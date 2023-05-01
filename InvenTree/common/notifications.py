@@ -180,7 +180,7 @@ class MethodStorageClass:
         Args:
             selected_classes (class, optional): References to the classes that should be registered. Defaults to None.
         """
-        logger.info('collecting notification methods')
+        logger.debug('Collecting notification methods')
         current_method = InvenTree.helpers.inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
 
         # for testing selective loading is made available
@@ -196,7 +196,7 @@ class MethodStorageClass:
             filtered_list[ref] = item
 
         storage.liste = list(filtered_list.values())
-        logger.info(f'found {len(storage.liste)} notification methods')
+        logger.info(f'Found {len(storage.liste)} notification methods')
 
     def get_usersettings(self, user) -> list:
         """Returns all user settings for a specific user.
@@ -231,10 +231,7 @@ class MethodStorageClass:
         return methods
 
 
-IGNORED_NOTIFICATION_CLS = set([
-    SingleNotificationMethod,
-    BulkNotificationMethod,
-])
+IGNORED_NOTIFICATION_CLS = {SingleNotificationMethod, BulkNotificationMethod, }
 storage = MethodStorageClass()
 
 
@@ -303,6 +300,13 @@ class InvenTreeNotificationBodies:
         slug='purchase_order.items_received',
         message=_('Items have been received against a purchase order'),
         template='email/purchase_order_received.html',
+    )
+
+    ReturnOrderItemsReceived = NotificationBody(
+        name=_('Items Received'),
+        slug='return_order.items_received',
+        message=_('Items have been received against a return order'),
+        template='email/return_order_received.html',
     )
 
 
@@ -417,7 +421,7 @@ def trigger_superuser_notification(plugin: PluginConfig, msg: str):
             'message': msg,
         },
         targets=users,
-        delivery_methods=set([UIMessageNotification]),
+        delivery_methods={UIMessageNotification, },
     )
 
 

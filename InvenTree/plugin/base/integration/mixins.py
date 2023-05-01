@@ -3,206 +3,14 @@
 import json as json_pkg
 import logging
 
-from django.db.utils import OperationalError, ProgrammingError
-from django.urls import include, re_path
-
 import requests
 
-import InvenTree.helpers
-from plugin.helpers import (MixinImplementationError, MixinNotImplementedError,
-                            render_template, render_text)
-from plugin.models import PluginConfig, PluginSetting
-from plugin.registry import registry
-from plugin.urls import PLUGIN_BASE
+import part.models
+import stock.models
+from plugin.helpers import (MixinNotImplementedError, render_template,
+                            render_text)
 
 logger = logging.getLogger('inventree')
-
-
-class SettingsMixin:
-    """Mixin that enables global settings for the plugin."""
-
-    class MixinMeta:
-        """Meta for mixin."""
-        MIXIN_NAME = 'Settings'
-
-    def __init__(self):
-        """Register mixin."""
-        super().__init__()
-        self.add_mixin('settings', 'has_settings', __class__)
-        self.settings = getattr(self, 'SETTINGS', {})
-
-    @property
-    def has_settings(self):
-        """Does this plugin use custom global settings."""
-        return bool(self.settings)
-
-    def get_setting(self, key):
-        """Return the 'value' of the setting associated with this plugin."""
-        return PluginSetting.get_setting(key, plugin=self)
-
-    def set_setting(self, key, value, user=None):
-        """Set plugin setting value by key."""
-        try:
-            plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
-        except (OperationalError, ProgrammingError):  # pragma: no cover
-            plugin = None
-
-        if not plugin:  # pragma: no cover
-            # Cannot find associated plugin model, return
-            logger.error(f"Plugin configuration not found for plugin '{self.slug}'")
-            return
-
-        PluginSetting.set_setting(key, value, user, plugin=plugin)
-
-
-class ScheduleMixin:
-    """Mixin that provides support for scheduled tasks.
-
-    Implementing classes must provide a dict object called SCHEDULED_TASKS,
-    which provides information on the tasks to be scheduled.
-
-    SCHEDULED_TASKS = {
-        # Name of the task (will be prepended with the plugin name)
-        'test_server': {
-            'func': 'myplugin.tasks.test_server',   # Python function to call (no arguments!)
-            'schedule': "I",                        # Schedule type (see django_q.Schedule)
-            'minutes': 30,                          # Number of minutes (only if schedule type = Minutes)
-            'repeats': 5,                           # Number of repeats (leave blank for 'forever')
-        },
-        'member_func': {
-            'func': 'my_class_func',                # Note, without the 'dot' notation, it will call a class member function
-            'schedule': "H",                        # Once per hour
-        },
-    }
-
-    Note: 'schedule' parameter must be one of ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
-
-    Note: The 'func' argument can take two different forms:
-        - Dotted notation e.g. 'module.submodule.func' - calls a global function with the defined path
-        - Member notation e.g. 'my_func' (no dots!) - calls a member function of the calling class
-    """
-
-    ALLOWABLE_SCHEDULE_TYPES = ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
-
-    # Override this in subclass model
-    SCHEDULED_TASKS = {}
-
-    class MixinMeta:
-        """Meta options for this mixin."""
-
-        MIXIN_NAME = 'Schedule'
-
-    def __init__(self):
-        """Register mixin."""
-        super().__init__()
-        self.scheduled_tasks = self.get_scheduled_tasks()
-        self.validate_scheduled_tasks()
-
-        self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
-
-    def get_scheduled_tasks(self):
-        """Returns `SCHEDULED_TASKS` context.
-
-        Override if you want the scheduled tasks to be dynamic (influenced by settings for example).
-        """
-        return getattr(self, 'SCHEDULED_TASKS', {})
-
-    @property
-    def has_scheduled_tasks(self):
-        """Are tasks defined for this plugin."""
-        return bool(self.scheduled_tasks)
-
-    def validate_scheduled_tasks(self):
-        """Check that the provided scheduled tasks are valid."""
-        if not self.has_scheduled_tasks:
-            raise MixinImplementationError("SCHEDULED_TASKS not defined")
-
-        for key, task in self.scheduled_tasks.items():
-
-            if 'func' not in task:
-                raise MixinImplementationError(f"Task '{key}' is missing 'func' parameter")
-
-            if 'schedule' not in task:
-                raise MixinImplementationError(f"Task '{key}' is missing 'schedule' parameter")
-
-            schedule = task['schedule'].upper().strip()
-
-            if schedule not in self.ALLOWABLE_SCHEDULE_TYPES:
-                raise MixinImplementationError(f"Task '{key}': Schedule '{schedule}' is not a valid option")
-
-            # If 'minutes' is selected, it must be provided!
-            if schedule == 'I' and 'minutes' not in task:
-                raise MixinImplementationError(f"Task '{key}' is missing 'minutes' parameter")
-
-    def get_task_name(self, key):
-        """Task name for key."""
-        # Generate a 'unique' task name
-        slug = self.plugin_slug()
-        return f"plugin.{slug}.{key}"
-
-    def get_task_names(self):
-        """All defined task names."""
-        # Returns a list of all task names associated with this plugin instance
-        return [self.get_task_name(key) for key in self.scheduled_tasks.keys()]
-
-    def register_tasks(self):
-        """Register the tasks with the database."""
-        try:
-            from django_q.models import Schedule
-
-            for key, task in self.scheduled_tasks.items():
-
-                task_name = self.get_task_name(key)
-                obj = {
-                    'name': task_name,
-                    'schedule_type': task['schedule'],
-                    'minutes': task.get('minutes', None),
-                    'repeats': task.get('repeats', -1),
-                }
-                func_name = task['func'].strip()
-
-                if '.' in func_name:
-                    """Dotted notation indicates that we wish to run a globally defined function, from a specified Python module."""
-                    obj['func'] = func_name
-                else:
-                    """Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin. This is managed by the plugin registry itself."""
-                    slug = self.plugin_slug()
-                    obj['func'] = registry.call_plugin_function
-                    obj['args'] = f"'{slug}', '{func_name}'"
-
-                if Schedule.objects.filter(name=task_name).exists():
-                    # Scheduled task already exists - update it!
-                    logger.info(f"Updating scheduled task '{task_name}'")
-                    instance = Schedule.objects.get(name=task_name)
-                    for item in obj:
-                        setattr(instance, item, obj[item])
-                    instance.save()
-                else:
-                    logger.info(f"Adding scheduled task '{task_name}'")
-                    # Create a new scheduled task
-                    Schedule.objects.create(**obj)
-
-        except (ProgrammingError, OperationalError):  # pragma: no cover
-            # Database might not yet be ready
-            logger.warning("register_tasks failed, database not ready")
-
-    def unregister_tasks(self):
-        """Deregister the tasks with the database."""
-        try:
-            from django_q.models import Schedule
-
-            for key, _ in self.scheduled_tasks.items():
-
-                task_name = self.get_task_name(key)
-
-                try:
-                    scheduled_task = Schedule.objects.get(name=task_name)
-                    scheduled_task.delete()
-                except Schedule.DoesNotExist:
-                    pass
-        except (ProgrammingError, OperationalError):  # pragma: no cover
-            # Database might not yet be ready
-            logger.warning("unregister_tasks failed, database not ready")
 
 
 class ValidationMixin:
@@ -239,42 +47,45 @@ class ValidationMixin:
         super().__init__()
         self.add_mixin('validation', True, __class__)
 
-    def validate_part_name(self, name: str):
+    def validate_part_name(self, name: str, part: part.models.Part):
         """Perform validation on a proposed Part name
 
         Arguments:
             name: The proposed part name
+            part: The part instance we are validating against
 
         Returns:
-            None or True
+            None or True (refer to class docstring)
 
         Raises:
             ValidationError if the proposed name is objectionable
         """
         return None
 
-    def validate_part_ipn(self, ipn: str):
+    def validate_part_ipn(self, ipn: str, part: part.models.Part):
         """Perform validation on a proposed Part IPN (internal part number)
 
         Arguments:
             ipn: The proposed part IPN
+            part: The Part instance we are validating against
 
         Returns:
-            None or True
+            None or True (refer to class docstring)
 
         Raises:
             ValidationError if the proposed IPN is objectionable
         """
         return None
 
-    def validate_batch_code(self, batch_code: str):
+    def validate_batch_code(self, batch_code: str, item: stock.models.StockItem):
         """Validate the supplied batch code
 
         Arguments:
             batch_code: The proposed batch code (string)
+            item: The StockItem instance we are validating against
 
         Returns:
-            None or True
+            None or True (refer to class docstring)
 
         Raises:
             ValidationError if the proposed batch code is objectionable
@@ -289,14 +100,15 @@ class ValidationMixin:
         """
         return None
 
-    def validate_serial_number(self, serial: str):
-        """Validate the supplied serial number
+    def validate_serial_number(self, serial: str, part: part.models.Part):
+        """Validate the supplied serial number.
 
         Arguments:
             serial: The proposed serial number (string)
+            part: The Part instance for which this serial number is being validated
 
         Returns:
-            None or True
+            None or True (refer to class docstring)
 
         Raises:
             ValidationError if the proposed serial is objectionable
@@ -336,47 +148,6 @@ class ValidationMixin:
             serial: Current serial value (string)
         """
         return None
-
-
-class UrlsMixin:
-    """Mixin that enables custom URLs for the plugin."""
-
-    class MixinMeta:
-        """Meta options for this mixin."""
-
-        MIXIN_NAME = 'URLs'
-
-    def __init__(self):
-        """Register mixin."""
-        super().__init__()
-        self.add_mixin('urls', 'has_urls', __class__)
-        self.urls = self.setup_urls()
-
-    def setup_urls(self):
-        """Setup url endpoints for this plugin."""
-        return getattr(self, 'URLS', None)
-
-    @property
-    def base_url(self):
-        """Base url for this plugin."""
-        return f'{PLUGIN_BASE}/{self.slug}/'
-
-    @property
-    def internal_name(self):
-        """Internal url pattern name."""
-        return f'plugin:{self.slug}:'
-
-    @property
-    def urlpatterns(self):
-        """Urlpatterns for this plugin."""
-        if self.has_urls:
-            return re_path(f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug)
-        return None
-
-    @property
-    def has_urls(self):
-        """Does this plugin use custom urls."""
-        return bool(self.urls)
 
 
 class NavigationMixin:
@@ -423,25 +194,6 @@ class NavigationMixin:
     def navigation_icon(self):
         """Icon-name for navigation tab."""
         return getattr(self, 'NAVIGATION_TAB_ICON', "fas fa-question")
-
-
-class AppMixin:
-    """Mixin that enables full django app functions for a plugin."""
-
-    class MixinMeta:
-        """Meta options for this mixin."""
-
-        MIXIN_NAME = 'App registration'
-
-    def __init__(self):
-        """Register mixin."""
-        super().__init__()
-        self.add_mixin('app', 'has_app', __class__)
-
-    @property
-    def has_app(self):
-        """This plugin is always an app with this plugin."""
-        return True
 
 
 class APICallMixin:
@@ -692,6 +444,8 @@ class PanelMixin:
         Returns:
             Array of panels
         """
+        import InvenTree.helpers
+
         panels = []
 
         # Construct an updated context object for template rendering
@@ -719,7 +473,7 @@ class PanelMixin:
             # Check for required keys
             required_keys = ['title', 'content']
 
-            if any([key not in panel for key in required_keys]):
+            if any(key not in panel for key in required_keys):
                 logger.warning(f"Custom panel for plugin {__class__} is missing a required parameter")
                 continue
 

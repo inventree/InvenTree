@@ -116,7 +116,7 @@ def allow_table_event(table_name):
         'users_',
     ]
 
-    if any([table_name.startswith(prefix) for prefix in ignore_prefixes]):
+    if any(table_name.startswith(prefix) for prefix in ignore_prefixes):
         return False
 
     ignore_tables = [
@@ -125,6 +125,8 @@ def allow_table_event(table_name):
         'common_webhookendpoint',
         'common_webhookmessage',
         'part_partpricing',
+        'part_partstocktake',
+        'part_partstocktakereport',
     ]
 
     if table_name in ignore_tables:

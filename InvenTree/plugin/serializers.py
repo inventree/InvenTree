@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
+from InvenTree.tasks import check_for_migrations, offload_task
 from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
 
 
@@ -18,17 +19,17 @@ class MetadataSerializer(serializers.ModelSerializer):
 
     metadata = serializers.JSONField(required=True)
 
-    def __init__(self, model_type, *args, **kwargs):
-        """Initialize the metadata serializer with information on the model type"""
-        self.Meta.model = model_type
-        super().__init__(*args, **kwargs)
-
     class Meta:
         """Metaclass options."""
 
         fields = [
             'metadata',
         ]
+
+    def __init__(self, model_type, *args, **kwargs):
+        """Initialize the metadata serializer with information on the model type"""
+        self.Meta.model = model_type
+        super().__init__(*args, **kwargs)
 
     def update(self, instance, data):
         """Perform update on the metadata field:
@@ -48,9 +49,6 @@ class MetadataSerializer(serializers.ModelSerializer):
 class PluginConfigSerializer(serializers.ModelSerializer):
     """Serializer for a PluginConfig."""
 
-    meta = serializers.DictField(read_only=True)
-    mixins = serializers.DictField(read_only=True)
-
     class Meta:
         """Meta for serializer."""
         model = PluginConfig
@@ -62,9 +60,20 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'mixins',
         ]
 
+    meta = serializers.DictField(read_only=True)
+    mixins = serializers.DictField(read_only=True)
+
 
 class PluginConfigInstallSerializer(serializers.Serializer):
     """Serializer for installing a new plugin."""
+
+    class Meta:
+        """Meta for serializer."""
+        fields = [
+            'url',
+            'packagename',
+            'confirm',
+        ]
 
     url = serializers.CharField(
         required=False,
@@ -82,14 +91,6 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         label=_('Confirm plugin installation'),
         help_text=_('This will install this plugin now into the current instance. The instance will go into maintenance.')
     )
-
-    class Meta:
-        """Meta for serializer."""
-        fields = [
-            'url',
-            'packagename',
-            'confirm',
-        ]
 
     def validate(self, data):
         """Validate inputs.
@@ -153,8 +154,17 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
         # save plugin to plugin_file if installed successfull
         if success:
+            # Read content of plugin file
+            plg_lines = open(settings.PLUGIN_FILE).readlines()
             with open(settings.PLUGIN_FILE, "a") as plugin_file:
+                # Check if last line has a newline
+                if plg_lines[-1][-1:] != '\n':
+                    plugin_file.write('\n')
+                # Write new plugin to file
                 plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
+
+        # Check for migrations
+        offload_task(check_for_migrations, worker=True)
 
         return ret
 

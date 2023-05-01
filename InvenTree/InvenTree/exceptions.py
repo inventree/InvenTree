@@ -18,6 +18,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 
+import InvenTree.sentry
+
 logger = logging.getLogger('inventree')
 
 
@@ -55,9 +57,18 @@ def exception_handler(exc, context):
     """Custom exception handler for DRF framework.
 
     Ref: https://www.django-rest-framework.org/api-guide/exceptions/#custom-exception-handling
-    Catches any errors not natively handled by DRF, and re-throws as an error DRF can handle
+    Catches any errors not natively handled by DRF, and re-throws as an error DRF can handle.
+
+    If sentry error reporting is enabled, we will also provide the original exception to sentry.io
     """
     response = None
+
+    # Pass exception to sentry.io handler
+    try:
+        InvenTree.sentry.report_exception(exc)
+    except Exception:
+        # If sentry.io fails, we don't want to crash the server!
+        pass
 
     # Catch any django validation error, and re-throw a DRF validation error
     if isinstance(exc, DjangoValidationError):

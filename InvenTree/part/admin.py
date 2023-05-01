@@ -3,18 +3,32 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-import import_export.widgets as widgets
+from import_export import widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
-import part.models as models
 from company.models import SupplierPart
 from InvenTree.admin import InvenTreeResource
+from part import models
 from stock.models import StockLocation
 
 
 class PartResource(InvenTreeResource):
     """Class for managing Part data import/export."""
+
+    class Meta:
+        """Metaclass definition"""
+        model = models.Part
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+        exclude = [
+            'bom_checksum', 'bom_checked_by', 'bom_checked_date',
+            'lft', 'rght', 'tree_id', 'level',
+            'image',
+            'metadata',
+            'barcode_data', 'barcode_hash',
+        ]
 
     id = Field(attribute='pk', column_name=_('Part ID'), widget=widgets.IntegerWidget())
     name = Field(attribute='name', column_name=_('Part Name'), widget=widgets.CharWidget())
@@ -29,7 +43,7 @@ class PartResource(InvenTreeResource):
     category_name = Field(attribute='category__name', column_name=_('Category Name'), readonly=True)
     default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
     default_supplier = Field(attribute='default_supplier', column_name=_('Default Supplier ID'), widget=widgets.ForeignKeyWidget(SupplierPart))
-    variant_of = Field(attribute='variant_of', column_name=('Variant Of'), widget=widgets.ForeignKeyWidget(models.Part))
+    variant_of = Field(attribute='variant_of', column_name=_('Variant Of'), widget=widgets.ForeignKeyWidget(models.Part))
     minimum_stock = Field(attribute='minimum_stock', column_name=_('Minimum Stock'))
 
     # Part Attributes
@@ -67,20 +81,6 @@ class PartResource(InvenTreeResource):
 
         if max_cost is not None:
             return float(max_cost.amount)
-
-    class Meta:
-        """Metaclass definition"""
-        model = models.Part
-        skip_unchanged = True
-        report_skipped = False
-        clean_model_instances = True
-        exclude = [
-            'bom_checksum', 'bom_checked_by', 'bom_checked_date',
-            'lft', 'rght', 'tree_id', 'level',
-            'image',
-            'metadata',
-            'barcode_data', 'barcode_hash',
-        ]
 
     def get_queryset(self):
         """Prefetch related data for quicker access."""
@@ -166,20 +166,14 @@ class PartStocktakeAdmin(admin.ModelAdmin):
     list_display = ['part', 'date', 'quantity', 'user']
 
 
+class PartStocktakeReportAdmin(admin.ModelAdmin):
+    """Admin class for PartStocktakeReport model"""
+
+    list_display = ['date', 'user']
+
+
 class PartCategoryResource(InvenTreeResource):
     """Class for managing PartCategory data import/export."""
-
-    id = Field(attribute='pk', column_name=_('Category ID'))
-    name = Field(attribute='name', column_name=_('Category Name'))
-    description = Field(attribute='description', column_name=_('Description'))
-    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
-    parent_name = Field(attribute='parent__name', column_name=_('Parent Name'), readonly=True)
-    default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
-    default_keywords = Field(attribute='default_keywords', column_name=_('Keywords'))
-    pathstring = Field(attribute='pathstring', column_name=_('Category Path'))
-
-    # Calculated fields
-    parts = Field(attribute='item_count', column_name=_('Parts'), widget=widgets.IntegerWidget(), readonly=True)
 
     class Meta:
         """Metaclass definition"""
@@ -194,6 +188,18 @@ class PartCategoryResource(InvenTreeResource):
             'metadata',
             'icon',
         ]
+
+    id = Field(attribute='pk', column_name=_('Category ID'), widget=widgets.IntegerWidget())
+    name = Field(attribute='name', column_name=_('Category Name'))
+    description = Field(attribute='description', column_name=_('Description'))
+    parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
+    parent_name = Field(attribute='parent__name', column_name=_('Parent Name'), readonly=True)
+    default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
+    default_keywords = Field(attribute='default_keywords', column_name=_('Keywords'))
+    pathstring = Field(attribute='pathstring', column_name=_('Category Path'))
+
+    # Calculated fields
+    parts = Field(attribute='item_count', column_name=_('Parts'), widget=widgets.IntegerWidget(), readonly=True)
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
         """Rebuild MPTT tree structure after importing PartCategory data"""
@@ -241,9 +247,24 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
 class BomItemResource(InvenTreeResource):
     """Class for managing BomItem data import/export."""
 
+    class Meta:
+        """Metaclass definition"""
+        model = models.BomItem
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+
+        exclude = [
+            'checksum',
+            'id',
+            'part',
+            'sub_part',
+            'validated',
+        ]
+
     level = Field(attribute='level', column_name=_('BOM Level'), readonly=True)
 
-    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'))
+    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'), widget=widgets.IntegerWidget())
 
     # ID of the parent part
     parent_part_id = Field(attribute='part', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.Part))
@@ -297,7 +318,7 @@ class BomItemResource(InvenTreeResource):
         is_importing = getattr(self, 'is_importing', False)
         include_pricing = getattr(self, 'include_pricing', False)
 
-        to_remove = []
+        to_remove = ['metadata']
 
         if is_importing or not include_pricing:
             # Remove pricing fields in this instance
@@ -329,20 +350,6 @@ class BomItemResource(InvenTreeResource):
 
         return fields
 
-    class Meta:
-        """Metaclass definition"""
-        model = models.BomItem
-        skip_unchanged = True
-        report_skipped = False
-        clean_model_instances = True
-
-        exclude = [
-            'checksum',
-            'id',
-            'part',
-            'sub_part',
-        ]
-
 
 class BomItemAdmin(ImportExportModelAdmin):
     """Admin class for the BomItem model"""
@@ -367,6 +374,13 @@ class ParameterTemplateAdmin(ImportExportModelAdmin):
 class ParameterResource(InvenTreeResource):
     """Class for managing PartParameter data import/export."""
 
+    class Meta:
+        """Metaclass definition"""
+        model = models.PartParameter
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instance = True
+
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(models.Part))
 
     part_name = Field(attribute='part__name', readonly=True)
@@ -374,13 +388,6 @@ class ParameterResource(InvenTreeResource):
     template = Field(attribute='template', widget=widgets.ForeignKeyWidget(models.PartParameterTemplate))
 
     template_name = Field(attribute='template__name', readonly=True)
-
-    class Meta:
-        """Metaclass definition"""
-        model = models.PartParameter
-        skip_unchanged = True
-        report_skipped = False
-        clean_model_instance = True
 
 
 class ParameterAdmin(ImportExportModelAdmin):
@@ -434,3 +441,4 @@ admin.site.register(models.PartSellPriceBreak, PartSellPriceBreakAdmin)
 admin.site.register(models.PartInternalPriceBreak, PartInternalPriceBreakAdmin)
 admin.site.register(models.PartPricing, PartPricingAdmin)
 admin.site.register(models.PartStocktake, PartStocktakeAdmin)
+admin.site.register(models.PartStocktakeReport, PartStocktakeReportAdmin)

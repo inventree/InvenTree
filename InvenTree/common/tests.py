@@ -1,13 +1,18 @@
 """Tests for mechanisms in common."""
 
+import io
 import json
+import time
 from datetime import timedelta
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
+
+import PIL
 
 from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
 from InvenTree.helpers import InvenTreeTestCase, str2bool
@@ -16,8 +21,8 @@ from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
-                     NotificationEntry, NotificationMessage, WebhookEndpoint,
-                     WebhookMessage)
+                     NotesImage, NotificationEntry, NotificationMessage,
+                     ProjectCode, WebhookEndpoint, WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -900,3 +905,209 @@ class ColorThemeTest(TestCase):
         # check valid theme
         self.assertFalse(ColorTheme.is_valid_choice(aa))
         self.assertTrue(ColorTheme.is_valid_choice(ab))
+
+
+class CurrencyAPITests(InvenTreeAPITestCase):
+    """Unit tests for the currency exchange API endpoints"""
+
+    def test_exchange_endpoint(self):
+        """Test that the currency exchange endpoint works as expected"""
+
+        response = self.get(reverse('api-currency-exchange'), expected_code=200)
+
+        self.assertIn('base_currency', response.data)
+        self.assertIn('exchange_rates', response.data)
+
+    def test_refresh_endpoint(self):
+        """Call the 'refresh currencies' endpoint"""
+
+        from djmoney.contrib.exchange.models import Rate
+
+        # Delete any existing exchange rate data
+        Rate.objects.all().delete()
+
+        # Updating via the external exchange may not work every time
+        for _idx in range(5):
+            self.post(reverse('api-currency-refresh'))
+
+            # There should be some new exchange rate objects now
+            if Rate.objects.all().exists():
+                # Exit early
+                return
+
+            # Delay and try again
+            time.sleep(10)
+
+        raise TimeoutError("Could not refresh currency exchange data after 5 attempts")
+
+
+class NotesImageTest(InvenTreeAPITestCase):
+    """Tests for uploading images to be used in markdown notes."""
+
+    def test_invalid_files(self):
+        """Test that invalid files are rejected."""
+
+        n = NotesImage.objects.count()
+
+        # Test upload of a simple text file
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={
+                'image': SimpleUploadedFile('test.txt', b"this is not an image file", content_type='text/plain'),
+            },
+            format='multipart',
+            expected_code=400
+        )
+
+        self.assertIn("Upload a valid image", str(response.data['image']))
+
+        # Test upload of an invalid image file
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={
+                'image': SimpleUploadedFile('test.png', b"this is not an image file", content_type='image/png'),
+            },
+            format='multipart',
+            expected_code=400,
+        )
+
+        self.assertIn("Upload a valid image", str(response.data['image']))
+
+        # Check that no extra database entries have been created
+        self.assertEqual(NotesImage.objects.count(), n)
+
+    def test_valid_image(self):
+        """Test upload of a valid image file"""
+
+        n = NotesImage.objects.count()
+
+        # Construct a simple image file
+        image = PIL.Image.new('RGB', (100, 100), color='red')
+
+        with io.BytesIO() as output:
+            image.save(output, format='PNG')
+            contents = output.getvalue()
+
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={
+                'image': SimpleUploadedFile('test.png', contents, content_type='image/png'),
+            },
+            format='multipart',
+            expected_code=201
+        )
+
+        print(response.data)
+
+        # Check that a new file has been created
+        self.assertEqual(NotesImage.objects.count(), n + 1)
+
+
+class ProjectCodesTest(InvenTreeAPITestCase):
+    """Units tests for the ProjectCodes model and API endpoints"""
+
+    @property
+    def url(self):
+        """Return the URL for the project code list endpoint"""
+        return reverse('api-project-code-list')
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create some initial project codes"""
+        super().setUpTestData()
+
+        codes = [
+            ProjectCode(code='PRJ-001', description='Test project code'),
+            ProjectCode(code='PRJ-002', description='Test project code'),
+            ProjectCode(code='PRJ-003', description='Test project code'),
+            ProjectCode(code='PRJ-004', description='Test project code'),
+        ]
+
+        ProjectCode.objects.bulk_create(codes)
+
+    def test_list(self):
+        """Test that the list endpoint works as expected"""
+
+        response = self.get(self.url, expected_code=200)
+        self.assertEqual(len(response.data), ProjectCode.objects.count())
+
+    def test_delete(self):
+        """Test we can delete a project code via the API"""
+
+        n = ProjectCode.objects.count()
+
+        # Get the first project code
+        code = ProjectCode.objects.first()
+
+        # Delete it
+        self.delete(
+            reverse('api-project-code-detail', kwargs={'pk': code.pk}),
+            expected_code=204
+        )
+
+        # Check it is gone
+        self.assertEqual(ProjectCode.objects.count(), n - 1)
+
+    def test_duplicate_code(self):
+        """Test that we cannot create two project codes with the same code"""
+
+        # Create a new project code
+        response = self.post(
+            self.url,
+            data={
+                'code': 'PRJ-001',
+                'description': 'Test project code',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('project code with this Project Code already exists', str(response.data['code']))
+
+    def test_write_access(self):
+        """Test that non-staff users have read-only access"""
+
+        # By default user has staff access, can create a new project code
+        response = self.post(
+            self.url,
+            data={
+                'code': 'PRJ-xxx',
+                'description': 'Test project code',
+            },
+            expected_code=201
+        )
+
+        pk = response.data['pk']
+
+        # Test we can edit, also
+        response = self.patch(
+            reverse('api-project-code-detail', kwargs={'pk': pk}),
+            data={
+                'code': 'PRJ-999',
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(response.data['code'], 'PRJ-999')
+
+        # Restrict user access to non-staff
+        self.user.is_staff = False
+        self.user.save()
+
+        # As user does not have staff access, should return 403 for list endpoint
+        response = self.post(
+            self.url,
+            data={
+                'code': 'PRJ-123',
+                'description': 'Test project code'
+            },
+            expected_code=403
+        )
+
+        # Should also return 403 for detail endpoint
+        response = self.patch(
+            reverse('api-project-code-detail', kwargs={'pk': pk}),
+            data={
+                'code': 'PRJ-999',
+            },
+            expected_code=403
+        )

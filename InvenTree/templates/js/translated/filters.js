@@ -43,7 +43,7 @@ function defaultFilters() {
  * @param tableKey - String key for the particular table
  * @param defaults - Default filters for this table e.g. 'cascade=1&location=5'
  */
-function loadTableFilters(tableKey) {
+function loadTableFilters(tableKey, query={}) {
 
     var lookup = 'table-filters-' + tableKey.toLowerCase();
 
@@ -66,6 +66,9 @@ function loadTableFilters(tableKey) {
             }
         }
     });
+
+    // Override configurable filters with hard-coded query
+    Object.assign(filters, query);
 
     return filters;
 }
@@ -241,15 +244,32 @@ function generateFilterInput(tableKey, filterKey) {
         // Return a 'select' input with the available values
         html = `<select class='form-control filter-input' id='${id}' name='value'>`;
 
+        // options can be an object or a function, in which case we need to run
+        // this callback first
+        if (options instanceof Function) {
+            options = options();
+        }
         for (var key in options) {
-            var option = options[key];
-            html += `<option value='${key}'>${option.value}</option>`;
+            let option = options[key];
+            html += `<option value='${option.key || key}'>${option.value}</option>`;
         }
 
         html += `</select>`;
     }
 
     return html;
+}
+
+
+/*
+ * Helper function to make a 'filter' style button
+ */
+function makeFilterButton(options={}) {
+
+    return `
+    <button id='${options.id}' title='${options.title}' class='btn btn-outline-secondary filter-button'>
+        <span class='fas ${options.icon}'></span>
+    </button>`;
 }
 
 
@@ -285,21 +305,64 @@ function setupFilterList(tableKey, table, target, options={}) {
     // One blank slate, please
     element.empty();
 
+    // Construct a set of buttons
     var buttons = '';
+
+    let report_button = options.report && global_settings.REPORT_ENABLE;
+    let labels_button = options.labels && global_settings.LABEL_ENABLE;
+
+    if (report_button || labels_button) {
+        let print_buttons = `
+        <div class='btn-group' role='group'>
+        <button id='printing-options' title='{% trans "Printing actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+            <span class='fas fa-print'></span> <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu' role='menu'>`;
+
+        if (labels_button) {
+            print_buttons += `<li><a class='dropdown-item' href='#' id='print-labels-${tableKey}'><span class='fas fa-tag'></span> {% trans "Print Labels" %}</a></li>`;
+        }
+
+        if (report_button) {
+            print_buttons += `<li><a class='dropdown-item' href='#' id='print-report-${tableKey}'><span class='fas fa-file-pdf'></span> {% trans "Print Reports" %}</a></li>`;
+        }
+
+        print_buttons += `</ul></div>`;
+
+        buttons += print_buttons;
+    }
 
     // Add download button
     if (options.download) {
-        buttons += `<button id='download-${tableKey}' title='{% trans "Download data" %}' class='btn btn-outline-secondary filter-button'><span class='fas fa-download'></span></button>`;
+        buttons += makeFilterButton({
+            id: `download-${tableKey}`,
+            title: '{% trans "Download table data" %}',
+            icon: 'fa-download',
+        });
     }
 
-    buttons += `<button id='reload-${tableKey}' title='{% trans "Reload data" %}' class='btn btn-outline-secondary filter-button'><span class='fas fa-redo-alt'></span></button>`;
+    buttons += makeFilterButton({
+        id: `reload-${tableKey}`,
+        title: '{% trans "Reload table data" %}',
+        icon: 'fa-redo-alt',
+    });
 
     // If there are filters defined for this table, add more buttons
     if (!jQuery.isEmptyObject(getAvailableTableFilters(tableKey))) {
-        buttons += `<button id='${add}' title='{% trans "Add new filter" %}' class='btn btn-outline-secondary filter-button'><span class='fas fa-filter'></span></button>`;
+
+        buttons += makeFilterButton({
+            id: add,
+            title: '{% trans "Add new filter" %}',
+            icon: 'fa-filter',
+        });
+
 
         if (Object.keys(filters).length > 0) {
-            buttons += `<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-outline-secondary filter-button'><span class='fas fa-backspace icon-red'></span></button>`;
+            buttons += makeFilterButton({
+                id: clear,
+                title: '{% trans "Clear all filters" %}',
+                icon: 'fa-backspace icon-red',
+            });
         }
     }
 
@@ -324,6 +387,42 @@ function setupFilterList(tableKey, table, target, options={}) {
         `;
 
         element.append(filter_tag);
+    }
+
+    // Callback for printing reports
+    if (options.report && global_settings.REPORT_ENABLE) {
+        element.find(`#print-report-${tableKey}`).click(function() {
+            let data = getTableData(table);
+            let items = [];
+
+            data.forEach(function(row) {
+                items.push(row.pk);
+            });
+
+            printReports({
+                items: items,
+                url: options.report.url,
+                key: options.report.key
+            });
+        });
+    }
+
+    // Callback for printing labels
+    if (options.labels && global_settings.LABEL_ENABLE) {
+        element.find(`#print-labels-${tableKey}`).click(function() {
+            let data = getTableData(table);
+            let items = [];
+
+            data.forEach(function(row) {
+                items.push(row.pk);
+            });
+
+            printLabels({
+                items: items,
+                url: options.labels.url,
+                key: options.labels.key,
+            });
+        });
     }
 
     // Callback for reloading the table
@@ -450,10 +549,17 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
 
     // Iterate through a list of options
     if ('options' in filter) {
-        for (var key in filter.options) {
+        // options can be an object or a function, in which case we need to run
+        // this callback first
+        if (filter.options instanceof Function) {
+            filter.options = filter.options();
+        }
 
-            if (key == valueKey) {
-                return filter.options[key].value;
+        for (var name in filter.options) {
+            let option = filter.options[name];
+
+            if (option.key == valueKey) {
+                return option.value;
             }
         }
 

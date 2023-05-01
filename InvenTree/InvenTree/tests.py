@@ -3,6 +3,7 @@
 import json
 import os
 import time
+from datetime import datetime, timedelta
 from decimal import Decimal
 from unittest import mock
 
@@ -13,7 +14,6 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-import requests
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -29,19 +29,11 @@ from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, status, version
 from .tasks import offload_task
-from .validators import validate_overage, validate_part_name
+from .validators import validate_overage
 
 
 class ValidatorTest(TestCase):
     """Simple tests for custom field validators."""
-
-    def test_part_name(self):
-        """Test part name validator."""
-        validate_part_name('hello world')
-
-        # Validate with some strange chars
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_part_name('### <> This | name is not } valid')
 
     def test_overage(self):
         """Test overage validator."""
@@ -294,10 +286,12 @@ class TestHelpers(TestCase):
                     time.sleep(10 * tries)
 
         # Attempt to download an image which throws a 404
-        dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
+        # TODO: Re-implement this test when we are happier with the external service
+        # dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
 
         # Attempt to download, but timeout
-        dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
+        # TODO: Re-implement this test when we are happier with the external service
+        # dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
 
         large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
 
@@ -312,6 +306,20 @@ class TestHelpers(TestCase):
 
         # Download a valid image (should not throw an error)
         helpers.download_image_from_url(large_img, timeout=10)
+
+    def test_model_mixin(self):
+        """Test the getModelsWithMixin function"""
+
+        from InvenTree.models import InvenTreeBarcodeMixin
+
+        models = helpers.getModelsWithMixin(InvenTreeBarcodeMixin)
+
+        self.assertIn(Part, models)
+        self.assertIn(StockLocation, models)
+        self.assertIn(StockItem, models)
+
+        self.assertNotIn(PartCategory, models)
+        self.assertNotIn(InvenTreeSetting, models)
 
 
 class TestQuoteWrap(TestCase):
@@ -398,10 +406,10 @@ class TestMPTT(TestCase):
         'location',
     ]
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        super().setUp()
-
+        super().setUpTestData()
         StockLocation.objects.rebuild()
 
     def test_self_as_parent(self):
@@ -799,7 +807,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/config.yaml',
         ]
 
-        self.assertTrue(any([opt in str(config.get_config_file()).lower() for opt in valid]))
+        self.assertTrue(any(opt in str(config.get_config_file()).lower() for opt in valid))
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
@@ -814,7 +822,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/plugins.txt',
         ]
 
-        self.assertTrue(any([opt in str(config.get_plugin_file()).lower() for opt in valid]))
+        self.assertTrue(any(opt in str(config.get_plugin_file()).lower() for opt in valid))
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
@@ -829,6 +837,17 @@ class TestSettings(helpers.InvenTreeTestCase):
         # with env set
         with self.in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
+
+        # test typecasting to dict - None should be mapped to empty dict
+        self.assertEqual(config.get_setting(TEST_ENV_NAME, None, None, typecast=dict), {})
+
+        # test typecasting to dict - valid JSON string should be mapped to corresponding dict
+        with self.in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
+            self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {"a": 1})
+
+        # test typecasting to dict - invalid JSON string should be mapped to empty dict
+        with self.in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
+            self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
 
 
 class TestInstanceName(helpers.InvenTreeTestCase):
@@ -902,6 +921,58 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             1, 2, 3, 4, 5,
             force_async=True
         )
+
+    def test_daily_holdoff(self):
+        """Tests for daily task holdoff helper functions"""
+
+        import InvenTree.tasks
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # With a non-positive interval, task will not run
+            result = InvenTree.tasks.check_daily_holdoff('some_task', 0)
+            self.assertFalse(result)
+            self.assertIn('Specified interval', str(cm.output))
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # First call should run without issue
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertTrue(result)
+            self.assertIn("Logging task attempt for 'dummy_task'", str(cm.output))
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            # An attempt has been logged, but it is too recent
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertFalse(result)
+            self.assertIn("Last attempt for 'dummy_task' was too recent", str(cm.output))
+
+        # Mark last attempt a few days ago - should now return True
+        t_old = datetime.now() - timedelta(days=3)
+        t_old = t_old.isoformat()
+        InvenTreeSetting.set_setting('_dummy_task_ATTEMPT', t_old, None)
+
+        result = InvenTree.tasks.check_daily_holdoff('dummy_task', 5)
+        self.assertTrue(result)
+
+        # Last attempt should have been updated
+        self.assertNotEqual(t_old, InvenTreeSetting.get_setting('_dummy_task_ATTEMPT', '', cache=False))
+
+        # Last attempt should prevent us now
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task')
+            self.assertFalse(result)
+            self.assertIn("Last attempt for 'dummy_task' was too recent", str(cm.output))
+
+        # Configure so a task was successful too recently
+        InvenTreeSetting.set_setting('_dummy_task_ATTEMPT', t_old, None)
+        InvenTreeSetting.set_setting('_dummy_task_SUCCESS', t_old, None)
+
+        with self.assertLogs(logger='inventree', level='INFO') as cm:
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task', 7)
+            self.assertFalse(result)
+            self.assertIn('Last successful run for', str(cm.output))
+
+            result = InvenTree.tasks.check_daily_holdoff('dummy_task', 2)
+            self.assertTrue(result)
 
 
 class BarcodeMixinTest(helpers.InvenTreeTestCase):

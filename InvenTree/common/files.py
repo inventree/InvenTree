@@ -59,7 +59,8 @@ class FileManager:
                 # Reset stream position to beginning of file
                 file.seek(0)
             else:
-                raise ValidationError(_(f'Unsupported file format: {ext.upper()}'))
+                fmt = ext.upper()
+                raise ValidationError(_(f'Unsupported file format: {fmt}'))
         except UnicodeEncodeError:
             raise ValidationError(_('Error reading file (invalid encoding)'))
 
@@ -180,7 +181,7 @@ class FileManager:
 
         for i in range(self.row_count()):
 
-            data = [item for item in self.get_row_data(i)]
+            data = list(self.get_row_data(i))
 
             # Is the row completely empty? Skip!
             empty = True

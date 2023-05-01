@@ -2,7 +2,6 @@
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from djmoney.money import Money
 
 import common.models
@@ -10,6 +9,7 @@ import common.settings
 import company.models
 import order.models
 import part.models
+import stock.models
 from InvenTree.helpers import InvenTreeTestCase
 from InvenTree.status_codes import PurchaseOrderStatus
 
@@ -17,33 +17,10 @@ from InvenTree.status_codes import PurchaseOrderStatus
 class PartPricingTests(InvenTreeTestCase):
     """Unit tests for part pricing calculations"""
 
-    def generate_exchange_rates(self):
-        """Generate some exchange rates to work with"""
-
-        rates = {
-            'AUD': 1.5,
-            'CAD': 1.7,
-            'GBP': 0.9,
-            'USD': 1.0,
-        }
-
-        # Create a dummy backend
-        ExchangeBackend.objects.create(
-            name='InvenTreeExchange',
-            base_currency='USD',
-        )
-
-        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-
-        for currency, rate in rates.items():
-            Rate.objects.create(
-                currency=currency,
-                value=rate,
-                backend=backend,
-            )
-
     def setUp(self):
         """Setup routines"""
+
+        super().setUp()
 
         self.generate_exchange_rates()
 
@@ -53,8 +30,6 @@ class PartPricingTests(InvenTreeTestCase):
             description='A part with pricing',
             assembly=True
         )
-
-        return super().setUp()
 
     def create_price_breaks(self):
         """Create some price breaks for the part, in various currencies"""
@@ -234,6 +209,54 @@ class PartPricingTests(InvenTreeTestCase):
             self.assertEqual(pricing.internal_cost_max, Money(10, currency))
             self.assertEqual(pricing.overall_max, Money(10, currency))
 
+    def test_stock_item_pricing(self):
+        """Test for stock item pricing data"""
+
+        # Create a part
+        p = part.models.Part.objects.create(
+            name='Test part for pricing',
+            description='hello world, this is a part description',
+        )
+
+        # Create some stock items
+        prices = [
+            (10, 'AUD'),
+            (5, 'USD'),
+            (2, 'CAD'),
+        ]
+
+        for price, currency in prices:
+
+            stock.models.StockItem.objects.create(
+                part=p,
+                quantity=10,
+                purchase_price=price,
+                purchase_price_currency=currency
+            )
+
+        # Ensure that initially, stock item pricing is disabled
+        common.models.InvenTreeSetting.set_setting('PRICING_USE_STOCK_PRICING', False, None)
+
+        pricing = p.pricing
+        pricing.update_pricing()
+
+        # Check that stock item pricing data is not used
+        self.assertIsNone(pricing.purchase_cost_min)
+        self.assertIsNone(pricing.purchase_cost_max)
+        self.assertIsNone(pricing.overall_min)
+        self.assertIsNone(pricing.overall_max)
+
+        # Turn on stock pricing
+        common.models.InvenTreeSetting.set_setting('PRICING_USE_STOCK_PRICING', True, None)
+
+        pricing.update_pricing()
+
+        self.assertIsNotNone(pricing.purchase_cost_min)
+        self.assertIsNotNone(pricing.purchase_cost_max)
+
+        self.assertEqual(pricing.overall_min, Money(1.176471, 'USD'))
+        self.assertEqual(pricing.overall_max, Money(6.666667, 'USD'))
+
     def test_bom_pricing(self):
         """Unit test for BOM pricing calculations"""
 
@@ -399,3 +422,40 @@ class PartPricingTests(InvenTreeTestCase):
         from django_q.models import OrmQ
 
         self.assertEqual(OrmQ.objects.count(), 101)
+
+    def test_delete_part_with_stock_items(self):
+        """Test deleting a part instance with stock items.
+
+        This is to test a specific edge condition which was discovered that caused an IntegrityError.
+        Ref: https://github.com/inventree/InvenTree/issues/4419
+
+        Essentially a series of on_delete listeners caused a new PartPricing object to be created,
+        but it pointed to a Part instance which was slated to be deleted inside an atomic transaction.
+        """
+
+        p = part.models.Part.objects.create(
+            name="my part",
+            description="my part description",
+            active=False,
+        )
+
+        # Create some stock items
+        for _idx in range(3):
+            stock.models.StockItem.objects.create(
+                part=p,
+                quantity=10,
+                purchase_price=Money(10, 'USD')
+            )
+
+        # Check that a PartPricing object exists
+        self.assertTrue(part.models.PartPricing.objects.filter(part=p).exists())
+
+        # Delete the part
+        p.delete()
+
+        # Check that the PartPricing object has been deleted
+        self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
+
+        # Try to update pricing (should fail gracefully as the Part has been deleted)
+        p.schedule_pricing_update(create=False)
+        self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())

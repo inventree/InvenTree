@@ -12,11 +12,6 @@
           <button id='search-clear' class='btn btn-outline-secondary' title='{% trans "Clear search" %}'>
             <span class='fas fa-backspace'></span>
           </button>
-          <!--
-            <button id='search-filter' class="btn btn-outline-secondary" title='{% trans "Filter results" %}'>
-              <span class='fas fa-filter'></span>
-            </button>
-          -->
           <button id='search-close' class="btn btn-outline-secondary" data-bs-dismiss='offcanvas' title='{% trans "Close search menu" %}'>
             <span class='fas fa-times icon-red'></span>
           </button>
@@ -25,15 +20,11 @@
     </div>
     <div class="offcanvas-body">
       <div id="search-center">
-        <p id='search-pending' class='text-muted' display='none'>
-          <em>{% trans "Searching" %}...</em>
-          <span class='float-right'>
-            <span class='fas fa-spinner fa-spin'></span>
-          </span>
-        </p>
-        <p id='search-no-results' class='text-muted'>
-          <em>{% trans "No search results" %}</em>
-        </p>
+        <div id='search-context'>
+          <div class='alert alert-block alert-info'>
+            <span class='fas fa-search'></span> <em>{% trans "Enter search query" %}</em>
+          </div>
+        </div>
         <div id='search-results'>
           <!-- Search results go here -->
         </div>

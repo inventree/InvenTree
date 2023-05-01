@@ -21,19 +21,21 @@ from django.http import StreamingHttpResponse
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 
+import moneyed.localization
 import regex
 import requests
 from bleach import clean
+from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
 
+import common.models
 import InvenTree.version
-from common.models import InvenTreeSetting
 from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
-from .api_tester import UserMixin
+from .api_tester import ExchangeRateMixin, UserMixin
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = logging.getLogger('inventree')
@@ -41,7 +43,7 @@ logger = logging.getLogger('inventree')
 
 def getSetting(key, backup_value=None):
     """Shortcut for reading a setting value from the database."""
-    return InvenTreeSetting.get_setting(key, backup_value=backup_value)
+    return common.models.InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
 def generateTestKey(test_name):
@@ -94,7 +96,7 @@ def construct_absolute_url(*arg):
 
     This requires the BASE_URL configuration option to be set!
     """
-    base = str(InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
+    base = str(common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
 
     url = '/'.join(arg)
 
@@ -143,10 +145,10 @@ def download_image_from_url(remote_url, timeout=2.5):
     validator(remote_url)
 
     # Calculate maximum allowable image size (in bytes)
-    max_size = int(InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
+    max_size = int(common.models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
 
     # Add user specified user-agent to request (if specified)
-    user_agent = InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
+    user_agent = common.models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
     if user_agent:
         headers = {"User-Agent": user_agent}
     else:
@@ -523,6 +525,7 @@ def DownloadFile(data, filename, content_type='application/text', inline=False) 
         A StreamingHttpResponse object wrapping the supplied data
     """
     filename = WrapWithQuotes(filename)
+    length = len(data)
 
     if type(data) == str:
         wrapper = FileWrapper(io.StringIO(data))
@@ -530,7 +533,9 @@ def DownloadFile(data, filename, content_type='application/text', inline=False) 
         wrapper = FileWrapper(io.BytesIO(data))
 
     response = StreamingHttpResponse(wrapper, content_type=content_type)
-    response['Content-Length'] = len(data)
+    if type(data) == str:
+        length = len(bytes(data, response.charset))
+    response['Content-Length'] = length
 
     disposition = "inline" if inline else "attachment"
 
@@ -1059,7 +1064,7 @@ def inheritors(cls):
     return subcls
 
 
-class InvenTreeTestCase(UserMixin, TestCase):
+class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
     """Testcase with user setup buildin."""
     pass
 
@@ -1105,3 +1110,71 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
             target_exclude=[exclude],
             context=context,
         )
+
+
+def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None):
+    """Render a currency / Money object to a formatted string (e.g. for reports)
+
+    Arguments:
+        money: The Money instance to be rendered
+        decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
+        currency: Optionally convert to the specified currency
+        include_symbol: Render with the appropriate currency symbol
+        min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
+    """
+
+    if money in [None, '']:
+        return '-'
+
+    if type(money) is not Money:
+        return '-'
+
+    if currency is not None:
+        # Attempt to convert to the provided currency
+        # If cannot be done, leave the original
+        try:
+            money = convert_money(money, currency)
+        except Exception:
+            pass
+
+    if decimal_places is None:
+        decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
+
+    if min_decimal_places is None:
+        min_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
+
+    value = Decimal(str(money.amount)).normalize()
+    value = str(value)
+
+    if '.' in value:
+        decimals = len(value.split('.')[-1])
+
+        decimals = max(decimals, min_decimal_places)
+        decimals = min(decimals, decimal_places)
+
+        decimal_places = decimals
+    else:
+        decimal_places = max(decimal_places, 2)
+
+    return moneyed.localization.format_money(
+        money,
+        decimal_places=decimal_places,
+        include_symbol=include_symbol,
+    )
+
+
+def getModelsWithMixin(mixin_class) -> list:
+    """Return a list of models that inherit from the given mixin class.
+
+    Args:
+        mixin_class: The mixin class to search for
+
+    Returns:
+        List of models that inherit from the given mixin class
+    """
+
+    from django.contrib.contenttypes.models import ContentType
+
+    db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
+
+    return [x for x in db_models if x is not None and issubclass(x, mixin_class)]
