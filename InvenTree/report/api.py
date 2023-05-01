@@ -137,7 +137,7 @@ class ReportFilterMixin:
                     valid_report_ids.add(report.pk)
 
             # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
+            queryset = queryset.filter(pk__in=list(valid_report_ids))
 
         return queryset
 

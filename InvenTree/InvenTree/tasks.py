@@ -71,7 +71,7 @@ def raise_warning(msg):
 
     # If testing is running raise a warning that can be asserted
     if settings.TESTING:
-        warnings.warn(msg)
+        warnings.warn(msg, stacklevel=2)
 
 
 def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:

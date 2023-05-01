@@ -807,7 +807,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/config.yaml',
         ]
 
-        self.assertTrue(any([opt in str(config.get_config_file()).lower() for opt in valid]))
+        self.assertTrue(any(opt in str(config.get_config_file()).lower() for opt in valid))
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
@@ -822,7 +822,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/plugins.txt',
         ]
 
-        self.assertTrue(any([opt in str(config.get_plugin_file()).lower() for opt in valid]))
+        self.assertTrue(any(opt in str(config.get_plugin_file()).lower() for opt in valid))
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):

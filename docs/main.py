@@ -23,7 +23,7 @@ def define_env(env):
 
         for asset in os.listdir(directory):
 
-            if any([asset.endswith(x) for x in allowed]):
+            if any(asset.endswith(x) for x in allowed):
                 assets.append(os.path.join(subdir, asset))
 
         return assets

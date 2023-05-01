@@ -265,8 +265,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
 
-        if expected_code is not None:
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'DOWNLOAD_FILE', expected_code, response)
 
         # Check that the response is of the correct type
         if not isinstance(response, StreamingHttpResponse):

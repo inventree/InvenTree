@@ -4,11 +4,11 @@ title: Sales Order Reports
 
 ## Sales Order Reports
 
-Custom sales order reports may be generated against any given [Sales Order](../sell/so.md). For example, a sales order report could be used to generate an invoice to send to a customer.
+Custom sales order reports may be generated against any given [Sales Order](../order/sales_order.md). For example, a sales order report could be used to generate an invoice to send to a customer.
 
 ### Sales Order Filters
 
-The report template can be filtered against available [Sales Order](../sell/so.md) instances.
+The report template can be filtered against available [Sales Order](../order/sales_order.md) instances.
 
 ### Context Variables
 
@@ -19,7 +19,7 @@ In addition to the default report context variables, the following variables are
 | order | The specific Sales Order object |
 | reference | The order reference field (can also be accessed as `{% raw %}{{ order.description }}{% endraw %}`) |
 | description | The order description field |
-| customer | The [customer](../sell/customer.md) associated with the particular sales order |
+| customer | The [customer](../order/company.md#customers) associated with the particular sales order |
 | lines | A list of available line items for this order |
 | extra_lines | A list of available *extra* line items for this order |
 | order.currency | The currency code associated with this order, e.g. 'CAD' |

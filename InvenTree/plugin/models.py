@@ -102,7 +102,7 @@ class PluginConfig(models.Model):
             if (self.active is False and self.__org_active is True) or \
                (self.active is True and self.__org_active is False):
                 if settings.PLUGIN_TESTING:
-                    warnings.warn('A reload was triggered')
+                    warnings.warn('A reload was triggered', stacklevel=2)
                 registry.reload_plugins()
 
         return ret

@@ -875,7 +875,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
             # Filter by list of available parts
             available_stock = available_stock.filter(
-                part__in=[p for p in available_parts],
+                part__in=list(available_parts),
             )
 
             # Filter out "serialized" stock items, these cannot be auto-allocated
@@ -884,12 +884,12 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             if location:
                 # Filter only stock items located "below" the specified location
                 sublocations = location.get_descendants(include_self=True)
-                available_stock = available_stock.filter(location__in=[loc for loc in sublocations])
+                available_stock = available_stock.filter(location__in=list(sublocations))
 
             if exclude_location:
                 # Exclude any stock items from the provided location
                 sublocations = exclude_location.get_descendants(include_self=True)
-                available_stock = available_stock.exclude(location__in=[loc for loc in sublocations])
+                available_stock = available_stock.exclude(location__in=list(sublocations))
 
             """
             Next, we sort the available stock items with the following priority:

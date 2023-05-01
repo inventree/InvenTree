@@ -4,11 +4,11 @@ title: Purchase Order Report
 
 ## Purchase Order Reports
 
-Custom purchase order reports may be generated against any given [Purchase Order](../buy/po.md). For example, purchase order reports could be used to generate a pdf of the order to send to a supplier.
+Custom purchase order reports may be generated against any given [Purchase Order](../order/purchase_order.md). For example, purchase order reports could be used to generate a pdf of the order to send to a supplier.
 
 ### Purchase Order Filters
 
-The report template can be filtered against available [Purchase Order](../buy/po.md) instances.
+The report template can be filtered against available [Purchase Order](../order/purchase_order.md) instances.
 
 ### Context Variables
 
@@ -19,7 +19,7 @@ In addition to the default report context variables, the following variables are
 | order | The specific Purchase Order object |
 | reference | The order reference field (can also be accessed as `{% raw %}{{ order.reference }}{% endraw %}`) |
 | description | The order description field |
-| supplier | The [supplier](../buy/supplier.md) associated with this purchase order |
+| supplier | The [supplier](../order/company.md#suppliers) associated with this purchase order |
 | lines | A list of available line items for this order |
 | extra_lines | A list of available *extra* line items for this order |
 | order.created_by | The user who created the order |
