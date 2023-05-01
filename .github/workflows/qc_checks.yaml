@@ -96,6 +96,28 @@ jobs:
           pip install requests
           python3 ci/version_check.py
 
+  mkdocs:
+    name: Style [documentation]
+    runs-on: ubuntu-20.04
+
+    needs: pep_style
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Set up Python ${{ env.python_version }}
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        with:
+          python-version: ${{ env.python_version }}
+      - name: Check Config
+        run: |
+          pip install pyyaml
+          python docs/ci/check_mkdocs_config.py
+      - name: Check Links
+        run: |
+          pip install linkcheckmd requests
+          python -m linkcheckmd docs --recurse
+
   python:
     name: Tests - inventree-python
     runs-on: ubuntu-20.04
