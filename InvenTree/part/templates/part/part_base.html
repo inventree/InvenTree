@@ -170,7 +170,7 @@
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
         <td>{% trans "Description" %}</td>
-        <td>{{ part.description }}{% include "clip.html"%}</td>
+        <td>{{ part.description }}{% include "clip.html" %}</td>
     </tr>
 
     {% if part.variant_of %}
@@ -269,7 +269,7 @@
             <tr>
                 <td><span class='fas fa-tag'></span></td>
                 <td>{% trans "IPN" %}</td>
-                <td>{{ part.IPN }}{% include "clip.html"%}</td>
+                <td>{{ part.IPN }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
             {% settings_value "PART_ENABLE_REVISION" as show_revision %}
@@ -277,7 +277,7 @@
             <tr>
                 <td><span class='fas fa-code-branch'></span></td>
                 <td>{% trans "Revision" %}</td>
-                <td>{{ part.revision }}{% include "clip.html"%}</td>
+                <td>{{ part.revision }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
             {% if part.units %}
@@ -298,7 +298,7 @@
             <tr>
                 <td><span class='fas fa-key'></span></td>
                 <td>{% trans "Keywords" %}</td>
-                <td>{{ part.keywords }}{% include "clip.html"%}</td>
+                <td>{{ part.keywords }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
             {% include "barcode_data.html" with instance=part %}
@@ -383,7 +383,7 @@
                 <tr>
                     <td><span class='fas fa-link'></span></td>
                     <td>{% trans "External Link" %}</td>
-                    <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
+                    <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html" %}</td>
                 </tr>
                 {% endif %}
                 {% if part.responsible %}

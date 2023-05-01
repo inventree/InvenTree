@@ -105,7 +105,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{{ order.reference }}{% include "clip.html"%}</td>
+        <td>{{ order.reference }}{% include "clip.html" %}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
@@ -143,14 +143,14 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html"%}</td>
+        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html" %}</td>
     </tr>
     {% endif %}
     {% if order.customer_reference %}
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Customer Reference" %}</td>
-        <td>{{ order.customer_reference }}{% include "clip.html"%}</td>
+        <td>{{ order.customer_reference }}{% include "clip.html" %}</td>
     </tr>
     {% endif %}
     <tr>
@@ -179,7 +179,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-link'></span></td>
         <td>External Link</td>
-        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html"%}</td>
+        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html" %}</td>
     </tr>
     {% endif %}
     <tr>

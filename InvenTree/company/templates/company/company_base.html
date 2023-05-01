@@ -74,7 +74,7 @@
     </tr>
     <tr>
         <td><span class='fas fa-industry'></span></td>
-        <td>{%trans "Manufacturer" %}</td>
+        <td>{% trans "Manufacturer" %}</td>
         <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
     </tr>
     <tr>
@@ -99,7 +99,7 @@
 <tr>
     <td><span class='fas fa-globe'></span></td>
     <td>{% trans "Website" %}</td>
-    <td><a href="{{ company.website }}">{{ company.website }}</a>{% include "clip.html"%}</td>
+    <td><a href="{{ company.website }}">{{ company.website }}</a>{% include "clip.html" %}</td>
 </tr>
 {% endif %}
 <tr>
@@ -117,7 +117,7 @@
 <tr>
     <td><span class='fas fa-map-marked-alt'></span></td>
     <td>{% trans "Address" %}</td>
-    <td>{{ company.address }}{% include "clip.html"%}</td>
+    <td>{{ company.address }}{% include "clip.html" %}</td>
 </tr>
 {% endif %}
 {% if company.phone %}
@@ -138,7 +138,7 @@
 <tr>
     <td><span class='fas fa-user'></span></td>
     <td>{% trans "Contact" %}</td>
-    <td>{{ company.contact }}{% include "clip.html"%}</td>
+    <td>{{ company.contact }}{% include "clip.html" %}</td>
 </tr>
 {% endif %}
 </table>

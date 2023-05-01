@@ -287,7 +287,7 @@ src="{% static 'img/blank_image.png' %}"
     $('#show-qr-code').click(function() {
         showQRDialog(
             '{% trans "Build Order QR Code" %}',
-            '{"build": {{ build.pk }}}'
+            '{"build": {{ build.pk }} }'
         );
     });
 
