@@ -6,7 +6,7 @@
 
 {% block sidebar %}
 {% include "build/sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
 
@@ -319,8 +319,7 @@
     </div>
 </div>
 
-
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -519,4 +518,4 @@ $('#allocate-selected-items').click(function() {
 
 enableSidebar('buildorder');
 
-{% endblock %}
+{% endblock js_ready %}

@@ -10,7 +10,7 @@
             {% endlocalize %}
             {% block margin %}
             margin: 0mm;
-            {% endblock %}
+            {% endblock margin %}
         }
 
         body {
@@ -35,7 +35,7 @@
 
         {% block style %}
         /* User-defined styles can go here */
-        {% endblock %}
+        {% endblock style %}
 
     </style>
 </head>
@@ -44,6 +44,6 @@
     <div class='content'>
         {% block content %}
         <!-- Label data rendered here! -->
-        {% endblock %}
+        {% endblock content %}
     </div>
 </body>

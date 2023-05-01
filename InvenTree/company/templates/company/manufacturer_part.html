@@ -48,7 +48,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb'
+<img class='part-thumb' alt="{% trans 'Part image' %}"
 {% if part.part.image %}
 src='{{ part.part.image.preview.url }}'
 {% else %}
@@ -193,7 +193,6 @@ src="{% static 'img/blank_image.png' %}"
 
 {% endblock page_content %}
 
-
 {% block js_ready %}
 {{ block.super }}
 
@@ -325,7 +324,7 @@ $('#delete-part').click(function() {
                         success: function() {
                             {% if part.manufacturer %}
                             window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
-                            {% else%}
+                            {% else %}
                             window.location.href = "{% url 'index' %}";
                             {% endif %}
                         }

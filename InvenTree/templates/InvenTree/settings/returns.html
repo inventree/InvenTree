@@ -1,11 +1,11 @@
 {% extends "panel.html" %}
 {% load i18n %}
 
-{% block label %}return-order{% endblock %}
+{% block label %}return-order{% endblock label %}
 
 {% block heading %}
 {% trans "Return Order Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -17,4 +17,4 @@
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}

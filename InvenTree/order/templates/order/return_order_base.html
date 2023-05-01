@@ -22,7 +22,7 @@ src="{{ order.customer.image.url }}"
 src="{% static 'img/blank_image.png' %}"
 {% endif %}
 />
-{% endblock thumbnail%}
+{% endblock thumbnail %}
 
 {% block heading %}
 {% trans "Return Order" %} {{ order.reference }}
@@ -255,7 +255,7 @@ $('#print-order-report').click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Return Order QR Code" %}',
-        '{"returnorder": {{ order.pk }}}'
+        '{"returnorder": {{ order.pk }} }'
     );
 });
 

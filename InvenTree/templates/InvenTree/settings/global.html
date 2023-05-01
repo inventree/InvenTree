@@ -2,12 +2,11 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}server{% endblock %}
-
+{% block label %}server{% endblock label %}
 
 {% block heading %}
 {% trans "Server Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -34,4 +33,4 @@
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}

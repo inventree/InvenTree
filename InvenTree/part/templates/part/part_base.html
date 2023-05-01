@@ -444,7 +444,7 @@
     $("#show-qr-code").click(function() {
         showQRDialog(
             '{% trans "Part QR Code" %}',
-            '{"part": {{ part.pk }}}',
+            '{"part": {{ part.pk }} }',
         );
     });
 
@@ -566,7 +566,6 @@
         )
     });
 
-
     function onSelectImage(response) {
         // Callback when the image-selection modal form is displayed
         // Populate the form with image data (requested via AJAX)
@@ -590,7 +589,7 @@
                     title: 'Image',
                     searchable: true,
                     formatter: function(value, row, index, field) {
-                        return "<img src='/media/" + value + "' class='grid-image'/>"
+                        return "<img src='/media/" + value + "' alt='image' class='grid-image'/>"
                     }
                 }
             ],

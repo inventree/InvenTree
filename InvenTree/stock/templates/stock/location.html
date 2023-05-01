@@ -374,7 +374,7 @@
     $('#show-qr-code').click(function() {
         showQRDialog(
             '{% trans "Stock Location QR Code" %}',
-            '{"stocklocation": {{ location.pk }}}'
+            '{"stocklocation": {{ location.pk }} }'
         );
     });
 
@@ -394,7 +394,6 @@
             stocklocation: {{ location.pk }},
         });
     });
-
 
     {% endif %}
 

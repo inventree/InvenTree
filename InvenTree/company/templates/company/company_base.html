@@ -6,11 +6,11 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Company" %} - {{ company.name }}
-{% endblock %}
+{% endblock page_title %}
 
 {% block heading %}
 {% trans "Company" %}: {{ company.name }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 <!-- Admin View -->
@@ -45,7 +45,7 @@
 
 {% block thumbnail %}
 <div class='dropzone part-thumb-container' id='company-thumb'>
-    <img class="part-thumb" id='company-image'
+    <img class="part-thumb" id='company-image' alt="{% trans 'Part image' %}"
     {% if company.image %}
     src="{{ company.image.preview.url }}"
     {% else %}
@@ -62,7 +62,7 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock thumbnail %}
 
 {% block details %}
 <table class='table table-striped table-condensed'>
@@ -89,7 +89,7 @@
     </tr>
 </table>
 
-{% endblock %}
+{% endblock details %}
 
 {% block details_right %}
 
@@ -142,7 +142,7 @@
 </tr>
 {% endif %}
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -262,4 +262,4 @@
         });
     }
 
-{% endblock %}
+{% endblock js_ready %}
