@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-28 10:51+0000\n"
-"PO-Revision-Date: 2023-04-26 19:59\n"
+"PO-Revision-Date: 2023-05-01 10:45\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -157,12 +157,12 @@ msgstr "Neplatný rozsah skupiny: {g}"
 #: InvenTree/helpers.py:702
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
-msgstr ""
+msgstr "Rozsah skupiny {g} překračuje povolené množství ({q})"
 
 #: InvenTree/helpers.py:726 InvenTree/helpers.py:733 InvenTree/helpers.py:748
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "Neplatná sekvence skupiny: {g}"
 
 #: InvenTree/helpers.py:758
 msgid "No serial numbers found"
@@ -171,7 +171,7 @@ msgstr "Nenalezena žádná výrobní čísla"
 #: InvenTree/helpers.py:761
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Počet jedinečných sériových čísel ({s}) musí odpovídat množství ({q})"
 
 #: InvenTree/helpers.py:960
 msgid "Remove HTML tags from this value"
@@ -179,35 +179,35 @@ msgstr "Odstranit HTML tagy z této hodnoty"
 
 #: InvenTree/models.py:65
 msgid "Plugin Metadata"
-msgstr ""
+msgstr "Metadata pluginu"
 
 #: InvenTree/models.py:66
 msgid "JSON metadata field, for use by external plugins"
-msgstr ""
+msgstr "Pole metadat JSON pro použití externími pluginy"
 
 #: InvenTree/models.py:297
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Nesprávně naformátovaný vzor"
 
 #: InvenTree/models.py:304
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Neznámý formát klíče"
 
 #: InvenTree/models.py:310
 msgid "Missing required format key"
-msgstr ""
+msgstr "Chybí požadovaný klíč"
 
 #: InvenTree/models.py:322
 msgid "Reference field cannot be empty"
-msgstr ""
+msgstr "Referenční pole nemůže být prázdné"
 
 #: InvenTree/models.py:329
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "Referenční číslo musí odpovídat požadovanému vzoru"
 
 #: InvenTree/models.py:360
 msgid "Reference number is too large"
-msgstr ""
+msgstr "Referenční číslo je příliš velké"
 
 #: InvenTree/models.py:442
 msgid "Missing file"
@@ -10710,10 +10710,8 @@ msgid "Category is required"
 msgstr ""
 
 #: templates/js/translated/part.js:2234
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No subcategories found"
-msgstr "Nenalezena žádná výrobní čísla"
+msgstr ""
 
 #: templates/js/translated/part.js:2270 templates/js/translated/stock.js:2499
 msgid "Display as tree"
@@ -12171,8 +12169,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12351,3 +12348,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:245
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
