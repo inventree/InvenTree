@@ -1,0 +1,29 @@
+
+<tr>
+    <td colspan='2'><b><i>Release {{ prefix }}.x</i></b></td>
+    <td colspan='2'></td>
+</tr>
+{% for release in config.releases %}
+{% if release.prefix == prefix %}
+<tr>
+    <td>
+        {% if release.local_path %}
+        <a href="../{{ release.tag_name }}">{{ release.tag_name }}</a>
+        {% else %}
+        {{ release.tag_name }}
+        {% endif %}
+    </td>
+    <td>{{ release.date }}</td>
+    <td>
+        <a href="https://github.com/inventree/InvenTree/releases/tag/{{ release.tag_name }}">{{ release.tag_name }}</a>
+    </td>
+    <td>
+        {% if release.docker %}
+        <a href="https://hub.docker.com/r/inventree/inventree/tags">inventree/inventree:{{ release.tag_name }}</a>
+        {% else %}
+        <em>Not available for this release</em>
+        {% endif %}
+    </td>
+</tr>
+{% endif %}
+{% endfor %}

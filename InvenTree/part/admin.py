@@ -43,7 +43,7 @@ class PartResource(InvenTreeResource):
     category_name = Field(attribute='category__name', column_name=_('Category Name'), readonly=True)
     default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
     default_supplier = Field(attribute='default_supplier', column_name=_('Default Supplier ID'), widget=widgets.ForeignKeyWidget(SupplierPart))
-    variant_of = Field(attribute='variant_of', column_name=('Variant Of'), widget=widgets.ForeignKeyWidget(models.Part))
+    variant_of = Field(attribute='variant_of', column_name=_('Variant Of'), widget=widgets.ForeignKeyWidget(models.Part))
     minimum_stock = Field(attribute='minimum_stock', column_name=_('Minimum Stock'))
 
     # Part Attributes
@@ -189,7 +189,7 @@ class PartCategoryResource(InvenTreeResource):
             'icon',
         ]
 
-    id = Field(attribute='pk', column_name=_('Category ID'))
+    id = Field(attribute='pk', column_name=_('Category ID'), widget=widgets.IntegerWidget())
     name = Field(attribute='name', column_name=_('Category Name'))
     description = Field(attribute='description', column_name=_('Description'))
     parent = Field(attribute='parent', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
@@ -264,7 +264,7 @@ class BomItemResource(InvenTreeResource):
 
     level = Field(attribute='level', column_name=_('BOM Level'), readonly=True)
 
-    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'))
+    bom_id = Field(attribute='pk', column_name=_('BOM Item ID'), widget=widgets.IntegerWidget())
 
     # ID of the parent part
     parent_part_id = Field(attribute='part', column_name=_('Parent ID'), widget=widgets.ForeignKeyWidget(models.Part))
@@ -318,7 +318,7 @@ class BomItemResource(InvenTreeResource):
         is_importing = getattr(self, 'is_importing', False)
         include_pricing = getattr(self, 'include_pricing', False)
 
-        to_remove = []
+        to_remove = ['metadata']
 
         if is_importing or not include_pricing:
             # Remove pricing fields in this instance

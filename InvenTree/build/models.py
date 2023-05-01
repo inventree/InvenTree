@@ -22,25 +22,24 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, normalize, notify_responsible
-from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 
 from plugin.events import trigger_event
 
 import common.notifications
-from part import models as PartModels
-from stock import models as StockModels
-from users import models as UserModels
+import part.models
+import stock.models
+import users.models
 
 
-class Build(MPTTModel, ReferenceIndexingMixin):
+class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -162,9 +161,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     title = models.CharField(
         verbose_name=_('Description'),
-        blank=False,
+        blank=True,
         max_length=100,
-        help_text=_('Brief description of the build')
+        help_text=_('Brief description of the build (optional)')
     )
 
     parent = TreeForeignKey(
@@ -278,7 +277,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     )
 
     responsible = models.ForeignKey(
-        UserModels.Owner,
+        users.models.Owner,
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Responsible'),
@@ -289,10 +288,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     link = InvenTree.fields.InvenTreeURLField(
         verbose_name=_('External Link'),
         blank=True, help_text=_('Link to external URL')
-    )
-
-    notes = InvenTree.fields.InvenTreeNotesField(
-        help_text=_('Extra build notes')
     )
 
     priority = models.PositiveIntegerField(
@@ -394,9 +389,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         if in_stock is not None:
             if in_stock:
-                outputs = outputs.filter(StockModels.StockItem.IN_STOCK_FILTER)
+                outputs = outputs.filter(stock.models.StockItem.IN_STOCK_FILTER)
             else:
-                outputs = outputs.exclude(StockModels.StockItem.IN_STOCK_FILTER)
+                outputs = outputs.exclude(stock.models.StockItem.IN_STOCK_FILTER)
 
         # Filter by 'complete' status
         complete = kwargs.get('complete', None)
@@ -466,7 +461,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         new_ref = ref
 
         while 1:
-            new_ref = increment(new_ref)
+            new_ref = InvenTree.helpers.increment(new_ref)
 
             if new_ref in tries:
                 # We are potentially stuck in a loop - simply return the original reference
@@ -658,7 +653,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 else:
                     serial = None
 
-                output = StockModels.StockItem.objects.create(
+                output = stock.models.StockItem.objects.create(
                     quantity=1,
                     location=location,
                     part=self.part,
@@ -676,11 +671,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
                         parts = bom_item.get_valid_parts_for_allocation()
 
-                        items = StockModels.StockItem.objects.filter(
+                        items = stock.models.StockItem.objects.filter(
                             part__in=parts,
                             serial=str(serial),
                             quantity=1,
-                        ).filter(StockModels.StockItem.IN_STOCK_FILTER)
+                        ).filter(stock.models.StockItem.IN_STOCK_FILTER)
 
                         """
                         Test if there is a matching serial number!
@@ -700,7 +695,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         else:
             """Create a single build output of the given quantity."""
 
-            StockModels.StockItem.objects.create(
+            stock.models.StockItem.objects.create(
                 quantity=quantity,
                 location=location,
                 part=self.part,
@@ -876,7 +871,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             )
 
             # Look for available stock items
-            available_stock = StockModels.StockItem.objects.filter(StockModels.StockItem.IN_STOCK_FILTER)
+            available_stock = stock.models.StockItem.objects.filter(stock.models.StockItem.IN_STOCK_FILTER)
 
             # Filter by list of available parts
             available_stock = available_stock.filter(
@@ -1127,10 +1122,10 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
         # Notify the responsible users that the build order has been created
-        notify_responsible(instance, sender, exclude=instance.issued_by)
+        InvenTree.helpers.notify_responsible(instance, sender, exclude=instance.issued_by)
 
 
-class BuildOrderAttachment(InvenTreeAttachment):
+class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a BuildOrder object."""
 
     def getSubdir(self):
@@ -1140,7 +1135,7 @@ class BuildOrderAttachment(InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildItem(models.Model):
+class BuildItem(InvenTree.models.MetadataMixin, models.Model):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.
@@ -1190,8 +1185,8 @@ class BuildItem(models.Model):
             # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
 
-                q = normalize(self.quantity)
-                a = normalize(self.stock_item.quantity)
+                q = InvenTree.helpers.normalize(self.quantity)
+                a = InvenTree.helpers.normalize(self.stock_item.quantity)
 
                 raise ValidationError({
                     'quantity': _(f'Allocated quantity ({q}) must not exceed available stock quantity ({a})')
@@ -1219,7 +1214,7 @@ class BuildItem(models.Model):
                     'quantity': _('Quantity must be 1 for serialized stock')
                 })
 
-        except (StockModels.StockItem.DoesNotExist, PartModels.Part.DoesNotExist):
+        except (stock.models.StockItem.DoesNotExist, part.models.Part.DoesNotExist):
             pass
 
         """
@@ -1258,8 +1253,8 @@ class BuildItem(models.Model):
                 for idx, ancestor in enumerate(ancestors):
 
                     try:
-                        bom_item = PartModels.BomItem.objects.get(part=self.build.part, sub_part=ancestor)
-                    except PartModels.BomItem.DoesNotExist:
+                        bom_item = part.models.BomItem.objects.get(part=self.build.part, sub_part=ancestor)
+                    except part.models.BomItem.DoesNotExist:
                         continue
 
                     # A matching BOM item has been found!
@@ -1349,7 +1344,7 @@ class BuildItem(models.Model):
     # Internal model which links part <-> sub_part
     # We need to track this separately, to allow for "variant' stock
     bom_item = models.ForeignKey(
-        PartModels.BomItem,
+        part.models.BomItem,
         on_delete=models.CASCADE,
         related_name='allocate_build_items',
         blank=True, null=True,

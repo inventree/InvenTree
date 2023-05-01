@@ -88,6 +88,22 @@ def manage(c, cmd, pty: bool = False):
     ), pty=pty)
 
 
+def check_file_existance(filename: str, overwrite: bool = False):
+    """Checks if a file exists and asks the user if it should be overwritten.
+
+    Args:
+        filename (str): Name of the file to check.
+        overwrite (bool, optional): Overwrite the file without asking. Defaults to False.
+    """
+    if Path(filename).is_file() and overwrite is False:
+        response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
+        response = str(response).strip().lower()
+
+        if response not in ['y', 'yes']:
+            print("Cancelled export operation")
+            sys.exit(1)
+
+
 # Install tasks
 @task
 def plugins(c):
@@ -305,13 +321,7 @@ def export_records(c, filename='data.json', overwrite=False, include_permissions
 
     print(f"Exporting database records to file '{filename}'")
 
-    if Path(filename).is_file() and overwrite is False:
-        response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
-        response = str(response).strip().lower()
-
-        if response not in ['y', 'yes']:
-            print("Cancelled export operation")
-            sys.exit(1)
+    check_file_existance(filename, overwrite)
 
     tmpfile = f"{filename}.tmp"
 
@@ -578,7 +588,7 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
 
     # Get test data
     print("Cloning demo dataset ...")
-    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v')
+    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v --depth=1')
     print("========================================")
 
     # Make sure migrations are done - might have just deleted sqlite database
@@ -621,3 +631,13 @@ def coverage(c):
 
     # Generate coverage report
     c.run('coverage html -i')
+
+
+@task(help={
+    'filename': "Output filename (default = 'schema.yml')",
+    'overwrite': "Overwrite existing files without asking first (default = off/False)",
+})
+def schema(c, filename='schema.yml', overwrite=False):
+    """Export current API schema."""
+    check_file_existance(filename, overwrite)
+    manage(c, f'spectacular --file {filename}')

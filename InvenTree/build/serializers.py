@@ -37,6 +37,7 @@ class BuildSerializer(InvenTreeModelSerializer):
             'pk',
             'url',
             'title',
+            'barcode_hash',
             'batch',
             'creation_date',
             'completed',
@@ -83,6 +84,8 @@ class BuildSerializer(InvenTreeModelSerializer):
     issued_by_detail = UserSerializer(source='issued_by', read_only=True)
 
     responsible_detail = OwnerSerializer(source='responsible', read_only=True)
+
+    barcode_hash = serializers.CharField(read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -486,7 +489,7 @@ class OverallocationChoice():
     TRIM = 'trim'
 
     OPTIONS = {
-        REJECT: ('Not permitted'),
+        REJECT: _('Not permitted'),
         ACCEPT: _('Accept as consumed by this build order'),
         TRIM: _('Deallocate before completing this build order'),
     }

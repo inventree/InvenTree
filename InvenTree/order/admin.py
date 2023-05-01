@@ -1,17 +1,27 @@
 """Admin functionality for the 'order' app"""
 
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
+import order.models as models
 from InvenTree.admin import InvenTreeResource
 
-from .models import (PurchaseOrder, PurchaseOrderExtraLine,
-                     PurchaseOrderLineItem, SalesOrder, SalesOrderAllocation,
-                     SalesOrderExtraLine, SalesOrderLineItem,
-                     SalesOrderShipment)
+
+class ProjectCodeResourceMixin:
+    """Mixin for exporting project code data"""
+
+    project_code = Field(attribute='project_code', column_name=_('Project Code'))
+
+    def dehydrate_project_code(self, order):
+        """Return the project code value, not the pk"""
+        if order.project_code:
+            return order.project_code.code
+        else:
+            return ''
 
 
 # region general classes
@@ -42,7 +52,7 @@ class GeneralExtraLineMeta:
 
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
     """Inline admin class for the PurchaseOrderLineItem model"""
-    model = PurchaseOrderLineItem
+    model = models.PurchaseOrderLineItem
     extra = 0
 
 
@@ -98,12 +108,12 @@ class SalesOrderAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('customer',)
 
 
-class PurchaseOrderResource(InvenTreeResource):
+class PurchaseOrderResource(ProjectCodeResourceMixin, InvenTreeResource):
     """Class for managing import / export of PurchaseOrder data."""
 
     class Meta:
         """Metaclass"""
-        model = PurchaseOrder
+        model = models.PurchaseOrder
         skip_unchanged = True
         clean_model_instances = True
         exclude = [
@@ -122,7 +132,7 @@ class PurchaseOrderLineItemResource(InvenTreeResource):
 
     class Meta:
         """Metaclass"""
-        model = PurchaseOrderLineItem
+        model = models.PurchaseOrderLineItem
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
@@ -142,15 +152,15 @@ class PurchaseOrderExtraLineResource(InvenTreeResource):
     class Meta(GeneralExtraLineMeta):
         """Metaclass options."""
 
-        model = PurchaseOrderExtraLine
+        model = models.PurchaseOrderExtraLine
 
 
-class SalesOrderResource(InvenTreeResource):
+class SalesOrderResource(ProjectCodeResourceMixin, InvenTreeResource):
     """Class for managing import / export of SalesOrder data."""
 
     class Meta:
         """Metaclass options"""
-        model = SalesOrder
+        model = models.SalesOrder
         skip_unchanged = True
         clean_model_instances = True
         exclude = [
@@ -169,7 +179,7 @@ class SalesOrderLineItemResource(InvenTreeResource):
 
     class Meta:
         """Metaclass options"""
-        model = SalesOrderLineItem
+        model = models.SalesOrderLineItem
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
@@ -198,8 +208,7 @@ class SalesOrderExtraLineResource(InvenTreeResource):
 
     class Meta(GeneralExtraLineMeta):
         """Metaclass options."""
-
-        model = SalesOrderExtraLine
+        model = models.SalesOrderExtraLine
 
 
 class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
@@ -281,13 +290,92 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('line', 'shipment', 'item',)
 
 
-admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
-admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
-admin.site.register(PurchaseOrderExtraLine, PurchaseOrderExtraLineAdmin)
+class ReturnOrderResource(ProjectCodeResourceMixin, InvenTreeResource):
+    """Class for managing import / export of ReturnOrder data"""
 
-admin.site.register(SalesOrder, SalesOrderAdmin)
-admin.site.register(SalesOrderLineItem, SalesOrderLineItemAdmin)
-admin.site.register(SalesOrderExtraLine, SalesOrderExtraLineAdmin)
+    class Meta:
+        """Metaclass options"""
+        model = models.ReturnOrder
+        skip_unchanged = True
+        clean_model_instances = True
+        exclude = [
+            'metadata',
+        ]
 
-admin.site.register(SalesOrderShipment, SalesOrderShipmentAdmin)
-admin.site.register(SalesOrderAllocation, SalesOrderAllocationAdmin)
+
+class ReturnOrderAdmin(ImportExportModelAdmin):
+    """Admin class for the ReturnOrder model"""
+
+    exclude = [
+        'reference_int',
+    ]
+
+    list_display = [
+        'reference',
+        'customer',
+        'status',
+    ]
+
+    search_fields = [
+        'reference',
+        'customer__name',
+        'description',
+    ]
+
+    autocomplete_fields = [
+        'customer',
+    ]
+
+
+class ReturnOrderLineItemResource(InvenTreeResource):
+    """Class for managing import / export of ReturnOrderLineItem data"""
+
+    class Meta:
+        """Metaclass options"""
+        model = models.ReturnOrderLineItem
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+
+
+class ReturnOrderLineItemAdmin(ImportExportModelAdmin):
+    """Admin class for ReturnOrderLine model"""
+
+    resource_class = ReturnOrderLineItemResource
+
+    list_display = [
+        'order',
+        'item',
+        'reference',
+    ]
+
+
+class ReturnOrderExtraLineClass(InvenTreeResource):
+    """Class for managing import/export of ReturnOrderExtraLine data"""
+
+    class Meta(GeneralExtraLineMeta):
+        """Metaclass options"""
+        model = models.ReturnOrderExtraLine
+
+
+class ReturnOrdeerExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
+    """Admin class for the ReturnOrderExtraLine model"""
+    resource_class = ReturnOrderExtraLineClass
+
+
+# Purchase Order models
+admin.site.register(models.PurchaseOrder, PurchaseOrderAdmin)
+admin.site.register(models.PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
+admin.site.register(models.PurchaseOrderExtraLine, PurchaseOrderExtraLineAdmin)
+
+# Sales Order models
+admin.site.register(models.SalesOrder, SalesOrderAdmin)
+admin.site.register(models.SalesOrderLineItem, SalesOrderLineItemAdmin)
+admin.site.register(models.SalesOrderExtraLine, SalesOrderExtraLineAdmin)
+admin.site.register(models.SalesOrderShipment, SalesOrderShipmentAdmin)
+admin.site.register(models.SalesOrderAllocation, SalesOrderAllocationAdmin)
+
+# Return Order models
+admin.site.register(models.ReturnOrder, ReturnOrderAdmin)
+admin.site.register(models.ReturnOrderLineItem, ReturnOrderLineItemAdmin)
+admin.site.register(models.ReturnOrderExtraLine, ReturnOrdeerExtraLineAdmin)

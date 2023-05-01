@@ -46,3 +46,39 @@ class TestForwardMigrations(MigratorTestCase):
         for name in ['A', 'C', 'E']:
             part = Part.objects.get(name=name)
             self.assertEqual(part.description, f"My part {name}")
+
+
+class TestBomItemMigrations(MigratorTestCase):
+    """Tests for BomItem migrations"""
+
+    migrate_from = ('part', '0002_auto_20190520_2204')
+    migrate_to = ('part', helpers.getNewestMigrationFile('part'))
+
+    def prepare(self):
+        """Create intial dataset"""
+
+        Part = self.old_state.apps.get_model('part', 'part')
+        BomItem = self.old_state.apps.get_model('part', 'bomitem')
+
+        a = Part.objects.create(name='Part A', description='My part A')
+        b = Part.objects.create(name='Part B', description='My part B')
+        c = Part.objects.create(name='Part C', description='My part C')
+
+        BomItem.objects.create(part=a, sub_part=b, quantity=1)
+        BomItem.objects.create(part=a, sub_part=c, quantity=1)
+
+        self.assertEqual(BomItem.objects.count(), 2)
+
+        # Initially we don't have the 'validated' field
+        with self.assertRaises(AttributeError):
+            print(b.validated)
+
+    def test_validated_field(self):
+        """Test that the 'validated' field is added to the BomItem objects"""
+
+        BomItem = self.new_state.apps.get_model('part', 'bomitem')
+
+        self.assertEqual(BomItem.objects.count(), 2)
+
+        for bom_item in BomItem.objects.all():
+            self.assertFalse(bom_item.validated)

@@ -132,6 +132,23 @@ class CompanySimpleTest(TestCase):
         with self.assertRaises(ValidationError):
             company.full_clean()
 
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        p = Company.objects.first()
+        self.assertIsNone(p.metadata)
+
+        self.assertIsNone(p.get_metadata('test'))
+        self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+        # Test update via the set_metadata() method
+        p.set_metadata('test', 3)
+        self.assertEqual(p.get_metadata('test'), 3)
+
+        for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+            p.set_metadata(k, k)
+
+        self.assertEqual(len(p.metadata.keys()), 4)
+
 
 class ContactSimpleTest(TestCase):
     """Unit tests for the Contact model"""
@@ -205,3 +222,21 @@ class ManufacturerPartSimpleTest(TestCase):
         Part.objects.get(pk=self.part.id).delete()
         # Check that ManufacturerPart was deleted
         self.assertEqual(ManufacturerPart.objects.count(), 3)
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [ManufacturerPart, SupplierPart]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)
