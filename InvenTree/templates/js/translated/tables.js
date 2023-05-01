@@ -9,7 +9,7 @@
     customGroupSorter,
     downloadTableData,
     getTableData,
-    reloadtable,
+    reloadBootstrapTable,
     renderLink,
     reloadTableFilters,
     constructExpandCollapseButtons,
@@ -20,8 +20,23 @@
  * Reload a named table
  * @param table
  */
-function reloadtable(table) {
-    $(table).bootstrapTable('refresh');
+function reloadBootstrapTable(table) {
+
+    let tbl = table;
+
+    if (tbl) {
+        if (typeof tbl === 'string' || tbl instanceof String) {
+            tbl = $(tbl);
+        }
+
+        if (tbl.exists()) {
+            tbl.bootstrapTable('refresh');
+        } else {
+            console.error(`Invalid table name passed to reloadTable(): ${table}`);
+        }
+    } else {
+        console.error(`Null value passed to reloadTable()`);
+    }
 }
 
 
@@ -127,7 +142,7 @@ function constructExpandCollapseButtons(table, idx=0) {
  */
 function getTableData(table, allowEmpty=false) {
 
-    var data = $(table).bootstrapTable('getSelections');
+    let data = $(table).bootstrapTable('getSelections');
 
     if (data.length == 0 && !allowEmpty) {
         data = $(table).bootstrapTable('getData');
@@ -338,6 +353,16 @@ function convertQueryParameters(params, filters) {
         params['search'] = clean_search;
 
         delete params['original_search'];
+    }
+
+    // Enable regex search
+    if (user_settings.SEARCH_REGEX) {
+        params['search_regex'] = true;
+    }
+
+    // Enable whole word search
+    if (user_settings.SEARCH_WHOLE) {
+        params['search_whole'] = true;
     }
 
     return params;

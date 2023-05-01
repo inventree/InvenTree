@@ -25,9 +25,9 @@ import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin
+from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
+                              InvenTreeNotesMixin, MetadataMixin)
 from InvenTree.status_codes import PurchaseOrderStatus
-from plugin.models import MetadataMixin
 
 
 def rename_company_image(instance, filename):
@@ -55,7 +55,7 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class Company(MetadataMixin, models.Model):
+class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     """A Company object represents an external company.
 
     It may be a supplier or a customer or a manufacturer (or a combination)
@@ -139,8 +139,6 @@ class Company(MetadataMixin, models.Model):
         delete_orphans=True,
         verbose_name=_('Image'),
     )
-
-    notes = InvenTree.fields.InvenTreeNotesField(help_text=_("Company Notes"))
 
     is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
 
@@ -235,6 +233,11 @@ class Contact(models.Model):
         role: position in company
     """
 
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the Contcat model"""
+        return reverse('api-contact-list')
+
     company = models.ForeignKey(Company, related_name='contacts',
                                 on_delete=models.CASCADE)
 
@@ -247,7 +250,7 @@ class Contact(models.Model):
     role = models.CharField(max_length=100, blank=True)
 
 
-class ManufacturerPart(models.Model):
+class ManufacturerPart(MetadataMixin, models.Model):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
     Attributes:
@@ -415,7 +418,7 @@ class SupplierPartManager(models.Manager):
         )
 
 
-class SupplierPart(InvenTreeBarcodeMixin, common.models.MetaMixin):
+class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 
     Attributes:

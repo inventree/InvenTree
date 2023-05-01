@@ -42,6 +42,7 @@ from rest_framework.exceptions import PermissionDenied
 import build.validators
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -82,6 +83,33 @@ class EmptyURLValidator(URLValidator):
 
         else:
             super().__call__(value)
+
+
+class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+    """A ProjectCode is a unique identifier for a project."""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-project-code-list')
+
+    def __str__(self):
+        """String representation of a ProjectCode."""
+        return self.code
+
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Unique project code'),
+    )
+
+    description = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Project description'),
+    )
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -388,10 +416,10 @@ class BaseInvenTreeSetting(models.Model):
         if not setting:
 
             # Unless otherwise specified, attempt to create the setting
-            create = kwargs.get('create', True)
+            create = kwargs.pop('create', True)
 
             # Prevent creation of new settings objects when importing data
-            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+            if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True, allow_shell=True):
                 create = False
 
             if create:
@@ -985,7 +1013,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_UPDATE_CHECK_INTERVAL': {
-            'name': _('Update Check Inverval'),
+            'name': _('Update Check Interval'),
             'description': _('How often to check for updates (set to zero to disable)'),
             'validator': [
                 int,
@@ -1216,9 +1244,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'PRICING_DECIMAL_PLACES_MIN': {
+            'name': _('Minimum Pricing Decimal Places'),
+            'description': _('Minimum number of decimal places to display when rendering pricing data'),
+            'default': 0,
+            'validator': [
+                int,
+                MinValueValidator(0),
+                MaxValueValidator(4),
+            ]
+        },
+
         'PRICING_DECIMAL_PLACES': {
-            'name': _('Pricing Decimal Places'),
-            'description': _('Number of decimal places to display when rendering pricing data'),
+            'name': _('Maximum Pricing Decimal Places'),
+            'description': _('Maximum number of decimal places to display when rendering pricing data'),
             'default': 6,
             'validator': [
                 int,
@@ -1430,6 +1469,27 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': build.validators.validate_build_order_reference_pattern,
         },
 
+        'RETURNORDER_ENABLED': {
+            'name': _('Enable Return Orders'),
+            'description': _('Enable return order functionality in the user interface'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'RETURNORDER_REFERENCE_PATTERN': {
+            'name': _('Return Order Reference Pattern'),
+            'description': _('Required pattern for generating Return Order reference field'),
+            'default': 'RMA-{ref:04d}',
+            'validator': order.validators.validate_return_order_reference_pattern,
+        },
+
+        'RETURNORDER_EDIT_COMPLETED_ORDERS': {
+            'name': _('Edit Completed Return Orders'),
+            'description': _('Allow editing of return orders after they have been completed'),
+            'default': False,
+            'validator': bool,
+        },
+
         'SALESORDER_REFERENCE_PATTERN': {
             'name': _('Sales Order Reference Pattern'),
             'description': _('Required pattern for generating Sales Order reference field'),
@@ -1599,6 +1659,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
 
+        "PROJECT_CODES_ENABLED": {
+            'name': _('Enable project codes'),
+            'description': _('Enable project codes for tracking projects'),
+            'default': False,
+            'validator': bool,
+        },
+
         'STOCKTAKE_ENABLE': {
             'name': _('Stocktake Functionality'),
             'description': _('Enable stocktake functionality for recording stock levels and calculating stock value'),
@@ -1674,6 +1741,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         ]
 
     SETTINGS = {
+
+        'HOMEPAGE_HIDE_INACTIVE': {
+            'name': _('Hide inactive parts'),
+            'description': _('Hide inactive parts in results displayed on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+
         'HOMEPAGE_PART_STARRED': {
             'name': _('Show subscribed parts'),
             'description': _('Show subscribed parts on the homepage'),
@@ -1926,11 +2001,39 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
         },
 
+        'SEARCH_PREVIEW_SHOW_RETURN_ORDERS': {
+            'name': _('Search Return Orders'),
+            'description': _('Display return orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS': {
+            'name': _('Exclude Inactive Return Orders'),
+            'description': _('Exclude inactive return orders from search preview window'),
+            'validator': bool,
+            'default': True,
+        },
+
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
             'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
+        },
+
+        'SEARCH_REGEX': {
+            'name': _('Regex Search'),
+            'description': _('Enable regular expressions in search queries'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SEARCH_WHOLE': {
+            'name': _('Whole Word Search'),
+            'description': _('Search queries return results for whole word matches'),
+            'default': False,
+            'validator': bool,
         },
 
         'PART_SHOW_QUANTITY_IN_FORMS': {
@@ -2582,3 +2685,27 @@ class NewsFeedEntry(models.Model):
         help_text=_('Was this news item read?'),
         default=False
     )
+
+
+def rename_notes_image(instance, filename):
+    """Function for renaming uploading image file. Will store in the 'notes' directory."""
+
+    fname = os.path.basename(filename)
+    return os.path.join('notes', fname)
+
+
+class NotesImage(models.Model):
+    """Model for storing uploading images for the 'notes' fields of various models.
+
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown)
+    """
+
+    image = models.ImageField(
+        upload_to=rename_notes_image,
+        verbose_name=_('Image'),
+        help_text=_('Image file'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    date = models.DateTimeField(auto_now_add=True)

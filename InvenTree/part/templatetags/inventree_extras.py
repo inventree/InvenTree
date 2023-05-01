@@ -328,13 +328,14 @@ def setting_object(key, *args, **kwargs):
 
         return PluginSetting.get_setting_object(key, plugin=plugin, cache=cache)
 
-    if 'method' in kwargs:
+    elif 'method' in kwargs:
         return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
 
-    if 'user' in kwargs:
+    elif 'user' in kwargs:
         return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'], cache=cache)
 
-    return InvenTreeSetting.get_setting_object(key, cache=cache)
+    else:
+        return InvenTreeSetting.get_setting_object(key, cache=cache)
 
 
 @register.simple_tag()

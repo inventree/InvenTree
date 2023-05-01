@@ -42,6 +42,7 @@ class RuleSet(models.Model):
         ('build', _('Build Orders')),
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
+        ('return_order', _('Return Orders')),
     ]
 
     RULESET_NAMES = [
@@ -135,6 +136,7 @@ class RuleSet(models.Model):
         'purchase_order': [
             'company_company',
             'company_companyattachment',
+            'company_contact',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_supplierpart',
@@ -148,6 +150,7 @@ class RuleSet(models.Model):
         'sales_order': [
             'company_company',
             'company_companyattachment',
+            'company_contact',
             'order_salesorder',
             'order_salesorderallocation',
             'order_salesorderattachment',
@@ -155,6 +158,16 @@ class RuleSet(models.Model):
             'order_salesorderextraline',
             'order_salesordershipment',
             'report_salesorderreport',
+        ],
+        'return_order': [
+            'company_company',
+            'company_companyattachment',
+            'company_contact',
+            'order_returnorder',
+            'order_returnorderlineitem',
+            'order_returnorderextraline',
+            'order_returnorderattachment',
+            'report_returnorderreport',
         ]
     }
 
@@ -168,11 +181,12 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'common_inventreeusersetting',
-        'common_webhookendpoint',
-        'common_webhookmessage',
         'common_notificationentry',
         'common_notificationmessage',
-        'company_contact',
+        'common_notesimage',
+        'common_projectcode',
+        'common_webhookendpoint',
+        'common_webhookmessage',
         'users_owner',
 
         # Third-party tables
@@ -261,8 +275,7 @@ class RuleSet(models.Model):
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
-
-        logger.info(f"User '{name}' failed permission check for {table}.{permission}")
+        logger.debug(f"User '{name}' failed permission check for {table}.{permission}")
 
         return False
 
@@ -451,7 +464,7 @@ def update_group_roles(group, debug=False):
             group.permissions.add(permission)
 
         if debug:  # pragma: no cover
-            logger.info(f"Adding permission {perm} to group {group.name}")
+            logger.debug(f"Adding permission {perm} to group {group.name}")
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -466,7 +479,7 @@ def update_group_roles(group, debug=False):
             group.permissions.remove(permission)
 
         if debug:  # pragma: no cover
-            logger.info(f"Removing permission {perm} from group {group.name}")
+            logger.debug(f"Removing permission {perm} from group {group.name}")
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
@@ -488,7 +501,7 @@ def update_group_roles(group, debug=False):
                     permission = get_permission_object(child_perm)
                     if permission:
                         group.permissions.add(permission)
-                        logger.info(f"Adding permission {child_perm} to group {group.name}")
+                        logger.debug(f"Adding permission {child_perm} to group {group.name}")
 
 
 def clear_user_role_cache(user):
@@ -504,6 +517,26 @@ def clear_user_role_cache(user):
         for perm in ['add', 'change', 'view', 'delete']:
             key = f"role_{user}_{role}_{perm}"
             cache.delete(key)
+
+
+def get_user_roles(user):
+    """Return all roles available to a given user"""
+
+    roles = set()
+
+    for group in user.groups.all():
+        for rule in group.rule_sets.all():
+            name = rule.name
+            if rule.can_view:
+                roles.add(f'{name}.view')
+            if rule.can_add:
+                roles.add(f'{name}.add')
+            if rule.can_change:
+                roles.add(f'{name}.change')
+            if rule.can_delete:
+                roles.add(f'{name}.delete')
+
+    return roles
 
 
 def check_user_role(user, role, permission):

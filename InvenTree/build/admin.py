@@ -28,7 +28,7 @@ class BuildResource(InvenTreeResource):
             'metadata',
         ]
 
-    id = Field(attribute='pk')
+    id = Field(attribute='pk', widget=widgets.IntegerWidget())
 
     reference = Field(attribute='reference')
 

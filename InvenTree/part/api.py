@@ -9,15 +9,17 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, serializers, status
+from rest_framework import permissions, serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 import order.models
 from build.models import Build, BuildItem
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView)
-from InvenTree.filters import InvenTreeOrderingFilter
+                           ListCreateDestroyAPIView, MetadataView)
+from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
+                               SEARCH_ORDER_FILTER_ALIAS,
+                               InvenTreeSearchFilter)
 from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -28,7 +30,6 @@ from InvenTree.permissions import RolePermission
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from part.admin import PartCategoryResource, PartResource
-from plugin.serializers import MetadataSerializer
 
 from . import serializers as part_serializers
 from . import views
@@ -39,34 +40,20 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartStocktake, PartStocktakeReport, PartTestTemplate)
 
 
-class CategoryList(APIDownloadMixin, ListCreateAPI):
-    """API endpoint for accessing a list of PartCategory objects.
-
-    - GET: Return a list of PartCategory objects
-    - POST: Create a new PartCategory object
-    """
-
-    queryset = PartCategory.objects.all()
+class CategoryMixin:
+    """Mixin class for PartCategory endpoints"""
     serializer_class = part_serializers.CategorySerializer
-
-    def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file"""
-
-        dataset = PartCategoryResource().export(queryset=queryset)
-        filedata = dataset.export(export_format)
-        filename = f"InvenTree_Categories.{export_format}"
-
-        return DownloadFile(filedata, filename)
+    queryset = PartCategory.objects.all()
 
     def get_queryset(self, *args, **kwargs):
-        """Return an annotated queryset for the CategoryList endpoint"""
+        """Return an annotated queryset for the CategoryDetail endpoint"""
 
         queryset = super().get_queryset(*args, **kwargs)
         queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
         return queryset
 
     def get_serializer_context(self):
-        """Add extra context data to the serializer for the PartCategoryList endpoint"""
+        """Add extra context to the serializer for the CategoryDetail endpoint"""
         ctx = super().get_serializer_context()
 
         try:
@@ -76,6 +63,23 @@ class CategoryList(APIDownloadMixin, ListCreateAPI):
             ctx['starred_categories'] = []
 
         return ctx
+
+
+class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
+    """API endpoint for accessing a list of PartCategory objects.
+
+    - GET: Return a list of PartCategory objects
+    - POST: Create a new PartCategory object
+    """
+
+    def download_queryset(self, queryset, export_format):
+        """Download the filtered queryset as a data file"""
+
+        dataset = PartCategoryResource().export(queryset=queryset)
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_Categories.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
         """Custom filtering:
@@ -150,11 +154,7 @@ class CategoryList(APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -184,30 +184,8 @@ class CategoryList(APIDownloadMixin, ListCreateAPI):
     ]
 
 
-class CategoryDetail(CustomRetrieveUpdateDestroyAPI):
+class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
-
-    serializer_class = part_serializers.CategorySerializer
-    queryset = PartCategory.objects.all()
-
-    def get_queryset(self, *args, **kwargs):
-        """Return an annotated queryset for the CategoryDetail endpoint"""
-
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
-        return queryset
-
-    def get_serializer_context(self):
-        """Add extra context to the serializer for the CategoryDetail endpoint"""
-        ctx = super().get_serializer_context()
-
-        try:
-            ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
-        except AttributeError:
-            # Error is thrown if the view does not have an associated request
-            ctx['starred_categories'] = []
-
-        return ctx
 
     def update(self, request, *args, **kwargs):
         """Perform 'update' function and mark this part as 'starred' (or not)"""
@@ -234,14 +212,16 @@ class CategoryDetail(CustomRetrieveUpdateDestroyAPI):
                                       delete_child_categories=delete_child_categories))
 
 
-class CategoryMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating PartCategory metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return a MetadataSerializer pointing to the referenced PartCategory instance"""
-        return MetadataSerializer(PartCategory, *args, **kwargs)
+class CategoryTree(ListAPI):
+    """API endpoint for accessing a list of PartCategory objects ready for rendering a tree."""
 
     queryset = PartCategory.objects.all()
+    serializer_class = part_serializers.CategoryTree
+
+    filter_backends = ORDER_FILTER
+
+    # Order by tree level (top levels first) and then name
+    ordering = ['level', 'name']
 
 
 class CategoryParameterList(ListCreateAPI):
@@ -290,21 +270,6 @@ class CategoryParameterDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PartCategoryParameterTemplate.objects.all()
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
-
-
-class CategoryTree(ListAPI):
-    """API endpoint for accessing a list of PartCategory objects ready for rendering a tree."""
-
-    queryset = PartCategory.objects.all()
-    serializer_class = part_serializers.CategoryTree
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
-
-    # Order by tree level (top levels first) and then name
-    ordering = ['level', 'name']
 
 
 class PartSalePriceDetail(RetrieveUpdateDestroyAPI):
@@ -414,11 +379,7 @@ class PartTestTemplateList(ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
 
 class PartThumbs(ListAPI):
@@ -451,7 +412,7 @@ class PartThumbs(ListAPI):
         return Response(data)
 
     filter_backends = [
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     search_fields = [
@@ -717,16 +678,6 @@ class PartRequirements(RetrieveAPI):
         return Response(data)
 
 
-class PartMetadata(RetrieveUpdateAPI):
-    """API endpoint for viewing / updating Part metadata."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Returns a MetadataSerializer instance pointing to the referenced Part"""
-        return MetadataSerializer(Part, *args, **kwargs)
-
-    queryset = Part.objects.all()
-
-
 class PartPricingDetail(RetrieveUpdateAPI):
     """API endpoint for viewing part pricing data"""
 
@@ -843,76 +794,6 @@ class PartValidateBOM(RetrieveUpdateAPI):
         return Response({
             'checksum': part.bom_checksum,
         })
-
-
-class PartDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a single Part object."""
-
-    queryset = Part.objects.all()
-    serializer_class = part_serializers.PartSerializer
-
-    starred_parts = None
-
-    def get_queryset(self, *args, **kwargs):
-        """Return an annotated queryset object for the PartDetail endpoint"""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
-
-        return queryset
-
-    def get_serializer(self, *args, **kwargs):
-        """Return a serializer instance for the PartDetail endpoint"""
-        # By default, include 'category_detail' information in the detail view
-        try:
-            kwargs['category_detail'] = str2bool(self.request.query_params.get('category_detail', True))
-        except AttributeError:
-            pass
-
-        # Ensure the request context is passed through
-        kwargs['context'] = self.get_serializer_context()
-
-        # Pass a list of "starred" parts of the current user to the serializer
-        # We do this to reduce the number of database queries required!
-        if self.starred_parts is None and self.request is not None:
-            self.starred_parts = [star.part for star in self.request.user.starred_parts.all()]
-
-        kwargs['starred_parts'] = self.starred_parts
-
-        return self.serializer_class(*args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        """Delete a Part instance via the API
-
-        - If the part is 'active' it cannot be deleted
-        - It must first be marked as 'inactive'
-        """
-        part = Part.objects.get(pk=int(kwargs['pk']))
-        # Check if inactive
-        if not part.active:
-            # Delete
-            return super(PartDetail, self).destroy(request, *args, **kwargs)
-        else:
-            # Return 405 error
-            message = 'Part is active: cannot delete'
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
-
-    def update(self, request, *args, **kwargs):
-        """Custom update functionality for Part instance.
-
-        - If the 'starred' field is provided, update the 'starred' status against current user
-        """
-        # Clean input data
-        data = self.clean_data(request.data)
-
-        if 'starred' in data:
-            starred = str2bool(data.get('starred', False))
-
-            self.get_object().set_starred(request.user, starred)
-
-        response = super().update(request, *args, **kwargs)
-
-        return response
 
 
 class PartFilter(rest_filters.FilterSet):
@@ -1090,14 +971,22 @@ class PartFilter(rest_filters.FilterSet):
     virtual = rest_filters.BooleanFilter()
 
 
-class PartList(APIDownloadMixin, ListCreateAPI):
-    """API endpoint for accessing a list of Part objects, or creating a new Part instance"""
-
+class PartMixin:
+    """Mixin class for Part API endpoints"""
     serializer_class = part_serializers.PartSerializer
     queryset = Part.objects.all()
-    filterset_class = PartFilter
 
     starred_parts = None
+
+    is_create = False
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset object for the PartDetail endpoint"""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
         """Return a serializer instance for this endpoint"""
@@ -1105,7 +994,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         kwargs['context'] = self.get_serializer_context()
 
         # Indicate that we can create a new Part via this endpoint
-        kwargs['create'] = True
+        kwargs['create'] = self.is_create
 
         # Pass a list of "starred" parts to the current user to the serializer
         # We do this to reduce the number of database queries required!
@@ -1131,6 +1020,13 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         context['request'] = self.request
 
         return context
+
+
+class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
+    """API endpoint for accessing a list of Part objects, or creating a new Part instance"""
+
+    filterset_class = PartFilter
+    is_create = True
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a data file"""
@@ -1168,13 +1064,6 @@ class PartList(APIDownloadMixin, ListCreateAPI):
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
-
-    def get_queryset(self, *args, **kwargs):
-        """Return an annotated queryset object"""
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
-
-        return queryset
 
     def filter_queryset(self, queryset):
         """Perform custom filtering of the queryset"""
@@ -1326,11 +1215,7 @@ class PartList(APIDownloadMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
         'name',
@@ -1356,6 +1241,43 @@ class PartList(APIDownloadMixin, ListCreateAPI):
         'manufacturer_parts__MPN',
         'supplier_parts__SKU',
     ]
+
+
+class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single Part object."""
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete a Part instance via the API
+
+        - If the part is 'active' it cannot be deleted
+        - It must first be marked as 'inactive'
+        """
+        part = Part.objects.get(pk=int(kwargs['pk']))
+        # Check if inactive
+        if not part.active:
+            # Delete
+            return super(PartDetail, self).destroy(request, *args, **kwargs)
+        else:
+            # Return 405 error
+            message = 'Part is active: cannot delete'
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
+
+    def update(self, request, *args, **kwargs):
+        """Custom update functionality for Part instance.
+
+        - If the 'starred' field is provided, update the 'starred' status against current user
+        """
+        # Clean input data
+        data = self.clean_data(request.data)
+
+        if 'starred' in data:
+            starred = str2bool(data.get('starred', False))
+
+            self.get_object().set_starred(request.user, starred)
+
+        response = super().update(request, *args, **kwargs)
+
+        return response
 
 
 class PartRelatedList(ListCreateAPI):
@@ -1402,11 +1324,7 @@ class PartParameterTemplateList(ListCreateAPI):
     queryset = PartParameterTemplate.objects.all()
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'name',
@@ -1527,10 +1445,7 @@ class PartStocktakeList(ListCreateAPI):
 
         return context
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     ordering_fields = [
         'part',
@@ -1561,10 +1476,7 @@ class PartStocktakeReportList(ListAPI):
     queryset = PartStocktakeReport.objects.all()
     serializer_class = part_serializers.PartStocktakeReportSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    ]
+    filter_backends = ORDER_FILTER
 
     ordering_fields = [
         'date',
@@ -1664,42 +1576,11 @@ class BomFilter(rest_filters.FilterSet):
         return queryset
 
 
-class BomList(ListCreateDestroyAPIView):
-    """API endpoint for accessing a list of BomItem objects.
-
-    - GET: Return list of BomItem objects
-    - POST: Create a new BomItem object
-    """
+class BomMixin:
+    """Mixin class for BomItem API endpoints"""
 
     serializer_class = part_serializers.BomItemSerializer
     queryset = BomItem.objects.all()
-    filterset_class = BomFilter
-
-    def list(self, request, *args, **kwargs):
-        """Return serialized list response for this endpoint"""
-
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-
-        data = serializer.data
-
-        """
-        Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browseable API) return a DRF response
-        b) For AJAX requests, simply return a JSON rendered response.
-        """
-        if page is not None:
-            return self.get_paginated_response(data)
-        elif request.is_ajax():
-            return JsonResponse(data, safe=False)
-        else:
-            return Response(data)
 
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this API endpoint
@@ -1733,6 +1614,42 @@ class BomList(ListCreateDestroyAPIView):
         queryset = self.get_serializer_class().annotate_queryset(queryset)
 
         return queryset
+
+
+class BomList(BomMixin, ListCreateDestroyAPIView):
+    """API endpoint for accessing a list of BomItem objects.
+
+    - GET: Return list of BomItem objects
+    - POST: Create a new BomItem object
+    """
+
+    filterset_class = BomFilter
+
+    def list(self, request, *args, **kwargs):
+        """Return serialized list response for this endpoint"""
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+
+        """
+        Determine the response type based on the request.
+        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        b) For AJAX requests, simply return a JSON rendered response.
+        """
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
+            return JsonResponse(data, safe=False)
+        else:
+            return Response(data)
 
     def filter_queryset(self, queryset):
         """Custom query filtering for the BomItem list API"""
@@ -1791,11 +1708,7 @@ class BomList(ListCreateDestroyAPIView):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        InvenTreeOrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     search_fields = [
         'reference',
@@ -1816,6 +1729,11 @@ class BomList(ListCreateDestroyAPIView):
     ordering_field_aliases = {
         'sub_part': 'sub_part__name',
     }
+
+
+class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single BomItem object."""
+    pass
 
 
 class BomImportUpload(CreateAPI):
@@ -1856,22 +1774,6 @@ class BomImportSubmit(CreateAPI):
     serializer_class = part_serializers.BomImportSubmitSerializer
 
 
-class BomDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a single BomItem object."""
-
-    queryset = BomItem.objects.all()
-    serializer_class = part_serializers.BomItemSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Prefetch related fields for this queryset"""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = self.get_serializer_class().setup_eager_loading(queryset)
-        queryset = self.get_serializer_class().annotate_queryset(queryset)
-
-        return queryset
-
-
 class BomItemValidate(UpdateAPI):
     """API endpoint for validating a BomItem."""
 
@@ -1907,11 +1809,7 @@ class BomItemSubstituteList(ListCreateAPI):
     serializer_class = part_serializers.BomItemSubstituteSerializer
     queryset = BomItemSubstitute.objects.all()
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
         'part',
@@ -1933,14 +1831,14 @@ part_api_urls = [
         re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
 
         re_path(r'^parameters/', include([
-            re_path('^(?P<pk>\d+)/', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
-            re_path('^.*$', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
+            re_path(r'^(?P<pk>\d+)/', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
+            re_path(r'^.*$', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
         ])),
 
         # Category detail endpoints
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
 
-            re_path(r'^metadata/', CategoryMetadata.as_view(), name='api-part-category-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': PartCategory}, name='api-part-category-metadata'),
 
             # PartCategory detail endpoint
             re_path(r'^.*$', CategoryDetail.as_view(), name='api-part-category-detail'),
@@ -1951,42 +1849,45 @@ part_api_urls = [
 
     # Base URL for PartTestTemplate API endpoints
     re_path(r'^test-template/', include([
-        re_path(r'^(?P<pk>\d+)/', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
+        path(r'<int:pk>/', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
         path('', PartTestTemplateList.as_view(), name='api-part-test-template-list'),
     ])),
 
     # Base URL for PartAttachment API endpoints
     re_path(r'^attachment/', include([
-        re_path(r'^(?P<pk>\d+)/', PartAttachmentDetail.as_view(), name='api-part-attachment-detail'),
+        path(r'<int:pk>/', PartAttachmentDetail.as_view(), name='api-part-attachment-detail'),
         path('', PartAttachmentList.as_view(), name='api-part-attachment-list'),
     ])),
 
     # Base URL for part sale pricing
     re_path(r'^sale-price/', include([
-        re_path(r'^(?P<pk>\d+)/', PartSalePriceDetail.as_view(), name='api-part-sale-price-detail'),
+        path(r'<int:pk>/', PartSalePriceDetail.as_view(), name='api-part-sale-price-detail'),
         re_path(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
     ])),
 
     # Base URL for part internal pricing
     re_path(r'^internal-price/', include([
-        re_path(r'^(?P<pk>\d+)/', PartInternalPriceDetail.as_view(), name='api-part-internal-price-detail'),
+        path(r'<int:pk>/', PartInternalPriceDetail.as_view(), name='api-part-internal-price-detail'),
         re_path(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
     ])),
 
     # Base URL for PartRelated API endpoints
     re_path(r'^related/', include([
-        re_path(r'^(?P<pk>\d+)/', PartRelatedDetail.as_view(), name='api-part-related-detail'),
+        path(r'<int:pk>/', PartRelatedDetail.as_view(), name='api-part-related-detail'),
         re_path(r'^.*$', PartRelatedList.as_view(), name='api-part-related-list'),
     ])),
 
     # Base URL for PartParameter API endpoints
     re_path(r'^parameter/', include([
         path('template/', include([
-            re_path(r'^(?P<pk>\d+)/', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
+            re_path(r'^(?P<pk>\d+)/', include([
+                re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameter}, name='api-part-parameter-template-metadata'),
+                re_path(r'^.*$', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
+            ])),
             re_path(r'^.*$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
         ])),
 
-        re_path(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
+        path(r'<int:pk>/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
         re_path(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
     ])),
 
@@ -1998,7 +1899,7 @@ part_api_urls = [
             re_path(r'^.*$', PartStocktakeReportList.as_view(), name='api-part-stocktake-report-list'),
         ])),
 
-        re_path(r'^(?P<pk>\d+)/', PartStocktakeDetail.as_view(), name='api-part-stocktake-detail'),
+        path(r'<int:pk>/', PartStocktakeDetail.as_view(), name='api-part-stocktake-detail'),
         re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
     ])),
 
@@ -2010,7 +1911,7 @@ part_api_urls = [
     # BOM template
     re_path(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='api-bom-upload-template'),
 
-    re_path(r'^(?P<pk>\d+)/', include([
+    path(r'<int:pk>/', include([
 
         # Endpoint for extra serial number information
         re_path(r'^serial-numbers/', PartSerialNumberDetail.as_view(), name='api-part-serial-number-detail'),
@@ -2027,7 +1928,7 @@ part_api_urls = [
         re_path(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
 
         # Part metadata
-        re_path(r'^metadata/', PartMetadata.as_view(), name='api-part-metadata'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': Part}, name='api-part-metadata'),
 
         # Part pricing
         re_path(r'^pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
@@ -2050,15 +1951,16 @@ bom_api_urls = [
     re_path(r'^substitute/', include([
 
         # Detail view
-        re_path(r'^(?P<pk>\d+)/', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
+        path(r'<int:pk>/', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
 
         # Catch all
         re_path(r'^.*$', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),
     ])),
 
     # BOM Item Detail
-    re_path(r'^(?P<pk>\d+)/', include([
+    path(r'<int:pk>/', include([
         re_path(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
+        re_path(r'^metadata/?', MetadataView.as_view(), {'model': BomItem}, name='api-bom-item-metadata'),
         re_path(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
 

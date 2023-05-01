@@ -34,6 +34,8 @@ jobs:
       cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
+      contents: read
+      packages: write
       id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -95,6 +97,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Log into registry ghcr.io
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # pin@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Extract Docker metadata
         if: github.event_name != 'pull_request'
         id: meta
@@ -102,6 +113,8 @@ jobs:
         with:
           images: |
             inventree/inventree
+            ghcr.io/inventree/inventree
+
       - name: Build and Push
         id: build-and-push
         if: github.event_name != 'pull_request'
@@ -115,6 +128,7 @@ jobs:
           build-args: |
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
+
       - name: Sign the published image
         if: ${{ false }} # github.event_name != 'pull_request'
         env:

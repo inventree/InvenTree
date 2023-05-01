@@ -29,6 +29,20 @@ class ReportTagTest(TestCase):
         """Enable or disable debug mode for reports"""
         InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', value, change_user=None)
 
+    def test_getindex(self):
+        """Tests for the 'getindex' template tag"""
+
+        fn = report_tags.getindex
+        data = [1, 2, 3, 4, 5, 6]
+
+        # Out of bounds or invalid
+        self.assertEqual(fn(data, -1), None)
+        self.assertEqual(fn(data, 99), None)
+        self.assertEqual(fn(data, 'xx'), None)
+
+        for idx in range(len(data)):
+            self.assertEqual(fn(data, idx), data[idx])
+
     def test_getkey(self):
         """Tests for the 'getkey' template tag"""
 
@@ -258,7 +272,6 @@ class ReportTest(InvenTreeAPITestCase):
         reports = self.model.objects.all()
 
         n = len(reports)
-
         # API endpoint must return correct number of reports
         self.assertEqual(len(response.data), n)
 
@@ -280,6 +293,25 @@ class ReportTest(InvenTreeAPITestCase):
 
         response = self.get(url, {'enabled': False})
         self.assertEqual(len(response.data), n)
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        if self.model is not None:
+            p = self.model.objects.first()
+
+            self.assertIsNone(p.metadata)
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)
 
 
 class TestReportTest(ReportTest):
@@ -393,14 +425,26 @@ class BOMReportTest(ReportTest):
     detail_url = 'api-bom-report-detail'
     print_url = 'api-bom-report-print'
 
+    def setUp(self):
+        """Setup function for the bill of materials Report"""
+        self.copyReportTemplate('inventree_bill_of_materials_report.html', 'bill of materials report')
+
+        return super().setUp()
+
 
 class PurchaseOrderReportTest(ReportTest):
-    """Unit test class fort he PurchaseOrderReport model"""
+    """Unit test class for the PurchaseOrderReport model"""
     model = report_models.PurchaseOrderReport
 
     list_url = 'api-po-report-list'
     detail_url = 'api-po-report-detail'
     print_url = 'api-po-report-print'
+
+    def setUp(self):
+        """Setup function for the purchase order Report"""
+        self.copyReportTemplate('inventree_po_report.html', 'purchase order report')
+
+        return super().setUp()
 
 
 class SalesOrderReportTest(ReportTest):
@@ -410,3 +454,24 @@ class SalesOrderReportTest(ReportTest):
     list_url = 'api-so-report-list'
     detail_url = 'api-so-report-detail'
     print_url = 'api-so-report-print'
+
+    def setUp(self):
+        """Setup function for the sales order Report"""
+        self.copyReportTemplate('inventree_so_report.html', 'sales order report')
+
+        return super().setUp()
+
+
+class ReturnOrderReportTest(ReportTest):
+    """Unit tests for the ReturnOrderReport model"""
+
+    model = report_models.ReturnOrderReport
+    list_url = 'api-return-order-report-list'
+    detail_url = 'api-return-order-report-detail'
+    print_url = 'api-return-order-report-print'
+
+    def setUp(self):
+        """Setup function for the ReturnOrderReport tests"""
+        self.copyReportTemplate('inventree_return_order_report.html', 'return order report')
+
+        return super().setUp()

@@ -2,10 +2,42 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 101
+INVENTREE_API_VERSION = 110
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v110 -> 2023-04-26 : https://github.com/inventree/InvenTree/pull/4698
+    - Adds 'order_currency' field for PurchaseOrder / SalesOrder endpoints
+
+v109 -> 2023-04-19 : https://github.com/inventree/InvenTree/pull/4636
+    - Adds API endpoints for the "ProjectCode" model
+
+v108 -> 2023-04-17 : https://github.com/inventree/InvenTree/pull/4615
+    - Adds functionality to upload images for rendering in markdown notes
+
+v107 -> 2023-04-04 : https://github.com/inventree/InvenTree/pull/4575
+    - Adds barcode support for PurchaseOrder model
+    - Adds barcode support for ReturnOrder model
+    - Adds barcode support for SalesOrder model
+    - Adds barcode support for BuildOrder model
+
+v106 -> 2023-04-03 : https://github.com/inventree/InvenTree/pull/4566
+    - Adds 'search_regex' parameter to all searchable API endpoints
+
+v105 -> 2023-03-31 : https://github.com/inventree/InvenTree/pull/4543
+    - Adds API endpoints for status label information on various models
+
+v104 -> 2023-03-23 : https://github.com/inventree/InvenTree/pull/4488
+    - Adds various endpoints for new "ReturnOrder" models
+    - Adds various endpoints for new "ReturnOrderReport" templates
+    - Exposes API endpoints for "Contact" model
+
+v103 -> 2023-03-17 : https://github.com/inventree/InvenTree/pull/4410
+    - Add metadata to several more models
+
+v102 -> 2023-03-18 : https://github.com/inventree/InvenTree/pull/4505
+- Adds global search API endpoint for consolidated search results
 
 v101 -> 2023-03-07 : https://github.com/inventree/InvenTree/pull/4462
     - Adds 'total_in_stock' to Part serializer, and supports API ordering

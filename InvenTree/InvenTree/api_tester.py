@@ -165,6 +165,26 @@ class ExchangeRateMixin:
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
+    def checkResponse(self, url, method, expected_code, response):
+        """Debug output for an unexpected response"""
+
+        # No expected code, return
+        if expected_code is None:
+            return
+
+        if expected_code != response.status_code:
+
+            print(f"Unexpected {method} response at '{url}': status_code = {response.status_code}")
+
+            if hasattr(response, 'data'):
+                print('data:', response.data)
+            if hasattr(response, 'body'):
+                print('body:', response.body)
+            if hasattr(response, 'content'):
+                print('content:', response.content)
+
+        self.assertEqual(expected_code, response.status_code)
+
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
 
@@ -188,13 +208,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         response = self.client.get(url, data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                print(f"Unexpected response at '{url}': status_code = {response.status_code}")
-                print(response.data)
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'GET', expected_code, response)
 
         return response
 
@@ -207,17 +221,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         response = self.client.post(url, data=data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                print(f"Unexpected response at '{url}': status code = {response.status_code}")
-
-                if hasattr(response, 'data'):
-                    print(response.data)
-                else:
-                    print(f"(response object {type(response)} has no 'data' attribute")
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'POST', expected_code, response)
 
         return response
 
@@ -229,8 +233,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         response = self.client.delete(url, data=data, format=format)
 
-        if expected_code is not None:
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'DELETE', expected_code, response)
 
         return response
 
@@ -238,8 +241,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue a PATCH request."""
         response = self.client.patch(url, data=data, format=format)
 
-        if expected_code is not None:
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'PATCH', expected_code, response)
 
         return response
 
@@ -247,13 +249,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue a PUT request."""
         response = self.client.put(url, data=data, format=format)
 
-        if expected_code is not None:
-
-            if response.status_code != expected_code:
-                print(f"Unexpected response at '{url}':")
-                print(response.data)
-
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'PUT', expected_code, response)
 
         return response
 
@@ -261,8 +257,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue an OPTIONS request."""
         response = self.client.options(url, format='json')
 
-        if expected_code is not None:
-            self.assertEqual(response.status_code, expected_code)
+        self.checkResponse(url, 'OPTIONS', expected_code, response)
 
         return response
 

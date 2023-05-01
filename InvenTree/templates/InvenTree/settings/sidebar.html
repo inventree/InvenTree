@@ -30,6 +30,8 @@
 {% include "sidebar_item.html" with label='login' text=text icon="fa-fingerprint" %}
 {% trans "Barcode Support" as text %}
 {% include "sidebar_item.html" with label='barcodes' text=text icon="fa-qrcode" %}
+{% trans "Project Codes" as text %}
+{% include "sidebar_item.html" with label='project-codes' text=text icon="fa-list" %}
 {% trans "Notifications" as text %}
 {% include "sidebar_item.html" with label='global-notifications' text=text icon="fa-bell" %}
 {% trans "Pricing" as text %}
@@ -52,6 +54,8 @@
 {% include "sidebar_item.html" with label='purchase-order' text=text icon="fa-shopping-cart" %}
 {% trans "Sales Orders" as text %}
 {% include "sidebar_item.html" with label='sales-order' text=text icon="fa-truck" %}
+{% trans "Return Orders" as text %}
+{% include "sidebar_item.html" with label='return-order' text=text icon="fa-undo" %}
 
 {% trans "Plugin Settings" as text %}
 {% include "sidebar_header.html" with text=text %}

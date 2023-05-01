@@ -17,6 +17,8 @@ import common.models
 import part.models
 import stock.models
 from InvenTree.helpers import normalize, validateFilterString
+from InvenTree.models import MetadataMixin
+from plugin.registry import registry
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -70,7 +72,7 @@ class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'label.pdf')
 
 
-class LabelTemplate(models.Model):
+class LabelTemplate(MetadataMixin, models.Model):
     """Base class for generic, filterable labels."""
 
     class Meta:
@@ -188,6 +190,13 @@ class LabelTemplate(models.Model):
         context['user'] = request.user
         context['width'] = self.width
         context['height'] = self.height
+
+        # Pass the context through to any registered plugins
+        plugins = registry.with_mixin('report')
+
+        for plugin in plugins:
+            # Let each plugin add its own context data
+            plugin.add_label_context(self, self.object_to_print, request, context)
 
         return context
 

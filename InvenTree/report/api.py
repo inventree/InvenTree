@@ -10,7 +10,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 from rest_framework.response import Response
 
 import build.models
@@ -18,13 +17,16 @@ import common.models
 import InvenTree.helpers
 import order.models
 import part.models
+from InvenTree.api import MetadataView
+from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     SalesOrderReport, TestReport)
+                     ReturnOrderReport, SalesOrderReport, TestReport)
 from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           PurchaseOrderReportSerializer,
+                          ReturnOrderReportSerializer,
                           SalesOrderReportSerializer, TestReportSerializer)
 
 
@@ -33,7 +35,7 @@ class ReportListView(ListAPI):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        InvenTreeSearchFilter,
     ]
 
     filterset_fields = [
@@ -295,8 +297,11 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
         if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT', cache=False):
 
             # Construct a PDF file object
-            pdf = report.get_document().write_pdf()
-            pdf_content = ContentFile(pdf, "test_report.pdf")
+            try:
+                pdf = report.get_document().write_pdf()
+                pdf_content = ContentFile(pdf, "test_report.pdf")
+            except TemplateDoesNotExist:
+                return
 
             StockItemAttachment.objects.create(
                 attachment=pdf_content,
@@ -418,13 +423,39 @@ class SalesOrderReportPrint(SalesOrderReportMixin, ReportPrintMixin, RetrieveAPI
     pass
 
 
+class ReturnOrderReportMixin(ReportFilterMixin):
+    """Mixin for the ReturnOrderReport report template"""
+
+    ITEM_MODEL = order.models.ReturnOrder
+    ITEM_KEY = 'order'
+
+    queryset = ReturnOrderReport.objects.all()
+    serializer_class = ReturnOrderReportSerializer
+
+
+class ReturnOrderReportList(ReturnOrderReportMixin, ReportListView):
+    """API list endpoint for the ReturnOrderReport model"""
+    pass
+
+
+class ReturnOrderReportDetail(ReturnOrderReportMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single ReturnOrderReport object"""
+    pass
+
+
+class ReturnOrderReportPrint(ReturnOrderReportMixin, ReportPrintMixin, RetrieveAPI):
+    """API endpoint for printing a ReturnOrderReport object"""
+    pass
+
+
 report_api_urls = [
 
     # Purchase order reports
     re_path(r'po/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/', PurchaseOrderReportPrint.as_view(), name='api-po-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': PurchaseOrderReport}, name='api-po-report-metadata'),
             path('', PurchaseOrderReportDetail.as_view(), name='api-po-report-detail'),
         ])),
 
@@ -435,19 +466,31 @@ report_api_urls = [
     # Sales order reports
     re_path(r'so/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/', SalesOrderReportPrint.as_view(), name='api-so-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': SalesOrderReport}, name='api-so-report-metadata'),
             path('', SalesOrderReportDetail.as_view(), name='api-so-report-detail'),
         ])),
 
         path('', SalesOrderReportList.as_view(), name='api-so-report-list'),
     ])),
 
+    # Return order reports
+    re_path(r'ro/', include([
+        path(r'<int:pk>/', include([
+            path(r'print/', ReturnOrderReportPrint.as_view(), name='api-return-order-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': ReturnOrderReport}, name='api-so-report-metadata'),
+            path('', ReturnOrderReportDetail.as_view(), name='api-return-order-report-detail'),
+        ])),
+        path('', ReturnOrderReportList.as_view(), name='api-return-order-report-list'),
+    ])),
+
     # Build reports
     re_path(r'build/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': BuildReport}, name='api-build-report-metadata'),
             re_path(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
         ])),
 
@@ -459,8 +502,9 @@ report_api_urls = [
     re_path(r'bom/', include([
 
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': BillOfMaterialsReport}, name='api-bom-report-metadata'),
             re_path(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
         ])),
 
@@ -471,8 +515,9 @@ report_api_urls = [
     # Stock item test reports
     re_path(r'test/', include([
         # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
+        path(r'<int:pk>/', include([
             re_path(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'report': TestReport}, name='api-stockitem-testreport-metadata'),
             re_path(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),
         ])),
 

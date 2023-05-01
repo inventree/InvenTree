@@ -14,18 +14,24 @@
  * Helper functions for calendar display
  */
 
+/*
+ * Extract the first displayed date on the calendar
+ */
 function startDate(calendar) {
-    // Extract the first displayed date on the calendar
     return calendar.currentData.dateProfile.activeRange.start.toISOString().split('T')[0];
 }
 
+/*
+ * Extract the last display date on the calendar
+ */
 function endDate(calendar) {
-    // Extract the last display date on the calendar
     return calendar.currentData.dateProfile.activeRange.end.toISOString().split('T')[0];
 }
 
+/*
+ * Remove all events from the calendar
+ */
 function clearEvents(calendar) {
-    // Remove all events from the calendar
 
     var events = calendar.getEvents();
 

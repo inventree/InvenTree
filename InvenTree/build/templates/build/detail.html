@@ -268,19 +268,6 @@
                             {% endif %}
                         </ul>
                     </div>
-
-                    <!-- Label Printing Actions -->
-                    <div class='btn-group'>
-                        <button id='output-print-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Printing Actions" %}'>
-                            <span class='fas fa-print'></span> <span class='caret'></span>
-                        </button>
-                        <ul class='dropdown-menu'>
-                            <li><a class='dropdown-item' href='#' id='incomplete-output-print-label' title='{% trans "Print labels" %}'>
-                                <span class='fas fa-tags'></span> {% trans "Print labels" %}
-                            </a></li>
-                        </ul>
-                    </div>
-
                     {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
                 {% endif %}
@@ -367,20 +354,6 @@ onPanelLoad('children', function() {
 
 onPanelLoad('attachments', function() {
 
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-build-attachment-list" %}',
-        {
-            data: {
-                build: {{ build.id }},
-            },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                $('#attachment-table').bootstrapTable('refresh');
-            }
-        }
-    );
-
     loadAttachmentTable('{% url "api-build-attachment-list" %}', {
         filters: {
             build: {{ build.pk }},
@@ -408,10 +381,6 @@ onPanelLoad('notes', function() {
         }
     );
 });
-
-function reloadTable() {
-    $('#allocation-table-untracked').bootstrapTable('refresh');
-}
 
 onPanelLoad('outputs', function() {
     {% if build.active %}

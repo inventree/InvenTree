@@ -274,21 +274,22 @@ class PartTest(TestCase):
         self.assertEqual(float(self.r1.get_internal_price(10)), 0.5)
 
     def test_metadata(self):
-        """Unit tests for the Part metadata field."""
-        p = Part.objects.get(pk=1)
-        self.assertIsNone(p.metadata)
+        """Unit tests for the metadata field."""
+        for model in [Part]:
+            p = model.objects.first()
+            self.assertIsNone(p.metadata)
 
-        self.assertIsNone(p.get_metadata('test'))
-        self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
 
-        # Test update via the set_metadata() method
-        p.set_metadata('test', 3)
-        self.assertEqual(p.get_metadata('test'), 3)
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
 
-        for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
-            p.set_metadata(k, k)
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
 
-        self.assertEqual(len(p.metadata.keys()), 4)
+            self.assertEqual(len(p.metadata.keys()), 4)
 
     def test_related(self):
         """Unit tests for the PartRelated model"""

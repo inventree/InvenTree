@@ -37,21 +37,20 @@ import common.settings
 import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
-import part.filters as part_filters
 import part.settings as part_settings
 from build import models as BuildModels
 from common.models import InvenTreeSetting
 from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
-from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
+from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
-                              InvenTreeBarcodeMixin, InvenTreeTree)
+                              InvenTreeBarcodeMixin, InvenTreeNotesMixin,
+                              InvenTreeTree, MetadataMixin)
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from order import models as OrderModels
-from plugin.models import MetadataMixin
 from stock import models as StockModels
 
 logger = logging.getLogger("inventree")
@@ -339,7 +338,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
+class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -857,9 +856,9 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     )
 
     description = models.CharField(
-        max_length=250, blank=False,
+        max_length=250, blank=True,
         verbose_name=_('Description'),
-        help_text=_('Part description')
+        help_text=_('Part description (optional)')
     )
 
     keywords = models.CharField(
@@ -1016,8 +1015,6 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         default=part_settings.part_virtual_default,
         verbose_name=_('Virtual'),
         help_text=_('Is this a virtual part, such as a software product or license?'))
-
-    notes = InvenTreeNotesField(help_text=_('Part notes'))
 
     bom_checksum = models.CharField(max_length=128, blank=True, verbose_name=_('BOM checksum'), help_text=_('Stored BOM checksum'))
 
@@ -1223,6 +1220,9 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
     @property
     def can_build(self):
         """Return the number of units that can be build with available stock."""
+
+        import part.filters
+
         # If this part does NOT have a BOM, result is simply the currently available stock
         if not self.has_bom:
             return 0
@@ -1246,9 +1246,9 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         # Annotate the 'available stock' for each part in the BOM
         ref = 'sub_part__'
         queryset = queryset.alias(
-            total_stock=part_filters.annotate_total_stock(reference=ref),
-            so_allocations=part_filters.annotate_sales_order_allocations(reference=ref),
-            bo_allocations=part_filters.annotate_build_order_allocations(reference=ref),
+            total_stock=part.filters.annotate_total_stock(reference=ref),
+            so_allocations=part.filters.annotate_sales_order_allocations(reference=ref),
+            bo_allocations=part.filters.annotate_build_order_allocations(reference=ref),
         )
 
         # Calculate the 'available stock' based on previous annotations
@@ -1262,9 +1262,9 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         # Extract similar information for any 'substitute' parts
         ref = 'substitutes__part__'
         queryset = queryset.alias(
-            sub_total_stock=part_filters.annotate_total_stock(reference=ref),
-            sub_so_allocations=part_filters.annotate_sales_order_allocations(reference=ref),
-            sub_bo_allocations=part_filters.annotate_build_order_allocations(reference=ref),
+            sub_total_stock=part.filters.annotate_total_stock(reference=ref),
+            sub_so_allocations=part.filters.annotate_sales_order_allocations(reference=ref),
+            sub_bo_allocations=part.filters.annotate_build_order_allocations(reference=ref),
         )
 
         queryset = queryset.annotate(
@@ -1275,12 +1275,12 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
         )
 
         # Extract similar information for any 'variant' parts
-        variant_stock_query = part_filters.variant_stock_query(reference='sub_part__')
+        variant_stock_query = part.filters.variant_stock_query(reference='sub_part__')
 
         queryset = queryset.alias(
-            var_total_stock=part_filters.annotate_variant_quantity(variant_stock_query, reference='quantity'),
-            var_bo_allocations=part_filters.annotate_variant_quantity(variant_stock_query, reference='allocations__quantity'),
-            var_so_allocations=part_filters.annotate_variant_quantity(variant_stock_query, reference='sales_order_allocations__quantity'),
+            var_total_stock=part.filters.annotate_variant_quantity(variant_stock_query, reference='quantity'),
+            var_bo_allocations=part.filters.annotate_variant_quantity(variant_stock_query, reference='allocations__quantity'),
+            var_so_allocations=part.filters.annotate_variant_quantity(variant_stock_query, reference='sales_order_allocations__quantity'),
         )
 
         queryset = queryset.annotate(
@@ -2082,6 +2082,16 @@ class Part(InvenTreeBarcodeMixin, MetadataMixin, MPTTModel):
             tests = tests.filter(required=required)
 
         return tests
+
+    def getTestTemplateMap(self, **kwargs):
+        """Return a map of all test templates associated with this Part"""
+
+        templates = {}
+
+        for template in self.getTestTemplates(**kwargs):
+            templates[template.key] = template
+
+        return templates
 
     def getRequiredTests(self):
         """Return the tests which are required by this part"""
@@ -3277,7 +3287,7 @@ def validate_template_name(name):
     """Placeholder for legacy function used in migrations."""
 
 
-class PartParameterTemplate(models.Model):
+class PartParameterTemplate(MetadataMixin, models.Model):
     """A PartParameterTemplate provides a template for key:value pairs for extra parameters fields/values to be added to a Part.
 
     This allows users to arbitrarily assign data fields to a Part beyond the built-in attributes.
@@ -3419,7 +3429,7 @@ class PartCategoryParameterTemplate(models.Model):
                                      help_text=_('Default Parameter Value'))
 
 
-class BomItem(DataImportMixin, models.Model):
+class BomItem(DataImportMixin, MetadataMixin, models.Model):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -3619,32 +3629,32 @@ class BomItem(DataImportMixin, models.Model):
         """Calculate the checksum hash of this BOM line item.
 
         The hash is calculated from the following fields:
-        - Part.full_name (if the part name changes, the BOM checksum is invalidated)
-        - Quantity
-        - Reference field
-        - Note field
-        - Optional field
-        - Inherited field
+        - part.pk
+        - sub_part.pk
+        - quantity
+        - reference
+        - optional
+        - inherited
+        - consumable
+        - allow_variants
         """
         # Seed the hash with the ID of this BOM item
-        result_hash = hashlib.md5(str(self.id).encode())
+        result_hash = hashlib.md5(''.encode())
 
-        # Update the hash based on line information
-        result_hash.update(str(self.sub_part.id).encode())
-        result_hash.update(str(self.sub_part.full_name).encode())
-        result_hash.update(str(self.quantity).encode())
-        result_hash.update(str(self.note).encode())
-        result_hash.update(str(self.reference).encode())
-        result_hash.update(str(self.optional).encode())
-        result_hash.update(str(self.inherited).encode())
+        # The following components are used to calculate the checksum
+        components = [
+            self.part.pk,
+            self.sub_part.pk,
+            normalize(self.quantity),
+            self.reference,
+            self.optional,
+            self.inherited,
+            self.consumable,
+            self.allow_variants
+        ]
 
-        # Optionally encoded for backwards compatibility
-        if self.consumable:
-            result_hash.update(str(self.consumable).encode())
-
-        # Optionally encoded for backwards compatibility
-        if self.allow_variants:
-            result_hash.update(str(self.allow_variants).encode())
+        for component in components:
+            result_hash.update(str(component).encode())
 
         return str(result_hash.digest())
 
@@ -3655,7 +3665,7 @@ class BomItem(DataImportMixin, models.Model):
             valid: If true, validate the hash, otherwise invalidate it (default = True)
         """
         if valid:
-            self.checksum = str(self.get_item_hash())
+            self.checksum = self.get_item_hash()
         else:
             self.checksum = ''
 

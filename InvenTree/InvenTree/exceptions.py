@@ -55,9 +55,24 @@ def exception_handler(exc, context):
     """Custom exception handler for DRF framework.
 
     Ref: https://www.django-rest-framework.org/api-guide/exceptions/#custom-exception-handling
-    Catches any errors not natively handled by DRF, and re-throws as an error DRF can handle
+    Catches any errors not natively handled by DRF, and re-throws as an error DRF can handle.
+
+    If sentry error reporting is enabled, we will also provide the original exception to sentry.io
     """
     response = None
+
+    if settings.SENTRY_ENABLED and settings.SENTRY_DSN and not settings.DEBUG:
+        # Report this exception to sentry.io
+        from sentry_sdk import capture_exception
+
+        # The following types of errors are ignored, they are "expected"
+        do_not_report = [
+            DjangoValidationError,
+            DRFValidationError,
+        ]
+
+        if not any([isinstance(exc, err) for err in do_not_report]):
+            capture_exception(exc)
 
     # Catch any django validation error, and re-throw a DRF validation error
     if isinstance(exc, DjangoValidationError):
