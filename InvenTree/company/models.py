@@ -266,10 +266,19 @@ class Address(models.Model):
         link: External link to additional address information
     """
 
+    def __str__(self):
+        """Defines string representation of address to supple a one-line to API calls"""
+        return ", ".join([self.line1,
+                          self.line2,
+                          self.postal_code,
+                          self.postal_city,
+                          self.province,
+                          self.country])
+
     class Meta:
         """Metaclass defines extra model options"""
         constraints = [
-            UniqueConstraint(fields=('company'), condition=Q(primary=True), name='one_primary_per_company')
+            UniqueConstraint(fields=['company'], condition=Q(primary=True), name='one_primary_per_company')
         ]
 
     company = models.ForeignKey(Company, related_name='addresses',
@@ -296,11 +305,20 @@ class Address(models.Model):
                              help_text=_('Address line 2'),
                              blank=True)
 
-    # Necessary to split into postal, city, province lines?
-    postal_code = models.CharField(max_length=50,
+    postal_code = models.CharField(max_length=10,
                                    verbose_name=_('Postal code'),
-                                   help_text=_('Postal code, city, province'),
+                                   help_text=_('Postal code'),
                                    blank=True)
+
+    postal_city = models.CharField(max_length=50,
+                                   verbose_name=_('City'),
+                                   help_text=_('Postal code city'),
+                                   blank=True)
+
+    province = models.CharField(max_length=50,
+                                verbose_name=_('State/Province'),
+                                help_text=_('State or province'),
+                                blank=True)
 
     country = models.CharField(max_length=50,
                                verbose_name=_('Country'),
