@@ -146,6 +146,8 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
             'manufacturer',
             'MPN',
             'part',
+            'tags__name',
+            'tags__slug',
         ]
 
     # Filter by 'active' status of linked part
@@ -194,6 +196,8 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
         'part__IPN',
         'part__name',
         'part__description',
+        'tags__name',
+        'tags__slug',
     ]
 
 
@@ -304,6 +308,8 @@ class SupplierPartFilter(rest_filters.FilterSet):
             'part',
             'manufacturer_part',
             'SKU',
+            'tags__name',
+            'tags__slug',
         ]
 
     # Filter by 'active' status of linked part
@@ -406,6 +412,8 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'part__name',
         'part__description',
         'part__keywords',
+        'tags__name',
+        'tags__slug',
     ]
 
 

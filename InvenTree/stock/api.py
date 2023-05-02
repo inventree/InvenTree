@@ -302,11 +302,15 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
         'name',
         'structural',
         'external',
+        'tags__name',
+        'tags__slug',
     ]
 
     search_fields = [
         'name',
         'description',
+        'tags__name',
+        'tags__slug',
     ]
 
     ordering_fields = [
@@ -353,6 +357,8 @@ class StockFilter(rest_filters.FilterSet):
             'customer',
             'sales_order',
             'purchase_order',
+            'tags__name',
+            'tags__slug',
         ]
 
     # Relationship filters
@@ -1038,6 +1044,8 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         'part__IPN',
         'part__description',
         'location__name',
+        'tags__name',
+        'tags__slug',
     ]
 
 
