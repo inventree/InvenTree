@@ -1,9 +1,0 @@
-{
-    "overrides": {
-        "**/templates/*.html": {
-            "rules": {
-                "[[character-reference]]": false
-            }
-        }
-    }
-}

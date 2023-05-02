@@ -1078,9 +1078,8 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
     var table_entries = '';
 
     for (var idx = 0; idx < line_items.length; idx++ ) {
-        var line_item = line_items[idx];
-
-        var remaining = 0;
+        let line_item = line_items[idx];
+        let remaining = Math.max(0, line_item.quantity - line_item.allocated);
 
         table_entries += renderLineItemRow(line_item, remaining);
     }
@@ -1247,7 +1246,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                             var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
 
                             // Remaining quantity to be allocated?
-                            var remaining = Math.max(line_item.quantity - line_item.shipped - line_item.allocated, 0);
+                            var remaining = Math.max(line_item.quantity - line_item.allocated, 0);
 
                             // Maximum amount that we need
                             var desired = Math.min(available, remaining);
@@ -1914,7 +1913,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             if (row.part && row.part_detail) {
                 let part = row.part_detail;
 
-                if (options.allow_edit && !row.shipped) {
+                if (options.allow_edit && (row.shipped < row.quantity)) {
                     if (part.trackable) {
                         buttons += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate serial numbers" %}');
                     }
