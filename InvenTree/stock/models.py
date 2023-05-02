@@ -1171,10 +1171,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             user: The user performing the operation
             notes: Any notes associated with the operation
         """
-        # Cannot be already installed in another stock item!
-        if self.belongs_to is not None:
-            return False
-
         # If the quantity is less than the stock item, split the stock!
         stock_item = other_item.splitStock(quantity, None, user)
 
