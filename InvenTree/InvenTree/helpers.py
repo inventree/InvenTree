@@ -17,6 +17,7 @@ from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
+from django.db.utils import OperationalError, ProgrammingError
 from django.http import StreamingHttpResponse
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
@@ -108,7 +109,12 @@ def construct_absolute_url(*arg, **kwargs):
 
     if not site_url:
         # Otherwise, try to use the InvenTree setting
-        site_url = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+        try:
+            site_url = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
+        except ProgrammingError:
+            pass
+        except OperationalError:
+            pass
 
     if not site_url:
         # Otherwise, try to use the current request
@@ -129,6 +135,11 @@ def construct_absolute_url(*arg, **kwargs):
         relative_url = relative_url[1:]
 
     return f"{site_url}/{relative_url}"
+
+
+def get_base_url(**kwargs):
+    """Return the base URL for the InvenTree server"""
+    return construct_absolute_url('', **kwargs)
 
 
 def download_image_from_url(remote_url, timeout=2.5):
