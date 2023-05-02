@@ -17,6 +17,7 @@ from pathlib import Path
 
 import django.conf.locale
 import django.core.exceptions
+from django.core.validators import URLValidator
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
@@ -910,6 +911,13 @@ PLUGIN_FILE_CHECKED = False                                                     
 
 # Site URL can be specified statically, or via a run-time setting
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
+
+if SITE_URL:
+    logger.info(f"Site URL: {SITE_URL}")
+
+    # Check that the site URL is valid
+    validator = URLValidator()
+    validator(SITE_URL)
 
 # User interface customization values
 CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)
