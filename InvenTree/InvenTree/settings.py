@@ -908,6 +908,9 @@ PLUGIN_TESTING_EVENTS = False                                                   
 PLUGIN_RETRY = get_setting('INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5)                                 # How often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False                                                                             # Was the plugin file checked?
 
+# Site URL can be specified statically, or via a run-time setting
+SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
+
 # User interface customization values
 CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)
 CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
