@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-02 10:05+0000\n"
-"PO-Revision-Date: 2023-04-26 19:59\n"
+"PO-Revision-Date: 2023-05-02 11:23\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -3727,10 +3727,8 @@ msgstr "Elimina Azienda"
 #: report/templates/report/inventree_so_report_base.html:40
 #: report/templates/report/inventree_test_report_base.html:84
 #: report/templates/report/inventree_test_report_base.html:163
-#, fuzzy
-#| msgid "Part Name"
 msgid "Part image"
-msgstr "Nome Articolo"
+msgstr ""
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:12
@@ -4230,10 +4228,8 @@ msgstr "Articolo Filtri di ricerca (elenco separato da virgole key=coppia di val
 #: label/templates/label/stockitem/qr.html:21
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
-#, fuzzy
-#| msgid "Show QR Code"
 msgid "QC Code"
-msgstr "Mostra QR Code"
+msgstr ""
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
@@ -6723,10 +6719,8 @@ msgid "Link Barcode to Part"
 msgstr "Collega il codice a barre all'Articolo"
 
 #: part/templates/part/part_base.html:474 templates/js/translated/part.js:1838
-#, fuzzy
-#| msgid "Sub part"
 msgid "part"
-msgstr "Articolo subordinato"
+msgstr ""
 
 #: part/templates/part/part_base.html:514
 msgid "Calculate"
@@ -8085,10 +8079,8 @@ msgstr "Nessun inventario eseguito"
 
 #: stock/templates/stock/item_base.html:497
 #: templates/js/translated/stock.js:1728
-#, fuzzy
-#| msgid "Edit stock item"
 msgid "stock item"
-msgstr "Modifica elemento di magazzino"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:522
 msgid "Edit Stock Status"
@@ -8194,10 +8186,8 @@ msgstr "Nuova Posizione"
 
 #: stock/templates/stock/location.html:287
 #: templates/js/translated/stock.js:2384
-#, fuzzy
-#| msgid "Stock Location"
 msgid "stock location"
-msgstr "Ubicazione magazzino"
+msgstr ""
 
 #: stock/templates/stock/location.html:304
 msgid "Scanned stock container into this location"
@@ -9105,10 +9095,8 @@ msgid "copy version information"
 msgstr "copia informazioni versione"
 
 #: templates/account/base.html:66 templates/navbar.html:17
-#, fuzzy
-#| msgid "InvenTree News"
 msgid "InvenTree logo"
-msgstr "Novità InvenTree"
+msgstr ""
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:9
@@ -9895,16 +9883,12 @@ msgid "Location not specified"
 msgstr "Posizione non specificata"
 
 #: templates/js/translated/build.js:893
-#, fuzzy
-#| msgid "Build output"
 msgid "build output"
-msgstr "Genera Output"
+msgstr ""
 
 #: templates/js/translated/build.js:894
-#, fuzzy
-#| msgid "Build output"
 msgid "build outputs"
-msgstr "Genera Output"
+msgstr ""
 
 #: templates/js/translated/build.js:1212
 msgid "No active build outputs found"
@@ -10368,10 +10352,8 @@ msgid "Export to PDF"
 msgstr "Esporta in PDF"
 
 #: templates/js/translated/label.js:102
-#, fuzzy
-#| msgid "Rejected"
 msgid "selected"
-msgstr "Respinto"
+msgstr ""
 
 #: templates/js/translated/label.js:110 templates/js/translated/label.js:127
 msgid "Select Label Template"
@@ -10760,10 +10742,8 @@ msgid "No parts found"
 msgstr "Nessun articolo trovato"
 
 #: templates/js/translated/part.js:1839
-#, fuzzy
-#| msgid "Parts"
 msgid "parts"
-msgstr "Articoli"
+msgstr ""
 
 #: templates/js/translated/part.js:1917
 msgid "No category"
@@ -10795,10 +10775,8 @@ msgid "Category is required"
 msgstr "Carica Sotto Categorie"
 
 #: templates/js/translated/part.js:2236
-#, fuzzy
-#| msgid "No sales orders found"
 msgid "No subcategories found"
-msgstr "Non sono state trovati ordini di vendita"
+msgstr ""
 
 #: templates/js/translated/part.js:2272 templates/js/translated/stock.js:2503
 msgid "Display as tree"
@@ -11669,10 +11647,8 @@ msgid "No stock location set"
 msgstr "Nessuna giacenza impostata"
 
 #: templates/js/translated/stock.js:1729
-#, fuzzy
-#| msgid "Stock Items"
 msgid "stock items"
-msgstr "Articoli in magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:1833
 msgid "Stock item is in production"
@@ -11752,10 +11728,8 @@ msgid "Status code must be selected"
 msgstr "Il codice di stato deve essere selezionato"
 
 #: templates/js/translated/stock.js:2385
-#, fuzzy
-#| msgid "Stock Locations"
 msgid "stock locations"
-msgstr "Posizioni magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:2542
 msgid "Load Subloactions"
@@ -12268,11 +12242,9 @@ msgstr "Continua"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/stats.html:13
@@ -12451,5 +12423,3 @@ msgstr "Permessi per modificare gli elementi"
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
 
-#~ msgid "stock items selected"
-#~ msgstr "elemento stock creato"
