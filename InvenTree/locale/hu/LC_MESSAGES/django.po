@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-02 10:05+0000\n"
-"PO-Revision-Date: 2023-04-26 19:59\n"
+"PO-Revision-Date: 2023-05-02 11:23\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1309,8 +1309,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:388
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:457
@@ -1331,7 +1330,7 @@ msgstr "A nem befejezett gyártási kimenetek törlése"
 
 #: build/serializers.py:492
 msgid "Not permitted"
-msgstr ""
+msgstr "Nem engedélyezett"
 
 #: build/serializers.py:493
 msgid "Accept as consumed by this build order"
@@ -2791,11 +2790,11 @@ msgstr "Nincs nyomtató (nyomtatás PDF-be)"
 
 #: common/models.py:1746
 msgid "Hide inactive parts"
-msgstr ""
+msgstr "Inaktív alkatrészek elrejtése"
 
 #: common/models.py:1747
 msgid "Hide inactive parts in results displayed on the homepage"
-msgstr ""
+msgstr "Nem aktív alkatrészek elrejtése a kezdőlapon"
 
 #: common/models.py:1753
 msgid "Show subscribed parts"
@@ -3729,10 +3728,8 @@ msgstr "Cég törlése"
 #: report/templates/report/inventree_so_report_base.html:40
 #: report/templates/report/inventree_test_report_base.html:84
 #: report/templates/report/inventree_test_report_base.html:163
-#, fuzzy
-#| msgid "Part Name"
 msgid "Part image"
-msgstr "Alkatrész neve"
+msgstr ""
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:12
@@ -4232,10 +4229,8 @@ msgstr "Alkatrész lekérdezés szűrők (vesszővel elválasztott kulcs=érték
 #: label/templates/label/stockitem/qr.html:21
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
-#, fuzzy
-#| msgid "Show QR Code"
 msgid "QC Code"
-msgstr "QR kód megjelenítése"
+msgstr ""
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
@@ -4280,11 +4275,11 @@ msgstr "A rendelés teljes ára"
 
 #: order/models.py:75 order/serializers.py:48
 msgid "Order Currency"
-msgstr ""
+msgstr "Megrendelés pénzneme"
 
 #: order/models.py:77 order/serializers.py:49
 msgid "Currency for this order (leave blank to use company default)"
-msgstr ""
+msgstr "Megrendeléshez használt pénznem (hagyd üresen a cég alapértelmezett pénznemének használatához)"
 
 #: order/models.py:206
 msgid "Contact does not match selected company"
@@ -6725,10 +6720,8 @@ msgid "Link Barcode to Part"
 msgstr "Vonalkód hozzárendelése az alkatrészhez"
 
 #: part/templates/part/part_base.html:474 templates/js/translated/part.js:1838
-#, fuzzy
-#| msgid "Sub part"
 msgid "part"
-msgstr "Al alkatrész"
+msgstr ""
 
 #: part/templates/part/part_base.html:514
 msgid "Calculate"
@@ -8087,10 +8080,8 @@ msgstr "Még nem volt leltározva"
 
 #: stock/templates/stock/item_base.html:497
 #: templates/js/translated/stock.js:1728
-#, fuzzy
-#| msgid "Edit stock item"
 msgid "stock item"
-msgstr "Készlet tétel szerkesztése"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:522
 msgid "Edit Stock Status"
@@ -8196,10 +8187,8 @@ msgstr "Új hely"
 
 #: stock/templates/stock/location.html:287
 #: templates/js/translated/stock.js:2384
-#, fuzzy
-#| msgid "Stock Location"
 msgid "stock location"
-msgstr "Készlet hely"
+msgstr ""
 
 #: stock/templates/stock/location.html:304
 msgid "Scanned stock container into this location"
@@ -9107,10 +9096,8 @@ msgid "copy version information"
 msgstr "verzió információk másolása"
 
 #: templates/account/base.html:66 templates/navbar.html:17
-#, fuzzy
-#| msgid "InvenTree News"
 msgid "InvenTree logo"
-msgstr "InvenTree hírek"
+msgstr ""
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:9
@@ -9897,16 +9884,12 @@ msgid "Location not specified"
 msgstr "Hely nincs megadva"
 
 #: templates/js/translated/build.js:893
-#, fuzzy
-#| msgid "Build output"
 msgid "build output"
-msgstr "Gyártás kimenet"
+msgstr ""
 
 #: templates/js/translated/build.js:894
-#, fuzzy
-#| msgid "Build output"
 msgid "build outputs"
-msgstr "Gyártás kimenet"
+msgstr ""
 
 #: templates/js/translated/build.js:1212
 msgid "No active build outputs found"
@@ -10370,10 +10353,8 @@ msgid "Export to PDF"
 msgstr "Exportálás PDF-be"
 
 #: templates/js/translated/label.js:102
-#, fuzzy
-#| msgid "Rejected"
 msgid "selected"
-msgstr "Elutasított"
+msgstr ""
 
 #: templates/js/translated/label.js:110 templates/js/translated/label.js:127
 msgid "Select Label Template"
@@ -10762,10 +10743,8 @@ msgid "No parts found"
 msgstr "Nincs alkatrész"
 
 #: templates/js/translated/part.js:1839
-#, fuzzy
-#| msgid "Parts"
 msgid "parts"
-msgstr "Alkatrészek"
+msgstr ""
 
 #: templates/js/translated/part.js:1917
 msgid "No category"
@@ -10797,10 +10776,8 @@ msgid "Category is required"
 msgstr "Kategória megadása kötelező"
 
 #: templates/js/translated/part.js:2236
-#, fuzzy
-#| msgid "No sales orders found"
 msgid "No subcategories found"
-msgstr "Nem található vevői rendelés"
+msgstr "Nem találhatóak alkategóriák"
 
 #: templates/js/translated/part.js:2272 templates/js/translated/stock.js:2503
 msgid "Display as tree"
@@ -11671,10 +11648,8 @@ msgid "No stock location set"
 msgstr "Nincs hely megadva"
 
 #: templates/js/translated/stock.js:1729
-#, fuzzy
-#| msgid "Stock Items"
 msgid "stock items"
-msgstr "Készlet tételek"
+msgstr ""
 
 #: templates/js/translated/stock.js:1833
 msgid "Stock item is in production"
@@ -11754,10 +11729,8 @@ msgid "Status code must be selected"
 msgstr "Státuszkódot ki kell választani"
 
 #: templates/js/translated/stock.js:2385
-#, fuzzy
-#| msgid "Stock Locations"
 msgid "stock locations"
-msgstr "Készlethelyek"
+msgstr ""
 
 #: templates/js/translated/stock.js:2542
 msgid "Load Subloactions"
@@ -12270,8 +12243,7 @@ msgstr "Tovább"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "A %(provider_name)s felhasználói fiókodat fogod használni a %(site_name)s belépéshez.<br>Kérlek töltsd ki az alábbi adatokat:"
 
@@ -12451,5 +12423,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "stock items selected"
-#~ msgstr "kiválasztott készlet tételek"
