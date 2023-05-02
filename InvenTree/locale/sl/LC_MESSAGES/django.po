@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-02 10:05+0000\n"
-"PO-Revision-Date: 2023-04-26 19:59\n"
+"PO-Revision-Date: 2023-05-02 11:23\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -8079,10 +8079,8 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:497
 #: templates/js/translated/stock.js:1728
-#, fuzzy
-#| msgid "Stock Item"
 msgid "stock item"
-msgstr "Postavka zaloge"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:522
 msgid "Edit Stock Status"
@@ -8188,10 +8186,8 @@ msgstr ""
 
 #: stock/templates/stock/location.html:287
 #: templates/js/translated/stock.js:2384
-#, fuzzy
-#| msgid "Source Location"
 msgid "stock location"
-msgstr "Lokacija vira"
+msgstr ""
 
 #: stock/templates/stock/location.html:304
 msgid "Scanned stock container into this location"
@@ -9099,10 +9095,8 @@ msgid "copy version information"
 msgstr ""
 
 #: templates/account/base.html:66 templates/navbar.html:17
-#, fuzzy
-#| msgid "About InvenTree"
 msgid "InvenTree logo"
-msgstr "O InvenTree"
+msgstr ""
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:9
@@ -9889,16 +9883,12 @@ msgid "Location not specified"
 msgstr ""
 
 #: templates/js/translated/build.js:893
-#, fuzzy
-#| msgid "Build Output"
 msgid "build output"
-msgstr "Izgradnja"
+msgstr ""
 
 #: templates/js/translated/build.js:894
-#, fuzzy
-#| msgid "Build Output"
 msgid "build outputs"
-msgstr "Izgradnja"
+msgstr ""
 
 #: templates/js/translated/build.js:1212
 msgid "No active build outputs found"
@@ -10362,10 +10352,8 @@ msgid "Export to PDF"
 msgstr ""
 
 #: templates/js/translated/label.js:102
-#, fuzzy
-#| msgid "Rejected"
 msgid "selected"
-msgstr "Zavrnjeno"
+msgstr ""
 
 #: templates/js/translated/label.js:110 templates/js/translated/label.js:127
 msgid "Select Label Template"
@@ -10787,10 +10775,8 @@ msgid "Category is required"
 msgstr ""
 
 #: templates/js/translated/part.js:2236
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No subcategories found"
-msgstr "Serijske številke niso najdene"
+msgstr ""
 
 #: templates/js/translated/part.js:2272 templates/js/translated/stock.js:2503
 msgid "Display as tree"
@@ -11661,10 +11647,8 @@ msgid "No stock location set"
 msgstr ""
 
 #: templates/js/translated/stock.js:1729
-#, fuzzy
-#| msgid "Stock Item"
 msgid "stock items"
-msgstr "Postavka zaloge"
+msgstr ""
 
 #: templates/js/translated/stock.js:1833
 msgid "Stock item is in production"
@@ -11744,10 +11728,8 @@ msgid "Status code must be selected"
 msgstr ""
 
 #: templates/js/translated/stock.js:2385
-#, fuzzy
-#| msgid "Source Location"
 msgid "stock locations"
-msgstr "Lokacija vira"
+msgstr ""
 
 #: templates/js/translated/stock.js:2542
 msgid "Load Subloactions"
@@ -12260,8 +12242,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12440,3 +12421,4 @@ msgstr ""
 #: users/models.py:245
 msgid "Permission to delete items"
 msgstr ""
+
