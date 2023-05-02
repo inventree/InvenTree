@@ -56,6 +56,15 @@ The following basic options are available:
 | INVENTREE_TIMZONE | timezome | Server timezone | UTC |
 | ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
+| INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
+
+### Base URL Configuration
+
+The base URL of the InvenTree site is required for constructing absolute URLs in a number of circumstances. To construct a URL, the InvenTree iterates through the following options in decreasing order of importance:
+
+1. Static configuration (i.e. set using environment variable or configuration file as above)
+2. Global settings (i.e. configured at run-time in the [global settings](../settings/global.md))
+3. Using the hostname supplied by the user request
 
 ## Administrator Account
 
