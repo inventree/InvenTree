@@ -192,8 +192,8 @@
         <div id='variant-button-toolbar'>
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
+                    {% include "filter_list.html" with id="variants" %}
                 </div>
-                {% include "filter_list.html" with id="variants" %}
             </div>
         </div>
 
@@ -218,7 +218,7 @@
     </div>
     <div class='panel-content'>
         <div id='param-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
+            <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
                     {% include "filter_list.html" with id="parameters" %}
                 </div>
