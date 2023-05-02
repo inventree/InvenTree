@@ -3103,7 +3103,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
         data = response.data[0]
 
-        self.assertEqual(data['part_count'], 14)
+        self.assertEqual(data['part_count'], 8)
         self.assertEqual(data['user'], None)
         self.assertTrue(data['report'].endswith('.csv'))
 
