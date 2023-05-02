@@ -3,7 +3,6 @@
 from django.contrib.auth import authenticate, login
 from django.db import transaction
 from django.db.models import F, Q
-from django.db.utils import ProgrammingError
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
@@ -20,7 +19,8 @@ from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
-from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import (DownloadFile, construct_absolute_url,
+                               get_base_url, str2bool)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
@@ -1371,11 +1371,8 @@ class OrderCalendarExport(ICalFeed):
         whether or not to show completed orders. Defaults to false
     """
 
-    try:
-        instance_url = InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
-    except ProgrammingError:  # pragma: no cover
-        # database is not initialized yet
-        instance_url = ''
+    instance_url = get_base_url()
+
     instance_url = instance_url.replace("http://", "").replace("https://", "")
     timezone = settings.TIME_ZONE
     file_name = "calendar.ics"
@@ -1507,9 +1504,7 @@ class OrderCalendarExport(ICalFeed):
     def item_link(self, item):
         """Set the item link."""
 
-        # Do not use instance_url as here, as the protocol needs to be included
-        site_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL")
-        return f'{site_url}{item.get_absolute_url()}'
+        return construct_absolute_url(item.get_absolute_url())
 
 
 order_api_urls = [

@@ -222,8 +222,8 @@ def inventree_splash(**kwargs):
 
 @register.simple_tag()
 def inventree_base_url(*args, **kwargs):
-    """Return the INVENTREE_BASE_URL setting."""
-    return InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+    """Return the base URL of the InvenTree server"""
+    return InvenTree.helpers.get_base_url()
 
 
 @register.simple_tag()
