@@ -1660,9 +1660,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         if location is None:
             # TODO - Raise appropriate error (cannot move to blank location)
             return False
-        elif self.location and (location.pk == self.location.pk) and (quantity == self.quantity):
-            # TODO - Raise appropriate error (cannot move to same location)
-            return False
 
         # Test for a partial movement
         if quantity < self.quantity:
