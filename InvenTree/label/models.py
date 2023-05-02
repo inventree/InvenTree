@@ -163,6 +163,37 @@ class LabelTemplate(MetadataMixin, models.Model):
         max_length=100,
     )
 
+    multipage = models.BooleanField(
+        default=False,
+        verbose_name=_('Print multiple labels to a single page'),
+    )
+
+    page_width = models.FloatField(
+        default=210,
+        verbose_name=_('Width of one page [mm]'),
+        help_text=_("The number of label columns per page will be automatically calculated from the label's width"),
+        validators=[MinValueValidator(2)]
+    )
+
+    page_height = models.FloatField(
+        default=297,
+        verbose_name=_('Height of one page [mm]'),
+        help_text=_("The number of label rows per page will be automatically calculated from the label's height"),
+        validators=[MinValueValidator(2)]
+    )
+
+    multipage_border = models.CharField(
+        choices=[
+            ('0.5mm solid #000', _('Solid')),
+            ('0.5mm dotted #000', _('Dotted')),
+            ('', _('No border')),
+        ],
+        default='0.5mm solid #000',
+        max_length=250,
+        verbose_name=_('Border style'),
+        blank=True,
+    )
+
     @property
     def template_name(self):
         """Returns the file system path to the template file.
@@ -213,6 +244,23 @@ class LabelTemplate(MetadataMixin, models.Model):
         for plugin in plugins:
             # Let each plugin add its own context data
             plugin.add_label_context(self, self.object_to_print, request, context)
+        return context
+
+    def context_multipage(self, request, content):
+        """Provides context data to the multipage template."""
+        context = {
+            'multipage_border': self.multipage_border,
+            'page_width': self.page_width,
+            'page_height': self.page_height,
+            'label_width': self.width,
+            'label_height': self.height,
+            'content': content}
+        # Pass the context through to any registered plugins
+        plugins = registry.with_mixin('report')
+
+        for plugin in plugins:
+            # Let each plugin add its own context data
+            plugin.add_label_context(self, self.object_to_print, request, context)
 
         return context
 
@@ -225,6 +273,53 @@ class LabelTemplate(MetadataMixin, models.Model):
 
     def render(self, request, **kwargs):
         """Render the label template to a PDF file.
+
+        Uses django-weasyprint plugin to render HTML template
+        """
+        wp = WeasyprintLabelMixin(
+            request,
+            self.template_name,
+            base_url=request.build_absolute_uri("/"),
+            presentational_hints=True,
+            filename=self.generate_filename(request),
+            **kwargs
+        )
+
+        return wp.render_to_response(
+            self.context(request),
+            **kwargs
+        )
+
+    def render_multipage_as_string(self, request, multipage_table, **kwargs):
+        """Render the multipage tables to a HTML string with the multipage template.
+
+        Useful for debug mode (viewing generated code)
+        """
+        return render_to_string(
+            "label/multipage_label_base.html",
+            self.context_multipage(request, multipage_table), request)
+
+    def render_multipage(self, request, multipage_table, **kwargs):
+        """Render the multipage tables to a HTML string with the multipage template.
+
+        Uses django-weasyprint plugin to render HTML template
+        """
+        wp = WeasyprintLabelMixin(
+            request,
+            "label/multipage_label_base.html",
+            base_url=request.build_absolute_uri("/"),
+            presentational_hints=True,
+            filename="multipage_label.pdf",
+            **kwargs
+        )
+        ret = wp.render_to_response(
+            self.context_multipage(request, multipage_table),
+            **kwargs
+        )
+        return ret
+
+    def render_from_html(self, request, **kwargs):
+        """Render a pre-rendered HTML data to a PDF file.
 
         Uses django-weasyprint plugin to render HTML template
         """

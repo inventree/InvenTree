@@ -1,0 +1,49 @@
+{% load l10n %}
+
+<head>
+    <style>
+        {% localize off %}
+        @page {
+            size: {{ page_width }}mm {{ page_height }}mm;
+            margin: 0mm;
+            padding: 0mm;
+        }
+
+        .main-table {
+            page-break-after: always;
+            table-layout: fixed;
+            width: {{ page_width }}mm;
+            border-spacing: 0mm 0mm;
+        }
+
+        .main-table-cell {
+{% if multipage_border|length > 0 %}
+            border-bottom: {{ multipage_border }};
+            border-left: {{ multipage_border }};
+{% endif %}
+            width: {{ label_width }}mm;
+            height: {{ label_height }}mm;
+            padding: 0mm;
+            position: relative;
+            top: 0mm;
+            left: 0mm;
+        }
+{% if multipage_border|length > 0 %}
+        .main-table tr:first-child td {
+            border-top: {{ multipage_border }};
+        }
+
+        .main-table-row> td:last-child {
+            border-right: {{ multipage_border }};
+        }
+{% endif %}
+
+        body {
+            margin: 0mm !important;
+        }
+        {% endlocalize %}
+    </style>
+</head>
+<body>
+    {{ content|safe }}
+</body>

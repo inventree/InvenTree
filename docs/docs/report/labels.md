@@ -41,7 +41,7 @@ Below is a reasonably simple example of a label template which demonstrates much
         width: 75mm;
         height: 24mm;
         padding: 1mm;
-	margin: 0px 0px 0px 0px;
+        margin: 0px 0px 0px 0px;
     }
 
     .location {
@@ -94,6 +94,7 @@ Some points of note:
 - Normal per-class and per-element styling is supported
 - Absolute positioning of elements is supported via the `position` CSS directive
 - If text is too long to fit on a given label, the `text-overflow` directive can be used
+- Avoid using `position: fixed` css if you are intend to print multiple labels to a single page
 
 ### Context Data
 
