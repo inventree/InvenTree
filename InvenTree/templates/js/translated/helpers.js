@@ -23,6 +23,7 @@
     yesNoLabel,
     withTitle,
     wrapButtons,
+    renderClipboard,
 */
 
 /* exported
@@ -376,7 +377,13 @@ function renderLink(text, url, options={}) {
         extras += ` download`;
     }
 
-    return `<a href="${url}" ${extras}>${text}</a>`;
+    let suffix = '';
+    if (options.external) {
+        extras += ` target="_blank" rel="noopener noreferrer"`;
+
+        suffix = ` <i class="fas fa-external-link-alt fa-xs d-none d-xl-inline"></i>`;
+    }
+    return `<a href="${url}" ${extras}>${text}${suffix}</a>`;
 }
 
 
@@ -515,4 +522,26 @@ function sanitizeInputString(s, options={}) {
     s = s.trim();
 
     return s;
+}
+
+/*
+ * Inserts HTML data equal to clip.html into input string
+ * Enables insertion of clipboard icons in dynamic tables
+ *
+ * clipString relies on ClipboardJS in the same manner as clip.html
+ * Thus, this functionality will break if the call to
+ * attachClipboard('.clip-btn') in script/inventree/inventree.js is altered
+ */
+function renderClipboard(s, prepend=false) {
+    if (!s || typeof s != 'string') {
+        return s;
+    }
+
+    let clipString = `<span class="d-none d-xl-inline"><button class="btn clip-btn" type="button" data-bs-toggle='tooltip' title='{% trans "copy to clipboard" %}'><em class="fas fa-copy"></em></button></span>`;
+
+    if (prepend === true) {
+        return `<div class="flex-cell">${clipString+s}</div>`;
+    } else {
+        return `<div class="flex-cell">${s+clipString}</div>`;
+    }
 }

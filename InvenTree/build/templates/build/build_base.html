@@ -7,7 +7,7 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Build Order" %} - {{ build }}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumbs %}
 <li class='breadcrumb-item'><a href='{% url "build-index" %}'>{% trans "Build Orders" %}</a></li>
@@ -25,7 +25,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block heading %}
 {% trans "Build Order" %} {{ build }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 <!-- Admin Display -->
@@ -147,7 +147,7 @@ src="{% static 'img/blank_image.png' %}"
     {% endif %}
     {% endif %}
 </div>
-{% endblock %}
+{% endblock details %}
 
 {% block details_right %}
 <table class='table table-striped table-condensed'>
@@ -219,7 +219,7 @@ src="{% static 'img/blank_image.png' %}"
     </tr>
     {% endif %}
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 {% block page_data %}
 <h3>
@@ -231,8 +231,7 @@ src="{% static 'img/blank_image.png' %}"
 <hr>
 <p>{{ build.title }}</p>
 
-
-{% endblock %}
+{% endblock page_data %}
 
 {% block js_ready %}
 
@@ -288,7 +287,7 @@ src="{% static 'img/blank_image.png' %}"
     $('#show-qr-code').click(function() {
         showQRDialog(
             '{% trans "Build Order QR Code" %}',
-            '{"build": {{ build.pk }}}'
+            '{"build": {{ build.pk }} }'
         );
     });
 
@@ -312,4 +311,4 @@ src="{% static 'img/blank_image.png' %}"
     {% endif %}
     {% endif %}
 
-{% endblock %}
+{% endblock js_ready %}

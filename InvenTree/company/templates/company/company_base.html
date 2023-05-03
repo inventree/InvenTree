@@ -6,11 +6,11 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Company" %} - {{ company.name }}
-{% endblock %}
+{% endblock page_title %}
 
 {% block heading %}
 {% trans "Company" %}: {{ company.name }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 <!-- Admin View -->
@@ -45,7 +45,7 @@
 
 {% block thumbnail %}
 <div class='dropzone part-thumb-container' id='company-thumb'>
-    <img class="part-thumb" id='company-image'
+    <img class="part-thumb" id='company-image' alt="{% trans 'Part image' %}"
     {% if company.image %}
     src="{{ company.image.preview.url }}"
     {% else %}
@@ -62,7 +62,7 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock thumbnail %}
 
 {% block details %}
 <table class='table table-striped table-condensed'>
@@ -74,7 +74,7 @@
     </tr>
     <tr>
         <td><span class='fas fa-industry'></span></td>
-        <td>{%trans "Manufacturer" %}</td>
+        <td>{% trans "Manufacturer" %}</td>
         <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
     </tr>
     <tr>
@@ -89,7 +89,7 @@
     </tr>
 </table>
 
-{% endblock %}
+{% endblock details %}
 
 {% block details_right %}
 
@@ -99,7 +99,7 @@
 <tr>
     <td><span class='fas fa-globe'></span></td>
     <td>{% trans "Website" %}</td>
-    <td><a href="{{ company.website }}">{{ company.website }}</a>{% include "clip.html"%}</td>
+    <td><a href="{{ company.website }}">{{ company.website }}</a>{% include "clip.html" %}</td>
 </tr>
 {% endif %}
 <tr>
@@ -117,7 +117,7 @@
 <tr>
     <td><span class='fas fa-map-marked-alt'></span></td>
     <td>{% trans "Address" %}</td>
-    <td>{{ company.address }}{% include "clip.html"%}</td>
+    <td>{{ company.address }}{% include "clip.html" %}</td>
 </tr>
 {% endif %}
 {% if company.phone %}
@@ -138,11 +138,11 @@
 <tr>
     <td><span class='fas fa-user'></span></td>
     <td>{% trans "Contact" %}</td>
-    <td>{{ company.contact }}{% include "clip.html"%}</td>
+    <td>{{ company.contact }}{% include "clip.html" %}</td>
 </tr>
 {% endif %}
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -262,4 +262,4 @@
         });
     }
 
-{% endblock %}
+{% endblock js_ready %}

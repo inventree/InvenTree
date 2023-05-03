@@ -211,7 +211,8 @@ class LabelPrintMixin(LabelFilterMixin):
             label_names.append(label_name)
             label_instances.append(label)
 
-            if debug_mode:
+            if debug_mode and plugin is None:
+                # Note that debug mode is only supported when not using a plugin
                 outputs.append(label.render_as_string(request))
             else:
                 outputs.append(label.render(request))

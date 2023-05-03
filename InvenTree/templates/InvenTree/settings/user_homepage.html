@@ -3,11 +3,11 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}user-home{% endblock %}
+{% block label %}user-home{% endblock label %}
 
 {% block heading %}
 {% trans "Home Page Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -42,4 +42,4 @@
         </tbody>
     </table>
 </div>
-{% endblock %}
+{% endblock content %}

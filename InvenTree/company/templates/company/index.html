@@ -6,11 +6,11 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Supplier List" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block heading %}
 {{ title }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if pagetype == 'manufacturers' and roles.purchase_order.add or pagetype == 'suppliers' and roles.purchase_order.add or pagetype == 'customers' and roles.sales_order.add %}
@@ -18,7 +18,7 @@
     <span class='fas fa-plus-circle'></span> {{ button_text }}
 </button>
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block page_info %}
 
@@ -32,7 +32,7 @@
     </table>
 </div>
 
-{% endblock %}
+{% endblock page_info %}
 {% block js_ready %}
 {{ block.super }}
 
@@ -59,4 +59,4 @@
         }
     );
 
-{% endblock %}
+{% endblock js_ready %}

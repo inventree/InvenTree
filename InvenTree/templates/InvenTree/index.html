@@ -5,21 +5,21 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Index" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block sidebar %}
 <!-- Sidebar data is filled dynamically for the index page-->
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
 
 <div id='detail-panels'>
 </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 
@@ -203,7 +203,6 @@ loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
 });
 {% endif %}
 
-
 {% if expiry %}
 
 {% if setting_stock_expired %}
@@ -349,4 +348,4 @@ enableSidebar(
     }
 );
 
-{% endblock %}
+{% endblock js_ready %}
