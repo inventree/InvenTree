@@ -6,11 +6,11 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Build Orders" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block heading %}
 {% trans "Build Orders" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if roles.build.add %}
@@ -18,7 +18,7 @@
     <span class='fas fa-tools'></span> {% trans "New Build Order" %}
 </button>
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block page_info %}
 
@@ -35,7 +35,7 @@
     </table>
 </div>
 
-{% endblock %}
+{% endblock page_info %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -48,4 +48,4 @@ loadBuildTable($("#build-table"), {
     locale: '{{ request.LANGUAGE_CODE }}',
 });
 
-{% endblock %}
+{% endblock js_ready %}

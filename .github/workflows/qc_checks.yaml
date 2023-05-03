@@ -76,22 +76,6 @@ jobs:
           python InvenTree/manage.py prerender
           npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
-  html:
-    name: Style [HTML]
-    runs-on: ubuntu-20.04
-
-    needs: pep_style
-
-    steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
-        uses: ./.github/actions/setup
-        with:
-          npm: true
-          install: true
-      - name: Check HTML Files
-        run: npx markuplint **/templates/*.html
-
   pre-commit:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
@@ -194,7 +178,7 @@ jobs:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'javascript', 'html', 'pre-commit' ]
+    needs: [ 'javascript', 'pre-commit' ]
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
@@ -227,7 +211,7 @@ jobs:
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'javascript', 'html', 'pre-commit' ]
+    needs: [ 'javascript', 'pre-commit' ]
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -271,7 +255,7 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'javascript', 'html', 'pre-commit' ]
+    needs: [ 'javascript', 'pre-commit' ]
     if: github.event_name == 'push'
 
     env:

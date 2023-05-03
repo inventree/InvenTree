@@ -5,7 +5,7 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Manufacturer Part" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block sidebar %}
 {% include "company/manufacturer_part_sidebar.html" %}
@@ -48,7 +48,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb'
+<img class='part-thumb' alt="{% trans 'Part image' %}"
 {% if part.part.image %}
 src='{{ part.part.image.preview.url }}'
 {% else %}
@@ -65,7 +65,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Internal Part" %}</td>
         <td>
             {% if part.part %}
-            <a href="{% url 'part-detail' part.part.id %}?display=part-suppliers">{{ part.part.full_name }}</a>{% include "clip.html"%}
+            <a href="{% url 'part-detail' part.part.id %}?display=part-suppliers">{{ part.part.full_name }}</a>{% include "clip.html" %}
             {% endif %}
         </td>
     </tr>
@@ -73,7 +73,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td></td>
         <td>{% trans "Description" %}</td>
-        <td>{{ part.description }}{% include "clip.html"%}</td>
+        <td>{{ part.description }}{% include "clip.html" %}</td>
     </tr>
     {% endif %}
 </table>
@@ -90,7 +90,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Manufacturer" %}</td>
         <td>
             {% if part.manufacturer %}
-            <a href="{% url 'company-detail' part.manufacturer.id %}">{{ part.manufacturer.name }}</a>{% include "clip.html"%}
+            <a href="{% url 'company-detail' part.manufacturer.id %}">{{ part.manufacturer.name }}</a>{% include "clip.html" %}
             {% else %}
             <em>{% trans "No manufacturer information available" %}</em>
             {% endif %}
@@ -99,7 +99,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "MPN" %}</td>
-        <td>{{ part.MPN }}{% include "clip.html"%}</td>
+        <td>{{ part.MPN }}{% include "clip.html" %}</td>
     </tr>
     {% if part.link %}
     <tr>
@@ -191,8 +191,7 @@ src="{% static 'img/blank_image.png' %}"
     </div>
 </div>
 
-{% endblock %}
-
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -325,7 +324,7 @@ $('#delete-part').click(function() {
                         success: function() {
                             {% if part.manufacturer %}
                             window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
-                            {% else%}
+                            {% else %}
                             window.location.href = "{% url 'index' %}";
                             {% endif %}
                         }
@@ -338,4 +337,4 @@ $('#delete-part').click(function() {
 
 enableSidebar('manufacturerpart');
 
-{% endblock %}
+{% endblock js_ready %}

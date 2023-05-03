@@ -128,6 +128,24 @@ The various github actions can be found in the `./github/workflows` directory
 Sumbitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
 Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for python. Docstrings for general javascript code is encouraged! Docstyles are checked by `invoke style`.
 
+### Django templates
+
+Django are checked by [djlint](https://github.com/Riverside-Healthcare/djlint) through pre-commit.
+
+The following rules out of the [default set](https://djlint.com/docs/linter/) are not applied:
+```bash
+D018: (Django) Internal links should use the {% url ... %} pattern
+H006: Img tag should have height and width attributes
+H008: Attributes should be double quoted
+H021: Inline styles should be avoided
+H023: Do not use entity references
+H025: Tag seems to be an orphan
+H030: Consider adding a meta description
+H031: Consider adding meta keywords
+T002: Double quotes should be used in tags
+```
+
+
 ## Documentation
 
 New features or updates to existing features should be accompanied by user documentation.

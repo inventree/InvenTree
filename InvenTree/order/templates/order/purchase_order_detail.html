@@ -5,7 +5,6 @@
 {% load i18n %}
 {% load static %}
 
-
 {% block sidebar %}
 {% include 'order/po_sidebar.html' %}
 {% endblock sidebar %}
@@ -264,4 +263,4 @@ loadOrderTotal(
 
 enableSidebar('purchaseorder');
 
-{% endblock %}
+{% endblock js_ready %}
