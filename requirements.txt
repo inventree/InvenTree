@@ -68,6 +68,7 @@ django==3.2.18
     #   django-sql-utils
     #   django-sslserver
     #   django-stdimage
+    #   django-taggit
     #   django-user-sessions
     #   django-weasyprint
     #   django-xforwardedfor-middleware
@@ -124,6 +125,8 @@ django-sql-utils==0.6.1
 django-sslserver==0.22
     # via -r requirements.in
 django-stdimage==5.3.0
+    # via -r requirements.in
+django-taggit==3.1.0
     # via -r requirements.in
 django-user-sessions==2.0.0
     # via -r requirements.in

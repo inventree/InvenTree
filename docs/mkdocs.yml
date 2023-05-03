@@ -166,6 +166,7 @@ nav:
       - Installation: extend/plugins/install.md
       - Developing a Plugin: extend/how_to_plugin.md
       - Model Meatadata: extend/plugins/metadata.md
+      - Tags: extend/plugins/tags.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md
       - API Mixin: extend/plugins/api.md
