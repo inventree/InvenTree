@@ -62,9 +62,8 @@ class MetadataMixin(models.Model):
 
     def save(self, *args, **kwargs):
         """Save the model instance, and perform validation on the metadata field."""
-        self.clean()
-
         self.validate_metadata()
+        super().save(*args, **kwargs)
 
     def clean(self, *args, **kwargs):
         """Perform model validation on the metadata field."""
