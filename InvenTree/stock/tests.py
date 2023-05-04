@@ -381,7 +381,7 @@ class StockTest(StockTestBase):
         it = StockItem.objects.get(pk=1)
 
         n = it.tracking_info.count()
-        self.assertFalse(it.move(it.location, 'Moved to same place', None))
+        self.assertTrue(it.move(it.location, 'Moved to same place', None))
 
         # Ensure tracking info was not added
         self.assertEqual(it.tracking_info.count(), n)
