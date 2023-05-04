@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+{% block head_title %}{% trans "Sign Out" %}{% endblock head_title %}
 
 {% block content %}
 <h3>{% trans "Sign Out" %}</h3>
@@ -28,4 +28,4 @@
   </a>
 </div>
 
-{% endblock %}
+{% endblock content %}

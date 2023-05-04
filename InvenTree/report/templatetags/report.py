@@ -205,10 +205,7 @@ def logo_image(**kwargs):
 def internal_link(link, text):
     """Make a <a></a> href which points to an InvenTree URL.
 
-    Important Note: This only works if the INVENTREE_BASE_URL parameter is set!
-
-    If the INVENTREE_BASE_URL parameter is not configured,
-    the text will be returned (unlinked)
+    Uses the InvenTree.helpers.construct_absolute_url function to build the URL.
     """
     text = str(text)
 

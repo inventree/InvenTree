@@ -148,7 +148,7 @@ class InvenTreeConfig(AppConfig):
             try:
                 update_exchange_rates()
             except Exception as e:
-                logger.error(f"Error updating exchange rates: {e}")
+                logger.error(f"Error updating exchange rates: {e} ({type(e)})")
 
     def add_user_on_startup(self):
         """Add a user on startup."""

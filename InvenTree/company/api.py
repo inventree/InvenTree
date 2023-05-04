@@ -146,6 +146,8 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
             'manufacturer',
             'MPN',
             'part',
+            'tags__name',
+            'tags__slug',
         ]
 
     # Filter by 'active' status of linked part
@@ -163,6 +165,7 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
         'part',
         'manufacturer',
         'supplier_parts',
+        'tags',
     )
 
     serializer_class = ManufacturerPartSerializer
@@ -193,6 +196,8 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
         'part__IPN',
         'part__name',
         'part__description',
+        'tags__name',
+        'tags__slug',
     ]
 
 
@@ -303,6 +308,8 @@ class SupplierPartFilter(rest_filters.FilterSet):
             'part',
             'manufacturer_part',
             'SKU',
+            'tags__name',
+            'tags__slug',
         ]
 
     # Filter by 'active' status of linked part
@@ -323,7 +330,9 @@ class SupplierPartList(ListCreateDestroyAPIView):
     - POST: Create a new SupplierPart object
     """
 
-    queryset = SupplierPart.objects.all()
+    queryset = SupplierPart.objects.all().prefetch_related(
+        'tags',
+    )
     filterset_class = SupplierPartFilter
 
     def get_queryset(self, *args, **kwargs):
@@ -403,6 +412,8 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'part__name',
         'part__description',
         'part__keywords',
+        'tags__name',
+        'tags__slug',
     ]
 
 
