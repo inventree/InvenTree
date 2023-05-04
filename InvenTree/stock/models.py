@@ -1670,16 +1670,25 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
             return True
 
+        # Moving into the same location triggers a different history code
+        same_location = location == self.location
+
         self.location = location
 
         tracking_info = {}
 
+        tracking_code = StockHistoryCode.STOCK_MOVE
+
+        if same_location:
+            tracking_code = StockHistoryCode.STOCK_UPDATE
+        else:
+            tracking_info['location'] = location.pk
+
         self.add_tracking_entry(
-            StockHistoryCode.STOCK_MOVE,
+            tracking_code,
             user,
             notes=notes,
             deltas=tracking_info,
-            location=location,
         )
 
         self.save()
