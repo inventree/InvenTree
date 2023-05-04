@@ -2,12 +2,11 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}login{% endblock %}
-
+{% block label %}login{% endblock label %}
 
 {% block heading %}
 {% trans "Login Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -41,4 +40,4 @@
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}

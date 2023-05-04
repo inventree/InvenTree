@@ -1724,7 +1724,9 @@ function loadStockTable(table, options) {
         labels: {
             url: '{% url "api-stockitem-label-list" %}',
             key: 'item',
-        }
+        },
+        singular_name: '{% trans "stock item" %}',
+        plural_name: '{% trans "stock items" %}'
     });
 
     // Override the default values, or add new ones
@@ -1780,7 +1782,7 @@ function loadStockTable(table, options) {
         formatter: function(value, row) {
             var ipn = row.part_detail.IPN;
             if (ipn) {
-                return withTitle(shortenString(ipn), ipn);
+                return renderClipboard(withTitle(shortenString(ipn), ipn));
             } else {
                 return '-';
             }
@@ -2012,7 +2014,7 @@ function loadStockTable(table, options) {
                 text = `<i>{% trans "Supplier part not specified" %}</i>`;
             }
 
-            return renderLink(text, link);
+            return renderClipboard(renderLink(text, link));
         }
     };
 
@@ -2378,7 +2380,9 @@ function loadStockLocationTable(table, options) {
         labels: {
             url: '{% url "api-stocklocation-label-list" %}',
             key: 'location'
-        }
+        },
+        singular_name: '{% trans "stock location" %}',
+        plural_name: '{% trans "stock locations" %}',
     });
 
     for (var key in params) {

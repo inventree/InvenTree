@@ -892,7 +892,9 @@ function loadBuildOutputTable(build_info, options={}) {
         labels: {
             url: '{% url "api-stockitem-label-list" %}',
             key: 'item',
-        }
+        },
+        singular_name: '{% trans "build output" %}',
+        plural_name: '{% trans "build outputs" %}',
     });
 
     function setupBuildOutputButtonCallbacks() {

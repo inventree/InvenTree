@@ -1095,3 +1095,9 @@ a {
     width:  100%;
     text-align: left;
 }
+
+.flex-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

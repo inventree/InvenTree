@@ -7,7 +7,7 @@
 {% url "po-detail" order.id as url %}
 {% trans "Return to Orders" as text %}
 {% include "sidebar_item.html" with url=url text=text icon="fa-undo" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
     {% trans "Upload File for Purchase Order" as header_text %}
@@ -60,9 +60,9 @@
             </div>
         </div>
     {% endwith %}
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
 
-{% endblock %}
+{% endblock js_ready %}

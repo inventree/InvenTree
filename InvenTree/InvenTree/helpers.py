@@ -16,6 +16,7 @@ from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
+from django.db.utils import OperationalError, ProgrammingError
 from django.http import StreamingHttpResponse
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
@@ -86,31 +87,57 @@ def getStaticUrl(filename):
     return os.path.join(STATIC_URL, str(filename))
 
 
-def construct_absolute_url(*arg):
+def construct_absolute_url(*arg, **kwargs):
     """Construct (or attempt to construct) an absolute URL from a relative URL.
 
     This is useful when (for example) sending an email to a user with a link
     to something in the InvenTree web framework.
 
-    This requires the BASE_URL configuration option to be set!
+    A URL is constructed in the following order:
+
+    1. If setings.SITE_URL is set (e.g. in the Django settings), use that
+    2. If the InvenTree setting INVENTREE_BASE_URL is set, use that
+    3. Otherwise, use the current request URL (if available)
     """
-    base = str(common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
 
-    url = '/'.join(arg)
+    relative_url = '/'.join(arg)
 
-    if not base:
-        return url
+    # If a site URL is provided, use that
+    site_url = getattr(settings, 'SITE_URL', None)
+
+    if not site_url:
+        # Otherwise, try to use the InvenTree setting
+        try:
+            site_url = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
+        except ProgrammingError:
+            pass
+        except OperationalError:
+            pass
+
+    if not site_url:
+        # Otherwise, try to use the current request
+        request = kwargs.get('request', None)
+
+        if request:
+            site_url = request.build_absolute_uri('/')
+
+    if not site_url:
+        # No site URL available, return the relative URL
+        return relative_url
 
     # Strip trailing slash from base url
-    if base.endswith('/'):
-        base = base[:-1]
+    if site_url.endswith('/'):
+        site_url = site_url[:-1]
 
-    if url.startswith('/'):
-        url = url[1:]
+    if relative_url.startswith('/'):
+        relative_url = relative_url[1:]
 
-    url = f"{base}/{url}"
+    return f"{site_url}/{relative_url}"
 
-    return url
+
+def get_base_url(**kwargs):
+    """Return the base URL for the InvenTree server"""
+    return construct_absolute_url('', **kwargs)
 
 
 def download_image_from_url(remote_url, timeout=2.5):

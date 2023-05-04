@@ -6,14 +6,14 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Sales Orders" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block heading %}
 {% trans "Sales Orders" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if roles.sales_order.add %}
@@ -21,7 +21,7 @@
     <span class='fas fa-plus-circle'></span> {% trans "New Sales Order" %}
 </button>
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block page_info %}
 
@@ -40,7 +40,7 @@
     <div id='sales-order-calendar'></div>
 </div>
 
-{% endblock %}
+{% endblock page_info %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -53,4 +53,4 @@ $("#so-create").click(function() {
     createSalesOrder();
 });
 
-{% endblock %}
+{% endblock js_ready %}
