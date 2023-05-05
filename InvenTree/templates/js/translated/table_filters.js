@@ -459,6 +459,29 @@ function getBuildTableFilters() {
 }
 
 
+// Return a dictionary of filters for the "build item" table
+function getBuildItemTableFilters() {
+    return {
+        allocated: {
+            type: 'bool',
+            title: '{% trans "Allocated" %}',
+        },
+        available: {
+            type: 'bool',
+            title: '{% trans "Available" %}',
+        },
+        consumable: {
+            type: 'bool',
+            title: '{% trans "Consumable" %}',
+        },
+        optional: {
+            type: 'bool',
+            title: '{% trans "Optional" %}',
+        },
+    };
+}
+
+
 // Return a dictionary of filters for the "purchase order line item" table
 function getPurchaseOrderLineItemFilters() {
     return {
@@ -682,6 +705,8 @@ function getAvailableTableFilters(tableKey) {
         return getBOMTableFilters();
     case 'build':
         return getBuildTableFilters();
+    case 'builditems':
+        return getBuildItemTableFilters();
     case 'location':
         return getStockLocationFilters();
     case 'parts':

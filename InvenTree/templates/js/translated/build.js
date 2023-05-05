@@ -1461,16 +1461,58 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         );
     }
 
-    var table = options.table;
+    // Apply filters to build table
+    // As the table is constructed locally, we can apply filters directly
+    function filterBuildAllocationTable(filters={}) {
+        $(table).bootstrapTable(
+            'filterBy',
+            filters,
+            {
+                'filterAlgorithm': function(row, filters) {
+                    let result = true;
 
-    if (options.table == null) {
-        table = `#allocation-table-${outputId}`;
+                    if (!filters) {
+                        return true;
+                    }
+
+                    // Filter by 'consumable' flag
+                    if ('consumable' in filters) {
+                        result &= filters.consumable == '1' ? row.consumable : !row.consumable;
+                    }
+
+                    // Filter by 'optional' flag
+                    if ('optional' in filters) {
+                        result &= filters.optional == '1' ? row.optional : !row.optional;
+                    }
+
+                    // Filter by 'allocated' flag
+                    if ('allocated' in filters) {
+                        let fully_allocated = row.consumable || isRowFullyAllocated(row);
+                        result &= filters.allocated == '1' ? fully_allocated : !fully_allocated;
+                    }
+
+                    // Filter by 'available' flag
+                    if ('available' in filters) {
+                        let available = row.available_stock > 0;
+                        result &= filters.available == '1' ? available : !available;
+                    }
+
+                    return result;
+                }
+            }
+        );
     }
+
+    var table = options.table || `#allocation-table-${outputId}`;
 
     // Filters
     let filters = loadTableFilters('builditems', options.params);
 
-    setupFilterList('builditems', $(table), options.filterTarget);
+    setupFilterList('builditems', $(table), options.filterTarget, {
+        callback: function(table, filters, options) {
+            filterBuildAllocationTable(filters);
+        }
+    });
 
     var allocated_items = output == null ? null : output.allocations;
 
@@ -1685,6 +1727,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         search: options.search || false,
         queryParams: filters,
         original: options.params,
+        onRefresh: function(data) {
+            filterBuildAllocationTable(filters);
+        },
         onPostBody: function(data) {
             // Setup button callbacks
             setupCallbacks();
@@ -2037,6 +2082,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             },
         ]
     });
+
+    filterBuildAllocationTable(filters);
 }
 
 
