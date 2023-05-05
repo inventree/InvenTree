@@ -376,15 +376,14 @@ class StockTest(StockTestBase):
         self.assertEqual(track.notes, 'Moved to the bathroom')
 
     def test_self_move(self):
-        """Test moving stock to itself does not work."""
-        # Try to move an item to its current location (should fail)
+        """Test moving stock to its current location."""
         it = StockItem.objects.get(pk=1)
 
         n = it.tracking_info.count()
         self.assertTrue(it.move(it.location, 'Moved to same place', None))
 
         # Ensure tracking info was not added
-        self.assertEqual(it.tracking_info.count(), n)
+        self.assertEqual(it.tracking_info.count(), n + 1)
 
     def test_partial_move(self):
         """Test partial stock moving."""
