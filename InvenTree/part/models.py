@@ -1543,7 +1543,11 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """
 
         # Cache all *parent* parts
-        parents = self.get_ancestors(include_self=False)
+        try:
+            parents = self.get_ancestors(include_self=False)
+        except ValueError:
+            # If get_ancestors() fails, then this part is not saved yet
+            parents = []
 
         # Case A: This part is directly specified in a BomItem (we always use this case)
         query = Q(
@@ -1593,7 +1597,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
             # Include inherited BOMs?
             if include_inherited and bom_item.inherited:
-                for variant in bom_item.part.get_descendants(include_self=False):
+                try:
+                    descendants = bom_item.part.get_descendants(include_self=False)
+                except ValueError:
+                    # This part is not saved yet
+                    descendants = []
+
+                for variant in descendants:
                     parts.add(variant)
 
         return list(parts)
