@@ -603,7 +603,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         serial_numbers = data.get('serial_numbers', '')
 
         # Check if the supplier_part has a package size defined, which is not 1
-        if 'supplier_part' in data:
+        if 'supplier_part' in data and data['supplier_part'] is not None:
             try:
                 supplier_part = SupplierPart.objects.get(pk=data.get('supplier_part', None))
             except (ValueError, SupplierPart.DoesNotExist):
