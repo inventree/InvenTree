@@ -696,7 +696,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=201
         )
         # Reload part, count stock again
-        part_4.reload()
+        part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock == current_count + 3)
 
         # POST with valid supplier part, no pack size defined
