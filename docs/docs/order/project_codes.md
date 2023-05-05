@@ -27,3 +27,11 @@ Project codes can be assigned to an order when the order is created, or at any l
 {% with id="assign_project_code", url="order/assign_project_code.png", description="Assign Project Code" %}
 {% include "img.html" %}
 {% endwith %}
+
+## Filtering by Project Codes
+
+The order tables can be easily filtered or sorted by project code:
+
+{% with id="filter-by-project", url="order/filter_by_project.png", description="Filter by Project Code" %}
+{% include "img.html" %}
+{% endwith %}
