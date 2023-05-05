@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-05 04:08+0000\n"
-"PO-Revision-Date: 2023-05-04 11:39\n"
+"PO-Revision-Date: 2023-05-05 11:44\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -697,10 +697,8 @@ msgid "Location changed"
 msgstr "Hely megváltozott"
 
 #: InvenTree/status_codes.py:320
-#, fuzzy
-#| msgid "Stock counted"
 msgid "Stock updated"
-msgstr "Készlet leleltározva"
+msgstr ""
 
 #: InvenTree/status_codes.py:322
 msgid "Installed into assembly"
@@ -1319,8 +1317,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:388
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:457
@@ -11752,10 +11749,8 @@ msgid "Details"
 msgstr "Részletek"
 
 #: templates/js/translated/stock.js:2653
-#, fuzzy
-#| msgid "Change"
 msgid "No changes"
-msgstr "Módosítás"
+msgstr ""
 
 #: templates/js/translated/stock.js:2665
 msgid "Part information unavailable"
@@ -12260,8 +12255,7 @@ msgstr "Tovább"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "A %(provider_name)s felhasználói fiókodat fogod használni a %(site_name)s belépéshez.<br>Kérlek töltsd ki az alábbi adatokat:"
 
@@ -12440,3 +12434,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
