@@ -1939,9 +1939,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     }
 
                     if (row.on_order && row.on_order > 0) {
-                        makeIconBadge('fa-shopping-cart', '{% trans "On Order" %}', {
-                            content: row.on_order,
-                        });
+                        icons += makeIconBadge('fa-shopping-cart', '{% trans "On Order" %}: ' + row.on_order);
                     }
 
                     return renderLink(text, url) + icons;
