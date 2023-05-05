@@ -964,7 +964,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_DEFAULT_CURRENCY': {
             'name': _('Default Currency'),
-            'description': _('Select base currency for pricing caluclations'),
+            'description': _('Select base currency for pricing calculations'),
             'default': 'USD',
             'choices': CURRENCY_CHOICES,
             'after_save': update_exchange_rates,
