@@ -60,6 +60,9 @@ class PluginWithSettings(SettingsMixin, InvenTreePlugin):
     }
 ```
 
+!!! tip "Hidden Settings"
+    Plugin settings can be hidden from the settings page by marking them as 'hidden'
+
 This mixin defines the helper functions `plugin.get_setting` and `plugin.set_setting` to access all plugin specific settings:
 
 ```python
