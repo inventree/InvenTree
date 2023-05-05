@@ -466,9 +466,17 @@ function getBuildItemTableFilters() {
             type: 'bool',
             title: '{% trans "Allocated" %}',
         },
+        available: {
+            type: 'bool',
+            title: '{% trans "Available" %}',
+        },
         consumable: {
             type: 'bool',
             title: '{% trans "Consumable" %}',
+        },
+        optional: {
+            type: 'bool',
+            title: '{% trans "Optional" %}',
         },
     };
 }

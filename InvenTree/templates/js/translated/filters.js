@@ -429,7 +429,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
     // Callback for reloading the table
     element.find(`#reload-${tableKey}`).click(function() {
-        reloadTableFilters(table, null, options);
+        reloadTableFilters(table, {}, options);
     });
 
     // Add a callback for downloading table data
