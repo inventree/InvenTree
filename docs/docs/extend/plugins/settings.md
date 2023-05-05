@@ -55,7 +55,7 @@ class PluginWithSettings(SettingsMixin, InvenTreePlugin):
         'HIDDEN_SETTING': {
             'name': _('Hidden Setting'),
             'description': _('This setting is hidden from the automatically generated plugin settings page'),
-            'hide': True,
+            'hidden': True,
         }
     }
 ```
