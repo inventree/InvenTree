@@ -217,14 +217,11 @@ Each part object has access to a lot of context variables about the part. The fo
 
 ### Orders
 
-!!! incomplete "TODO"
-    This section requires further work
-
-The [Purchase Order](../buy/po.md) context variables are described in the [Purchase Order](purchase_order.md) section.
+The [Purchase Order](../order/purchase_order.md) context variables are described in the [Purchase Order](./purchase_order.md) section.
 
 #### SalesOrder
 
-A [Sales Order](../sell/so.md) object has the following context variables available.
+A [Sales Order](../order/sales_order.md) object has the following context variables available.
 
 | Variable | Description |
 |----------|-------------|
@@ -235,7 +232,7 @@ A [Sales Order](../sell/so.md) object has the following context variables availa
 
 #### Return Order
 
-A [Return Order](../sell/return.md) object has the following context variables avaiable.
+A [Return Order](../order/return_order.md) object has the following context variables avaiable.
 
 | Variable | Description |
 | --- | --- |
@@ -243,7 +240,6 @@ A [Return Order](../sell/return.md) object has the following context variables a
 | description | The order description |
 | lines | The lines in the Sales Order |
 | reference | The reference number |
-
 
 ### User
 

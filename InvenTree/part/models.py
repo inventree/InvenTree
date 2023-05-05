@@ -31,6 +31,7 @@ from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
+from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
@@ -89,14 +90,15 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
         for child_category in self.children.all():
             if kwargs.get('delete_child_categories', False):
-                child_category.delete_recursive(**dict(delete_child_categories=True,
-                                                       delete_parts=delete_parts,
-                                                       parent_category=parent_category))
+                child_category.delete_recursive(**{
+                    "delete_child_categories": True,
+                    "delete_parts": delete_parts,
+                    "parent_category": parent_category})
             else:
                 child_category.parent = parent_category
                 child_category.save()
 
-        super().delete(*args, **dict())
+        super().delete(*args, **{})
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
@@ -104,9 +106,10 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
         with transaction.atomic():
-            self.delete_recursive(**dict(delete_parts=kwargs.get('delete_parts', False),
-                                         delete_child_categories=kwargs.get('delete_child_categories', False),
-                                         parent_category=self.parent))
+            self.delete_recursive(**{
+                "delete_parts": kwargs.get('delete_parts', False),
+                "delete_child_categories": kwargs.get('delete_child_categories', False),
+                "parent_category": self.parent})
 
             if self.parent is not None:
                 # Partially rebuild the tree (cheaper than a complete rebuild)
@@ -275,7 +278,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         for result in queryset:
             subscribers.add(result.user)
 
-        return [s for s in subscribers]
+        return list(subscribers)
 
     def is_starred_by(self, user, **kwargs):
         """Returns True if the specified user subscribes to this category."""
@@ -334,6 +337,7 @@ class PartManager(TreeManager):
             'category__parent',
             'stock_items',
             'builds',
+            'tags',
         )
 
 
@@ -376,6 +380,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     """
 
     objects = PartManager()
+    tags = TaggableManager()
 
     class Meta:
         """Metaclass defines extra model properties"""
@@ -1195,7 +1200,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             for sub in self.category.get_subscribers():
                 subscribers.add(sub)
 
-        return [s for s in subscribers]
+        return list(subscribers)
 
     def is_starred_by(self, user, **kwargs):
         """Return True if the specified user subscribes to this part."""

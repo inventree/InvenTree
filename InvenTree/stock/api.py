@@ -214,7 +214,9 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
     - POST: Create a new StockLocation
     """
 
-    queryset = StockLocation.objects.all()
+    queryset = StockLocation.objects.all().prefetch_related(
+        'tags',
+    )
     serializer_class = StockSerializers.LocationSerializer
 
     def download_queryset(self, queryset, export_format):
@@ -300,11 +302,15 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
         'name',
         'structural',
         'external',
+        'tags__name',
+        'tags__slug',
     ]
 
     search_fields = [
         'name',
         'description',
+        'tags__name',
+        'tags__slug',
     ]
 
     ordering_fields = [
@@ -351,6 +357,8 @@ class StockFilter(rest_filters.FilterSet):
             'customer',
             'sales_order',
             'purchase_order',
+            'tags__name',
+            'tags__slug',
         ]
 
     # Relationship filters
@@ -838,7 +846,8 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         queryset = queryset.prefetch_related(
             'part',
             'part__category',
-            'location'
+            'location',
+            'tags',
         )
 
         return queryset
@@ -1062,6 +1071,8 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         'part__IPN',
         'part__description',
         'location__name',
+        'tags__name',
+        'tags__slug',
     ]
 
 
@@ -1145,7 +1156,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
                     # Note that this function is recursive!
                     installed_items = item.get_installed_items(cascade=True)
 
-                    items += [it for it in installed_items]
+                    items += list(installed_items)
 
                 queryset = queryset.filter(stock_item__in=items)
 

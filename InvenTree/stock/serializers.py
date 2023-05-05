@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
+from taggit.serializers import TagListSerializerField
 
 import common.models
 import company.models
@@ -76,7 +77,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
         return value
 
 
-class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     """Serializer for a StockItem.
 
     - Includes serialization for the linked part
@@ -124,6 +125,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
+
+            'tags',
         ]
 
         """
@@ -254,6 +257,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
+
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
@@ -585,7 +590,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         ]
 
 
-class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     """Detailed information about a stock location."""
 
     class Meta:
@@ -606,6 +611,8 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'icon',
             'structural',
             'external',
+
+            'tags',
         ]
 
         read_only_fields = [
@@ -628,6 +635,8 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     items = serializers.IntegerField(read_only=True)
 
     level = serializers.IntegerField(read_only=True)
+
+    tags = TagListSerializerField(required=False)
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):

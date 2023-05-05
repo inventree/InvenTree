@@ -1447,7 +1447,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     if (row.supplier_part_detail) {
                         var supp = row.supplier_part_detail;
 
-                        return renderLink(supp.SKU, `/supplier-part/${supp.pk}/`);
+                        return renderClipboard(renderLink(supp.SKU, `/supplier-part/${supp.pk}/`));
                     } else {
                         return '-';
                     }
@@ -1460,7 +1460,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 formatter: function(value, row) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part_detail) {
                         var manu = row.supplier_part_detail.manufacturer_part_detail;
-                        return renderLink(manu.MPN, `/manufacturer-part/${manu.pk}/`);
+                        return renderClipboard(renderLink(manu.MPN, `/manufacturer-part/${manu.pk}/`));
                     }
                 }
             },
@@ -1834,7 +1834,9 @@ function loadPartTable(table, url, options={}) {
         labels: {
             url: '{% url "api-part-label-list" %}',
             key: 'part',
-        }
+        },
+        singular_name: '{% trans "part" %}',
+        plural_name: '{% trans "parts" %}',
     });
 
     var columns = [
@@ -2230,6 +2232,9 @@ function loadPartCategoryTable(table, options) {
         treeShowField: 'name',
         parentIdField: tree_view ? 'parent' : null,
         method: 'get',
+        formatNoMatches: function() {
+            return '{% trans "No subcategories found" %}';
+        },
         url: options.url || '{% url "api-part-category-list" %}',
         queryParams: filters,
         disablePagination: tree_view,

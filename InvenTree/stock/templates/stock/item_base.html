@@ -8,19 +8,19 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Stock Item" %} - {{ item }}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumbs %}
 <a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><span class="fas fa-bars"></span></a>
 {% include 'stock/loc_link.html' with location=item.location %}
-{% endblock %}
+{% endblock breadcrumbs %}
 
 {% block breadcrumb_tree %}
 <div id="breadcrumb-tree"></div>
 {% endblock breadcrumb_tree %}
 
 {% block heading %}
-    {% trans "Stock Item" %}: {{ item.part.full_name}}
+    {% trans "Stock Item" %}: {{ item.part.full_name }}
 {% endblock heading %}
 
 {% block actions %}
@@ -131,7 +131,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.preview.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
+<img class='part-thumb' alt='{% trans "Image" %}' {% if item.part.image %}src="{{ item.part.image.preview.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
 {% endblock thumbnail %}
 
 {% block details %}
@@ -199,7 +199,7 @@
     <tr>
         <td><span class='fas fa-link'></span>
         <td>{% trans "External Link" %}</td>
-        <td><a href="{{ item.link }}">{{ item.link }}</a></td>
+        <td>{% include 'clip_link.html' with link=item.link %}</td>
     </tr>
     {% endif %}
     {% if item.supplier_part.manufacturer_part %}
@@ -446,10 +446,8 @@
         {% endif %}
     </tr>
 
-
 </table>
 {% endblock details_right %}
-
 
 {% block js_ready %}
 {{ block.super }}
@@ -496,6 +494,7 @@ $("#stock-test-report").click(function() {
 $("#print-label").click(function() {
     printLabels({
         items: [{{ item.pk }}],
+        singular_name: '{% trans "stock item" %}',
         url: '{% url "api-stockitem-label-list" %}',
         key: 'item',
     });
@@ -530,7 +529,7 @@ $('#stock-edit-status').click(function () {
 $("#show-qr-code").click(function() {
     showQRDialog(
         '{% trans "Stock Item QR Code" %}',
-        '{"stockitem": {{ item.pk }}}',
+        '{"stockitem": {{ item.pk }} }',
     );
 });
 
@@ -703,4 +702,4 @@ enableBreadcrumbTree({
     }
 });
 
-{% endblock %}
+{% endblock js_ready %}

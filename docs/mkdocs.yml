@@ -101,15 +101,11 @@ nav:
     - Bill of Materials: build/bom.md
     - Importing BOM Data: build/bom_import.md
     - Exporting BOM Data: build/bom_export.md
-  - Buy:
-    - Suppliers: buy/supplier.md
-    - Manufacturers: buy/manufacturer.md
-    - Purchase Orders: buy/po.md
-  - Sell:
-    - Customers: sell/customer.md
-    - Sales Orders: sell/so.md
-    - Shipments: sell/shipment.md
-    - Return Orders: sell/return.md
+  - Orders:
+    - Companies: order/company.md
+    - Purchase Orders: order/purchase_order.md
+    - Sales Orders: order/sales_order.md
+    - Return Orders: order/return_order.md
   - Report:
     - Templates: report/report.md
     - Report Types:
@@ -169,6 +165,8 @@ nav:
       - Overview: extend/plugins.md
       - Installation: extend/plugins/install.md
       - Developing a Plugin: extend/how_to_plugin.md
+      - Model Meatadata: extend/plugins/metadata.md
+      - Tags: extend/plugins/tags.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md
       - API Mixin: extend/plugins/api.md

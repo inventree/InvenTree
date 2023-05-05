@@ -970,6 +970,10 @@ class PartFilter(rest_filters.FilterSet):
 
     virtual = rest_filters.BooleanFilter()
 
+    tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
+
+    tags_slug = rest_filters.CharFilter(field_name='tags__slug', lookup_expr='iexact')
+
 
 class PartMixin:
     """Mixin class for Part API endpoints"""
@@ -1140,10 +1144,10 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
                 if related is not None:
                     # Only return related results
-                    queryset = queryset.filter(pk__in=[pk for pk in part_ids])
+                    queryset = queryset.filter(pk__in=list(part_ids))
                 elif exclude_related is not None:
                     # Exclude related results
-                    queryset = queryset.exclude(pk__in=[pk for pk in part_ids])
+                    queryset = queryset.exclude(pk__in=list(part_ids))
 
             except (ValueError, Part.DoesNotExist):
                 pass
@@ -1240,6 +1244,8 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         'category__name',
         'manufacturer_parts__MPN',
         'supplier_parts__SKU',
+        'tags__name',
+        'tags__slug',
     ]
 
 
