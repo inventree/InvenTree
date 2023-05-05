@@ -52,6 +52,11 @@ class PluginWithSettings(SettingsMixin, InvenTreePlugin):
                 MaxValueValidator(25)
             ]
         },
+        'HIDDEN_SETTING': {
+            'name': _('Hidden Setting'),
+            'description': _('This setting is hidden from the automatically generated plugin settings page'),
+            'hide': True,
+        }
     }
 ```
 
