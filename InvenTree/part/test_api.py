@@ -1425,6 +1425,7 @@ class PartDetailTests(PartAPITestBase):
                 'name': 'my test api part',
                 'description': 'a part created with the API',
                 'category': 1,
+                'tags': '["tag1", "tag2"]',
             }
         )
 
@@ -1438,6 +1439,8 @@ class PartDetailTests(PartAPITestBase):
         part = Part.objects.get(pk=pk)
 
         self.assertEqual(part.name, 'my test api part')
+        self.assertEqual(part.tags.count(), 2)
+        self.assertEqual([a.name for a in part.tags.order_by('slug')], ['tag1', 'tag2'])
 
         # Edit the part
         url = reverse('api-part-detail', kwargs={'pk': pk})
@@ -1467,6 +1470,13 @@ class PartDetailTests(PartAPITestBase):
         })
 
         self.assertEqual(response.status_code, 200)
+
+        # Try to remove a tag
+        response = self.patch(url, {
+            'tags': ['tag1',],
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['tags'], ['tag1'])
 
         # Try to remove the part
         response = self.delete(url)
