@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-03 23:04+0000\n"
+"POT-Creation-Date: 2023-05-05 04:08+0000\n"
 "PO-Revision-Date: 2023-05-04 11:39\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
@@ -33,7 +33,7 @@ msgstr ""
 msgid "Enter date"
 msgstr "הזן תאריך סיום"
 
-#: InvenTree/fields.py:204 InvenTree/models.py:743 build/serializers.py:392
+#: InvenTree/fields.py:204 InvenTree/models.py:764 build/serializers.py:392
 #: build/templates/build/sidebar.html:21 company/models.py:556
 #: company/templates/company/sidebar.html:35 order/models.py:1086
 #: order/templates/order/po_sidebar.html:11
@@ -41,7 +41,7 @@ msgstr "הזן תאריך סיום"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
 #: part/models.py:2992 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:121 stock/models.py:2127 stock/models.py:2235
+#: stock/admin.py:121 stock/models.py:2133 stock/models.py:2241
 #: stock/serializers.py:322 stock/serializers.py:455 stock/serializers.py:536
 #: stock/serializers.py:819 stock/serializers.py:918 stock/serializers.py:1050
 #: stock/templates/stock/stock_sidebar.html:25
@@ -177,57 +177,61 @@ msgstr ""
 msgid "Remove HTML tags from this value"
 msgstr ""
 
-#: InvenTree/models.py:65
+#: InvenTree/models.py:82
+msgid "Metadata must be a python dict object"
+msgstr ""
+
+#: InvenTree/models.py:86
 msgid "Plugin Metadata"
 msgstr ""
 
-#: InvenTree/models.py:66
+#: InvenTree/models.py:87
 msgid "JSON metadata field, for use by external plugins"
 msgstr ""
 
-#: InvenTree/models.py:297
+#: InvenTree/models.py:318
 msgid "Improperly formatted pattern"
 msgstr ""
 
-#: InvenTree/models.py:304
+#: InvenTree/models.py:325
 msgid "Unknown format key specified"
 msgstr ""
 
-#: InvenTree/models.py:310
+#: InvenTree/models.py:331
 msgid "Missing required format key"
 msgstr ""
 
-#: InvenTree/models.py:322
+#: InvenTree/models.py:343
 msgid "Reference field cannot be empty"
 msgstr ""
 
-#: InvenTree/models.py:329
+#: InvenTree/models.py:350
 msgid "Reference must match required pattern"
 msgstr ""
 
-#: InvenTree/models.py:360
+#: InvenTree/models.py:381
 msgid "Reference number is too large"
 msgstr ""
 
-#: InvenTree/models.py:442
+#: InvenTree/models.py:463
 msgid "Missing file"
 msgstr "קובץ חסר"
 
-#: InvenTree/models.py:443
+#: InvenTree/models.py:464
 msgid "Missing external link"
 msgstr "חסר קישור חיצוני"
 
-#: InvenTree/models.py:463 stock/models.py:2229
+#: InvenTree/models.py:484 stock/models.py:2235
 #: templates/js/translated/attachment.js:109
 #: templates/js/translated/attachment.js:296
 msgid "Attachment"
 msgstr "קובץ מצורף"
 
-#: InvenTree/models.py:464
+#: InvenTree/models.py:485
 msgid "Select file to attach"
 msgstr "בחר קובץ לצירוף"
 
-#: InvenTree/models.py:470 common/models.py:2664 company/models.py:130
+#: InvenTree/models.py:491 common/models.py:2664 company/models.py:130
 #: company/models.py:304 company/models.py:543 order/models.py:232
 #: order/models.py:1090 order/models.py:1438 part/admin.py:39
 #: part/models.py:897 part/templates/part/part_scheduling.html:11
@@ -243,21 +247,21 @@ msgstr "בחר קובץ לצירוף"
 msgid "Link"
 msgstr "קישור"
 
-#: InvenTree/models.py:471 build/models.py:290 part/models.py:898
+#: InvenTree/models.py:492 build/models.py:290 part/models.py:898
 #: stock/models.py:734
 msgid "Link to external URL"
 msgstr "קישור חיצוני"
 
-#: InvenTree/models.py:474 templates/js/translated/attachment.js:110
+#: InvenTree/models.py:495 templates/js/translated/attachment.js:110
 #: templates/js/translated/attachment.js:311
 msgid "Comment"
 msgstr "הערה"
 
-#: InvenTree/models.py:474
+#: InvenTree/models.py:495
 msgid "File comment"
 msgstr "הערת קובץ"
 
-#: InvenTree/models.py:480 InvenTree/models.py:481 common/models.py:2113
+#: InvenTree/models.py:501 InvenTree/models.py:502 common/models.py:2113
 #: common/models.py:2114 common/models.py:2337 common/models.py:2338
 #: common/models.py:2594 common/models.py:2595 part/models.py:3000
 #: part/models.py:3088 part/models.py:3167 part/models.py:3187
@@ -267,44 +271,44 @@ msgstr "הערת קובץ"
 msgid "User"
 msgstr "משתמש"
 
-#: InvenTree/models.py:484
+#: InvenTree/models.py:505
 msgid "upload date"
 msgstr "תאריך העלאה"
 
-#: InvenTree/models.py:506
+#: InvenTree/models.py:527
 msgid "Filename must not be empty"
 msgstr "חובה למלא שם קובץ"
 
-#: InvenTree/models.py:515
+#: InvenTree/models.py:536
 msgid "Invalid attachment directory"
 msgstr "תיקיית קובץ שגויה"
 
-#: InvenTree/models.py:525
+#: InvenTree/models.py:546
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
 msgstr "שם הקובץ מכיל תו '{c}' שאינו חוקי"
 
-#: InvenTree/models.py:528
+#: InvenTree/models.py:549
 msgid "Filename missing extension"
 msgstr ""
 
-#: InvenTree/models.py:535
+#: InvenTree/models.py:556
 msgid "Attachment with this filename already exists"
 msgstr ""
 
-#: InvenTree/models.py:542
+#: InvenTree/models.py:563
 msgid "Error renaming file"
 msgstr "שגיאה בשינוי שם פריט"
 
-#: InvenTree/models.py:581
+#: InvenTree/models.py:602
 msgid "Duplicate names cannot exist under the same parent"
 msgstr ""
 
-#: InvenTree/models.py:600
+#: InvenTree/models.py:621
 msgid "Invalid choice"
 msgstr "בחירה שגויה"
 
-#: InvenTree/models.py:625 InvenTree/models.py:626 common/models.py:2323
+#: InvenTree/models.py:646 InvenTree/models.py:647 common/models.py:2323
 #: company/models.py:388 label/models.py:102 part/models.py:843
 #: part/models.py:3335 plugin/models.py:40 report/models.py:159
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -322,7 +326,7 @@ msgstr "בחירה שגויה"
 msgid "Name"
 msgstr "שם"
 
-#: InvenTree/models.py:632 build/models.py:163
+#: InvenTree/models.py:653 build/models.py:163
 #: build/templates/build/detail.html:24 common/models.py:110
 #: company/models.py:310 company/models.py:549
 #: company/templates/company/company_base.html:72
@@ -355,48 +359,48 @@ msgstr "שם"
 msgid "Description"
 msgstr "תיאור"
 
-#: InvenTree/models.py:633
+#: InvenTree/models.py:654
 msgid "Description (optional)"
 msgstr "תיאור (לא חובה)"
 
-#: InvenTree/models.py:641
+#: InvenTree/models.py:662
 msgid "parent"
 msgstr "מקור"
 
-#: InvenTree/models.py:648 InvenTree/models.py:649
+#: InvenTree/models.py:669 InvenTree/models.py:670
 #: templates/js/translated/part.js:2385 templates/js/translated/stock.js:2571
 msgid "Path"
 msgstr ""
 
-#: InvenTree/models.py:744
+#: InvenTree/models.py:765
 msgid "Markdown notes (optional)"
 msgstr ""
 
-#: InvenTree/models.py:771
+#: InvenTree/models.py:792
 msgid "Barcode Data"
 msgstr ""
 
-#: InvenTree/models.py:772
+#: InvenTree/models.py:793
 msgid "Third party barcode data"
 msgstr ""
 
-#: InvenTree/models.py:777
+#: InvenTree/models.py:798
 msgid "Barcode Hash"
 msgstr ""
 
-#: InvenTree/models.py:778
+#: InvenTree/models.py:799
 msgid "Unique hash of barcode data"
 msgstr ""
 
-#: InvenTree/models.py:823
+#: InvenTree/models.py:844
 msgid "Existing barcode found"
 msgstr ""
 
-#: InvenTree/models.py:877
+#: InvenTree/models.py:898
 msgid "Server Error"
 msgstr ""
 
-#: InvenTree/models.py:878
+#: InvenTree/models.py:899
 msgid "An error has been logged by the server."
 msgstr ""
 
@@ -595,8 +599,8 @@ msgid "InvenTree system health checks failed"
 msgstr ""
 
 #: InvenTree/status_codes.py:139 InvenTree/status_codes.py:181
-#: InvenTree/status_codes.py:357 InvenTree/status_codes.py:394
-#: InvenTree/status_codes.py:429 templates/js/translated/table_filters.js:467
+#: InvenTree/status_codes.py:359 InvenTree/status_codes.py:396
+#: InvenTree/status_codes.py:431 templates/js/translated/table_filters.js:467
 msgid "Pending"
 msgstr "בהמתנה"
 
@@ -604,14 +608,14 @@ msgstr "בהמתנה"
 msgid "Placed"
 msgstr "מוקם"
 
-#: InvenTree/status_codes.py:141 InvenTree/status_codes.py:360
-#: InvenTree/status_codes.py:396 order/templates/order/order_base.html:162
+#: InvenTree/status_codes.py:141 InvenTree/status_codes.py:362
+#: InvenTree/status_codes.py:398 order/templates/order/order_base.html:162
 #: order/templates/order/sales_order_base.html:162
 msgid "Complete"
 msgstr "הושלם"
 
 #: InvenTree/status_codes.py:142 InvenTree/status_codes.py:184
-#: InvenTree/status_codes.py:359 InvenTree/status_codes.py:397
+#: InvenTree/status_codes.py:361 InvenTree/status_codes.py:399
 msgid "Cancelled"
 msgstr "מבוטל"
 
@@ -625,7 +629,7 @@ msgstr "אבד"
 msgid "Returned"
 msgstr "הוחזר"
 
-#: InvenTree/status_codes.py:182 InvenTree/status_codes.py:395
+#: InvenTree/status_codes.py:182 InvenTree/status_codes.py:397
 msgid "In Progress"
 msgstr ""
 
@@ -660,123 +664,127 @@ msgstr "נדחה"
 msgid "Quarantined"
 msgstr ""
 
-#: InvenTree/status_codes.py:307
+#: InvenTree/status_codes.py:308
 msgid "Legacy stock tracking entry"
 msgstr ""
 
-#: InvenTree/status_codes.py:309 templates/js/translated/stock.js:481
+#: InvenTree/status_codes.py:310 templates/js/translated/stock.js:481
 msgid "Stock item created"
 msgstr ""
 
-#: InvenTree/status_codes.py:311
+#: InvenTree/status_codes.py:312
 msgid "Edited stock item"
 msgstr ""
 
-#: InvenTree/status_codes.py:312
+#: InvenTree/status_codes.py:313
 msgid "Assigned serial number"
 msgstr ""
 
-#: InvenTree/status_codes.py:314
+#: InvenTree/status_codes.py:315
 msgid "Stock counted"
 msgstr ""
 
-#: InvenTree/status_codes.py:315
+#: InvenTree/status_codes.py:316
 msgid "Stock manually added"
 msgstr ""
 
-#: InvenTree/status_codes.py:316
+#: InvenTree/status_codes.py:317
 msgid "Stock manually removed"
 msgstr ""
 
-#: InvenTree/status_codes.py:318
+#: InvenTree/status_codes.py:319
 msgid "Location changed"
 msgstr "מיקום שונה"
 
 #: InvenTree/status_codes.py:320
+msgid "Stock updated"
+msgstr ""
+
+#: InvenTree/status_codes.py:322
 msgid "Installed into assembly"
 msgstr ""
 
-#: InvenTree/status_codes.py:321
+#: InvenTree/status_codes.py:323
 msgid "Removed from assembly"
 msgstr ""
 
-#: InvenTree/status_codes.py:323
+#: InvenTree/status_codes.py:325
 msgid "Installed component item"
 msgstr ""
 
-#: InvenTree/status_codes.py:324
+#: InvenTree/status_codes.py:326
 msgid "Removed component item"
 msgstr ""
 
-#: InvenTree/status_codes.py:326
+#: InvenTree/status_codes.py:328
 msgid "Split from parent item"
 msgstr ""
 
-#: InvenTree/status_codes.py:327
+#: InvenTree/status_codes.py:329
 msgid "Split child item"
 msgstr ""
 
-#: InvenTree/status_codes.py:329 templates/js/translated/stock.js:2222
+#: InvenTree/status_codes.py:331 templates/js/translated/stock.js:2222
 msgid "Merged stock items"
 msgstr ""
 
-#: InvenTree/status_codes.py:331
+#: InvenTree/status_codes.py:333
 msgid "Converted to variant"
 msgstr ""
 
-#: InvenTree/status_codes.py:333 templates/js/translated/table_filters.js:317
+#: InvenTree/status_codes.py:335 templates/js/translated/table_filters.js:317
 msgid "Sent to customer"
 msgstr "נשלח ללקוח"
 
-#: InvenTree/status_codes.py:334
+#: InvenTree/status_codes.py:336
 msgid "Returned from customer"
 msgstr "הוחזר מלקוח"
 
-#: InvenTree/status_codes.py:336
+#: InvenTree/status_codes.py:338
 msgid "Build order output created"
 msgstr ""
 
-#: InvenTree/status_codes.py:337
+#: InvenTree/status_codes.py:339
 msgid "Build order output completed"
 msgstr ""
 
-#: InvenTree/status_codes.py:338
+#: InvenTree/status_codes.py:340
 msgid "Consumed by build order"
 msgstr ""
 
-#: InvenTree/status_codes.py:340
+#: InvenTree/status_codes.py:342
 msgid "Shipped against Sales Order"
 msgstr ""
 
-#: InvenTree/status_codes.py:342
+#: InvenTree/status_codes.py:344
 msgid "Received against Purchase Order"
 msgstr ""
 
-#: InvenTree/status_codes.py:344
+#: InvenTree/status_codes.py:346
 msgid "Returned against Return Order"
 msgstr ""
 
-#: InvenTree/status_codes.py:358
+#: InvenTree/status_codes.py:360
 msgid "Production"
 msgstr "ייצור"
 
-#: InvenTree/status_codes.py:430
+#: InvenTree/status_codes.py:432
 msgid "Return"
 msgstr ""
 
-#: InvenTree/status_codes.py:431
+#: InvenTree/status_codes.py:433
 msgid "Repair"
 msgstr ""
 
-#: InvenTree/status_codes.py:432
+#: InvenTree/status_codes.py:434
 msgid "Refund"
 msgstr ""
 
-#: InvenTree/status_codes.py:433
+#: InvenTree/status_codes.py:435
 msgid "Replace"
 msgstr ""
 
-#: InvenTree/status_codes.py:434
+#: InvenTree/status_codes.py:436
 msgid "Reject"
 msgstr ""
 
@@ -3541,7 +3549,7 @@ msgstr ""
 
 #: company/models.py:395
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2222 templates/js/translated/company.js:857
+#: stock/models.py:2228 templates/js/translated/company.js:857
 #: templates/js/translated/company.js:1062 templates/js/translated/part.js:1291
 #: templates/js/translated/stock.js:1432
 msgid "Value"
@@ -7357,12 +7365,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2210 templates/js/translated/stock.js:1405
+#: stock/models.py:2216 templates/js/translated/stock.js:1405
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2216
+#: stock/models.py:2222
 msgid "Result"
 msgstr ""
 
@@ -7693,35 +7701,35 @@ msgstr ""
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:2128
+#: stock/models.py:2134
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:2186
+#: stock/models.py:2192
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:2192
+#: stock/models.py:2198
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:2211
+#: stock/models.py:2217
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:2217
+#: stock/models.py:2223
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:2223
+#: stock/models.py:2229
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:2230
+#: stock/models.py:2236
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:2236
+#: stock/models.py:2242
 msgid "Test notes"
 msgstr ""
 
@@ -11739,6 +11747,12 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
+#: templates/js/translated/stock.js:2653
+#, fuzzy
+#| msgid "Location changed"
+msgid "No changes"
+msgstr "מיקום שונה"
+
 #: templates/js/translated/stock.js:2665
 msgid "Part information unavailable"
 msgstr ""
@@ -12242,7 +12256,8 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12421,4 +12436,3 @@ msgstr ""
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr ""
-
