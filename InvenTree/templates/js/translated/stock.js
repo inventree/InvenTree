@@ -2072,6 +2072,10 @@ function loadStockTable(table, options) {
                 currency = baseCurrency();
             }
 
+            if (row.quantity <= 0) {
+                return '-';
+            }
+
             return formatPriceRange(
                 min_price,
                 max_price,

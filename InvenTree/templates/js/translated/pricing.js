@@ -76,7 +76,11 @@ function formatPriceRange(price_min, price_max, options={}) {
     var p_min = price_min || price_max;
     var p_max = price_max || price_min;
 
-    var quantity = options.quantity || 1;
+    var quantity = 1;
+
+    if ('quantity' in options) {
+        quantity = options.quantity;
+    }
 
     if (p_min == null && p_max == null) {
         return null;
