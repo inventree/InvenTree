@@ -697,7 +697,7 @@ class StockItemTest(StockAPITestCase):
         )
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
-        self.assertEqual(part_4.available_stock == current_count + 3)
+        self.assertEqual(part_4.available_stock, current_count + 3)
 
         # POST with valid supplier part, no pack size defined
         # Send use_pack_size along, make sure this doesn't break stuff
@@ -717,7 +717,7 @@ class StockItemTest(StockAPITestCase):
         )
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
-        self.assertEqual(part_4.available_stock == current_count + 12)
+        self.assertEqual(part_4.available_stock, current_count + 12)
 
         # POST with valid supplier part, WITH pack size defined - but ignore
         # Supplier part 6 is a 100-pack, otherwise same as SP 5
@@ -735,7 +735,7 @@ class StockItemTest(StockAPITestCase):
         )
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
-        self.assertEqual(part_4.available_stock == current_count + 3)
+        self.assertEqual(part_4.available_stock, current_count + 3)
 
         # POST with valid supplier part, WITH pack size defined and used
         # Supplier part 6 is a 100-pack, otherwise same as SP 5
@@ -753,7 +753,7 @@ class StockItemTest(StockAPITestCase):
         )
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
-        self.assertEqual(part_4.available_stock == current_count + 3 * 100)
+        self.assertEqual(part_4.available_stock, current_count + 3 * 100)
 
     def test_creation_with_serials(self):
         """Test that serialized stock items can be created via the API."""
