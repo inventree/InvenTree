@@ -40,7 +40,8 @@
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "batisteo.vscode-django"
+        "batisteo.vscode-django",
+        "eamodio.gitlens"
       ]
     }
   },
@@ -74,6 +75,7 @@
     "INVENTREE_BACKUP_DIR": "/workspaces/InvenTree/dev/backup",
     "INVENTREE_CONFIG_FILE": "/workspaces/InvenTree/dev/config.yaml",
     "INVENTREE_SECRET_KEY_FILE": "/workspaces/InvenTree/dev/secret_key.txt",
+    "INVENTREE_PLUGINS_ENABLED": "True",
     "INVENTREE_PLUGIN_DIR": "/workspaces/InvenTree/dev/plugins",
     "INVENTREE_PLUGIN_FILE": "/workspaces/InvenTree/dev/plugins.txt",
 
