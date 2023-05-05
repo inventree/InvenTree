@@ -82,7 +82,7 @@
     // Python config
     "PIP_USER": "no",
 
-    // used to load the venv into the PATH and avtivate it
+    // used to load the venv into the PATH and activate it
     // Ref: https://stackoverflow.com/a/56286534
     "VIRTUAL_ENV": "/workspaces/InvenTree/dev/venv",
     "PATH": "/workspaces/InvenTree/dev/venv/bin:${containerEnv:PATH}"
