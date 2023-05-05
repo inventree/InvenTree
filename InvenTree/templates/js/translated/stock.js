@@ -2072,6 +2072,10 @@ function loadStockTable(table, options) {
                 currency = baseCurrency();
             }
 
+            if (row.quantity <= 0) {
+                return '-';
+            }
+
             return formatPriceRange(
                 min_price,
                 max_price,
@@ -2648,12 +2652,12 @@ function loadStockTrackingTable(table, options) {
         field: 'deltas',
         title: '{% trans "Details" %}',
         formatter: function(details, row) {
-            var html = `<table class='table table-condensed' id='tracking-table-${row.pk}'>`;
 
-            if (!details) {
-                html += '</table>';
-                return html;
+            if (!details || !Object.keys(details).length) {
+                return `<small><em>{% trans "No changes" %}</em></small>`;
             }
+
+            let html = `<table class='table table-condensed' id='tracking-table-${row.pk}'>`;
 
             // Part information
             if (details.part) {

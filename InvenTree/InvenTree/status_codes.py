@@ -267,6 +267,7 @@ class StockHistoryCode(StatusCode):
 
     # Location operations
     STOCK_MOVE = 20
+    STOCK_UPDATE = 25
 
     # Installation operations
     INSTALLED_INTO_ASSEMBLY = 30
@@ -316,6 +317,7 @@ class StockHistoryCode(StatusCode):
         STOCK_REMOVE: _('Stock manually removed'),
 
         STOCK_MOVE: _('Location changed'),
+        STOCK_UPDATE: _('Stock updated'),
 
         INSTALLED_INTO_ASSEMBLY: _('Installed into assembly'),
         REMOVED_FROM_ASSEMBLY: _('Removed from assembly'),

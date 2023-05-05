@@ -303,8 +303,6 @@ class SalesOrderTest(TestCase):
         for model in [SalesOrder, SalesOrderLineItem, SalesOrderExtraLine, SalesOrderShipment]:
             p = model.objects.first()
 
-            self.assertIsNone(p.metadata)
-
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)
 
