@@ -15,19 +15,14 @@ name: Docker
 
 on:
   release:
-    types: [ published ]
-
+    types: [published]
   push:
     branches:
       - 'master'
 
-  # pull_request:
-  #   branches:
-  #     - 'master'
-
 jobs:
 
-  # Build the docker image
+  # Build the Docker image
   build:
     concurrency:
       group: ${{ github.workflow }}-${{ github.event_name }}
@@ -39,12 +34,15 @@ jobs:
       id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }} # add Dockerhub username secret
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }} # add Dockerhub password secret
+      docker_tags: latest
       python_version: 3.9
     steps:
       - name: Check out repo
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Set Up Python ${{ env.python_version }}
-        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        uses: actions/checkout@v2.4.2
+      - name: Set up Python ${{ env.python_version }}
+        uses: actions/setup-python@v2.2.2
         with:
           python-version: ${{ env.python_version }}
       - name: Version Check
@@ -55,7 +53,7 @@ jobs:
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Build Docker Image
-        # Build the development docker image (using docker-compose.yml)
+        # Build the development Docker image (using docker-compose.yml)
         run: |
           docker-compose build --no-cache
       - name: Update Docker Image
@@ -66,7 +64,7 @@ jobs:
           docker-compose run inventree-dev-server pip install --upgrade setuptools
           docker-compose run inventree-dev-server invoke wait
       - name: Check Data Directory
-        # The following file structure should have been created by the docker image
+        # The following file structure should have been created by the Docker image
         run: |
           test -d data
           test -d data/env
@@ -84,16 +82,16 @@ jobs:
           docker-compose down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
-        uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18 # pin@v2.1.0
+        uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         if: github.event_name != 'pull_request'
-        uses: docker/setup-buildx-action@95cb08cb2672c73d4ffd2f422e6d11953d2a9c70 # pin@v2.1.0
+        uses: docker/setup-buildx-action@v1
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88 # pin@v2.8.0
+        uses: sigstore/cosign-installer@v0.4.0
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # pin@v2.1.0
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -106,32 +104,39 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Docker metadata
-        if: github.event_name != 'pull_request'
-        id: meta
-        uses: docker/metadata-action@12cce9efe0d49980455aaaca9b071c0befcdd702 # pin@v4.1.0
-        with:
-          images: |
-            inventree/inventree
-            ghcr.io/inventree/inventree
+      - name: Log into registry ghcr.io
+  if: github.event_name != 'pull_request'
+  uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # pin@v2
+  with:
+    registry: ghcr.io
+    username: ${{ github.actor }}
+    password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push
-        id: build-and-push
-        if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v3.2.0
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
-          push: true
-          target: production
-          tags: ${{ env.docker_tags }}
-          build-args: |
-            commit_hash=${{ env.git_commit_hash }}
-            commit_date=${{ env.git_commit_date }}
+- name: Extract Docker metadata
+  if: github.event_name != 'pull_request'
+  id: meta
+  uses: docker/metadata-action@12cce9efe0d49980455aaaca9b071c0befcdd702 # pin@v4.1.0
+  with:
+    images: |
+      inventree/inventree
+      ghcr.io/inventree/inventree
 
-      - name: Sign the published image
-        if: ${{ false }} # github.event_name != 'pull_request'
-        env:
-          COSIGN_EXPERIMENTAL: "true"
-        run: cosign sign ${{ steps.meta.outputs.tags }}@${{
-          steps.build-and-push.outputs.digest }}
+- name: Build and Push
+  id: build-and-push
+  if: github.event_name != 'pull_request'
+  uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v3.2.0
+  with:
+    context: .
+    platforms: linux/amd64,linux/arm64,linux/arm/v7
+    push: true
+    target: production
+    tags: ${{ env.docker_tags }}
+    build-args: |
+      commit_hash=${{ env.git_commit_hash }}
+      commit_date=${{ env.git_commit_date }}
+
+- name: Sign the published image
+  if: false # github.event_name != 'pull_request'
+  env:
+    COSIGN_EXPERIMENTAL: "true"
+  run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
