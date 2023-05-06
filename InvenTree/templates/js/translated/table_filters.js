@@ -646,6 +646,12 @@ function getPartTableFilters() {
 }
 
 
+// Return a dictionary of filters for the "contact" table
+function getContactFilters() {
+    return {};
+}
+
+
 // Return a dictionary of filters for the "company" table
 function getCompanyFilters() {
     return {
@@ -676,6 +682,8 @@ function getAvailableTableFilters(tableKey) {
         return getPartCategoryFilters();
     case 'company':
         return getCompanyFilters();
+    case 'contact':
+        return getContactFilters();
     case 'customerstock':
         return getCustomerStockFilters();
     case 'bom':
