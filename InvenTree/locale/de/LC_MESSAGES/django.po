@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-06 08:51+0000\n"
-"PO-Revision-Date: 2023-05-06 11:57\n"
+"POT-Creation-Date: 2023-05-07 00:03+0000\n"
+"PO-Revision-Date: 2023-05-07 12:19\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -179,7 +179,7 @@ msgstr "Entferne HTML-Tags von diesem Wert"
 
 #: InvenTree/models.py:82
 msgid "Metadata must be a python dict object"
-msgstr ""
+msgstr "Metadaten müssen ein Python-Dict Objekt sein"
 
 #: InvenTree/models.py:86
 msgid "Plugin Metadata"
@@ -374,7 +374,7 @@ msgstr "Pfad"
 
 #: InvenTree/models.py:765
 msgid "Markdown notes (optional)"
-msgstr ""
+msgstr "Markdown Notizen (optional)"
 
 #: InvenTree/models.py:792
 msgid "Barcode Data"
@@ -631,7 +631,7 @@ msgstr "Zurückgegeben"
 
 #: InvenTree/status_codes.py:182 InvenTree/status_codes.py:397
 msgid "In Progress"
-msgstr ""
+msgstr "In Bearbeitung"
 
 #: InvenTree/status_codes.py:183 order/models.py:1323
 #: templates/js/translated/sales_order.js:1439
@@ -698,7 +698,7 @@ msgstr "Standort geändert"
 
 #: InvenTree/status_codes.py:320
 msgid "Stock updated"
-msgstr ""
+msgstr "Lagerbestand aktualisiert"
 
 #: InvenTree/status_codes.py:322
 msgid "Installed into assembly"
@@ -774,15 +774,15 @@ msgstr ""
 
 #: InvenTree/status_codes.py:433
 msgid "Repair"
-msgstr ""
+msgstr "Reparatur"
 
 #: InvenTree/status_codes.py:434
 msgid "Refund"
-msgstr ""
+msgstr "Rückerstattung"
 
 #: InvenTree/status_codes.py:435
 msgid "Replace"
-msgstr ""
+msgstr "Ersetzen"
 
 #: InvenTree/status_codes.py:436
 msgid "Reject"
@@ -878,7 +878,7 @@ msgstr "Referenz"
 
 #: build/models.py:166
 msgid "Brief description of the build (optional)"
-msgstr ""
+msgstr "Kurze Beschreibung des Baus (optional)"
 
 #: build/models.py:174 build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:87
@@ -1337,7 +1337,7 @@ msgstr "Lösche alle noch nicht abgeschlossenen Endprodukte"
 
 #: build/serializers.py:492
 msgid "Not permitted"
-msgstr ""
+msgstr "Nicht erlaubt"
 
 #: build/serializers.py:493
 msgid "Accept as consumed by this build order"
@@ -1857,7 +1857,7 @@ msgstr "Fertiggestellte Endprodukte"
 #: common/files.py:63
 #, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr ""
+msgstr "Nicht unterstütztes Dateiformat: {fmt}"
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
@@ -1908,15 +1908,15 @@ msgstr "Zeitstempel der letzten Aktualisierung"
 #: templates/js/translated/table_filters.js:20
 #: templates/project_code_data.html:6
 msgid "Project Code"
-msgstr ""
+msgstr "Projektcode"
 
 #: common/models.py:104
 msgid "Unique project code"
-msgstr ""
+msgstr "Eindeutiger Projektcode"
 
 #: common/models.py:111
 msgid "Project description"
-msgstr ""
+msgstr "Projektbeschreibung"
 
 #: common/models.py:528
 msgid "Settings key (must be unique - case insensitive)"
@@ -2009,7 +2009,7 @@ msgstr "Standardwährung"
 
 #: common/models.py:967
 msgid "Select base currency for pricing calculations"
-msgstr ""
+msgstr "Wählen Sie die Basiswährung für Preisberechnungen aus"
 
 #: common/models.py:974
 msgid "Download from URL"
@@ -2053,7 +2053,7 @@ msgstr "Standard Ebene für Baumansicht. Tiefere Ebenen kann bei Bedarf nachgela
 
 #: common/models.py:1016
 msgid "Update Check Interval"
-msgstr ""
+msgstr "Prüfungsintervall aktualisieren"
 
 #: common/models.py:1017
 msgid "How often to check for updates (set to zero to disable)"
@@ -2675,8 +2675,8 @@ msgid "Allowed domains"
 msgstr "Erlaubte Domains"
 
 #: common/models.py:1587
-msgid "Restrict signup to certain domains (comma-separated, strarting with @)"
-msgstr "Anmeldung auf bestimmte Domänen beschränken (komma-separiert, mit @ startend)"
+msgid "Restrict signup to certain domains (comma-separated, starting with @)"
+msgstr ""
 
 #: common/models.py:1593
 msgid "Group on signup"
@@ -2752,7 +2752,7 @@ msgstr "Plugins ermöglichen auf interne Ereignisse zu reagieren"
 
 #: common/models.py:1663
 msgid "Enable project codes"
-msgstr ""
+msgstr "Projektcodes aktivieren"
 
 #: common/models.py:1664
 msgid "Enable project codes for tracking projects"
@@ -3112,7 +3112,7 @@ msgstr "Anzahl der Ergebnisse, die in der Vorschau pro Sektion angezeigt werden 
 
 #: common/models.py:2026
 msgid "Regex Search"
-msgstr ""
+msgstr "Regex Suche"
 
 #: common/models.py:2027
 msgid "Enable regular expressions in search queries"
@@ -3324,7 +3324,7 @@ msgstr "Bild"
 
 #: common/models.py:2706
 msgid "Image file"
-msgstr ""
+msgstr "Bilddatei"
 
 #: common/notifications.py:291
 #, python-brace-format
@@ -3732,7 +3732,7 @@ msgstr "Firma löschen"
 #: report/templates/report/inventree_test_report_base.html:84
 #: report/templates/report/inventree_test_report_base.html:163
 msgid "Part image"
-msgstr ""
+msgstr "Artikelbild"
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:12
