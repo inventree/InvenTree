@@ -166,7 +166,9 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
                 if issubclass(plugin.__class__, InvenTreePlugin):
                     plugin = plugin.plugin_config()
 
-                kwargs['settings'] = registry.mixins_settings.get(plugin.key, {})
+                mixin_settings = registry.get('mixins_settings')
+                if mixin_settings:
+                    kwargs['settings'] = mixin_settings.get(plugin.key, {})
 
         return super().get_setting_definition(key, **kwargs)
 

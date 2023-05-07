@@ -64,9 +64,6 @@ class PluginsRegistry:
 
         self.installed_apps = []                                # Holds all added plugin_paths
 
-        # mixins
-        self.mixins_settings = {}
-
     def get_plugin(self, slug):
         """Lookup plugin by slug (unique key)."""
         if slug not in self.plugins:
