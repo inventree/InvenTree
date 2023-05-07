@@ -247,7 +247,13 @@ function isNumeric(n) {
  * Reload a table which has already been made into a bootstrap table.
  * New filters can be optionally provided, to change the query params.
  */
-function reloadTableFilters(table, filters) {
+function reloadTableFilters(table, filters, options={}) {
+
+    // If a callback is specified, let's use that
+    if (options.callback) {
+        options.callback(table, filters, options);
+        return;
+    }
 
     // Simply perform a refresh
     if (filters == null) {
