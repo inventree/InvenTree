@@ -836,6 +836,9 @@ function loadSalesOrderShipmentTable(table, options={}) {
     // Add callbacks for expand / collapse buttons
     var prefix = options.shipped ? 'completed' : 'pending';
 
+    // Add option to show SO reference also
+    var show_so_reference = options.show_so_reference || false;
+
     $(`#${prefix}-shipments-expand`).click(function() {
         $(table).bootstrapTable('expandAllRows');
     });
@@ -930,6 +933,21 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 visible: false,
                 checkbox: true,
                 switchable: false,
+            },
+            {
+                visible: show_so_reference,
+                field: 'order_detail',
+                title: '{% trans "Sales Order" %}',
+                switchable: false,
+                formatter: function(value, row) {
+                    var html = renderLink(row.order_detail.reference, `/order/sales-order/${row.order}/`);
+
+                    if (row.overdue) {
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
+                    }
+
+                    return html;
+                },
             },
             {
                 field: 'reference',
