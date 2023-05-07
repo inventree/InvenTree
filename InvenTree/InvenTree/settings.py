@@ -225,6 +225,7 @@ INSTALLED_APPS = [
     'django_q',
     'formtools',                            # Form wizard tools
     'dbbackup',                             # Backups - django-dbbackup
+    'taggit',                               # Tagging
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts

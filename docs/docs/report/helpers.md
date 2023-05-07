@@ -34,6 +34,16 @@ Total Price: {% render_currency order.total_price currency='NZD' decimal_places=
 {% endraw %}
 ```
 
+The following keyword arguments are available to the `render_currency` function:
+
+| Argument | Description |
+| --- | --- |
+| currency | Specify the currency code to render in (will attempt conversion if different to provided currency) |
+| decimal_places | Specify the number of decimal places to render |
+| min_decimal_places | Specify the minimum number of decimal places to render (ignored if *decimal_places* is specified) |
+| max_decimal_places | Specify the maximum number of decimal places to render (ignored if *decimal_places* is specified) |
+| include_symbol | Include currency symbol in rendered value (default = True) |
+
 ## Maths Operations
 
 Simple mathematical operators are available, as demonstrated in the example template below:

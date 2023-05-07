@@ -1139,7 +1139,7 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
         )
 
 
-def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None):
+def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None, max_decimal_places=None):
     """Render a currency / Money object to a formatted string (e.g. for reports)
 
     Arguments:
@@ -1148,6 +1148,7 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
         currency: Optionally convert to the specified currency
         include_symbol: Render with the appropriate currency symbol
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
+        max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
     """
 
     if money in [None, '']:
@@ -1170,6 +1171,9 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
     if min_decimal_places is None:
         min_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
+    if max_decimal_places is None:
+        max_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
+
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
 
@@ -1182,6 +1186,8 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
         decimal_places = decimals
     else:
         decimal_places = max(decimal_places, 2)
+
+    decimal_places = max(decimal_places, max_decimal_places)
 
     return moneyed.localization.format_money(
         money,
