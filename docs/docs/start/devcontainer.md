@@ -4,7 +4,7 @@ title: Devcontainer
 
 ## Devcontainer
 
-The easiest way to get into InvenTree development is by using devcontainers. You can either run them locally or use github codespaces.
+[Devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) are the easiest way to get into InvenTree development. You can either run them on your machine in vscode or use github codespaces.
 
 ### Setup in vscode
 
