@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-06 08:51+0000\n"
-"PO-Revision-Date: 2023-05-06 11:58\n"
+"POT-Creation-Date: 2023-05-07 00:03+0000\n"
+"PO-Revision-Date: 2023-05-07 12:20\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -2675,7 +2675,7 @@ msgid "Allowed domains"
 msgstr ""
 
 #: common/models.py:1587
-msgid "Restrict signup to certain domains (comma-separated, strarting with @)"
+msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr ""
 
 #: common/models.py:1593
