@@ -58,7 +58,7 @@ You can now set breakpoints and vscode will automatically pause execution if tha
 
 The easiest way for plugin developing is by using the InvenTree devcontainer. Just mount your plugin repository also into the devcontainer workspace and install it as pip editable package.
 
-1. Mount your plugin repo into the workspace. Add this to your `.devcontainer/devcontainer.json` file. (Make sure that you don't commit it)
+1. To mount your plugin repo into the workspace, add this to your `.devcontainer/devcontainer.json` file. (Make sure that you don't commit it)
    ```json
    "mounts": [
      "source=/path/to/your/local/inventree-plugin,target=/workspaces/inventree-plugin,type=bind,consistency=cached"
