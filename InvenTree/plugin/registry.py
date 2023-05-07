@@ -42,7 +42,7 @@ class PluginsRegistry:
 
     DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, AppMixin, UrlsMixin]
 
-    def __init__(self, mixin_order: list = None) -> None:
+    def __init__(self) -> None:
         """Initialize registry.
 
         Set up all needed references for internal and external states.
@@ -66,7 +66,6 @@ class PluginsRegistry:
 
         # mixins
         self.mixins_settings = {}
-        self.mixin_order = mixin_order or self.DEFAULT_MIXIN_ORDER
 
     def get_plugin(self, slug):
         """Lookup plugin by slug (unique key)."""
@@ -481,7 +480,7 @@ class PluginsRegistry:
     def _get_mixin_order(self):
         """Returns a list of mixin classes, in the order that they should be activated."""
         # Preset list of mixins
-        order = self.mixin_order
+        order = self.DEFAULT_MIXIN_ORDER
 
         # Append mixins that are not defined
         addition_mixins = [m.get('cls') for m in self.mixin_modules if m.get('cls') not in order]
