@@ -53,7 +53,7 @@ class PluginsRegistry:
         self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
         self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
-        self.mixin_modules: List() = []                         # Holdes all discovered mixins
+        self.mixin_modules: List() = []                         # Holds all discovered mixins
 
         self.errors = {}                                        # Holds discovering errors
 
@@ -496,7 +496,7 @@ class PluginsRegistry:
         # Collect mixins
         self.discover_mixins()
 
-        # activate integrations
+        # Activate integrations
         plugins = self.plugins.items()
         logger.info(f'Found {len(plugins)} active plugins')
 
