@@ -71,6 +71,10 @@ language: en-us
 # Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone: UTC
 
+# Base URL for the InvenTree server
+# Use the environment variable INVENTREE_BASE_URL
+# base_url: 'http://localhost:8000'
+
 # Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD
 

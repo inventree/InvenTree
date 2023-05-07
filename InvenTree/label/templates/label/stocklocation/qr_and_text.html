@@ -1,7 +1,6 @@
 {% extends "label/label_base.html" %}
 
-{% load l10n %}
-{% load barcode %}
+{% load l10n i18n barcode %}
 
 {% block style %}
 
@@ -25,14 +24,14 @@
     top: 2mm;
 }
 
-{% endblock %}
+{% endblock style %}
 
 {% block content %}
 
-<img class='qr' src='{% qrcode qr_data %}'>
+<img class='qr' alt="{% trans 'QR code' %}" src='{% qrcode qr_data %}'>
 
 <div class='loc'>
     {{ location.name }}
 </div>
 
-{% endblock %}
+{% endblock content %}

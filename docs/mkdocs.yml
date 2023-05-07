@@ -106,6 +106,7 @@ nav:
     - Purchase Orders: order/purchase_order.md
     - Sales Orders: order/sales_order.md
     - Return Orders: order/return_order.md
+    - Project Codes: order/project_codes.md
   - Report:
     - Templates: report/report.md
     - Report Types:
@@ -166,6 +167,7 @@ nav:
       - Installation: extend/plugins/install.md
       - Developing a Plugin: extend/how_to_plugin.md
       - Model Meatadata: extend/plugins/metadata.md
+      - Tags: extend/plugins/tags.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md
       - API Mixin: extend/plugins/api.md

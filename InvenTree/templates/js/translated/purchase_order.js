@@ -1955,7 +1955,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "SKU" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
-                        return renderLink(value, `/supplier-part/${row.part}/`);
+                        return renderClipboard(renderLink(value, `/supplier-part/${row.part}/`));
                     } else {
                         return '-';
                     }
@@ -1967,7 +1967,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "Link" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
-                        return renderLink(value, value);
+                        return renderLink(value, value, {external: true});
                     } else {
                         return '';
                     }
@@ -1980,7 +1980,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row, index, field) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {
-                        return renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`);
+                        return renderClipboard(renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`));
                     } else {
                         return '-';
                     }

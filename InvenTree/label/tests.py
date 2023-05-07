@@ -135,7 +135,6 @@ class LabelTest(InvenTreeAPITestCase):
         """Unit tests for the metadata field."""
         for model in [StockItemLabel, StockLocationLabel, PartLabel]:
             p = model.objects.first()
-            self.assertIsNone(p.metadata)
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

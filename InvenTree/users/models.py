@@ -82,6 +82,8 @@ class RuleSet(models.Model):
             'common_webconnectiontransaction',
             'plugin_connectionsetting',
             'common_newsfeedentry',
+            'taggit_tag',
+            'taggit_taggeditem',
         ],
         'part_category': [
             'part_partcategory',

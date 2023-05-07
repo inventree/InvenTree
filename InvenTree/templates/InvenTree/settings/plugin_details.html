@@ -21,7 +21,7 @@
 
         {% if mixin_list %}
         {% for mixin in mixin_list %}
-        <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
+        <a class='sidebar-selector' id='select-plugin-{{ plugin_key }}' data-bs-parent="#sidebar">
             <span class='badge bg-dark badge-right rounded-pill'>{{ mixin.human_name }}</span>
         </a>
         {% endfor %}
@@ -34,7 +34,7 @@
         {% endif %}
 
         {% if plugin.is_sample %}
-        <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
+        <a class='sidebar-selector' id='select-plugin-{{ plugin_key }}' data-bs-parent="#sidebar">
             <span class='badge bg-info rounded-pill badge-right'>{% trans "Sample" %}</span>
         </a>
         {% endif %}

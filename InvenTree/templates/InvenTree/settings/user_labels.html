@@ -3,11 +3,11 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}user-labels{% endblock %}
+{% block label %}user-labels{% endblock label %}
 
 {% block heading %}
 {% trans "Label Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -20,4 +20,4 @@
     </table>
 </div>
 
-{% endblock %}
+{% endblock content %}

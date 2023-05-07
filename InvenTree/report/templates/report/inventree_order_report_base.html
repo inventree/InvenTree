@@ -9,15 +9,15 @@
 {% block page_margin %}
 margin: 2cm;
 margin-top: 4cm;
-{% endblock %}
+{% endblock page_margin %}
 
 {% block bottom_left %}
-content: "v{{report_revision}} - {{ date.isoformat }}";
-{% endblock %}
+content: "v{{ report_revision }} - {{ date.isoformat }}";
+{% endblock bottom_left %}
 
 {% block bottom_center %}
 content: "{% inventree_version shortstring=True %}";
-{% endblock %}
+{% endblock bottom_center %}
 
 {% block style %}
 
@@ -35,7 +35,6 @@ content: "{% inventree_version shortstring=True %}";
     width: 32px;
     display: inline;
 }
-
 
 .part-thumb {
     max-width: 32px;
@@ -67,4 +66,4 @@ table td.expand {
     width: 99%
 }
 
-{% endblock %}
+{% endblock style %}

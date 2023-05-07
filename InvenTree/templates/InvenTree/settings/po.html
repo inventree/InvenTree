@@ -1,11 +1,11 @@
 {% extends "panel.html" %}
 {% load i18n %}
 
-{% block label %}purchase-order{% endblock %}
+{% block label %}purchase-order{% endblock label %}
 
 {% block heading %}
 {% trans "Purchase Order Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 <table class='table table-striped table-condensed'>
@@ -14,4 +14,4 @@
         {% include "InvenTree/settings/setting.html" with key="PURCHASEORDER_EDIT_COMPLETED_ORDERS" icon='fa-edit' %}
     </tbody>
 </table>
-{% endblock %}
+{% endblock content %}

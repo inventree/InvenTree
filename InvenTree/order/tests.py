@@ -390,7 +390,14 @@ class OrderTest(TestCase):
         """Unit tests for the metadata field."""
         for model in [PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLine]:
             p = model.objects.first()
-            self.assertIsNone(p.metadata)
+
+            # Setting metadata to something *other* than a dict will fail
+            with self.assertRaises(django_exceptions.ValidationError):
+                p.metadata = 'test'
+                p.save()
+
+            # Reset metadata to known state
+            p.metadata = {}
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

@@ -954,7 +954,7 @@ function loadManufacturerPartTable(table, url, options) {
                 field: 'MPN',
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row) {
-                    return renderLink(value, `/manufacturer-part/${row.pk}/`);
+                    return renderClipboard(renderLink(value, `/manufacturer-part/${row.pk}/`));
                 }
             },
             {
@@ -962,7 +962,7 @@ function loadManufacturerPartTable(table, url, options) {
                 title: '{% trans "Link" %}',
                 formatter: function(value) {
                     if (value) {
-                        return renderLink(value, value);
+                        return renderLink(value, value, {external: true});
                     } else {
                         return '';
                     }
@@ -1194,7 +1194,7 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'SKU',
                 title: '{% trans "Supplier Part" %}',
                 formatter: function(value, row) {
-                    return renderLink(value, `/supplier-part/${row.pk}/`);
+                    return renderClipboard(renderLink(value, `/supplier-part/${row.pk}/`));
                 }
             },
             {
@@ -1225,7 +1225,7 @@ function loadSupplierPartTable(table, url, options) {
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row) {
                     if (value && row.manufacturer_part) {
-                        return renderLink(value, `/manufacturer-part/${row.manufacturer_part}/`);
+                        return renderClipboard(renderLink(value, `/manufacturer-part/${row.manufacturer_part}/`));
                     } else {
                         return '-';
                     }
@@ -1261,7 +1261,7 @@ function loadSupplierPartTable(table, url, options) {
                 title: '{% trans "Link" %}',
                 formatter: function(value) {
                     if (value) {
-                        return renderLink(value, value);
+                        return renderLink(value, value, {external: true});
                     } else {
                         return '';
                     }

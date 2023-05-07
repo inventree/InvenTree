@@ -1,20 +1,20 @@
-<div class='panel panel-hidden' id='panel-{% block label %}name{% endblock %}'>
+<div class='panel panel-hidden' id='panel-{% block label %}name{% endblock label %}'>
     {% block panel_heading %}
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
-            <h4>{% block heading %}HEADING{% endblock %}</h4>
+            <h4>{% block heading %}HEADING{% endblock heading %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% block actions %}
-                {% endblock %}
+                {% endblock actions %}
             </div>
         </div>
     </div>
-    {% endblock %}
+    {% endblock panel_heading %}
     {% block panel_content %}
     <div class='panel-content'>
         {% block content %}
-        {% endblock %}
+        {% endblock content %}
     </div>
-    {% endblock %}
+    {% endblock panel_content %}
 </div>

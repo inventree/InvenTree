@@ -3,11 +3,11 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}user-home{% endblock %}
+{% block label %}user-home{% endblock label %}
 
 {% block heading %}
 {% trans "Home Page Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -37,9 +37,10 @@
             <tr><td colspan='5'></td></tr>
             {% include "InvenTree/settings/setting.html" with key="HOMEPAGE_SO_OUTSTANDING" user_setting=True %}
             {% include "InvenTree/settings/setting.html" with key="HOMEPAGE_SO_OVERDUE" user_setting=True %}
+            {% include "InvenTree/settings/setting.html" with key="HOMEPAGE_SO_SHIPMENTS_PENDING" user_setting=True %}
             <tr><td colspan='5'></td></tr>
             {% include "InvenTree/settings/setting.html" with key="HOMEPAGE_NEWS" user_setting=True %}
         </tbody>
     </table>
 </div>
-{% endblock %}
+{% endblock content %}
