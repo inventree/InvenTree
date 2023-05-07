@@ -31,7 +31,7 @@ You need to make sure that you have the following tools installed before continu
 Open [inventree/InvenTree](https://github.com/inventree/InvenTree) with your browser and click on `Code`, select the `codespaces` tab and click on create codespace on current branch. This may can take a few minutes until your inventree development environment is setup.
 
 !!! warning "Close the terminal"
-   The appearing terminal which says `Welcome to codespaces` is not using the virtual env. Close it and use a new terminal that will automatically connect to the venv for using commands.
+    The appearing terminal which says `Welcome to codespaces` is not using the virtual env. Close it and use a new terminal that will automatically connect to the venv for using commands.
 
 ### Running tasks
 
@@ -50,7 +50,7 @@ If you only need a superuser, run the `superuser` task. It should prompt you for
 You can either only run InvenTree or use the integrated debugger for debugging. Goto the `Run and debug` side panel make sure `InvenTree Server` is selected. Click on the play button on the left.
 
 !!! tip "Debug with 3rd party"
-   Sometimes you need to debug also some 3rd party packages. Just select `python: Django - 3rd party`
+    Sometimes you need to debug also some 3rd party packages. Just select `python: Django - 3rd party`
 
 You can now set breakpoints and vscode will automatically pause execution if that point is hit. You can see all variables available in that context and evaluate some code with the debugger console at the bottom. Use the play or step buttons to continue execution.
 
