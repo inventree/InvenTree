@@ -53,6 +53,7 @@ class PluginsRegistry:
         self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
         self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
+        self.mixin_modules: List() = []                         # Holdes all discovered mixins
 
         self.errors = {}                                        # Holds discovering errors
 
@@ -322,6 +323,15 @@ class PluginsRegistry:
 
         return collected_plugins
 
+    def discover_mixins(self):
+        """Discover all mixins from plugins and register them."""
+        collected_mixins = []
+
+        for plugin in self.plugins.items():
+            collected_mixins += plugin[1].get_registered_mixins()
+
+        self.mixin_modules = collected_mixins
+
     def install_plugin_file(self):
         """Make sure all plugins are installed in the current environment."""
         if settings.PLUGIN_FILE_CHECKED:
@@ -468,6 +478,18 @@ class PluginsRegistry:
             else:  # pragma: no cover
                 safe_reference(plugin=plg, key=plg_key, active=False)
 
+    def _get_mixin_order(self):
+        """Returns a list of mixin classes, in the order that they should be activated."""
+        # Preset list of mixins
+        order = self.mixin_order
+
+        # Append mixins that are not defined
+        addition_mixins = [m.get('cls') for m in self.mixin_modules if m.get('cls') not in order]
+        order += addition_mixins
+
+        # Final list of mixins
+        return order
+
     def _activate_plugins(self, force_reload=False, full_reload: bool = False):
         """Run activation functions for all plugins.
 
@@ -475,11 +497,14 @@ class PluginsRegistry:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
+        # Collect mixins
+        self.discover_mixins()
+
         # activate integrations
         plugins = self.plugins.items()
         logger.info(f'Found {len(plugins)} active plugins')
 
-        for mixin in self.mixin_order:
+        for mixin in self._get_mixin_order():
             if hasattr(mixin, '_activate_mixin'):
                 mixin._activate_mixin(self, plugins, force_reload=force_reload, full_reload=full_reload)
 
@@ -491,7 +516,7 @@ class PluginsRegistry:
         Args:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
-        for mixin in self.mixin_order:
+        for mixin in reversed(self._get_mixin_order()):
             if hasattr(mixin, '_deactivate_mixin'):
                 mixin._deactivate_mixin(self, force_reload=force_reload)
 

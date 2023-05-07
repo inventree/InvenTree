@@ -161,10 +161,10 @@ class MixinBase:
         self._mixinreg[key] = {
             'key': key,
             'human_name': human_name,
+            'cls': cls,
         }
 
-    @property
-    def registered_mixins(self, with_base: bool = False):
+    def get_registered_mixins(self, with_base: bool = False):
         """Get all registered mixins for the plugin."""
         mixins = getattr(self, '_mixinreg', None)
         if mixins:
@@ -174,6 +174,11 @@ class MixinBase:
             # only return dict
             mixins = list(mixins.values())
         return mixins
+
+    @property
+    def registered_mixins(self, with_base: bool = False):
+        """Get all registered mixins for the plugin."""
+        return self.get_registered_mixins(with_base=with_base)
 
 
 class VersionMixin:
