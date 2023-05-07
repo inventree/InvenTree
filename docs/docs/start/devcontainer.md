@@ -18,13 +18,13 @@ You need to make sure that you have the following tools installed before continu
 
 #### Setup/Installation
 
-1. Clone the repository (If you want to submit changes for it and use the url to your fork in the next step)
+1. Clone the repository (If you want to submit changes fork it and use the url to your fork in the next step)
    ```bash
    git clone https://github.com/inventree/InvenTree.git
    ```
 2. open vscode, navigate to the extensions sidebar and search for `ms-vscode-remote.remote-containers`. Click on install.
 3. open the cloned folder from above by clicking on `file > open folder`
-4. vscode should now ask you if you'd like to reopen this folder in a devcontainer. Click `Reopen in Container`. If it shouldn't ask you open the command palette (<kbd>CMD</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>) and search for `Reopen in Container`.
+4. vscode should now ask you if you'd like to reopen this folder in a devcontainer. Click `Reopen in Container`. If it shouldn't ask you open the command palette (<kbd>CMD</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>) and search for `Reopen in Container`. This can take a few minutes until the image is downloaded, build and setup with all dependencies.
 
 ### Setup in codespaces
 
@@ -39,7 +39,7 @@ Tasks can help you executing scripts. You can run them by open the command panel
 
 #### Setup demo dataset
 
-If you need some demo test-data, run the `setup-test` task. This will import a `admin` user with the password `inventree`. For more info on what this dataset contains see [inventree/demo-dataset](https://github.com/inventree/demo-dataset).
+If you need some demo test-data, run the `setup-test` task. This will import an `admin` user with the password `inventree`. For more info on what this dataset contains see [inventree/demo-dataset](https://github.com/inventree/demo-dataset).
 
 #### Setup a superuser
 
