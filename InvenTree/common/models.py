@@ -1584,7 +1584,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'LOGIN_SIGNUP_MAIL_RESTRICTION': {
             'name': _('Allowed domains'),
-            'description': _('Restrict signup to certain domains (comma-separated, strarting with @)'),
+            'description': _('Restrict signup to certain domains (comma-separated, starting with @)'),
             'default': '',
             'before_save': validate_email_domains,
         },
