@@ -6,11 +6,11 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Supplier API" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block heading %}
 {% trans "Supplier API" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if roles.part.add %}
@@ -18,7 +18,7 @@
     <span class='fas fa-tools'></span> {% trans "Import Supplier Part" %}
 </button>
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block page_info %}
 
@@ -26,7 +26,7 @@
     <p>Multiple supplier APIs are available</p>
 </div>
 
-{% endblock %}
+{% endblock page_info %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -58,4 +58,4 @@ function importSupplierPart(options={}) {
     });
 }
 
-{% endblock %}
+{% endblock js_ready %}

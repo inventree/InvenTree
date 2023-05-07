@@ -237,13 +237,13 @@
     {% for plugin_key, plugin in pl_list.items %}
         {% mixin_enabled plugin 'supplier' as supplier %}
         {% if supplier %}
-        addItem('supplier-api-{{plugin_key}}', '{{plugin.human_name}}');
-        loadSupplierApiTable('#table-supplier-api-{{plugin_key}}', {
+        addItem('supplier-api-{{ plugin_key }}', '{{ plugin.human_name }}');
+        loadSupplierApiTable('#table-supplier-api-{{ plugin_key }}', {
             params: {
                 original_search: '{{ query }}',
-                plugin: '{{plugin_key}}',
+                plugin: '{{ plugin_key }}',
             },
-            url: `/api/plugins/{{plugin_key}}/search/`
+            url: `/api/plugins/{{ plugin_key }}/search/`
         });
         {% endif %}
     {% endfor %}
