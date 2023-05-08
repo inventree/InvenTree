@@ -166,7 +166,7 @@ class MixinBase:
 
     def get_registered_mixins(self, with_base: bool = False):
         """Get all registered mixins for the plugin."""
-        mixins = getattr(self, '_mixinreg', None)
+        mixins = getattr(self, '_mixinreg', None).copy()
         if mixins:
             # filter out base
             if not with_base and 'base' in mixins:
