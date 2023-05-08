@@ -4,20 +4,20 @@
 {% load inventree_extras %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Notifications" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block sidebar %}
     {% include "InvenTree/notifications/sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
     {% include "InvenTree/notifications/inbox.html" %}
     {% include "InvenTree/notifications/history.html" %}
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -28,7 +28,6 @@ function updateNotificationTables() {
 }
 // this allows the global notification panel to update the tables
 window.updateNotifications = updateNotificationTables
-
 
 loadNotificationTable("#inbox-table", {
     name: 'inbox',
@@ -58,7 +57,6 @@ loadNotificationTable("#history-table", {
     url: '{% url 'api-notifications-list' %}',
     no_matches: function() { return '{% trans "No notification history found" %}'; },
 }, true);
-
 
 $('#history-delete').click(function() {
 
@@ -96,4 +94,4 @@ $("#history-table").on('click', '.notification-delete', function() {
 });
 
 enableSidebar('notifications');
-{% endblock %}
+{% endblock js_ready %}

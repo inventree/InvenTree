@@ -1,7 +1,7 @@
 {% if 'http' in url %}
 {% set img_url = url %}
 {% else %}
-{% set img_url = config.assets_dir  + '/images/' + url %}
+{% set img_url = config.assets_dir + '/images/' + url %}
 {% endif %}
 
 <figure class='image image-inventree'>

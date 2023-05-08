@@ -3,12 +3,11 @@
 {% load inventree_extras %}
 {% load plugin_extras %}
 
-{% block label %}plugin{% endblock %}
-
+{% block label %}plugin{% endblock label %}
 
 {% block heading %}
 {% trans "Plugin Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -86,7 +85,6 @@
 </table>
 </div>
 
-
 {% plugin_errors as pl_errors %}
 {% if pl_errors %}
 <div class='panel-heading'>
@@ -123,4 +121,4 @@
     </div>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}

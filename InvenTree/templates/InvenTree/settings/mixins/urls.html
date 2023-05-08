@@ -18,9 +18,9 @@
     <tbody>
         {% for key, entry in plugin.urlpatterns.reverse_dict.items %}{% if key %}
         <tr>
-            <td>{{key}}</td>
-            <td>{{entry.1}}</td>
-            <td><a class="btn btn-primary btn-small" href="/{{ base }}{{entry.1}}" target="_blank">{% trans 'Open in new tab' %}</a></td>
+            <td>{{ key }}</td>
+            <td>{{ entry.1 }}</td>
+            <td><a class="btn btn-primary btn-small" href="/{{ base }}{{ entry.1 }}" target="_blank">{% trans 'Open in new tab' %}</a></td>
         </tr>
         {% endif %}{% endfor %}
     </tbody>

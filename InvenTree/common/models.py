@@ -964,7 +964,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_DEFAULT_CURRENCY': {
             'name': _('Default Currency'),
-            'description': _('Select base currency for pricing caluclations'),
+            'description': _('Select base currency for pricing calculations'),
             'default': 'USD',
             'choices': CURRENCY_CHOICES,
             'after_save': update_exchange_rates,
@@ -1584,7 +1584,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'LOGIN_SIGNUP_MAIL_RESTRICTION': {
             'name': _('Allowed domains'),
-            'description': _('Restrict signup to certain domains (comma-separated, strarting with @)'),
+            'description': _('Restrict signup to certain domains (comma-separated, starting with @)'),
             'default': '',
             'before_save': validate_email_domains,
         },
@@ -1871,6 +1871,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         'HOMEPAGE_SO_OVERDUE': {
             'name': _('Show overdue SOs'),
             'description': _('Show overdue SOs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'HOMEPAGE_SO_SHIPMENTS_PENDING': {
+            'name': _('Show pending SO shipments'),
+            'description': _('Show pending SO shipments on the homepage'),
             'default': True,
             'validator': bool,
         },

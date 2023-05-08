@@ -419,6 +419,8 @@ function setupFilterList(tableKey, table, target, options={}) {
 
             printLabels({
                 items: items,
+                singular_name: options.singular_name,
+                plural_name: options.plural_name,
                 url: options.labels.url,
                 key: options.labels.key,
             });
@@ -427,7 +429,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
     // Callback for reloading the table
     element.find(`#reload-${tableKey}`).click(function() {
-        reloadTableFilters(table);
+        reloadTableFilters(table, {}, options);
     });
 
     // Add a callback for downloading table data
@@ -470,7 +472,7 @@ function setupFilterList(tableKey, table, target, options={}) {
                 // Only add the new filter if it is not empty!
                 if (tag && tag.length > 0) {
                     var filters = addTableFilter(tableKey, tag, val);
-                    reloadTableFilters(table, filters);
+                    reloadTableFilters(table, filters, options);
 
                     // Run this function again
                     setupFilterList(tableKey, table, target, options);
@@ -489,8 +491,7 @@ function setupFilterList(tableKey, table, target, options={}) {
     element.find(`#${clear}`).click(function() {
         var filters = clearTableFilters(tableKey);
 
-        reloadTableFilters(table, filters);
-
+        reloadTableFilters(table, filters, options);
         setupFilterList(tableKey, table, target, options);
     });
 
@@ -502,7 +503,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
         var filters = removeTableFilter(tableKey, filter);
 
-        reloadTableFilters(table, filters);
+        reloadTableFilters(table, filters, options);
 
         // Run this function again!
         setupFilterList(tableKey, table, target, options);

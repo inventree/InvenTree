@@ -151,7 +151,9 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
     """
 
     # Grab all "available" stock items for the Part
-    stock_entries = target.stock_entries(in_stock=True, include_variants=True)
+    # We do not include variant stock when performing a stocktake,
+    # otherwise the stocktake entries will be duplicated
+    stock_entries = target.stock_entries(in_stock=True, include_variants=False)
 
     # Cache min/max pricing information for this Part
     pricing = target.pricing
