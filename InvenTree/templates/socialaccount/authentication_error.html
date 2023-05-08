@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Social Network Login Failure" %}{% endblock %}
+{% block head_title %}{% trans "Social Network Login Failure" %}{% endblock head_title %}
 
 {% block content %}
 <h3>{% trans "Account Login Failure" %}</h3>
@@ -20,4 +20,4 @@
     </a>
 </div>
 
-{% endblock %}
+{% endblock content %}

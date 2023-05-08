@@ -3,11 +3,11 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}user-display{% endblock %}
+{% block label %}user-display{% endblock label %}
 
 {% block heading %}
 {% trans "Display Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -43,7 +43,7 @@
                     {% get_available_themes as themes %}
                     {% get_user_color_theme request.user.username as user_theme %}
                     {% for theme in themes %}
-                    <option value='{{ theme.key }}'{% if theme.key == user_theme %} selected{% endif%}>{{ theme.name }}</option>
+                    <option value='{{ theme.key }}'{% if theme.key == user_theme %} selected{% endif %}>{{ theme.name }}</option>
                     {% endfor %}
                 </select>
                 <div class='input-group-append'>
@@ -76,7 +76,7 @@
                         {% define language.code as lang_code %}
                         {% define locale_stats|keyvalue:lang_code as lang_translated %}
                         {% if lang_translated > 10 or lang_code == 'en' or lang_code == LANGUAGE_CODE %}{% define True as use_lang %}{% else %}{% define False as use_lang %}{% endif %}
-                        {% if ALL_LANG or use_lang  %}
+                        {% if ALL_LANG or use_lang %}
                         <option value="{{ lang_code }}"{% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
                             {{ language.name_local }} ({{ lang_code }})
                             {% if lang_translated %}
@@ -110,4 +110,4 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock content %}

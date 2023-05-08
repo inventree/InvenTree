@@ -6,15 +6,15 @@
 {% load plugin_extras %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Settings" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block sidebar %}
 {% include "InvenTree/settings/sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
 
@@ -31,6 +31,7 @@
 {% include "InvenTree/settings/global.html" %}
 {% include "InvenTree/settings/login.html" %}
 {% include "InvenTree/settings/barcode.html" %}
+{% include "InvenTree/settings/project_codes.html" %}
 {% include "InvenTree/settings/notifications.html" %}
 {% include "InvenTree/settings/label.html" %}
 {% include "InvenTree/settings/report.html" %}
@@ -54,11 +55,11 @@
 
 {% endif %}
 
-{% endblock %}
+{% endblock content %}
 
 {% block js_load %}
 {{ block.super }}
-{% endblock %}
+{% endblock js_load %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -77,4 +78,4 @@
 
 enableSidebar('settings');
 
-{% endblock %}
+{% endblock js_ready %}

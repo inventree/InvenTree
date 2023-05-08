@@ -62,6 +62,12 @@ function purchaseOrderFields(options={}) {
             }
         },
         supplier_reference: {},
+        project_code: {
+            icon: 'fa-list',
+        },
+        order_currency: {
+            icon: 'fa-coins',
+        },
         target_date: {
             icon: 'fa-calendar-alt',
         },
@@ -124,6 +130,10 @@ function purchaseOrderFields(options={}) {
             label: '{% trans "Duplicate Extra Lines" %}',
             help_text: '{% trans "Duplicate extra line items from the selected order" %}',
         };
+    }
+
+    if (!global_settings.PROJECT_CODES_ENABLED) {
+        delete fields.project_code;
     }
 
     return fields;
@@ -1615,6 +1625,18 @@ function loadPurchaseOrderTable(table, options) {
                 title: '{% trans "Description" %}',
             },
             {
+                field: 'project_code',
+                title: '{% trans "Project Code" %}',
+                switchable: global_settings.PROJECT_CODES_ENABLED,
+                visible: global_settings.PROJECT_CODES_ENABLED,
+                sortable: true,
+                formatter: function(value, row) {
+                    if (row.project_code_detail) {
+                        return `<span title='${row.project_code_detail.description}'>${row.project_code_detail.code}</span>`;
+                    }
+                }
+            },
+            {
                 field: 'status',
                 title: '{% trans "Status" %}',
                 switchable: true,
@@ -1651,7 +1673,7 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     return formatCurrency(value, {
-                        currency: row.total_price_currency,
+                        currency: row.order_currency,
                     });
                 },
             },
@@ -1933,7 +1955,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "SKU" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
-                        return renderLink(value, `/supplier-part/${row.part}/`);
+                        return renderClipboard(renderLink(value, `/supplier-part/${row.part}/`));
                     } else {
                         return '-';
                     }
@@ -1945,7 +1967,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "Link" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
-                        return renderLink(value, value);
+                        return renderLink(value, value, {external: true});
                     } else {
                         return '';
                     }
@@ -1958,7 +1980,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row, index, field) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {
-                        return renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`);
+                        return renderClipboard(renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`));
                     } else {
                         return '-';
                     }

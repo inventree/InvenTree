@@ -23,6 +23,7 @@
     yesNoLabel,
     withTitle,
     wrapButtons,
+    renderClipboard,
 */
 
 /* exported
@@ -376,10 +377,20 @@ function renderLink(text, url, options={}) {
         extras += ` download`;
     }
 
-    return `<a href="${url}" ${extras}>${text}</a>`;
+    let suffix = '';
+    if (options.external) {
+        extras += ` target="_blank" rel="noopener noreferrer"`;
+
+        suffix = ` <i class="fas fa-external-link-alt fa-xs d-none d-xl-inline"></i>`;
+    }
+    return `<a href="${url}" ${extras}>${text}${suffix}</a>`;
 }
 
 
+/*
+ * Configure an EasyMDE editor for the given element,
+ * allowing markdown editing of the notes field.
+ */
 function setupNotesField(element, url, options={}) {
 
     var editable = options.editable || false;
@@ -419,12 +430,24 @@ function setupNotesField(element, url, options={}) {
         element: document.getElementById(element),
         initialValue: initial,
         toolbar: toolbar_icons,
+        uploadImage: true,
+        imagePathAbsolute: true,
+        imageUploadFunction: function(imageFile, onSuccess, onError) {
+            // Attempt to upload the image to the InvenTree server
+            var form_data = new FormData();
+
+            form_data.append('image', imageFile);
+
+            inventreeFormDataUpload('{% url "api-notes-image-list" %}', form_data, {
+                success: function(response) {
+                    onSuccess(response.image);
+                },
+                error: function(xhr, status, error) {
+                    onError(error);
+                }
+            });
+        },
         shortcuts: [],
-        renderingConfig: {
-            markedOptions: {
-                sanitize: true,
-            }
-        }
     });
 
 
@@ -460,12 +483,15 @@ function setupNotesField(element, url, options={}) {
 
             data[options.notes_field || 'notes'] = mde.value();
 
+            $('#save-notes').find('#save-icon').removeClass('fa-save').addClass('fa-spin fa-spinner');
+
             inventreePut(url, data, {
                 method: 'PATCH',
                 success: function(response) {
-                    showMessage('{% trans "Notes updated" %}', {style: 'success'});
+                    $('#save-notes').find('#save-icon').removeClass('fa-spin fa-spinner').addClass('fa-check-circle');
                 },
                 error: function(xhr) {
+                    $('#save-notes').find('#save-icon').removeClass('fa-spin fa-spinner').addClass('fa-times-circle icon-red');
                     showApiError(xhr, url);
                 }
             });
@@ -496,4 +522,26 @@ function sanitizeInputString(s, options={}) {
     s = s.trim();
 
     return s;
+}
+
+/*
+ * Inserts HTML data equal to clip.html into input string
+ * Enables insertion of clipboard icons in dynamic tables
+ *
+ * clipString relies on ClipboardJS in the same manner as clip.html
+ * Thus, this functionality will break if the call to
+ * attachClipboard('.clip-btn') in script/inventree/inventree.js is altered
+ */
+function renderClipboard(s, prepend=false) {
+    if (!s || typeof s != 'string') {
+        return s;
+    }
+
+    let clipString = `<span class="d-none d-xl-inline"><button class="btn clip-btn" type="button" data-bs-toggle='tooltip' title='{% trans "copy to clipboard" %}'><em class="fas fa-copy"></em></button></span>`;
+
+    if (prepend === true) {
+        return `<div class="flex-cell">${clipString+s}</div>`;
+    } else {
+        return `<div class="flex-cell">${s+clipString}</div>`;
+    }
 }

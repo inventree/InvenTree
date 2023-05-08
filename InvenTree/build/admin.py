@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-import import_export.widgets as widgets
+from import_export import widgets
 
 from build.models import Build, BuildItem
 from InvenTree.admin import InvenTreeResource

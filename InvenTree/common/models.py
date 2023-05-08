@@ -42,6 +42,7 @@ from rest_framework.exceptions import PermissionDenied
 import build.validators
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -82,6 +83,33 @@ class EmptyURLValidator(URLValidator):
 
         else:
             super().__call__(value)
+
+
+class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+    """A ProjectCode is a unique identifier for a project."""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-project-code-list')
+
+    def __str__(self):
+        """String representation of a ProjectCode."""
+        return self.code
+
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Unique project code'),
+    )
+
+    description = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Project description'),
+    )
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -936,7 +964,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_DEFAULT_CURRENCY': {
             'name': _('Default Currency'),
-            'description': _('Select base currency for pricing caluclations'),
+            'description': _('Select base currency for pricing calculations'),
             'default': 'USD',
             'choices': CURRENCY_CHOICES,
             'after_save': update_exchange_rates,
@@ -985,7 +1013,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_UPDATE_CHECK_INTERVAL': {
-            'name': _('Update Check Inverval'),
+            'name': _('Update Check Interval'),
             'description': _('How often to check for updates (set to zero to disable)'),
             'validator': [
                 int,
@@ -1556,7 +1584,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'LOGIN_SIGNUP_MAIL_RESTRICTION': {
             'name': _('Allowed domains'),
-            'description': _('Restrict signup to certain domains (comma-separated, strarting with @)'),
+            'description': _('Restrict signup to certain domains (comma-separated, starting with @)'),
             'default': '',
             'before_save': validate_email_domains,
         },
@@ -1629,6 +1657,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
+        },
+
+        "PROJECT_CODES_ENABLED": {
+            'name': _('Enable project codes'),
+            'description': _('Enable project codes for tracking projects'),
+            'default': False,
+            'validator': bool,
         },
 
         'STOCKTAKE_ENABLE': {
@@ -1706,6 +1741,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         ]
 
     SETTINGS = {
+
+        'HOMEPAGE_HIDE_INACTIVE': {
+            'name': _('Hide inactive parts'),
+            'description': _('Hide inactive parts in results displayed on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+
         'HOMEPAGE_PART_STARRED': {
             'name': _('Show subscribed parts'),
             'description': _('Show subscribed parts on the homepage'),
@@ -1828,6 +1871,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         'HOMEPAGE_SO_OVERDUE': {
             'name': _('Show overdue SOs'),
             'description': _('Show overdue SOs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'HOMEPAGE_SO_SHIPMENTS_PENDING': {
+            'name': _('Show pending SO shipments'),
+            'description': _('Show pending SO shipments on the homepage'),
             'default': True,
             'validator': bool,
         },
@@ -2368,7 +2418,7 @@ class WebhookEndpoint(models.Model):
         """
         return WebhookMessage.objects.create(
             host=request.get_host(),
-            header=json.dumps({key: val for key, val in headers.items()}),
+            header=json.dumps(dict(headers.items())),
             body=payload,
             endpoint=self,
         )
@@ -2642,3 +2692,27 @@ class NewsFeedEntry(models.Model):
         help_text=_('Was this news item read?'),
         default=False
     )
+
+
+def rename_notes_image(instance, filename):
+    """Function for renaming uploading image file. Will store in the 'notes' directory."""
+
+    fname = os.path.basename(filename)
+    return os.path.join('notes', fname)
+
+
+class NotesImage(models.Model):
+    """Model for storing uploading images for the 'notes' fields of various models.
+
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown)
+    """
+
+    image = models.ImageField(
+        upload_to=rename_notes_image,
+        verbose_name=_('Image'),
+        help_text=_('Image file'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    date = models.DateTimeField(auto_now_add=True)

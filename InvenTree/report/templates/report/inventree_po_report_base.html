@@ -15,7 +15,7 @@
         {% if supplier %}{{ supplier.name }}{% else %}{% trans "Supplier was deleted" %}{% endif %}
     </div>
 
-{% endblock %}
+{% endblock header_content %}
 
 {% block page_content %}
 
@@ -37,7 +37,7 @@
         <tr>
             <td>
                 <div class='thumb-container'>
-                    <img src='{% part_image line.part.part %}' class='part-thumb'>
+                    <img src='{% part_image line.part.part %}' class='part-thumb' alt="{% trans 'Part image' %}">
                 </div>
                 <div class='part-text'>
                     {{ line.part.part.full_name }}
@@ -70,12 +70,11 @@
             <td></td>
             <td></td>
             <th>{% trans "Total" %}</th>
-            <td>{% render_currency order.total_price decimal_places=2 currency=order.supplier.currency %}</td>
+            <td>{% render_currency order.total_price decimal_places=2 currency=order.currency %}</td>
             <td></td>
         </tr>
 
     </tbody>
 </table>
 
-
-{% endblock %}
+{% endblock page_content %}

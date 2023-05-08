@@ -17,7 +17,7 @@
         </div>
     </div>
     {% endif %}
-    <img class="part-thumb" id='part-image'
+    <img class="part-thumb" id='part-image' alt="{% trans 'Part image' %}"
         {% if part.image %}
         src="{{ part.image.preview.url }}"
         {% else %}

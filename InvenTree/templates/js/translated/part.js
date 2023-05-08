@@ -20,6 +20,7 @@
 
 /* exported
     createPart,
+    createPartCategory,
     deletePart,
     deletePartCategory,
     duplicateBom,
@@ -253,8 +254,8 @@ function partFields(options={}) {
 /*
  * Construct a set of fields for a PartCategory intance
  */
-function categoryFields() {
-    return {
+function categoryFields(options={}) {
+    let fields = {
         parent: {
             help_text: '{% trans "Parent part category" %}',
             required: false,
@@ -276,6 +277,28 @@ function categoryFields() {
             placeholder: 'fas fa-tag',
         },
     };
+
+    if (options.parent) {
+        fields.parent.value = options.parent;
+    }
+
+    return fields;
+}
+
+
+// Create a PartCategory via the API
+function createPartCategory(options={}) {
+    let fields = categoryFields(options);
+
+    constructForm('{% url "api-part-category-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Create Part Category" %}',
+        follow: true,
+        persist: true,
+        persistMessage: '{% trans "Create new category after this one" %}',
+        successMessage: '{% trans "Part category created" %}'
+    });
 }
 
 
@@ -349,7 +372,7 @@ function createPart(options={}) {
         fields: partFields(options),
         groups: partGroups(),
         title: '{% trans "Create Part" %}',
-        reloadFormAfterSuccess: true,
+        persist: true,
         persistMessage: '{% trans "Create another part after this one" %}',
         successMessage: '{% trans "Part created successfully" %}',
         onSuccess: function(data) {
@@ -1424,7 +1447,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     if (row.supplier_part_detail) {
                         var supp = row.supplier_part_detail;
 
-                        return renderLink(supp.SKU, `/supplier-part/${supp.pk}/`);
+                        return renderClipboard(renderLink(supp.SKU, `/supplier-part/${supp.pk}/`));
                     } else {
                         return '-';
                     }
@@ -1437,7 +1460,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 formatter: function(value, row) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part_detail) {
                         var manu = row.supplier_part_detail.manufacturer_part_detail;
-                        return renderLink(manu.MPN, `/manufacturer-part/${manu.pk}/`);
+                        return renderClipboard(renderLink(manu.MPN, `/manufacturer-part/${manu.pk}/`));
                     }
                 }
             },
@@ -1811,7 +1834,9 @@ function loadPartTable(table, url, options={}) {
         labels: {
             url: '{% url "api-part-label-list" %}',
             key: 'part',
-        }
+        },
+        singular_name: '{% trans "part" %}',
+        plural_name: '{% trans "parts" %}',
     });
 
     var columns = [
@@ -2207,6 +2232,9 @@ function loadPartCategoryTable(table, options) {
         treeShowField: 'name',
         parentIdField: tree_view ? 'parent' : null,
         method: 'get',
+        formatNoMatches: function() {
+            return '{% trans "No subcategories found" %}';
+        },
         url: options.url || '{% url "api-part-category-list" %}',
         queryParams: filters,
         disablePagination: tree_view,

@@ -5,7 +5,6 @@
 {% load i18n %}
 {% load static %}
 
-
 {% block sidebar %}
 {% include 'order/po_sidebar.html' %}
 {% endblock sidebar %}
@@ -180,9 +179,7 @@ $('#new-po-line').click(function() {
     createPurchaseOrderLineItem({{ order.pk }}, {
         {% if order.supplier %}
         supplier: {{ order.supplier.pk }},
-        {% if order.supplier.currency %}
-        currency: '{{ order.supplier.currency }}',
-        {% endif %}
+        currency: '{{ order.currency }}',
         {% endif %}
         onSuccess: function() {
             $('#po-line-table').bootstrapTable('refresh');
@@ -235,9 +232,7 @@ onPanelLoad('order-items', function() {
             order: {{ order.pk }},
             table: '#po-extra-lines-table',
             url: '{% url "api-po-extra-line-list" %}',
-            {% if order.supplier.currency %}
-            currency: '{{ order.supplier.currency }}',
-            {% endif %}
+            currency: '{{ order.currency }}',
         });
     });
 
@@ -268,4 +263,4 @@ loadOrderTotal(
 
 enableSidebar('purchaseorder');
 
-{% endblock %}
+{% endblock js_ready %}

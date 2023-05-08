@@ -5,7 +5,7 @@
 
 {% block sidebar %}
 {% include 'company/sidebar.html' %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
 
@@ -270,7 +270,7 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -390,7 +390,7 @@
         });
         {% endif %}
 
-        {% if roles.salse_order.add %}
+        {% if roles.sales_order.add %}
         $("#new-sales-order").click(function() {
 
             createSalesOrder({
@@ -542,4 +542,4 @@
 
     enableSidebar('company');
 
-{% endblock %}
+{% endblock js_ready %}

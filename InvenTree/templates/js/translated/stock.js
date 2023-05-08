@@ -159,6 +159,9 @@ function createStockLocation(options={}) {
     options.method = 'POST';
     options.fields = stockLocationFields(options);
     options.title = '{% trans "New Stock Location" %}';
+    options.persist = true;
+    options.persistMessage = '{% trans "Create another location after this one" %}';
+    options.successMessage = '{% trans "Stock location created" %}';
 
     constructForm(url, options);
 }
@@ -472,6 +475,10 @@ function createNewStockItem(options={}) {
     options.method = 'POST';
 
     options.create = true;
+
+    options.persist = true;
+    options.persistMessage = '{% trans "Create another item after this one" %}';
+    options.successMessage = '{% trans "Stock item created" %}';
 
     options.fields = stockItemFields(options);
     options.groups = stockItemGroups(options);
@@ -1717,7 +1724,9 @@ function loadStockTable(table, options) {
         labels: {
             url: '{% url "api-stockitem-label-list" %}',
             key: 'item',
-        }
+        },
+        singular_name: '{% trans "stock item" %}',
+        plural_name: '{% trans "stock items" %}'
     });
 
     // Override the default values, or add new ones
@@ -1773,7 +1782,7 @@ function loadStockTable(table, options) {
         formatter: function(value, row) {
             var ipn = row.part_detail.IPN;
             if (ipn) {
-                return withTitle(shortenString(ipn), ipn);
+                return renderClipboard(withTitle(shortenString(ipn), ipn));
             } else {
                 return '-';
             }
@@ -2005,7 +2014,7 @@ function loadStockTable(table, options) {
                 text = `<i>{% trans "Supplier part not specified" %}</i>`;
             }
 
-            return renderLink(text, link);
+            return renderClipboard(renderLink(text, link));
         }
     };
 
@@ -2061,6 +2070,10 @@ function loadStockTable(table, options) {
                 min_price = row.part_detail.pricing_min;
                 max_price = row.part_detail.pricing_max;
                 currency = baseCurrency();
+            }
+
+            if (row.quantity <= 0) {
+                return '-';
             }
 
             return formatPriceRange(
@@ -2371,7 +2384,9 @@ function loadStockLocationTable(table, options) {
         labels: {
             url: '{% url "api-stocklocation-label-list" %}',
             key: 'location'
-        }
+        },
+        singular_name: '{% trans "stock location" %}',
+        plural_name: '{% trans "stock locations" %}',
     });
 
     for (var key in params) {
@@ -2637,12 +2652,12 @@ function loadStockTrackingTable(table, options) {
         field: 'deltas',
         title: '{% trans "Details" %}',
         formatter: function(details, row) {
-            var html = `<table class='table table-condensed' id='tracking-table-${row.pk}'>`;
 
-            if (!details) {
-                html += '</table>';
-                return html;
+            if (!details || !Object.keys(details).length) {
+                return `<small><em>{% trans "No changes" %}</em></small>`;
             }
+
+            let html = `<table class='table table-condensed' id='tracking-table-${row.pk}'>`;
 
             // Part information
             if (details.part) {

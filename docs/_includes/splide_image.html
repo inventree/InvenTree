@@ -1,0 +1,10 @@
+
+{% if 'http' in src %}
+{% set img_url = src %}
+{% else %}
+{% set img_url = config.assets_dir + '/images/' + src %}
+{% endif %}
+
+<li class='splide__slide'>
+    <img alt='Image' src='{{ img_url }}'>
+</li>
