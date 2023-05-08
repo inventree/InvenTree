@@ -4,9 +4,9 @@
     {% if hover %}
     <a class='hover-icon'>
     {% endif %}
-        <img class='hover-img-thumb' {% if image %}src='{{ image.url }}'{% else %}src='{% static "img/blank_image.png" %}'{% endif %}>
+        <img class='hover-img-thumb' alt='{% trans "Image" %}' {% if image %}src='{{ image.url }}'{% else %}src='{% static "img/blank_image.png" %}'{% endif %}>
     {% if hover and image %}
-        <img class='hover-img-large' {% if image %}src='{{ image.url }}'{% else %}src='{% static "img/blank_image.png" %}'{% endif %}>
+        <img class='hover-img-large' alt='{% trans "Image" %}' {% if image %}src='{{ image.url }}'{% else %}src='{% static "img/blank_image.png" %}'{% endif %}>
     </a>
     {% endif %}
 </div>

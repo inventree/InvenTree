@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
+from taggit.serializers import TagListSerializerField
 
 import common.models
 import company.models
@@ -31,8 +32,9 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer, RemoteImageMixin,
-                                   UserSerializer)
+                                   InvenTreeMoneySerializer,
+                                   InvenTreeTagModelSerializer,
+                                   RemoteImageMixin, UserSerializer)
 from InvenTree.status_codes import BuildStatus
 from InvenTree.tasks import offload_task
 
@@ -403,7 +405,7 @@ class InitialSupplierSerializer(serializers.Serializer):
         return data
 
 
-class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
+class PartSerializer(RemoteImageMixin, InvenTreeTagModelSerializer):
     """Serializer for complete detail information of a part.
 
     Used when displaying all details of a single component.
@@ -464,12 +466,16 @@ class PartSerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'duplicate',
             'initial_stock',
             'initial_supplier',
-            'copy_category_parameters'
+            'copy_category_parameters',
+
+            'tags',
         ]
 
         read_only_fields = [
             'barcode_hash',
         ]
+
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for PartSerializer:

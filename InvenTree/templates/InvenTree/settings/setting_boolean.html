@@ -4,7 +4,7 @@
         fieldname='{{ setting.key.upper }}'
         pk='{{ setting.pk }}'
         setting='{{ setting.key.upper }}'
-        id='setting-value-{{setting.pk }}-{{ setting.typ }}'
+        id='setting-value-{{ setting.pk }}-{{ setting.typ }}'
         type='checkbox'
         {% if setting.as_bool %}checked=''{% endif %}
         {{ reference }}

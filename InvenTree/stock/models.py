@@ -21,6 +21,7 @@ from django.utils.translation import gettext_lazy as _
 from jinja2 import Template
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
+from taggit.managers import TaggableManager
 
 import common.models
 import InvenTree.helpers
@@ -52,6 +53,8 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
         verbose_name = _('Stock Location')
         verbose_name_plural = _('Stock Locations')
+
+    tags = TaggableManager()
 
     def delete_recursive(self, *args, **kwargs):
         """This function handles the recursive deletion of sub-locations depending on kwargs contents"""
@@ -320,6 +323,8 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
                 'exclude_tree': self.pk,
             }
         }
+
+    tags = TaggableManager()
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
@@ -1171,10 +1176,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             user: The user performing the operation
             notes: Any notes associated with the operation
         """
-        # Cannot be already installed in another stock item!
-        if self.belongs_to is not None:
-            return False
-
         # If the quantity is less than the stock item, split the stock!
         stock_item = other_item.splitStock(quantity, None, user)
 
@@ -1664,9 +1665,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         if location is None:
             # TODO - Raise appropriate error (cannot move to blank location)
             return False
-        elif self.location and (location.pk == self.location.pk) and (quantity == self.quantity):
-            # TODO - Raise appropriate error (cannot move to same location)
-            return False
 
         # Test for a partial movement
         if quantity < self.quantity:
@@ -1677,16 +1675,25 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
             return True
 
+        # Moving into the same location triggers a different history code
+        same_location = location == self.location
+
         self.location = location
 
         tracking_info = {}
 
+        tracking_code = StockHistoryCode.STOCK_MOVE
+
+        if same_location:
+            tracking_code = StockHistoryCode.STOCK_UPDATE
+        else:
+            tracking_info['location'] = location.pk
+
         self.add_tracking_entry(
-            StockHistoryCode.STOCK_MOVE,
+            tracking_code,
             user,
             notes=notes,
             deltas=tracking_info,
-            location=location,
         )
 
         self.save()

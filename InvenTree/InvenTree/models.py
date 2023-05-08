@@ -60,6 +60,27 @@ class MetadataMixin(models.Model):
         """Meta for MetadataMixin."""
         abstract = True
 
+    def save(self, *args, **kwargs):
+        """Save the model instance, and perform validation on the metadata field."""
+        self.validate_metadata()
+        super().save(*args, **kwargs)
+
+    def clean(self, *args, **kwargs):
+        """Perform model validation on the metadata field."""
+        super().clean()
+
+        self.validate_metadata()
+
+    def validate_metadata(self):
+        """Validate the metadata field."""
+
+        # Ensure that the 'metadata' field is a valid dict object
+        if self.metadata is None:
+            self.metadata = {}
+
+        if type(self.metadata) is not dict:
+            raise ValidationError({'metadata': _('Metadata must be a python dict object')})
+
     metadata = models.JSONField(
         blank=True, null=True,
         verbose_name=_('Plugin Metadata'),
@@ -80,16 +101,16 @@ class MetadataMixin(models.Model):
 
         return self.metadata.get(key, backup_value)
 
-    def set_metadata(self, key: str, data, commit: bool = True):
+    def set_metadata(self, key: str, data, commit: bool = True, overwrite: bool = False):
         """Save the provided metadata under the provided key.
 
         Args:
             key (str): Key for saving metadata
             data (Any): Data object to save - must be able to be rendered as a JSON string
             commit (bool, optional): If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted. Defaults to True.
+            overwrite (bool): If true, delete existing metadata before adding new value
         """
-        if self.metadata is None:
-            # Handle a null field value
+        if overwrite or self.metadata is None:
             self.metadata = {}
 
         self.metadata[key] = data
