@@ -39,9 +39,8 @@ class PluginsRegistry:
     from .base.integration.ScheduleMixin import ScheduleMixin
     from .base.integration.SettingsMixin import SettingsMixin
     from .base.integration.UrlsMixin import UrlsMixin
-    from .base.supplier.mixins import SupplierMixin
 
-    DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, SupplierMixin, AppMixin, UrlsMixin]
+    DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, AppMixin, UrlsMixin]
 
     def __init__(self, mixin_order: list = None) -> None:
         """Initialize registry.
