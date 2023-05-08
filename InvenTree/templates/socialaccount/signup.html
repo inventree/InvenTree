@@ -2,7 +2,7 @@
 
 {% load i18n crispy_forms_tags inventree_extras %}
 
-{% block head_title %}{% trans "Signup" %}{% endblock %}
+{% block head_title %}{% trans "Signup" %}{% endblock head_title %}
 
 {% block content %}
     <h3>{% trans "Sign Up" %}</h3>
@@ -28,4 +28,4 @@
     </a>
 </div>
 
-{% endblock %}
+{% endblock content %}

@@ -59,15 +59,15 @@
 <style>
     {% block css %}
     <!-- Custom CSS style goes here -->
-    {% endblock %}
+    {% endblock css %}
 </style>
 {% block head %}
-{% endblock %}
+{% endblock head %}
 
 <title>
 {% block page_title %}
 {% inventree_title %}
-{% endblock %}
+{% endblock page_title %}
 </title>
 </head>
 
@@ -84,7 +84,7 @@
                     <ul id='sidebar-list-group' class='list-group sidebar-list-group'>
                         {% block sidebar %}
                         <!-- Sidebar goes here -->
-                        {% endblock %}
+                        {% endblock sidebar %}
                         {% include "plugin/panel_menu.html" %}
                         {% include "sidebar_toggle.html" with target='sidebar' %}
                     </ul>
@@ -107,28 +107,28 @@
                 </div>
                 {% endif %}
             </div>
-            {% endblock %}
+            {% endblock alerts %}
 
             {% block breadcrumb_list %}
             <div class='container-fluid navigation' id='breadcrumb-div'>
                 <nav aria-label='breadcrumb'>
                     <ol class='breadcrumb' id='breadcrumb-list'>
                         {% block breadcrumbs %}
-                        {% endblock %}
+                        {% endblock breadcrumbs %}
                     </ol>
                 </nav>
 
                 <div id='breadcrumb-tree-collapse' class='collapse collapse-horizontal show border' style='display: none;'>
                     {% block breadcrumb_tree %}
-                    {% endblock %}
+                    {% endblock breadcrumb_tree %}
                 </div>
             </div>
 
-            {% endblock %}
+            {% endblock breadcrumb_list %}
 
             {% block content %}
                 <!-- Each view fills in here.. -->
-            {% endblock %}
+            {% endblock content %}
         </main>
     </div>
 
@@ -180,7 +180,7 @@
 <script defer type='text/javascript' src="{% i18n_static 'notification.js' %}"></script>
 
 {% block js_load %}
-{% endblock %}
+{% endblock js_load %}
 
 <script defer type='text/javascript'>
 
@@ -189,7 +189,7 @@ $(document).ready(function () {
     {% include "plugin/panel_js.html" %}
 
 {% block js_ready %}
-{% endblock %}
+{% endblock js_ready %}
 
     inventreeDocReady();
 
@@ -217,7 +217,7 @@ $(document).ready(function () {
 </script>
 
 {% block js %}
-{% endblock %}
+{% endblock js %}
 
 </body>
 </html>

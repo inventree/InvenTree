@@ -31,6 +31,7 @@ from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
+from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
@@ -336,6 +337,7 @@ class PartManager(TreeManager):
             'category__parent',
             'stock_items',
             'builds',
+            'tags',
         )
 
 
@@ -378,6 +380,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     """
 
     objects = PartManager()
+    tags = TaggableManager()
 
     class Meta:
         """Metaclass defines extra model properties"""
@@ -827,7 +830,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         self.validate_name()
 
         if self.trackable:
-            for part in self.get_used_in().all():
+            for part in self.get_used_in():
 
                 if not part.trackable:
                     part.trackable = True
@@ -1060,7 +1063,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
-            part__in=self.get_used_in().all(),
+            part__in=self.get_used_in(),
             status__in=BuildStatus.ACTIVE_CODES
         )
 
@@ -1540,7 +1543,11 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """
 
         # Cache all *parent* parts
-        parents = self.get_ancestors(include_self=False)
+        try:
+            parents = self.get_ancestors(include_self=False)
+        except ValueError:
+            # If get_ancestors() fails, then this part is not saved yet
+            parents = []
 
         # Case A: This part is directly specified in a BomItem (we always use this case)
         query = Q(
@@ -1566,50 +1573,40 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         return query
 
-    def get_used_in_filter(self, include_inherited=True):
-        """Return a query filter for all parts that this part is used in.
-
-        There are some considerations:
-
-        a) This part may be directly specified against a BOM for a part
-        b) This part may be specifed in a BOM which is then inherited by another part
-
-        Note: This function returns a Q object, not an actual queryset.
-              The Q object is used to filter against a list of Part objects
-        """
-        # This is pretty expensive - we need to traverse multiple variant lists!
-        # TODO - In the future, could this be improved somehow?
-
-        # Keep a set of Part ID values
-        parts = set()
-
-        # First, grab a list of all BomItem objects which "require" this part
-        bom_items = BomItem.objects.filter(sub_part=self)
-
-        for bom_item in bom_items:
-
-            # Add the directly referenced part
-            parts.add(bom_item.part)
-
-            # Traverse down the variant tree?
-            if include_inherited and bom_item.inherited:
-
-                part_variants = bom_item.part.get_descendants(include_self=False)
-
-                for variant in part_variants:
-                    parts.add(variant)
-
-        # Turn into a list of valid IDs (for matching against a Part query)
-        part_ids = [part.pk for part in parts]
-
-        return Q(id__in=part_ids)
-
-    def get_used_in(self, include_inherited=True):
-        """Return a queryset containing all parts this part is used in.
+    def get_used_in(self, include_inherited=True, include_substitutes=True):
+        """Return a list containing all parts this part is used in.
 
         Includes consideration of inherited BOMs
         """
-        return Part.objects.filter(self.get_used_in_filter(include_inherited=include_inherited))
+
+        # Grab a queryset of all BomItem objects which "require" this part
+        bom_items = BomItem.objects.filter(
+            self.get_used_in_bom_item_filter(
+                include_substitutes=include_substitutes
+            )
+        )
+
+        # Iterate through the returned items and construct a set of
+        parts = set()
+
+        for bom_item in bom_items:
+            if bom_item.part in parts:
+                continue
+
+            parts.add(bom_item.part)
+
+            # Include inherited BOMs?
+            if include_inherited and bom_item.inherited:
+                try:
+                    descendants = bom_item.part.get_descendants(include_self=False)
+                except ValueError:
+                    # This part is not saved yet
+                    descendants = []
+
+                for variant in descendants:
+                    parts.add(variant)
+
+        return list(parts)
 
     @property
     def has_bom(self):
@@ -1639,7 +1636,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     @property
     def used_in_count(self):
         """Return the number of part BOMs that this part appears in."""
-        return self.get_used_in().count()
+        return len(self.get_used_in())
 
     def get_bom_hash(self):
         """Return a checksum hash for the BOM for this part.

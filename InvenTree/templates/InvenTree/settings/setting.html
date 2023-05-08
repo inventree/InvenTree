@@ -45,7 +45,7 @@
                     pk='{{ setting.pk }}'
                     setting='{{ setting.key.upper }}'
                     {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}
-                    {% if user_setting or notification_setting %}user='{{request.user.id}}'{% endif %}
+                    {% if user_setting or notification_setting %}user='{{ request.user.id }}'{% endif %}
                     {% if notification_setting %}
                     notification=true
                     method='{{ setting.method }}'

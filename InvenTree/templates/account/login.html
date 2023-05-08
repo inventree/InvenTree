@@ -3,7 +3,7 @@
 {% load inventree_extras %}
 {% load i18n account socialaccount crispy_forms_tags inventree_extras %}
 
-{% block head_title %}{% trans "Sign In" %}{% endblock %}
+{% block head_title %}{% trans "Sign In" %}{% endblock head_title %}
 
 {% block content %}
 
@@ -26,7 +26,7 @@
   {% endif %}
 </div>
 
-<form class="login" method="POST" action="{% url 'account_login' %}">
+<form class="login" method="post" action="{% url 'account_login' %}">
   {% csrf_token %}
   {{ form|crispy }}
   {% if redirect_field_value %}
@@ -42,7 +42,7 @@
   <div>{{ login_message | safe }}<hr></div>
   {% endif %}
   {% if mail_conf and enable_pwd_forgot %}
-  <a class="" href="{% url 'account_reset_password' %}"><small>{% trans "Forgot Password?" %}</small></a>
+  <a href="{% url 'account_reset_password' %}"><small>{% trans "Forgot Password?" %}</small></a>
   {% endif %}
 </form>
 
@@ -60,4 +60,4 @@
 {% include "socialaccount/snippets/login_extra.html" %}
 {% endif %}
 
-{% endblock %}
+{% endblock content %}

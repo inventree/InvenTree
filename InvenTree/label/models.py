@@ -13,10 +13,9 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-import common.models
 import part.models
 import stock.models
-from InvenTree.helpers import normalize, validateFilterString
+from InvenTree.helpers import get_base_url, normalize, validateFilterString
 from InvenTree.models import MetadataMixin
 from plugin.registry import registry
 
@@ -183,7 +182,7 @@ class LabelTemplate(MetadataMixin, models.Model):
         context = self.get_context_data(request)
 
         # Add "basic" context data which gets passed to every label
-        context['base_url'] = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+        context['base_url'] = get_base_url(request=request)
         context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
         context['request'] = request
