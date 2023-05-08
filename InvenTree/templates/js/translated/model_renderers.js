@@ -488,6 +488,7 @@ function renderSupplierPart(data, parameters={}) {
 function renderWebconnection(name, data, parameters={}, options={}) {
     var html = `<span>${data.connection_key} \\ ${data.name}</span>`;
     return html;
+}
 
 // Renderer for "ProjectCode" model
 function renderProjectCode(data, parameters={}) {
