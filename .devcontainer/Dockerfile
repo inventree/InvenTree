@@ -16,7 +16,7 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
     apt-get -y install --no-install-recommends \
-    git gcc g++ gettext gnupg libffi-dev \
+    git gcc g++ gettext gnupg2 libffi-dev \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
     poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
     # Image format support

@@ -301,7 +301,8 @@ loadPurchaseOrderTable("#table-po-overdue", {
 
 {% settings_value 'HOMEPAGE_SO_OUTSTANDING' user=request.user as setting_so_outstanding %}
 {% settings_value 'HOMEPAGE_SO_OVERDUE' user=request.user as setting_so_overdue %}
-{% to_list setting_so_outstanding setting_so_overdue as settings_list_so %}
+{% settings_value 'HOMEPAGE_SO_SHIPMENTS_PENDING' user=request.user as setting_so_shipments_pending %}
+{% to_list setting_so_outstanding setting_so_overdue setting_so_shipments_pending as settings_list_so %}
 
 {% if roles.sales_order.view and True in settings_list_so %}
 addHeaderTitle('{% trans "Sales Orders" %}');
@@ -325,6 +326,17 @@ loadSalesOrderTable("#table-so-overdue", {
         overdue: true,
         customer_detail: true,
     }
+});
+{% endif %}
+
+{% if setting_so_shipments_pending %}
+addHeaderAction('so-shipments', '{% trans "Pending Shipments" %}', 'fa-truck-loading');
+loadSalesOrderShipmentTable("#table-so-shipments", {
+    url: "{% url 'api-so-shipment-list' %}",
+    params: {
+        shipped: false,
+    },
+    show_so_reference: true,
 });
 {% endif %}
 

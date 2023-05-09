@@ -106,6 +106,7 @@ nav:
     - Purchase Orders: order/purchase_order.md
     - Sales Orders: order/sales_order.md
     - Return Orders: order/return_order.md
+    - Project Codes: order/project_codes.md
   - Report:
     - Templates: report/report.md
     - Report Types:
