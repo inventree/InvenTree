@@ -323,8 +323,8 @@ class PluginsRegistry:
         """Discover all mixins from plugins and register them."""
         collected_mixins = {}
 
-        for plugin in self.plugins.items():
-            collected_mixins.update(plugin[1].get_registered_mixins())
+        for plg in self.plugins.values():
+            collected_mixins.update(plg.get_registered_mixins())
 
         self.mixin_modules = collected_mixins
 
@@ -474,14 +474,13 @@ class PluginsRegistry:
             else:  # pragma: no cover
                 safe_reference(plugin=plg, key=plg_key, active=False)
 
-    def _get_mixin_order(self):
+    def __get_mixin_order(self):
         """Returns a list of mixin classes, in the order that they should be activated."""
         # Preset list of mixins
         order = self.DEFAULT_MIXIN_ORDER
 
-        # Append mixins that are not defined
-        addition_mixins = [m.get('cls') for m in self.mixin_modules.values() if m.get('cls') not in order]
-        order += addition_mixins
+        # Append mixins that are not defined in the default list
+        order += [m.get('cls') for m in self.mixin_modules.values() if m.get('cls') not in order]
 
         # Final list of mixins
         return order
@@ -500,7 +499,7 @@ class PluginsRegistry:
         plugins = self.plugins.items()
         logger.info(f'Found {len(plugins)} active plugins')
 
-        for mixin in self._get_mixin_order():
+        for mixin in self.__get_mixin_order():
             if hasattr(mixin, '_activate_mixin'):
                 mixin._activate_mixin(self, plugins, force_reload=force_reload, full_reload=full_reload)
 
@@ -512,7 +511,7 @@ class PluginsRegistry:
         Args:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
-        for mixin in reversed(self._get_mixin_order()):
+        for mixin in reversed(self.__get_mixin_order()):
             if hasattr(mixin, '_deactivate_mixin'):
                 mixin._deactivate_mixin(self, force_reload=force_reload)
 
