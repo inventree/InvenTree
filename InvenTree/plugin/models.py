@@ -1,5 +1,6 @@
 """Plugin model definitions."""
 
+import inspect
 import warnings
 
 from django.conf import settings
@@ -58,6 +59,8 @@ class PluginConfig(models.Model):
     def mixins(self):
         """Returns all registered mixins."""
         try:
+            if inspect.isclass(self.plugin):
+                return self.plugin.get_registered_mixins(self, with_base=True, with_cls=False)
             return self.plugin.get_registered_mixins(with_base=True, with_cls=False)
         except (AttributeError, ValueError):  # pragma: no cover
             return {}
