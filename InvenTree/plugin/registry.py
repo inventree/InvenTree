@@ -53,7 +53,7 @@ class PluginsRegistry:
         self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
         self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
-        self.mixin_modules: List() = []                         # Holds all discovered mixins
+        self.mixin_modules: Dict[str, any] = {}                 # Holds all discovered mixins
 
         self.errors = {}                                        # Holds discovering errors
 
@@ -321,10 +321,10 @@ class PluginsRegistry:
 
     def discover_mixins(self):
         """Discover all mixins from plugins and register them."""
-        collected_mixins = []
+        collected_mixins = {}
 
         for plugin in self.plugins.items():
-            collected_mixins += plugin[1].get_registered_mixins()
+            collected_mixins.update(plugin[1].get_registered_mixins())
 
         self.mixin_modules = collected_mixins
 
@@ -480,7 +480,7 @@ class PluginsRegistry:
         order = self.DEFAULT_MIXIN_ORDER
 
         # Append mixins that are not defined
-        addition_mixins = [m.get('cls') for m in self.mixin_modules if m.get('cls') not in order]
+        addition_mixins = [m.get('cls') for m in self.mixin_modules.values() if m.get('cls') not in order]
         order += addition_mixins
 
         # Final list of mixins
