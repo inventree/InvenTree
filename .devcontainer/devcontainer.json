@@ -11,7 +11,8 @@
       // Use -bullseye variants on local on arm64/Apple Silicon.
       "VARIANT": "3.10-bullseye",
       // Options
-      "NODE_VERSION": "lts/*"
+      "NODE_VERSION": "lts/*",
+      "WORKSPACE": "${containerWorkspaceFolder}"
     }
   },
 
@@ -55,7 +56,7 @@
   },
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "./.devcontainer/postCreateCommand.sh",
+  "postCreateCommand": "./.devcontainer/postCreateCommand.sh ${containerWorkspaceFolder}",
 
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
