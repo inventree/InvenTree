@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-07 14:27+0000\n"
-"PO-Revision-Date: 2023-05-08 12:34\n"
+"PO-Revision-Date: 2023-05-09 12:31\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -718,11 +718,11 @@ msgstr "Elemento de componente eliminado"
 
 #: InvenTree/status_codes.py:328
 msgid "Split from parent item"
-msgstr "Separar del elemento principal"
+msgstr "Separar del artículo principal"
 
 #: InvenTree/status_codes.py:329
 msgid "Split child item"
-msgstr "Dividir elemento secundario"
+msgstr "Dividir artículo secundario"
 
 #: InvenTree/status_codes.py:331 templates/js/translated/stock.js:2226
 msgid "Merged stock items"
@@ -967,7 +967,7 @@ msgstr "Ubicación de destino"
 
 #: build/models.py:215
 msgid "Select location where the completed items will be stored"
-msgstr "Seleccione la ubicación donde se almacenarán los elementos completados"
+msgstr "Seleccione la ubicación donde se almacenarán los artículos completados"
 
 #: build/models.py:219
 msgid "Build Quantity"
@@ -1264,7 +1264,7 @@ msgstr "Autoasignar Números de Serie"
 
 #: build/serializers.py:251
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr "Asignar automáticamente los elementos requeridos con números de serie coincidentes"
+msgstr "Asignar automáticamente los artículos requeridos con números de serie coincidentes"
 
 #: build/serializers.py:286 stock/api.py:638
 msgid "The following serial numbers already exist or are invalid"
@@ -2345,15 +2345,15 @@ msgstr "El precio histórico de compra anula los descuentos de precios del prove
 
 #: common/models.py:1284
 msgid "Use Stock Item Pricing"
-msgstr "Usar precio del artículo de inventario"
+msgstr "Usar precio del artículo de almacén"
 
 #: common/models.py:1285
 msgid "Use pricing from manually entered stock data for pricing calculations"
-msgstr ""
+msgstr "Usar los precios de los datos de inventario introducidos manualmente para los cálculos de precios"
 
 #: common/models.py:1291
 msgid "Stock Item Pricing Age"
-msgstr ""
+msgstr "Edad del precio del artículo de almacén"
 
 #: common/models.py:1292
 msgid "Exclude stock items older than this number of days from pricing calculations"
@@ -2453,7 +2453,7 @@ msgstr "Adjuntar informes de prueba"
 
 #: common/models.py:1391
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
-msgstr "Al imprimir un informe de prueba, adjuntar una copia del informe de prueba al artículo de inventario asociado"
+msgstr "Al imprimir un informe de prueba, adjuntar una copia del informe de prueba al artículo de almacén asociado"
 
 #: common/models.py:1397
 msgid "Globally Unique Serials"
@@ -2853,7 +2853,7 @@ msgstr "Conteo Reciente de Stock"
 
 #: common/models.py:1796
 msgid "Number of recent stock items to display on index page"
-msgstr "Número de elementos de stock recientes a mostrar en la página de índice"
+msgstr "Número de artículos de stock recientes a mostrar en la página de índice"
 
 #: common/models.py:1802
 msgid "Show low stock"
@@ -2877,7 +2877,7 @@ msgstr "Mostrar stock necesario"
 
 #: common/models.py:1817
 msgid "Show stock items needed for builds on the homepage"
-msgstr "Mostrar elementos de stock necesarios para trabajos en la página de inicio"
+msgstr "Mostrar artículos de stock necesarios para trabajos en la página de inicio"
 
 #: common/models.py:1823
 msgid "Show expired stock"
@@ -2893,7 +2893,7 @@ msgstr "Mostrar stock obsoleto"
 
 #: common/models.py:1831
 msgid "Show stale stock items on the homepage"
-msgstr "Mostrar elementos de stock obsoletos en la página de inicio"
+msgstr "Mostrar artículos de stock obsoletos en la página de inicio"
 
 #: common/models.py:1837
 msgid "Show pending builds"
@@ -3041,19 +3041,19 @@ msgstr ""
 
 #: common/models.py:1963
 msgid "Search Locations"
-msgstr ""
+msgstr "Buscar ubicaciones"
 
 #: common/models.py:1964
 msgid "Display stock locations in search preview window"
-msgstr ""
+msgstr "Mostrar ubicaciones de almacén en la ventana de vista previa de búsqueda"
 
 #: common/models.py:1970
 msgid "Search Companies"
-msgstr ""
+msgstr "Buscar empresas"
 
 #: common/models.py:1971
 msgid "Display companies in search preview window"
-msgstr ""
+msgstr "Mostrar empresas en la ventana de vista previa de búsqueda"
 
 #: common/models.py:1977
 msgid "Search Build Orders"
@@ -3377,7 +3377,7 @@ msgstr "Coincidir Campos"
 
 #: common/views.py:87
 msgid "Match Items"
-msgstr "Coincidir elementos"
+msgstr "Coincidir artículos"
 
 #: common/views.py:420
 msgid "Fields matching failed"
@@ -3741,7 +3741,7 @@ msgstr "Eliminar Empresa"
 #: report/templates/report/inventree_test_report_base.html:84
 #: report/templates/report/inventree_test_report_base.html:163
 msgid "Part image"
-msgstr ""
+msgstr "Imagen de parte"
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:12
@@ -3787,7 +3787,7 @@ msgstr "Quitar imagen"
 
 #: company/templates/company/company_base.html:207
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Eliminar imagen asociada a esta empresa"
 
 #: company/templates/company/company_base.html:209
 #: part/templates/part/part_base.html:533
@@ -4050,7 +4050,7 @@ msgstr "Parte del proveedor"
 
 #: company/templates/company/supplier_part.html:51
 msgid "Supplier part actions"
-msgstr ""
+msgstr "Acciones de partes del proveedor"
 
 #: company/templates/company/supplier_part.html:56
 #: company/templates/company/supplier_part.html:57
@@ -4074,19 +4074,19 @@ msgstr "Editar Parte del Proveedor"
 #: company/templates/company/supplier_part.html:70
 #: templates/js/translated/company.js:243
 msgid "Duplicate Supplier Part"
-msgstr ""
+msgstr "Duplicar parte del proveedor"
 
 #: company/templates/company/supplier_part.html:74
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Eliminar parte del proveedor"
 
 #: company/templates/company/supplier_part.html:75
 msgid "Delete Supplier  Part"
-msgstr ""
+msgstr "Eliminar parte del proveedor"
 
 #: company/templates/company/supplier_part.html:134
 msgid "No supplier information available"
-msgstr ""
+msgstr "No hay información de proveedor disponible"
 
 #: company/templates/company/supplier_part.html:194
 msgid "Supplier Part Stock"
@@ -4119,15 +4119,15 @@ msgstr "Agregar descuento de precio"
 
 #: company/templates/company/supplier_part.html:268
 msgid "Supplier Part QR Code"
-msgstr ""
+msgstr "Código QR de parte del proveedor"
 
 #: company/templates/company/supplier_part.html:279
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Enlazar código de barras a la parte del proveedor"
 
 #: company/templates/company/supplier_part.html:354
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Actualizar disponibilidad de parte"
 
 #: company/templates/company/supplier_part_sidebar.html:5 part/tasks.py:290
 #: part/templates/part/category.html:199
@@ -4242,13 +4242,13 @@ msgstr "Filtros de búsqueda de partes (valor separado por comas de pares clave=
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
 msgid "QC Code"
-msgstr ""
+msgstr "Código QC"
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
 #: templates/qr_code.html:7
 msgid "QR code"
-msgstr ""
+msgstr "Código QR"
 
 #: order/admin.py:30 order/models.py:69
 #: report/templates/report/inventree_po_report_base.html:31
@@ -4261,7 +4261,7 @@ msgstr "Precio Total"
 
 #: order/api.py:239
 msgid "No matching purchase order found"
-msgstr ""
+msgstr "No se encontró ninguna orden de compra coincidente"
 
 #: order/api.py:1440 order/models.py:1169 order/models.py:1253
 #: order/templates/order/order_base.html:9
@@ -4283,7 +4283,7 @@ msgstr "Desconocido"
 
 #: order/models.py:70
 msgid "Total price for this order"
-msgstr ""
+msgstr "Precio total para este pedido"
 
 #: order/models.py:75 order/serializers.py:48
 msgid "Order Currency"
@@ -4291,19 +4291,19 @@ msgstr "Moneda de pedido"
 
 #: order/models.py:77 order/serializers.py:49
 msgid "Currency for this order (leave blank to use company default)"
-msgstr ""
+msgstr "Moneda para este pedido (dejar en blanco para utilizar el valor predeterminado de la empresa)"
 
 #: order/models.py:206
 msgid "Contact does not match selected company"
-msgstr ""
+msgstr "El contacto no coincide con la empresa seleccionada"
 
 #: order/models.py:228
 msgid "Order description (optional)"
-msgstr ""
+msgstr "Descripción del pedido (opcional)"
 
 #: order/models.py:230
 msgid "Select project code for this order"
-msgstr ""
+msgstr "Seleccione el código del proyecto para este pedido"
 
 #: order/models.py:232 order/models.py:1091 order/models.py:1439
 msgid "Link to external page"
@@ -4323,7 +4323,7 @@ msgstr "Usuario o grupo responsable de este pedido"
 
 #: order/models.py:263
 msgid "Point of contact for this order"
-msgstr ""
+msgstr "Punto de contacto para este pedido"
 
 #: order/models.py:356 order/models.py:763
 msgid "Order reference"
@@ -4398,7 +4398,7 @@ msgstr "El pedido no se puede completar porque no se han asignado partes"
 
 #: order/models.py:858
 msgid "Only an open order can be marked as complete"
-msgstr ""
+msgstr "Sólo una orden abierta puede ser marcada como completa"
 
 #: order/models.py:861 templates/js/translated/sales_order.js:451
 msgid "Order cannot be completed as there are incomplete shipments"
@@ -4422,7 +4422,7 @@ msgstr "Notas del artículo de línea"
 
 #: order/models.py:1097
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr ""
+msgstr "Fecha objetivo para este artículo de línea (dejar en blanco para usar la fecha de destino de la orden)"
 
 #: order/models.py:1114
 msgid "Context"
@@ -4673,11 +4673,11 @@ msgstr ""
 
 #: order/serializers.py:425
 msgid "Purchase order must be specified"
-msgstr ""
+msgstr "La orden de compra debe especificarse"
 
 #: order/serializers.py:431
 msgid "Supplier must match purchase order"
-msgstr ""
+msgstr "El proveedor debe coincidir con la orden de compra"
 
 #: order/serializers.py:432
 msgid "Purchase order must match supplier"
@@ -4697,11 +4697,11 @@ msgstr "Seleccione la ubicación de destino para los artículos recibidos"
 
 #: order/serializers.py:505 templates/js/translated/purchase_order.js:1059
 msgid "Enter batch code for incoming stock items"
-msgstr ""
+msgstr "Introduzca el código de lote para los artículos de almacén entrantes"
 
 #: order/serializers.py:513 templates/js/translated/purchase_order.js:1083
 msgid "Enter serial numbers for incoming stock items"
-msgstr ""
+msgstr "Introduzca números de serie para artículos de almacén entrantes"
 
 #: order/serializers.py:526 templates/js/translated/barcode.js:41
 msgid "Barcode"
@@ -4709,7 +4709,7 @@ msgstr "Código de barras"
 
 #: order/serializers.py:527
 msgid "Scanned barcode"
-msgstr ""
+msgstr "Código de barras escaneado"
 
 #: order/serializers.py:543
 msgid "Barcode is already in use"
@@ -4717,11 +4717,11 @@ msgstr "Código de barras en uso"
 
 #: order/serializers.py:569
 msgid "An integer quantity must be provided for trackable parts"
-msgstr ""
+msgstr "Debe proporcionarse una cantidad entera para las partes rastreables"
 
 #: order/serializers.py:623 order/serializers.py:1599
 msgid "Line items must be provided"
-msgstr "Se deben proporcionar elementos de línea"
+msgstr "Se deben proporcionar artículos de línea"
 
 #: order/serializers.py:640
 msgid "Destination location must be specified"
@@ -5501,7 +5501,7 @@ msgstr "Revisión de parte o número de versión"
 
 #: part/models.py:917
 msgid "Where is this item normally stored?"
-msgstr "¿Dónde se almacena este elemento normalmente?"
+msgstr "¿Dónde se almacena este artículo normalmente?"
 
 #: part/models.py:962 part/templates/part/part_base.html:378
 msgid "Default Supplier"
@@ -5927,7 +5927,7 @@ msgstr "Opcional"
 
 #: part/models.py:3585
 msgid "This BOM item is optional"
-msgstr "Este elemento BOM es opcional"
+msgstr "Este artículo BOM es opcional"
 
 #: part/models.py:3590 templates/js/translated/bom.js:937
 #: templates/js/translated/bom.js:1003 templates/js/translated/build.js:1900
@@ -6199,7 +6199,7 @@ msgstr "Eliminar Datos Existentes"
 
 #: part/serializers.py:1262
 msgid "Remove existing BOM items before copying"
-msgstr "Eliminar elementos BOM existentes antes de copiar"
+msgstr "Eliminar artículos BOM existentes antes de copiar"
 
 #: part/serializers.py:1267
 msgid "Include Inherited"
@@ -6207,7 +6207,7 @@ msgstr "Incluye Heredado"
 
 #: part/serializers.py:1268
 msgid "Include BOM items which are inherited from templated parts"
-msgstr "Incluye elementos BOM que son heredados de partes con plantillas"
+msgstr "Incluye artículos BOM que son heredados de partes con plantillas"
 
 #: part/serializers.py:1273
 msgid "Skip Invalid Rows"
@@ -6259,7 +6259,7 @@ msgstr "Cantidad no válida"
 
 #: part/serializers.py:1438
 msgid "At least one BOM item is required"
-msgstr "Se requiere al menos un elemento BOM"
+msgstr "Se requiere al menos un artículo BOM"
 
 #: part/tasks.py:36
 msgid "Low stock notification"
@@ -6316,7 +6316,7 @@ msgstr "Acciones BOM"
 
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
-msgstr "Eliminar elementos"
+msgstr "Eliminar artículos"
 
 #: part/templates/part/category.html:34
 msgid "Perform stocktake for this part category"
@@ -7021,7 +7021,7 @@ msgstr "Coincidencia encontrada para datos de códigos de barras"
 #: plugin/base/barcodes/api.py:120
 #: templates/js/translated/purchase_order.js:1331
 msgid "Barcode matches existing item"
-msgstr "El código de barras coincide con elemento existente"
+msgstr "El código de barras coincide con artículo existente"
 
 #: plugin/base/barcodes/api.py:217
 msgid "No match found for provided value"
@@ -7424,7 +7424,7 @@ msgstr "Ruta de Ubicación"
 
 #: stock/admin.py:100
 msgid "Stock Item ID"
-msgstr "ID del artículo de inventario"
+msgstr "ID del artículo de almacén"
 
 #: stock/admin.py:107
 msgid "Status Code"
@@ -7558,7 +7558,7 @@ msgstr "El objeto no puede pertenecer a sí mismo"
 
 #: stock/models.py:638
 msgid "Item must have a build reference if is_building=True"
-msgstr "El elemento debe tener una referencia de construcción si is_building=True"
+msgstr "El artículo debe tener una referencia de construcción si is_building=True"
 
 #: stock/models.py:652
 msgid "Build reference does not point to the same part object"
@@ -7582,15 +7582,15 @@ msgstr "¿Dónde se encuentra este artículo de stock?"
 
 #: stock/models.py:701
 msgid "Packaging this stock item is stored in"
-msgstr "Empaquetar este elemento de stock se almacena en"
+msgstr "Empaquetar este artículo de stock se almacena en"
 
 #: stock/models.py:710
 msgid "Is this item installed in another item?"
-msgstr "¿Está este elemento instalado en otro elemento?"
+msgstr "¿Está este artículo instalado en otro artículo?"
 
 #: stock/models.py:726
 msgid "Serial number for this item"
-msgstr "Número de serie para este elemento"
+msgstr "Número de serie para este artículo"
 
 #: stock/models.py:740
 msgid "Batch code for this stock item"
@@ -7751,7 +7751,7 @@ msgstr "Precio de compra de este artículo de stock"
 
 #: stock/serializers.py:287
 msgid "Enter number of stock items to serialize"
-msgstr "Introduzca el número de elementos de stock para serializar"
+msgstr "Introduzca el número de artículos de stock para serializar"
 
 #: stock/serializers.py:299
 #, python-brace-format
@@ -7760,7 +7760,7 @@ msgstr "La cantidad no debe exceder la cantidad disponible de stock ({q})"
 
 #: stock/serializers.py:305
 msgid "Enter serial numbers for new items"
-msgstr "Introduzca números de serie para nuevos elementos"
+msgstr "Introduzca números de serie para nuevos artículos"
 
 #: stock/serializers.py:316 stock/serializers.py:912 stock/serializers.py:1154
 msgid "Destination stock location"
@@ -7820,7 +7820,7 @@ msgstr "El artículo está asignado a una orden de creación"
 
 #: stock/serializers.py:806
 msgid "Customer to assign stock items"
-msgstr "Cliente para asignar elementos de stock"
+msgstr "Cliente para asignar artículos de stock"
 
 #: stock/serializers.py:812
 msgid "Selected company is not a customer"
@@ -7852,7 +7852,7 @@ msgstr "Permitir estado no coincidente"
 
 #: stock/serializers.py:931
 msgid "Allow stock items with different status codes to be merged"
-msgstr "Permitir fusionar elementos de stock con diferentes códigos de estado"
+msgstr "Permitir fusionar artículos de stock con diferentes códigos de estado"
 
 #: stock/serializers.py:941
 msgid "At least two stock items must be provided"
@@ -7876,7 +7876,7 @@ msgstr "Elementos de Stock Hijos"
 
 #: stock/templates/stock/item.html:77
 msgid "This stock item does not have any child items"
-msgstr "Este artículo de stock no tiene ningún elemento secundario"
+msgstr "Este artículo de stock no tiene ningún artículo secundario"
 
 #: stock/templates/stock/item.html:86
 #: stock/templates/stock/stock_sidebar.html:12
@@ -7905,7 +7905,7 @@ msgstr "Elementos de Stock instalados"
 
 #: stock/templates/stock/item.html:152 templates/js/translated/stock.js:3053
 msgid "Install Stock Item"
-msgstr "Instalar elemento de stock"
+msgstr "Instalar artículo de stock"
 
 #: stock/templates/stock/item.html:276
 msgid "Delete all test results for this stock item"
@@ -7973,7 +7973,7 @@ msgstr "Desinstalar"
 
 #: stock/templates/stock/item_base.html:102
 msgid "Install stock item"
-msgstr "Instalar elemento de stock"
+msgstr "Instalar artículo de stock"
 
 #: stock/templates/stock/item_base.html:102
 msgid "Install"
@@ -7993,7 +7993,7 @@ msgstr "Elemento de stock editado"
 
 #: stock/templates/stock/item_base.html:124
 msgid "Delete stock item"
-msgstr "Eliminar elemento de stock"
+msgstr "Eliminar artículo de stock"
 
 #: stock/templates/stock/item_base.html:194
 msgid "Parent Item"
@@ -8022,7 +8022,7 @@ msgstr "Este artículo de stock está en producción y no puede ser editado."
 
 #: stock/templates/stock/item_base.html:273
 msgid "Edit the stock item from the build view."
-msgstr "Editar el elemento de stock desde la vista de construcción."
+msgstr "Editar el artículo de stock desde la vista de construcción."
 
 #: stock/templates/stock/item_base.html:288
 msgid "This stock item is allocated to Sales Order"
@@ -9513,7 +9513,7 @@ msgstr "Desvincular"
 
 #: templates/js/translated/barcode.js:537 templates/js/translated/stock.js:1104
 msgid "Remove stock item"
-msgstr "Eliminar elemento de stock"
+msgstr "Eliminar artículo de stock"
 
 #: templates/js/translated/barcode.js:580
 msgid "Scan Stock Items Into Location"
@@ -9679,15 +9679,15 @@ msgstr "Añadir sustituto"
 
 #: templates/js/translated/bom.js:671
 msgid "Edit BOM Item Substitutes"
-msgstr "Editar sustitutos de elementos BOM"
+msgstr "Editar sustitutos de artículos BOM"
 
 #: templates/js/translated/bom.js:733
 msgid "All selected BOM items will be deleted"
-msgstr "Todos los elementos BOM seleccionados serán eliminados"
+msgstr "Todos los artículos BOM seleccionados serán eliminados"
 
 #: templates/js/translated/bom.js:749
 msgid "Delete selected BOM items?"
-msgstr "¿Eliminar elementos BOM seleccionados?"
+msgstr "¿Eliminar artículos BOM seleccionados?"
 
 #: templates/js/translated/bom.js:876
 msgid "Load BOM for subassembly"
@@ -9766,7 +9766,7 @@ msgstr "Ver BOM"
 
 #: templates/js/translated/bom.js:1352 templates/js/translated/build.js:1723
 msgid "No BOM items found"
-msgstr "No se encontraron elementos BOM"
+msgstr "No se encontraron artículos BOM"
 
 #: templates/js/translated/bom.js:1612 templates/js/translated/build.js:1869
 msgid "Required Part"
@@ -9848,7 +9848,7 @@ msgstr "Crear Salida de Trabajo"
 
 #: templates/js/translated/build.js:377
 msgid "Allocate stock items to this build output"
-msgstr "Asignar elementos de stock a esta salida de trabajo"
+msgstr "Asignar artículos de stock a esta salida de trabajo"
 
 #: templates/js/translated/build.js:388
 msgid "Unallocate stock from build output"
@@ -10389,7 +10389,7 @@ msgstr "No se encontraron etiquetas"
 
 #: templates/js/translated/label.js:184
 msgid "No label templates found which match the selected items"
-msgstr "No se encontraron plantillas de etiqueta que coincidan con los elementos seleccionados"
+msgstr "No se encontraron plantillas de etiqueta que coincidan con los artículos seleccionados"
 
 #: templates/js/translated/label.js:203
 msgid "Labels sent to printer"
@@ -10505,7 +10505,7 @@ msgstr "Eliminar línea"
 #: templates/js/translated/order.js:262
 #: templates/js/translated/purchase_order.js:1917
 msgid "No line items found"
-msgstr "No hay elementos de línea"
+msgstr "No hay artículos de línea"
 
 #: templates/js/translated/order.js:344
 msgid "Duplicate line"
@@ -10633,23 +10633,23 @@ msgstr "Eliminar parte"
 
 #: templates/js/translated/part.js:537
 msgid "You are subscribed to notifications for this item"
-msgstr "Estás suscrito a las notificaciones de este elemento"
+msgstr "Estás suscrito a las notificaciones de este artículo"
 
 #: templates/js/translated/part.js:539
 msgid "You have subscribed to notifications for this item"
-msgstr "Te has suscrito a las notificaciones de este elemento"
+msgstr "Te has suscrito a las notificaciones de este artículo"
 
 #: templates/js/translated/part.js:544
 msgid "Subscribe to notifications for this item"
-msgstr "Suscríbete a las notificaciones de este elemento"
+msgstr "Suscríbete a las notificaciones de este artículo"
 
 #: templates/js/translated/part.js:546
 msgid "You have unsubscribed to notifications for this item"
-msgstr "Has cancelado la suscripción a las notificaciones de este elemento"
+msgstr "Has cancelado la suscripción a las notificaciones de este artículo"
 
 #: templates/js/translated/part.js:563
 msgid "Validating the BOM will mark each line item as valid"
-msgstr "Validar el BOM marcará cada elemento de línea como válido"
+msgstr "Validar el BOM marcará cada artículo de línea como válido"
 
 #: templates/js/translated/part.js:573
 msgid "Validate Bill of Materials"
@@ -11014,7 +11014,7 @@ msgstr "Seleccionar Artículos de Línea"
 #: templates/js/translated/purchase_order.js:1005
 #: templates/js/translated/return_order.js:460
 msgid "At least one line item must be selected"
-msgstr "Debe seleccionar al menos un elemento de línea"
+msgstr "Debe seleccionar al menos un artículo de línea"
 
 #: templates/js/translated/purchase_order.js:1033
 msgid "Received Quantity"
@@ -11131,13 +11131,13 @@ msgstr "Duplicar artículo de línea"
 #: templates/js/translated/return_order.js:765
 #: templates/js/translated/sales_order.js:1953
 msgid "Edit line item"
-msgstr "Editar elemento de línea"
+msgstr "Editar artículo de línea"
 
 #: templates/js/translated/purchase_order.js:2153
 #: templates/js/translated/return_order.js:769
 #: templates/js/translated/sales_order.js:1959
 msgid "Delete line item"
-msgstr "Eliminar elemento de línea"
+msgstr "Eliminar artículo de línea"
 
 #: templates/js/translated/report.js:63
 msgid "items selected"
@@ -11199,16 +11199,16 @@ msgstr "Cliente Inválido"
 
 #: templates/js/translated/return_order.js:526
 msgid "Receive Return Order Items"
-msgstr ""
+msgstr "Recibir artículos de pedido de devolución"
 
 #: templates/js/translated/return_order.js:657
 #: templates/js/translated/sales_order.js:2158
 msgid "No matching line items"
-msgstr "No hay elementos de línea coincidentes"
+msgstr "No hay artículos de línea coincidentes"
 
 #: templates/js/translated/return_order.js:762
 msgid "Mark item as received"
-msgstr ""
+msgstr "Marcar artículo como recibido"
 
 #: templates/js/translated/sales_order.js:113
 msgid "Create Sales Order"
@@ -11240,11 +11240,11 @@ msgstr "No se encontraron envíos pendientes"
 
 #: templates/js/translated/sales_order.js:365
 msgid "No stock items have been allocated to pending shipments"
-msgstr ""
+msgstr "No se ha asignado ningún artículo de almacén a los envíos pendientes"
 
 #: templates/js/translated/sales_order.js:375
 msgid "Complete Shipments"
-msgstr ""
+msgstr "Completar Envíos"
 
 #: templates/js/translated/sales_order.js:397
 msgid "Skip"
@@ -11252,19 +11252,19 @@ msgstr "Omitir"
 
 #: templates/js/translated/sales_order.js:458
 msgid "This order has line items which have not been completed."
-msgstr ""
+msgstr "Este pedido tiene artículos de línea que no han sido completados."
 
 #: templates/js/translated/sales_order.js:480
 msgid "Issue this Sales Order?"
-msgstr ""
+msgstr "¿Emitir este pedido de venta?"
 
 #: templates/js/translated/sales_order.js:485
 msgid "Issue Sales Order"
-msgstr ""
+msgstr "Emitir orden de venta"
 
 #: templates/js/translated/sales_order.js:504
 msgid "Cancel Sales Order"
-msgstr ""
+msgstr "Cancelar orden de venta"
 
 #: templates/js/translated/sales_order.js:509
 msgid "Cancelling this order means that the order will no longer be editable."
@@ -11377,7 +11377,7 @@ msgstr "No se puede eliminar ya que los artículos han sido enviados"
 
 #: templates/js/translated/sales_order.js:1966
 msgid "Cannot be deleted as items have been allocated"
-msgstr "No se puede eliminar ya que los elementos han sido asignados"
+msgstr "No se puede eliminar ya que los artículos han sido asignados"
 
 #: templates/js/translated/sales_order.js:2037
 msgid "Allocate Serial Numbers"
@@ -11389,11 +11389,11 @@ msgstr "Actualizarprecio Unitario"
 
 #: templates/js/translated/search.js:300
 msgid "No results"
-msgstr ""
+msgstr "Sin resultados"
 
 #: templates/js/translated/search.js:322 templates/search.html:25
 msgid "Enter search query"
-msgstr ""
+msgstr "Ingresar consulta de búsqueda"
 
 #: templates/js/translated/search.js:372
 msgid "result"
@@ -11445,7 +11445,7 @@ msgstr "¿Está seguro que desea eliminar esta ubicación?"
 
 #: templates/js/translated/stock.js:185
 msgid "Move to parent stock location"
-msgstr ""
+msgstr "Mover a la ubicación de inventario del padre"
 
 #: templates/js/translated/stock.js:194
 msgid "Delete Stock Location"
@@ -11481,11 +11481,11 @@ msgstr "Duplicar artículo de stock"
 
 #: templates/js/translated/stock.js:412
 msgid "Are you sure you want to delete this stock item?"
-msgstr "¿Está seguro que desea eliminar este elemento de stock?"
+msgstr "¿Está seguro que desea eliminar este artículo de stock?"
 
 #: templates/js/translated/stock.js:417
 msgid "Delete Stock Item"
-msgstr "Eliminar elemento de stock"
+msgstr "Eliminar artículo de stock"
 
 #: templates/js/translated/stock.js:438
 msgid "Edit Stock Item"
@@ -11541,7 +11541,7 @@ msgstr "Alguna información se perderá al combinar artículos de stock"
 
 #: templates/js/translated/stock.js:785
 msgid "Stock transaction history will be deleted for merged items"
-msgstr "Se eliminará el historial de transacciones de stock para elementos fusionados"
+msgstr "Se eliminará el historial de transacciones de stock para artículos fusionados"
 
 #: templates/js/translated/stock.js:786
 msgid "Supplier part information will be deleted for merged items"
@@ -11601,7 +11601,7 @@ msgstr "Especificar cantidad de stock"
 
 #: templates/js/translated/stock.js:1126
 msgid "Select Stock Items"
-msgstr "Seleccionar elementos de stock"
+msgstr "Seleccionar artículos de stock"
 
 #: templates/js/translated/stock.js:1127
 msgid "You must select at least one available stock item"
@@ -11798,11 +11798,11 @@ msgstr "Eliminado"
 
 #: templates/js/translated/stock.js:2883
 msgid "No installed items"
-msgstr "Ningún elemento instalado"
+msgstr "Ningún artículo instalado"
 
 #: templates/js/translated/stock.js:2933 templates/js/translated/stock.js:2968
 msgid "Uninstall Stock Item"
-msgstr "Desinstalar elemento de stock"
+msgstr "Desinstalar artículo de stock"
 
 #: templates/js/translated/stock.js:2986
 msgid "Select stock item to uninstall"
@@ -11974,7 +11974,7 @@ msgstr "Mostrar artículos de stock que están agotados"
 
 #: templates/js/translated/table_filters.js:298
 msgid "Show items which are in stock"
-msgstr "Mostrar elementos en stock"
+msgstr "Mostrar artículos en stock"
 
 #: templates/js/translated/table_filters.js:302
 msgid "In Production"
@@ -11998,11 +11998,11 @@ msgstr "Instalado"
 
 #: templates/js/translated/table_filters.js:313
 msgid "Show stock items which are installed in another item"
-msgstr "Mostrar elementos de stock que están instalados en otro artículo"
+msgstr "Mostrar artículos de stock que están instalados en otro artículo"
 
 #: templates/js/translated/table_filters.js:318
 msgid "Show items which have been assigned to a customer"
-msgstr "Mostrar elementos que han sido asignados a un cliente"
+msgstr "Mostrar artículos que han sido asignados a un cliente"
 
 #: templates/js/translated/table_filters.js:338
 #: templates/js/translated/table_filters.js:339
@@ -12338,11 +12338,11 @@ msgstr "Opciones Stock"
 
 #: templates/stock_table.html:33
 msgid "Add to selected stock items"
-msgstr "Añadir a los elementos de stock seleccionados"
+msgstr "Añadir a los artículos de stock seleccionados"
 
 #: templates/stock_table.html:34
 msgid "Remove from selected stock items"
-msgstr "Eliminar de los elementos de stock seleccionados"
+msgstr "Eliminar de los artículos de stock seleccionados"
 
 #: templates/stock_table.html:35
 msgid "Stocktake selected stock items"
@@ -12350,7 +12350,7 @@ msgstr "Artículos de stock seleccionados"
 
 #: templates/stock_table.html:36
 msgid "Move selected stock items"
-msgstr "Mover elementos de stock seleccionados"
+msgstr "Mover artículos de stock seleccionados"
 
 #: templates/stock_table.html:37
 msgid "Merge selected stock items"
@@ -12374,7 +12374,7 @@ msgstr "Cambiar estado de stock"
 
 #: templates/stock_table.html:43
 msgid "Delete selected items"
-msgstr "Eliminar elementos seleccionados"
+msgstr "Eliminar artículos seleccionados"
 
 #: templates/stock_table.html:43
 msgid "Delete stock"
@@ -12426,11 +12426,11 @@ msgstr "Vista"
 
 #: users/models.py:241
 msgid "Permission to view items"
-msgstr "Permiso para ver elementos"
+msgstr "Permiso para ver artículos"
 
 #: users/models.py:243
 msgid "Permission to add items"
-msgstr "Permiso para añadir elementos"
+msgstr "Permiso para añadir artículos"
 
 #: users/models.py:245
 msgid "Change"
@@ -12438,9 +12438,9 @@ msgstr "Cambiar"
 
 #: users/models.py:245
 msgid "Permissions to edit items"
-msgstr "Permisos para editar elementos"
+msgstr "Permisos para editar artículos"
 
 #: users/models.py:247
 msgid "Permission to delete items"
-msgstr "Permiso para eliminar elementos"
+msgstr "Permiso para eliminar artículos"
 
