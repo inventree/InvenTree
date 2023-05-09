@@ -52,8 +52,9 @@ class ConnectionSetting(common.models.BaseInvenTreeSetting):
             if issubclass(plugin.__class__, InvenTreePlugin):
                 plugin = plugin.plugin_config()
 
-            if plugin and connection_key:
-                plugin_connection_settings = registry.mixins_suppliers.get(plugin.key, None)
+            mixin_reg = getattr(registry, 'mixins_suppliers', None)
+            if plugin and connection_key and mixin_reg:
+                plugin_connection_settings = mixin_reg.get(plugin.key, None)
                 if plugin_connection_settings:
                     connection_settings = plugin_connection_settings.get(connection_key, None)
                     if connection_settings:

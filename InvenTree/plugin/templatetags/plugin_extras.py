@@ -42,7 +42,10 @@ def plugin_settings_content(context, plugin, *args, **kwargs):
 def plugin_connections(plugin, *args, **kwargs):
     """List of all connections for the plugin."""
     ret = {}
-    plg = registry.mixins_suppliers.get(plugin)
+    mixin_suppliers = getattr(registry, 'mixins_suppliers', None)
+    if not mixin_suppliers:
+        return
+    plg = mixin_suppliers.get(plugin)
     if plg:
         for key, val in plg.items():
             qs = registry.get_plugin(plugin).db.webconnections.filter(connection_key=key)
