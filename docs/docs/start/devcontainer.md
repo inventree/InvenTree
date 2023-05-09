@@ -85,3 +85,6 @@ Make sure you enabled full disk access on macOS for vscode, otherwise your ssh-k
 
 #### You're not able to use your gpg-keys inside the devcontainer to sign commits on macOS
 Make sure you have `gnupg` and `pinentry-mac` installed and set up correctly. Read this [medium post](https://medium.com/@jma/setup-gpg-for-git-on-macos-4ad69e8d3733) for more info on how to set it up correctly.
+
+#### Where are the database, media files, ... stored?
+Backups, Commandhistory, media/static files, venv, plugin.txt, secret_key.txt, ... are stored in the `dev` folder. If you want to start with a clean setup, you can remove that folder, but be aware that this will delete everything you already setup in InvenTree.
