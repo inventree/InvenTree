@@ -58,7 +58,7 @@ class PluginConfig(models.Model):
     def mixins(self):
         """Returns all registered mixins."""
         try:
-            return self.plugin._mixinreg
+            return self.plugin.get_registered_mixins(with_base=True, with_cls=False)
         except (AttributeError, ValueError):  # pragma: no cover
             return {}
 

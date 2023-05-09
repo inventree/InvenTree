@@ -164,7 +164,7 @@ class MixinBase:
             'cls': cls,
         }
 
-    def get_registered_mixins(self, with_base: bool = False):
+    def get_registered_mixins(self, with_base: bool = False, with_cls: bool = True):
         """Get all registered mixins for the plugin."""
         mixins = getattr(self, '_mixinreg', None).copy()
         if mixins:
@@ -173,6 +173,11 @@ class MixinBase:
                 del mixins['base']
             # only return dict
             mixins = list(mixins.values())
+
+        # Do not return the mixin class if flas is set
+        if not with_cls:
+            a_mixins = {key: {k: v for k, v in mixin.items() if k != 'cls'} for key, mixin in mixins.items()}
+            return a_mixins
         return mixins
 
     @property
