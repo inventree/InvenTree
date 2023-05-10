@@ -250,7 +250,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
         allow_null=True,
-        help_text=_('Purchase price of this stock item'),
+        help_text=_('Purchase price of this stock item, per unit'),
     )
 
     purchase_price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
