@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-07 14:27+0000\n"
-"PO-Revision-Date: 2023-05-09 12:31\n"
+"PO-Revision-Date: 2023-05-10 12:34\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -2357,7 +2357,7 @@ msgstr "Edad del precio del artículo de almacén"
 
 #: common/models.py:1292
 msgid "Exclude stock items older than this number of days from pricing calculations"
-msgstr ""
+msgstr "Excluir artículos de almacén anteriores a este número de días de los cálculos de precios"
 
 #: common/models.py:1302
 msgid "Use Variant Pricing"
@@ -2365,7 +2365,7 @@ msgstr "Usar precios variantes"
 
 #: common/models.py:1303
 msgid "Include variant pricing in overall pricing calculations"
-msgstr ""
+msgstr "Incluir variantes de precios en los cálculos generales de precios"
 
 #: common/models.py:1309
 msgid "Active Variants Only"
@@ -2373,15 +2373,15 @@ msgstr "Solo variantes activas"
 
 #: common/models.py:1310
 msgid "Only use active variant parts for calculating variant pricing"
-msgstr ""
+msgstr "Usar solo partes de variantes activas para calcular los precios de variantes"
 
 #: common/models.py:1316
 msgid "Pricing Rebuild Interval"
-msgstr ""
+msgstr "Intervalo de reconstrucción de precios"
 
 #: common/models.py:1317
 msgid "Number of days before part pricing is automatically updated"
-msgstr ""
+msgstr "Número de días antes de que el precio de la parte se actualice automáticamente"
 
 #: common/models.py:1327
 msgid "Internal Prices"
@@ -2393,11 +2393,11 @@ msgstr "Habilitar precios internos para piezas"
 
 #: common/models.py:1334
 msgid "Internal Price Override"
-msgstr ""
+msgstr "Anulación del precio interno"
 
 #: common/models.py:1335
 msgid "If available, internal prices override price range calculations"
-msgstr ""
+msgstr "Si está disponible, los precios internos anulan los cálculos del rango de precios"
 
 #: common/models.py:1341
 msgid "Enable label printing"
@@ -2477,15 +2477,15 @@ msgstr ""
 
 #: common/models.py:1412
 msgid "Determines default behaviour when a stock item is depleted"
-msgstr ""
+msgstr "Determina el comportamiento predeterminado cuando un artículo de almacén es agotado"
 
 #: common/models.py:1418
 msgid "Batch Code Template"
-msgstr ""
+msgstr "Plantilla de código de lote"
 
 #: common/models.py:1419
 msgid "Template for generating default batch codes for stock items"
-msgstr ""
+msgstr "Plantilla para generar códigos de lote por defecto para artículos de almacén"
 
 #: common/models.py:1424
 msgid "Stock Expiry"
@@ -2529,11 +2529,11 @@ msgstr "Habilitar control de propiedad sobre ubicaciones de stock y artículos"
 
 #: common/models.py:1460
 msgid "Stock Location Default Icon"
-msgstr ""
+msgstr "Icono por defecto de ubicación de almacén"
 
 #: common/models.py:1461
 msgid "Stock location default icon (empty means no icon)"
-msgstr ""
+msgstr "Icono por defecto de ubicación de almacén (vacío significa que no hay icono)"
 
 #: common/models.py:1466
 msgid "Build Order Reference Pattern"
@@ -2541,23 +2541,23 @@ msgstr ""
 
 #: common/models.py:1467
 msgid "Required pattern for generating Build Order reference field"
-msgstr ""
+msgstr "Patrón requerido para generar el campo de referencia de la Orden de Ensamblado"
 
 #: common/models.py:1473
 msgid "Enable Return Orders"
-msgstr ""
+msgstr "Habilitar órdenes de devolución"
 
 #: common/models.py:1474
 msgid "Enable return order functionality in the user interface"
-msgstr ""
+msgstr "Habilitar la funcionalidad de orden de devolución en la interfaz de usuario"
 
 #: common/models.py:1480
 msgid "Return Order Reference Pattern"
-msgstr ""
+msgstr "Patrón de referencia de orden de devolución"
 
 #: common/models.py:1481
 msgid "Required pattern for generating Return Order reference field"
-msgstr ""
+msgstr "Patrón requerido para generar el campo de referencia de la orden de devolución"
 
 #: common/models.py:1487
 msgid "Edit Completed Return Orders"
