@@ -17,6 +17,6 @@ inv update
 inv setup-dev
 
 # remove existing gitconfig created by "Avoiding Dubious Ownership" step
-# so that it gets copyied from host to the container to have your global 
+# so that it gets copyied from host to the container to have your global
 # git config in container
 rm -f /home/vscode/.gitconfig

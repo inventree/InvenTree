@@ -180,7 +180,14 @@ Boolean field which determines if the specific report template is enabled, and a
 
 ### Filename Pattern
 
-The filename pattern used to generate the output `.pdf` file. Defaults to "report.pdf"
+The filename pattern used to generate the output `.pdf` file. Defaults to "report.pdf".
+
+The filename pattern allows custom rendering with any context variables which are available to the report. For example, a [test report](./test.md) for a particular [Stock Item](../stock/stock.md#stock-item) can use the part name and serial number of the stock item when generating the report name:
+
+{% with id="report-filename-pattern", url="report/filename_pattern.png", description="Report filename pattern" %}
+{% include 'img.html' %}
+{% endwith %}
+
 
 ### Report Filters
 

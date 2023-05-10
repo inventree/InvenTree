@@ -52,8 +52,16 @@ class PluginWithSettings(SettingsMixin, InvenTreePlugin):
                 MaxValueValidator(25)
             ]
         },
+        'HIDDEN_SETTING': {
+            'name': _('Hidden Setting'),
+            'description': _('This setting is hidden from the automatically generated plugin settings page'),
+            'hidden': True,
+        }
     }
 ```
+
+!!! tip "Hidden Settings"
+    Plugin settings can be hidden from the settings page by marking them as 'hidden'
 
 This mixin defines the helper functions `plugin.get_setting` and `plugin.set_setting` to access all plugin specific settings:
 
