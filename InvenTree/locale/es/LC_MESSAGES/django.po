@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-07 14:27+0000\n"
-"PO-Revision-Date: 2023-05-10 12:34\n"
+"PO-Revision-Date: 2023-05-11 12:49\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -2561,11 +2561,11 @@ msgstr "Patrón requerido para generar el campo de referencia de la orden de dev
 
 #: common/models.py:1487
 msgid "Edit Completed Return Orders"
-msgstr ""
+msgstr "Editar ordenes de devolución completadas"
 
 #: common/models.py:1488
 msgid "Allow editing of return orders after they have been completed"
-msgstr ""
+msgstr "Permitir la edición de ordenes de devolución después de que hayan sido completados"
 
 #: common/models.py:1494
 msgid "Sales Order Reference Pattern"
@@ -2573,7 +2573,7 @@ msgstr ""
 
 #: common/models.py:1495
 msgid "Required pattern for generating Sales Order reference field"
-msgstr ""
+msgstr "Patrón requerido para generar el campo de referencia de la orden de venta"
 
 #: common/models.py:1501
 msgid "Sales Order Default Shipment"
@@ -2993,7 +2993,7 @@ msgstr ""
 
 #: common/models.py:1921
 msgid "Search Supplier Parts"
-msgstr ""
+msgstr "Buscar partes de proveedor"
 
 #: common/models.py:1922
 msgid "Display supplier parts in search preview window"
@@ -3121,19 +3121,19 @@ msgstr ""
 
 #: common/models.py:2033
 msgid "Regex Search"
-msgstr ""
+msgstr "Búsqueda Regex"
 
 #: common/models.py:2034
 msgid "Enable regular expressions in search queries"
-msgstr ""
+msgstr "Habilitar expresiones regulares en las consultas de búsqueda"
 
 #: common/models.py:2040
 msgid "Whole Word Search"
-msgstr ""
+msgstr "Búsqueda por palabra completa"
 
 #: common/models.py:2041
 msgid "Search queries return results for whole word matches"
-msgstr ""
+msgstr "Las consultas de búsqueda devuelven resultados para palabras enteras coincidentes"
 
 #: common/models.py:2047
 msgid "Show Quantity in Forms"
@@ -3319,7 +3319,7 @@ msgstr ""
 
 #: common/models.py:2692
 msgid "Was this news item read?"
-msgstr ""
+msgstr "¿Esta noticia fue leída?"
 
 #: common/models.py:2712 company/models.py:141 part/models.py:910
 #: report/templates/report/inventree_bill_of_materials_report.html:126
@@ -3342,7 +3342,7 @@ msgstr "Nuevo {verbose_name}"
 
 #: common/notifications.py:293
 msgid "A new order has been created and assigned to you"
-msgstr ""
+msgstr "Se ha creado un nuevo pedido y se le ha asignado"
 
 #: common/notifications.py:299 common/notifications.py:306
 msgid "Items Received"
@@ -3350,11 +3350,11 @@ msgstr "Artículos Recibidos"
 
 #: common/notifications.py:301
 msgid "Items have been received against a purchase order"
-msgstr ""
+msgstr "Los artículos han sido recibidos contra una orden de compra"
 
 #: common/notifications.py:308
 msgid "Items have been received against a return order"
-msgstr ""
+msgstr "Los artículos han sido recibidos contra una orden de devolución"
 
 #: common/notifications.py:420
 msgid "Error raised by plugin"
@@ -3665,7 +3665,7 @@ msgstr "Cantidad de paquete"
 
 #: company/models.py:565
 msgid "Unit quantity supplied in a single pack"
-msgstr ""
+msgstr "Cantidad de unidades suministradas en un solo paquete"
 
 #: company/models.py:571 part/models.py:1909
 msgid "multiple"
@@ -3690,7 +3690,7 @@ msgstr "Disponible"
 
 #: company/models.py:580
 msgid "Quantity available from supplier"
-msgstr ""
+msgstr "Cantidad disponible del proveedor"
 
 #: company/models.py:584
 msgid "Availability Updated"
@@ -3698,7 +3698,7 @@ msgstr "Disponibilidad actualizada"
 
 #: company/models.py:585
 msgid "Date of last update of availability data"
-msgstr ""
+msgstr "Fecha de última actualización de los datos de disponibilidad"
 
 #: company/serializers.py:99
 msgid "Default currency used for this supplier"
@@ -4430,7 +4430,7 @@ msgstr "Contexto"
 
 #: order/models.py:1115
 msgid "Additional context for this line"
-msgstr ""
+msgstr "Contexto adicional para esta línea"
 
 #: order/models.py:1124
 msgid "Unit price"
@@ -4484,11 +4484,11 @@ msgstr "¿Dónde quiere el comprador almacenar este objeto?"
 
 #: order/models.py:1282
 msgid "Virtual part cannot be assigned to a sales order"
-msgstr ""
+msgstr "Una parte virtual no puede ser asignada a un pedido de venta"
 
 #: order/models.py:1287
 msgid "Only salable parts can be assigned to a sales order"
-msgstr ""
+msgstr "Sólo las piezas vendibles pueden ser asignadas a un pedido de venta"
 
 #: order/models.py:1313 part/templates/part/part_pricing.html:107
 #: part/templates/part/prices.html:128 templates/js/translated/pricing.js:926
@@ -4538,7 +4538,7 @@ msgstr "Número de factura"
 
 #: order/models.py:1433
 msgid "Reference number for associated invoice"
-msgstr ""
+msgstr "Número de referencia para la factura asociada"
 
 #: order/models.py:1451
 msgid "Shipment has already been sent"
@@ -4599,19 +4599,19 @@ msgstr "Especificar la cantidad de asignación de stock"
 
 #: order/models.py:1700
 msgid "Return Order reference"
-msgstr ""
+msgstr "Referencia de la orden de devolución"
 
 #: order/models.py:1714
 msgid "Company from which items are being returned"
-msgstr ""
+msgstr "Compañía de la que se están devolviendo los artículos"
 
 #: order/models.py:1725
 msgid "Return order status"
-msgstr ""
+msgstr "Estado de la orden de devolución"
 
 #: order/models.py:1876
 msgid "Only serialized items can be assigned to a Return Order"
-msgstr ""
+msgstr "Sólo los artículos serializados pueden ser asignados a una orden de devolución"
 
 #: order/models.py:1884 order/models.py:1930
 #: order/templates/order/return_order_base.html:9
@@ -4624,28 +4624,28 @@ msgstr "Orden de devolución"
 
 #: order/models.py:1892
 msgid "Select item to return from customer"
-msgstr ""
+msgstr "Seleccionar el artículo a devolver del cliente"
 
 #: order/models.py:1897
 msgid "Received Date"
-msgstr ""
+msgstr "Fecha de recepción"
 
 #: order/models.py:1898
 msgid "The date this this return item was received"
-msgstr ""
+msgstr "La fecha en la que se recibió este artículo de devolución"
 
 #: order/models.py:1909 templates/js/translated/return_order.js:697
 #: templates/js/translated/table_filters.js:89
 msgid "Outcome"
-msgstr ""
+msgstr "Resultado"
 
 #: order/models.py:1909
 msgid "Outcome for this line item"
-msgstr ""
+msgstr "Salida para este artículo de línea"
 
 #: order/models.py:1915
 msgid "Cost associated with return or repair for this line item"
-msgstr ""
+msgstr "Costo asociado con la devolución o reparación para este artículo de línea"
 
 #: order/serializers.py:245
 msgid "Order cannot be cancelled"
@@ -4653,15 +4653,15 @@ msgstr "El pedido no puede ser cancelado"
 
 #: order/serializers.py:260 order/serializers.py:1125
 msgid "Allow order to be closed with incomplete line items"
-msgstr ""
+msgstr "Permitir cerrar el pedido con artículos de línea incompletos"
 
 #: order/serializers.py:271 order/serializers.py:1136
 msgid "Order has incomplete line items"
-msgstr ""
+msgstr "El pedido tiene artículos de línea incompletos"
 
 #: order/serializers.py:384
 msgid "Order is not open"
-msgstr ""
+msgstr "El pedido no está abierto"
 
 #: order/serializers.py:402
 msgid "Purchase price currency"
@@ -4669,7 +4669,7 @@ msgstr "Moneda del precio de compra"
 
 #: order/serializers.py:420
 msgid "Supplier part must be specified"
-msgstr ""
+msgstr "Debe especificar la parte del proveedor"
 
 #: order/serializers.py:425
 msgid "Purchase order must be specified"
@@ -4769,19 +4769,19 @@ msgstr "Los siguientes números de serie ya están asignados"
 
 #: order/serializers.py:1550
 msgid "Return order line item"
-msgstr ""
+msgstr "Artículo de línea de orden de devolución"
 
 #: order/serializers.py:1557
 msgid "Line item does not match return order"
-msgstr ""
+msgstr "El artículo de línea no coincide con la orden de devolución"
 
 #: order/serializers.py:1560
 msgid "Line item has already been received"
-msgstr ""
+msgstr "El artículo de línea ya ha sido recibido"
 
 #: order/serializers.py:1592
 msgid "Items can only be received against orders which are in progress"
-msgstr ""
+msgstr "Los artículos sólo pueden ser recibidos contra pedidos en curso"
 
 #: order/serializers.py:1673
 msgid "Line price currency"
