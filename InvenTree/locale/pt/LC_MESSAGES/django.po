@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-07 14:27+0000\n"
-"PO-Revision-Date: 2023-05-08 12:34\n"
+"PO-Revision-Date: 2023-05-11 12:49\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -179,7 +179,7 @@ msgstr "Remova as \"tags\" HTML deste valor"
 
 #: InvenTree/models.py:82
 msgid "Metadata must be a python dict object"
-msgstr ""
+msgstr "Metadados deve ser um objeto dict python"
 
 #: InvenTree/models.py:86
 msgid "Plugin Metadata"
@@ -698,7 +698,7 @@ msgstr "Local alterado"
 
 #: InvenTree/status_codes.py:320
 msgid "Stock updated"
-msgstr ""
+msgstr "Estoque atualizado"
 
 #: InvenTree/status_codes.py:322
 msgid "Installed into assembly"
@@ -2010,7 +2010,7 @@ msgstr "Moeda Padrão"
 
 #: common/models.py:967
 msgid "Select base currency for pricing calculations"
-msgstr ""
+msgstr "Selecione a moeda base para cálculos de preços"
 
 #: common/models.py:974
 msgid "Download from URL"
@@ -2677,7 +2677,7 @@ msgstr "Domínios permitidos"
 
 #: common/models.py:1587
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
-msgstr ""
+msgstr "Restringir registros a certos domínios (separados por vírgula, começando com @)"
 
 #: common/models.py:1593
 msgid "Group on signup"
@@ -2945,11 +2945,11 @@ msgstr "Mostrar os Pedidos de Vendas atrasadas na tela inicial"
 
 #: common/models.py:1879
 msgid "Show pending SO shipments"
-msgstr ""
+msgstr "Mostrar remessas de OV pendentes"
 
 #: common/models.py:1880
 msgid "Show pending SO shipments on the homepage"
-msgstr ""
+msgstr "Mostrar envios OV pendentes na tela inicial"
 
 #: common/models.py:1886
 msgid "Show News"
@@ -3741,7 +3741,7 @@ msgstr "Excluir Empresa"
 #: report/templates/report/inventree_test_report_base.html:84
 #: report/templates/report/inventree_test_report_base.html:163
 msgid "Part image"
-msgstr ""
+msgstr "Imagem da peça"
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:12
@@ -4242,13 +4242,13 @@ msgstr "Filtros de consulta de peça (lista de valores separados por vírgula)"
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
 msgid "QC Code"
-msgstr ""
+msgstr "Código QC"
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
 #: templates/qr_code.html:7
 msgid "QR code"
-msgstr ""
+msgstr "Código QR"
 
 #: order/admin.py:30 order/models.py:69
 #: report/templates/report/inventree_po_report_base.html:31
@@ -4303,7 +4303,7 @@ msgstr "Descrição do pedido (opcional)"
 
 #: order/models.py:230
 msgid "Select project code for this order"
-msgstr ""
+msgstr "Selecione o código do projeto para este pedido"
 
 #: order/models.py:232 order/models.py:1091 order/models.py:1439
 msgid "Link to external page"
@@ -5473,7 +5473,7 @@ msgstr "Esta peça é variante de outra peça?"
 
 #: part/models.py:866
 msgid "Part description (optional)"
-msgstr ""
+msgstr "Descrição da peça (opcional)"
 
 #: part/models.py:872
 msgid "Part keywords to improve visibility in search results"
@@ -6298,7 +6298,7 @@ msgstr "Você não tem permissões para editar a LDM."
 
 #: part/templates/part/bom.html:15
 msgid "The BOM this part has been changed, and must be validated"
-msgstr ""
+msgstr "A LDM dessa peça foi alterada, e deve ser validada"
 
 #: part/templates/part/bom.html:17
 #, python-format
@@ -6736,7 +6736,7 @@ msgstr "Vincular Código de Barras à Peça"
 
 #: part/templates/part/part_base.html:474 templates/js/translated/part.js:1838
 msgid "part"
-msgstr ""
+msgstr "peça"
 
 #: part/templates/part/part_base.html:514
 msgid "Calculate"
@@ -6958,7 +6958,7 @@ msgstr "Criar variante de peça"
 
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
-msgstr ""
+msgstr "Criar uma peça variante a partir deste modelo"
 
 #: part/templatetags/inventree_extras.py:187
 msgid "Unknown database"
@@ -7137,17 +7137,17 @@ msgstr "Nenhum dado encontrado"
 #: plugin/registry.py:459
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
-msgstr ""
+msgstr "A extensão '{p}' não é compatível com a versão atual do InvenTree {v}"
 
 #: plugin/registry.py:461
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
-msgstr ""
+msgstr "Extensão requer pelo menos a versão {v}"
 
 #: plugin/registry.py:463
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
-msgstr ""
+msgstr "Extensão requer no máximo a versão {v}"
 
 #: plugin/samples/integration/sample.py:39
 msgid "Enable PO"
@@ -7663,7 +7663,7 @@ msgstr "A quantidade não corresponde aos números de série"
 
 #: stock/models.py:1386 stock/serializers.py:354
 msgid "Serial numbers already exist"
-msgstr ""
+msgstr "Números de série já existem"
 
 #: stock/models.py:1457
 msgid "Stock item has been assigned to a sales order"
@@ -7727,104 +7727,104 @@ msgstr "Nome de teste"
 
 #: stock/models.py:2223
 msgid "Test result"
-msgstr ""
+msgstr "Resultado do teste"
 
 #: stock/models.py:2229
 msgid "Test output value"
-msgstr ""
+msgstr "Valor da saída do teste"
 
 #: stock/models.py:2236
 msgid "Test result attachment"
-msgstr ""
+msgstr "Anexo do resultado do teste"
 
 #: stock/models.py:2242
 msgid "Test notes"
-msgstr ""
+msgstr "Notas do teste"
 
 #: stock/serializers.py:76
 msgid "Serial number is too large"
-msgstr ""
+msgstr "Número de série é muito grande"
 
 #: stock/serializers.py:234
 msgid "Purchase price of this stock item"
-msgstr ""
+msgstr "Preço de compra deste item de estoque"
 
 #: stock/serializers.py:287
 msgid "Enter number of stock items to serialize"
-msgstr ""
+msgstr "Insira o número de itens de estoque para serializar"
 
 #: stock/serializers.py:299
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
-msgstr ""
+msgstr "Quantidade não deve exceder a quantidade disponível em estoque ({q})"
 
 #: stock/serializers.py:305
 msgid "Enter serial numbers for new items"
-msgstr ""
+msgstr "Inserir número de série para novos itens"
 
 #: stock/serializers.py:316 stock/serializers.py:912 stock/serializers.py:1154
 msgid "Destination stock location"
-msgstr ""
+msgstr "Local de destino do estoque"
 
 #: stock/serializers.py:323
 msgid "Optional note field"
-msgstr ""
+msgstr "Campo opcional de notas"
 
 #: stock/serializers.py:333
 msgid "Serial numbers cannot be assigned to this part"
-msgstr ""
+msgstr "Números de série não podem ser atribuídos a esta peça"
 
 #: stock/serializers.py:394
 msgid "Select stock item to install"
-msgstr ""
+msgstr "Selecione o item de estoque para instalar"
 
 #: stock/serializers.py:407
 msgid "Stock item is unavailable"
-msgstr ""
+msgstr "Item de estoque indisponível"
 
 #: stock/serializers.py:414
 msgid "Selected part is not in the Bill of Materials"
-msgstr ""
+msgstr "Peça selecionada não está na Lista de Materiais"
 
 #: stock/serializers.py:451
 msgid "Destination location for uninstalled item"
-msgstr ""
+msgstr "Local de destino para o item desinstalado"
 
 #: stock/serializers.py:456 stock/serializers.py:537
 msgid "Add transaction note (optional)"
-msgstr ""
+msgstr "Adicionar nota de transação (opcional)"
 
 #: stock/serializers.py:490
 msgid "Select part to convert stock item into"
-msgstr ""
+msgstr "Selecione peça para converter o item de estoque em"
 
 #: stock/serializers.py:501
 msgid "Selected part is not a valid option for conversion"
-msgstr ""
+msgstr "Peça selecionada não é uma opção válida para conversão"
 
 #: stock/serializers.py:532
 msgid "Destination location for returned item"
-msgstr ""
+msgstr "Local de destino para item retornado"
 
 #: stock/serializers.py:767
 msgid "Part must be salable"
-msgstr ""
+msgstr "Parte deve ser comercializável"
 
 #: stock/serializers.py:771
 msgid "Item is allocated to a sales order"
-msgstr ""
+msgstr "Item é alocado para um pedido de venda"
 
 #: stock/serializers.py:775
 msgid "Item is allocated to a build order"
-msgstr ""
+msgstr "Item está alocado a um pedido de produção"
 
 #: stock/serializers.py:806
 msgid "Customer to assign stock items"
-msgstr ""
+msgstr "Cliente para atribuir itens de estoque"
 
 #: stock/serializers.py:812
 msgid "Selected company is not a customer"
-msgstr ""
+msgstr "A empresa selecionada não é um cliente"
 
 #: stock/serializers.py:820
 msgid "Stock assignment notes"
