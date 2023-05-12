@@ -276,6 +276,14 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
     serializer_class = build.serializers.BuildOutputCreateSerializer
 
 
+class BuildOutputScrap(BuildOrderContextMixin, CreateAPI):
+    """API endpoint for scrapping build output(s)."""
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildOutputScrapSerializer
+
+
 class BuildOutputComplete(BuildOrderContextMixin, CreateAPI):
     """API endpoint for completing build outputs."""
 
@@ -489,6 +497,7 @@ build_api_urls = [
         re_path(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
         re_path(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
         re_path(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
+        re_path(r'^scrap-outputs/', BuildOutputScrap.as_view(), name='api-build-output-scrap'),
         re_path(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
         re_path(r'^cancel/', BuildCancel.as_view(), name='api-build-cancel'),
         re_path(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),

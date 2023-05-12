@@ -302,12 +302,14 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         auto_allocate = data.get('auto_allocate', False)
 
         build = self.get_build()
+        user = self.context['request'].user
 
         build.create_build_output(
             quantity,
             serials=self.serials,
             batch=batch_code,
             auto_allocate=auto_allocate,
+            user=user,
         )
 
 
@@ -347,6 +349,71 @@ class BuildOutputDeleteSerializer(serializers.Serializer):
             for item in outputs:
                 output = item['output']
                 build.delete_output(output)
+
+
+class BuildOutputScrapSerializer(serializers.Serializer):
+    """DRF serializer for scrapping one or more build outputs"""
+
+    class Meta:
+        """Serializer metaclass"""
+        fields = [
+            'outputs',
+            'location',
+            'notes',
+        ]
+
+    outputs = BuildOutputSerializer(
+        many=True,
+        required=True,
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Location'),
+        help_text=_('Stock location for scrapped outputs'),
+    )
+
+    notes = serializers.CharField(
+        label=_('Notes'),
+        help_text=_('Reason for scrapping build output(s)'),
+        required=True,
+        allow_blank=False,
+    )
+
+    def validate(self, data):
+        """Perform validation on the serializer data"""
+        super().validate(data)
+        outputs = data.get('outputs', [])
+
+        if len(outputs) == 0:
+            raise ValidationError(_("A list of build outputs must be provided"))
+
+        return data
+
+    def save(self):
+        """Save the serializer to scrap the build outputs"""
+
+        build = self.context['build']
+        request = self.context['request']
+        data = self.validated_data
+
+        notes = data.get('notes', '')
+        outputs = data.get('outputs', [])
+        location = data.get('location', None)
+
+        # Scrap the build outputs
+        with transaction.atomic():
+            for item in outputs:
+                output = item['output']
+                build.scrap_build_output(
+                    output,
+                    location,
+                    user=request.user,
+                    notes=notes,
+                )
 
 
 class BuildOutputCompleteSerializer(serializers.Serializer):

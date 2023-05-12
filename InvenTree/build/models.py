@@ -620,6 +620,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             location: Override location
             auto_allocate: Automatically allocate stock with matching serial numbers
         """
+        user = kwargs.get('user', None)
         batch = kwargs.get('batch', self.batch)
         location = kwargs.get('location', self.destination)
         serials = kwargs.get('serials', None)
@@ -629,6 +630,24 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         Determine if we can create a single output (with quantity > 0),
         or multiple outputs (with quantity = 1)
         """
+
+        def _add_tracking_entry(output, user):
+            """Helper function to add a tracking entry to the newly created output"""
+            deltas = {
+                'quantity': float(output.quantity),
+                'buildorder': self.pk,
+            }
+
+            if output.batch:
+                deltas['batch'] = output.batch
+
+            if output.serial:
+                deltas['serial'] = output.serial
+
+            if output.location:
+                deltas['location'] = output.location.pk
+
+            output.add_tracking_entry(StockHistoryCode.BUILD_OUTPUT_CREATED, user, deltas)
 
         multiple = False
 
@@ -663,6 +682,8 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                     is_building=True,
                 )
 
+                _add_tracking_entry(output, user)
+
                 if auto_allocate and serial is not None:
 
                     # Get a list of BomItem objects which point to "trackable" parts
@@ -695,7 +716,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         else:
             """Create a single build output of the given quantity."""
 
-            stock.models.StockItem.objects.create(
+            output = stock.models.StockItem.objects.create(
                 quantity=quantity,
                 location=location,
                 part=self.part,
@@ -703,6 +724,8 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                 batch=batch,
                 is_building=True
             )
+
+            _add_tracking_entry(output, user)
 
         if self.status == BuildStatus.PENDING:
             self.status = BuildStatus.PRODUCTION
@@ -774,6 +797,36 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         items.all().delete()
 
     @transaction.atomic
+    def scrap_build_output(self, output, location, user=None, notes=''):
+        """Mark a particular build output as scrapped / rejected
+
+        - Mark the output as "complete"
+        - *Do Not* update the "completed" count for this order
+        - Set the item status to "scrapped"
+        - Add a transaction entry to the stock item history
+        """
+
+        if not output:
+            raise ValidationError(_("No build output specified"))
+
+        output.is_building = False
+        output.status = StockStatus.REJECTED
+        output.location = location
+
+        output.save(add_note=False)
+
+        output.add_tracking_entry(
+            StockHistoryCode.BUILD_OUTPUT_REJECTED,
+            user,
+            noptes=notes,
+            deltas={
+                'location': location.pk,
+                'status': StockStatus.REJECTED,
+                'buildorder': self.pk,
+            }
+        )
+
+    @transaction.atomic
     def complete_build_output(self, output, user, **kwargs):
         """Complete a particular build output.
 
@@ -801,7 +854,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         output.location = location
         output.status = status
 
-        output.save()
+        output.save(add_note=False)
 
         output.add_tracking_entry(
             StockHistoryCode.BUILD_OUTPUT_COMPLETED,
@@ -809,6 +862,8 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             notes=notes,
             deltas={
                 'status': status,
+                'location': location.pk,
+                'buildorder': self.pk,
             }
         )
 
