@@ -3,8 +3,6 @@
 {% load status_codes %}
 
 /* globals
-    attachSelect,
-    closeModal,
     constructField,
     constructFormBody,
     getFormFieldValue,
@@ -18,12 +16,6 @@
     loadTableFilters,
     makeIconBadge,
     makeIconButton,
-    makeOptionsList,
-    modalEnable,
-    modalSetContent,
-    modalSetTitle,
-    modalSubmit,
-    openModal,
     renderLink,
     scanItemsIntoLocation,
     showAlertDialog,
