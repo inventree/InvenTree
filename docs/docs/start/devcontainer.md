@@ -69,7 +69,7 @@ The easiest way for plugin developing is by using the InvenTree devcontainer. Ju
    ```bash
    pip install -e /workspaces/inventree-plugin
    ```
-4. Add InvenTree core code to pylance intelicense path by adding the following file to your plugin repo `.vscode/settings.json` (Your path can be different depending on your setup):
+4. Add InvenTree core code to Pylance IntelliSense path by adding the following file to your plugin repo `.vscode/settings.json` (Your path can be different depending on your setup):
    ```json
    {
      "python.analysis.extraPaths": ["/workspaces/InvenTree/InvenTree"]
