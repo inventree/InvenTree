@@ -227,13 +227,12 @@ class StockStatus(StatusCode):
         LOST: _("Lost"),
         REJECTED: _("Rejected"),
         QUARANTINED: _("Quarantined"),
-        RETURNED: _("Returned"),
     }
 
     colors = {
         OK: 'success',
         ATTENTION: 'warning',
-        DAMAGED: 'danger',
+        DAMAGED: 'warning',
         DESTROYED: 'danger',
         LOST: 'dark',
         REJECTED: 'danger',
