@@ -280,8 +280,13 @@ class BuildOutputScrap(BuildOrderContextMixin, CreateAPI):
     """API endpoint for scrapping build output(s)."""
 
     queryset = Build.objects.none()
-
     serializer_class = build.serializers.BuildOutputScrapSerializer
+
+    def get_serializer_context(self):
+        """Add extra context information to the endpoint serializer."""
+        ctx = super().get_serializer_context()
+        ctx['to_complete'] = False
+        return ctx
 
 
 class BuildOutputComplete(BuildOrderContextMixin, CreateAPI):

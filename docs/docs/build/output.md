@@ -14,7 +14,7 @@ With reference to a [build order](./build.md), a *Build Output* is a finished pr
 
 The *Incomplete Outputs* tab displays any outstanding / in-progress build outputs for the current build order.
 
-{% with id="build-outputs-incomplete", url="build/build_outputs_incomplete_.png", description="Incomplete build outputs" %}
+{% with id="build-outputs-incomplete", url="build/build_outputs_incomplete.png", description="Incomplete build outputs" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -28,7 +28,26 @@ The *Completed Outputs* tab displays any [completed](#complete-build-output) or 
 
 ## Create Build Output
 
-Create a new build output by pressing the
+Create a new build output by pressing the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Build Output</span> button under the [incomplete outputs](#incomplete-outputs) tab:
+
+{% with id="build_output_create", url="build/build_output_create.png", description="Create build output" %}
+{% include "img.html" %}
+{% endwith %}
+
+### Create Options
+
+The following options are available when creating a new build output:
+
+| Option | Description |
+| --- | --- |
+| Quantity | The number of items to create as part of this build output |
+| Serial Numbers | If this is a tracked build output, the serial numbers for each of the generated outputs |
+| Batch Code | Batch code identifier for the generated output(s) |
+| Auto Allocate Serial Numbers | If selected, any available tracked subcomponents which already have serial numbers assigned, will be automatically assigned to matching build outputs |
+
+### Specifying Serial Numbers
+
+Refer to the [serial number generation guide](../stock/tracking.md#generating-serial-numbers) for further information on serial number input.
 
 ## Complete Build Output
 
@@ -50,7 +69,7 @@ Marking the build output(s) as complete performs the following actions:
 
 ### Complete Options
 
-The following options are available when completing a build order:
+The following options are available when completing a build output:
 
 | Option | Description |
 | --- | --- |
