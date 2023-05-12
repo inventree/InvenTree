@@ -66,14 +66,14 @@ nav:
     - Docker:
         - Introduction: start/docker.md
         - Production: start/docker_prod.md
+        - Development: start/docker_dev.md
     - Bare Metal:
         - Introduction: start/install.md
         - Installer: start/installer.md
         - Production: start/production.md
+        - Development: start/development.md
     - Development:
         - Devcontainer: start/devcontainer.md
-        - Docker devserver: start/docker_dev.md
-        - Baremetal devserver: start/development.md
     - Serving Files: start/serving_files.md
     - Data Backup: start/backup.md
     - Migrating Data: start/migrate.md
