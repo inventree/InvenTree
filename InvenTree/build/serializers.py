@@ -376,6 +376,13 @@ class BuildOutputScrapSerializer(serializers.Serializer):
         help_text=_('Stock location for scrapped outputs'),
     )
 
+    discard_allocations = serializers.BooleanField(
+        required=False,
+        default=False,
+        label=_('Discard Allocations'),
+        help_text=_('Discard any stock allocations for scrapped outputs'),
+    )
+
     notes = serializers.CharField(
         label=_('Notes'),
         help_text=_('Reason for scrapping build output(s)'),
@@ -399,10 +406,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
         build = self.context['build']
         request = self.context['request']
         data = self.validated_data
-
-        notes = data.get('notes', '')
         outputs = data.get('outputs', [])
-        location = data.get('location', None)
 
         # Scrap the build outputs
         with transaction.atomic():
@@ -410,9 +414,10 @@ class BuildOutputScrapSerializer(serializers.Serializer):
                 output = item['output']
                 build.scrap_build_output(
                     output,
-                    location,
+                    data.get('location', None),
                     user=request.user,
-                    notes=notes,
+                    notes=data.get('notes', ''),
+                    discard_allocations=data.get('discard_allocations', False)
                 )
 
 

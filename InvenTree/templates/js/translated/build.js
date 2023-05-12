@@ -673,6 +673,7 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
         fields: {
             location: {},
             notes: {},
+            discard_allocations: {},
         },
         confirm: true,
         title: '{% trans "Scrap Build Outputs" %}',
@@ -688,6 +689,7 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
                 outputs: [],
                 location: getFormFieldValue('location', {}, opts),
                 notes: getFormFieldValue('notes', {}, opts),
+                discard_allocations: getFormFieldValue('discard_allocations', {type: 'boolean'}, opts),
             };
 
             let output_pk_values = [];

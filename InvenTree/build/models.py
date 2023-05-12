@@ -797,7 +797,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         items.all().delete()
 
     @transaction.atomic
-    def scrap_build_output(self, output, location, user=None, notes=''):
+    def scrap_build_output(self, output, location, **kwargs):
         """Mark a particular build output as scrapped / rejected
 
         - Mark the output as "complete"
@@ -809,16 +809,30 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         if not output:
             raise ValidationError(_("No build output specified"))
 
+        user = kwargs.get('user', None)
+        notes = kwargs.get('notes', '')
+        discard_allocations = kwargs.get('discard_allocations', False)
+
+        # Update build output item
         output.is_building = False
         output.status = StockStatus.REJECTED
         output.location = location
-
         output.save(add_note=False)
+
+        allocated_items = output.items_to_install.all()
+
+        # Complete or discard allocations
+        for build_item in allocated_items:
+            if not discard_allocations:
+                build_item.complete_allocation(user)
+
+        # Delete allocations
+        allocated_items.delete()
 
         output.add_tracking_entry(
             StockHistoryCode.BUILD_OUTPUT_REJECTED,
             user,
-            noptes=notes,
+            notes=notes,
             deltas={
                 'location': location.pk,
                 'status': StockStatus.REJECTED,
