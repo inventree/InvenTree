@@ -203,8 +203,6 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
 
     var options = [];
 
-    console.log("items:", elements);
-
     elements.forEach(function(element) {
 
         var text = textFunc(element);
