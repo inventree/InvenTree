@@ -2590,11 +2590,24 @@ function loadStockTrackingTable(table, options) {
                 html += '</td></tr>';
             }
 
+            // BuildOrder Information
+            if (details.buildorder) {
+                html += `<tr><th>{% trans "Build Order" %}</th>`;
+                html += `<td>`;
+
+                if (details.buildorder_detail) {
+                    html += renderLink(
+                        details.buildorder_detail.reference,
+                        `/build/${details.buildorder}/`
+                    );
+                } else {
+                    html += `<i>{% trans "Build order no longer exists" %}</i>`;
+                }
+            }
+
             // PurchaseOrder Information
             if (details.purchaseorder) {
-
                 html += `<tr><th>{% trans "Purchase Order" %}</th>`;
-
                 html += '<td>';
 
                 if (details.purchaseorder_detail) {

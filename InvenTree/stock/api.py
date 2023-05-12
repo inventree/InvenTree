@@ -19,6 +19,7 @@ import common.models
 import common.settings
 import stock.serializers as StockSerializers
 from build.models import Build
+from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
@@ -1276,6 +1277,15 @@ class StockTrackingList(ListAPI):
                     order = ReturnOrder.objects.get(pk=deltas['returnorder'])
                     serializer = ReturnOrderSerializer(order)
                     deltas['returnorder_detail'] = serializer.data
+                except Exception:
+                    pass
+
+            # Add BuildOrder detail
+            if 'buildorder' in deltas:
+                try:
+                    order = Build.objects.get(pk=deltas['buildorder'])
+                    serializer = BuildSerializer(order)
+                    deltas['buildorder_detail'] = serializer.data
                 except Exception:
                     pass
 
