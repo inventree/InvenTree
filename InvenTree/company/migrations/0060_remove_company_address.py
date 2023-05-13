@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0058_move_address_field_to_address_model'),
+        ('company', '0059_move_address_field_to_address_model'),
     ]
 
     operations = [
