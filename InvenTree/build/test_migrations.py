@@ -19,6 +19,7 @@ class TestForwardMigrations(MigratorTestCase):
             name='Widget',
             description='Buildable Part',
             active=True,
+            level=0, lft=0, rght=0, tree_id=0,
         )
 
         with self.assertRaises(TypeError):
@@ -66,30 +67,30 @@ class TestReferenceMigration(MigratorTestCase):
     def prepare(self):
         """Create some builds."""
         Part = self.old_state.apps.get_model('part', 'part')
+        Build = self.old_state.apps.get_model('build', 'build')
 
         part = Part.objects.create(
             name='Part',
-            description='A test part'
+            description='A test part',
+            level=0, lft=0, rght=0, tree_id=0,
         )
-
-        Build = self.old_state.apps.get_model('build', 'build')
 
         Build.objects.create(
             part=part,
             title='My very first build',
-            quantity=10
+            quantity=10,
         )
 
         Build.objects.create(
             part=part,
             title='My very second build',
-            quantity=10
+            quantity=10,
         )
 
         Build.objects.create(
             part=part,
             title='My very third build',
-            quantity=10
+            quantity=10,
         )
 
         # Ensure that the builds *do not* have a 'reference' field
