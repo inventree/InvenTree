@@ -37,7 +37,6 @@ class CompanySimpleTest(TestCase):
         Company.objects.create(name='ABC Co.',
                                description='Seller of ABC products',
                                website='www.abc-sales.com',
-                               address='123 Sales St.',
                                is_customer=False,
                                is_supplier=True)
 
@@ -231,6 +230,14 @@ class AddressTest(TestCase):
                                       province=pv,
                                       country=cn)
         self.assertEqual(str(addr), f'{l1}, {l2}, {pcd}, {pct}, {pv}, {cn}')
+
+        addr2 = Address.objects.create(company=self.c,
+                                       primary=True,
+                                       title=t,
+                                       line1=l1,
+                                       postal_code=pcd)
+
+        self.assertEqual(str(addr2), f'{l1}, {pcd}')
 
 
 class ManufacturerPartSimpleTest(TestCase):

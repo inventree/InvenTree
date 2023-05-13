@@ -153,6 +153,14 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     )
 
     @property
+    def address(self):
+        """Return the string representation for the primary address"""
+
+        addr = Address.objects.filter(company=self.id).filter(primary=True).first()
+
+        return str(addr or '')
+
+    @property
     def currency_code(self):
         """Return the currency code associated with this company.
 
@@ -265,12 +273,20 @@ class Address(models.Model):
 
     def __str__(self):
         """Defines string representation of address to supple a one-line to API calls"""
-        return ", ".join([self.line1,
-                          self.line2,
-                          self.postal_code,
-                          self.postal_city,
-                          self.province,
-                          self.country])
+        available_lines = [self.line1,
+                           self.line2,
+                           self.postal_code,
+                           self.postal_city,
+                           self.province,
+                           self.country
+                           ]
+
+        populated_lines = []
+        for line in available_lines:
+            if len(line) > 0:
+                populated_lines.append(line)
+
+        return ", ".join(populated_lines)
 
     class Meta:
         """Metaclass defines extra model options"""
