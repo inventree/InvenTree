@@ -8,12 +8,12 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
+import common.models
 import InvenTree.helpers
-from common.models import NotificationEntry, NotificationMessage
+import plugin.models
+import users.models
 from InvenTree.ready import isImportingData
 from plugin import registry
-from plugin.models import NotificationUserSetting, PluginConfig
-from users.models import Owner
 
 logger = logging.getLogger('inventree')
 
@@ -142,7 +142,7 @@ class NotificationMethod:
 
     def usersetting(self, target):
         """Returns setting for this method for a given user."""
-        return NotificationUserSetting.get_setting(f'NOTIFICATION_METHOD_{self.METHOD_NAME.upper()}', user=target, method=self.METHOD_NAME)
+        return plugin.models.NotificationUserSetting.get_setting(f'NOTIFICATION_METHOD_{self.METHOD_NAME.upper()}', user=target, method=self.METHOD_NAME)
     # endregion
 
 
@@ -216,7 +216,7 @@ class MethodStorageClass:
 
                 # make sure the setting exists
                 self.user_settings[new_key] = item.USER_SETTING
-                NotificationUserSetting.get_setting(
+                plugin.models.NotificationUserSetting.get_setting(
                     key=new_key,
                     user=user,
                     method=item.METHOD_NAME,
@@ -247,7 +247,7 @@ class UIMessageNotification(SingleNotificationMethod):
 
     def send(self, target):
         """Send a UI notification to a user."""
-        NotificationMessage.objects.create(
+        common.models.NotificationMessage.objects.create(
             target_object=self.obj,
             source_object=target,
             user=target,
@@ -338,7 +338,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     # Check if we have notified recently...
     delta = timedelta(days=1)
 
-    if NotificationEntry.check_recent(category, obj_ref_value, delta):
+    if common.models.NotificationEntry.check_recent(category, obj_ref_value, delta):
         logger.info(f"Notification '{category}' has recently been sent for '{str(obj)}' - SKIPPING")
         return
 
@@ -369,7 +369,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
                     if user not in target_exclude:
                         target_users.add(user)
             # Owner instance (either 'user' or 'group' is provided)
-            elif isinstance(target, Owner):
+            elif isinstance(target, users.models.Owner):
                 for owner in target.get_related_owners(include_group=False):
                     user = owner.owner
                     if user not in target_exclude:
@@ -398,12 +398,12 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
                 logger.error(error)
 
         # Set delivery flag
-        NotificationEntry.notify(category, obj_ref_value)
+        common.models.NotificationEntry.notify(category, obj_ref_value)
     else:
         logger.info(f"No possible users for notification '{category}'")
 
 
-def trigger_superuser_notification(plugin: PluginConfig, msg: str):
+def trigger_superuser_notification(plugin: plugin.models.PluginConfig, msg: str):
     """Trigger a notification to all superusers.
 
     Args:

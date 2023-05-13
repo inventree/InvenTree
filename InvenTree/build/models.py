@@ -25,6 +25,7 @@ from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
+import common.models
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -299,7 +300,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
     )
 
     project_code = models.ForeignKey(
-        'common.ProjectCode',
+        common.models.ProjectCode,
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Project Code'),

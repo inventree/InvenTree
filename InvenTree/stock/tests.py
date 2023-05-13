@@ -9,7 +9,7 @@ from django.test import override_settings
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.api_tester import InvenTreeTestCase
 from InvenTree.status_codes import StockHistoryCode
 from order.models import SalesOrder
 from part.models import Part

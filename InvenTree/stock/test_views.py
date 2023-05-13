@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.api_tester import InvenTreeTestCase
 from InvenTree.status_codes import StockStatus
 from stock.models import StockItem, StockLocation
 from users.models import Owner

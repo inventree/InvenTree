@@ -1,6 +1,6 @@
 """Unit tests for action plugins."""
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.api_tester import InvenTreeTestCase
 
 
 class SampleIntegrationPluginTests(InvenTreeTestCase):

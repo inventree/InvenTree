@@ -10,7 +10,7 @@ import company.models
 import order.models
 import part.models
 import stock.models
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.api_tester import InvenTreeTestCase
 from InvenTree.status_codes import PurchaseOrderStatus
 
 

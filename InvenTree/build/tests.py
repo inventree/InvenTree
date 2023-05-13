@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from datetime import datetime, timedelta
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.api_tester import InvenTreeTestCase
 
 from .models import Build
 from stock.models import StockItem

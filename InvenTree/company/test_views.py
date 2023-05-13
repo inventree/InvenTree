@@ -2,7 +2,7 @@
 
 from django.urls import reverse
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.api_tester import InvenTreeTestCase
 
 
 class CompanyViewTest(InvenTreeTestCase):

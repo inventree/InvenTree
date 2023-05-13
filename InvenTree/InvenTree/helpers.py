@@ -19,7 +19,6 @@ from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.http import StreamingHttpResponse
-from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 
 import moneyed.localization
@@ -31,13 +30,8 @@ from djmoney.money import Money
 from PIL import Image
 
 import common.models
+import common.settings
 import InvenTree.version
-from common.notifications import (InvenTreeNotificationBodies,
-                                  NotificationBody, trigger_notification)
-from common.settings import currency_code_default
-
-from .api_tester import ExchangeRateMixin, UserMixin
-from .settings import MEDIA_URL, STATIC_URL
 
 logger = logging.getLogger('inventree')
 
@@ -81,12 +75,12 @@ def constructPathString(path, max_chars=250):
 
 def getMediaUrl(filename):
     """Return the qualified access path for the given file, under the media directory."""
-    return os.path.join(MEDIA_URL, str(filename))
+    return os.path.join(settings.MEDIA_URL, str(filename))
 
 
 def getStaticUrl(filename):
     """Return the qualified access path for the given file, under the static media directory."""
-    return os.path.join(STATIC_URL, str(filename))
+    return os.path.join(settings.STATIC_URL, str(filename))
 
 
 def construct_absolute_url(*arg, **kwargs):
@@ -470,7 +464,7 @@ def decimal2money(d, currency=None):
         A Money object from the input(s)
     """
     if not currency:
-        currency = currency_code_default()
+        currency = common.settings.currency_code_default()
     return Money(d, currency)
 
 
@@ -1091,12 +1085,7 @@ def inheritors(cls):
     return subcls
 
 
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup buildin."""
-    pass
-
-
-def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
+def notify_responsible(instance, sender, content=None, exclude=None):
     """Notify all responsible parties of a change in an instance.
 
     Parses the supplied content with the provided instance and sender and sends a notification to all responsible users,
@@ -1108,6 +1097,12 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
+
+    import common.notifications
+
+    if content is None:
+        content = common.notifications.InvenTreeNotificationBodies.NewOrder
+
     if instance.responsible is not None:
         # Setup context for notification parsing
         content_context = {
@@ -1130,7 +1125,7 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
         }
 
         # Create notification
-        trigger_notification(
+        common.notifications.trigger_notification(
             instance,
             content.slug.format(**content_context),
             targets=[instance.responsible],
