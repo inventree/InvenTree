@@ -870,15 +870,19 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         output.save(add_note=False)
 
+        deltas = {
+            'status': status,
+            'buildorder': self.pk
+        }
+
+        if location:
+            deltas['location'] = location.pk
+
         output.add_tracking_entry(
             StockHistoryCode.BUILD_OUTPUT_COMPLETED,
             user,
             notes=notes,
-            deltas={
-                'status': status,
-                'location': location.pk,
-                'buildorder': self.pk,
-            }
+            deltas=deltas
         )
 
         # Increase the completed quantity for this build
