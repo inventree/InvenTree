@@ -19,6 +19,7 @@ import common.models
 import common.settings
 import stock.serializers as StockSerializers
 from build.models import Build
+from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
@@ -214,7 +215,9 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
     - POST: Create a new StockLocation
     """
 
-    queryset = StockLocation.objects.all()
+    queryset = StockLocation.objects.all().prefetch_related(
+        'tags',
+    )
     serializer_class = StockSerializers.LocationSerializer
 
     def download_queryset(self, queryset, export_format):
@@ -300,11 +303,15 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
         'name',
         'structural',
         'external',
+        'tags__name',
+        'tags__slug',
     ]
 
     search_fields = [
         'name',
         'description',
+        'tags__name',
+        'tags__slug',
     ]
 
     ordering_fields = [
@@ -351,6 +358,8 @@ class StockFilter(rest_filters.FilterSet):
             'customer',
             'sales_order',
             'purchase_order',
+            'tags__name',
+            'tags__slug',
         ]
 
     # Relationship filters
@@ -594,6 +603,35 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         # Check if a set of serial numbers was provided
         serial_numbers = data.get('serial_numbers', '')
 
+        # Check if the supplier_part has a package size defined, which is not 1
+        if 'supplier_part' in data and data['supplier_part'] is not None:
+            try:
+                supplier_part = SupplierPart.objects.get(pk=data.get('supplier_part', None))
+            except (ValueError, SupplierPart.DoesNotExist):
+                raise ValidationError({
+                    'supplier_part': _('The given supplier part does not exist'),
+                })
+
+            if supplier_part.pack_size != 1:
+                # Skip this check if pack size is 1 - makes no difference
+                # use_pack_size = True -> Multiply quantity by pack size
+                # use_pack_size = False -> Use quantity as is
+                if 'use_pack_size' not in data:
+                    raise ValidationError({
+                        'use_pack_size': _('The supplier part has a pack size defined, but flag use_pack_size not set'),
+                    })
+                else:
+                    if bool(data.get('use_pack_size')):
+                        data['quantity'] = int(quantity) * float(supplier_part.pack_size)
+                        quantity = data.get('quantity', None)
+                        # Divide purchase price by pack size, to save correct price per stock item
+                        data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_size)
+
+        # Now remove the flag from data, so that it doesn't interfere with saving
+        # Do this regardless of results above
+        if 'use_pack_size' in data:
+            data.pop('use_pack_size')
+
         # Assign serial numbers for a trackable part
         if serial_numbers:
 
@@ -811,7 +849,8 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         queryset = queryset.prefetch_related(
             'part',
             'part__category',
-            'location'
+            'location',
+            'tags',
         )
 
         return queryset
@@ -1035,6 +1074,8 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         'part__IPN',
         'part__description',
         'location__name',
+        'tags__name',
+        'tags__slug',
     ]
 
 
@@ -1265,6 +1306,15 @@ class StockTrackingList(ListAPI):
                     order = ReturnOrder.objects.get(pk=deltas['returnorder'])
                     serializer = ReturnOrderSerializer(order)
                     deltas['returnorder_detail'] = serializer.data
+                except Exception:
+                    pass
+
+            # Add BuildOrder detail
+            if 'buildorder' in deltas:
+                try:
+                    order = Build.objects.get(pk=deltas['buildorder'])
+                    serializer = BuildSerializer(order)
+                    deltas['buildorder_detail'] = serializer.data
                 except Exception:
                     pass
 

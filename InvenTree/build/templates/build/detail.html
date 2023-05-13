@@ -6,7 +6,7 @@
 
 {% block sidebar %}
 {% include "build/sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
 
@@ -22,12 +22,12 @@
                 <tr>
                     <td><span class='fas fa-info'></span></td>
                     <td>{% trans "Description" %}</td>
-                    <td>{{ build.title }}{% include "clip.html"%}</td>
+                    <td>{{ build.title }}{% include "clip.html" %}</td>
                 </tr>
                 <tr>
                     <td><span class='fas fa-shapes'></span></td>
                     <td>{% trans "Part" %}</td>
-                    <td><a href="{% url 'part-detail' build.part.id %}?display=build-orders">{{ build.part.full_name }}</a>{% include "clip.html"%}</td>
+                    <td><a href="{% url 'part-detail' build.part.id %}?display=build-orders">{{ build.part.full_name }}</a>{% include "clip.html" %}</td>
                 </tr>
                 <tr>
                     <td></td>
@@ -38,7 +38,7 @@
                     <td>{% trans "Stock Source" %}</td>
                     <td>
                         {% if build.take_from %}
-                        <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>{% include "clip.html"%}
+                        <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>{% include "clip.html" %}
                         {% else %}
                         <em>{% trans "Stock can be taken from any available location." %}</em>
                         {% endif %}
@@ -51,7 +51,7 @@
                         {% if build.destination %}
                         <a href="{% url 'stock-location-detail' build.destination.id %}">
                             {{ build.destination }}
-                        </a>{% include "clip.html"%}
+                        </a>{% include "clip.html" %}
                         {% else %}
                         <em>{% trans "Destination location not specified" %}</em>
                         {% endif %}
@@ -78,14 +78,14 @@
                 <tr>
                     <td><span class='fas fa-layer-group'></span></td>
                     <td>{% trans "Batch" %}</td>
-                    <td>{{ build.batch }}{% include "clip.html"%}</td>
+                    <td>{{ build.batch }}{% include "clip.html" %}</td>
                 </tr>
                 {% endif %}
                 {% if build.parent %}
                 <tr>
                     <td><span class='fas fa-sitemap'></span></td>
                     <td>{% trans "Parent Build" %}</td>
-                    <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a>{% include "clip.html"%}</td>
+                    <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a>{% include "clip.html" %}</td>
                 </tr>
                 {% endif %}
                 {% if build.priority != 0 %}
@@ -99,14 +99,14 @@
                 <tr>
                     <td><span class='fas fa-dolly'></span></td>
                     <td>{% trans "Sales Order" %}</td>
-                    <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a>{% include "clip.html"%}</td>
+                    <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a>{% include "clip.html" %}</td>
                 </tr>
                 {% endif %}
                 {% if build.link %}
                 <tr>
                     <td><span class='fas fa-link'></span></td>
                     <td>{% trans "External Link" %}</td>
-                    <td><a href="{{ build.link }}">{{ build.link }}</a>{% include "clip.html"%}</td>
+                    <td>{% include 'clip_link.html' with link=build.link %}</td>
                 </tr>
                 {% endif %}
                 {% if build.issued_by %}
@@ -261,6 +261,11 @@
                                 <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
                             </a></li>
                             {% endif %}
+                            {% if roles.build.change %}
+                            <li><a class='dropdown-item' href='#' id='multi-output-scrap' title='{% trans "Scrap selected build outputs" %}'>
+                                <span class='fas fa-times-circle icon-red'></span> {% trans "Scrap outputs" %}
+                            </a></li>
+                            {% endif %}
                             {% if roles.build.delete %}
                             <li><a class='dropdown-item' href='#' id='multi-output-delete' title='{% trans "Delete selected build outputs" %}'>
                                 <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete outputs" %}
@@ -319,8 +324,7 @@
     </div>
 </div>
 
-
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -519,4 +523,4 @@ $('#allocate-selected-items').click(function() {
 
 enableSidebar('buildorder');
 
-{% endblock %}
+{% endblock js_ready %}

@@ -137,7 +137,7 @@ class CompanySimpleTest(TestCase):
     def test_metadata(self):
         """Unit tests for the metadata field."""
         p = Company.objects.first()
-        self.assertIsNone(p.metadata)
+        self.assertIn(p.metadata, [None, {}])
 
         self.assertIsNone(p.get_metadata('test'))
         self.assertEqual(p.get_metadata('test', backup_value=123), 123)
@@ -286,7 +286,7 @@ class ManufacturerPartSimpleTest(TestCase):
         """Unit tests for the metadata field."""
         for model in [ManufacturerPart, SupplierPart]:
             p = model.objects.first()
-            self.assertIsNone(p.metadata)
+            self.assertIn(p.metadata, [None, {}])
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

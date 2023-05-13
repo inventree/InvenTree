@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
+from taggit.serializers import TagListSerializerField
 
 import part.filters
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
@@ -14,7 +15,9 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer, RemoteImageMixin)
+                                   InvenTreeMoneySerializer,
+                                   InvenTreeTagModelSerializer,
+                                   RemoteImageMixin)
 from part.serializers import PartBriefSerializer
 
 from .models import (Address, Company, CompanyAttachment, Contact,
@@ -174,7 +177,7 @@ class AddressSerializer(InvenTreeModelSerializer):
         ]
 
 
-class ManufacturerPartSerializer(InvenTreeModelSerializer):
+class ManufacturerPartSerializer(InvenTreeTagModelSerializer):
     """Serializer for ManufacturerPart object."""
 
     class Meta:
@@ -191,7 +194,11 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
             'description',
             'MPN',
             'link',
+
+            'tags',
         ]
+
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
@@ -261,7 +268,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
 
 
-class SupplierPartSerializer(InvenTreeModelSerializer):
+class SupplierPartSerializer(InvenTreeTagModelSerializer):
     """Serializer for SupplierPart object."""
 
     class Meta:
@@ -292,12 +299,16 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier_detail',
             'url',
             'updated',
+
+            'tags',
         ]
 
         read_only_fields = [
             'availability_updated',
             'barcode_hash',
         ]
+
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""

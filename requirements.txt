@@ -44,7 +44,7 @@ defusedxml==0.7.1
     #   python3-openid
 diff-match-patch==20200713
     # via django-import-export
-django==3.2.18
+django==3.2.19
     # via
     #   -r requirements.in
     #   django-allauth
@@ -68,6 +68,7 @@ django==3.2.18
     #   django-sql-utils
     #   django-sslserver
     #   django-stdimage
+    #   django-taggit
     #   django-user-sessions
     #   django-weasyprint
     #   django-xforwardedfor-middleware
@@ -124,6 +125,8 @@ django-sql-utils==0.6.1
 django-sslserver==0.22
     # via -r requirements.in
 django-stdimage==5.3.0
+    # via -r requirements.in
+django-taggit==3.1.0
     # via -r requirements.in
 django-user-sessions==2.0.0
     # via -r requirements.in

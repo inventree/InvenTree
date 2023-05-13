@@ -970,6 +970,10 @@ class PartFilter(rest_filters.FilterSet):
 
     virtual = rest_filters.BooleanFilter()
 
+    tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
+
+    tags_slug = rest_filters.CharFilter(field_name='tags__slug', lookup_expr='iexact')
+
 
 class PartMixin:
     """Mixin class for Part API endpoints"""
@@ -1240,6 +1244,8 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         'category__name',
         'manufacturer_parts__MPN',
         'supplier_parts__SKU',
+        'tags__name',
+        'tags__slug',
     ]
 
 

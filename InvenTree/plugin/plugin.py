@@ -161,19 +161,29 @@ class MixinBase:
         self._mixinreg[key] = {
             'key': key,
             'human_name': human_name,
+            'cls': cls,
         }
+
+    def get_registered_mixins(self, with_base: bool = False, with_cls: bool = True):
+        """Get all registered mixins for the plugin."""
+        mixins = getattr(self, '_mixinreg', None)
+        if not mixins:
+            return {}
+
+        mixins = mixins.copy()
+        # filter out base
+        if not with_base and 'base' in mixins:
+            del mixins['base']
+
+        # Do not return the mixin class if flas is set
+        if not with_cls:
+            return {key: {k: v for k, v in mixin.items() if k != 'cls'} for key, mixin in mixins.items()}
+        return mixins
 
     @property
     def registered_mixins(self, with_base: bool = False):
         """Get all registered mixins for the plugin."""
-        mixins = getattr(self, '_mixinreg', None)
-        if mixins:
-            # filter out base
-            if not with_base and 'base' in mixins:
-                del mixins['base']
-            # only return dict
-            mixins = list(mixins.values())
-        return mixins
+        return self.get_registered_mixins(with_base=with_base)
 
 
 class VersionMixin:
@@ -366,7 +376,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         try:
             website = meta['Project-URL'].split(', ')[1]
-        except (ValueError, IndexError, ):
+        except (ValueError, IndexError, AttributeError, ):
             website = meta['Project-URL']
 
         return {

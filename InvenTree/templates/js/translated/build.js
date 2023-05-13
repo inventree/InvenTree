@@ -397,9 +397,17 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
         '{% trans "Complete build output" %}',
     );
 
-    // Add a button to "delete" this build output
+    // Add a button to "scrap" the build output
+    html += makeIconButton(
+        'fa-times-circle icon-red',
+        'button-output-scrap',
+        output_id,
+        '{% trans "Scrap build output" %}',
+    );
+
+    // Add a button to "remove" this build output
     html += makeDeleteButton(
-        'button-output-delete',
+        'button-output-remove',
         output_id,
         '{% trans "Delete build output" %}',
     );
@@ -452,6 +460,51 @@ function unallocateStock(build_id, options={}) {
 }
 
 
+/*
+ * Helper function to render a single build output in a modal form
+ */
+function renderBuildOutput(output, opts={}) {
+    let pk = output.pk;
+
+    let output_html = imageHoverIcon(output.part_detail.thumbnail);
+
+    if (output.quantity == 1 && output.serial) {
+        output_html += `{% trans "Serial Number" %}: ${output.serial}`;
+    } else {
+        output_html += `{% trans "Quantity" %}: ${output.quantity}`;
+        if (output.part_detail && output.part_detail.units) {
+            output_html += ` ${output.part_detail.units}  `;
+        }
+    }
+
+    let buttons = `<div class='btn-group float-right' role='group'>`;
+
+    buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
+
+    buttons += '</div>';
+
+    let field = constructField(
+        `outputs_output_${pk}`,
+        {
+            type: 'raw',
+            html: output_html,
+        },
+        {
+            hideLabels: true,
+        }
+    );
+
+    let html = `
+    <tr id='output_row_${pk}'>
+        <td>${field}</td>
+        <td>${output.part_detail.full_name}</td>
+        <td>${buttons}</td>
+    </tr>`;
+
+    return html;
+}
+
+
 /**
  * Launch a modal form to complete selected build outputs
  */
@@ -465,48 +518,6 @@ function completeBuildOutputs(build_id, outputs, options={}) {
         return;
     }
 
-    // Render a single build output (StockItem)
-    function renderBuildOutput(output, opts={}) {
-        var pk = output.pk;
-
-        var output_html = imageHoverIcon(output.part_detail.thumbnail);
-
-        if (output.quantity == 1 && output.serial) {
-            output_html += `{% trans "Serial Number" %}: ${output.serial}`;
-        } else {
-            output_html += `{% trans "Quantity" %}: ${output.quantity}`;
-            if (output.part_detail && output.part_detail.units) {
-                output_html += ` ${output.part_detail.units}  `;
-            }
-        }
-
-        var buttons = `<div class='btn-group float-right' role='group'>`;
-
-        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
-
-        buttons += '</div>';
-
-        var field = constructField(
-            `outputs_output_${pk}`,
-            {
-                type: 'raw',
-                html: output_html,
-            },
-            {
-                hideLabels: true,
-            }
-        );
-
-        var html = `
-        <tr id='output_row_${pk}'>
-            <td>${field}</td>
-            <td>${output.part_detail.full_name}</td>
-            <td>${buttons}</td>
-        </tr>`;
-
-        return html;
-    }
-
     // Construct table entries
     var table_entries = '';
 
@@ -515,6 +526,9 @@ function completeBuildOutputs(build_id, outputs, options={}) {
     });
 
     var html = `
+    <div class='alert alert-block alert-success'>
+    {% trans "Selected build outputs will be marked as complete" %}
+    </div>
     <table class='table table-striped table-condensed' id='build-complete-table'>
         <thead>
             <th colspan='2'>{% trans "Output" %}</th>
@@ -613,8 +627,122 @@ function completeBuildOutputs(build_id, outputs, options={}) {
 
 
 
+/*
+ * Launch a modal form to scrap selected build outputs.
+ * Scrapped outputs are marked as "complete", but with the "rejected" code
+ * These outputs are not included in build completion calculations.
+ */
+function scrapBuildOutputs(build_id, outputs, options={}) {
+
+    if (outputs.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Build Outputs" %}',
+            '{% trans "At least one build output must be selected" %}',
+        );
+        return;
+    }
+
+    let table_entries = '';
+
+    outputs.forEach(function(output) {
+        table_entries += renderBuildOutput(output);
+    });
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Selected build outputs will be marked as scrapped" %}
+    <ul>
+    <li>{% trans "Scrapped output are given the 'rejected' status" %}</li>
+    <li>{% trans "Allocated stock items will no longer be available" %}</li>
+    <li>{% trans "The completion status of the build order will not be adjusted" %}</li>
+    </ul>
+    </div>
+    <table class='table table-striped table-condensed' id='build-scrap-table'>
+        <thead>
+            <th colspan='2'>{% trans "Output" %}</th>
+            <th><!-- Actions --></th>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>`;
+
+    constructForm(`{% url "api-build-list" %}${build_id}/scrap-outputs/`, {
+        method: 'POST',
+        preFormContent: html,
+        fields: {
+            location: {},
+            notes: {},
+            discard_allocations: {},
+        },
+        confirm: true,
+        title: '{% trans "Scrap Build Outputs" %}',
+        afterRender: function(fields, opts) {
+            // Setup callbacks to remove outputs
+            $(opts.modal).find('.button-row-remove').click(function() {
+                let pk = $(this).attr('pk');
+                $(opts.modal).find(`#output_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+            let data = {
+                outputs: [],
+                location: getFormFieldValue('location', {}, opts),
+                notes: getFormFieldValue('notes', {}, opts),
+                discard_allocations: getFormFieldValue('discard_allocations', {type: 'boolean'}, opts),
+            };
+
+            let output_pk_values = [];
+
+            outputs.forEach(function(output) {
+                let pk = output.pk;
+                let row = $(opts.modal).find(`#output_row_${pk}`);
+
+                if (row.exists()) {
+                    data.outputs.push({
+                        output: pk,
+                    });
+                    output_pk_values.push(pk);
+                }
+            });
+
+            opts.nested = {
+                'outputs': output_pk_values,
+            };
+
+            inventreePut(
+                opts.url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        $(opts.modal).modal('hide');
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr, opts.url);
+                            break;
+                        }
+                    }
+                }
+            );
+        }
+    });
+}
+
+
 /**
- * Launch a modal form to delete selected build outputs
+ * Launch a modal form to delete selected build outputs.
+ * Deleted outputs are expunged from the database.
  */
 function deleteBuildOutputs(build_id, outputs, options={}) {
 
@@ -626,48 +754,6 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
         return;
     }
 
-    // Render a single build output (StockItem)
-    function renderBuildOutput(output, opts={}) {
-        var pk = output.pk;
-
-        var output_html = imageHoverIcon(output.part_detail.thumbnail);
-
-        if (output.quantity == 1 && output.serial) {
-            output_html += `{% trans "Serial Number" %}: ${output.serial}`;
-        } else {
-            output_html += `{% trans "Quantity" %}: ${output.quantity}`;
-            if (output.part_detail && output.part_detail.units) {
-                output_html += ` ${output.part_detail.units}  `;
-            }
-        }
-
-        var buttons = `<div class='btn-group float-right' role='group'>`;
-
-        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
-
-        buttons += '</div>';
-
-        var field = constructField(
-            `outputs_output_${pk}`,
-            {
-                type: 'raw',
-                html: output_html,
-            },
-            {
-                hideLabels: true,
-            }
-        );
-
-        var html = `
-        <tr id='output_row_${pk}'>
-            <td>${field}</td>
-            <td>${output.part_detail.full_name}</td>
-            <td>${buttons}</td>
-        </tr>`;
-
-        return html;
-    }
-
     // Construct table entries
     var table_entries = '';
 
@@ -676,6 +762,13 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
     });
 
     var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Selected build outputs will be deleted" %}
+    <ul>
+    <li>{% trans "Build output data will be permanently deleted" %}</li>
+    <li>{% trans "Allocated stock items will be returned to stock" %}</li>
+    </ul>
+    </div>
     <table class='table table-striped table-condensed' id='build-complete-table'>
         <thead>
             <th colspan='2'>{% trans "Output" %}</th>
@@ -889,7 +982,9 @@ function loadBuildOutputTable(build_info, options={}) {
         labels: {
             url: '{% url "api-stockitem-label-list" %}',
             key: 'item',
-        }
+        },
+        singular_name: '{% trans "build output" %}',
+        plural_name: '{% trans "build outputs" %}',
     });
 
     function setupBuildOutputButtonCallbacks() {
@@ -950,8 +1045,25 @@ function loadBuildOutputTable(build_info, options={}) {
             );
         });
 
-        // Callback for the "delete" button
-        $(table).find('.button-output-delete').click(function() {
+        // Callback for the "scrap" button
+        $(table).find('.button-output-scrap').click(function() {
+            var pk = $(this).attr('pk');
+            var output = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+            scrapBuildOutputs(
+                build_info.pk,
+                [output],
+                {
+                    success: function() {
+                        $(table).bootstrapTable('refresh');
+                        $('#build-stock-table').bootstrapTable('refresh');
+                    }
+                }
+            );
+        });
+
+        // Callback for the "remove" button
+        $(table).find('.button-output-remove').click(function() {
             var pk = $(this).attr('pk');
 
             var output = $(table).bootstrapTable('getRowByUniqueId', pk);
@@ -1366,6 +1478,25 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Add callbacks for the various table menubar buttons
 
+    // Scrap multiple outputs
+    $('#multi-output-scrap').click(function() {
+        var outputs = getTableData(table);
+
+        scrapBuildOutputs(
+            build_info.pk,
+            outputs,
+            {
+                success: function() {
+                    // Reload the "in progress" table
+                    $('#build-output-table').bootstrapTable('refresh');
+
+                    // Reload the "completed" table
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
     // Complete multiple outputs
     $('#multi-output-complete').click(function() {
         var outputs = getTableData(table);
@@ -1441,8 +1572,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     var bom_items = buildInfo.bom_items || null;
 
-    // If BOM items have not been provided, load via the API
-    if (bom_items == null) {
+    function loadBomData() {
+        let data = [];
+
         inventreeGet(
             '{% url "api-bom-list" %}',
             {
@@ -1453,22 +1585,77 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 async: false,
                 success: function(results) {
-                    bom_items = results;
+                    data = results;
+                }
+            }
+        );
+
+        return data;
+    }
+
+    // If BOM items have not been provided, load via the API
+    if (bom_items == null) {
+        bom_items = loadBomData();
+    }
+
+    // Apply filters to build table
+    // As the table is constructed locally, we can apply filters directly
+    function filterBuildAllocationTable(filters={}) {
+        $(table).bootstrapTable(
+            'filterBy',
+            filters,
+            {
+                'filterAlgorithm': function(row, filters) {
+                    let result = true;
+
+                    if (!filters) {
+                        return true;
+                    }
+
+                    // Filter by 'consumable' flag
+                    if ('consumable' in filters) {
+                        result &= filters.consumable == '1' ? row.consumable : !row.consumable;
+                    }
+
+                    // Filter by 'optional' flag
+                    if ('optional' in filters) {
+                        result &= filters.optional == '1' ? row.optional : !row.optional;
+                    }
+
+                    // Filter by 'allocated' flag
+                    if ('allocated' in filters) {
+                        let fully_allocated = row.consumable || isRowFullyAllocated(row);
+                        result &= filters.allocated == '1' ? fully_allocated : !fully_allocated;
+                    }
+
+                    // Filter by 'available' flag
+                    if ('available' in filters) {
+                        let available = row.available_stock > 0;
+                        result &= filters.available == '1' ? available : !available;
+                    }
+
+                    return result;
                 }
             }
         );
     }
 
-    var table = options.table;
-
-    if (options.table == null) {
-        table = `#allocation-table-${outputId}`;
-    }
+    var table = options.table || `#allocation-table-${outputId}`;
 
     // Filters
     let filters = loadTableFilters('builditems', options.params);
 
-    setupFilterList('builditems', $(table), options.filterTarget);
+    setupFilterList('builditems', $(table), options.filterTarget, {
+        callback: function(table, filters, options) {
+            if (filters == null) {
+                // Destroy and re-create the table from scratch
+                $(table).bootstrapTable('destroy');
+                loadBuildOutputAllocationTable(buildInfo, output, options);
+            } else {
+                filterBuildAllocationTable(filters);
+            }
+        }
+    });
 
     var allocated_items = output == null ? null : output.allocations;
 
@@ -1683,6 +1870,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         search: options.search || false,
         queryParams: filters,
         original: options.params,
+        onRefresh: function(data) {
+            filterBuildAllocationTable(filters);
+        },
         onPostBody: function(data) {
             // Setup button callbacks
             setupCallbacks();
@@ -1937,9 +2127,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     }
 
                     if (row.on_order && row.on_order > 0) {
-                        makeIconBadge('fa-shopping-cart', '{% trans "On Order" %}', {
-                            content: row.on_order,
-                        });
+                        icons += makeIconBadge('fa-shopping-cart', '{% trans "On Order" %}: ' + row.on_order);
                     }
 
                     return renderLink(text, url) + icons;
@@ -2035,6 +2223,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             },
         ]
     });
+
+    filterBuildAllocationTable(filters);
 }
 
 

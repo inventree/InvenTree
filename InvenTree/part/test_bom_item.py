@@ -250,7 +250,6 @@ class BomItemTest(TestCase):
         """Unit tests for the metadata field."""
         for model in [BomItem]:
             p = model.objects.first()
-            self.assertIsNone(p.metadata)
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

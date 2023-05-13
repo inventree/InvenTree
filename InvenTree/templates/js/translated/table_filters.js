@@ -405,6 +405,12 @@ function getStockTestTableFilters() {
 }
 
 
+// Return a dictionary of filters for the "stocktracking" table
+function getStockTrackingTableFilters() {
+    return {};
+}
+
+
 // Return a dictionary of filters for the "part tests" table
 function getPartTestTemplateFilters() {
     return {
@@ -454,6 +460,29 @@ function getBuildTableFilters() {
                 });
                 return ownersList;
             },
+        },
+    };
+}
+
+
+// Return a dictionary of filters for the "build item" table
+function getBuildItemTableFilters() {
+    return {
+        allocated: {
+            type: 'bool',
+            title: '{% trans "Allocated" %}',
+        },
+        available: {
+            type: 'bool',
+            title: '{% trans "Available" %}',
+        },
+        consumable: {
+            type: 'bool',
+            title: '{% trans "Consumable" %}',
+        },
+        optional: {
+            type: 'bool',
+            title: '{% trans "Optional" %}',
         },
     };
 }
@@ -646,6 +675,12 @@ function getPartTableFilters() {
 }
 
 
+// Return a dictionary of filters for the "contact" table
+function getContactFilters() {
+    return {};
+}
+
+
 // Return a dictionary of filters for the "company" table
 function getCompanyFilters() {
     return {
@@ -676,12 +711,16 @@ function getAvailableTableFilters(tableKey) {
         return getPartCategoryFilters();
     case 'company':
         return getCompanyFilters();
+    case 'contact':
+        return getContactFilters();
     case 'customerstock':
         return getCustomerStockFilters();
     case 'bom':
         return getBOMTableFilters();
     case 'build':
         return getBuildTableFilters();
+    case 'builditems':
+        return getBuildItemTableFilters();
     case 'location':
         return getStockLocationFilters();
     case 'parts':
@@ -708,6 +747,8 @@ function getAvailableTableFilters(tableKey) {
         return getStockTableFilters();
     case 'stocktests':
         return getStockTestTableFilters();
+    case 'stocktracking':
+        return getStockTrackingTableFilters();
     case 'supplierpart':
         return getSupplierPartFilters();
     case 'usedin':
