@@ -964,6 +964,7 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
             'order_detail',
             'allocations',
             'shipment_date',
+            'delivery_date',
             'checked_by',
             'reference',
             'tracking_number',
