@@ -70,7 +70,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         name: Brief name of the company
         description: Longer form description
         website: URL for the company website
-        address: Postal address
+        address: One-line string representation of primary address
         phone: contact phone number
         email: contact email address
         link: Secondary URL e.g. for link to internal Wiki page

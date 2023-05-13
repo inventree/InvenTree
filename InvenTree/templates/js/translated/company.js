@@ -767,6 +767,272 @@ function loadContactTable(table, options={}) {
     });
 }
 
+/*
+ * Construct a set of form fields for the Contact model
+ */
+function addressFields(options={}) {
+
+    let fields = {
+        company: {
+            icon: 'fa-building',
+        },
+        title: {},
+        line1: {
+            icon: 'fa-map'
+        },
+        line2: {
+            icon: 'fa-map',
+        },
+        postal_code: {
+            icon: 'fa-map-pin',
+        },
+        postal_city: {
+            icon: 'fa-city'
+        },
+        province: {
+            icon: 'fa-map'
+        },
+        shipping_notes: {
+            icon: 'fa-shuttle-van'
+        },
+        internal_shipping_notes: {
+            icon: 'fa-clipboard'
+        }
+    };
+
+    if (options.company) {
+        fields.company.value = options.company;
+    }
+
+    return fields;
+}
+
+/*
+ * Launches a form to create a new Contact
+ */
+function createAddress(options={}) {
+    let fields = options.fields || addressFields(options);
+
+    constructForm('{% url "api-address-list" %}', {
+        method: 'POST',
+        fields: fields,
+        title: '{% trans "Create New Address" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+/*
+ * Launches a form to edit an existing Contact
+ */
+function editAddress(pk, options={}) {
+    let fields = options.fields || addressFields(options);
+
+    constructForm(`{% url "api-address-list" %}${pk}/`, {
+        fields: fields,
+        title: '{% trans "Edit Address" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+/*
+ * Launches a form to delete one (or more) contacts
+ */
+function deleteAddress(addresses, options={}) {
+
+    if (addresses.length == 0) {
+        return;
+    }
+
+    function renderAddress(address) {
+        return `
+        <tr>
+            <td>${address.title}</td>
+            <td>${address.line1}</td>
+            <td>${address.line2}</td>
+        </tr>`;
+    }
+
+    let rows = '';
+    let ids = [];
+
+    addresses.forEach(function(address) {
+        rows += renderAddress(address);
+        ids.push(address.pk);
+    });
+
+    let html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected addresses will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Line 1" %}</th>
+        <th>{% trans "Line 2" %}</th>
+    </tr>
+    ${rows}
+    </table>`;
+
+    constructForm('{% url "api-address-list" %}', {
+        method: 'DELETE',
+        multi_delete: true,
+        title: '{% trans "Delete Addresses" %}',
+        preFormContent: html,
+        form_data: {
+            items: ids,
+        },
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+function loadAddressTable(table, options={}) {
+    var params = options.params || {};
+    console.log(params)
+    var filters = loadTableFilters('address', params);
+
+    setupFilterList('address', $(table), '#filter-list-addresses');
+
+    $(table).inventreeTable({
+        url: '{% url "api-address-list" %}',
+        queryParams: filters,
+        original: params,
+        idField: 'pk',
+        uniqueId: 'pk',
+        sidePagination: 'server',
+        formatNoMatches: function() {
+            return '{% trans "No addresses found" %}';
+        },
+        showColumns: true,
+        name: 'addresses',
+        columns: [
+        {
+            field: 'primary',
+            title: '{% trans "Primary" %}',
+            sortable: true,
+            switchable: false,
+        },
+        {
+            field: 'title',
+            title: '{% trans "Title" %}',
+            sortable: true,
+            switchable: false,
+        },
+        {
+            field: 'line1',
+            title: '{% trans "Line 1" %}',
+            sortable: false,
+            switchable: false,
+        },
+        {
+            field: 'line2',
+            title: '{% trans "Line 2" %}',
+            sortable: false,
+            switchable: false,
+        },
+        {
+            field: 'postal_code',
+            title: '{% trans "Postal code" %}',
+            sortable: false,
+            switchable: false,
+        },
+        {
+            field: 'postal_city',
+            title: '{% trans "Postal city" %}',
+            sortable: false,
+            switchable: false,
+        },
+        {
+            field: 'prvince',
+            title: '{% trans "State/province" %}',
+            sortable: false,
+            switchable: false,
+        },
+        {
+            field: 'country',
+            title: '{% trans "Country" %}',
+            sortable: false,
+            switchable: false,
+        },
+        {
+            field: 'shipping_notes',
+            title: '{% trans "Courier notes" %}',
+            sortable: false,
+            switchable: false,
+        },
+        {
+            field: 'internal_shipping_notes',
+            title: '{% trans "Internal notes" %}',
+            sortable: false,
+            switchable: false,
+        },
+        {
+            field: 'link',
+            title: '{% trans "External Link" %}',
+            sortable: false,
+            switchable: false,
+        },
+        {
+            field: 'actions',
+            title: '',
+            sortable: false,
+            switchable: false,
+            visible: options.allow_edit || options.allow_delete,
+            formatter: function(value, row) {
+                var pk = row.pk;
+
+                let html = '';
+
+                if (options.allow_edit) {
+                    html += makeEditButton('btn-address-edit', pk, '{% trans "Edit Address" %}');
+                }
+
+                if (options.allow_delete) {
+                    html += makeDeleteButton('btn-address-delete', pk, '{% trans "Delete Address" %}');
+                }
+
+                return wrapButtons(html);
+            }
+        }
+    ],
+    onPostBody: function() {
+        // Edit button callback
+        if (options.allow_edit) {
+            $(table).find('.btn-address-edit').click(function() {
+                var pk = $(this).attr('pk');
+                editAddress(pk, {
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
+
+        // Delete button callback
+        if (options.allow_delete) {
+            $(table).find('.btn-address-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                if (row && row.pk) {
+
+                    deleteAddress([row], {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    });
+                }
+            });
+        }
+    }
+});
+}
 
 /* Delete one or more ManufacturerPart objects from the database.
  * - User will be provided with a modal form, showing all the parts to be deleted.
