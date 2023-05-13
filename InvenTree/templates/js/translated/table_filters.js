@@ -405,6 +405,12 @@ function getStockTestTableFilters() {
 }
 
 
+// Return a dictionary of filters for the "stocktracking" table
+function getStockTrackingTableFilters() {
+    return {};
+}
+
+
 // Return a dictionary of filters for the "part tests" table
 function getPartTestTemplateFilters() {
     return {
@@ -748,6 +754,8 @@ function getAvailableTableFilters(tableKey) {
         return getStockTableFilters();
     case 'stocktests':
         return getStockTestTableFilters();
+    case 'stocktracking':
+        return getStockTrackingTableFilters();
     case 'supplierpart':
         return getSupplierPartFilters();
     case 'usedin':
