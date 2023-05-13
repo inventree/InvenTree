@@ -27,7 +27,8 @@ class TestForwardMigrations(MigratorTestCase):
             Part.objects.create(
                 name='Blorb',
                 description='ABCDE',
-                assembly=True
+                assembly=True,
+                level=0, lft=0, rght=0, tree_id=0,
             )
 
         Build = self.old_state.apps.get_model('build', 'build')
@@ -157,6 +158,9 @@ class TestReferencePatternMigration(MigratorTestCase):
 
         for build in Build.objects.all():
             self.assertTrue(build.reference.startswith('BuildOrder-'))
+
+            # Test that the 'project_code' field has been added (but is empty)
+            self.assertIsNone(build.project_code)
 
         Setting = self.new_state.apps.get_model('common', 'inventreesetting')
 
