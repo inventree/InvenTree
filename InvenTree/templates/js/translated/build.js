@@ -34,7 +34,7 @@
 
 
 function buildFormFields() {
-    return {
+    let fields = {
         reference: {
             icon: 'fa-hashtag',
         },
@@ -84,6 +84,12 @@ function buildFormFields() {
             icon: 'fa-users',
         },
     };
+
+    if (!global_settings.PROJECT_CODES_ENABLED) {
+        delete fields.project_code;
+    }
+
+    return fields;
 }
 
 /*
