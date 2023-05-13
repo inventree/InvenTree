@@ -425,7 +425,7 @@ function getPartTestTemplateFilters() {
 // Return a dictionary of filters for the "build" table
 function getBuildTableFilters() {
 
-    return {
+    let filters = {
         status: {
             title: '{% trans "Build status" %}',
             options: buildCodes,
@@ -462,6 +462,13 @@ function getBuildTableFilters() {
             },
         },
     };
+
+    if (global_settings.PROJECT_CODES_ENABLED) {
+        filters['has_project_code'] = constructHasProjectCodeFilter();
+        filters['project_code'] = constructProjectCodeFilter();
+    }
+
+    return filters;
 }
 
 
