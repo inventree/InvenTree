@@ -280,6 +280,9 @@ function stockItemFields(options={}) {
                 return query;
             }
         },
+        use_pack_size: {
+            help_text: '{% trans "Add given quantity as packs instead of individual items" %}',
+        },
         location: {
             icon: 'fa-sitemap',
             filters: {

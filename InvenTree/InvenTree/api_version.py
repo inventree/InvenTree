@@ -2,13 +2,16 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 112
+INVENTREE_API_VERSION = 113
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v112 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
+v113 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
     - Adds API endpoints for scrapping a build output
+
+v112 -> 2023-05-13: https://github.com/inventree/InvenTree/pull/4741
+    - Adds flag use_pack_size to the stock addition API, which allows addings packs
 
 v111 -> 2023-05-02 : https://github.com/inventree/InvenTree/pull/4367
     - Adds tags to the Part serializer

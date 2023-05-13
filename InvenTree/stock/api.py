@@ -603,6 +603,35 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         # Check if a set of serial numbers was provided
         serial_numbers = data.get('serial_numbers', '')
 
+        # Check if the supplier_part has a package size defined, which is not 1
+        if 'supplier_part' in data and data['supplier_part'] is not None:
+            try:
+                supplier_part = SupplierPart.objects.get(pk=data.get('supplier_part', None))
+            except (ValueError, SupplierPart.DoesNotExist):
+                raise ValidationError({
+                    'supplier_part': _('The given supplier part does not exist'),
+                })
+
+            if supplier_part.pack_size != 1:
+                # Skip this check if pack size is 1 - makes no difference
+                # use_pack_size = True -> Multiply quantity by pack size
+                # use_pack_size = False -> Use quantity as is
+                if 'use_pack_size' not in data:
+                    raise ValidationError({
+                        'use_pack_size': _('The supplier part has a pack size defined, but flag use_pack_size not set'),
+                    })
+                else:
+                    if bool(data.get('use_pack_size')):
+                        data['quantity'] = int(quantity) * float(supplier_part.pack_size)
+                        quantity = data.get('quantity', None)
+                        # Divide purchase price by pack size, to save correct price per stock item
+                        data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_size)
+
+        # Now remove the flag from data, so that it doesn't interfere with saving
+        # Do this regardless of results above
+        if 'use_pack_size' in data:
+            data.pop('use_pack_size')
+
         # Assign serial numbers for a trackable part
         if serial_numbers:
 

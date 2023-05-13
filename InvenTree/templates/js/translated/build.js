@@ -1572,8 +1572,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     var bom_items = buildInfo.bom_items || null;
 
-    // If BOM items have not been provided, load via the API
-    if (bom_items == null) {
+    function loadBomData() {
+        let data = [];
+
         inventreeGet(
             '{% url "api-bom-list" %}',
             {
@@ -1584,10 +1585,17 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 async: false,
                 success: function(results) {
-                    bom_items = results;
+                    data = results;
                 }
             }
         );
+
+        return data;
+    }
+
+    // If BOM items have not been provided, load via the API
+    if (bom_items == null) {
+        bom_items = loadBomData();
     }
 
     // Apply filters to build table
@@ -1639,7 +1647,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     setupFilterList('builditems', $(table), options.filterTarget, {
         callback: function(table, filters, options) {
-            filterBuildAllocationTable(filters);
+            if (filters == null) {
+                // Destroy and re-create the table from scratch
+                $(table).bootstrapTable('destroy');
+                loadBuildOutputAllocationTable(buildInfo, output, options);
+            } else {
+                filterBuildAllocationTable(filters);
+            }
         }
     });
 

@@ -1,5 +1,6 @@
 """Plugin model definitions."""
 
+import inspect
 import warnings
 
 from django.conf import settings
@@ -58,7 +59,9 @@ class PluginConfig(models.Model):
     def mixins(self):
         """Returns all registered mixins."""
         try:
-            return self.plugin._mixinreg
+            if inspect.isclass(self.plugin):
+                return self.plugin.get_registered_mixins(self, with_base=True, with_cls=False)
+            return self.plugin.get_registered_mixins(with_base=True, with_cls=False)
         except (AttributeError, ValueError):  # pragma: no cover
             return {}
 
@@ -166,7 +169,9 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
                 if issubclass(plugin.__class__, InvenTreePlugin):
                     plugin = plugin.plugin_config()
 
-                kwargs['settings'] = registry.mixins_settings.get(plugin.key, {})
+                mixin_settings = getattr(registry, 'mixins_settings')
+                if mixin_settings:
+                    kwargs['settings'] = mixin_settings.get(plugin.key, {})
 
         return super().get_setting_definition(key, **kwargs)
 
