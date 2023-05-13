@@ -1446,8 +1446,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     var bom_items = buildInfo.bom_items || null;
 
-    // If BOM items have not been provided, load via the API
-    if (bom_items == null) {
+    function loadBomData() {
+        let data = [];
+
         inventreeGet(
             '{% url "api-bom-list" %}',
             {
@@ -1458,22 +1459,77 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 async: false,
                 success: function(results) {
-                    bom_items = results;
+                    data = results;
+                }
+            }
+        );
+
+        return data;
+    }
+
+    // If BOM items have not been provided, load via the API
+    if (bom_items == null) {
+        bom_items = loadBomData();
+    }
+
+    // Apply filters to build table
+    // As the table is constructed locally, we can apply filters directly
+    function filterBuildAllocationTable(filters={}) {
+        $(table).bootstrapTable(
+            'filterBy',
+            filters,
+            {
+                'filterAlgorithm': function(row, filters) {
+                    let result = true;
+
+                    if (!filters) {
+                        return true;
+                    }
+
+                    // Filter by 'consumable' flag
+                    if ('consumable' in filters) {
+                        result &= filters.consumable == '1' ? row.consumable : !row.consumable;
+                    }
+
+                    // Filter by 'optional' flag
+                    if ('optional' in filters) {
+                        result &= filters.optional == '1' ? row.optional : !row.optional;
+                    }
+
+                    // Filter by 'allocated' flag
+                    if ('allocated' in filters) {
+                        let fully_allocated = row.consumable || isRowFullyAllocated(row);
+                        result &= filters.allocated == '1' ? fully_allocated : !fully_allocated;
+                    }
+
+                    // Filter by 'available' flag
+                    if ('available' in filters) {
+                        let available = row.available_stock > 0;
+                        result &= filters.available == '1' ? available : !available;
+                    }
+
+                    return result;
                 }
             }
         );
     }
 
-    var table = options.table;
-
-    if (options.table == null) {
-        table = `#allocation-table-${outputId}`;
-    }
+    var table = options.table || `#allocation-table-${outputId}`;
 
     // Filters
     let filters = loadTableFilters('builditems', options.params);
 
-    setupFilterList('builditems', $(table), options.filterTarget);
+    setupFilterList('builditems', $(table), options.filterTarget, {
+        callback: function(table, filters, options) {
+            if (filters == null) {
+                // Destroy and re-create the table from scratch
+                $(table).bootstrapTable('destroy');
+                loadBuildOutputAllocationTable(buildInfo, output, options);
+            } else {
+                filterBuildAllocationTable(filters);
+            }
+        }
+    });
 
     var allocated_items = output == null ? null : output.allocations;
 
@@ -1688,6 +1744,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         search: options.search || false,
         queryParams: filters,
         original: options.params,
+        onRefresh: function(data) {
+            filterBuildAllocationTable(filters);
+        },
         onPostBody: function(data) {
             // Setup button callbacks
             setupCallbacks();
@@ -1942,9 +2001,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     }
 
                     if (row.on_order && row.on_order > 0) {
-                        makeIconBadge('fa-shopping-cart', '{% trans "On Order" %}', {
-                            content: row.on_order,
-                        });
+                        icons += makeIconBadge('fa-shopping-cart', '{% trans "On Order" %}: ' + row.on_order);
                     }
 
                     return renderLink(text, url) + icons;
@@ -2040,6 +2097,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             },
         ]
     });
+
+    filterBuildAllocationTable(filters);
 }
 
 

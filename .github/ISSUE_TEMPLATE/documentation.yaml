@@ -1,6 +1,6 @@
 name: "Documentation"
 description: "Create an issue to improve the documentation"
-labels: ["documentation"]
+labels: ["documentation", "triage:not-checked"]
 body:
   - type: markdown
     attributes:

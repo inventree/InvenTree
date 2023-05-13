@@ -118,12 +118,6 @@ src="{% static 'img/blank_image.png' %}"
         {% trans "No build outputs have been created for this build order" %}<br>
     </div>
     {% endif %}
-    {% if build.parent %}
-    <div class='alert alert-block alert-info'>
-        {% object_link 'build-detail' build.parent.id build.parent as link %}
-        {% blocktrans %}This Build Order is a child of Build Order {{link}}{% endblocktrans %}
-    </div>
-    {% endif %}
 
     {% if build.active %}
     {% if build.can_complete %}
