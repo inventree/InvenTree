@@ -17,9 +17,10 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeMoneySerializer, RemoteImageMixin)
 from part.serializers import PartBriefSerializer
 
-from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
-                     ManufacturerPartAttachment, ManufacturerPartParameter,
-                     SupplierPart, SupplierPriceBreak)
+from .models import (Address, Company, CompanyAttachment, Contact,
+                     ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
@@ -146,6 +147,30 @@ class ContactSerializer(InvenTreeModelSerializer):
             'phone',
             'email',
             'role',
+        ]
+
+
+class AddressSerializer(InvenTreeModelSerializer):
+    """Serializer for the Address Model"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = Address
+        fields = [
+            'pk',
+            'company',
+            'title',
+            'primary',
+            'line1',
+            'line2',
+            'postal_code',
+            'postal_city',
+            'province',
+            'country',
+            'shipping_notes',
+            'internal_shipping_notes',
+            'link'
         ]
 
 

@@ -111,10 +111,6 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         help_text=_('Company website URL')
     )
 
-    address = models.CharField(max_length=200,
-                               verbose_name=_('Address'),
-                               blank=True, help_text=_('Company address'))
-
     phone = models.CharField(max_length=50,
                              verbose_name=_('Phone number'),
                              blank=True, help_text=_('Contact phone number'))
@@ -280,6 +276,11 @@ class Address(models.Model):
         constraints = [
             UniqueConstraint(fields=['company'], condition=Q(primary=True), name='one_primary_per_company')
         ]
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the Contcat model"""
+        return reverse('api-address-list')
 
     company = models.ForeignKey(Company, related_name='addresses',
                                 on_delete=models.CASCADE,
