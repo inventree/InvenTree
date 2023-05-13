@@ -14,6 +14,7 @@ from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.status_codes import BuildStatus
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
+import common.models
 import build.admin
 import build.serializers
 from build.models import Build, BuildItem, BuildOrderAttachment
@@ -87,6 +88,21 @@ class BuildFilter(rest_filters.FilterSet):
         lookup_expr="iexact"
     )
 
+    project_code = rest_filters.ModelChoiceFilter(
+        queryset=common.models.ProjectCode.objects.all(),
+        field_name='project_code'
+    )
+
+    has_project_code = rest_filters.BooleanFilter(label='has_project_code', method='filter_has_project_code')
+
+    def filter_has_project_code(self, queryset, name, value):
+        """Filter by whether or not the order has a project code"""
+
+        if str2bool(value):
+            return queryset.exclude(project_code=None)
+        else:
+            return queryset.filter(project_code=None)
+
 
 class BuildList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
@@ -112,11 +128,13 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
         'completed',
         'issued_by',
         'responsible',
+        'project_code',
         'priority',
     ]
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     ordering = '-reference'
@@ -127,6 +145,7 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
         'part__name',
         'part__IPN',
         'part__description',
+        'project_code__code',
         'priority',
     ]
 
