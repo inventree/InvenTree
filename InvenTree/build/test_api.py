@@ -10,7 +10,7 @@ from part.models import Part
 from build.models import Build, BuildItem
 from stock.models import StockItem
 
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatus, StockStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
 
 
@@ -924,3 +924,127 @@ class BuildListTest(BuildAPITest):
         builds = response.data
 
         self.assertEqual(len(builds), 20)
+
+
+class BuildOutputScrapTest(BuildAPITest):
+    """Unit tests for scrapping build outputs"""
+
+    def scrap(self, build_id, data, expected_code=None):
+        """Helper method to POST to the scrap API"""
+
+        url = reverse('api-build-output-scrap', kwargs={'pk': build_id})
+
+        response = self.post(url, data, expected_code=expected_code)
+
+        return response.data
+
+    def test_invalid_scraps(self):
+        """Test that invalid scrap attempts are rejected"""
+
+        # Test with missing required fields
+        response = self.scrap(1, {}, expected_code=400)
+
+        for field in ['outputs', 'location', 'notes']:
+            self.assertIn('This field is required', str(response[field]))
+
+        # Scrap with no outputs specified
+        response = self.scrap(
+            1,
+            {
+                'outputs': [],
+                'location': 1,
+                'notes': 'Should fail',
+            }
+        )
+
+        self.assertIn('A list of build outputs must be provided', str(response))
+
+        # Scrap with an invalid output ID
+        response = self.scrap(
+            1,
+            {
+                'outputs': [
+                    {
+                        'output': 9999,
+                    }
+                ],
+                'location': 1,
+                'notes': 'Should fail',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('object does not exist', str(response['outputs']))
+
+        # Create a build output, for a different build
+        build = Build.objects.get(pk=2)
+        output = StockItem.objects.create(
+            part=build.part,
+            quantity=10,
+            batch='BATCH-TEST',
+            is_building=True,
+            build=build,
+        )
+
+        response = self.scrap(
+            1,
+            {
+                'outputs': [
+                    {
+                        'output': output.pk,
+                    },
+                ],
+                'location': 1,
+                'notes': 'Should fail',
+            },
+            expected_code=400
+        )
+
+        self.assertIn("Build output does not match the parent build", str(response['outputs']))
+
+    def test_valid_scraps(self):
+        """Test that valid scrap attempts succeed"""
+
+        # Create a build output
+        build = Build.objects.get(pk=1)
+
+        for _ in range(3):
+            build.create_build_output(2)
+
+        outputs = build.build_outputs.all()
+
+        self.assertEqual(outputs.count(), 3)
+        self.assertEqual(StockItem.objects.filter(build=build).count(), 3)
+
+        for output in outputs:
+            self.assertEqual(output.status, StockStatus.OK)
+            self.assertTrue(output.is_building)
+
+        # Scrap all three outputs
+        self.scrap(
+            1,
+            {
+                'outputs': [
+                    {
+                        'output': outputs[0].pk,
+                    },
+                    {
+                        'output': outputs[1].pk,
+                    },
+                    {
+                        'output': outputs[2].pk,
+                    },
+                ],
+                'location': 1,
+                'notes': 'Should succeed',
+            },
+            expected_code=201
+        )
+
+        # There should still be three outputs associated with this build
+        self.assertEqual(StockItem.objects.filter(build=build).count(), 3)
+
+        for output in outputs:
+            output.refresh_from_db()
+            self.assertEqual(output.status, StockStatus.REJECTED)
+            self.assertFalse(output.is_building)

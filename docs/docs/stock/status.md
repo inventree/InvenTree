@@ -4,39 +4,36 @@ title: Stock Status
 
 ## Stock Status
 
-Stock status serves at categorizing and identifying the state of stock items.
+Each [Stock Item](./stock.md#stock-item) has a *status* attribute, which serves to identify the current condition of the individual stock item.
 
-Below is the current list of stock status and their proposed meaning:
+Certain stock item status codes will restrict the availability of the stock item.
 
-| Status      | Description |
-| ----------- | ----------- |
-| OK | Stock item is healthy, nothing wrong to report |
-| Attention needed | Stock item hasn't been checked or tested yet |
-| Damaged | Stock item is not functional in its present state |
-| Destroyed | Stock item has been destroyed |
-| Lost | Stock item has been lost |
-| Rejected | Stock item did not pass the quality control standards |
-| Returned | Stock item was returned to seller (if bought) or is a customer return (if sold) |
-| Quarantined | Stock item has been intentionally isolated and it unavailable |
+Below is the list of available stock status codes and their meaning:
 
-Stock status code will remove the stock from certain operations. For instance, users can't add "destroyed" or "lost" stock to a sales order.
+| Status      | Description | Available |
+| ----------- | ----------- | --- |
+| <span class='badge inventree success'>OK</span> | Stock item is healthy, nothing wrong to report | <span class='badge inventree success'>Yes</span> |
+| <span class='badge inventree warning'>Attention needed</span> | Stock item hasn't been checked or tested yet | <span class='badge inventree success'>Yes</span> |
+| <span class='badge inventree warning'>Damaged</span> | Stock item is not functional in its present state | <span class='badge inventree success'>Yes</span> |
+| <span class='badge inventree danger'>Destroyed</span> | Stock item has been destroyed | <span class='badge inventree danger'>No</span> |
+| <span class='badge inventree'>Lost</span> | Stock item has been lost | <span class='badge inventree danger'>No</span> |
+| <span class='badge inventree danger'>Rejected</span> | Stock item did not pass the quality control standards | <span class='badge inventree danger'>No</span> |
+| <span class='badge inventree info'>Quarantined</span> | Stock item has been intentionally isolated and it unavailable | <span class='badge inventree danger'>No</span> |
 
-The stock status is displayed as a label in the header of each stock item detail page, for instance here the stock status is "OK":
+The *status* of a given stock item is displayed on the stock item detail page:
 
 {% with id="stock_status_label", url="stock/stock_status_label.png", description="Stock Status Label" %}
 {% include 'img.html' %}
 {% endwith %}
 
+### Default Status Code
+
+The default status code for any newly created Stock Item is <span class='badge inventree success'>OK</span>
+
 ## Update Status
 
-In the "Stock" tab of the part view, select all stock items which stock status needs to be updated:
+To update the status code for an individual stock item, open the *Edit Stock Item* dialog and then select the required status code in the *Status* field
 
-{% with id="stock_status_change_multiple", url="stock/stock_status_change_multiple.png", description="Stock Status Status Multiple" %}
-{% include 'img.html' %}
-{% endwith %}
-
-Click on `Stock Options > Change stock status`, select the new status then submit. All selected stock items status will be automatically updated:
-
-{% with id="stock_status_change_multiple_done", url="stock/stock_status_change_multiple_done.png", description="Stock Status Status Multiple Done" %}
+{% with id="stock_status_edit", url="stock/stock_status_edit.png", description="Edit stock item status" %}
 {% include 'img.html' %}
 {% endwith %}

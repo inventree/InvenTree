@@ -135,3 +135,22 @@ div:nth-of-type(1) p {
 	margin: 5px;
 	margin-bottom: 0px;
 }
+
+.badge.inventree.success {
+	background-color: #5cb85c;
+	color: #555;
+}
+
+.badge.inventree.warning {
+	background-color: #f0ad4e;
+	color: #555;
+}
+
+.badge.inventree.danger {
+	background-color: #d9534f;
+}
+
+.badge.inventree.info {
+	background-color: #5bc0de;
+	color: #555;
+}
