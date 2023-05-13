@@ -282,8 +282,8 @@ class TestCurrencyMigration(MigratorTestCase):
 class TestAddressMigration(MigratorTestCase):
     """Test moving address data into Address model"""
 
-    migrate_from = ('company', '0057_auto_20230502_1956')
-    migrate_to = ('company', '0058_move_address_field_to_address_model')
+    migrate_from = ('company', '0058_auto_20230502_1956')
+    migrate_to = ('company', '0059_move_address_field_to_address_model')
 
     # Setting up string values for re-use
     short_l1 = 'Less than 50 characters long address'
