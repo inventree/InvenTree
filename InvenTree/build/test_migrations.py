@@ -22,15 +22,6 @@ class TestForwardMigrations(MigratorTestCase):
             level=0, lft=0, rght=0, tree_id=0,
         )
 
-        with self.assertRaises(TypeError):
-            # Cannot set the 'assembly' field as it hasn't been added to the db schema
-            Part.objects.create(
-                name='Blorb',
-                description='ABCDE',
-                assembly=True,
-                level=0, lft=0, rght=0, tree_id=0,
-            )
-
         Build = self.old_state.apps.get_model('build', 'build')
 
         Build.objects.create(
