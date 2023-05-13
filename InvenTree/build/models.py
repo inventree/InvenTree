@@ -61,6 +61,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         issued_by: User that issued the build
         responsible: User (or group) responsible for completing the build
         priority: Priority of the build
+        project_code: Reference to ProjectCode instance
     """
 
     class Meta:
@@ -295,6 +296,14 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         default=0,
         validators=[MinValueValidator(0)],
         help_text=_('Priority of this build order')
+    )
+
+    project_code = models.ForeignKey(
+        'common.ProjectCode',
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Project code for this build order'),
     )
 
     def sub_builds(self, cascade=True):
