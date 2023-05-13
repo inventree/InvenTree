@@ -623,6 +623,8 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     if bool(data.get('use_pack_size')):
                         data['quantity'] = int(quantity) * float(supplier_part.pack_size)
                         quantity = data.get('quantity', None)
+                        # Divide purchase price by pack size, to save correct price per stock item
+                        data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_size)
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
