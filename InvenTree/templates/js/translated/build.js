@@ -46,6 +46,9 @@ function buildFormFields() {
         },
         title: {},
         quantity: {},
+        project_code: {
+            icon: 'fa-list',
+        },
         priority: {},
         parent: {
             filters: {
@@ -2793,6 +2796,18 @@ function loadBuildTable(table, options) {
                 field: 'title',
                 title: '{% trans "Description" %}',
                 switchable: true,
+            },
+            {
+                field: 'project_code',
+                title: '{% trans "Project Code" %}',
+                sortable: true,
+                switchable: global_settings.PROJECT_CODES_ENABLED,
+                visible: global_settings.PROJECT_CODES_ENABLED,
+                formatter: function(value, row) {
+                    if (row.project_code_detail) {
+                        return `<span title='${row.project_code_detail.description}'>${row.project_code_detail.code}</span>`;
+                    }
+                }
             },
             {
                 field: 'priority',
