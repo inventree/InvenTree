@@ -32,7 +32,7 @@ coreapi==2.3.3
     # via -r requirements.in
 coreschema==0.0.4
     # via coreapi
-cryptography==40.0.2
+cryptography==40.0.1
     # via
     #   -r requirements.in
     #   pyjwt
