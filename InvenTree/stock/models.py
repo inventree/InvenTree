@@ -332,6 +332,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         sales_order=None,
         belongs_to=None,
         customer=None,
+        consumed_by=None,
         is_building=False,
         status__in=StockStatus.AVAILABLE_CODES
     )
@@ -753,6 +754,14 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         blank=True, null=True,
         help_text=_('Build for this stock item'),
         related_name='build_outputs',
+    )
+
+    consumed_by = models.ForeignKey(
+        'build.Build', on_delete=models.CASCADE,
+        verbose_name=_('Consumed By'),
+        blank=True, null=True,
+        help_text=_('Build order which consumed this stock item'),
+        related_name='consumed_stock',
     )
 
     is_building = models.BooleanField(
