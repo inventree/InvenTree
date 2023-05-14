@@ -13,11 +13,11 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount
 
-import common.serializers
 import order.models
 import part.filters
 import stock.models
 import stock.serializers
+from common.serializers import ProjectCodeSerializer
 from company.serializers import (CompanyBriefSerializer, ContactSerializer,
                                  SupplierPartSerializer)
 from InvenTree.helpers import (extract_serial_numbers, hash_barcode, normalize,
@@ -72,7 +72,7 @@ class AbstractOrderSerializer(serializers.Serializer):
     responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
 
     # Detail for project code field
-    project_code_detail = common.serializers.ProjectCodeSerializer(source='project_code', read_only=True, many=False)
+    project_code_detail = ProjectCodeSerializer(source='project_code', read_only=True, many=False)
 
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(required=False, read_only=True)
