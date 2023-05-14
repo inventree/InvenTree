@@ -9,19 +9,23 @@
 */
 
 /* exported
+    createAddress,
     createCompany,
     createContact,
     createManufacturerPart,
     createSupplierPart,
     createSupplierPartPriceBreak,
+    deleteAddress,
     deleteContacts,
     deleteManufacturerParts,
     deleteManufacturerPartParameters,
     deleteSupplierParts,
     duplicateSupplierPart,
+    editAddress,
     editCompany,
     editContact,
     editSupplierPartPriceBreak,
+    loadAddressTable,
     loadCompanyTable,
     loadContactTable,
     loadManufacturerPartTable,
@@ -776,6 +780,7 @@ function addressFields(options={}) {
         company: {
             icon: 'fa-building',
         },
+        primary: {},
         title: {},
         line1: {
             icon: 'fa-map'
@@ -893,7 +898,7 @@ function deleteAddress(addresses, options={}) {
 
 function loadAddressTable(table, options={}) {
     var params = options.params || {};
-    console.log(params)
+
     var filters = loadTableFilters('address', params);
 
     setupFilterList('address', $(table), '#filter-list-addresses');
@@ -911,127 +916,127 @@ function loadAddressTable(table, options={}) {
         showColumns: true,
         name: 'addresses',
         columns: [
-        {
-            field: 'primary',
-            title: '{% trans "Primary" %}',
-            sortable: true,
-            switchable: false,
-        },
-        {
-            field: 'title',
-            title: '{% trans "Title" %}',
-            sortable: true,
-            switchable: false,
-        },
-        {
-            field: 'line1',
-            title: '{% trans "Line 1" %}',
-            sortable: false,
-            switchable: false,
-        },
-        {
-            field: 'line2',
-            title: '{% trans "Line 2" %}',
-            sortable: false,
-            switchable: false,
-        },
-        {
-            field: 'postal_code',
-            title: '{% trans "Postal code" %}',
-            sortable: false,
-            switchable: false,
-        },
-        {
-            field: 'postal_city',
-            title: '{% trans "Postal city" %}',
-            sortable: false,
-            switchable: false,
-        },
-        {
-            field: 'prvince',
-            title: '{% trans "State/province" %}',
-            sortable: false,
-            switchable: false,
-        },
-        {
-            field: 'country',
-            title: '{% trans "Country" %}',
-            sortable: false,
-            switchable: false,
-        },
-        {
-            field: 'shipping_notes',
-            title: '{% trans "Courier notes" %}',
-            sortable: false,
-            switchable: false,
-        },
-        {
-            field: 'internal_shipping_notes',
-            title: '{% trans "Internal notes" %}',
-            sortable: false,
-            switchable: false,
-        },
-        {
-            field: 'link',
-            title: '{% trans "External Link" %}',
-            sortable: false,
-            switchable: false,
-        },
-        {
-            field: 'actions',
-            title: '',
-            sortable: false,
-            switchable: false,
-            visible: options.allow_edit || options.allow_delete,
-            formatter: function(value, row) {
-                var pk = row.pk;
+            {
+                field: 'primary',
+                title: '{% trans "Primary" %}',
+                sortable: true,
+                switchable: false,
+            },
+            {
+                field: 'title',
+                title: '{% trans "Title" %}',
+                sortable: true,
+                switchable: false,
+            },
+            {
+                field: 'line1',
+                title: '{% trans "Line 1" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'line2',
+                title: '{% trans "Line 2" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'postal_code',
+                title: '{% trans "Postal code" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'postal_city',
+                title: '{% trans "Postal city" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'prvince',
+                title: '{% trans "State/province" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'country',
+                title: '{% trans "Country" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'shipping_notes',
+                title: '{% trans "Courier notes" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'internal_shipping_notes',
+                title: '{% trans "Internal notes" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'link',
+                title: '{% trans "External Link" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'actions',
+                title: '',
+                sortable: false,
+                switchable: false,
+                visible: options.allow_edit || options.allow_delete,
+                formatter: function(value, row) {
+                    var pk = row.pk;
 
-                let html = '';
+                    let html = '';
 
-                if (options.allow_edit) {
-                    html += makeEditButton('btn-address-edit', pk, '{% trans "Edit Address" %}');
-                }
-
-                if (options.allow_delete) {
-                    html += makeDeleteButton('btn-address-delete', pk, '{% trans "Delete Address" %}');
-                }
-
-                return wrapButtons(html);
-            }
-        }
-    ],
-    onPostBody: function() {
-        // Edit button callback
-        if (options.allow_edit) {
-            $(table).find('.btn-address-edit').click(function() {
-                var pk = $(this).attr('pk');
-                editAddress(pk, {
-                    onSuccess: function() {
-                        $(table).bootstrapTable('refresh');
+                    if (options.allow_edit) {
+                        html += makeEditButton('btn-address-edit', pk, '{% trans "Edit Address" %}');
                     }
-                });
-            });
-        }
 
-        // Delete button callback
-        if (options.allow_delete) {
-            $(table).find('.btn-address-delete').click(function() {
-                var pk = $(this).attr('pk');
+                    if (options.allow_delete) {
+                        html += makeDeleteButton('btn-address-delete', pk, '{% trans "Delete Address" %}');
+                    }
 
-                var row = $(table).bootstrapTable('getRowByUniqueId', pk);
-
-                if (row && row.pk) {
-
-                    deleteAddress([row], {
+                    return wrapButtons(html);
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Edit button callback
+            if (options.allow_edit) {
+                $(table).find('.btn-address-edit').click(function() {
+                    var pk = $(this).attr('pk');
+                    editAddress(pk, {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
                         }
                     });
-                }
-            });
+                });
+            }
+
+            // Delete button callback
+            if (options.allow_delete) {
+                $(table).find('.btn-address-delete').click(function() {
+                    var pk = $(this).attr('pk');
+
+                    var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                    if (row && row.pk) {
+
+                        deleteAddress([row], {
+                            onSuccess: function() {
+                                $(table).bootstrapTable('refresh');
+                            }
+                        });
+                    }
+                });
+            }
         }
-    }
-});
+    });
 }
 
 /* Delete one or more ManufacturerPart objects from the database.
