@@ -11,7 +11,7 @@ from build.models import Build, BuildItem
 from stock.models import StockItem
 
 from InvenTree.status_codes import BuildStatus, StockStatus
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_tests import InvenTreeAPITestCase
 
 
 class TestBuildAPI(InvenTreeAPITestCase):

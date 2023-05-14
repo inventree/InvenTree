@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from rest_framework.exceptions import NotFound
 
-from InvenTree.api_tester import InvenTreeAPITestCase, PluginMixin
+from InvenTree.unit_tests import InvenTreeAPITestCase, PluginMixin
 from plugin.api import check_plugin
 from plugin.models import PluginConfig
 

@@ -4,7 +4,7 @@ from django.urls import reverse
 
 import part.models
 import stock.models
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_tests import InvenTreeAPITestCase
 
 
 class TestInvenTreeBarcode(InvenTreeAPITestCase):

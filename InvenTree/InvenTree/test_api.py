@@ -6,8 +6,7 @@ from django.urls import reverse
 
 from rest_framework import status
 
-from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.unit_tests import InvenTreeTestCase
+from InvenTree.unit_tests import InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import RuleSet, update_group_roles
 
 

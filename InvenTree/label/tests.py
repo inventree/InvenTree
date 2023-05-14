@@ -9,8 +9,8 @@ from django.core.files.base import ContentFile
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import validateFilterString
+from InvenTree.unit_tests import InvenTreeAPITestCase
 from part.models import Part
 from stock.models import StockItem
 

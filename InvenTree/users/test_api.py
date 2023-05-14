@@ -3,7 +3,7 @@
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_tests import InvenTreeAPITestCase
 
 
 class UserAPITests(InvenTreeAPITestCase):
