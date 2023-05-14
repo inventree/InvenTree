@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-13 12:21+0000\n"
+"POT-Creation-Date: 2023-05-14 09:15+0000\n"
 "PO-Revision-Date: 2023-05-13 12:43\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -1336,7 +1336,8 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:460
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr ""
+"Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:529
@@ -12341,7 +12342,8 @@ msgstr "Tovább"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "A %(provider_name)s felhasználói fiókodat fogod használni a %(site_name)s belépéshez.<br>Kérlek töltsd ki az alábbi adatokat:"
 
@@ -12512,4 +12514,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
-
