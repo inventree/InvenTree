@@ -86,7 +86,7 @@ invoke worker
 ```
 
 !!! info "Supervisor"
-    A better option is to manage the background worker process using a process manager such as supervisor. Refer to the [production server guide](./start/production.md).
+    A better option is to manage the background worker process using a process manager such as supervisor. Refer to the [production server guide](./start/bare_prod.md).
 
 ### File Sync Issues - Docker
 
