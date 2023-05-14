@@ -24,6 +24,7 @@ import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
 from InvenTree.sanitizer import sanitize_svg
+from InvenTree.unit_tests import InvenTreeTestCase
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
@@ -711,7 +712,7 @@ class TestStatus(TestCase):
         self.assertEqual(ready.isImportingData(), False)
 
 
-class TestSettings(helpers.InvenTreeTestCase):
+class TestSettings(InvenTreeTestCase):
     """Unit tests for settings."""
 
     superuser = True
@@ -850,7 +851,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
 
 
-class TestInstanceName(helpers.InvenTreeTestCase):
+class TestInstanceName(InvenTreeTestCase):
     """Unit tests for instance name."""
 
     def test_instance_name(self):
@@ -878,7 +879,7 @@ class TestInstanceName(helpers.InvenTreeTestCase):
         self.assertEqual(site_obj.domain, 'http://127.1.2.3')
 
 
-class TestOffloadTask(helpers.InvenTreeTestCase):
+class TestOffloadTask(InvenTreeTestCase):
     """Tests for offloading tasks to the background worker"""
 
     fixtures = [
@@ -975,7 +976,7 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             self.assertTrue(result)
 
 
-class BarcodeMixinTest(helpers.InvenTreeTestCase):
+class BarcodeMixinTest(InvenTreeTestCase):
     """Tests for the InvenTreeBarcodeMixin mixin class"""
 
     def test_barcode_model_type(self):

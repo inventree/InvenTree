@@ -14,8 +14,9 @@ from django.urls import reverse
 
 import PIL
 
+from InvenTree.helpers import str2bool
 from InvenTree.unit_tests import (InvenTreeAPITestCase, InvenTreeTestCase,
-                                  PluginMixin, str2bool)
+                                  PluginMixin)
 from plugin import registry
 from plugin.models import NotificationUserSetting
 
