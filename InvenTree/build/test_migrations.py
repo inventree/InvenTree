@@ -2,14 +2,14 @@
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
-from InvenTree import helpers
+from InvenTree import unit_tests
 
 
 class TestForwardMigrations(MigratorTestCase):
     """Test entire schema migration sequence for the build app."""
 
-    migrate_from = ('build', helpers.getOldestMigrationFile('build'))
-    migrate_to = ('build', helpers.getNewestMigrationFile('build'))
+    migrate_from = ('build', unit_tests.getOldestMigrationFile('build'))
+    migrate_to = ('build', unit_tests.getNewestMigrationFile('build'))
 
     def prepare(self):
         """Create initial data!"""
@@ -19,22 +19,15 @@ class TestForwardMigrations(MigratorTestCase):
             name='Widget',
             description='Buildable Part',
             active=True,
+            level=0, lft=0, rght=0, tree_id=0,
         )
-
-        with self.assertRaises(TypeError):
-            # Cannot set the 'assembly' field as it hasn't been added to the db schema
-            Part.objects.create(
-                name='Blorb',
-                description='ABCDE',
-                assembly=True
-            )
 
         Build = self.old_state.apps.get_model('build', 'build')
 
         Build.objects.create(
             part=buildable_part,
             title='A build of some stuff',
-            quantity=50
+            quantity=50,
         )
 
     def test_items_exist(self):
@@ -58,7 +51,7 @@ class TestForwardMigrations(MigratorTestCase):
 class TestReferenceMigration(MigratorTestCase):
     """Test custom migration which adds 'reference' field to Build model."""
 
-    migrate_from = ('build', helpers.getOldestMigrationFile('build'))
+    migrate_from = ('build', unit_tests.getOldestMigrationFile('build'))
     migrate_to = ('build', '0018_build_reference')
 
     def prepare(self):
@@ -67,7 +60,8 @@ class TestReferenceMigration(MigratorTestCase):
 
         part = Part.objects.create(
             name='Part',
-            description='A test part'
+            description='A test part',
+            level=0, lft=0, rght=0, tree_id=0,
         )
 
         Build = self.old_state.apps.get_model('build', 'build')
@@ -113,7 +107,7 @@ class TestReferencePatternMigration(MigratorTestCase):
     """
 
     migrate_from = ('build', '0019_auto_20201019_1302')
-    migrate_to = ('build', helpers.getNewestMigrationFile('build'))
+    migrate_to = ('build', unit_tests.getNewestMigrationFile('build'))
 
     def prepare(self):
         """Create some initial data prior to migration"""

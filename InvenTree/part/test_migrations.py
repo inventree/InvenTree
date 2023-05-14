@@ -2,14 +2,14 @@
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
-from InvenTree import helpers
+from InvenTree import unit_tests
 
 
 class TestForwardMigrations(MigratorTestCase):
     """Test entire schema migration sequence for the part app."""
 
-    migrate_from = ('part', helpers.getOldestMigrationFile('part'))
-    migrate_to = ('part', helpers.getNewestMigrationFile('part'))
+    migrate_from = ('part', unit_tests.getOldestMigrationFile('part'))
+    migrate_to = ('part', unit_tests.getNewestMigrationFile('part'))
 
     def prepare(self):
         """Create initial data."""
@@ -52,7 +52,7 @@ class TestBomItemMigrations(MigratorTestCase):
     """Tests for BomItem migrations"""
 
     migrate_from = ('part', '0002_auto_20190520_2204')
-    migrate_to = ('part', helpers.getNewestMigrationFile('part'))
+    migrate_to = ('part', unit_tests.getNewestMigrationFile('part'))
 
     def prepare(self):
         """Create intial dataset"""
