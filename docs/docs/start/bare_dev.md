@@ -1,8 +1,8 @@
 ---
-title: Development Server
+title: Bare Metal Development Server
 ---
 
-## Development Server
+## Bare Metal Development Server
 
 !!! warning "Installation"
     Before continuing, ensure that the [installation steps](./install.md) have been completed.

@@ -70,8 +70,8 @@ nav:
     - Bare Metal:
         - Introduction: start/install.md
         - Installer: start/installer.md
-        - Production: start/production.md
-        - Development: start/development.md
+        - Production: start/bare_prod.md
+        - Development: start/bare_dev.md
     - Development:
         - Devcontainer: develop/devcontainer.md
     - Serving Files: start/serving_files.md
