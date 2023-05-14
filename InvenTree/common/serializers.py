@@ -4,9 +4,7 @@ from django.urls import reverse
 
 from rest_framework import serializers
 
-from common.models import (InvenTreeSetting, InvenTreeUserSetting,
-                           NewsFeedEntry, NotesImage, NotificationMessage,
-                           ProjectCode)
+import common.models as common_models
 from InvenTree.helpers import construct_absolute_url, get_objectreference
 from InvenTree.serializers import (InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
@@ -61,7 +59,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
     class Meta:
         """Meta options for GlobalSettingsSerializer."""
 
-        model = InvenTreeSetting
+        model = common_models.InvenTreeSetting
         fields = [
             'pk',
             'key',
@@ -82,7 +80,7 @@ class UserSettingsSerializer(SettingsSerializer):
     class Meta:
         """Meta options for UserSettingsSerializer."""
 
-        model = InvenTreeUserSetting
+        model = common_models.InvenTreeUserSetting
         fields = [
             'pk',
             'key',
@@ -145,7 +143,7 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
     class Meta:
         """Meta options for NotificationMessageSerializer."""
 
-        model = NotificationMessage
+        model = common_models.NotificationMessage
         fields = [
             'pk',
             'target',
@@ -206,7 +204,7 @@ class NewsFeedEntrySerializer(InvenTreeModelSerializer):
     class Meta:
         """Meta options for NewsFeedEntrySerializer."""
 
-        model = NewsFeedEntry
+        model = common_models.NewsFeedEntry
         fields = [
             'pk',
             'feed_id',
@@ -240,7 +238,7 @@ class NotesImageSerializer(InvenTreeModelSerializer):
     class Meta:
         """Meta options for NotesImageSerializer."""
 
-        model = NotesImage
+        model = common_models.NotesImage
         fields = [
             'pk',
             'image',
@@ -262,7 +260,7 @@ class ProjectCodeSerializer(InvenTreeModelSerializer):
     class Meta:
         """Meta options for ProjectCodeSerializer."""
 
-        model = ProjectCode
+        model = common_models.ProjectCode
         fields = [
             'pk',
             'code',

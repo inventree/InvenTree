@@ -7,6 +7,7 @@ import re
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.http.response import StreamingHttpResponse
+from django.test import TestCase
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework.test import APITestCase
@@ -160,6 +161,11 @@ class ExchangeRateMixin:
             )
 
         Rate.objects.bulk_create(items)
+
+
+class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
+    """Testcase with user setup buildin."""
+    pass
 
 
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):

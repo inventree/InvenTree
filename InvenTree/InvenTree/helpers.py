@@ -19,7 +19,6 @@ from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.http import StreamingHttpResponse
-from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 
 import moneyed.localization
@@ -36,7 +35,6 @@ from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
-from .api_tester import ExchangeRateMixin, UserMixin
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = logging.getLogger('inventree')
@@ -1089,11 +1087,6 @@ def inheritors(cls):
                 subcls.add(child)
                 work.append(child)
     return subcls
-
-
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup buildin."""
-    pass
 
 
 def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):

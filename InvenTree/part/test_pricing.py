@@ -10,8 +10,8 @@ import company.models
 import order.models
 import part.models
 import stock.models
-from InvenTree.helpers import InvenTreeTestCase
 from InvenTree.status_codes import PurchaseOrderStatus
+from InvenTree.unit_tests import InvenTreeTestCase
 
 
 class PartPricingTests(InvenTreeTestCase):

@@ -6,7 +6,7 @@ Only used for testing the js files! - This file is omited from coverage.
 import os  # pragma: no cover
 import pathlib  # pragma: no cover
 
-from InvenTree.helpers import InvenTreeTestCase  # pragma: no cover
+from InvenTree.unit_tests import InvenTreeTestCase  # pragma: no cover
 
 
 class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover

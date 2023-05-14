@@ -14,7 +14,7 @@ from common.models import (InvenTreeSetting, InvenTreeUserSetting,
                            NotificationEntry, NotificationMessage)
 from common.notifications import UIMessageNotification, storage
 from InvenTree import version
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_tests import InvenTreeTestCase
 
 from .models import (Part, PartCategory, PartCategoryStar, PartRelated,
                      PartStar, PartStocktake, PartTestTemplate,

@@ -14,7 +14,7 @@ from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.status_codes import BuildStatus
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
-from common.models import ProjectCode
+import common.models
 import build.admin
 import build.serializers
 from build.models import Build, BuildItem, BuildOrderAttachment
@@ -89,7 +89,7 @@ class BuildFilter(rest_filters.FilterSet):
     )
 
     project_code = rest_filters.ModelChoiceFilter(
-        queryset=ProjectCode.objects.all(),
+        queryset=common.models.ProjectCode.objects.all(),
         field_name='project_code'
     )
 

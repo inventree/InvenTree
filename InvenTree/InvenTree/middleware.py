@@ -14,7 +14,6 @@ from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
 from error_report.middleware import ExceptionProcessor
 from rest_framework.authtoken.models import Token
 
-from common.models import InvenTreeSetting
 from InvenTree.urls import frontendpatterns
 
 logger = logging.getLogger("inventree")
@@ -123,6 +122,9 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
     """Check if user is required to have MFA enabled."""
     def require_2fa(self, request):
         """Use setting to check if MFA should be enforced for frontend page."""
+
+        from common.models import InvenTreeSetting
+
         try:
             if url_matcher.resolve(request.path[1:]):
                 return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')

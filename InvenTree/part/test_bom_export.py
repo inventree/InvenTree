@@ -4,7 +4,7 @@ import csv
 
 from django.urls import reverse
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_tests import InvenTreeTestCase
 
 
 class BomExportTest(InvenTreeTestCase):
