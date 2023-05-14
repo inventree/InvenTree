@@ -73,6 +73,7 @@ nav:
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
     - Development:
+        - Developing InvenTree: develop/starting.md
         - Devcontainer: develop/devcontainer.md
     - Serving Files: start/serving_files.md
     - Data Backup: start/backup.md
