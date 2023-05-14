@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-14 09:15+0000\n"
-"PO-Revision-Date: 2023-05-13 12:44\n"
+"POT-Creation-Date: 2023-05-13 12:21+0000\n"
+"PO-Revision-Date: 2023-05-14 12:41\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -2820,7 +2820,7 @@ msgstr "Ingen skriver (Eksporter til PDF)"
 
 #: common/models.py:1746
 msgid "Hide inactive parts"
-msgstr "Skjul inaktive deler"
+msgstr "Skjul inaktive elementer"
 
 #: common/models.py:1747
 msgid "Hide inactive parts in results displayed on the homepage"
@@ -4318,7 +4318,7 @@ msgstr "Ordre valuta"
 
 #: order/models.py:77 order/serializers.py:49
 msgid "Currency for this order (leave blank to use company default)"
-msgstr "Valuta for denne ordren (la stå tom for å bruke bedriftsstandard)"
+msgstr "Valuta for denne ordren (la stå tom for å bruke firmastandard)"
 
 #: order/models.py:206
 msgid "Contact does not match selected company"
@@ -4403,11 +4403,11 @@ msgstr "Firma som varene selges til"
 
 #: order/models.py:796 order/models.py:1730
 msgid "Customer Reference "
-msgstr "Kundens referanse "
+msgstr "Kundereferanse "
 
 #: order/models.py:796 order/models.py:1731
 msgid "Customer order reference code"
-msgstr "Kundens ordre referansekode"
+msgstr "Kundens ordrereferanse"
 
 #: order/models.py:798 order/models.py:1399
 #: templates/js/translated/sales_order.js:791
@@ -4433,7 +4433,7 @@ msgstr "Bestillingen kan ikke fullføres da det finnes ufullstendige varepartier
 
 #: order/models.py:864
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr "Denne produksjonsordren kan ikke fullføres da det fortsatt er ufullstendige artikler"
+msgstr "Denne ordren kan ikke fullføres da det fortsatt er ufullstendige artikler"
 
 #: order/models.py:1071
 msgid "Item quantity"
@@ -4449,15 +4449,15 @@ msgstr "Linje notat"
 
 #: order/models.py:1097
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr "Ønsket dato for denne linjen (la stå tomt for å bruke måldatoen fra ordren)"
+msgstr "Måldato for denne linjen (la stå tomt for å bruke måldatoen fra ordren)"
 
 #: order/models.py:1114
 msgid "Context"
-msgstr "Sammenheng"
+msgstr "Kontekst"
 
 #: order/models.py:1115
 msgid "Additional context for this line"
-msgstr "Ytterligere sammenheng for denne linjen"
+msgstr "Ytterligere kontekst for denne linjen"
 
 #: order/models.py:1124
 msgid "Unit price"
@@ -6186,7 +6186,7 @@ msgstr "Begrens lagerbeholdningsrapport til en bestemt delkategori og alle under
 
 #: part/serializers.py:861
 msgid "Limit stocktake report to a particular stock location, and any child locations"
-msgstr "Begrens lagerbeholdningsrapport til en bestemt lokasjon, og eventuelle underlokasjoner"
+msgstr "Begrens lagerbeholdningsrapport til en bestemt plasering og eventuelle underplasseringer"
 
 #: part/serializers.py:866
 msgid "Generate Report"
@@ -6194,7 +6194,7 @@ msgstr "Generer rapport"
 
 #: part/serializers.py:867
 msgid "Generate report file containing calculated stocktake data"
-msgstr "Genererer rapport som inneholder kalkulerte lagerdata"
+msgstr "Genererer rapport som inneholder beregnede lagerdata"
 
 #: part/serializers.py:872
 msgid "Update Parts"
@@ -12340,8 +12340,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12512,3 +12511,4 @@ msgstr ""
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr ""
+
