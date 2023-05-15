@@ -3374,15 +3374,45 @@ class PartParameterTemplate(MetadataMixin, models.Model):
 
         return choices
 
-    def validate_regex(self, value) -> bool:
-        """Validate a value against a regular expression"""
-        if self.validator:
+    def validate_parameter(self, value):
+        """Validate a value against the parameter template
+
+        Args:
+            value: The value to validate
+
+        Raises:
+            ValidationError: If the value is invalid
+        """
+
+        # Check that the value is a valid integer
+        if self.type == PartParameterTypeCode.INTEGER:
             try:
-                return bool(re.match(self.validator, value))
-            except re.error:
-                return False
-        else:
-            return True
+                int(self.data)
+            except ValueError:
+                raise ValidationError({'data': _('Integer value required')})
+
+        # Check that the value is a valid float
+        elif self.type == PartParameterTypeCode.FLOAT:
+            try:
+                float(self.data)
+            except ValueError:
+                raise ValidationError({'data': _('Numerical value required')})
+
+        # Check that the value is a valid choice
+        elif self.type == PartParameterTypeCode.CHOICE:
+            choices = self.template.get_valid_choices()
+
+            if self.data.strip() not in choices:
+                raise ValidationError({'data': _('Invalid choice')})
+
+        # Check that the value is a valid regular expression
+        elif self.type == PartParameterTypeCode.REGEX:
+
+            if self.validator:
+                try:
+                    re.match(self.validator, value)
+                except Exception:
+                    raise ValidationError({'data': _('Must match pattern {pattern}').format(pattern=self.template.validator)})
 
 
 class PartParameter(models.Model):
@@ -3412,6 +3442,18 @@ class PartParameter(models.Model):
             data=str(self.data),
             units=str(self.template.units)
         )
+
+    def clean(self):
+        """Validate the PartParameter before saving to the database."""
+
+        super().clean()
+
+        # A 'boolean' type simply gets cast to a common boolean value
+        if self.template.type == PartParameterTypeCode.BOOLEAN:
+            self.data = str(helpers.str2bool(self.data))
+
+        # Validate the parameter data against the template type
+        self.template.validate_parameter(self.data.strip())
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
 
