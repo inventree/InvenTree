@@ -49,8 +49,8 @@ from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
                               InvenTreeBarcodeMixin, InvenTreeNotesMixin,
                               InvenTreeTree, MetadataMixin)
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import (BuildStatus, PartParameterTypeCode,
+                                    PurchaseOrderStatus, SalesOrderStatus)
 from order import models as OrderModels
 from stock import models as StockModels
 
@@ -3295,6 +3295,7 @@ class PartParameterTemplate(MetadataMixin, models.Model):
     Attributes:
         name: The name (key) of the Parameter [string]
         units: The units of the Parameter [string]
+        type: The data type of the Parameter [integer]
     """
 
     @staticmethod
@@ -3339,6 +3340,16 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         verbose_name=_('Description'),
         help_text=_('Parameter description'),
         blank=True,
+    )
+
+    type = models.PositiveIntegerField(
+        default=PartParameterTypeCode.STRING,
+        choices=PartParameterTypeCode.items(),
+        validators=[
+            MinValueValidator(1)
+        ],
+        verbose_name=_('Type'),
+        help_text=_('Parameter type'),
     )
 
 
