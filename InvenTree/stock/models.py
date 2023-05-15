@@ -54,7 +54,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         verbose_name = _('Stock Location')
         verbose_name_plural = _('Stock Locations')
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     def delete_recursive(self, *args, **kwargs):
         """This function handles the recursive deletion of sub-locations depending on kwargs contents"""
@@ -324,7 +324,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             }
         }
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
