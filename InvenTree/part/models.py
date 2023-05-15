@@ -3384,35 +3384,37 @@ class PartParameterTemplate(MetadataMixin, models.Model):
             ValidationError: If the value is invalid
         """
 
+        if len(value) == 0:
+            raise ValidationError({'data': _('Parameter value required')})
+
         # Check that the value is a valid integer
         if self.type == PartParameterTypeCode.INTEGER:
             try:
-                int(self.data)
+                int(value)
             except ValueError:
                 raise ValidationError({'data': _('Integer value required')})
 
         # Check that the value is a valid float
         elif self.type == PartParameterTypeCode.FLOAT:
             try:
-                float(self.data)
+                float(value)
             except ValueError:
                 raise ValidationError({'data': _('Numerical value required')})
 
         # Check that the value is a valid choice
         elif self.type == PartParameterTypeCode.CHOICE:
-            choices = self.template.get_valid_choices()
+            choices = self.get_valid_choices()
 
-            if self.data.strip() not in choices:
+            if value not in choices:
                 raise ValidationError({'data': _('Invalid choice')})
 
         # Check that the value is a valid regular expression
         elif self.type == PartParameterTypeCode.REGEX:
 
             if self.validator:
-                try:
-                    re.match(self.validator, value)
-                except Exception:
-                    raise ValidationError({'data': _('Must match pattern {pattern}').format(pattern=self.template.validator)})
+                # Check that the value matches the regular expression
+                if not re.match(self.validator, value):
+                    raise ValidationError({'data': _('Must match pattern {pattern}').format(pattern=self.validator)})
 
 
 class PartParameter(models.Model):
@@ -3453,7 +3455,7 @@ class PartParameter(models.Model):
             self.data = str(helpers.str2bool(self.data))
 
         # Validate the parameter data against the template type
-        self.template.validate_parameter(self.data.strip())
+        self.template.validate_parameter(str(self.data).strip())
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
 

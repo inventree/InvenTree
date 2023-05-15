@@ -2,8 +2,12 @@
 
 import django.core.exceptions as django_exceptions
 from django.test import TestCase, TransactionTestCase
+from django.urls import reverse
 
-from .models import (PartCategory, PartCategoryParameterTemplate,
+from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.status_codes import PartParameterTypeCode
+
+from .models import (Part, PartCategory, PartCategoryParameterTemplate,
                      PartParameter, PartParameterTemplate)
 
 
@@ -87,3 +91,174 @@ class TestCategoryTemplates(TransactionTestCase):
 
         n = PartCategoryParameterTemplate.objects.all().count()
         self.assertEqual(n, 3)
+
+
+class ParameterValidationTest(TestCase):
+    """Unit tests for parameter validation"""
+
+    fixtures = [
+        'location',
+        'category',
+        'part',
+        'params'
+    ]
+
+    def test_param_validation(self):
+        """Unit tests for parameter validation based on template type"""
+
+        # Create some specific parameter templates
+        tmp_int = PartParameterTemplate.objects.create(
+            name='Test Integer',
+            description='An integer parameter template',
+            type=PartParameterTypeCode.INTEGER,
+        )
+
+        tmp_flt = PartParameterTemplate.objects.create(
+            name='Test Float',
+            description='A float parameter template',
+            type=PartParameterTypeCode.FLOAT,
+        )
+
+        tmp_reg = PartParameterTemplate.objects.create(
+            name='Test Regex',
+            description='A regex parameter template',
+            type=PartParameterTypeCode.REGEX,
+            validator='^num[0-9]+$',
+        )
+
+        tmp_opt = PartParameterTemplate.objects.create(
+            name='Test Options',
+            description='An options parameter template',
+            type=PartParameterTypeCode.CHOICE,
+            validator='red,green,blue',
+        )
+
+        # Construct a set of pass / fail values based on each template type
+        test_values = {
+            tmp_int: {
+                'pass': [-100, 2, 0, '23'],
+                'fail': ['a', 'b', '1.2'],
+            },
+            tmp_flt: {
+                'pass': [1, -2, 1.0, 2.0, '34'],
+                'fail': ['a', 'b', '-1.x', 'g.4'],
+            },
+            tmp_reg: {
+                'pass': ['num1', 'num2', 'num344'],
+                'fail': ['a', '1.0', 'num', 'nun1'],
+            },
+            tmp_opt: {
+                'pass': ['red', 'green', 'blue'],
+                'fail': ['a', 'b', 'c', 'd', 'e'],
+            }
+        }
+
+        prt = Part.objects.get(pk=3)
+
+        # Run the tests!
+        for template, data in test_values.items():
+            for value in data['pass']:
+
+                param = PartParameter(
+                    template=template,
+                    part=prt,
+                    data=value
+                )
+
+                param.clean()
+
+            for value in data['fail']:
+
+                param = PartParameter(
+                    template=template,
+                    part=prt,
+                    data=value
+                )
+
+                with self.assertRaises(django_exceptions.ValidationError):
+                    param.clean()
+
+
+class PartParameterTest(InvenTreeAPITestCase):
+    """Tests for the ParParameter API."""
+    superuser = True
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'params',
+    ]
+
+    def test_list_params(self):
+        """Test for listing part parameters."""
+        url = reverse('api-part-parameter-list')
+
+        response = self.get(url)
+
+        self.assertEqual(len(response.data), 7)
+
+        # Filter by part
+        response = self.get(
+            url,
+            {
+                'part': 3,
+            }
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+        # Filter by template
+        response = self.get(
+            url,
+            {
+                'template': 1,
+            }
+        )
+
+        self.assertEqual(len(response.data), 4)
+
+    def test_create_param(self):
+        """Test that we can create a param via the API."""
+        url = reverse('api-part-parameter-list')
+
+        response = self.post(
+            url,
+            {
+                'part': '2',
+                'template': '3',
+                'data': 70
+            }
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+        response = self.get(url)
+
+        self.assertEqual(len(response.data), 8)
+
+    def test_param_detail(self):
+        """Tests for the PartParameter detail endpoint."""
+        url = reverse('api-part-parameter-detail', kwargs={'pk': 5})
+
+        response = self.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+        data = response.data
+
+        self.assertEqual(data['pk'], 5)
+        self.assertEqual(data['part'], 3)
+        self.assertEqual(data['data'], '12')
+
+        # PATCH data back in
+        response = self.patch(url, {'data': '15'})
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the data changed!
+        response = self.get(url)
+
+        data = response.data
+
+        self.assertEqual(data['data'], '15')
