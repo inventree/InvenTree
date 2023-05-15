@@ -3344,7 +3344,7 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         blank=True,
     )
 
-    type = models.PositiveIntegerField(
+    param_type = models.PositiveIntegerField(
         default=PartParameterTypeCode.STRING,
         choices=PartParameterTypeCode.items(),
         validators=[
@@ -3388,28 +3388,28 @@ class PartParameterTemplate(MetadataMixin, models.Model):
             raise ValidationError({'data': _('Parameter value required')})
 
         # Check that the value is a valid integer
-        if self.type == PartParameterTypeCode.INTEGER:
+        if self.param_type == PartParameterTypeCode.INTEGER:
             try:
                 int(value)
             except ValueError:
                 raise ValidationError({'data': _('Integer value required')})
 
         # Check that the value is a valid float
-        elif self.type == PartParameterTypeCode.FLOAT:
+        elif self.param_type == PartParameterTypeCode.FLOAT:
             try:
                 float(value)
             except ValueError:
                 raise ValidationError({'data': _('Numerical value required')})
 
         # Check that the value is a valid choice
-        elif self.type == PartParameterTypeCode.CHOICE:
+        elif self.param_type == PartParameterTypeCode.CHOICE:
             choices = self.get_valid_choices()
 
             if value not in choices:
                 raise ValidationError({'data': _('Invalid choice')})
 
         # Check that the value is a valid regular expression
-        elif self.type == PartParameterTypeCode.REGEX:
+        elif self.param_type == PartParameterTypeCode.REGEX:
 
             if self.validator:
                 # Check that the value matches the regular expression
@@ -3451,7 +3451,7 @@ class PartParameter(models.Model):
         super().clean()
 
         # A 'boolean' type simply gets cast to a common boolean value
-        if self.template.type == PartParameterTypeCode.BOOLEAN:
+        if self.template.param_type == PartParameterTypeCode.BOOLEAN:
             self.data = str(helpers.str2bool(self.data))
 
         # Validate the parameter data against the template type

@@ -110,26 +110,26 @@ class ParameterValidationTest(TestCase):
         tmp_int = PartParameterTemplate.objects.create(
             name='Test Integer',
             description='An integer parameter template',
-            type=PartParameterTypeCode.INTEGER,
+            param_type=PartParameterTypeCode.INTEGER,
         )
 
         tmp_flt = PartParameterTemplate.objects.create(
             name='Test Float',
             description='A float parameter template',
-            type=PartParameterTypeCode.FLOAT,
+            param_type=PartParameterTypeCode.FLOAT,
         )
 
         tmp_reg = PartParameterTemplate.objects.create(
             name='Test Regex',
             description='A regex parameter template',
-            type=PartParameterTypeCode.REGEX,
+            param_type=PartParameterTypeCode.REGEX,
             validator='^num[0-9]+$',
         )
 
         tmp_opt = PartParameterTemplate.objects.create(
             name='Test Options',
             description='An options parameter template',
-            type=PartParameterTypeCode.CHOICE,
+            param_type=PartParameterTypeCode.CHOICE,
             validator='red,green,blue',
         )
 

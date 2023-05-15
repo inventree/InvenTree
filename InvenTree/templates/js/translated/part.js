@@ -1394,12 +1394,12 @@ function loadPartParameterTemplateTable(table, options={}) {
                 switchable: true,
             },
             {
-                field: 'type',
+                field: 'param_type',
                 title: '{% trans "Type" %}',
                 sortable: true,
                 switchable: true,
                 formatter: function(value, row) {
-                    return row.type_text || row.type;
+                    return row.param_type_text || row.param_type;
                 }
             },
             {
@@ -1433,7 +1433,7 @@ function loadPartParameterTemplateTable(table, options={}) {
                     name: {},
                     units: {},
                     description: {},
-                    type: {},
+                    param_type: {},
                     validator: {},
                 },
                 title: '{% trans "Edit Part Parameter Template" %}',

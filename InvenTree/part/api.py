@@ -1320,6 +1320,26 @@ class PartRelatedDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartRelationSerializer
 
 
+class PartParameterTemplateFilter(rest_filters.FilterSet):
+    """FilterSet for PartParameterTemplate objects."""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = PartParameterTemplate
+
+        # Simple filter fields
+        fields = []
+
+    # Filter based on 'type'
+    param_type = rest_filters.NumberFilter(label='Parameter Type', method='filter_type')
+
+    def filter_type(self, queryset, name, value):
+        """Filter by integer type code"""
+
+        return queryset.filter(param_type=value)
+
+
 class PartParameterTemplateList(ListCreateAPI):
     """API endpoint for accessing a list of PartParameterTemplate objects.
 
@@ -1329,6 +1349,7 @@ class PartParameterTemplateList(ListCreateAPI):
 
     queryset = PartParameterTemplate.objects.all()
     serializer_class = part_serializers.PartParameterTemplateSerializer
+    filterset_class = PartParameterTemplateFilter
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -1344,7 +1365,7 @@ class PartParameterTemplateList(ListCreateAPI):
     ordering_fields = [
         'name',
         'units',
-        'type',
+        'param_type',
     ]
 
     def filter_queryset(self, queryset):

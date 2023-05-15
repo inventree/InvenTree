@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='partparametertemplate',
-            name='type',
+            name='param_type',
             field=models.PositiveIntegerField(choices=[(10, 'String'), (20, 'Integer'), (30, 'Floating Point'), (40, 'Boolean'), (50, 'Choice'), (60, 'Regular Expression')], default=10, help_text='Parameter type', validators=[django.core.validators.MinValueValidator(1)], verbose_name='Type'),
         ),
         migrations.AddField(
