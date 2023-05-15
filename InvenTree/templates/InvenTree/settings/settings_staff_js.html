@@ -302,8 +302,8 @@ onPanelLoad('category', function() {
     });
 });
 
-// Javascript for the Part settings panel
-onPanelLoad('parts', function() {
+// Javascript for the Part parameters settings panel
+onPanelLoad('part-parameters', function() {
     $("#param-table").inventreeTable({
         url: "{% url 'api-part-parameter-template-list' %}",
         queryParams: {
@@ -371,6 +371,7 @@ onPanelLoad('parts', function() {
                     name: {},
                     units: {},
                     description: {},
+                    type: {},
                 },
                 title: '{% trans "Edit Part Parameter Template" %}',
                 refreshTable: '#param-table',
@@ -397,7 +398,10 @@ onPanelLoad('parts', function() {
             }
         );
     });
+});
 
+// Javascript for the Part settings panel
+onPanelLoad('parts', function() {
     $("#import-part").click(function() {
         launchModalForm("{% url 'api-part-import' %}?reset", {});
     });
