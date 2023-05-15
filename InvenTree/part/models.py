@@ -3295,7 +3295,9 @@ class PartParameterTemplate(MetadataMixin, models.Model):
     Attributes:
         name: The name (key) of the Parameter [string]
         units: The units of the Parameter [string]
+        description: Description of the parameter [string]
         type: The data type of the Parameter [integer]
+        choices: A comma-separated list of choices for the Parameter [string]
     """
 
     @staticmethod
@@ -3351,6 +3353,36 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         verbose_name=_('Type'),
         help_text=_('Parameter type'),
     )
+
+    validator = models.CharField(
+        max_length=1000,
+        verbose_name=_('Validator'),
+        help_text=_('Comma-separated list of valid choices, or regular expression'),
+        blank=True,
+    )
+
+    def get_valid_choices(self) -> list:
+        """Return a list of choices for this template, based on the choices field"""
+
+        choices = []
+
+        for opt in self.validator.split(','):
+            opt = opt.strip()
+
+            if opt and opt not in choices:
+                choices.append(opt)
+
+        return choices
+
+    def validate_regex(self, value) -> bool:
+        """Validate a value against a regular expression"""
+        if self.validator:
+            try:
+                return bool(re.match(self.validator, value))
+            except re.error:
+                return False
+        else:
+            return True
 
 
 class PartParameter(models.Model):

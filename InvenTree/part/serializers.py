@@ -226,7 +226,12 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
             'name',
             'units',
             'description',
+            'type',
+            'type_text',
+            'choices',
         ]
+
+    type_text = serializers.CharField(source='get_type_display', read_only=True)
 
 
 class PartParameterSerializer(InvenTreeModelSerializer):

@@ -454,10 +454,14 @@ class PartParameterTypeCode(StatusCode):
     INTEGER = 20
     FLOAT = 30
     BOOLEAN = 40
+    CHOICE = 50
+    REGEX = 60
 
     options = {
         STRING: _("String"),
         INTEGER: _("Integer"),
         FLOAT: _("Floating Point"),
         BOOLEAN: _("Boolean"),
+        CHOICE: _("Choice"),
+        REGEX: _("Regular Expression"),
     }

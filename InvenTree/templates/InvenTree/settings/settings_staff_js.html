@@ -335,6 +335,21 @@ onPanelLoad('part-parameters', function() {
                 switchable: true,
             },
             {
+                field: 'type',
+                title: '{% trans "Type" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value, row) {
+                    return row.type_text || row.type;
+                }
+            },
+            {
+                field: 'choices',
+                title: '{% trans "Choices" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
                 formatter: function(value, row, index, field) {
                     var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit icon-green'></span></button>";
                     var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
@@ -353,6 +368,8 @@ onPanelLoad('part-parameters', function() {
                 name: {},
                 units: {},
                 description: {},
+                type: {},
+                choices: {},
             },
             method: 'POST',
             title: '{% trans "Create Part Parameter Template" %}',
@@ -372,6 +389,7 @@ onPanelLoad('part-parameters', function() {
                     units: {},
                     description: {},
                     type: {},
+                    choices: {},
                 },
                 title: '{% trans "Edit Part Parameter Template" %}',
                 refreshTable: '#param-table',
