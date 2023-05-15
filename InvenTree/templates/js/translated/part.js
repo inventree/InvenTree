@@ -1288,6 +1288,15 @@ function loadPartParameterTable(table, options) {
                 }
             },
             {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value, row) {
+                    return row.template_detail.description;
+                }
+            },
+            {
                 field: 'data',
                 title: '{% trans "Value" %}',
                 switchable: false,
