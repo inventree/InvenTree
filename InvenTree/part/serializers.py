@@ -228,7 +228,7 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
             'description',
             'type',
             'type_text',
-            'choices',
+            'validator',
         ]
 
     type_text = serializers.CharField(source='get_type_display', read_only=True)
