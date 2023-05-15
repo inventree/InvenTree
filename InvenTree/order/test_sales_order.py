@@ -262,7 +262,7 @@ class SalesOrderTest(TestCase):
 
         # Shipment delivery date should be empty before setting date
         self.assertIsNone(self.shipment.delivery_date)
-        self.assertIsFalse(self.shipment.is_delivered)
+        self.assertFalse(self.shipment.is_delivered())
 
     def test_overdue_notification(self):
         """Test overdue sales order notification"""
