@@ -304,63 +304,8 @@ onPanelLoad('category', function() {
 
 // Javascript for the Part parameters settings panel
 onPanelLoad('part-parameters', function() {
-    $("#param-table").inventreeTable({
-        url: "{% url 'api-part-parameter-template-list' %}",
-        queryParams: {
-            ordering: 'name',
-        },
-        formatNoMatches: function() { return '{% trans "No part parameter templates found" %}'; },
-        columns: [
-            {
-                field: 'pk',
-                title: '{% trans "ID" %}',
-                visible: false,
-                switchable: false,
-            },
-            {
-                field: 'name',
-                title: '{% trans "Name" %}',
-                sortable: true,
-            },
-            {
-                field: 'units',
-                title: '{% trans "Units" %}',
-                sortable: true,
-                switchable: true,
-            },
-            {
-                field: 'description',
-                title: '{% trans "Description" %}',
-                sortable: false,
-                switchable: true,
-            },
-            {
-                field: 'type',
-                title: '{% trans "Type" %}',
-                sortable: true,
-                switchable: true,
-                formatter: function(value, row) {
-                    return row.type_text || row.type;
-                }
-            },
-            {
-                field: 'choices',
-                title: '{% trans "Choices" %}',
-                sortable: false,
-                switchable: true,
-            },
-            {
-                formatter: function(value, row, index, field) {
-                    var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit icon-green'></span></button>";
-                    var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
-                    var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
-
-                    return html;
-                }
-            }
-        ]
-    });
+    loadPartParameterTemplateTable("#param-table", {});
 
     $("#new-param").click(function() {
         constructForm('{% url "api-part-parameter-template-list" %}', {
@@ -369,52 +314,12 @@ onPanelLoad('part-parameters', function() {
                 units: {},
                 description: {},
                 type: {},
-                choices: {},
+                validator: {},
             },
             method: 'POST',
             title: '{% trans "Create Part Parameter Template" %}',
             refreshTable: '#param-table',
         });
-    });
-
-    $("#param-table").on('click', '.template-edit', function() {
-        var button = $(this);
-        var pk = button.attr('pk');
-
-        constructForm(
-            `/api/part/parameter/template/${pk}/`,
-            {
-                fields: {
-                    name: {},
-                    units: {},
-                    description: {},
-                    type: {},
-                    choices: {},
-                },
-                title: '{% trans "Edit Part Parameter Template" %}',
-                refreshTable: '#param-table',
-            }
-        );
-    });
-
-    $("#param-table").on('click', '.template-delete', function() {
-        var button = $(this);
-        var pk = button.attr('pk');
-
-        var html = `
-        <div class='alert alert-block alert-danger'>
-            {% trans "Any parameters which reference this template will also be deleted" %}
-        </div>`;
-
-        constructForm(
-            `/api/part/parameter/template/${pk}/`,
-            {
-                method: 'DELETE',
-                preFormContent: html,
-                title: '{% trans "Delete Part Parameter Template" %}',
-                refreshTable: '#param-table',
-            }
-        );
     });
 });
 

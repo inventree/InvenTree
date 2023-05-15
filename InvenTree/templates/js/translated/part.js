@@ -31,6 +31,7 @@
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
+    loadPartParameterTemplateTable,
     loadPartPurchaseOrderTable,
     loadPartTable,
     loadPartTestTemplateTable,
@@ -1341,6 +1342,124 @@ function loadPartParameterTable(table, options) {
                 });
             });
         }
+    });
+}
+
+
+/*
+ * Construct a table showing a list of part parameter templates
+ */
+function loadPartParameterTemplateTable(table, options={}) {
+
+    let params = options.params || {};
+
+    params.ordering = 'name';
+
+    let filters = loadTableFilters('part-parameter-templates', params);
+
+    let filterTarget = options.filterTarget || '#filter-list-parameter-templates';
+
+    setupFilterList('part-parameter-templates', $(table), filterTarget);
+
+    $(table).inventreeTable({
+        url: '{% url "api-part-parameter-template-list" %}',
+        original: params,
+        queryParams: filters,
+        name: 'part-parameter-templates',
+        formatNoMatches: function() {
+            return '{% trans "No part parameter templates found" %}';
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: '{% trans "ID" %}',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                sortable: true,
+            },
+            {
+                field: 'units',
+                title: '{% trans "Units" %}',
+                sortable: true,
+                switchable: true,
+            },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                field: 'type',
+                title: '{% trans "Type" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value, row) {
+                    return row.type_text || row.type;
+                }
+            },
+            {
+                field: 'validator',
+                title: '{% trans "Validator" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                formatter: function(value, row, index, field) {
+
+                    let buttons = '';
+
+                    buttons += makeEditButton('template-edit', row.pk, '{% trans "Edit Template" %}');
+                    buttons += makeDeleteButton('template-delete', row.pk, '{% trans "Delete Template" %}');
+
+                    return wrapButtons(buttons);
+                }
+            }
+        ]
+    });
+
+    $(table).on('click', '.template-edit', function() {
+        var button = $(this);
+        var pk = button.attr('pk');
+
+        constructForm(
+            `/api/part/parameter/template/${pk}/`,
+            {
+                fields: {
+                    name: {},
+                    units: {},
+                    description: {},
+                    type: {},
+                    validator: {},
+                },
+                title: '{% trans "Edit Part Parameter Template" %}',
+                refreshTable: table,
+            }
+        );
+    });
+
+    $(table).on('click', '.template-delete', function() {
+        var button = $(this);
+        var pk = button.attr('pk');
+
+        var html = `
+        <div class='alert alert-block alert-danger'>
+            {% trans "Any parameters which reference this template will also be deleted" %}
+        </div>`;
+
+        constructForm(
+            `/api/part/parameter/template/${pk}/`,
+            {
+                method: 'DELETE',
+                preFormContent: html,
+                title: '{% trans "Delete Part Parameter Template" %}',
+                refreshTable: table,
+            }
+        );
     });
 }
 
