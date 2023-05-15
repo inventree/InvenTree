@@ -3445,14 +3445,19 @@ class PartParameter(models.Model):
             units=str(self.template.units)
         )
 
-    def clean(self):
-        """Validate the PartParameter before saving to the database."""
-
-        super().clean()
+    def save(self, *args, **kwargs):
+        """Custom save function for the PartParameter model."""
 
         # A 'boolean' type simply gets cast to a common boolean value
         if self.template.param_type == PartParameterTypeCode.BOOLEAN:
             self.data = str(helpers.str2bool(self.data))
+
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Validate the PartParameter before saving to the database."""
+
+        super().clean()
 
         # Validate the parameter data against the template type
         self.template.validate_parameter(str(self.data).strip())
