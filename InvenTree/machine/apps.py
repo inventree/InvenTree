@@ -2,8 +2,7 @@ import logging
 
 from django.apps import AppConfig
 
-from InvenTree.ready import canAppAccessDatabase
-from plugin import registry as plg_registry
+from InvenTree.ready import canAppAccessDatabase, isPluginRegistryLoaded
 
 logger = logging.getLogger('inventree')
 
@@ -13,7 +12,7 @@ class MachineConfig(AppConfig):
 
     def ready(self) -> None:
         """Initialization method for the Machine app."""
-        if not canAppAccessDatabase(allow_test=True) or plg_registry.is_loading:
+        if not canAppAccessDatabase(allow_test=True) or not isPluginRegistryLoaded():
             logger.info("Skipping machine loading sequence")
             return
 
