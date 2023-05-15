@@ -55,7 +55,6 @@ function renderStatusLabel(key, codes, options={}) {
     return `<span class='${classes}'>${text}</span>`;
 }
 
-
 {% include "status_codes.html" with label='stock' data=StockStatus.list %}
 {% include "status_codes.html" with label='stockHistory' data=StockHistoryCode.list %}
 {% include "status_codes.html" with label='build' data=BuildStatus.list %}
@@ -63,3 +62,4 @@ function renderStatusLabel(key, codes, options={}) {
 {% include "status_codes.html" with label='salesOrder' data=SalesOrderStatus.list %}
 {% include "status_codes.html" with label='returnOrder' data=ReturnOrderStatus.list %}
 {% include "status_codes.html" with label='returnOrderLineItem' data=ReturnOrderLineStatus.list %}
+{% include "status_codes.html" with label='partParameterTypeCode' data=PartParameterTypeCode.list %}

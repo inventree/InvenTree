@@ -700,6 +700,16 @@ function getCompanyFilters() {
 }
 
 
+// Return a dictionary of filters for the "part parameter template" table
+function getPartParameterTemplateFilters() {
+    return {
+        type: {
+            title: '{% trans "Type" %}',
+            options: partParameterTypeCodeCodes,
+        }
+    };
+}
+
 
 // Return a dictionary of filters for a given table, based on the name of the table
 function getAvailableTableFilters(tableKey) {
@@ -723,6 +733,8 @@ function getAvailableTableFilters(tableKey) {
         return getBuildItemTableFilters();
     case 'location':
         return getStockLocationFilters();
+    case 'part-parameter-templates':
+        return getPartParameterTemplateFilters();
     case 'parts':
         return getPartTableFilters();
     case 'parttests':

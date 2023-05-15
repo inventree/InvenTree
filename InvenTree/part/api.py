@@ -1338,6 +1338,13 @@ class PartParameterTemplateList(ListCreateAPI):
 
     search_fields = [
         'name',
+        'description',
+    ]
+
+    ordering_fields = [
+        'name',
+        'units',
+        'type',
     ]
 
     def filter_queryset(self, queryset):
