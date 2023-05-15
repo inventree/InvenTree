@@ -1389,7 +1389,7 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
                 notes=notes,
                 deltas={
                     'buildorder': self.build.pk,
-                    'quantity': item.quantity,
+                    'quantity': float(item.quantity),
                 }
             )
 
