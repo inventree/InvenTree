@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('build', '0042_alter_build_notes'),
-        ('stock', '0099_alter_stockitem_status'),
+        ('stock', '0100_auto_20230515_0004'),
     ]
 
     operations = [
