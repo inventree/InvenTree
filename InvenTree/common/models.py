@@ -381,6 +381,12 @@ class BaseInvenTreeSetting(models.Model):
             filters['plugin'] = plugin
             kwargs['plugin'] = plugin
 
+        # Filter by machine
+        machine = kwargs.get('machine', None)
+
+        if machine is not None:
+            filters['machine'] = machine
+
         # Filter by method
         method = kwargs.get('method', None)
 
@@ -497,6 +503,7 @@ class BaseInvenTreeSetting(models.Model):
 
         user = kwargs.get('user', None)
         plugin = kwargs.get('plugin', None)
+        machine = kwargs.get('machine', None)
 
         if user is not None:
             filters['user'] = user
@@ -508,6 +515,9 @@ class BaseInvenTreeSetting(models.Model):
                 filters['plugin'] = plugin.plugin_config()
             else:
                 filters['plugin'] = plugin
+
+        if machine is not None:
+            filters['machine'] = machine
 
         try:
             setting = cls.objects.get(**filters)
@@ -629,12 +639,16 @@ class BaseInvenTreeSetting(models.Model):
 
         user = getattr(self, 'user', None)
         plugin = getattr(self, 'plugin', None)
+        machine = getattr(self, 'machine', None)
 
         if user is not None:
             filters['user'] = user
 
         if plugin is not None:
             filters['plugin'] = plugin
+
+        if machine is not None:
+            filters['machine'] = machine
 
         try:
             # Check if a duplicate setting already exists
