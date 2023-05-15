@@ -424,6 +424,7 @@ class BuildTest(BuildTestBase):
                 extra_2_2: 4,       # 35
             }
         )
+
         self.assertTrue(self.build.has_overallocated_parts(None))
 
         self.build.trim_allocated_stock()
@@ -433,14 +434,29 @@ class BuildTest(BuildTestBase):
         self.build.complete_build_output(self.output_2, None)
         self.assertTrue(self.build.can_complete)
 
+        n = StockItem.objects.filter(consumed_by=self.build).count()
+
         self.build.complete_build(None)
 
         self.assertEqual(self.build.status, status.BuildStatus.COMPLETE)
 
         # Check stock items are in expected state.
         self.assertEqual(StockItem.objects.get(pk=self.stock_1_2.pk).quantity, 53)
-        self.assertEqual(StockItem.objects.filter(part=self.sub_part_2).aggregate(Sum('quantity'))['quantity__sum'], 5)
+
+        # Total stock quantity has not been decreased
+        items = StockItem.objects.filter(part=self.sub_part_2)
+        self.assertEqual(items.aggregate(Sum('quantity'))['quantity__sum'], 35)
+
+        # However, the "available" stock quantity has been decreased
+        self.assertEqual(items.filter(consumed_by=None).aggregate(Sum('quantity'))['quantity__sum'], 5)
+
+        # And the "consumed_by" quantity has been increased
+        self.assertEqual(items.filter(consumed_by=self.build).aggregate(Sum('quantity'))['quantity__sum'], 30)
+
         self.assertEqual(StockItem.objects.get(pk=self.stock_3_1.pk).quantity, 980)
+
+        # Check that the "consumed_by" item count has increased
+        self.assertEqual(StockItem.objects.filter(consumed_by=self.build).count(), n + 8)
 
     def test_cancel(self):
         """Test cancellation of the build"""
@@ -510,15 +526,12 @@ class BuildTest(BuildTestBase):
         self.assertEqual(BuildItem.objects.count(), 0)
 
         # New stock items should have been created!
-        self.assertEqual(StockItem.objects.count(), 10)
+        self.assertEqual(StockItem.objects.count(), 13)
 
-        # This stock item has been depleted!
-        with self.assertRaises(StockItem.DoesNotExist):
-            StockItem.objects.get(pk=self.stock_1_1.pk)
-
-        # This stock item has also been depleted
-        with self.assertRaises(StockItem.DoesNotExist):
-            StockItem.objects.get(pk=self.stock_2_1.pk)
+        # This stock item has been marked as "consumed"
+        item = StockItem.objects.get(pk=self.stock_1_1.pk)
+        self.assertIsNotNone(item.consumed_by)
+        self.assertFalse(item.in_stock)
 
         # And 10 new stock items created for the build output
         outputs = StockItem.objects.filter(build=self.build)

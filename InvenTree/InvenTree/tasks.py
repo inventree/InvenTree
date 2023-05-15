@@ -563,6 +563,16 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
     if type(recipients) == str:
         recipients = [recipients]
 
+    import InvenTree.ready
+
+    if InvenTree.ready.isImportingData():
+        # If we are importing data, don't send emails
+        return
+
+    if InvenTree.ready.isInTestMode():
+        # If we are running in test mode, don't send emails
+        return
+
     offload_task(
         django_mail.send_mail,
         subject,
