@@ -569,10 +569,6 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         # If we are importing data, don't send emails
         return
 
-    if InvenTree.ready.isInTestMode():
-        # If we are running in test mode, don't send emails
-        return
-
     offload_task(
         django_mail.send_mail,
         subject,
