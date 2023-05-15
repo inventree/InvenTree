@@ -1176,7 +1176,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         return self.installed_parts.count()
 
     @transaction.atomic
-    def installStockItem(self, other_item, quantity, user, notes):
+    def installStockItem(self, other_item, quantity, user, notes, build=None):
         """Install another stock item into this stock item.
 
         Args:
@@ -1184,6 +1184,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             quantity: The quantity of stock to install
             user: The user performing the operation
             notes: Any notes associated with the operation
+            build: The BuildOrder to associate with the operation (optional)
         """
         # If the quantity is less than the stock item, split the stock!
         stock_item = other_item.splitStock(quantity, None, user)
@@ -1193,16 +1194,21 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         # Assign the other stock item into this one
         stock_item.belongs_to = self
-        stock_item.save()
+        stock_item.save(add_note=False)
+
+        deltas = {
+            'stockitem': self.pk,
+        }
+
+        if build is not None:
+            deltas['buildorder'] = build.pk
 
         # Add a transaction note to the other item
         stock_item.add_tracking_entry(
             StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
             user,
             notes=notes,
-            deltas={
-                'stockitem': self.pk,
-            }
+            deltas=deltas,
         )
 
         # Add a transaction note to this item (the assembly)
