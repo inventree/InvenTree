@@ -1359,7 +1359,7 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
                 self.quantity,
                 None,
                 user,
-                code=StockHistoryCode.BUILD_CONSUMED,
+                notes=notes,
             )
 
         # For a trackable part, special consideration needed!

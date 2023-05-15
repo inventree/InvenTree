@@ -1589,7 +1589,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             The new item will have a different StockItem ID, while this will remain the same.
         """
         notes = kwargs.get('notes', '')
-        code = kwargs.get('code', StockHistoryCode.SPLIT_FROM_PARENT)
 
         # Do not split a serialized part
         if self.serialized:
@@ -1621,30 +1620,31 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         else:
             new_stock.location = self.location
 
-        new_stock.save()
+        new_stock.save(add_note=False)
 
-        # Copy the transaction history of this part into the new one
-        new_stock.copyHistoryFrom(self)
+        # Add a stock tracking entry for the newly created item
+        new_stock.add_tracking_entry(
+            StockHistoryCode.SPLIT_FROM_PARENT,
+            user,
+            quantity=quantity,
+            notes=notes,
+            location=location,
+            deltas={
+                'stockitem': self.pk,
+            }
+        )
 
         # Copy the test results of this part to the new one
         new_stock.copyTestResultsFrom(self)
-
-        # Add a new tracking item for the new stock item
-        new_stock.add_tracking_entry(
-            code,
-            user,
-            notes=notes,
-            deltas={
-                'stockitem': self.pk,
-            },
-            location=location,
-        )
 
         # Remove the specified quantity from THIS stock item
         self.take_stock(
             quantity,
             user,
-            notes=notes
+            code=StockHistoryCode.SPLIT_CHILD_ITEM,
+            notes=notes,
+            location=location,
+            stockitem=new_stock,
         )
 
         # Return a copy of the "new" stock item
@@ -1813,7 +1813,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         return True
 
     @transaction.atomic
-    def take_stock(self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE):
+    def take_stock(self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE, **kwargs):
         """Remove items from stock."""
         # Cannot remove items from a serialized part
         if self.serialized:
@@ -1829,14 +1829,22 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         if self.updateQuantity(self.quantity - quantity):
 
+            deltas = {
+                'removed': float(quantity),
+                'quantity': float(self.quantity),
+            }
+
+            if location := kwargs.get('location', None):
+                deltas['location'] = location.pk
+
+            if stockitem := kwargs.get('stockitem', None):
+                deltas['stockitem'] = stockitem.pk
+
             self.add_tracking_entry(
                 code,
                 user,
                 notes=notes,
-                deltas={
-                    'removed': float(quantity),
-                    'quantity': float(self.quantity),
-                }
+                deltas=deltas,
             )
 
         return True
