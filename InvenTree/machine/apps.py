@@ -13,7 +13,7 @@ class MachineConfig(AppConfig):
     def ready(self) -> None:
         """Initialization method for the Machine app."""
         if not canAppAccessDatabase(allow_test=True) or not isPluginRegistryLoaded():
-            logger.info("Skipping machine loading sequence")
+            logger.debug("Machine app: Skipping machine loading sequence")
             return
 
         from machine.registry import registry

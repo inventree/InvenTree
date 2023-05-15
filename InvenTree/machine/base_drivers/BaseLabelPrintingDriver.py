@@ -18,6 +18,6 @@ class BaseLabelPrintingDriver(BaseDriver):
 class LabelPrintingMachineType(BaseMachineType):
     SLUG = "label_printer"
     NAME = _("Label Printer")
-    DESCRIPTION = _("Label printer used to print labels")
+    DESCRIPTION = _("Device used to print labels")
 
     base_driver = BaseLabelPrintingDriver

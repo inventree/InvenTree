@@ -35,23 +35,33 @@ class MachinesRegistry:
     def discover_machine_types(self):
         logger.debug("Collecting machine types")
 
-        machine_types: List[BaseMachineType] = InvenTree.helpers.inheritors(BaseMachineType)
-        for machine_type in machine_types:
-            self.machine_types[machine_type.SLUG] = machine_type
-            self.base_drivers.append(machine_type.base_driver)
+        machine_types: Dict[str, BaseMachineType] = {}
+        base_drivers: List[BaseDriver] = []
+
+        discovered_machine_types: List[BaseMachineType] = InvenTree.helpers.inheritors(BaseMachineType)
+        for machine_type in discovered_machine_types:
+            machine_types[machine_type.SLUG] = machine_type
+            base_drivers.append(machine_type.base_driver)
+
+        self.machine_types = machine_types
+        self.base_drivers = base_drivers
 
         logger.debug(f"Found {len(self.machine_types.keys())} machine types")
 
     def discover_drivers(self):
         logger.debug("Collecting machine drivers")
 
-        drivers: List[BaseDriver] = InvenTree.helpers.inheritors(BaseDriver)
-        for driver in drivers:
+        drivers: Dict[str, BaseDriver] = {}
+
+        discovered_drivers: List[BaseDriver] = InvenTree.helpers.inheritors(BaseDriver)
+        for driver in discovered_drivers:
             # skip discovered drivers that define a base driver for a machine type
             if driver in self.base_drivers:
                 continue
 
-            self.drivers[driver.SLUG] = driver
+            drivers[driver.SLUG] = driver
+
+        self.drivers = drivers
 
         logger.debug(f"Found {len(self.drivers.keys())} machine drivers")
 
