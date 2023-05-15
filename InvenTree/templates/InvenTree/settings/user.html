@@ -113,10 +113,7 @@
     {% endif %}
 </div>
 
-{% sso_login_enabled as sso_enabled %}
-{% if sso_enabled %}
 {% include "InvenTree/settings/user_sso.html" %}
-{% endif %}
 
 <div class="row">
     <div class='panel-heading'>
