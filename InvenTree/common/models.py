@@ -1875,6 +1875,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'HOMEPAGE_SO_SHIPMENTS_PENDING': {
+            'name': _('Show pending SO shipments'),
+            'description': _('Show pending SO shipments on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+
         'HOMEPAGE_NEWS': {
             'name': _('Show News'),
             'description': _('Show news on the homepage'),

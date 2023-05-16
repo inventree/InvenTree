@@ -31,6 +31,7 @@ function extraLineFields(options={}) {
         },
         quantity: {},
         reference: {},
+        description: {},
         price: {
             icon: 'fa-dollar-sign',
         },
@@ -271,6 +272,12 @@ function loadExtraLineTable(options={}) {
                 field: 'reference',
                 title: '{% trans "Reference" %}',
                 switchable: false,
+            },
+            {
+                sortable: false,
+                switchable: true,
+                field: 'description',
+                title: '{% trans "Description" %}',
             },
             {
                 sortable: true,

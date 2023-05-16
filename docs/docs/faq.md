@@ -91,3 +91,17 @@ invoke worker
 ### File Sync Issues - Docker
 
 When installing under [Docker](./start/docker.md), sometimes issues may arise keeping [persistent data](./start/docker.md#persistent-data) in sync. Refer to the [common issues](./start/docker_prod.md#common-issues) section in the docker setup guide for further details.
+
+### Permission denied for mkdir: /home/inventree
+
+If you see an error message like this:
+
+```
+Permission denied for mkdir: /home/inventree/data/static
+```
+
+It means that the user running the InvenTree server does not have permission to create the required directories.
+
+Ensure that the user running the InvenTree server has permission to create the required directories. For example, if running the server as the `inventree` user, ensure that the `inventree` user has permission to create the required directories.
+
+If you are using Docker to run the InvenTree server, ensure that the user that runs the docker deamon has permission to create the required directories in the volume.

@@ -66,8 +66,7 @@ The following parameters are available for each Build Order, and can be edited b
 
 A *Build Output* creates a new stock instance of the assembly part, of a specified quantity. Each *Build Order* requires at least one build output. Multiple build outputs can be specified if the build is completed in batches.
 
-!!! info "Example - Build Outputs"
-	For example, let's say we wish to create 10 new "Widgets". We create a new build for the widget, which signals an *intent* to assemble the "Widget" in quantity 10. We can produce 5 widgets in a single day, and so we create 2 build outputs, each of quantity 5.
+Read more about build outputs [here](./output.md).
 
 ### Build Status
 
@@ -125,7 +124,7 @@ The allocation table (as shown above) shows the stock allocation progress for th
 
 ### Build Outputs
 
-The *Build Outputs* tab shows the outputs (created stock items) associated with this build.
+The *Build Outputs* tab shows the [build outputs](./output.md) (created stock items) associated with this build.
 
 As shown below, there are separate panels for *incomplete* and *completed* build outputs.
 

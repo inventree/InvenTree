@@ -311,7 +311,7 @@ class ManufacturerPart(MetadataMixin, models.Model):
         help_text=_('Manufacturer part description')
     )
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     @classmethod
     def create(cls, part, manufacturer, mpn, description, link=None):
@@ -448,7 +448,8 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         db_table = 'part_supplierpart'
 
     objects = SupplierPartManager()
-    tags = TaggableManager()
+
+    tags = TaggableManager(blank=True)
 
     @staticmethod
     def get_api_url():

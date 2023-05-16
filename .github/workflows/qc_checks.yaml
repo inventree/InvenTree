@@ -37,6 +37,8 @@ jobs:
         filters: |
           server:
             - 'InvenTree/**'
+            - 'requirements.txt'
+            - 'requirements-dev.txt'
 
   pep_style:
     name: Style [Python]

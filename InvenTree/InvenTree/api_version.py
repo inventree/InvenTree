@@ -2,10 +2,16 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 111
+INVENTREE_API_VERSION = 113
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v113 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
+    - Adds API endpoints for scrapping a build output
+
+v112 -> 2023-05-13: https://github.com/inventree/InvenTree/pull/4741
+    - Adds flag use_pack_size to the stock addition API, which allows addings packs
 
 v111 -> 2023-05-02 : https://github.com/inventree/InvenTree/pull/4367
     - Adds tags to the Part serializer
@@ -13,6 +19,7 @@ v111 -> 2023-05-02 : https://github.com/inventree/InvenTree/pull/4367
     - Adds tags to the ManufacturerPart serializer
     - Adds tags to the StockItem serializer
     - Adds tags to the StockLocation serializer
+
 v110 -> 2023-04-26 : https://github.com/inventree/InvenTree/pull/4698
     - Adds 'order_currency' field for PurchaseOrder / SalesOrder endpoints
 

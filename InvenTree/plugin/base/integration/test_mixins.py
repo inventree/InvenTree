@@ -24,9 +24,9 @@ class BaseMixinDefinition:
     def test_mixin_name(self):
         """Test that the mixin registers itseld correctly."""
         # mixin name
-        self.assertIn(self.MIXIN_NAME, [item['key'] for item in self.mixin.registered_mixins])
+        self.assertIn(self.MIXIN_NAME, {item['key'] for item in self.mixin.registered_mixins.values()})
         # human name
-        self.assertIn(self.MIXIN_HUMAN_NAME, [item['human_name'] for item in self.mixin.registered_mixins])
+        self.assertIn(self.MIXIN_HUMAN_NAME, {item['human_name'] for item in self.mixin.registered_mixins.values()})
 
 
 class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
