@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-16 11:29+0000\n"
+"POT-Creation-Date: 2023-05-16 21:37+0000\n"
 "PO-Revision-Date: 2023-05-16 13:01\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -105,75 +105,75 @@ msgstr "所提供的主要电子邮件地址无效。"
 msgid "The provided email domain is not approved."
 msgstr "提供的电子邮件域未被核准。"
 
-#: InvenTree/helpers.py:195
+#: InvenTree/helpers.py:191
 msgid "Connection error"
 msgstr "连接错误"
 
-#: InvenTree/helpers.py:199 InvenTree/helpers.py:204
+#: InvenTree/helpers.py:195 InvenTree/helpers.py:200
 msgid "Server responded with invalid status code"
 msgstr "服务器响应状态码无效"
 
-#: InvenTree/helpers.py:201
+#: InvenTree/helpers.py:197
 msgid "Exception occurred"
 msgstr "发生异常"
 
-#: InvenTree/helpers.py:209
+#: InvenTree/helpers.py:205
 msgid "Server responded with invalid Content-Length value"
 msgstr "服务器响应的内容长度值无效"
 
-#: InvenTree/helpers.py:212
+#: InvenTree/helpers.py:208
 msgid "Image size is too large"
 msgstr "图片尺寸过大"
 
-#: InvenTree/helpers.py:224
+#: InvenTree/helpers.py:220
 msgid "Image download exceeded maximum size"
 msgstr "图像下载超过最大尺寸"
 
-#: InvenTree/helpers.py:229
+#: InvenTree/helpers.py:225
 msgid "Remote server returned empty response"
 msgstr "远程服务器返回了空响应"
 
-#: InvenTree/helpers.py:237
+#: InvenTree/helpers.py:233
 msgid "Supplied URL is not a valid image file"
 msgstr "提供的 URL 不是一个有效的图片文件"
 
-#: InvenTree/helpers.py:629 order/models.py:438 order/models.py:599
+#: InvenTree/helpers.py:625 order/models.py:438 order/models.py:599
 msgid "Invalid quantity provided"
 msgstr "提供的数量无效"
 
-#: InvenTree/helpers.py:637
+#: InvenTree/helpers.py:633
 msgid "Empty serial number string"
 msgstr "空序列号字符串"
 
-#: InvenTree/helpers.py:667
+#: InvenTree/helpers.py:663
 msgid "Duplicate serial"
 msgstr "重复的序列号"
 
-#: InvenTree/helpers.py:700 InvenTree/helpers.py:735
+#: InvenTree/helpers.py:696 InvenTree/helpers.py:731
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "无效的组范围: {g}"
 
-#: InvenTree/helpers.py:729
+#: InvenTree/helpers.py:725
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
 msgstr "组 {g} 超出了允许的数量 ({q})"
 
-#: InvenTree/helpers.py:753 InvenTree/helpers.py:760 InvenTree/helpers.py:775
+#: InvenTree/helpers.py:749 InvenTree/helpers.py:756 InvenTree/helpers.py:771
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "无效的组序列: {g}"
 
-#: InvenTree/helpers.py:785
+#: InvenTree/helpers.py:781
 msgid "No serial numbers found"
 msgstr "未找到序列号"
 
-#: InvenTree/helpers.py:788
+#: InvenTree/helpers.py:784
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
 
-#: InvenTree/helpers.py:987
+#: InvenTree/helpers.py:914
 msgid "Remove HTML tags from this value"
 msgstr "从这个值中删除 HTML 标签"
 
@@ -12381,7 +12381,8 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12560,4 +12561,3 @@ msgstr "编辑项目权限"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "删除项目权限"
-
