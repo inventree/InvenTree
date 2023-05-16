@@ -31,11 +31,10 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 
-from common.models import ProjectCode
-from plugin.events import trigger_event
-
+import common.models
 import common.notifications
 import part.models
+import plugin.events
 import stock.models
 import users.models
 
@@ -299,7 +298,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
     )
 
     project_code = models.ForeignKey(
-        ProjectCode,
+        common.models.ProjectCode,
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Project Code'),
@@ -522,7 +521,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         self.allocated_stock.all().delete()
 
         # Register an event
-        trigger_event('build.completed', id=self.pk)
+        plugin.events.trigger_event('build.completed', id=self.pk)
 
         # Notify users that this build has been completed
         targets = [
@@ -596,7 +595,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         self.status = BuildStatus.CANCELLED
         self.save()
 
-        trigger_event('build.cancelled', id=self.pk)
+        plugin.events.trigger_event('build.cancelled', id=self.pk)
 
     @transaction.atomic
     def unallocateStock(self, bom_item=None, output=None):
