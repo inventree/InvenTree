@@ -20,7 +20,8 @@ def convert_physical_value(value: str, unit: str = None):
         The converted quantity, in the specified units
     """
 
-    value = value.strip()
+    # Ensure that the value is a string
+    value = str(value).strip()
 
     # Ignore blank values
     if not value:
@@ -29,10 +30,17 @@ def convert_physical_value(value: str, unit: str = None):
     ureg = pint.UnitRegistry()
 
     try:
-        val = ureg(value)
+        # Convert to a quantity
+        val = ureg.Quantity(value)
 
         if unit:
-            val = val.to(unit)
+
+            if val.units == ureg.dimensionless:
+                # If the provided value is dimensionless, assume that the unit is correct
+                val = ureg.Quantity(value, unit)
+            else:
+                # Convert to the provided unit (may raise an exception)
+                val = val.to(unit)
 
     except pint.errors.UndefinedUnitError:
         raise ValidationError(_('Provided value has an invalid unit'))

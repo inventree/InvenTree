@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 
-from .models import (PartCategory, PartCategoryParameterTemplate,
+from .models import (Part, PartCategory, PartCategoryParameterTemplate,
                      PartParameter, PartParameterTemplate)
 
 
@@ -95,6 +95,13 @@ class TestCategoryTemplates(TransactionTestCase):
 class ParameterTests(TestCase):
     """Unit tests for parameter validation"""
 
+    fixtures = [
+        'location',
+        'category',
+        'part',
+        'params'
+    ]
+
     def test_unit_validation(self):
         """Test validation of 'units' field for PartParameterTemplate"""
 
@@ -108,6 +115,52 @@ class ParameterTests(TestCase):
             tmp = PartParameterTemplate(name='test', units=unit)
             with self.assertRaises(django_exceptions.ValidationError):
                 tmp.full_clean()
+
+    def test_param_validation(self):
+        """Test that parameters are correctly validated against template units"""
+
+        template = PartParameterTemplate.objects.create(
+            name='My Template',
+            units='m',
+        )
+
+        prt = Part.objects.get(pk=1)
+
+        # Test that valid parameters pass
+        for value in ['1', '1m', 'm', '-4m', -2, '2.032mm', '99km', '-12 mile', 'foot', '3 yards']:
+            param = PartParameter(part=prt, template=template, data=value)
+            param.full_clean()
+
+        # Test that invalid parameters fail
+        for value in ['3 Amps', '-3 zogs', '3.14F']:
+            param = PartParameter(part=prt, template=template, data=value)
+            with self.assertRaises(django_exceptions.ValidationError):
+                param.full_clean()
+
+    def test_param_conversion(self):
+        """Test that parameters are correctly converted to template units"""
+
+        template = PartParameterTemplate.objects.create(
+            name='My Template',
+            units='m',
+        )
+
+        tests = {
+            '1': 1.0,
+            '-1': -1.0,
+            '23m': 23.0,
+            '-89mm': -0.089,
+            '100 foot': 30.48,
+            '-17 yards': -15.54,
+        }
+
+        prt = Part.objects.get(pk=1)
+        param = PartParameter(part=prt, template=template, data='1')
+
+        for value, expected in tests.items():
+            param.data = value
+            param.calculate_numeric_value()
+            self.assertAlmostEqual(param.data_numeric, expected, places=2)
 
 
 class PartParameterTest(InvenTreeAPITestCase):
