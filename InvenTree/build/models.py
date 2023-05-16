@@ -31,7 +31,6 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 
-import common.models
 import common.notifications
 import part.models
 import plugin.events
@@ -298,7 +297,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
     )
 
     project_code = models.ForeignKey(
-        common.models.ProjectCode,
+        'common.ProjectCode',
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Project Code'),
