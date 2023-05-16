@@ -15,10 +15,10 @@ from rest_framework import status
 
 from common.settings import currency_codes
 from company.models import Company
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockStatus)
+from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from part.models import Part
 from stock.models import StockItem

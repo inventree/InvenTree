@@ -16,8 +16,8 @@ from rest_framework import status
 import company.models
 import part.models
 from common.models import InvenTreeSetting
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import StockStatus
+from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from stock.models import StockItem, StockItemTestResult, StockLocation
 
