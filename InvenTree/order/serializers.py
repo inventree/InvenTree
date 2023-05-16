@@ -988,6 +988,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
 
         fields = [
             'shipment_date',
+            'delivery_date',
             'tracking_number',
             'invoice_number',
             'link',
@@ -1034,6 +1035,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
             invoice_number=data.get('invoice_number', shipment.invoice_number),
             link=data.get('link', shipment.link),
             shipment_date=shipment_date,
+            delivery_date=data.get('delivery_date', shipment.delivery_date),
         )
 
 

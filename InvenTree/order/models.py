@@ -1512,6 +1512,12 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
         if link is not None:
             self.link = link
 
+        # Was a delivery date provided?
+        delivery_date = kwargs.get('delivery_date', None)
+
+        if delivery_date is not None:
+            self.delivery_date = delivery_date
+
         self.save()
 
         trigger_event('salesordershipment.completed', id=self.pk)
