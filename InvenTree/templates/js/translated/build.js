@@ -671,7 +671,11 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
         method: 'POST',
         preFormContent: html,
         fields: {
-            location: {},
+            location: {
+                filters: {
+                    structural: false,
+                }
+            },
             notes: {},
             discard_allocations: {},
         },

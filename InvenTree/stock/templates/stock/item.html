@@ -315,11 +315,9 @@
             ancestor: {{ item.id }},
         },
         name: 'item-childs',
-        groupByField: 'location',
         buttons: [
             '#stock-options',
         ],
-        url: "{% url 'api-stock-list' %}",
     });
     {% endif %}
 

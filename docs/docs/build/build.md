@@ -122,6 +122,13 @@ The allocation table (as shown above) shows the stock allocation progress for th
 !!! info "Completed Builds"
 	The *Allocate Stock* tab is not available if the build has been completed!
 
+### Consumed Stock
+
+The *Consumed Stock* tab displays all stock items which have been *consumed* by this build order. These stock items remain in the database after the build order has been completed, but are no longer available for use.
+
+- [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
+- [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
+
 ### Build Outputs
 
 The *Build Outputs* tab shows the [build outputs](./output.md) (created stock items) associated with this build.

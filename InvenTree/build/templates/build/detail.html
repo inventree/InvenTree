@@ -282,6 +282,18 @@
     </div>
 </div>
 
+<div class='panel panel-hidden' id='panel-consumed'>
+    <div class='panel-heading'>
+        <h4>
+            {% trans "Consumed Stock" %}
+        </h4>
+    </div>
+
+    <div class='panel-content'>
+        {% include "stock_table.html" with read_only=True prefix="consumed-" %}
+    </div>
+</div>
+
 <div class='panel panel-hidden' id='panel-completed'>
     <div class='panel-heading'>
         <h4>
@@ -329,6 +341,17 @@
 {% block js_ready %}
 {{ block.super }}
 
+onPanelLoad('consumed', function() {
+    loadStockTable($('#consumed-stock-table'), {
+        params: {
+            location_detail: true,
+            part_detail: true,
+            consumed_by: {{ build.pk }},
+            in_stock: false,
+        },
+    });
+});
+
 onPanelLoad('completed', function() {
     loadStockTable($("#build-stock-table"), {
         params: {
@@ -337,11 +360,9 @@ onPanelLoad('completed', function() {
             build: {{ build.id }},
             is_building: false,
         },
-        groupByField: 'location',
         buttons: [
             '#stock-options',
         ],
-        url: "{% url 'api-stock-list' %}",
     });
 });
 
