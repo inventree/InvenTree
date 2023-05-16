@@ -3387,7 +3387,12 @@ class PartParameter(models.Model):
 
         # Validate the parameter data against the template units
         if self.template.units:
-            ...
+            try:
+                validators.validate_physical_value(self.data, self.template.units)
+            except ValidationError as e:
+                raise ValidationError({
+                    'data': e.message
+                })
 
     part = models.ForeignKey(
         Part, on_delete=models.CASCADE, related_name='parameters',

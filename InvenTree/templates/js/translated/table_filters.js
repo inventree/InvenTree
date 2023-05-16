@@ -702,8 +702,7 @@ function getCompanyFilters() {
 
 // Return a dictionary of filters for the "part parameter template" table
 function getPartParameterTemplateFilters() {
-    return {
-    };
+    return {};
 }
 
 
