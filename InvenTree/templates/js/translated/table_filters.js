@@ -703,10 +703,6 @@ function getCompanyFilters() {
 // Return a dictionary of filters for the "part parameter template" table
 function getPartParameterTemplateFilters() {
     return {
-        param_type: {
-            title: '{% trans "Type" %}',
-            options: partParameterTypeCodeCodes,
-        }
     };
 }
 

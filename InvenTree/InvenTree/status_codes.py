@@ -445,23 +445,3 @@ class ReturnOrderLineStatus(StatusCode):
         REPLACE: 'warning',
         REJECT: 'danger',
     }
-
-
-class PartParameterTypeCode(StatusCode):
-    """Defines a set of codes for a PartParameterType"""
-
-    STRING = 10
-    INTEGER = 20
-    FLOAT = 30
-    BOOLEAN = 40
-    CHOICE = 50
-    REGEX = 60
-
-    options = {
-        STRING: _("String"),
-        INTEGER: _("Integer"),
-        FLOAT: _("Floating Point"),
-        BOOLEAN: _("Boolean"),
-        CHOICE: _("Choice"),
-        REGEX: _("Regular Expression"),
-    }

@@ -7,7 +7,6 @@
 
 /* exported
     buildStatusDisplay,
-    partParameterTypeCodeStatusDisplay
     purchaseOrderStatusDisplay,
     returnOrderStatusDisplay,
     returnOrderLineItemStatusDisplay,
@@ -63,4 +62,3 @@ function renderStatusLabel(key, codes, options={}) {
 {% include "status_codes.html" with label='salesOrder' data=SalesOrderStatus.list %}
 {% include "status_codes.html" with label='returnOrder' data=ReturnOrderStatus.list %}
 {% include "status_codes.html" with label='returnOrderLineItem' data=ReturnOrderLineStatus.list %}
-{% include "status_codes.html" with label='partParameterTypeCode' data=PartParameterTypeCode.list %}

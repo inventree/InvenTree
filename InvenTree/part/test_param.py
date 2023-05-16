@@ -5,9 +5,8 @@ from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import PartParameterTypeCode
 
-from .models import (Part, PartCategory, PartCategoryParameterTemplate,
+from .models import (PartCategory, PartCategoryParameterTemplate,
                      PartParameter, PartParameterTemplate)
 
 
@@ -93,90 +92,22 @@ class TestCategoryTemplates(TransactionTestCase):
         self.assertEqual(n, 3)
 
 
-class ParameterValidationTest(TestCase):
+class ParameterTests(TestCase):
     """Unit tests for parameter validation"""
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-        'params'
-    ]
+    def test_unit_validation(self):
+        """Test validation of 'units' field for PartParameterTemplate"""
 
-    def test_param_validation(self):
-        """Unit tests for parameter validation based on template type"""
+        # Test that valid units pass
+        for unit in ['', 'mm', 'A', 'm^2', 'Pa', 'V', 'C', 'F', 'uF', 'mF', 'millifarad']:
+            tmp = PartParameterTemplate(name='test', units=unit)
+            tmp.full_clean()
 
-        # Create some specific parameter templates
-        tmp_int = PartParameterTemplate.objects.create(
-            name='Test Integer',
-            description='An integer parameter template',
-            param_type=PartParameterTypeCode.INTEGER,
-        )
-
-        tmp_flt = PartParameterTemplate.objects.create(
-            name='Test Float',
-            description='A float parameter template',
-            param_type=PartParameterTypeCode.FLOAT,
-        )
-
-        tmp_reg = PartParameterTemplate.objects.create(
-            name='Test Regex',
-            description='A regex parameter template',
-            param_type=PartParameterTypeCode.REGEX,
-            validator='^num[0-9]+$',
-        )
-
-        tmp_opt = PartParameterTemplate.objects.create(
-            name='Test Options',
-            description='An options parameter template',
-            param_type=PartParameterTypeCode.CHOICE,
-            validator='red,green,blue',
-        )
-
-        # Construct a set of pass / fail values based on each template type
-        test_values = {
-            tmp_int: {
-                'pass': [-100, 2, 0, '23'],
-                'fail': ['a', 'b', '1.2'],
-            },
-            tmp_flt: {
-                'pass': [1, -2, 1.0, 2.0, '34'],
-                'fail': ['a', 'b', '-1.x', 'g.4'],
-            },
-            tmp_reg: {
-                'pass': ['num1', 'num2', 'num344'],
-                'fail': ['a', '1.0', 'num', 'nun1'],
-            },
-            tmp_opt: {
-                'pass': ['red', 'green', 'blue'],
-                'fail': ['a', 'b', 'c', 'd', 'e'],
-            }
-        }
-
-        prt = Part.objects.get(pk=3)
-
-        # Run the tests!
-        for template, data in test_values.items():
-            for value in data['pass']:
-
-                param = PartParameter(
-                    template=template,
-                    part=prt,
-                    data=value
-                )
-
-                param.clean()
-
-            for value in data['fail']:
-
-                param = PartParameter(
-                    template=template,
-                    part=prt,
-                    data=value
-                )
-
-                with self.assertRaises(django_exceptions.ValidationError):
-                    param.clean()
+        # Test that invalid units fail
+        for unit in ['mmmmm', '-', 'x']:
+            tmp = PartParameterTemplate(name='test', units=unit)
+            with self.assertRaises(django_exceptions.ValidationError):
+                tmp.full_clean()
 
 
 class PartParameterTest(InvenTreeAPITestCase):

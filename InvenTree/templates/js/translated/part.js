@@ -1403,21 +1403,6 @@ function loadPartParameterTemplateTable(table, options={}) {
                 switchable: true,
             },
             {
-                field: 'param_type',
-                title: '{% trans "Type" %}',
-                sortable: true,
-                switchable: true,
-                formatter: function(value, row) {
-                    return row.param_type_text || row.param_type;
-                }
-            },
-            {
-                field: 'validator',
-                title: '{% trans "Validator" %}',
-                sortable: false,
-                switchable: true,
-            },
-            {
                 formatter: function(value, row, index, field) {
 
                     let buttons = '';
@@ -1442,8 +1427,6 @@ function loadPartParameterTemplateTable(table, options={}) {
                     name: {},
                     units: {},
                     description: {},
-                    param_type: {},
-                    validator: {},
                 },
                 title: '{% trans "Edit Part Parameter Template" %}',
                 refreshTable: table,

@@ -3,10 +3,10 @@
 """Provides extra global data to all templates."""
 
 import InvenTree.status
-from InvenTree.status_codes import (BuildStatus, PartParameterTypeCode,
-                                    PurchaseOrderStatus, ReturnOrderLineStatus,
-                                    ReturnOrderStatus, SalesOrderStatus,
-                                    StockHistoryCode, StockStatus)
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+                                    ReturnOrderLineStatus, ReturnOrderStatus,
+                                    SalesOrderStatus, StockHistoryCode,
+                                    StockStatus)
 from users.models import RuleSet, check_user_role
 
 
@@ -66,7 +66,6 @@ def status_codes(request):
         'BuildStatus': BuildStatus,
         'StockStatus': StockStatus,
         'StockHistoryCode': StockHistoryCode,
-        'PartParameterTypeCode': PartParameterTypeCode,
     }
 
 

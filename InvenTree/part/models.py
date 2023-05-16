@@ -49,8 +49,8 @@ from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
                               InvenTreeBarcodeMixin, InvenTreeNotesMixin,
                               InvenTreeTree, MetadataMixin)
-from InvenTree.status_codes import (BuildStatus, PartParameterTypeCode,
-                                    PurchaseOrderStatus, SalesOrderStatus)
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+                                    SalesOrderStatus)
 from order import models as OrderModels
 from stock import models as StockModels
 
@@ -982,7 +982,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         max_length=20, default="",
         blank=True, null=True,
         verbose_name=_('Units'),
-        help_text=_('Units of measure for this part')
+        help_text=_('Units of measure for this part'),
     )
 
     assembly = models.BooleanField(
@@ -3335,7 +3335,14 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         unique=True
     )
 
-    units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
+    units = models.CharField(
+        max_length=25,
+        verbose_name=_('Units'), help_text=_('Physical units for this parameter'),
+        blank=True,
+        validators=[
+            validators.validate_physical_units,
+        ]
+    )
 
     description = models.CharField(
         max_length=250,
@@ -3343,78 +3350,6 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         help_text=_('Parameter description'),
         blank=True,
     )
-
-    param_type = models.PositiveIntegerField(
-        default=PartParameterTypeCode.STRING,
-        choices=PartParameterTypeCode.items(),
-        validators=[
-            MinValueValidator(1)
-        ],
-        verbose_name=_('Type'),
-        help_text=_('Parameter type'),
-    )
-
-    validator = models.CharField(
-        max_length=1000,
-        verbose_name=_('Validator'),
-        help_text=_('Comma-separated list of valid choices, or regular expression'),
-        blank=True,
-    )
-
-    def get_valid_choices(self) -> list:
-        """Return a list of choices for this template, based on the choices field"""
-
-        choices = []
-
-        for opt in self.validator.split(','):
-            opt = opt.strip()
-
-            if opt and opt not in choices:
-                choices.append(opt)
-
-        return choices
-
-    def validate_parameter(self, value):
-        """Validate a value against the parameter template
-
-        Args:
-            value: The value to validate
-
-        Raises:
-            ValidationError: If the value is invalid
-        """
-
-        if len(value) == 0:
-            raise ValidationError({'data': _('Parameter value required')})
-
-        # Check that the value is a valid integer
-        if self.param_type == PartParameterTypeCode.INTEGER:
-            try:
-                int(value)
-            except ValueError:
-                raise ValidationError({'data': _('Integer value required')})
-
-        # Check that the value is a valid float
-        elif self.param_type == PartParameterTypeCode.FLOAT:
-            try:
-                float(value)
-            except ValueError:
-                raise ValidationError({'data': _('Numerical value required')})
-
-        # Check that the value is a valid choice
-        elif self.param_type == PartParameterTypeCode.CHOICE:
-            choices = self.get_valid_choices()
-
-            if value not in choices:
-                raise ValidationError({'data': _('Invalid choice')})
-
-        # Check that the value is a valid regular expression
-        elif self.param_type == PartParameterTypeCode.REGEX:
-
-            if self.validator:
-                # Check that the value matches the regular expression
-                if not re.match(self.validator, value):
-                    raise ValidationError({'data': _('Must match pattern {pattern}').format(pattern=self.validator)})
 
 
 class PartParameter(models.Model):
@@ -3445,22 +3380,12 @@ class PartParameter(models.Model):
             units=str(self.template.units)
         )
 
-    def save(self, *args, **kwargs):
-        """Custom save function for the PartParameter model."""
-
-        # A 'boolean' type simply gets cast to a common boolean value
-        if self.template.param_type == PartParameterTypeCode.BOOLEAN:
-            self.data = str(helpers.str2bool(self.data))
-
-        super().save(*args, **kwargs)
-
     def clean(self):
         """Validate the PartParameter before saving to the database."""
 
         super().clean()
 
-        # Validate the parameter data against the template type
-        self.template.validate_parameter(str(self.data).strip())
+        # Validate the parameter data against the template units
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
 

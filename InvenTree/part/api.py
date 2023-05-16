@@ -1329,15 +1329,9 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         model = PartParameterTemplate
 
         # Simple filter fields
-        fields = []
-
-    # Filter based on 'type'
-    param_type = rest_filters.NumberFilter(label='Parameter Type', method='filter_type')
-
-    def filter_type(self, queryset, name, value):
-        """Filter by integer type code"""
-
-        return queryset.filter(param_type=value)
+        fields = [
+            'units',
+        ]
 
 
 class PartParameterTemplateList(ListCreateAPI):
@@ -1365,7 +1359,6 @@ class PartParameterTemplateList(ListCreateAPI):
     ordering_fields = [
         'name',
         'units',
-        'param_type',
     ]
 
     def filter_queryset(self, queryset):
