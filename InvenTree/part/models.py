@@ -12,7 +12,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
@@ -3386,12 +3386,30 @@ class PartParameter(models.Model):
         super().clean()
 
         # Validate the parameter data against the template units
+        if self.template.units:
+            ...
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
+    part = models.ForeignKey(
+        Part, on_delete=models.CASCADE, related_name='parameters',
+        verbose_name=_('Part'), help_text=_('Parent Part')
+    )
 
-    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', verbose_name=_('Template'), help_text=_('Parameter Template'))
+    template = models.ForeignKey(
+        PartParameterTemplate, on_delete=models.CASCADE, related_name='instances',
+        verbose_name=_('Template'), help_text=_('Parameter Template')
+    )
 
-    data = models.CharField(max_length=500, verbose_name=_('Data'), help_text=_('Parameter Value'))
+    data = models.CharField(
+        max_length=500,
+        verbose_name=_('Data'), help_text=_('Parameter Value'),
+        validators=[
+            MinLengthValidator(1),
+        ]
+    )
+
+    data_numeric = models.FloatField(
+        default=0.0,
+    )
 
     @classmethod
     def create(cls, part, template, data, save=False):
