@@ -1109,6 +1109,12 @@ class OrderExtraLine(OrderLineItem):
         """Metaclass options. Abstract ensures no database table is created."""
         abstract = True
 
+    description = models.CharField(
+        max_length=250, blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Line item description (optional)')
+    )
+
     context = models.JSONField(
         blank=True, null=True,
         verbose_name=_('Context'),

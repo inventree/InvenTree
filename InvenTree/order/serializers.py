@@ -147,6 +147,7 @@ class AbstractExtraLineMeta:
 
     fields = [
         'pk',
+        'description',
         'quantity',
         'reference',
         'notes',

@@ -261,6 +261,11 @@
                                 <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
                             </a></li>
                             {% endif %}
+                            {% if roles.build.change %}
+                            <li><a class='dropdown-item' href='#' id='multi-output-scrap' title='{% trans "Scrap selected build outputs" %}'>
+                                <span class='fas fa-times-circle icon-red'></span> {% trans "Scrap outputs" %}
+                            </a></li>
+                            {% endif %}
                             {% if roles.build.delete %}
                             <li><a class='dropdown-item' href='#' id='multi-output-delete' title='{% trans "Delete selected build outputs" %}'>
                                 <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete outputs" %}

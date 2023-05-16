@@ -164,7 +164,7 @@ class PluginsRegistry:
         if not _maintenance:
             set_maintenance_mode(False)
 
-        logger.info('Finished loading plugins')
+        logger.debug('Finished loading plugins')
 
     def unload_plugins(self, force_reload: bool = False):
         """Unload and deactivate all IntegrationPlugins.
@@ -335,15 +335,13 @@ class PluginsRegistry:
             return True
 
         try:
-            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=settings.BASE_DIR.parent), 'utf-8')
+            subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=settings.BASE_DIR.parent)
         except subprocess.CalledProcessError as error:  # pragma: no cover
             logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
             return False
         except FileNotFoundError:  # pragma: no cover
             # System most likely does not have 'git' installed
             return False
-
-        logger.info(f'plugin requirements were run\n{output}')
 
         # do not run again
         settings.PLUGIN_FILE_CHECKED = True
@@ -503,7 +501,7 @@ class PluginsRegistry:
             if hasattr(mixin, '_activate_mixin'):
                 mixin._activate_mixin(self, plugins, force_reload=force_reload, full_reload=full_reload)
 
-        logger.info('Done activating')
+        logger.debug('Done activating')
 
     def _deactivate_plugins(self, force_reload: bool = False):
         """Run deactivation functions for all plugins.

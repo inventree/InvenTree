@@ -99,7 +99,9 @@ nav:
     - Test Results: stock/test.md
   - Build:
     - Build Orders: build/build.md
+    - Build Outputs: build/output.md
     - Allocating Stock: build/allocate.md
+    - Example Build Order: build/example.md
     - Bill of Materials: build/bom.md
     - Importing BOM Data: build/bom_import.md
     - Exporting BOM Data: build/bom_export.md
