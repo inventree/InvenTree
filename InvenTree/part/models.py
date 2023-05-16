@@ -35,6 +35,7 @@ from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
+import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
@@ -3380,6 +3381,14 @@ class PartParameter(models.Model):
             units=str(self.template.units)
         )
 
+    def save(self, *args, **kwargs):
+        """Custom save method for the PartParameter model."""
+
+        # Validate the PartParameter before saving
+        self.calculate_numeric_value()
+
+        super().save(*args, **kwargs)
+
     def clean(self):
         """Validate the PartParameter before saving to the database."""
 
@@ -3388,11 +3397,36 @@ class PartParameter(models.Model):
         # Validate the parameter data against the template units
         if self.template.units:
             try:
-                validators.validate_physical_value(self.data, self.template.units)
+                InvenTree.conversion.convert_physical_value(self.data, self.template.units)
             except ValidationError as e:
                 raise ValidationError({
                     'data': e.message
                 })
+
+        # TODO: Should we convert the data to the correct unit?
+        # e.g. if the template is in mm, and the user enters "1 inch", should we convert to "25.4" and strip the units?
+
+    def calculate_numeric_value(self):
+        """Calculate a numeric value for the parameter data.
+
+        - If a 'units' field is provided, then the data will be converted to the base SI unit.
+        - Otherwise, we'll try to do a simple float cast
+        """
+
+        if self.template.units:
+            try:
+                converted = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
+                self.data_numeric = float(converted.magnitude)
+
+            except ValidationError:
+                self.data_numeric = 0.0
+
+        # No units provided, so try to cast to a float
+        else:
+            try:
+                self.data_numeric = float(self.data)
+            except ValueError:
+                self.data_numeric = 0.0
 
     part = models.ForeignKey(
         Part, on_delete=models.CASCADE, related_name='parameters',

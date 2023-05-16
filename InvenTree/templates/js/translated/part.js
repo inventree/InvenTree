@@ -1301,6 +1301,13 @@ function loadPartParameterTable(table, options) {
                 title: '{% trans "Value" %}',
                 switchable: false,
                 sortable: true,
+                formatter: function(value, row) {
+                    if (row.data_numeric && row.template_detail.units) {
+                        return `<span title='${row.data_numeric} ${row.template_detail.units}'>${row.data}</span>`;
+                    } else {
+                        return row.data;
+                    }
+                }
             },
             {
                 field: 'units',

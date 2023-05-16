@@ -30,43 +30,6 @@ def validate_physical_units(unit):
         raise ValidationError(_('Invalid physical unit'))
 
 
-def validate_physical_value(value: str, unit: str = None) -> None:
-    """Validate that the provided value is a valid physical quantity.
-
-    Arguments:
-        value: Value to validate (str)
-        unit: Optional unit to validate against
-
-    Raises:
-        ValidationError: If the value is invalid
-    """
-
-    value = value.strip()
-
-    # Ignore blank values
-    if not value:
-        return
-
-    ureg = pint.UnitRegistry()
-
-    try:
-        val = ureg(value)
-
-        if unit:
-            val.to(unit)
-
-    except pint.errors.UndefinedUnitError:
-        raise ValidationError(_('Provided value has an invalid unit'))
-
-    except pint.errors.DimensionalityError:
-        msg = _('Provided value could not be converted to the specified unit')
-
-        if unit:
-            msg += f' ({unit})'
-
-        raise ValidationError(msg)
-
-
 def validate_currency_code(code):
     """Check that a given code is a valid currency code."""
     if code not in CURRENCIES:
