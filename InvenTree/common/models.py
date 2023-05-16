@@ -16,6 +16,7 @@ import uuid
 from datetime import datetime, timedelta
 from enum import Enum
 from secrets import compare_digest
+from typing import Any, Callable, Dict, List, Tuple, TypedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -112,10 +113,36 @@ class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
     )
 
 
+class SettingsKeyType(TypedDict, total=False):
+    """Type definitions for a SettingsKeyType
+
+    Attributes:
+        name: Translatable string name of the setting (required)
+        description: Translatable string description of the setting (required)
+        units: Units of the particular setting (optional)
+        validator: Validation function/list of functions for the setting (optional, default: None, e.g: bool, int, str, MinValueValidator, ...)
+        default: Default value or function that returns default value (optional)
+        choices: (Function that returns) Tuple[str: key, str: display value] (optional)
+        hidden: Hide this setting from settings page (optional)
+        before_save: Function that gets called after save with *args, **kwargs (optional)
+        after_save: Function that gets called after save with *args, **kwargs (optional)
+    """
+
+    name: str
+    description: str
+    units: str
+    validator: Callable | List[Callable] | Tuple[Callable]
+    default: Callable | Any
+    choices: Tuple[str, str] | Callable[[], Tuple[str, str]]
+    hidden: bool
+    before_save: Callable[..., None]
+    after_save: Callable[..., None]
+
+
 class BaseInvenTreeSetting(models.Model):
     """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values)."""
 
-    SETTINGS = {}
+    SETTINGS: Dict[str, SettingsKeyType] = {}
 
     class Meta:
         """Meta options for BaseInvenTreeSetting -> abstract stops creation of database entry."""

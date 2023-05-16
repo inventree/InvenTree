@@ -1,13 +1,24 @@
 """Plugin mixin class for SettingsMixin."""
 import logging
+from typing import TYPE_CHECKING, Dict
 
 from django.db.utils import OperationalError, ProgrammingError
 
 logger = logging.getLogger('inventree')
 
+# import only for typechecking, otherwise this throws a model is unready error
+if TYPE_CHECKING:
+    from common.models import SettingsKeyType
+else:
+    class SettingsKeyType:
+        """Dummy class, so that python throws no error"""
+        pass
+
 
 class SettingsMixin:
     """Mixin that enables global settings for the plugin."""
+
+    SETTINGS: Dict[str, SettingsKeyType] = {}
 
     class MixinMeta:
         """Meta for mixin."""
