@@ -16,7 +16,7 @@ import uuid
 from datetime import datetime, timedelta
 from enum import Enum
 from secrets import compare_digest
-from typing import Any, Callable, Dict, List, Tuple, TypedDict
+from typing import Any, Callable, Dict, List, Tuple, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -131,9 +131,9 @@ class SettingsKeyType(TypedDict, total=False):
     name: str
     description: str
     units: str
-    validator: Callable | List[Callable] | Tuple[Callable]
-    default: Callable | Any
-    choices: Tuple[str, str] | Callable[[], Tuple[str, str]]
+    validator: Union[Callable, List[Callable], Tuple[Callable]]
+    default: Union[Callable, Any]
+    choices: Union[Tuple[str, str], Callable[[], Tuple[str, str]]]
     hidden: bool
     before_save: Callable[..., None]
     after_save: Callable[..., None]
