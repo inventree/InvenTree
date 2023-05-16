@@ -67,7 +67,7 @@ class SettingsMixin:
         """
         from plugin.models import PluginSetting
 
-        return PluginSetting.get_setting(key, plugin=self, cache=cache)
+        return PluginSetting.get_setting(key, plugin=self.plugin_config(), cache=cache)
 
     def set_setting(self, key, value, user=None):
         """Set plugin setting value by key."""

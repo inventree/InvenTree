@@ -133,6 +133,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
     """This model represents settings for individual plugins."""
 
     typ = 'plugin'
+    extra_unique_fields = ['plugin']
 
     class Meta:
         """Meta for PluginSetting."""
@@ -186,6 +187,7 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     """This model represents notification settings for a user."""
 
     typ = 'notification'
+    extra_unique_fields = ['method', 'user']
 
     class Meta:
         """Meta for NotificationUserSetting."""

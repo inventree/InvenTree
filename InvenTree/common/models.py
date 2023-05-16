@@ -140,9 +140,16 @@ class SettingsKeyType(TypedDict, total=False):
 
 
 class BaseInvenTreeSetting(models.Model):
-    """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values)."""
+    """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
+
+    Attributes:
+        SETTINGS: definition of all available settings
+        extra_unique_fields: List of extra fields used to be unique, e.g. for PluginConfig -> plugin
+    """
 
     SETTINGS: Dict[str, SettingsKeyType] = {}
+
+    extra_unique_fields: List[str] = []
 
     class Meta:
         """Meta options for BaseInvenTreeSetting -> abstract stops creation of database entry."""
@@ -226,7 +233,16 @@ class BaseInvenTreeSetting(models.Model):
         return key.replace(" ", "")
 
     @classmethod
-    def allValues(cls, user=None, exclude_hidden=False):
+    def get_filters(cls, **kwargs):
+        """Enable to filter by other kwargs defined in cls.extra_unique_fields"""
+        return {key: value for key, value in kwargs.items() if key in cls.extra_unique_fields}
+
+    def get_filters_for_instance(self):
+        """Enable to filter by other fields defined in self.extra_unique_fields"""
+        return {key: getattr(self, key, None) for key in self.extra_unique_fields if hasattr(self, key)}
+
+    @classmethod
+    def allValues(cls, exclude_hidden=False, **kwargs):
         """Return a dict of "all" defined global settings.
 
         This performs a single database lookup,
@@ -239,9 +255,8 @@ class BaseInvenTreeSetting(models.Model):
             # Keys which start with an undersore are used for internal functionality
             results = results.exclude(key__startswith='_')
 
-        # Optionally filter by user
-        if user is not None:
-            results = results.filter(user=user)
+        # Optionally filter by other keys
+        results = results.filter(**cls.get_filters(**kwargs))
 
         # Query the database
         settings = {}
@@ -388,31 +403,10 @@ class BaseInvenTreeSetting(models.Model):
 
         filters = {
             'key__iexact': key,
+
+            # Optionally filter by other keys
+            **cls.get_filters(**kwargs),
         }
-
-        # Filter by user
-        user = kwargs.get('user', None)
-
-        if user is not None:
-            filters['user'] = user
-
-        # Filter by plugin
-        plugin = kwargs.get('plugin', None)
-
-        if plugin is not None:
-            from plugin import InvenTreePlugin
-
-            if issubclass(plugin.__class__, InvenTreePlugin):
-                plugin = plugin.plugin_config()
-
-            filters['plugin'] = plugin
-            kwargs['plugin'] = plugin
-
-        # Filter by method
-        method = kwargs.get('method', None)
-
-        if method is not None:
-            filters['method'] = method
 
         # Perform cache lookup by default
         do_cache = kwargs.pop('cache', True)
@@ -520,21 +514,10 @@ class BaseInvenTreeSetting(models.Model):
 
         filters = {
             'key__iexact': key,
+
+            # Optionally filter by other keys
+            **cls.get_filters(**kwargs),
         }
-
-        user = kwargs.get('user', None)
-        plugin = kwargs.get('plugin', None)
-
-        if user is not None:
-            filters['user'] = user
-
-        if plugin is not None:
-            from plugin import InvenTreePlugin
-
-            if issubclass(plugin.__class__, InvenTreePlugin):
-                filters['plugin'] = plugin.plugin_config()
-            else:
-                filters['plugin'] = plugin
 
         try:
             setting = cls.objects.get(**filters)
@@ -652,16 +635,10 @@ class BaseInvenTreeSetting(models.Model):
 
         filters = {
             'key__iexact': self.key,
+
+            # Optionally filter by other keys
+            **self.get_filters_for_instance(),
         }
-
-        user = getattr(self, 'user', None)
-        plugin = getattr(self, 'plugin', None)
-
-        if user is not None:
-            filters['user'] = user
-
-        if plugin is not None:
-            filters['plugin'] = plugin
 
         try:
             # Check if a duplicate setting already exists
@@ -2132,6 +2109,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     }
 
     typ = 'user'
+    extra_unique_fields = ['user']
 
     key = models.CharField(
         max_length=50,
