@@ -32,9 +32,9 @@ import InvenTree.ready
 import InvenTree.tasks
 
 from common.models import ProjectCode
-from common.notifications import trigger_notification
 from plugin.events import trigger_event
 
+import common.notifications
 import part.models
 import stock.models
 import users.models
@@ -555,7 +555,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             }
         }
 
-        trigger_notification(
+        common.notifications.trigger_notification(
             build,
             'build.completed',
             targets=targets,
