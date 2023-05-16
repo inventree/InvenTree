@@ -7,6 +7,7 @@
 
 /* exported
     buildStatusDisplay,
+    partParameterTypeCodeStatusDisplay
     purchaseOrderStatusDisplay,
     returnOrderStatusDisplay,
     returnOrderLineItemStatusDisplay,
