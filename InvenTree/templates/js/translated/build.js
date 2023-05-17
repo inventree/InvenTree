@@ -463,7 +463,7 @@ function unallocateStock(build_id, options={}) {
 /*
  * Helper function to render a single build output in a modal form
  */
-function renderBuildOutput(output, opts={}) {
+function renderBuildOutput(output, options={}) {
     let pk = output.pk;
 
     let output_html = imageHoverIcon(output.part_detail.thumbnail);
@@ -494,10 +494,31 @@ function renderBuildOutput(output, opts={}) {
         }
     );
 
+    let quantity_field = '';
+
+    if (options.adjust_quantity) {
+        quantity_field = constructField(
+            `outputs_quantity_${pk}`,
+            {
+                type: 'decimal',
+                value: output.quantity,
+                min_value: 0,
+                max_value: output.quantity,
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        quantity_field = `<td>${quantity_field}</td>`;
+    }
+
     let html = `
     <tr id='output_row_${pk}'>
         <td>${field}</td>
         <td>${output.part_detail.full_name}</td>
+        ${quantity_field}
         <td>${buttons}</td>
     </tr>`;
 
@@ -645,7 +666,9 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
     let table_entries = '';
 
     outputs.forEach(function(output) {
-        table_entries += renderBuildOutput(output);
+        table_entries += renderBuildOutput(output, {
+            adjust_quantity: true,
+        });
     });
 
     var html = `
@@ -660,6 +683,7 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
     <table class='table table-striped table-condensed' id='build-scrap-table'>
         <thead>
             <th colspan='2'>{% trans "Output" %}</th>
+            <th>{% trans "Quantity" %}</th>
             <th><!-- Actions --></th>
         </thead>
         <tbody>
@@ -701,11 +725,14 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
             outputs.forEach(function(output) {
                 let pk = output.pk;
                 let row = $(opts.modal).find(`#output_row_${pk}`);
+                let quantity = getFormFieldValue(`outputs_quantity_${pk}`, {}, opts);
 
                 if (row.exists()) {
                     data.outputs.push({
                         output: pk,
+                        quantity: quantity,
                     });
+
                     output_pk_values.push(pk);
                 }
             });
