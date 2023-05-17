@@ -9,7 +9,7 @@ _unit_registry = None
 
 
 def get_unit_registry():
-    """Return an instance of the Pint UnitRegistry"""
+    """Return a custom instance of the Pint UnitRegistry."""
 
     global _unit_registry
 
@@ -39,9 +39,9 @@ def convert_physical_value(value: str, unit: str = None):
     # Ensure that the value is a string
     value = str(value).strip()
 
-    # Ignore blank values
+    # Error on blank values
     if not value:
-        return
+        raise ValidationError(_('No value provided'))
 
     ureg = get_unit_registry()
     error = ''
