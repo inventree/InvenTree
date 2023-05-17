@@ -66,6 +66,13 @@ def convert_physical_value(value: str, unit: str = None):
     except pint.errors.DimensionalityError:
         error = _('Provided value could not be converted to the specified unit')
 
+    # At this point we *should* have a valid pint value
+    # To double check, look at the maginitude
+    try:
+        float(val.magnitude)
+    except ValueError:
+        error = _('Provided value is not a valid number')
+
     if error:
         if unit:
             error += f' ({unit})'

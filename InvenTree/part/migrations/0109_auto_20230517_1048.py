@@ -97,7 +97,7 @@ def convert_to_numeric_value(value: str, units: str):
         try:
             result = InvenTree.conversion.convert_physical_value(value, units)
             result = float(result.magnitude)
-        except ValidationError:
+        except (ValidationError, ValueError):
             pass
     else:
         try:
