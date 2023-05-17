@@ -3297,8 +3297,6 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         name: The name (key) of the Parameter [string]
         units: The units of the Parameter [string]
         description: Description of the parameter [string]
-        type: The data type of the Parameter [integer]
-        choices: A comma-separated list of choices for the Parameter [string]
     """
 
     @staticmethod
