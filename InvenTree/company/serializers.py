@@ -115,7 +115,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
         return queryset
 
-    primary_address = AddressSerializer(required=False)
+    primary_address = AddressSerializer(required=False, allow_null=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
