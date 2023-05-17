@@ -3372,7 +3372,7 @@ class PartParameter(models.Model):
 
     def __str__(self):
         """String representation of a PartParameter (used in the admin interface)"""
-        return "{part} : {param} = {data}{units}".format(
+        return "{part} : {param} = {data} ({units})".format(
             part=str(self.part.full_name),
             param=str(self.template.name),
             data=str(self.data),
@@ -3400,9 +3400,6 @@ class PartParameter(models.Model):
                 raise ValidationError({
                     'data': e.message
                 })
-
-        # TODO: Should we convert the data to the correct unit?
-        # e.g. if the template is in mm, and the user enters "1 inch", should we convert to "25.4" and strip the units?
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.

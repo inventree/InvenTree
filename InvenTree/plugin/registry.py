@@ -314,7 +314,7 @@ class PluginsRegistry:
                         handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
-        logger.info(f'Collected {len(collected_plugins)} plugins!')
+        logger.info(f'Collected {len(collected_plugins)} plugins')
         logger.debug(", ".join([a.__module__ for a in collected_plugins]))
 
         return collected_plugins
