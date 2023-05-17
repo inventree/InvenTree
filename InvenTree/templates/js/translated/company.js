@@ -929,9 +929,9 @@ function loadAddressTable(table, options={}) {
                 sortable: true,
                 switchable: false,
                 sorter: function(a, b, c, d) {
-                    if(a == true) {
+                    if (a == true) {
                         return 1;
-                    } else if(b == true) {
+                    } else if (b == true) {
                         return -1;
                     }
                     return 0;
@@ -939,7 +939,7 @@ function loadAddressTable(table, options={}) {
 
                 formatter: function(value) {
                     let checked = '';
-                    if(value == true){
+                    if (value == true) {
                         checked = 'checked="checked"';
                     }
                     return `<input type="checkbox" ${checked} disabled="disabled" value="${value? 1 : 0}">`;
