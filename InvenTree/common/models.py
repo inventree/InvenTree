@@ -126,6 +126,7 @@ class SettingsKeyType(TypedDict, total=False):
         hidden: Hide this setting from settings page (optional)
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
+        protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
     """
 
     name: str
@@ -137,6 +138,7 @@ class SettingsKeyType(TypedDict, total=False):
     hidden: bool
     before_save: Callable[..., None]
     after_save: Callable[..., None]
+    protected: bool
 
 
 class BaseInvenTreeSetting(models.Model):
