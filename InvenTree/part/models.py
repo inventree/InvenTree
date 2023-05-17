@@ -3415,7 +3415,6 @@ class PartParameter(models.Model):
             try:
                 converted = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
                 self.data_numeric = float(converted.magnitude)
-
             except ValidationError:
                 self.data_numeric = 0.0
 

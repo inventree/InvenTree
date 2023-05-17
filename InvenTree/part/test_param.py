@@ -246,3 +246,96 @@ class PartParameterTest(InvenTreeAPITestCase):
         data = response.data
 
         self.assertEqual(data['data'], '15')
+
+    def test_order_parts_by_param(self):
+        """Test that we can order parts by a specified parameter."""
+
+        def get_param_value(response, template, index):
+            """Helper function to extract a parameter value from a response"""
+            params = response.data[index]['parameters']
+
+            for param in params:
+                if param['template'] == template:
+                    return param['data']
+
+            # No match
+            return None
+
+        # Create a new parameter template
+        template = PartParameterTemplate.objects.create(
+            name='Test Template',
+            description='My test template',
+            units='m'
+        )
+
+        # Create parameters for each existing part
+        params = []
+
+        parts = Part.objects.all().order_by('pk')
+
+        for idx, part in enumerate(parts):
+
+            # Skip parts every now and then
+            if idx % 10 == 7:
+                continue
+
+            suffix = 'mm' if idx % 3 == 0 else 'm'
+
+            params.append(
+                PartParameter.objects.create(
+                    part=part,
+                    template=template,
+                    data=f'{idx}{suffix}'
+                )
+            )
+
+        # Now, request parts, ordered by this parameter
+        url = reverse('api-part-list')
+
+        response = self.get(
+            url,
+            {
+                'ordering': 'parameter_{pk}'.format(pk=template.pk),
+                'parameters': 'true',
+            },
+            expected_code=200
+        )
+
+        # All parts should be returned
+        self.assertEqual(len(response.data), len(parts))
+
+        # Check that the parts are ordered correctly (in increasing order)
+        expectation = {
+            0: '0mm',
+            1: '3mm',
+            7: '4m',
+            9: '8m',
+            -2: '13m',
+            -1: None,
+        }
+
+        for idx, expected in expectation.items():
+            actual = get_param_value(response, template.pk, idx)
+            self.assertEqual(actual, expected)
+
+        # Next, check reverse ordering
+        response = self.get(
+            url,
+            {
+                'ordering': '-parameter_{pk}'.format(pk=template.pk),
+                'parameters': 'true',
+            },
+            expected_code=200
+        )
+
+        expectation = {
+            0: '13m',
+            1: '11m',
+            -3: '3mm',
+            -2: '0mm',
+            -1: None,
+        }
+
+        for idx, expected in expectation.items():
+            actual = get_param_value(response, template.pk, idx)
+            self.assertEqual(actual, expected)

@@ -1876,8 +1876,8 @@ function loadParametricPartTable(table, options={}) {
 }
 
 
+// Generate a "grid tile" view for a particular part
 function partGridTile(part) {
-    // Generate a "grid tile" view for a particular part
 
     // Rows for table view
     var rows = '';
