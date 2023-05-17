@@ -1,6 +1,7 @@
 """Provides a JSON API for the Part app."""
 
 import functools
+import re
 
 from django.db.models import Count, F, Q
 from django.http import JsonResponse
@@ -14,6 +15,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 import order.models
+import part.filters
 from build.models import Build, BuildItem
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
@@ -1102,7 +1104,6 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         # TODO: Querying bom_valid status may be quite expensive
         # TODO: (It needs to be profiled!)
         # TODO: It might be worth caching the bom_valid status to a database column
-
         if bom_valid is not None:
 
             bom_valid = str2bool(bom_valid)
@@ -1112,9 +1113,9 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
             pks = []
 
-            for part in queryset:
-                if part.is_bom_valid() == bom_valid:
-                    pks.append(part.pk)
+            for prt in queryset:
+                if prt.is_bom_valid() == bom_valid:
+                    pks.append(prt.pk)
 
             queryset = queryset.filter(pk__in=pks)
 
@@ -1216,6 +1217,34 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
                 parts_needed_to_complete_builds += [part.pk for part in build.required_parts_to_complete_build]
 
             queryset = queryset.filter(pk__in=parts_needed_to_complete_builds)
+
+        queryset = self.filter_parameteric_data(queryset)
+
+        return queryset
+
+    def filter_parameteric_data(self, queryset):
+        """Filter queryset against part parameters.
+
+        Here we can perfom a number of different functions:
+
+        Ordering Based on Parameter Value:
+        - Used if the 'ordering' query param points to a parameter
+        - e.g. '&ordering=param_<id>' where <id> specifies the PartParameterTemplate
+        - Only parts which have a matching parameter are returned
+        - Queryset is ordered based on parameter value
+        """
+
+        # Extract "ordering" parameter from query args
+        ordering = self.request.query_params.get('ordering', None)
+
+        if ordering:
+            # Ordering value must match required regex pattern
+            result = re.match(r'^\-?parameter_(\d+)$', ordering)
+
+            if result:
+                template_id = result.group(1)
+                ascending = not ordering.startswith('-')
+                queryset = part.filters.order_by_parameter(queryset, template_id, ascending)
 
         return queryset
 
