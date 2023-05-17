@@ -12,6 +12,8 @@ import pint
 from jinja2 import Template
 from moneyed import CURRENCIES
 
+import InvenTree.conversion
+
 
 def validate_physical_units(unit):
     """Ensure that a given unit is a valid physical unit."""
@@ -22,7 +24,7 @@ def validate_physical_units(unit):
     if not unit:
         return
 
-    ureg = pint.UnitRegistry()
+    ureg = InvenTree.conversion.get_unit_registry()
 
     try:
         ureg(unit)

@@ -5,6 +5,22 @@ from django.utils.translation import gettext_lazy as _
 
 import pint
 
+_unit_registry = None
+
+
+def get_unit_registry():
+    """Return an instance of the Pint UnitRegistry"""
+
+    global _unit_registry
+
+    # Cache the unit registry for speedier access
+    if _unit_registry is None:
+        _unit_registry = pint.UnitRegistry()
+
+    # TODO: Allow for custom units to be defined in the database
+
+    return _unit_registry
+
 
 def convert_physical_value(value: str, unit: str = None):
     """Validate that the provided value is a valid physical quantity.
@@ -27,7 +43,8 @@ def convert_physical_value(value: str, unit: str = None):
     if not value:
         return
 
-    ureg = pint.UnitRegistry()
+    ureg = get_unit_registry()
+    error = ''
 
     try:
         # Convert to a quantity
@@ -43,15 +60,17 @@ def convert_physical_value(value: str, unit: str = None):
                 val = val.to(unit)
 
     except pint.errors.UndefinedUnitError:
-        raise ValidationError(_('Provided value has an invalid unit'))
-
+        error = _('Provided value has an invalid unit')
+    except pint.errors.DefinitionSyntaxError:
+        error = _('Provided value has an invalid unit')
     except pint.errors.DimensionalityError:
-        msg = _('Provided value could not be converted to the specified unit')
+        error = _('Provided value could not be converted to the specified unit')
 
+    if error:
         if unit:
-            msg += f' ({unit})'
+            error += f' ({unit})'
 
-        raise ValidationError(msg)
+        raise ValidationError(error)
 
     # Return the converted value
     return val
