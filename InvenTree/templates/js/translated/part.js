@@ -1809,9 +1809,16 @@ function loadParametricPartTable(table, options={}) {
             async: false,
             success: function(response) {
                 for (var template of response) {
+
+                    let template_name = template.name;
+
+                    if (template.units) {
+                        template_name += ` [${template.units}]`;
+                    }
+
                     columns.push({
                         field: `parameter_${template.pk}`,
-                        title: template.name,
+                        title: template_name,
                         switchable: true,
                         sortable: false,
                         filterControl: 'input',
