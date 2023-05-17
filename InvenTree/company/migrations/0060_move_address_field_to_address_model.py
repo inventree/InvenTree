@@ -29,7 +29,7 @@ def revert_address_move(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0058_auto_20230502_1956'),
+        ('company', '0059_auto_20230502_1956'),
     ]
 
     operations = [
