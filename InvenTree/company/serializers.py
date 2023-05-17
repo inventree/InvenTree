@@ -46,6 +46,30 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
     image = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
 
+class AddressSerializer(InvenTreeModelSerializer):
+    """Serializer for the Address Model"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = Address
+        fields = [
+            'pk',
+            'company',
+            'title',
+            'primary',
+            'line1',
+            'line2',
+            'postal_code',
+            'postal_city',
+            'province',
+            'country',
+            'shipping_notes',
+            'internal_shipping_notes',
+            'link'
+        ]
+
+
 class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for Company object (full detail)"""
 
@@ -74,6 +98,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'parts_supplied',
             'parts_manufactured',
             'remote_image',
+            'primary_address'
         ]
 
     @staticmethod
@@ -89,6 +114,8 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
         )
 
         return queryset
+
+    primary_address = AddressSerializer()
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -150,30 +177,6 @@ class ContactSerializer(InvenTreeModelSerializer):
             'phone',
             'email',
             'role',
-        ]
-
-
-class AddressSerializer(InvenTreeModelSerializer):
-    """Serializer for the Address Model"""
-
-    class Meta:
-        """Metaclass options"""
-
-        model = Address
-        fields = [
-            'pk',
-            'company',
-            'title',
-            'primary',
-            'line1',
-            'line2',
-            'postal_code',
-            'postal_city',
-            'province',
-            'country',
-            'shipping_notes',
-            'internal_shipping_notes',
-            'link'
         ]
 
 

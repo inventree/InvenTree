@@ -154,11 +154,19 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
     @property
     def address(self):
-        """Return the string representation for the primary address"""
+        """Return the string representation for the primary address
+
+        This property exists for backwards compability
+        """
 
         addr = Address.objects.filter(company=self.id).filter(primary=True).first()
 
         return str(addr or '')
+
+    @property
+    def primary_address(self):
+        """Returns address object of primary address. Parsed by serializer"""
+        return Address.objects.filter(company=self.id).filter(primary=True).first() or ''
 
     @property
     def currency_code(self):

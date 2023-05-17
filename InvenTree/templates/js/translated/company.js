@@ -772,7 +772,7 @@ function loadContactTable(table, options={}) {
 }
 
 /*
- * Construct a set of form fields for the Contact model
+ * Construct a set of form fields for the Address model
  */
 function addressFields(options={}) {
 
@@ -797,11 +797,17 @@ function addressFields(options={}) {
         province: {
             icon: 'fa-map'
         },
+        country: {
+            icon: 'fa-map'
+        },
         shipping_notes: {
             icon: 'fa-shuttle-van'
         },
         internal_shipping_notes: {
             icon: 'fa-clipboard'
+        },
+        link: {
+            icon: 'fa-link'
         }
     };
 
@@ -813,7 +819,7 @@ function addressFields(options={}) {
 }
 
 /*
- * Launches a form to create a new Contact
+ * Launches a form to create a new Address
  */
 function createAddress(options={}) {
     let fields = options.fields || addressFields(options);
@@ -829,7 +835,7 @@ function createAddress(options={}) {
 }
 
 /*
- * Launches a form to edit an existing Contact
+ * Launches a form to edit an existing Address
  */
 function editAddress(pk, options={}) {
     let fields = options.fields || addressFields(options);
@@ -844,7 +850,7 @@ function editAddress(pk, options={}) {
 }
 
 /*
- * Launches a form to delete one (or more) contacts
+ * Launches a form to delete one (or more) addresses
  */
 function deleteAddress(addresses, options={}) {
 
@@ -910,6 +916,7 @@ function loadAddressTable(table, options={}) {
         idField: 'pk',
         uniqueId: 'pk',
         sidePagination: 'server',
+        sortable: true,
         formatNoMatches: function() {
             return '{% trans "No addresses found" %}';
         },
@@ -921,6 +928,22 @@ function loadAddressTable(table, options={}) {
                 title: '{% trans "Primary" %}',
                 sortable: true,
                 switchable: false,
+                sorter: function(a, b, c, d) {
+                    if(a == true) {
+                        return 1;
+                    } else if(b == true) {
+                        return -1;
+                    }
+                    return 0;
+                },
+
+                formatter: function(value) {
+                    let checked = '';
+                    if(value == true){
+                        checked = 'checked="checked"';
+                    }
+                    return `<input type="checkbox" ${checked} disabled="disabled" value="${value? 1 : 0}">`;
+                }
             },
             {
                 field: 'title',
@@ -953,7 +976,7 @@ function loadAddressTable(table, options={}) {
                 switchable: false,
             },
             {
-                field: 'prvince',
+                field: 'province',
                 title: '{% trans "State/province" %}',
                 sortable: false,
                 switchable: false,
@@ -968,19 +991,19 @@ function loadAddressTable(table, options={}) {
                 field: 'shipping_notes',
                 title: '{% trans "Courier notes" %}',
                 sortable: false,
-                switchable: false,
+                switchable: true,
             },
             {
                 field: 'internal_shipping_notes',
                 title: '{% trans "Internal notes" %}',
                 sortable: false,
-                switchable: false,
+                switchable: true,
             },
             {
                 field: 'link',
                 title: '{% trans "External Link" %}',
                 sortable: false,
-                switchable: false,
+                switchable: true,
             },
             {
                 field: 'actions',
