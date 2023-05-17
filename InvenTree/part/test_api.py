@@ -18,9 +18,9 @@ import company.models
 import order.models
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     StockStatus)
+from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import (BomItem, BomItemSubstitute, Part, PartCategory,
                          PartCategoryParameterTemplate, PartParameterTemplate,
                          PartRelated, PartStocktake)

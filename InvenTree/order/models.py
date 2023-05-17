@@ -1406,6 +1406,12 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
         help_text=_('Date of shipment'),
     )
 
+    delivery_date = models.DateField(
+        null=True, blank=True,
+        verbose_name=_('Delivery Date'),
+        help_text=_('Date of delivery of shipment'),
+    )
+
     checked_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -1448,6 +1454,10 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
     def is_complete(self):
         """Return True if this shipment has already been completed"""
         return self.shipment_date is not None
+
+    def is_delivered(self):
+        """Return True if this shipment has already been delivered"""
+        return self.delivery_date is not None
 
     def check_can_complete(self, raise_error=True):
         """Check if this shipment is able to be completed"""
@@ -1507,6 +1517,12 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
         if link is not None:
             self.link = link
+
+        # Was a delivery date provided?
+        delivery_date = kwargs.get('delivery_date', None)
+
+        if delivery_date is not None:
+            self.delivery_date = delivery_date
 
         self.save()
 

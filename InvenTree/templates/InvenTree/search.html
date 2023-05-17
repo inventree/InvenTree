@@ -156,7 +156,6 @@
 
     loadStockTable($('#table-stock'), {
         filterKey: 'stocksearch',
-        url: "{% url 'api-stock-list' %}",
         params: {
             original_search: search_text,
             part_detail: true,
