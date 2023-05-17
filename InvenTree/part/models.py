@@ -380,7 +380,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     """
 
     objects = PartManager()
-    tags = TaggableManager()
+
+    tags = TaggableManager(blank=True)
 
     class Meta:
         """Metaclass defines extra model properties"""

@@ -14,6 +14,34 @@ Some common functions are provided for use in custom report and label templates.
 !!! tip "Use the Source, Luke"
     To see the full range of available helper functions, refer to the source file [report.py](https://github.com/inventree/InvenTree/blob/master/InvenTree/report/templatetags/report.py) where these functions are defined!
 
+## Data Structure Access
+
+A number of helper functions are available for accessing data contained in a particular structure format:
+
+### Index Access
+
+To return the element at a given index in a container which supports indexed access (such as a [list](https://www.w3schools.com/python/python_lists.asp)), use the `getindex` function:
+
+```html
+{% raw %}
+Item: {% getindex my_list 1 %}
+{% endraw %}
+```
+
+### Key Access
+
+To return an element corresponding to a certain key in a container which supports key access (such as a [dictionary](https://www.w3schools.com/python/python_dictionaries.asp)), use the `getkey` function:
+
+```html
+{% raw %}
+<ul>
+    {% for key in keys %}
+    <li>Key: {% getkey my_container key %}</li>
+    {% endfor %}
+</ul>
+{% endraw %}
+```
+
 ## Rendering Currency
 
 The helper function `render_currency` allows for simple rendering of currency data. This function can also convert the specified amount of currency into a different target currency:

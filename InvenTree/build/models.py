@@ -1349,39 +1349,48 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
         """Complete the allocation of this BuildItem into the output stock item.
 
         - If the referenced part is trackable, the stock item will be *installed* into the build output
-        - If the referenced part is *not* trackable, the stock item will be removed from stock
+        - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
         """
         item = self.stock_item
 
+        # Split the allocated stock if there are more available than allocated
+        if item.quantity > self.quantity:
+            item = item.splitStock(
+                self.quantity,
+                None,
+                user,
+                notes=notes,
+            )
+
         # For a trackable part, special consideration needed!
         if item.part.trackable:
-            # Split the allocated stock if there are more available than allocated
-            if item.quantity > self.quantity:
-                item = item.splitStock(
-                    self.quantity,
-                    None,
-                    user,
-                    code=StockHistoryCode.BUILD_CONSUMED,
-                )
 
-                # Make sure we are pointing to the new item
-                self.stock_item = item
-                self.save()
+            # Make sure we are pointing to the new item
+            self.stock_item = item
+            self.save()
 
             # Install the stock item into the output
             self.install_into.installStockItem(
                 item,
                 self.quantity,
                 user,
-                notes
+                notes,
+                build=self.build,
             )
 
         else:
-            # Simply remove the items from stock
-            item.take_stock(
-                self.quantity,
+            # Mark the item as "consumed" by the build order
+            item.consumed_by = self.build
+            item.save(add_note=False)
+
+            item.add_tracking_entry(
+                StockHistoryCode.BUILD_CONSUMED,
                 user,
-                code=StockHistoryCode.BUILD_CONSUMED
+                notes=notes,
+                deltas={
+                    'buildorder': self.build.pk,
+                    'quantity': float(item.quantity),
+                }
             )
 
     def getStockItemThumbnail(self):
