@@ -172,12 +172,6 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
 
         return super().get_setting_definition(key, **kwargs)
 
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'plugin': self.plugin,
-        }
-
 
 class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     """This model represents notification settings for a user."""
@@ -199,13 +193,6 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
         kwargs['settings'] = storage.user_settings
 
         return super().get_setting_definition(key, **kwargs)
-
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'method': self.method,
-            'user': self.user,
-        }
 
     method = models.CharField(
         max_length=255,

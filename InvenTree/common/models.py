@@ -165,7 +165,7 @@ class BaseInvenTreeSetting(models.Model):
         do_cache = kwargs.pop('cache', True)
 
         self.clean(**kwargs)
-        self.validate_unique(**kwargs)
+        self.validate_unique()
 
         # Execute before_save action
         self._call_settings_function('before_save', args, kwargs)
@@ -198,7 +198,7 @@ class BaseInvenTreeSetting(models.Model):
     @property
     def cache_key(self):
         """Generate a unique cache key for this settings object"""
-        return self.__class__.create_cache_key(self.key, **self.get_kwargs())
+        return self.__class__.create_cache_key(self.key, **self.get_filters_for_instance())
 
     def save_to_cache(self):
         """Save this setting object to cache"""
@@ -296,16 +296,6 @@ class BaseInvenTreeSetting(models.Model):
             settings[key] = value
 
         return settings
-
-    def get_kwargs(self):
-        """Construct kwargs for doing class-based settings lookup, depending on *which* class we are.
-
-        This is necessary to abtract the settings object
-        from the implementing class (e.g plugins)
-
-        Subclasses should override this function to ensure the kwargs are correctly set.
-        """
-        return {}
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -544,22 +534,22 @@ class BaseInvenTreeSetting(models.Model):
     @property
     def name(self):
         """Return name for setting."""
-        return self.__class__.get_setting_name(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_name(self.key, **self.get_filters_for_instance())
 
     @property
     def default_value(self):
         """Return default_value for setting."""
-        return self.__class__.get_setting_default(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_default(self.key, **self.get_filters_for_instance())
 
     @property
     def description(self):
         """Return description for setting."""
-        return self.__class__.get_setting_description(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_description(self.key, **self.get_filters_for_instance())
 
     @property
     def units(self):
         """Return units for setting."""
-        return self.__class__.get_setting_units(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_units(self.key, **self.get_filters_for_instance())
 
     def clean(self, **kwargs):
         """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
@@ -627,7 +617,7 @@ class BaseInvenTreeSetting(models.Model):
 
             validator(value)
 
-    def validate_unique(self, exclude=None, **kwargs):
+    def validate_unique(self, exclude=None):
         """Ensure that the key:value pair is unique. In addition to the base validators, this ensures that the 'key' is unique, using a case-insensitive comparison.
 
         Note that sub-classes (UserSetting, PluginSetting) use other filters
@@ -654,7 +644,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def choices(self):
         """Return the available choices for this setting (or None if no choices are defined)."""
-        return self.__class__.get_setting_choices(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_choices(self.key, **self.get_filters_for_instance())
 
     def valid_options(self):
         """Return a list of valid options for this setting."""
@@ -667,7 +657,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def is_choice(self):
         """Check if this setting is a "choice" field."""
-        return self.__class__.get_setting_choices(self.key, **self.get_kwargs()) is not None
+        return self.__class__.get_setting_choices(self.key, **self.get_filters_for_instance()) is not None
 
     def as_choice(self):
         """Render this setting as the "display" value of a choice field.
@@ -677,7 +667,7 @@ class BaseInvenTreeSetting(models.Model):
         and the value is 'A4',
         then display 'A4 paper'
         """
-        choices = self.get_setting_choices(self.key, **self.get_kwargs())
+        choices = self.get_setting_choices(self.key, **self.get_filters_for_instance())
 
         if not choices:
             return self.value
@@ -694,7 +684,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def model_name(self):
         """Return the model name associated with this setting."""
-        setting = self.get_setting_definition(self.key, **self.get_kwargs())
+        setting = self.get_setting_definition(self.key, **self.get_filters_for_instance())
 
         return setting.get('model', None)
 
@@ -758,7 +748,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def is_bool(self):
         """Check if this setting is required to be a boolean value."""
-        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
+        validator = self.__class__.get_setting_validator(self.key, **self.get_filters_for_instance())
 
         return self.__class__.validator_is_bool(validator)
 
@@ -798,7 +788,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def is_int(self,):
         """Check if the setting is required to be an integer value."""
-        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
+        validator = self.__class__.get_setting_validator(self.key, **self.get_filters_for_instance())
 
         return self.__class__.validator_is_int(validator)
 
@@ -837,7 +827,7 @@ class BaseInvenTreeSetting(models.Model):
     @property
     def protected(self):
         """Returns if setting is protected from rendering."""
-        return self.__class__.is_protected(self.key, **self.get_kwargs())
+        return self.__class__.is_protected(self.key, **self.get_filters_for_instance())
 
 
 def settings_group_options():
@@ -2128,19 +2118,9 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         help_text=_('User'),
     )
 
-    def validate_unique(self, exclude=None, **kwargs):
-        """Return if the setting (including key) is unique."""
-        return super().validate_unique(exclude=exclude, user=self.user)
-
     def to_native_value(self):
         """Return the "pythonic" value, e.g. convert "True" to True, and "1" to 1."""
         return self.__class__.get_setting(self.key, user=self.user)
-
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'user': self.user,
-        }
 
 
 class PriceBreak(MetaMixin):
