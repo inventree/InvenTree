@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-16 11:29+0000\n"
-"PO-Revision-Date: 2023-05-16 13:01\n"
+"POT-Creation-Date: 2023-05-16 21:37+0000\n"
+"PO-Revision-Date: 2023-05-17 13:16\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -105,75 +105,75 @@ msgstr "La dirección de correo electrónico principal proporcionada no es váli
 msgid "The provided email domain is not approved."
 msgstr "El dominio de correo electrónico proporcionado no está aprobado."
 
-#: InvenTree/helpers.py:195
+#: InvenTree/helpers.py:191
 msgid "Connection error"
 msgstr "Error de conexión"
 
-#: InvenTree/helpers.py:199 InvenTree/helpers.py:204
+#: InvenTree/helpers.py:195 InvenTree/helpers.py:200
 msgid "Server responded with invalid status code"
 msgstr "El servidor respondió con código de estado no válido"
 
-#: InvenTree/helpers.py:201
+#: InvenTree/helpers.py:197
 msgid "Exception occurred"
 msgstr "Se ha producido una excepción"
 
-#: InvenTree/helpers.py:209
+#: InvenTree/helpers.py:205
 msgid "Server responded with invalid Content-Length value"
 msgstr "El servidor respondió con un valor de longitud de contenido inválido"
 
-#: InvenTree/helpers.py:212
+#: InvenTree/helpers.py:208
 msgid "Image size is too large"
 msgstr "El tamaño de la imagen es demasiado grande"
 
-#: InvenTree/helpers.py:224
+#: InvenTree/helpers.py:220
 msgid "Image download exceeded maximum size"
 msgstr "La descarga de imagen excedió el tamaño máximo"
 
-#: InvenTree/helpers.py:229
+#: InvenTree/helpers.py:225
 msgid "Remote server returned empty response"
 msgstr "El servidor remoto devolvió una respuesta vacía"
 
-#: InvenTree/helpers.py:237
+#: InvenTree/helpers.py:233
 msgid "Supplied URL is not a valid image file"
 msgstr "La URL proporcionada no es un archivo de imagen válido"
 
-#: InvenTree/helpers.py:629 order/models.py:438 order/models.py:599
+#: InvenTree/helpers.py:625 order/models.py:438 order/models.py:599
 msgid "Invalid quantity provided"
 msgstr "Cantidad proporcionada no válida"
 
-#: InvenTree/helpers.py:637
+#: InvenTree/helpers.py:633
 msgid "Empty serial number string"
 msgstr "No se ha proporcionado un número de serie"
 
-#: InvenTree/helpers.py:667
+#: InvenTree/helpers.py:663
 msgid "Duplicate serial"
 msgstr "Serie duplicada"
 
-#: InvenTree/helpers.py:700 InvenTree/helpers.py:735
+#: InvenTree/helpers.py:696 InvenTree/helpers.py:731
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "Rango de grupo no válido: {g}"
 
-#: InvenTree/helpers.py:729
+#: InvenTree/helpers.py:725
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
 msgstr "El rango del grupo {g} supera la cantidad permitida ({q})"
 
-#: InvenTree/helpers.py:753 InvenTree/helpers.py:760 InvenTree/helpers.py:775
+#: InvenTree/helpers.py:749 InvenTree/helpers.py:756 InvenTree/helpers.py:771
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr "Secuencia de grupo no válida: {g}"
 
-#: InvenTree/helpers.py:785
+#: InvenTree/helpers.py:781
 msgid "No serial numbers found"
 msgstr "Numeros de serie no encontrados"
 
-#: InvenTree/helpers.py:788
+#: InvenTree/helpers.py:784
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "Número único de número de serie ({s}) debe coincidir con la cantidad ({q})"
 
-#: InvenTree/helpers.py:987
+#: InvenTree/helpers.py:914
 msgid "Remove HTML tags from this value"
 msgstr "Eliminar etiquetas HTML de este valor"
 
