@@ -27,7 +27,7 @@ To create a template:
 - Scroll down to the "Part Parameter Templates" section
 - Click on the "New Parameter" button
 - Fill out the `Create Part Parameter Template` form: `Name` (required) and `Units` (optional) fields
-- Finally click on the "Submit" button.
+- Click on the "Submit" button.
 
 ### Create Parameter
 
@@ -54,5 +54,38 @@ To access a category's parametric table, click on the "Parameters" tab within th
 Below is an example of capacitor parametric table filtered with `Package Type = 0402`:
 
 {% with id="parametric_table_example", url="part/parametric_table_example.png", description="Parametric Table Example" %}
+{% include 'img.html' %}
+{% endwith %}
+
+### Sorting by Parameter Value
+
+The parametric parts table allows the returned parts to be sorted by particular parameter values. Click on the header of a particular parameter column to sort results by that parameter:
+
+{% with id="sort_by_param", url="part/part_sort_by_param.png", description="Sort by Parameter" %}
+{% include 'img.html' %}
+{% endwith %}
+
+## Parameter Units
+
+The *units* field (which is defined against a [parameter template](#parameter-templates)) defines the base unit of that template. Any parameters which are created against that unit *must* be specified in compatible units. Unit conversion is implemented using the [pint](https://pint.readthedocs.io/en/stable/) Python library. This conversion library is used to perform two main functions:
+
+- Enforce use of compatible units when creating part parameters
+- Perform conversion to the base template unit
+
+The in-built conversion functionality means that parameter values can be input in different dimensions - *as long as the dimension is compatible with the base template units*.
+
+### Incompatible Units
+
+If a part parameter is created with a value which is incompatible with the units specified for the template, it will be rejected:
+
+{% with id="invalid_units", url="part/part_invalid_units.png", description="Invalid Parameter Units" %}
+{% include 'img.html' %}
+{% endwith %}
+
+### Parameter Sorting
+
+Parameter sorting takes unit conversion into account, meaning that values provided in different (but compatible) units are sorted correctly:
+
+{% with id="sort_by_param_units", url="part/part_sorting_units.png", description="Sort by Parameter Units" %}
 {% include 'img.html' %}
 {% endwith %}

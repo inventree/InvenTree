@@ -1834,7 +1834,6 @@ function loadParametricPartTable(table, options={}) {
         }
     );
 
-    // TODO: Re-enable filter control for parameter values
 
     $(table).inventreeTable({
         url: '{% url "api-part-list" %}',
@@ -1845,9 +1844,11 @@ function loadParametricPartTable(table, options={}) {
         formatNoMatches: function() {
             return '{% trans "No parts found" %}';
         },
-        filterControl: true,
-        showFilterControlSwitch: true,
-        sortSelectOptions: true,
+        // TODO: Re-enable filter control for parameter values
+        // Ref: https://github.com/inventree/InvenTree/issues/4851
+        // filterControl: true,
+        // showFilterControlSwitch: true,
+        // sortSelectOptions: true,
         columns: columns,
         showColumns: true,
         sidePagination: 'server',
