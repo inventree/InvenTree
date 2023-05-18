@@ -1027,12 +1027,15 @@ class BuildOutputScrapTest(BuildAPITest):
                 'outputs': [
                     {
                         'output': outputs[0].pk,
+                        'quantity': outputs[0].quantity,
                     },
                     {
                         'output': outputs[1].pk,
+                        'quantity': outputs[1].quantity,
                     },
                     {
                         'output': outputs[2].pk,
+                        'quantity': outputs[2].quantity,
                     },
                 ],
                 'location': 1,

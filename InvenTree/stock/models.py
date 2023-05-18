@@ -1575,7 +1575,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         self.save()
 
     @transaction.atomic
-    def splitStock(self, quantity, location, user, **kwargs):
+    def splitStock(self, quantity, location=None, user=None, **kwargs):
         """Split this stock item into two items, in the same location.
 
         Stock tracking notes for this StockItem will be duplicated,
@@ -1585,9 +1585,11 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             quantity: Number of stock items to remove from this entity, and pass to the next
             location: Where to move the new StockItem to
 
-        Notes:
-            The provided quantity will be subtracted from this item and given to the new one.
-            The new item will have a different StockItem ID, while this will remain the same.
+        Returns:
+            The new StockItem object
+
+        - The provided quantity will be subtracted from this item and given to the new one.
+        - The new item will have a different StockItem ID, while this will remain the same.
         """
         notes = kwargs.get('notes', '')
 

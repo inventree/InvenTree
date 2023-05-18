@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-16 11:29+0000\n"
-"PO-Revision-Date: 2023-05-16 13:01\n"
+"POT-Creation-Date: 2023-05-16 21:37+0000\n"
+"PO-Revision-Date: 2023-05-17 13:16\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -105,75 +105,75 @@ msgstr "Sağlanan e-posta adresi geçerli değil."
 msgid "The provided email domain is not approved."
 msgstr "Sağlanan e-posta alanı onaylanmadı."
 
-#: InvenTree/helpers.py:195
+#: InvenTree/helpers.py:191
 msgid "Connection error"
 msgstr "Bağlantı hatası"
 
-#: InvenTree/helpers.py:199 InvenTree/helpers.py:204
+#: InvenTree/helpers.py:195 InvenTree/helpers.py:200
 msgid "Server responded with invalid status code"
 msgstr "Sunucu geçersiz durum kodu ile cevap verdi"
 
-#: InvenTree/helpers.py:201
+#: InvenTree/helpers.py:197
 msgid "Exception occurred"
 msgstr "İstisna oluştu"
 
-#: InvenTree/helpers.py:209
+#: InvenTree/helpers.py:205
 msgid "Server responded with invalid Content-Length value"
 msgstr "Sunucu geçersiz Content-Length değeriyle yanıt verdi"
 
-#: InvenTree/helpers.py:212
+#: InvenTree/helpers.py:208
 msgid "Image size is too large"
 msgstr "Resim boyutu çok büyük"
 
-#: InvenTree/helpers.py:224
+#: InvenTree/helpers.py:220
 msgid "Image download exceeded maximum size"
 msgstr "Resim indirme boyutu izin verilenden büyük"
 
-#: InvenTree/helpers.py:229
+#: InvenTree/helpers.py:225
 msgid "Remote server returned empty response"
 msgstr "Uzak sunucu boş cevap döndü"
 
-#: InvenTree/helpers.py:237
+#: InvenTree/helpers.py:233
 msgid "Supplied URL is not a valid image file"
 msgstr "Sağlanan URL geçerli bir resim dosyası değil"
 
-#: InvenTree/helpers.py:629 order/models.py:438 order/models.py:599
+#: InvenTree/helpers.py:625 order/models.py:438 order/models.py:599
 msgid "Invalid quantity provided"
 msgstr "Geçersiz veri sağlandı"
 
-#: InvenTree/helpers.py:637
+#: InvenTree/helpers.py:633
 msgid "Empty serial number string"
 msgstr "Boş seri numarası dizesi"
 
-#: InvenTree/helpers.py:667
+#: InvenTree/helpers.py:663
 msgid "Duplicate serial"
 msgstr "Yinelenen seri"
 
-#: InvenTree/helpers.py:700 InvenTree/helpers.py:735
+#: InvenTree/helpers.py:696 InvenTree/helpers.py:731
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr "Geçersiz grup: {g}"
 
-#: InvenTree/helpers.py:729
+#: InvenTree/helpers.py:725
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
 msgstr ""
 
-#: InvenTree/helpers.py:753 InvenTree/helpers.py:760 InvenTree/helpers.py:775
+#: InvenTree/helpers.py:749 InvenTree/helpers.py:756 InvenTree/helpers.py:771
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:785
+#: InvenTree/helpers.py:781
 msgid "No serial numbers found"
 msgstr "Seri numarası bulunamadı"
 
-#: InvenTree/helpers.py:788
+#: InvenTree/helpers.py:784
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr ""
 
-#: InvenTree/helpers.py:987
+#: InvenTree/helpers.py:914
 msgid "Remove HTML tags from this value"
 msgstr ""
 
