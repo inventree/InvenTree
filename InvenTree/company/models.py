@@ -161,12 +161,12 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
         addr = Address.objects.filter(company=self.id).filter(primary=True).first()
 
-        return str(addr or '')
+        return str(addr) if addr is not None else None
 
     @property
     def primary_address(self):
         """Returns address object of primary address. Parsed by serializer"""
-        return Address.objects.filter(company=self.id).filter(primary=True).first() or ''
+        return Address.objects.filter(company=self.id).filter(primary=True).first()
 
     @property
     def currency_code(self):

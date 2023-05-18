@@ -98,12 +98,13 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'parts_supplied',
             'parts_manufactured',
             'remote_image',
+            'address_count',
             'primary_address'
         ]
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Annoate the supplied queryset with aggregated information"""
+        """Annotate the supplied queryset with aggregated information"""
         # Add count of parts manufactured
         queryset = queryset.annotate(
             parts_manufactured=SubqueryCount('manufactured_parts')
@@ -113,9 +114,13 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             parts_supplied=SubqueryCount('supplied_parts')
         )
 
+        queryset = queryset.annotate(
+            address_count=SubqueryCount('addresses')
+        )
+
         return queryset
 
-    primary_address = AddressSerializer(required=False, allow_null=True)
+    primary_address = AddressSerializer(required=False, allow_null=True, read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -123,6 +128,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
+    address_count = serializers.IntegerField(read_only=True)
 
     currency = InvenTreeCurrencySerializer(help_text=_('Default currency used for this supplier'), required=True)
 
