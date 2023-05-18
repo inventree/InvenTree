@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-18 10:53+0000\n"
-"PO-Revision-Date: 2023-05-17 13:16\n"
+"POT-Creation-Date: 2023-05-18 04:06+0000\n"
+"PO-Revision-Date: 2023-05-18 13:11\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1104,10 +1104,8 @@ msgid "Quantity must be greater than zero"
 msgstr ""
 
 #: build/models.py:819 build/serializers.py:217
-#, fuzzy
-#| msgid "Allocation quantity cannot exceed stock quantity"
 msgid "Quantity cannot be greater than the output quantity"
-msgstr "Tahsis miktarı stok miktarını aşamaz"
+msgstr ""
 
 #: build/models.py:1271
 msgid "Build item must specify a build output, as master part is marked as trackable"
@@ -12388,8 +12386,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12568,3 +12565,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
