@@ -2,7 +2,7 @@ import logging
 from typing import Dict, List
 
 import InvenTree.helpers
-from machine.driver import BaseDriver, BaseMachineType
+from machine.machine_type import BaseDriver, BaseMachineType
 
 logger = logging.getLogger('inventree')
 

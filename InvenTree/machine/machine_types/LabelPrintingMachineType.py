@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
-from machine.driver import BaseDriver, BaseMachineType
+from machine.machine_type import BaseDriver, BaseMachineType
 
 
 class BaseLabelPrintingDriver(BaseDriver):

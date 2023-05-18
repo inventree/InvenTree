@@ -1,4 +1,4 @@
-from machine.base_drivers.BaseLabelPrintingDriver import \
+from machine.machine_types.LabelPrintingMachineType import \
     BaseLabelPrintingDriver
 
 __all__ = [
