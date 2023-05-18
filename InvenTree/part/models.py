@@ -3351,6 +3351,23 @@ class PartParameterTemplate(MetadataMixin, models.Model):
     )
 
 
+@receiver(post_save, sender=PartParameterTemplate, dispatch_uid='post_save_part_parameter_template')
+def post_save_part_parameter_template(sender, instance, created, **kwargs):
+    """Callback function when a PartParameterTemplate is created or saved"""
+
+    import part.tasks as part_tasks
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+
+        # Schedule a background task to rebuild the parameters against this template
+        if not created:
+            InvenTree.tasks.offload_task(
+                part_tasks.rebuild_parameters,
+                instance.pk,
+                force_async=True
+            )
+
+
 class PartParameter(models.Model):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 

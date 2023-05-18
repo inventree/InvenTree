@@ -428,3 +428,31 @@ def scheduled_stocktake_reports():
 
     # Record the date of this report
     common.models.InvenTreeSetting.set_setting('STOCKTAKE_RECENT_REPORT', datetime.now().isoformat(), None)
+
+
+def rebuild_parameters(template_id):
+    """Rebuild all parameters for a given template.
+
+    This method is called when a base template is changed,
+    which may cause the base unit to be adjusted.
+    """
+
+    try:
+        template = part.models.PartParameterTemplate.objects.get(pk=template_id)
+    except part.models.PartParameterTemplate.DoesNotExist:
+        return
+
+    parameters = part.models.PartParameter.objects.filter(template=template)
+
+    n = 0
+
+    for parameter in parameters:
+        # Update the parameter if the numeric value has changed
+        value_old = parameter.data_numeric
+        parameter.calculate_numeric_value()
+
+        if value_old != parameter.data_numeric:
+            parameter.save()
+            n += 1
+
+    logger.info(f"Rebuilt {n} parameters for template '{template.name}'")
