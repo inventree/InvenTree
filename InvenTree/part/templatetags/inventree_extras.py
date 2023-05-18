@@ -19,6 +19,7 @@ from common.settings import currency_code_default
 from InvenTree import settings, version
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginSetting
+from plugin.plugin import InvenTreePlugin
 
 register = template.Library()
 
@@ -325,6 +326,8 @@ def setting_object(key, *args, **kwargs):
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
         plugin = kwargs['plugin']
+        if issubclass(plugin.__class__, InvenTreePlugin):
+            plugin = plugin.plugin_config()
 
         return PluginSetting.get_setting_object(key, plugin=plugin, cache=cache)
 
