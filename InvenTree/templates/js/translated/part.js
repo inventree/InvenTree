@@ -1781,6 +1781,12 @@ function loadRelatedPartsTable(table, part_id, options={}) {
  */
 function loadParametricPartTable(table, options={}) {
 
+    options.params = options.params || {};
+
+    options.params['parameters'] = true;
+
+    let filters = loadTableFilters('parameters', options.params);
+
     setupFilterList('parameters', $(table), '#filter-list-parameters');
 
     var columns = [
@@ -1832,16 +1838,16 @@ function loadParametricPartTable(table, options={}) {
 
     $(table).inventreeTable({
         url: '{% url "api-part-list" %}',
-        queryParams: {
-            category: options.category,
-            cascade: true,
-            parameters: true,
-        },
+        queryParams: filters,
+        original: options.params,
         groupBy: false,
         name: options.name || 'part-parameters',
         formatNoMatches: function() {
             return '{% trans "No parts found" %}';
         },
+        filterControl: true,
+        showFilterControlSwitch: true,
+        sortSelectOptions: true,
         columns: columns,
         showColumns: true,
         sidePagination: 'server',
@@ -1946,6 +1952,8 @@ function partGridTile(part) {
  *      actions: Provide a callback function to construct an "actions" column
  */
 function loadPartTable(table, url, options={}) {
+
+    options.params = options.params || {};
 
     // Ensure category detail is included
     options.params['category_detail'] = true;
