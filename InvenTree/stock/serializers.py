@@ -93,6 +93,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'batch',
             'belongs_to',
             'build',
+            'consumed_by',
             'customer',
             'delete_on_deplete',
             'expired',

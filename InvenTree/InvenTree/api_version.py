@@ -2,13 +2,16 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 114
+INVENTREE_API_VERSION = 115
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v114 -> 2023-05-17 : https://github.com/inventree/InvenTree/pull/4823
+v115 -> 2023-05-17 : https://github.com/inventree/InvenTree/pull/4823
     - Updates to part parameter implementation, to use physical units
+
+v114 -> 2023-05-16 : https://github.com/inventree/InvenTree/pull/4825
+    - Adds "delivery_date" to shipments
 
 v113 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
     - Adds API endpoints for scrapping a build output

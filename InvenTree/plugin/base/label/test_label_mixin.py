@@ -8,7 +8,7 @@ from django.urls import reverse
 from PIL import Image
 
 from common.models import InvenTreeSetting
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 from label.models import PartLabel, StockItemLabel, StockLocationLabel
 from part.models import Part
 from plugin.base.label.mixins import LabelPrintingMixin

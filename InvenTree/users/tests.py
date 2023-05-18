@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from rest_framework.authtoken.models import Token
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 from users.models import Owner, RuleSet
 
 
