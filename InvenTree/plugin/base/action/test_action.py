@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 from plugin import InvenTreePlugin
 from plugin.mixins import ActionMixin
 
