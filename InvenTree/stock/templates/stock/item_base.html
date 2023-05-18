@@ -358,6 +358,12 @@
             <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
         </td>
     </tr>
+    {% elif item.consumed_by %}
+    <tr>
+        <td><span class='fas fa-tools'></span></td>
+        <td>{% trans "Consumed By" %}</td>
+        <td><a href='{% url "build-detail" item.consumed_by.pk %}'>{{ item.consumed_by }}</td>
+    </tr>
     {% elif item.sales_order %}
     <tr>
         <td><span class='fas fa-th-list'></span></td>

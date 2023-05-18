@@ -54,7 +54,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         verbose_name = _('Stock Location')
         verbose_name_plural = _('Stock Locations')
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     def delete_recursive(self, *args, **kwargs):
         """This function handles the recursive deletion of sub-locations depending on kwargs contents"""
@@ -324,7 +324,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             }
         }
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
@@ -332,6 +332,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         sales_order=None,
         belongs_to=None,
         customer=None,
+        consumed_by=None,
         is_building=False,
         status__in=StockStatus.AVAILABLE_CODES
     )
@@ -755,6 +756,14 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         related_name='build_outputs',
     )
 
+    consumed_by = models.ForeignKey(
+        'build.Build', on_delete=models.CASCADE,
+        verbose_name=_('Consumed By'),
+        blank=True, null=True,
+        help_text=_('Build order which consumed this stock item'),
+        related_name='consumed_stock',
+    )
+
     is_building = models.BooleanField(
         default=False,
     )
@@ -1167,7 +1176,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         return self.installed_parts.count()
 
     @transaction.atomic
-    def installStockItem(self, other_item, quantity, user, notes):
+    def installStockItem(self, other_item, quantity, user, notes, build=None):
         """Install another stock item into this stock item.
 
         Args:
@@ -1175,6 +1184,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             quantity: The quantity of stock to install
             user: The user performing the operation
             notes: Any notes associated with the operation
+            build: The BuildOrder to associate with the operation (optional)
         """
         # If the quantity is less than the stock item, split the stock!
         stock_item = other_item.splitStock(quantity, None, user)
@@ -1184,16 +1194,22 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         # Assign the other stock item into this one
         stock_item.belongs_to = self
-        stock_item.save()
+        stock_item.consumed_by = build
+        stock_item.save(add_note=False)
+
+        deltas = {
+            'stockitem': self.pk,
+        }
+
+        if build is not None:
+            deltas['buildorder'] = build.pk
 
         # Add a transaction note to the other item
         stock_item.add_tracking_entry(
             StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
             user,
             notes=notes,
-            deltas={
-                'stockitem': self.pk,
-            }
+            deltas=deltas,
         )
 
         # Add a transaction note to this item (the assembly)
@@ -1559,7 +1575,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         self.save()
 
     @transaction.atomic
-    def splitStock(self, quantity, location, user, **kwargs):
+    def splitStock(self, quantity, location=None, user=None, **kwargs):
         """Split this stock item into two items, in the same location.
 
         Stock tracking notes for this StockItem will be duplicated,
@@ -1569,12 +1585,13 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             quantity: Number of stock items to remove from this entity, and pass to the next
             location: Where to move the new StockItem to
 
-        Notes:
-            The provided quantity will be subtracted from this item and given to the new one.
-            The new item will have a different StockItem ID, while this will remain the same.
+        Returns:
+            The new StockItem object
+
+        - The provided quantity will be subtracted from this item and given to the new one.
+        - The new item will have a different StockItem ID, while this will remain the same.
         """
         notes = kwargs.get('notes', '')
-        code = kwargs.get('code', StockHistoryCode.SPLIT_FROM_PARENT)
 
         # Do not split a serialized part
         if self.serialized:
@@ -1606,30 +1623,31 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         else:
             new_stock.location = self.location
 
-        new_stock.save()
+        new_stock.save(add_note=False)
 
-        # Copy the transaction history of this part into the new one
-        new_stock.copyHistoryFrom(self)
+        # Add a stock tracking entry for the newly created item
+        new_stock.add_tracking_entry(
+            StockHistoryCode.SPLIT_FROM_PARENT,
+            user,
+            quantity=quantity,
+            notes=notes,
+            location=location,
+            deltas={
+                'stockitem': self.pk,
+            }
+        )
 
         # Copy the test results of this part to the new one
         new_stock.copyTestResultsFrom(self)
-
-        # Add a new tracking item for the new stock item
-        new_stock.add_tracking_entry(
-            code,
-            user,
-            notes=notes,
-            deltas={
-                'stockitem': self.pk,
-            },
-            location=location,
-        )
 
         # Remove the specified quantity from THIS stock item
         self.take_stock(
             quantity,
             user,
-            notes=notes
+            code=StockHistoryCode.SPLIT_CHILD_ITEM,
+            notes=notes,
+            location=location,
+            stockitem=new_stock,
         )
 
         # Return a copy of the "new" stock item
@@ -1798,7 +1816,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         return True
 
     @transaction.atomic
-    def take_stock(self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE):
+    def take_stock(self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE, **kwargs):
         """Remove items from stock."""
         # Cannot remove items from a serialized part
         if self.serialized:
@@ -1814,14 +1832,22 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         if self.updateQuantity(self.quantity - quantity):
 
+            deltas = {
+                'removed': float(quantity),
+                'quantity': float(self.quantity),
+            }
+
+            if location := kwargs.get('location', None):
+                deltas['location'] = location.pk
+
+            if stockitem := kwargs.get('stockitem', None):
+                deltas['stockitem'] = stockitem.pk
+
             self.add_tracking_entry(
                 code,
                 user,
                 notes=notes,
-                deltas={
-                    'removed': float(quantity),
-                    'quantity': float(self.quantity),
-                }
+                deltas=deltas,
             )
 
         return True

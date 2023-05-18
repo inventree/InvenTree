@@ -15,10 +15,10 @@ from rest_framework import status
 
 from common.settings import currency_codes
 from company.models import Company
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockStatus)
+from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from part.models import Part
 from stock.models import StockItem
@@ -1829,6 +1829,7 @@ class SalesOrderAllocateTest(OrderTest):
                 'link': 'http://test.com/link.html',
                 'tracking_number': 'TRK12345',
                 'shipment_date': '2020-12-05',
+                'delivery_date': '2023-12-05',
             },
             expected_code=201,
         )
@@ -1839,6 +1840,48 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(self.shipment.tracking_number, 'TRK12345')
         self.assertEqual(self.shipment.invoice_number, 'INV01234')
         self.assertEqual(self.shipment.link, 'http://test.com/link.html')
+        self.assertEqual(self.shipment.delivery_date, datetime(2023, 12, 5).date())
+        self.assertTrue(self.shipment.is_delivered())
+
+    def test_shipment_deliverydate(self):
+        """Test delivery date functions via API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        # Attempt remove delivery_date from shipment
+        response = self.patch(
+            url,
+            {
+                'delivery_date': None,
+            },
+            expected_code=200,
+        )
+
+        # Shipment should not be marked as delivered
+        self.assertFalse(self.shipment.is_delivered())
+
+        # Attempt to set delivery date
+        response = self.patch(
+            url,
+            {
+                'delivery_date': 'asfasd',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Date has wrong format', str(response.data))
+
+        response = self.patch(
+            url,
+            {
+                'delivery_date': '2023-05-15',
+            },
+            expected_code=200,
+        )
+        self.shipment.refresh_from_db()
+
+        # Shipment should now be marked as delivered
+        self.assertTrue(self.shipment.is_delivered())
+        self.assertEqual(self.shipment.delivery_date, datetime(2023, 5, 15).date())
 
     def test_sales_order_shipment_list(self):
         """Test the SalesOrderShipment list API endpoint"""
