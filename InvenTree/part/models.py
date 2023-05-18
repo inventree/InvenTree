@@ -3430,14 +3430,14 @@ class PartParameter(models.Model):
                 converted = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
                 self.data_numeric = float(converted.magnitude)
             except (ValidationError, ValueError):
-                self.data_numeric = 0.0
+                self.data_numeric = None
 
         # No units provided, so try to cast to a float
         else:
             try:
                 self.data_numeric = float(self.data)
             except ValueError:
-                self.data_numeric = 0.0
+                self.data_numeric = None
 
     part = models.ForeignKey(
         Part, on_delete=models.CASCADE, related_name='parameters',
@@ -3458,7 +3458,9 @@ class PartParameter(models.Model):
     )
 
     data_numeric = models.FloatField(
-        default=0.0,
+        default=None,
+        null=True,
+        blank=True,
     )
 
     @classmethod

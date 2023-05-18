@@ -91,7 +91,8 @@ def convert_to_numeric_value(value: str, units: str):
     Defaults to zero if the value cannot be converted.
     """
 
-    result = 0.0
+    # Default value is null
+    result = None
 
     if units:
         try:

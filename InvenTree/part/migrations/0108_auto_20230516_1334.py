@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partparameter',
             name='data_numeric',
-            field=models.FloatField(default=0.0),
+            field=models.FloatField(default=None, null=True, blank=True),
         ),
         migrations.AlterField(
             model_name='partparameter',
