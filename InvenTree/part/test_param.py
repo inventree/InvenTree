@@ -4,7 +4,7 @@ import django.core.exceptions as django_exceptions
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 
 from .models import (Part, PartCategory, PartCategoryParameterTemplate,
                      PartParameter, PartParameterTemplate)
