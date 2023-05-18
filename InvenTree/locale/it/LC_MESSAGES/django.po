@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-16 21:37+0000\n"
+"POT-Creation-Date: 2023-05-18 10:53+0000\n"
 "PO-Revision-Date: 2023-05-17 13:16\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -33,15 +33,15 @@ msgstr "I dettagli dell'errore possono essere trovati nel pannello di amministra
 msgid "Enter date"
 msgstr "Inserisci la data"
 
-#: InvenTree/fields.py:204 InvenTree/models.py:764 build/serializers.py:387
-#: build/serializers.py:464 build/templates/build/sidebar.html:23
+#: InvenTree/fields.py:204 InvenTree/models.py:764 build/serializers.py:427
+#: build/serializers.py:506 build/templates/build/sidebar.html:23
 #: company/models.py:557 company/templates/company/sidebar.html:35
 #: order/models.py:1086 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
 #: part/models.py:2987 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:121 stock/models.py:2157 stock/models.py:2265
+#: stock/admin.py:121 stock/models.py:2159 stock/models.py:2267
 #: stock/serializers.py:342 stock/serializers.py:475 stock/serializers.py:556
 #: stock/serializers.py:839 stock/serializers.py:938 stock/serializers.py:1070
 #: stock/templates/stock/stock_sidebar.html:25
@@ -221,7 +221,7 @@ msgstr "File mancante"
 msgid "Missing external link"
 msgstr "Link esterno mancante"
 
-#: InvenTree/models.py:484 stock/models.py:2259
+#: InvenTree/models.py:484 stock/models.py:2261
 #: templates/js/translated/attachment.js:109
 #: templates/js/translated/attachment.js:296
 msgid "Attachment"
@@ -344,7 +344,7 @@ msgstr "Nome"
 #: templates/InvenTree/settings/settings_staff_js.html:75
 #: templates/InvenTree/settings/settings_staff_js.html:333
 #: templates/js/translated/bom.js:602 templates/js/translated/bom.js:903
-#: templates/js/translated/build.js:2798 templates/js/translated/company.js:496
+#: templates/js/translated/build.js:2825 templates/js/translated/company.js:496
 #: templates/js/translated/company.js:973
 #: templates/js/translated/company.js:1236 templates/js/translated/order.js:280
 #: templates/js/translated/part.js:1178 templates/js/translated/part.js:1620
@@ -841,7 +841,7 @@ msgstr "La produzione deve essere annullata prima di poter essere eliminata"
 #: report/templates/report/inventree_build_order_base.html:105
 #: templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
-#: templates/js/translated/build.js:888 templates/js/translated/stock.js:2593
+#: templates/js/translated/build.js:915 templates/js/translated/stock.js:2593
 msgid "Build Order"
 msgstr "Ordine di Produzione"
 
@@ -872,7 +872,7 @@ msgstr "Riferimento Ordine Di Produzione"
 #: report/templates/report/inventree_return_order_report_base.html:26
 #: report/templates/report/inventree_so_report_base.html:28
 #: templates/js/translated/bom.js:739 templates/js/translated/bom.js:913
-#: templates/js/translated/build.js:2041 templates/js/translated/order.js:273
+#: templates/js/translated/build.js:2068 templates/js/translated/order.js:273
 #: templates/js/translated/pricing.js:372
 #: templates/js/translated/purchase_order.js:1992
 #: templates/js/translated/return_order.js:693
@@ -918,8 +918,8 @@ msgstr "Ordine di produzione a cui questa produzione viene assegnata"
 #: templates/email/overdue_build_order.html:16
 #: templates/js/translated/barcode.js:516 templates/js/translated/bom.js:601
 #: templates/js/translated/bom.js:738 templates/js/translated/bom.js:857
-#: templates/js/translated/build.js:1346 templates/js/translated/build.js:1908
-#: templates/js/translated/build.js:2407 templates/js/translated/build.js:2809
+#: templates/js/translated/build.js:1373 templates/js/translated/build.js:1935
+#: templates/js/translated/build.js:2434 templates/js/translated/build.js:2836
 #: templates/js/translated/company.js:322
 #: templates/js/translated/company.js:807
 #: templates/js/translated/company.js:914
@@ -955,8 +955,8 @@ msgstr "Numero di riferimento ordine di vendita"
 msgid "SalesOrder to which this build is allocated"
 msgstr "Ordine di vendita a cui questa produzione viene assegnata"
 
-#: build/models.py:202 build/serializers.py:900
-#: templates/js/translated/build.js:2395
+#: build/models.py:202 build/serializers.py:942
+#: templates/js/translated/build.js:2422
 #: templates/js/translated/sales_order.js:1140
 msgid "Source Location"
 msgstr "Posizione Di Origine"
@@ -997,12 +997,12 @@ msgstr "Stato Produzione"
 msgid "Build status code"
 msgstr "Codice stato di produzione"
 
-#: build/models.py:245 build/serializers.py:229 order/serializers.py:505
+#: build/models.py:245 build/serializers.py:269 order/serializers.py:505
 #: stock/models.py:739 templates/js/translated/purchase_order.js:1058
 msgid "Batch Code"
 msgstr "Codice Lotto"
 
-#: build/models.py:249 build/serializers.py:230
+#: build/models.py:249 build/serializers.py:270
 msgid "Batch code for this build output"
 msgstr "Codice del lotto per questa produzione"
 
@@ -1022,7 +1022,7 @@ msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Data di completamento della produzione. Dopo tale data la produzione sarà in ritardo."
 
 #: build/models.py:260 order/models.py:405 order/models.py:1764
-#: templates/js/translated/build.js:2894
+#: templates/js/translated/build.js:2921
 msgid "Completion Date"
 msgstr "Data di completamento"
 
@@ -1030,7 +1030,7 @@ msgstr "Data di completamento"
 msgid "completed by"
 msgstr "Completato da"
 
-#: build/models.py:274 templates/js/translated/build.js:2854
+#: build/models.py:274 templates/js/translated/build.js:2881
 msgid "Issued by"
 msgstr "Rilasciato da"
 
@@ -1045,7 +1045,7 @@ msgstr "Utente che ha emesso questo ordine di costruzione"
 #: order/templates/order/sales_order_base.html:222 part/models.py:1036
 #: part/templates/part/part_base.html:392
 #: report/templates/report/inventree_build_order_base.html:158
-#: templates/js/translated/build.js:2866
+#: templates/js/translated/build.js:2893
 #: templates/js/translated/purchase_order.js:1682
 #: templates/js/translated/return_order.js:327
 #: templates/js/translated/table_filters.js:446
@@ -1096,48 +1096,61 @@ msgstr "La produzione è stata completata"
 msgid "Build output does not match Build Order"
 msgstr "L'output della produzione non corrisponde all'ordine di compilazione"
 
-#: build/models.py:1256
+#: build/models.py:814 build/serializers.py:212 build/serializers.py:251
+#: build/serializers.py:811 order/models.py:436 order/serializers.py:378
+#: order/serializers.py:500 part/serializers.py:1094 part/serializers.py:1415
+#: stock/models.py:593 stock/models.py:1386 stock/serializers.py:315
+msgid "Quantity must be greater than zero"
+msgstr "La quantità deve essere maggiore di zero"
+
+#: build/models.py:819 build/serializers.py:217
+#, fuzzy
+#| msgid "Quantity must be greater than zero"
+msgid "Quantity cannot be greater than the output quantity"
+msgstr "La quantità deve essere maggiore di zero"
+
+#: build/models.py:1271
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "L'elemento di compilazione deve specificare un output poiché la parte principale è contrassegnata come rintracciabile"
 
-#: build/models.py:1265
+#: build/models.py:1280
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "La quantità assegnata ({q}) non deve essere maggiore della quantità disponibile ({a})"
 
-#: build/models.py:1275 order/models.py:1598
+#: build/models.py:1290 order/models.py:1598
 msgid "Stock item is over-allocated"
 msgstr "L'articolo in giacenza è sovrallocato"
 
-#: build/models.py:1281 order/models.py:1601
+#: build/models.py:1296 order/models.py:1601
 msgid "Allocation quantity must be greater than zero"
 msgstr "La quantità di assegnazione deve essere maggiore di zero"
 
-#: build/models.py:1287
+#: build/models.py:1302
 msgid "Quantity must be 1 for serialized stock"
 msgstr "La quantità deve essere 1 per lo stock serializzato"
 
-#: build/models.py:1344
+#: build/models.py:1359
 msgid "Selected stock item not found in BOM"
 msgstr "Articolo in giacenza selezionato non trovato nel BOM"
 
-#: build/models.py:1422 stock/templates/stock/item_base.html:170
-#: templates/InvenTree/search.html:139 templates/js/translated/build.js:2782
+#: build/models.py:1437 stock/templates/stock/item_base.html:170
+#: templates/InvenTree/search.html:139 templates/js/translated/build.js:2809
 #: templates/navbar.html:38
 msgid "Build"
 msgstr "Produzione"
 
-#: build/models.py:1423
+#: build/models.py:1438
 msgid "Build to allocate parts"
 msgstr "Costruisci per allocare gli articoli"
 
-#: build/models.py:1439 build/serializers.py:749 order/serializers.py:1060
+#: build/models.py:1454 build/serializers.py:791 order/serializers.py:1060
 #: order/serializers.py:1081 stock/serializers.py:413 stock/serializers.py:770
 #: stock/serializers.py:896 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:195
-#: templates/js/translated/build.js:898 templates/js/translated/build.js:903
-#: templates/js/translated/build.js:2409 templates/js/translated/build.js:2979
+#: templates/js/translated/build.js:925 templates/js/translated/build.js:930
+#: templates/js/translated/build.js:2436 templates/js/translated/build.js:3006
 #: templates/js/translated/sales_order.js:253
 #: templates/js/translated/sales_order.js:1153
 #: templates/js/translated/sales_order.js:1452
@@ -1149,11 +1162,11 @@ msgstr "Costruisci per allocare gli articoli"
 msgid "Stock Item"
 msgstr "Articoli in magazzino"
 
-#: build/models.py:1440
+#: build/models.py:1455
 msgid "Source stock item"
 msgstr "Origine giacenza articolo"
 
-#: build/models.py:1452 build/serializers.py:197
+#: build/models.py:1467 build/serializers.py:198 build/serializers.py:236
 #: build/templates/build/build_base.html:103
 #: build/templates/build/detail.html:34 common/models.py:2152
 #: order/models.py:1070 order/models.py:1642 order/serializers.py:1234
@@ -1174,8 +1187,9 @@ msgstr "Origine giacenza articolo"
 #: templates/email/build_order_completed.html:18
 #: templates/js/translated/barcode.js:518 templates/js/translated/bom.js:740
 #: templates/js/translated/bom.js:921 templates/js/translated/build.js:474
-#: templates/js/translated/build.js:925 templates/js/translated/build.js:1368
-#: templates/js/translated/build.js:1934 templates/js/translated/build.js:2410
+#: templates/js/translated/build.js:686 templates/js/translated/build.js:952
+#: templates/js/translated/build.js:1395 templates/js/translated/build.js:1961
+#: templates/js/translated/build.js:2437
 #: templates/js/translated/company.js:1406
 #: templates/js/translated/model_renderers.js:204
 #: templates/js/translated/order.js:286 templates/js/translated/part.js:901
@@ -1199,20 +1213,20 @@ msgstr "Origine giacenza articolo"
 msgid "Quantity"
 msgstr "Quantità"
 
-#: build/models.py:1453
+#: build/models.py:1468
 msgid "Stock quantity to allocate to build"
 msgstr "Quantità di magazzino da assegnare per la produzione"
 
-#: build/models.py:1461
+#: build/models.py:1476
 msgid "Install into"
 msgstr "Installa in"
 
-#: build/models.py:1462
+#: build/models.py:1477
 msgid "Destination stock item"
 msgstr "Destinazione articolo in giacenza"
 
-#: build/serializers.py:148 build/serializers.py:778
-#: templates/js/translated/build.js:1356
+#: build/serializers.py:148 build/serializers.py:820
+#: templates/js/translated/build.js:1383
 msgid "Build Output"
 msgstr "Genera Output"
 
@@ -1232,59 +1246,52 @@ msgstr "Questa produzione è stata già completata"
 msgid "This build output is not fully allocated"
 msgstr "Questo output non è stato completamente assegnato"
 
-#: build/serializers.py:198
+#: build/serializers.py:199 build/serializers.py:237
 msgid "Enter quantity for build output"
 msgstr "Inserisci la quantità per l'output di compilazione"
 
-#: build/serializers.py:212 build/serializers.py:769 order/models.py:436
-#: order/serializers.py:378 order/serializers.py:500 part/serializers.py:1094
-#: part/serializers.py:1415 stock/models.py:593 stock/models.py:1386
-#: stock/serializers.py:315
-msgid "Quantity must be greater than zero"
-msgstr "La quantità deve essere maggiore di zero"
-
-#: build/serializers.py:219
+#: build/serializers.py:258
 msgid "Integer quantity required for trackable parts"
 msgstr "Quantità totale richiesta per articoli rintracciabili"
 
-#: build/serializers.py:222
+#: build/serializers.py:261
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Quantità totale richiesta, poiché la fattura dei materiali contiene articoli rintracciabili"
 
-#: build/serializers.py:236 order/serializers.py:513 order/serializers.py:1238
+#: build/serializers.py:276 order/serializers.py:513 order/serializers.py:1238
 #: stock/serializers.py:324 templates/js/translated/purchase_order.js:1082
 #: templates/js/translated/stock.js:298 templates/js/translated/stock.js:496
 msgid "Serial Numbers"
 msgstr "Codice Seriale"
 
-#: build/serializers.py:237
+#: build/serializers.py:277
 msgid "Enter serial numbers for build outputs"
 msgstr "Inserisci i numeri di serie per gli output di compilazione (build option)"
 
-#: build/serializers.py:250
+#: build/serializers.py:290
 msgid "Auto Allocate Serial Numbers"
 msgstr "Numeri di Serie Assegnazione automatica"
 
-#: build/serializers.py:251
+#: build/serializers.py:291
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Assegna automaticamente gli articoli richiesti con i numeri di serie corrispondenti"
 
-#: build/serializers.py:286 stock/api.py:669
+#: build/serializers.py:326 stock/api.py:669
 msgid "The following serial numbers already exist or are invalid"
 msgstr "I seguenti numeri di serie sono già esistenti o non sono validi"
 
-#: build/serializers.py:337 build/serializers.py:399 build/serializers.py:476
+#: build/serializers.py:377 build/serializers.py:439 build/serializers.py:518
 msgid "A list of build outputs must be provided"
 msgstr "Deve essere fornito un elenco dei risultati di produzione"
 
-#: build/serializers.py:375 build/serializers.py:446 order/serializers.py:486
+#: build/serializers.py:415 build/serializers.py:488 order/serializers.py:486
 #: order/serializers.py:607 order/serializers.py:1587 part/serializers.py:861
 #: stock/serializers.py:335 stock/serializers.py:470 stock/serializers.py:551
 #: stock/serializers.py:931 stock/serializers.py:1173
 #: stock/templates/stock/item_base.html:390
 #: templates/js/translated/barcode.js:517
-#: templates/js/translated/barcode.js:765 templates/js/translated/build.js:910
-#: templates/js/translated/build.js:1949
+#: templates/js/translated/barcode.js:765 templates/js/translated/build.js:937
+#: templates/js/translated/build.js:1976
 #: templates/js/translated/purchase_order.js:1107
 #: templates/js/translated/purchase_order.js:1197
 #: templates/js/translated/sales_order.js:1464
@@ -1297,31 +1304,31 @@ msgstr "Deve essere fornito un elenco dei risultati di produzione"
 msgid "Location"
 msgstr "Posizione"
 
-#: build/serializers.py:376
+#: build/serializers.py:416
 msgid "Stock location for scrapped outputs"
 msgstr ""
 
-#: build/serializers.py:382
+#: build/serializers.py:422
 msgid "Discard Allocations"
 msgstr ""
 
-#: build/serializers.py:383
+#: build/serializers.py:423
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr ""
 
-#: build/serializers.py:388
+#: build/serializers.py:428
 msgid "Reason for scrapping build output(s)"
 msgstr ""
 
-#: build/serializers.py:447
+#: build/serializers.py:489
 msgid "Location for completed build outputs"
 msgstr "Posizione per gli output di build completati"
 
-#: build/serializers.py:453 build/templates/build/build_base.html:151
+#: build/serializers.py:495 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:788
 #: order/models.py:1747 order/serializers.py:523 stock/admin.py:106
 #: stock/templates/stock/item_base.html:423
-#: templates/js/translated/barcode.js:239 templates/js/translated/build.js:2838
+#: templates/js/translated/barcode.js:239 templates/js/translated/build.js:2865
 #: templates/js/translated/purchase_order.js:1237
 #: templates/js/translated/purchase_order.js:1641
 #: templates/js/translated/return_order.js:299
@@ -1331,157 +1338,157 @@ msgstr "Posizione per gli output di build completati"
 msgid "Status"
 msgstr "Stato"
 
-#: build/serializers.py:459
+#: build/serializers.py:501
 msgid "Accept Incomplete Allocation"
 msgstr "Accetta Assegnazione Incompleta"
 
-#: build/serializers.py:460
+#: build/serializers.py:502
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Completa l'output se le scorte non sono state interamente assegnate"
 
-#: build/serializers.py:529
+#: build/serializers.py:571
 msgid "Remove Allocated Stock"
 msgstr "Rimuovi Giacenze Allocate"
 
-#: build/serializers.py:530
+#: build/serializers.py:572
 msgid "Subtract any stock which has already been allocated to this build"
 msgstr "Detrai qualsiasi scorta che è stata già assegnata a questa produzione"
 
-#: build/serializers.py:536
+#: build/serializers.py:578
 msgid "Remove Incomplete Outputs"
 msgstr "Rimuovi Output Incompleti"
 
-#: build/serializers.py:537
+#: build/serializers.py:579
 msgid "Delete any build outputs which have not been completed"
 msgstr "Elimina gli output di produzione che non sono stati completati"
 
-#: build/serializers.py:564
+#: build/serializers.py:606
 msgid "Not permitted"
 msgstr ""
 
-#: build/serializers.py:565
+#: build/serializers.py:607
 msgid "Accept as consumed by this build order"
 msgstr "Accetta come consumato da questo ordine di produzione"
 
-#: build/serializers.py:566
+#: build/serializers.py:608
 msgid "Deallocate before completing this build order"
 msgstr "Non assegnare prima di aver completato questo ordine di produzione"
 
-#: build/serializers.py:589
+#: build/serializers.py:631
 msgid "Overallocated Stock"
 msgstr "Giacenza in eccesso assegnata"
 
-#: build/serializers.py:591
+#: build/serializers.py:633
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr "Come si desidera gestire gli elementi extra giacenza assegnati all'ordine di produzione"
 
-#: build/serializers.py:601
+#: build/serializers.py:643
 msgid "Some stock items have been overallocated"
 msgstr "Alcuni articoli di magazzino sono stati assegnati in eccedenza"
 
-#: build/serializers.py:606
+#: build/serializers.py:648
 msgid "Accept Unallocated"
 msgstr "Accetta Non Assegnato"
 
-#: build/serializers.py:607
+#: build/serializers.py:649
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr "Accetta che gli elementi in giacenza non sono stati completamente assegnati a questo ordine di produzione"
 
-#: build/serializers.py:617 templates/js/translated/build.js:265
+#: build/serializers.py:659 templates/js/translated/build.js:265
 msgid "Required stock has not been fully allocated"
 msgstr "La giacenza richiesta non è stata completamente assegnata"
 
-#: build/serializers.py:622 order/serializers.py:260 order/serializers.py:1128
+#: build/serializers.py:664 order/serializers.py:260 order/serializers.py:1128
 msgid "Accept Incomplete"
 msgstr "Accetta Incompleta"
 
-#: build/serializers.py:623
+#: build/serializers.py:665
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr "Accetta che il numero richiesto di output di produzione non sia stato completato"
 
-#: build/serializers.py:633 templates/js/translated/build.js:269
+#: build/serializers.py:675 templates/js/translated/build.js:269
 msgid "Required build quantity has not been completed"
 msgstr "La quantità di produzione richiesta non è stata completata"
 
-#: build/serializers.py:642 templates/js/translated/build.js:253
+#: build/serializers.py:684 templates/js/translated/build.js:253
 msgid "Build order has incomplete outputs"
 msgstr "L'ordine di produzione ha output incompleti"
 
-#: build/serializers.py:672 build/serializers.py:726 part/models.py:3488
+#: build/serializers.py:714 build/serializers.py:768 part/models.py:3488
 #: part/models.py:3871
 msgid "BOM Item"
 msgstr "Distinta base (Bom)"
 
-#: build/serializers.py:682
+#: build/serializers.py:724
 msgid "Build output"
 msgstr "Genera Output"
 
-#: build/serializers.py:690
+#: build/serializers.py:732
 msgid "Build output must point to the same build"
 msgstr "L'output di produzione deve puntare alla stessa produzione"
 
-#: build/serializers.py:740
+#: build/serializers.py:782
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "gli elementi degli articoli della distinta base devono puntare alla stessa parte dell'ordine di produzione"
 
-#: build/serializers.py:755 stock/serializers.py:783
+#: build/serializers.py:797 stock/serializers.py:783
 msgid "Item must be in stock"
 msgstr "L'articolo deve essere disponibile"
 
-#: build/serializers.py:804 order/serializers.py:1118
+#: build/serializers.py:846 order/serializers.py:1118
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Quantità disponibile ({q}) superata"
 
-#: build/serializers.py:810
+#: build/serializers.py:852
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "L'output di produzione deve essere specificato per l'ubicazione delle parti tracciate"
 
-#: build/serializers.py:817
+#: build/serializers.py:859
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "L'output di produzione non deve essere specificato per l'ubicazione delle parti non tracciate"
 
-#: build/serializers.py:822
+#: build/serializers.py:864
 msgid "This stock item has already been allocated to this build output"
 msgstr "Questa giacenza di magazzino è già stato assegnato a questa produzione"
 
-#: build/serializers.py:845 order/serializers.py:1402
+#: build/serializers.py:887 order/serializers.py:1402
 msgid "Allocation items must be provided"
 msgstr "Deve essere indicata l'allocazione dell'articolo"
 
-#: build/serializers.py:901
+#: build/serializers.py:943
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "Posizione dello stock in cui le parti devono prelevate (lasciare vuoto per prelevare da qualsiasi luogo)"
 
-#: build/serializers.py:909
+#: build/serializers.py:951
 msgid "Exclude Location"
 msgstr "Escludi Ubicazione"
 
-#: build/serializers.py:910
+#: build/serializers.py:952
 msgid "Exclude stock items from this selected location"
 msgstr "Escludi gli elementi stock da questa ubicazione selezionata"
 
-#: build/serializers.py:915
+#: build/serializers.py:957
 msgid "Interchangeable Stock"
 msgstr "Scorte Intercambiabili"
 
-#: build/serializers.py:916
+#: build/serializers.py:958
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "Gli elementi in magazzino in più sedi possono essere utilizzati in modo intercambiabile"
 
-#: build/serializers.py:921
+#: build/serializers.py:963
 msgid "Substitute Stock"
 msgstr "Sostituisci Giacenze"
 
-#: build/serializers.py:922
+#: build/serializers.py:964
 msgid "Allow allocation of substitute parts"
 msgstr "Consenti l'allocazione delle parti sostitutive"
 
-#: build/serializers.py:927
+#: build/serializers.py:969
 msgid "Optional Items"
 msgstr "Articoli Opzionali"
 
-#: build/serializers.py:928
+#: build/serializers.py:970
 msgid "Allocate optional BOM items to build order"
 msgstr "Assegna gli elementi opzionali della distinta base all'ordine di produzione"
 
@@ -1609,7 +1616,7 @@ msgstr "Lo stock non è stato completamente assegnato a questo ordine di produzi
 #: order/templates/order/return_order_base.html:165
 #: order/templates/order/sales_order_base.html:193
 #: report/templates/report/inventree_build_order_base.html:125
-#: templates/js/translated/build.js:2886 templates/js/translated/part.js:1488
+#: templates/js/translated/build.js:2913 templates/js/translated/part.js:1488
 #: templates/js/translated/purchase_order.js:1658
 #: templates/js/translated/purchase_order.js:2074
 #: templates/js/translated/return_order.js:315
@@ -1666,7 +1673,7 @@ msgid "Issued By"
 msgstr "Inviato da"
 
 #: build/templates/build/build_base.html:211
-#: build/templates/build/detail.html:94 templates/js/translated/build.js:2803
+#: build/templates/build/detail.html:94 templates/js/translated/build.js:2830
 msgid "Priority"
 msgstr "Priorità"
 
@@ -1709,7 +1716,7 @@ msgstr "Articoli Assegnati"
 
 #: build/templates/build/detail.html:80 stock/admin.py:105
 #: stock/templates/stock/item_base.html:163
-#: templates/js/translated/build.js:1375
+#: templates/js/translated/build.js:1402
 #: templates/js/translated/model_renderers.js:209
 #: templates/js/translated/purchase_order.js:1203
 #: templates/js/translated/stock.js:1057 templates/js/translated/stock.js:1890
@@ -1723,7 +1730,7 @@ msgstr "Lotto"
 #: order/templates/order/order_base.html:177
 #: order/templates/order/return_order_base.html:152
 #: order/templates/order/sales_order_base.html:187
-#: templates/js/translated/build.js:2846
+#: templates/js/translated/build.js:2873
 msgid "Created"
 msgstr "Creato"
 
@@ -1743,7 +1750,7 @@ msgstr "Ordine di Produzione Subordinato"
 msgid "Allocate Stock to Build"
 msgstr "Assegna Scorte alla Produzione"
 
-#: build/templates/build/detail.html:183 templates/js/translated/build.js:2219
+#: build/templates/build/detail.html:183 templates/js/translated/build.js:2246
 msgid "Unallocate stock"
 msgstr "Scorte Non Assegnate"
 
@@ -1863,11 +1870,11 @@ msgstr "Allegati"
 msgid "Build Notes"
 msgstr "Genera Note"
 
-#: build/templates/build/detail.html:500
+#: build/templates/build/detail.html:502
 msgid "Allocation Complete"
 msgstr "Assegnazione Completa"
 
-#: build/templates/build/detail.html:501
+#: build/templates/build/detail.html:503
 msgid "All untracked stock items have been allocated"
 msgstr "Tutte le giacenze non tracciate sono state assegnate"
 
@@ -3585,7 +3592,7 @@ msgstr "Nome parametro"
 
 #: company/models.py:395
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2252 templates/js/translated/company.js:857
+#: stock/models.py:2254 templates/js/translated/company.js:857
 #: templates/js/translated/company.js:1062 templates/js/translated/part.js:1291
 #: templates/js/translated/stock.js:1410
 msgid "Value"
@@ -3710,8 +3717,8 @@ msgstr "Ordine multiplo"
 #: company/models.py:580 company/templates/company/supplier_part.html:115
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
-#: templates/js/translated/bom.js:1123 templates/js/translated/build.js:2079
-#: templates/js/translated/build.js:2986
+#: templates/js/translated/bom.js:1123 templates/js/translated/build.js:2106
+#: templates/js/translated/build.js:3013
 #: templates/js/translated/model_renderers.js:202
 #: templates/js/translated/part.js:636 templates/js/translated/part.js:638
 #: templates/js/translated/part.js:643
@@ -3935,7 +3942,7 @@ msgid "New Sales Order"
 msgstr "Nuovo Ordine di Vendita"
 
 #: company/templates/company/detail.html:173
-#: templates/js/translated/build.js:1919
+#: templates/js/translated/build.js:1946
 msgid "Assigned Stock"
 msgstr "Assegna Giacenza"
 
@@ -5016,7 +5023,7 @@ msgstr "Duplica selezionati"
 #: part/templates/part/import_wizard/match_fields.html:71
 #: part/templates/part/import_wizard/match_references.html:49
 #: templates/js/translated/bom.js:102 templates/js/translated/build.js:482
-#: templates/js/translated/build.js:2291
+#: templates/js/translated/build.js:2318
 #: templates/js/translated/purchase_order.js:653
 #: templates/js/translated/purchase_order.js:1165
 #: templates/js/translated/return_order.js:474
@@ -5206,7 +5213,7 @@ msgstr "Spedizione in sospeso"
 
 #: order/templates/order/sales_order_detail.html:75
 #: templates/attachment_table.html:6 templates/js/translated/bom.js:1232
-#: templates/js/translated/build.js:2192
+#: templates/js/translated/build.js:2219
 msgid "Actions"
 msgstr "Azioni"
 
@@ -5298,7 +5305,7 @@ msgid "In Stock"
 msgstr "In magazzino"
 
 #: part/admin.py:62 part/bom.py:178 part/templates/part/part_base.html:212
-#: templates/js/translated/bom.js:1163 templates/js/translated/build.js:2134
+#: templates/js/translated/bom.js:1163 templates/js/translated/build.js:2161
 #: templates/js/translated/part.js:653 templates/js/translated/part.js:1772
 #: templates/js/translated/table_filters.js:136
 msgid "On Order"
@@ -5308,8 +5315,8 @@ msgstr "Ordinato"
 msgid "Used In"
 msgstr "Utilizzato In"
 
-#: part/admin.py:64 templates/js/translated/build.js:2146
-#: templates/js/translated/build.js:2408 templates/js/translated/build.js:2993
+#: part/admin.py:64 templates/js/translated/build.js:2173
+#: templates/js/translated/build.js:2435 templates/js/translated/build.js:3020
 #: templates/js/translated/sales_order.js:1876
 #: templates/js/translated/table_filters.js:473
 msgid "Allocated"
@@ -5962,7 +5969,7 @@ msgstr "Quantità Distinta Base per questo elemento Distinta Base"
 
 #: part/models.py:3585 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:941 templates/js/translated/bom.js:994
-#: templates/js/translated/build.js:2056
+#: templates/js/translated/build.js:2083
 #: templates/js/translated/table_filters.js:152
 #: templates/js/translated/table_filters.js:181
 #: templates/js/translated/table_filters.js:485
@@ -5974,7 +5981,7 @@ msgid "This BOM item is optional"
 msgstr "Questo elemento della Distinta Base è opzionale"
 
 #: part/models.py:3591 templates/js/translated/bom.js:937
-#: templates/js/translated/bom.js:1003 templates/js/translated/build.js:2047
+#: templates/js/translated/bom.js:1003 templates/js/translated/build.js:2074
 #: templates/js/translated/table_filters.js:156
 #: templates/js/translated/table_filters.js:481
 msgid "Consumable"
@@ -7396,8 +7403,8 @@ msgstr "Totale"
 #: report/templates/report/inventree_return_order_report_base.html:25
 #: report/templates/report/inventree_test_report_base.html:88
 #: stock/models.py:725 stock/templates/stock/item_base.html:312
-#: templates/js/translated/build.js:472 templates/js/translated/build.js:1366
-#: templates/js/translated/build.js:1932
+#: templates/js/translated/build.js:472 templates/js/translated/build.js:1393
+#: templates/js/translated/build.js:1959
 #: templates/js/translated/model_renderers.js:198
 #: templates/js/translated/return_order.js:508
 #: templates/js/translated/return_order.js:688
@@ -7417,12 +7424,12 @@ msgid "Test Results"
 msgstr "Risultati Test"
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2240 templates/js/translated/stock.js:1383
+#: stock/models.py:2242 templates/js/translated/stock.js:1383
 msgid "Test"
 msgstr "Test"
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2246
+#: stock/models.py:2248
 msgid "Result"
 msgstr "Risultato"
 
@@ -7765,39 +7772,39 @@ msgstr "Gli elementi di magazzino devono riferirsi allo stesso articolo fornitor
 msgid "Stock status codes must match"
 msgstr "I codici di stato dello stock devono corrispondere"
 
-#: stock/models.py:1676
+#: stock/models.py:1678
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Le giacenze non possono essere spostate perché non disponibili"
 
-#: stock/models.py:2158
+#: stock/models.py:2160
 msgid "Entry notes"
 msgstr "Note d'ingresso"
 
-#: stock/models.py:2216
+#: stock/models.py:2218
 msgid "Value must be provided for this test"
 msgstr "Il valore deve essere fornito per questo test"
 
-#: stock/models.py:2222
+#: stock/models.py:2224
 msgid "Attachment must be uploaded for this test"
 msgstr "L'allegato deve essere caricato per questo test"
 
-#: stock/models.py:2241
+#: stock/models.py:2243
 msgid "Test name"
 msgstr "Nome Test"
 
-#: stock/models.py:2247
+#: stock/models.py:2249
 msgid "Test result"
 msgstr "Risultato Test"
 
-#: stock/models.py:2253
+#: stock/models.py:2255
 msgid "Test output value"
 msgstr "Test valore output"
 
-#: stock/models.py:2260
+#: stock/models.py:2262
 msgid "Test result attachment"
 msgstr "Risultato della prova allegato"
 
-#: stock/models.py:2266
+#: stock/models.py:2268
 msgid "Test notes"
 msgstr "Note del test"
 
@@ -8121,7 +8128,7 @@ msgid "Available Quantity"
 msgstr "Quantità Disponibile"
 
 #: stock/templates/stock/item_base.html:394
-#: templates/js/translated/build.js:1958
+#: templates/js/translated/build.js:1985
 msgid "No location set"
 msgstr "Nessuna posizione impostata"
 
@@ -9765,7 +9772,7 @@ msgstr "Carica la Distinta Base per il sotto assemblaggio"
 msgid "Substitutes Available"
 msgstr "Sostituti Disponibili"
 
-#: templates/js/translated/bom.js:890 templates/js/translated/build.js:2033
+#: templates/js/translated/bom.js:890 templates/js/translated/build.js:2060
 msgid "Variant stock allowed"
 msgstr "Variante stock consentita"
 
@@ -9785,26 +9792,26 @@ msgstr "I prezzi Distinta Base sono incompleti"
 msgid "No pricing available"
 msgstr "Nessun prezzo disponibile"
 
-#: templates/js/translated/bom.js:1143 templates/js/translated/build.js:2116
+#: templates/js/translated/bom.js:1143 templates/js/translated/build.js:2143
 #: templates/js/translated/sales_order.js:1857
 msgid "No Stock Available"
 msgstr "Nessuna Scorta Disponibile"
 
-#: templates/js/translated/bom.js:1148 templates/js/translated/build.js:2120
+#: templates/js/translated/bom.js:1148 templates/js/translated/build.js:2147
 msgid "Includes variant and substitute stock"
 msgstr "Include variante e scorte sostitutive"
 
-#: templates/js/translated/bom.js:1150 templates/js/translated/build.js:2122
+#: templates/js/translated/bom.js:1150 templates/js/translated/build.js:2149
 #: templates/js/translated/part.js:1196
 msgid "Includes variant stock"
 msgstr "Comprende varianti magazzino"
 
-#: templates/js/translated/bom.js:1152 templates/js/translated/build.js:2124
+#: templates/js/translated/bom.js:1152 templates/js/translated/build.js:2151
 msgid "Includes substitute stock"
 msgstr "Comprende le scorte sostitutive"
 
-#: templates/js/translated/bom.js:1180 templates/js/translated/build.js:2107
-#: templates/js/translated/build.js:2198
+#: templates/js/translated/bom.js:1180 templates/js/translated/build.js:2134
+#: templates/js/translated/build.js:2225
 msgid "Consumable item"
 msgstr "Elementi consumabili"
 
@@ -9832,11 +9839,11 @@ msgstr "Cancella elemento Distinta Base"
 msgid "View BOM"
 msgstr "Visualizza Distinta Base"
 
-#: templates/js/translated/bom.js:1352 templates/js/translated/build.js:1870
+#: templates/js/translated/bom.js:1352 templates/js/translated/build.js:1897
 msgid "No BOM items found"
 msgstr "Nessun elemento trovato in Distinta Base"
 
-#: templates/js/translated/bom.js:1612 templates/js/translated/build.js:2016
+#: templates/js/translated/bom.js:1612 templates/js/translated/build.js:2043
 msgid "Required Part"
 msgstr "Articolo richiesto"
 
@@ -9942,245 +9949,245 @@ msgstr "Sei sicuro di voler annullare l'allocazione degli elementi stock da ques
 msgid "Unallocate Stock Items"
 msgstr "Non assegnare Elementi Stock"
 
-#: templates/js/translated/build.js:515 templates/js/translated/build.js:639
-#: templates/js/translated/build.js:755
+#: templates/js/translated/build.js:536 templates/js/translated/build.js:660
+#: templates/js/translated/build.js:782
 msgid "Select Build Outputs"
 msgstr "Seleziona Output di produzione"
 
-#: templates/js/translated/build.js:516 templates/js/translated/build.js:640
-#: templates/js/translated/build.js:756
+#: templates/js/translated/build.js:537 templates/js/translated/build.js:661
+#: templates/js/translated/build.js:783
 msgid "At least one build output must be selected"
 msgstr "Almeno un output di produzione deve essere selezionato"
 
-#: templates/js/translated/build.js:530
+#: templates/js/translated/build.js:551
 msgid "Selected build outputs will be marked as complete"
 msgstr ""
 
-#: templates/js/translated/build.js:534 templates/js/translated/build.js:662
-#: templates/js/translated/build.js:778
+#: templates/js/translated/build.js:555 templates/js/translated/build.js:685
+#: templates/js/translated/build.js:805
 msgid "Output"
 msgstr "Output"
 
-#: templates/js/translated/build.js:558
+#: templates/js/translated/build.js:579
 msgid "Complete Build Outputs"
 msgstr "Completa l'output di produzione"
 
-#: templates/js/translated/build.js:653
+#: templates/js/translated/build.js:676
 msgid "Selected build outputs will be marked as scrapped"
 msgstr ""
 
-#: templates/js/translated/build.js:655
+#: templates/js/translated/build.js:678
 msgid "Scrapped output are given the 'rejected' status"
 msgstr ""
 
-#: templates/js/translated/build.js:656
+#: templates/js/translated/build.js:679
 msgid "Allocated stock items will no longer be available"
 msgstr ""
 
-#: templates/js/translated/build.js:657
+#: templates/js/translated/build.js:680
 msgid "The completion status of the build order will not be adjusted"
 msgstr ""
 
-#: templates/js/translated/build.js:683
+#: templates/js/translated/build.js:707
 msgid "Scrap Build Outputs"
 msgstr ""
 
-#: templates/js/translated/build.js:770
+#: templates/js/translated/build.js:797
 msgid "Selected build outputs will be deleted"
 msgstr ""
 
-#: templates/js/translated/build.js:772
+#: templates/js/translated/build.js:799
 msgid "Build output data will be permanently deleted"
 msgstr ""
 
-#: templates/js/translated/build.js:773
+#: templates/js/translated/build.js:800
 msgid "Allocated stock items will be returned to stock"
 msgstr ""
 
-#: templates/js/translated/build.js:791
+#: templates/js/translated/build.js:818
 msgid "Delete Build Outputs"
 msgstr "Cancella l'output di produzione"
 
-#: templates/js/translated/build.js:877
+#: templates/js/translated/build.js:904
 msgid "No build order allocations found"
 msgstr "Nessuna allocazione per l'ordine di produzione trovato"
 
-#: templates/js/translated/build.js:914
+#: templates/js/translated/build.js:941
 msgid "Location not specified"
 msgstr "Posizione non specificata"
 
-#: templates/js/translated/build.js:990
+#: templates/js/translated/build.js:1017
 msgid "build output"
 msgstr ""
 
-#: templates/js/translated/build.js:991
+#: templates/js/translated/build.js:1018
 msgid "build outputs"
 msgstr ""
 
-#: templates/js/translated/build.js:1326
+#: templates/js/translated/build.js:1353
 msgid "No active build outputs found"
 msgstr "Nessun output di produzione attivo trovato"
 
-#: templates/js/translated/build.js:1400
+#: templates/js/translated/build.js:1427
 msgid "Allocated Stock"
 msgstr "Scorte Assegnate"
 
-#: templates/js/translated/build.js:1407
+#: templates/js/translated/build.js:1434
 msgid "No tracked BOM items for this build"
 msgstr "Nessun elemento Distinta Base tracciato per questa produzione"
 
-#: templates/js/translated/build.js:1429
+#: templates/js/translated/build.js:1456
 msgid "Completed Tests"
 msgstr "Test Completati"
 
-#: templates/js/translated/build.js:1434
+#: templates/js/translated/build.js:1461
 msgid "No required tests for this build"
 msgstr "Nessun test richiesto per questa produzione"
 
-#: templates/js/translated/build.js:1975 templates/js/translated/build.js:2997
+#: templates/js/translated/build.js:2002 templates/js/translated/build.js:3024
 #: templates/js/translated/sales_order.js:1602
 msgid "Edit stock allocation"
 msgstr "Modifica allocazione magazzino"
 
-#: templates/js/translated/build.js:1977 templates/js/translated/build.js:2998
+#: templates/js/translated/build.js:2004 templates/js/translated/build.js:3025
 #: templates/js/translated/sales_order.js:1603
 msgid "Delete stock allocation"
 msgstr "Elimina posizione giacenza"
 
-#: templates/js/translated/build.js:1993
+#: templates/js/translated/build.js:2020
 msgid "Edit Allocation"
 msgstr "Modifica Posizione"
 
-#: templates/js/translated/build.js:2003
+#: templates/js/translated/build.js:2030
 msgid "Remove Allocation"
 msgstr "Rimuovi Posizione"
 
-#: templates/js/translated/build.js:2029
+#: templates/js/translated/build.js:2056
 msgid "Substitute parts available"
 msgstr "Articoli sostitutivi disponibili"
 
-#: templates/js/translated/build.js:2065
+#: templates/js/translated/build.js:2092
 msgid "Quantity Per"
 msgstr "Quantità Per"
 
-#: templates/js/translated/build.js:2110
+#: templates/js/translated/build.js:2137
 #: templates/js/translated/sales_order.js:1864
 msgid "Insufficient stock available"
 msgstr "Scorte insufficienti disponibili"
 
-#: templates/js/translated/build.js:2112
+#: templates/js/translated/build.js:2139
 #: templates/js/translated/sales_order.js:1862
 msgid "Sufficient stock available"
 msgstr "Scorte sufficienti disponibili"
 
-#: templates/js/translated/build.js:2206
+#: templates/js/translated/build.js:2233
 #: templates/js/translated/sales_order.js:1963
 msgid "Build stock"
 msgstr "Produci scorta"
 
-#: templates/js/translated/build.js:2210 templates/stock_table.html:38
+#: templates/js/translated/build.js:2237 templates/stock_table.html:38
 msgid "Order stock"
 msgstr "Ordina scorta"
 
-#: templates/js/translated/build.js:2213
+#: templates/js/translated/build.js:2240
 #: templates/js/translated/sales_order.js:1957
 msgid "Allocate stock"
 msgstr "Assegna scorta"
 
-#: templates/js/translated/build.js:2253
+#: templates/js/translated/build.js:2280
 #: templates/js/translated/purchase_order.js:577
 #: templates/js/translated/sales_order.js:1126
 msgid "Select Parts"
 msgstr "Seleziona Articoli"
 
-#: templates/js/translated/build.js:2254
+#: templates/js/translated/build.js:2281
 #: templates/js/translated/sales_order.js:1127
 msgid "You must select at least one part to allocate"
 msgstr "È necessario selezionare almeno un articolo da assegnare"
 
-#: templates/js/translated/build.js:2302
+#: templates/js/translated/build.js:2329
 #: templates/js/translated/sales_order.js:1076
 msgid "Specify stock allocation quantity"
 msgstr "Specificare il quantitativo assegnato allo stock"
 
-#: templates/js/translated/build.js:2381
+#: templates/js/translated/build.js:2408
 msgid "All Parts Allocated"
 msgstr "Tutti gli articoli assegnati"
 
-#: templates/js/translated/build.js:2382
+#: templates/js/translated/build.js:2409
 msgid "All selected parts have been fully allocated"
 msgstr "Tutti gli articoli selezionati sono stati completamente assegnati"
 
-#: templates/js/translated/build.js:2396
+#: templates/js/translated/build.js:2423
 #: templates/js/translated/sales_order.js:1141
 msgid "Select source location (leave blank to take from all locations)"
 msgstr "Seleziona la posizione di origine (lascia vuoto per prendere da tutte le posizioni)"
 
-#: templates/js/translated/build.js:2424
+#: templates/js/translated/build.js:2451
 msgid "Allocate Stock Items to Build Order"
 msgstr "Assegna gli Elementi Stock all'Ordine di Produzione"
 
-#: templates/js/translated/build.js:2435
+#: templates/js/translated/build.js:2462
 #: templates/js/translated/sales_order.js:1238
 msgid "No matching stock locations"
 msgstr "Nessuna posizione di magazzino corrispondente"
 
-#: templates/js/translated/build.js:2508
+#: templates/js/translated/build.js:2535
 #: templates/js/translated/sales_order.js:1315
 msgid "No matching stock items"
 msgstr "Nessun elemento corrispondente trovato"
 
-#: templates/js/translated/build.js:2605
+#: templates/js/translated/build.js:2632
 msgid "Automatic Stock Allocation"
 msgstr "Assegna Automaticamente Scorte"
 
-#: templates/js/translated/build.js:2606
+#: templates/js/translated/build.js:2633
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
 msgstr "Gli elementi in magazzino saranno automaticamente assegnati a questo ordine di produzione, secondo le linee guida fornite"
 
-#: templates/js/translated/build.js:2608
+#: templates/js/translated/build.js:2635
 msgid "If a location is specified, stock will only be allocated from that location"
 msgstr "Se viene specificata una posizione, le scorte saranno assegnate solo da quella ubicazione"
 
-#: templates/js/translated/build.js:2609
+#: templates/js/translated/build.js:2636
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
 msgstr "Se lo stock è considerato intercambiabile, sarà assegnato dal primo luogo in cui viene trovato"
 
-#: templates/js/translated/build.js:2610
+#: templates/js/translated/build.js:2637
 msgid "If substitute stock is allowed, it will be used where stock of the primary part cannot be found"
 msgstr "Se lo stock sostitutivo è ammesso, sarà utilizzato nel caso in cui lo stock dell'articolo primario non possa essere trovato"
 
-#: templates/js/translated/build.js:2637
+#: templates/js/translated/build.js:2664
 msgid "Allocate Stock Items"
 msgstr "Assegna Elementi di Magazzino"
 
-#: templates/js/translated/build.js:2741
+#: templates/js/translated/build.js:2768
 msgid "No builds matching query"
 msgstr "Nessuna produzione corrispondente alla ricerca"
 
-#: templates/js/translated/build.js:2776 templates/js/translated/part.js:1855
+#: templates/js/translated/build.js:2803 templates/js/translated/part.js:1855
 #: templates/js/translated/part.js:2333 templates/js/translated/stock.js:1723
 #: templates/js/translated/stock.js:2422
 msgid "Select"
 msgstr "Seleziona"
 
-#: templates/js/translated/build.js:2790
+#: templates/js/translated/build.js:2817
 msgid "Build order is overdue"
 msgstr "L'ordine di produzione è in ritardo"
 
-#: templates/js/translated/build.js:2824
+#: templates/js/translated/build.js:2851
 msgid "Progress"
 msgstr "Avanzamento"
 
-#: templates/js/translated/build.js:2860 templates/js/translated/stock.js:2743
+#: templates/js/translated/build.js:2887 templates/js/translated/stock.js:2743
 msgid "No user information"
 msgstr "Nessuna informazione utente"
 
-#: templates/js/translated/build.js:2875
+#: templates/js/translated/build.js:2902
 msgid "group"
 msgstr "gruppo"
 
-#: templates/js/translated/build.js:2974
+#: templates/js/translated/build.js:3001
 msgid "No parts allocated for"
 msgstr "Nessun articolo assegnato per"
 
@@ -12381,9 +12388,11 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr ""
+"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12561,4 +12570,3 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
-
