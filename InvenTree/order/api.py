@@ -1020,6 +1020,15 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(shipment_date=None)
 
+    delivered = rest_filters.BooleanFilter(label='delivered', method='filter_delivered')
+
+    def filter_delivered(self, queryset, name, value):
+        """Filter SalesOrder list by 'delivered' status (boolean)"""
+        if str2bool(value):
+            return queryset.exclude(delivery_date=None)
+        else:
+            return queryset.filter(delivery_date=None)
+
 
 class SalesOrderShipmentList(ListCreateAPI):
     """API list endpoint for SalesOrderShipment model."""

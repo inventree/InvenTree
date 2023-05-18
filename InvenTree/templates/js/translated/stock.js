@@ -3,8 +3,6 @@
 {% load status_codes %}
 
 /* globals
-    attachSelect,
-    closeModal,
     constructField,
     constructFormBody,
     getFormFieldValue,
@@ -18,12 +16,6 @@
     loadTableFilters,
     makeIconBadge,
     makeIconButton,
-    makeOptionsList,
-    modalEnable,
-    modalSetContent,
-    modalSetTitle,
-    modalSubmit,
-    openModal,
     renderLink,
     scanItemsIntoLocation,
     showAlertDialog,
@@ -54,7 +46,6 @@
     serializeStockItem,
     stockItemFields,
     stockLocationFields,
-    stockStatusCodes,
     uninstallStockItem,
 */
 
@@ -288,6 +279,9 @@ function stockItemFields(options={}) {
 
                 return query;
             }
+        },
+        use_pack_size: {
+            help_text: '{% trans "Add given quantity as packs instead of individual items" %}',
         },
         location: {
             icon: 'fa-sitemap',
@@ -597,22 +591,6 @@ function findStockItemBySerialNumber(part_id) {
             );
         }
     });
-}
-
-
-/* Stock API functions
- * Requires api.js to be loaded first
- */
-
-function stockStatusCodes() {
-    return [
-        {% for code in StockStatus.list %}
-        {
-            key: {{ code.key }},
-            text: '{{ code.value }}',
-        },
-        {% endfor %}
-    ];
 }
 
 
@@ -1639,26 +1617,29 @@ function loadStockTestResultsTable(table, options) {
 }
 
 
+/*
+ * Function to display a "location" of a StockItem.
+ *
+ * Complicating factors: A StockItem may not actually *be* in a location!
+ * - Could be at a customer
+ * - Could be installed in another stock item
+ * - Could be assigned to a sales order
+ * - Could be currently in production!
+ *
+ * So, instead of being naive, we'll check!
+ */
 function locationDetail(row, showLink=true) {
-    /*
-     * Function to display a "location" of a StockItem.
-     *
-     * Complicating factors: A StockItem may not actually *be* in a location!
-     * - Could be at a customer
-     * - Could be installed in another stock item
-     * - Could be assigned to a sales order
-     * - Could be currently in production!
-     *
-     * So, instead of being naive, we'll check!
-     */
 
     // Display text
-    var text = '';
+    let text = '';
 
     // URL (optional)
-    var url = '';
+    let url = '';
 
-    if (row.is_building && row.build) {
+    if (row.consumed_by) {
+        text = '{% trans "Consumed by build order" %}';
+        url = `/build/${row.consumed_by}/`;
+    } else if (row.is_building && row.build) {
         // StockItem is currently being built!
         text = '{% trans "In production" %}';
         url = `/build/${row.build}/`;
@@ -1849,6 +1830,8 @@ function loadStockTable(table, options) {
                 }
             } else if (row.belongs_to) {
                 html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
+            } else if (row.consumed_by) {
+                html += makeIconBadge('fa-tools', '{% trans "Stock item has been consumed by a build order" %}');
             }
 
             if (row.expired) {
@@ -1858,13 +1841,11 @@ function loadStockTable(table, options) {
             }
 
             // Special stock status codes
-
-            // REJECTED
-            if (row.status == {{ StockStatus.REJECTED }}) {
+            if (row.status == stockCodes.REJECTED.key) {
                 html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
-            } else if (row.status == {{ StockStatus.LOST }}) {
+            } else if (row.status == stockCodes.LOST.key) {
                 html += makeIconBadge('fa-question-circle', '{% trans "Stock item is lost" %}');
-            } else if (row.status == {{ StockStatus.DESTROYED }}) {
+            } else if (row.status == stockCodes.DESTROYED.key) {
                 html += makeIconBadge('fa-skull-crossbones', '{% trans "Stock item is destroyed" %}');
             }
 
@@ -2258,93 +2239,6 @@ function loadStockTable(table, options) {
         orderParts(parts, {});
     });
 
-    $('#multi-item-set-status').click(function() {
-        // Select and set the STATUS field for selected stock items
-        var selections = getTableData(table);
-
-        // Select stock status
-        var modal = '#modal-form';
-
-        var status_list = makeOptionsList(
-            stockStatusCodes(),
-            function(item) {
-                return item.text;
-            },
-            function(item) {
-                return item.key;
-            }
-        );
-
-        // Add an empty option at the start of the list
-        status_list.unshift('<option value="">---------</option>');
-
-        // Construct form
-        var html = `
-        <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
-            <div class='form-group'>
-                <label class='control-label requiredField' for='id_status'>
-                {% trans "Stock Status" %}
-                </label>
-                <div class='controls'>
-                    <select id='id_status' class='select form-control' name='label'>
-                        ${status_list}
-                    </select>
-                </div>
-            </div>
-        </form>`;
-
-        openModal({
-            modal: modal,
-        });
-
-        modalEnable(modal, true);
-        modalSetTitle(modal, '{% trans "Set Stock Status" %}');
-        modalSetContent(modal, html);
-
-        attachSelect(modal);
-
-        modalSubmit(modal, function() {
-            var label = $(modal).find('#id_status');
-
-            var status_code = label.val();
-
-            closeModal(modal);
-
-            if (!status_code) {
-                showAlertDialog(
-                    '{% trans "Select Status Code" %}',
-                    '{% trans "Status code must be selected" %}'
-                );
-
-                return;
-            }
-
-            var requests = [];
-
-            selections.forEach(function(item) {
-                var url = `/api/stock/${item.pk}/`;
-
-                requests.push(
-                    inventreePut(
-                        url,
-                        {
-                            status: status_code,
-                        },
-                        {
-                            method: 'PATCH',
-                            success: function() {
-                            }
-                        }
-                    )
-                );
-            });
-
-            $.when.apply($, requests).done(function() {
-                $(table).bootstrapTable('refresh');
-            });
-        });
-    });
-
     $('#multi-item-delete').click(function() {
         var selections = getTableData(table);
 
@@ -2694,11 +2588,24 @@ function loadStockTrackingTable(table, options) {
                 html += '</td></tr>';
             }
 
+            // BuildOrder Information
+            if (details.buildorder) {
+                html += `<tr><th>{% trans "Build Order" %}</th>`;
+                html += `<td>`;
+
+                if (details.buildorder_detail) {
+                    html += renderLink(
+                        details.buildorder_detail.reference,
+                        `/build/${details.buildorder}/`
+                    );
+                } else {
+                    html += `<i>{% trans "Build order no longer exists" %}</i>`;
+                }
+            }
+
             // PurchaseOrder Information
             if (details.purchaseorder) {
-
                 html += `<tr><th>{% trans "Purchase Order" %}</th>`;
-
                 html += '<td>';
 
                 if (details.purchaseorder_detail) {

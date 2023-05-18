@@ -65,13 +65,15 @@ nav:
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
-        - Development: start/docker_dev.md
         - Production: start/docker_prod.md
+        - Development: start/docker_dev.md
     - Bare Metal:
         - Introduction: start/install.md
         - Installer: start/installer.md
-        - Development: start/development.md
         - Production: start/production.md
+        - Development: start/development.md
+    - Development:
+        - Devcontainer: start/devcontainer.md
     - Serving Files: start/serving_files.md
     - Data Backup: start/backup.md
     - Migrating Data: start/migrate.md
@@ -97,7 +99,9 @@ nav:
     - Test Results: stock/test.md
   - Build:
     - Build Orders: build/build.md
+    - Build Outputs: build/output.md
     - Allocating Stock: build/allocate.md
+    - Example Build Order: build/example.md
     - Bill of Materials: build/bom.md
     - Importing BOM Data: build/bom_import.md
     - Exporting BOM Data: build/bom_export.md
@@ -166,7 +170,7 @@ nav:
       - Overview: extend/plugins.md
       - Installation: extend/plugins/install.md
       - Developing a Plugin: extend/how_to_plugin.md
-      - Model Meatadata: extend/plugins/metadata.md
+      - Model Metadata: extend/plugins/metadata.md
       - Tags: extend/plugins/tags.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md

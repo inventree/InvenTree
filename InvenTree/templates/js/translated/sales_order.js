@@ -209,6 +209,9 @@ function salesOrderShipmentFields(options={}) {
         },
         link: {
             icon: 'fa-link',
+        },
+        delivery_date: {
+            icon: 'fa-calendar-check',
         }
     };
 
@@ -298,7 +301,11 @@ function completeSalesOrderShipment(shipment_id, options={}) {
                     link: {
                         value: shipment.link,
                         icon: 'fa-link',
-                    }
+                    },
+                    delivery_date: {
+                        value: shipment.delivery_date,
+                        icon: 'fa-calendar-check',
+                    },
                 },
                 preFormContent: html,
                 confirm: true,
@@ -976,6 +983,18 @@ function loadSalesOrderShipmentTable(table, options={}) {
                         return renderDate(value);
                     } else {
                         return '<em>{% trans "Not shipped" %}</em>';
+                    }
+                }
+            },
+            {
+                field: 'delivery_date',
+                title: '{% trans "Delivery Date" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    if (value) {
+                        return renderDate(value);
+                    } else {
+                        return '<em>{% trans "Unknown" %}</em>';
                     }
                 }
             },
