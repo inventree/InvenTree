@@ -797,7 +797,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         items.all().delete()
 
     @transaction.atomic
-    def scrap_build_output(self, output, location, **kwargs):
+    def scrap_build_output(self, output, quantity, location, **kwargs):
         """Mark a particular build output as scrapped / rejected
 
         - Mark the output as "complete"
@@ -809,9 +809,24 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         if not output:
             raise ValidationError(_("No build output specified"))
 
+        if quantity <= 0:
+            raise ValidationError({
+                'quantity': _("Quantity must be greater than zero")
+            })
+
+        if quantity > output.quantity:
+            raise ValidationError({
+                'quantity': _("Quantity cannot be greater than the output quantity")
+            })
+
         user = kwargs.get('user', None)
         notes = kwargs.get('notes', '')
         discard_allocations = kwargs.get('discard_allocations', False)
+
+        if quantity < output.quantity:
+            # Split output into two items
+            output = output.splitStock(quantity, location=location, user=user)
+            output.build = self
 
         # Update build output item
         output.is_building = False

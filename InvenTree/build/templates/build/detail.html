@@ -302,7 +302,7 @@
     </div>
 
     <div class='panel-content'>
-        {% include "stock_table.html" with read_only=True prefix="build-" %}
+        {% include "stock_table.html" with prefix="build-" %}
     </div>
 </div>
 
@@ -343,6 +343,7 @@
 
 onPanelLoad('consumed', function() {
     loadStockTable($('#consumed-stock-table'), {
+        filterTarget: '#filter-list-consumed-stock',
         params: {
             location_detail: true,
             part_detail: true,
@@ -354,6 +355,7 @@ onPanelLoad('consumed', function() {
 
 onPanelLoad('completed', function() {
     loadStockTable($("#build-stock-table"), {
+        filterTarget: '#filter-list-build-stock',
         params: {
             location_detail: true,
             part_detail: true,
