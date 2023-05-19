@@ -561,6 +561,13 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
 
+    pack_units = models.CharField(
+        max_length=25,
+        verbose_name=_('Packaging Units'),
+        help_text=_('Units of measure for this supplier part'),
+        blank=True,
+    )
+
     pack_size = RoundingDecimalField(
         verbose_name=_('Pack Quantity'),
         help_text=_('Unit quantity supplied in a single pack'),
