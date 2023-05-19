@@ -1,12 +1,10 @@
 """Provide templates for the various model status codes."""
 
-from django import template
 from django.utils.safestring import mark_safe
 
 from generic.states.states import StatusCode
+from generic.templatetags.generic import register
 from InvenTree.helpers import inheritors_attr
-
-register = template.Library()
 
 
 @register.simple_tag
