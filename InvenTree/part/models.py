@@ -984,6 +984,9 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         blank=True, null=True,
         verbose_name=_('Units'),
         help_text=_('Units of measure for this part'),
+        validators=[
+            validators.validate_physical_units,
+        ]
     )
 
     assembly = models.BooleanField(
