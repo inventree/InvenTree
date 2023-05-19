@@ -19,13 +19,14 @@ from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
+import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
-from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
+from InvenTree.fields import InvenTreeURLField
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, MetadataMixin)
 from InvenTree.status_codes import PurchaseOrderStatus
@@ -436,7 +437,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         multiple: Multiple that the part is provided in
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
-        pack_size: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
+        pack_units: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
         updated: Date that the SupplierPart was last updated
     """
 
@@ -474,6 +475,15 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         - Ensure that manufacturer_part.part and part are the same!
         """
         super().clean()
+
+        # Validate that the UOM is compatible with the base part
+        if self.pack_units and self.part:
+            try:
+                InvenTree.conversion.convert_physical_value(self.pack_units, self.part.units)
+            except ValidationError as e:
+                raise ValidationError({
+                    'pack_units': e.messages
+                })
 
         # Ensure that the linked manufacturer_part points to the same part!
         if self.manufacturer_part and self.part:
@@ -566,14 +576,6 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         verbose_name=_('Packaging Units'),
         help_text=_('Units of measure for this supplier part'),
         blank=True,
-    )
-
-    pack_size = RoundingDecimalField(
-        verbose_name=_('Pack Quantity'),
-        help_text=_('Unit quantity supplied in a single pack'),
-        default=1,
-        max_digits=15, decimal_places=5,
-        validators=[MinValueValidator(0.001)],
     )
 
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))

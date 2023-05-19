@@ -390,7 +390,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'manufacturer',
         'MPN',
         'packaging',
-        'pack_size',
+        'pack_units',
         'in_stock',
         'updated',
     ]
