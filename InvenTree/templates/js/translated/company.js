@@ -1246,10 +1246,10 @@ function loadSupplierPartTable(table, url, options) {
                 title: '{% trans "Pack Units" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var output = `${formatDecimal(value)}`;
+                    var output = `${value}`;
 
                     if (row.part_detail && row.part_detail.units) {
-                        output += ` [${row.part_detail.units}]`;
+                        output += `<span class='fas fa-info-circle float-right' title='{% trans "Base Units" %}: ${row.part_detail.units}'></span>`;
                     }
 
                     return output;
