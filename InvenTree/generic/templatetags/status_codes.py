@@ -24,9 +24,3 @@ def status_label(typ: str, key: int, *args, **kwargs):
     if state:
         return mark_safe(state.render(key, large=kwargs.get('large', False)))
     raise ValueError(f"Unknown status type '{typ}'")
-
-
-@register.simple_tag
-def stock_status_text(key, *args, **kwargs):
-    """Render the text value of a StockItem status value"""
-    return mark_safe(StockStatus.text(key))
