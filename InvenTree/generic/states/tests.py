@@ -7,6 +7,7 @@ from InvenTree.unit_test import InvenTreeTestCase
 
 class GeneralStatus(StatusCode):
     """Defines a set of status codes for tests."""
+    _TAG = 'general'
 
     PENDING = 10
     PLACED = 20
