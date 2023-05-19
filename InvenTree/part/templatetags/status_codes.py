@@ -11,36 +11,22 @@ register = template.Library()
 
 
 @register.simple_tag
-def purchase_order_status_label(key, *args, **kwargs):
-    """Render a PurchaseOrder status label."""
-    return mark_safe(PurchaseOrderStatus.render(key, large=kwargs.get('large', False)))
-
-
-@register.simple_tag
-def sales_order_status_label(key, *args, **kwargs):
-    """Render a SalesOrder status label."""
-    return mark_safe(SalesOrderStatus.render(key, large=kwargs.get('large', False)))
-
-
-@register.simple_tag
-def return_order_status_label(key, *args, **kwargs):
-    """Render a ReturnOrder status label"""
-    return mark_safe(ReturnOrderStatus.render(key, large=kwargs.get('large', False)))
-
-
-@register.simple_tag
-def stock_status_label(key, *args, **kwargs):
-    """Render a StockItem status label."""
-    return mark_safe(StockStatus.render(key, large=kwargs.get('large', False)))
+def status_label(typ: str, key: int, *args, **kwargs):
+    """Render a status label."""
+    opts = {
+        'build': BuildStatus,
+        'purchase_order': PurchaseOrderStatus,
+        'return_order': ReturnOrderStatus,
+        'sales_order': SalesOrderStatus,
+        'stock': StockStatus,
+    }
+    state = opts.get(typ, None)
+    if state:
+        return mark_safe(state.render(key, large=kwargs.get('large', False)))
+    raise ValueError(f"Unknown status type '{typ}'")
 
 
 @register.simple_tag
 def stock_status_text(key, *args, **kwargs):
     """Render the text value of a StockItem status value"""
     return mark_safe(StockStatus.text(key))
-
-
-@register.simple_tag
-def build_status_label(key, *args, **kwargs):
-    """Render a Build status label."""
-    return mark_safe(BuildStatus.render(key, large=kwargs.get('large', False)))
