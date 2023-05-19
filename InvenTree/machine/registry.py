@@ -83,15 +83,45 @@ class MachinesRegistry:
         from machine.models import Machine
 
         for machine in Machine.objects.all():
-            self.machines[machine.name] = machine
+            self.machines[machine.pk] = machine
 
         # initialize machines after all machine instances were created
         for machine in self.machines.values():
             machine.initialize()
 
-    def get_machines(self, machine_type):
-        # TODO: implement function
-        pass
+    def get_machines(self, **kwargs):
+        """Get loaded machines from registry.
+
+        Kwargs:
+            name: Machine name
+            machine_type: Machine type defition (class)
+            driver: Machine driver (class)
+            active: (bool)
+            base_driver: base driver (class | List[class])
+        """
+        allowed_fields = ["name", "machine_type", "driver", "active", "base_driver"]
+
+        def filter_machine(machine):
+            for key, value in kwargs.items():
+                if key not in allowed_fields:
+                    continue
+
+                # check if current driver is subclass from base_driver
+                if key == "base_driver":
+                    if machine.driver and not issubclass(machine.driver.__class__, value):
+                        return False
+
+                # check attributes of machine
+                elif value != getattr(machine, key, None):
+                    return False
+
+            return True
+
+        return list(filter(filter_machine, self.machines.values()))
+
+    def get_machine(self, pk):
+        """Get machine from registry by pk."""
+        return self.machines.get(pk, None)
 
 
 registry: MachinesRegistry = MachinesRegistry()

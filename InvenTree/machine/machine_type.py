@@ -33,6 +33,12 @@ class BaseDriver:
         """
         pass
 
+    def get_machines(self):
+        """Return all machines using this driver."""
+        from machine import registry
+
+        return registry.get_machines(driver=self)
+
 
 class BaseMachineType:
     """Base class for machine types

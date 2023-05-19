@@ -45,6 +45,7 @@ class Machine(models.Model):
         super().__init__(*args, **kwargs)
 
         self.errors = []
+        self.initialized = False
 
         self.driver = registry.get_driver_instance(self.driver_key)
         self.machine_type = registry.machine_types.get(self.machine_type_key, None)
@@ -77,6 +78,8 @@ class Machine(models.Model):
             return
 
         self.driver.init_machine(self)
+
+        self.initialized = True
 
     def get_setting(self, key, cache=False):
         """Return the 'value' of the setting associated with this machine.
