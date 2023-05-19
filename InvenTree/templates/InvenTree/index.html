@@ -160,7 +160,6 @@ loadStockTable($('#table-recently-updated-stock'), {
         limit: {% settings_value "STOCK_RECENT_COUNT" user=request.user %},
     },
     name: 'recently-updated-stock',
-    grouping: false,
 });
 {% endif %}
 

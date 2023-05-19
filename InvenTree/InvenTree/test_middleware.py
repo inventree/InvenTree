@@ -7,7 +7,7 @@ from django.urls import reverse
 from error_report.models import Error
 
 from InvenTree.exceptions import log_error
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 
 
 class MiddlewareTests(InvenTreeTestCase):

@@ -55,7 +55,6 @@ function renderStatusLabel(key, codes, options={}) {
     return `<span class='${classes}'>${text}</span>`;
 }
 
-
 {% include "status_codes.html" with label='stock' data=StockStatus.list %}
 {% include "status_codes.html" with label='stockHistory' data=StockHistoryCode.list %}
 {% include "status_codes.html" with label='build' data=BuildStatus.list %}

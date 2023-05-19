@@ -284,15 +284,6 @@
         );
     });
 
-    onPanelLoad('parameters', function() {
-        loadParametricPartTable(
-            "#parametric-part-table",
-            {
-                category: {{ category.pk }},
-            }
-        );
-    });
-
     $("#toggle-starred").click(function() {
         toggleStar({
             url: '{% url "api-part-category-detail" category.pk %}',
@@ -301,6 +292,17 @@
     });
 
     {% endif %}
+
+    onPanelLoad('parameters', function() {
+        loadParametricPartTable(
+            "#parametric-part-table",
+            {
+                {% if category %}
+                category: {{ category.pk }},
+                {% endif %}
+            }
+        );
+    });
 
     // Enable breadcrumb tree view
     enableBreadcrumbTree({
