@@ -11,6 +11,12 @@ class GeneralStatus(StatusCode):
     PENDING = 10
     PLACED = 20
     COMPLETE = 30
+    ABC = None  # This should be ignored
+    DEF = 40  # This should be ignored
+
+    def GHI(self):  # This should be ignored
+        """A invalid function"""
+        pass
 
     options = {
         PENDING: _("Pending"),
@@ -105,4 +111,6 @@ class GeneralStateTest(InvenTreeTestCase):
         # value
         self.assertEqual(GeneralStatus.value('Pending'), 10)
         # value with invalid key
-        self.assertEqual(GeneralStatus.value('Invalid'), None)
+        with self.assertRaises(ValueError) as e:
+            GeneralStatus.value('Invalid')
+        self.assertEqual(str(e.exception), "Label not found")
