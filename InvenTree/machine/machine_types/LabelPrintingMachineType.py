@@ -14,6 +14,8 @@ class BaseLabelPrintingDriver(BaseDriver):
         """This function must be overriden."""
         raise NotImplementedError("The `print_labels` function must be overriden!")
 
+    requires_override = [print_label]
+
 
 class LabelPrintingMachineType(BaseMachineType):
     SLUG = "label_printer"

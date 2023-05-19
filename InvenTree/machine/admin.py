@@ -41,4 +41,5 @@ class MachineAdmin(admin.ModelAdmin):
     form = MachineAdminForm
     list_filter = ["active"]
     list_display = ["name", "machine_type_key", "driver_key", "active", "is_driver_available", "no_errors"]
+    readonly_fields = ["is_driver_available", "get_admin_errors"]
     inlines = [MachineSettingInline]

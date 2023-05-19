@@ -24,6 +24,7 @@ class MachinesRegistry:
         self.machines: Dict[str, Machine] = {}
 
         self.base_drivers: List[BaseDriver] = []
+        self.errors = []
 
     def initialize(self):
         print("INITIALIZE")  # TODO: remove debug statement
@@ -41,6 +42,12 @@ class MachinesRegistry:
 
         discovered_machine_types: List[BaseMachineType] = InvenTree.helpers.inheritors(BaseMachineType)
         for machine_type in discovered_machine_types:
+            try:
+                machine_type.validate()
+            except NotImplementedError as error:
+                self.errors.append(error)
+                continue
+
             machine_types[machine_type.SLUG] = machine_type
             base_drivers.append(machine_type.base_driver)
 
@@ -60,6 +67,12 @@ class MachinesRegistry:
         for driver in discovered_drivers:
             # skip discovered drivers that define a base driver for a machine type
             if driver in self.base_drivers:
+                continue
+
+            try:
+                driver.validate()
+            except NotImplementedError as error:
+                self.errors.append(error)
                 continue
 
             drivers[driver.SLUG] = driver

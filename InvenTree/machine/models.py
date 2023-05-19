@@ -2,6 +2,8 @@ from typing import Any
 
 from django.contrib import admin
 from django.db import models
+from django.utils.html import format_html_join
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import common.models
@@ -54,7 +56,7 @@ class Machine(models.Model):
             self.errors.append(f"Driver '{self.driver_key}' not found")
         if not self.machine_type:
             self.errors.append(f"Machine type '{self.machine_type_key}' not found")
-        if self.machine_type and not isinstance(self.driver, self.machine_type.base_driver):
+        if self.machine_type and self.driver and not isinstance(self.driver, self.machine_type.base_driver):
             self.errors.append(f"'{self.driver.NAME}' is incompatibe with machine type '{self.machine_type.NAME}'")
 
         if len(self.errors) > 0:
@@ -71,6 +73,10 @@ class Machine(models.Model):
     def no_errors(self) -> bool:
         """Status if machine has errors"""
         return len(self.errors) == 0
+
+    @admin.display(description=_("Errors"))
+    def get_admin_errors(self):
+        return format_html_join(mark_safe("<br>"), "{}", ((str(error),) for error in self.errors)) or mark_safe(f"<i>{_('No errors')}</i>")
 
     def initialize(self):
         """Machine initialitation function, gets called after all machines are loaded"""
