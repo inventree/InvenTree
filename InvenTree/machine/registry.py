@@ -1,7 +1,6 @@
 import logging
 from typing import Dict, List
 
-import InvenTree.helpers
 from machine.machine_type import BaseDriver, BaseMachineType
 
 logger = logging.getLogger('inventree')
@@ -33,6 +32,8 @@ class MachinesRegistry:
         self.load_machines()
 
     def discover_machine_types(self):
+        import InvenTree.helpers
+
         logger.debug("Collecting machine types")
 
         machine_types: Dict[str, BaseMachineType] = {}
@@ -49,6 +50,8 @@ class MachinesRegistry:
         logger.debug(f"Found {len(self.machine_types.keys())} machine types")
 
     def discover_drivers(self):
+        import InvenTree.helpers
+
         logger.debug("Collecting machine drivers")
 
         drivers: Dict[str, BaseDriver] = {}
