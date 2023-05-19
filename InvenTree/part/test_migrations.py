@@ -150,7 +150,7 @@ class TestParameterMigrations(MigratorTestCase):
         self.assertEqual(p3.data, '1/10 inch')
         self.assertEqual(p3.data_numeric, 2.54)
 
-        # This one has not converred correctly
+        # This one has not converted correctly
         p4 = PartParameter.objects.get(part=b, template=t2)
         self.assertEqual(p4.data, 'abc')
-        self.assertEqual(p4.data_numeric, 0.0)
+        self.assertEqual(p4.data_numeric, None)
