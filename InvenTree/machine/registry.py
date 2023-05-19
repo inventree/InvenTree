@@ -103,16 +103,18 @@ class MachinesRegistry:
             machine.initialize()
 
     def get_machines(self, **kwargs):
-        """Get loaded machines from registry.
+        """Get loaded machines from registry. (By default only active machines)
 
         Kwargs:
             name: Machine name
-            machine_type: Machine type defition (class)
+            machine_type: Machine type definition (class)
             driver: Machine driver (class)
-            active: (bool)
+            active: (bool, default: True)
             base_driver: base driver (class | List[class])
         """
         allowed_fields = ["name", "machine_type", "driver", "active", "base_driver"]
+
+        kwargs = {**{'active': True}, **kwargs}
 
         def filter_machine(machine):
             for key, value in kwargs.items():
