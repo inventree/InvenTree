@@ -28,6 +28,8 @@ def validate_physical_units(unit):
 
     try:
         ureg(unit)
+    except AttributeError:
+        raise ValidationError(_('Invalid physical unit'))
     except pint.errors.UndefinedUnitError:
         raise ValidationError(_('Invalid physical unit'))
 

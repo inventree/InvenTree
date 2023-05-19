@@ -106,12 +106,12 @@ class ParameterTests(TestCase):
         """Test validation of 'units' field for PartParameterTemplate"""
 
         # Test that valid units pass
-        for unit in ['', 'mm', 'A', 'm^2', 'Pa', 'V', 'C', 'F', 'uF', 'mF', 'millifarad']:
+        for unit in [None, '', 'mm', 'A', 'm^2', 'Pa', 'V', 'C', 'F', 'uF', 'mF', 'millifarad']:
             tmp = PartParameterTemplate(name='test', units=unit)
             tmp.full_clean()
 
         # Test that invalid units fail
-        for unit in ['mmmmm', '-', 'x']:
+        for unit in ['mmmmm', '-', 'x', int]:
             tmp = PartParameterTemplate(name='test', units=unit)
             with self.assertRaises(django_exceptions.ValidationError):
                 tmp.full_clean()
