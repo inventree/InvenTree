@@ -26,7 +26,7 @@ class TestParams(TestCase):
         self.assertEqual(str(t1), 'Length (mm)')
 
         p1 = PartParameter.objects.get(pk=1)
-        self.assertEqual(str(p1), 'M2x4 LPHS : Length = 4mm')
+        self.assertEqual(str(p1), 'M2x4 LPHS : Length = 4 (mm)')
 
         c1 = PartCategoryParameterTemplate.objects.get(pk=1)
         self.assertEqual(str(c1), 'Mechanical | Length | 2.8')
