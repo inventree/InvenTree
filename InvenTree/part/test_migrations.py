@@ -82,3 +82,75 @@ class TestBomItemMigrations(MigratorTestCase):
 
         for bom_item in BomItem.objects.all():
             self.assertFalse(bom_item.validated)
+
+
+class TestParameterMigrations(MigratorTestCase):
+    """Unit test for part parameter migrations"""
+
+    migrate_from = ('part', '0106_part_tags')
+    migrate_to = ('part', '0109_auto_20230517_1048')
+
+    def prepare(self):
+        """Create some parts, and templates with parameters"""
+
+        Part = self.old_state.apps.get_model('part', 'part')
+        PartParameter = self.old_state.apps.get_model('part', 'partparameter')
+        PartParameterTemlate = self.old_state.apps.get_model('part', 'partparametertemplate')
+
+        # Create some parts
+        a = Part.objects.create(
+            name='Part A', description='My part A',
+            level=0, lft=0, rght=0, tree_id=0,
+        )
+
+        b = Part.objects.create(
+            name='Part B', description='My part B',
+            level=0, lft=0, rght=0, tree_id=0,
+        )
+
+        # Create some templates
+        t1 = PartParameterTemlate.objects.create(name='Template 1', units='mm')
+        t2 = PartParameterTemlate.objects.create(name='Template 2', units='AMPERE')
+
+        # Create some parameter values
+        PartParameter.objects.create(part=a, template=t1, data='1.0')
+        PartParameter.objects.create(part=a, template=t2, data='-2mA',)
+
+        PartParameter.objects.create(part=b, template=t1, data='1/10 inch')
+        PartParameter.objects.create(part=b, template=t2, data='abc')
+
+    def test_data_migration(self):
+        """Test that the template units and values have been updated correctly"""
+
+        Part = self.new_state.apps.get_model('part', 'part')
+        PartParameter = self.new_state.apps.get_model('part', 'partparameter')
+        PartParameterTemlate = self.new_state.apps.get_model('part', 'partparametertemplate')
+
+        # Extract the parts
+        a = Part.objects.get(name='Part A')
+        b = Part.objects.get(name='Part B')
+
+        # Check that the templates have been updated correctly
+        t1 = PartParameterTemlate.objects.get(name='Template 1')
+        self.assertEqual(t1.units, 'mm')
+
+        t2 = PartParameterTemlate.objects.get(name='Template 2')
+        self.assertEqual(t2.units, 'ampere')
+
+        # Check that the parameter values have been updated correctly
+        p1 = PartParameter.objects.get(part=a, template=t1)
+        self.assertEqual(p1.data, '1.0')
+        self.assertEqual(p1.data_numeric, 1.0)
+
+        p2 = PartParameter.objects.get(part=a, template=t2)
+        self.assertEqual(p2.data, '-2mA')
+        self.assertEqual(p2.data_numeric, -0.002)
+
+        p3 = PartParameter.objects.get(part=b, template=t1)
+        self.assertEqual(p3.data, '1/10 inch')
+        self.assertEqual(p3.data_numeric, 2.54)
+
+        # This one has not converted correctly
+        p4 = PartParameter.objects.get(part=b, template=t2)
+        self.assertEqual(p4.data, 'abc')
+        self.assertEqual(p4.data_numeric, None)

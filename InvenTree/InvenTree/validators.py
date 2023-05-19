@@ -8,8 +8,30 @@ from django.core import validators
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import pint
 from jinja2 import Template
 from moneyed import CURRENCIES
+
+import InvenTree.conversion
+
+
+def validate_physical_units(unit):
+    """Ensure that a given unit is a valid physical unit."""
+
+    unit = unit.strip()
+
+    # Ignore blank units
+    if not unit:
+        return
+
+    ureg = InvenTree.conversion.get_unit_registry()
+
+    try:
+        ureg(unit)
+    except AttributeError:
+        raise ValidationError(_('Invalid physical unit'))
+    except pint.errors.UndefinedUnitError:
+        raise ValidationError(_('Invalid physical unit'))
 
 
 def validate_currency_code(code):

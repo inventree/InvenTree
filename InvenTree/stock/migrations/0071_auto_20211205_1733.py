@@ -35,10 +35,6 @@ def delete_scheduled(apps, schema_editor):
     Task.objects.filter(func='stock.tasks.delete_old_stock_items').delete()
 
 
-def reverse(apps, schema_editor):  # pragma: no cover
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -48,6 +44,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             delete_scheduled,
-            reverse_code=reverse,
+            reverse_code=migrations.RunPython.noop,
         )
     ]
