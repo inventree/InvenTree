@@ -106,6 +106,7 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
     """This models represents settings for individial machines."""
 
     typ = "machine"
+    extra_unique_fields = ["machine"]
 
     class Meta:
         """Meta for MachineSetting."""
@@ -138,9 +139,3 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
                 kwargs['settings'] = getattr(machine.driver, "MACHINE_SETTINGS", {})
 
         return super().get_setting_definition(key, **kwargs)
-
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'machine': self.machine,
-        }
