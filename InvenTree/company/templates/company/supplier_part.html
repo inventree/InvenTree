@@ -162,11 +162,11 @@ src="{% static 'img/blank_image.png' %}"
             <td>{{ part.packaging }}{% include "clip.html" %}</td>
         </tr>
         {% endif %}
-        {% if part.pack_size != 1.0 %}
+        {% if part.pack_units %}
         <tr>
             <td><span class='fas fa-box'></span></td>
-            <td>{% trans "Pack Quantity" %}</td>
-            <td>{% decimal part.pack_size %} {% include "part/part_units.html" with part=part.part %}</td>
+            <td>{% trans "Units" %}</td>
+            <td>{% part.pack_units %} {% include "part/part_units.html" with part=part.part %}</td>
         </tr>
         {% endif %}
         {% if part.note %}
