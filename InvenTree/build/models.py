@@ -1223,6 +1223,55 @@ class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
+class BuildLine(models.Model):
+    """A BuildLine object links a BOMItem to a Build.
+
+    When a new Build is created, the BuildLine objects are created automatically.
+    - A BuildLine entry is created for each BOM item associated with the part
+    - The quantity is set to the quantity required to build the part (including overage)
+    - BuildItem objects are associated with a particular BuildLine
+
+    Once a build has been created, BuildLines can (optionally) be removed from the Build
+
+    Attributes:
+        build: Link to a Build object
+        bom_item: Link to a BomItem object
+        quantity: Number of units required for the Build
+    """
+
+    class Meta:
+        """Model meta options"""
+        unique_together = [
+            ('build', 'bom_item'),
+        ]
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL used to access this model"""
+        return reverse('api-build-line-list')
+
+    build = models.ForeignKey(
+        Build, on_delete=models.CASCADE,
+        related_name='build_lines', help_text=_('Build object')
+    )
+
+    bom_item = models.ForeignKey(
+        part.models.BomItem,
+        blank=True, null=True,
+        on_delete=models.SET_NULL,
+        related_name='build_lines',
+    )
+
+    quantity = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        default=1,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Quantity'),
+        help_text=_('Required quantity for build order'),
+    )
+
+
 class BuildItem(InvenTree.models.MetadataMixin, models.Model):
     """A BuildItem links multiple StockItem objects to a Build.
 
@@ -1237,7 +1286,7 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
     """
 
     class Meta:
-        """Serializer metaclass"""
+        """Model meta options"""
         unique_together = [
             ('build', 'stock_item', 'install_into'),
         ]
