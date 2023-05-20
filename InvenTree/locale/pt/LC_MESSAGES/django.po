@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-19 03:26+0000\n"
-"PO-Revision-Date: 2023-05-19 13:24\n"
+"PO-Revision-Date: 2023-05-20 13:23\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -1124,7 +1124,7 @@ msgstr "Quantidade deve ser maior que zero"
 
 #: build/models.py:819 build/serializers.py:217
 msgid "Quantity cannot be greater than the output quantity"
-msgstr ""
+msgstr "Quantidade não pode ser maior do que a quantidade de saída"
 
 #: build/models.py:1271
 msgid "Build item must specify a build output, as master part is marked as trackable"
