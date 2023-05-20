@@ -2,7 +2,7 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from generic.states.states import StatusCode
+from generic.states import StatusCode
 
 
 class PurchaseOrderStatus(StatusCode):

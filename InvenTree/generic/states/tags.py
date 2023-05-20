@@ -2,9 +2,10 @@
 
 from django.utils.safestring import mark_safe
 
-from generic.states.states import StatusCode
 from generic.templatetags.generic import register
 from InvenTree.helpers import inheritors_attr
+
+from .states import StatusCode
 
 
 @register.simple_tag

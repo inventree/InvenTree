@@ -10,7 +10,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
 from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
-from generic.states.api import StatusView
+from generic.states import StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.status_codes import BuildStatus
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI

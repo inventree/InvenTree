@@ -1,8 +1,9 @@
 """Tests for the generic states module."""
 from django.utils.translation import gettext_lazy as _
 
-from generic.states.states import StatusCode
 from InvenTree.unit_test import InvenTreeTestCase
+
+from .states import StatusCode
 
 
 class GeneralStatus(StatusCode):
@@ -118,7 +119,7 @@ class GeneralStateTest(InvenTreeTestCase):
 
     def test_tag_function(self):
         """Test that the status code tag functions."""
-        from generic.states.tags import status_label
+        from .tags import status_label
 
         self.assertEqual(status_label('general', 10), "<span class='badge rounded-pill bg-secondary'>Pending</span>")
 

@@ -3,7 +3,7 @@
 """Provides extra global data to all templates."""
 
 import InvenTree.status
-from generic.states.states import StatusCode
+from generic.states import StatusCode
 from InvenTree.helpers import inheritors
 from users.models import RuleSet, check_user_role
 
