@@ -45,8 +45,8 @@ class GeneralStatus(StatusCode):
 
 class GeneralStateTest(InvenTreeTestCase):
     """Test that the StatusCode class works."""
-    def test_definition(self):
-        """Test that the status code class has been defined correctly"""
+    def test_code_definition(self):
+        """Test that the status code class has been defined correctly."""
         self.assertEqual(GeneralStatus.PENDING, 10)
         self.assertEqual(GeneralStatus.PLACED, 20)
         self.assertEqual(GeneralStatus.COMPLETE, 30)
@@ -72,7 +72,7 @@ class GeneralStateTest(InvenTreeTestCase):
             30,
         ])
 
-    def test_functions(self):
+    def test_code_functions(self):
         """Test that the status code class functions work correctly"""
         # render
         self.assertEqual(GeneralStatus.render(10), "<span class='badge rounded-pill bg-secondary'>Pending</span>")
