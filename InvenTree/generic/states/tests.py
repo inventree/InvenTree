@@ -115,3 +115,17 @@ class GeneralStateTest(InvenTreeTestCase):
         with self.assertRaises(ValueError) as e:
             GeneralStatus.value('Invalid')
         self.assertEqual(str(e.exception), "Label not found")
+
+    def test_tag_function(self):
+        """Test that the status code tag functions."""
+        from generic.states.tags import status_label
+
+        self.assertEqual(status_label('general', 10), "<span class='badge rounded-pill bg-secondary'>Pending</span>")
+
+        # invalid type
+        with self.assertRaises(ValueError) as e:
+            status_label('invalid', 10)
+        self.assertEqual(str(e.exception), "Unknown status type 'invalid'")
+
+        # Test non-existent key
+        self.assertEqual(status_label('general', 100), '100')
