@@ -2039,6 +2039,12 @@ function loadPartTable(table, url, options={}) {
     });
 
     columns.push({
+        field: 'units',
+        title: '{% trans "Units" %}',
+        sortable: true,
+    });
+
+    columns.push({
         sortName: 'category',
         field: 'category_detail',
         title: '{% trans "Category" %}',
