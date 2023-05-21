@@ -438,8 +438,8 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         multiple: Multiple that the part is provided in
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
-        pack_units: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
-        pack_units_native: Pack units, converted to "native" units of the referenced part
+        pack_quantity: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
+        pack_quantity_native: Pack quantity, converted to "native" units of the referenced part
         updated: Date that the SupplierPart was last updated
     """
 
@@ -478,38 +478,38 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         """
         super().clean()
 
-        self.pack_units = self.pack_units.strip()
+        self.pack_quantity = self.pack_quantity.strip()
 
-        # An empty 'pack_units' value is equivalent to '1'
-        if self.pack_units == '':
-            self.pack_units = '1'
+        # An empty 'pack_quantity' value is equivalent to '1'
+        if self.pack_quantity == '':
+            self.pack_quantity = '1'
 
         # Validate that the UOM is compatible with the base part
-        if self.pack_units and self.part:
+        if self.pack_quantity and self.part:
             try:
                 # Attempt conversion to specified unit
                 native_value = InvenTree.conversion.convert_physical_value(
-                    self.pack_units, self.part.units
+                    self.pack_quantity, self.part.units
                 )
 
                 # If part units are not provided, value must be dimensionless
                 if not self.part.units and native_value.units not in ['', 'dimensionless']:
                     raise ValidationError({
-                        'pack_units': _("Pack units must be compatible with the base part units")
+                        'pack_quantity': _("Pack units must be compatible with the base part units")
                     })
 
                 # Native value must be greater than zero
                 if float(native_value.magnitude) <= 0:
                     raise ValidationError({
-                        'pack_units': _("Pack units must be greater than zero")
+                        'pack_quantity': _("Pack units must be greater than zero")
                     })
 
                 # Update native pack units value
-                self.pack_units_native = Decimal(native_value.magnitude)
+                self.pack_quantity_native = Decimal(native_value.magnitude)
 
             except ValidationError as e:
                 raise ValidationError({
-                    'pack_units': e.messages
+                    'pack_quantity': e.messages
                 })
 
         # Ensure that the linked manufacturer_part points to the same part!
@@ -601,14 +601,14 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
 
-    pack_units = models.CharField(
+    pack_quantity = models.CharField(
         max_length=25,
-        verbose_name=_('Packaging Units'),
-        help_text=_('Units of measure for this supplier part'),
+        verbose_name=_('Pack Quantity'),
+        help_text=_('Total quantity supplied in a single pack. Leave empty for single items.'),
         blank=True,
     )
 
-    pack_units_native = RoundingDecimalField(
+    pack_quantity_native = RoundingDecimalField(
         max_digits=20, decimal_places=10, default=1,
         null=True,
     )

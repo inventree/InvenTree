@@ -63,14 +63,14 @@ class PartPricingTests(InvenTreeTestCase):
             supplier=self.supplier_2,
             part=self.part,
             SKU='SUP_2',
-            pack_units='2.5',
+            pack_quantity='2.5',
         )
 
         self.sp_3 = company.models.SupplierPart.objects.create(
             supplier=self.supplier_2,
             part=self.part,
             SKU='SUP_3',
-            pack_units='10'
+            pack_quantity='10'
         )
 
         company.models.SupplierPriceBreak.objects.create(
@@ -322,7 +322,7 @@ class PartPricingTests(InvenTreeTestCase):
         # $5 AUD each
         line_1 = po.add_line_item(self.sp_2, quantity=10, purchase_price=Money(5, 'AUD'))
 
-        # $30 CAD each (but pack_units is 10, so really $3 CAD each)
+        # $30 CAD each (but pack_size is 10, so really $3 CAD each)
         line_2 = po.add_line_item(self.sp_3, quantity=5, purchase_price=Money(30, 'CAD'))
 
         pricing.update_purchase_cost()

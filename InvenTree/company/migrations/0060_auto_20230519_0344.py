@@ -14,8 +14,8 @@ def update_supplier_part_units(apps, schema_editor):
 
     for sp in supplier_parts:
         pack_size = normalize(sp.pack_size)
-        sp.pack_units = str(pack_size)
-        sp.pack_units_native = pack_size
+        sp.pack_quantity = str(pack_size)
+        sp.pack_quantity_native = pack_size
         sp.save()
 
     if supplier_parts.count() > 0:

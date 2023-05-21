@@ -656,7 +656,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 )
 
         # Update the number of parts received against the particular line item
-        # Note that this quantity does *not* take the pack_size into account, it is "number of packs"
+        # Note that this quantity does *not* take the pack_quantity into account, it is "number of packs"
         line.received += quantity
         line.save()
 

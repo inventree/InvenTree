@@ -10,10 +10,10 @@ from part.models import Part
 
 
 class SupplierPartPackUnitsTests(InvenTreeTestCase):
-    """Unit tests for the SupplierPart pack_units field"""
+    """Unit tests for the SupplierPart pack_quantity field"""
 
-    def test_pack_units_dimensionless(self):
-        """Test valid values for the 'pack_units' field"""
+    def test_pack_quantity_dimensionless(self):
+        """Test valid values for the 'pack_quantity' field"""
 
         # Create a part without units (dimensionless)
         part = Part.objects.create(name='Test Part', description='Test part description', component=True)
@@ -48,17 +48,17 @@ class SupplierPartPackUnitsTests(InvenTreeTestCase):
         ]
 
         for test, expected in pass_tests.items():
-            sp.pack_units = test
+            sp.pack_quantity = test
             sp.full_clean()
-            self.assertEqual(sp.pack_units_native, expected)
+            self.assertEqual(sp.pack_quantity_native, expected)
 
         for test in fail_tests:
-            sp.pack_units = test
+            sp.pack_quantity = test
             with self.assertRaises(ValidationError):
                 sp.full_clean()
 
-    def test_pack_units(self):
-        """Test pack_units for a part with a specified dimension"""
+    def test_pack_quantity(self):
+        """Test pack_quantity for a part with a specified dimension"""
 
         # Create a part with units 'm'
         part = Part.objects.create(name='Test Part', description='Test part description', component=True, units='m')
@@ -101,14 +101,14 @@ class SupplierPartPackUnitsTests(InvenTreeTestCase):
         ]
 
         for test, expected in pass_tests.items():
-            sp.pack_units = test
+            sp.pack_quantity = test
             sp.full_clean()
             self.assertEqual(
-                round(Decimal(sp.pack_units_native), 10),
+                round(Decimal(sp.pack_quantity_native), 10),
                 round(Decimal(str(expected)), 10)
             )
 
         for test in fail_tests:
-            sp.pack_units = test
+            sp.pack_quantity = test
             with self.assertRaises(ValidationError):
                 sp.full_clean()

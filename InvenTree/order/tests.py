@@ -228,7 +228,7 @@ class OrderTest(TestCase):
             part=prt,
             supplier=sup,
             SKU='SKUx10',
-            pack_units='10',
+            pack_quantity='10',
         )
 
         # Create a new supplier part with smaller pack size
@@ -236,7 +236,7 @@ class OrderTest(TestCase):
             part=prt,
             supplier=sup,
             SKU='SKUx0.1',
-            pack_units='0.1',
+            pack_quantity='0.1',
         )
 
         # Record values before we start

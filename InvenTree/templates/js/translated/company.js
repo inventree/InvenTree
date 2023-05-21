@@ -138,7 +138,7 @@ function supplierPartFields(options={}) {
         packaging: {
             icon: 'fa-box',
         },
-        pack_units: {},
+        pack_quantity: {},
     };
 
     if (options.part) {
@@ -1242,8 +1242,8 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
             },
             {
-                field: 'pack_units',
-                title: '{% trans "Pack Units" %}',
+                field: 'pack_quantity',
+                title: '{% trans "Pack Quantity" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var output = `${value}`;

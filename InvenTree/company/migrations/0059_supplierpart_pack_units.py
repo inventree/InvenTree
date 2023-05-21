@@ -14,12 +14,12 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='supplierpart',
-            name='pack_units',
-            field=models.CharField(blank=True, help_text='Units of measure for this supplier part', max_length=25, verbose_name='Packaging Units'),
+            name='pack_quantity',
+            field=models.CharField(blank=True, help_text='Total quantity supplied in a single pack. Leave empty for single items.', max_length=25, verbose_name='Pack Quantity'),
         ),
         migrations.AddField(
             model_name='supplierpart',
-            name='pack_units_native',
+            name='pack_quantity_native',
             field=InvenTree.fields.RoundingDecimalField(decimal_places=10, default=1, max_digits=20, null=True),
         ),
     ]

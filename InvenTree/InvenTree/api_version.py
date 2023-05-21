@@ -8,7 +8,7 @@ INVENTREE_API_VERSION = 117
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
 v117 -> 2023-05-22 : https://github.com/inventree/InvenTree/pull/4854
-    - Replaces SupplierPart "pack_size" field with "pack_units"
+    - Replaces SupplierPart "pack_size" field with "pack_quantity"
     - New field supports physical units, and allows for conversion between compatible units
 
 v116 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4823
