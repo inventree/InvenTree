@@ -173,7 +173,13 @@ src="{% static 'img/blank_image.png' %}"
                 </span>
                 {% endif %}
             </td>
-            <td>{{ part.pack_units }}</td>
+            <td>
+                {{ part.pack_units }}
+                {% include "clip.html" %}
+                {% if part.part.units and part.pack_units_native %}
+                <span class='fas fa-info-circle float-right' title='{% decimal part.pack_units_native %} {{ part.part.units }}'></span>
+                {% endif %}
+            </td>
         </tr>
         {% endif %}
         {% if part.note %}
