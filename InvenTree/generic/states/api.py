@@ -1,9 +1,13 @@
 """Generic implementation of status api functions for InvenTree models."""
 
+import inspect
+
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
+
+from .states import StatusCode
 
 
 class StatusView(APIView):
@@ -36,8 +40,11 @@ class StatusView(APIView):
 
         status_class = self.get_status_model()
 
-        if not status_class:
-            raise NotImplementedError("status_class not defined for this endpoint")
+        if not inspect.isclass(status_class):
+            raise NotImplementedError("`status_class` not a class")
+
+        if not issubclass(status_class, StatusCode):
+            raise NotImplementedError("`status_class` not a valid StatusCode class")
 
         data = {
             'class': status_class.__name__,

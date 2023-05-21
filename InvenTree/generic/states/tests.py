@@ -150,3 +150,13 @@ class GeneralStateTest(InvenTreeTestCase):
         resp = pattern[0].resolve('status/').func(request, **{StatusView.MODEL_REF: None})
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(str(resp.rendered_content, 'utf-8'), '["StatusView view called without \'statusmodel\' parameter"]')
+
+        # Invalid call - not a class
+        with self.assertRaises(NotImplementedError) as e:
+            resp = pattern[0].resolve('status/').func(request, **{StatusView.MODEL_REF: 'invalid'})
+        self.assertEqual(str(e.exception), "`status_class` not a class")
+
+        # Invalid call - not the right class
+        with self.assertRaises(NotImplementedError) as e:
+            resp = pattern[0].resolve('status/').func(request, **{StatusView.MODEL_REF: object})
+        self.assertEqual(str(e.exception), "`status_class` not a valid StatusCode class")
