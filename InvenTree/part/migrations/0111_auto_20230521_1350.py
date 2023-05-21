@@ -20,6 +20,10 @@ def migrate_part_units(apps, schema_editor):
     parts = Part.objects.exclude(units=None).exclude(units='')
     n_parts = parts.count()
 
+    if n_parts == 0:
+        # Escape early
+        return
+
     ureg = InvenTree.conversion.get_unit_registry()
 
     invalid_units = set()

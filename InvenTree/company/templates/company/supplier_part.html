@@ -165,8 +165,15 @@ src="{% static 'img/blank_image.png' %}"
         {% if part.pack_units %}
         <tr>
             <td><span class='fas fa-box'></span></td>
-            <td>{% trans "Units" %}</td>
-            <td>{% part.pack_units %} {% include "part/part_units.html" with part=part.part %}</td>
+            <td>
+                {% trans "Units" %}
+                {% if part.part.units %}
+                <span class='float-right'>
+                    <em>[ {% include "part/part_units.html" with part=part.part %}]</em>
+                </span>
+                {% endif %}
+            </td>
+            <td>{{ part.pack_units }}</td>
         </tr>
         {% endif %}
         {% if part.note %}

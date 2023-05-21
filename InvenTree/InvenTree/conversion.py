@@ -43,7 +43,7 @@ def convert_physical_value(value: str, unit: str = None):
         unit: Optional unit to convert to, and validate against
 
     Raises:
-        ValidationError: If the value is invalid
+        ValidationError: If the value is invalid or cannot be converted to the specified unit
 
     Returns:
         The converted quantity, in the specified units

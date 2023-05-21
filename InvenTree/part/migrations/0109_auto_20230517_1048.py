@@ -19,6 +19,10 @@ def update_template_units(apps, schema_editor):
 
     n_templates = PartParameterTemplate.objects.count()
 
+    if n_templates == 0:
+        # Escape early
+        return
+
     ureg = InvenTree.conversion.get_unit_registry()
 
     n_converted = 0

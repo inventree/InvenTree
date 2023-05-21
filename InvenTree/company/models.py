@@ -2,6 +2,7 @@
 
 import os
 from datetime import datetime
+from decimal import Decimal
 
 from django.apps import apps
 from django.core.exceptions import ValidationError
@@ -477,10 +478,35 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         """
         super().clean()
 
+        self.pack_units = self.pack_units.strip()
+
+        # An empty 'pack_units' value is equivalent to '1'
+        if self.pack_units == '':
+            self.pack_units = '1'
+
         # Validate that the UOM is compatible with the base part
         if self.pack_units and self.part:
             try:
-                InvenTree.conversion.convert_physical_value(self.pack_units, self.part.units)
+                # Attempt conversion to specified unit
+                native_value = InvenTree.conversion.convert_physical_value(
+                    self.pack_units, self.part.units
+                )
+
+                # If part units are not provided, value must be dimensionless
+                if not self.part.units and native_value.units not in ['', 'dimensionless']:
+                    raise ValidationError({
+                        'pack_units': _("Pack units must be compatible with the base part units")
+                    })
+
+                # Native value must be greater than zero
+                if float(native_value.magnitude) <= 0:
+                    raise ValidationError({
+                        'pack_units': _("Pack units must be greater than zero")
+                    })
+
+                # Update native pack units value
+                self.pack_units_native = Decimal(native_value.magnitude)
+
             except ValidationError as e:
                 raise ValidationError({
                     'pack_units': e.messages
@@ -521,21 +547,23 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
         super().save(*args, **kwargs)
 
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
-                             related_name='supplier_parts',
-                             verbose_name=_('Base Part'),
-                             limit_choices_to={
-                                 'purchaseable': True,
-                             },
-                             help_text=_('Select part'),
-                             )
+    part = models.ForeignKey(
+        'part.Part', on_delete=models.CASCADE,
+        related_name='supplier_parts',
+        verbose_name=_('Base Part'),
+        limit_choices_to={
+            'purchaseable': True,
+        },
+        help_text=_('Select part'),
+    )
 
-    supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
-                                 related_name='supplied_parts',
-                                 limit_choices_to={'is_supplier': True},
-                                 verbose_name=_('Supplier'),
-                                 help_text=_('Select supplier'),
-                                 )
+    supplier = models.ForeignKey(
+        Company, on_delete=models.CASCADE,
+        related_name='supplied_parts',
+        limit_choices_to={'is_supplier': True},
+        verbose_name=_('Supplier'),
+        help_text=_('Select supplier'),
+    )
 
     SKU = models.CharField(
         max_length=100,
@@ -543,12 +571,13 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         help_text=_('Supplier stock keeping unit')
     )
 
-    manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
-                                          blank=True, null=True,
-                                          related_name='supplier_parts',
-                                          verbose_name=_('Manufacturer Part'),
-                                          help_text=_('Select manufacturer part'),
-                                          )
+    manufacturer_part = models.ForeignKey(
+        ManufacturerPart, on_delete=models.CASCADE,
+        blank=True, null=True,
+        related_name='supplier_parts',
+        verbose_name=_('Manufacturer Part'),
+        help_text=_('Select manufacturer part'),
+    )
 
     link = InvenTreeURLField(
         blank=True, null=True,
