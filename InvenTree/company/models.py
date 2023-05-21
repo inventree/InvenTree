@@ -26,7 +26,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
-from InvenTree.fields import InvenTreeURLField
+from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, MetadataMixin)
 from InvenTree.status_codes import PurchaseOrderStatus
@@ -438,6 +438,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
         pack_units: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
+        pack_units_native: Pack units, converted to "native" units of the referenced part
         updated: Date that the SupplierPart was last updated
     """
 
@@ -576,6 +577,11 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         verbose_name=_('Packaging Units'),
         help_text=_('Units of measure for this supplier part'),
         blank=True,
+    )
+
+    pack_units_native = RoundingDecimalField(
+        max_digits=20, decimal_places=10, default=1,
+        null=True,
     )
 
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))

@@ -2,6 +2,8 @@
 
 from django.db import migrations, models
 
+import InvenTree.fields
+
 
 class Migration(migrations.Migration):
 
@@ -14,5 +16,10 @@ class Migration(migrations.Migration):
             model_name='supplierpart',
             name='pack_units',
             field=models.CharField(blank=True, help_text='Units of measure for this supplier part', max_length=25, verbose_name='Packaging Units'),
+        ),
+        migrations.AddField(
+            model_name='supplierpart',
+            name='pack_units_native',
+            field=InvenTree.fields.RoundingDecimalField(decimal_places=10, default=1, max_digits=20, null=True),
         ),
     ]

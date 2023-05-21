@@ -13,7 +13,9 @@ def update_supplier_part_units(apps, schema_editor):
     supplier_parts = SupplierPart.objects.all()
 
     for sp in supplier_parts:
-        sp.pack_units = str(normalize(sp.pack_size))
+        pack_size = normalize(sp.pack_size)
+        sp.pack_units = str(pack_size)
+        sp.pack_units_native = pack_size
         sp.save()
 
     if supplier_parts.count() > 0:
@@ -24,6 +26,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('company', '0059_supplierpart_pack_units'),
+        ('part', '0111_auto_20230521_1350'),
     ]
 
     operations = [
