@@ -400,6 +400,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'supplier': 'supplier__name',
         'manufacturer': 'manufacturer_part__manufacturer__name',
         'MPN': 'manufacturer_part__MPN',
+        'pack_units': ['pack_units_native', 'pack_units'],
     }
 
     search_fields = [
