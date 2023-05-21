@@ -2294,6 +2294,13 @@ def after_save_part(sender, instance: Part, created, **kwargs):
             # Can sometimes occur if the referenced Part has issues
             pass
 
+        # Schedule a background task to rebuild any supplier parts
+        InvenTree.tasks.offload_task(
+            part_tasks.rebuild_supplier_parts,
+            instance.pk,
+            force_async=True
+        )
+
 
 class PartPricing(common.models.MetaMixin):
     """Model for caching min/max pricing information for a particular Part
@@ -3362,8 +3369,8 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
 
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
-        # Schedule a background task to rebuild the parameters against this template
         if not created:
+            # Schedule a background task to rebuild the parameters against this template
             InvenTree.tasks.offload_task(
                 part_tasks.rebuild_parameters,
                 instance.pk,
