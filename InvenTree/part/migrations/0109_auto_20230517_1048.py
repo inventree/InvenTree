@@ -22,7 +22,7 @@ def update_template_units(apps, schema_editor):
     ureg = InvenTree.conversion.get_unit_registry()
 
     n_converted = 0
-    invalid_units = []
+    invalid_units = set()
 
     for template in PartParameterTemplate.objects.all():
 
@@ -69,8 +69,8 @@ def update_template_units(apps, schema_editor):
                 break
 
         if not found:
-            print(f"warningCould not find unit match for {template.units}")
-            invalid_units.append(template.units)
+            print(f"warning: Could not find unit match for {template.units}")
+            invalid_units.add(template.units)
 
     print(f"Updated units for {n_templates} parameter templates")
 
