@@ -15,11 +15,24 @@ def get_unit_registry():
 
     # Cache the unit registry for speedier access
     if _unit_registry is None:
-        _unit_registry = pint.UnitRegistry()
-
-    # TODO: Allow for custom units to be defined in the database
+        reload_unit_registry()
 
     return _unit_registry
+
+
+def reload_unit_registry():
+    """Reload the unit registry from the database.
+
+    This function is called at startup, and whenever the database is updated.
+    """
+
+    global _unit_registry
+
+    _unit_registry = pint.UnitRegistry()
+
+    # TODO: Define some "standard" additional unitss
+
+    # TODO: Allow for custom units to be defined in the database
 
 
 def convert_physical_value(value: str, unit: str = None):
