@@ -36,7 +36,7 @@ def is_email_configured():
         logger.debug("EMAIL_HOST_USER is not configured")
 
     # Display warning unless in test mode
-    if not settings.TESTING:  # pragma: no cover
+    if not settings.EMAIL_HOST_PASSWORD and not settings.TESTING:  # pragma: no cover
         logger.debug("EMAIL_HOST_PASSWORD is not configured")
 
     return configured
