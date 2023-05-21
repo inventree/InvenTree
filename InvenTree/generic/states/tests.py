@@ -1,6 +1,5 @@
 """Tests for the generic states module."""
 from django.test.client import RequestFactory
-from django.urls import re_path
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework.test import force_authenticate
@@ -137,26 +136,26 @@ class GeneralStateTest(InvenTreeTestCase):
         self.assertEqual(status_label('general', 100), '100')
 
     def test_api(self):
-        """Test API view."""
-        pattern = [re_path(r'status/', StatusView.as_view(), name='api-test'),]
-        request = RequestFactory().get('status/',)
-        force_authenticate(request, user=self.user)
+        """Test StatusView API view."""
+        view = StatusView.as_view()
+        rqst = RequestFactory().get('status/',)
+        force_authenticate(rqst, user=self.user)
 
         # Correct call
-        resp = pattern[0].resolve('status/').func(request, **{StatusView.MODEL_REF: GeneralStatus})
+        resp = view(rqst, **{StatusView.MODEL_REF: GeneralStatus})
         self.assertEqual(resp.data, {'class': 'GeneralStatus', 'values': {'COMPLETE': {'key': 30, 'name': 'COMPLETE', 'label': 'Complete', 'color': 'success'}, 'PENDING': {'key': 10, 'name': 'PENDING', 'label': 'Pending', 'color': 'secondary'}, 'PLACED': {'key': 20, 'name': 'PLACED', 'label': 'Placed', 'color': 'primary'}}})
 
         # No status defined
-        resp = pattern[0].resolve('status/').func(request, **{StatusView.MODEL_REF: None})
+        resp = view(rqst, **{StatusView.MODEL_REF: None})
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(str(resp.rendered_content, 'utf-8'), '["StatusView view called without \'statusmodel\' parameter"]')
 
         # Invalid call - not a class
         with self.assertRaises(NotImplementedError) as e:
-            resp = pattern[0].resolve('status/').func(request, **{StatusView.MODEL_REF: 'invalid'})
+            resp = view(rqst, **{StatusView.MODEL_REF: 'invalid'})
         self.assertEqual(str(e.exception), "`status_class` not a class")
 
         # Invalid call - not the right class
         with self.assertRaises(NotImplementedError) as e:
-            resp = pattern[0].resolve('status/').func(request, **{StatusView.MODEL_REF: object})
+            resp = view(rqst, **{StatusView.MODEL_REF: object})
         self.assertEqual(str(e.exception), "`status_class` not a valid StatusCode class")
