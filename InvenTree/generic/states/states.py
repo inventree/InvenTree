@@ -104,6 +104,11 @@ class StatusCode(BaseEnum):
         return f"<span class='badge rounded-pill bg-{item.color}'>{item.label}</span>"
 
     @classmethod
+    def tag(cls):
+        """Return tag for this status code."""
+        return cls._TAG.value
+
+    @classmethod
     def items(cls):
         """All status code items."""
         return [(x.value, x.label) for x in cls.values()]
