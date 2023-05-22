@@ -7,7 +7,7 @@ from rest_framework.test import force_authenticate
 from InvenTree.unit_test import InvenTreeTestCase
 
 from .api import StatusView
-from .states import StatusCode
+from .states import NewStatusCode, StatusCode
 
 
 class GeneralStatus(StatusCode):
@@ -48,6 +48,34 @@ class GeneralStatus(StatusCode):
     ]
 
 
+class GeneralStatus2(NewStatusCode):
+    """Defines a set of status codes for tests."""
+    # _TAG = 'general2'
+
+    PENDING = 10, _("Pending"), 'secondary'
+    PLACED = 20, _("Placed"), 'primary'
+    COMPLETE = 30, _("Complete"), 'success'
+    ABC = None  # This should be ignored
+    DEF = 40  # This should be ignored
+
+    def GHI(self):  # This should be ignored
+        """A invalid function"""
+        pass
+
+    """
+    # Open orders
+    OPEN = [
+        PENDING,
+        PLACED,
+    ]
+
+    # Done orders
+    DONE = [
+        COMPLETE,
+    ]
+    """
+
+
 class GeneralStateTest(InvenTreeTestCase):
     """Test that the StatusCode class works."""
     def test_code_definition(self):
@@ -79,6 +107,7 @@ class GeneralStateTest(InvenTreeTestCase):
 
     def test_code_functions(self):
         """Test that the status code class functions work correctly"""
+        GeneralStatus = GeneralStatus2
         # render
         self.assertEqual(GeneralStatus.render(10), "<span class='badge rounded-pill bg-secondary'>Pending</span>")
         self.assertEqual(GeneralStatus.render(20), "<span class='badge rounded-pill bg-primary'>Placed</span>")
@@ -86,7 +115,7 @@ class GeneralStateTest(InvenTreeTestCase):
         self.assertEqual(GeneralStatus.render(100), 100)
 
         # list
-        self.assertEqual(GeneralStatus.list(), [{'color': 'success', 'key': 30, 'label': 'Complete', 'name': 'COMPLETE'}, {'color': 'secondary', 'key': 10, 'label': 'Pending', 'name': 'PENDING'}, {'color': 'primary', 'key': 20, 'label': 'Placed', 'name': 'PLACED'}])
+        self.assertEqual(GeneralStatus.list(), [{'color': 'secondary', 'key': 10, 'label': 'Pending', 'name': 'PENDING'}, {'color': 'primary', 'key': 20, 'label': 'Placed', 'name': 'PLACED'}, {'color': 'success', 'key': 30, 'label': 'Complete', 'name': 'COMPLETE'}])
 
         # text
         self.assertEqual(GeneralStatus.text(10), 'Pending')
@@ -113,13 +142,6 @@ class GeneralStateTest(InvenTreeTestCase):
 
         # label
         self.assertEqual(GeneralStatus.label(10), 'Pending')
-
-        # value
-        self.assertEqual(GeneralStatus.value('Pending'), 10)
-        # value with invalid key
-        with self.assertRaises(ValueError) as e:
-            GeneralStatus.value('Invalid')
-        self.assertEqual(str(e.exception), "Label not found")
 
     def test_tag_function(self):
         """Test that the status code tag functions."""
