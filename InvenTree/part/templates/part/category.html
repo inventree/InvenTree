@@ -297,9 +297,11 @@
         loadParametricPartTable(
             "#parametric-part-table",
             {
-                {% if category %}
-                category: {{ category.pk }},
-                {% endif %}
+                params: {
+                    {% if category %}
+                    category: {{ category.pk }},
+                    {% endif %}
+                },
             }
         );
     });
