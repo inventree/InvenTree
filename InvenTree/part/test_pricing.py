@@ -322,7 +322,7 @@ class PartPricingTests(InvenTreeTestCase):
         # $5 AUD each
         line_1 = po.add_line_item(self.sp_2, quantity=10, purchase_price=Money(5, 'AUD'))
 
-        # $30 CAD each (but pack_size is 10, so really $3 CAD each)
+        # $30 CAD each (but pack_quantity is 10, so really $3 CAD each)
         line_2 = po.add_line_item(self.sp_3, quantity=5, purchase_price=Money(30, 'CAD'))
 
         pricing.update_purchase_cost()

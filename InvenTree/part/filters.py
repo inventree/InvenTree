@@ -40,7 +40,7 @@ def annotate_on_order_quantity(reference: str = ''):
     - Purchase order must be 'active' or 'pending'
     - Received quantity must be less than line item quantity
 
-    Note that in addition to the 'quantity' on order, we must also take into account 'pack_size'.
+    Note that in addition to the 'quantity' on order, we must also take into account 'pack_quantity'.
     """
 
     # Filter only 'active' purhase orders
@@ -53,7 +53,7 @@ def annotate_on_order_quantity(reference: str = ''):
     return Coalesce(
         SubquerySum(
             ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__quantity') * F(f'{reference}supplier_parts__pack_size'),
+                F(f'{reference}supplier_parts__purchase_order_line_items__quantity') * F(f'{reference}supplier_parts__pack_quantity_native'),
                 output_field=DecimalField(),
             ),
             filter=order_filter
@@ -63,7 +63,7 @@ def annotate_on_order_quantity(reference: str = ''):
     ) - Coalesce(
         SubquerySum(
             ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__received') * F(f'{reference}supplier_parts__pack_size'),
+                F(f'{reference}supplier_parts__purchase_order_line_items__received') * F(f'{reference}supplier_parts__pack_quantity_native'),
                 output_field=DecimalField(),
             ),
             filter=order_filter

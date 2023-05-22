@@ -613,6 +613,11 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         null=True,
     )
 
+    def base_quantity(self, quantity=1) -> Decimal:
+        """Calculate the base unit quantiy for a given quantity."""
+
+        return Decimal(quantity) * Decimal(self.pack_quantity_native)
+
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).

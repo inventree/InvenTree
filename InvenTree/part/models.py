@@ -2144,7 +2144,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     def on_order(self):
         """Return the total number of items on order for this part.
 
-        Note that some supplier parts may have a different pack_size attribute,
+        Note that some supplier parts may have a different pack_quantity attribute,
         and this needs to be taken into account!
         """
 
@@ -2163,7 +2163,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                 remaining = line.quantity - line.received
 
                 if remaining > 0:
-                    quantity += remaining * sp.pack_size
+                    quantity += sp.base_quantity(remaining)
 
         return quantity
 
@@ -2570,7 +2570,7 @@ class PartPricing(common.models.MetaMixin):
                 continue
 
             # Take supplier part pack size into account
-            purchase_cost = self.convert(line.purchase_price / line.part.pack_size)
+            purchase_cost = self.convert(line.purchase_price / line.part.pack_quantity_native)
 
             if purchase_cost is None:
                 continue
@@ -2661,7 +2661,7 @@ class PartPricing(common.models.MetaMixin):
                         continue
 
                     # Ensure we take supplier part pack size into account
-                    cost = self.convert(pb.price / sp.pack_size)
+                    cost = self.convert(pb.price / sp.pack_quantity_native)
 
                     if cost is None:
                         continue

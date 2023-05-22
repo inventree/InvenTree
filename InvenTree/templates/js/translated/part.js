@@ -1588,13 +1588,12 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 formatter: function(value, row) {
                     let data = value;
 
-                    if (row.supplier_part_detail.pack_size != 1.0) {
-                        let pack_size = row.supplier_part_detail.pack_size;
-                        let total = value * pack_size;
+                    if (row.supplier_part_detail.pack_quantity_native != 1.0) {
+                        let total = value * row.supplier_part_detail.pack_quantity_native;
 
                         data += makeIconBadge(
                             'fa-info-circle icon-blue',
-                            `{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}`
+                            `{% trans "Pack Quantity" %}: ${row.pack_quantity} - {% trans "Total Quantity" %}: ${total}`
                         );
                     }
 
@@ -1647,10 +1646,9 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 formatter: function(value, row) {
                     var data = value;
 
-                    if (value > 0 && row.supplier_part_detail.pack_size != 1.0) {
-                        var pack_size = row.supplier_part_detail.pack_size;
-                        var total = value * pack_size;
-                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                    if (value > 0 && row.supplier_part_detail.pack_quantity_native != 1.0) {
+                        let total = value * row.supplier_part_detail.pack_quantity_native;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${row.pack_quantity} - {% trans "Total Quantity" %}: ${total}'></span>`;
                     }
 
                     return data;
