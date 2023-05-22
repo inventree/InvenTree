@@ -54,9 +54,7 @@ def status_codes(request):
         return {}
 
     request._inventree_status_codes = True
-
-    classes = inheritors(StatusCode)
-    return {cls.__name__: cls for cls in classes}
+    return {cls.__name__: cls for cls in inheritors(StatusCode)}
 
 
 def user_roles(request):
