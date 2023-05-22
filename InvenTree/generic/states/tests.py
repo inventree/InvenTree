@@ -12,7 +12,7 @@ from .states import StatusCode
 
 class GeneralStatus(StatusCode):
     """Defines a set of status codes for tests."""
-    _TAG = 'general2'
+    _TAG = 'general'
 
     PENDING = 10, _("Pending"), 'secondary'
     PLACED = 20, _("Placed"), 'primary'
