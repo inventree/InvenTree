@@ -1209,7 +1209,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                     continue
 
             # Calculate required quantity
-            quantity = bom_item.calculate_required_quantity(self.quantity)
+            quantity = bom_item.get_required_quantity(self.quantity)
 
             lines.append(
                 BuildLine(
@@ -1237,7 +1237,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         # A new Build has just been created
 
         # Generate initial BuildLine objects for the Build
-        instance.create_build_lines()
+        instance.create_build_line_items()
 
         # Run checks on required parts
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
