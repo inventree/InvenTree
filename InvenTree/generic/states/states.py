@@ -1,5 +1,6 @@
 """Generic implementation of status for InvenTree models."""
 import enum
+import re
 
 
 class BaseEnum(enum.Enum):
@@ -93,7 +94,15 @@ class StatusCode(BaseEnum):
     @classmethod
     def tag(cls):
         """Return tag for this status code."""
-        return cls._TAG.value
+        # Return the tag if it is defined
+        if bool(cls._TAG):
+            return cls._TAG.value
+
+        # Try to find a default tag
+        # Remove `Status` from the class name
+        ref_name = cls.__name__.removesuffix('Status')
+        # Convert to snake case
+        return re.sub(r'(?<!^)(?=[A-Z])', '_', ref_name).lower()
 
     @classmethod
     def items(cls):

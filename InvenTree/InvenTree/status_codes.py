@@ -7,7 +7,6 @@ from generic.states import StatusCode
 
 class PurchaseOrderStatus(StatusCode):
     """Defines a set of status codes for a PurchaseOrder."""
-    _TAG = 'purchase_order'
 
     # Order status codes
     PENDING = 10  # Order is pending (not yet placed)
@@ -51,7 +50,6 @@ class PurchaseOrderStatus(StatusCode):
 
 class SalesOrderStatus(StatusCode):
     """Defines a set of status codes for a SalesOrder."""
-    _TAG = 'sales_order'
 
     PENDING = 10  # Order is pending
     IN_PROGRESS = 15  # Order has been issued, and is in progress
@@ -92,7 +90,6 @@ class SalesOrderStatus(StatusCode):
 
 class StockStatus(StatusCode):
     """Status codes for Stock."""
-    _TAG = 'stock'
 
     OK = 10  # Item is OK
     ATTENTION = 50  # Item requires attention
@@ -134,7 +131,6 @@ class StockStatus(StatusCode):
 
 class StockHistoryCode(StatusCode):
     """Status codes for StockHistory."""
-    _TAG = 'stock_history'
 
     LEGACY = 0
 
@@ -235,7 +231,6 @@ class StockHistoryCode(StatusCode):
 
 class BuildStatus(StatusCode):
     """Build status codes."""
-    _TAG = 'build'
 
     PENDING = 10  # Build is pending / active
     PRODUCTION = 20  # BuildOrder is in production
@@ -264,7 +259,6 @@ class BuildStatus(StatusCode):
 
 class ReturnOrderStatus(StatusCode):
     """Defines a set of status codes for a ReturnOrder"""
-    _TAG = 'return_order'
 
     # Order is pending, waiting for receipt of items
     PENDING = 10
@@ -297,7 +291,6 @@ class ReturnOrderStatus(StatusCode):
 
 class ReturnOrderLineStatus(StatusCode):
     """Defines a set of status codes for a ReturnOrderLineItem"""
-    _TAG = 'return_order_line'
 
     PENDING = 10
 
