@@ -52,11 +52,6 @@ def update_stock_history(apps, schema_editor):
         print(f"Updated {n} StockItemTracking entries with SalesOrder data")
 
 
-def nope(apps, schema_editor):
-    """Provided for reverse migration compatibility"""
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -65,6 +60,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            update_stock_history, reverse_code=nope,
+            update_stock_history, reverse_code=migrations.RunPython.noop,
         )
     ]

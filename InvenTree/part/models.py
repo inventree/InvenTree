@@ -12,7 +12,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
@@ -35,6 +35,7 @@ from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
+import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
@@ -380,7 +381,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     """
 
     objects = PartManager()
-    tags = TaggableManager()
+
+    tags = TaggableManager(blank=True)
 
     class Meta:
         """Metaclass defines extra model properties"""
@@ -981,7 +983,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         max_length=20, default="",
         blank=True, null=True,
         verbose_name=_('Units'),
-        help_text=_('Units of measure for this part')
+        help_text=_('Units of measure for this part'),
     )
 
     assembly = models.BooleanField(
@@ -3294,6 +3296,7 @@ class PartParameterTemplate(MetadataMixin, models.Model):
     Attributes:
         name: The name (key) of the Parameter [string]
         units: The units of the Parameter [string]
+        description: Description of the parameter [string]
     """
 
     @staticmethod
@@ -3331,7 +3334,14 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         unique=True
     )
 
-    units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
+    units = models.CharField(
+        max_length=25,
+        verbose_name=_('Units'), help_text=_('Physical units for this parameter'),
+        blank=True,
+        validators=[
+            validators.validate_physical_units,
+        ]
+    )
 
     description = models.CharField(
         max_length=250,
@@ -3339,6 +3349,23 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         help_text=_('Parameter description'),
         blank=True,
     )
+
+
+@receiver(post_save, sender=PartParameterTemplate, dispatch_uid='post_save_part_parameter_template')
+def post_save_part_parameter_template(sender, instance, created, **kwargs):
+    """Callback function when a PartParameterTemplate is created or saved"""
+
+    import part.tasks as part_tasks
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+
+        # Schedule a background task to rebuild the parameters against this template
+        if not created:
+            InvenTree.tasks.offload_task(
+                part_tasks.rebuild_parameters,
+                instance.pk,
+                force_async=True
+            )
 
 
 class PartParameter(models.Model):
@@ -3362,18 +3389,79 @@ class PartParameter(models.Model):
 
     def __str__(self):
         """String representation of a PartParameter (used in the admin interface)"""
-        return "{part} : {param} = {data}{units}".format(
+        return "{part} : {param} = {data} ({units})".format(
             part=str(self.part.full_name),
             param=str(self.template.name),
             data=str(self.data),
             units=str(self.template.units)
         )
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
+    def save(self, *args, **kwargs):
+        """Custom save method for the PartParameter model."""
 
-    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', verbose_name=_('Template'), help_text=_('Parameter Template'))
+        # Validate the PartParameter before saving
+        self.calculate_numeric_value()
 
-    data = models.CharField(max_length=500, verbose_name=_('Data'), help_text=_('Parameter Value'))
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Validate the PartParameter before saving to the database."""
+
+        super().clean()
+
+        # Validate the parameter data against the template units
+        if self.template.units:
+            try:
+                InvenTree.conversion.convert_physical_value(self.data, self.template.units)
+            except ValidationError as e:
+                raise ValidationError({
+                    'data': e.message
+                })
+
+    def calculate_numeric_value(self):
+        """Calculate a numeric value for the parameter data.
+
+        - If a 'units' field is provided, then the data will be converted to the base SI unit.
+        - Otherwise, we'll try to do a simple float cast
+        """
+
+        if self.template.units:
+            try:
+                converted = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
+                self.data_numeric = float(converted.magnitude)
+            except (ValidationError, ValueError):
+                self.data_numeric = None
+
+        # No units provided, so try to cast to a float
+        else:
+            try:
+                self.data_numeric = float(self.data)
+            except ValueError:
+                self.data_numeric = None
+
+    part = models.ForeignKey(
+        Part, on_delete=models.CASCADE, related_name='parameters',
+        verbose_name=_('Part'), help_text=_('Parent Part')
+    )
+
+    template = models.ForeignKey(
+        PartParameterTemplate, on_delete=models.CASCADE, related_name='instances',
+        verbose_name=_('Template'), help_text=_('Parameter Template')
+    )
+
+    data = models.CharField(
+        max_length=500,
+        verbose_name=_('Data'), help_text=_('Parameter Value'),
+        validators=[
+            MinLengthValidator(1),
+        ]
+    )
+
+    data_numeric = models.FloatField(
+        default=None,
+        null=True,
+        blank=True,
+    )
 
     @classmethod
     def create(cls, part, template, data, save=False):

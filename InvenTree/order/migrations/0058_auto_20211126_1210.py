@@ -40,14 +40,6 @@ def calculate_shipped_quantity(apps, schema_editor):
         item.save()
 
 
-def reverse_calculate_shipped_quantity(apps, schema_editor):  # pragma: no cover
-    """
-    Provided only for reverse migration compatibility.
-    This function does nothing.
-    """
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -57,6 +49,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             calculate_shipped_quantity,
-            reverse_code=reverse_calculate_shipped_quantity
+            reverse_code=migrations.RunPython.noop
         )
     ]

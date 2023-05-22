@@ -313,9 +313,7 @@ loadStockTable($("#stock-table"), {
         location_detail: true,
         part_detail: false,
     },
-    groupByField: 'location',
     buttons: ['#stock-options'],
-    url: "{% url 'api-stock-list' %}",
 });
 
 $("#item-create").click(function() {

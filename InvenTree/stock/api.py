@@ -356,6 +356,7 @@ class StockFilter(rest_filters.FilterSet):
             'belongs_to',
             'build',
             'customer',
+            'consumed_by',
             'sales_order',
             'purchase_order',
             'tags__name',

@@ -27,7 +27,7 @@ from .models import Part, PartCategory
 from .part import MakePartTemplate
 
 
-class PartIndex(InvenTreeRoleMixin, ListView):
+class PartIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
     """View for displaying list of Part objects."""
 
     model = Part
