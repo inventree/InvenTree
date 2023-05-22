@@ -16,7 +16,7 @@ from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
 import build.admin
 import build.serializers
-from build.models import Build, BuildItem, BuildOrderAttachment
+from build.models import Build, BuildLine, BuildItem, BuildOrderAttachment
 import part.models
 from users.models import Owner
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
@@ -248,6 +248,41 @@ class BuildUnallocate(CreateAPI):
         ctx['request'] = self.request
 
         return ctx
+
+
+class BuildLineFilter(rest_filters.FilterSet):
+    """Custom filterset for the BuildLine API endpoint."""
+
+    class Meta:
+        """Meta information for the BuildLineFilter class."""
+        model = BuildLine
+        fields = [
+            'build',
+            'bom_item',
+        ]
+
+
+class BuildLineList(ListCreateAPI):
+    """API endpoint for accessing a list of BuildLine objects"""
+
+    queryset = BuildLine.objects.all()
+    serializer_class = build.serializers.BuildLineSerializer
+    filterset_class = BuildLineFilter
+
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    ordering_fields = [
+        'quantity',
+    ]
+
+    search_fields = []
+
+
+class BuildLineDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a BuildLine object."""
+
+    queryset = BuildLine.objects.all()
+    serializer_class = build.serializers.BuildLineSerializer
 
 
 class BuildOrderContextMixin:
@@ -484,6 +519,12 @@ build_api_urls = [
     re_path(r'^attachment/', include([
         path(r'<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
         re_path(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+    ])),
+
+    # Build lines
+    re_path(r'^line/', include([
+        path(r'<int:pk>/', BuildLineDetail.as_view(), name='api-build-line-detail'),
+        re_path(r'^.*$', BuildLineList.as_view(), name='api-build-line-list'),
     ])),
 
     # Build Items

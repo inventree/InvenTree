@@ -24,7 +24,7 @@ from part.models import BomItem
 from part.serializers import PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
-from .models import Build, BuildItem, BuildOrderAttachment
+from .models import Build, BuildLine, BuildItem, BuildOrderAttachment
 
 
 class BuildSerializer(InvenTreeModelSerializer):
@@ -126,6 +126,28 @@ class BuildSerializer(InvenTreeModelSerializer):
         Build.validate_reference_field(reference)
 
         return reference
+
+
+class BuildLineSerializer(InvenTreeModelSerializer):
+    """Serializer for a BuildItem object."""
+
+    class Meta:
+        """Serializer metaclass"""
+
+        model = BuildLine
+        fields = [
+            'pk',
+            'build',
+            'bom_item',
+            'quantity',
+        ]
+
+        read_only_fields = [
+            'build',
+            'bom_item',
+        ]
+
+    quantity = serializers.FloatField()
 
 
 class BuildOutputSerializer(serializers.Serializer):
