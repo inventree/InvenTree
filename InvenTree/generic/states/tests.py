@@ -50,13 +50,12 @@ class GeneralStatus(StatusCode):
 
 class GeneralStatus2(NewStatusCode):
     """Defines a set of status codes for tests."""
-    # _TAG = 'general2'
+    _TAG = 'general2'
 
     PENDING = 10, _("Pending"), 'secondary'
     PLACED = 20, _("Placed"), 'primary'
     COMPLETE = 30, _("Complete"), 'success'
     ABC = None  # This should be ignored
-    DEF = 40  # This should be ignored
 
     def GHI(self):  # This should be ignored
         """A invalid function"""

@@ -183,67 +183,71 @@ class NewStatusCode(BaseEnum):
         return obj
 
     @classmethod
+    def _is_element(cls, d):
+        """Check if the supplied value is a valid status code."""
+        if d.startswith('_'):
+            return False
+        if d != d.upper():
+            return False
+
+        value = getattr(cls, d, None)
+
+        if value is None:
+            return False
+        if callable(value):
+            return False
+        if type(value.value) != int:
+            return False
+        # if value not in keys:
+        #     continue
+        return True
+
+    @classmethod
+    def values(cls, key=None):
+        """Return a dict representation containing all required information"""
+        elements = [itm for itm in cls if cls._is_element(itm.name)]
+        if key is None:
+            return elements
+
+        ret = [itm for itm in elements if itm.value == key]
+        if ret:
+            return ret[0]
+        return None
+
+    @classmethod
     def render(cls, key, large=False):
         """Render the value as a HTML label."""
         # If the key cannot be found, pass it back
-        item = cls.dict(key)
+        item = cls.values(key)
         if not item:
             return key
 
         return f"<span class='badge rounded-pill bg-{item.color}'>{item.label}</span>"
 
     @classmethod
-    def list(cls):
-        """Return the StatusCode options as a list of mapped key / value items."""
-        return list(cls.dict().values())
-
-    @classmethod
     def items(cls):
         """All status code items."""
-        return [(x.value, x.label) for x in cls]
+        return [(x.value, x.label) for x in cls.values()]
 
     @classmethod
     def keys(cls):
         """All status code keys."""
-        return [x.value for x in cls]
+        return [x.value for x in cls.values()]
 
     @classmethod
     def labels(cls):
         """All status code labels."""
-        return [x.label for x in cls]
+        return [x.label for x in cls.values()]
 
     @classmethod
     def names(cls):
-        """Return a map of all 'names' of status codes in this class
-
-        Will return a dict object, with the attribute name indexed to the integer value.
-
-        e.g.
-        {
-            'PENDING': 10,
-            'IN_PROGRESS': 20,
-        }
-        """
-        return {x.name: x.value for x in cls}
-
-    @classmethod
-    def dict(cls, key=None):
-        """Return a dict representation containing all required information"""
-        elems = {
-            x.name: {
-                'color': x.color,
-                'key': x.value,
-                'label': x.label,
-                'name': x.name,
-            }
-            for x in cls if not x.name.startswith('_') and x.value is not None
-        }
-        return elems if key is None else elems[key]
+        """Return a map of all 'names' of status codes in this class."""
+        return {x.name: x.value for x in cls.values()}
 
     @classmethod
     def text(cls, key):
         """Text for supplied status code."""
-        filtered = cls.dict(key)
+        filtered = cls.values(key)
         if filtered is None:
             return key
         return filtered.label
@@ -251,7 +255,22 @@ class NewStatusCode(BaseEnum):
     @classmethod
     def label(cls, key):
         """Return the status code label associated with the provided value."""
-        filtered = cls.dict(key)
+        filtered = cls.values(key)
         if filtered is None:
             return key
         return filtered.label
+
+    @classmethod
+    def dict(cls, key=None):
+        """Return a dict representation containing all required information"""
+        return {x.name: {
+            'color': x.color,
+            'key': x.value,
+            'label': x.label,
+            'name': x.name,
+        } for x in cls.values(key)}
+
+    @classmethod
+    def list(cls):
+        """Return the StatusCode options as a list of mapped key / value items."""
+        return list(cls.dict().values())
