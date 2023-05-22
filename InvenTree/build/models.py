@@ -1,7 +1,7 @@
 """Build database model definitions."""
 
 import decimal
-
+import logging
 import os
 from datetime import datetime
 
@@ -37,6 +37,9 @@ import common.notifications
 import part.models
 import stock.models
 import users.models
+
+
+logger = logging.getLogger('inventree')
 
 
 class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
@@ -1193,6 +1196,33 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """Returns True if the build status is COMPLETE."""
         return self.status == BuildStatus.COMPLETE
 
+    @transaction.atomic
+    def create_build_line_items(self, prevent_duplicates=True):
+        """Create BuildLine objects for each BOM line in this BuildOrder."""
+
+        lines = []
+
+        for bom_item in self.bom_items.all():
+
+            if prevent_duplicates:
+                if BuildLine.objects.filter(build=self, bom_item=bom_item).exists():
+                    continue
+
+            # Calculate required quantity
+            quantity = bom_item.calculate_required_quantity(self.quantity)
+
+            lines.append(
+                BuildLine(
+                    build=self,
+                    bom_item=bom_item,
+                    quantity=quantity
+                )
+            )
+
+        BuildLine.objects.bulk_create(lines)
+
+        logger.info(f"Created {len(lines)} BuildLine objects for BuildOrder {self.pk}")
+
 
 @receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
 def after_save_build(sender, instance: Build, created: bool, **kwargs):
@@ -1203,8 +1233,11 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
 
     from . import tasks as build_tasks
 
-    if created:
+    if instance and created:
         # A new Build has just been created
+
+        # Generate initial BuildLine objects for the Build
+        instance.create_build_lines()
 
         # Run checks on required parts
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)

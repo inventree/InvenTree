@@ -6,7 +6,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 from import_export import widgets
 
-from build.models import Build, BuildItem
+from build.models import Build, BuildLine, BuildItem
 from InvenTree.admin import InvenTreeResource
 import part.models
 
@@ -100,5 +100,16 @@ class BuildItemAdmin(admin.ModelAdmin):
     ]
 
 
+class BuildLineAdmin(admin.ModelAdmin):
+    """Class for managing the BuildLine model via the admin interface"""
+
+    list_display = (
+        'build',
+        'bom_item',
+        'quantity',
+    )
+
+
 admin.site.register(Build, BuildAdmin)
 admin.site.register(BuildItem, BuildItemAdmin)
+admin.site.register(BuildLine, BuildLineAdmin)
