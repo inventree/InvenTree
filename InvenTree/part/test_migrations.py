@@ -154,3 +154,38 @@ class TestParameterMigrations(MigratorTestCase):
         p4 = PartParameter.objects.get(part=b, template=t2)
         self.assertEqual(p4.data, 'abc')
         self.assertEqual(p4.data_numeric, None)
+
+
+class PartUnitsMigrationTest(MigratorTestCase):
+    """Test for data migration of Part.units field"""
+
+    migrate_from = ('part', '0109_auto_20230517_1048')
+    migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
+
+    def prepare(self):
+        """Prepare some parts with units"""
+
+        Part = self.old_state.apps.get_model('part', 'part')
+
+        units = ['mm', 'INCH', '', '%']
+
+        for idx, unit in enumerate(units):
+            Part.objects.create(
+                name=f'Part {idx + 1}', description=f'My part at index {idx}', units=unit,
+                level=0, lft=0, rght=0, tree_id=0,
+            )
+
+    def test_units_migration(self):
+        """Test that the units have migrated OK"""
+
+        Part = self.new_state.apps.get_model('part', 'part')
+
+        part_1 = Part.objects.get(name='Part 1')
+        part_2 = Part.objects.get(name='Part 2')
+        part_3 = Part.objects.get(name='Part 3')
+        part_4 = Part.objects.get(name='Part 4')
+
+        self.assertEqual(part_1.units, 'mm')
+        self.assertEqual(part_2.units, 'inch')
+        self.assertEqual(part_3.units, '')
+        self.assertEqual(part_4.units, 'percent')
