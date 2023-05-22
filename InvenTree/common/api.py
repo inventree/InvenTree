@@ -121,8 +121,13 @@ class CurrencyExchangeView(APIView):
 
         # Information on last update
         try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            updated = backend.last_update
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
+
+            if backend.exists():
+                backend = backend.first()
+                updated = backend.last_update
+            else:
+                updated = None
         except Exception:
             updated = None
 

@@ -508,9 +508,13 @@ def update_exchange_rates():
         # Other error?
         return
 
+    backend = None
+
     # Test to see if the database is ready yet
     try:
-        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+        backends = ExchangeBackend.objects.filter(name='InvenTreeExchange')
+        if backends.exists():
+            backend = backends.first()
     except ExchangeBackend.DoesNotExist:
         pass
     except Exception:  # pragma: no cover
@@ -518,7 +522,9 @@ def update_exchange_rates():
         logger.warning("update_exchange_rates: Database not ready")
         return
 
-    backend = InvenTreeExchange()
+    if not backend:
+        backend = InvenTreeExchange()
+
     logger.info(f"Updating exchange rates from {backend.url}")
 
     base = currency_code_default()
