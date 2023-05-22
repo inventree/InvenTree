@@ -105,3 +105,18 @@ It means that the user running the InvenTree server does not have permission to 
 Ensure that the user running the InvenTree server has permission to create the required directories. For example, if running the server as the `inventree` user, ensure that the `inventree` user has permission to create the required directories.
 
 If you are using Docker to run the InvenTree server, ensure that the user that runs the docker deamon has permission to create the required directories in the volume.
+
+### docker - failed to mount local volume
+
+If, when running InvenTree setup using docker, you see an error message like this:
+
+```
+Error response from daemon: failed to mount local volume:
+```
+
+This means that either:
+
+- The specified directory does not exist on your local machine
+- The docker user does not have write permission to the specified directory
+
+In either case, ensure that the directory is available *on your local machine* and the user account has the required permissions.
