@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-22 13:00+0000\n"
-"PO-Revision-Date: 2023-05-19 13:24\n"
+"POT-Creation-Date: 2023-05-22 02:13+0000\n"
+"PO-Revision-Date: 2023-05-22 13:26\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -12406,11 +12406,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12588,3 +12586,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
