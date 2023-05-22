@@ -22,6 +22,20 @@ def update_supplier_part_units(apps, schema_editor):
         print(f"Updated {supplier_parts.count()} supplier part units")
 
 
+def reverse_pack_quantity(apps, schema_editor):
+    """Reverse the migrations"""
+
+    SupplierPart = apps.get_model('company', 'SupplierPart')
+
+    supplier_parts = SupplierPart.objects.all()
+
+    for sp in supplier_parts:
+        sp.pack_size = sp.pack_quantity_native
+        sp.save()
+
+    if supplier_parts.count() > 0:
+        print(f"Updated {supplier_parts.count()} supplier part units")
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -32,6 +46,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             code=update_supplier_part_units,
-            reverse_code=migrations.RunPython.noop
+            reverse_code=reverse_pack_quantity,
         )
     ]
