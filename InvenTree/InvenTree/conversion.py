@@ -30,17 +30,23 @@ def reload_unit_registry():
 
     _unit_registry = pint.UnitRegistry()
 
-    # TODO: Define some "standard" additional unitss
+    # Define some "standard" additional units
+    _unit_registry.define('piece = 1')
+    _unit_registry.define('each = 1 = ea')
+    _unit_registry.define('dozen = 12 = dz')
+    _unit_registry.define('hundred = 100')
+    _unit_registry.define('thousand = 1000')
 
     # TODO: Allow for custom units to be defined in the database
 
 
-def convert_physical_value(value: str, unit: str = None):
+def convert_physical_value(value: str, unit: str = None, base_units=True):
     """Validate that the provided value is a valid physical quantity.
 
     Arguments:
         value: Value to validate (str)
         unit: Optional unit to convert to, and validate against
+        base_units: If True, convert the value to the base units before returning
 
     Raises:
         ValidationError: If the value is invalid or cannot be converted to the specified unit
@@ -89,6 +95,9 @@ def convert_physical_value(value: str, unit: str = None):
             error += f' ({unit})'
 
         raise ValidationError(error)
+
+    if base_units:
+        val = val.to_base_units()
 
     # Return the converted value
     return val
