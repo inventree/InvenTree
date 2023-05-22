@@ -1018,12 +1018,6 @@ def inheritors(cls):
     return subcls
 
 
-def inheritors_attr(cls, attr):
-    """Return the attribute from each inheriting class."""
-    classes = inheritors(cls)
-    return {getattr(cls, attr): cls for cls in classes}
-
-
 def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
     """Notify all responsible parties of a change in an instance.
 
