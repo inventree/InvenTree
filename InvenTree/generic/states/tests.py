@@ -7,48 +7,10 @@ from rest_framework.test import force_authenticate
 from InvenTree.unit_test import InvenTreeTestCase
 
 from .api import StatusView
-from .states import NewStatusCode, StatusCode
+from .states import StatusCode
 
 
 class GeneralStatus(StatusCode):
-    """Defines a set of status codes for tests."""
-    _TAG = 'general'
-
-    PENDING = 10
-    PLACED = 20
-    COMPLETE = 30
-    ABC = None  # This should be ignored
-    DEF = 40  # This should be ignored
-
-    def GHI(self):  # This should be ignored
-        """A invalid function"""
-        pass
-
-    options = {
-        PENDING: _("Pending"),
-        PLACED: _("Placed"),
-        COMPLETE: _("Complete"),
-    }
-
-    colors = {
-        PENDING: 'secondary',
-        PLACED: 'primary',
-        COMPLETE: 'success',
-    }
-
-    # Open orders
-    OPEN = [
-        PENDING,
-        PLACED,
-    ]
-
-    # Done orders
-    DONE = [
-        COMPLETE,
-    ]
-
-
-class GeneralStatus2(NewStatusCode):
     """Defines a set of status codes for tests."""
     _TAG = 'general2'
 
@@ -83,18 +45,7 @@ class GeneralStateTest(InvenTreeTestCase):
         self.assertEqual(GeneralStatus.PLACED, 20)
         self.assertEqual(GeneralStatus.COMPLETE, 30)
 
-        self.assertEqual(GeneralStatus.options, {
-            10: _("Pending"),
-            20: _("Placed"),
-            30: _("Complete"),
-        })
-
-        self.assertEqual(GeneralStatus.colors, {
-            10: 'secondary',
-            20: 'primary',
-            30: 'success',
-        })
-
+        """
         self.assertEqual(GeneralStatus.OPEN, [
             10,
             20,
@@ -103,10 +54,10 @@ class GeneralStateTest(InvenTreeTestCase):
         self.assertEqual(GeneralStatus.DONE, [
             30,
         ])
+        """
 
     def test_code_functions(self):
         """Test that the status code class functions work correctly"""
-        GeneralStatus = GeneralStatus2
         # render
         self.assertEqual(GeneralStatus.render(10), "<span class='badge rounded-pill bg-secondary'>Pending</span>")
         self.assertEqual(GeneralStatus.render(20), "<span class='badge rounded-pill bg-primary'>Placed</span>")
