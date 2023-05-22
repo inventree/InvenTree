@@ -8,6 +8,16 @@ def set_default_currency(apps, schema_editor):
     """ migrate the currency setting from config.yml to db """
     # get value from settings-file
     base_currency = get_setting('INVENTREE_BASE_CURRENCY', 'base_currency', 'USD')
+
+    from common.settings import currency_codes
+
+    # check if value is valid
+    if base_currency not in currency_codes():
+        if len (currency_codes()) > 0:
+            base_currency = currency_codes()[0]
+        else:
+            base_currency = 'USD'
+
     # write to database
     InvenTreeSetting.set_setting('INVENTREE_DEFAULT_CURRENCY', base_currency, None, create=True)
 
