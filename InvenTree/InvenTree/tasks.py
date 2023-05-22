@@ -167,6 +167,7 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
     If workers are not running or force_sync flag
     is set then the task is ran synchronously.
     """
+
     try:
         import importlib
 
@@ -562,6 +563,12 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
     """Send an email with the specified subject and body, to the specified recipients list."""
     if type(recipients) == str:
         recipients = [recipients]
+
+    import InvenTree.ready
+
+    if InvenTree.ready.isImportingData():
+        # If we are importing data, don't send emails
+        return
 
     offload_task(
         django_mail.send_mail,

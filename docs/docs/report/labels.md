@@ -310,3 +310,12 @@ Length: {{ parameters.length }}
 
 {% endraw %}
 ```
+
+Note that for parameters which include a `space` character in their name, lookup using the "dot" notation won't work! In this case, try using the [key lookup](./helpers.md#key-access) method:
+
+```html
+{% raw %}
+
+Voltage Rating: {% getkey parameters "Voltage Rating" %}
+{% endraw %}
+```

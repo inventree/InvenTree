@@ -11,7 +11,7 @@ from build.models import Build, BuildItem
 from stock.models import StockItem
 
 from InvenTree.status_codes import BuildStatus, StockStatus
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 
 
 class TestBuildAPI(InvenTreeAPITestCase):
@@ -1027,12 +1027,15 @@ class BuildOutputScrapTest(BuildAPITest):
                 'outputs': [
                     {
                         'output': outputs[0].pk,
+                        'quantity': outputs[0].quantity,
                     },
                     {
                         'output': outputs[1].pk,
+                        'quantity': outputs[1].quantity,
                     },
                     {
                         'output': outputs[2].pk,
+                        'quantity': outputs[2].quantity,
                     },
                 ],
                 'location': 1,
