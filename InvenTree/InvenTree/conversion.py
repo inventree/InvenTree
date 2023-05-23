@@ -81,11 +81,9 @@ def convert_physical_value(value: str, unit: str = None, base_units=True):
         # At this point we *should* have a valid pint value
         # To double check, look at the maginitude
         float(val.magnitude)
-    except ValueError:
+    except (TypeError, ValueError):
         error = _('Provided value is not a valid number')
-    except pint.errors.UndefinedUnitError:
-        error = _('Provided value has an invalid unit')
-    except pint.errors.DefinitionSyntaxError:
+    except (pint.errors.UndefinedUnitError, pint.errors.DefinitionSyntaxError):
         error = _('Provided value has an invalid unit')
     except pint.errors.DimensionalityError:
         error = _('Provided value could not be converted to the specified unit')
@@ -97,7 +95,11 @@ def convert_physical_value(value: str, unit: str = None, base_units=True):
         raise ValidationError(error)
 
     if base_units:
-        val = val.to_base_units()
+        try:
+            base = val.to_base_units()
+            val = base
+        except TypeError:
+            pass
 
     # Return the converted value
     return val
