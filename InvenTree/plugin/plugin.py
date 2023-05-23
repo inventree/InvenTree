@@ -14,6 +14,8 @@ from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+from plugin.helpers import GitStatus, get_git_log
+
 logger = logging.getLogger("inventree")
 
 
@@ -345,6 +347,10 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return f'{reverse("settings")}#select-plugin-{self.slug}'
 
     # region package info
+    def _get_package_commit(self):
+        """Get last git commit for the plugin."""
+        return get_git_log(str(self.file()))
+
     @classmethod
     def is_editable(cls):
         """Returns if the current part is editable."""
@@ -389,6 +395,16 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         if package.get('date'):
             package['date'] = datetime.fromisoformat(package.get('date'))
 
+        # process sign state
+        sign_state = getattr(GitStatus, str(package.get('verified')), GitStatus.N)
+        if sign_state.status == 0:
+            self.sign_color = 'success'  # pragma: no cover
+        elif sign_state.status == 1:
+            self.sign_color = 'warning'
+        else:
+            self.sign_color = 'danger'  # pragma: no cover
+
         # set variables
         self.package = package
+        self.sign_state = sign_state
     # endregion
