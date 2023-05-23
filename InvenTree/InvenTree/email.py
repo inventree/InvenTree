@@ -64,9 +64,12 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         from_email = settings.DEFAULT_FROM_EMAIL
 
         # If we still don't have a valid from_email, then we can't send emails
-        if not from_email and not settings.TESTING:
-            logger.error("send_email failed: DEFAULT_FROM_EMAIL not specified")
-            return
+        if not from_email:
+            if settings.TESTING:
+                from_email = 'from@test.com'
+            else:
+                logger.error("send_email failed: DEFAULT_FROM_EMAIL not specified")
+                return
 
     InvenTree.tasks.offload_task(
         django_mail.send_mail,
