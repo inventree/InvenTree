@@ -389,7 +389,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
     def define_package(self):
         """Add package info of the plugin into plugins context."""
-        package = self._get_package_metadata() if self._is_package else {'author': '', 'description': '', 'version': '', 'website': '', 'license': ''}
+        package = self._get_package_metadata() if self._is_package else self._get_package_commit()
 
         # process date
         if package.get('date'):
