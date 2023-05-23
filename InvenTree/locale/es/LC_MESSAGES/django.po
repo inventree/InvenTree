@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-22 02:13+0000\n"
-"PO-Revision-Date: 2023-05-22 13:26\n"
+"PO-Revision-Date: 2023-05-23 16:16\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -27,19 +27,19 @@ msgstr "El usuario no tiene permiso para ver este modelo"
 
 #: InvenTree/conversion.py:44
 msgid "No value provided"
-msgstr ""
+msgstr "Ningún valor proporcionado"
 
 #: InvenTree/conversion.py:66
 msgid "Provided value is not a valid number"
-msgstr ""
+msgstr "El valor proporcionado no es un número válido"
 
 #: InvenTree/conversion.py:68 InvenTree/conversion.py:70
 msgid "Provided value has an invalid unit"
-msgstr ""
+msgstr "El valor proporcionado tiene una unidad inválida"
 
 #: InvenTree/conversion.py:72
 msgid "Provided value could not be converted to the specified unit"
-msgstr ""
+msgstr "El valor proporcionado no puede ser convertido a la unidad especificada"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -809,7 +809,7 @@ msgstr "Rechazo"
 
 #: InvenTree/validators.py:32 InvenTree/validators.py:34
 msgid "Invalid physical unit"
-msgstr ""
+msgstr "Unidad física inválida"
 
 #: InvenTree/validators.py:40
 msgid "Not a valid currency code"
@@ -1124,7 +1124,7 @@ msgstr "La cantidad debe ser mayor que cero"
 
 #: build/models.py:819 build/serializers.py:217
 msgid "Quantity cannot be greater than the output quantity"
-msgstr ""
+msgstr "La cantidad no puede ser mayor que la cantidad de salida"
 
 #: build/models.py:1271
 msgid "Build item must specify a build output, as master part is marked as trackable"
@@ -8535,7 +8535,7 @@ msgstr "Registrarse"
 
 #: templates/InvenTree/settings/login.html:34
 msgid "Single Sign On"
-msgstr ""
+msgstr "Inicio de sesión único"
 
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:144
@@ -9106,7 +9106,7 @@ msgstr "Ajustes de Búsqueda"
 
 #: templates/InvenTree/settings/user_sso.html:9
 msgid "Single Sign On Accounts"
-msgstr ""
+msgstr "Cuentas de inicio de sesión único"
 
 #: templates/InvenTree/settings/user_sso.html:16
 msgid "You can sign in to your account using any of the following third party accounts:"
@@ -9114,15 +9114,15 @@ msgstr "Puede iniciar sesión en su cuenta utilizando cualquiera de las siguient
 
 #: templates/InvenTree/settings/user_sso.html:52
 msgid "There are no social network accounts connected to this account."
-msgstr ""
+msgstr "No hay cuentas de redes sociales conectadas a esta cuenta."
 
 #: templates/InvenTree/settings/user_sso.html:58
 msgid "Add SSO Account"
-msgstr ""
+msgstr "Añadir cuenta SSO"
 
 #: templates/InvenTree/settings/user_sso.html:67
 msgid "Single Sign On is not enabled for this server"
-msgstr ""
+msgstr "El inicio de sesión único no está habilitado para este servidor"
 
 #: templates/about.html:9
 msgid "InvenTree Version"
