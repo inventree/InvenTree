@@ -651,23 +651,27 @@ def version(c):
     from InvenTree.InvenTree.config import (get_config_file, get_media_dir,
                                             get_static_dir)
 
-    print("\nInvenTree - inventree.org")
-    print("The Open-Source Inventory Management System\n")
-    print("========================================")
-    print("Installation paths:")
-    print(f"Base        {localDir()}")
-    print(f"Config      {get_config_file()}")
-    print(f"Media       {get_media_dir()}")
-    print(f"Static      {get_static_dir()}")
-    print("Versions:")
-    print(f"Python      {python_version()}")
-    print(f"Django      {InvenTreeVersion.inventreeDjangoVersion()}")
-    print(f"InvenTree   {InvenTreeVersion.inventreeVersion()}")
-    print(f"API         {InvenTreeVersion.inventreeApiVersion()}")
-    print("")
-    print(f"Commit hash:{InvenTreeVersion.inventreeCommitHash()}")
-    print(f"Commit date:{InvenTreeVersion.inventreeCommitDate()}")
+    print(f"""
+InvenTree - inventree.org
+The Open-Source Inventory Management System\n
+
+Installation paths:
+Base        {localDir()}
+Config      {get_config_file()}
+Media       {get_media_dir()}
+Static      {get_static_dir()}
+
+Versions:
+Python      {python_version()}
+Django      {InvenTreeVersion.inventreeDjangoVersion()}
+InvenTree   {InvenTreeVersion.inventreeVersion()}
+API         {InvenTreeVersion.inventreeApiVersion()}
+
+Commit hash:{InvenTreeVersion.inventreeCommitHash()}
+Commit date:{InvenTreeVersion.inventreeCommitDate()}""")
     if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
-        print("\nYou are probably running the package installer / single-line installer. Please mentioned that in any bug reports!\n")
-        print("Use '--list' for a list of available commands")
-        print("Use '--help' for help on a specific command")
+        print("""
+You are probably running the package installer / single-line installer. Please mentioned that in any bug reports!
+
+Use '--list' for a list of available commands
+Use '--help' for help on a specific command""")
