@@ -616,7 +616,10 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
     def base_quantity(self, quantity=1) -> Decimal:
         """Calculate the base unit quantiy for a given quantity."""
 
-        return Decimal(quantity) * Decimal(self.pack_quantity_native)
+        q = Decimal(quantity) * Decimal(self.pack_quantity_native)
+        q = round(q, 10).normalize()
+
+        return q
 
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
 
