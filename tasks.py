@@ -11,8 +11,6 @@ from platform import python_version
 
 from invoke import task
 
-import InvenTree.InvenTree.version as InvenTreeVersion
-
 
 def apps():
     """Returns a list of installed apps."""
@@ -649,15 +647,27 @@ def schema(c, filename='schema.yml', overwrite=False):
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
+    import InvenTree.InvenTree.version as InvenTreeVersion
+    from InvenTree.InvenTree.config import (get_config_file, get_media_dir,
+                                            get_static_dir)
+
     print("\nInvenTree - inventree.org")
     print("The Open-Source Inventory Management System\n")
     print("========================================")
-    print(f"Base directory: {localDir()}")
+    print("Installation paths:")
+    print(f"Base        {localDir()}")
+    print(f"Config      {get_config_file()}")
+    print(f"Media       {get_media_dir()}")
+    print(f"Static      {get_static_dir()}")
     print("Versions:")
     print(f"Python      {python_version()}")
     print(f"Django      {InvenTreeVersion.inventreeDjangoVersion()}")
     print(f"InvenTree   {InvenTreeVersion.inventreeVersion()}")
     print(f"API         {InvenTreeVersion.inventreeApiVersion()}")
-    print("========================================")
+    print("")
     print(f"Commit hash:{InvenTreeVersion.inventreeCommitHash()}")
     print(f"Commit date:{InvenTreeVersion.inventreeCommitDate()}")
+    if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
+        print("\nYou are probably running the package installer / single-line installer. Please mentioned that in any bug reports!\n")
+        print("Use '--list' for a list of available commands")
+        print("Use '--help' for help on a specific command")
