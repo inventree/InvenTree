@@ -88,7 +88,7 @@ class TestParameterMigrations(MigratorTestCase):
     """Unit test for part parameter migrations"""
 
     migrate_from = ('part', '0106_part_tags')
-    migrate_to = ('part', '0109_auto_20230517_1048')
+    migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
 
     def prepare(self):
         """Create some parts, and templates with parameters"""
