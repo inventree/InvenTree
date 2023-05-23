@@ -93,6 +93,30 @@ def inventreeDjangoVersion():
     return django.get_version()
 
 
+git_available: bool = None  # is git available and used by the install?
+
+
+def check_for_git():
+    """Check if git is available on the install."""
+    global git_available
+
+    if git_available is not None:
+        return git_available
+
+    try:
+        subprocess.check_output('git --version'.split(), stderr=subprocess.DEVNULL)
+    except Exception:
+        git_available = False
+
+    if git_available is None:
+        try:
+            subprocess.check_output('git status'.split(), stderr=subprocess.DEVNULL)
+            git_available = True
+            return True
+        except Exception:
+            git_available = False
+
+
 def inventreeCommitHash():
     """Returns the git commit hash for the running codebase."""
     # First look in the environment variables, i.e. if running in docker
@@ -100,6 +124,9 @@ def inventreeCommitHash():
 
     if commit_hash:
         return commit_hash
+
+    if not check_for_git():
+        return None
 
     try:
         return str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
@@ -114,6 +141,9 @@ def inventreeCommitDate():
 
     if commit_date:
         return commit_date.split(' ')[0]
+
+    if not check_for_git():
+        return None
 
     try:
         d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip()
