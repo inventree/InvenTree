@@ -7,8 +7,11 @@ import re
 import shutil
 import sys
 from pathlib import Path
+from platform import python_version
 
 from invoke import task
+
+import InvenTree.InvenTree.version as InvenTreeVersion
 
 
 def apps():
@@ -641,3 +644,20 @@ def schema(c, filename='schema.yml', overwrite=False):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
     manage(c, f'spectacular --file {filename}')
+
+
+@task(default=True)
+def version(c):
+    """Show the current version of InvenTree."""
+    print("\nInvenTree - inventree.org")
+    print("The Open-Source Inventory Management System\n")
+    print("========================================")
+    print(f"Base directory: {localDir()}")
+    print("Versions:")
+    print(f"Python      {python_version()}")
+    print(f"Django      {InvenTreeVersion.inventreeDjangoVersion()}")
+    print(f"InvenTree   {InvenTreeVersion.inventreeVersion()}")
+    print(f"API         {InvenTreeVersion.inventreeApiVersion()}")
+    print("========================================")
+    print(f"Commit hash:{InvenTreeVersion.inventreeCommitHash()}")
+    print(f"Commit date:{InvenTreeVersion.inventreeCommitDate()}")
