@@ -3,7 +3,6 @@
 from django.contrib.auth import authenticate, login
 from django.db import transaction
 from django.db.models import F, Q
-from django.db.utils import ProgrammingError
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
@@ -14,19 +13,19 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-import order.models as models
-import order.serializers as serializers
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, ProjectCode
 from common.settings import settings
 from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
-from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import (DownloadFile, construct_absolute_url,
+                               get_base_url, str2bool)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus)
+from order import models, serializers
 from order.admin import (PurchaseOrderExtraLineResource,
                          PurchaseOrderLineItemResource, PurchaseOrderResource,
                          ReturnOrderResource, SalesOrderExtraLineResource,
@@ -135,6 +134,21 @@ class OrderFilter(rest_filters.FilterSet):
             return queryset.filter(status__in=self.Meta.model.get_status_class().OPEN)
         else:
             return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
+
+    project_code = rest_filters.ModelChoiceFilter(
+        queryset=ProjectCode.objects.all(),
+        field_name='project_code'
+    )
+
+    has_project_code = rest_filters.BooleanFilter(label='has_project_code', method='filter_has_project_code')
+
+    def filter_has_project_code(self, queryset, name, value):
+        """Filter by whether or not the order has a project code"""
+
+        if str2bool(value):
+            return queryset.exclude(project_code=None)
+        else:
+            return queryset.filter(project_code=None)
 
 
 class LineItemFilter(rest_filters.FilterSet):
@@ -307,12 +321,14 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     search_fields = [
         'reference',
         'supplier__name',
         'supplier_reference',
+        'project_code__code',
         'description',
     ]
 
@@ -325,6 +341,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
         'status',
         'responsible',
         'total_price',
+        'project_code',
     ]
 
     ordering = '-reference'
@@ -685,6 +702,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     filterset_fields = [
@@ -701,6 +719,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
         'line_items',
         'shipment_date',
         'total_price',
+        'project_code',
     ]
 
     search_fields = [
@@ -708,6 +727,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
         'reference',
         'description',
         'customer_reference',
+        'project_code__code',
     ]
 
     ordering = '-reference'
@@ -1000,6 +1020,15 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(shipment_date=None)
 
+    delivered = rest_filters.BooleanFilter(label='delivered', method='filter_delivered')
+
+    def filter_delivered(self, queryset, name, value):
+        """Filter SalesOrder list by 'delivered' status (boolean)"""
+        if str2bool(value):
+            return queryset.exclude(delivery_date=None)
+        else:
+            return queryset.filter(delivery_date=None)
+
 
 class SalesOrderShipmentList(ListCreateAPI):
     """API list endpoint for SalesOrderShipment model."""
@@ -1138,6 +1167,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
     }
 
     ordering_fields = [
@@ -1148,6 +1178,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
         'line_items',
         'status',
         'target_date',
+        'project_code',
     ]
 
     search_fields = [
@@ -1155,6 +1186,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
         'reference',
         'description',
         'customer_reference',
+        'project_code__code',
     ]
 
     ordering = '-reference'
@@ -1348,11 +1380,8 @@ class OrderCalendarExport(ICalFeed):
         whether or not to show completed orders. Defaults to false
     """
 
-    try:
-        instance_url = InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
-    except ProgrammingError:  # pragma: no cover
-        # database is not initialized yet
-        instance_url = ''
+    instance_url = get_base_url()
+
     instance_url = instance_url.replace("http://", "").replace("https://", "")
     timezone = settings.TIME_ZONE
     file_name = "calendar.ics"
@@ -1407,7 +1436,7 @@ class OrderCalendarExport(ICalFeed):
         # Help:
         # https://django.readthedocs.io/en/stable/ref/contrib/syndication.html
 
-        obj = dict()
+        obj = {}
         obj['ordertype'] = kwargs['ordertype']
         obj['include_completed'] = bool(request.GET.get('include_completed', False))
 
@@ -1484,9 +1513,7 @@ class OrderCalendarExport(ICalFeed):
     def item_link(self, item):
         """Set the item link."""
 
-        # Do not use instance_url as here, as the protocol needs to be included
-        site_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL")
-        return f'{site_url}{item.get_absolute_url()}'
+        return construct_absolute_url(item.get_absolute_url())
 
 
 order_api_urls = [

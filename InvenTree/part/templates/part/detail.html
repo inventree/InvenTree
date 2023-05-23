@@ -6,7 +6,7 @@
 
 {% block sidebar %}
 {% include 'part/part_sidebar.html' %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block breadcrumb_tree %}
 <div id="breadcrumb-tree"></div>
@@ -192,8 +192,8 @@
         <div id='variant-button-toolbar'>
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
+                    {% include "filter_list.html" with id="variants" %}
                 </div>
-                {% include "filter_list.html" with id="variants" %}
             </div>
         </div>
 
@@ -218,7 +218,7 @@
     </div>
     <div class='panel-content'>
         <div id='param-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
+            <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
                     {% include "filter_list.html" with id="parameters" %}
                 </div>
@@ -431,11 +431,11 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_load %}
 {{ block.super }}
-{% endblock %}
+{% endblock js_load %}
 
 {% block js_ready %}
     {{ block.super }}
@@ -733,7 +733,7 @@
         $('#new-variant').click(function() {
 
             duplicatePart(
-                {{ part.pk}},
+                {{ part.pk }},
                 {
                     variant: true,
                 }
@@ -756,7 +756,6 @@
             },
         });
     });
-
 
     $("#part-order2").click(function() {
         inventreeGet(
@@ -823,11 +822,9 @@
                 part_detail: true,
                 supplier_part_detail: true,
             },
-            groupByField: 'location',
             buttons: [
                 '#stock-options',
             ],
-            url: "{% url 'api-stock-list' %}",
         });
 
         $('#item-create').click(function () {
@@ -926,4 +923,4 @@
         }
     });
 
-{% endblock %}
+{% endblock js_ready %}

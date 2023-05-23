@@ -227,13 +227,12 @@ class StockStatus(StatusCode):
         LOST: _("Lost"),
         REJECTED: _("Rejected"),
         QUARANTINED: _("Quarantined"),
-        RETURNED: _("Returned"),
     }
 
     colors = {
         OK: 'success',
         ATTENTION: 'warning',
-        DAMAGED: 'danger',
+        DAMAGED: 'warning',
         DESTROYED: 'danger',
         LOST: 'dark',
         REJECTED: 'danger',
@@ -267,6 +266,7 @@ class StockHistoryCode(StatusCode):
 
     # Location operations
     STOCK_MOVE = 20
+    STOCK_UPDATE = 25
 
     # Installation operations
     INSTALLED_INTO_ASSEMBLY = 30
@@ -288,6 +288,7 @@ class StockHistoryCode(StatusCode):
     # Build order codes
     BUILD_OUTPUT_CREATED = 50
     BUILD_OUTPUT_COMPLETED = 55
+    BUILD_OUTPUT_REJECTED = 56
     BUILD_CONSUMED = 57
 
     # Sales order codes
@@ -316,6 +317,7 @@ class StockHistoryCode(StatusCode):
         STOCK_REMOVE: _('Stock manually removed'),
 
         STOCK_MOVE: _('Location changed'),
+        STOCK_UPDATE: _('Stock updated'),
 
         INSTALLED_INTO_ASSEMBLY: _('Installed into assembly'),
         REMOVED_FROM_ASSEMBLY: _('Removed from assembly'),
@@ -335,6 +337,7 @@ class StockHistoryCode(StatusCode):
 
         BUILD_OUTPUT_CREATED: _('Build order output created'),
         BUILD_OUTPUT_COMPLETED: _('Build order output completed'),
+        BUILD_OUTPUT_REJECTED: _('Build order output rejected'),
         BUILD_CONSUMED: _('Consumed by build order'),
 
         SHIPPED_AGAINST_SALES_ORDER: _("Shipped against Sales Order"),

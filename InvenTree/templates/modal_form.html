@@ -14,7 +14,7 @@
 </div>
 
 {% block pre_form_content %}
-{% endblock %}
+{% endblock pre_form_content %}
 
 {% block form %}
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
@@ -22,13 +22,13 @@
   {% load crispy_forms_tags %}
 
   {% block form_data %}
-  {% endblock %}
+  {% endblock form_data %}
 
   {% crispy form %}
 
 </form>
 
-{% endblock %}
+{% endblock form %}
 
 {% block post_form_content %}
-{% endblock %}
+{% endblock post_form_content %}

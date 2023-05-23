@@ -20,8 +20,9 @@ import common.models
 import order.models
 import part.models
 import stock.models
-from InvenTree.helpers import validateFilterString
-from plugin.models import MetadataMixin
+from InvenTree.helpers import get_base_url, validateFilterString
+from InvenTree.models import MetadataMixin
+from plugin.registry import registry
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -202,7 +203,7 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         # Generate custom context data based on the particular report subclass
         context = self.get_context_data(request)
 
-        context['base_url'] = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+        context['base_url'] = get_base_url(request=request)
         context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
         context['default_page_size'] = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE')
@@ -211,6 +212,13 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         context['report_revision'] = self.revision
         context['request'] = request
         context['user'] = request.user
+
+        # Pass the context through to any active reporting plugins
+        plugins = registry.with_mixin('report')
+
+        for plugin in plugins:
+            # Let each plugin add its own context data
+            plugin.add_report_context(self, self.object_to_print, request, context)
 
         return context
 

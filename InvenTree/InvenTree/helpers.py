@@ -8,17 +8,15 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
-from pathlib import Path
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
-from django.contrib.auth.models import Permission
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
+from django.db.utils import OperationalError, ProgrammingError
 from django.http import StreamingHttpResponse
-from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 
 import moneyed.localization
@@ -29,13 +27,12 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
 
+import common.models
 import InvenTree.version
-from common.models import InvenTreeSetting
 from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
-from .api_tester import ExchangeRateMixin, UserMixin
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = logging.getLogger('inventree')
@@ -43,7 +40,7 @@ logger = logging.getLogger('inventree')
 
 def getSetting(key, backup_value=None):
     """Shortcut for reading a setting value from the database."""
-    return InvenTreeSetting.get_setting(key, backup_value=backup_value)
+    return common.models.InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
 def generateTestKey(test_name):
@@ -88,31 +85,57 @@ def getStaticUrl(filename):
     return os.path.join(STATIC_URL, str(filename))
 
 
-def construct_absolute_url(*arg):
+def construct_absolute_url(*arg, **kwargs):
     """Construct (or attempt to construct) an absolute URL from a relative URL.
 
     This is useful when (for example) sending an email to a user with a link
     to something in the InvenTree web framework.
 
-    This requires the BASE_URL configuration option to be set!
+    A URL is constructed in the following order:
+
+    1. If setings.SITE_URL is set (e.g. in the Django settings), use that
+    2. If the InvenTree setting INVENTREE_BASE_URL is set, use that
+    3. Otherwise, use the current request URL (if available)
     """
-    base = str(InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
 
-    url = '/'.join(arg)
+    relative_url = '/'.join(arg)
 
-    if not base:
-        return url
+    # If a site URL is provided, use that
+    site_url = getattr(settings, 'SITE_URL', None)
+
+    if not site_url:
+        # Otherwise, try to use the InvenTree setting
+        try:
+            site_url = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
+        except ProgrammingError:
+            pass
+        except OperationalError:
+            pass
+
+    if not site_url:
+        # Otherwise, try to use the current request
+        request = kwargs.get('request', None)
+
+        if request:
+            site_url = request.build_absolute_uri('/')
+
+    if not site_url:
+        # No site URL available, return the relative URL
+        return relative_url
 
     # Strip trailing slash from base url
-    if base.endswith('/'):
-        base = base[:-1]
+    if site_url.endswith('/'):
+        site_url = site_url[:-1]
 
-    if url.startswith('/'):
-        url = url[1:]
+    if relative_url.startswith('/'):
+        relative_url = relative_url[1:]
 
-    url = f"{base}/{url}"
+    return f"{site_url}/{relative_url}"
 
-    return url
+
+def get_base_url(**kwargs):
+    """Return the base URL for the InvenTree server"""
+    return construct_absolute_url('', **kwargs)
 
 
 def download_image_from_url(remote_url, timeout=2.5):
@@ -145,10 +168,10 @@ def download_image_from_url(remote_url, timeout=2.5):
     validator(remote_url)
 
     # Calculate maximum allowable image size (in bytes)
-    max_size = int(InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
+    max_size = int(common.models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
 
     # Add user specified user-agent to request (if specified)
-    user_agent = InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
+    user_agent = common.models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
     if user_agent:
         headers = {"User-Agent": user_agent}
     else:
@@ -823,75 +846,6 @@ def validateFilterString(value, model=None):
     return results
 
 
-def addUserPermission(user, permission):
-    """Shortcut function for adding a certain permission to a user."""
-    perm = Permission.objects.get(codename=permission)
-    user.user_permissions.add(perm)
-
-
-def addUserPermissions(user, permissions):
-    """Shortcut function for adding multiple permissions to a user."""
-    for permission in permissions:
-        addUserPermission(user, permission)
-
-
-def getMigrationFileNames(app):
-    """Return a list of all migration filenames for provided app."""
-    local_dir = Path(__file__).parent
-    files = local_dir.joinpath('..', app, 'migrations').iterdir()
-
-    # Regex pattern for migration files
-    regex = re.compile(r"^[\d]+_.*\.py$")
-
-    migration_files = []
-
-    for f in files:
-        if regex.match(f.name):
-            migration_files.append(f.name)
-
-    return migration_files
-
-
-def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
-    """Return the filename associated with the oldest migration."""
-    oldest_num = -1
-    oldest_file = None
-
-    for f in getMigrationFileNames(app):
-
-        if ignore_initial and f.startswith('0001_initial'):
-            continue
-
-        num = int(f.split('_')[0])
-
-        if oldest_file is None or num < oldest_num:
-            oldest_num = num
-            oldest_file = f
-
-    if exclude_extension:
-        oldest_file = oldest_file.replace('.py', '')
-
-    return oldest_file
-
-
-def getNewestMigrationFile(app, exclude_extension=True):
-    """Return the filename associated with the newest migration."""
-    newest_file = None
-    newest_num = -1
-
-    for f in getMigrationFileNames(app):
-        num = int(f.split('_')[0])
-
-        if newest_file is None or num > newest_num:
-            newest_num = num
-            newest_file = f
-
-    if exclude_extension:
-        newest_file = newest_file.replace('.py', '')
-
-    return newest_file
-
-
 def clean_decimal(number):
     """Clean-up decimal value."""
     # Check if empty
@@ -1064,11 +1018,6 @@ def inheritors(cls):
     return subcls
 
 
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup buildin."""
-    pass
-
-
 def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
     """Notify all responsible parties of a change in an instance.
 
@@ -1112,7 +1061,7 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
         )
 
 
-def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None):
+def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None, max_decimal_places=None):
     """Render a currency / Money object to a formatted string (e.g. for reports)
 
     Arguments:
@@ -1121,6 +1070,7 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
         currency: Optionally convert to the specified currency
         include_symbol: Render with the appropriate currency symbol
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
+        max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
     """
 
     if money in [None, '']:
@@ -1138,10 +1088,13 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
             pass
 
     if decimal_places is None:
-        decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
+        decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
 
     if min_decimal_places is None:
-        min_decimal_places = InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
+        min_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
+
+    if max_decimal_places is None:
+        max_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
 
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
@@ -1156,8 +1109,27 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
     else:
         decimal_places = max(decimal_places, 2)
 
+    decimal_places = max(decimal_places, max_decimal_places)
+
     return moneyed.localization.format_money(
         money,
         decimal_places=decimal_places,
         include_symbol=include_symbol,
     )
+
+
+def getModelsWithMixin(mixin_class) -> list:
+    """Return a list of models that inherit from the given mixin class.
+
+    Args:
+        mixin_class: The mixin class to search for
+
+    Returns:
+        List of models that inherit from the given mixin class
+    """
+
+    from django.contrib.contenttypes.models import ContentType
+
+    db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
+
+    return [x for x in db_models if x is not None and issubclass(x, mixin_class)]

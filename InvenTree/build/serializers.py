@@ -17,7 +17,7 @@ import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
 
-from stock.models import StockItem, StockLocation
+from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
 from part.models import BomItem
@@ -181,6 +181,45 @@ class BuildOutputSerializer(serializers.Serializer):
         return output
 
 
+class BuildOutputQuantitySerializer(BuildOutputSerializer):
+    """Serializer for a single build output, with additional quantity field"""
+
+    class Meta:
+        """Serializer metaclass"""
+        fields = BuildOutputSerializer.Meta.fields + [
+            'quantity',
+        ]
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=0,
+        required=True,
+        label=_('Quantity'),
+        help_text=_('Enter quantity for build output'),
+    )
+
+    def validate(self, data):
+        """Validate the serializer data"""
+
+        data = super().validate(data)
+
+        output = data.get('output')
+        quantity = data.get('quantity')
+
+        if quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Quantity must be greater than zero')
+            })
+
+        if quantity > output.quantity:
+            raise ValidationError({
+                'quantity': _("Quantity cannot be greater than the output quantity")
+            })
+
+        return data
+
+
 class BuildOutputCreateSerializer(serializers.Serializer):
     """Serializer for creating a new BuildOutput against a BuildOrder.
 
@@ -226,6 +265,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     batch_code = serializers.CharField(
         required=False,
         allow_blank=True,
+        default=generate_batch_code,
         label=_('Batch Code'),
         help_text=_('Batch code for this build output'),
     )
@@ -302,12 +342,14 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         auto_allocate = data.get('auto_allocate', False)
 
         build = self.get_build()
+        user = self.context['request'].user
 
         build.create_build_output(
             quantity,
             serials=self.serials,
             batch=batch_code,
             auto_allocate=auto_allocate,
+            user=user,
         )
 
 
@@ -347,6 +389,78 @@ class BuildOutputDeleteSerializer(serializers.Serializer):
             for item in outputs:
                 output = item['output']
                 build.delete_output(output)
+
+
+class BuildOutputScrapSerializer(serializers.Serializer):
+    """DRF serializer for scrapping one or more build outputs"""
+
+    class Meta:
+        """Serializer metaclass"""
+        fields = [
+            'outputs',
+            'location',
+            'notes',
+        ]
+
+    outputs = BuildOutputQuantitySerializer(
+        many=True,
+        required=True,
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Location'),
+        help_text=_('Stock location for scrapped outputs'),
+    )
+
+    discard_allocations = serializers.BooleanField(
+        required=False,
+        default=False,
+        label=_('Discard Allocations'),
+        help_text=_('Discard any stock allocations for scrapped outputs'),
+    )
+
+    notes = serializers.CharField(
+        label=_('Notes'),
+        help_text=_('Reason for scrapping build output(s)'),
+        required=True,
+        allow_blank=False,
+    )
+
+    def validate(self, data):
+        """Perform validation on the serializer data"""
+        super().validate(data)
+        outputs = data.get('outputs', [])
+
+        if len(outputs) == 0:
+            raise ValidationError(_("A list of build outputs must be provided"))
+
+        return data
+
+    def save(self):
+        """Save the serializer to scrap the build outputs"""
+
+        build = self.context['build']
+        request = self.context['request']
+        data = self.validated_data
+        outputs = data.get('outputs', [])
+
+        # Scrap the build outputs
+        with transaction.atomic():
+            for item in outputs:
+                output = item['output']
+                quantity = item['quantity']
+                build.scrap_build_output(
+                    output,
+                    quantity,
+                    data.get('location', None),
+                    user=request.user,
+                    notes=data.get('notes', ''),
+                    discard_allocations=data.get('discard_allocations', False)
+                )
 
 
 class BuildOutputCompleteSerializer(serializers.Serializer):
@@ -489,7 +603,7 @@ class OverallocationChoice():
     TRIM = 'trim'
 
     OPTIONS = {
-        REJECT: ('Not permitted'),
+        REJECT: _('Not permitted'),
         ACCEPT: _('Accept as consumed by this build order'),
         TRIM: _('Deallocate before completing this build order'),
     }

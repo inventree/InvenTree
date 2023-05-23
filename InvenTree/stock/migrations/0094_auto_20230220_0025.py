@@ -62,9 +62,6 @@ def fix_purchase_price(apps, schema_editor):
         logger.info(f"Corrected purchase_price field for {n_updated} stock items.")
 
 
-def reverse(apps, schema_editor):  # pragmae: no cover
-    pass
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -74,6 +71,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             fix_purchase_price,
-            reverse_code=reverse,
+            reverse_code=migrations.RunPython.noop,
         )
     ]

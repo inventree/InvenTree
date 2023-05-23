@@ -22,27 +22,24 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, normalize, notify_responsible
-from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin, ReferenceIndexingMixin
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 
 from plugin.events import trigger_event
-from plugin.models import MetadataMixin
 
 import common.notifications
-
 import part.models
 import stock.models
 import users.models
 
 
-class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMixin):
+class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -293,10 +290,6 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
         blank=True, help_text=_('Link to external URL')
     )
 
-    notes = InvenTree.fields.InvenTreeNotesField(
-        help_text=_('Extra build notes')
-    )
-
     priority = models.PositiveIntegerField(
         verbose_name=_('Build Priority'),
         default=0,
@@ -468,7 +461,7 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
         new_ref = ref
 
         while 1:
-            new_ref = increment(new_ref)
+            new_ref = InvenTree.helpers.increment(new_ref)
 
             if new_ref in tries:
                 # We are potentially stuck in a loop - simply return the original reference
@@ -627,6 +620,7 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
             location: Override location
             auto_allocate: Automatically allocate stock with matching serial numbers
         """
+        user = kwargs.get('user', None)
         batch = kwargs.get('batch', self.batch)
         location = kwargs.get('location', self.destination)
         serials = kwargs.get('serials', None)
@@ -636,6 +630,24 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
         Determine if we can create a single output (with quantity > 0),
         or multiple outputs (with quantity = 1)
         """
+
+        def _add_tracking_entry(output, user):
+            """Helper function to add a tracking entry to the newly created output"""
+            deltas = {
+                'quantity': float(output.quantity),
+                'buildorder': self.pk,
+            }
+
+            if output.batch:
+                deltas['batch'] = output.batch
+
+            if output.serial:
+                deltas['serial'] = output.serial
+
+            if output.location:
+                deltas['location'] = output.location.pk
+
+            output.add_tracking_entry(StockHistoryCode.BUILD_OUTPUT_CREATED, user, deltas)
 
         multiple = False
 
@@ -670,6 +682,8 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
                     is_building=True,
                 )
 
+                _add_tracking_entry(output, user)
+
                 if auto_allocate and serial is not None:
 
                     # Get a list of BomItem objects which point to "trackable" parts
@@ -702,7 +716,7 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
         else:
             """Create a single build output of the given quantity."""
 
-            stock.models.StockItem.objects.create(
+            output = stock.models.StockItem.objects.create(
                 quantity=quantity,
                 location=location,
                 part=self.part,
@@ -710,6 +724,8 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
                 batch=batch,
                 is_building=True
             )
+
+            _add_tracking_entry(output, user)
 
         if self.status == BuildStatus.PENDING:
             self.status = BuildStatus.PRODUCTION
@@ -781,6 +797,65 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
         items.all().delete()
 
     @transaction.atomic
+    def scrap_build_output(self, output, quantity, location, **kwargs):
+        """Mark a particular build output as scrapped / rejected
+
+        - Mark the output as "complete"
+        - *Do Not* update the "completed" count for this order
+        - Set the item status to "scrapped"
+        - Add a transaction entry to the stock item history
+        """
+
+        if not output:
+            raise ValidationError(_("No build output specified"))
+
+        if quantity <= 0:
+            raise ValidationError({
+                'quantity': _("Quantity must be greater than zero")
+            })
+
+        if quantity > output.quantity:
+            raise ValidationError({
+                'quantity': _("Quantity cannot be greater than the output quantity")
+            })
+
+        user = kwargs.get('user', None)
+        notes = kwargs.get('notes', '')
+        discard_allocations = kwargs.get('discard_allocations', False)
+
+        if quantity < output.quantity:
+            # Split output into two items
+            output = output.splitStock(quantity, location=location, user=user)
+            output.build = self
+
+        # Update build output item
+        output.is_building = False
+        output.status = StockStatus.REJECTED
+        output.location = location
+        output.save(add_note=False)
+
+        allocated_items = output.items_to_install.all()
+
+        # Complete or discard allocations
+        for build_item in allocated_items:
+            if not discard_allocations:
+                build_item.complete_allocation(user)
+
+        # Delete allocations
+        allocated_items.delete()
+
+        output.add_tracking_entry(
+            StockHistoryCode.BUILD_OUTPUT_REJECTED,
+            user,
+            notes=notes,
+            deltas={
+                'location': location.pk,
+                'status': StockStatus.REJECTED,
+                'buildorder': self.pk,
+            }
+        )
+
+    @transaction.atomic
     def complete_build_output(self, output, user, **kwargs):
         """Complete a particular build output.
 
@@ -808,15 +883,21 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
         output.location = location
         output.status = status
 
-        output.save()
+        output.save(add_note=False)
+
+        deltas = {
+            'status': status,
+            'buildorder': self.pk
+        }
+
+        if location:
+            deltas['location'] = location.pk
 
         output.add_tracking_entry(
             StockHistoryCode.BUILD_OUTPUT_COMPLETED,
             user,
             notes=notes,
-            deltas={
-                'status': status,
-            }
+            deltas=deltas
         )
 
         # Increase the completed quantity for this build
@@ -882,7 +963,7 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
 
             # Filter by list of available parts
             available_stock = available_stock.filter(
-                part__in=[p for p in available_parts],
+                part__in=list(available_parts),
             )
 
             # Filter out "serialized" stock items, these cannot be auto-allocated
@@ -891,12 +972,12 @@ class Build(MPTTModel, InvenTreeBarcodeMixin, MetadataMixin, ReferenceIndexingMi
             if location:
                 # Filter only stock items located "below" the specified location
                 sublocations = location.get_descendants(include_self=True)
-                available_stock = available_stock.filter(location__in=[loc for loc in sublocations])
+                available_stock = available_stock.filter(location__in=list(sublocations))
 
             if exclude_location:
                 # Exclude any stock items from the provided location
                 sublocations = exclude_location.get_descendants(include_self=True)
-                available_stock = available_stock.exclude(location__in=[loc for loc in sublocations])
+                available_stock = available_stock.exclude(location__in=list(sublocations))
 
             """
             Next, we sort the available stock items with the following priority:
@@ -1129,10 +1210,10 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
         # Notify the responsible users that the build order has been created
-        notify_responsible(instance, sender, exclude=instance.issued_by)
+        InvenTree.helpers.notify_responsible(instance, sender, exclude=instance.issued_by)
 
 
-class BuildOrderAttachment(InvenTreeAttachment):
+class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a BuildOrder object."""
 
     def getSubdir(self):
@@ -1142,7 +1223,7 @@ class BuildOrderAttachment(InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildItem(MetadataMixin, models.Model):
+class BuildItem(InvenTree.models.MetadataMixin, models.Model):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.
@@ -1192,8 +1273,8 @@ class BuildItem(MetadataMixin, models.Model):
             # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
 
-                q = normalize(self.quantity)
-                a = normalize(self.stock_item.quantity)
+                q = InvenTree.helpers.normalize(self.quantity)
+                a = InvenTree.helpers.normalize(self.stock_item.quantity)
 
                 raise ValidationError({
                     'quantity': _(f'Allocated quantity ({q}) must not exceed available stock quantity ({a})')
@@ -1283,39 +1364,48 @@ class BuildItem(MetadataMixin, models.Model):
         """Complete the allocation of this BuildItem into the output stock item.
 
         - If the referenced part is trackable, the stock item will be *installed* into the build output
-        - If the referenced part is *not* trackable, the stock item will be removed from stock
+        - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
         """
         item = self.stock_item
 
+        # Split the allocated stock if there are more available than allocated
+        if item.quantity > self.quantity:
+            item = item.splitStock(
+                self.quantity,
+                None,
+                user,
+                notes=notes,
+            )
+
         # For a trackable part, special consideration needed!
         if item.part.trackable:
-            # Split the allocated stock if there are more available than allocated
-            if item.quantity > self.quantity:
-                item = item.splitStock(
-                    self.quantity,
-                    None,
-                    user,
-                    code=StockHistoryCode.BUILD_CONSUMED,
-                )
 
-                # Make sure we are pointing to the new item
-                self.stock_item = item
-                self.save()
+            # Make sure we are pointing to the new item
+            self.stock_item = item
+            self.save()
 
             # Install the stock item into the output
             self.install_into.installStockItem(
                 item,
                 self.quantity,
                 user,
-                notes
+                notes,
+                build=self.build,
             )
 
         else:
-            # Simply remove the items from stock
-            item.take_stock(
-                self.quantity,
+            # Mark the item as "consumed" by the build order
+            item.consumed_by = self.build
+            item.save(add_note=False)
+
+            item.add_tracking_entry(
+                StockHistoryCode.BUILD_CONSUMED,
                 user,
-                code=StockHistoryCode.BUILD_CONSUMED
+                notes=notes,
+                deltas={
+                    'buildorder': self.build.pk,
+                    'quantity': float(item.quantity),
+                }
             )
 
     def getStockItemThumbnail(self):

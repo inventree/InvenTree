@@ -18,9 +18,9 @@ import company.models
 import order.models
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     StockStatus)
+from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import (BomItem, BomItemSubstitute, Part, PartCategory,
                          PartCategoryParameterTemplate, PartParameterTemplate,
                          PartRelated, PartStocktake)
@@ -1425,6 +1425,7 @@ class PartDetailTests(PartAPITestBase):
                 'name': 'my test api part',
                 'description': 'a part created with the API',
                 'category': 1,
+                'tags': '["tag1", "tag2"]',
             }
         )
 
@@ -1438,6 +1439,8 @@ class PartDetailTests(PartAPITestBase):
         part = Part.objects.get(pk=pk)
 
         self.assertEqual(part.name, 'my test api part')
+        self.assertEqual(part.tags.count(), 2)
+        self.assertEqual([a.name for a in part.tags.order_by('slug')], ['tag1', 'tag2'])
 
         # Edit the part
         url = reverse('api-part-detail', kwargs={'pk': pk})
@@ -1467,6 +1470,13 @@ class PartDetailTests(PartAPITestBase):
         })
 
         self.assertEqual(response.status_code, 200)
+
+        # Try to remove a tag
+        response = self.patch(url, {
+            'tags': ['tag1',],
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['tags'], ['tag1'])
 
         # Try to remove the part
         response = self.delete(url)
@@ -2689,91 +2699,6 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['available_variant_stock'], 1000)
 
 
-class PartParameterTest(InvenTreeAPITestCase):
-    """Tests for the ParParameter API."""
-    superuser = True
-
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'params',
-    ]
-
-    def test_list_params(self):
-        """Test for listing part parameters."""
-        url = reverse('api-part-parameter-list')
-
-        response = self.get(url)
-
-        self.assertEqual(len(response.data), 7)
-
-        # Filter by part
-        response = self.get(
-            url,
-            {
-                'part': 3,
-            }
-        )
-
-        self.assertEqual(len(response.data), 3)
-
-        # Filter by template
-        response = self.get(
-            url,
-            {
-                'template': 1,
-            }
-        )
-
-        self.assertEqual(len(response.data), 4)
-
-    def test_create_param(self):
-        """Test that we can create a param via the API."""
-        url = reverse('api-part-parameter-list')
-
-        response = self.post(
-            url,
-            {
-                'part': '2',
-                'template': '3',
-                'data': 70
-            }
-        )
-
-        self.assertEqual(response.status_code, 201)
-
-        response = self.get(url)
-
-        self.assertEqual(len(response.data), 8)
-
-    def test_param_detail(self):
-        """Tests for the PartParameter detail endpoint."""
-        url = reverse('api-part-parameter-detail', kwargs={'pk': 5})
-
-        response = self.get(url)
-
-        self.assertEqual(response.status_code, 200)
-
-        data = response.data
-
-        self.assertEqual(data['pk'], 5)
-        self.assertEqual(data['part'], 3)
-        self.assertEqual(data['data'], '12')
-
-        # PATCH data back in
-        response = self.patch(url, {'data': '15'})
-
-        self.assertEqual(response.status_code, 200)
-
-        # Check that the data changed!
-        response = self.get(url)
-
-        data = response.data
-
-        self.assertEqual(data['data'], '15')
-
-
 class PartAttachmentTest(InvenTreeAPITestCase):
     """Unit tests for the PartAttachment API endpoint"""
 
@@ -3079,22 +3004,21 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
         from part.tasks import generate_stocktake_report
 
-        n_parts = Part.objects.count()
-
         # Initially, no stocktake records are available
         self.assertEqual(PartStocktake.objects.count(), 0)
 
         # Generate stocktake data for all parts (default configuration)
         generate_stocktake_report()
 
-        # There should now be 1 stocktake entry for each part
-        self.assertEqual(PartStocktake.objects.count(), n_parts)
+        # At least one report now created
+        n = PartStocktake.objects.count()
+        self.assertGreater(n, 0)
 
         self.assignRole('stocktake.view')
 
         response = self.get(reverse('api-part-stocktake-list'), expected_code=200)
 
-        self.assertEqual(len(response.data), n_parts)
+        self.assertEqual(len(response.data), n)
 
         # Stocktake report should be available via the API, also
         response = self.get(reverse('api-part-stocktake-report-list'), expected_code=200)
@@ -3103,7 +3027,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
         data = response.data[0]
 
-        self.assertEqual(data['part_count'], 14)
+        self.assertEqual(data['part_count'], 8)
         self.assertEqual(data['user'], None)
         self.assertTrue(data['report'].endswith('.csv'))
 

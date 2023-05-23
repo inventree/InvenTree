@@ -8,15 +8,15 @@
 {% block page_margin %}
 margin: 2cm;
 margin-top: 4cm;
-{% endblock %}
+{% endblock page_margin %}
 
 {% block bottom_left %}
-content: "v{{report_revision}} - {{ date.isoformat }}";
-{% endblock %}
+content: "v{{ report_revision }} - {{ date.isoformat }}";
+{% endblock bottom_left %}
 
 {% block bottom_center %}
 content: "{% inventree_version shortstring=True %}";
-{% endblock %}
+{% endblock bottom_center %}
 
 {% block style %}
 
@@ -90,7 +90,7 @@ table td.expand {
     display: inline;
 }
 
-{% endblock %}
+{% endblock style %}
 
 {% block header_content %}
 
@@ -100,7 +100,7 @@ table td.expand {
         <h3>{% trans "Bill of Materials" %}</h3>
     </div>
 
-    {% endblock %}
+{% endblock header_content %}
 
 {% block page_content %}
 
@@ -123,7 +123,7 @@ table td.expand {
             </td>
             <td>
                 <div class='part-logo'>
-                    <img src='{% part_image part %}' class='part-logo'>
+                    <img src='{% part_image part %}' alt='{% trans "Image" %}' class='part-logo'>
                 </div>
             </td>
         </tr>
@@ -145,7 +145,7 @@ table td.expand {
         <tr>
             <td>
                 <div class='thumb-container'>
-                    <img src='{% part_image line.sub_part %}' class='part-thumb'>
+                    <img src='{% part_image line.sub_part %}' alt='{% trans "Image" %}' class='part-thumb'>
                 </div>
                 <div class='part-text'>
                     {{ line.sub_part.full_name }}
@@ -159,4 +159,4 @@ table td.expand {
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock page_content %}

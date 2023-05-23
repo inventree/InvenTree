@@ -12,7 +12,6 @@ from datetime import datetime, timedelta
 from typing import Callable, List
 
 from django.conf import settings
-from django.core import mail as django_mail
 from django.core.exceptions import AppRegistryNotReady
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
@@ -71,7 +70,7 @@ def raise_warning(msg):
 
     # If testing is running raise a warning that can be asserted
     if settings.TESTING:
-        warnings.warn(msg)
+        warnings.warn(msg, stacklevel=2)
 
 
 def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
@@ -167,6 +166,7 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
     If workers are not running or force_sync flag
     is set then the task is ran synchronously.
     """
+
     try:
         import importlib
 
@@ -530,7 +530,7 @@ def update_exchange_rates():
         # Remove any exchange rates which are not in the provided currencies
         Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
     except Exception as e:  # pragma: no cover
-        logger.error(f"Error updating exchange rates: {e}")
+        logger.error(f"Error updating exchange rates: {e} ({type(e)})")
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -556,22 +556,6 @@ def run_backup():
 
     # Record that this task was successful
     record_task_success('run_backup')
-
-
-def send_email(subject, body, recipients, from_email=None, html_message=None):
-    """Send an email with the specified subject and body, to the specified recipients list."""
-    if type(recipients) == str:
-        recipients = [recipients]
-
-    offload_task(
-        django_mail.send_mail,
-        subject,
-        body,
-        from_email,
-        recipients,
-        fail_silently=False,
-        html_message=html_message
-    )
 
 
 @scheduled_task(ScheduledTask.DAILY)

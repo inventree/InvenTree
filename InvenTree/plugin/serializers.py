@@ -154,7 +154,13 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
         # save plugin to plugin_file if installed successfull
         if success:
+            # Read content of plugin file
+            plg_lines = open(settings.PLUGIN_FILE).readlines()
             with open(settings.PLUGIN_FILE, "a") as plugin_file:
+                # Check if last line has a newline
+                if plg_lines[-1][-1:] != '\n':
+                    plugin_file.write('\n')
+                # Write new plugin to file
                 plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
 
         # Check for migrations

@@ -14,7 +14,7 @@ from common.models import (InvenTreeSetting, InvenTreeUserSetting,
                            NotificationEntry, NotificationMessage)
 from common.notifications import UIMessageNotification, storage
 from InvenTree import version
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 
 from .models import (Part, PartCategory, PartCategoryStar, PartRelated,
                      PartStar, PartStocktake, PartTestTemplate,
@@ -277,7 +277,6 @@ class PartTest(TestCase):
         """Unit tests for the metadata field."""
         for model in [Part]:
             p = model.objects.first()
-            self.assertIsNone(p.metadata)
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

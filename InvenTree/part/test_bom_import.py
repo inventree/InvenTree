@@ -5,7 +5,7 @@ from django.urls import reverse
 
 import tablib
 
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 
 
@@ -208,7 +208,7 @@ class BomUploadTest(InvenTreeAPITestCase):
             url,
             {
                 'columns': dataset.headers,
-                'rows': [row for row in dataset],
+                'rows': list(dataset),
             },
         )
 
@@ -249,7 +249,7 @@ class BomUploadTest(InvenTreeAPITestCase):
             url,
             {
                 'columns': dataset.headers,
-                'rows': [row for row in dataset],
+                'rows': list(dataset),
             },
             expected_code=201,
         )
@@ -276,7 +276,7 @@ class BomUploadTest(InvenTreeAPITestCase):
             url,
             {
                 'columns': dataset.headers,
-                'rows': [row for row in dataset],
+                'rows': list(dataset),
             },
             expected_code=201,
         )
@@ -308,7 +308,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         response = self.post(
             url,
             {
-                'rows': [row for row in dataset],
+                'rows': list(dataset),
                 'columns': dataset.headers,
             },
             expected_code=201,

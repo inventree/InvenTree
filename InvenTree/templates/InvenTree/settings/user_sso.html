@@ -1,0 +1,71 @@
+{% load i18n %}
+{% load inventree_extras %}
+{% load sso %}
+
+{% sso_login_enabled as sso %}
+
+<div class="row">
+    <div class='panel-heading'>
+        <h4>{% trans "Single Sign On Accounts" %}</h4>
+        {% include "spacer.html" %}
+    </div>
+
+    {% if sso %}
+    <div class="col-md-6">
+        {% if social_form.accounts %}
+        <p>{% blocktrans %}You can sign in to your account using any of the following third party accounts:{% endblocktrans %}</p>
+
+
+        <form method="post" action="{% url 'socialaccount_connections' %}">
+            {% csrf_token %}
+
+            <fieldset>
+                {% if social_form.non_field_errors %}
+                <div id="errorMsg">{{ social_form.non_field_errors }}</div>
+                {% endif %}
+
+                {% for base_account in social_form.accounts %}
+                {% with base_account.get_provider_account as account %}
+                <div>
+                    <label for="id_account_{{ base_account.id }}">
+                        <input id="id_account_{{ base_account.id }}" type="radio" name="account"
+                            value="{{ base_account.id }}" />
+                        <span class="socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}">
+                            <span class='brand-icon'
+                                brand_name='{{ account.get_brand.id }}'></span>{{ account.get_brand.name }}</span>
+                        {{ account }}
+                    </label>
+                </div>
+                {% endwith %}
+                {% endfor %}
+
+                <div>
+                    <button class="btn btn-primary" type="submit">{% trans 'Remove' %}</button>
+                </div>
+
+            </fieldset>
+
+        </form>
+
+        {% else %}
+        <div class='alert alert-block alert-warning'>
+            {% trans 'There are no social network accounts connected to this account.' %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-6">
+        <h5>{% trans 'Add SSO Account' %}</h5>
+        <div>
+            {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
+        </div>
+        {% include "socialaccount/snippets/login_extra.html" %}
+    </div>
+
+    {% else %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "Single Sign On is not enabled for this server" %}
+    </div>
+    {% endif %}
+
+</div>

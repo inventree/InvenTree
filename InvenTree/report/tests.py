@@ -16,7 +16,7 @@ from PIL import Image
 import report.models as report_models
 from build.models import Build
 from common.models import InvenTreeSetting, InvenTreeUserSetting
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
 from stock.models import StockItem, StockItemAttachment
@@ -299,7 +299,7 @@ class ReportTest(InvenTreeAPITestCase):
         if self.model is not None:
             p = self.model.objects.first()
 
-            self.assertIsNone(p.metadata)
+            self.assertEqual(p.metadata, {})
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

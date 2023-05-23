@@ -1,0 +1,156 @@
+/* Image "popping" feature */
+.overlay {
+	/* Display over the entire page */
+	position: fixed;
+	z-index: 99;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.9) !important;
+
+	/* Horizontal and vertical centering of the image */
+	display: flex;
+	align-items: center;
+	text-align: center;
+
+	/* We hide all this by default */
+	visibility: hidden;
+
+	/* Animation */
+/*  opacity: 0;*/
+	transition: opacity .3s;
+}
+
+.image-inventree {
+	border-radius: 2px;
+	border: 1px solid #ddd;
+}
+
+.image-inventree>a>img.img-inline:hover {
+	opacity: 75%;
+}
+
+.overlay img {
+	/* Maximum image size */
+	max-width: 90%;
+	max-height: 90%;
+
+	/* We keep the ratio of the image */
+	width: auto;
+	height: auto;
+	margin: auto;
+
+	/* Animation */
+	transform: scale(0.95);
+	transition: transform .3s;
+}
+
+.overlay:target {
+	visibility: visible;
+	outline: none;
+	cursor: default;
+}
+
+.overlay:target img {
+	transform: scale(1);
+}
+
+/* Add icon after external links */
+/* Ignore auto-generated material theme links */
+a[target="_blank"]:not([class*="md-"]):after {
+/*	content: " " url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='rgb(123,136,204)' d='M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z' /%3E%3C/svg%3E%0A");*/
+	content: " " url('../assets/open-in-new-custom.svg');
+}
+
+/* Set text alignment to "justify" */
+p {
+	text-align: justify;
+}
+
+div:nth-of-type(1) p {
+	padding-top: 12px;
+}
+
+/* Remove page title  */
+.md-content h1:first-child {
+	display: none;
+}
+
+/* Remove top margin for first h2 header */
+.md-typeset h2:first-of-type {
+	margin-top: 0em;
+}
+
+.red {
+	color: #C55;
+}
+
+.green {
+	color: #5C5;
+}
+
+.blue {
+	color: #55C;
+}
+
+.badge.inventree {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	border-radius: 5px;
+	padding: 6px 12px;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.badge.inventree.nav.main {
+	background-color: #e7e7e7;
+	color: #777;
+	border-width: 0px;
+}
+
+.badge.inventree.nav.side {
+	background-color: #fff;
+	color: #337ab7;
+	border-color: #ddd;
+	font-size: 100%;
+	font-weight: 500;
+}
+
+.badge.inventree.add {
+	background-color: #449d44;
+	border-color: #398439;
+	color: #fff;
+}
+
+.badge.inventree.confirm {
+	background-color: #337ab7;
+	border-color: #2e6da4;
+	color: #fff;
+}
+
+.alert-version {
+	padding: 5px;
+	margin: 5px;
+	margin-bottom: 0px;
+}
+
+.badge.inventree.success {
+	background-color: #5cb85c;
+	color: #555;
+}
+
+.badge.inventree.warning {
+	background-color: #f0ad4e;
+	color: #555;
+}
+
+.badge.inventree.danger {
+	background-color: #d9534f;
+}
+
+.badge.inventree.info {
+	background-color: #5bc0de;
+	color: #555;
+}

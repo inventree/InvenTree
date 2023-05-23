@@ -22,7 +22,7 @@ src="{{ order.customer.image.url }}"
 src="{% static 'img/blank_image.png' %}"
 {% endif %}
 />
-{% endblock thumbnail%}
+{% endblock thumbnail %}
 
 {% block heading %}
 {% trans "Return Order" %} {{ order.reference }}
@@ -100,16 +100,15 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{{ order.reference }}{% include "clip.html"%}</td>
+        <td>{{ order.reference }}{% include "clip.html" %}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
         <td>{% trans "Order Description" %}</td>
         <td>{{ order.description }}{% include "clip.html" %}</td>
     </tr>
-
+    {% include "project_code_data.html" with instance=order %}
     {% include "barcode_data.html" with instance=order %}
-
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>
@@ -131,21 +130,21 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html"%}</td>
+        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html" %}</td>
     </tr>
     {% endif %}
     {% if order.customer_reference %}
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Customer Reference" %}</td>
-        <td>{{ order.customer_reference }}{% include "clip.html"%}</td>
+        <td>{{ order.customer_reference }}{% include "clip.html" %}</td>
     </tr>
     {% endif %}
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
-        <td>External Link</td>
-        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html"%}</td>
+        <td>{% trans "External Link" %}</td>
+        <td>{% include 'clip_link.html' with link=order.link %}</td>
     </tr>
     {% endif %}
     <tr>
@@ -184,7 +183,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
-
+    {% include "currency_data.html" with instance=order %}
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Total Cost" %}</td>
@@ -193,7 +192,7 @@ src="{% static 'img/blank_image.png' %}"
             {% if tp == None %}
             <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
             {% else %}
-            {% render_currency tp currency=order.customer.currency %}
+            {% render_currency tp currency=order.currency %}
             {% endif %}
             {% endwith %}
         </td>
@@ -256,7 +255,7 @@ $('#print-order-report').click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Return Order QR Code" %}',
-        '{"returnorder": {{ order.pk }}}'
+        '{"returnorder": {{ order.pk }} }'
     );
 });
 

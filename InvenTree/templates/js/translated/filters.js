@@ -308,22 +308,28 @@ function setupFilterList(tableKey, table, target, options={}) {
     // Construct a set of buttons
     var buttons = '';
 
-    // Add 'print reports' button
-    if (options.report && global_settings.REPORT_ENABLE) {
-        buttons += makeFilterButton({
-            id: `print-report-${tableKey}`,
-            title: options.report.title || '{% trans "Print reports for selected items" %}',
-            icon: 'fa-print',
-        });
-    }
+    let report_button = options.report && global_settings.REPORT_ENABLE;
+    let labels_button = options.labels && global_settings.LABEL_ENABLE;
 
-    // Add 'print labels' button
-    if (options.labels && global_settings.LABEL_ENABLE) {
-        buttons += makeFilterButton({
-            id: `print-labels-${tableKey}`,
-            title: options.labels.title || '{% trans "Print labels for selected items" %}',
-            icon: 'fa-tag',
-        });
+    if (report_button || labels_button) {
+        let print_buttons = `
+        <div class='btn-group' role='group'>
+        <button id='printing-options' title='{% trans "Printing actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+            <span class='fas fa-print'></span> <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu' role='menu'>`;
+
+        if (labels_button) {
+            print_buttons += `<li><a class='dropdown-item' href='#' id='print-labels-${tableKey}'><span class='fas fa-tag'></span> {% trans "Print Labels" %}</a></li>`;
+        }
+
+        if (report_button) {
+            print_buttons += `<li><a class='dropdown-item' href='#' id='print-report-${tableKey}'><span class='fas fa-file-pdf'></span> {% trans "Print Reports" %}</a></li>`;
+        }
+
+        print_buttons += `</ul></div>`;
+
+        buttons += print_buttons;
     }
 
     // Add download button
@@ -413,6 +419,8 @@ function setupFilterList(tableKey, table, target, options={}) {
 
             printLabels({
                 items: items,
+                singular_name: options.singular_name,
+                plural_name: options.plural_name,
                 url: options.labels.url,
                 key: options.labels.key,
             });
@@ -421,7 +429,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
     // Callback for reloading the table
     element.find(`#reload-${tableKey}`).click(function() {
-        reloadTableFilters(table);
+        reloadTableFilters(table, null, options);
     });
 
     // Add a callback for downloading table data
@@ -464,7 +472,7 @@ function setupFilterList(tableKey, table, target, options={}) {
                 // Only add the new filter if it is not empty!
                 if (tag && tag.length > 0) {
                     var filters = addTableFilter(tableKey, tag, val);
-                    reloadTableFilters(table, filters);
+                    reloadTableFilters(table, filters, options);
 
                     // Run this function again
                     setupFilterList(tableKey, table, target, options);
@@ -483,8 +491,7 @@ function setupFilterList(tableKey, table, target, options={}) {
     element.find(`#${clear}`).click(function() {
         var filters = clearTableFilters(tableKey);
 
-        reloadTableFilters(table, filters);
-
+        reloadTableFilters(table, filters, options);
         setupFilterList(tableKey, table, target, options);
     });
 
@@ -496,7 +503,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
         var filters = removeTableFilter(tableKey, filter);
 
-        reloadTableFilters(table, filters);
+        reloadTableFilters(table, filters, options);
 
         // Run this function again!
         setupFilterList(tableKey, table, target, options);

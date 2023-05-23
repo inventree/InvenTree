@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 
 from moneyed import CURRENCIES
 from stdimage.models import StdImageField
+from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
@@ -25,9 +26,9 @@ import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.models import InvenTreeAttachment, InvenTreeBarcodeMixin
+from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
+                              InvenTreeNotesMixin, MetadataMixin)
 from InvenTree.status_codes import PurchaseOrderStatus
-from plugin.models import MetadataMixin
 
 
 def rename_company_image(instance, filename):
@@ -55,7 +56,7 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class Company(MetadataMixin, models.Model):
+class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     """A Company object represents an external company.
 
     It may be a supplier or a customer or a manufacturer (or a combination)
@@ -139,8 +140,6 @@ class Company(MetadataMixin, models.Model):
         delete_orphans=True,
         verbose_name=_('Image'),
     )
-
-    notes = InvenTree.fields.InvenTreeNotesField(help_text=_("Company Notes"))
 
     is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
 
@@ -312,6 +311,8 @@ class ManufacturerPart(MetadataMixin, models.Model):
         help_text=_('Manufacturer part description')
     )
 
+    tags = TaggableManager(blank=True)
+
     @classmethod
     def create(cls, part, manufacturer, mpn, description, link=None):
         """Check if ManufacturerPart instance does not already exist then create it."""
@@ -447,6 +448,8 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         db_table = 'part_supplierpart'
 
     objects = SupplierPartManager()
+
+    tags = TaggableManager(blank=True)
 
     @staticmethod
     def get_api_url():

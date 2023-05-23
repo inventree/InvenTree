@@ -16,6 +16,7 @@ import uuid
 from datetime import datetime, timedelta
 from enum import Enum
 from secrets import compare_digest
+from typing import Any, Callable, Dict, List, Tuple, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -42,6 +43,7 @@ from rest_framework.exceptions import PermissionDenied
 import build.validators
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -84,10 +86,72 @@ class EmptyURLValidator(URLValidator):
             super().__call__(value)
 
 
-class BaseInvenTreeSetting(models.Model):
-    """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values)."""
+class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+    """A ProjectCode is a unique identifier for a project."""
 
-    SETTINGS = {}
+    @staticmethod
+    def get_api_url():
+        """Return the API URL for this model."""
+        return reverse('api-project-code-list')
+
+    def __str__(self):
+        """String representation of a ProjectCode."""
+        return self.code
+
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Unique project code'),
+    )
+
+    description = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Project description'),
+    )
+
+
+class SettingsKeyType(TypedDict, total=False):
+    """Type definitions for a SettingsKeyType
+
+    Attributes:
+        name: Translatable string name of the setting (required)
+        description: Translatable string description of the setting (required)
+        units: Units of the particular setting (optional)
+        validator: Validation function/list of functions for the setting (optional, default: None, e.g: bool, int, str, MinValueValidator, ...)
+        default: Default value or function that returns default value (optional)
+        choices: (Function that returns) Tuple[str: key, str: display value] (optional)
+        hidden: Hide this setting from settings page (optional)
+        before_save: Function that gets called after save with *args, **kwargs (optional)
+        after_save: Function that gets called after save with *args, **kwargs (optional)
+        protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
+    """
+
+    name: str
+    description: str
+    units: str
+    validator: Union[Callable, List[Callable], Tuple[Callable]]
+    default: Union[Callable, Any]
+    choices: Union[Tuple[str, str], Callable[[], Tuple[str, str]]]
+    hidden: bool
+    before_save: Callable[..., None]
+    after_save: Callable[..., None]
+    protected: bool
+
+
+class BaseInvenTreeSetting(models.Model):
+    """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
+
+    Attributes:
+        SETTINGS: definition of all available settings
+        extra_unique_fields: List of extra fields used to be unique, e.g. for PluginConfig -> plugin
+    """
+
+    SETTINGS: Dict[str, SettingsKeyType] = {}
+
+    extra_unique_fields: List[str] = []
 
     class Meta:
         """Meta options for BaseInvenTreeSetting -> abstract stops creation of database entry."""
@@ -101,7 +165,7 @@ class BaseInvenTreeSetting(models.Model):
         do_cache = kwargs.pop('cache', True)
 
         self.clean(**kwargs)
-        self.validate_unique(**kwargs)
+        self.validate_unique()
 
         # Execute before_save action
         self._call_settings_function('before_save', args, kwargs)
@@ -134,7 +198,7 @@ class BaseInvenTreeSetting(models.Model):
     @property
     def cache_key(self):
         """Generate a unique cache key for this settings object"""
-        return self.__class__.create_cache_key(self.key, **self.get_kwargs())
+        return self.__class__.create_cache_key(self.key, **self.get_filters_for_instance())
 
     def save_to_cache(self):
         """Save this setting object to cache"""
@@ -171,7 +235,16 @@ class BaseInvenTreeSetting(models.Model):
         return key.replace(" ", "")
 
     @classmethod
-    def allValues(cls, user=None, exclude_hidden=False):
+    def get_filters(cls, **kwargs):
+        """Enable to filter by other kwargs defined in cls.extra_unique_fields"""
+        return {key: value for key, value in kwargs.items() if key in cls.extra_unique_fields}
+
+    def get_filters_for_instance(self):
+        """Enable to filter by other fields defined in self.extra_unique_fields"""
+        return {key: getattr(self, key, None) for key in self.extra_unique_fields if hasattr(self, key)}
+
+    @classmethod
+    def allValues(cls, exclude_hidden=False, **kwargs):
         """Return a dict of "all" defined global settings.
 
         This performs a single database lookup,
@@ -184,9 +257,8 @@ class BaseInvenTreeSetting(models.Model):
             # Keys which start with an undersore are used for internal functionality
             results = results.exclude(key__startswith='_')
 
-        # Optionally filter by user
-        if user is not None:
-            results = results.filter(user=user)
+        # Optionally filter by other keys
+        results = results.filter(**cls.get_filters(**kwargs))
 
         # Query the database
         settings = {}
@@ -224,16 +296,6 @@ class BaseInvenTreeSetting(models.Model):
             settings[key] = value
 
         return settings
-
-    def get_kwargs(self):
-        """Construct kwargs for doing class-based settings lookup, depending on *which* class we are.
-
-        This is necessary to abtract the settings object
-        from the implementing class (e.g plugins)
-
-        Subclasses should override this function to ensure the kwargs are correctly set.
-        """
-        return {}
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -333,31 +395,10 @@ class BaseInvenTreeSetting(models.Model):
 
         filters = {
             'key__iexact': key,
+
+            # Optionally filter by other keys
+            **cls.get_filters(**kwargs),
         }
-
-        # Filter by user
-        user = kwargs.get('user', None)
-
-        if user is not None:
-            filters['user'] = user
-
-        # Filter by plugin
-        plugin = kwargs.get('plugin', None)
-
-        if plugin is not None:
-            from plugin import InvenTreePlugin
-
-            if issubclass(plugin.__class__, InvenTreePlugin):
-                plugin = plugin.plugin_config()
-
-            filters['plugin'] = plugin
-            kwargs['plugin'] = plugin
-
-        # Filter by method
-        method = kwargs.get('method', None)
-
-        if method is not None:
-            filters['method'] = method
 
         # Perform cache lookup by default
         do_cache = kwargs.pop('cache', True)
@@ -412,6 +453,9 @@ class BaseInvenTreeSetting(models.Model):
                 except (IntegrityError, OperationalError):
                     # It might be the case that the database isn't created yet
                     pass
+                except ValidationError:
+                    # The setting failed validation - might be due to duplicate keys
+                    pass
 
         if setting and do_cache:
             # Cache this setting object
@@ -465,21 +509,10 @@ class BaseInvenTreeSetting(models.Model):
 
         filters = {
             'key__iexact': key,
+
+            # Optionally filter by other keys
+            **cls.get_filters(**kwargs),
         }
-
-        user = kwargs.get('user', None)
-        plugin = kwargs.get('plugin', None)
-
-        if user is not None:
-            filters['user'] = user
-
-        if plugin is not None:
-            from plugin import InvenTreePlugin
-
-            if issubclass(plugin.__class__, InvenTreePlugin):
-                filters['plugin'] = plugin.plugin_config()
-            else:
-                filters['plugin'] = plugin
 
         try:
             setting = cls.objects.get(**filters)
@@ -504,22 +537,22 @@ class BaseInvenTreeSetting(models.Model):
     @property
     def name(self):
         """Return name for setting."""
-        return self.__class__.get_setting_name(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_name(self.key, **self.get_filters_for_instance())
 
     @property
     def default_value(self):
         """Return default_value for setting."""
-        return self.__class__.get_setting_default(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_default(self.key, **self.get_filters_for_instance())
 
     @property
     def description(self):
         """Return description for setting."""
-        return self.__class__.get_setting_description(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_description(self.key, **self.get_filters_for_instance())
 
     @property
     def units(self):
         """Return units for setting."""
-        return self.__class__.get_setting_units(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_units(self.key, **self.get_filters_for_instance())
 
     def clean(self, **kwargs):
         """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
@@ -587,7 +620,7 @@ class BaseInvenTreeSetting(models.Model):
 
             validator(value)
 
-    def validate_unique(self, exclude=None, **kwargs):
+    def validate_unique(self, exclude=None):
         """Ensure that the key:value pair is unique. In addition to the base validators, this ensures that the 'key' is unique, using a case-insensitive comparison.
 
         Note that sub-classes (UserSetting, PluginSetting) use other filters
@@ -597,16 +630,10 @@ class BaseInvenTreeSetting(models.Model):
 
         filters = {
             'key__iexact': self.key,
+
+            # Optionally filter by other keys
+            **self.get_filters_for_instance(),
         }
-
-        user = getattr(self, 'user', None)
-        plugin = getattr(self, 'plugin', None)
-
-        if user is not None:
-            filters['user'] = user
-
-        if plugin is not None:
-            filters['plugin'] = plugin
 
         try:
             # Check if a duplicate setting already exists
@@ -620,7 +647,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def choices(self):
         """Return the available choices for this setting (or None if no choices are defined)."""
-        return self.__class__.get_setting_choices(self.key, **self.get_kwargs())
+        return self.__class__.get_setting_choices(self.key, **self.get_filters_for_instance())
 
     def valid_options(self):
         """Return a list of valid options for this setting."""
@@ -633,7 +660,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def is_choice(self):
         """Check if this setting is a "choice" field."""
-        return self.__class__.get_setting_choices(self.key, **self.get_kwargs()) is not None
+        return self.__class__.get_setting_choices(self.key, **self.get_filters_for_instance()) is not None
 
     def as_choice(self):
         """Render this setting as the "display" value of a choice field.
@@ -643,7 +670,7 @@ class BaseInvenTreeSetting(models.Model):
         and the value is 'A4',
         then display 'A4 paper'
         """
-        choices = self.get_setting_choices(self.key, **self.get_kwargs())
+        choices = self.get_setting_choices(self.key, **self.get_filters_for_instance())
 
         if not choices:
             return self.value
@@ -660,7 +687,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def model_name(self):
         """Return the model name associated with this setting."""
-        setting = self.get_setting_definition(self.key, **self.get_kwargs())
+        setting = self.get_setting_definition(self.key, **self.get_filters_for_instance())
 
         return setting.get('model', None)
 
@@ -724,7 +751,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def is_bool(self):
         """Check if this setting is required to be a boolean value."""
-        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
+        validator = self.__class__.get_setting_validator(self.key, **self.get_filters_for_instance())
 
         return self.__class__.validator_is_bool(validator)
 
@@ -764,7 +791,7 @@ class BaseInvenTreeSetting(models.Model):
 
     def is_int(self,):
         """Check if the setting is required to be an integer value."""
-        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
+        validator = self.__class__.get_setting_validator(self.key, **self.get_filters_for_instance())
 
         return self.__class__.validator_is_int(validator)
 
@@ -803,7 +830,7 @@ class BaseInvenTreeSetting(models.Model):
     @property
     def protected(self):
         """Returns if setting is protected from rendering."""
-        return self.__class__.is_protected(self.key, **self.get_kwargs())
+        return self.__class__.is_protected(self.key, **self.get_filters_for_instance())
 
 
 def settings_group_options():
@@ -936,7 +963,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_DEFAULT_CURRENCY': {
             'name': _('Default Currency'),
-            'description': _('Select base currency for pricing caluclations'),
+            'description': _('Select base currency for pricing calculations'),
             'default': 'USD',
             'choices': CURRENCY_CHOICES,
             'after_save': update_exchange_rates,
@@ -985,7 +1012,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_UPDATE_CHECK_INTERVAL': {
-            'name': _('Update Check Inverval'),
+            'name': _('Update Check Interval'),
             'description': _('How often to check for updates (set to zero to disable)'),
             'validator': [
                 int,
@@ -1556,7 +1583,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'LOGIN_SIGNUP_MAIL_RESTRICTION': {
             'name': _('Allowed domains'),
-            'description': _('Restrict signup to certain domains (comma-separated, strarting with @)'),
+            'description': _('Restrict signup to certain domains (comma-separated, starting with @)'),
             'default': '',
             'before_save': validate_email_domains,
         },
@@ -1622,6 +1649,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
+        },
+
+        "PROJECT_CODES_ENABLED": {
+            'name': _('Enable project codes'),
+            'description': _('Enable project codes for tracking projects'),
+            'default': False,
+            'validator': bool,
         },
 
         'STOCKTAKE_ENABLE': {
@@ -1699,6 +1733,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         ]
 
     SETTINGS = {
+
+        'HOMEPAGE_HIDE_INACTIVE': {
+            'name': _('Hide inactive parts'),
+            'description': _('Hide inactive parts in results displayed on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+
         'HOMEPAGE_PART_STARRED': {
             'name': _('Show subscribed parts'),
             'description': _('Show subscribed parts on the homepage'),
@@ -1821,6 +1863,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         'HOMEPAGE_SO_OVERDUE': {
             'name': _('Show overdue SOs'),
             'description': _('Show overdue SOs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'HOMEPAGE_SO_SHIPMENTS_PENDING': {
+            'name': _('Show pending SO shipments'),
+            'description': _('Show pending SO shipments on the homepage'),
             'default': True,
             'validator': bool,
         },
@@ -2048,6 +2097,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     }
 
     typ = 'user'
+    extra_unique_fields = ['user']
 
     key = models.CharField(
         max_length=50,
@@ -2064,19 +2114,9 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         help_text=_('User'),
     )
 
-    def validate_unique(self, exclude=None, **kwargs):
-        """Return if the setting (including key) is unique."""
-        return super().validate_unique(exclude=exclude, user=self.user)
-
     def to_native_value(self):
         """Return the "pythonic" value, e.g. convert "True" to True, and "1" to 1."""
         return self.__class__.get_setting(self.key, user=self.user)
-
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'user': self.user,
-        }
 
 
 class PriceBreak(MetaMixin):
@@ -2361,7 +2401,7 @@ class WebhookEndpoint(models.Model):
         """
         return WebhookMessage.objects.create(
             host=request.get_host(),
-            header=json.dumps({key: val for key, val in headers.items()}),
+            header=json.dumps(dict(headers.items())),
             body=payload,
             endpoint=self,
         )
@@ -2635,3 +2675,27 @@ class NewsFeedEntry(models.Model):
         help_text=_('Was this news item read?'),
         default=False
     )
+
+
+def rename_notes_image(instance, filename):
+    """Function for renaming uploading image file. Will store in the 'notes' directory."""
+
+    fname = os.path.basename(filename)
+    return os.path.join('notes', fname)
+
+
+class NotesImage(models.Model):
+    """Model for storing uploading images for the 'notes' fields of various models.
+
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown)
+    """
+
+    image = models.ImageField(
+        upload_to=rename_notes_image,
+        verbose_name=_('Image'),
+        help_text=_('Image file'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    date = models.DateTimeField(auto_now_add=True)

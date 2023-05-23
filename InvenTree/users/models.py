@@ -79,6 +79,8 @@ class RuleSet(models.Model):
             'plugin_pluginsetting',
             'plugin_notificationusersetting',
             'common_newsfeedentry',
+            'taggit_tag',
+            'taggit_taggeditem',
         ],
         'part_category': [
             'part_partcategory',
@@ -181,10 +183,12 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'common_inventreeusersetting',
-        'common_webhookendpoint',
-        'common_webhookmessage',
         'common_notificationentry',
         'common_notificationmessage',
+        'common_notesimage',
+        'common_projectcode',
+        'common_webhookendpoint',
+        'common_webhookmessage',
         'users_owner',
 
         # Third-party tables

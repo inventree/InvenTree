@@ -3,17 +3,17 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}inbox{% endblock %}
+{% block label %}inbox{% endblock label %}
 
 {% block heading %}
 {% trans "Pending Notifications" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 <div class='btn btn-outline-secondary' type='button' id='mark-all' title='{% trans "Mark all as read" %}'>
     <span class='fa fa-bookmark'></span> {% trans "Mark all as read" %}
 </div>
-{% endblock %}
+{% endblock actions %}
 
 {% block content %}
 
@@ -28,4 +28,4 @@
     </table>
 </div>
 
-{% endblock %}
+{% endblock content %}

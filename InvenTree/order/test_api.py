@@ -13,13 +13,13 @@ from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
 
-import order.models as models
 from common.settings import currency_codes
 from company.models import Company
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockStatus)
+from InvenTree.unit_test import InvenTreeAPITestCase
+from order import models
 from part.models import Part
 from stock.models import StockItem
 
@@ -59,6 +59,50 @@ class PurchaseOrderTest(OrderTest):
     """Tests for the PurchaseOrder API."""
 
     LIST_URL = reverse('api-po-list')
+
+    def test_options(self):
+        """Test the PurchaseOrder OPTIONS endpoint."""
+
+        self.assignRole('purchase_order.add')
+
+        response = self.options(self.LIST_URL, expected_code=200)
+
+        data = response.data
+        self.assertEqual(data['name'], 'Purchase Order List')
+
+        post = data['actions']['POST']
+
+        def check_options(data, field_name, spec):
+            """Helper function to check that the options are configured correctly."""
+            field_data = data[field_name]
+
+            for k, v in spec.items():
+                self.assertIn(k, field_data)
+                self.assertEqual(field_data[k], v)
+
+        # Checks for the 'order_currency' field
+        check_options(post, 'order_currency', {
+            'type': 'choice',
+            'required': False,
+            'read_only': False,
+            'label': 'Order Currency',
+            'help_text': 'Currency for this order (leave blank to use company default)',
+        })
+
+        # Checks for the 'reference' field
+        check_options(post, 'reference', {
+            'type': 'string',
+            'required': True,
+            'read_only': False,
+            'label': 'Reference',
+        })
+
+        # Checks for the 'supplier' field
+        check_options(post, 'supplier', {
+            'type': 'related field',
+            'required': True,
+            'api_url': '/api/company/',
+        })
 
     def test_po_list(self):
         """Test the PurchaseOrder list API endpoint"""
@@ -155,7 +199,7 @@ class PurchaseOrderTest(OrderTest):
 
                 for result in response.data['results']:
                     self.assertIn('total_price', result)
-                    self.assertIn('total_price_currency', result)
+                    self.assertIn('order_currency', result)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -323,13 +367,18 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertTrue(po.lines.count() > 0)
 
+        lines = []
+
         # Add some extra line items to this order
         for idx in range(5):
-            models.PurchaseOrderExtraLine.objects.create(
+            lines.append(models.PurchaseOrderExtraLine(
                 order=po,
                 quantity=idx + 10,
                 reference='some reference',
-            )
+            ))
+
+        # bulk create orders
+        models.PurchaseOrderExtraLine.objects.bulk_create(lines)
 
         data = self.get(reverse('api-po-detail', kwargs={'pk': 1})).data
 
@@ -1133,7 +1182,7 @@ class SalesOrderTest(OrderTest):
                 idx += 1
 
             # Create some extra lines against this order
-            for ii in range(3):
+            for _ in range(3):
                 extra_lines.append(
                     models.SalesOrderExtraLine(
                         order=so,
@@ -1157,7 +1206,7 @@ class SalesOrderTest(OrderTest):
 
                 for result in response.data['results']:
                     self.assertIn('total_price', result)
-                    self.assertIn('total_price_currency', result)
+                    self.assertIn('order_currency', result)
 
     def test_overdue(self):
         """Test "overdue" status."""
@@ -1402,6 +1451,28 @@ class SalesOrderTest(OrderTest):
 
         self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders_incl_complete, n_events)
+
+    def test_export(self):
+        """Test we can export the SalesOrder list"""
+
+        n = models.SalesOrder.objects.count()
+
+        # Check there are some sales orders
+        self.assertGreater(n, 0)
+
+        for order in models.SalesOrder.objects.all():
+            # Reconstruct the total price
+            order.save()
+
+        # Download file, check we get a 200 response
+        for fmt in ['csv', 'xls', 'xlsx']:
+            self.download_file(
+                reverse('api-so-list'),
+                {'export': fmt},
+                decode=True if fmt == 'csv' else False,
+                expected_code=200,
+                expected_fn=f"InvenTree_SalesOrders.{fmt}"
+            )
 
 
 class SalesOrderLineItemTest(OrderTest):
@@ -1758,6 +1829,7 @@ class SalesOrderAllocateTest(OrderTest):
                 'link': 'http://test.com/link.html',
                 'tracking_number': 'TRK12345',
                 'shipment_date': '2020-12-05',
+                'delivery_date': '2023-12-05',
             },
             expected_code=201,
         )
@@ -1768,6 +1840,48 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(self.shipment.tracking_number, 'TRK12345')
         self.assertEqual(self.shipment.invoice_number, 'INV01234')
         self.assertEqual(self.shipment.link, 'http://test.com/link.html')
+        self.assertEqual(self.shipment.delivery_date, datetime(2023, 12, 5).date())
+        self.assertTrue(self.shipment.is_delivered())
+
+    def test_shipment_deliverydate(self):
+        """Test delivery date functions via API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        # Attempt remove delivery_date from shipment
+        response = self.patch(
+            url,
+            {
+                'delivery_date': None,
+            },
+            expected_code=200,
+        )
+
+        # Shipment should not be marked as delivered
+        self.assertFalse(self.shipment.is_delivered())
+
+        # Attempt to set delivery date
+        response = self.patch(
+            url,
+            {
+                'delivery_date': 'asfasd',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Date has wrong format', str(response.data))
+
+        response = self.patch(
+            url,
+            {
+                'delivery_date': '2023-05-15',
+            },
+            expected_code=200,
+        )
+        self.shipment.refresh_from_db()
+
+        # Shipment should now be marked as delivered
+        self.assertTrue(self.shipment.is_delivered())
+        self.assertEqual(self.shipment.delivery_date, datetime(2023, 5, 15).date())
 
     def test_sales_order_shipment_list(self):
         """Test the SalesOrderShipment list API endpoint"""

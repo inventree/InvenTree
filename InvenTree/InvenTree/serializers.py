@@ -19,6 +19,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
+from taggit.serializers import TaggitSerializer
 
 from common.models import InvenTreeSetting
 from common.settings import currency_code_default, currency_code_mappings
@@ -73,10 +74,17 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
     def __init__(self, *args, **kwargs):
         """Initialize the currency serializer"""
 
-        kwargs['choices'] = currency_code_mappings()
+        choices = currency_code_mappings()
+
+        allow_blank = kwargs.get('allow_blank', False) or kwargs.get('allow_null', False)
+
+        if allow_blank:
+            choices = [('', '---------')] + choices
+
+        kwargs['choices'] = choices
 
         if 'default' not in kwargs and 'required' not in kwargs:
-            kwargs['default'] = currency_code_default
+            kwargs['default'] = '' if allow_blank else currency_code_default
 
         if 'label' not in kwargs:
             kwargs['label'] = _('Currency')
@@ -255,6 +263,28 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             raise ValidationError(data)
 
         return data
+
+
+class InvenTreeTaggitSerializer(TaggitSerializer):
+    """Updated from https://github.com/glemmaPaul/django-taggit-serializer."""
+
+    def update(self, instance, validated_data):
+        """Overriden update method to readd the tagmanager."""
+        to_be_tagged, validated_data = self._pop_tags(validated_data)
+
+        tag_object = super().update(instance, validated_data)
+
+        for key in to_be_tagged.keys():
+            # readd the tagmanager
+            new_tagobject = tag_object.__class__.objects.get(id=tag_object.id)
+            setattr(tag_object, key, getattr(new_tagobject, key))
+
+        return self._save_tags(tag_object, to_be_tagged)
+
+
+class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
+    """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
+    pass
 
 
 class UserSerializer(InvenTreeModelSerializer):
@@ -492,7 +522,7 @@ class DataFileUploadSerializer(serializers.Serializer):
                 pass
 
         # Extract a list of valid model field names
-        model_field_names = [key for key in model_fields.keys()]
+        model_field_names = list(model_fields.keys())
 
         # Provide a dict of available columns from the dataset
         file_columns = {}

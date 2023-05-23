@@ -36,13 +36,6 @@ def update_serials(apps, schema_editor):
         item.save()
 
 
-def nupdate_serials(apps, schema_editor):  # pragma: no cover
-    """
-    Provided only for reverse migration compatibility
-    """
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -52,6 +45,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             update_serials,
-            reverse_code=nupdate_serials,
+            reverse_code=migrations.RunPython.noop,
         )
     ]

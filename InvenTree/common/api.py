@@ -17,13 +17,13 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
-from InvenTree.api import BulkDeleteMixin
+from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors
-from InvenTree.mixins import (ListAPI, RetrieveAPI, RetrieveUpdateAPI,
-                              RetrieveUpdateDestroyAPI)
-from InvenTree.permissions import IsSuperuser
+from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from InvenTree.permissions import IsStaffOrReadOnly, IsSuperuser
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
@@ -440,6 +440,46 @@ class ConfigDetail(RetrieveAPI):
         return {key: value}
 
 
+class NotesImageList(ListCreateAPI):
+    """List view for all notes images."""
+
+    queryset = common.models.NotesImage.objects.all()
+    serializer_class = common.serializers.NotesImageSerializer
+    permission_classes = [permissions.IsAuthenticated, ]
+
+    def perform_create(self, serializer):
+        """Create (upload) a new notes image"""
+        image = serializer.save()
+        image.user = self.request.user
+        image.save()
+
+
+class ProjectCodeList(ListCreateAPI):
+    """List view for all project codes."""
+
+    queryset = common.models.ProjectCode.objects.all()
+    serializer_class = common.serializers.ProjectCodeSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        'code',
+    ]
+
+    search_fields = [
+        'code',
+        'description',
+    ]
+
+
+class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a particular project code"""
+
+    queryset = common.models.ProjectCode.objects.all()
+    serializer_class = common.serializers.ProjectCodeSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+
 settings_api_urls = [
     # User settings
     re_path(r'^user/', include([
@@ -472,6 +512,18 @@ settings_api_urls = [
 common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
+
+    # Uploaded images for notes
+    re_path(r'^notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'),
+
+    # Project codes
+    re_path(r'^project-code/', include([
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': common.models.ProjectCode}, name='api-project-code-metadata'),
+            re_path(r'^.*$', ProjectCodeDetail.as_view(), name='api-project-code-detail'),
+        ])),
+        re_path(r'^.*$', ProjectCodeList.as_view(), name='api-project-code-list'),
+    ])),
 
     # Currencies
     re_path(r'^currency/', include([

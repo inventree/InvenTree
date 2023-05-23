@@ -37,7 +37,6 @@
                     <li><a class='dropdown-item' href='#' id='multi-item-merge' title='{% trans "Merge selected stock items" %}'><span class='fas fa-object-group'></span> {% trans "Merge stock" %}</a></li>
                     <li><a class='dropdown-item' href='#' id='multi-item-order' title='{% trans "Order selected items" %}'><span class='fas fa-shopping-cart'></span> {% trans "Order stock" %}</a></li>
                     <li><a class='dropdown-item' href='#' id='multi-item-assign' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>
-                    <li><a class='dropdown-item' href='#' id='multi-item-set-status' title='{% trans "Change status" %}'><span class='fas fa-exclamation-circle'></span> {% trans "Change stock status" %}</a></li>
                     {% endif %}
                     {% if roles.stock.delete %}
                     <li><a class='dropdown-item' href='#' id='multi-item-delete' title='{% trans "Delete selected items" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete stock" %}</a></li>
@@ -46,7 +45,7 @@
                 </div>
             {% endif %}
             {% endif %}
-            {% include "filter_list.html" with id="stock" %}
+            {% include "filter_list.html" with prefix=prefix id="stock" %}
         </div>
     </div>
 </div>

@@ -1,5 +1,6 @@
 """Plugin model definitions."""
 
+import inspect
 import warnings
 
 from django.conf import settings
@@ -10,60 +11,6 @@ from django.utils.translation import gettext_lazy as _
 
 import common.models
 from plugin import InvenTreePlugin, registry
-
-
-class MetadataMixin(models.Model):
-    """Model mixin class which adds a JSON metadata field to a model, for use by any (and all) plugins.
-
-    The intent of this mixin is to provide a metadata field on a model instance,
-    for plugins to read / modify as required, to store any extra information.
-
-    The assumptions for models implementing this mixin are:
-
-    - The internal InvenTree business logic will make no use of this field
-    - Multiple plugins may read / write to this metadata field, and not assume they have sole rights
-    """
-
-    class Meta:
-        """Meta for MetadataMixin."""
-        abstract = True
-
-    metadata = models.JSONField(
-        blank=True, null=True,
-        verbose_name=_('Plugin Metadata'),
-        help_text=_('JSON metadata field, for use by external plugins'),
-    )
-
-    def get_metadata(self, key: str, backup_value=None):
-        """Finds metadata for this model instance, using the provided key for lookup.
-
-        Args:
-            key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
-
-        Returns:
-            Python dict object containing requested metadata. If no matching metadata is found, returns None
-        """
-        if self.metadata is None:
-            return backup_value
-
-        return self.metadata.get(key, backup_value)
-
-    def set_metadata(self, key: str, data, commit: bool = True):
-        """Save the provided metadata under the provided key.
-
-        Args:
-            key (str): Key for saving metadata
-            data (Any): Data object to save - must be able to be rendered as a JSON string
-            commit (bool, optional): If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted. Defaults to True.
-        """
-        if self.metadata is None:
-            # Handle a null field value
-            self.metadata = {}
-
-        self.metadata[key] = data
-
-        if commit:
-            self.save()
 
 
 class PluginConfig(models.Model):
@@ -112,7 +59,9 @@ class PluginConfig(models.Model):
     def mixins(self):
         """Returns all registered mixins."""
         try:
-            return self.plugin._mixinreg
+            if inspect.isclass(self.plugin):
+                return self.plugin.get_registered_mixins(self, with_base=True, with_cls=False)
+            return self.plugin.get_registered_mixins(with_base=True, with_cls=False)
         except (AttributeError, ValueError):  # pragma: no cover
             return {}
 
@@ -156,7 +105,7 @@ class PluginConfig(models.Model):
             if (self.active is False and self.__org_active is True) or \
                (self.active is True and self.__org_active is False):
                 if settings.PLUGIN_TESTING:
-                    warnings.warn('A reload was triggered')
+                    warnings.warn('A reload was triggered', stacklevel=2)
                 registry.reload_plugins()
 
         return ret
@@ -184,6 +133,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
     """This model represents settings for individual plugins."""
 
     typ = 'plugin'
+    extra_unique_fields = ['plugin']
 
     class Meta:
         """Meta for PluginSetting."""
@@ -216,25 +166,18 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
             plugin = kwargs.pop('plugin', None)
 
             if plugin:
-
-                if issubclass(plugin.__class__, InvenTreePlugin):
-                    plugin = plugin.plugin_config()
-
-                kwargs['settings'] = registry.mixins_settings.get(plugin.key, {})
+                mixin_settings = getattr(registry, 'mixins_settings')
+                if mixin_settings:
+                    kwargs['settings'] = mixin_settings.get(plugin.key, {})
 
         return super().get_setting_definition(key, **kwargs)
-
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'plugin': self.plugin,
-        }
 
 
 class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     """This model represents notification settings for a user."""
 
     typ = 'notification'
+    extra_unique_fields = ['method', 'user']
 
     class Meta:
         """Meta for NotificationUserSetting."""
@@ -250,13 +193,6 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
         kwargs['settings'] = storage.user_settings
 
         return super().get_setting_definition(key, **kwargs)
-
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'method': self.method,
-            'user': self.user,
-        }
 
     method = models.CharField(
         max_length=255,

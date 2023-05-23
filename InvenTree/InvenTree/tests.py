@@ -14,7 +14,6 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-import requests
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -25,6 +24,7 @@ import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
 from InvenTree.sanitizer import sanitize_svg
+from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
@@ -287,10 +287,12 @@ class TestHelpers(TestCase):
                     time.sleep(10 * tries)
 
         # Attempt to download an image which throws a 404
-        dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
+        # TODO: Re-implement this test when we are happier with the external service
+        # dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
 
         # Attempt to download, but timeout
-        dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
+        # TODO: Re-implement this test when we are happier with the external service
+        # dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
 
         large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
 
@@ -305,6 +307,20 @@ class TestHelpers(TestCase):
 
         # Download a valid image (should not throw an error)
         helpers.download_image_from_url(large_img, timeout=10)
+
+    def test_model_mixin(self):
+        """Test the getModelsWithMixin function"""
+
+        from InvenTree.models import InvenTreeBarcodeMixin
+
+        models = helpers.getModelsWithMixin(InvenTreeBarcodeMixin)
+
+        self.assertIn(Part, models)
+        self.assertIn(StockLocation, models)
+        self.assertIn(StockItem, models)
+
+        self.assertNotIn(PartCategory, models)
+        self.assertNotIn(InvenTreeSetting, models)
 
 
 class TestQuoteWrap(TestCase):
@@ -696,7 +712,7 @@ class TestStatus(TestCase):
         self.assertEqual(ready.isImportingData(), False)
 
 
-class TestSettings(helpers.InvenTreeTestCase):
+class TestSettings(InvenTreeTestCase):
     """Unit tests for settings."""
 
     superuser = True
@@ -792,7 +808,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/config.yaml',
         ]
 
-        self.assertTrue(any([opt in str(config.get_config_file()).lower() for opt in valid]))
+        self.assertTrue(any(opt in str(config.get_config_file()).lower() for opt in valid))
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
@@ -807,7 +823,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             'inventree/data/plugins.txt',
         ]
 
-        self.assertTrue(any([opt in str(config.get_plugin_file()).lower() for opt in valid]))
+        self.assertTrue(any(opt in str(config.get_plugin_file()).lower() for opt in valid))
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
@@ -835,7 +851,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
 
 
-class TestInstanceName(helpers.InvenTreeTestCase):
+class TestInstanceName(InvenTreeTestCase):
     """Unit tests for instance name."""
 
     def test_instance_name(self):
@@ -863,7 +879,7 @@ class TestInstanceName(helpers.InvenTreeTestCase):
         self.assertEqual(site_obj.domain, 'http://127.1.2.3')
 
 
-class TestOffloadTask(helpers.InvenTreeTestCase):
+class TestOffloadTask(InvenTreeTestCase):
     """Tests for offloading tasks to the background worker"""
 
     fixtures = [
@@ -960,7 +976,7 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             self.assertTrue(result)
 
 
-class BarcodeMixinTest(helpers.InvenTreeTestCase):
+class BarcodeMixinTest(InvenTreeTestCase):
     """Tests for the InvenTreeBarcodeMixin mixin class"""
 
     def test_barcode_model_type(self):

@@ -6,11 +6,11 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Purchase Orders" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block heading %}
 {% trans "Purchase Orders" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if roles.purchase_order.add %}
@@ -18,7 +18,7 @@
     <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}
 </button>
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block page_info %}
 
@@ -38,12 +38,12 @@
 
 </div>
 
-{% endblock %}
+{% endblock page_info %}
 
 {% block js_load %}
 {{ block.super }}
 
-{% endblock %}
+{% endblock js_load %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -56,4 +56,4 @@ loadPurchaseOrderTable("#purchase-order-table", {
     url: "{% url 'api-po-list' %}",
 });
 
-{% endblock %}
+{% endblock js_ready %}

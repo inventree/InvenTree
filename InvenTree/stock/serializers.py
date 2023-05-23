@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
+from taggit.serializers import TagListSerializerField
 
 import common.models
 import company.models
@@ -76,7 +77,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
         return value
 
 
-class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     """Serializer for a StockItem.
 
     - Includes serialization for the linked part
@@ -92,6 +93,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'batch',
             'belongs_to',
             'build',
+            'consumed_by',
             'customer',
             'delete_on_deplete',
             'expired',
@@ -123,6 +125,9 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'updated',
             'purchase_price',
             'purchase_price_currency',
+            'use_pack_size',
+
+            'tags',
         ]
 
         """
@@ -137,11 +142,29 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'updated',
         ]
 
+        """
+        Fields used when creating a stock item
+        """
+        extra_kwargs = {
+            'use_pack_size': {'write_only': True},
+        }
+
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
         many=False, allow_null=False,
         help_text=_("Base Part"),
         label=_("Part"),
+    )
+
+    """
+    Field used when creating a stock item
+    """
+    use_pack_size = serializers.BooleanField(
+        write_only=True,
+        required=False,
+        allow_null=True,
+        help_text=_("Use pack size when adding: the quantity defined is the number of packs"),
+        label=("Use pack size"),
     )
 
     def validate_part(self, part):
@@ -228,13 +251,15 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
         allow_null=True,
-        help_text=_('Purchase price of this stock item'),
+        help_text=_('Purchase price of this stock item, per unit or pack'),
     )
 
     purchase_price_currency = InvenTreeCurrencySerializer(help_text=_('Purchase currency of this stock item'))
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
+
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
@@ -566,7 +591,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         ]
 
 
-class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     """Detailed information about a stock location."""
 
     class Meta:
@@ -587,6 +612,8 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'icon',
             'structural',
             'external',
+
+            'tags',
         ]
 
         read_only_fields = [
@@ -609,6 +636,8 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     items = serializers.IntegerField(read_only=True)
 
     level = serializers.IntegerField(read_only=True)
+
+    tags = TagListSerializerField(required=False)
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
