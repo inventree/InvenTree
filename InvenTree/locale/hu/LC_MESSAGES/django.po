@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-22 02:13+0000\n"
-"PO-Revision-Date: 2023-05-22 13:26\n"
+"POT-Creation-Date: 2023-05-23 21:34+0000\n"
+"PO-Revision-Date: 2023-05-24 16:11\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -27,19 +27,19 @@ msgstr "Nincs jogosultságod az adatok megtekintéséhez"
 
 #: InvenTree/conversion.py:44
 msgid "No value provided"
-msgstr ""
+msgstr "Nincs érték megadva"
 
 #: InvenTree/conversion.py:66
 msgid "Provided value is not a valid number"
-msgstr ""
+msgstr "A megadott érték nem egy szám"
 
 #: InvenTree/conversion.py:68 InvenTree/conversion.py:70
 msgid "Provided value has an invalid unit"
-msgstr ""
+msgstr "A megadott érték mértékegysége érvénytelen"
 
 #: InvenTree/conversion.py:72
 msgid "Provided value could not be converted to the specified unit"
-msgstr ""
+msgstr "A megadott érték nem konvertálható a megadott mértékegységre"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -195,7 +195,7 @@ msgstr "HTML tag-ek eltávolítása ebből az értékből"
 
 #: InvenTree/models.py:82
 msgid "Metadata must be a python dict object"
-msgstr ""
+msgstr "A meta adatnak egy python dict objektumnak kell lennie"
 
 #: InvenTree/models.py:86
 msgid "Plugin Metadata"
@@ -602,15 +602,15 @@ msgstr "Vietnámi"
 msgid "Chinese"
 msgstr "Kínai"
 
-#: InvenTree/status.py:92 part/serializers.py:886
+#: InvenTree/status.py:61 part/serializers.py:886
 msgid "Background worker check failed"
 msgstr "Háttér folyamat ellenőrzés sikertelen"
 
-#: InvenTree/status.py:96
+#: InvenTree/status.py:65
 msgid "Email backend not configured"
 msgstr "Email backend nincs beállítva"
 
-#: InvenTree/status.py:99
+#: InvenTree/status.py:68
 msgid "InvenTree system health checks failed"
 msgstr "InvenTree rendszer állapotának ellenőrzése sikertelen"
 
@@ -713,7 +713,7 @@ msgstr "Hely megváltozott"
 
 #: InvenTree/status_codes.py:320
 msgid "Stock updated"
-msgstr ""
+msgstr "Készletadatok frissítve"
 
 #: InvenTree/status_codes.py:322
 msgid "Installed into assembly"
@@ -765,7 +765,7 @@ msgstr "Gyártási utasítás kimenete kész"
 
 #: InvenTree/status_codes.py:340
 msgid "Build order output rejected"
-msgstr ""
+msgstr "Gyártási utasítás kimenete visszautasítva"
 
 #: InvenTree/status_codes.py:341 templates/js/translated/stock.js:1640
 msgid "Consumed by build order"
@@ -809,7 +809,7 @@ msgstr "Elutasított"
 
 #: InvenTree/validators.py:32 InvenTree/validators.py:34
 msgid "Invalid physical unit"
-msgstr ""
+msgstr "Érvénytelen fizikai mértékegysgé"
 
 #: InvenTree/validators.py:40
 msgid "Not a valid currency code"
@@ -1124,7 +1124,7 @@ msgstr "Mennyiségnek nullánál többnek kell lennie"
 
 #: build/models.py:819 build/serializers.py:217
 msgid "Quantity cannot be greater than the output quantity"
-msgstr ""
+msgstr "A mennyiség nem lehet mint a gyártási mennyiség"
 
 #: build/models.py:1271
 msgid "Build item must specify a build output, as master part is marked as trackable"
@@ -1323,11 +1323,11 @@ msgstr "Hely"
 
 #: build/serializers.py:416
 msgid "Stock location for scrapped outputs"
-msgstr ""
+msgstr "Selejtezett termékek lokációja"
 
 #: build/serializers.py:422
 msgid "Discard Allocations"
-msgstr ""
+msgstr "Foglalások törlése"
 
 #: build/serializers.py:423
 msgid "Discard any stock allocations for scrapped outputs"
@@ -1335,7 +1335,7 @@ msgstr ""
 
 #: build/serializers.py:428
 msgid "Reason for scrapping build output(s)"
-msgstr ""
+msgstr "Selejtezés oka(i)"
 
 #: build/serializers.py:489
 msgid "Location for completed build outputs"
@@ -1510,15 +1510,15 @@ msgstr "Opcionális tételek"
 msgid "Allocate optional BOM items to build order"
 msgstr "Opcionális tételek lefoglalása a gyártáshoz"
 
-#: build/tasks.py:100
+#: build/tasks.py:101
 msgid "Stock required for build order"
 msgstr "A gyártási utasításhoz készlet szükséges"
 
-#: build/tasks.py:118
+#: build/tasks.py:119
 msgid "Overdue Build Order"
 msgstr "Késésben lévő gyártás"
 
-#: build/tasks.py:123
+#: build/tasks.py:124
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "A {bo} gyártás most már késésben van"
@@ -1846,11 +1846,11 @@ msgstr "Befejezett kimenetek"
 
 #: build/templates/build/detail.html:265
 msgid "Scrap selected build outputs"
-msgstr ""
+msgstr "Kiválasztott gyártási kimenetek selejtezése"
 
 #: build/templates/build/detail.html:266
 msgid "Scrap outputs"
-msgstr ""
+msgstr "Gyártási kimenetek selejtezése"
 
 #: build/templates/build/detail.html:270
 msgid "Delete selected build outputs"
@@ -1862,7 +1862,7 @@ msgstr "Kimenetek törlése"
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:11
 msgid "Consumed Stock"
-msgstr ""
+msgstr "Elhasznált készlet"
 
 #: build/templates/build/detail.html:300
 msgid "Completed Build Outputs"
@@ -2067,7 +2067,7 @@ msgstr "Alapértelmezett pénznem"
 
 #: common/models.py:966
 msgid "Select base currency for pricing calculations"
-msgstr ""
+msgstr "Válassz alap pénznemet az ár számításokhoz"
 
 #: common/models.py:973
 msgid "Download from URL"
@@ -2734,7 +2734,7 @@ msgstr "Engedélyezett domainek"
 
 #: common/models.py:1586
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
-msgstr ""
+msgstr "Bejelentkezés korlátozása megadott domain-ekre (vesszővel elválasztva, @-al kezdve)"
 
 #: common/models.py:1592
 msgid "Group on signup"
@@ -3798,7 +3798,7 @@ msgstr "Cég törlése"
 #: report/templates/report/inventree_test_report_base.html:84
 #: report/templates/report/inventree_test_report_base.html:163
 msgid "Part image"
-msgstr ""
+msgstr "Alkatrész képe"
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:12
@@ -4299,13 +4299,13 @@ msgstr "Alkatrész lekérdezés szűrők (vesszővel elválasztott kulcs=érték
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
 msgid "QC Code"
-msgstr ""
+msgstr "QC kód"
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
 #: templates/qr_code.html:7
 msgid "QR code"
-msgstr ""
+msgstr "QR kód"
 
 #: order/admin.py:30 order/models.py:69
 #: report/templates/report/inventree_po_report_base.html:31
@@ -4570,7 +4570,7 @@ msgstr "Szállítás dátuma"
 
 #: order/models.py:1411 templates/js/translated/sales_order.js:991
 msgid "Delivery Date"
-msgstr ""
+msgstr "Szállítás dátuma"
 
 #: order/models.py:1412
 msgid "Date of delivery of shipment"
@@ -5918,7 +5918,7 @@ msgstr "Paraméter neve"
 
 #: part/models.py:3339
 msgid "Physical units for this parameter"
-msgstr ""
+msgstr "Paraméter mértékegysége"
 
 #: part/models.py:3349
 msgid "Parameter description"
@@ -6806,7 +6806,7 @@ msgstr "Vonalkód hozzárendelése az alkatrészhez"
 
 #: part/templates/part/part_base.html:474 templates/js/translated/part.js:1972
 msgid "part"
-msgstr ""
+msgstr "alkatrész"
 
 #: part/templates/part/part_base.html:514
 msgid "Calculate"
@@ -7110,45 +7110,45 @@ msgid "Provides native support for barcodes"
 msgstr "Alapvető vonalkód támogatást ad"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
-#: plugin/builtin/integration/core_notifications.py:33
+#: plugin/builtin/integration/core_notifications.py:34
 msgid "InvenTree contributors"
 msgstr "InvenTree fejlesztők"
 
-#: plugin/builtin/integration/core_notifications.py:32
+#: plugin/builtin/integration/core_notifications.py:33
 msgid "InvenTree Notifications"
 msgstr "InvenTree értesítések"
 
-#: plugin/builtin/integration/core_notifications.py:34
+#: plugin/builtin/integration/core_notifications.py:35
 msgid "Integrated outgoing notificaton methods"
 msgstr "Integrált kimenő értesítési módszerek"
 
-#: plugin/builtin/integration/core_notifications.py:39
-#: plugin/builtin/integration/core_notifications.py:80
+#: plugin/builtin/integration/core_notifications.py:40
+#: plugin/builtin/integration/core_notifications.py:81
 msgid "Enable email notifications"
 msgstr "Email értesítések engedélyezése"
 
-#: plugin/builtin/integration/core_notifications.py:40
-#: plugin/builtin/integration/core_notifications.py:81
+#: plugin/builtin/integration/core_notifications.py:41
+#: plugin/builtin/integration/core_notifications.py:82
 msgid "Allow sending of emails for event notifications"
 msgstr "Email küldés engedélyezése esemény értesítésekre"
 
-#: plugin/builtin/integration/core_notifications.py:45
+#: plugin/builtin/integration/core_notifications.py:46
 msgid "Enable slack notifications"
 msgstr "Slack értesítések engedélyezése"
 
-#: plugin/builtin/integration/core_notifications.py:46
+#: plugin/builtin/integration/core_notifications.py:47
 msgid "Allow sending of slack channel messages for event notifications"
 msgstr "Slack channel üzenetek küldésének engedélyezése az esemény értesítésekre"
 
-#: plugin/builtin/integration/core_notifications.py:51
+#: plugin/builtin/integration/core_notifications.py:52
 msgid "Slack incoming webhook url"
 msgstr "Slack bejövő webhook URL"
 
-#: plugin/builtin/integration/core_notifications.py:52
+#: plugin/builtin/integration/core_notifications.py:53
 msgid "URL that is used to send messages to a slack channel"
 msgstr "URL az üzenetek küldéséhez egy a slack channel-re"
 
-#: plugin/builtin/integration/core_notifications.py:162
+#: plugin/builtin/integration/core_notifications.py:163
 msgid "Open link"
 msgstr "Link megnyitása"
 
@@ -7561,7 +7561,7 @@ msgstr "Egy érvényes alkatrészt meg kell adni"
 
 #: stock/api.py:613
 msgid "The given supplier part does not exist"
-msgstr ""
+msgstr "A megadott beszállítói alkatrész nem létezik"
 
 #: stock/api.py:622
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
@@ -7688,7 +7688,7 @@ msgstr "Gyártás ehhez a készlet tételhez"
 
 #: stock/models.py:761 stock/templates/stock/item_base.html:364
 msgid "Consumed By"
-msgstr ""
+msgstr "Elhasználva ebbe"
 
 #: stock/models.py:763
 msgid "Build order which consumed this stock item"
@@ -8186,7 +8186,7 @@ msgstr "Még nem volt leltározva"
 #: stock/templates/stock/item_base.html:503
 #: templates/js/translated/stock.js:1709
 msgid "stock item"
-msgstr ""
+msgstr "készlet tétel"
 
 #: stock/templates/stock/item_base.html:528
 msgid "Edit Stock Status"
@@ -8293,7 +8293,7 @@ msgstr "Új hely"
 #: stock/templates/stock/location.html:287
 #: templates/js/translated/stock.js:2282
 msgid "stock location"
-msgstr ""
+msgstr "készlet hely"
 
 #: stock/templates/stock/location.html:304
 msgid "Scanned stock container into this location"
@@ -9119,7 +9119,7 @@ msgstr "Jelenleg nincs ehhez a fiókhoz kapcsolódó közösségi fiókod."
 
 #: templates/InvenTree/settings/user_sso.html:58
 msgid "Add SSO Account"
-msgstr ""
+msgstr "SSO fiók Hozzáadása"
 
 #: templates/InvenTree/settings/user_sso.html:67
 msgid "Single Sign On is not enabled for this server"
@@ -9184,7 +9184,7 @@ msgstr "verzió információk másolása"
 
 #: templates/account/base.html:66 templates/navbar.html:17
 msgid "InvenTree logo"
-msgstr ""
+msgstr "InvenTree logó"
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:9
@@ -9932,7 +9932,7 @@ msgstr "Gyártási kimenet befejezése"
 
 #: templates/js/translated/build.js:405
 msgid "Scrap build output"
-msgstr ""
+msgstr "Gyártási kimenet selejtezése"
 
 #: templates/js/translated/build.js:412
 msgid "Delete build output"
@@ -9987,7 +9987,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:707
 msgid "Scrap Build Outputs"
-msgstr ""
+msgstr "Gyártási kimenetek selejtezése"
 
 #: templates/js/translated/build.js:797
 msgid "Selected build outputs will be deleted"
@@ -10015,11 +10015,11 @@ msgstr "Hely nincs megadva"
 
 #: templates/js/translated/build.js:1017
 msgid "build output"
-msgstr ""
+msgstr "gyártás kimenet"
 
 #: templates/js/translated/build.js:1018
 msgid "build outputs"
-msgstr ""
+msgstr "gyártás kimenetek"
 
 #: templates/js/translated/build.js:1353
 msgid "No active build outputs found"
@@ -10484,7 +10484,7 @@ msgstr "Exportálás PDF-be"
 
 #: templates/js/translated/label.js:102
 msgid "selected"
-msgstr ""
+msgstr "kiválasztva"
 
 #: templates/js/translated/label.js:110 templates/js/translated/label.js:127
 msgid "Select Label Template"
@@ -10896,7 +10896,7 @@ msgstr "Nincs alkatrész"
 
 #: templates/js/translated/part.js:1973
 msgid "parts"
-msgstr ""
+msgstr "alkatrészek"
 
 #: templates/js/translated/part.js:2051
 msgid "No category"
@@ -11805,7 +11805,7 @@ msgstr "Nincs hely megadva"
 
 #: templates/js/translated/stock.js:1710
 msgid "stock items"
-msgstr ""
+msgstr "készlet tételek"
 
 #: templates/js/translated/stock.js:1814
 msgid "Stock item is in production"
@@ -11878,7 +11878,7 @@ msgstr "Nincs a lekérdezésnek megfelelő készlet tétel"
 
 #: templates/js/translated/stock.js:2283
 msgid "stock locations"
-msgstr ""
+msgstr "készlethelyek"
 
 #: templates/js/translated/stock.js:2440
 msgid "Load Subloactions"
@@ -11890,7 +11890,7 @@ msgstr "Részletek"
 
 #: templates/js/translated/stock.js:2551
 msgid "No changes"
-msgstr ""
+msgstr "Nem változott"
 
 #: templates/js/translated/stock.js:2563
 msgid "Part information unavailable"
@@ -11902,7 +11902,7 @@ msgstr "A hely már nem létezik"
 
 #: templates/js/translated/stock.js:2602
 msgid "Build order no longer exists"
-msgstr ""
+msgstr "A gyártási utasítás már nem létezik"
 
 #: templates/js/translated/stock.js:2617
 msgid "Purchase order no longer exists"
