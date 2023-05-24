@@ -98,12 +98,12 @@ def convert_to_numeric_value(value: str, units: str):
         try:
             result = InvenTree.conversion.convert_physical_value(value, units)
             result = float(result.magnitude)
-        except (ValidationError, ValueError):
+        except Exception:
             pass
     else:
         try:
             result = float(value)
-        except ValueError:
+        except Exception:
             pass
 
     return result
@@ -122,8 +122,11 @@ def update_parameter_values(apps, schema_editor):
 
     # Convert each parameter value to a the specified units
     for parameter in PartParameter.objects.all():
-        parameter.data_numeric = convert_to_numeric_value(parameter.data, parameter.template.units)
-        parameter.save()
+        try:
+            parameter.data_numeric = convert_to_numeric_value(parameter.data, parameter.template.units)
+            parameter.save()
+        except Exception:
+            pass
 
     if n_params > 0:
         print(f"Updated {n_params} parameter values")
