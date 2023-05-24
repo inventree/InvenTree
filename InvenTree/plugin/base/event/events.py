@@ -79,7 +79,6 @@ def process_event(plugin_slug, event, *args, **kwargs):
     This function is run by the background worker process.
     This function may queue multiple functions to be handled by the background worker.
     """
-    logger.info(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
 
     plugin = registry.plugins.get(plugin_slug, None)
 
@@ -88,6 +87,7 @@ def process_event(plugin_slug, event, *args, **kwargs):
         return
 
     plugin.process_event(event, *args, **kwargs)
+    logger.debug(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
 
 
 def allow_table_event(table_name):
