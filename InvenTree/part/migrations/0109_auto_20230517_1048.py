@@ -41,7 +41,7 @@ def update_template_units(apps, schema_editor):
         try:
             ureg.Unit(template.units)
             continue
-        except Exception
+        except Exception:
             pass
 
         # Check a lower-case version
