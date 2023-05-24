@@ -41,7 +41,7 @@ def update_template_units(apps, schema_editor):
         try:
             ureg.Unit(template.units)
             continue
-        except pint.errors.UndefinedUnitError:
+        except Exception
             pass
 
         # Check a lower-case version
@@ -52,7 +52,7 @@ def update_template_units(apps, schema_editor):
             template.save()
             n_converted += 1
             continue
-        except pint.errors.UndefinedUnitError:
+        except Exception:
             pass
 
         found = False
