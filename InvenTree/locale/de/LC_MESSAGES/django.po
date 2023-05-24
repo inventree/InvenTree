@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-22 02:13+0000\n"
-"PO-Revision-Date: 2023-05-22 13:25\n"
+"POT-Creation-Date: 2023-05-23 21:34+0000\n"
+"PO-Revision-Date: 2023-05-24 16:11\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -602,15 +602,15 @@ msgstr "Vietnamesisch"
 msgid "Chinese"
 msgstr "Chinesisch"
 
-#: InvenTree/status.py:92 part/serializers.py:886
+#: InvenTree/status.py:61 part/serializers.py:886
 msgid "Background worker check failed"
 msgstr "Hintergrund-Prozess-Kontrolle fehlgeschlagen"
 
-#: InvenTree/status.py:96
+#: InvenTree/status.py:65
 msgid "Email backend not configured"
 msgstr "E-Mail-Backend nicht konfiguriert"
 
-#: InvenTree/status.py:99
+#: InvenTree/status.py:68
 msgid "InvenTree system health checks failed"
 msgstr "InvenTree Status-Überprüfung fehlgeschlagen"
 
@@ -1509,15 +1509,15 @@ msgstr "Optionale Positionen"
 msgid "Allocate optional BOM items to build order"
 msgstr "Optionale Stücklisten-Positionen dem Bauauftrag hinzufügen"
 
-#: build/tasks.py:100
+#: build/tasks.py:101
 msgid "Stock required for build order"
 msgstr "Bestand für Bauauftrag erforderlich"
 
-#: build/tasks.py:118
+#: build/tasks.py:119
 msgid "Overdue Build Order"
 msgstr "Überfälliger Bauauftrag"
 
-#: build/tasks.py:123
+#: build/tasks.py:124
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "Bauauftrag {bo} ist jetzt überfällig"
@@ -7109,45 +7109,45 @@ msgid "Provides native support for barcodes"
 msgstr "Bietet native Unterstützung für Barcodes"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
-#: plugin/builtin/integration/core_notifications.py:33
+#: plugin/builtin/integration/core_notifications.py:34
 msgid "InvenTree contributors"
 msgstr "InvenTree Mitwirkende"
 
-#: plugin/builtin/integration/core_notifications.py:32
+#: plugin/builtin/integration/core_notifications.py:33
 msgid "InvenTree Notifications"
 msgstr "InvenTree Benachrichtigungen"
 
-#: plugin/builtin/integration/core_notifications.py:34
+#: plugin/builtin/integration/core_notifications.py:35
 msgid "Integrated outgoing notificaton methods"
 msgstr "Integrierte ausgehende Benachrichtigungsmethoden"
 
-#: plugin/builtin/integration/core_notifications.py:39
-#: plugin/builtin/integration/core_notifications.py:80
+#: plugin/builtin/integration/core_notifications.py:40
+#: plugin/builtin/integration/core_notifications.py:81
 msgid "Enable email notifications"
 msgstr "E-Mail-Benachrichtigungen aktivieren"
 
-#: plugin/builtin/integration/core_notifications.py:40
-#: plugin/builtin/integration/core_notifications.py:81
+#: plugin/builtin/integration/core_notifications.py:41
+#: plugin/builtin/integration/core_notifications.py:82
 msgid "Allow sending of emails for event notifications"
 msgstr "Das Senden von Benachrichtigungen als E-Mails erlauben"
 
-#: plugin/builtin/integration/core_notifications.py:45
+#: plugin/builtin/integration/core_notifications.py:46
 msgid "Enable slack notifications"
 msgstr "Slack Benachrichtigungen aktivieren"
 
-#: plugin/builtin/integration/core_notifications.py:46
+#: plugin/builtin/integration/core_notifications.py:47
 msgid "Allow sending of slack channel messages for event notifications"
 msgstr "Erlaube das Senden von Slack Channel Nachrichten für Benachrichtigungen"
 
-#: plugin/builtin/integration/core_notifications.py:51
+#: plugin/builtin/integration/core_notifications.py:52
 msgid "Slack incoming webhook url"
 msgstr "Eingehender Webhook-URL für Slack"
 
-#: plugin/builtin/integration/core_notifications.py:52
+#: plugin/builtin/integration/core_notifications.py:53
 msgid "URL that is used to send messages to a slack channel"
 msgstr "URL, die verwendet wird, um Nachrichten an einen Slack-Kanal zu senden"
 
-#: plugin/builtin/integration/core_notifications.py:162
+#: plugin/builtin/integration/core_notifications.py:163
 msgid "Open link"
 msgstr "Link öffnen"
 
