@@ -7,6 +7,9 @@ INVENTREE_API_VERSION = 116
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
+v117 -> 2023-05-25 : https://github.com/inventree/InvenTree/pull/4883
+    - Add Metadata to:  Part test templates, Part parameters, Part category parameter templates, BOM item substitute, Part relateds, Stock item test result
+
 v116 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4823
     - Updates to part parameter implementation, to use physical units
 
