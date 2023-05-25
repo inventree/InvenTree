@@ -516,8 +516,8 @@ manufacturer_part_api_urls = [
     ])),
 
     re_path(r'^(?P<pk>\d+)/?', include([
-        re_path('^metadata/', MetadataView.as_view(), {'model': ManufacturerPart}, name='api-manufacturer-part-metadata'),
-        re_path('^.*$', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': ManufacturerPart}, name='api-manufacturer-part-metadata'),
+        re_path(r'^.*$', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
     ])),
 
     # Catch anything else
@@ -528,8 +528,8 @@ manufacturer_part_api_urls = [
 supplier_part_api_urls = [
 
     re_path(r'^(?P<pk>\d+)/?', include([
-        re_path('^metadata/', MetadataView.as_view(), {'model': SupplierPart}, name='api-supplier-part-metadata'),
-        re_path('^.*$', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
+        re_path(r'^metadata/', MetadataView.as_view(), {'model': SupplierPart}, name='api-supplier-part-metadata'),
+        re_path(r'^.*$', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
     ])),
 
     # Catch anything else

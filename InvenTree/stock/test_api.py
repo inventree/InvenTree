@@ -1717,7 +1717,7 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
         # Metadata is initially null
         self.assertIsNone(modeldata.metadata)
 
-        numstr = randint(100,900))
+        numstr = randint(100,900)
 
         self.patch(
             url,
@@ -1730,7 +1730,7 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
         )
 
         # Refresh
-        modeldata.from_db()
+        modeldata.refresh_from_db()
         self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
 
     def test_metadata(self):

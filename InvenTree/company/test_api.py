@@ -6,7 +6,7 @@ from rest_framework import status
 
 from InvenTree.unit_test import InvenTreeAPITestCase
 
-from .models import Company, Contact, SupplierPart
+from .models import Company, Contact, ManufacturerPart, SupplierPart
 
 
 class CompanyTest(InvenTreeAPITestCase):
@@ -138,26 +138,6 @@ class CompanyTest(InvenTreeAPITestCase):
         )
 
         self.assertTrue('currency' in response.data)
-
-    def test_metadata(self):
-        """Test the 'metadata' API endpoint for the model"""
-
-        modeldata = Company.objects.first()
-        url = reverse('api-company-metadata', kwargs={'pk': modeldata.pk})
-
-        self.patch(
-            url,
-            {
-                'metadata': {
-                    'COabc': 'COxyz112',
-                }
-            },
-            expected_code=200
-        )
-
-        # Refresh
-        modeldata.from_db()
-        self.assertEqual(modeldata.get_metadata('COabc'), 'COxyz112')
 
 
 class ContactTest(InvenTreeAPITestCase):
@@ -314,7 +294,7 @@ class ContactTest(InvenTreeAPITestCase):
         )
 
         # Refresh
-        modeldata.from_db()
+        modeldata.refresh_from_db()
         self.assertEqual(modeldata.get_metadata('CONabc'), 'CONxyz112')
 
 
@@ -422,26 +402,6 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
         # Check link is not modified
         self.assertEqual(response.data['link'], 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E')
-
-    def test_metadata(self):
-        """Test the 'metadata' API endpoint for the model"""
-
-        modeldata = ManufacturerPart.objects.first()
-        url = reverse('api-manufacturer-part-metadata', kwargs={'pk': modeldata.pk})
-
-        self.patch(
-            url,
-            {
-                'metadata': {
-                    'MPRTNabc': 'MPRTxyz112',
-                }
-            },
-            expected_code=200
-        )
-
-        # Refresh
-        modeldata.from_db()
-        self.assertEqual(modeldata.get_metadata('MPRTabc'), 'MPRTxyz112')
 
 
 class SupplierPartTest(InvenTreeAPITestCase):
@@ -551,22 +511,48 @@ class SupplierPartTest(InvenTreeAPITestCase):
         self.assertEqual(sp.available, 999)
         self.assertIsNotNone(sp.availability_updated)
 
-    def test_metadata(self):
-        """Test the 'metadata' API endpoint for the model"""
 
-        modeldata = SupplierPart.objects.first()
-        url = reverse('api-supplier-part-metadata', kwargs={'pk': modeldata.pk})
+class CompanyMetadataAPITest(InvenTreeAPITestCase):
+    """Unit tests for the various metadata endpoints of API."""
+
+    fixtures = [
+        'company',
+        'manufacturer_part',
+        'supplier_part',
+    ]
+
+    def metatester(apikey, model):
+        """Generic tester"""
+
+        modeldata = model.objects.first()
+        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+
+        # Metadata is initially null
+        self.assertIsNone(modeldata.metadata)
+
+        numstr = randint(100,900)
 
         self.patch(
             url,
             {
                 'metadata': {
-                    'SPRTNabc': 'SPRTxyz112',
+                    f'abc-{numstr}': f'xyz-{apikey}-{numstr}',
                 }
             },
             expected_code=200
         )
 
         # Refresh
-        modeldata.from_db()
-        self.assertEqual(modeldata.get_metadata('SPRTabc'), 'SPRTxyz112')
+        modeldata.refresh_from_db()
+        self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
+
+    def test_metadata(self):
+        """ Test all endpoints"""
+
+        for apikey, model in {
+            'api-manufacturer-part-metadata': ManufacturerPart,
+            'api-supplier-part-metadata': SupplierPart,
+            'api-company-metadata': Company,
+            'api-contact-metadata': Contact,
+        }.items():
+            metatester(apikey, model)
