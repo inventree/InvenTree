@@ -11,16 +11,20 @@ repo_name: inventree/inventree
 # Theme
 theme:
   name: material
+  font:
+    text: Roboto
   custom_dir: _includes/overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
+      primary: blue
       accent: light blue
       toggle:
         icon: material/toggle-switch
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
+      primary: blue
       accent: light blue
       toggle:
         icon: material/toggle-switch-off-outline
@@ -30,9 +34,19 @@ theme:
   icon:
     repo: fontawesome/brands/github
   features:
+    - header.autohide
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
     - navigation.instant
+    # - navigation.sections
+    - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
     - toc.autohide
+    - toc.follow
 edit_uri: "" # Disable "Edit" button
 extra_css:
   - stylesheets/brands.css
