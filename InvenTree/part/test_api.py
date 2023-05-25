@@ -159,26 +159,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # Annotation should include parts from all sub-categories
         self.assertEqual(response.data['part_count'], 100)
 
-    def test_category_metadata(self):
-        """Test metadata endpoint for the PartCategory."""
-        cat = PartCategory.objects.get(pk=1)
-
-        cat.metadata = {
-            'foo': 'bar',
-            'water': 'melon',
-            'abc': 'xyz',
-        }
-
-        cat.set_metadata('abc', 'ABC')
-
-        response = self.get(reverse('api-part-category-metadata', kwargs={'pk': 1}), expected_code=200)
-
-        metadata = response.data['metadata']
-
-        self.assertEqual(metadata['foo'], 'bar')
-        self.assertEqual(metadata['water'], 'melon')
-        self.assertEqual(metadata['abc'], 'ABC')
-
     def test_category_parameters(self):
         """Test that the PartCategoryParameterTemplate API function work"""
 
@@ -229,6 +209,25 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         # There should not be any templates left at this point
         self.assertEqual(PartCategoryParameterTemplate.objects.count(), 0)
+
+    def test_category_püarameter__template_metadata(self):
+        """Test metadata endpoint for the PartCategory."""
+        modeldata = PartCategoryParameterTemplate.objects.first()
+        url = reverse('api-part-category-parameter-metadata', kwargs={'pk': modeldata.pk})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'PCATTemplatePRTNabc': 'PCATTemplateABCD',
+                }
+            },
+            expected_code=200
+        )
+
+        # Refresh
+        modeldata.from_db()
+        self.assertEqual(modeldata.get_metadata('PCATTemplatePRTNabc'), 'PCATTemplateABCD')
 
     def test_bleach(self):
         """Test that the data cleaning functionality is working.
@@ -1665,56 +1664,6 @@ class PartDetailTests(PartAPITestBase):
         self.assertEqual(data['in_stock'], 9000)
         self.assertEqual(data['unallocated_stock'], 9000)
 
-    def test_part_metadata(self):
-        """Tests for the part metadata endpoint."""
-        url = reverse('api-part-metadata', kwargs={'pk': 1})
-
-        part = Part.objects.get(pk=1)
-
-        # Metadata is initially null
-        self.assertIsNone(part.metadata)
-
-        part.metadata = {'foo': 'bar'}
-        part.save()
-
-        response = self.get(url, expected_code=200)
-
-        self.assertEqual(response.data['metadata']['foo'], 'bar')
-
-        # Add more data via the API
-        # Using the 'patch' method causes the new data to be merged in
-        self.patch(
-            url,
-            {
-                'metadata': {
-                    'hello': 'world',
-                }
-            },
-            expected_code=200
-        )
-
-        part.refresh_from_db()
-
-        self.assertEqual(part.metadata['foo'], 'bar')
-        self.assertEqual(part.metadata['hello'], 'world')
-
-        # Now, issue a PUT request (existing data will be replacted)
-        self.put(
-            url,
-            {
-                'metadata': {
-                    'x': 'y'
-                },
-            },
-            expected_code=200
-        )
-
-        part.refresh_from_db()
-
-        self.assertFalse('foo' in part.metadata)
-        self.assertFalse('hello' in part.metadata)
-        self.assertEqual(part.metadata['x'], 'y')
-
 
 class PartListTests(PartAPITestBase):
     """Unit tests for the Part List API endpoint"""
@@ -3050,3 +2999,62 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         InvenTreeSetting.set_setting('STOCKTAKE_ENABLE', True, None)
         response = self.post(url, data={}, expected_code=400)
         self.assertIn('Background worker check failed', str(response.data))
+
+
+class PartMetadataAPITest(InvenTreeAPITestCase):
+    """Unit tests for the various metadata endpoints of API."""
+
+    fixtures = [
+        'category',
+        'part',
+        'params',
+        'location',
+        'bom',
+        'company',
+        'test_templates',
+        'manufacturer_part',
+        'supplier_part',
+        'order',
+        'stock',
+    ]
+
+    def metatester(apikey, model):
+        """Generic tester"""
+
+        modeldata = model.objects.first()
+        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+
+        # Metadata is initially null
+        self.assertIsNone(modeldata.metadata)
+
+        numstr = randint(100,900))
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    f'abc-{numstr}': f'xyz-{apikey}-{numstr}',
+                }
+            },
+            expected_code=200
+        )
+
+        # Refresh
+        modeldata.from_db()
+        self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
+
+    def test_metadata(self):
+        """ Test all endpoints"""
+
+        for apikey, model in {
+            'api-part-category-parameter-metadata': PartCategoryParameterTemplate,
+            'api-part-category-metadata': PartCategory,
+            'api-part-test-template-metadata': PartTestTemplate,
+            'api-part-related-metadata': PartRelated,
+            'api-part-parameter-template-metadata': PartParameterTemplate,
+            'api-part-parameter-metadata': PartParameter,
+            'api-part-metadata': Part,
+            'api-bom-substitute-metadata': BomItemSubstitute,
+            'api-bom-item-metadata': BomItem,
+        }.items():
+            metatester(apikey, model)
