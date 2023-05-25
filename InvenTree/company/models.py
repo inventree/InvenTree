@@ -223,7 +223,7 @@ class CompanyAttachment(InvenTreeAttachment):
     )
 
 
-class Contact(models.Model, MetadataMixin):
+class Contact(MetadataMixin, models.Model):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
