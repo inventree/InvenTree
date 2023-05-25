@@ -80,6 +80,9 @@ def fetch_rtd_versions():
 
     output_filename = os.path.join(os.path.dirname(__file__), 'versions.json')
 
+    print("Discovered the following versions:")
+    print(versions)
+
     with open(output_filename, 'w') as fo:
         json.dump(versions, fo, indent=2)
 
