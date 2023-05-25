@@ -560,7 +560,10 @@ company_api_urls = [
     ])),
 
     re_path(r'^contact/', include([
-        path('<int:pk>/', ContactDetail.as_view(), name='api-contact-detail'),
+        path('<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': Contact}, name='api-contact-metadata'),
+            re_path(r'^.*$', ContactDetail.as_view(), name='api-contact-detail'),
+        ])),
         re_path(r'^.*$', ContactList.as_view(), name='api-contact-list'),
     ])),
 
