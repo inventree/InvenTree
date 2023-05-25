@@ -511,20 +511,55 @@ class PurchaseOrderTest(OrderTest):
 
     def test_po_metadata(self):
         """Test the 'metadata' endpoint for the PurchaseOrder model"""
-        url = reverse('api-po-metadata', kwargs={'pk': 1})
+        order = models.PurchaseOrder.objects.first()
+        url = reverse('api-po-metadata', kwargs={'pk': order.pk})
 
         self.patch(
             url,
             {
                 'metadata': {
-                    'yam': 'yum',
+                    'yam': 'yum123',
                 }
             },
             expected_code=200
         )
 
-        order = models.PurchaseOrder.objects.get(pk=1)
-        self.assertEqual(order.get_metadata('yam'), 'yum')
+        order = models.PurchaseOrder.objects.get(pk=order.pk)
+        self.assertEqual(order.get_metadata('yam'), 'yum123')
+
+        # Do the same for line items
+        lineitem = models.PurchaseOrderLineItem.objects.first()
+        url = reverse('api-po-line-metadata', kwargs={'pk': lineitem.pk})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'yam': 'yum456',
+                }
+            },
+            expected_code=200
+        )
+
+        lineitem = models.PurchaseOrderLineItem.objects.first()
+        self.assertEqual(lineitem.get_metadata('yam'), 'yum456')
+
+        # Do the same for extra line items
+        extralineitem = models.PurchaseOrderExtraLine.objects.first()
+        url = reverse('api-po-extra-line-metadata', kwargs={'pk': extralineitem.pk})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'yam': 'yum789',
+                }
+            },
+            expected_code=200
+        )
+
+        extralineitem = models.PurchaseOrderExtraLine.objects.first()
+        self.assertEqual(extralineitem.get_metadata('yam'), 'yum789')
 
     def test_po_calendar(self):
         """Test the calendar export endpoint"""
@@ -1376,20 +1411,55 @@ class SalesOrderTest(OrderTest):
 
     def test_so_metadata(self):
         """Test the 'metadata' API endpoint for the SalesOrder model"""
-        url = reverse('api-so-metadata', kwargs={'pk': 1})
+        order = models.SalesOrder.objects.first()
+        url = reverse('api-so-metadata', kwargs={'pk': order.pk})
 
         self.patch(
             url,
             {
                 'metadata': {
-                    'xyz': 'abc',
+                    'SOxyz': 'SOabc',
                 }
             },
             expected_code=200
         )
 
-        order = models.SalesOrder.objects.get(pk=1)
-        self.assertEqual(order.get_metadata('xyz'), 'abc')
+        order = models.SalesOrder.objects.get(pk=order.pk)
+        self.assertEqual(order.get_metadata('SOxyz'), 'SOabc')
+
+        # Do the same for line items
+        lineitem = models.SalesOrderLineItem.objects.first()
+        url = reverse('api-so-line-metadata', kwargs={'pk': lineitem.pk})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'SOyam': 'SOyum456',
+                }
+            },
+            expected_code=200
+        )
+
+        lineitem = models.SalesOrderLineItem.objects.first()
+        self.assertEqual(lineitem.get_metadata('SOyam'), 'SOyum456')
+
+        # Do the same for extra line items
+        extralineitem = models.SalesOrderExtraLine.objects.first()
+        url = reverse('api-so-extra-line-metadata', kwargs={'pk': extralineitem.pk})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'SOyam': 'SOyum789',
+                }
+            },
+            expected_code=200
+        )
+
+        extralineitem = models.SalesOrderExtraLine.objects.first()
+        self.assertEqual(extralineitem.get_metadata('SOyam'), 'SOyum789')
 
     def test_so_calendar(self):
         """Test the calendar export endpoint"""
@@ -2200,3 +2270,56 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(deltas['customer'], customer.pk)
         self.assertEqual(deltas['location'], 1)
         self.assertEqual(deltas['returnorder'], rma.pk)
+
+    def test_ro_metadata(self):
+        """Test the 'metadata' API endpoint for the ReturnOrder model"""
+
+        order = models.ReturnOrder.objects.first()
+        url = reverse('api-return-order-metadata', kwargs={'pk': order.pk})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'abc': 'xyz112',
+                }
+            },
+            expected_code=200
+        )
+
+        order = models.ReturnOrder.objects.get(pk=order.pk)
+        self.assertEqual(order.get_metadata('abc'), 'xyz112')
+
+        # Do the same for line items
+        lineitem = models.ReturnOrderLineItem.objects.first()
+        url = reverse('api-return-order-line-metadata', kwargs={'pk': lineitem.pk})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'ROyam': 'ROyum456',
+                }
+            },
+            expected_code=200
+        )
+
+        lineitem = models.ReturnOrderLineItem.objects.first()
+        self.assertEqual(lineitem.get_metadata('ROyam'), 'ROyum456')
+
+        # Do the same for extra line items
+        extralineitem = models.ReturnOrderExtraLine.objects.first()
+        url = reverse('api-return-order-extra-line-metadata', kwargs={'pk': extralineitem.pk})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'ROyam': 'ROyum789',
+                }
+            },
+            expected_code=200
+        )
+
+        extralineitem = models.ReturnOrderExtraLine.objects.first()
+        self.assertEqual(extralineitem.get_metadata('ROyam'), 'ROyum789')
