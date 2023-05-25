@@ -10,10 +10,6 @@ def update_tree(apps, schema_editor):
     Part.objects.rebuild()
 
 
-def nupdate_tree(apps, schema_editor):  # pragma: no cover
-    pass
-
-
 class Migration(migrations.Migration):
 
     atomic = False
@@ -48,5 +44,5 @@ class Migration(migrations.Migration):
             preserve_default=False,
         ),
 
-        migrations.RunPython(update_tree, reverse_code=nupdate_tree)
+        migrations.RunPython(update_tree, reverse_code=migrations.RunPython.noop)
     ]

@@ -700,6 +700,19 @@ function getCompanyFilters() {
 }
 
 
+// Return a dictionary of filters for the "part parameter template" table
+function getPartParameterTemplateFilters() {
+    return {};
+}
+
+
+// Return a dictionary of filters for the "parameteric part" table
+function getParametricPartTableFilters() {
+    let filters = getPartTableFilters();
+
+    return filters;
+}
+
 
 // Return a dictionary of filters for a given table, based on the name of the table
 function getAvailableTableFilters(tableKey) {
@@ -723,6 +736,10 @@ function getAvailableTableFilters(tableKey) {
         return getBuildItemTableFilters();
     case 'location':
         return getStockLocationFilters();
+    case 'parameters':
+        return getParametricPartTableFilters();
+    case 'part-parameter-templates':
+        return getPartParameterTemplateFilters();
     case 'parts':
         return getPartTableFilters();
     case 'parttests':

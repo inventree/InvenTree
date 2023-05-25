@@ -44,6 +44,7 @@ InvenTree relies on the following Python libraries:
 | [coveralls](https://pypi.org/project/coveralls/) | MIT | coverage uploader |
 | [django-formtools](https://pypi.org/project/django-formtools/) | MIT | better forms / wizards |
 | [django-allauth](https://pypi.org/project/django-allauth/) | MIT | SSO for django |
+| [pint](https://pint.readthedocs.io/en/stable/) | [licence](https://github.com/hgrecco/pint/blob/master/LICENSE) | Physical unit conversion |
 
 ## Frontend libraries
 

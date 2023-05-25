@@ -232,7 +232,7 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         if key not in settings:
             raise NotFound(detail=f"Plugin '{plugin.slug}' has no setting matching '{key}'")
 
-        return PluginSetting.get_setting_object(key, plugin=plugin)
+        return PluginSetting.get_setting_object(key, plugin=plugin.plugin_config())
 
     # Staff permission required
     permission_classes = [

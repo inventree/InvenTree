@@ -240,7 +240,8 @@ class PartParameterSerializer(InvenTreeModelSerializer):
             'part',
             'template',
             'template_detail',
-            'data'
+            'data',
+            'data_numeric',
         ]
 
     def __init__(self, *args, **kwargs):
