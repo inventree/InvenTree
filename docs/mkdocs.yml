@@ -30,6 +30,7 @@ theme:
   icon:
     repo: fontawesome/brands/github
   features:
+    - navigation.instant
     - navigation.tabs
     - toc.autohide
 edit_uri: "" # Disable "Edit" button
