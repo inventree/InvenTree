@@ -40,13 +40,12 @@ def reload_unit_registry():
     # TODO: Allow for custom units to be defined in the database
 
 
-def convert_physical_value(value: str, unit: str = None, base_units=True):
+def convert_physical_value(value: str, unit: str = None):
     """Validate that the provided value is a valid physical quantity.
 
     Arguments:
         value: Value to validate (str)
         unit: Optional unit to convert to, and validate against
-        base_units: If True, convert the value to the base units before returning
 
     Raises:
         ValidationError: If the value is invalid or cannot be converted to the specified unit
@@ -93,13 +92,6 @@ def convert_physical_value(value: str, unit: str = None, base_units=True):
             error += f' ({unit})'
 
         raise ValidationError(error)
-
-    if base_units:
-        try:
-            base = val.to_base_units()
-            val = base
-        except TypeError:
-            pass
 
     # Return the converted value
     return val
