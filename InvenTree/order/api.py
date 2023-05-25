@@ -1495,11 +1495,15 @@ class OrderCalendarExport(ICalFeed):
 
     def item_title(self, item):
         """Set the event title to the purchase order reference"""
-        return item.reference
+        return f"{ordertype_title}: {item.reference}"
 
     def item_description(self, item):
         """Set the event description"""
-        return item.description
+        return f"""
+            Supplier: {item.supplier}
+            Description: {item.description}
+            Status: {item.status}
+        """
 
     def item_start_datetime(self, item):
         """Set event start to target date. Goal is all-day event."""
