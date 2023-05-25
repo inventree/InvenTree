@@ -1495,7 +1495,7 @@ class OrderCalendarExport(ICalFeed):
 
     def item_title(self, item):
         """Set the event title to the purchase order reference"""
-        return f"{ordertype_title}: {item.reference}"
+        return f"{self.ordertype_title}: {item.reference}"
 
     def item_description(self, item):
         """Set the event description"""
