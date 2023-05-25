@@ -554,7 +554,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
     def test_metadata(self):
         """Test the 'metadata' API endpoint for the model"""
 
-        modeldata = SupplierrPart.objects.first()
+        modeldata = SupplierPart.objects.first()
         url = reverse('api-supplier-part-metadata', kwargs={'pk': modeldata.pk})
 
         self.patch(
