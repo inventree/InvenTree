@@ -1489,7 +1489,7 @@ class OrderCalendarExport(ICalFeed):
             else:
                 outlist = models.ReturnOrder.objects.filter(target_date__isnull=False)
         else:
-            outlist = list()
+            outlist = []
 
         return outlist
 
