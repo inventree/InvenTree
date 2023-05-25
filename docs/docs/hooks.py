@@ -51,7 +51,8 @@ def fetch_rtd_versions():
             make_request(data['next'], headers)
 
     # Fetch the list of versions from the RTD API
-    if token := os.environ.get('RTD_TOKEN', None):
+    token = os.environ.get('RTD_TOKEN', None)
+    if token:
         headers = {'Authorization': f'Token {token}'}
         url = "https://readthedocs.org/api/v3/projects/inventree/versions/?active=true&limit=50"
         make_request(url, headers)
