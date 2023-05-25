@@ -225,6 +225,10 @@ extra:
   #  provider: google
   #  property: UA-143467500-1
 
+  version:
+    default: stable
+    provider: mike
+
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/inventree/inventree
