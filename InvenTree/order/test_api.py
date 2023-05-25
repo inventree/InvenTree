@@ -2323,3 +2323,60 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
         extralineitem = models.ReturnOrderExtraLine.objects.first()
         self.assertEqual(extralineitem.get_metadata('ROyam'), 'ROyum789')
+
+
+class OrderMetadataAPITest(InvenTreeAPITestCase):
+    """Unit tests for the various metadata endpoints of API."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+    ]
+
+    def metatester(apikey, model):
+        """Generic tester"""
+
+        modeldata = model.objects.first()
+        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+
+        # Metadata is initially null
+        self.assertIsNone(modeldata.metadata)
+
+        numstr = randint(100,900))
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    f'abc-{numstr}': f'xyz-{apikey}-{numstr}',
+                }
+            },
+            expected_code=200
+        )
+
+        # Refresh
+        modeldata.from_db()
+        self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
+
+    def test_metadata(self):
+        """ Test all endpoints"""
+
+        for apikey, model in {
+            'api-po-metadata': models.PurchaseOrder,
+            'api-po-line-metadata': models.PurchaseOrderLineItem,
+            'api-po-extra-line-metadata': models.PurchaseOrderExtraLine,
+            'api-so-shipment-metadata': models.SalesOrderShipment,
+            'api-so-metadata': models.SalesOrder,
+            'api-so-line-metadata': models.SalesOrderLineItem,
+            'api-so-extra-line-metadata': models.SalesOrderExtraLine,
+            'api-return-order-metadata': models.ReturnOrder,
+            'api-return-order-line-metadata': models.ReturnOrderLine,
+            'api-return-order-extra-line-metadata': models.ReturnOrderExtraLine,
+        }.items():
+            metatester(apikey, model)
