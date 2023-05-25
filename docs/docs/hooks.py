@@ -56,6 +56,8 @@ def fetch_rtd_versions():
         headers = {'Authorization': f'Token {token}'}
         url = "https://readthedocs.org/api/v3/projects/inventree/versions/?active=true&limit=50"
         make_request(url, headers)
+    else:
+        print("No RTD token found - skipping RTD version fetch")
 
     # Sort versions by version number
     versions = sorted(versions, key=lambda x: StrictVersion(x['version']), reverse=True)
