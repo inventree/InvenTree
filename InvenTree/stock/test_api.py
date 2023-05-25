@@ -1700,15 +1700,12 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
     fixtures = [
         'category',
         'part',
-        'params',
-        'location',
         'bom',
         'company',
-        'test_templates',
-        'manufacturer_part',
+        'location',
         'supplier_part',
-        'order',
         'stock',
+        'stock_tests',
     ]
 
     def metatester(apikey, model):
