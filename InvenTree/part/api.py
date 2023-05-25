@@ -1937,7 +1937,7 @@ part_api_urls = [
     re_path(r'^parameter/', include([
         path('template/', include([
             re_path(r'^(?P<pk>\d+)/', include([
-                re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameter}, name='api-part-parameter-template-metadata'),
+                re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameterTemplate}, name='api-part-parameter-template-metadata'),
                 re_path(r'^.*$', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
             ])),
             re_path(r'^.*$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
