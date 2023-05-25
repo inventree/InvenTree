@@ -5,7 +5,6 @@ import os
 import re
 from datetime import datetime
 from distutils.version import StrictVersion
-from urllib import request
 
 import requests
 
@@ -65,9 +64,9 @@ def fetch_rtd_versions():
     # Add "latest" version first
     if not any((x['title'] == 'latest' for x in versions)):
         versions.insert(0, {
+            'title': 'Development',
             'version': 'latest',
-            'title': 'latest',
-            'aliases': [],
+            'aliases': ['main', 'latest', 'development',],
         })
 
     # Ensure we have the 'latest' version
@@ -105,35 +104,35 @@ def get_release_data():
 
         print("Loading release information from 'releases.json'")
         with open(json_file) as f:
-            releases = json.loads(f.read())
-    else:
-        # Download release information via the GitHub API
-        print("Fetching InvenTree release information from api.github.com:")
-        releases = []
+            return json.loads(f.read())
 
-        # Keep making API requests until we run out of results
-        page = 1
+    # Download release information via the GitHub API
+    print("Fetching InvenTree release information from api.github.com:")
+    releases = []
 
-        while 1:
-            url = f"https://api.github.com/repos/inventree/inventree/releases?page={page}&per_page=150"
+    # Keep making API requests until we run out of results
+    page = 1
 
-            response = request.urlopen(url, timeout=30)
-            assert response.status == 200
+    while 1:
+        url = f"https://api.github.com/repos/inventree/inventree/releases?page={page}&per_page=150"
 
-            data = json.loads(response.read().decode())
+        response = requests.get(url, timeout=30)
+        assert response.status_code == 200
 
-            if len(data) == 0:
-                break
+        data = json.loads(response.text)
 
-            for item in data:
-                releases.append(item)
+        if len(data) == 0:
+            break
 
-            page += 1
+        for item in data:
+            releases.append(item)
 
-        # Cache these results to file
-        with open(json_file, 'w') as f:
-            print("Saving release information to 'releases.json'")
-            f.write(json.dumps(releases))
+        page += 1
+
+    # Cache these results to file
+    with open(json_file, 'w') as f:
+        print("Saving release information to 'releases.json'")
+        f.write(json.dumps(releases))
 
     return releases
 
