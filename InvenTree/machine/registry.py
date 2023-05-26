@@ -1,5 +1,6 @@
 import logging
-from typing import Dict, List
+from typing import Dict, List, Union
+from uuid import UUID
 
 from machine.machine_type import BaseDriver, BaseMachineType
 
@@ -104,7 +105,7 @@ class MachinesRegistry:
             return
 
         machine: BaseMachineType = machine_type(machine_config)
-        self.machines[machine.pk] = machine
+        self.machines[str(machine.pk)] = machine
 
         if initialize:
             machine.initialize()
@@ -146,9 +147,9 @@ class MachinesRegistry:
 
         return list(filter(filter_machine, self.machines.values()))
 
-    def get_machine(self, pk):
+    def get_machine(self, pk: Union[str, UUID]):
         """Get machine from registry by pk."""
-        return self.machines.get(pk, None)
+        return self.machines.get(str(pk), None)
 
 
 registry: MachinesRegistry = MachinesRegistry()

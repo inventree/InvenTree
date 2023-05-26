@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html_join
@@ -10,6 +12,8 @@ from machine import registry
 
 class MachineConfig(models.Model):
     """A Machine objects represents a physical machine."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     name = models.CharField(
         unique=True,
@@ -41,7 +45,7 @@ class MachineConfig(models.Model):
         return f"{self.name}"
 
     def save(self, *args, **kwargs) -> None:
-        created = self.pk is None
+        created = self._state.adding
 
         super().save(*args, **kwargs)
 
@@ -50,6 +54,10 @@ class MachineConfig(models.Model):
         # machine was created, add it to the machine registry
         if created:
             registry.add_machine(self, initialize=True)
+
+    def delete(self, using, keep_parents):
+        # TODO: remove from registry
+        return super().delete(using, keep_parents)
 
     @property
     def machine(self):
