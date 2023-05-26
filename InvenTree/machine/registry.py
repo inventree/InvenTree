@@ -13,15 +13,10 @@ class MachinesRegistry:
         Set up all needed references for internal and external states.
         """
 
-        # Import only for typechecking
-        from typing import TYPE_CHECKING
-        if TYPE_CHECKING:
-            from machine.models import Machine
-
         self.machine_types: Dict[str, BaseMachineType] = {}
         self.drivers: Dict[str, BaseDriver] = {}
         self.driver_instances: Dict[str, BaseDriver] = {}
-        self.machines: Dict[str, Machine] = {}
+        self.machines: Dict[str, BaseMachineType] = {}
 
         self.base_drivers: List[BaseDriver] = []
         self.errors = []
@@ -93,18 +88,26 @@ class MachinesRegistry:
 
     def load_machines(self):
         # Imports need to be in this level to prevent early db model imports
-        from machine.models import Machine
+        from machine.models import MachineConfig
 
-        for machine in Machine.objects.all():
-            self.machines[machine.pk] = machine
+        for machine_config in MachineConfig.objects.all():
+            self.add_machine(machine_config, initialize=False)
 
         # initialize machines after all machine instances were created
         for machine in self.machines.values():
-            try:
-                machine.initialize()
-            except Exception:
-                # TODO: handle exception
-                pass
+            machine.initialize()
+
+    def add_machine(self, machine_config, initialize=True):
+        machine_type = self.machine_types.get(machine_config.machine_type_key, None)
+        if machine_type is None:
+            self.errors.append(f"Machine type '{machine_config.machine_type_key}' not found")
+            return
+
+        machine: BaseMachineType = machine_type(machine_config)
+        self.machines[machine.pk] = machine
+
+        if initialize:
+            machine.initialize()
 
     def get_machines(self, **kwargs):
         """Get loaded machines from registry. (By default only active machines)
@@ -120,7 +123,7 @@ class MachinesRegistry:
 
         kwargs = {**{'active': True}, **kwargs}
 
-        def filter_machine(machine):
+        def filter_machine(machine: BaseMachineType):
             for key, value in kwargs.items():
                 if key not in allowed_fields:
                     continue
@@ -128,6 +131,11 @@ class MachinesRegistry:
                 # check if current driver is subclass from base_driver
                 if key == "base_driver":
                     if machine.driver and not issubclass(machine.driver.__class__, value):
+                        return False
+
+                # check if current machine is subclass from machine_type
+                elif key == "machine_type":
+                    if issubclass(machine.__class__, value):
                         return False
 
                 # check attributes of machine

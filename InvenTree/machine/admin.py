@@ -6,7 +6,7 @@ from machine import models
 from machine.registry import registry
 
 
-class MachineAdminForm(forms.ModelForm):
+class MachineConfigAdminForm(forms.ModelForm):
     def get_machine_type_choices():
         return [(machine_type.SLUG, machine_type.NAME) for machine_type in registry.machine_types.values()]
 
@@ -29,17 +29,44 @@ class MachineSettingInline(admin.TabularInline):
         'key',
     ]
 
+    def get_extra(self, request, obj, **kwargs):
+        if getattr(obj, 'machine', None) is not None:
+            # TODO: improve this mechanism
+            settings = getattr(obj.machine.driver, "MACHINE_SETTINGS", {})
+            count = len(settings.keys())
+            if obj.settings.count() != count:
+                return count
+        return 0
+
     def has_add_permission(self, request, obj):
         """The machine settings should not be meddled with manually."""
-        return False
+        return True
 
 
-@admin.register(models.Machine)
-class MachineAdmin(admin.ModelAdmin):
+@admin.register(models.MachineConfig)
+class MachineConfigAdmin(admin.ModelAdmin):
     """Custom admin with restricted id fields."""
 
-    form = MachineAdminForm
+    form = MachineConfigAdminForm
     list_filter = ["active"]
     list_display = ["name", "machine_type_key", "driver_key", "active", "is_driver_available", "no_errors"]
     readonly_fields = ["is_driver_available", "get_admin_errors"]
     inlines = [MachineSettingInline]
+
+    def get_readonly_fields(self, request, obj):
+        # if update, don't allow changes on machine_type and driver
+        if obj is not None:
+            return ["machine_type_key", "driver_key", *self.readonly_fields]
+
+        return self.readonly_fields
+
+    def get_inline_formsets(self, request, formsets, inline_instances, obj):
+        formsets = super().get_inline_formsets(request, formsets, inline_instances, obj)
+
+        if getattr(obj, 'machine', None) is not None:
+            settings = getattr(obj.machine.driver, "MACHINE_SETTINGS", {})
+            for form, setting in zip(formsets[0].forms, settings.keys()):
+                if form.fields["key"].initial is None:
+                    form.fields["key"].initial = setting
+
+        return formsets
