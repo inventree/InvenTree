@@ -257,7 +257,7 @@ function poLineItemFields(options={}) {
                 ).then(function() {
                     // Update pack size information
                     if (pack_quantity != 1) {
-                        var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_quantity} ${units}`;
+                        var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${formatDecimal(pack_quantity)} ${units}`;
                         $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
                     }
                 }).then(function() {
@@ -1031,7 +1031,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         if (native_pack_quantity != 1) {
             pack_size_div = `
             <div class='alert alert-small alert-block alert-info'>
-                {% trans "Pack Quantity" %}: ${pack_quantity}<br>
+                {% trans "Pack Quantity" %}: ${formatDecimal(pack_quantity)}<br>
                 {% trans "Received Quantity" %}: <span class='pack_received_quantity' id='items_received_quantity_${pk}'>${received}</span> ${units}
             </div>`;
         }

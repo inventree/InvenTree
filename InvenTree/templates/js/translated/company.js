@@ -1246,13 +1246,20 @@ function loadSupplierPartTable(table, url, options) {
                 title: '{% trans "Pack Quantity" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var output = `${value}`;
 
-                    if (row.part_detail && row.part_detail.units) {
-                        output += `<span class='fas fa-info-circle float-right' title='{% trans "Base Units" %}: ${row.part_detail.units}'></span>`;
+                    let html = '';
+
+                    if (value) {
+                        html = value;
+                    } else {
+                        html = '-';
                     }
 
-                    return output;
+                    if (row.part_detail && row.part_detail.units) {
+                        html += `<span class='fas fa-info-circle float-right' title='{% trans "Base Units" %}: ${row.part_detail.units}'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {
