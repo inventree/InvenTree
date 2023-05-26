@@ -100,7 +100,11 @@ class MachinesRegistry:
 
         # initialize machines after all machine instances were created
         for machine in self.machines.values():
-            machine.initialize()
+            try:
+                machine.initialize()
+            except Exception:
+                # TODO: handle exception
+                pass
 
     def get_machines(self, **kwargs):
         """Get loaded machines from registry. (By default only active machines)

@@ -43,7 +43,7 @@ class Machine(models.Model):
         return f"{self.name}"
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Override to set origignal state of the machine instance."""
+        """Override to set original state of the machine instance."""
         super().__init__(*args, **kwargs)
 
         self.errors = []
@@ -57,7 +57,7 @@ class Machine(models.Model):
         if not self.machine_type:
             self.errors.append(f"Machine type '{self.machine_type_key}' not found")
         if self.machine_type and self.driver and not isinstance(self.driver, self.machine_type.base_driver):
-            self.errors.append(f"'{self.driver.NAME}' is incompatibe with machine type '{self.machine_type.NAME}'")
+            self.errors.append(f"'{self.driver.NAME}' is incompatible with machine type '{self.machine_type.NAME}'")
 
         if len(self.errors) > 0:
             return
@@ -79,7 +79,7 @@ class Machine(models.Model):
         return format_html_join(mark_safe("<br>"), "{}", ((str(error),) for error in self.errors)) or mark_safe(f"<i>{_('No errors')}</i>")
 
     def initialize(self):
-        """Machine initialitation function, gets called after all machines are loaded"""
+        """Machine initialization function, gets called after all machines are loaded"""
         if self.driver is None:
             return
 
@@ -98,21 +98,20 @@ class Machine(models.Model):
 
         return MachineSetting.get_setting(key, machine=self, cache=cache)
 
-    def set_setting(self, key, value, user=None):
+    def set_setting(self, key, value):
         """Set plugin setting value by key.
 
         Arguments:
             key: The 'name' of the setting to set
             value: The 'value' of the setting
-            user: TODO: what is this doing?
         """
         from machine.models import MachineSetting
 
-        MachineSetting.set_setting(key, value, user, machine=self)
+        MachineSetting.set_setting(key, value, None, machine=self)
 
 
 class MachineSetting(common.models.BaseInvenTreeSetting):
-    """This models represents settings for individial machines."""
+    """This models represents settings for individual machines."""
 
     typ = "machine"
     extra_unique_fields = ["machine"]
