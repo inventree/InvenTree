@@ -41,7 +41,7 @@ def migrate_part_units(apps, schema_editor):
         try:
             ureg.Unit(part.units)
             continue
-        except pint.errors.UndefinedUnitError:
+        except Exception:
             pass
 
         # Check a lower-case version
@@ -52,7 +52,7 @@ def migrate_part_units(apps, schema_editor):
             part.save()
             n_converted += 1
             continue
-        except pint.errors.UndefinedUnitError:
+        except Exception:
             pass
 
         found = False
