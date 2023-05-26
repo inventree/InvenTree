@@ -11,6 +11,7 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError
 
+import InvenTree.conversion
 import InvenTree.tasks
 from InvenTree.config import get_setting
 from InvenTree.ready import canAppAccessDatabase, isInTestMode
@@ -45,6 +46,9 @@ class InvenTreeConfig(AppConfig):
                 self.update_exchange_rates()
 
         self.collect_notification_methods()
+
+        # Ensure the unit registry is loaded
+        InvenTree.conversion.reload_unit_registry()
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()

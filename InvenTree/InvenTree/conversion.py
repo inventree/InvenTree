@@ -15,11 +15,29 @@ def get_unit_registry():
 
     # Cache the unit registry for speedier access
     if _unit_registry is None:
-        _unit_registry = pint.UnitRegistry()
-
-    # TODO: Allow for custom units to be defined in the database
+        reload_unit_registry()
 
     return _unit_registry
+
+
+def reload_unit_registry():
+    """Reload the unit registry from the database.
+
+    This function is called at startup, and whenever the database is updated.
+    """
+
+    global _unit_registry
+
+    _unit_registry = pint.UnitRegistry()
+
+    # Define some "standard" additional units
+    _unit_registry.define('piece = 1')
+    _unit_registry.define('each = 1 = ea')
+    _unit_registry.define('dozen = 12 = dz')
+    _unit_registry.define('hundred = 100')
+    _unit_registry.define('thousand = 1000')
+
+    # TODO: Allow for custom units to be defined in the database
 
 
 def convert_physical_value(value: str, unit: str = None):
@@ -30,7 +48,7 @@ def convert_physical_value(value: str, unit: str = None):
         unit: Optional unit to convert to, and validate against
 
     Raises:
-        ValidationError: If the value is invalid
+        ValidationError: If the value is invalid or cannot be converted to the specified unit
 
     Returns:
         The converted quantity, in the specified units
@@ -62,11 +80,9 @@ def convert_physical_value(value: str, unit: str = None):
         # At this point we *should* have a valid pint value
         # To double check, look at the maginitude
         float(val.magnitude)
-    except ValueError:
+    except (TypeError, ValueError):
         error = _('Provided value is not a valid number')
-    except pint.errors.UndefinedUnitError:
-        error = _('Provided value has an invalid unit')
-    except pint.errors.DefinitionSyntaxError:
+    except (pint.errors.UndefinedUnitError, pint.errors.DefinitionSyntaxError):
         error = _('Provided value has an invalid unit')
     except pint.errors.DimensionalityError:
         error = _('Provided value could not be converted to the specified unit')

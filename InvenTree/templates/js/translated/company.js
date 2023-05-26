@@ -138,7 +138,7 @@ function supplierPartFields(options={}) {
         packaging: {
             icon: 'fa-box',
         },
-        pack_size: {},
+        pack_quantity: {},
     };
 
     if (options.part) {
@@ -1242,17 +1242,24 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
             },
             {
-                field: 'pack_size',
+                field: 'pack_quantity',
                 title: '{% trans "Pack Quantity" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var output = `${value}`;
 
-                    if (row.part_detail && row.part_detail.units) {
-                        output += ` ${row.part_detail.units}`;
+                    let html = '';
+
+                    if (value) {
+                        html = value;
+                    } else {
+                        html = '-';
                     }
 
-                    return output;
+                    if (row.part_detail && row.part_detail.units) {
+                        html += `<span class='fas fa-info-circle float-right' title='{% trans "Base Units" %}: ${row.part_detail.units}'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {
