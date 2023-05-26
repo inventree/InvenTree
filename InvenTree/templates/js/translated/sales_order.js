@@ -379,7 +379,7 @@ function completePendingShipments(order_id, options={}) {
  */
 function completePendingShipmentsHelper(shipments, shipment_idx, options={}) {
     if (shipment_idx < shipments.length) {
-        completeSalseOrderShipment(shipments[shipment_idx].pk,
+        completeSalesOrderShipment(shipments[shipment_idx].pk,
             {
                 buttons: [
                     {
