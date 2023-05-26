@@ -458,7 +458,7 @@ function loadPartSupplierPricingTable(options={}) {
             data = data.sort((a, b) => (a.quantity - b.quantity));
 
             var graphLabels = Array.from(data, (x) => (`${x.part_detail.SKU} - {% trans "Quantity" %} ${x.quantity}`));
-            var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_size));
+            var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_quantity_native));
 
             if (chart) {
                 chart.destroy();
@@ -518,7 +518,7 @@ function loadPartSupplierPricingTable(options={}) {
                     }
 
                     // Convert to unit pricing
-                    var unit_price = row.price / row.part_detail.pack_size;
+                    var unit_price = row.price / row.part_detail.pack_quantity_native;
 
                     var html = formatCurrency(unit_price, {
                         currency: row.price_currency
@@ -811,9 +811,12 @@ function loadPurchasePriceHistoryTable(options={}) {
                         return '-';
                     }
 
-                    return formatCurrency(row.purchase_price / row.supplier_part_detail.pack_size, {
-                        currency: row.purchase_price_currency
-                    });
+                    return formatCurrency(
+                        row.purchase_price / row.supplier_part_detail.pack_quantity_native,
+                        {
+                            currency: row.purchase_price_currency
+                        }
+                    );
                 }
             },
         ]

@@ -7,6 +7,7 @@ import time
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
@@ -18,6 +19,7 @@ from djmoney.money import Money
 import common.models
 import common.notifications
 import common.settings
+import company.models
 import InvenTree.helpers
 import InvenTree.tasks
 import part.models
@@ -433,7 +435,7 @@ def scheduled_stocktake_reports():
 def rebuild_parameters(template_id):
     """Rebuild all parameters for a given template.
 
-    This method is called when a base template is changed,
+    This function is called when a base template is changed,
     which may cause the base unit to be adjusted.
     """
 
@@ -452,7 +454,35 @@ def rebuild_parameters(template_id):
         parameter.calculate_numeric_value()
 
         if value_old != parameter.data_numeric:
+            parameter.full_clean()
             parameter.save()
             n += 1
 
     logger.info(f"Rebuilt {n} parameters for template '{template.name}'")
+
+
+def rebuild_supplier_parts(part_id):
+    """Rebuild all SupplierPart objects for a given part.
+
+    This function is called when a bart part is changed,
+    which may cause the native units of any supplier parts to be updated
+    """
+
+    try:
+        prt = part.models.Part.objects.get(pk=part_id)
+    except part.models.Part.DoesNotExist:
+        return
+
+    supplier_parts = company.models.SupplierPart.objects.filter(part=prt)
+
+    n = supplier_parts.count()
+
+    for supplier_part in supplier_parts:
+        # Re-save the part, to ensure that the units have updated correctly
+        try:
+            supplier_part.full_clean()
+            supplier_part.save()
+        except ValidationError:
+            pass
+
+    logger.info(f"Rebuilt {n} supplier parts for part '{prt.name}'")

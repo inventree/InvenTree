@@ -602,11 +602,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Create a new stock item
         if line.part and quantity > 0:
 
-            # Take the 'pack_size' of the SupplierPart into account
-            pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
+            # Calculate received quantity in base units
+            stock_quantity = line.part.base_quantity(quantity)
 
+            # Calculate unit purchase price (in base units)
             if line.purchase_price:
-                unit_purchase_price = line.purchase_price / line.part.pack_size
+                unit_purchase_price = line.purchase_price
+                unit_purchase_price /= line.part.base_quantity(1)
             else:
                 unit_purchase_price = None
 
@@ -623,7 +625,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     part=line.part.part,
                     supplier_part=line.part,
                     location=location,
-                    quantity=1 if serialize else pack_quantity,
+                    quantity=1 if serialize else stock_quantity,
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
@@ -656,7 +658,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 )
 
         # Update the number of parts received against the particular line item
-        # Note that this quantity does *not* take the pack_size into account, it is "number of packs"
+        # Note that this quantity does *not* take the pack_quantity into account, it is "number of packs"
         line.received += quantity
         line.save()
 
