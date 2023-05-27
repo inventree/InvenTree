@@ -530,7 +530,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
         # Filter to limit builds to "active"
         build_filter = Q(
-            status__in=BuildStatus.ACTIVE_CODES
+            status__in=BuildStatus.ACTIVE_CODES.value
         )
 
         # Annotate with the total 'building' quantity

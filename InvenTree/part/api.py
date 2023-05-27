@@ -522,7 +522,7 @@ class PartScheduling(RetrieveAPI):
         # Add build orders (incoming stock) information
         build_orders = Build.objects.filter(
             part=part,
-            status__in=BuildStatus.ACTIVE_CODES
+            status__in=BuildStatus.ACTIVE_CODES.value
         )
 
         for build in build_orders:
@@ -567,12 +567,12 @@ class PartScheduling(RetrieveAPI):
                 # An "inherited" BOM item filters down to variant parts also
                 childs = bom_item.part.get_descendants(include_self=True)
                 builds = Build.objects.filter(
-                    status__in=BuildStatus.ACTIVE_CODES,
+                    status__in=BuildStatus.ACTIVE_CODES.value,
                     part__in=childs,
                 )
             else:
                 builds = Build.objects.filter(
-                    status__in=BuildStatus.ACTIVE_CODES,
+                    status__in=BuildStatus.ACTIVE_CODES.value,
                     part=bom_item.part,
                 )
 
@@ -1197,7 +1197,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
         if stock_to_build is not None:
             # Get active builds
-            builds = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES)
+            builds = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES.value)
             # Store parts with builds needing stock
             parts_needed_to_complete_builds = []
             # Filter required parts

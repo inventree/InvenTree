@@ -131,7 +131,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         completed = Q(status=BuildStatus.COMPLETE) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
 
         # Order target date falls witin specified range
-        pending = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = Q(status__in=BuildStatus.ACTIVE_CODES.value) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders
 
@@ -330,7 +330,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
     @property
     def active(self):
         """Return True if this build is active."""
-        return self.status in BuildStatus.ACTIVE_CODES
+        return self.status in BuildStatus.ACTIVE_CODES.value
 
     @property
     def bom_items(self):
@@ -1186,7 +1186,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         - PENDING
         - HOLDING
         """
-        return self.status in BuildStatus.ACTIVE_CODES
+        return self.status in BuildStatus.ACTIVE_CODES.value
 
     @property
     def is_complete(self):

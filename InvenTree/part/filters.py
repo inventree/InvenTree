@@ -111,7 +111,7 @@ def annotate_build_order_allocations(reference: str = ''):
     """
 
     # Build filter only returns 'active' build orders
-    build_filter = Q(build__status__in=BuildStatus.ACTIVE_CODES)
+    build_filter = Q(build__status__in=BuildStatus.ACTIVE_CODES.value)
 
     return Coalesce(
         SubquerySum(

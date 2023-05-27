@@ -158,7 +158,7 @@ def check_overdue_build_orders():
 
     overdue_orders = build.models.Build.objects.filter(
         target_date=yesterday,
-        status__in=BuildStatus.ACTIVE_CODES
+        status__in=BuildStatus.ACTIVE_CODES.value
     )
 
     for bo in overdue_orders:

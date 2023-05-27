@@ -1069,7 +1069,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
             part__in=self.get_used_in(),
-            status__in=BuildStatus.ACTIVE_CODES
+            status__in=BuildStatus.ACTIVE_CODES.value
         )
 
         return builds
@@ -1323,7 +1323,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         Builds marked as 'complete' or 'cancelled' are ignored
         """
-        return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES)
+        return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES.value)
 
     @property
     def quantity_being_built(self):

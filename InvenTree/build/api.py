@@ -42,9 +42,9 @@ class BuildFilter(rest_filters.FilterSet):
     def filter_active(self, queryset, name, value):
         """Filter the queryset to either include or exclude orders which are active."""
         if str2bool(value):
-            return queryset.filter(status__in=BuildStatus.ACTIVE_CODES)
+            return queryset.filter(status__in=BuildStatus.ACTIVE_CODES.value)
         else:
-            return queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
+            return queryset.exclude(status__in=BuildStatus.ACTIVE_CODES.value)
 
     overdue = rest_filters.BooleanFilter(label='Build is overdue', method='filter_overdue')
 
