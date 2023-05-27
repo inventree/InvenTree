@@ -15,7 +15,7 @@
 {% endblock breadcrumbs %}
 
 {% block thumbnail %}
-<img class="part-thumb"
+<img alt="{% trans "Part thumbnail" %}" class="part-thumb"
 {% if build.part.image %}
 src="{{ build.part.image.preview.url }}"
 {% else %}

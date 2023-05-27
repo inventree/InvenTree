@@ -1450,6 +1450,8 @@ class OrderCalendarExport(ICalFeed):
             ordertype_title = _('Purchase Order')
         elif obj["ordertype"] == 'sales-order':
             ordertype_title = _('Sales Order')
+        elif obj["ordertype"] == 'return-order':
+            ordertype_title = _('Return Order')
         else:
             ordertype_title = _('Unknown')
 
@@ -1460,7 +1462,7 @@ class OrderCalendarExport(ICalFeed):
         return f'//{self.instance_url}//{self.title(obj)}//EN'
 
     def items(self, obj):
-        """Return a list of PurchaseOrders.
+        """Return a list of Orders.
 
         Filters:
         - Only return those which have a target_date set
@@ -1473,23 +1475,32 @@ class OrderCalendarExport(ICalFeed):
                 outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE)
             else:
                 outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
-        else:
+        elif obj["ordertype"] == 'sales-order':
             if obj['include_completed'] is False:
                 # Do not include completed (=shipped) orders from list in this case
                 # Shipped status = 20
                 outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED)
             else:
                 outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
+        elif obj["ordertype"] == 'return-order':
+            if obj['include_completed'] is False:
+                # Do not include completed orders from list in this case
+                # Complete status = 30
+                outlist = models.ReturnOrder.objects.filter(target_date__isnull=False).filter(status__lt=ReturnOrderStatus.COMPLETE)
+            else:
+                outlist = models.ReturnOrder.objects.filter(target_date__isnull=False)
+        else:
+            outlist = []
 
         return outlist
 
     def item_title(self, item):
-        """Set the event title to the purchase order reference"""
-        return item.reference
+        """Set the event title to the order reference"""
+        return f"{item.reference}"
 
     def item_description(self, item):
         """Set the event description"""
-        return item.description
+        return f"Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}"
 
     def item_start_datetime(self, item):
         """Set event start to target date. Goal is all-day event."""
@@ -1665,6 +1676,6 @@ order_api_urls = [
         path('', ReturnOrderExtraLineList.as_view(), name='api-return-order-extra-line-list'),
     ])),
 
-    # API endpoint for subscribing to ICS calendar of purchase/sales orders
-    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order)/calendar.ics', OrderCalendarExport(), name='api-po-so-calendar'),
+    # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
+    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order)/calendar.ics', OrderCalendarExport(), name='api-po-so-calendar'),
 ]

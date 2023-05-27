@@ -92,7 +92,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb'
+<img alt="{% trans "Supplier part thumbnail" %}"  class='part-thumb'
 {% if order.supplier and order.supplier.image %}
 src="{{ order.supplier.image.url }}"
 {% else %}

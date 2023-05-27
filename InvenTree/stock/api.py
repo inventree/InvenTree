@@ -614,7 +614,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     'supplier_part': _('The given supplier part does not exist'),
                 })
 
-            if supplier_part.pack_size != 1:
+            if supplier_part.base_quantity() != 1:
                 # Skip this check if pack size is 1 - makes no difference
                 # use_pack_size = True -> Multiply quantity by pack size
                 # use_pack_size = False -> Use quantity as is
@@ -624,10 +624,9 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     })
                 else:
                     if bool(data.get('use_pack_size')):
-                        data['quantity'] = int(quantity) * float(supplier_part.pack_size)
-                        quantity = data.get('quantity', None)
+                        quantity = data['quantity'] = supplier_part.base_quantity(quantity)
                         # Divide purchase price by pack size, to save correct price per stock item
-                        data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_size)
+                        data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_quantity_native)
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above

@@ -19,10 +19,14 @@ def update_template_units(apps, schema_editor):
 
     n_templates = PartParameterTemplate.objects.count()
 
+    if n_templates == 0:
+        # Escape early
+        return
+
     ureg = InvenTree.conversion.get_unit_registry()
 
     n_converted = 0
-    invalid_units = []
+    invalid_units = set()
 
     for template in PartParameterTemplate.objects.all():
 
@@ -41,7 +45,7 @@ def update_template_units(apps, schema_editor):
         try:
             ureg.Unit(template.units)
             continue
-        except pint.errors.UndefinedUnitError:
+        except Exception:
             pass
 
         # Check a lower-case version
@@ -52,7 +56,7 @@ def update_template_units(apps, schema_editor):
             template.save()
             n_converted += 1
             continue
-        except pint.errors.UndefinedUnitError:
+        except Exception:
             pass
 
         found = False
@@ -69,8 +73,8 @@ def update_template_units(apps, schema_editor):
                 break
 
         if not found:
-            print(f"warningCould not find unit match for {template.units}")
-            invalid_units.append(template.units)
+            print(f"warning: Could not find unit match for {template.units}")
+            invalid_units.add(template.units)
 
     print(f"Updated units for {n_templates} parameter templates")
 
@@ -98,12 +102,12 @@ def convert_to_numeric_value(value: str, units: str):
         try:
             result = InvenTree.conversion.convert_physical_value(value, units)
             result = float(result.magnitude)
-        except (ValidationError, ValueError):
+        except Exception:
             pass
     else:
         try:
             result = float(value)
-        except ValueError:
+        except Exception:
             pass
 
     return result
@@ -122,8 +126,11 @@ def update_parameter_values(apps, schema_editor):
 
     # Convert each parameter value to a the specified units
     for parameter in PartParameter.objects.all():
-        parameter.data_numeric = convert_to_numeric_value(parameter.data, parameter.template.units)
-        parameter.save()
+        try:
+            parameter.data_numeric = convert_to_numeric_value(parameter.data, parameter.template.units)
+            parameter.save()
+        except Exception:
+            pass
 
     if n_params > 0:
         print(f"Updated {n_params} parameter values")

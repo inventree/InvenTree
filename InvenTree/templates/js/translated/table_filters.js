@@ -626,6 +626,11 @@ function getPartTableFilters() {
             type: 'bool',
             title: '{% trans "Component" %}',
         },
+        has_units: {
+            type: 'bool',
+            title: '{% trans "Has Units" %}',
+            description: '{% trans "Part has defined units" %}',
+        },
         has_ipn: {
             type: 'bool',
             title: '{% trans "Has IPN" %}',
