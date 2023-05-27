@@ -28,6 +28,11 @@ class MachinesRegistry:
         self.discover_drivers()
         self.load_machines()
 
+    def terminate(self):
+        for machine in self.machines.values():
+            if machine.active:
+                machine.terminate()
+
     def discover_machine_types(self):
         import InvenTree.helpers
 
@@ -96,7 +101,8 @@ class MachinesRegistry:
 
         # initialize machines after all machine instances were created
         for machine in self.machines.values():
-            machine.initialize()
+            if machine.active:
+                machine.initialize()
 
     def add_machine(self, machine_config, initialize=True):
         machine_type = self.machine_types.get(machine_config.machine_type_key, None)
@@ -107,8 +113,14 @@ class MachinesRegistry:
         machine: BaseMachineType = machine_type(machine_config)
         self.machines[str(machine.pk)] = machine
 
-        if initialize:
+        if initialize and machine.active:
             machine.initialize()
+
+    def remove_machine(self, machine: BaseMachineType):
+        if machine.active:
+            machine.terminate()
+
+        self.machines.pop(machine.pk, None)
 
     def get_machines(self, **kwargs):
         """Get loaded machines from registry. (By default only active machines)

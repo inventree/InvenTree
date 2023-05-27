@@ -1,5 +1,6 @@
 """Functions to check if certain parts of InvenTree are ready."""
 
+import os
 import sys
 
 
@@ -11,6 +12,18 @@ def isInTestMode():
 def isImportingData():
     """Returns True if the database is currently importing data, e.g. 'loaddata' command is performed."""
     return 'loaddata' in sys.argv
+
+
+def isInMainThread():
+    """Django starts two processes, one for the actual dev server and the other to reload the application.
+
+    The RUN_MAIN env is set in that case. However if --noreload is applied, this variable
+    is not set because there are no different threads.
+    """
+    if '--noreload' in sys.argv:
+        return True
+
+    return os.environ.get('RUN_MAIN', None) == 'true'
 
 
 def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False):

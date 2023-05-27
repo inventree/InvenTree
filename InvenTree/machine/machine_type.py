@@ -71,6 +71,14 @@ class BaseDriver(ClassValidationMixin):
         """
         pass
 
+    def terminate_machine(self, machine: "BaseMachineType"):
+        """This method get called for each machine before server termination or this machine gets removed.
+
+        Arguments:
+            machine: Machine instance
+        """
+        pass
+
     def get_machines(self, **kwargs):
         """Return all machines using this driver. (By default only active machines)"""
         from machine import registry
@@ -117,6 +125,10 @@ class BaseMachineType(ClassValidationMixin):
 
         # TODO: add further init stuff here
 
+    def __str__(self):
+        return f"{self.name}"
+
+    # --- properties
     @property
     def pk(self):
         return self.machine_config.pk
@@ -129,6 +141,7 @@ class BaseMachineType(ClassValidationMixin):
     def active(self):
         return self.machine_config.active
 
+    # --- hook functions
     def initialize(self):
         """Machine initialization function, gets called after all machines are loaded"""
         if self.driver is None:
@@ -140,6 +153,18 @@ class BaseMachineType(ClassValidationMixin):
         except Exception as e:
             self.errors.append(e)
 
+    def terminate(self):
+        """Machine termination function, gets called before server is shut down or machine gets removed."""
+        if self.driver is None:
+            return
+
+        try:
+            self.driver.terminate_machine(self)
+            self.initialized = False
+        except Exception as e:
+            self.errors.append(e)
+
+    # --- helper functions
     def get_setting(self, key, cache=False):
         """Return the 'value' of the setting associated with this machine.
 
