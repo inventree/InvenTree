@@ -41,12 +41,23 @@ class StatusCode(int, BaseEnum):
         """Define object out of args."""
         obj = int.__new__(cls)
         obj._value_ = args[0]
+
+        # Normal item definition
         if len(args) == 1:
             obj.label = args[0]
             obj.color = 'secondary'
         else:
             obj.label = args[1]
             obj.color = args[2] if len(args) > 2 else 'secondary'
+
+        # Check if this might be a code:
+        # - the first arg is a list
+        # - the first arg has at least one item
+        # - the first item in the first arg has three items (could be a code)
+        if isinstance(args[0], list) and len(args[0]) >= 1 and len(args[0][0]) == 3:
+            # Look up referenced enum
+            obj._value_ = [cls.values(x[0]) for x in args[0]]
+
         return obj
 
     @classmethod
