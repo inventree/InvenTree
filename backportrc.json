@@ -1,0 +1,13 @@
+{
+  // example repo info
+  "repoOwner": "Oliver Walters",
+  "repoName": "InvenTree",
+
+  // the branches available to backport to
+  "targetBranchChoices": [],
+
+  // In this case, adding the label "auto-backport-to-production" will backport the PR to the "production" branch
+  "branchLabelMapping": {
+    "^backport-to-(.+)$": "$1"
+  }
+}
