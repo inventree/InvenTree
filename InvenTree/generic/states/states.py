@@ -154,3 +154,12 @@ class StatusCode(int, BaseEnum):
     def list(cls):
         """Return the StatusCode options as a list of mapped key / value items."""
         return list(cls.dict().values())
+
+    @classmethod
+    def template_context(cls):
+        """Return a dict representation containing all required information for templates."""
+
+        ret = {x.name: x.value for x in cls.values()}
+        ret['list'] = cls.list()
+
+        return ret
