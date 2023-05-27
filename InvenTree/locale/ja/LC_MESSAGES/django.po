@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-26 07:03+0000\n"
-"PO-Revision-Date: 2023-05-26 22:36\n"
+"POT-Creation-Date: 2023-05-26 22:54+0000\n"
+"PO-Revision-Date: 2023-05-27 22:51\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -1520,6 +1520,10 @@ msgstr ""
 #: build/tasks.py:124
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
+msgstr ""
+
+#: build/templates/build/build_base.html:18
+msgid "Part thumbnail"
 msgstr ""
 
 #: build/templates/build/build_base.html:39
@@ -4940,6 +4944,10 @@ msgstr ""
 msgid "Complete Order"
 msgstr ""
 
+#: order/templates/order/order_base.html:95
+msgid "Supplier part thumbnail"
+msgstr ""
+
 #: order/templates/order/order_base.html:110
 #: order/templates/order/return_order_base.html:102
 #: order/templates/order/sales_order_base.html:107
@@ -5151,6 +5159,11 @@ msgstr ""
 #: order/templates/order/return_order_detail.html:89
 #: order/templates/order/sales_order_detail.html:149
 msgid "Order Notes"
+msgstr ""
+
+#: order/templates/order/return_order_base.html:18
+#: order/templates/order/sales_order_base.html:18
+msgid "Customer logo thumbnail"
 msgstr ""
 
 #: order/templates/order/return_order_base.html:61
