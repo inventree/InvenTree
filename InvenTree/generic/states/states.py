@@ -28,7 +28,7 @@ class BaseEnum(enum.Enum):
         return self.value != obj
 
 
-class StatusCode(BaseEnum):
+class StatusCode(int, BaseEnum):
     """Base class for representing a set of StatusCodes.
 
     Use enum syntax to define the status codes, e.g.
@@ -39,7 +39,7 @@ class StatusCode(BaseEnum):
 
     def __new__(cls, *args):
         """Define object out of args."""
-        obj = object.__new__(cls)
+        obj = int.__new__(cls)
         obj._value_ = args[0]
         if len(args) == 1:
             obj.label = args[0]
