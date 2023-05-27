@@ -1103,7 +1103,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatus.OPEN.value,
             part=self
         )
 
@@ -1116,7 +1116,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Return the quantity of this part required for active sales orders."""
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatus.OPEN.value,
             part=self
         )
 
@@ -1395,13 +1395,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         if pending is True:
             # Look only for 'open' orders which have not shipped
             queryset = queryset.filter(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatus.OPEN.value,
                 shipment__shipment_date=None,
             )
         elif pending is False:
             # Look only for 'closed' orders or orders which have shipped
             queryset = queryset.exclude(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatus.OPEN.value,
                 shipment__shipment_date=None,
             )
 
@@ -2155,7 +2155,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
             # Look at any incomplete line item for open orders
             lines = sp.purchase_order_line_items.filter(
-                order__status__in=PurchaseOrderStatus.OPEN,
+                order__status__in=PurchaseOrderStatus.OPEN.value,
                 quantity__gt=F('received'),
             )
 

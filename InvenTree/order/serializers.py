@@ -381,7 +381,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     def validate_purchase_order(self, purchase_order):
         """Validation for the 'purchase_order' field"""
-        if purchase_order.status not in PurchaseOrderStatus.OPEN:
+        if purchase_order.status not in PurchaseOrderStatus.OPEN.value:
             raise ValidationError(_('Order is not open'))
 
         return purchase_order
@@ -906,7 +906,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    Q(order__status__in=SalesOrderStatus.OPEN) & order.models.SalesOrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                    Q(order__status__in=SalesOrderStatus.OPEN.value) & order.models.SalesOrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),
             )

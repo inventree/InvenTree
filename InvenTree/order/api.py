@@ -432,9 +432,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         """Filter by "pending" status (order status = pending)"""
 
         if str2bool(value):
-            return queryset.filter(order__status__in=PurchaseOrderStatus.OPEN)
+            return queryset.filter(order__status__in=PurchaseOrderStatus.OPEN.value)
         else:
-            return queryset.exclude(order__status__in=PurchaseOrderStatus.OPEN)
+            return queryset.exclude(order__status__in=PurchaseOrderStatus.OPEN.value)
 
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
@@ -449,7 +449,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
             return queryset.filter(q)
         else:
             # Only count "pending" orders
-            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatus.OPEN)
+            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatus.OPEN.value)
 
 
 class PurchaseOrderLineItemMixin:
@@ -985,12 +985,12 @@ class SalesOrderAllocationList(ListAPI):
                 # Filter only "open" orders
                 # Filter only allocations which have *not* shipped
                 queryset = queryset.filter(
-                    line__order__status__in=SalesOrderStatus.OPEN,
+                    line__order__status__in=SalesOrderStatus.OPEN.value,
                     shipment__shipment_date=None,
                 )
             else:
                 queryset = queryset.exclude(
-                    line__order__status__in=SalesOrderStatus.OPEN,
+                    line__order__status__in=SalesOrderStatus.OPEN.value,
                     shipment__shipment_date=None
                 )
 

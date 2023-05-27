@@ -334,7 +334,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         customer=None,
         consumed_by=None,
         is_building=False,
-        status__in=StockStatus.AVAILABLE_CODES
+        status__in=StockStatus.AVAILABLE_CODES.value
     )
 
     # A query filter which can be used to filter StockItem objects which have expired
@@ -1082,12 +1082,12 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         if active is True:
             query = query.filter(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatus.OPEN.value,
                 shipment__shipment_date=None
             )
         elif active is False:
             query = query.exclude(
-                line__order__status__in=SalesOrderStatus.OPEN
+                line__order__status__in=SalesOrderStatus.OPEN.value
             ).exclude(
                 shipment__shipment_date=None
             )

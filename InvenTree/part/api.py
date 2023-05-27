@@ -479,7 +479,7 @@ class PartScheduling(RetrieveAPI):
         # Add purchase order (incoming stock) information
         po_lines = order.models.PurchaseOrderLineItem.objects.filter(
             part__part=part,
-            order__status__in=PurchaseOrderStatus.OPEN,
+            order__status__in=PurchaseOrderStatus.OPEN.value,
         )
 
         for line in po_lines:
@@ -502,7 +502,7 @@ class PartScheduling(RetrieveAPI):
         # Add sales order (outgoing stock) information
         so_lines = order.models.SalesOrderLineItem.objects.filter(
             part=part,
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatus.OPEN.value,
         )
 
         for line in so_lines:

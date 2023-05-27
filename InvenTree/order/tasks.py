@@ -68,7 +68,7 @@ def check_overdue_purchase_orders():
 
     overdue_orders = order.models.PurchaseOrder.objects.filter(
         target_date=yesterday,
-        status__in=PurchaseOrderStatus.OPEN
+        status__in=PurchaseOrderStatus.OPEN.value
     )
 
     for po in overdue_orders:
@@ -131,7 +131,7 @@ def check_overdue_sales_orders():
 
     overdue_orders = order.models.SalesOrder.objects.filter(
         target_date=yesterday,
-        status__in=SalesOrderStatus.OPEN
+        status__in=SalesOrderStatus.OPEN.value
     )
 
     for po in overdue_orders:

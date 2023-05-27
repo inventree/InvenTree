@@ -697,7 +697,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     def open_orders(self):
         """Return a database query for PurchaseOrder line items for this SupplierPart, limited to purchase orders that are open / outstanding."""
-        return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=PurchaseOrderStatus.OPEN)
+        return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=PurchaseOrderStatus.OPEN.value)
 
     def on_order(self):
         """Return the total quantity of items currently on order.

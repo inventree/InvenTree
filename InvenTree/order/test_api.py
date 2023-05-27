@@ -1655,7 +1655,7 @@ class SalesOrderDownloadTest(OrderTest):
                 fo,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
-                required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatus.OPEN).count(),
+                required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatus.OPEN.value).count(),
                 delimiter='\t',
             )
 

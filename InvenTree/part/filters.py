@@ -46,7 +46,7 @@ def annotate_on_order_quantity(reference: str = ''):
     # Filter only 'active' purhase orders
     # Filter only line with outstanding quantity
     order_filter = Q(
-        order__status__in=PurchaseOrderStatus.OPEN,
+        order__status__in=PurchaseOrderStatus.OPEN.value,
         quantity__gt=F('received'),
     )
 
@@ -137,7 +137,7 @@ def annotate_sales_order_allocations(reference: str = ''):
 
     # Order filter only returns incomplete shipments for open orders
     order_filter = Q(
-        line__order__status__in=SalesOrderStatus.OPEN,
+        line__order__status__in=SalesOrderStatus.OPEN.value,
         shipment__shipment_date=None,
     )
 

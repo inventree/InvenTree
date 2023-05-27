@@ -1647,7 +1647,7 @@ class PartDetailTests(PartAPITestBase):
         # How many parts are 'on order' for this part?
         lines = order.models.PurchaseOrderLineItem.objects.filter(
             part__part__pk=1,
-            order__status__in=PurchaseOrderStatus.OPEN,
+            order__status__in=PurchaseOrderStatus.OPEN.value,
         )
 
         on_order = 0
@@ -2202,7 +2202,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
                 for line_item in sp.purchase_order_line_items.all():
                     po = line_item.order
 
-                    if po.status in PurchaseOrderStatus.OPEN:
+                    if po.status in PurchaseOrderStatus.OPEN.value:
                         remaining = line_item.quantity - line_item.received
 
                         if remaining > 0:

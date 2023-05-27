@@ -335,7 +335,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         received = Q(status=PurchaseOrderStatus.COMPLETE) & Q(complete_date__gte=min_date) & Q(complete_date__lte=max_date)
 
         # Construct a queryset for "pending" orders within the range
-        pending = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = Q(status__in=PurchaseOrderStatus.OPEN.value) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders within the range
 
@@ -511,7 +511,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @property
     def is_open(self):
         """Return True if the PurchaseOrder is 'open'"""
-        return self.status in PurchaseOrderStatus.OPEN
+        return self.status in PurchaseOrderStatus.OPEN.value
 
     def can_cancel(self):
         """A PurchaseOrder can only be cancelled under the following circumstances.
@@ -741,10 +741,10 @@ class SalesOrder(TotalPriceMixin, Order):
             return queryset
 
         # Construct a queryset for "completed" orders within the range
-        completed = Q(status__in=SalesOrderStatus.COMPLETE) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
+        completed = Q(status__in=SalesOrderStatus.COMPLETE.value) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
 
         # Construct a queryset for "pending" orders within the range
-        pending = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = Q(status__in=SalesOrderStatus.OPEN.value) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO: Construct a queryset for "overdue" orders within the range
 
@@ -815,7 +815,7 @@ class SalesOrder(TotalPriceMixin, Order):
     @property
     def is_open(self):
         """Return True if this order is 'open' (either 'pending' or 'in_progress')"""
-        return self.status in SalesOrderStatus.OPEN
+        return self.status in SalesOrderStatus.OPEN.value
 
     @property
     def stock_allocations(self):
@@ -1775,7 +1775,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     @property
     def is_open(self):
         """Return True if this order is outstanding"""
-        return self.status in ReturnOrderStatus.OPEN
+        return self.status in ReturnOrderStatus.OPEN.value
 
     @property
     def is_received(self):
