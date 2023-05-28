@@ -13,10 +13,6 @@ register = template.Library()
 def sso_login_enabled():
     """Return True if single-sign-on is enabled"""
 
-    val = InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO')
-
-    print("SSO Enabled:", val)
-
     return str2bool(InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO'))
 
 

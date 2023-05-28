@@ -2,6 +2,7 @@
 
 """Provides extra global data to all templates."""
 
+import InvenTree.email
 import InvenTree.status
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     ReturnOrderLineStatus, ReturnOrderStatus,
@@ -28,7 +29,7 @@ def health_status(request):
 
     status = {
         'django_q_running': InvenTree.status.is_worker_running(),
-        'email_configured': InvenTree.status.is_email_configured(),
+        'email_configured': InvenTree.email.is_email_configured(),
     }
 
     # The following keys are required to denote system health

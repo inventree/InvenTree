@@ -1,8 +1,9 @@
 ---
-title: How to plugin
+title: Developing Plugins
 ---
 
-## How to write a plugin
+## How to Develop a Plugin
+
 A short introductory guide for plugin beginners.
 
 ### Should it be a plugin?

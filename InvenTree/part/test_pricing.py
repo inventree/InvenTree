@@ -2,6 +2,7 @@
 
 from django.core.exceptions import ObjectDoesNotExist
 
+from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
 import common.models
@@ -25,10 +26,13 @@ class PartPricingTests(InvenTreeTestCase):
         self.generate_exchange_rates()
 
         # Create a new part for performing pricing calculations
+        # We will use 'metres' for the UOM here
+        # Some SupplierPart instances will have different units!
         self.part = part.models.Part.objects.create(
             name='PP',
-            description='A part with pricing',
-            assembly=True
+            description='A part with pricing, measured in metres',
+            assembly=True,
+            units='m'
         )
 
     def create_price_breaks(self):
@@ -44,7 +48,11 @@ class PartPricingTests(InvenTreeTestCase):
             supplier=self.supplier_1,
             part=self.part,
             SKU='SUP_1',
+            pack_quantity='200 cm',
         )
+
+        # Native pack quantity should be 2m
+        self.assertEqual(self.sp_1.pack_quantity_native, 2)
 
         company.models.SupplierPriceBreak.objects.create(
             part=self.sp_1,
@@ -63,15 +71,21 @@ class PartPricingTests(InvenTreeTestCase):
             supplier=self.supplier_2,
             part=self.part,
             SKU='SUP_2',
-            pack_size=2.5,
+            pack_quantity='2.5',
         )
+
+        # Native pack quantity should be 2.5m
+        self.assertEqual(self.sp_2.pack_quantity_native, 2.5)
 
         self.sp_3 = company.models.SupplierPart.objects.create(
             supplier=self.supplier_2,
             part=self.part,
             SKU='SUP_3',
-            pack_size=10
+            pack_quantity='10 inches',
         )
+
+        # Native pack quantity should be 0.254m
+        self.assertEqual(self.sp_3.pack_quantity_native, 0.254)
 
         company.models.SupplierPriceBreak.objects.create(
             part=self.sp_2,
@@ -162,8 +176,8 @@ class PartPricingTests(InvenTreeTestCase):
 
         pricing.update_pricing()
 
-        self.assertEqual(pricing.overall_min, Money('2.014667', 'USD'))
-        self.assertEqual(pricing.overall_max, Money('6.117647', 'USD'))
+        self.assertAlmostEqual(float(pricing.overall_min.amount), 2.015, places=2)
+        self.assertAlmostEqual(float(pricing.overall_max.amount), 3.06, places=2)
 
         # Delete all supplier parts and re-calculate
         self.part.supplier_parts.all().delete()
@@ -319,11 +333,11 @@ class PartPricingTests(InvenTreeTestCase):
 
         # Add some line items to the order
 
-        # $5 AUD each
+        # $5 AUD each @ 2.5m per unit = $2 AUD per metre
         line_1 = po.add_line_item(self.sp_2, quantity=10, purchase_price=Money(5, 'AUD'))
 
-        # $30 CAD each (but pack_size is 10, so really $3 CAD each)
-        line_2 = po.add_line_item(self.sp_3, quantity=5, purchase_price=Money(30, 'CAD'))
+        # $3 CAD each @ 10 inches per unit = $0.3 CAD per inch = $11.81 CAD per metre
+        line_2 = po.add_line_item(self.sp_3, quantity=5, purchase_price=Money(3, 'CAD'))
 
         pricing.update_purchase_cost()
 
@@ -349,8 +363,20 @@ class PartPricingTests(InvenTreeTestCase):
 
         pricing.update_purchase_cost()
 
-        self.assertEqual(pricing.purchase_cost_min, Money('1.333333', 'USD'))
-        self.assertEqual(pricing.purchase_cost_max, Money('1.764706', 'USD'))
+        min_cost_aud = convert_money(pricing.purchase_cost_min, 'AUD')
+        max_cost_cad = convert_money(pricing.purchase_cost_max, 'CAD')
+
+        # Min cost in AUD = $2 AUD per metre
+        self.assertAlmostEqual(float(min_cost_aud.amount), 2, places=2)
+
+        # Min cost in USD
+        self.assertAlmostEqual(float(pricing.purchase_cost_min.amount), 1.3333, places=2)
+
+        # Max cost in CAD = $11.81 CAD per metre
+        self.assertAlmostEqual(float(max_cost_cad.amount), 11.81, places=2)
+
+        # Max cost in USD
+        self.assertAlmostEqual(float(pricing.purchase_cost_max.amount), 6.95, places=2)
 
     def test_delete_with_pricing(self):
         """Test for deleting a part which has pricing information"""

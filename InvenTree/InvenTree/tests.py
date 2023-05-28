@@ -18,6 +18,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 
+import InvenTree.conversion
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.tasks
@@ -31,6 +32,28 @@ from stock.models import StockItem, StockLocation
 from . import config, helpers, ready, status, version
 from .tasks import offload_task
 from .validators import validate_overage
+
+
+class ConversionTest(TestCase):
+    """Tests for conversion of physical units"""
+
+    def test_dimensionless_units(self):
+        """Tests for 'dimensonless' unit quantities"""
+
+        # Test some dimensionless units
+        tests = {
+            'ea': 1,
+            'each': 1,
+            '3 piece': 3,
+            '5 dozen': 60,
+            '3 hundred': 300,
+            '2 thousand': 2000,
+            '12 pieces': 12,
+        }
+
+        for val, expected in tests.items():
+            q = InvenTree.conversion.convert_physical_value(val).to_base_units()
+            self.assertEqual(q.magnitude, expected)
 
 
 class ValidatorTest(TestCase):
