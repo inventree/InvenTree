@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-26 09:46+0000\n"
+"POT-Creation-Date: 2023-05-28 12:14+0000\n"
 "PO-Revision-Date: 2023-02-28 22:38\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -1555,6 +1555,12 @@ msgstr "超时构建顺序"
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "生成订单 {bo} 现在已过期"
+
+#: build/templates/build/build_base.html:18
+#, fuzzy
+#| msgid "Part name"
+msgid "Part thumbnail"
+msgstr "商品名称"
 
 #: build/templates/build/build_base.html:39
 #: company/templates/company/supplier_part.html:36
@@ -5065,6 +5071,12 @@ msgstr ""
 msgid "Complete Order"
 msgstr ""
 
+#: order/templates/order/order_base.html:95
+#, fuzzy
+#| msgid "Supplier part"
+msgid "Supplier part thumbnail"
+msgstr "供应商商品"
+
 #: order/templates/order/order_base.html:110
 #: order/templates/order/return_order_base.html:102
 #: order/templates/order/sales_order_base.html:107
@@ -5282,6 +5294,11 @@ msgstr ""
 #: order/templates/order/return_order_detail.html:89
 #: order/templates/order/sales_order_detail.html:149
 msgid "Order Notes"
+msgstr ""
+
+#: order/templates/order/return_order_base.html:18
+#: order/templates/order/sales_order_base.html:18
+msgid "Customer logo thumbnail"
 msgstr ""
 
 #: order/templates/order/return_order_base.html:61
