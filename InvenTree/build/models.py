@@ -936,6 +936,8 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             else:
                 return 3
 
+        new_items = []
+
         # Get a list of all 'untracked' BOM items
         for bom_item in self.untracked_bom_items:
 
@@ -1006,12 +1008,12 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                     if quantity > 0:
 
                         try:
-                            BuildItem.objects.create(
+                            new_items.append(BuildItem(
                                 build=self,
                                 bom_item=bom_item,
                                 stock_item=stock_item,
                                 quantity=quantity,
-                            )
+                            ))
 
                             # Subtract the required quantity
                             unallocated_quantity -= quantity
@@ -1023,6 +1025,9 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                     if unallocated_quantity <= 0:
                         # We have now fully-allocated this BomItem - no need to continue!
                         break
+
+        # Bulk-create the new BuildItem objects
+        BuildItem.objects.bulk_create(new_items)
 
     def required_quantity(self, bom_item, output=None):
         """Get the quantity of a part required to complete the particular build output.
