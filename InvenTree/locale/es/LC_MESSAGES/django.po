@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 12:14+0000\n"
-"PO-Revision-Date: 2023-05-27 22:52\n"
+"POT-Creation-Date: 2023-05-26 22:54+0000\n"
+"PO-Revision-Date: 2023-05-28 23:11\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -1475,7 +1475,7 @@ msgstr "Debe proporcionarse la adjudicación de artículos"
 
 #: build/serializers.py:943
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr "Ubicación de inventario donde las piezas deben ser obtenidas (dejar en blanco para tomar de cualquier ubicación)"
+msgstr "Ubicación de inventario donde las partes deben ser obtenidas (dejar en blanco para tomar de cualquier ubicación)"
 
 #: build/serializers.py:951
 msgid "Exclude Location"
@@ -2220,7 +2220,7 @@ msgstr "Permitir editar IPN"
 
 #: common/models.py:1122
 msgid "Allow changing the IPN value while editing a part"
-msgstr "Permite cambiar el valor de IPN mientras se edita una pieza"
+msgstr "Permite cambiar el valor de IPN mientras se edita una parte"
 
 #: common/models.py:1128
 msgid "Copy Part BOM Data"
@@ -2232,7 +2232,7 @@ msgstr "Copiar datos BOM por defecto al duplicar una parte"
 
 #: common/models.py:1135
 msgid "Copy Part Parameter Data"
-msgstr "Copiar Parámetros de Pieza"
+msgstr "Copiar parámetros de parte"
 
 #: common/models.py:1136
 msgid "Copy parameter data by default when duplicating a part"
@@ -2262,7 +2262,7 @@ msgstr "Plantilla"
 
 #: common/models.py:1157
 msgid "Parts are templates by default"
-msgstr "Las piezas son plantillas por defecto"
+msgstr "Las partes son plantillas por defecto"
 
 #: common/models.py:1163 part/admin.py:51 part/admin.py:283 part/models.py:994
 #: templates/js/translated/bom.js:1594
@@ -2273,7 +2273,7 @@ msgstr "Montaje"
 
 #: common/models.py:1164
 msgid "Parts can be assembled from other components by default"
-msgstr "Las piezas pueden ser ensambladas desde otros componentes por defecto"
+msgstr "Las partes pueden ser ensambladas desde otros componentes por defecto"
 
 #: common/models.py:1170 part/admin.py:52 part/models.py:1000
 #: templates/js/translated/table_filters.js:627
@@ -2282,7 +2282,7 @@ msgstr "Componente"
 
 #: common/models.py:1171
 msgid "Parts can be used as sub-components by default"
-msgstr "Las piezas pueden ser usadas como subcomponentes por defecto"
+msgstr "Las partes pueden ser usadas como subcomponentes por defecto"
 
 #: common/models.py:1177 part/admin.py:53 part/models.py:1011
 msgid "Purchaseable"
@@ -2290,7 +2290,7 @@ msgstr "Comprable"
 
 #: common/models.py:1178
 msgid "Parts are purchaseable by default"
-msgstr "Las piezas son comprables por defecto"
+msgstr "Las partes son comprables por defecto"
 
 #: common/models.py:1184 part/admin.py:54 part/models.py:1016
 #: templates/js/translated/table_filters.js:653
@@ -2299,7 +2299,7 @@ msgstr "Vendible"
 
 #: common/models.py:1185
 msgid "Parts are salable by default"
-msgstr "Las piezas se pueden vender por defecto"
+msgstr "Las partes se pueden vender por defecto"
 
 #: common/models.py:1191 part/admin.py:56 part/models.py:1006
 #: templates/js/translated/table_filters.js:113
@@ -2310,7 +2310,7 @@ msgstr "Rastreable"
 
 #: common/models.py:1192
 msgid "Parts are trackable by default"
-msgstr "Las piezas son rastreables por defecto"
+msgstr "Las partes son rastreables por defecto"
 
 #: common/models.py:1198 part/admin.py:57 part/models.py:1026
 #: part/templates/part/part_base.html:156
@@ -2321,7 +2321,7 @@ msgstr "Virtual"
 
 #: common/models.py:1199
 msgid "Parts are virtual by default"
-msgstr "Las piezas son virtuales por defecto"
+msgstr "Las partes son virtuales por defecto"
 
 #: common/models.py:1205
 msgid "Show Import in Views"
@@ -2333,11 +2333,11 @@ msgstr "Mostrar el asistente de importación en algunas vistas de partes"
 
 #: common/models.py:1212
 msgid "Show related parts"
-msgstr "Mostrar piezas relacionadas"
+msgstr "Mostrar partes relacionadas"
 
 #: common/models.py:1213
 msgid "Display related parts for a part"
-msgstr "Mostrar partes relacionadas para una pieza"
+msgstr "Mostrar partes relacionadas para una parte"
 
 #: common/models.py:1219
 msgid "Initial Stock Data"
@@ -2361,7 +2361,7 @@ msgstr "Formato de visualización de Nombre de Parte"
 
 #: common/models.py:1234
 msgid "Format to display the part name"
-msgstr "Formato para mostrar el nombre de la pieza"
+msgstr "Formato para mostrar el nombre de la parte"
 
 #: common/models.py:1241
 msgid "Part Category Default Icon"
@@ -2449,7 +2449,7 @@ msgstr "Precios internos"
 
 #: common/models.py:1327
 msgid "Enable internal prices for parts"
-msgstr "Habilitar precios internos para piezas"
+msgstr "Habilitar precios internos para partes"
 
 #: common/models.py:1333
 msgid "Internal Price Override"
@@ -3201,7 +3201,7 @@ msgstr "Mostrar cantidad en formularios"
 
 #: common/models.py:2047
 msgid "Display available part quantity in some forms"
-msgstr "Mostrar la cantidad de piezas disponibles en algunos formularios"
+msgstr "Mostrar la cantidad de partes disponibles en algunos formularios"
 
 #: common/models.py:2053
 msgid "Escape Key Closes Forms"
@@ -3375,7 +3375,7 @@ msgstr "Resumen"
 
 #: common/models.py:2681
 msgid "Read"
-msgstr ""
+msgstr "Leer"
 
 #: common/models.py:2682
 msgid "Was this news item read?"
@@ -3539,7 +3539,7 @@ msgstr "es fabricante"
 
 #: company/models.py:150
 msgid "Does this company manufacture parts?"
-msgstr "¿Esta empresa fabrica piezas?"
+msgstr "¿Esta empresa fabrica partes?"
 
 #: company/models.py:157
 msgid "Default currency used for this company"
@@ -3559,7 +3559,7 @@ msgstr "Parte base"
 
 #: company/models.py:282 company/models.py:557
 msgid "Select part"
-msgstr "Seleccionar pieza"
+msgstr "Seleccionar parte"
 
 #: company/models.py:293 company/templates/company/company_base.html:77
 #: company/templates/company/manufacturer_part.html:90
@@ -3645,7 +3645,7 @@ msgstr ""
 
 #: company/models.py:520
 msgid "Linked manufacturer part must reference the same base part"
-msgstr "La parte vinculada del fabricante debe hacer referencia a la misma pieza base"
+msgstr "La parte vinculada del fabricante debe hacer referencia a la misma parte base"
 
 #: company/models.py:564 company/templates/company/company_base.html:82
 #: company/templates/company/supplier_part.html:130 order/models.py:378
@@ -3893,7 +3893,7 @@ msgstr "Nueva Parte de Proveedor"
 #: company/templates/company/detail.html:85
 #: part/templates/part/category.html:183
 msgid "Order parts"
-msgstr "Piezas de pedido"
+msgstr "Partes de pedido"
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:90
@@ -3912,11 +3912,11 @@ msgstr "Partes del fabricante"
 
 #: company/templates/company/detail.html:66
 msgid "Create new manufacturer part"
-msgstr "Crear nueva pieza de fabricante"
+msgstr "Crear nueva parte de fabricante"
 
 #: company/templates/company/detail.html:67 part/templates/part/detail.html:411
 msgid "New Manufacturer Part"
-msgstr "Nueva pieza de fabricante"
+msgstr "Nueva parte de fabricante"
 
 #: company/templates/company/detail.html:108
 msgid "Supplier Stock"
@@ -4026,12 +4026,12 @@ msgstr "Pedir ítem"
 #: company/templates/company/manufacturer_part.html:39
 #: templates/js/translated/company.js:986
 msgid "Edit manufacturer part"
-msgstr "Editar fabricante de la pieza"
+msgstr "Editar fabricante de la parte"
 
 #: company/templates/company/manufacturer_part.html:43
 #: templates/js/translated/company.js:987
 msgid "Delete manufacturer part"
-msgstr "Eliminar fabricante de la pieza"
+msgstr "Eliminar fabricante de la parte"
 
 #: company/templates/company/manufacturer_part.html:65
 #: company/templates/company/supplier_part.html:98
@@ -4172,11 +4172,11 @@ msgstr "Nuevo artículo de stock"
 
 #: company/templates/company/supplier_part.html:224
 msgid "Supplier Part Orders"
-msgstr "Pedidos de piezas al proveedor"
+msgstr "Pedidos de partes al proveedor"
 
 #: company/templates/company/supplier_part.html:249
 msgid "Pricing Information"
-msgstr "Información deprecios"
+msgstr "Información de precios"
 
 #: company/templates/company/supplier_part.html:254
 #: templates/js/translated/company.js:373
@@ -4211,7 +4211,7 @@ msgstr "Elementos de stock"
 
 #: company/templates/company/supplier_part_sidebar.html:9
 msgid "Supplier Part Pricing"
-msgstr "Precio de pieza del proveedor"
+msgstr "Precio de parte del proveedor"
 
 #: company/views.py:33
 msgid "New Supplier"
@@ -4440,7 +4440,7 @@ msgstr "La fecha de pedido fue completada"
 
 #: order/models.py:441
 msgid "Part supplier must match PO supplier"
-msgstr "El proveedor de la pieza debe coincidir con el proveedor de PO"
+msgstr "El proveedor de la parte debe coincidir con el proveedor de PO"
 
 #: order/models.py:594
 msgid "Quantity must be a positive number"
@@ -4502,7 +4502,7 @@ msgstr "Fecha objetivo para este artículo de línea (dejar en blanco para usar 
 
 #: order/models.py:1117
 msgid "Line item description (optional)"
-msgstr ""
+msgstr "Descripción del artículo de línea (opcional)"
 
 #: order/models.py:1122
 msgid "Context"
@@ -4518,7 +4518,7 @@ msgstr "Precio unitario"
 
 #: order/models.py:1162
 msgid "Supplier part must match supplier"
-msgstr "La pieza del proveedor debe coincidir con el proveedor"
+msgstr "La parte del proveedor debe coincidir con el proveedor"
 
 #: order/models.py:1170
 msgid "deleted"
@@ -4568,7 +4568,7 @@ msgstr "Una parte virtual no puede ser asignada a un pedido de venta"
 
 #: order/models.py:1295
 msgid "Only salable parts can be assigned to a sales order"
-msgstr "Sólo las piezas vendibles pueden ser asignadas a un pedido de venta"
+msgstr "Sólo las partes vendibles pueden ser asignadas a un pedido de venta"
 
 #: order/models.py:1321 part/templates/part/part_pricing.html:107
 #: part/templates/part/prices.html:128 templates/js/translated/pricing.js:929
@@ -4589,11 +4589,11 @@ msgstr "Fecha del envío"
 
 #: order/models.py:1413 templates/js/translated/sales_order.js:991
 msgid "Delivery Date"
-msgstr ""
+msgstr "Fecha de entrega"
 
 #: order/models.py:1414
 msgid "Date of delivery of shipment"
-msgstr ""
+msgstr "Fecha de entrega del envío"
 
 #: order/models.py:1421
 msgid "Checked By"
@@ -4646,7 +4646,7 @@ msgstr "No se puede asignar el artículo de stock a una línea con una parte dif
 
 #: order/models.py:1593
 msgid "Cannot allocate stock to a line without a part"
-msgstr "No se puede asignar stock a una línea sin una pieza"
+msgstr "No se puede asignar stock a una línea sin una parte"
 
 #: order/models.py:1596
 msgid "Allocation quantity cannot exceed stock quantity"
@@ -4946,7 +4946,7 @@ msgstr "Completar pedido"
 
 #: order/templates/order/order_base.html:95
 msgid "Supplier part thumbnail"
-msgstr ""
+msgstr "Miniatura de la parte del proveedor"
 
 #: order/templates/order/order_base.html:110
 #: order/templates/order/return_order_base.html:102
@@ -5164,7 +5164,7 @@ msgstr "Notas del pedido"
 #: order/templates/order/return_order_base.html:18
 #: order/templates/order/sales_order_base.html:18
 msgid "Customer logo thumbnail"
-msgstr ""
+msgstr "Miniatura del logo del cliente"
 
 #: order/templates/order/return_order_base.html:61
 msgid "Print return order report"
@@ -5209,7 +5209,7 @@ msgstr "Detalles del pedido"
 
 #: order/templates/order/sales_order_base.html:61
 msgid "Print sales order report"
-msgstr "Imprimir reporte de orden de venta"
+msgstr "Imprimir informe de orden de venta"
 
 #: order/templates/order/sales_order_base.html:89
 #: order/templates/order/sales_order_base.html:90
@@ -5260,7 +5260,7 @@ msgstr "Nuevo Envío"
 
 #: order/views.py:120
 msgid "Match Supplier Parts"
-msgstr "Coincidir Piezas de Proveedor"
+msgstr "Coincidir partes de proveedor"
 
 #: order/views.py:393
 msgid "Sales order not found"
@@ -5491,7 +5491,7 @@ msgstr "Estructural"
 
 #: part/models.py:133
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
-msgstr ""
+msgstr "Las partes no pueden asignarse directamente a una categoría estructural, pero pueden asignarse a categorías hijas."
 
 #: part/models.py:137
 msgid "Default keywords"
@@ -5511,7 +5511,7 @@ msgstr "Icono (opcional)"
 
 #: part/models.py:162
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
-msgstr ""
+msgstr "¡No puedes hacer que esta categoría de partes sea estructural porque algunas partes ya están asignadas!"
 
 #: part/models.py:473
 msgid "Invalid choice for parent part"
@@ -5529,7 +5529,7 @@ msgstr "El IPN debe coincidir con la expresión regular {pat}"
 
 #: part/models.py:670
 msgid "Stock item with this serial number already exists"
-msgstr ""
+msgstr "Ya existe un artículo de almacén con este número de serie"
 
 #: part/models.py:801
 msgid "Duplicate IPN not allowed in part settings"
@@ -5537,15 +5537,15 @@ msgstr "IPN duplicado no permitido en la configuración de partes"
 
 #: part/models.py:806
 msgid "Part with this Name, IPN and Revision already exists."
-msgstr ""
+msgstr "Parte con este nombre, IPN y revisión ya existe."
 
 #: part/models.py:820
 msgid "Parts cannot be assigned to structural part categories!"
-msgstr ""
+msgstr "¡No se pueden asignar partes a las categorías de partes estructurales!"
 
 #: part/models.py:844 part/models.py:3571
 msgid "Part name"
-msgstr "Nombre de la pieza"
+msgstr "Nombre de la parte"
 
 #: part/models.py:850
 msgid "Is Template"
@@ -5561,7 +5561,7 @@ msgstr "¿Es esta parte una variante de otra parte?"
 
 #: part/models.py:868
 msgid "Part description (optional)"
-msgstr ""
+msgstr "Descripción de parte (opcional)"
 
 #: part/models.py:874
 msgid "Part keywords to improve visibility in search results"
@@ -5613,15 +5613,15 @@ msgstr "Nivel mínimo de stock permitido"
 
 #: part/models.py:986
 msgid "Units of measure for this part"
-msgstr ""
+msgstr "Unidades de medida para esta parte"
 
 #: part/models.py:995
 msgid "Can this part be built from other parts?"
-msgstr "¿Se puede construir esta pieza a partir de otras piezas?"
+msgstr "¿Se puede construir esta parte a partir de otras partes?"
 
 #: part/models.py:1001
 msgid "Can this part be used to build other parts?"
-msgstr "¿Se puede utilizar esta pieza para construir otras partes?"
+msgstr "¿Se puede utilizar esta parte para construir otras partes?"
 
 #: part/models.py:1007
 msgid "Does this part have tracking for unique items?"
@@ -5629,11 +5629,11 @@ msgstr "¿Esta parte tiene seguimiento de objetos únicos?"
 
 #: part/models.py:1012
 msgid "Can this part be purchased from external suppliers?"
-msgstr "¿Se puede comprar esta pieza a proveedores externos?"
+msgstr "¿Se puede comprar esta parte a proveedores externos?"
 
 #: part/models.py:1017
 msgid "Can this part be sold to customers?"
-msgstr "¿Se puede vender esta pieza a los clientes?"
+msgstr "¿Se puede vender esta parte a los clientes?"
 
 #: part/models.py:1022
 msgid "Is this part active?"
@@ -5645,11 +5645,11 @@ msgstr "¿Es ésta una parte virtual, como un producto de software o una licenci
 
 #: part/models.py:1029
 msgid "BOM checksum"
-msgstr ""
+msgstr "Suma de verificación de BOM"
 
 #: part/models.py:1029
 msgid "Stored BOM checksum"
-msgstr "Suma de control BOM almacenada"
+msgstr "Suma de verificación de BOM almacenada"
 
 #: part/models.py:1032
 msgid "BOM checked by"
@@ -5665,7 +5665,7 @@ msgstr "Creación de Usuario"
 
 #: part/models.py:1040
 msgid "User responsible for this part"
-msgstr ""
+msgstr "Usuario responsable de esta parte"
 
 #: part/models.py:1044 part/templates/part/part_base.html:341
 #: stock/templates/stock/item_base.html:447
@@ -5679,19 +5679,19 @@ msgstr "Vender múltiples"
 
 #: part/models.py:2846
 msgid "Currency used to cache pricing calculations"
-msgstr ""
+msgstr "Moneda utilizada para almacenar en caché los cálculos de precios"
 
 #: part/models.py:2863
 msgid "Minimum BOM Cost"
-msgstr ""
+msgstr "Costo mínimo de BOM"
 
 #: part/models.py:2864
 msgid "Minimum cost of component parts"
-msgstr ""
+msgstr "Coste mínimo de partes de componentes"
 
 #: part/models.py:2869
 msgid "Maximum BOM Cost"
-msgstr ""
+msgstr "Costo máximo de BOM"
 
 #: part/models.py:2870
 msgid "Maximum cost of component parts"
@@ -5735,7 +5735,7 @@ msgstr ""
 
 #: part/models.py:2900
 msgid "Minimum price of part from external suppliers"
-msgstr "Precio mínimo de la pieza de proveedores externos"
+msgstr "Precio mínimo de la parte de proveedores externos"
 
 #: part/models.py:2905
 msgid "Maximum Supplier Price"
@@ -5751,7 +5751,7 @@ msgstr "Costo mínimo de variante"
 
 #: part/models.py:2912
 msgid "Calculated minimum cost of variant parts"
-msgstr "Coste mínimo calculado de las partes variantes"
+msgstr "Costo mínimo calculado de las partes variantes"
 
 #: part/models.py:2917
 msgid "Maximum Variant Cost"
@@ -5771,27 +5771,27 @@ msgstr ""
 
 #: part/models.py:2935
 msgid "Minimum Sale Price"
-msgstr ""
+msgstr "Precio de venta mínimo"
 
 #: part/models.py:2936
 msgid "Minimum sale price based on price breaks"
-msgstr ""
+msgstr "Precio de venta mínimo basado en precios reducidos"
 
 #: part/models.py:2941
 msgid "Maximum Sale Price"
-msgstr ""
+msgstr "Precio de venta máximo"
 
 #: part/models.py:2942
 msgid "Maximum sale price based on price breaks"
-msgstr ""
+msgstr "Precio de venta máximo basado en precios reducidos"
 
 #: part/models.py:2947
 msgid "Minimum Sale Cost"
-msgstr ""
+msgstr "Costo de venta mínimo"
 
 #: part/models.py:2948
 msgid "Minimum historical sale price"
-msgstr ""
+msgstr "Precio de venta mínimo histórico"
 
 #: part/models.py:2953
 msgid "Maximum Sale Cost"
@@ -5970,7 +5970,7 @@ msgstr "Valor de parámetro por defecto"
 
 #: part/models.py:3563
 msgid "Part ID or part name"
-msgstr ""
+msgstr "ID de parte o nombre de parte"
 
 #: part/models.py:3567
 msgid "Unique part ID value"
@@ -5986,7 +5986,7 @@ msgstr "Nivel"
 
 #: part/models.py:3579
 msgid "BOM level"
-msgstr ""
+msgstr "Nivel de BOM"
 
 #: part/models.py:3663
 msgid "Select parent part"
@@ -6046,11 +6046,11 @@ msgstr "Notas del artículo de BOM"
 
 #: part/models.py:3704
 msgid "Checksum"
-msgstr ""
+msgstr "Suma de verificación"
 
 #: part/models.py:3704
 msgid "BOM line checksum"
-msgstr "Suma de comprobación de la línea en BOM"
+msgstr "Suma de verificación de línea de BOM"
 
 #: part/models.py:3709 templates/js/translated/table_filters.js:140
 msgid "Validated"
@@ -6259,7 +6259,7 @@ msgstr ""
 
 #: part/serializers.py:863
 msgid "Update Parts"
-msgstr ""
+msgstr "Actualizar partes"
 
 #: part/serializers.py:864
 msgid "Update specified parts with calculated stocktake data"
@@ -6617,11 +6617,11 @@ msgstr "Construir adjudicaciones de pedidos"
 
 #: part/templates/part/detail.html:377
 msgid "Part Suppliers"
-msgstr "Proveedores de piezas"
+msgstr "Proveedores de partes"
 
 #: part/templates/part/detail.html:407
 msgid "Part Manufacturers"
-msgstr "Fabricantes de piezas"
+msgstr "Fabricantes de partes"
 
 #: part/templates/part/detail.html:423
 msgid "Delete manufacturer parts"
@@ -6714,51 +6714,51 @@ msgstr "Acciones de stock"
 
 #: part/templates/part/part_base.html:72
 msgid "Count part stock"
-msgstr "Contar stock de piezas"
+msgstr "Contar stock de partes"
 
 #: part/templates/part/part_base.html:78
 msgid "Transfer part stock"
-msgstr "Transferir stock de piezas"
+msgstr "Transferir stock de partes"
 
 #: part/templates/part/part_base.html:93
 msgid "Part actions"
-msgstr "Acciones para piezas"
+msgstr "Acciones para partes"
 
 #: part/templates/part/part_base.html:96
 msgid "Duplicate part"
-msgstr "Duplicar pieza"
+msgstr "Duplicar parte"
 
 #: part/templates/part/part_base.html:99
 msgid "Edit part"
-msgstr "Editar pieza"
+msgstr "Editar parte"
 
 #: part/templates/part/part_base.html:102
 msgid "Delete part"
-msgstr "Eliminar pieza"
+msgstr "Eliminar parte"
 
 #: part/templates/part/part_base.html:121
 msgid "Part is a template part (variants can be made from this part)"
-msgstr "La pieza es una pieza de plantilla (las variantes se pueden hacer a partir de esta pieza)"
+msgstr "La parte es una parte de plantilla (las variantes se pueden hacer a partir de esta parte)"
 
 #: part/templates/part/part_base.html:125
 msgid "Part can be assembled from other parts"
-msgstr "La pieza puede ser ensamblada desde otras piezas"
+msgstr "La parte puede ser ensamblada desde otras partes"
 
 #: part/templates/part/part_base.html:129
 msgid "Part can be used in assemblies"
-msgstr "La pieza puede ser usada en ensamblajes"
+msgstr "La parte puede ser usada en ensamblajes"
 
 #: part/templates/part/part_base.html:133
 msgid "Part stock is tracked by serial number"
-msgstr "El stock de esta pieza está rastreado por número de serie"
+msgstr "El stock de esta parte está rastreado por número de serie"
 
 #: part/templates/part/part_base.html:137
 msgid "Part can be purchased from external suppliers"
-msgstr "La pieza puede ser comprada de proveedores externos"
+msgstr "La parte puede ser comprada de proveedores externos"
 
 #: part/templates/part/part_base.html:141
 msgid "Part can be sold to customers"
-msgstr "La pieza puede ser vendida a clientes"
+msgstr "La parte puede ser vendida a clientes"
 
 #: part/templates/part/part_base.html:147
 msgid "Part is not active"
@@ -6774,7 +6774,7 @@ msgstr "Inactivo"
 
 #: part/templates/part/part_base.html:155
 msgid "Part is virtual (not a physical part)"
-msgstr "La pieza es virtual (no una pieza física)"
+msgstr "La parte es virtual (no una parte física)"
 
 #: part/templates/part/part_base.html:165
 #: part/templates/part/part_base.html:684
@@ -6853,7 +6853,7 @@ msgstr "Precios del Proveedor"
 #: part/templates/part/part_pricing.html:95
 #: part/templates/part/part_pricing.html:110
 msgid "Unit Cost"
-msgstr "Coste Unitario"
+msgstr "Costo unitario"
 
 #: part/templates/part/part_pricing.html:40
 msgid "No supplier pricing available"
@@ -7043,7 +7043,7 @@ msgstr "Cada parte debe existir en la base de datos"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
-msgstr "Crear nueva variante de pieza"
+msgstr "Crear nueva variante de parte"
 
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
@@ -7385,7 +7385,7 @@ msgstr "Fragmento"
 
 #: report/models.py:582
 msgid "Report snippet file"
-msgstr "Archivo de reporte snippet"
+msgstr "Archivo fragmento de informe"
 
 #: report/models.py:586
 msgid "Snippet file description"
@@ -7576,7 +7576,7 @@ msgstr "Cantidad requerida"
 
 #: stock/api.py:587
 msgid "Valid part must be supplied"
-msgstr "Debe suministrarse una pieza válida"
+msgstr "Debe suministrarse una parte válida"
 
 #: stock/api.py:613
 msgid "The given supplier part does not exist"
@@ -7639,7 +7639,7 @@ msgstr ""
 #: stock/models.py:600
 #, python-brace-format
 msgid "Part type ('{pf}') must be {pe}"
-msgstr "Tipo de pieza ('{pf}') debe ser {pe}"
+msgstr "Tipo de parte ('{pf}') debe ser {pe}"
 
 #: stock/models.py:610 stock/models.py:619
 msgid "Quantity must be 1 for item with a serial number"
@@ -7953,7 +7953,7 @@ msgstr "Permitir proveedores no coincidentes"
 
 #: stock/serializers.py:945
 msgid "Allow stock items with different supplier parts to be merged"
-msgstr "Permitir fusionar artículos de stock con diferentes piezas de proveedor"
+msgstr "Permitir fusionar artículos de stock con diferentes partes de proveedor"
 
 #: stock/serializers.py:950
 msgid "Allow mismatched status"
@@ -9454,7 +9454,7 @@ msgstr "Estás recibiendo este correo electrónico porque estás suscrito a las 
 
 #: templates/email/low_stock_notification.html:9
 msgid "Click on the following link to view this part"
-msgstr "Haga clic en el siguiente enlace para ver esta pieza"
+msgstr "Haga clic en el siguiente enlace para ver esta parte"
 
 #: templates/email/low_stock_notification.html:18
 #: templates/js/translated/part.js:2919
@@ -9722,7 +9722,7 @@ msgstr "Incluye Datos de Stock"
 
 #: templates/js/translated/bom.js:347
 msgid "Include part stock data in exported BOM"
-msgstr "Incluye datos de stock de piezas en BOM exportado"
+msgstr "Incluye datos de stock de partes en BOM exportado"
 
 #: templates/js/translated/bom.js:352
 msgid "Include Manufacturer Data"
@@ -9730,7 +9730,7 @@ msgstr "Incluir Datos del fabricante"
 
 #: templates/js/translated/bom.js:353
 msgid "Include part manufacturer data in exported BOM"
-msgstr "Incluye datos del fabricante de piezas en BOM exportado"
+msgstr "Incluye datos del fabricante de partes en BOM exportado"
 
 #: templates/js/translated/bom.js:358
 msgid "Include Supplier Data"
@@ -9738,7 +9738,7 @@ msgstr "Incluir Datos del Proveedor"
 
 #: templates/js/translated/bom.js:359
 msgid "Include part supplier data in exported BOM"
-msgstr "Incluye datos del proveedor de piezas en BOM exportado"
+msgstr "Incluye datos del proveedor de partes en BOM exportado"
 
 #: templates/js/translated/bom.js:364
 msgid "Include Pricing Data"
@@ -10080,7 +10080,7 @@ msgstr "Quitar asignación"
 
 #: templates/js/translated/build.js:2056
 msgid "Substitute parts available"
-msgstr "Piezas sustitutas disponibles"
+msgstr "Partes sustitutas disponibles"
 
 #: templates/js/translated/build.js:2092
 msgid "Quantity Per"
@@ -10345,7 +10345,7 @@ msgstr "Eliminar parámetro"
 
 #: templates/js/translated/company.js:1141
 msgid "No supplier parts found"
-msgstr "No se encontraron piezas de proveedor"
+msgstr "No se encontraron partes de proveedor"
 
 #: templates/js/translated/company.js:1259
 msgid "Base Units"
@@ -10838,7 +10838,7 @@ msgstr "Parte suscrita"
 
 #: templates/js/translated/part.js:755
 msgid "Salable part"
-msgstr "Pieza vendible"
+msgstr "Parte vendible"
 
 #: templates/js/translated/part.js:830
 msgid "Schedule generation of a new stocktake report."
@@ -11161,7 +11161,7 @@ msgstr "Añadir a la orden de compra"
 
 #: templates/js/translated/purchase_order.js:806
 msgid "No matching supplier parts"
-msgstr "No hay piezas de proveedor coincidentes"
+msgstr "No hay partes de proveedor coincidentes"
 
 #: templates/js/translated/purchase_order.js:825
 msgid "No matching purchase orders"
@@ -11544,7 +11544,7 @@ msgstr "Asignar Números de Serie"
 
 #: templates/js/translated/sales_order.js:2163
 msgid "Update Unit Price"
-msgstr "Actualizarprecio Unitario"
+msgstr "Actualizar precio unitario"
 
 #: templates/js/translated/search.js:300
 msgid "No results"
@@ -11708,7 +11708,7 @@ msgstr "Se eliminará el historial de transacciones de stock para artículos fus
 
 #: templates/js/translated/stock.js:764
 msgid "Supplier part information will be deleted for merged items"
-msgstr "La información de la pieza del proveedor se eliminará para los artículos fusionados"
+msgstr "La información de la parte del proveedor se eliminará para los artículos fusionados"
 
 #: templates/js/translated/stock.js:855
 msgid "Confirm stock item merge"
@@ -12242,7 +12242,7 @@ msgstr "Tiene IPN"
 
 #: templates/js/translated/table_filters.js:637
 msgid "Part has internal part number"
-msgstr "La parte tiene número de pieza interno"
+msgstr "La parte tiene número de parte interno"
 
 #: templates/js/translated/table_filters.js:641
 msgid "In stock"
@@ -12438,11 +12438,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Estás a punto de usar tu cuenta de %(provider_name)s para iniciar sesión en\n"
+msgstr "Estás a punto de usar tu cuenta de %(provider_name)s para iniciar sesión en\n"
 "%(site_name)s.<br>Como paso final, por favor completa el siguiente formulario:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12620,3 +12618,4 @@ msgstr "Permisos para editar artículos"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "Permiso para eliminar artículos"
+
