@@ -130,6 +130,7 @@ class RuleSet(models.Model):
             'part_bomitemsubstitute',
             'build_build',
             'build_builditem',
+            'build_buildline',
             'build_buildorderattachment',
             'stock_stockitem',
             'stock_stocklocation',
