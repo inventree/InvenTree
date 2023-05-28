@@ -57,6 +57,7 @@ function partGroups() {
         attributes: {
             title: '{% trans "Part Attributes" %}',
             collapsible: true,
+            test: callFunctionWhichDoesNotExist(),
         },
         create: {
             title: '{% trans "Part Creation Options" %}',
