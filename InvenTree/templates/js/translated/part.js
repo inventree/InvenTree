@@ -1593,7 +1593,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
 
                         data += makeIconBadge(
                             'fa-info-circle icon-blue',
-                            `{% trans "Pack Quantity" %}: ${formatDecimal(row.pack_quantity)} - {% trans "Total Quantity" %}: ${total}`
+                            `{% trans "Pack Quantity" %}: ${row.pack_quantity} - {% trans "Total Quantity" %}: ${total}`
                         );
                     }
 
