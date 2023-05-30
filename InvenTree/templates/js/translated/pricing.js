@@ -4,6 +4,20 @@
 /* Functions for retrieving and displaying pricing data */
 
 /* globals
+    constructForm,
+    global_settings,
+    imageHoverIcon,
+    inventreeGet,
+    loadBarChart,
+    loadDoughnutChart,
+    makeEditButton,
+    makeDeleteButton,
+    randomColor,
+    renderDate,
+    renderLink,
+    shortenString,
+    withTitle,
+    wrapButtons,
 */
 
 /* exported
@@ -150,7 +164,7 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
         var common_currency = true;
 
         for (var idx = 0; idx < dataset.length; idx++) {
-            var row = dataset[idx];
+            let row = dataset[idx];
 
             var row_currency = currency_func(row);
 
@@ -177,7 +191,7 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
     var total = null;
 
     for (var ii = 0; ii < dataset.length; ii++) {
-        var row = dataset[ii];
+        let row = dataset[ii];
 
         // Pass the row back to the decoder
         var value = value_func(row);
