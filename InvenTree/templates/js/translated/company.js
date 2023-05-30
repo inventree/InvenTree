@@ -648,6 +648,7 @@ function deleteContacts(contacts, options={}) {
         ids.push(contact.pk);
     });
 
+    // eslint-disable-next-line no-useless-escape
     let html = `
     <div class='alert alert-block alert-danger'>
     {% trans "All selected contacts will be deleted" %}
