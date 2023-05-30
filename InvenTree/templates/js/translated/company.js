@@ -1,11 +1,26 @@
 {% load i18n %}
 
 /* globals
+    constructLabel,
     constructForm,
+    formatCurrency,
+    formatDecimal,
+    formatDate,
+    handleFormSuccess,
     imageHoverIcon,
+    inventreeGet,
+    inventreePut,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
+    makeIconBadge,
+    renderClipboard,
+    renderDate,
     renderLink,
+    renderPart,
     setupFilterList,
+    thumbnailImage,
+    wrapButtons,
 */
 
 /* exported
@@ -369,7 +384,6 @@ function createSupplierPartPriceBreak(part_id, options={}) {
     constructForm('{% url "api-part-supplier-price-list" %}', {
         fields: fields,
         method: 'POST',
-        fields: fields,
         title: '{% trans "Add Price Break" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
