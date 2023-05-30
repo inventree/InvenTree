@@ -360,7 +360,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         ]
     )
 
-    status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
+    status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING.value, choices=PurchaseOrderStatus.items(),
                                          help_text=_('Purchase order status'))
 
     @property
@@ -782,7 +782,7 @@ class SalesOrder(TotalPriceMixin, Order):
         return self.customer
 
     status = models.PositiveIntegerField(
-        default=SalesOrderStatus.PENDING,
+        default=SalesOrderStatus.PENDING.value,
         choices=SalesOrderStatus.items(),
         verbose_name=_('Status'), help_text=_('Purchase order status')
     )
@@ -1741,7 +1741,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         return self.customer
 
     status = models.PositiveIntegerField(
-        default=ReturnOrderStatus.PENDING,
+        default=ReturnOrderStatus.PENDING.value,
         choices=ReturnOrderStatus.items(),
         verbose_name=_('Status'), help_text=_('Return order status')
     )
@@ -1925,7 +1925,7 @@ class ReturnOrderLineItem(OrderLineItem):
         return self.received_date is not None
 
     outcome = models.PositiveIntegerField(
-        default=ReturnOrderLineStatus.PENDING,
+        default=ReturnOrderLineStatus.PENDING.value,
         choices=ReturnOrderLineStatus.items(),
         verbose_name=_('Outcome'), help_text=_('Outcome for this line item')
     )

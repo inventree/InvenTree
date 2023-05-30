@@ -806,7 +806,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
     )
 
     status = models.PositiveIntegerField(
-        default=StockStatus.OK,
+        default=StockStatus.OK.value,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
