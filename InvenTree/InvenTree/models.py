@@ -24,6 +24,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
+import InvenTree.helpers_model
 from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
@@ -890,7 +891,7 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
             users = get_user_model().objects.filter(is_staff=True)
 
-            link = InvenTree.helpers.construct_absolute_url(
+            link = InvenTree.helpers_model.construct_absolute_url(
                 reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
             )
 

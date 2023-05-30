@@ -17,7 +17,7 @@ from PIL import Image
 
 import common.models
 import InvenTree
-import InvenTree.helpers
+import InvenTree.helpers_model
 import InvenTree.version
 from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
@@ -276,7 +276,7 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
             'instance': instance,
             'name': content.name.format(**content_context),
             'message': content.message.format(**content_context),
-            'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+            'link': InvenTree.helpers_model.construct_absolute_url(instance.get_absolute_url()),
             'template': {
                 'html': content.template.format(**content_context),
                 'subject': content.name.format(**content_context),
