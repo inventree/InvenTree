@@ -20,6 +20,7 @@ rules:
   no-multiple-empty-lines: off
   comma-dangle: off
   no-unused-vars: off
+  no-useless-escape: off
   prefer-spread: off
   indent:
     - error
