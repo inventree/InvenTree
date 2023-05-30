@@ -2,20 +2,60 @@
 {% load inventree_extras %}
 
 /* globals
+    addClearCallback,
+    addFieldCallback,
+    barcodeDialog,
+    calculateTotalPrice,
+    clearEvents,
+    closeModal,
+    constructFormBody,
     companyFormFields,
+    constructField,
     constructForm,
+    constructOrderTableButtons,
     createSupplierPart,
+    endDate,
+    formatCurrency,
+    formatDecimal,
+    FullCalendar,
+    initializeChoiceField,
+    initializeRelatedField,
+    getFormFieldElement,
+    getFormFieldValue,
+    getTableData,
     global_settings,
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
     inventreeGet,
+    inventreeLoad,
+    inventreePut,
     launchModalForm,
+    linkButtonsToSelection,
     loadTableFilters,
+    makeCopyButton,
+    makeDeleteButton,
+    makeEditButton,
     makeIconBadge,
+    makeIconButton,
+    makeProgressBar,
+    makeRemoveButton,
     purchaseOrderStatusDisplay,
-    receivePurchaseOrderItems,
+    reloadBootstrapTable,
+    renderClipboard,
+    renderDate,
     renderLink,
+    showAlertDialog,
+    showApiError,
+    showBarcodeMessage,
+    setRelatedFieldData,
     setupFilterList,
+    startDate,
+    stockCodes,
     supplierPartFields,
+    thumbnailImage,
+    updateFieldValue,
+    wrapButtons,
 */
 
 /* exported
@@ -169,7 +209,7 @@ function createPurchaseOrder(options={}) {
             title: '{% trans "Duplication Options" %}',
             collapsible: false,
         };
-    };
+    }
 
     constructForm('{% url "api-po-list" %}', {
         method: 'POST',
@@ -273,8 +313,7 @@ function poLineItemFields(options={}) {
                                 success: function(response) {
                                     // Returned prices are in increasing order of quantity
                                     if (response.length > 0) {
-                                        var idx = 0;
-                                        var index = 0;
+                                        let index = 0;
 
                                         for (var idx = 0; idx < response.length; idx++) {
                                             if (response[idx].quantity > quantity) {
@@ -1711,9 +1750,9 @@ function loadPurchaseOrderTable(table, options) {
         onLoadSuccess: function() {
 
             if (display_mode == 'calendar') {
-                var el = document.getElementById('purchase-order-calendar');
+                let el = document.getElementById('purchase-order-calendar');
 
-                calendar = new FullCalendar.Calendar(el, {
+                let calendar = new FullCalendar.Calendar(el, {
                     initialView: 'dayGridMonth',
                     nowIndicator: true,
                     aspectRatio: 2.5,
