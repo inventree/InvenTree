@@ -2,19 +2,48 @@
 {% load inventree_extras %}
 
 /* globals
+    baseCurrency,
     Chart,
     constructForm,
+    constructFormBody,
+    convertCurrency,
+    formatCurrency,
+    formatDecimal,
+    formatPriceRange,
+    getCurrencyConversionRates,
+    getFormFieldValue,
+    getTableData,
     global_settings,
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
     inventreeGet,
+    inventreeLoad,
     inventreePut,
+    inventreeSave,
     linkButtonsToSelection,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
     makeIconBadge,
     makeIconButton,
+    moment,
+    orderParts,
+    purchaseOrderStatusDisplay,
+    receivePurchaseOrderItems,
+    renderClipboard,
+    renderDate,
     renderLink,
     setFormGroupVisibility,
     setupFilterList,
+    shortenString,
+    showAlertDialog,
+    showApiError,
+    showMessage,
+    showModalSpinner,
+    thumbnailImage,
+    withTitle,
+    wrapButtons,
     yesNoLabel,
 */
 
@@ -1593,7 +1622,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
 
                         data += makeIconBadge(
                             'fa-info-circle icon-blue',
-                            `{% trans "Pack Quantity" %}: ${formatDecimal(row.pack_quantity)} - {% trans "Total Quantity" %}: ${total}`
+                            `{% trans "Pack Quantity" %}: ${row.pack_quantity} - {% trans "Total Quantity" %}: ${total}`
                         );
                     }
 
@@ -2300,7 +2329,7 @@ function loadPartTable(table, url, options={}) {
 
                         $(table).bootstrapTable('refresh');
                     }
-                };
+                }
 
                 // Start the ball rolling
                 showModalSpinner(opts.modal);

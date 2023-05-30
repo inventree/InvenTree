@@ -1,9 +1,14 @@
 {% load i18n %}
 
 /* globals
+    downloadTableData,
     getAvailableTableFilters,
+    getTableData,
+    global_settings,
     inventreeLoad,
     inventreeSave,
+    printLabels,
+    printReports,
     reloadTableFilters,
 */
 
