@@ -97,7 +97,7 @@ class StatusCode(BaseEnum):
         """Render the value as a HTML label."""
         # If the key cannot be found, pass it back
         item = cls.values(key)
-        if not item:
+        if item is None:
             return key
 
         return f"<span class='badge rounded-pill bg-{item.color}'>{item.label}</span>"
