@@ -277,26 +277,6 @@ class ContactTest(InvenTreeAPITestCase):
         # Try to access again (gone!)
         self.get(url, expected_code=404)
 
-    def test_metadata(self):
-        """Test the 'metadata' API endpoint for the model"""
-
-        modeldata = Contact.objects.first()
-        url = reverse('api-contact-metadata', kwargs={'pk': modeldata.pk})
-
-        self.patch(
-            url,
-            {
-                'metadata': {
-                    'CONabc': 'CONxyz112',
-                }
-            },
-            expected_code=200
-        )
-
-        # Refresh
-        modeldata.refresh_from_db()
-        self.assertEqual(modeldata.get_metadata('CONabc'), 'CONxyz112')
-
 
 class ManufacturerTest(InvenTreeAPITestCase):
     """Series of tests for the Manufacturer DRF API."""
@@ -516,21 +496,35 @@ class CompanyMetadataAPITest(InvenTreeAPITestCase):
     """Unit tests for the various metadata endpoints of API."""
 
     fixtures = [
+        'category',
+        'part',
+        'location',
         'company',
+        'contact',
         'manufacturer_part',
         'supplier_part',
     ]
 
-    def metatester(apikey, model):
+    roles = [
+        'company.change',
+        'purchase_order.change',
+        'part.change',
+    ]
+
+    def metatester(self, apikey, model):
         """Generic tester"""
 
         modeldata = model.objects.first()
+
+        # Useless test unless a model object is found
+        self.assertIsNotNone(modeldata)
+
         url = reverse(apikey, kwargs={'pk': modeldata.pk})
 
         # Metadata is initially null
         self.assertIsNone(modeldata.metadata)
 
-        numstr = randint(100,900)
+        numstr = f'12{len(apikey)}'
 
         self.patch(
             url,
@@ -547,7 +541,7 @@ class CompanyMetadataAPITest(InvenTreeAPITestCase):
         self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
 
     def test_metadata(self):
-        """ Test all endpoints"""
+        """Test all endpoints"""
 
         for apikey, model in {
             'api-manufacturer-part-metadata': ManufacturerPart,
@@ -555,4 +549,4 @@ class CompanyMetadataAPITest(InvenTreeAPITestCase):
             'api-company-metadata': Company,
             'api-contact-metadata': Contact,
         }.items():
-            metatester(apikey, model)
+            self.metatester(apikey, model)

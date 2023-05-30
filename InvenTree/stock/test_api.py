@@ -1708,16 +1708,25 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
         'stock_tests',
     ]
 
-    def metatester(apikey, model):
+    roles = [
+        'stock.change',
+        'stock_location.change',
+    ]
+
+    def metatester(self, apikey, model):
         """Generic tester"""
 
         modeldata = model.objects.first()
+
+        # Useless test unless a model object is found
+        self.assertIsNotNone(modeldata)
+
         url = reverse(apikey, kwargs={'pk': modeldata.pk})
 
         # Metadata is initially null
         self.assertIsNone(modeldata.metadata)
 
-        numstr = randint(100,900)
+        numstr = f'12{len(apikey)}'
 
         self.patch(
             url,
@@ -1734,11 +1743,11 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
         self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
 
     def test_metadata(self):
-        """ Test all endpoints"""
+        """Test all endpoints"""
 
         for apikey, model in {
             'api-location-metadata': StockLocation,
             'api-stock-test-result-metadata': StockItemTestResult,
             'api-stock-item-metadata': StockItem,
         }.items():
-            metatester(apikey, model)
+            self.metatester(apikey, model)
