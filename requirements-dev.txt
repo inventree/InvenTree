@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=requirements-dev.txt requirements-dev.in
 #
-asgiref==3.7.1
+asgiref==3.7.2
     # via
     #   -c requirements.txt
     #   django
