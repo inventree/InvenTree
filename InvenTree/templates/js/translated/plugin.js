@@ -3,6 +3,9 @@
 
 /* globals
     constructForm,
+    showMessage,
+    inventreeGet,
+    inventreePut,
 */
 
 /* exported
@@ -20,7 +23,7 @@ function installPlugin() {
             confirm: {},
         },
         onSuccess: function(data) {
-            msg = '{% trans "The Plugin was installed" %}';
+            let msg = '{% trans "The Plugin was installed" %}';
             showMessage(msg, {style: 'success', details: data.result, timeout: 30000});
         }
     });
