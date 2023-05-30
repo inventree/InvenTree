@@ -1345,7 +1345,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         entry = StockItemTracking.objects.create(
             item=self,
-            tracking_type=entry_type,
+            tracking_type=entry_type.value,
             user=user,
             date=datetime.now(),
             notes=notes,
