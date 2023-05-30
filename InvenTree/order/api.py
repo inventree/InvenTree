@@ -1481,14 +1481,14 @@ class OrderCalendarExport(ICalFeed):
             if obj['include_completed'] is False:
                 # Do not include completed (=shipped) orders from list in this case
                 # Shipped status = 20
-                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED)
+                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED.value)
             else:
                 outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
         elif obj["ordertype"] == 'return-order':
             if obj['include_completed'] is False:
                 # Do not include completed orders from list in this case
                 # Complete status = 30
-                outlist = models.ReturnOrder.objects.filter(target_date__isnull=False).filter(status__lt=ReturnOrderStatus.COMPLETE)
+                outlist = models.ReturnOrder.objects.filter(target_date__isnull=False).filter(status__lt=ReturnOrderStatus.COMPLETE.value)
             else:
                 outlist = models.ReturnOrder.objects.filter(target_date__isnull=False)
         else:

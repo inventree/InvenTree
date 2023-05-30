@@ -491,7 +491,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
     status = serializers.ChoiceField(
         choices=StockStatus.items(),
-        default=StockStatus.OK,
+        default=StockStatus.OK.value,
         label=_("Status"),
     )
 

@@ -760,7 +760,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         # Mark the order as "placed" so we can receive line items
         order = models.PurchaseOrder.objects.get(pk=1)
-        order.status = PurchaseOrderStatus.PLACED
+        order.status = PurchaseOrderStatus.PLACED.value
         order.save()
 
     def test_empty(self):
@@ -961,7 +961,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         # Before posting "valid" data, we will mark the purchase order as "pending"
         # In this case we do expect an error!
         order = models.PurchaseOrder.objects.get(pk=1)
-        order.status = PurchaseOrderStatus.PENDING
+        order.status = PurchaseOrderStatus.PENDING.value
         order.save()
 
         response = self.post(
@@ -973,7 +973,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertIn('can only be received against', str(response.data))
 
         # Now, set the PurchaseOrder back to "PLACED" so the items can be received
-        order.status = PurchaseOrderStatus.PLACED
+        order.status = PurchaseOrderStatus.PLACED.value
         order.save()
 
         # Receive two separate line items against this order
@@ -1422,7 +1422,7 @@ class SalesOrderTest(OrderTest):
         # Test without completed orders
         response = self.get(url, expected_code=200, format=None)
 
-        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED))
+        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED.value))
 
         # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)

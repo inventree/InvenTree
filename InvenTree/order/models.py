@@ -481,7 +481,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Order must be currently PENDING.
         """
         if self.status == PurchaseOrderStatus.PENDING:
-            self.status = PurchaseOrderStatus.PLACED
+            self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = datetime.now().date()
             self.save()
 
@@ -502,7 +502,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Order must be currently PLACED.
         """
         if self.status == PurchaseOrderStatus.PLACED:
-            self.status = PurchaseOrderStatus.COMPLETE
+            self.status = PurchaseOrderStatus.COMPLETE.value
             self.complete_date = datetime.now().date()
 
             self.save()
@@ -539,7 +539,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def cancel_order(self):
         """Marks the PurchaseOrder as CANCELLED."""
         if self.can_cancel():
-            self.status = PurchaseOrderStatus.CANCELLED
+            self.status = PurchaseOrderStatus.CANCELLED.value
             self.save()
 
             trigger_event('purchaseorder.cancelled', id=self.pk)
@@ -883,7 +883,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Change this order from 'PENDING' to 'IN_PROGRESS'"""
 
         if self.status == SalesOrderStatus.PENDING:
-            self.status = SalesOrderStatus.IN_PROGRESS
+            self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = datetime.now().date()
             self.save()
 
@@ -894,7 +894,7 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_complete(**kwargs):
             return False
 
-        self.status = SalesOrderStatus.SHIPPED
+        self.status = SalesOrderStatus.SHIPPED.value
         self.shipped_by = user
         self.shipment_date = datetime.now()
 
@@ -923,7 +923,7 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_cancel():
             return False
 
-        self.status = SalesOrderStatus.CANCELLED
+        self.status = SalesOrderStatus.CANCELLED.value
         self.save()
 
         for line in self.lines.all():
@@ -1786,7 +1786,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     def cancel_order(self):
         """Cancel this ReturnOrder (if not already cancelled)"""
         if self.status != ReturnOrderStatus.CANCELLED:
-            self.status = ReturnOrderStatus.CANCELLED
+            self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
 
             trigger_event('returnorder.cancelled', id=self.pk)
@@ -1796,7 +1796,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Complete this ReturnOrder (if not already completed)"""
 
         if self.status == ReturnOrderStatus.IN_PROGRESS:
-            self.status = ReturnOrderStatus.COMPLETE
+            self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = datetime.now().date()
             self.save()
 
@@ -1811,7 +1811,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Issue this ReturnOrder (if currently pending)"""
 
         if self.status == ReturnOrderStatus.PENDING:
-            self.status = ReturnOrderStatus.IN_PROGRESS
+            self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = datetime.now().date()
             self.save()
 
@@ -1835,7 +1835,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         stock_item = line.item
 
         deltas = {
-            'status': StockStatus.QUARANTINED,
+            'status': StockStatus.QUARANTINED.value,
             'returnorder': self.pk,
             'location': location.pk,
         }
@@ -1844,7 +1844,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = StockStatus.QUARANTINED
+        stock_item.status = StockStatus.QUARANTINED.value
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
