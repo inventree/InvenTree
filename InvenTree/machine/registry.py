@@ -44,6 +44,10 @@ class MachinesRegistry:
                 self.errors.append(error)
                 continue
 
+            if machine_type.SLUG in machine_types:
+                self.errors.append(ValueError(f"Cannot re-register machine type '{machine_type.SLUG}'"))
+                continue
+
             machine_types[machine_type.SLUG] = machine_type
             base_drivers.append(machine_type.base_driver)
 
@@ -69,6 +73,10 @@ class MachinesRegistry:
                 driver.validate()
             except NotImplementedError as error:
                 self.errors.append(error)
+                continue
+
+            if driver.SLUG in drivers:
+                self.errors.append(ValueError(f"Cannot re-register driver '{driver.SLUG}'"))
                 continue
 
             drivers[driver.SLUG] = driver
