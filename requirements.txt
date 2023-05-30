@@ -6,7 +6,7 @@
 #
 arrow==1.2.3
     # via django-q
-asgiref==3.7.1
+asgiref==3.7.2
     # via django
 attrs==23.1.0
     # via jsonschema
@@ -150,7 +150,7 @@ gunicorn==20.1.0
     # via -r requirements.in
 html5lib==1.1
     # via weasyprint
-icalendar==5.0.5
+icalendar==5.0.7
     # via django-ical
 idna==3.4
     # via requests
@@ -272,7 +272,6 @@ tinycss2==1.1.1
 typing-extensions==4.6.2
     # via
     #   asgiref
-    #   pint
     #   qrcode
 uritemplate==4.1.1
     # via
