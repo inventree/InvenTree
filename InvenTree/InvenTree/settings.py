@@ -732,6 +732,7 @@ LANGUAGES = [
     ('es', _('Spanish')),
     ('es-mx', _('Spanish (Mexican)')),
     ('fa', _('Farsi / Persian')),
+    ('fi', _('Finnish')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('hu', _('Hungarian')),
@@ -777,6 +778,11 @@ CURRENCIES = get_setting(
     ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD'],
     typecast=list,
 )
+
+# Ensure that at least one currency value is available
+if len(CURRENCIES) == 0:  # pragma: no cover
+    logger.warning("No currencies selected: Defaulting to USD")
+    CURRENCIES = ['USD']
 
 # Maximum number of decimal places for currency rendering
 CURRENCY_DECIMAL_PLACES = 6

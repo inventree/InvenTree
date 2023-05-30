@@ -1,7 +1,7 @@
 # Please keep this list sorted - if you pin a version provide a reason
 Django>=3.2.14,<4                       # Django package
 coreapi                                 # API documentation for djangorestframework
-cryptography>=40.0.0                    # Core cryptographic functionality
+cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
 django-allauth                          # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
@@ -35,6 +35,7 @@ feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
+pint                                    # Unit conversion
 python-barcode[images]                  # Barcode generator
 qrcode[pil]                             # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching

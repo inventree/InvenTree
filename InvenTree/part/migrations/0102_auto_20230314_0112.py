@@ -94,11 +94,6 @@ def update_bom_item(apps, schema_editor):
         logger.info(f"Updated 'validated' flag for {n} BomItem objects")
 
 
-def meti_mob_etadpu(apps, schema_editor):
-    """Provided for reverse compatibility"""
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -108,6 +103,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             update_bom_item,
-            reverse_code=meti_mob_etadpu
+            reverse_code=migrations.RunPython.noop
         )
     ]

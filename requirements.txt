@@ -32,7 +32,7 @@ coreapi==2.3.3
     # via -r requirements.in
 coreschema==0.0.4
     # via coreapi
-cryptography==40.0.2
+cryptography==40.0.1
     # via
     #   -r requirements.in
     #   djangorestframework-simplejwt
@@ -47,7 +47,7 @@ diff-match-patch==20200713
     # via django-import-export
 dj-rest-auth==3.0.0
     # via -r requirements.in
-django==3.2.18
+django==3.2.19
     # via
     #   -r requirements.in
     #   dj-rest-auth
@@ -195,6 +195,8 @@ pillow==9.5.0
     #   python-barcode
     #   qrcode
     #   weasyprint
+pint==0.21
+    # via -r requirements.in
 py-moneyed==1.2
     # via
     #   -r requirements.in

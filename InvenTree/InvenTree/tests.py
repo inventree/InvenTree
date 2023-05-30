@@ -18,18 +18,42 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 
+import InvenTree.conversion
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
 from InvenTree.sanitizer import sanitize_svg
+from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, status, version
 from .tasks import offload_task
 from .validators import validate_overage
+
+
+class ConversionTest(TestCase):
+    """Tests for conversion of physical units"""
+
+    def test_dimensionless_units(self):
+        """Tests for 'dimensonless' unit quantities"""
+
+        # Test some dimensionless units
+        tests = {
+            'ea': 1,
+            'each': 1,
+            '3 piece': 3,
+            '5 dozen': 60,
+            '3 hundred': 300,
+            '2 thousand': 2000,
+            '12 pieces': 12,
+        }
+
+        for val, expected in tests.items():
+            q = InvenTree.conversion.convert_physical_value(val).to_base_units()
+            self.assertEqual(q.magnitude, expected)
 
 
 class ValidatorTest(TestCase):
@@ -711,7 +735,7 @@ class TestStatus(TestCase):
         self.assertEqual(ready.isImportingData(), False)
 
 
-class TestSettings(helpers.InvenTreeTestCase):
+class TestSettings(InvenTreeTestCase):
     """Unit tests for settings."""
 
     superuser = True
@@ -850,7 +874,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
 
 
-class TestInstanceName(helpers.InvenTreeTestCase):
+class TestInstanceName(InvenTreeTestCase):
     """Unit tests for instance name."""
 
     def test_instance_name(self):
@@ -878,7 +902,7 @@ class TestInstanceName(helpers.InvenTreeTestCase):
         self.assertEqual(site_obj.domain, 'http://127.1.2.3')
 
 
-class TestOffloadTask(helpers.InvenTreeTestCase):
+class TestOffloadTask(InvenTreeTestCase):
     """Tests for offloading tasks to the background worker"""
 
     fixtures = [
@@ -975,7 +999,7 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             self.assertTrue(result)
 
 
-class BarcodeMixinTest(helpers.InvenTreeTestCase):
+class BarcodeMixinTest(InvenTreeTestCase):
     """Tests for the InvenTreeBarcodeMixin mixin class"""
 
     def test_barcode_model_type(self):

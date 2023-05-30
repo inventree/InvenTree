@@ -1,9 +1,14 @@
 {% load i18n %}
 
 /* globals
+    downloadTableData,
     getAvailableTableFilters,
+    getTableData,
+    global_settings,
     inventreeLoad,
     inventreeSave,
+    printLabels,
+    printReports,
     reloadTableFilters,
 */
 
@@ -429,7 +434,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
     // Callback for reloading the table
     element.find(`#reload-${tableKey}`).click(function() {
-        reloadTableFilters(table, {}, options);
+        reloadTableFilters(table, null, options);
     });
 
     // Add a callback for downloading table data

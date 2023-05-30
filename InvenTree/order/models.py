@@ -484,6 +484,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             trigger_event('purchaseorder.placed', id=self.pk)
 
+            # Notify users that the order has been placed
+            notify_responsible(
+                self,
+                PurchaseOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder
+            )
+
     @transaction.atomic
     def complete_order(self):
         """Marks the PurchaseOrder as COMPLETE.
@@ -602,11 +610,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Create a new stock item
         if line.part and quantity > 0:
 
-            # Take the 'pack_size' of the SupplierPart into account
-            pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
+            # Calculate received quantity in base units
+            stock_quantity = line.part.base_quantity(quantity)
 
+            # Calculate unit purchase price (in base units)
             if line.purchase_price:
-                unit_purchase_price = line.purchase_price / line.part.pack_size
+                unit_purchase_price = line.purchase_price
+                unit_purchase_price /= line.part.base_quantity(1)
             else:
                 unit_purchase_price = None
 
@@ -623,7 +633,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     part=line.part.part,
                     supplier_part=line.part,
                     location=location,
-                    quantity=1 if serialize else pack_quantity,
+                    quantity=1 if serialize else stock_quantity,
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
@@ -656,7 +666,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 )
 
         # Update the number of parts received against the particular line item
-        # Note that this quantity does *not* take the pack_size into account, it is "number of packs"
+        # Note that this quantity does *not* take the pack_quantity into account, it is "number of packs"
         line.received += quantity
         line.save()
 
@@ -673,17 +683,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
         )
-
-
-@receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
-def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **kwargs):
-    """Callback function to be executed after a PurchaseOrder is saved."""
-    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
-        return
-
-    if created:
-        # Notify the responsible users that the purchase order has been created
-        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class SalesOrder(TotalPriceMixin, Order):
@@ -1109,6 +1108,12 @@ class OrderExtraLine(OrderLineItem):
         """Metaclass options. Abstract ensures no database table is created."""
         abstract = True
 
+    description = models.CharField(
+        max_length=250, blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Line item description (optional)')
+    )
+
     context = models.JSONField(
         blank=True, null=True,
         verbose_name=_('Context'),
@@ -1400,6 +1405,12 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
         help_text=_('Date of shipment'),
     )
 
+    delivery_date = models.DateField(
+        null=True, blank=True,
+        verbose_name=_('Delivery Date'),
+        help_text=_('Date of delivery of shipment'),
+    )
+
     checked_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -1442,6 +1453,10 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
     def is_complete(self):
         """Return True if this shipment has already been completed"""
         return self.shipment_date is not None
+
+    def is_delivered(self):
+        """Return True if this shipment has already been delivered"""
+        return self.delivery_date is not None
 
     def check_can_complete(self, raise_error=True):
         """Check if this shipment is able to be completed"""
@@ -1501,6 +1516,12 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
         if link is not None:
             self.link = link
+
+        # Was a delivery date provided?
+        delivery_date = kwargs.get('delivery_date', None)
+
+        if delivery_date is not None:
+            self.delivery_date = delivery_date
 
         self.save()
 

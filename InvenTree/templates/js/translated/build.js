@@ -2,19 +2,49 @@
 {% load inventree_extras %}
 
 /* globals
+    addClearCallback,
     buildStatusDisplay,
+    clearEvents,
+    constructExpandCollapseButtons,
+    constructField,
     constructForm,
+    constructOrderTableButtons,
+    endDate,
+    formatDecimal,
+    FullCalendar,
+    getFormFieldValue,
+    getTableData,0
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
+    initializeRelatedField,
     inventreeGet,
+    inventreeLoad,
+    inventreePut,
     launchModalForm,
     linkButtonsToSelection,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
+    makeRemoveButton,
     makeIconBadge,
     makeIconButton,
     makePartIcons,
     makeProgressBar,
+    orderParts,
+    renderDate,
     renderLink,
     setupFilterList,
+    shortenString,
+    showAlertDialog,
+    showApiError,
+    startDate,
+    stockStatusDisplay,
+    showApiErrors,
+    thumbnailImage,
+    updateFieldValue,
+    wrapButtons,
+    yesNoLabel,
 */
 
 /* exported
@@ -397,9 +427,17 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
         '{% trans "Complete build output" %}',
     );
 
-    // Add a button to "delete" this build output
+    // Add a button to "scrap" the build output
+    html += makeIconButton(
+        'fa-times-circle icon-red',
+        'button-output-scrap',
+        output_id,
+        '{% trans "Scrap build output" %}',
+    );
+
+    // Add a button to "remove" this build output
     html += makeDeleteButton(
-        'button-output-delete',
+        'button-output-remove',
         output_id,
         '{% trans "Delete build output" %}',
     );
@@ -452,6 +490,72 @@ function unallocateStock(build_id, options={}) {
 }
 
 
+/*
+ * Helper function to render a single build output in a modal form
+ */
+function renderBuildOutput(output, options={}) {
+    let pk = output.pk;
+
+    let output_html = imageHoverIcon(output.part_detail.thumbnail);
+
+    if (output.quantity == 1 && output.serial) {
+        output_html += `{% trans "Serial Number" %}: ${output.serial}`;
+    } else {
+        output_html += `{% trans "Quantity" %}: ${output.quantity}`;
+        if (output.part_detail && output.part_detail.units) {
+            output_html += ` ${output.part_detail.units}  `;
+        }
+    }
+
+    let buttons = `<div class='btn-group float-right' role='group'>`;
+
+    buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
+
+    buttons += '</div>';
+
+    let field = constructField(
+        `outputs_output_${pk}`,
+        {
+            type: 'raw',
+            html: output_html,
+        },
+        {
+            hideLabels: true,
+        }
+    );
+
+    let quantity_field = '';
+
+    if (options.adjust_quantity) {
+        quantity_field = constructField(
+            `outputs_quantity_${pk}`,
+            {
+                type: 'decimal',
+                value: output.quantity,
+                min_value: 0,
+                max_value: output.quantity,
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        quantity_field = `<td>${quantity_field}</td>`;
+    }
+
+    let html = `
+    <tr id='output_row_${pk}'>
+        <td>${field}</td>
+        <td>${output.part_detail.full_name}</td>
+        ${quantity_field}
+        <td>${buttons}</td>
+    </tr>`;
+
+    return html;
+}
+
+
 /**
  * Launch a modal form to complete selected build outputs
  */
@@ -465,48 +569,6 @@ function completeBuildOutputs(build_id, outputs, options={}) {
         return;
     }
 
-    // Render a single build output (StockItem)
-    function renderBuildOutput(output, opts={}) {
-        var pk = output.pk;
-
-        var output_html = imageHoverIcon(output.part_detail.thumbnail);
-
-        if (output.quantity == 1 && output.serial) {
-            output_html += `{% trans "Serial Number" %}: ${output.serial}`;
-        } else {
-            output_html += `{% trans "Quantity" %}: ${output.quantity}`;
-            if (output.part_detail && output.part_detail.units) {
-                output_html += ` ${output.part_detail.units}  `;
-            }
-        }
-
-        var buttons = `<div class='btn-group float-right' role='group'>`;
-
-        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
-
-        buttons += '</div>';
-
-        var field = constructField(
-            `outputs_output_${pk}`,
-            {
-                type: 'raw',
-                html: output_html,
-            },
-            {
-                hideLabels: true,
-            }
-        );
-
-        var html = `
-        <tr id='output_row_${pk}'>
-            <td>${field}</td>
-            <td>${output.part_detail.full_name}</td>
-            <td>${buttons}</td>
-        </tr>`;
-
-        return html;
-    }
-
     // Construct table entries
     var table_entries = '';
 
@@ -515,6 +577,9 @@ function completeBuildOutputs(build_id, outputs, options={}) {
     });
 
     var html = `
+    <div class='alert alert-block alert-success'>
+    {% trans "Selected build outputs will be marked as complete" %}
+    </div>
     <table class='table table-striped table-condensed' id='build-complete-table'>
         <thead>
             <th colspan='2'>{% trans "Output" %}</th>
@@ -613,8 +678,132 @@ function completeBuildOutputs(build_id, outputs, options={}) {
 
 
 
+/*
+ * Launch a modal form to scrap selected build outputs.
+ * Scrapped outputs are marked as "complete", but with the "rejected" code
+ * These outputs are not included in build completion calculations.
+ */
+function scrapBuildOutputs(build_id, outputs, options={}) {
+
+    if (outputs.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Build Outputs" %}',
+            '{% trans "At least one build output must be selected" %}',
+        );
+        return;
+    }
+
+    let table_entries = '';
+
+    outputs.forEach(function(output) {
+        table_entries += renderBuildOutput(output, {
+            adjust_quantity: true,
+        });
+    });
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Selected build outputs will be marked as scrapped" %}
+    <ul>
+        <li>{% trans "Scrapped output are marked as rejected" %}</li>
+        <li>{% trans "Allocated stock items will no longer be available" %}</li>
+        <li>{% trans "The completion status of the build order will not be adjusted" %}</li>
+    </ul>
+    </div>
+    <table class='table table-striped table-condensed' id='build-scrap-table'>
+        <thead>
+            <th colspan='2'>{% trans "Output" %}</th>
+            <th>{% trans "Quantity" %}</th>
+            <th><!-- Actions --></th>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>`;
+
+    constructForm(`{% url "api-build-list" %}${build_id}/scrap-outputs/`, {
+        method: 'POST',
+        preFormContent: html,
+        fields: {
+            location: {
+                filters: {
+                    structural: false,
+                }
+            },
+            notes: {},
+            discard_allocations: {},
+        },
+        confirm: true,
+        title: '{% trans "Scrap Build Outputs" %}',
+        afterRender: function(fields, opts) {
+            // Setup callbacks to remove outputs
+            $(opts.modal).find('.button-row-remove').click(function() {
+                let pk = $(this).attr('pk');
+                $(opts.modal).find(`#output_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+            let data = {
+                outputs: [],
+                location: getFormFieldValue('location', {}, opts),
+                notes: getFormFieldValue('notes', {}, opts),
+                discard_allocations: getFormFieldValue('discard_allocations', {type: 'boolean'}, opts),
+            };
+
+            let output_pk_values = [];
+
+            outputs.forEach(function(output) {
+                let pk = output.pk;
+                let row = $(opts.modal).find(`#output_row_${pk}`);
+                let quantity = getFormFieldValue(`outputs_quantity_${pk}`, {}, opts);
+
+                if (row.exists()) {
+                    data.outputs.push({
+                        output: pk,
+                        quantity: quantity,
+                    });
+
+                    output_pk_values.push(pk);
+                }
+            });
+
+            opts.nested = {
+                'outputs': output_pk_values,
+            };
+
+            inventreePut(
+                opts.url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        $(opts.modal).modal('hide');
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr, opts.url);
+                            break;
+                        }
+                    }
+                }
+            );
+        }
+    });
+}
+
+
 /**
- * Launch a modal form to delete selected build outputs
+ * Launch a modal form to delete selected build outputs.
+ * Deleted outputs are expunged from the database.
  */
 function deleteBuildOutputs(build_id, outputs, options={}) {
 
@@ -626,48 +815,6 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
         return;
     }
 
-    // Render a single build output (StockItem)
-    function renderBuildOutput(output, opts={}) {
-        var pk = output.pk;
-
-        var output_html = imageHoverIcon(output.part_detail.thumbnail);
-
-        if (output.quantity == 1 && output.serial) {
-            output_html += `{% trans "Serial Number" %}: ${output.serial}`;
-        } else {
-            output_html += `{% trans "Quantity" %}: ${output.quantity}`;
-            if (output.part_detail && output.part_detail.units) {
-                output_html += ` ${output.part_detail.units}  `;
-            }
-        }
-
-        var buttons = `<div class='btn-group float-right' role='group'>`;
-
-        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
-
-        buttons += '</div>';
-
-        var field = constructField(
-            `outputs_output_${pk}`,
-            {
-                type: 'raw',
-                html: output_html,
-            },
-            {
-                hideLabels: true,
-            }
-        );
-
-        var html = `
-        <tr id='output_row_${pk}'>
-            <td>${field}</td>
-            <td>${output.part_detail.full_name}</td>
-            <td>${buttons}</td>
-        </tr>`;
-
-        return html;
-    }
-
     // Construct table entries
     var table_entries = '';
 
@@ -676,6 +823,13 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
     });
 
     var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Selected build outputs will be deleted" %}
+    <ul>
+    <li>{% trans "Build output data will be permanently deleted" %}</li>
+    <li>{% trans "Allocated stock items will be returned to stock" %}</li>
+    </ul>
+    </div>
     <table class='table table-striped table-condensed' id='build-complete-table'>
         <thead>
             <th colspan='2'>{% trans "Output" %}</th>
@@ -952,8 +1106,25 @@ function loadBuildOutputTable(build_info, options={}) {
             );
         });
 
-        // Callback for the "delete" button
-        $(table).find('.button-output-delete').click(function() {
+        // Callback for the "scrap" button
+        $(table).find('.button-output-scrap').click(function() {
+            var pk = $(this).attr('pk');
+            var output = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+            scrapBuildOutputs(
+                build_info.pk,
+                [output],
+                {
+                    success: function() {
+                        $(table).bootstrapTable('refresh');
+                        $('#build-stock-table').bootstrapTable('refresh');
+                    }
+                }
+            );
+        });
+
+        // Callback for the "remove" button
+        $(table).find('.button-output-remove').click(function() {
             var pk = $(this).attr('pk');
 
             var output = $(table).bootstrapTable('getRowByUniqueId', pk);
@@ -1368,6 +1539,25 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Add callbacks for the various table menubar buttons
 
+    // Scrap multiple outputs
+    $('#multi-output-scrap').click(function() {
+        var outputs = getTableData(table);
+
+        scrapBuildOutputs(
+            build_info.pk,
+            outputs,
+            {
+                success: function() {
+                    // Reload the "in progress" table
+                    $('#build-output-table').bootstrapTable('refresh');
+
+                    // Reload the "completed" table
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
     // Complete multiple outputs
     $('#multi-output-complete').click(function() {
         var outputs = getTableData(table);
@@ -1443,8 +1633,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     var bom_items = buildInfo.bom_items || null;
 
-    // If BOM items have not been provided, load via the API
-    if (bom_items == null) {
+    function loadBomData() {
+        let data = [];
+
         inventreeGet(
             '{% url "api-bom-list" %}',
             {
@@ -1455,10 +1646,17 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 async: false,
                 success: function(results) {
-                    bom_items = results;
+                    data = results;
                 }
             }
         );
+
+        return data;
+    }
+
+    // If BOM items have not been provided, load via the API
+    if (bom_items == null) {
+        bom_items = loadBomData();
     }
 
     // Apply filters to build table
@@ -1510,7 +1708,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     setupFilterList('builditems', $(table), options.filterTarget, {
         callback: function(table, filters, options) {
-            filterBuildAllocationTable(filters);
+            if (filters == null) {
+                // Destroy and re-create the table from scratch
+                $(table).bootstrapTable('destroy');
+                loadBuildOutputAllocationTable(buildInfo, output, options);
+            } else {
+                filterBuildAllocationTable(filters);
+            }
         }
     });
 
@@ -2513,6 +2717,8 @@ function loadBuildTable(table, options) {
 
     var filters = loadTableFilters('build', params);
 
+    var calendar = null;
+
     var filterTarget = options.filterTarget || null;
 
     setupFilterList('build', table, filterTarget, {
@@ -2770,7 +2976,7 @@ function loadBuildTable(table, options) {
                 if (!loaded_calendar) {
                     loaded_calendar = true;
 
-                    var el = document.getElementById('build-order-calendar');
+                    let el = document.getElementById('build-order-calendar');
 
                     calendar = new FullCalendar.Calendar(el, {
                         initialView: 'dayGridMonth',

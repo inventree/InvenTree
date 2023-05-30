@@ -261,6 +261,11 @@
                                 <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
                             </a></li>
                             {% endif %}
+                            {% if roles.build.change %}
+                            <li><a class='dropdown-item' href='#' id='multi-output-scrap' title='{% trans "Scrap selected build outputs" %}'>
+                                <span class='fas fa-times-circle icon-red'></span> {% trans "Scrap outputs" %}
+                            </a></li>
+                            {% endif %}
                             {% if roles.build.delete %}
                             <li><a class='dropdown-item' href='#' id='multi-output-delete' title='{% trans "Delete selected build outputs" %}'>
                                 <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete outputs" %}
@@ -277,6 +282,18 @@
     </div>
 </div>
 
+<div class='panel panel-hidden' id='panel-consumed'>
+    <div class='panel-heading'>
+        <h4>
+            {% trans "Consumed Stock" %}
+        </h4>
+    </div>
+
+    <div class='panel-content'>
+        {% include "stock_table.html" with read_only=True prefix="consumed-" %}
+    </div>
+</div>
+
 <div class='panel panel-hidden' id='panel-completed'>
     <div class='panel-heading'>
         <h4>
@@ -285,7 +302,7 @@
     </div>
 
     <div class='panel-content'>
-        {% include "stock_table.html" with read_only=True prefix="build-" %}
+        {% include "stock_table.html" with prefix="build-" %}
     </div>
 </div>
 
@@ -324,19 +341,30 @@
 {% block js_ready %}
 {{ block.super }}
 
+onPanelLoad('consumed', function() {
+    loadStockTable($('#consumed-stock-table'), {
+        filterTarget: '#filter-list-consumed-stock',
+        params: {
+            location_detail: true,
+            part_detail: true,
+            consumed_by: {{ build.pk }},
+            in_stock: false,
+        },
+    });
+});
+
 onPanelLoad('completed', function() {
     loadStockTable($("#build-stock-table"), {
+        filterTarget: '#filter-list-build-stock',
         params: {
             location_detail: true,
             part_detail: true,
             build: {{ build.id }},
             is_building: false,
         },
-        groupByField: 'location',
         buttons: [
             '#stock-options',
         ],
-        url: "{% url 'api-stock-list' %}",
     });
 });
 
