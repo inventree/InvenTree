@@ -3,7 +3,7 @@ import enum
 import re
 
 
-class BaseEnum(enum.Enum):
+class BaseEnum(enum.IntEnum):
     """An `Enum` capabile of having its members have docstrings.
 
     Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
@@ -28,7 +28,7 @@ class BaseEnum(enum.Enum):
         return self.value != obj
 
 
-class StatusCode(int, BaseEnum):
+class StatusCode(BaseEnum):
     """Base class for representing a set of StatusCodes.
 
     Use enum syntax to define the status codes, e.g.
