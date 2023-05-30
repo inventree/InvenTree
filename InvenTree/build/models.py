@@ -502,7 +502,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         self.completion_date = datetime.now().date()
         self.completed_by = user
-        self.status = BuildStatus.COMPLETE
+        self.status = BuildStatus.COMPLETE.value
         self.save()
 
         # Remove untracked allocated stock
@@ -728,7 +728,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             _add_tracking_entry(output, user)
 
         if self.status == BuildStatus.PENDING:
-            self.status = BuildStatus.PRODUCTION
+            self.status = BuildStatus.PRODUCTION.value
             self.save()
 
     @transaction.atomic
@@ -830,7 +830,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         # Update build output item
         output.is_building = False
-        output.status = StockStatus.REJECTED
+        output.status = StockStatus.REJECTED.value
         output.location = location
         output.save(add_note=False)
 
@@ -850,7 +850,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             notes=notes,
             deltas={
                 'location': location.pk,
-                'status': StockStatus.REJECTED,
+                'status': StockStatus.REJECTED.value,
                 'buildorder': self.pk,
             }
         )
@@ -864,7 +864,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
-        status = kwargs.get('status', StockStatus.OK)
+        status = kwargs.get('status', StockStatus.OK.value)
         notes = kwargs.get('notes', '')
 
         # List the allocated BuildItem objects for the given output

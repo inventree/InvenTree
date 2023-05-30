@@ -112,7 +112,7 @@ class StockOwnershipTest(StockViewTestCase):
         """Helper function to get response to API change."""
         return self.client.patch(
             reverse('api-stock-detail', args=(self.test_item_id,)),
-            {'status': StockStatus.DAMAGED},
+            {'status': StockStatus.DAMAGED.value},
             content_type='application/json',
         )
 
@@ -156,7 +156,7 @@ class StockOwnershipTest(StockViewTestCase):
         # Check that user is allowed to change item
         self.assertTrue(item.check_ownership(self.user))        # Owner is group -> True
         self.assertTrue(location.check_ownership(self.user))    # Owner is group -> True
-        self.assertContains(self.assert_api_change(), f'"status":{StockStatus.DAMAGED}', status_code=200)
+        self.assertContains(self.assert_api_change(), f'"status":{StockStatus.DAMAGED.value}', status_code=200)
 
         # Change group
         new_group = Group.objects.create(name='new_group')

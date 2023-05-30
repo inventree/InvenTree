@@ -385,11 +385,11 @@ class StockItemListTest(StockAPITestCase):
     def test_filter_by_status(self):
         """Filter StockItem by 'status' field."""
         codes = {
-            StockStatus.OK: 27,
-            StockStatus.DESTROYED: 1,
-            StockStatus.LOST: 1,
-            StockStatus.DAMAGED: 0,
-            StockStatus.REJECTED: 0,
+            StockStatus.OK.value: 27,
+            StockStatus.DESTROYED.value: 1,
+            StockStatus.LOST.value: 1,
+            StockStatus.DAMAGED.value: 0,
+            StockStatus.REJECTED.value: 0,
         }
 
         for code in codes.keys():
@@ -1465,7 +1465,7 @@ class StockAssignTest(StockAPITestCase):
 
         stock_item = StockItem.objects.create(
             part=part.models.Part.objects.get(pk=1),
-            status=StockStatus.DESTROYED,
+            status=StockStatus.DESTROYED.value,
             quantity=5,
         )
 
