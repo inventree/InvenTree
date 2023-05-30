@@ -26,6 +26,7 @@
     duplicateBuildOrder,
     editBuildOrder,
     loadAllocationTable,
+    loadBuildLineTable,
     loadBuildOrderAllocationTable,
     loadBuildOutputAllocationTable,
     loadBuildOutputTable,
@@ -3078,5 +3079,135 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
                 table.bootstrapTable('refresh');
             }
         });
+    });
+}
+
+
+/*
+ * Load a table of BuildLine objects associated with a Build
+ *
+ * @param {int} build_id - The ID of the Build object
+ * @param {object} options - Options for the table
+ */
+function loadBuildLineTable(table, build_id, options={}) {
+
+    let params = options.params || {};
+
+    params.build = build_id;
+
+    let filters = loadTableFilters('buildlines', params);
+    let filterTarget = options.filterTarget || '#buildline-filters';
+
+    setupFilterList('build', table, filterTarget);
+
+    $(table).inventreeTable({
+        url: '{% url "api-build-line-list" %}',
+        queryParams: filters,
+        name: 'buildlines',
+        original: params,
+        search: true,
+        showColumns: true,
+        formatNoMatches: function() {
+            return '{% trans "No build lines found" %}';
+        },
+        columns: [
+            {
+                checkbox: true,
+                title: '{% trans "Select" %}',
+                searchable: false,
+                switchable: false,
+            },
+            {
+                field: 'bom_item',
+                title: '{% trans "Required Part" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    if (value == null) {
+                        return `BOM item deleted`;
+                    }
+
+                    let html = '';
+
+                    // Part thumbnail
+                    html += imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
+
+                    let bom_item = row.bom_item_detail;
+
+                    if (bom_item.allow_variants)
+
+                    if (row.bom_item_detail) {
+                        html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
+                    }
+
+                    return html;
+                }
+            },
+            {
+                field: 'reference',
+                title: '{% trans "Reference" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    return row.bom_item_detail.reference;
+                }
+            },
+            {
+                field: 'consumable',
+                title: '{% trans "Consumable" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value, row) {
+                    return yesNoLabel(row.bom_item_detail.consumable);
+                }
+            },
+            {
+                field: 'optional',
+                title: '{% trans "Optional" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value, row) {
+                    return yesNoLabel(row.bom_item_detail.optional);
+                }
+            },
+            {
+                field: 'unit_quantity',
+                title: '{% trans "Unit Quantity" %}',
+                formatter: function(value, row) {
+                    let text = row.bom_item_detail.quantity;
+
+                    if (row.part_detail.units) {
+                        text += ` <small>${row.part_detail.units}</small>`;
+
+                    }
+
+                    // TODO: Integrate "overage" display here
+
+                    return text;
+                }
+            },
+            {
+                field: 'allocated',
+                title: '{% trans "Allocated" %}',
+                formatter: function(value, row) {
+                    return 'TODO: allocated';
+                }
+            },
+            {
+                field: 'consumed',
+                title: '{% trans "Consumed" %}',
+                formatter: function(value, row) {
+                    return 'TODO: consumed';
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+                    return 'TODO: actions';
+                }
+            }
+        ]
     });
 }

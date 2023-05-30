@@ -221,7 +221,9 @@
                 </div>
             </div>
         </div>
+        <table class='table table-striped table-condensed' id='build-lines-table'></table>
         <table class='table table-striped table-condensed' id='allocation-table-untracked' data-toolbar='#unallocated-toolbar'></table>
+
         {% else %}
         <div class='alert alert-block alert-info'>
             {% trans "This Build Order does not have any associated untracked BOM items" %}
@@ -455,6 +457,9 @@ function loadUntrackedStockTable() {
 
 onPanelLoad('allocate', function() {
     loadUntrackedStockTable();
+
+    loadBuildLineTable("#build-lines-table", {{ build.pk }}, {
+    });
 });
 
 {% endif %}

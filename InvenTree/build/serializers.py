@@ -21,7 +21,7 @@ from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
 from part.models import BomItem
-from part.serializers import PartSerializer, PartBriefSerializer
+from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
 from .models import Build, BuildLine, BuildItem, BuildOrderAttachment
@@ -139,6 +139,8 @@ class BuildLineSerializer(InvenTreeModelSerializer):
             'pk',
             'build',
             'bom_item',
+            'bom_item_detail',
+            'part_detail',
             'quantity',
         ]
 
@@ -148,6 +150,9 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         ]
 
     quantity = serializers.FloatField()
+
+    bom_item_detail = BomItemSerializer(source='bom_item', many=False, read_only=True)
+    part_detail = PartSerializer(source='bom_item.sub_part', many=False, read_only=True)
 
 
 class BuildOutputSerializer(serializers.Serializer):
