@@ -7,6 +7,7 @@ import requests
 
 import part.models
 import stock.models
+from InvenTree.helpers import generateTestKey
 from plugin.helpers import (MixinNotImplementedError, render_template,
                             render_text)
 
@@ -444,7 +445,6 @@ class PanelMixin:
         Returns:
             Array of panels
         """
-        import InvenTree.helpers
 
         panels = []
 
@@ -482,7 +482,7 @@ class PanelMixin:
             panel['slug'] = self.slug
 
             # Add a 'key' for the panel, which is mostly guaranteed to be unique
-            panel['key'] = InvenTree.helpers.generateTestKey(self.slug + panel.get('title', 'panel'))
+            panel['key'] = generateTestKey(self.slug + panel.get('title', 'panel'))
 
             panels.append(panel)
 

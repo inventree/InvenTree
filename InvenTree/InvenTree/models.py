@@ -21,10 +21,10 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
-import common.models
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
+import InvenTree.helpers_model
 from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
@@ -207,7 +207,9 @@ class ReferenceIndexingMixin(models.Model):
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        return common.models.InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
+        # import at function level to prevent cyclic imports
+        from common.models import InvenTreeSetting
+        return InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
 
     @classmethod
     def get_reference_context(cls):
@@ -889,7 +891,7 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
             users = get_user_model().objects.filter(is_staff=True)
 
-            link = InvenTree.helpers.construct_absolute_url(
+            link = InvenTree.helpers_model.construct_absolute_url(
                 reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
             )
 

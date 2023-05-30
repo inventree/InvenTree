@@ -36,7 +36,8 @@ from company.models import Company, Contact, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
                               RoundingDecimalField)
-from InvenTree.helpers import decimal2string, getSetting, notify_responsible
+from InvenTree.helpers import decimal2string
+from InvenTree.helpers_model import getSetting, notify_responsible
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, MetadataMixin,
                               ReferenceIndexingMixin)
