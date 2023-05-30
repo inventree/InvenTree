@@ -49,15 +49,15 @@ class MachineConfig(models.Model):
 
         super().save(*args, **kwargs)
 
-        # TODO: active state
-
         # machine was created, add it to the machine registry
         if created:
             registry.add_machine(self, initialize=True)
 
-    def delete(self, using, keep_parents):
-        # TODO: remove from registry
-        return super().delete(using, keep_parents)
+    def delete(self, *args, **kwargs):
+        # remove machine first from registry
+        registry.remove_machine(self.machine)
+
+        return super().delete(*args, **kwargs)
 
     @property
     def machine(self):

@@ -112,7 +112,7 @@ class MachinesRegistry:
             machine.initialize()
 
     def remove_machine(self, machine: BaseMachineType):
-        self.machines.pop(machine.pk, None)
+        self.machines.pop(str(machine.pk), None)
 
     def get_machines(self, **kwargs):
         """Get loaded machines from registry. (By default only active machines)
