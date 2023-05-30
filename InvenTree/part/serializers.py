@@ -25,7 +25,7 @@ import InvenTree.status
 import part.filters
 import part.tasks
 import stock.models
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
@@ -530,7 +530,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
         # Filter to limit builds to "active"
         build_filter = Q(
-            status__in=BuildStatus.ACTIVE_CODES.value
+            status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         # Annotate with the total 'building' quantity

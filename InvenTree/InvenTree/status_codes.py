@@ -138,9 +138,13 @@ class BuildStatus(StatusCode):
     CANCELLED = 30, _("Cancelled"), 'danger'       # Build was cancelled
     COMPLETE = 40, _("Complete"), 'success'        # Build is complete
 
+
+class BuildStatusGroups:
+    """Groups for BuildStatus codes."""
+
     ACTIVE_CODES = [
-        PENDING,
-        PRODUCTION,
+        BuildStatus.PENDING.value,
+        BuildStatus.PRODUCTION.value,
     ]
 
 

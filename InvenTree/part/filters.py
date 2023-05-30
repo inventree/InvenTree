@@ -28,7 +28,7 @@ from sql_util.utils import SubquerySum
 
 import part.models
 import stock.models
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+from InvenTree.status_codes import (BuildStatusGroups, PurchaseOrderStatus,
                                     SalesOrderStatus)
 
 
@@ -111,7 +111,7 @@ def annotate_build_order_allocations(reference: str = ''):
     """
 
     # Build filter only returns 'active' build orders
-    build_filter = Q(build__status__in=BuildStatus.ACTIVE_CODES.value)
+    build_filter = Q(build__status__in=BuildStatusGroups.ACTIVE_CODES)
 
     return Coalesce(
         SubquerySum(

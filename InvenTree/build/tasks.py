@@ -15,7 +15,7 @@ import build.models
 import InvenTree.email
 import InvenTree.helpers
 import InvenTree.tasks
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.ready import isImportingData
 
 import part.models as part_models
@@ -158,7 +158,7 @@ def check_overdue_build_orders():
 
     overdue_orders = build.models.Build.objects.filter(
         target_date=yesterday,
-        status__in=BuildStatus.ACTIVE_CODES.value
+        status__in=BuildStatusGroups.ACTIVE_CODES
     )
 
     for bo in overdue_orders:

@@ -50,7 +50,7 @@ from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
                               InvenTreeBarcodeMixin, InvenTreeNotesMixin,
                               InvenTreeTree, MetadataMixin)
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+from InvenTree.status_codes import (BuildStatusGroups, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from order import models as OrderModels
 from stock import models as StockModels
@@ -1069,7 +1069,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
             part__in=self.get_used_in(),
-            status__in=BuildStatus.ACTIVE_CODES.value
+            status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         return builds
@@ -1323,7 +1323,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         Builds marked as 'complete' or 'cancelled' are ignored
         """
-        return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES.value)
+        return self.builds.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     @property
     def quantity_being_built(self):

@@ -29,7 +29,7 @@ from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
 from InvenTree.permissions import RolePermission
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+from InvenTree.status_codes import (BuildStatusGroups, PurchaseOrderStatus,
                                     SalesOrderStatus)
 from part.admin import PartCategoryResource, PartResource
 
@@ -522,7 +522,7 @@ class PartScheduling(RetrieveAPI):
         # Add build orders (incoming stock) information
         build_orders = Build.objects.filter(
             part=part,
-            status__in=BuildStatus.ACTIVE_CODES.value
+            status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         for build in build_orders:
@@ -567,12 +567,12 @@ class PartScheduling(RetrieveAPI):
                 # An "inherited" BOM item filters down to variant parts also
                 childs = bom_item.part.get_descendants(include_self=True)
                 builds = Build.objects.filter(
-                    status__in=BuildStatus.ACTIVE_CODES.value,
+                    status__in=BuildStatusGroups.ACTIVE_CODES,
                     part__in=childs,
                 )
             else:
                 builds = Build.objects.filter(
-                    status__in=BuildStatus.ACTIVE_CODES.value,
+                    status__in=BuildStatusGroups.ACTIVE_CODES,
                     part=bom_item.part,
                 )
 
@@ -1197,7 +1197,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
         if stock_to_build is not None:
             # Get active builds
-            builds = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES.value)
+            builds = Build.objects.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
             # Store parts with builds needing stock
             parts_needed_to_complete_builds = []
             # Filter required parts
