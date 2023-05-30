@@ -20,7 +20,8 @@ import common.models
 import order.models
 import part.models
 import stock.models
-from InvenTree.helpers import get_base_url, validateFilterString
+from InvenTree.helpers import validateFilterString
+from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin.registry import registry
 

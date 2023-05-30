@@ -21,7 +21,6 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
-import common.models
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
@@ -207,7 +206,9 @@ class ReferenceIndexingMixin(models.Model):
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        return common.models.InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
+        # import at function level to prevent cyclic imports
+        from common.models import InvenTreeSetting
+        return InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
 
     @classmethod
     def get_reference_context(cls):
