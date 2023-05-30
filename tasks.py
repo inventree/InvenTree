@@ -7,6 +7,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
+from platform import python_version
 
 from invoke import task
 
@@ -641,3 +642,36 @@ def schema(c, filename='schema.yml', overwrite=False):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
     manage(c, f'spectacular --file {filename}')
+
+
+@task(default=True)
+def version(c):
+    """Show the current version of InvenTree."""
+    import InvenTree.InvenTree.version as InvenTreeVersion
+    from InvenTree.InvenTree.config import (get_config_file, get_media_dir,
+                                            get_static_dir)
+
+    print(f"""
+InvenTree - inventree.org
+The Open-Source Inventory Management System\n
+
+Installation paths:
+Base        {localDir()}
+Config      {get_config_file()}
+Media       {get_media_dir()}
+Static      {get_static_dir()}
+
+Versions:
+Python      {python_version()}
+Django      {InvenTreeVersion.inventreeDjangoVersion()}
+InvenTree   {InvenTreeVersion.inventreeVersion()}
+API         {InvenTreeVersion.inventreeApiVersion()}
+
+Commit hash:{InvenTreeVersion.inventreeCommitHash()}
+Commit date:{InvenTreeVersion.inventreeCommitDate()}""")
+    if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
+        print("""
+You are probably running the package installer / single-line installer. Please mentioned that in any bug reports!
+
+Use '--list' for a list of available commands
+Use '--help' for help on a specific command""")

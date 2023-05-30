@@ -15,7 +15,7 @@
 {% endblock breadcrumbs %}
 
 {% block thumbnail %}
-<img class='part-thumb'
+<img alt="{% trans "Customer logo thumbnail" %}" class='part-thumb'
 {% if order.customer and order.customer.image %}
 src="{{ order.customer.image.url }}"
 {% else %}

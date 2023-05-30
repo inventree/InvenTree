@@ -2,10 +2,18 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 115
+INVENTREE_API_VERSION = 117
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v117 -> 2023-05-22 : https://github.com/inventree/InvenTree/pull/4854
+    - Part.units model now supports physical units (e.g. "kg", "m", "mm", etc)
+    - Replaces SupplierPart "pack_size" field with "pack_quantity"
+    - New field supports physical units, and allows for conversion between compatible units
+
+v116 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4823
+    - Updates to part parameter implementation, to use physical units
 
 v115 - > 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
     - Adds ability to partially scrap a build output

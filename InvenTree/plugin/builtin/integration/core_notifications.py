@@ -7,6 +7,7 @@ import requests
 from allauth.account.models import EmailAddress
 
 import common.models
+import InvenTree.email
 import InvenTree.helpers
 import InvenTree.tasks
 from plugin import InvenTreePlugin, registry
@@ -115,7 +116,7 @@ class InvenTreeCoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, Inve
             if instance_title:
                 subject = f'[{instance_title}] {subject}'
 
-            InvenTree.tasks.send_email(subject, '', targets, html_message=html_message)
+            InvenTree.email.send_email(subject, '', targets, html_message=html_message)
 
             return True
 

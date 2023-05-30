@@ -228,7 +228,7 @@ class OrderTest(TestCase):
             part=prt,
             supplier=sup,
             SKU='SKUx10',
-            pack_size=10,
+            pack_quantity='10',
         )
 
         # Create a new supplier part with smaller pack size
@@ -236,7 +236,7 @@ class OrderTest(TestCase):
             part=prt,
             supplier=sup,
             SKU='SKUx0.1',
-            pack_size=0.1,
+            pack_quantity='0.1',
         )
 
         # Record values before we start
@@ -367,18 +367,23 @@ class OrderTest(TestCase):
         - The creating user should *not* receive a notification
         """
 
-        PurchaseOrder.objects.create(
+        po = PurchaseOrder.objects.create(
             supplier=Company.objects.get(pk=1),
             reference='XYZABC',
             created_by=get_user_model().objects.get(pk=3),
             responsible=Owner.create(obj=get_user_model().objects.get(pk=4)),
         )
 
+        # Initially, no notifications
+
         messages = common.models.NotificationMessage.objects.filter(
             category='order.new_purchaseorder',
         )
 
-        self.assertEqual(messages.count(), 1)
+        self.assertEqual(messages.count(), 0)
+
+        # Place the order
+        po.place_order()
 
         # A notification should have been generated for user 4 (who is a member of group 3)
         self.assertTrue(messages.filter(user__pk=4).exists())

@@ -14,11 +14,13 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import InvenTree.helpers
+import InvenTree.helpers_model
 from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
 from common.settings import currency_code_default
 from InvenTree import settings, version
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginSetting
+from plugin.plugin import InvenTreePlugin
 
 register = template.Library()
 
@@ -104,7 +106,7 @@ def render_date(context, date_object):
 def render_currency(money, **kwargs):
     """Render a currency / Money object"""
 
-    return InvenTree.helpers.render_currency(money, **kwargs)
+    return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
 @register.simple_tag()
@@ -223,7 +225,7 @@ def inventree_splash(**kwargs):
 @register.simple_tag()
 def inventree_base_url(*args, **kwargs):
     """Return the base URL of the InvenTree server"""
-    return InvenTree.helpers.get_base_url()
+    return InvenTree.helpers_model.get_base_url()
 
 
 @register.simple_tag()
@@ -325,6 +327,8 @@ def setting_object(key, *args, **kwargs):
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
         plugin = kwargs['plugin']
+        if issubclass(plugin.__class__, InvenTreePlugin):
+            plugin = plugin.plugin_config()
 
         return PluginSetting.get_setting_object(key, plugin=plugin, cache=cache)
 

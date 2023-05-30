@@ -2,7 +2,9 @@
 
 /* globals
     inventreeGet,
+    QRCode,
     showAlertOrCache,
+    user_settings,
 */
 
 /* exported
@@ -856,7 +858,7 @@ function insertActionButton(modal, options) {
     // check if button already present
     var already_present = false;
     for (var child=element[0].firstElementChild; child; child=child.nextElementSibling) {
-        if (item.firstElementChild.name == options.name) {
+        if (child.firstElementChild.name == options.name) {
             already_present = true;
         }
     }

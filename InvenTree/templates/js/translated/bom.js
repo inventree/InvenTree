@@ -1,16 +1,46 @@
 {% load i18n %}
 
 /* globals
+    addFieldErrorMessage,
+    constructField,
     constructForm,
+    constructFormBody,
+    createNewModal,
+    enableSubmitButton,
     exportFormatOptions,
+    formatDecimal,
+    formatPriceRange,
+    getApiEndpointOptions,
+    getFormFieldValue,
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
+    initializeRelatedField,
     inventreeGet,
+    inventreeLoad,
     inventreePut,
+    inventreeSave,
     launchModalForm,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
+    makeIcon,
+    makeIconBadge,
+    makeIconButton,
+    makeInfoButton,
     makePartIcons,
+    makeRemoveButton,
+    modalSetContent,
+    partFields,
+    partGroups,
     renderLink,
     setupFilterList,
+    shortenString,
+    showApiError,
+    thumbnailImage,
+    updateFieldValue,
+    withTitle,
+    wrapButtons,
     yesNoLabel,
 */
 
@@ -226,7 +256,7 @@ function submitBomTable(part_id, options={}) {
         items: rows,
     };
 
-    var options = {
+    var opts = {
         nested: {
             items: idx_values,
         }
@@ -247,7 +277,7 @@ function submitBomTable(part_id, options={}) {
             error: function(xhr) {
                 switch (xhr.status) {
                 case 400:
-                    handleFormErrors(xhr.responseJSON, fields, options);
+                    handleFormErrors(xhr.responseJSON, fields, opts);
                     break;
                 default:
                     showApiError(xhr, url);
@@ -1092,7 +1122,7 @@ function loadBomTable(table, options={}) {
 
             if (any_pricing) {
 
-                var html = formatPriceRange(min_price, max_price);
+                let html = formatPriceRange(min_price, max_price);
 
                 if (complete_pricing) {
                     html += makeIconBadge(
@@ -1109,7 +1139,7 @@ function loadBomTable(table, options={}) {
                 return html;
 
             } else {
-                var html = '<em>{% trans "No pricing available" %}</em>';
+                let html = '<em>{% trans "No pricing available" %}</em>';
                 html += makeIconBadge('fa-times-circle icon-red');
 
                 return html;

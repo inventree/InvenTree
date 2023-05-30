@@ -33,6 +33,7 @@ feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
+pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
 python-barcode[images]                  # Barcode generator
 qrcode[pil]                             # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
