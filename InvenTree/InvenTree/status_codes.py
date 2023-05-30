@@ -16,17 +16,21 @@ class PurchaseOrderStatus(StatusCode):
     LOST = 50, _("Lost"), 'warning'             # Order was lost
     RETURNED = 60, _("Returned"), 'warning'     # Order was returned
 
+
+class PurchaseOrderStatusGroups:
+    """Groups for PurchaseOrderStatus codes."""
+
     # Open orders
     OPEN = [
-        PENDING,
-        PLACED,
+        PurchaseOrderStatus.PENDING.value,
+        PurchaseOrderStatus.PLACED.value,
     ]
 
     # Failed orders
     FAILED = [
-        CANCELLED,
-        LOST,
-        RETURNED
+        PurchaseOrderStatus.CANCELLED.value,
+        PurchaseOrderStatus.LOST.value,
+        PurchaseOrderStatus.RETURNED.value
     ]
 
 
@@ -40,15 +44,19 @@ class SalesOrderStatus(StatusCode):
     LOST = 50, _("Lost"), 'warning'                 # Order was lost
     RETURNED = 60, _("Returned"), 'warning'         # Order was returned
 
+
+class SalesOrderStatusGroups:
+    """Groups for SalesOrderStatus codes."""
+
     # Open orders
     OPEN = [
-        PENDING,
-        IN_PROGRESS,
+        SalesOrderStatus.PENDING.value,
+        SalesOrderStatus.IN_PROGRESS.value,
     ]
 
     # Completed orders
     COMPLETE = [
-        SHIPPED,
+        SalesOrderStatus.SHIPPED.value,
     ]
 
 
@@ -64,12 +72,16 @@ class StockStatus(StatusCode):
     QUARANTINED = 75, _("Quarantined"), 'info'          # Item has been quarantined and is unavailable
     RETURNED = 85, _("Returned"), 'warning'             # Item has been returned from a customer
 
+
+class StockStatusGroups:
+    """Groups for StockStatus codes."""
+
     # The following codes correspond to parts that are 'available' or 'in stock'
     AVAILABLE_CODES = [
-        OK,
-        ATTENTION,
-        DAMAGED,
-        RETURNED,
+        StockStatus.OK.value,
+        StockStatus.ATTENTION.value,
+        StockStatus.DAMAGED.value,
+        StockStatus.RETURNED.value,
     ]
 
 
@@ -160,9 +172,13 @@ class ReturnOrderStatus(StatusCode):
     COMPLETE = 30, _("Complete"), 'success'
     CANCELLED = 40, _("Cancelled"), 'danger'
 
+
+class ReturnOrderStatusGroups:
+    """Groups for ReturnOrderStatus codes."""
+
     OPEN = [
-        PENDING,
-        IN_PROGRESS,
+        ReturnOrderStatus.PENDING.value,
+        ReturnOrderStatus.IN_PROGRESS.value,
     ]
 
 

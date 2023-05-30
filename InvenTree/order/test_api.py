@@ -17,7 +17,7 @@ from common.settings import currency_codes
 from company.models import Company
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
-                                    StockStatus)
+                                    SalesOrderStatusGroups, StockStatus)
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from part.models import Part
@@ -1655,7 +1655,7 @@ class SalesOrderDownloadTest(OrderTest):
                 fo,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
-                required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatus.OPEN.value).count(),
+                required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatusGroups.OPEN).count(),
                 delimiter='\t',
             )
 

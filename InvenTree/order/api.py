@@ -24,8 +24,10 @@ from InvenTree.helpers import (DownloadFile, construct_absolute_url,
                                get_base_url, str2bool)
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
-from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
-                                    ReturnOrderStatus, SalesOrderStatus)
+from InvenTree.status_codes import (PurchaseOrderStatus,
+                                    PurchaseOrderStatusGroups,
+                                    ReturnOrderLineStatus, ReturnOrderStatus,
+                                    SalesOrderStatus, SalesOrderStatusGroups)
 from order import models, serializers
 from order.admin import (PurchaseOrderExtraLineResource,
                          PurchaseOrderLineItemResource, PurchaseOrderResource,
@@ -432,9 +434,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         """Filter by "pending" status (order status = pending)"""
 
         if str2bool(value):
-            return queryset.filter(order__status__in=PurchaseOrderStatus.OPEN.value)
+            return queryset.filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
         else:
-            return queryset.exclude(order__status__in=PurchaseOrderStatus.OPEN.value)
+            return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
@@ -449,7 +451,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
             return queryset.filter(q)
         else:
             # Only count "pending" orders
-            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatus.OPEN.value)
+            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
 
 class PurchaseOrderLineItemMixin:
@@ -985,12 +987,12 @@ class SalesOrderAllocationList(ListAPI):
                 # Filter only "open" orders
                 # Filter only allocations which have *not* shipped
                 queryset = queryset.filter(
-                    line__order__status__in=SalesOrderStatus.OPEN.value,
+                    line__order__status__in=SalesOrderStatusGroups.OPEN,
                     shipment__shipment_date=None,
                 )
             else:
                 queryset = queryset.exclude(
-                    line__order__status__in=SalesOrderStatus.OPEN.value,
+                    line__order__status__in=SalesOrderStatusGroups.OPEN,
                     shipment__shipment_date=None
                 )
 

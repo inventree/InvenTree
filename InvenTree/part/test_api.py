@@ -18,7 +18,7 @@ import company.models
 import order.models
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatusGroups,
                                     StockStatus)
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import (BomItem, BomItemSubstitute, Part, PartCategory,
@@ -1647,7 +1647,7 @@ class PartDetailTests(PartAPITestBase):
         # How many parts are 'on order' for this part?
         lines = order.models.PurchaseOrderLineItem.objects.filter(
             part__part__pk=1,
-            order__status__in=PurchaseOrderStatus.OPEN.value,
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
         )
 
         on_order = 0
@@ -2202,7 +2202,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
                 for line_item in sp.purchase_order_line_items.all():
                     po = line_item.order
 
-                    if po.status in PurchaseOrderStatus.OPEN.value:
+                    if po.status in PurchaseOrderStatusGroups.OPEN:
                         remaining = line_item.quantity - line_item.received
 
                         if remaining > 0:

@@ -40,9 +40,12 @@ from InvenTree.helpers import decimal2string, getSetting, notify_responsible
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, MetadataMixin,
                               ReferenceIndexingMixin)
-from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
-                                    ReturnOrderStatus, SalesOrderStatus,
-                                    StockHistoryCode, StockStatus)
+from InvenTree.status_codes import (PurchaseOrderStatus,
+                                    PurchaseOrderStatusGroups,
+                                    ReturnOrderLineStatus, ReturnOrderStatus,
+                                    ReturnOrderStatusGroups, SalesOrderStatus,
+                                    SalesOrderStatusGroups, StockHistoryCode,
+                                    StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
 
@@ -293,7 +296,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @classmethod
     def get_status_class(cls):
         """Return the PurchasOrderStatus class"""
-        return PurchaseOrderStatus
+        return PurchaseOrderStatusGroups
 
     @classmethod
     def api_defaults(cls, request):
@@ -335,7 +338,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         received = Q(status=PurchaseOrderStatus.COMPLETE.value) & Q(complete_date__gte=min_date) & Q(complete_date__lte=max_date)
 
         # Construct a queryset for "pending" orders within the range
-        pending = Q(status__in=PurchaseOrderStatus.OPEN.value) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = Q(status__in=PurchaseOrderStatusGroups.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders within the range
 
@@ -519,7 +522,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @property
     def is_open(self):
         """Return True if the PurchaseOrder is 'open'"""
-        return self.status in PurchaseOrderStatus.OPEN.value
+        return self.status in PurchaseOrderStatusGroups.OPEN
 
     def can_cancel(self):
         """A PurchaseOrder can only be cancelled under the following circumstances.
@@ -700,7 +703,7 @@ class SalesOrder(TotalPriceMixin, Order):
     @classmethod
     def get_status_class(cls):
         """Return the SalesOrderStatus class"""
-        return SalesOrderStatus
+        return SalesOrderStatusGroups
 
     @classmethod
     def api_defaults(cls, request):
@@ -738,10 +741,10 @@ class SalesOrder(TotalPriceMixin, Order):
             return queryset
 
         # Construct a queryset for "completed" orders within the range
-        completed = Q(status__in=SalesOrderStatus.COMPLETE.value) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
+        completed = Q(status__in=SalesOrderStatusGroups.COMPLETE) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
 
         # Construct a queryset for "pending" orders within the range
-        pending = Q(status__in=SalesOrderStatus.OPEN.value) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = Q(status__in=SalesOrderStatusGroups.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO: Construct a queryset for "overdue" orders within the range
 
@@ -812,7 +815,7 @@ class SalesOrder(TotalPriceMixin, Order):
     @property
     def is_open(self):
         """Return True if this order is 'open' (either 'pending' or 'in_progress')"""
-        return self.status in SalesOrderStatus.OPEN.value
+        return self.status in SalesOrderStatusGroups.OPEN
 
     @property
     def stock_allocations(self):
@@ -1695,7 +1698,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     @classmethod
     def get_status_class(cls):
         """Return the ReturnOrderStatus class"""
-        return ReturnOrderStatus
+        return ReturnOrderStatusGroups
 
     @classmethod
     def api_defaults(cls, request):
@@ -1772,7 +1775,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     @property
     def is_open(self):
         """Return True if this order is outstanding"""
-        return self.status in ReturnOrderStatus.OPEN.value
+        return self.status in ReturnOrderStatusGroups.OPEN
 
     @property
     def is_received(self):

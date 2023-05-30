@@ -29,8 +29,9 @@ from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
 from InvenTree.permissions import RolePermission
-from InvenTree.status_codes import (BuildStatusGroups, PurchaseOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import (BuildStatusGroups,
+                                    PurchaseOrderStatusGroups,
+                                    SalesOrderStatusGroups)
 from part.admin import PartCategoryResource, PartResource
 
 from . import serializers as part_serializers
@@ -479,7 +480,7 @@ class PartScheduling(RetrieveAPI):
         # Add purchase order (incoming stock) information
         po_lines = order.models.PurchaseOrderLineItem.objects.filter(
             part__part=part,
-            order__status__in=PurchaseOrderStatus.OPEN.value,
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
         )
 
         for line in po_lines:
@@ -502,7 +503,7 @@ class PartScheduling(RetrieveAPI):
         # Add sales order (outgoing stock) information
         so_lines = order.models.SalesOrderLineItem.objects.filter(
             part=part,
-            order__status__in=SalesOrderStatus.OPEN.value,
+            order__status__in=SalesOrderStatusGroups.OPEN,
         )
 
         for line in so_lines:
