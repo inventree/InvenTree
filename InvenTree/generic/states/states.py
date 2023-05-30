@@ -106,7 +106,7 @@ class StatusCode(BaseEnum):
     def tag(cls):
         """Return tag for this status code."""
         # Return the tag if it is defined
-        if bool(cls._TAG):
+        if hasattr(cls, '_TAG') and bool(cls._TAG):
             return cls._TAG.value
 
         # Try to find a default tag
