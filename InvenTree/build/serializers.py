@@ -629,7 +629,7 @@ class BuildCompleteSerializer(serializers.Serializer):
 
     accept_overallocated = serializers.ChoiceField(
         label=_('Overallocated Stock'),
-        choices=OverallocationChoice.OPTIONS.items(),
+        choices=list(OverallocationChoice.OPTIONS.items()),
         help_text=_('How do you want to handle extra stock items assigned to the build order'),
         required=False,
         default=OverallocationChoice.REJECT,
