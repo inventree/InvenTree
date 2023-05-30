@@ -331,7 +331,12 @@ class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocial
 # override dj-rest-auth
 class CustomRegisterSerializer(RegisterSerializer):
     """Override of serializer to use dynamic settings."""
-    email = serializers.EmailField(required=InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED'))
+    email = serializers.EmailField()
+
+    def __init__(self, instance=None, data=..., **kwargs):
+        """Check settings to influence which fields are needed."""
+        kwargs['email_required'] = InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED')
+        super().__init__(instance, data, **kwargs)
 
     def save(self, request):
         """Override to check if registration is open."""
