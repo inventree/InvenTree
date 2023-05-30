@@ -1,4 +1,10 @@
+import inspect
+from pathlib import Path
 from typing import TYPE_CHECKING, Dict
+
+from django.conf import settings
+
+from plugin import registry as plg_registry
 
 # Import only for typechecking, otherwise this throws cyclic import errors
 if TYPE_CHECKING:
@@ -12,7 +18,7 @@ else:  # pragma: no cover
         pass
 
 
-# TODO: move to better destination
+# TODO: move to better destination (helpers)
 class ClassValidationMixin:
     """Mixin to validate class attributes and overrides.
 
@@ -46,7 +52,31 @@ class ClassValidationMixin:
             raise NotImplementedError(f"'{cls}' " + " and ".join(errors))
 
 
-class BaseDriver(ClassValidationMixin):
+class ClassProviderMixin:
+    @classmethod
+    def get_provider_file(cls):
+        """File that contains the Class definition."""
+        return inspect.getfile(cls)
+
+    @classmethod
+    def get_provider_plugin(cls):
+        """Plugin that contains the Class definition, otherwise None."""
+        for plg in plg_registry.plugins.values():
+            if plg.package_path == cls.__module__:
+                return plg
+
+    @classmethod
+    def get_is_builtin(cls):
+        """Is this Class build in the Inventree source code?"""
+        try:
+            Path(cls.get_provider_file()).relative_to(settings.BASE_DIR)
+            return True
+        except ValueError:
+            # Path(...).relative_to throws an ValueError if its not relative to the InvenTree source base dir
+            return False
+
+
+class BaseDriver(ClassValidationMixin, ClassProviderMixin):
     """Base class for machine drivers
 
     Attributes:
@@ -78,7 +108,7 @@ class BaseDriver(ClassValidationMixin):
         return registry.get_machines(driver=self, **kwargs)
 
 
-class BaseMachineType(ClassValidationMixin):
+class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
     """Base class for machine types
 
     Attributes:
