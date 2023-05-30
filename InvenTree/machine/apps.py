@@ -21,17 +21,3 @@ class MachineConfig(AppConfig):
 
         logger.info("Loading InvenTree machines")
         registry.initialize()
-
-        from InvenTree.wsgi import shutdown_signal
-        shutdown_signal.connect(self.on_shutdown, dispatch_uid="machine.on_shutdown")
-
-    def on_shutdown(self, **kwargs):
-        # gracefully shutdown machines
-        from machine import registry
-
-        logger.debug("Shutting down InvenTree machines")
-        registry.terminate()
-
-        import time
-        time.sleep(3)
-        print("### After sleep")

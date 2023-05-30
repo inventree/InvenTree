@@ -28,11 +28,6 @@ class MachinesRegistry:
         self.discover_drivers()
         self.load_machines()
 
-    def terminate(self):
-        for machine in self.machines.values():
-            if machine.active:
-                machine.terminate()
-
     def discover_machine_types(self):
         import InvenTree.helpers
 
@@ -117,9 +112,6 @@ class MachinesRegistry:
             machine.initialize()
 
     def remove_machine(self, machine: BaseMachineType):
-        if machine.active:
-            machine.terminate()
-
         self.machines.pop(machine.pk, None)
 
     def get_machines(self, **kwargs):

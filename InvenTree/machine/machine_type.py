@@ -71,14 +71,6 @@ class BaseDriver(ClassValidationMixin):
         """
         pass
 
-    def terminate_machine(self, machine: "BaseMachineType"):
-        """This method get called for each machine before server termination or this machine gets removed.
-
-        Arguments:
-            machine: Machine instance
-        """
-        pass
-
     def get_machines(self, **kwargs):
         """Return all machines using this driver. (By default only active machines)"""
         from machine import registry
@@ -150,17 +142,6 @@ class BaseMachineType(ClassValidationMixin):
         try:
             self.driver.init_machine(self)
             self.initialized = True
-        except Exception as e:
-            self.errors.append(e)
-
-    def terminate(self):
-        """Machine termination function, gets called before server is shut down or machine gets removed."""
-        if self.driver is None:
-            return
-
-        try:
-            self.driver.terminate_machine(self)
-            self.initialized = False
         except Exception as e:
             self.errors.append(e)
 
