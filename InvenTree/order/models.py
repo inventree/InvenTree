@@ -484,6 +484,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             trigger_event('purchaseorder.placed', id=self.pk)
 
+            # Notify users that the order has been placed
+            notify_responsible(
+                self,
+                PurchaseOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder
+            )
+
     @transaction.atomic
     def complete_order(self):
         """Marks the PurchaseOrder as COMPLETE.
@@ -675,17 +683,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
         )
-
-
-@receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
-def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **kwargs):
-    """Callback function to be executed after a PurchaseOrder is saved."""
-    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
-        return
-
-    if created:
-        # Notify the responsible users that the purchase order has been created
-        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class SalesOrder(TotalPriceMixin, Order):

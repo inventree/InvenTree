@@ -1,5 +1,14 @@
 {% load i18n %}
 
+/* globals
+    EasyMDE,
+    inventreeFormDataUpload,
+    inventreeGet,
+    inventreePut,
+    showApiError,
+    user_settings,
+*/
+
 /* exported
     blankImage,
     deleteButton,
@@ -336,8 +345,6 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var id = options.id || 'progress-bar';
 
-    var style = '';
-
     if (opts.max_width) {
         style += `max-width: ${options.max_width}; `;
     }
@@ -514,6 +521,7 @@ function sanitizeInputString(s, options={}) {
     }
 
     // Remove ASCII control characters
+    // eslint-disable-next-line no-control-regex
     s = s.replace(/[\x00-\x1F\x7F]+/g, '');
 
     // Remove Unicode control characters
