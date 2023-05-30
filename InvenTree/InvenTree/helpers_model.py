@@ -17,6 +17,7 @@ from PIL import Image
 
 import common.models
 import InvenTree
+import InvenTree.helpers
 import InvenTree.version
 from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
