@@ -332,7 +332,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             return queryset
 
         # Construct a queryset for "received" orders within the range
-        received = Q(status=PurchaseOrderStatus.COMPLETE) & Q(complete_date__gte=min_date) & Q(complete_date__lte=max_date)
+        received = Q(status=PurchaseOrderStatus.COMPLETE.value) & Q(complete_date__gte=min_date) & Q(complete_date__lte=max_date)
 
         # Construct a queryset for "pending" orders within the range
         pending = Q(status__in=PurchaseOrderStatus.OPEN.value) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)

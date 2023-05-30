@@ -518,7 +518,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=list(StockStatus.items()),
+        choices=StockStatus.items(),
         default=StockStatus.OK,
         label=_('Status'),
     )

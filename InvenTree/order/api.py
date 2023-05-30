@@ -1472,7 +1472,7 @@ class OrderCalendarExport(ICalFeed):
             if obj['include_completed'] is False:
                 # Do not include completed orders from list in this case
                 # Completed status = 30
-                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE)
+                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE.value)
             else:
                 outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
         elif obj["ordertype"] == 'sales-order':

@@ -2553,7 +2553,7 @@ class PartPricing(common.models.MetaMixin):
 
         # Find all line items for completed orders which reference this part
         line_items = OrderModels.PurchaseOrderLineItem.objects.filter(
-            order__status=PurchaseOrderStatus.COMPLETE,
+            order__status=PurchaseOrderStatus.COMPLETE.value,
             received__gt=0,
             part__part=self.part,
         )

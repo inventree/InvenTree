@@ -128,7 +128,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             return queryset
 
         # Order was completed within the specified range
-        completed = Q(status=BuildStatus.COMPLETE) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
+        completed = Q(status=BuildStatus.COMPLETE.value) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
 
         # Order target date falls witin specified range
         pending = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
@@ -584,7 +584,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         self.completion_date = datetime.now().date()
         self.completed_by = user
 
-        self.status = BuildStatus.CANCELLED
+        self.status = BuildStatus.CANCELLED.value
         self.save()
 
         trigger_event('build.cancelled', id=self.pk)

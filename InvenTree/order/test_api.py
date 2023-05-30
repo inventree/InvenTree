@@ -579,7 +579,7 @@ class PurchaseOrderTest(OrderTest):
         # Test without completed orders
         response = self.get(url, expected_code=200, format=None)
 
-        number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE))
+        number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE.value))
 
         # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
