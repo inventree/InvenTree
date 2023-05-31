@@ -202,6 +202,41 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), 4)
 
+    def test_param_validation(self):
+        """Test that part parameter validation routines work correctly."""
+
+        # Checkbox parameter cannot have "units" specified
+        with self.assertRaises(django_exceptions.ValidationError):
+            template = PartParameterTemplate(
+                name='test',
+                description='My description',
+                units='mm',
+                checkbox=True
+            )
+
+            template.clean()
+
+        # Checkbox parameter cannot have "choices" specified
+        with self.assertRaises(django_exceptions.ValidationError):
+            template = PartParameterTemplate(
+                name='test',
+                description='My description',
+                choices='a,b,c',
+                checkbox=True
+            )
+
+            template.clean()
+
+        # Choices must be 'unique'
+        with self.assertRaises(django_exceptions.ValidationError):
+            template = PartParameterTemplate(
+                name='test',
+                description='My description',
+                choices='a,a,b',
+            )
+
+            template.clean()
+
     def test_create_param(self):
         """Test that we can create a param via the API."""
         url = reverse('api-part-parameter-list')

@@ -3332,6 +3332,7 @@ class PartParameterTemplate(MetadataMixin, models.Model):
 
         super().clean()
 
+        # Check that checkbox parameters do not have units or choices
         if self.checkbox:
             if self.units:
                 raise ValidationError({
@@ -3342,6 +3343,26 @@ class PartParameterTemplate(MetadataMixin, models.Model):
                 raise ValidationError({
                     'choices': _('Checkbox parameters cannot have choices')
                 })
+
+        # Check that 'choices' are in fact valid
+        self.choices = self.choices.strip()
+
+        if self.choices:
+            choice_set = set()
+
+            for choice in self.choices.split(','):
+                choice = choice.strip()
+
+                # Ignore empty choices
+                if not choice:
+                    continue
+
+                if choice in choice_set:
+                    raise ValidationError({
+                        'choices': _('Choices must be unique')
+                    })
+
+                choice_set.add(choice)
 
     def validate_unique(self, exclude=None):
         """Ensure that PartParameterTemplates cannot be created with the same name.
