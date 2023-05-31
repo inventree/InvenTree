@@ -6,6 +6,7 @@
     Chart,
     constructForm,
     constructFormBody,
+    constructInput,
     convertCurrency,
     formatCurrency,
     formatDecimal,
@@ -14,6 +15,7 @@
     getFormFieldValue,
     getTableData,
     global_settings,
+    guessFieldType,
     handleFormErrors,
     handleFormSuccess,
     imageHoverIcon,
@@ -42,6 +44,7 @@
     showMessage,
     showModalSpinner,
     thumbnailImage,
+    updateFieldValue,
     withTitle,
     wrapButtons,
     yesNoLabel,
@@ -1564,6 +1567,8 @@ function loadPartParameterTemplateTable(table, options={}) {
         url: '{% url "api-part-parameter-template-list" %}',
         original: params,
         queryParams: filters,
+        sortable: true,
+        sidePagination: 'server',
         name: 'part-parameter-templates',
         formatNoMatches: function() {
             return '{% trans "No part parameter templates found" %}';

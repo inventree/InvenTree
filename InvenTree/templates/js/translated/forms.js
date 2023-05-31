@@ -1094,7 +1094,6 @@ function guessFieldType(element) {
         return 'string';
     default:
         // Unknown field type
-        console.warn(`Unknown field type for element '${element}' (${element.attr('type')})`);
         return null;
     }
 }
