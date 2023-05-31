@@ -1294,6 +1294,68 @@ function partParameterFields(options={}) {
         template: {
             filters: {
                 ordering: 'name',
+            },
+            callback: function() {
+                console.log("callback func:");
+            },
+            onEdit: function(value, name, field, opts) {
+                // Callback function when the parameter template is selected.
+                // We rebuild the 'data' field based on the template selection
+
+                let checkbox = false;
+                let choices = [];
+
+                if (value) {
+                    // Request the parameter template data
+                    inventreeGet(`{% url "api-part-parameter-template-list" %}${value}/`, {}, {
+                        async: false,
+                        success: function(response) {
+                            if (response.checkbox) {
+                                // Checkbox input
+                                checkbox = true;
+                            } else if (response.choices) {
+                                // Select input
+                                response.choices.split(',').forEach(function(choice) {
+                                    choice = choice.trim();
+                                    choices.push({
+                                        value: choice,
+                                        display_name: choice,
+                                    });
+                                });
+                            }
+                        }
+                    });
+                }
+
+                // Find the current field element
+                let el = $(opts.modal).find('#id_data');
+
+                // Extract the current value from the field
+                let val = getFormFieldValue('data', {}, opts);
+
+                // Rebuild the field
+                let parameters = {};
+
+                if (checkbox) {
+                    parameters.type = 'boolean';
+                } else if (choices.length > 0) {
+                    parameters.type = 'choice';
+                    parameters.choices = choices;
+                } else {
+                    parameters.type = 'string';
+                }
+
+                // Construct the new field
+                let new_field = constructInput('data', parameters, opts);
+
+                if (guessFieldType(el) == 'boolean') {
+                    // Boolean fields are wrapped in a parent element
+                    el.parent().replaceWith(new_field);
+                } else {
+                    el.replaceWith(new_field);
+                }
+
+                updateFieldValue('data', val, parameters, opts);
             }
         },
         data: {},

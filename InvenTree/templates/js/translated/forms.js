@@ -990,6 +990,10 @@ function updateFieldValue(name, value, field, options) {
         return;
     }
 
+    if (field.type == null) {
+        field.type = guessFieldType(el);
+    }
+
     switch (field.type) {
     case 'decimal':
         // Strip trailing zeros
@@ -1069,6 +1073,35 @@ function validateFormField(name, options) {
 
 
 /*
+ * Introspect the HTML element to guess the field type
+ */
+function guessFieldType(element) {
+
+    if (!element.exists) {
+        console.error(`Could not find element '${element}' for guessFieldType`);
+        return null;
+    }
+
+    switch (element.attr('type')) {
+    case 'number':
+        return 'decimal';
+    case 'checkbox':
+        return 'boolean';
+    case 'date':
+        return 'date';
+    case 'datetime':
+        return 'datetime';
+    case 'text':
+        return 'string';
+    default:
+        // Unknown field type
+        console.warn(`Unknown field type for element '${element}' (${element.attr('type')})`);
+        return null;
+    }
+}
+
+
+/*
  * Extract and field value before sending back to the server
  *
  * arguments:
@@ -1087,6 +1120,11 @@ function getFormFieldValue(name, field={}, options={}) {
     }
 
     var value = null;
+
+    // If field type is not specified, try to guess it
+    if (field.type == null) {
+        field.type = guessFieldType(el);
+    }
 
     switch (field.type) {
     case 'boolean':
