@@ -984,6 +984,9 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         blank=True, null=True,
         verbose_name=_('Units'),
         help_text=_('Units of measure for this part'),
+        validators=[
+            validators.validate_physical_units,
+        ]
     )
 
     assembly = models.BooleanField(
@@ -2141,7 +2144,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     def on_order(self):
         """Return the total number of items on order for this part.
 
-        Note that some supplier parts may have a different pack_size attribute,
+        Note that some supplier parts may have a different pack_quantity attribute,
         and this needs to be taken into account!
         """
 
@@ -2160,7 +2163,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                 remaining = line.quantity - line.received
 
                 if remaining > 0:
-                    quantity += remaining * sp.pack_size
+                    quantity += sp.base_quantity(remaining)
 
         return quantity
 
@@ -2290,6 +2293,13 @@ def after_save_part(sender, instance: Part, created, **kwargs):
         except PicklingError:
             # Can sometimes occur if the referenced Part has issues
             pass
+
+        # Schedule a background task to rebuild any supplier parts
+        InvenTree.tasks.offload_task(
+            part_tasks.rebuild_supplier_parts,
+            instance.pk,
+            force_async=True
+        )
 
 
 class PartPricing(common.models.MetaMixin):
@@ -2560,7 +2570,7 @@ class PartPricing(common.models.MetaMixin):
                 continue
 
             # Take supplier part pack size into account
-            purchase_cost = self.convert(line.purchase_price / line.part.pack_size)
+            purchase_cost = self.convert(line.purchase_price / line.part.pack_quantity_native)
 
             if purchase_cost is None:
                 continue
@@ -2651,7 +2661,7 @@ class PartPricing(common.models.MetaMixin):
                         continue
 
                     # Ensure we take supplier part pack size into account
-                    cost = self.convert(pb.price / sp.pack_size)
+                    cost = self.convert(pb.price / sp.pack_quantity_native)
 
                     if cost is None:
                         continue
@@ -3359,8 +3369,8 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
 
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
-        # Schedule a background task to rebuild the parameters against this template
         if not created:
+            # Schedule a background task to rebuild the parameters against this template
             InvenTree.tasks.offload_task(
                 part_tasks.rebuild_parameters,
                 instance.pk,

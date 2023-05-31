@@ -7,7 +7,8 @@ from rest_framework import serializers
 from common.models import (InvenTreeSetting, InvenTreeUserSetting,
                            NewsFeedEntry, NotesImage, NotificationMessage,
                            ProjectCode)
-from InvenTree.helpers import construct_absolute_url, get_objectreference
+from InvenTree.helpers import get_objectreference
+from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.serializers import (InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
 

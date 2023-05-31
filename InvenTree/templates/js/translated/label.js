@@ -8,10 +8,13 @@
     modalEnable,
     modalSetContent,
     modalSetTitle,
+    modalShowSubmitButton,
     modalSubmit,
     openModal,
     plugins_enabled,
     showAlertDialog,
+    showMessage,
+    user_settings,
 */
 
 /* exported
@@ -96,10 +99,10 @@ function selectLabel(labels, items, options={}) {
     var html = '';
 
     if (items.length > 0) {
-        name = items.length == 1 ? options.singular_name : options.plural_name;
+        let item_name = items.length == 1 ? options.singular_name : options.plural_name;
         html += `
         <div class='alert alert-block alert-info'>
-        ${items.length} ${name} {% trans "selected" %}
+        ${items.length} ${item_name} {% trans "selected" %}
         </div>`;
     }
 

@@ -2170,6 +2170,18 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(deltas['location'], 1)
         self.assertEqual(deltas['returnorder'], rma.pk)
 
+    def test_ro_calendar(self):
+        """Test the calendar export endpoint"""
+
+        # Full test is in test_po_calendar. Since these use the same backend, test only
+        # that the endpoint is available
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'return-order'})
+
+        # Test without completed orders
+        response = self.get(url, expected_code=200, format=None)
+        calendar = Calendar.from_ical(response.content)
+        self.assertIsInstance(calendar, Calendar)
+
 
 class OrderMetadataAPITest(InvenTreeAPITestCase):
     """Unit tests for the various metadata endpoints of API."""

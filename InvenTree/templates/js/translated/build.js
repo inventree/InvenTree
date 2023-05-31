@@ -2,19 +2,49 @@
 {% load inventree_extras %}
 
 /* globals
+    addClearCallback,
     buildStatusDisplay,
+    clearEvents,
+    constructExpandCollapseButtons,
+    constructField,
     constructForm,
+    constructOrderTableButtons,
+    endDate,
+    formatDecimal,
+    FullCalendar,
+    getFormFieldValue,
+    getTableData,0
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
+    initializeRelatedField,
     inventreeGet,
+    inventreeLoad,
+    inventreePut,
     launchModalForm,
     linkButtonsToSelection,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
+    makeRemoveButton,
     makeIconBadge,
     makeIconButton,
     makePartIcons,
     makeProgressBar,
+    orderParts,
+    renderDate,
     renderLink,
     setupFilterList,
+    shortenString,
+    showAlertDialog,
+    showApiError,
+    startDate,
+    stockStatusDisplay,
+    showApiErrors,
+    thumbnailImage,
+    updateFieldValue,
+    wrapButtons,
+    yesNoLabel,
 */
 
 /* exported
@@ -675,9 +705,9 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
     <div class='alert alert-block alert-danger'>
     {% trans "Selected build outputs will be marked as scrapped" %}
     <ul>
-    <li>{% trans "Scrapped output are given the 'rejected' status" %}</li>
-    <li>{% trans "Allocated stock items will no longer be available" %}</li>
-    <li>{% trans "The completion status of the build order will not be adjusted" %}</li>
+        <li>{% trans "Scrapped output are marked as rejected" %}</li>
+        <li>{% trans "Allocated stock items will no longer be available" %}</li>
+        <li>{% trans "The completion status of the build order will not be adjusted" %}</li>
     </ul>
     </div>
     <table class='table table-striped table-condensed' id='build-scrap-table'>
@@ -2687,6 +2717,8 @@ function loadBuildTable(table, options) {
 
     var filters = loadTableFilters('build', params);
 
+    var calendar = null;
+
     var filterTarget = options.filterTarget || null;
 
     setupFilterList('build', table, filterTarget, {
@@ -2944,7 +2976,7 @@ function loadBuildTable(table, options) {
                 if (!loaded_calendar) {
                     loaded_calendar = true;
 
-                    var el = document.getElementById('build-order-calendar');
+                    let el = document.getElementById('build-order-calendar');
 
                     calendar = new FullCalendar.Calendar(el, {
                         initialView: 'dayGridMonth',

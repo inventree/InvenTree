@@ -1,11 +1,26 @@
 {% load i18n %}
 
 /* globals
+    constructLabel,
     constructForm,
+    formatCurrency,
+    formatDecimal,
+    formatDate,
+    handleFormSuccess,
     imageHoverIcon,
+    inventreeGet,
+    inventreePut,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
+    makeIconBadge,
+    renderClipboard,
+    renderDate,
     renderLink,
+    renderPart,
     setupFilterList,
+    thumbnailImage,
+    wrapButtons,
 */
 
 /* exported
@@ -138,7 +153,7 @@ function supplierPartFields(options={}) {
         packaging: {
             icon: 'fa-box',
         },
-        pack_size: {},
+        pack_quantity: {},
     };
 
     if (options.part) {
@@ -369,7 +384,6 @@ function createSupplierPartPriceBreak(part_id, options={}) {
     constructForm('{% url "api-part-supplier-price-list" %}', {
         fields: fields,
         method: 'POST',
-        fields: fields,
         title: '{% trans "Add Price Break" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
@@ -634,6 +648,7 @@ function deleteContacts(contacts, options={}) {
         ids.push(contact.pk);
     });
 
+    // eslint-disable-next-line no-useless-escape
     let html = `
     <div class='alert alert-block alert-danger'>
     {% trans "All selected contacts will be deleted" %}
@@ -1242,17 +1257,24 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
             },
             {
-                field: 'pack_size',
+                field: 'pack_quantity',
                 title: '{% trans "Pack Quantity" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var output = `${value}`;
 
-                    if (row.part_detail && row.part_detail.units) {
-                        output += ` ${row.part_detail.units}`;
+                    let html = '';
+
+                    if (value) {
+                        html = value;
+                    } else {
+                        html = '-';
                     }
 
-                    return output;
+                    if (row.part_detail && row.part_detail.units) {
+                        html += `<span class='fas fa-info-circle float-right' title='{% trans "Base Units" %}: ${row.part_detail.units}'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {

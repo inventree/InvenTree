@@ -2094,7 +2094,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
                     part=p,
                     supplier=supplier,
                     SKU=f"PNT-{color}-{pk_sz}L",
-                    pack_size=pk_sz,
+                    pack_quantity=str(pk_sz),
                 )
 
             self.assertEqual(p.supplier_parts.count(), 4)
@@ -2156,7 +2156,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
                         remaining = line_item.quantity - line_item.received
 
                         if remaining > 0:
-                            on_order += remaining * sp.pack_size
+                            on_order += sp.base_quantity(remaining)
 
             # The annotated quantity must be equal to the hand-calculated quantity
             self.assertEqual(on_order, item['ordering'])
