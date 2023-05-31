@@ -3307,6 +3307,8 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         name: The name (key) of the Parameter [string]
         units: The units of the Parameter [string]
         description: Description of the parameter [string]
+        checkbox: Boolean flag to indicate whether the parameter is a checkbox [bool]
+        choices: List of valid choices for the parameter [string]
     """
 
     @staticmethod
@@ -3320,6 +3322,26 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         if self.units:
             s += " ({units})".format(units=self.units)
         return s
+
+    def clean(self):
+        """Custom cleaning step for this model:
+
+        - A 'checkbox' field cannot have 'choices' set
+        - A 'checkbox' field cannot have 'units' set
+        """
+
+        super().clean()
+
+        if self.checkbox:
+            if self.units:
+                raise ValidationError({
+                    'units': _('Checkbox parameters cannot have units')
+                })
+
+            if self.choices:
+                raise ValidationError({
+                    'choices': _('Checkbox parameters cannot have choices')
+                })
 
     def validate_unique(self, exclude=None):
         """Ensure that PartParameterTemplates cannot be created with the same name.
@@ -3357,6 +3379,19 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         max_length=250,
         verbose_name=_('Description'),
         help_text=_('Parameter description'),
+        blank=True,
+    )
+
+    checkbox = models.BooleanField(
+        default=False,
+        verbose_name=_('Checkbox'),
+        help_text=_('Is this parameter a checkbox?')
+    )
+
+    choices = models.CharField(
+        max_length=5000,
+        verbose_name=_('Choices'),
+        help_text=_('Valid choices for this parameter (comma-separated)'),
         blank=True,
     )
 
