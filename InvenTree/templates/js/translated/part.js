@@ -2,19 +2,48 @@
 {% load inventree_extras %}
 
 /* globals
+    baseCurrency,
     Chart,
     constructForm,
+    constructFormBody,
+    convertCurrency,
+    formatCurrency,
+    formatDecimal,
+    formatPriceRange,
+    getCurrencyConversionRates,
+    getFormFieldValue,
+    getTableData,
     global_settings,
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
     inventreeGet,
+    inventreeLoad,
     inventreePut,
+    inventreeSave,
     linkButtonsToSelection,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
     makeIconBadge,
     makeIconButton,
+    moment,
+    orderParts,
+    purchaseOrderStatusDisplay,
+    receivePurchaseOrderItems,
+    renderClipboard,
+    renderDate,
     renderLink,
     setFormGroupVisibility,
     setupFilterList,
+    shortenString,
+    showAlertDialog,
+    showApiError,
+    showMessage,
+    showModalSpinner,
+    thumbnailImage,
+    withTitle,
+    wrapButtons,
     yesNoLabel,
 */
 
@@ -31,6 +60,7 @@
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
+    loadPartParameterTemplateTable,
     loadPartPurchaseOrderTable,
     loadPartTable,
     loadPartTestTemplateTable,
@@ -1287,10 +1317,26 @@ function loadPartParameterTable(table, options) {
                 }
             },
             {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value, row) {
+                    return row.template_detail.description;
+                }
+            },
+            {
                 field: 'data',
                 title: '{% trans "Value" %}',
                 switchable: false,
                 sortable: true,
+                formatter: function(value, row) {
+                    if (row.data_numeric && row.template_detail.units) {
+                        return `<span title='${row.data_numeric} ${row.template_detail.units}'>${row.data}</span>`;
+                    } else {
+                        return row.data;
+                    }
+                }
             },
             {
                 field: 'units',
@@ -1341,6 +1387,107 @@ function loadPartParameterTable(table, options) {
                 });
             });
         }
+    });
+}
+
+
+/*
+ * Construct a table showing a list of part parameter templates
+ */
+function loadPartParameterTemplateTable(table, options={}) {
+
+    let params = options.params || {};
+
+    params.ordering = 'name';
+
+    let filters = loadTableFilters('part-parameter-templates', params);
+
+    let filterTarget = options.filterTarget || '#filter-list-parameter-templates';
+
+    setupFilterList('part-parameter-templates', $(table), filterTarget);
+
+    $(table).inventreeTable({
+        url: '{% url "api-part-parameter-template-list" %}',
+        original: params,
+        queryParams: filters,
+        name: 'part-parameter-templates',
+        formatNoMatches: function() {
+            return '{% trans "No part parameter templates found" %}';
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: '{% trans "ID" %}',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                sortable: true,
+            },
+            {
+                field: 'units',
+                title: '{% trans "Units" %}',
+                sortable: true,
+                switchable: true,
+            },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                formatter: function(value, row, index, field) {
+
+                    let buttons = '';
+
+                    buttons += makeEditButton('template-edit', row.pk, '{% trans "Edit Template" %}');
+                    buttons += makeDeleteButton('template-delete', row.pk, '{% trans "Delete Template" %}');
+
+                    return wrapButtons(buttons);
+                }
+            }
+        ]
+    });
+
+    $(table).on('click', '.template-edit', function() {
+        var button = $(this);
+        var pk = button.attr('pk');
+
+        constructForm(
+            `/api/part/parameter/template/${pk}/`,
+            {
+                fields: {
+                    name: {},
+                    units: {},
+                    description: {},
+                },
+                title: '{% trans "Edit Part Parameter Template" %}',
+                refreshTable: table,
+            }
+        );
+    });
+
+    $(table).on('click', '.template-delete', function() {
+        var button = $(this);
+        var pk = button.attr('pk');
+
+        var html = `
+        <div class='alert alert-block alert-danger'>
+            {% trans "Any parameters which reference this template will also be deleted" %}
+        </div>`;
+
+        constructForm(
+            `/api/part/parameter/template/${pk}/`,
+            {
+                method: 'DELETE',
+                preFormContent: html,
+                title: '{% trans "Delete Part Parameter Template" %}',
+                refreshTable: table,
+            }
+        );
     });
 }
 
@@ -1470,13 +1617,12 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 formatter: function(value, row) {
                     let data = value;
 
-                    if (row.supplier_part_detail.pack_size != 1.0) {
-                        let pack_size = row.supplier_part_detail.pack_size;
-                        let total = value * pack_size;
+                    if (row.supplier_part_detail.pack_quantity_native != 1.0) {
+                        let total = value * row.supplier_part_detail.pack_quantity_native;
 
                         data += makeIconBadge(
                             'fa-info-circle icon-blue',
-                            `{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}`
+                            `{% trans "Pack Quantity" %}: ${row.pack_quantity} - {% trans "Total Quantity" %}: ${total}`
                         );
                     }
 
@@ -1529,10 +1675,9 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 formatter: function(value, row) {
                     var data = value;
 
-                    if (value > 0 && row.supplier_part_detail.pack_size != 1.0) {
-                        var pack_size = row.supplier_part_detail.pack_size;
-                        var total = value * pack_size;
-                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                    if (value > 0 && row.supplier_part_detail.pack_quantity_native != 1.0) {
+                        let total = value * row.supplier_part_detail.pack_quantity_native;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${row.pack_quantity} - {% trans "Total Quantity" %}: ${total}'></span>`;
                     }
 
                     return data;
@@ -1663,6 +1808,12 @@ function loadRelatedPartsTable(table, part_id, options={}) {
  */
 function loadParametricPartTable(table, options={}) {
 
+    options.params = options.params || {};
+
+    options.params['parameters'] = true;
+
+    let filters = loadTableFilters('parameters', options.params);
+
     setupFilterList('parameters', $(table), '#filter-list-parameters');
 
     var columns = [
@@ -1691,11 +1842,18 @@ function loadParametricPartTable(table, options={}) {
             async: false,
             success: function(response) {
                 for (var template of response) {
+
+                    let template_name = template.name;
+
+                    if (template.units) {
+                        template_name += ` [${template.units}]`;
+                    }
+
                     columns.push({
                         field: `parameter_${template.pk}`,
-                        title: template.name,
+                        title: template_name,
                         switchable: true,
-                        sortable: false,
+                        sortable: true,
                         filterControl: 'input',
                     });
                 }
@@ -1703,20 +1861,21 @@ function loadParametricPartTable(table, options={}) {
         }
     );
 
-    // TODO: Re-enable filter control for parameter values
 
     $(table).inventreeTable({
         url: '{% url "api-part-list" %}',
-        queryParams: {
-            category: options.category,
-            cascade: true,
-            parameters: true,
-        },
+        queryParams: filters,
+        original: options.params,
         groupBy: false,
         name: options.name || 'part-parameters',
         formatNoMatches: function() {
             return '{% trans "No parts found" %}';
         },
+        // TODO: Re-enable filter control for parameter values
+        // Ref: https://github.com/inventree/InvenTree/issues/4851
+        // filterControl: true,
+        // showFilterControlSwitch: true,
+        // sortSelectOptions: true,
         columns: columns,
         showColumns: true,
         sidePagination: 'server',
@@ -1751,8 +1910,8 @@ function loadParametricPartTable(table, options={}) {
 }
 
 
+// Generate a "grid tile" view for a particular part
 function partGridTile(part) {
-    // Generate a "grid tile" view for a particular part
 
     // Rows for table view
     var rows = '';
@@ -1821,6 +1980,8 @@ function partGridTile(part) {
  *      actions: Provide a callback function to construct an "actions" column
  */
 function loadPartTable(table, url, options={}) {
+
+    options.params = options.params || {};
 
     // Ensure category detail is included
     options.params['category_detail'] = true;
@@ -1902,6 +2063,12 @@ function loadPartTable(table, url, options={}) {
 
             return withTitle(text, row.description);
         }
+    });
+
+    columns.push({
+        field: 'units',
+        title: '{% trans "Units" %}',
+        sortable: true,
     });
 
     columns.push({
@@ -2162,7 +2329,7 @@ function loadPartTable(table, url, options={}) {
 
                         $(table).bootstrapTable('refresh');
                     }
-                };
+                }
 
                 // Start the ball rolling
                 showModalSpinner(opts.modal);

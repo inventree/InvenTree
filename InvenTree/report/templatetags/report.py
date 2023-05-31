@@ -8,6 +8,7 @@ from django.conf import settings
 from django.utils.safestring import SafeString, mark_safe
 
 import InvenTree.helpers
+import InvenTree.helpers_model
 from common.models import InvenTreeSetting
 from company.models import Company
 from part.models import Part
@@ -205,11 +206,11 @@ def logo_image(**kwargs):
 def internal_link(link, text):
     """Make a <a></a> href which points to an InvenTree URL.
 
-    Uses the InvenTree.helpers.construct_absolute_url function to build the URL.
+    Uses the InvenTree.helpers_model.construct_absolute_url function to build the URL.
     """
     text = str(text)
 
-    url = InvenTree.helpers.construct_absolute_url(link)
+    url = InvenTree.helpers_model.construct_absolute_url(link)
 
     # If the base URL is not set, just return the text
     if not url:
@@ -246,7 +247,7 @@ def divide(x, y):
 def render_currency(money, **kwargs):
     """Render a currency / Money object"""
 
-    return InvenTree.helpers.render_currency(money, **kwargs)
+    return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
 @register.simple_tag

@@ -417,7 +417,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'manufacturer',
         'MPN',
         'packaging',
-        'pack_size',
+        'pack_quantity',
         'in_stock',
         'updated',
     ]
@@ -427,6 +427,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'supplier': 'supplier__name',
         'manufacturer': 'manufacturer_part__manufacturer__name',
         'MPN': 'manufacturer_part__MPN',
+        'pack_quantity': ['pack_quantity_native', 'pack_quantity'],
     }
 
     search_fields = [

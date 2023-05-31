@@ -27,6 +27,7 @@ from build.validators import generate_next_build_reference, validate_build_order
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.helpers_model
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
@@ -539,7 +540,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             'name': name,
             'slug': 'build.completed',
             'message': _('A build order has been completed'),
-            'link': InvenTree.helpers.construct_absolute_url(self.get_absolute_url()),
+            'link': InvenTree.helpers_model.construct_absolute_url(self.get_absolute_url()),
             'template': {
                 'html': 'email/build_order_completed.html',
                 'subject': name,
@@ -797,7 +798,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         items.all().delete()
 
     @transaction.atomic
-    def scrap_build_output(self, output, location, **kwargs):
+    def scrap_build_output(self, output, quantity, location, **kwargs):
         """Mark a particular build output as scrapped / rejected
 
         - Mark the output as "complete"
@@ -809,9 +810,24 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         if not output:
             raise ValidationError(_("No build output specified"))
 
+        if quantity <= 0:
+            raise ValidationError({
+                'quantity': _("Quantity must be greater than zero")
+            })
+
+        if quantity > output.quantity:
+            raise ValidationError({
+                'quantity': _("Quantity cannot be greater than the output quantity")
+            })
+
         user = kwargs.get('user', None)
         notes = kwargs.get('notes', '')
         discard_allocations = kwargs.get('discard_allocations', False)
+
+        if quantity < output.quantity:
+            # Split output into two items
+            output = output.splitStock(quantity, location=location, user=user)
+            output.build = self
 
         # Update build output item
         output.is_building = False
@@ -1195,7 +1211,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
         # Notify the responsible users that the build order has been created
-        InvenTree.helpers.notify_responsible(instance, sender, exclude=instance.issued_by)
+        InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
 
 
 class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):

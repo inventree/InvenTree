@@ -2,8 +2,11 @@
 
 /* globals
     blankImage,
+    partStockLabel,
+    renderLink,
     select2Thumbnail
-    shortenString
+    shortenString,
+    user_settings
 */
 
 /* exported

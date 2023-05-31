@@ -3,17 +3,50 @@
 
 
 /* globals
+    addClearCallback,
+    calculateTotalPrice,
+    clearEvents,
     companyFormFields,
+    constructExpandCollapseButtons,
+    constructField,
     constructForm,
+    constructOrderTableButtons,
+    endDate,
+    formatCurrency,
+    FullCalendar,
+    getFormFieldValue,
     global_settings,
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
+    initializeRelatedField,
     inventreeGet,
+    inventreeLoad,
+    inventreePut,
     launchModalForm,
+    locationDetail,
     loadTableFilters,
+    makeCopyButton,
+    makeEditButton,
+    makeDeleteButton,
     makeIconBadge,
+    makeIconButton,
+    makeProgressBar,
+    makeRemoveButton,
+    moment,
+    newBuildOrder,
+    orderParts,
+    reloadTotal,
+    renderDate,
     renderLink,
     salesOrderStatusDisplay,
     setupFilterList,
+    showAlertDialog,
+    showApiError,
+    startDate,
+    thumbnailImage,
+    updateFieldValue,
+    wrapButtons,
 */
 
 /* exported
@@ -371,7 +404,7 @@ function completePendingShipments(order_id, options={}) {
         completePendingShipmentsHelper(allocated_shipments, 0, options);
 
     } else {
-        html = `
+        let html = `
         <div class='alert alert-block alert-danger'>
         `;
 
@@ -408,7 +441,7 @@ function completePendingShipments(order_id, options={}) {
  */
 function completePendingShipmentsHelper(shipments, shipment_idx, options={}) {
     if (shipment_idx < shipments.length) {
-        completeSalseOrderShipment(shipments[shipment_idx].pk,
+        completeSalesOrderShipment(shipments[shipment_idx].pk,
             {
                 buttons: [
                     {
@@ -710,7 +743,7 @@ function loadSalesOrderTable(table, options) {
             if (display_mode == 'calendar') {
                 var el = document.getElementById('purchase-order-calendar');
 
-                calendar = new FullCalendar.Calendar(el, {
+                let calendar = new FullCalendar.Calendar(el, {
                     initialView: 'dayGridMonth',
                     nowIndicator: true,
                     aspectRatio: 2.5,
@@ -1569,11 +1602,8 @@ function showAllocationSubTable(index, row, element, options) {
                 field: 'allocated',
                 title: '{% trans "Stock Item" %}',
                 formatter: function(value, row, index, field) {
-                    var text = '';
-
-                    var item = row.item_detail;
-
-                    var text = `{% trans "Quantity" %}: ${row.quantity}`;
+                    let item = row.item_detail;
+                    let text = `{% trans "Quantity" %}: ${row.quantity}`;
 
                     if (item && item.serial != null && row.quantity == 1) {
                         text = `{% trans "Serial Number" %}: ${item.serial}`;
@@ -1989,10 +2019,10 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                 var title = '{% trans "Delete line item" %}';
 
-                if (!!row.shipped) {
+                if (row.shipped) {
                     delete_disabled = true;
                     title = '{% trans "Cannot be deleted as items have been shipped" %}';
-                } else if (!!row.allocated) {
+                } else if (row.allocated) {
                     delete_disabled = true;
                     title = '{% trans "Cannot be deleted as items have been allocated" %}';
                 }

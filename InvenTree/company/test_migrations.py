@@ -282,8 +282,8 @@ class TestCurrencyMigration(MigratorTestCase):
 class TestAddressMigration(MigratorTestCase):
     """Test moving address data into Address model"""
 
-    migrate_from = ('company', '0059_auto_20230502_1956')
-    migrate_to = ('company', '0060_move_address_field_to_address_model')
+    migrate_from = ('company', '0062_auto_20230502_1956')
+    migrate_to = ('company', '0063_move_address_field_to_address_model')
 
     # Setting up string values for re-use
     short_l1 = 'Less than 50 characters long address'
@@ -318,3 +318,51 @@ class TestAddressMigration(MigratorTestCase):
         self.assertEqual(a2.line2, self.l2)
         self.assertEqual(c1.address, '')
         self.assertEqual(c2.address, '')
+
+
+class TestSupplierPartQuantity(MigratorTestCase):
+    """Test that the supplier part quantity is correctly migrated."""
+
+    migrate_from = ('company', '0058_auto_20230515_0004')
+    migrate_to = ('company', unit_test.getNewestMigrationFile('company'))
+
+    def prepare(self):
+        """Prepare a number of SupplierPart objects"""
+
+        Part = self.old_state.apps.get_model('part', 'part')
+        Company = self.old_state.apps.get_model('company', 'company')
+        SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
+
+        self.part = Part.objects.create(
+            name="PART", description="A purchaseable part",
+            purchaseable=True,
+            level=0, tree_id=0, lft=0, rght=0
+        )
+
+        self.supplier = Company.objects.create(name='Supplier', description='A supplier', is_supplier=True)
+
+        self.supplier_parts = []
+
+        for i in range(10):
+            self.supplier_parts.append(
+                SupplierPart.objects.create(
+                    part=self.part,
+                    supplier=self.supplier,
+                    SKU=f'SKU-{i}',
+                    pack_size=i + 1,
+                )
+            )
+
+    def test_supplier_part_quantity(self):
+        """Test that the supplier part quantity is correctly migrated."""
+
+        SupplierPart = self.new_state.apps.get_model('company', 'supplierpart')
+
+        for i, sp in enumerate(SupplierPart.objects.all()):
+
+            self.assertEqual(sp.pack_quantity, str(i + 1))
+            self.assertEqual(sp.pack_quantity_native, i + 1)
+
+            # And the 'pack_size' attribute has been removed
+            with self.assertRaises(AttributeError):
+                sp.pack_size

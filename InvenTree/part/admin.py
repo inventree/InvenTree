@@ -122,9 +122,9 @@ class PartImportResource(InvenTreeResource):
         ]
 
 
-class StocktakeInline(admin.TabularInline):
-    """Inline for part stocktake data"""
-    model = models.PartStocktake
+class PartParameterInline(admin.TabularInline):
+    """Inline for part parameter data"""
+    model = models.PartParameter
 
 
 class PartAdmin(ImportExportModelAdmin):
@@ -146,7 +146,7 @@ class PartAdmin(ImportExportModelAdmin):
     ]
 
     inlines = [
-        StocktakeInline,
+        PartParameterInline,
     ]
 
 
