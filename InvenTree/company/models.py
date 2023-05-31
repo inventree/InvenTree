@@ -159,7 +159,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         This property exists for backwards compability
         """
 
-        addr = Address.objects.filter(company=self.id).filter(primary=True).first()
+        addr = self.primary_address
 
         return str(addr) if addr is not None else None
 

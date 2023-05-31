@@ -70,6 +70,18 @@ function returnOrderFields(options={}) {
                 return filters;
             }
         },
+        address: {
+            icon: 'fa-map',
+            adjustFilters: function(filters) {
+                let customer = getFormFieldValue('customer', {}, {modal: options.modal});
+
+                if (customer) {
+                    filters.company = customer;
+                }
+
+                return filters;
+            }
+        },
         responsible: {
             icon: 'fa-user',
         }

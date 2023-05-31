@@ -70,6 +70,26 @@ class AddressSerializer(InvenTreeModelSerializer):
         ]
 
 
+class AddressBriefSerializer(InvenTreeModelSerializer):
+    """Serializer for Address Model (limited)"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = Address
+        fields = [
+            'pk',
+            'line1',
+            'line2',
+            'postal_code',
+            'postal_city',
+            'province',
+            'country',
+            'shipping_notes',
+            'internal_shipping_notes'
+        ]
+
+
 class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for Company object (full detail)"""
 

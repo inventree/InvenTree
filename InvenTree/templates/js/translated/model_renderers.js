@@ -11,6 +11,7 @@
     renderBuild,
     renderCompany,
     renderContact,
+    renderAddress,
     renderGroup,
     renderManufacturerPart,
     renderOwner,
@@ -49,6 +50,8 @@ function getModelRenderer(model) {
         return renderCompany;
     case 'contact':
         return renderContact;
+    case 'address':
+        return renderAddress;
     case 'stockitem':
         return renderStockItem;
     case 'stocklocation':
@@ -164,6 +167,18 @@ function renderContact(data, parameters={}) {
     return renderModel(
         {
             text: data.name,
+        },
+        parameters
+    );
+}
+
+
+// Renderer for "Address" model
+function renderAddress(data, parameters={}) {
+    console.log(data)
+    return renderModel(
+        {
+            text: [data.title, data.country, data.postal_code, data.postal_city, data.province, data.line1, data.line2].filter(Boolean).join(', '),
         },
         parameters
     );

@@ -391,9 +391,6 @@ function companyFormFields() {
         website: {
             icon: 'fa-globe',
         },
-        address: {
-            icon: 'fa-envelope',
-        },
         currency: {
             icon: 'fa-dollar-sign',
         },

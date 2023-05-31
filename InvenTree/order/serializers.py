@@ -18,7 +18,8 @@ import order.models
 import part.filters
 import stock.models
 import stock.serializers
-from company.serializers import (CompanyBriefSerializer, ContactSerializer,
+from company.serializers import (AddressBriefSerializer,
+                                 CompanyBriefSerializer, ContactSerializer,
                                  SupplierPartSerializer)
 from InvenTree.helpers import (extract_serial_numbers, hash_barcode, normalize,
                                str2bool)
@@ -74,6 +75,9 @@ class AbstractOrderSerializer(serializers.Serializer):
     # Detail for project code field
     project_code_detail = common.serializers.ProjectCodeSerializer(source='project_code', read_only=True, many=False)
 
+    # Detail for address field
+    address_detail = AddressBriefSerializer(source='address', many=False, read_only=True)
+
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(required=False, read_only=True)
 
@@ -113,6 +117,8 @@ class AbstractOrderSerializer(serializers.Serializer):
             'responsible_detail',
             'contact',
             'contact_detail',
+            'address',
+            'address_detail',
             'status',
             'status_text',
             'notes',

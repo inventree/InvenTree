@@ -86,6 +86,18 @@ function purchaseOrderFields(options={}) {
                 return filters;
             }
         },
+        address: {
+            icon: 'fa-map',
+            adjustFilters: function(filters) {
+                let supplier = getFormFieldValue('supplier', {}, {modal: options.modal});
+
+                if (supplier) {
+                    filters.company = supplier;
+                }
+
+                return filters;
+            }
+        },
         responsible: {
             icon: 'fa-user',
         },

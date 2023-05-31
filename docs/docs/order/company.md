@@ -43,6 +43,18 @@ The list of contacts associated with a particular company is available in the <s
 
 A *contact* can be assigned to orders, (such as [purchase orders](./purchase_order.md) or [sales orders](./sales_order.md)).
 
+### Addresses
+
+A company can have multiple registered addresses for use with all types of orders.
+An address is broken down to internationally recognised elements that are designed to allow for formatting an address according to user needs.
+Addresses can be accessed by the <span class='badge inventree nav main'><span class='fas fa-map-marked'></span> Contacts</span> navigation tab.
+
+#### Primary Address
+
+Each company can have exactly one (1) primary address.
+This address is the default shown on the company profile, and the one that is automatically suggested when creating an order.
+Marking a new address as primary will remove the mark from the old primary address.
+
 ## Customers
 
 A *customer* is an external client to whom parts or services are sold.
