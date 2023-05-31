@@ -453,6 +453,9 @@ class BaseInvenTreeSetting(models.Model):
                 except (IntegrityError, OperationalError):
                     # It might be the case that the database isn't created yet
                     pass
+                except ValidationError:
+                    # The setting failed validation - might be due to duplicate keys
+                    pass
 
         if setting and do_cache:
             # Cache this setting object

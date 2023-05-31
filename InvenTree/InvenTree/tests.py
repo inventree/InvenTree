@@ -18,8 +18,10 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 
+import InvenTree.conversion
 import InvenTree.format
 import InvenTree.helpers
+import InvenTree.helpers_model
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
@@ -31,6 +33,28 @@ from stock.models import StockItem, StockLocation
 from . import config, helpers, ready, status, version
 from .tasks import offload_task
 from .validators import validate_overage
+
+
+class ConversionTest(TestCase):
+    """Tests for conversion of physical units"""
+
+    def test_dimensionless_units(self):
+        """Tests for 'dimensonless' unit quantities"""
+
+        # Test some dimensionless units
+        tests = {
+            'ea': 1,
+            'each': 1,
+            '3 piece': 3,
+            '5 dozen': 60,
+            '3 hundred': 300,
+            '2 thousand': 2000,
+            '12 pieces': 12,
+        }
+
+        for val, expected in tests.items():
+            q = InvenTree.conversion.convert_physical_value(val).to_base_units()
+            self.assertEqual(q.magnitude, expected)
 
 
 class ValidatorTest(TestCase):
@@ -259,7 +283,7 @@ class TestHelpers(TestCase):
             "\\invalid-url"
         ]:
             with self.assertRaises(django_exceptions.ValidationError):
-                helpers.download_image_from_url(url)
+                InvenTree.helpers_model.download_image_from_url(url)
 
         def dl_helper(url, expected_error, timeout=2.5, retries=3):
             """Helper function for unit testing downloads.
@@ -274,7 +298,7 @@ class TestHelpers(TestCase):
                 while tries < retries:
 
                     try:
-                        helpers.download_image_from_url(url, timeout=timeout)
+                        InvenTree.helpers_model.download_image_from_url(url, timeout=timeout)
                         break
                     except Exception as exc:
                         if type(exc) is expected_error:
@@ -300,20 +324,20 @@ class TestHelpers(TestCase):
 
         # Attempt to download an image which is too large
         with self.assertRaises(ValueError):
-            helpers.download_image_from_url(large_img, timeout=10)
+            InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
 
         # Increase allowable download size
         InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None)
 
         # Download a valid image (should not throw an error)
-        helpers.download_image_from_url(large_img, timeout=10)
+        InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function"""
 
         from InvenTree.models import InvenTreeBarcodeMixin
 
-        models = helpers.getModelsWithMixin(InvenTreeBarcodeMixin)
+        models = InvenTree.helpers_model.getModelsWithMixin(InvenTreeBarcodeMixin)
 
         self.assertIn(Part, models)
         self.assertIn(StockLocation, models)

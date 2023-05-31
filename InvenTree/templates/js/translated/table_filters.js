@@ -3,10 +3,14 @@
 {% load inventree_extras %}
 
 /* globals
-    global_settings
+    buildCodes,
+    global_settings,
+    inventreeGet,
     purchaseOrderCodes,
     returnOrderCodes,
+    returnOrderLineItemCodes,
     salesOrderCodes,
+    stockCodes,
 */
 
 /* exported
@@ -449,7 +453,7 @@ function getBuildTableFilters() {
                 inventreeGet('{% url "api-owner-list" %}', {}, {
                     async: false,
                     success: function(response) {
-                        for (key in response) {
+                        for (var key in response) {
                             var owner = response[key];
                             ownersList[owner.pk] = {
                                 key: owner.pk,
@@ -625,6 +629,11 @@ function getPartTableFilters() {
         component: {
             type: 'bool',
             title: '{% trans "Component" %}',
+        },
+        has_units: {
+            type: 'bool',
+            title: '{% trans "Has Units" %}',
+            description: '{% trans "Part has defined units" %}',
         },
         has_ipn: {
             type: 'bool',

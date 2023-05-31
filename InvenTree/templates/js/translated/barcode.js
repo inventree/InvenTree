@@ -1,15 +1,26 @@
 {% load i18n %}
 
 /* globals
+    createNewModal,
+    global_settings,
+    handleFormError,
+    handleFormSuccess,
+    Html5Qrcode,
+    Html5QrcodeScannerState,
     imageHoverIcon,
+    inventreeGet,
     inventreePut,
+    makeIcon,
+    makeRemoveButton,
     modalEnable,
     modalSetContent,
     modalSetTitle,
     modalSetSubmitText,
     modalShowSubmitButton,
     modalSubmit,
+    showApiError,
     showQuestionDialog,
+    user_settings,
 */
 
 /* exported
@@ -57,8 +68,10 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     return html;
 }
 
-qrScanner = null;
-qrScannerCallback = null;
+// Global variables for qrScanner
+var qrScanner = null;
+var qrScannerCallback = null;
+
 
 function startQrScanner() {
     $('#barcode_scan_video_container').show();
