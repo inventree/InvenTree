@@ -1,4 +1,5 @@
 import uuid
+from typing import Literal
 
 from django.contrib import admin
 from django.db import models
@@ -86,13 +87,17 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
     """This models represents settings for individual machines."""
 
     typ = "machine_config"
-    extra_unique_fields = ["machine_config"]
+    extra_unique_fields = ["machine_config", "config_type"]
 
     class Meta:
         """Meta for MachineSetting."""
         unique_together = [
-            ("machine_config", "key")
+            ("machine_config", "config_type", "key")
         ]
+
+    class ConfigType(models.TextChoices):
+        MACHINE = "M", _("Machine")
+        DRIVER = "D", _("Driver")
 
     machine_config = models.ForeignKey(
         MachineConfig,
@@ -100,6 +105,19 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         verbose_name=_("Machine Config"),
         on_delete=models.CASCADE
     )
+
+    config_type = models.CharField(
+        verbose_name=_("Config type"),
+        max_length=1,
+        choices=ConfigType.choices,
+    )
+
+    @classmethod
+    def get_config_type(cls, config_type_str: Literal["M", "D"]):
+        if config_type_str == "M":
+            return cls.ConfigType.MACHINE
+        elif config_type_str == "D":
+            return cls.ConfigType.DRIVER
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -116,6 +134,10 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         if 'settings' not in kwargs:
             machine_config: MachineConfig = kwargs.pop('machine_config', None)
             if machine_config:
-                kwargs['settings'] = getattr(machine_config.machine.driver, "MACHINE_SETTINGS", {})
+                config_type = kwargs.get("config_type", None)
+                if config_type == cls.ConfigType.DRIVER:
+                    kwargs['settings'] = getattr(machine_config.machine.driver, "MACHINE_SETTINGS", {})
+                elif config_type == cls.ConfigType.MACHINE:
+                    kwargs['settings'] = getattr(machine_config.machine, "MACHINE_SETTINGS", {})
 
         return super().get_setting_definition(key, **kwargs)

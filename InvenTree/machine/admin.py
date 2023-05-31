@@ -5,6 +5,8 @@ from django.utils.translation import gettext_lazy as _
 from machine import models
 from machine.registry import registry
 
+# Note: Most of this code here is only for developing as there is no UI for machines *yet*.
+
 
 class MachineConfigAdminForm(forms.ModelForm):
     def get_machine_type_choices():
@@ -27,20 +29,22 @@ class MachineSettingInline(admin.TabularInline):
 
     read_only_fields = [
         'key',
+        'config_type'
     ]
 
     def get_extra(self, request, obj, **kwargs):
         if getattr(obj, 'machine', None) is not None:
             # TODO: improve this mechanism
-            settings = getattr(obj.machine.driver, "MACHINE_SETTINGS", {})
-            count = len(settings.keys())
+            machine_settings = getattr(obj.machine, "MACHINE_SETTINGS", {})
+            driver_settings = getattr(obj.machine.driver, "MACHINE_SETTINGS", {})
+            count = len(machine_settings.keys()) + len(driver_settings.keys())
             if obj.settings.count() != count:
                 return count
         return 0
 
     def has_add_permission(self, request, obj):
         """The machine settings should not be meddled with manually."""
-        return True
+        return True  # TODO: change back
 
 
 @admin.register(models.MachineConfig)
@@ -64,9 +68,13 @@ class MachineConfigAdmin(admin.ModelAdmin):
         formsets = super().get_inline_formsets(request, formsets, inline_instances, obj)
 
         if getattr(obj, 'machine', None) is not None:
-            settings = getattr(obj.machine.driver, "MACHINE_SETTINGS", {})
-            for form, setting in zip(formsets[0].forms, settings.keys()):
+            machine_settings = getattr(obj.machine, "MACHINE_SETTINGS", {})
+            driver_settings = getattr(obj.machine.driver, "MACHINE_SETTINGS", {})
+            settings = [(s, models.MachineSetting.ConfigType.MACHINE) for s in machine_settings] + [(s, models.MachineSetting.ConfigType.DRIVER) for s in driver_settings]
+            for form, (setting, typ) in zip(formsets[0].forms, settings):
                 if form.fields["key"].initial is None:
                     form.fields["key"].initial = setting
+                if form.fields["config_type"].initial is None:
+                    form.fields["config_type"].initial = typ
 
         return formsets
