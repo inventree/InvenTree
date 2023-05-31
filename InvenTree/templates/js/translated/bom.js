@@ -786,17 +786,17 @@ function deleteBomItems(items, options={}) {
 }
 
 
+/* Load a BOM table with some configurable options.
+ *
+ * Following options are available:
+ * editable      - Should the BOM table be editable?
+ * bom_url       - Address to request BOM data from
+ * part_url      - Address to request Part data from
+ * parent_id     - Parent ID of the owning part
+ *
+ * BOM data are retrieved from the server via AJAX query
+ */
 function loadBomTable(table, options={}) {
-    /* Load a BOM table with some configurable options.
-     *
-     * Following options are available:
-     * editable      - Should the BOM table be editable?
-     * bom_url       - Address to request BOM data from
-     * part_url      - Address to request Part data from
-     * parent_id     - Parent ID of the owning part
-     *
-     * BOM data are retrieved from the server via AJAX query
-     */
 
     var params = {
         part: options.parent_id,
@@ -977,32 +977,6 @@ function loadBomTable(table, options={}) {
 
             return text;
         },
-        footerFormatter: function(data) {
-
-            // Top-level BOM count
-            var top_total = 0;
-
-            // Total BOM count
-            var all_total = 0;
-
-            data.forEach(function(row) {
-                var q = +row['quantity'] || 0;
-
-                all_total += q;
-
-                if (row.part == options.parent_id) {
-                    top_total += q;
-                }
-            });
-
-            var total = `${formatDecimal(top_total)}`;
-
-            if (top_total != all_total) {
-                total += ` / ${formatDecimal(all_total)}`;
-            }
-
-            return total;
-        }
     });
 
     cols.push({
