@@ -46,7 +46,8 @@ from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2money, decimal2string, normalize
+from InvenTree.helpers import (decimal2money, decimal2string, normalize,
+                               str2bool)
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
                               InvenTreeBarcodeMixin, InvenTreeNotesMixin,
                               InvenTreeTree, MetadataMixin)
@@ -3380,6 +3381,14 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         except PartParameterTemplate.DoesNotExist:
             pass
 
+    def get_choices(self):
+        """Return a list of choices for this parameter template"""
+
+        if not self.choices:
+            return []
+
+        return [x.strip() for x in self.choices.split(',') if x.strip()]
+
     name = models.CharField(
         max_length=100,
         verbose_name=_('Name'),
@@ -3468,6 +3477,11 @@ class PartParameter(models.Model):
         # Validate the PartParameter before saving
         self.calculate_numeric_value()
 
+        # Convert 'boolean' values to 'True' / 'False'
+        if self.template.checkbox:
+            print("checkbox value:", self.data, '->', str2bool(self.data))
+            self.data = str2bool(self.data)
+
         super().save(*args, **kwargs)
 
     def clean(self):
@@ -3482,6 +3496,13 @@ class PartParameter(models.Model):
             except ValidationError as e:
                 raise ValidationError({
                     'data': e.message
+                })
+
+        # Validate the parameter data against the template choices
+        if choices := self.template.get_choices():
+            if self.data not in choices:
+                raise ValidationError({
+                    'data': _('Invalid choice for parameter value')
                 })
 
     def calculate_numeric_value(self):

@@ -1295,9 +1295,6 @@ function partParameterFields(options={}) {
             filters: {
                 ordering: 'name',
             },
-            callback: function() {
-                console.log("callback func:");
-            },
             onEdit: function(value, name, field, opts) {
                 // Callback function when the parameter template is selected.
                 // We rebuild the 'data' field based on the template selection
@@ -1345,16 +1342,23 @@ function partParameterFields(options={}) {
                     parameters.type = 'string';
                 }
 
-                // Construct the new field
-                let new_field = constructInput('data', parameters, opts);
+                let existing_field_type = guessFieldType(el);
 
-                if (guessFieldType(el) == 'boolean') {
-                    // Boolean fields are wrapped in a parent element
-                    el.parent().replaceWith(new_field);
-                } else {
-                    el.replaceWith(new_field);
+                // If the field type has changed, we need to replace the field
+                if (existing_field_type != parameters.type) {
+                    // Construct the new field
+                    let new_field = constructInput('data', parameters, opts);
+
+                    if (guessFieldType(el) == 'boolean') {
+                        // Boolean fields are wrapped in a parent element
+                        el.parent().replaceWith(new_field);
+                    } else {
+                        el.replaceWith(new_field);
+                    }
                 }
 
+                // Update the field parameters in the form options
+                opts.fields.data.type = parameters.type;
                 updateFieldValue('data', val, parameters, opts);
             }
         },
@@ -1378,6 +1382,12 @@ function createPartParameter(part_id, options={}) {
         part: part_id,
     });
 
+    options.processBeforeUpload = function(data) {
+        // Convert data to string
+        data.data = data.data.toString();
+        return data;
+    }
+
     options.method = 'POST';
     options.title = '{% trans "Add Parameter" %}';
 
@@ -1391,6 +1401,12 @@ function createPartParameter(part_id, options={}) {
 function editPartParameter(param_id, options={}) {
     options.fields = partParameterFields();
     options.title = '{% trans "Edit Parameter" %}';
+
+    options.processBeforeUpload = function(data) {
+        // Convert data to string
+        data.data = data.data.toString();
+        return data;
+    }
 
     constructForm(`{% url "api-part-parameter-list" %}${param_id}/`, options);
 }
@@ -1446,6 +1462,12 @@ function loadPartParameterTable(table, options) {
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
+                    let template = row.template_detail;
+
+                    if (template.checkbox) {
+                        return yesNoLabel(value);
+                    }
+
                     if (row.data_numeric && row.template_detail.units) {
                         return `<span title='${row.data_numeric} ${row.template_detail.units}'>${row.data}</span>`;
                     } else {

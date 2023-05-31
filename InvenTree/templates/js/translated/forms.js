@@ -18,6 +18,7 @@
     showApiError,
     showMessage,
     showModalSpinner,
+    toBool,
 */
 
 /* exported
@@ -1000,9 +1001,7 @@ function updateFieldValue(name, value, field, options) {
         el.val(formatDecimal(value));
         break;
     case 'boolean':
-        if (value == true || value.toString().toLowerCase() == 'true') {
-            el.prop('checked');
-        }
+        el.prop('checked', toBool(value));
         break;
     case 'related field':
         // Clear?
@@ -1121,14 +1120,16 @@ function getFormFieldValue(name, field={}, options={}) {
 
     var value = null;
 
+    let guessed_type = guessFieldType(el);
+
     // If field type is not specified, try to guess it
-    if (field.type == null) {
-        field.type = guessFieldType(el);
+    if (field.type == null || guessed_type == 'boolean') {
+        field.type = guessed_type;
     }
 
     switch (field.type) {
     case 'boolean':
-        value = el.is(':checked');
+        value = toBool(el.prop("checked"));
         break;
     case 'date':
     case 'datetime':

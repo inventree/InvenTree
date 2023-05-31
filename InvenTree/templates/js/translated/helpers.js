@@ -40,11 +40,38 @@
 */
 
 
-function yesNoLabel(value, options={}) {
-    var text = '';
-    var color = '';
+/*
+ * Convert a value (which may be a string) to a boolean value
+ *
+ * @param {string} value: Input value
+ * @returns {boolean} true or false
+ */
+function toBool(value) {
 
-    if (value) {
+    if (typeof value == 'string') {
+
+        if (value.length == 0) {
+            return false;
+        }
+
+        value = value.toLowerCase();
+
+        if (['true', 't', 'yes', 'y', '1', 'on', 'ok'].includes(value)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return value == true;
+    }
+}
+
+
+function yesNoLabel(value, options={}) {
+    let text = '';
+    let color = '';
+
+    if (toBool(value)) {
         text = '{% trans "YES" %}';
         color = 'bg-success';
     } else {
