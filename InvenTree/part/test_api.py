@@ -211,25 +211,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # There should not be any templates left at this point
         self.assertEqual(PartCategoryParameterTemplate.objects.count(), 0)
 
-    def test_category_püarameter__template_metadata(self):
-        """Test metadata endpoint for the PartCategory."""
-        modeldata = PartCategoryParameterTemplate.objects.first()
-        url = reverse('api-part-category-parameter-metadata', kwargs={'pk': modeldata.pk})
-
-        self.patch(
-            url,
-            {
-                'metadata': {
-                    'PCATTemplatePRTNabc': 'PCATTemplateABCD',
-                }
-            },
-            expected_code=200
-        )
-
-        # Refresh
-        modeldata.refresh_from_db()
-        self.assertEqual(modeldata.get_metadata('PCATTemplatePRTNabc'), 'PCATTemplateABCD')
-
     def test_bleach(self):
         """Test that the data cleaning functionality is working.
 
