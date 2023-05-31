@@ -14,6 +14,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import InvenTree.helpers
+import InvenTree.helpers_model
 from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
 from common.settings import currency_code_default
 from InvenTree import settings, version
@@ -105,7 +106,7 @@ def render_date(context, date_object):
 def render_currency(money, **kwargs):
     """Render a currency / Money object"""
 
-    return InvenTree.helpers.render_currency(money, **kwargs)
+    return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
 @register.simple_tag()
@@ -224,7 +225,7 @@ def inventree_splash(**kwargs):
 @register.simple_tag()
 def inventree_base_url(*args, **kwargs):
     """Return the base URL of the InvenTree server"""
-    return InvenTree.helpers.get_base_url()
+    return InvenTree.helpers_model.get_base_url()
 
 
 @register.simple_tag()

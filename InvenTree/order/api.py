@@ -19,8 +19,8 @@ from company.models import SupplierPart
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView, StatusView)
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
-from InvenTree.helpers import (DownloadFile, construct_absolute_url,
-                               get_base_url, str2bool)
+from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
