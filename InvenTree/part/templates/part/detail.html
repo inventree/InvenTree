@@ -846,9 +846,6 @@
             }
         );
 
-        $('#param-table').inventreeTable({
-        });
-
         {% if roles.part.add %}
         $('#param-create').click(function() {
 
@@ -871,22 +868,6 @@
             });
         });
         {% endif %}
-
-        $('.param-edit').click(function() {
-            var button = $(this);
-
-            launchModalForm(button.attr('url'), {
-                reload: true,
-            });
-        });
-
-        $('.param-delete').click(function() {
-            var button = $(this);
-
-            launchModalForm(button.attr('url'), {
-                reload: true,
-            });
-        });
     });
 
     onPanelLoad("part-attachments", function() {
