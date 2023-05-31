@@ -6,6 +6,7 @@
     Chart,
     constructForm,
     constructFormBody,
+    constructInput,
     convertCurrency,
     formatCurrency,
     formatDecimal,
@@ -14,6 +15,7 @@
     getFormFieldValue,
     getTableData,
     global_settings,
+    guessFieldType,
     handleFormErrors,
     handleFormSuccess,
     imageHoverIcon,
@@ -42,6 +44,7 @@
     showMessage,
     showModalSpinner,
     thumbnailImage,
+    updateFieldValue,
     withTitle,
     wrapButtons,
     yesNoLabel,
@@ -1281,6 +1284,137 @@ function loadSimplePartTable(table, url, options={}) {
 }
 
 
+/*
+ * Construct a set of fields for the PartParameter model.
+ * Note that the 'data' field changes based on the seleted parameter template
+ */
+function partParameterFields(options={}) {
+
+    let fields = {
+        part: {
+            hidden: true,  // Part is set by the parent form
+        },
+        template: {
+            filters: {
+                ordering: 'name',
+            },
+            onEdit: function(value, name, field, opts) {
+                // Callback function when the parameter template is selected.
+                // We rebuild the 'data' field based on the template selection
+
+                let checkbox = false;
+                let choices = [];
+
+                if (value) {
+                    // Request the parameter template data
+                    inventreeGet(`{% url "api-part-parameter-template-list" %}${value}/`, {}, {
+                        async: false,
+                        success: function(response) {
+                            if (response.checkbox) {
+                                // Checkbox input
+                                checkbox = true;
+                            } else if (response.choices) {
+                                // Select input
+                                response.choices.split(',').forEach(function(choice) {
+                                    choice = choice.trim();
+                                    choices.push({
+                                        value: choice,
+                                        display_name: choice,
+                                    });
+                                });
+                            }
+                        }
+                    });
+                }
+
+                // Find the current field element
+                let el = $(opts.modal).find('#id_data');
+
+                // Extract the current value from the field
+                let val = getFormFieldValue('data', {}, opts);
+
+                // Rebuild the field
+                let parameters = {};
+
+                if (checkbox) {
+                    parameters.type = 'boolean';
+                } else if (choices.length > 0) {
+                    parameters.type = 'choice';
+                    parameters.choices = choices;
+                } else {
+                    parameters.type = 'string';
+                }
+
+                let existing_field_type = guessFieldType(el);
+
+                // If the field type has changed, we need to replace the field
+                if (existing_field_type != parameters.type) {
+                    // Construct the new field
+                    let new_field = constructInput('data', parameters, opts);
+
+                    if (guessFieldType(el) == 'boolean') {
+                        // Boolean fields are wrapped in a parent element
+                        el.parent().replaceWith(new_field);
+                    } else {
+                        el.replaceWith(new_field);
+                    }
+                }
+
+                // Update the field parameters in the form options
+                opts.fields.data.type = parameters.type;
+                updateFieldValue('data', val, parameters, opts);
+            }
+        },
+        data: {},
+    };
+
+    if (options.part) {
+        fields.part.value = options.part;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Launch a modal form for creating a new PartParameter object
+ */
+function createPartParameter(part_id, options={}) {
+
+    options.fields = partParameterFields({
+        part: part_id,
+    });
+
+    options.processBeforeUpload = function(data) {
+        // Convert data to string
+        data.data = data.data.toString();
+        return data;
+    }
+
+    options.method = 'POST';
+    options.title = '{% trans "Add Parameter" %}';
+
+    constructForm('{% url "api-part-parameter-list" %}', options);
+}
+
+
+/*
+ * Launch a modal form for editing a PartParameter object
+ */
+function editPartParameter(param_id, options={}) {
+    options.fields = partParameterFields();
+    options.title = '{% trans "Edit Parameter" %}';
+
+    options.processBeforeUpload = function(data) {
+        // Convert data to string
+        data.data = data.data.toString();
+        return data;
+    }
+
+    constructForm(`{% url "api-part-parameter-list" %}${param_id}/`, options);
+}
+
+
 function loadPartParameterTable(table, options) {
 
     var params = options.params || {};
@@ -1331,6 +1465,15 @@ function loadPartParameterTable(table, options) {
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
+                    let template = row.template_detail;
+
+                    if (template.checkbox) {
+                        return yesNoLabel(value, {
+                            pass: '{% trans "True" %}',
+                            fail: '{% trans "False" %}',
+                        });
+                    }
+
                     if (row.data_numeric && row.template_detail.units) {
                         return `<span title='${row.data_numeric} ${row.template_detail.units}'>${row.data}</span>`;
                     } else {
@@ -1368,12 +1511,8 @@ function loadPartParameterTable(table, options) {
             $(table).find('.button-parameter-edit').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`{% url "api-part-parameter-list" %}${pk}/`, {
-                    fields: {
-                        data: {},
-                    },
-                    title: '{% trans "Edit Parameter" %}',
-                    refreshTable: table,
+                editPartParameter(pk, {
+                    refreshTable: table
                 });
             });
 
@@ -1388,6 +1527,24 @@ function loadPartParameterTable(table, options) {
             });
         }
     });
+}
+
+
+/*
+ * Return a list of fields for a part parameter template
+ */
+function partParameterTemplateFields() {
+    return {
+        name: {},
+        description: {},
+        units: {
+            icon: 'fa-ruler',
+        },
+        choices: {
+            icon: 'fa-th-list',
+        },
+        checkbox: {},
+    };
 }
 
 
@@ -1410,6 +1567,8 @@ function loadPartParameterTemplateTable(table, options={}) {
         url: '{% url "api-part-parameter-template-list" %}',
         original: params,
         queryParams: filters,
+        sortable: true,
+        sidePagination: 'server',
         name: 'part-parameter-templates',
         formatNoMatches: function() {
             return '{% trans "No part parameter templates found" %}';
@@ -1439,6 +1598,21 @@ function loadPartParameterTemplateTable(table, options={}) {
                 switchable: true,
             },
             {
+                field: 'checkbox',
+                title: '{% trans "Checkbox" %}',
+                sortable: false,
+                switchable: true,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
+            },
+            {
+                field: 'choices',
+                title: '{% trans "Choices" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
                 formatter: function(value, row, index, field) {
 
                     let buttons = '';
@@ -1459,11 +1633,7 @@ function loadPartParameterTemplateTable(table, options={}) {
         constructForm(
             `/api/part/parameter/template/${pk}/`,
             {
-                fields: {
-                    name: {},
-                    units: {},
-                    description: {},
-                },
+                fields: partParameterTemplateFields(),
                 title: '{% trans "Edit Part Parameter Template" %}',
                 refreshTable: table,
             }
