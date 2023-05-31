@@ -14,6 +14,25 @@ Some common functions are provided for use in custom report and label templates.
 !!! tip "Use the Source, Luke"
     To see the full range of available helper functions, refer to the source file [report.py](https://github.com/inventree/InvenTree/blob/master/InvenTree/report/templatetags/report.py) where these functions are defined!
 
+## Assigning Variables
+
+When making use of helper functions within a template, it can be useful to store the result of the function to a variable, rather than immediately rendering the output.
+
+For example, using the [render_currency](#rendering-currency) helper function, we can store the output to a variable which can be used at a later point in the template:
+
+```html
+{% raw %}
+
+{% load report %}
+
+{% render_currency 12.3 currency='USD' as myvar %}
+...
+...
+Result: {{ myvar }}
+
+{% endraw %}
+```
+
 ## Data Structure Access
 
 A number of helper functions are available for accessing data contained in a particular structure format:
@@ -24,7 +43,8 @@ To return the element at a given index in a container which supports indexed acc
 
 ```html
 {% raw %}
-Item: {% getindex my_list 1 %}
+{% getindex my_list 1 as value %}
+Item: {{ value }}
 {% endraw %}
 ```
 
@@ -32,11 +52,13 @@ Item: {% getindex my_list 1 %}
 
 To return an element corresponding to a certain key in a container which supports key access (such as a [dictionary](https://www.w3schools.com/python/python_dictionaries.asp)), use the `getkey` function:
 
+
 ```html
 {% raw %}
 <ul>
     {% for key in keys %}
-    <li>Key: {% getkey my_container key %}</li>
+    {% getkey my_container key as value %}
+    <li>{{ key }} = {{ value }}</li>
     {% endfor %}
 </ul>
 {% endraw %}
@@ -84,7 +106,9 @@ Simple mathematical operators are available, as demonstrated in the example temp
 {% add 1 3 %} <!-- Add two numbers together -->
 {% subtract 4 3 %} <!-- Subtract 3 from 4 -->
 {% multiply 1.2 3.4 %} <!-- Multiply two numbers -->
-{% divide 10 2 %} <!-- Divide 10 by 2 -->
+{% divide 10 2  as division_result %} <!-- Divide 10 by 2 -->
+
+Division Result: {{ division_result }}
 
 {% endraw %}
 ```
