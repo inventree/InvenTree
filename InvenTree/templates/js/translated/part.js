@@ -1392,6 +1392,24 @@ function loadPartParameterTable(table, options) {
 
 
 /*
+ * Return a list of fields for a part parameter template
+ */
+function partParameterTemplateFields() {
+    return {
+        name: {},
+        description: {},
+        units: {
+            icon: 'fa-ruler',
+        },
+        choices: {
+            icon: 'fa-th-list',
+        },
+        checkbox: {},
+    };
+}
+
+
+/*
  * Construct a table showing a list of part parameter templates
  */
 function loadPartParameterTemplateTable(table, options={}) {
@@ -1439,6 +1457,21 @@ function loadPartParameterTemplateTable(table, options={}) {
                 switchable: true,
             },
             {
+                field: 'checkbox',
+                title: '{% trans "Checkbox" %}',
+                sortable: false,
+                switchable: true,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
+            },
+            {
+                field: 'choices',
+                title: '{% trans "Choices" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
                 formatter: function(value, row, index, field) {
 
                     let buttons = '';
@@ -1459,11 +1492,7 @@ function loadPartParameterTemplateTable(table, options={}) {
         constructForm(
             `/api/part/parameter/template/${pk}/`,
             {
-                fields: {
-                    name: {},
-                    units: {},
-                    description: {},
-                },
+                fields: partParameterTemplateFields(),
                 title: '{% trans "Edit Part Parameter Template" %}',
                 refreshTable: table,
             }
