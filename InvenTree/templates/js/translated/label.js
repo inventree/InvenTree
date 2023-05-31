@@ -1,5 +1,6 @@
 {% load i18n %}
-
+{% load static %}
+{% load inventree_extras %}
 /* globals
     attachSelect,
     closeModal,
@@ -29,7 +30,6 @@
  * (via AJAX) from the server.
  */
 function selectLabel(labels, items, options={}) {
-
     // Array of available plugins for label printing
     var plugins = [];
 
@@ -78,7 +78,9 @@ function selectLabel(labels, items, options={}) {
     }
 
     var modal = options.modal || '#modal-form';
-
+    {% settings_value 'DEFAULT_LOCATION_LABEL_TEMPLATE' user=request.user as default_location_template_pk %}
+    {% settings_value 'DEFAULT_PART_LABEL_TEMPLATE' user=request.user as default_part_template_pk %}
+    {% settings_value 'DEFAULT_STOCK_LABEL_TEMPLATE' user=request.user as default_stock_template_pk %}
     var label_list = makeOptionsList(
         labels,
         function(item) {
@@ -92,6 +94,16 @@ function selectLabel(labels, items, options={}) {
         },
         function(item) {
             return item.pk;
+        },
+        null,
+        function(item) {
+            if (options.key == 'part')
+                return item.pk == "{{ default_part_template_pk }}";
+            else if (options.key == 'location')
+                return item.pk == "{{ default_location_template_pk }}";
+            else if (options.key == 'stock')
+                return item.pk == "{{ default_stock_template_pk }}";
+            return '';
         }
     );
 
@@ -214,6 +226,7 @@ function printLabels(options) {
                 },
                 plural_name: options.plural_name,
                 singular_name: options.singular_name,
+                key: options.key,
             });
         }
     });
