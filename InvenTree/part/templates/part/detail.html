@@ -848,23 +848,8 @@
 
         {% if roles.part.add %}
         $('#param-create').click(function() {
-
-            constructForm('{% url "api-part-parameter-list" %}', {
-                method: 'POST',
-                fields: {
-                    part: {
-                        value: {{ part.pk }},
-                        hidden: true,
-                    },
-                    template: {
-                        filters: {
-                            ordering: 'name',
-                        },
-                    },
-                    data: {},
-                },
-                title: '{% trans "Add Parameter" %}',
-                refreshTable: '#parameter-table',
+            createPartParameter({{ part.pk }}, {
+                refreshTable: '#parameter-table'
             });
         });
         {% endif %}

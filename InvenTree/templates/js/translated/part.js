@@ -1281,6 +1281,59 @@ function loadSimplePartTable(table, url, options={}) {
 }
 
 
+/*
+ * Construct a set of fields for the PartParameter model.
+ * Note that the 'data' field changes based on the seleted parameter template
+ */
+function partParameterFields(options={}) {
+
+    let fields = {
+        part: {
+            hidden: true,  // Part is set by the parent form
+        },
+        template: {
+            filters: {
+                ordering: 'name',
+            }
+        },
+        data: {},
+    };
+
+    if (options.part) {
+        fields.part.value = options.part;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Launch a modal form for creating a new PartParameter object
+ */
+function createPartParameter(part_id, options={}) {
+
+    options.fields = partParameterFields({
+        part: part_id,
+    });
+
+    options.method = 'POST';
+    options.title = '{% trans "Add Parameter" %}';
+
+    constructForm('{% url "api-part-parameter-list" %}', options);
+}
+
+
+/*
+ * Launch a modal form for editing a PartParameter object
+ */
+function editPartParameter(param_id, options={}) {
+    options.fields = partParameterFields();
+    options.title = '{% trans "Edit Parameter" %}';
+
+    constructForm(`{% url "api-part-parameter-list" %}${param_id}/`, options);
+}
+
+
 function loadPartParameterTable(table, options) {
 
     var params = options.params || {};
@@ -1368,12 +1421,8 @@ function loadPartParameterTable(table, options) {
             $(table).find('.button-parameter-edit').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`{% url "api-part-parameter-list" %}${pk}/`, {
-                    fields: {
-                        data: {},
-                    },
-                    title: '{% trans "Edit Parameter" %}',
-                    refreshTable: table,
+                editPartParameter(pk, {
+                    refreshTable: table
                 });
             });
 
