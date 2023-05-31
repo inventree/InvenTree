@@ -1465,7 +1465,10 @@ function loadPartParameterTable(table, options) {
                     let template = row.template_detail;
 
                     if (template.checkbox) {
-                        return yesNoLabel(value);
+                        return yesNoLabel(value, {
+                            pass: '{% trans "True" %}',
+                            fail: '{% trans "False" %}',
+                        });
                     }
 
                     if (row.data_numeric && row.template_detail.units) {

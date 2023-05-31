@@ -3479,8 +3479,8 @@ class PartParameter(models.Model):
 
         # Convert 'boolean' values to 'True' / 'False'
         if self.template.checkbox:
-            print("checkbox value:", self.data, '->', str2bool(self.data))
             self.data = str2bool(self.data)
+            self.data_numeric = 1 if self.data else 0
 
         super().save(*args, **kwargs)
 

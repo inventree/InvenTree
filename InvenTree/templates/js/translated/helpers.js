@@ -72,10 +72,10 @@ function yesNoLabel(value, options={}) {
     let color = '';
 
     if (toBool(value)) {
-        text = '{% trans "YES" %}';
+        text = options.pass || '{% trans "YES" %}';
         color = 'bg-success';
     } else {
-        text = '{% trans "NO" %}';
+        text = options.fail || '{% trans "NO" %}';
         color = 'bg-warning';
     }
 
