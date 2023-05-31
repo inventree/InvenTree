@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-31 21:21+0000\n"
-"PO-Revision-Date: 2023-05-27 22:52\n"
+"PO-Revision-Date: 2023-05-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -5941,10 +5941,8 @@ msgid "Checkbox parameters cannot have choices"
 msgstr ""
 
 #: part/models.py:3363
-#, fuzzy
-#| msgid "Key string must be unique"
 msgid "Choices must be unique"
-msgstr "Anahtar dizesi benzersiz olmalı"
+msgstr ""
 
 #: part/models.py:3379
 msgid "Parameter template name must be unique"
@@ -5968,10 +5966,8 @@ msgid "Checkbox"
 msgstr ""
 
 #: part/models.py:3418
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this parameter a checkbox?"
-msgstr "Bu parça aktif mi?"
+msgstr ""
 
 #: part/models.py:3423 templates/js/translated/part.js:1611
 msgid "Choices"
@@ -10916,10 +10912,8 @@ msgid "True"
 msgstr ""
 
 #: templates/js/translated/part.js:1473
-#, fuzzy
-#| msgid "false"
 msgid "False"
-msgstr "yanlış"
+msgstr ""
 
 #: templates/js/translated/part.js:1574
 msgid "No part parameter templates found"
@@ -12492,8 +12486,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12672,3 +12665,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
