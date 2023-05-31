@@ -711,7 +711,20 @@ function getCompanyFilters() {
 
 // Return a dictionary of filters for the "part parameter template" table
 function getPartParameterTemplateFilters() {
-    return {};
+    return {
+        checkbox: {
+            type: 'bool',
+            title: '{% trans "Checkbox" %}',
+        },
+        has_choices: {
+            type: 'bool',
+            title: '{% trans "Has Choices" %}',
+        },
+        has_units: {
+            type: 'bool',
+            title: '{% trans "Has Units" %}',
+        }
+    };
 }
 
 
