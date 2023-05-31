@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-31 21:21+0000\n"
-"PO-Revision-Date: 2023-05-27 22:52\n"
+"PO-Revision-Date: 2023-05-31 23:41\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -531,10 +531,8 @@ msgid "Farsi / Persian"
 msgstr "Perski"
 
 #: InvenTree/settings.py:721
-#, fuzzy
-#| msgid "Danish"
 msgid "Finnish"
-msgstr "Duński"
+msgstr ""
 
 #: InvenTree/settings.py:722
 msgid "French"
@@ -5943,10 +5941,8 @@ msgid "Checkbox parameters cannot have choices"
 msgstr ""
 
 #: part/models.py:3363
-#, fuzzy
-#| msgid "Key string must be unique"
 msgid "Choices must be unique"
-msgstr "Ciąg musi być unikatowy"
+msgstr ""
 
 #: part/models.py:3379
 msgid "Parameter template name must be unique"
@@ -5966,32 +5962,24 @@ msgstr ""
 
 #: part/models.py:3417 templates/js/translated/part.js:1602
 #: templates/js/translated/table_filters.js:723
-#, fuzzy
-#| msgid "Checksum"
 msgid "Checkbox"
-msgstr "Suma kontrolna"
+msgstr ""
 
 #: part/models.py:3418
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this parameter a checkbox?"
-msgstr "Czy ta część jest aktywna?"
+msgstr ""
 
 #: part/models.py:3423 templates/js/translated/part.js:1611
 msgid "Choices"
 msgstr ""
 
 #: part/models.py:3424
-#, fuzzy
-#| msgid "Invalid choice for parent part"
 msgid "Valid choices for this parameter (comma-separated)"
-msgstr "Nieprawidłowy wybór dla części nadrzędnej"
+msgstr ""
 
 #: part/models.py:3505
-#, fuzzy
-#| msgid "Invalid choice for parent part"
 msgid "Invalid choice for parameter value"
-msgstr "Nieprawidłowy wybór dla części nadrzędnej"
+msgstr ""
 
 #: part/models.py:3531
 msgid "Parent Part"
@@ -10924,10 +10912,8 @@ msgid "True"
 msgstr ""
 
 #: templates/js/translated/part.js:1473
-#, fuzzy
-#| msgid "false"
 msgid "False"
-msgstr "fałsz"
+msgstr ""
 
 #: templates/js/translated/part.js:1574
 msgid "No part parameter templates found"
@@ -12500,8 +12486,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12680,3 +12665,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
