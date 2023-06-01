@@ -37,6 +37,8 @@
 
 /* exported
     makeIcon,
+    trueFalseLabel,
+    yesNoLabel,
 */
 
 
@@ -84,6 +86,14 @@ function yesNoLabel(value, options={}) {
     }
 
     return `<span class='badge rounded-pill ${color}'>${text}</span>`;
+}
+
+
+function trueFalseLabel(value, options={}) {
+    options.pass = '{% trans "True" %}';
+    options.fail = '{% trans "False" %}';
+
+    return yesNoLabel(value, options);
 }
 
 
