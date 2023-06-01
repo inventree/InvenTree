@@ -258,7 +258,7 @@ plugin_api_urls = [
             re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
         ])),
 
-        # Plugin managment
+        # Plugin management
         re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
         re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
 
