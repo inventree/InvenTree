@@ -2025,6 +2025,7 @@ function loadParametricPartTable(table, options={}) {
                         switchable: true,
                         sortable: true,
                         filterControl: 'input',
+                        visible: false,
                     });
                 }
             }
@@ -2053,6 +2054,9 @@ function loadParametricPartTable(table, options={}) {
         uniqueId: 'pk',
         onLoadSuccess: function(response) {
 
+            // Display columns as we receive data from them
+            let activated_columns = [];
+
             // Data may be returned paginated, in which case we preference response.results
             var data = response.results || response;
 
@@ -2061,7 +2065,14 @@ function loadParametricPartTable(table, options={}) {
 
                 // Make each parameter accessible, based on the "template" columns
                 row.parameters.forEach(function(parameter) {
-                    row[`parameter_${parameter.template}`] = parameter.data;
+                    let col_name = `parameter_${parameter.template}`;
+                    row[col_name] = parameter.data;
+
+                    // Display the column if it is not already displayed
+                    if (!activated_columns.includes(col_name)) {
+                        activated_columns.push(col_name);
+                        $(table).bootstrapTable('showColumn', col_name);
+                    }
                 });
 
                 data[idx] = row;
