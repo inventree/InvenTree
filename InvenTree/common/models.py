@@ -2100,7 +2100,35 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
                 MinValueValidator(0),
             ],
             'default': 100,
-        }
+        },
+
+        'DEFAULT_PART_LABEL_TEMPLATE': {
+            'name': _('Default part label template'),
+            'description': _('The part label template to be automatically selected'),
+            'validator': [
+                int,
+            ],
+            'default': '',
+        },
+
+        'DEFAULT_ITEM_LABEL_TEMPLATE': {
+            'name': _('Default stock item template'),
+            'description': _('The stock item label template to be automatically selected'),
+            'validator': [
+                int,
+            ],
+            'default': '',
+        },
+
+        'DEFAULT_LOCATION_LABEL_TEMPLATE': {
+            'name': _('Default stock location label template'),
+            'description': _('The stock location label template to be automatically selected'),
+            'validator': [
+                int,
+            ],
+            'default': '',
+        },
+
     }
 
     typ = 'user'

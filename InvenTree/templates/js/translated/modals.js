@@ -174,7 +174,7 @@ function enableSubmitButton(options, enable=true) {
 }
 
 
-function makeOption(text, value, title) {
+function makeOption(text, value, title, selected) {
     /* Format an option for a select element
      */
 
@@ -184,6 +184,9 @@ function makeOption(text, value, title) {
         html += ` title='${title}'`;
     }
 
+    if (selected) {
+        html += 'selected="selected"';
+    }
     html += `>${text}</option>`;
 
     return html;
@@ -200,8 +203,9 @@ function makeOption(text, value, title) {
  * - textFunc: Function which takes an element and generates the text to be displayed
  * - valueFunc: optional function which takes an element and generates the value
  * - titleFunc: optional function which takes an element and generates a title
+ * - selectedFunc: optional function which takes an element and generate true if the given item should be added as selected
  */
-function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
+function makeOptionsList(elements, textFunc, valueFunc, titleFunc, selectedFunc) {
 
     var options = [];
 
@@ -210,6 +214,7 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
         var text = textFunc(element);
         var value = null;
         var title = null;
+        var selected = null;
 
         if (valueFunc) {
             value = valueFunc(element);
@@ -221,7 +226,11 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
             title = titleFunc(element);
         }
 
-        options.push(makeOption(text, value, title));
+        if (selectedFunc) {
+            selected = selectedFunc(element);
+        }
+
+        options.push(makeOption(text, value, title, selected));
     });
 
     return options;
