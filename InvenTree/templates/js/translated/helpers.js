@@ -37,18 +37,47 @@
 
 /* exported
     makeIcon,
+    trueFalseLabel,
+    yesNoLabel,
 */
 
 
-function yesNoLabel(value, options={}) {
-    var text = '';
-    var color = '';
+/*
+ * Convert a value (which may be a string) to a boolean value
+ *
+ * @param {string} value: Input value
+ * @returns {boolean} true or false
+ */
+function toBool(value) {
 
-    if (value) {
-        text = '{% trans "YES" %}';
+    if (typeof value == 'string') {
+
+        if (value.length == 0) {
+            return false;
+        }
+
+        value = value.toLowerCase();
+
+        if (['true', 't', 'yes', 'y', '1', 'on', 'ok'].includes(value)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return value == true;
+    }
+}
+
+
+function yesNoLabel(value, options={}) {
+    let text = '';
+    let color = '';
+
+    if (toBool(value)) {
+        text = options.pass || '{% trans "YES" %}';
         color = 'bg-success';
     } else {
-        text = '{% trans "NO" %}';
+        text = options.fail || '{% trans "NO" %}';
         color = 'bg-warning';
     }
 
@@ -57,6 +86,14 @@ function yesNoLabel(value, options={}) {
     }
 
     return `<span class='badge rounded-pill ${color}'>${text}</span>`;
+}
+
+
+function trueFalseLabel(value, options={}) {
+    options.pass = '{% trans "True" %}';
+    options.fail = '{% trans "False" %}';
+
+    return yesNoLabel(value, options);
 }
 
 
