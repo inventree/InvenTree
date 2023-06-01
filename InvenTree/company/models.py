@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q, Sum, UniqueConstraint
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -281,6 +281,11 @@ class Address(models.Model):
         link: External link to additional address information
     """
 
+    def __init__(self, *args, **kwargs):
+        """Custom init function"""
+        super().__init__(*args, **kwargs)
+        self.confirm_primary = False
+
     def __str__(self):
         """Defines string representation of address to supple a one-line to API calls"""
         available_lines = [self.line1,
@@ -366,6 +371,17 @@ class Address(models.Model):
     link = InvenTreeURLField(blank=True,
                              verbose_name=_('Link'),
                              help_text=_('Link to address information (external)'))
+
+
+@receiver(pre_save, sender=Address)
+def check_primary(sender, instance, **kwargs):
+    """Removes primary flag from current primary address if the to-be-saved address is marked as primary"""
+    if instance.primary is True:
+        if instance.company.primary_address is not None:
+            if instance.id != instance.company.primary_address.id:
+                adr = Address.objects.get(id=instance.company.primary_address.id)
+                adr.primary = False
+                adr.save()
 
 
 class ManufacturerPart(MetadataMixin, models.Model):

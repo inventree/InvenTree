@@ -206,7 +206,7 @@ class AddressTest(TestCase):
         with transaction.atomic():
             self.assertRaises(IntegrityError, Address.objects.create, company=self.c, primary=True)
 
-        Address.objects.create(company=c2, primary=True)
+        Address.objects.create(company=c2, primary=True, line1="Hellothere", line2="generalkenobi")
 
         with transaction.atomic():
             self.assertRaises(IntegrityError, Address.objects.create, company=c2, primary=True)
