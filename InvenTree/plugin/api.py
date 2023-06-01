@@ -164,7 +164,7 @@ class PluginSettingList(ListAPI):
 
 
 def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
-    """Check that a plugin for the provided slug exsists and get the config.
+    """Check that a plugin for the provided slug exists and get the config.
 
     Args:
         plugin_slug (str): Slug for plugin.

@@ -254,7 +254,7 @@ class BaseInvenTreeSetting(models.Model):
         results = cls.objects.all()
 
         if exclude_hidden:
-            # Keys which start with an undersore are used for internal functionality
+            # Keys which start with an underscore are used for internal functionality
             results = results.exclude(key__startswith='_')
 
         # Optionally filter by other keys
@@ -469,7 +469,7 @@ class BaseInvenTreeSetting(models.Model):
 
         If it does not exist, return the backup value (default = None)
         """
-        # If no backup value is specified, atttempt to retrieve a "default" value
+        # If no backup value is specified, attempt to retrieve a "default" value
         if backup_value is None:
             backup_value = cls.get_setting_default(key, **kwargs)
 
