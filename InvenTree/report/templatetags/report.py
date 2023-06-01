@@ -1,5 +1,6 @@
 """Custom template tags for report generation."""
 
+import base64
 import logging
 import os
 
@@ -98,12 +99,13 @@ def asset(filename):
 
 
 @register.simple_tag()
-def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png'):
+def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png', validate=True):
     """Return a fully-qualified path for an 'uploaded' image.
 
     Arguments:
         filename: The filename of the image relative to the MEDIA_ROOT directory
         replace_missing: Optionally return a placeholder image if the provided filename does not exist
+        validate: Optionally validate that the file is a valid image file (default = True)
 
     Returns:
         A fully qualified path to the image
@@ -126,7 +128,7 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         except Exception:
             exists = False
 
-    if exists and not InvenTree.helpers.TestIfImage(full_path):
+    if exists and validate and not InvenTree.helpers.TestIfImage(full_path):
         logger.warning(f"File '{filename}' is not a valid image")
         exists = False
 
@@ -147,6 +149,35 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
             path = settings.STATIC_ROOT.joinpath('img', replacement_file).resolve()
 
         return f"file://{path}"
+
+
+@register.simple_tag()
+def encode_svg_image(filename):
+    """Return a base64-encoded svg image data string"""
+
+    if type(filename) is SafeString:
+        # Prepend an empty string to enforce 'stringiness'
+        filename = '' + filename
+
+    # Check if the file exists
+    if not filename:
+        exists = False
+    else:
+        try:
+            full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
+            exists = full_path.exists() and full_path.is_file()
+        except Exception:
+            exists = False
+
+    if not exists:
+        raise FileNotFoundError(f"Image file '{filename}' not found")
+
+    # Read the file data
+    with open(full_path, 'rb') as f:
+        data = f.read()
+
+    # Return the base64-encoded data
+    return "data:image/svg+xml;charset=utf-8;base64," + base64.b64encode(data).decode('utf-8')
 
 
 @register.simple_tag()

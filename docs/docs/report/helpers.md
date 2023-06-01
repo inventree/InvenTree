@@ -148,6 +148,19 @@ You can access an uploaded image file if you know the *path* of the image, relat
 !!! warning "Invalid Image"
     If the supplied file is not a valid image, it will be replaced with a placeholder image file
 
+
+### SVG Images
+
+SVG images need to be handled in a slightly different manner. When embedding an uploaded SVG image, use the `{% raw %}{% encode_svg_image ... %}{% endraw %}` tag:
+
+```html
+{% raw %}
+<!-- Load the report helper functions -->
+{% load report %}
+<img src='{% encode_svg_image svg_image_file %}'/>
+{% endraw %}
+```
+
 ### Part images
 
 A shortcut function is provided for rendering an image associated with a Part instance. You can render the image of the part using the `{% raw %}{% part_image ... %}{% endraw %}` template tag:
