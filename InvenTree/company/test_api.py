@@ -233,7 +233,10 @@ class ContactTest(InvenTreeAPITestCase):
     def test_edit(self):
         """Test that we can edit a Contact via the API"""
 
-        url = reverse('api-contact-detail', kwargs={'pk': 1})
+        # Get the first contact
+        contact = Contact.objects.first()
+        # Use this contact in the tests
+        url = reverse('api-contact-detail', kwargs={'pk': contact.pk})
 
         # Retrieve detail view
         data = self.get(url, expected_code=200).data
@@ -259,13 +262,16 @@ class ContactTest(InvenTreeAPITestCase):
             expected_code=200
         )
 
-        contact = Contact.objects.get(pk=1)
+        # Get the contact again
+        contact = Contact.objects.first()
         self.assertEqual(contact.role, 'x')
 
     def test_delete(self):
         """Tests that we can delete a Contact via the API"""
 
-        url = reverse('api-contact-detail', kwargs={'pk': 6})
+        # Get the last contact
+        contact = Contact.objects.first()
+        url = reverse('api-contact-detail', kwargs={'pk': contact.pk})
 
         # Delete (without required permissions)
         self.delete(url, expected_code=403)
