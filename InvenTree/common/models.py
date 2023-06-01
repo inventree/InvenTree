@@ -127,7 +127,7 @@ class SettingsKeyType(TypedDict, total=False):
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
         protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
-        model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', optional)
+        model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
     """
 
     name: str
