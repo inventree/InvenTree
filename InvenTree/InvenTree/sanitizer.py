@@ -43,7 +43,7 @@ ALLOWED_ATTRIBUTES_SVG = [
 ]
 
 
-def sanitize_svg(file_data: str, strip: bool = True, elements: str = ALLOWED_ELEMENTS_SVG, attributes: str = ALLOWED_ATTRIBUTES_SVG) -> str:
+def sanitize_svg(file_data, strip: bool = True, elements: str = ALLOWED_ELEMENTS_SVG, attributes: str = ALLOWED_ATTRIBUTES_SVG) -> str:
     """Sanatize a SVG file.
 
     Args:
@@ -56,6 +56,10 @@ def sanitize_svg(file_data: str, strip: bool = True, elements: str = ALLOWED_ELE
         str: Sanitzied SVG file.
     """
 
+    # Handle byte-encoded data
+    if type(file_data) == bytes:
+        file_data = file_data.decode('utf-8')
+
     cleaned = clean(
         file_data,
         tags=elements,
@@ -64,4 +68,5 @@ def sanitize_svg(file_data: str, strip: bool = True, elements: str = ALLOWED_ELE
         strip_comments=strip,
         css_sanitizer=CSSSanitizer()
     )
+
     return cleaned
