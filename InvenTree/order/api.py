@@ -1663,7 +1663,7 @@ order_api_urls = [
     # API endpoints for return order lines
     re_path(r'^ro-line/', include([
         path('<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderLine}, name='api-return-order-line-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderLineItem}, name='api-return-order-line-metadata'),
             re_path(r'^.*$', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
         ])),
 
