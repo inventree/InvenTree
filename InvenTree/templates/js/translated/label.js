@@ -78,9 +78,6 @@ function selectLabel(labels, items, options={}) {
     }
 
     var modal = options.modal || '#modal-form';
-    {% settings_value 'DEFAULT_LOCATION_LABEL_TEMPLATE' user=request.user as default_location_template_pk %}
-    {% settings_value 'DEFAULT_PART_LABEL_TEMPLATE' user=request.user as default_part_template_pk %}
-    {% settings_value 'DEFAULT_STOCK_LABEL_TEMPLATE' user=request.user as default_stock_template_pk %}
     var label_list = makeOptionsList(
         labels,
         function(item) {
@@ -98,11 +95,11 @@ function selectLabel(labels, items, options={}) {
         null,
         function(item) {
             if (options.key == 'part')
-                return item.pk == "{{ default_part_template_pk }}";
+                return item.key == user_settings.DEFAULT_PART_LABEL_TEMPLATE;
             else if (options.key == 'location')
-                return item.pk == "{{ default_location_template_pk }}";
+                return item.key == user_settings.DEFAULT_LOCATION_LABEL_TEMPLATE;
             else if (options.key == 'stock')
-                return item.pk == "{{ default_stock_template_pk }}";
+                return item.key == user_settings.DEFAULT_STOCK_LABEL_TEMPLATE;
             return '';
         }
     );
