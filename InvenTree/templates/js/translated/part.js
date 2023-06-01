@@ -44,6 +44,7 @@
     showMessage,
     showModalSpinner,
     thumbnailImage,
+    trueFalseLabel,
     updateFieldValue,
     withTitle,
     wrapButtons,
@@ -1468,10 +1469,7 @@ function loadPartParameterTable(table, options) {
                     let template = row.template_detail;
 
                     if (template.checkbox) {
-                        return yesNoLabel(value, {
-                            pass: '{% trans "True" %}',
-                            fail: '{% trans "False" %}',
-                        });
+                        return trueFalseLabel(value);
                     }
 
                     if (row.data_numeric && row.template_detail.units) {
@@ -2019,6 +2017,18 @@ function loadParametricPartTable(table, options={}) {
                         template_name += ` [${template.units}]`;
                     }
 
+                    let fmt_func = null;
+
+                    if (template.checkbox) {
+                        fmt_func = function(value) {
+                            if (value == null) {
+                                return null;
+                            } else {
+                                return trueFalseLabel(value);
+                            }
+                        }
+                    }
+
                     columns.push({
                         field: `parameter_${template.pk}`,
                         title: template_name,
@@ -2026,6 +2036,7 @@ function loadParametricPartTable(table, options={}) {
                         sortable: true,
                         filterControl: 'input',
                         visible: false,
+                        formatter: fmt_func,
                     });
                 }
             }
