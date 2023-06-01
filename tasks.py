@@ -561,16 +561,30 @@ def test_translations(c):
     os.environ['TEST_TRANSLATIONS'] = 'True'
 
 
-@task
-def test(c, disable_pty=False):
-    """Run unit-tests for InvenTree codebase."""
+@task(
+    help={
+        'disable_pty': 'Disable PTY',
+        'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
+    }
+)
+def test(c, disable_pty=False, runtest=''):
+    """Run unit-tests for InvenTree codebase.
+
+    To run only certain test, use the argument --runtest.
+    This can filter all the way down to:
+        <module>.<file>.<class>.<method>
+
+    Example:
+        test --runtest=company.test_api
+    will run tests in the company/test_api.py file.
+    """
     # Run sanity check on the django install
     manage(c, 'check')
 
     pty = not disable_pty
 
     # Run coverage tests
-    manage(c, 'test --slowreport', pty=pty)
+    manage(c, f'test --slowreport {runtest}', pty=pty)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
