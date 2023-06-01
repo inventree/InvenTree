@@ -170,11 +170,11 @@ class BaseInvenTreeSetting(models.Model):
         # Execute before_save action
         self._call_settings_function('before_save', args, kwargs)
 
-        # Update this setting in the cache
+        super().save()
+
+        # Update this setting in the cache after it was saved so a pk exists
         if do_cache:
             self.save_to_cache()
-
-        super().save()
 
         # Execute after_save action
         self._call_settings_function('after_save', args, kwargs)
@@ -204,6 +204,10 @@ class BaseInvenTreeSetting(models.Model):
         """Save this setting object to cache"""
 
         ckey = self.cache_key
+
+        # skip saving to cache if no pk is set
+        if self.pk is None:
+            return
 
         logger.debug(f"Saving setting '{ckey}' to cache")
 
