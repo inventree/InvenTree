@@ -98,37 +98,6 @@ def asset(filename):
         return f"file://{full_path}"
 
 
-@register.simple_tag
-def uploaded_file(filename, raise_error=True):
-    """Return a fully-qualified path for an 'uploaded' file
-
-    Arguments:
-        filename: The filename of the file relative to the MEDIA_ROOT directory
-        raise_error: If True, raise an error if the file does not exist
-    """
-
-    if type(filename) is SafeString:
-        # Prepend an empty string to enforce 'stringiness'
-        filename = '' + filename
-
-    # If in debug mode, return URL to the image, not a local file
-    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
-
-    # Test if the file actually exists
-    full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
-
-    if not full_path.exists() or not full_path.is_file():
-        if raise_error:
-            raise FileNotFoundError(f"File '{filename}' does not exist")
-        else:
-            return ''
-
-    if debug_mode:
-        return os.path.join(settings.MEDIA_URL, filename)
-    else:
-        return f"file://{full_path}"
-
-
 @register.simple_tag()
 def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png', validate=True):
     """Return a fully-qualified path for an 'uploaded' image.
