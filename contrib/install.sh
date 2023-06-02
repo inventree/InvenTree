@@ -55,7 +55,7 @@ root_command() {
   # Check if os and version is supported
   get_distribution
   echo "### Detected distribution: $OS $VER"
-  SUPPORTED=true          # is thos OS supported?
+  SUPPORTED=true          # is this OS supported?
   NEEDS_LIBSSL1_1=false   # does this OS need libssl1.1?
 
   DIST_OS=${OS,,}
@@ -118,7 +118,7 @@ root_command() {
   echo "### Adding package source"
   do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/$DIST_OS/$DIST_VER.repo"
 
-  echo "### Updateing package lists"
+  echo "### Updating package lists"
   do_call "sudo apt-get update"
 
   # Set up environment for install

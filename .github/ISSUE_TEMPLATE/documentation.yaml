@@ -10,6 +10,6 @@ body:
     id: repro
     attributes:
       label: Body of the issue
-      description: Please provide one distinct thing to fix or a clearly defined enhancment
+      description: Please provide one distinct thing to fix or a clearly defined enhancement
     validations:
       required: true
