@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-01 13:55+0000\n"
-"PO-Revision-Date: 2023-06-01 23:37\n"
+"POT-Creation-Date: 2023-06-02 06:39+0000\n"
+"PO-Revision-Date: 2023-06-02 23:40\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1297,7 +1297,7 @@ msgstr "Numeri di Serie Assegnazione automatica"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Assegna automaticamente gli articoli richiesti con i numeri di serie corrispondenti"
 
-#: build/serializers.py:326 stock/api.py:668
+#: build/serializers.py:326 stock/api.py:669
 msgid "The following serial numbers already exist or are invalid"
 msgstr "I seguenti numeri di serie sono già esistenti o non sono validi"
 
@@ -7628,23 +7628,23 @@ msgstr "Data di Scadenza"
 msgid "External Location"
 msgstr "Ubicazione Esterna"
 
-#: stock/api.py:580
+#: stock/api.py:581
 msgid "Quantity is required"
 msgstr "La quantità è richiesta"
 
-#: stock/api.py:587
+#: stock/api.py:588
 msgid "Valid part must be supplied"
 msgstr "Deve essere fornita un articolo valido"
 
-#: stock/api.py:613
+#: stock/api.py:614
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:622
+#: stock/api.py:623
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:640
+#: stock/api.py:641
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "I numeri di serie non possono essere forniti per un articolo non tracciabile"
 
