@@ -1430,7 +1430,10 @@ stock_api_urls = [
 
     # StockItemTestResult API endpoints
     re_path(r'^test/', include([
-        path(r'<int:pk>/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockItemTestResult}, name='api-stock-test-result-metadata'),
+            re_path(r'^.*$', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        ])),
         re_path(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 

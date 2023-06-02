@@ -22,8 +22,9 @@ from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     StockStatus)
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import (BomItem, BomItemSubstitute, Part, PartCategory,
-                         PartCategoryParameterTemplate, PartParameterTemplate,
-                         PartRelated, PartStocktake)
+                         PartCategoryParameterTemplate, PartParameter,
+                         PartParameterTemplate, PartRelated, PartStocktake,
+                         PartTestTemplate)
 from stock.models import StockItem, StockLocation
 
 
@@ -158,26 +159,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         # Annotation should include parts from all sub-categories
         self.assertEqual(response.data['part_count'], 100)
-
-    def test_category_metadata(self):
-        """Test metadata endpoint for the PartCategory."""
-        cat = PartCategory.objects.get(pk=1)
-
-        cat.metadata = {
-            'foo': 'bar',
-            'water': 'melon',
-            'abc': 'xyz',
-        }
-
-        cat.set_metadata('abc', 'ABC')
-
-        response = self.get(reverse('api-part-category-metadata', kwargs={'pk': 1}), expected_code=200)
-
-        metadata = response.data['metadata']
-
-        self.assertEqual(metadata['foo'], 'bar')
-        self.assertEqual(metadata['water'], 'melon')
-        self.assertEqual(metadata['abc'], 'ABC')
 
     def test_category_parameters(self):
         """Test that the PartCategoryParameterTemplate API function work"""
@@ -1665,56 +1646,6 @@ class PartDetailTests(PartAPITestBase):
         self.assertEqual(data['in_stock'], 9000)
         self.assertEqual(data['unallocated_stock'], 9000)
 
-    def test_part_metadata(self):
-        """Tests for the part metadata endpoint."""
-        url = reverse('api-part-metadata', kwargs={'pk': 1})
-
-        part = Part.objects.get(pk=1)
-
-        # Metadata is initially null
-        self.assertIsNone(part.metadata)
-
-        part.metadata = {'foo': 'bar'}
-        part.save()
-
-        response = self.get(url, expected_code=200)
-
-        self.assertEqual(response.data['metadata']['foo'], 'bar')
-
-        # Add more data via the API
-        # Using the 'patch' method causes the new data to be merged in
-        self.patch(
-            url,
-            {
-                'metadata': {
-                    'hello': 'world',
-                }
-            },
-            expected_code=200
-        )
-
-        part.refresh_from_db()
-
-        self.assertEqual(part.metadata['foo'], 'bar')
-        self.assertEqual(part.metadata['hello'], 'world')
-
-        # Now, issue a PUT request (existing data will be replacted)
-        self.put(
-            url,
-            {
-                'metadata': {
-                    'x': 'y'
-                },
-            },
-            expected_code=200
-        )
-
-        part.refresh_from_db()
-
-        self.assertFalse('foo' in part.metadata)
-        self.assertFalse('hello' in part.metadata)
-        self.assertEqual(part.metadata['x'], 'y')
-
 
 class PartListTests(PartAPITestBase):
     """Unit tests for the Part List API endpoint"""
@@ -2536,9 +2467,13 @@ class BomItemTest(InvenTreeAPITestCase):
         url = reverse('api-bom-substitute-list')
         stock_url = reverse('api-stock-list')
 
-        # Initially we have no substitute parts
+        # Initially we may have substitute parts
+        # Count first, operate directly on Model
+        countbefore = BomItemSubstitute.objects.count()
+
+        # Now, make sure API returns the same count
         response = self.get(url, expected_code=200)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), countbefore)
 
         # BOM item we are interested in
         bom_item = BomItem.objects.get(pk=1)
@@ -2594,9 +2529,9 @@ class BomItemTest(InvenTreeAPITestCase):
 
             self.assertEqual(len(response.data), n_items + ii + 1)
 
-        # There should now be 5 substitute parts available in the database
+        # There should now be 5 more substitute parts available in the database
         response = self.get(url, expected_code=200)
-        self.assertEqual(len(response.data), 5)
+        self.assertEqual(len(response.data), countbefore + 5)
 
         # The BomItem detail endpoint should now also reflect the substitute data
         data = self.get(
@@ -3050,3 +2985,71 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         InvenTreeSetting.set_setting('STOCKTAKE_ENABLE', True, None)
         response = self.post(url, data={}, expected_code=400)
         self.assertIn('Background worker check failed', str(response.data))
+
+
+class PartMetadataAPITest(InvenTreeAPITestCase):
+    """Unit tests for the various metadata endpoints of API."""
+
+    fixtures = [
+        'category',
+        'part',
+        'params',
+        'location',
+        'bom',
+        'company',
+        'test_templates',
+        'manufacturer_part',
+        'supplier_part',
+        'order',
+        'stock',
+    ]
+
+    roles = [
+        'part.change',
+        'part_category.change',
+    ]
+
+    def metatester(self, apikey, model):
+        """Generic tester"""
+
+        modeldata = model.objects.first()
+
+        # Useless test unless a model object is found
+        self.assertIsNotNone(modeldata)
+
+        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+
+        # Metadata is initially null
+        self.assertIsNone(modeldata.metadata)
+
+        numstr = randint(100, 900)
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    f'abc-{numstr}': f'xyz-{apikey}-{numstr}',
+                }
+            },
+            expected_code=200
+        )
+
+        # Refresh
+        modeldata.refresh_from_db()
+        self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
+
+    def test_metadata(self):
+        """Test all endpoints"""
+
+        for apikey, model in {
+            'api-part-category-parameter-metadata': PartCategoryParameterTemplate,
+            'api-part-category-metadata': PartCategory,
+            'api-part-test-template-metadata': PartTestTemplate,
+            'api-part-related-metadata': PartRelated,
+            'api-part-parameter-template-metadata': PartParameterTemplate,
+            'api-part-parameter-metadata': PartParameter,
+            'api-part-metadata': Part,
+            'api-bom-substitute-metadata': BomItemSubstitute,
+            'api-bom-item-metadata': BomItem,
+        }.items():
+            self.metatester(apikey, model)

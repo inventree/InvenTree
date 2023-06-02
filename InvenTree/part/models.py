@@ -3194,7 +3194,7 @@ class PartCategoryStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
 
 
-class PartTestTemplate(models.Model):
+class PartTestTemplate(MetadataMixin, models.Model):
     """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
@@ -3443,7 +3443,7 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class PartParameter(models.Model):
+class PartParameter(MetadataMixin, models.Model):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
@@ -3559,7 +3559,7 @@ class PartParameter(models.Model):
         return part_parameter
 
 
-class PartCategoryParameterTemplate(models.Model):
+class PartCategoryParameterTemplate(MetadataMixin, models.Model):
     """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate.
 
     Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
@@ -3999,7 +3999,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         instance.part.schedule_pricing_update(create=False)
 
 
-class BomItemSubstitute(models.Model):
+class BomItemSubstitute(MetadataMixin, models.Model):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
@@ -4058,7 +4058,7 @@ class BomItemSubstitute(models.Model):
     )
 
 
-class PartRelated(models.Model):
+class PartRelated(MetadataMixin, models.Model):
     """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
     class Meta:

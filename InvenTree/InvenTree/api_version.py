@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 118
+INVENTREE_API_VERSION = 119
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+
+v119 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4898
+    - Add Metadata to:  Part test templates, Part parameters, Part category parameter templates, BOM item substitute, Part relateds, Stock item test result
 
 v118 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4935
     - Adds extra fields for the PartParameterTemplate model
