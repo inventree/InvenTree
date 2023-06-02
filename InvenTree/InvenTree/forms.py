@@ -253,7 +253,7 @@ class RegistratonMixin:
                 group = Group.objects.get(id=start_group)
                 user.groups.add(group)
             except Group.DoesNotExist:
-                logger.error('The setting `SIGNUP_GROUP` contains an non existant group', start_group)
+                logger.error('The setting `SIGNUP_GROUP` contains an non existent group', start_group)
         user.save()
         return user
 

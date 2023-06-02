@@ -712,12 +712,12 @@ class InvenTreeTree(MPTTModel):
         available = contents.get_all_objects_for_this_type()
 
         # List of child IDs
-        childs = self.getUniqueChildren()
+        children = self.getUniqueChildren()
 
         acceptable = [None]
 
         for a in available:
-            if a.id not in childs:
+            if a.id not in children:
                 acceptable.append(a)
 
         return acceptable

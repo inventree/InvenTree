@@ -309,12 +309,12 @@ class StockTest(StockTestBase):
 
         self.assertFalse(self.drawer2.has_children)
 
-        childs = [item.pk for item in self.office.getUniqueChildren()]
+        children = [item.pk for item in self.office.getUniqueChildren()]
 
-        self.assertIn(self.drawer1.id, childs)
-        self.assertIn(self.drawer2.id, childs)
+        self.assertIn(self.drawer1.id, children)
+        self.assertIn(self.drawer2.id, children)
 
-        self.assertNotIn(self.bathroom.id, childs)
+        self.assertNotIn(self.bathroom.id, children)
 
     def test_items(self):
         """Test has_items."""

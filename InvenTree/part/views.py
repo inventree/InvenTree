@@ -260,7 +260,7 @@ class PartImport(FileManagementFormView):
             messages.success(self.request, alert)
         if import_error:
             error_text = '\n'.join([f'<li><strong>{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
-            messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
+            messages.error(self.request, f"<strong>{_('Some errors occurred:')}</strong><br><ul>{error_text}</ul>")
 
         return HttpResponseRedirect(reverse('part-index'))
 

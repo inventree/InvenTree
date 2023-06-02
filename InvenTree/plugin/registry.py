@@ -152,7 +152,7 @@ class PluginsRegistry:
                         print('[PLUGIN] Max retries, breaking loading')
                     break
                 if settings.PLUGIN_TESTING:
-                    print(f'[PLUGIN] Above error occured during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
+                    print(f'[PLUGIN] Above error occurred during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
 
                 # now the loading will re-start up with init
 

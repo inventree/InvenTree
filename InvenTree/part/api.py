@@ -268,7 +268,7 @@ class CategoryParameterList(ListCreateAPI):
 
 
 class CategoryParameterDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint fro the PartCategoryParameterTemplate model"""
+    """Detail endpoint for the PartCategoryParameterTemplate model"""
 
     queryset = PartCategoryParameterTemplate.objects.all()
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
@@ -565,10 +565,10 @@ class PartScheduling(RetrieveAPI):
 
             if bom_item.inherited:
                 # An "inherited" BOM item filters down to variant parts also
-                childs = bom_item.part.get_descendants(include_self=True)
+                children = bom_item.part.get_descendants(include_self=True)
                 builds = Build.objects.filter(
                     status__in=BuildStatus.ACTIVE_CODES,
-                    part__in=childs,
+                    part__in=children,
                 )
             else:
                 builds = Build.objects.filter(

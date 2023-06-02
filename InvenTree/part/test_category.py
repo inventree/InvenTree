@@ -49,14 +49,14 @@ class CategoryTest(TestCase):
         self.assertEqual(len(self.electronics.children.all()), 3)
         self.assertEqual(len(self.mechanical.children.all()), 1)
 
-    def test_unique_childs(self):
+    def test_unique_children(self):
         """Test the 'unique_children' functionality."""
-        childs = [item.pk for item in self.electronics.getUniqueChildren()]
+        children = [item.pk for item in self.electronics.getUniqueChildren()]
 
-        self.assertIn(self.transceivers.id, childs)
-        self.assertIn(self.ic.id, childs)
+        self.assertIn(self.transceivers.id, children)
+        self.assertIn(self.ic.id, children)
 
-        self.assertNotIn(self.fasteners.id, childs)
+        self.assertNotIn(self.fasteners.id, children)
 
     def test_unique_parents(self):
         """Test the 'unique_parents' functionality."""
