@@ -52,6 +52,17 @@ body:
       label: "Version Information"
       description: "The version info block."
       placeholder: "You can get this by going to the `About InvenTree` section in the upper right corner and clicking on the `copy version information` button"
+  - type: dropdown
+    id: can-reproduce
+    attributes:
+      label: "I can reproduce this bug on the [InvenTree Demo](https://demo.inventree.org) site."
+      options:
+        - label: "I checked and didn't find a similar issue"
+          options:
+            - Yes
+            - No
+      validations:
+        required: true
   - type: textarea
     id: logs
     attributes:
