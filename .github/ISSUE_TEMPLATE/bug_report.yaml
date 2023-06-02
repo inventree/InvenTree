@@ -61,7 +61,7 @@ body:
           options:
             - Yes
             - No
-      validations:
+    validations:
         required: true
   - type: textarea
     id: logs
