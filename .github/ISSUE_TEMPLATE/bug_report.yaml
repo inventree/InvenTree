@@ -55,12 +55,11 @@ body:
   - type: dropdown
     id: can-reproduce
     attributes:
-      label: "I can reproduce this bug on the [InvenTree Demo](https://demo.inventree.org) site."
+      label: "I can reproduce this bug on the demo site."
+      description: "[InvenTree Demo](https://demo.inventree.org)"
       options:
-        - label: "I checked and didn't find a similar issue"
-          options:
-            - Yes
-            - No
+        - Yes
+        - No
     validations:
         required: true
   - type: textarea
