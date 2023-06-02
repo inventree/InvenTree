@@ -102,6 +102,29 @@ class ParameterTests(TestCase):
         'params'
     ]
 
+    def test_choice_validation(self):
+        """Test that parameter choices are correctly validated"""
+
+        template = PartParameterTemplate.objects.create(
+            name='My Template',
+            description='A template with choices',
+            choices='red, blue, green'
+        )
+
+        pass_values = ['red', 'blue', 'green']
+        fail_values = ['rod', 'bleu', 'grene']
+
+        part = Part.objects.all().first()
+
+        for value in pass_values:
+            param = PartParameter(part=part, template=template, data=value)
+            param.full_clean()
+
+        for value in fail_values:
+            param = PartParameter(part=part, template=template, data=value)
+            with self.assertRaises(django_exceptions.ValidationError):
+                param.full_clean()
+
     def test_unit_validation(self):
         """Test validation of 'units' field for PartParameterTemplate"""
 
@@ -116,7 +139,7 @@ class ParameterTests(TestCase):
             with self.assertRaises(django_exceptions.ValidationError):
                 tmp.full_clean()
 
-    def test_param_validation(self):
+    def test_param_unit_validation(self):
         """Test that parameters are correctly validated against template units"""
 
         template = PartParameterTemplate.objects.create(
@@ -137,7 +160,7 @@ class ParameterTests(TestCase):
             with self.assertRaises(django_exceptions.ValidationError):
                 param.full_clean()
 
-    def test_param_conversion(self):
+    def test_param_unit_conversion(self):
         """Test that parameters are correctly converted to template units"""
 
         template = PartParameterTemplate.objects.create(
@@ -201,6 +224,41 @@ class PartParameterTest(InvenTreeAPITestCase):
         )
 
         self.assertEqual(len(response.data), 4)
+
+    def test_param_template_validation(self):
+        """Test that part parameter template validation routines work correctly."""
+
+        # Checkbox parameter cannot have "units" specified
+        with self.assertRaises(django_exceptions.ValidationError):
+            template = PartParameterTemplate(
+                name='test',
+                description='My description',
+                units='mm',
+                checkbox=True
+            )
+
+            template.clean()
+
+        # Checkbox parameter cannot have "choices" specified
+        with self.assertRaises(django_exceptions.ValidationError):
+            template = PartParameterTemplate(
+                name='test',
+                description='My description',
+                choices='a,b,c',
+                checkbox=True
+            )
+
+            template.clean()
+
+        # Choices must be 'unique'
+        with self.assertRaises(django_exceptions.ValidationError):
+            template = PartParameterTemplate(
+                name='test',
+                description='My description',
+                choices='a,a,b',
+            )
+
+            template.clean()
 
     def test_create_param(self):
         """Test that we can create a param via the API."""
