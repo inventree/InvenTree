@@ -58,8 +58,8 @@ body:
       label: "I can reproduce this bug on the demo site."
       description: "[InvenTree Demo](https://demo.inventree.org)"
       options:
-        - Yes
-        - No
+        - "Yes"
+        - "No"
     validations:
         required: true
   - type: textarea
