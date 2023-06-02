@@ -1,9 +1,16 @@
 """Generic implementation of status for InvenTree models."""
 import enum
 import re
+from typing import Any
 
 
-class BaseEnum(enum.IntEnum):
+class MyMeta(enum.EnumMeta):
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        ret = super().__call__(*args, **kwds)
+        return ret
+
+
+class BaseEnum(enum.IntEnum, metaclass=MyMeta):
     """An `Enum` capabile of having its members have docstrings.
 
     Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
@@ -42,6 +49,11 @@ class StatusCode(BaseEnum):
         obj = int.__new__(cls)
         obj._value_ = args[0]
 
+        # Group definition
+        if isinstance(obj._value_, StatusGroup):
+            obj.group = obj._value_
+            return obj
+
         # Normal item definition
         if len(args) == 1:
             obj.label = args[0]
@@ -50,15 +62,13 @@ class StatusCode(BaseEnum):
             obj.label = args[1]
             obj.color = args[2] if len(args) > 2 else 'secondary'
 
-        # Check if this might be a code:
-        # - the first arg is a list
-        # - the first arg has at least one item
-        # - the first item in the first arg has three items (could be a code)
-        if isinstance(args[0], list) and len(args[0]) >= 1 and len(args[0][0]) == 3:
-            # Look up referenced enum
-            obj._value_ = [cls.values(x[0]) for x in args[0]]
-
         return obj
+
+    def __cal__(called):
+        return called.value
+
+    def __call__(self, *args, **kwargs):
+        return self.value
 
     @classmethod
     def _is_element(cls, d):
@@ -174,3 +184,14 @@ class StatusCode(BaseEnum):
         ret['list'] = cls.list()
 
         return ret
+
+
+class StatusGroup(list):
+    """A small list instance"""
+    pass
+
+
+def Group(*args, **kwargs):
+    """Group of status codes."""
+    # return StatusGroup(*args, **kwargs)
+    return StatusGroup([x[0] for x in args])

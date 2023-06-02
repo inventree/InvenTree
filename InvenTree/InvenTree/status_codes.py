@@ -2,7 +2,7 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from generic.states import StatusCode
+from generic.states import StatusCode, Group
 
 
 class PurchaseOrderStatus(StatusCode):
@@ -149,6 +149,11 @@ class BuildStatus(StatusCode):
     PRODUCTION = 20, _("Production"), 'primary'    # BuildOrder is in production
     CANCELLED = 30, _("Cancelled"), 'danger'       # Build was cancelled
     COMPLETE = 40, _("Complete"), 'success'        # Build is complete
+
+    ACTIVE_CODES = Group(
+        PENDING,
+        PRODUCTION,
+    )
 
 
 class BuildStatusGroups:
