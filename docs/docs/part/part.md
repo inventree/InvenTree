@@ -4,7 +4,7 @@ title: Parts
 
 ## Part
 
-The *Part* is the core element of the InvenTree ecosystem. A Part object is the archetype of any stock item in your inventory. Parts are arranged in heirarchical categories which are used to organise and filter parts by function.
+The *Part* is the core element of the InvenTree ecosystem. A Part object is the archetype of any stock item in your inventory. Parts are arranged in hierarchical categories which are used to organise and filter parts by function.
 
 ## Part Category
 
@@ -132,7 +132,7 @@ In the web interface, part images can be uploaded directly from the [part view](
 
 #### API
 
-Image upload is supported via the [InvenTree API](../api/api.md), allowing images to be associated with parts programatically. Further, this means that the [Python interface](../api/python/python.md) also supports image upload.
+Image upload is supported via the [InvenTree API](../api/api.md), allowing images to be associated with parts programmatically. Further, this means that the [Python interface](../api/python/python.md) also supports image upload.
 
 #### Mobile App
 
