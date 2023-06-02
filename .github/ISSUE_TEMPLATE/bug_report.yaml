@@ -55,12 +55,10 @@ body:
   - type: checkboxes
     id: can-reproduce
     attributes:
-      label: "I can reproduce this bug on the demo site."
+      label: "Please verify if you can reproduce this bug on the demo site."
       description: "You can sign in at [InvenTree Demo](https://demo.inventree.org) with admin:inventree."
       options:
-        - label: "Yes"
-    validations:
-        required: true
+        - label: "I can reproduce this bug on the demo site."
   - type: textarea
     id: logs
     attributes:
