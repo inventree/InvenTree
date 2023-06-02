@@ -285,7 +285,7 @@ function makeRemoveButton(cls, pk, title, options={}) {
 
 
 /*
- * Render a progessbar!
+ * Render a progressbar!
  *
  * @param value is the current value of the progress bar
  * @param maximum is the maximum value of the progress bar

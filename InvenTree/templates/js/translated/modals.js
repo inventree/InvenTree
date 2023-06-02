@@ -190,7 +190,7 @@ function makeOption(text, value, title) {
 }
 
 /*
- * Programatically generate a list of <option> elements,
+ * Programmatically generate a list of <option> elements,
  * from the (assumed array) of elements.
  * For each element, we pass the element to the supplied functions,
  * which (in turn) generate display / value / title values.
@@ -263,7 +263,7 @@ function setFieldOptions(fieldName, optionList, options={}) {
 
 
 /**
- * Clear (emtpy) the options list for a particular field
+ * Clear (empty) the options list for a particular field
  */
 function clearFieldOptions(fieldName) {
 
@@ -360,7 +360,7 @@ function getFieldValue(fieldName, options={}) {
 
 /* Replacement function for the 'matcher' parameter for a select2 dropdown.
 
-Intead of performing an exact match search, a partial match search is performed.
+Instead of performing an exact match search, a partial match search is performed.
 This splits the search term by the space ' ' character and matches each segment.
 Segments can appear out of order and are not case sensitive
 
@@ -660,7 +660,7 @@ function showQuestionDialog(title, content, options={}) {
      *   accept_text - Text for the accept button (default = 'Accept')
      *   cancel_text - Text for the cancel button (default = 'Cancel')
      *   accept - Function to run if the user presses 'Accept'
-     *   cancel - Functino to run if the user presses 'Cancel'
+     *   cancel - Function to run if the user presses 'Cancel'
      */
 
     options.title = title;

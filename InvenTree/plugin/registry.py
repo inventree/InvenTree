@@ -58,7 +58,7 @@ class PluginsRegistry:
         self.errors = {}                                        # Holds discovering errors
 
         # flags
-        self.is_loading = False                                 # Are plugins beeing loaded right now
+        self.is_loading = False                                 # Are plugins being loaded right now
         self.apps_loading = True                                # Marks if apps were reloaded yet
         self.git_is_modern = True                               # Is a modern version of git available
 
@@ -199,7 +199,7 @@ class PluginsRegistry:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
             force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
-        # Do not reload whe currently loading
+        # Do not reload when currently loading
         if self.is_loading:
             return  # pragma: no cover
 

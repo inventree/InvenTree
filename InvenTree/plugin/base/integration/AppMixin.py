@@ -71,7 +71,7 @@ class AppMixin:
         """
         # unregister models from admin
         for plugin_path in registry.installed_apps:
-            models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
+            models = []  # the modelrefs need to be collected as popping an item in a iter is not welcomed
             app_name = plugin_path.split('.')[-1]
             try:
                 app_config = apps.get_app_config(app_name)

@@ -65,7 +65,7 @@ function formatCurrency(value, options={}) {
     // Extract default currency information
     let currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
 
-    // Exctract locale information
+    // Extract locale information
     let locale = options.locale || navigator.language || 'en-US';
 
     let formatter = new Intl.NumberFormat(

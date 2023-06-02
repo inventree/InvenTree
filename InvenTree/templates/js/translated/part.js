@@ -282,7 +282,7 @@ function partFields(options={}) {
 
 
 /*
- * Construct a set of fields for a PartCategory intance
+ * Construct a set of fields for a PartCategory instance
  */
 function categoryFields(options={}) {
     let fields = {
@@ -683,7 +683,7 @@ function partStockLabel(part, options={}) {
         elements.push(`{% trans "On Order" %}: ${part.ordering}`);
     }
 
-    // Check for items beeing built
+    // Check for items being built
     if (part.building) {
         elements.push(`{% trans "Building" %}: ${part.building}`);
     }
@@ -1700,7 +1700,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 formatter: function(value, row) {
 
                     if (row.received >= row.quantity) {
-                        // Already recevied
+                        // Already received
                         return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
                     } else if (row.order_detail && row.order_detail.status == {{ PurchaseOrderStatus.PLACED }}) {
                         let html = '';

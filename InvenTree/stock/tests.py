@@ -754,7 +754,7 @@ class StockTest(StockTestBase):
         """Unit tests for stock location tree structure (MPTT).
 
         Ensure that the MPTT structure is rebuilt correctly,
-        and the corrent ancestor tree is observed.
+        and the current ancestor tree is observed.
 
         Ref: https://github.com/inventree/InvenTree/issues/2636
         Ref: https://github.com/inventree/InvenTree/issues/2733

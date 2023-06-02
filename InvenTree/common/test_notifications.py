@@ -149,7 +149,7 @@ class NotificationUserSettingTests(BaseNotificationIntegrationTest):
             def send_bulk(self):
                 return True
 
-        # run thorugh notification
+        # run through notification
         self._notification_run(SampleImplementation)
         # make sure the array fits
         array = storage.get_usersettings(self.user)

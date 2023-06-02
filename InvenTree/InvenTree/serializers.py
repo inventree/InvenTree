@@ -34,7 +34,7 @@ class InvenTreeMoneySerializer(MoneyField):
     """
 
     def __init__(self, *args, **kwargs):
-        """Overrite default values."""
+        """Override default values."""
         kwargs["max_digits"] = kwargs.get("max_digits", 19)
         self.decimal_places = kwargs["decimal_places"] = kwargs.get("decimal_places", 6)
         kwargs["required"] = kwargs.get("required", False)
@@ -269,13 +269,13 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
     """Updated from https://github.com/glemmaPaul/django-taggit-serializer."""
 
     def update(self, instance, validated_data):
-        """Overridden update method to readd the tagmanager."""
+        """Overridden update method to re-add the tagmanager."""
         to_be_tagged, validated_data = self._pop_tags(validated_data)
 
         tag_object = super().update(instance, validated_data)
 
         for key in to_be_tagged.keys():
-            # readd the tagmanager
+            # re-add the tagmanager
             new_tagobject = tag_object.__class__.objects.get(id=tag_object.id)
             setattr(tag_object, key, getattr(new_tagobject, key))
 

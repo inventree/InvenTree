@@ -1698,7 +1698,7 @@ class PartDetailTests(PartAPITestBase):
         self.assertEqual(part.metadata['foo'], 'bar')
         self.assertEqual(part.metadata['hello'], 'world')
 
-        # Now, issue a PUT request (existing data will be replacted)
+        # Now, issue a PUT request (existing data will be replaced)
         self.put(
             url,
             {
