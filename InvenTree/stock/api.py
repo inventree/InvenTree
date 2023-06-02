@@ -434,7 +434,8 @@ class StockFilter(rest_filters.FilterSet):
         """
         if str2bool(value):
             # The 'quantity' field is greater than the calculated 'allocated' field
-            return queryset.filter(Q(quantity__gt=F('allocated')))
+            # Note that the item must also be "in stock"
+            return queryset.filter(StockItem.IN_STOCK_FILTER).filter(Q(quantity__gt=F('allocated')))
         else:
             # The 'quantity' field is less than (or equal to) the calculated 'allocated' field
             return queryset.filter(Q(quantity__lte=F('allocated')))
