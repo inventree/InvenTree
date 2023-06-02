@@ -1659,7 +1659,7 @@ order_api_urls = [
         re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
     ])),
 
-    # API endpoints for reutrn order lines
+    # API endpoints for return order lines
     re_path(r'^ro-line/', include([
         path('<int:pk>/', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
 

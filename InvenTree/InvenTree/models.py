@@ -125,7 +125,7 @@ class DataImportMixin(object):
     Models which implement this mixin should provide information on the fields available for import
     """
 
-    # Define a map of fields avaialble for import
+    # Define a map of fields available for import
     IMPORT_FIELDS = {}
 
     @classmethod

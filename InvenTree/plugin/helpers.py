@@ -25,7 +25,7 @@ class IntegrationPluginError(Exception):
         """Init a plugin error.
 
         Args:
-            path: Path on which the error occured - used to find out which plugin it was
+            path: Path on which the error occurred - used to find out which plugin it was
             message: The original error message
         """
         self.path = path

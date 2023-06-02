@@ -62,7 +62,7 @@ apipatterns = [
     # Plugin endpoints
     path('', include(plugin_api_urls)),
 
-    # Common endpoints enpoint
+    # Common endpoints endpoint
     path('', include(common_api_urls)),
 
     # OpenAPI Schema

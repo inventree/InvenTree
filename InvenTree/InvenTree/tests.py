@@ -288,7 +288,7 @@ class TestHelpers(TestCase):
         def dl_helper(url, expected_error, timeout=2.5, retries=3):
             """Helper function for unit testing downloads.
 
-            As the httpstat.us service occassionaly refuses a connection,
+            As the httpstat.us service occasionally refuses a connection,
             we will simply try multiple times
             """
 
@@ -542,7 +542,7 @@ class TestSerialNumberExtraction(TestCase):
         self.assertEqual(sn, ['5', '6', '7', '8'])
 
     def test_failures(self):
-        """Test wron serial numbers."""
+        """Test wrong serial numbers."""
         e = helpers.extract_serial_numbers
 
         # Test duplicates
@@ -1033,7 +1033,7 @@ class SanitizerTest(TestCase):
     """Simple tests for sanitizer functions."""
 
     def test_svg_sanitizer(self):
-        """Test that SVGs are sanitized acordingly."""
+        """Test that SVGs are sanitized accordingly."""
         valid_string = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" height="400" width="400">{0}
         <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91;"></path>
         </svg>"""

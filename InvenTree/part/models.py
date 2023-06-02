@@ -571,7 +571,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Ensure that the IPN (internal part number) is valid for this Part"
 
         - Validation is handled by custom plugins
-        - By default, no validation checks are perfomed
+        - By default, no validation checks are performed
         """
 
         from plugin.registry import registry
@@ -1542,7 +1542,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         A) This part may be directly specified in a BomItem instance
         B) This part may be a *variant* of a part which is directly specified in a BomItem instance
-        C) This part may be a *substitute* for a part which is directly specifed in a BomItem instance
+        C) This part may be a *substitute* for a part which is directly specified in a BomItem instance
 
         So we construct a query for each case, and combine them...
         """
@@ -2172,7 +2172,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         return self.parameters.order_by('template__name')
 
     def parameters_map(self):
-        """Return a map (dict) of parameter values assocaited with this Part instance, of the form.
+        """Return a map (dict) of parameter values associated with this Part instance, of the form.
 
         Example:
         {
@@ -3197,7 +3197,7 @@ class PartTestTemplate(models.Model):
     """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
-    defined in a heirarchy.
+    defined in a hierarchy.
 
     Test names are simply strings, rather than enforcing any sort of structure or pattern.
     It is up to the user to determine what tests are defined (and how they are run).

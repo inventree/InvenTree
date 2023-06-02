@@ -203,7 +203,7 @@ v64 -> 2022-07-08 : https://github.com/inventree/InvenTree/pull/3310
     - Allow BOM List API endpoint to be filtered by "on_order" parameter
 
 v63 -> 2022-07-06 : https://github.com/inventree/InvenTree/pull/3301
-    - Allow BOM List API endpoint to be filtered by "available_stock" paramater
+    - Allow BOM List API endpoint to be filtered by "available_stock" parameter
 
 v62 -> 2022-07-05 : https://github.com/inventree/InvenTree/pull/3296
     - Allows search on BOM List API endpoint

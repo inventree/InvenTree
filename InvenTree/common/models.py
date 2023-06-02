@@ -2361,7 +2361,7 @@ class WebhookEndpoint(models.Model):
         self.verify = self.VERIFICATION_METHOD
 
     def process_webhook(self):
-        """Process the webhook incomming.
+        """Process the webhook incoming.
 
         This does not deal with the data itself - that happens in process_payload.
         Do not touch or pickle data here - it was not verified to be safe.
@@ -2498,7 +2498,7 @@ class WebhookMessage(models.Model):
 
 
 class NotificationEntry(MetaMixin):
-    """A NotificationEntry records the last time a particular notifaction was sent out.
+    """A NotificationEntry records the last time a particular notification was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
 

@@ -51,7 +51,7 @@ class StockTestBase(InvenTreeTestCase):
 
 
 class StockTest(StockTestBase):
-    """Tests to ensure that the stock location tree functions correcly."""
+    """Tests to ensure that the stock location tree functions correctly."""
 
     def test_pathstring(self):
         """Check that pathstring updates occur as expected"""
@@ -145,7 +145,7 @@ class StockTest(StockTestBase):
                 item.save()
                 item.full_clean()
 
-        # Check that valid URLs pass - and check custon schemes
+        # Check that valid URLs pass - and check custom schemes
         for good_url in [
             'https://test.com',
             'https://digikey.com/datasheets?file=1010101010101.bin',
@@ -646,7 +646,7 @@ class StockTest(StockTestBase):
 
             self.assertEqual(item.serial_int, 0)
 
-        # Next, test for incremenet / decrement functionality
+        # Next, test for increment / decrement functionality
         item.serial = 100
         item.save()
 
@@ -1185,7 +1185,7 @@ class TestResultTest(StockTestBase):
         tests = item.testResultMap(include_installed=False)
         self.assertEqual(len(tests), 3)
 
-        # There are no "sub items" intalled at this stage
+        # There are no "sub items" installed at this stage
         tests = item.testResultMap(include_installed=False)
         self.assertEqual(len(tests), 3)
 

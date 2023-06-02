@@ -233,7 +233,7 @@ class PartImport(FileManagementFormView):
                 image=part_data.get('image', None),
             )
 
-            # check if theres a category assigned, if not skip this part or else bad things happen
+            # check if there's a category assigned, if not skip this part or else bad things happen
             if not optional_matches['Category']:
                 import_error.append(_("Can't import part {name} because there is no category assigned").format(name=new_part.name))
                 continue

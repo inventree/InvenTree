@@ -480,7 +480,7 @@ if "postgres" in db_engine:  # pragma: no cover
     if "connect_timeout" not in db_options:
         # The DB server is in the same data center, it should not take very
         # long to connect to the database server
-        # # seconds, 2 is minium allowed by libpq
+        # # seconds, 2 is minimum allowed by libpq
         db_options["connect_timeout"] = int(
             get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 2)
         )
@@ -576,7 +576,7 @@ REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
 
-# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+# Default Sentry DSN (can be overridden if user wants custom sentry integration)
 SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', default_sentry_dsn())
 SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
 
@@ -598,7 +598,7 @@ cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=
 if cache_host:  # pragma: no cover
     # We are going to rely upon a possibly non-localhost for our cache,
     # so don't wait too long for the cache as nothing in the cache should be
-    # irreplacable.
+    # irreplaceable.
     _cache_options = {
         "CLIENT_CLASS": "django_redis.client.DefaultClient",
         "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),

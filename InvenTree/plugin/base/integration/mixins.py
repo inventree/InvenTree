@@ -202,7 +202,7 @@ class APICallMixin:
 
     Steps to set up:
     1. Add this mixin before (left of) SettingsMixin and PluginBase
-    2. Add two settings for the required url and token/passowrd (use `SettingsMixin`)
+    2. Add two settings for the required url and token/password (use `SettingsMixin`)
     3. Save the references to keys of the settings in `API_URL_SETTING` and `API_TOKEN_SETTING`
     4. (Optional) Set `API_TOKEN` to the name required for the token by the external API - Defaults to `Bearer`
     5. (Optional) Override the `api_url` property method if the setting needs to be extended

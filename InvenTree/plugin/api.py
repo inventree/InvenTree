@@ -164,7 +164,7 @@ class PluginSettingList(ListAPI):
 
 
 def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
-    """Check that a plugin for the provided slug exsists and get the config.
+    """Check that a plugin for the provided slug exists and get the config.
 
     Args:
         plugin_slug (str): Slug for plugin.
@@ -258,7 +258,7 @@ plugin_api_urls = [
             re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
         ])),
 
-        # Plugin managment
+        # Plugin management
         re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
         re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
 

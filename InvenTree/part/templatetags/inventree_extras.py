@@ -295,7 +295,7 @@ def inventree_github_url(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
-    """Return URL for InvenTree documenation site."""
+    """Return URL for InvenTree documentation site."""
     tag = version.inventreeDocsVersion()
 
     return f"https://docs.inventree.org/en/{tag}"
@@ -315,7 +315,7 @@ def default_currency(*args, **kwargs):
 
 @register.simple_tag()
 def setting_object(key, *args, **kwargs):
-    """Return a setting object speciifed by the given key.
+    """Return a setting object specified by the given key.
 
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
@@ -605,7 +605,7 @@ else:  # pragma: no cover
         bits = token.split_contents()
         loc_name = settings.STATICFILES_I18_PREFIX
 
-        # change path to called ressource
+        # change path to called resource
         bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
         token.contents = ' '.join(bits)
 

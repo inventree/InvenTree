@@ -269,7 +269,7 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
     """Updated from https://github.com/glemmaPaul/django-taggit-serializer."""
 
     def update(self, instance, validated_data):
-        """Overriden update method to readd the tagmanager."""
+        """Overridden update method to readd the tagmanager."""
         to_be_tagged, validated_data = self._pop_tags(validated_data)
 
         tag_object = super().update(instance, validated_data)

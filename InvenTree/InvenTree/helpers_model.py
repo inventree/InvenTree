@@ -36,7 +36,7 @@ def construct_absolute_url(*arg, **kwargs):
     This is useful when (for example) sending an email to a user with a link
     to something in the InvenTree web framework.
     A URL is constructed in the following order:
-    1. If setings.SITE_URL is set (e.g. in the Django settings), use that
+    1. If settings.SITE_URL is set (e.g. in the Django settings), use that
     2. If the InvenTree setting INVENTREE_BASE_URL is set, use that
     3. Otherwise, use the current request URL (if available)
     """

@@ -826,7 +826,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         """
         Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        a) For HTTP requests (e.g. via the browsable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
 
         Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft

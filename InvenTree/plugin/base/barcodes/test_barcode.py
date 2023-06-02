@@ -48,7 +48,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
     def test_empty(self):
         """Test an empty barcode scan.
 
-        Ensure that all required data is in teh respomse.
+        Ensure that all required data is in the respomse.
         """
         response = self.postBarcode(self.scan_url, '')
 

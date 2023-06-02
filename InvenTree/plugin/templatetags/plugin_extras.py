@@ -1,4 +1,4 @@
-"""This module provides template tags for handeling plugins."""
+"""This module provides template tags for handling plugins."""
 
 from django import template
 from django.conf import settings as djangosettings

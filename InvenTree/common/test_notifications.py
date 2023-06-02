@@ -47,7 +47,7 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
         with self.assertRaises(NotImplementedError):
             NoNameNotificationMethod('', '', '', '', )
 
-        # a not existant context check
+        # a not existent context check
         with self.assertRaises(NotImplementedError):
             WrongContextNotificationMethod('', '', '', '', )
 

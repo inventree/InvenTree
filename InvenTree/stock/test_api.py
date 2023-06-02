@@ -1241,7 +1241,7 @@ class StockTestResultTest(StockAPITestCase):
     """Tests for StockTestResult APIs."""
 
     def get_url(self):
-        """Helper funtion to get test-result api url."""
+        """Helper function to get test-result api url."""
         return reverse('api-stock-test-result-list')
 
     def test_list(self):

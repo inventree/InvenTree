@@ -168,7 +168,7 @@ class CategoryTest(TestCase):
             parts_parameters = self.fasteners.get_parts_parameters(prefetch=fasteners)
             part_infos = ['pk', 'name', 'description']
             for part_parameter in parts_parameters:
-                # Remove part informations
+                # Remove part information
                 for item in part_infos:
                     part_parameter.pop(item)
                 self.assertEqual(len(part_parameter), 1)
