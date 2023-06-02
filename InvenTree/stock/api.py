@@ -444,7 +444,8 @@ class StockFilter(rest_filters.FilterSet):
         """
         if str2bool(value):
             # The 'quantity' field is greater than the calculated 'allocated' field
-            return queryset.filter(Q(quantity__gt=F('allocated')))
+            # Note that the item must also be "in stock"
+            return queryset.filter(StockItem.IN_STOCK_FILTER).filter(Q(quantity__gt=F('allocated')))
         else:
             # The 'quantity' field is less than (or equal to) the calculated 'allocated' field
             return queryset.filter(Q(quantity__lte=F('allocated')))
@@ -1429,7 +1430,10 @@ stock_api_urls = [
 
     # StockItemTestResult API endpoints
     re_path(r'^test/', include([
-        path(r'<int:pk>/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockItemTestResult}, name='api-stock-test-result-metadata'),
+            re_path(r'^.*$', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        ])),
         re_path(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 

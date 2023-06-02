@@ -127,6 +127,7 @@ class SettingsKeyType(TypedDict, total=False):
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
         protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
+        model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
     """
 
     name: str
@@ -139,6 +140,7 @@ class SettingsKeyType(TypedDict, total=False):
     before_save: Callable[..., None]
     after_save: Callable[..., None]
     protected: bool
+    model: str
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -170,11 +172,11 @@ class BaseInvenTreeSetting(models.Model):
         # Execute before_save action
         self._call_settings_function('before_save', args, kwargs)
 
-        # Update this setting in the cache
+        super().save()
+
+        # Update this setting in the cache after it was saved so a pk exists
         if do_cache:
             self.save_to_cache()
-
-        super().save()
 
         # Execute after_save action
         self._call_settings_function('after_save', args, kwargs)
@@ -204,6 +206,10 @@ class BaseInvenTreeSetting(models.Model):
         """Save this setting object to cache"""
 
         ckey = self.cache_key
+
+        # skip saving to cache if no pk is set
+        if self.pk is None:
+            return
 
         logger.debug(f"Saving setting '{ckey}' to cache")
 
@@ -254,7 +260,7 @@ class BaseInvenTreeSetting(models.Model):
         results = cls.objects.all()
 
         if exclude_hidden:
-            # Keys which start with an undersore are used for internal functionality
+            # Keys which start with an underscore are used for internal functionality
             results = results.exclude(key__startswith='_')
 
         # Optionally filter by other keys
@@ -469,7 +475,7 @@ class BaseInvenTreeSetting(models.Model):
 
         If it does not exist, return the backup value (default = None)
         """
-        # If no backup value is specified, atttempt to retrieve a "default" value
+        # If no backup value is specified, attempt to retrieve a "default" value
         if backup_value is None:
             backup_value = cls.get_setting_default(key, **kwargs)
 
@@ -2100,7 +2106,35 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
                 MinValueValidator(0),
             ],
             'default': 100,
-        }
+        },
+
+        'DEFAULT_PART_LABEL_TEMPLATE': {
+            'name': _('Default part label template'),
+            'description': _('The part label template to be automatically selected'),
+            'validator': [
+                int,
+            ],
+            'default': '',
+        },
+
+        'DEFAULT_ITEM_LABEL_TEMPLATE': {
+            'name': _('Default stock item template'),
+            'description': _('The stock item label template to be automatically selected'),
+            'validator': [
+                int,
+            ],
+            'default': '',
+        },
+
+        'DEFAULT_LOCATION_LABEL_TEMPLATE': {
+            'name': _('Default stock location label template'),
+            'description': _('The stock location label template to be automatically selected'),
+            'validator': [
+                int,
+            ],
+            'default': '',
+        },
+
     }
 
     typ = 'user'

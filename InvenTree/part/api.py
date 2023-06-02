@@ -1349,7 +1349,34 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         # Simple filter fields
         fields = [
             'units',
+            'checkbox',
         ]
+
+    has_choices = rest_filters.BooleanFilter(
+        method='filter_has_choices',
+        label='Has Choice',
+    )
+
+    def filter_has_choices(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with choices."""
+
+        if str2bool(value):
+            return queryset.exclude(Q(choices=None) | Q(choices=''))
+        else:
+            return queryset.filter(Q(choices=None) | Q(choices=''))
+
+    has_units = rest_filters.BooleanFilter(
+        method='filter_has_units',
+        label='Has Units',
+    )
+
+    def filter_has_units(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with units."""
+
+        if str2bool(value):
+            return queryset.exclude(Q(units=None) | Q(units=''))
+        else:
+            return queryset.filter(Q(units=None) | Q(units=''))
 
 
 class PartParameterTemplateList(ListCreateAPI):
@@ -1377,6 +1404,7 @@ class PartParameterTemplateList(ListCreateAPI):
     ordering_fields = [
         'name',
         'units',
+        'checkbox',
     ]
 
     def filter_queryset(self, queryset):
@@ -1580,45 +1608,33 @@ class BomFilter(rest_filters.FilterSet):
     def filter_available_stock(self, queryset, name, value):
         """Filter the queryset based on whether each line item has any available stock"""
 
-        value = str2bool(value)
-
-        if value:
-            queryset = queryset.filter(available_stock__gt=0)
+        if str2bool(value):
+            return queryset.filter(available_stock__gt=0)
         else:
-            queryset = queryset.filter(available_stock=0)
-
-        return queryset
+            return queryset.filter(available_stock=0)
 
     on_order = rest_filters.BooleanFilter(label="On order", method="filter_on_order")
 
     def filter_on_order(self, queryset, name, value):
         """Filter the queryset based on whether each line item has any stock on order"""
 
-        value = str2bool(value)
-
-        if value:
-            queryset = queryset.filter(on_order__gt=0)
+        if str2bool(value):
+            return queryset.filter(on_order__gt=0)
         else:
-            queryset = queryset.filter(on_order=0)
-
-        return queryset
+            return queryset.filter(on_order=0)
 
     has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method="filter_has_pricing")
 
     def filter_has_pricing(self, queryset, name, value):
         """Filter the queryset based on whether pricing information is available for the sub_part"""
 
-        value = str2bool(value)
-
         q_a = Q(sub_part__pricing_data=None)
         q_b = Q(sub_part__pricing_data__overall_min=None, sub_part__pricing_data__overall_max=None)
 
-        if value:
-            queryset = queryset.exclude(q_a | q_b)
+        if str2bool(value):
+            return queryset.exclude(q_a | q_b)
         else:
-            queryset = queryset.filter(q_a | q_b)
-
-        return queryset
+            return queryset.filter(q_a | q_b)
 
 
 class BomMixin:
@@ -1876,7 +1892,10 @@ part_api_urls = [
         re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
 
         re_path(r'^parameters/', include([
-            re_path(r'^(?P<pk>\d+)/', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
+            re_path(r'^(?P<pk>\d+)/', include([
+                re_path(r'^metadata/', MetadataView.as_view(), {'model': PartCategoryParameterTemplate}, name='api-part-category-parameter-metadata'),
+                re_path(r'^.*$', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
+            ])),
             re_path(r'^.*$', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
         ])),
 
@@ -1894,7 +1913,10 @@ part_api_urls = [
 
     # Base URL for PartTestTemplate API endpoints
     re_path(r'^test-template/', include([
-        path(r'<int:pk>/', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': PartTestTemplate}, name='api-part-test-template-metadata'),
+            re_path(r'^.*$', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
+        ])),
         path('', PartTestTemplateList.as_view(), name='api-part-test-template-list'),
     ])),
 
@@ -1918,7 +1940,10 @@ part_api_urls = [
 
     # Base URL for PartRelated API endpoints
     re_path(r'^related/', include([
-        path(r'<int:pk>/', PartRelatedDetail.as_view(), name='api-part-related-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': PartRelated}, name='api-part-related-metadata'),
+            re_path(r'^.*$', PartRelatedDetail.as_view(), name='api-part-related-detail'),
+        ])),
         re_path(r'^.*$', PartRelatedList.as_view(), name='api-part-related-list'),
     ])),
 
@@ -1926,13 +1951,16 @@ part_api_urls = [
     re_path(r'^parameter/', include([
         path('template/', include([
             re_path(r'^(?P<pk>\d+)/', include([
-                re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameter}, name='api-part-parameter-template-metadata'),
+                re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameterTemplate}, name='api-part-parameter-template-metadata'),
                 re_path(r'^.*$', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
             ])),
             re_path(r'^.*$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
         ])),
 
-        path(r'<int:pk>/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameter}, name='api-part-parameter-metadata'),
+            re_path(r'^.*$', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
+        ])),
         re_path(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
     ])),
 
@@ -1996,7 +2024,10 @@ bom_api_urls = [
     re_path(r'^substitute/', include([
 
         # Detail view
-        path(r'<int:pk>/', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/?', MetadataView.as_view(), {'model': BomItemSubstitute}, name='api-bom-substitute-metadata'),
+            re_path(r'^.*$', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
+        ])),
 
         # Catch all
         re_path(r'^.*$', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),

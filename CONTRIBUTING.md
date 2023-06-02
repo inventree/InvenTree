@@ -123,6 +123,18 @@ The InvenTree code base makes use of [GitHub actions](https://github.com/feature
 
 The various github actions can be found in the `./github/workflows` directory
 
+### Run tests locally
+
+To run test locally, use:
+```
+invoke test
+```
+
+To run only partial tests, for example for a module use:
+```
+invoke test --runtest order
+```
+
 ## Code Style
 
 Submitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.

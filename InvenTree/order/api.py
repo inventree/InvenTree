@@ -1649,6 +1649,7 @@ order_api_urls = [
             re_path(r'complete/', ReturnOrderComplete.as_view(), name='api-return-order-complete'),
             re_path(r'issue/', ReturnOrderIssue.as_view(), name='api-return-order-issue'),
             re_path(r'receive/', ReturnOrderReceive.as_view(), name='api-return-order-receive'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': models.ReturnOrder}, name='api-return-order-metadata'),
             re_path(r'.*$', ReturnOrderDetail.as_view(), name='api-return-order-detail'),
         ])),
 
@@ -1661,7 +1662,10 @@ order_api_urls = [
 
     # API endpoints for return order lines
     re_path(r'^ro-line/', include([
-        path('<int:pk>/', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
+        path('<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderLineItem}, name='api-return-order-line-metadata'),
+            re_path(r'^.*$', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
+        ])),
 
         # Return order line item status code information
         re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: ReturnOrderLineStatus}, name='api-return-order-line-status-codes'),
@@ -1671,7 +1675,10 @@ order_api_urls = [
 
     # API endpoints for return order extra line
     re_path(r'^ro-extra-line/', include([
-        path('<int:pk>/', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),
+        path('<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderExtraLine}, name='api-return-order-extra-line-metadata'),
+            re_path(r'^.*$', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),
+        ])),
         path('', ReturnOrderExtraLineList.as_view(), name='api-return-order-extra-line-list'),
     ])),
 
