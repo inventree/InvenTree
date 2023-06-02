@@ -16,7 +16,7 @@ Any of the methods described below can be implemented in a custom plugin to prov
 
 ### Part Name
 
-By default, part names are not subject to any particular naming conventions or requirements. However if custom validation is required, the `validate_part_name` method can be implemente to ensure that a part name conforms to a required convention.
+By default, part names are not subject to any particular naming conventions or requirements. However if custom validation is required, the `validate_part_name` method can be implemented to ensure that a part name conforms to a required convention.
 
 If the custom method determines that the part name is *objectionable*, it should throw a `ValidationError` which will be handled upstream by parent calling methods.
 
