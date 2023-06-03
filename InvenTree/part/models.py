@@ -572,7 +572,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Ensure that the IPN (internal part number) is valid for this Part"
 
         - Validation is handled by custom plugins
-        - By default, no validation checks are perfomed
+        - By default, no validation checks are performed
         """
 
         from plugin.registry import registry
@@ -3504,6 +3504,15 @@ class PartParameter(MetadataMixin, models.Model):
                 raise ValidationError({
                     'data': _('Invalid choice for parameter value')
                 })
+
+        # Run custom validation checks (via plugins)
+        from plugin.registry import registry
+
+        for plugin in registry.with_mixin('validation'):
+
+            # Note: The validate_part_parameter function may raise a ValidationError
+            if plugin.validate_part_parameter(self, self.data):
+                break
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.
