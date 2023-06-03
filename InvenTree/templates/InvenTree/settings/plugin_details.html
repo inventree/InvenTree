@@ -60,21 +60,21 @@
     <td>
         {% if plugin.author %}
         {{ plugin.author }}
-        {% else %}
+        {% elif plugin.is_active %}
         <em>{{ no_info }}</em>
         {% endif %}
     </td>
     <td>
         {% if plugin.pub_date %}
         {% render_date plugin.pub_date %}
-        {% else %}
+        {% elif plugin.is_active %}
         <em>{{ no_info }}</em>
         {% endif %}
     </td>
     <td>
         {% if plugin.version %}
         {{ plugin.version }}
-        {% else %}
+        {% elif plugin.is_active %}
         <em>{{ no_info }}</em>
         {% endif %}
     </td>
