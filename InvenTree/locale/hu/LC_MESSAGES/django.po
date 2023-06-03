@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-02 06:39+0000\n"
-"PO-Revision-Date: 2023-06-02 23:40\n"
+"POT-Creation-Date: 2023-06-03 14:06+0000\n"
+"PO-Revision-Date: 2023-06-03 23:52\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -420,7 +420,7 @@ msgstr "Kiszolgálóhiba"
 msgid "An error has been logged by the server."
 msgstr "A kiszolgáló egy hibaüzenetet rögzített."
 
-#: InvenTree/serializers.py:60 part/models.py:3873
+#: InvenTree/serializers.py:60 part/models.py:3891
 msgid "Must be a valid number"
 msgstr "Érvényes számnak kell lennie"
 
@@ -889,7 +889,7 @@ msgstr "Gyártási utasítás azonosító"
 
 #: build/models.py:156 order/models.py:356 order/models.py:762
 #: order/models.py:1084 order/models.py:1721 part/admin.py:278
-#: part/models.py:3774 part/templates/part/upload_bom.html:54
+#: part/models.py:3792 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:26
@@ -921,8 +921,8 @@ msgstr "Gyártás, amihez ez a gyártás hozzá van rendelve"
 #: order/models.py:1192 order/models.py:1308 order/models.py:1309
 #: part/models.py:390 part/models.py:2859 part/models.py:2973
 #: part/models.py:3113 part/models.py:3132 part/models.py:3151
-#: part/models.py:3172 part/models.py:3264 part/models.py:3531
-#: part/models.py:3639 part/models.py:3739 part/models.py:4053
+#: part/models.py:3172 part/models.py:3264 part/models.py:3549
+#: part/models.py:3657 part/models.py:3757 part/models.py:4071
 #: part/serializers.py:842 part/serializers.py:1245
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
@@ -1192,7 +1192,7 @@ msgstr "Forrás készlet tétel"
 #: build/templates/build/detail.html:34 common/models.py:2176
 #: order/models.py:1070 order/models.py:1642 order/serializers.py:1232
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:277
-#: part/forms.py:47 part/models.py:2986 part/models.py:3755
+#: part/forms.py:47 part/models.py:2986 part/models.py:3773
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1436,8 +1436,8 @@ msgstr "Szükséges gyártási mennyiség nem lett elérve"
 msgid "Build order has incomplete outputs"
 msgstr "A gyártási utasítás befejezetlen kimeneteket tartalmaz"
 
-#: build/serializers.py:714 build/serializers.py:768 part/models.py:3662
-#: part/models.py:4045
+#: build/serializers.py:714 build/serializers.py:768 part/models.py:3680
+#: part/models.py:4063
 msgid "BOM Item"
 msgstr "Alkatrészjegyzék tétel"
 
@@ -2260,7 +2260,7 @@ msgstr "Kategória paraméter sablonok másolása"
 msgid "Copy category parameter templates when creating a part"
 msgstr "Kategória paraméter sablonok másolása alkatrész létrehozásakor"
 
-#: common/models.py:1162 part/admin.py:55 part/models.py:3536
+#: common/models.py:1162 part/admin.py:55 part/models.py:3554
 #: report/models.py:166 templates/js/translated/table_filters.js:109
 #: templates/js/translated/table_filters.js:669
 msgid "Template"
@@ -3721,7 +3721,7 @@ msgid "Supplier part description"
 msgstr "Beszállítói alkatrész leírása"
 
 #: company/models.py:596 company/templates/company/supplier_part.html:188
-#: part/admin.py:279 part/models.py:3777 part/templates/part/upload_bom.html:59
+#: part/admin.py:279 part/models.py:3795 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
 #: report/templates/report/inventree_return_order_report_base.html:27
@@ -5310,12 +5310,12 @@ msgstr "A {part} egységára {price}-ra módosítva"
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr "A {part} alkatrész módosított egységára {price} mennyisége pedig {qty}"
 
-#: part/admin.py:33 part/admin.py:273 part/models.py:3643 part/tasks.py:288
+#: part/admin.py:33 part/admin.py:273 part/models.py:3661 part/tasks.py:288
 #: stock/admin.py:101
 msgid "Part ID"
 msgstr "Alkatrész ID"
 
-#: part/admin.py:34 part/admin.py:275 part/models.py:3647 part/tasks.py:289
+#: part/admin.py:34 part/admin.py:275 part/models.py:3665 part/tasks.py:289
 #: stock/admin.py:102
 msgid "Part Name"
 msgstr "Alkatrész neve"
@@ -5438,7 +5438,7 @@ msgstr "Alkatrészjegyzék tétel ID"
 msgid "Parent IPN"
 msgstr "Szülő IPN"
 
-#: part/admin.py:274 part/models.py:3651
+#: part/admin.py:274 part/models.py:3669
 msgid "Part IPN"
 msgstr "Alkatrész IPN"
 
@@ -5498,7 +5498,7 @@ msgstr "Elérhető készlet"
 msgid "Input quantity for price calculation"
 msgstr "Add meg a mennyiséget az árszámításhoz"
 
-#: part/models.py:74 part/models.py:3592 part/templates/part/category.html:16
+#: part/models.py:74 part/models.py:3610 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr "Alkatrész kategória"
@@ -5573,7 +5573,7 @@ msgstr "Ilyen nevű, IPN-ű és reviziójú alkatrész már létezik."
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr "Szerkezeti kategóriákhoz nem lehet alkatrészeket rendelni!"
 
-#: part/models.py:845 part/models.py:3648
+#: part/models.py:845 part/models.py:3666
 msgid "Part name"
 msgstr "Alkatrész neve"
 
@@ -5597,7 +5597,7 @@ msgstr "Alkatrész leírása (opcionális)"
 msgid "Part keywords to improve visibility in search results"
 msgstr "Alkatrész kulcsszavak amik segítik a megjelenést a keresési eredményekben"
 
-#: part/models.py:882 part/models.py:3192 part/models.py:3591
+#: part/models.py:882 part/models.py:3192 part/models.py:3609
 #: part/serializers.py:848 part/templates/part/part_base.html:262
 #: templates/InvenTree/settings/settings_staff_js.html:204
 #: templates/js/translated/notification.js:59
@@ -6006,68 +6006,68 @@ msgstr ""
 msgid "Invalid choice for parameter value"
 msgstr ""
 
-#: part/models.py:3531
+#: part/models.py:3549
 msgid "Parent Part"
 msgstr "Szülő alkatrész"
 
-#: part/models.py:3536 part/models.py:3597 part/models.py:3598
+#: part/models.py:3554 part/models.py:3615 part/models.py:3616
 #: templates/InvenTree/settings/settings_staff_js.html:199
 msgid "Parameter Template"
 msgstr "Paraméter sablon"
 
-#: part/models.py:3541
+#: part/models.py:3559
 msgid "Data"
 msgstr "Adat"
 
-#: part/models.py:3541
+#: part/models.py:3559
 msgid "Parameter Value"
 msgstr "Paraméter értéke"
 
-#: part/models.py:3602 templates/InvenTree/settings/settings_staff_js.html:208
+#: part/models.py:3620 templates/InvenTree/settings/settings_staff_js.html:208
 msgid "Default Value"
 msgstr "Alapértelmezett érték"
 
-#: part/models.py:3603
+#: part/models.py:3621
 msgid "Default Parameter Value"
 msgstr "Alapértelmezett paraméter érték"
 
-#: part/models.py:3640
+#: part/models.py:3658
 msgid "Part ID or part name"
 msgstr "Alkatrész ID vagy alkatrész név"
 
-#: part/models.py:3644
+#: part/models.py:3662
 msgid "Unique part ID value"
 msgstr "Egyedi alkatrész ID értéke"
 
-#: part/models.py:3652
+#: part/models.py:3670
 msgid "Part IPN value"
 msgstr "Alkatrész IPN érték"
 
-#: part/models.py:3655
+#: part/models.py:3673
 msgid "Level"
 msgstr "Szint"
 
-#: part/models.py:3656
+#: part/models.py:3674
 msgid "BOM level"
 msgstr "Alkatrészjegyzék szint"
 
-#: part/models.py:3740
+#: part/models.py:3758
 msgid "Select parent part"
 msgstr "Szülő alkatrész kiválasztása"
 
-#: part/models.py:3748
+#: part/models.py:3766
 msgid "Sub part"
 msgstr "Al alkatrész"
 
-#: part/models.py:3749
+#: part/models.py:3767
 msgid "Select part to be used in BOM"
 msgstr "Válaszd ki az alkatrészjegyzékben használandó alkatrészt"
 
-#: part/models.py:3755
+#: part/models.py:3773
 msgid "BOM quantity for this BOM item"
 msgstr "Alkatrészjegyzék mennyiség ehhez az alkatrészjegyzék tételhez"
 
-#: part/models.py:3759 part/templates/part/upload_bom.html:58
+#: part/models.py:3777 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:971 templates/js/translated/bom.js:998
 #: templates/js/translated/build.js:2113
 #: templates/js/translated/table_filters.js:156
@@ -6076,114 +6076,114 @@ msgstr "Alkatrészjegyzék mennyiség ehhez az alkatrészjegyzék tételhez"
 msgid "Optional"
 msgstr "Opcionális"
 
-#: part/models.py:3760
+#: part/models.py:3778
 msgid "This BOM item is optional"
 msgstr "Ez az alkatrészjegyzék tétel opcionális"
 
-#: part/models.py:3765 templates/js/translated/bom.js:967
+#: part/models.py:3783 templates/js/translated/bom.js:967
 #: templates/js/translated/bom.js:1007 templates/js/translated/build.js:2104
 #: templates/js/translated/table_filters.js:160
 #: templates/js/translated/table_filters.js:485
 msgid "Consumable"
 msgstr "Fogyóeszköz"
 
-#: part/models.py:3766
+#: part/models.py:3784
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "Ez az alkatrészjegyzék tétel fogyóeszköz (készlete nincs követve a gyártásban)"
 
-#: part/models.py:3770 part/templates/part/upload_bom.html:55
+#: part/models.py:3788 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr "Többlet"
 
-#: part/models.py:3771
+#: part/models.py:3789
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "Becsült gyártási veszteség (abszolút vagy százalékos)"
 
-#: part/models.py:3774
+#: part/models.py:3792
 msgid "BOM item reference"
 msgstr "Alkatrészjegyzék tétel azonosító"
 
-#: part/models.py:3777
+#: part/models.py:3795
 msgid "BOM item notes"
 msgstr "Alkatrészjegyzék tétel megjegyzései"
 
-#: part/models.py:3781
+#: part/models.py:3799
 msgid "Checksum"
 msgstr "Ellenőrző összeg"
 
-#: part/models.py:3781
+#: part/models.py:3799
 msgid "BOM line checksum"
 msgstr "Alkatrészjegyzék sor ellenőrző összeg"
 
-#: part/models.py:3786 templates/js/translated/table_filters.js:144
+#: part/models.py:3804 templates/js/translated/table_filters.js:144
 msgid "Validated"
 msgstr "Jóváhagyva"
 
-#: part/models.py:3787
+#: part/models.py:3805
 msgid "This BOM item has been validated"
 msgstr "Ez a BOM tétel jóvá lett hagyva"
 
-#: part/models.py:3792 part/templates/part/upload_bom.html:57
+#: part/models.py:3810 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1024
 #: templates/js/translated/table_filters.js:148
 #: templates/js/translated/table_filters.js:181
 msgid "Gets inherited"
 msgstr "Öröklődött"
 
-#: part/models.py:3793
+#: part/models.py:3811
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Ezt az alkatrészjegyzék tételt az alkatrész változatok alkatrészjegyzékei is öröklik"
 
-#: part/models.py:3798 part/templates/part/upload_bom.html:56
+#: part/models.py:3816 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1016
 msgid "Allow Variants"
 msgstr "Változatok"
 
-#: part/models.py:3799
+#: part/models.py:3817
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Alkatrészváltozatok készlet tételei használhatók ehhez az alkatrészjegyzék tételhez"
 
-#: part/models.py:3885 stock/models.py:577
+#: part/models.py:3903 stock/models.py:577
 msgid "Quantity must be integer value for trackable parts"
 msgstr "A mennyiség egész szám kell legyen a követésre kötelezett alkatrészek esetén"
 
-#: part/models.py:3894 part/models.py:3896
+#: part/models.py:3912 part/models.py:3914
 msgid "Sub part must be specified"
 msgstr "Al alkatrészt kötelező megadni"
 
-#: part/models.py:4012
+#: part/models.py:4030
 msgid "BOM Item Substitute"
 msgstr "Alkatrészjegyzék tétel helyettesítő"
 
-#: part/models.py:4033
+#: part/models.py:4051
 msgid "Substitute part cannot be the same as the master part"
 msgstr "A helyettesítő alkatrész nem lehet ugyanaz mint a fő alkatrész"
 
-#: part/models.py:4046
+#: part/models.py:4064
 msgid "Parent BOM item"
 msgstr "Szülő alkatrészjegyzék tétel"
 
-#: part/models.py:4054
+#: part/models.py:4072
 msgid "Substitute part"
 msgstr "Helyettesítő alkatrész"
 
-#: part/models.py:4069
+#: part/models.py:4087
 msgid "Part 1"
 msgstr "1.rész"
 
-#: part/models.py:4073
+#: part/models.py:4091
 msgid "Part 2"
 msgstr "2.rész"
 
-#: part/models.py:4073
+#: part/models.py:4091
 msgid "Select Related Part"
 msgstr "Válassz kapcsolódó alkatrészt"
 
-#: part/models.py:4091
+#: part/models.py:4109
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "Alkatrész kapcsolat nem hozható létre önmagával"
 
-#: part/models.py:4095
+#: part/models.py:4113
 msgid "Duplicate relationship already exists"
 msgstr "Már létezik duplikált alkatrész kapcsolat"
 
@@ -7197,8 +7197,8 @@ msgid "InvenTree Notifications"
 msgstr "InvenTree értesítések"
 
 #: plugin/builtin/integration/core_notifications.py:35
-msgid "Integrated outgoing notificaton methods"
-msgstr "Integrált kimenő értesítési módszerek"
+msgid "Integrated outgoing notification methods"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:40
 #: plugin/builtin/integration/core_notifications.py:81
@@ -7254,7 +7254,7 @@ msgstr "PluginNeve a pluginnak"
 msgid "Is the plugin active"
 msgstr "Aktív-e a plugin"
 
-#: plugin/models.py:82 templates/InvenTree/settings/plugin_details.html:47
+#: plugin/models.py:82
 msgid "Unvailable"
 msgstr "Nem elérhető"
 
@@ -8725,6 +8725,10 @@ msgstr "Beépített"
 msgid "Sample"
 msgstr "Minta"
 
+#: templates/InvenTree/settings/plugin_details.html:47
+msgid "Unavailable"
+msgstr ""
+
 #: templates/InvenTree/settings/plugin_settings.html:16
 msgid "Plugin information"
 msgstr "Plugin információ"
@@ -9153,8 +9157,8 @@ msgid "Some languages are not complete"
 msgstr "Néhány nyelv nem teljes"
 
 #: templates/InvenTree/settings/user_display.html:97
-msgid "Show only sufficent"
-msgstr "Csak a szükséges megjelenítése"
+msgid "Show only sufficient"
+msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:99
 msgid "and hidden."
