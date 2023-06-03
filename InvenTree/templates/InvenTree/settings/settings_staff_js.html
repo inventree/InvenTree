@@ -400,7 +400,13 @@ onPanelLoad('plugin', function() {
     // Callback to activate a plugin
     $(".btn-plugin-enable").click(function() {
         let pk = $(this).attr('pk');
-        activatePlugin(pk);
+        activatePlugin(pk, true);
+    });
+
+    // Callback to deactivate a plugin
+    $(".btn-plugin-disable").click(function() {
+        let pk = $(this).attr('pk');
+        activatePlugin(pk, false);
     });
 
 {% endif %}

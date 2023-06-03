@@ -34,32 +34,39 @@ function installPlugin() {
 /*
  * Activate a specific plugin via the API
  */
-function activatePlugin(plugin_id) {
+function activatePlugin(plugin_id, active=true) {
 
     let url = `{% url "api-plugin-list" %}${plugin_id}/activate/`;
 
-    let html = `
+    let html = active ? `
     <span class='alert alert-block alert-info'>
-    {% trans "Are you sure you want to activate this plugin?" %}
+    {% trans "Are you sure you want to enable this plugin?" %}
+    </span>
+    ` : `
+    <span class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to disable this plugin?" %}
     </span>
     `;
 
     constructForm(null, {
-        title: '{% trans "Activate Plugin" %}',
+        title: active ? '{% trans "Enable Plugin" %}' : '{% trans "Disable Plugin" %}',
         preFormContent: html,
         confirm: true,
-        submitText: '{% trans "Activate" %}',
+        submitText: active ? '{% trans "Enable" %}' : '{% trans "Disable" %}',
+        submitClass: active ? 'success' : 'danger',
         onSubmit: function(_fields, opts) {
             showModalSpinner(opts.modal);
 
             inventreePut(
                 url,
-                {},
+                {
+                    active: active,
+                },
                 {
                     method: 'PATCH',
                     success: function() {
                         $(opts.modal).modal('hide');
-                        addCachedAlert('{% trans "Plugin activated" %}', {style: 'success'});
+                        addCachedAlert('{% trans "Plugin updated" %}', {style: 'success'});
                         location.reload();
                     },
                     error: function(xhr) {
