@@ -78,8 +78,10 @@ class PluginConfig(models.Model):
         def get_plugin_meta(name):
             if not plugin:
                 return None
+
             if not self.active:
-                return _('Unvailable')
+                return _('Unavailable')
+
             return str(getattr(plugin, name, None))
 
         self.meta = {
