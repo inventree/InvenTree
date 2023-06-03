@@ -515,7 +515,7 @@ class PartSettingsTest(InvenTreeTestCase):
             Part.objects.create(name='zyx', description='A part', IPN='UNIQUE')
 
         # However, *blank* / empty IPN values should be allowed, even if duplicates are not
-        # Note that leading / trailling whitespace characters are trimmed, too
+        # Note that leading / trailing whitespace characters are trimmed, too
         Part.objects.create(name='abc', revision='1', description='A part', IPN=None)
         Part.objects.create(name='abc', revision='2', description='A part', IPN='')
         Part.objects.create(name='abc', revision='3', description='A part', IPN=None)

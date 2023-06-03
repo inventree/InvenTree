@@ -1183,7 +1183,7 @@ function handleFormSuccess(response, options) {
     var msg_target = null;
 
     if (persist) {
-        // If the modal is persistant, the target for any messages should be the modal!
+        // If the modal is persistent, the target for any messages should be the modal!
         msg_target = $(options.modal).find('#pre-form-content');
     }
 
@@ -1944,7 +1944,7 @@ function initializeRelatedField(field, fields, options={}) {
                 var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
-                // Return a simple renderering
+                // Return a simple rendering
                 console.warn(`templateResult() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
@@ -1974,7 +1974,7 @@ function initializeRelatedField(field, fields, options={}) {
                 var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
-                // Return a simple renderering
+                // Return a simple rendering
                 console.warn(`templateSelection() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
@@ -2026,7 +2026,7 @@ function initializeRelatedField(field, fields, options={}) {
 
 
 /*
- * Set the value of a select2 instace for a "related field",
+ * Set the value of a select2 instance for a "related field",
  * e.g. with data returned from a secondary modal
  *
  * arguments:
@@ -2431,7 +2431,7 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
             opts.push(`value='${parameters.value}'`);
         }
     } else if (parameters.default != null) {
-        // Otherwise, a defualt value?
+        // Otherwise, a default value?
         opts.push(`value='${parameters.default}'`);
     }
 

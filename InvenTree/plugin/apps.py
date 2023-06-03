@@ -1,6 +1,6 @@
 """Apps file for plugin app.
 
-This initializes the plugin mechanisms and handles reloading throught the lifecycle.
+This initializes the plugin mechanisms and handles reloading throughout the lifecycle.
 The main code for plugin special sauce is in the plugin registry in `InvenTree/plugin/registry.py`.
 """
 

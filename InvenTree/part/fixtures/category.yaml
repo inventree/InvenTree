@@ -76,7 +76,7 @@
   pk: 7
   fields:
     name: Mechanical
-    description: Mechanical componenets
+    description: Mechanical components
     default_location: null
     level: 0
     tree_id: 2

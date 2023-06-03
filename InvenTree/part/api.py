@@ -268,7 +268,7 @@ class CategoryParameterList(ListCreateAPI):
 
 
 class CategoryParameterDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint fro the PartCategoryParameterTemplate model"""
+    """Detail endpoint for the PartCategoryParameterTemplate model"""
 
     queryset = PartCategoryParameterTemplate.objects.all()
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
@@ -550,7 +550,7 @@ class PartScheduling(RetrieveAPI):
 
         This assumes that the user is responsible for correctly allocating parts.
 
-        However, it has the added benefit of side-stepping the various BOM substition options,
+        However, it has the added benefit of side-stepping the various BOM substitution options,
         and just looking at what stock items the user has actually allocated against the Build.
         """
 
@@ -565,10 +565,10 @@ class PartScheduling(RetrieveAPI):
 
             if bom_item.inherited:
                 # An "inherited" BOM item filters down to variant parts also
-                childs = bom_item.part.get_descendants(include_self=True)
+                children = bom_item.part.get_descendants(include_self=True)
                 builds = Build.objects.filter(
                     status__in=BuildStatus.ACTIVE_CODES,
-                    part__in=childs,
+                    part__in=children,
                 )
             else:
                 builds = Build.objects.filter(
@@ -591,7 +591,7 @@ class PartScheduling(RetrieveAPI):
                     # Non-trackable parts are allocated against the build itself
                     required_quantity = build.quantity * bom_item.quantity
 
-                # Grab all allocations against the spefied BomItem
+                # Grab all allocations against the specified BomItem
                 allocations = BuildItem.objects.filter(
                     bom_item=bom_item,
                     build=build,
@@ -1032,7 +1032,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         return DownloadFile(filedata, filename)
 
     def list(self, request, *args, **kwargs):
-        """Overide the 'list' method, as the PartCategory objects are very expensive to serialize!
+        """Override the 'list' method, as the PartCategory objects are very expensive to serialize!
 
         So we will serialize them first, and keep them in memory, so that they do not have to be serialized multiple times...
         """
@@ -1049,7 +1049,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
         """
         Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        a) For HTTP requests (e.g. via the browsable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
         """
         if page is not None:
@@ -1213,7 +1213,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
     def filter_parameteric_data(self, queryset):
         """Filter queryset against part parameters.
 
-        Here we can perfom a number of different functions:
+        Here we can perform a number of different functions:
 
         Ordering Based on Parameter Value:
         - Used if the 'ordering' query param points to a parameter
@@ -1492,7 +1492,7 @@ class PartParameterDetail(RetrieveUpdateDestroyAPI):
 
 
 class PartStocktakeFilter(rest_filters.FilterSet):
-    """Custom fitler for the PartStocktakeList endpoint"""
+    """Custom filter for the PartStocktakeList endpoint"""
 
     class Meta:
         """Metaclass options"""
@@ -1702,7 +1702,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
 
         """
         Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        a) For HTTP requests (e.g. via the browsable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
         """
         if page is not None:
@@ -1748,7 +1748,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         There are multiple ways that an assembly can "use" a sub-part:
 
         A) Directly specifying the sub_part in a BomItem field
-        B) Specifing a "template" part with inherited=True
+        B) Specifying a "template" part with inherited=True
         C) Allowing variant parts to be substituted
         D) Allowing direct substitute parts to be specified
 

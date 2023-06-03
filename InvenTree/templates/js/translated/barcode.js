@@ -111,7 +111,7 @@ function onBarcodeScanClicked(e) {
 
 function onCameraAvailable(hasCamera, options) {
     if (hasCamera && global_settings.BARCODE_WEBCAM_SUPPORT) {
-        // Camera is only acccessible if page is served over secure connection
+        // Camera is only accessible if page is served over secure connection
         if (window.isSecureContext == true) {
             qrScanner = new Html5Qrcode('barcode_scan_video', {
                 useBarCodeDetectorIfSupported: true,

@@ -500,17 +500,17 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         var bb = sortName.split('.').reduce(extract, b);
 
         // Extract parent information
-        var aparent = a._data && a._data['parent-index'];
+        var apparent = a._data && a._data['parent-index'];
         var bparent = b._data && b._data['parent-index'];
 
         // If either of the comparisons are in a group
-        if (aparent || bparent) {
+        if (apparent || bparent) {
 
             // If the parents are different (or one item does not have a parent,
             // then we need to extract the parent value for the selected column.
 
-            if (aparent != bparent) {
-                if (aparent) {
+            if (apparent != bparent) {
+                if (apparent) {
                     aa = a._data['table'].options.groupByFormatter(sortName, 0, a._data['group-data']);
                 }
 

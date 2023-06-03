@@ -13,7 +13,7 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         """Return a set of search fields for the request, adjusted based on request params.
 
         The following query params are available to 'augment' the search (in decreasing order of priority)
-        - search_regex: If True, search is perfomed on 'regex' comparison
+        - search_regex: If True, search is performed on 'regex' comparison
         """
 
         regex = InvenTree.helpers.str2bool(request.query_params.get('search_regex', False))

@@ -39,10 +39,10 @@ Change how logins, password-forgot, signups are handled.
 | Enable SSO registration | Boolean | Enable self-registration for users via SSO on the login-pages | False |
 | Enable password forgot | Boolean | Enable password forgot function on the login-pages.<br><br>This will let users reset their passwords on their own. For this feature to work you need to configure E-mail | True |
 | E-Mail required | Boolean | Require user to supply e-mail on signup.<br><br>Without a way (e-mail) to contact the user notifications and security features might not work! | False |
-| Enforce MFA | Boolean | Users must use multifactor security.<br><br>This forces each user to setup MFA and use it on each autentication | False |
+| Enforce MFA | Boolean | Users must use multifactor security.<br><br>This forces each user to setup MFA and use it on each authentication | False |
 | Mail twice | Boolean | On signup ask users twice for their mail | False |
 | Password twice | Boolean | On signup ask users twice for their password | True |
-| Auto-fill SSO users | Boolean | Automatically fill out user-details from SSO account-data.<br><br>If this feature is enabled the user is only asked for their username, first- and surname if those values can not be gathered from their SSO profile. This might lead to unwanted usernames bleading over. | True |
+| Auto-fill SSO users | Boolean | Automatically fill out user-details from SSO account-data.<br><br>If this feature is enabled the user is only asked for their username, first- and surname if those values can not be gathered from their SSO profile. This might lead to unwanted usernames bleeding over. | True |
 | Allowed domains | String | Restrict signup to certain domains (comma-separated, starting with @) |  |
 
 

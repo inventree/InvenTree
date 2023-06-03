@@ -131,7 +131,7 @@ def install(c):
 
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
-    """Sets up everything needed for the dev enviroment."""
+    """Sets up everything needed for the dev environment."""
     print("Installing required python packages from 'requirements-dev.txt'")
 
     # Install required Python packages with PIP
@@ -175,7 +175,7 @@ def clean_settings(c):
     manage(c, "clean_settings")
 
 
-@task(help={'mail': 'mail of the user whos MFA should be disabled'})
+@task(help={'mail': "mail of the user who's MFA should be disabled"})
 def remove_mfa(c, mail=''):
     """Remove MFA for a user."""
     if not mail:
@@ -520,7 +520,7 @@ def test_translations(c):
     file_path = pathlib.Path(settings.LOCALE_PATHS[0], 'xx', 'LC_MESSAGES', 'django.po')
     new_file_path = str(file_path) + '_new'
 
-    # complie regex
+    # compile regex
     reg = re.compile(
         r"[a-zA-Z0-9]{1}" +  # match any single letter and number  # noqa: W504
         r"(?![^{\(\<]*[}\)\>])" +  # that is not inside curly brackets, brackets or a tag  # noqa: W504
@@ -542,7 +542,7 @@ def test_translations(c):
                     file_new.write(line)
                 else:
                     if last_string:
-                        last_string = last_string + line  # a string is beeing read in -> continue appending
+                        last_string = last_string + line  # a string is being read in -> continue appending
                     file_new.write(line)
 
     # change out translation files
@@ -589,7 +589,7 @@ def test(c, disable_pty=False, runtest=''):
 
 @task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
-    """Setup a testing enviroment."""
+    """Setup a testing environment."""
 
     from InvenTree.InvenTree.config import get_media_dir
 

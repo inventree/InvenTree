@@ -91,7 +91,7 @@ class BuildSerializer(InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Add custom annotations to the BuildSerializer queryset, performing database queries as efficiently as possible.
 
-        The following annoted fields are added:
+        The following annotated fields are added:
 
         - overdue: True if the build is outstanding *and* the completion date has past
         """

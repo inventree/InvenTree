@@ -363,7 +363,7 @@ class ManufacturerPartAttachment(InvenTreeAttachment):
 class ManufacturerPartParameter(models.Model):
     """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
 
-    This is used to represent parmeters / properties for a particular manufacturer part.
+    This is used to represent parameters / properties for a particular manufacturer part.
 
     Each parameter is a simple string (text) value.
     """
