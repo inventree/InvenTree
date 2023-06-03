@@ -175,7 +175,7 @@ class PluginConfigEmptySerializer(serializers.Serializer):
 
 
 class PluginActivateSerializer(serializers.Serializer):
-    """Serializer for activating a plugin"""
+    """Serializer for activating or deactivating a plugin"""
 
     model = PluginConfig
 
