@@ -9,7 +9,14 @@
         <span class='fas fa-times-circle icon-red'></span>
         {% endif %}
     </td>
+    {% if user.is_staff and perms.plugin.change_pluginconfig %}
     <td>
+        {% url 'admin:plugin_pluginconfig_change' plugin.pk as url %}
+        {% include "admin_button.html" with url=url %}
+    </td>
+    {% endif %}
+    <td>
+
         {% if plugin.human_name %}
         {{ plugin.human_name }}
         {% elif plugin.title %}
@@ -43,8 +50,11 @@
         {% if plugin.website %}
         <a href="{{ plugin.website }}"><span class="fas fa-globe"></span></a>
         {% endif %}
+
     </td>
-    <td>{{ plugin_key }}</td>
+    <td>
+        {{ plugin_key }}
+    </td>
     {% trans "Unvailable" as no_info %}
     <td>
         {% if plugin.author %}
@@ -68,9 +78,20 @@
         {% endif %}
     </td>
     <td>
-        {% if user.is_staff and perms.plugin.change_pluginconfig %}
-        {% url 'admin:plugin_pluginconfig_change' plugin.pk as url %}
-        {% include "admin_button.html" with url=url %}
+
+        {% plugins_enabled as plug %}
+        {% if plug %}
+            {% if not plugin.is_builtin %}
+                {% if plugin.is_active %}
+                <button type='button' class='btn btn-danger btn-plugin-disable' pk='{{ plugin.pk }}' title='{% trans "Disable plugin" %}'>
+                    <span class='fas fa-stop-circle'></span>
+                </button>
+                {% else %}
+                <button type='button' class='btn btn-success btn-plugin-enable' pk='{{ plugin.pk }}' title='{% trans "Enable plugin" %}'>
+                    <span class='fas fa-play-circle'></span>
+                </button>
+                {% endif %}
+            {% endif %}
         {% endif %}
     </td>
 </tr>
