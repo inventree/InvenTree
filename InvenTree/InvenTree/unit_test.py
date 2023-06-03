@@ -354,27 +354,27 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         if decode:
             # Decode data and return as StringIO file object
-            fo = io.StringIO()
-            fo.name = fo
-            fo.write(response.getvalue().decode('UTF-8'))
+            file = io.StringIO()
+            file.name = file
+            file.write(response.getvalue().decode('UTF-8'))
         else:
             # Return a a BytesIO file object
-            fo = io.BytesIO()
-            fo.name = fn
-            fo.write(response.getvalue())
+            file = io.BytesIO()
+            file.name = fn
+            file.write(response.getvalue())
 
-        fo.seek(0)
+        file.seek(0)
 
-        return fo
+        return file
 
-    def process_csv(self, fo, delimiter=',', required_cols=None, excluded_cols=None, required_rows=None):
+    def process_csv(self, file_object, delimiter=',', required_cols=None, excluded_cols=None, required_rows=None):
         """Helper function to process and validate a downloaded csv file."""
         # Check that the correct object type has been passed
-        self.assertTrue(isinstance(fo, io.StringIO))
+        self.assertTrue(isinstance(file_object, io.StringIO))
 
-        fo.seek(0)
+        file_object.seek(0)
 
-        reader = csv.reader(fo, delimiter=delimiter)
+        reader = csv.reader(file_object, delimiter=delimiter)
 
         headers = []
         rows = []
