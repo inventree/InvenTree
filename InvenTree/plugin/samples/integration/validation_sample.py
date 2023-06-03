@@ -84,13 +84,10 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         These examples are silly, but serve to demonstrate how the feature could be used
         """
 
-        if parameter.template.name == 'Length':
-            if parameter.data_numeric > 100:
-                raise ValidationError("Length must be less than 100")
-
-        if parameter.template.name == 'Width':
-            if parameter.data_numeric > 100:
-                raise ValidationError("Width must be less than 100")
+        if parameter.template.name.lower() in ['length', 'width']:
+            d = int(data)
+            if d >= 100:
+                raise ValidationError("Value must be less than 100")
 
     def validate_serial_number(self, serial: str, part):
         """Validate serial number for a given StockItem
