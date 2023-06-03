@@ -227,7 +227,9 @@ The tags describe issues and PRs in multiple areas:
 |  | stock | Stock item management |
 |  | user interface | User interface |
 | Ecosystem Labels |  |  |
+|  | backport | Tags that the issue will be backported to a stable branch as a bug-fix |
 |  | demo | Relates to the InvenTree demo server or dataset |
 |  | docker | Docker / docker-compose |
 |  | CI | CI / unit testing ecosystem |
+|  | refactor | Refactoring existing code |
 |  | setup | Relates to the InvenTree setup / installation process |
