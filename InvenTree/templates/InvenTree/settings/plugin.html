@@ -55,7 +55,9 @@
 <div class='table-responsive'>
 <table class='table table-striped table-condensed'>
     <thead>
+        <col width='25'>
         <tr>
+            <th></th>
             <th>{% trans "Name" %}</th>
             <th>{% trans "Key" %}</th>
             <th>{% trans "Author" %}</th>
@@ -68,7 +70,12 @@
     <tbody>
         {% plugin_list as pl_list %}
         {% if pl_list %}
-        <tr><td colspan="6"><h6>{% trans 'Active plugins' %}</h6></td></tr>
+        <tr>
+            <td></td>
+            <td colspan="6">
+                <h5>{% trans 'Active plugins' %}</h5>
+            </td>
+        </tr>
         {% for plugin_key, plugin in pl_list.items %}
             {% include "InvenTree/settings/plugin_details.html" with plugin=plugin plugin_key=plugin_key %}
         {% endfor %}
@@ -76,7 +83,12 @@
 
         {% inactive_plugin_list as in_pl_list %}
         {% if in_pl_list %}
-        <tr><td colspan="6"><h6>{% trans 'Inactive plugins' %}</h6></td></tr>
+        <tr>
+            <td></td>
+            <td colspan="6">
+                <h5>{% trans 'Inactive plugins' %}</h5>
+            </td>
+        </tr>
         {% for plugin_key, plugin in in_pl_list.items %}
             {% include "InvenTree/settings/plugin_details.html" with plugin=plugin plugin_key=plugin_key %}
         {% endfor %}
