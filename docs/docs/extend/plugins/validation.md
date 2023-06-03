@@ -24,6 +24,10 @@ If the custom method determines that the part name is *objectionable*, it should
 
 Validation of the Part IPN (Internal Part Number) field is exposed to custom plugins via the `validate_part_IPN` method. Any plugins which extend the `ValidationMixin` class can implement this method, and raise a `ValidationError` if the IPN value does not match a required convention.
 
+### Part Parameter Values
+
+[Part parameters](../../part/parameter.md) can also have custom validation rules applied, by implementing the `validate_part_parameter` method. A plugin which implements this method should raise a `ValidationError` with an appropriate message if the part parameter value does not match a required convention.
+
 ### Batch Codes
 
 [Batch codes](../../stock/tracking.md#batch-codes) can be generated and/or validated by custom plugins.
