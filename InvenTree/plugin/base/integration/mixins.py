@@ -21,6 +21,7 @@ class ValidationMixin:
 
     - Part names
     - Part IPN (internal part number) values
+    - Part parameter values
     - Serial numbers
     - Batch codes
 
@@ -149,6 +150,21 @@ class ValidationMixin:
             serial: Current serial value (string)
         """
         return None
+
+    def validate_part_parameter(self, parameter, data):
+        """Validate a parameter value.
+
+        Arguments:
+            parameter: The parameter we are validating
+            data: The proposed parameter value
+
+        Returns:
+            None or True (refer to class docstring)
+
+        Raises:
+            ValidationError if the proposed parameter value is objectionable
+        """
+        pass
 
 
 class NavigationMixin:
