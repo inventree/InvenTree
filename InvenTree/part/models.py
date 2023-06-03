@@ -3511,8 +3511,15 @@ class PartParameter(MetadataMixin, models.Model):
         for plugin in registry.with_mixin('validation'):
 
             # Note: The validate_part_parameter function may raise a ValidationError
-            if plugin.validate_part_parameter(self, self.data):
-                break
+            try:
+                result = plugin.validate_part_parameter(self, self.data)
+                if result:
+                    break
+            except ValidationError as exc:
+                # Re-throw the ValidationError against the 'data' field
+                raise ValidationError({
+                    'data': exc.message
+                })
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.
