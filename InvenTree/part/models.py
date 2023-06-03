@@ -3505,6 +3505,8 @@ class PartParameter(MetadataMixin, models.Model):
                     'data': _('Invalid choice for parameter value')
                 })
 
+        self.calculate_numeric_value()
+
         # Run custom validation checks (via plugins)
         from plugin.registry import registry
 
