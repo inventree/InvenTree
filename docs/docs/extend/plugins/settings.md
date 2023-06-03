@@ -11,8 +11,13 @@ The *SettingsMixin* allows the plugin to save and load persistent settings to th
 
 Use the class constant `SETTINGS` for a dict of settings that should be added as global database settings.
 
-The dict must be formatted similar to the following sample that shows how to use validator choices and default. Take a look at the settings defined in `InvenTree.common.models.InvenTreeSetting` for all possible parameters.
+The dict must be formatted similar to the following sample that shows how to use validator choices and default.
 
+Take a look at the settings defined in `InvenTree.common.models.InvenTreeSetting` for all possible parameters.
+
+### Example
+
+Below is a simple example of how a plugin can implement settings:
 
 ``` python
 class PluginWithSettings(SettingsMixin, InvenTreePlugin):
@@ -59,6 +64,9 @@ class PluginWithSettings(SettingsMixin, InvenTreePlugin):
         }
     }
 ```
+
+!!! info "More Info"
+    For more information on any of the methods described below, refer to the InvenTree source code.
 
 !!! tip "Hidden Settings"
     Plugin settings can be hidden from the settings page by marking them as 'hidden'

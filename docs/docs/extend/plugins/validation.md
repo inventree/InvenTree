@@ -9,7 +9,7 @@ The `ValidationMixin` class enables plugins to perform custom validation of vari
 Any of the methods described below can be implemented in a custom plugin to provide functionality as required.
 
 !!! info "More Info"
-    For more information on any of the methods described below, refer to the InvenTree source code.
+    For more information on any of the methods described below, refer to the InvenTree source code. [A working example is available as a starting point](https://github.com/inventree/InvenTree/blob/master/InvenTree/plugin/samples/integration/validation_sample.py).
 
 !!! info "Multi Plugin Support"
     It is possible to have multiple plugins loaded simultaneously which support validation methods. For example when validating a field, if one plugin returns a null value (`None`) then the *next* plugin (if available) will be queried.
@@ -24,6 +24,10 @@ If the custom method determines that the part name is *objectionable*, it should
 
 Validation of the Part IPN (Internal Part Number) field is exposed to custom plugins via the `validate_part_IPN` method. Any plugins which extend the `ValidationMixin` class can implement this method, and raise a `ValidationError` if the IPN value does not match a required convention.
 
+### Part Parameter Values
+
+[Part parameters](../../part/parameter.md) can also have custom validation rules applied, by implementing the `validate_part_parameter` method. A plugin which implements this method should raise a `ValidationError` with an appropriate message if the part parameter value does not match a required convention.
+
 ### Batch Codes
 
 [Batch codes](../../stock/tracking.md#batch-codes) can be generated and/or validated by custom plugins.
@@ -36,7 +40,7 @@ The `generate_batch_code` method can be implemented to generate a new batch code
 
 Requirements for serial numbers can vary greatly depending on the application. Rather than attempting to provide a "one size fits all" serial number implementation, InvenTree allows custom serial number schemes to be implemented via plugins.
 
-The default InvenTree [serial numbering system](../../stock/tracking.md#serial-numbers) uses a simple algorithm to validate and increment serial numbers. More complex behaviours can be implemented using the `ValidationMixin` plugin class and the following custom methods:
+The default InvenTree [serial numbering system](../../stock/tracking.md#serial-numbers) uses a simple algorithm to validate and increment serial numbers. More complex behaviors can be implemented using the `ValidationMixin` plugin class and the following custom methods:
 
 #### Serial Number Validation
 
