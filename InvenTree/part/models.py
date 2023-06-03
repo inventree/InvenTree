@@ -46,7 +46,8 @@ from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2money, decimal2string, normalize
+from InvenTree.helpers import (decimal2money, decimal2string, normalize,
+                               str2bool)
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
                               InvenTreeBarcodeMixin, InvenTreeNotesMixin,
                               InvenTreeTree, MetadataMixin)
@@ -3193,7 +3194,7 @@ class PartCategoryStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
 
 
-class PartTestTemplate(models.Model):
+class PartTestTemplate(MetadataMixin, models.Model):
     """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
@@ -3307,6 +3308,8 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         name: The name (key) of the Parameter [string]
         units: The units of the Parameter [string]
         description: Description of the parameter [string]
+        checkbox: Boolean flag to indicate whether the parameter is a checkbox [bool]
+        choices: List of valid choices for the parameter [string]
     """
 
     @staticmethod
@@ -3320,6 +3323,47 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         if self.units:
             s += " ({units})".format(units=self.units)
         return s
+
+    def clean(self):
+        """Custom cleaning step for this model:
+
+        - A 'checkbox' field cannot have 'choices' set
+        - A 'checkbox' field cannot have 'units' set
+        """
+
+        super().clean()
+
+        # Check that checkbox parameters do not have units or choices
+        if self.checkbox:
+            if self.units:
+                raise ValidationError({
+                    'units': _('Checkbox parameters cannot have units')
+                })
+
+            if self.choices:
+                raise ValidationError({
+                    'choices': _('Checkbox parameters cannot have choices')
+                })
+
+        # Check that 'choices' are in fact valid
+        self.choices = self.choices.strip()
+
+        if self.choices:
+            choice_set = set()
+
+            for choice in self.choices.split(','):
+                choice = choice.strip()
+
+                # Ignore empty choices
+                if not choice:
+                    continue
+
+                if choice in choice_set:
+                    raise ValidationError({
+                        'choices': _('Choices must be unique')
+                    })
+
+                choice_set.add(choice)
 
     def validate_unique(self, exclude=None):
         """Ensure that PartParameterTemplates cannot be created with the same name.
@@ -3336,6 +3380,14 @@ class PartParameterTemplate(MetadataMixin, models.Model):
                 raise ValidationError({"name": msg})
         except PartParameterTemplate.DoesNotExist:
             pass
+
+    def get_choices(self):
+        """Return a list of choices for this parameter template"""
+
+        if not self.choices:
+            return []
+
+        return [x.strip() for x in self.choices.split(',') if x.strip()]
 
     name = models.CharField(
         max_length=100,
@@ -3360,6 +3412,19 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         blank=True,
     )
 
+    checkbox = models.BooleanField(
+        default=False,
+        verbose_name=_('Checkbox'),
+        help_text=_('Is this parameter a checkbox?')
+    )
+
+    choices = models.CharField(
+        max_length=5000,
+        verbose_name=_('Choices'),
+        help_text=_('Valid choices for this parameter (comma-separated)'),
+        blank=True,
+    )
+
 
 @receiver(post_save, sender=PartParameterTemplate, dispatch_uid='post_save_part_parameter_template')
 def post_save_part_parameter_template(sender, instance, created, **kwargs):
@@ -3378,7 +3443,7 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class PartParameter(models.Model):
+class PartParameter(MetadataMixin, models.Model):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
@@ -3412,6 +3477,11 @@ class PartParameter(models.Model):
         # Validate the PartParameter before saving
         self.calculate_numeric_value()
 
+        # Convert 'boolean' values to 'True' / 'False'
+        if self.template.checkbox:
+            self.data = str2bool(self.data)
+            self.data_numeric = 1 if self.data else 0
+
         super().save(*args, **kwargs)
 
     def clean(self):
@@ -3426,6 +3496,13 @@ class PartParameter(models.Model):
             except ValidationError as e:
                 raise ValidationError({
                     'data': e.message
+                })
+
+        # Validate the parameter data against the template choices
+        if choices := self.template.get_choices():
+            if self.data not in choices:
+                raise ValidationError({
+                    'data': _('Invalid choice for parameter value')
                 })
 
     def calculate_numeric_value(self):
@@ -3482,7 +3559,7 @@ class PartParameter(models.Model):
         return part_parameter
 
 
-class PartCategoryParameterTemplate(models.Model):
+class PartCategoryParameterTemplate(MetadataMixin, models.Model):
     """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate.
 
     Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
@@ -3922,7 +3999,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         instance.part.schedule_pricing_update(create=False)
 
 
-class BomItemSubstitute(models.Model):
+class BomItemSubstitute(MetadataMixin, models.Model):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
@@ -3981,7 +4058,7 @@ class BomItemSubstitute(models.Model):
     )
 
 
-class PartRelated(models.Model):
+class PartRelated(MetadataMixin, models.Model):
     """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
     class Meta:

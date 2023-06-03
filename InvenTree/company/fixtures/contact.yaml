@@ -1,0 +1,9 @@
+# Sample contact data
+- model: company.contact
+  pk: 1
+  fields:
+    name: Johnny Rotten
+    company: 1
+    phone: 001234567
+    email: none@example.com
+    role: Rockstar

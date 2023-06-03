@@ -718,6 +718,7 @@ LANGUAGES = [
     ('es', _('Spanish')),
     ('es-mx', _('Spanish (Mexican)')),
     ('fa', _('Farsi / Persian')),
+    ('fi', _('Finnish')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('hu', _('Hungarian')),

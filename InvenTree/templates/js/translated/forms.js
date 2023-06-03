@@ -3,6 +3,8 @@
 
 /* globals
     createNewModal,
+    enableSubmitButton,
+    formatDecimal,
     inventreeFormDataUpload,
     inventreeGet,
     inventreePut,
@@ -10,8 +12,13 @@
     modalEnable,
     modalShowSubmitButton,
     getModelRenderer,
+    reloadBootstrapTable,
+    sanitizeInputString,
     showAlertOrCache,
     showApiError,
+    showMessage,
+    showModalSpinner,
+    toBool,
 */
 
 /* exported
@@ -617,10 +624,12 @@ function constructFormBody(fields, options) {
 
     if (options.preFormContent) {
 
+        let content = '';
+
         if (typeof(options.preFormContent) === 'function') {
-            var content = options.preFormContent(options);
+            content = options.preFormContent(options);
         } else {
-            var content = options.preFormContent;
+            content = options.preFormContent;
         }
 
         $(modal).find('#pre-form-content').html(content);
@@ -982,15 +991,17 @@ function updateFieldValue(name, value, field, options) {
         return;
     }
 
+    if (field.type == null) {
+        field.type = guessFieldType(el);
+    }
+
     switch (field.type) {
     case 'decimal':
         // Strip trailing zeros
         el.val(formatDecimal(value));
         break;
     case 'boolean':
-        if (value == true || value.toString().toLowerCase() == 'true') {
-            el.prop('checked');
-        }
+        el.prop('checked', toBool(value));
         break;
     case 'related field':
         // Clear?
@@ -1061,6 +1072,34 @@ function validateFormField(name, options) {
 
 
 /*
+ * Introspect the HTML element to guess the field type
+ */
+function guessFieldType(element) {
+
+    if (!element.exists) {
+        console.error(`Could not find element '${element}' for guessFieldType`);
+        return null;
+    }
+
+    switch (element.attr('type')) {
+    case 'number':
+        return 'decimal';
+    case 'checkbox':
+        return 'boolean';
+    case 'date':
+        return 'date';
+    case 'datetime':
+        return 'datetime';
+    case 'text':
+        return 'string';
+    default:
+        // Unknown field type
+        return null;
+    }
+}
+
+
+/*
  * Extract and field value before sending back to the server
  *
  * arguments:
@@ -1080,9 +1119,16 @@ function getFormFieldValue(name, field={}, options={}) {
 
     var value = null;
 
+    let guessed_type = guessFieldType(el);
+
+    // If field type is not specified, try to guess it
+    if (field.type == null || guessed_type == 'boolean') {
+        field.type = guessed_type;
+    }
+
     switch (field.type) {
     case 'boolean':
-        value = el.is(':checked');
+        value = toBool(el.prop("checked"));
         break;
     case 'date':
     case 'datetime':
@@ -1270,7 +1316,7 @@ function handleNestedArrayErrors(errors, field_name, options={}) {
 
     // Nest list must be provided!
     if (!nest_list) {
-        console.warn(`handleNestedArrayErrors missing nesting options for field '${fieldName}'`);
+        console.warn(`handleNestedArrayErrors missing nesting options for field '${field_name}'`);
         return;
     }
 
@@ -1287,9 +1333,9 @@ function handleNestedArrayErrors(errors, field_name, options={}) {
         var nest_id = nest_list[idx];
 
         // Here, error_item is a map of field names to error messages
-        for (sub_field_name in error_item) {
+        for (var sub_field_name in error_item) {
 
-            var errors = error_item[sub_field_name];
+            var sub_errors = error_item[sub_field_name];
 
             if (sub_field_name == 'non_field_errors') {
 
@@ -1301,11 +1347,11 @@ function handleNestedArrayErrors(errors, field_name, options={}) {
                     row = $(`#items_${nest_id}`);
                 }
 
-                for (var ii = errors.length - 1; ii >= 0; ii--) {
+                for (var ii = sub_errors.length - 1; ii >= 0; ii--) {
 
                     var html = `
                     <div id='error_${ii}_non_field_error' class='help-block form-field-error form-error-message'>
-                        <strong>${errors[ii]}</strong>
+                        <strong>${sub_errors[ii]}</strong>
                     </div>`;
 
                     row.after(html);
@@ -1443,7 +1489,7 @@ function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
         return;
     }
 
-    field_name = getFieldName(name, options);
+    let field_name = getFieldName(name, options);
 
     var field_dom = null;
 
@@ -2336,6 +2382,7 @@ function constructInput(name, parameters, options={}) {
         break;
     case 'raw':
         func = constructRawInput;
+        break;
     default:
         // Unsupported field type!
         break;

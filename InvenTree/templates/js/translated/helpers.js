@@ -1,5 +1,14 @@
 {% load i18n %}
 
+/* globals
+    EasyMDE,
+    inventreeFormDataUpload,
+    inventreeGet,
+    inventreePut,
+    showApiError,
+    user_settings,
+*/
+
 /* exported
     blankImage,
     deleteButton,
@@ -28,18 +37,47 @@
 
 /* exported
     makeIcon,
+    trueFalseLabel,
+    yesNoLabel,
 */
 
 
-function yesNoLabel(value, options={}) {
-    var text = '';
-    var color = '';
+/*
+ * Convert a value (which may be a string) to a boolean value
+ *
+ * @param {string} value: Input value
+ * @returns {boolean} true or false
+ */
+function toBool(value) {
 
-    if (value) {
-        text = '{% trans "YES" %}';
+    if (typeof value == 'string') {
+
+        if (value.length == 0) {
+            return false;
+        }
+
+        value = value.toLowerCase();
+
+        if (['true', 't', 'yes', 'y', '1', 'on', 'ok'].includes(value)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return value == true;
+    }
+}
+
+
+function yesNoLabel(value, options={}) {
+    let text = '';
+    let color = '';
+
+    if (toBool(value)) {
+        text = options.pass || '{% trans "YES" %}';
         color = 'bg-success';
     } else {
-        text = '{% trans "NO" %}';
+        text = options.fail || '{% trans "NO" %}';
         color = 'bg-warning';
     }
 
@@ -48,6 +86,14 @@ function yesNoLabel(value, options={}) {
     }
 
     return `<span class='badge rounded-pill ${color}'>${text}</span>`;
+}
+
+
+function trueFalseLabel(value, options={}) {
+    options.pass = '{% trans "True" %}';
+    options.fail = '{% trans "False" %}';
+
+    return yesNoLabel(value, options);
 }
 
 
@@ -336,8 +382,6 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var id = options.id || 'progress-bar';
 
-    var style = '';
-
     if (opts.max_width) {
         style += `max-width: ${options.max_width}; `;
     }
@@ -359,7 +403,7 @@ function renderLink(text, url, options={}) {
         return text;
     }
 
-    var max_length = options.max_length || 0;
+    var max_length = options.max_length || user_settings.TABLE_STRING_MAX_LENGTH || 100;
 
     if (max_length > 0) {
         text = shortenString(text, {
@@ -514,6 +558,7 @@ function sanitizeInputString(s, options={}) {
     }
 
     // Remove ASCII control characters
+    // eslint-disable-next-line no-control-regex
     s = s.replace(/[\x00-\x1F\x7F]+/g, '');
 
     // Remove Unicode control characters

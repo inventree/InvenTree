@@ -2170,7 +2170,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
     return os.path.join('stock_files', str(instance.stock_item.pk), os.path.basename(filename))
 
 
-class StockItemTestResult(models.Model):
+class StockItemTestResult(MetadataMixin, models.Model):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
 
     This is useful for tracking unit acceptance tests, and particularly useful when integrated
