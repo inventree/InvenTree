@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-02 06:39+0000\n"
-"PO-Revision-Date: 2023-06-02 23:40\n"
+"POT-Creation-Date: 2023-06-03 14:06+0000\n"
+"PO-Revision-Date: 2023-06-03 23:52\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -420,7 +420,7 @@ msgstr ""
 msgid "An error has been logged by the server."
 msgstr ""
 
-#: InvenTree/serializers.py:60 part/models.py:3873
+#: InvenTree/serializers.py:60 part/models.py:3891
 msgid "Must be a valid number"
 msgstr "Должно быть действительным номером"
 
@@ -889,7 +889,7 @@ msgstr "Ссылка на заказ"
 
 #: build/models.py:156 order/models.py:356 order/models.py:762
 #: order/models.py:1084 order/models.py:1721 part/admin.py:278
-#: part/models.py:3774 part/templates/part/upload_bom.html:54
+#: part/models.py:3792 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:26
@@ -921,8 +921,8 @@ msgstr ""
 #: order/models.py:1192 order/models.py:1308 order/models.py:1309
 #: part/models.py:390 part/models.py:2859 part/models.py:2973
 #: part/models.py:3113 part/models.py:3132 part/models.py:3151
-#: part/models.py:3172 part/models.py:3264 part/models.py:3531
-#: part/models.py:3639 part/models.py:3739 part/models.py:4053
+#: part/models.py:3172 part/models.py:3264 part/models.py:3549
+#: part/models.py:3657 part/models.py:3757 part/models.py:4071
 #: part/serializers.py:842 part/serializers.py:1245
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
@@ -1192,7 +1192,7 @@ msgstr "Исходный складской предмет"
 #: build/templates/build/detail.html:34 common/models.py:2176
 #: order/models.py:1070 order/models.py:1642 order/serializers.py:1232
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:277
-#: part/forms.py:47 part/models.py:2986 part/models.py:3755
+#: part/forms.py:47 part/models.py:2986 part/models.py:3773
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1435,8 +1435,8 @@ msgstr ""
 msgid "Build order has incomplete outputs"
 msgstr ""
 
-#: build/serializers.py:714 build/serializers.py:768 part/models.py:3662
-#: part/models.py:4045
+#: build/serializers.py:714 build/serializers.py:768 part/models.py:3680
+#: part/models.py:4063
 msgid "BOM Item"
 msgstr "BOM Компонент"
 
@@ -2259,7 +2259,7 @@ msgstr ""
 msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
-#: common/models.py:1162 part/admin.py:55 part/models.py:3536
+#: common/models.py:1162 part/admin.py:55 part/models.py:3554
 #: report/models.py:166 templates/js/translated/table_filters.js:109
 #: templates/js/translated/table_filters.js:669
 msgid "Template"
@@ -3720,7 +3720,7 @@ msgid "Supplier part description"
 msgstr ""
 
 #: company/models.py:596 company/templates/company/supplier_part.html:188
-#: part/admin.py:279 part/models.py:3777 part/templates/part/upload_bom.html:59
+#: part/admin.py:279 part/models.py:3795 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
 #: report/templates/report/inventree_return_order_report_base.html:27
@@ -5309,12 +5309,12 @@ msgstr ""
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
-#: part/admin.py:33 part/admin.py:273 part/models.py:3643 part/tasks.py:288
+#: part/admin.py:33 part/admin.py:273 part/models.py:3661 part/tasks.py:288
 #: stock/admin.py:101
 msgid "Part ID"
 msgstr "Артикул"
 
-#: part/admin.py:34 part/admin.py:275 part/models.py:3647 part/tasks.py:289
+#: part/admin.py:34 part/admin.py:275 part/models.py:3665 part/tasks.py:289
 #: stock/admin.py:102
 msgid "Part Name"
 msgstr "Наименование детали"
@@ -5437,7 +5437,7 @@ msgstr ""
 msgid "Parent IPN"
 msgstr ""
 
-#: part/admin.py:274 part/models.py:3651
+#: part/admin.py:274 part/models.py:3669
 msgid "Part IPN"
 msgstr "IPN"
 
@@ -5497,7 +5497,7 @@ msgstr "Доступный запас"
 msgid "Input quantity for price calculation"
 msgstr ""
 
-#: part/models.py:74 part/models.py:3592 part/templates/part/category.html:16
+#: part/models.py:74 part/models.py:3610 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr "Категория детали"
@@ -5572,7 +5572,7 @@ msgstr ""
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr ""
 
-#: part/models.py:845 part/models.py:3648
+#: part/models.py:845 part/models.py:3666
 msgid "Part name"
 msgstr "Наименование детали"
 
@@ -5596,7 +5596,7 @@ msgstr ""
 msgid "Part keywords to improve visibility in search results"
 msgstr "Ключевые слова для улучшения видимости в результатах поиска"
 
-#: part/models.py:882 part/models.py:3192 part/models.py:3591
+#: part/models.py:882 part/models.py:3192 part/models.py:3609
 #: part/serializers.py:848 part/templates/part/part_base.html:262
 #: templates/InvenTree/settings/settings_staff_js.html:204
 #: templates/js/translated/notification.js:59
@@ -6005,68 +6005,68 @@ msgstr ""
 msgid "Invalid choice for parameter value"
 msgstr ""
 
-#: part/models.py:3531
+#: part/models.py:3549
 msgid "Parent Part"
 msgstr "Родительская деталь"
 
-#: part/models.py:3536 part/models.py:3597 part/models.py:3598
+#: part/models.py:3554 part/models.py:3615 part/models.py:3616
 #: templates/InvenTree/settings/settings_staff_js.html:199
 msgid "Parameter Template"
 msgstr "Шаблон параметра"
 
-#: part/models.py:3541
+#: part/models.py:3559
 msgid "Data"
 msgstr ""
 
-#: part/models.py:3541
+#: part/models.py:3559
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:3602 templates/InvenTree/settings/settings_staff_js.html:208
+#: part/models.py:3620 templates/InvenTree/settings/settings_staff_js.html:208
 msgid "Default Value"
 msgstr ""
 
-#: part/models.py:3603
+#: part/models.py:3621
 msgid "Default Parameter Value"
 msgstr ""
 
-#: part/models.py:3640
+#: part/models.py:3658
 msgid "Part ID or part name"
 msgstr "Артикул или наименование детали"
 
-#: part/models.py:3644
+#: part/models.py:3662
 msgid "Unique part ID value"
 msgstr ""
 
-#: part/models.py:3652
+#: part/models.py:3670
 msgid "Part IPN value"
 msgstr "Значение IPN"
 
-#: part/models.py:3655
+#: part/models.py:3673
 msgid "Level"
 msgstr ""
 
-#: part/models.py:3656
+#: part/models.py:3674
 msgid "BOM level"
 msgstr ""
 
-#: part/models.py:3740
+#: part/models.py:3758
 msgid "Select parent part"
 msgstr "Выберите родительскую деталь"
 
-#: part/models.py:3748
+#: part/models.py:3766
 msgid "Sub part"
 msgstr ""
 
-#: part/models.py:3749
+#: part/models.py:3767
 msgid "Select part to be used in BOM"
 msgstr "Выбрать деталь для использования в BOM"
 
-#: part/models.py:3755
+#: part/models.py:3773
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:3759 part/templates/part/upload_bom.html:58
+#: part/models.py:3777 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:971 templates/js/translated/bom.js:998
 #: templates/js/translated/build.js:2113
 #: templates/js/translated/table_filters.js:156
@@ -6075,114 +6075,114 @@ msgstr ""
 msgid "Optional"
 msgstr ""
 
-#: part/models.py:3760
+#: part/models.py:3778
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:3765 templates/js/translated/bom.js:967
+#: part/models.py:3783 templates/js/translated/bom.js:967
 #: templates/js/translated/bom.js:1007 templates/js/translated/build.js:2104
 #: templates/js/translated/table_filters.js:160
 #: templates/js/translated/table_filters.js:485
 msgid "Consumable"
 msgstr ""
 
-#: part/models.py:3766
+#: part/models.py:3784
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr ""
 
-#: part/models.py:3770 part/templates/part/upload_bom.html:55
+#: part/models.py:3788 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr ""
 
-#: part/models.py:3771
+#: part/models.py:3789
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:3774
+#: part/models.py:3792
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:3777
+#: part/models.py:3795
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:3781
+#: part/models.py:3799
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:3781
+#: part/models.py:3799
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:3786 templates/js/translated/table_filters.js:144
+#: part/models.py:3804 templates/js/translated/table_filters.js:144
 msgid "Validated"
 msgstr ""
 
-#: part/models.py:3787
+#: part/models.py:3805
 msgid "This BOM item has been validated"
 msgstr ""
 
-#: part/models.py:3792 part/templates/part/upload_bom.html:57
+#: part/models.py:3810 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1024
 #: templates/js/translated/table_filters.js:148
 #: templates/js/translated/table_filters.js:181
 msgid "Gets inherited"
 msgstr ""
 
-#: part/models.py:3793
+#: part/models.py:3811
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:3798 part/templates/part/upload_bom.html:56
+#: part/models.py:3816 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1016
 msgid "Allow Variants"
 msgstr "Разрешить разновидности"
 
-#: part/models.py:3799
+#: part/models.py:3817
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:3885 stock/models.py:577
+#: part/models.py:3903 stock/models.py:577
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Для отслеживаемых деталей количество должно быть целым числом"
 
-#: part/models.py:3894 part/models.py:3896
+#: part/models.py:3912 part/models.py:3914
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:4012
+#: part/models.py:4030
 msgid "BOM Item Substitute"
 msgstr ""
 
-#: part/models.py:4033
+#: part/models.py:4051
 msgid "Substitute part cannot be the same as the master part"
 msgstr ""
 
-#: part/models.py:4046
+#: part/models.py:4064
 msgid "Parent BOM item"
 msgstr ""
 
-#: part/models.py:4054
+#: part/models.py:4072
 msgid "Substitute part"
 msgstr ""
 
-#: part/models.py:4069
+#: part/models.py:4087
 msgid "Part 1"
 msgstr "Часть 1"
 
-#: part/models.py:4073
+#: part/models.py:4091
 msgid "Part 2"
 msgstr "Часть 2"
 
-#: part/models.py:4073
+#: part/models.py:4091
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:4091
+#: part/models.py:4109
 msgid "Part relationship cannot be created between a part and itself"
 msgstr ""
 
-#: part/models.py:4095
+#: part/models.py:4113
 msgid "Duplicate relationship already exists"
 msgstr ""
 
@@ -7196,7 +7196,7 @@ msgid "InvenTree Notifications"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:35
-msgid "Integrated outgoing notificaton methods"
+msgid "Integrated outgoing notification methods"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:40
@@ -7253,7 +7253,7 @@ msgstr ""
 msgid "Is the plugin active"
 msgstr ""
 
-#: plugin/models.py:82 templates/InvenTree/settings/plugin_details.html:47
+#: plugin/models.py:82
 msgid "Unvailable"
 msgstr ""
 
@@ -8724,6 +8724,10 @@ msgstr ""
 msgid "Sample"
 msgstr ""
 
+#: templates/InvenTree/settings/plugin_details.html:47
+msgid "Unavailable"
+msgstr ""
+
 #: templates/InvenTree/settings/plugin_settings.html:16
 msgid "Plugin information"
 msgstr ""
@@ -9152,7 +9156,7 @@ msgid "Some languages are not complete"
 msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:97
-msgid "Show only sufficent"
+msgid "Show only sufficient"
 msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:99
