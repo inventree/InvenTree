@@ -58,7 +58,7 @@ When using the InvenTree [template / variant](../part/template.md) feature, it m
 
 If a BOM Line Item is designed as *Inherited*, it will be automatically included in the BOM of any part which is a variant (or sub-variant) of the part for which the BOM Line Item is defined.
 
-This is particulary useful if a template part is defined with the "common" BOM items which exist for all variants of that template.
+This is particularly useful if a template part is defined with the "common" BOM items which exist for all variants of that template.
 
 Consider the example diagram below:
 
@@ -140,7 +140,7 @@ To process with BOM validation, click on the <span class='fas fa-clipboard-check
 
 ## Multi Level BOMs
 
-Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimted number of levels.
+Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimited number of levels.
 
 When viewing a BOM table, sub-assemblies are not loaded by default, but can be loaded "on demand" by pressing the <span class='fas fa-sync-alt'></span> icon associated with the particular subassembly:
 

@@ -71,7 +71,7 @@ class AppMixin:
         """
         # unregister models from admin
         for plugin_path in registry.installed_apps:
-            models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
+            models = []  # the modelrefs need to be collected as popping an item in a iter is not welcomed
             app_name = plugin_path.split('.')[-1]
             try:
                 app_config = apps.get_app_config(app_name)
@@ -128,7 +128,7 @@ class AppMixin:
 
             # reload models if they were set
             # models_module gets set if models were defined - even after multiple loads
-            # on a reload the models registery is empty but models_module is not
+            # on a reload the models registry is empty but models_module is not
             if app_config.models_module and len(app_config.models) == 0:
                 reload(app_config.models_module)
 
@@ -140,7 +140,7 @@ class AppMixin:
 
             # reload admin if at least one model is not registered
             # models are registered with admin in the 'admin.py' file - so we check
-            # if the app_config has an admin module before trying to laod it
+            # if the app_config has an admin module before trying to load it
             if model_not_reg and hasattr(app_config.module, 'admin'):
                 reload(app_config.module.admin)
 
@@ -148,7 +148,7 @@ class AppMixin:
     def _get_plugin_path(cls, plugin):
         """Parse plugin path.
 
-        The input can be eiter:
+        The input can be either:
         - a local file / dir
         - a package
         """

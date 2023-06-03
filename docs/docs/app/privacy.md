@@ -40,7 +40,7 @@ The InvenTree app does not share any personal information on users of the app wi
 The InvenTree app makes use of the [sentry.io](https://sentry.io/) service to monitor the app for bugs and run-time errors. When an error occurs in the app, log data is uploaded to the sentry server, where InvenTree developers can use this information to improve the quality of the app.
 
 !!! question "Identifying Information"
-    The uploaded error reports contain information on the nature of the error / bug; i.e. "where" in the app code the failures occured. The uploaded data does not contain any information which can be used to identify users or extract user data.
+    The uploaded error reports contain information on the nature of the error / bug; i.e. "where" in the app code the failures occurred. The uploaded data does not contain any information which can be used to identify users or extract user data.
 
 !!! tip "Disable Error Reporting"
     If desired, users can disable error reporting entirely, from within the [app settings](./settings.md). This prevents any error logs from being uploaded to the sentry server.

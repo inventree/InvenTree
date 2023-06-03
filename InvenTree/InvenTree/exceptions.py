@@ -34,7 +34,7 @@ def log_error(path):
 
     kind, info, data = sys.exc_info()
 
-    # Check if the eror is on the ignore list
+    # Check if the error is on the ignore list
     if kind in settings.IGNORED_ERRORS:
         return
 

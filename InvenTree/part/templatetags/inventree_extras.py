@@ -295,7 +295,7 @@ def inventree_github_url(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
-    """Return URL for InvenTree documenation site."""
+    """Return URL for InvenTree documentation site."""
     tag = version.inventreeDocsVersion()
 
     return f"https://docs.inventree.org/en/{tag}"
@@ -605,7 +605,7 @@ else:  # pragma: no cover
         bits = token.split_contents()
         loc_name = settings.STATICFILES_I18_PREFIX
 
-        # change path to called ressource
+        # change path to called resource
         bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
         token.contents = ' '.join(bits)
 

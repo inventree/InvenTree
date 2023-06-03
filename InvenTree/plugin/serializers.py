@@ -152,7 +152,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             ret['result'] = str(error.output, 'utf-8')
             ret['error'] = True
 
-        # save plugin to plugin_file if installed successfull
+        # save plugin to plugin_file if installed successful
         if success:
             # Read content of plugin file
             plg_lines = open(settings.PLUGIN_FILE).readlines()

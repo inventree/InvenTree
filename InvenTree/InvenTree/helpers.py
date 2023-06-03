@@ -492,7 +492,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
         serial = serial.strip()
 
-        # Ignore blank / emtpy serials
+        # Ignore blank / empty serials
         if len(serial) == 0:
             return
 

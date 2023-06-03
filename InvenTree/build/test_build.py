@@ -679,7 +679,7 @@ class AutoAllocationTests(BuildTestBase):
         self.assertEqual(self.build.unallocated_quantity(self.bom_item_1), 0)
         self.assertEqual(self.build.unallocated_quantity(self.bom_item_2), 5)
 
-        # This time, allow substitue parts to be used!
+        # This time, allow substitute parts to be used!
         self.build.auto_allocate_stock(
             interchangeable=True,
             substitutes=True,

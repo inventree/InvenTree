@@ -125,7 +125,7 @@ class LabelConfig(AppConfig):
             logger.info(f"Creating required directory: '{dst_dir}'")
             dst_dir.mkdir(parents=True, exist_ok=True)
 
-        # Create lables
+        # Create labels
         for label in labels:
             self.create_template_label(model, src_dir, ref_name, label)
 
@@ -156,7 +156,7 @@ class LabelConfig(AppConfig):
 
         if to_copy:
             logger.info(f"Copying label template '{dst_file}'")
-            # Ensure destionation dir exists
+            # Ensure destination dir exists
             dst_file.parent.mkdir(parents=True, exist_ok=True)
 
             # Copy file

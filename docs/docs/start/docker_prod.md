@@ -151,7 +151,7 @@ If you are creating the initial database, you need to create an admin (superuser
 docker compose run inventree-server invoke superuser
 ```
 
-Alternatively, admin account details can be specifed in the `.env` file, removing the need for this manual step:
+Alternatively, admin account details can be specified in the `.env` file, removing the need for this manual step:
 
 | Variable | Description |
 | --- | --- |
@@ -203,7 +203,7 @@ docker compose pull
 This ensures that the InvenTree containers will be running the latest version of the InvenTree source code.
 
 !!! info "Tagged Version"
-    If you are targetting a particular "tagged" version of InvenTree, you may wish to edit the `INVENTREE_TAG` variable in the `.env` file before issuing the `docker compose pull` command
+    If you are targeting a particular "tagged" version of InvenTree, you may wish to edit the `INVENTREE_TAG` variable in the `.env` file before issuing the `docker compose pull` command
 
 ### Update Database
 
