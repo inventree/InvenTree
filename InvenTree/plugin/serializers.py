@@ -171,6 +171,26 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
 class PluginConfigEmptySerializer(serializers.Serializer):
     """Serializer for a PluginConfig."""
+    ...
+
+
+class PluginActivateSerializer(serializers.Serializer):
+    """Serializer for activating a plugin"""
+
+    model = PluginConfig
+
+    active = serializers.BooleanField(
+        required=False, default=True,
+        label=_('Activate Plugin'),
+        help_text=_('Activate this plugin')
+    )
+
+    def update(self, instance, validated_data):
+        """Apply the new 'active' value to the plugin instance"""
+
+        instance.active = validated_data.get('active', True)
+        instance.save()
+        return instance
 
 
 class PluginSettingSerializer(GenericReferencedSettingSerializer):

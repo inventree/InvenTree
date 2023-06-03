@@ -120,10 +120,17 @@ class PluginInstall(CreateAPI):
 
 
 class PluginActivate(UpdateAPI):
-    """Endpoint for activating a plugin."""
+    """Endpoint for activating a plugin.
+
+    - PATCH: Activate a plugin
+
+    Pass a boolean value for the 'active' field.
+    If not provided, it is assumed to be True,
+    and the plugin will be activated.
+    """
 
     queryset = PluginConfig.objects.all()
-    serializer_class = PluginSerializers.PluginConfigEmptySerializer
+    serializer_class = PluginSerializers.PluginActivateSerializer
     permission_classes = [IsSuperuser, ]
 
     def get_object(self):
@@ -134,9 +141,8 @@ class PluginActivate(UpdateAPI):
 
     def perform_update(self, serializer):
         """Activate the plugin."""
-        instance = serializer.instance
-        instance.active = True
-        instance.save()
+
+        serializer.save()
 
 
 class PluginSettingList(ListAPI):
