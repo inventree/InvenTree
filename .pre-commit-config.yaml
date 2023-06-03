@@ -48,3 +48,9 @@ repos:
   rev: v2.2.4
   hooks:
   - id: codespell
+    exclude: >
+      (?x)^(
+          docs/docs/stylesheets/.*|
+          docs/docs/javascripts/.*|
+          docs/docs/webfonts/.*
+      )$
