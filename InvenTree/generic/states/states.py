@@ -42,11 +42,6 @@ class StatusCode(BaseEnum):
         obj = int.__new__(cls)
         obj._value_ = args[0]
 
-        # Group definition
-        if isinstance(obj._value_, StatusGroup):
-            obj.group = obj._value_
-            return obj
-
         # Normal item definition
         if len(args) == 1:
             obj.label = args[0]
@@ -169,14 +164,3 @@ class StatusCode(BaseEnum):
         ret['list'] = cls.list()
 
         return ret
-
-
-class StatusGroup(list):
-    """A small list instance"""
-    pass
-
-
-def Group(*args, **kwargs):
-    """Group of status codes."""
-    # return StatusGroup(*args, **kwargs)
-    return StatusGroup([x[0] for x in args])

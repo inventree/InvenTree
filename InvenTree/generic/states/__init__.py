@@ -7,10 +7,9 @@ States can be extended with custom options for each InvenTree instance - those o
 """
 
 from .api import StatusView
-from .states import Group, StatusCode
+from .states import StatusCode
 
 __all__ = [
     StatusView,
     StatusCode,
-    Group,
 ]
