@@ -212,7 +212,7 @@ class RegistratonMixin:
     def is_open_for_signup(self, request, *args, **kwargs):
         """Check if signup is enabled in settings.
 
-        Configure the class variable `REGISTRATION_SETTING` to set which setting should be used, defualt: `LOGIN_ENABLE_REG`.
+        Configure the class variable `REGISTRATION_SETTING` to set which setting should be used, default: `LOGIN_ENABLE_REG`.
         """
         if settings.EMAIL_HOST and (InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG')):
             return super().is_open_for_signup(request, *args, **kwargs)
@@ -253,7 +253,7 @@ class RegistratonMixin:
                 group = Group.objects.get(id=start_group)
                 user.groups.add(group)
             except Group.DoesNotExist:
-                logger.error('The setting `SIGNUP_GROUP` contains an non existant group', start_group)
+                logger.error('The setting `SIGNUP_GROUP` contains an non existent group', start_group)
         user.save()
         return user
 
@@ -276,7 +276,7 @@ class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, Default
             try:
                 result = super().send_mail(template_prefix, email, context)
             except Exception:
-                # An exception ocurred while attempting to send email
+                # An exception occurred while attempting to send email
                 # Log it (for admin users) and return silently
                 log_error('account email')
                 result = False

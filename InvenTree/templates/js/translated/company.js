@@ -289,7 +289,7 @@ function editSupplierPart(part, options={}) {
 /*
  * Delete one or more SupplierPart objects from the database.
  * - User will be provided with a modal form, showing all the parts to be deleted.
- * - Delete operations are performed sequentialy, not simultaneously
+ * - Delete operations are performed sequentially, not simultaneously
  */
 function deleteSupplierParts(parts, options={}) {
 
@@ -785,7 +785,7 @@ function loadContactTable(table, options={}) {
 
 /* Delete one or more ManufacturerPart objects from the database.
  * - User will be provided with a modal form, showing all the parts to be deleted.
- * - Delete operations are performed sequentialy, not simultaneously
+ * - Delete operations are performed sequentially, not simultaneously
  */
 function deleteManufacturerParts(selections, options={}) {
 

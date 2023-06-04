@@ -541,10 +541,10 @@ class BuildTest(BuildAPITest):
             {
                 'export': 'csv',
             }
-        ) as fo:
+        ) as file:
 
             data = self.process_csv(
-                fo,
+                file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
                 required_rows=Build.objects.count()

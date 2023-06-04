@@ -4,7 +4,7 @@ title: Return Order
 
 ## Return Orders
 
-Return Orders allow stock items (which have been sold or allocted to a customer) to be to be returned into stock, typically for the purpose of repair or refund.
+Return Orders allow stock items (which have been sold or allocated to a customer) to be to be returned into stock, typically for the purpose of repair or refund.
 
 !!! tip "An Order By Any Other Name"
     A Return Order may also be known as an [RMA](https://en.wikipedia.org/wiki/Return_merchandise_authorization)
@@ -73,7 +73,7 @@ The order can be assigned to a responsible *owner*, which is either a user or gr
 
 ## Return Order Detail
 
-Indvidual Return Orders can be viewed via the Return Order detail page:
+Individual Return Orders can be viewed via the Return Order detail page:
 
 {% with id="return-order-detail", url="order/return_order_detail.png", description="Return Order Detail" %}
 {% include "img.html" %}

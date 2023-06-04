@@ -111,8 +111,13 @@ function editSetting(key, options={}) {
                     return data;
                 },
                 processBeforeUpload: function(data) {
-                    // Convert value to string
-                    data.value = data.value.toString();
+                    if(response.type === 'related field' && data.value === null) {
+                        // related fields throw an error because they are set to null on delete
+                        data.value = "";
+                    } else {
+                        // Convert value to string
+                        data.value = data.value.toString();
+                    }
 
                     return data;
                 },

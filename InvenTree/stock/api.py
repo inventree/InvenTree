@@ -365,7 +365,7 @@ class StockFilter(rest_filters.FilterSet):
         ]
 
     # Relationship filters
-    manufactuer = rest_filters.ModelChoiceFilter(label='Manufacturer', queryset=Company.objects.filter(is_manufacturer=True), field_name='manufacturer_part__manufacturer')
+    manufacturer = rest_filters.ModelChoiceFilter(label='Manufacturer', queryset=Company.objects.filter(is_manufacturer=True), field_name='manufacturer_part__manufacturer')
     supplier = rest_filters.ModelChoiceFilter(label='Supplier', queryset=Company.objects.filter(is_supplier=True), field_name='supplier_part__supplier')
 
     # Part name filters
@@ -445,7 +445,8 @@ class StockFilter(rest_filters.FilterSet):
         """
         if str2bool(value):
             # The 'quantity' field is greater than the calculated 'allocated' field
-            return queryset.filter(Q(quantity__gt=F('allocated')))
+            # Note that the item must also be "in stock"
+            return queryset.filter(StockItem.IN_STOCK_FILTER).filter(Q(quantity__gt=F('allocated')))
         else:
             # The 'quantity' field is less than (or equal to) the calculated 'allocated' field
             return queryset.filter(Q(quantity__lte=F('allocated')))
@@ -827,7 +828,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         """
         Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        a) For HTTP requests (e.g. via the browsable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
 
         Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft
@@ -1430,7 +1431,10 @@ stock_api_urls = [
 
     # StockItemTestResult API endpoints
     re_path(r'^test/', include([
-        path(r'<int:pk>/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockItemTestResult}, name='api-stock-test-result-metadata'),
+            re_path(r'^.*$', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        ])),
         re_path(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 

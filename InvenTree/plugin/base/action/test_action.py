@@ -59,7 +59,7 @@ class ActionMixinTests(TestCase):
             "info": None,
         })
 
-        # overriden functions
+        # overridden functions
         self.assertEqual(self.action_plugin.perform_action(), self.ACTION_RETURN + 'action')
         self.assertEqual(self.action_plugin.get_result(), self.ACTION_RETURN + 'result')
         self.assertEqual(self.action_plugin.get_info(), self.ACTION_RETURN + 'info')

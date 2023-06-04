@@ -20,7 +20,8 @@ import common.models
 import order.models
 import part.models
 import stock.models
-from InvenTree.helpers import get_base_url, validateFilterString
+from InvenTree.helpers import validateFilterString
+from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin.registry import registry
 
@@ -408,7 +409,7 @@ class BillOfMaterialsReport(ReportTemplateBase):
 
     @classmethod
     def getSubdir(cls):
-        """Retun the directory where BillOfMaterialsReport templates are located"""
+        """Return the directory where BillOfMaterialsReport templates are located"""
         return 'bom'
 
     filters = models.CharField(
@@ -480,7 +481,7 @@ class SalesOrderReport(ReportTemplateBase):
 
     @classmethod
     def getSubdir(cls):
-        """Retun the subdirectory where SalesOrderReport templates are located"""
+        """Return the subdirectory where SalesOrderReport templates are located"""
         return 'salesorder'
 
     filters = models.CharField(

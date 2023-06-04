@@ -11,7 +11,8 @@ import json
 
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.helpers import getModelsWithMixin, hash_barcode
+from InvenTree.helpers import hash_barcode
+from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeBarcodeMixin
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin

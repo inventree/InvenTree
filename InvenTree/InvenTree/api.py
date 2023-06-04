@@ -60,7 +60,7 @@ class NotFoundView(AjaxView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, *args, **kwargs):
-        """Proces an `not found` event on the API."""
+        """Process an `not found` event on the API."""
         data = {
             'details': _('API endpoint not found'),
             'url': request.build_absolute_uri(),

@@ -11,7 +11,7 @@ from django.utils import timezone
 
 import feedparser
 
-from InvenTree.helpers import getModelsWithMixin
+from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeNotesMixin
 from InvenTree.tasks import ScheduledTask, scheduled_task
 
@@ -57,7 +57,7 @@ def update_news_feed():
 
     # Iterate over entries
     for entry in d.entries:
-        # Check if id already exsists
+        # Check if id already exists
         if entry.id in id_list:
             continue
 

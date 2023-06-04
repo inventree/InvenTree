@@ -272,7 +272,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), len(InvenTreeSetting.SETTINGS.keys()))
 
     def test_company_name(self):
-        """Test a settings object lifecyle e2e."""
+        """Test a settings object lifecycle e2e."""
         setting = InvenTreeSetting.get_setting_object('INVENTREE_COMPANY_NAME')
 
         # Check default value
@@ -781,7 +781,7 @@ class NotificationTest(InvenTreeAPITestCase):
         for _ii in range(10):
             Error.objects.create()
 
-        # Check that messsages have been created
+        # Check that messages have been created
         messages = NotificationMessage.objects.all()
 
         # As there are three staff users (including the 'test' user) we expect 30 notifications
@@ -860,7 +860,7 @@ class CommonTest(InvenTreeAPITestCase):
         self.user.is_superuser = True
         self.user.save()
 
-        # Successfull checks
+        # Successful checks
         data = [
             self.get(reverse('api-config-list'), expected_code=200).data[0],                                    # list endpoint
             self.get(reverse('api-config-detail', kwargs={'key': 'INVENTREE_DEBUG'}), expected_code=200).data,  # detail endpoint

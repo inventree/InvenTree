@@ -27,6 +27,7 @@ from build.validators import generate_next_build_reference, validate_build_order
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.helpers_model
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
@@ -130,7 +131,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         # Order was completed within the specified range
         completed = Q(status=BuildStatus.COMPLETE.value) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
 
-        # Order target date falls witin specified range
+        # Order target date falls within specified range
         pending = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders
@@ -309,7 +310,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """Return the number of sub builds under this one.
 
         Args:
-            cascade: If True (defualt), include cascading builds under sub builds
+            cascade: If True (default), include cascading builds under sub builds
         """
         return self.sub_builds(cascade=cascade).count()
 
@@ -539,7 +540,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             'name': name,
             'slug': 'build.completed',
             'message': _('A build order has been completed'),
-            'link': InvenTree.helpers.construct_absolute_url(self.get_absolute_url()),
+            'link': InvenTree.helpers_model.construct_absolute_url(self.get_absolute_url()),
             'template': {
                 'html': 'email/build_order_completed.html',
                 'subject': name,
@@ -1210,7 +1211,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
         # Notify the responsible users that the build order has been created
-        InvenTree.helpers.notify_responsible(instance, sender, exclude=instance.issued_by)
+        InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
 
 
 class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 
 import common.notifications
-import InvenTree.helpers
+import InvenTree.helpers_model
 import order.models
 from InvenTree.status_codes import (PurchaseOrderStatusGroups,
                                     SalesOrderStatusGroups)
@@ -30,7 +30,7 @@ def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
         'order': po,
         'name': name,
         'message': _(f'Purchase order {po} is now overdue'),
-        'link': InvenTree.helpers.construct_absolute_url(
+        'link': InvenTree.helpers_model.construct_absolute_url(
             po.get_absolute_url(),
         ),
         'template': {
@@ -93,7 +93,7 @@ def notify_overdue_sales_order(so: order.models.SalesOrder):
         'order': so,
         'name': name,
         'message': _(f"Sales order {so} is now overdue"),
-        'link': InvenTree.helpers.construct_absolute_url(
+        'link': InvenTree.helpers_model.construct_absolute_url(
             so.get_absolute_url(),
         ),
         'template': {

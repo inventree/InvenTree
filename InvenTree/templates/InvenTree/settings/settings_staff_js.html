@@ -309,11 +309,7 @@ onPanelLoad('part-parameters', function() {
 
     $("#new-param").click(function() {
         constructForm('{% url "api-part-parameter-template-list" %}', {
-            fields: {
-                name: {},
-                units: {},
-                description: {},
-            },
+            fields: partParameterTemplateFields(),
             method: 'POST',
             title: '{% trans "Create Part Parameter Template" %}',
             refreshTable: '#param-table',

@@ -36,7 +36,8 @@ from company.models import Company, Contact, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
                               RoundingDecimalField)
-from InvenTree.helpers import decimal2string, getSetting, notify_responsible
+from InvenTree.helpers import decimal2string
+from InvenTree.helpers_model import getSetting, notify_responsible
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, MetadataMixin,
                               ReferenceIndexingMixin)
@@ -317,7 +318,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         - Specified as min_date, max_date
         - Both must be specified for filter to be applied
-        - Determine which "interesting" orders exist bewteen these dates
+        - Determine which "interesting" orders exist between these dates
 
         To be "interesting":
         - A "received" order where the received date lies within the date range
@@ -1227,7 +1228,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_destination(self):
         """Show where the line item is or should be placed.
 
-        NOTE: If a line item gets split when recieved, only an arbitrary
+        NOTE: If a line item gets split when received, only an arbitrary
               stock items location will be reported as the location for the
               entire line.
         """

@@ -158,10 +158,10 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
     """Custom exception processor that respects blocked errors."""
 
     def process_exception(self, request, exception):
-        """Check if kind is ignored before procesing."""
+        """Check if kind is ignored before processing."""
         kind, info, data = sys.exc_info()
 
-        # Check if the eror is on the ignore list
+        # Check if the error is on the ignore list
         if kind in settings.IGNORED_ERRORS:
             return
 

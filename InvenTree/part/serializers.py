@@ -216,6 +216,8 @@ class PartParameterTemplateSerializer(InvenTree.serializers.InvenTreeModelSerial
             'name',
             'units',
             'description',
+            'checkbox',
+            'choices',
         ]
 
 
