@@ -158,7 +158,7 @@ if __name__ == '__main__':
             docker_tags = [version_tag]
 
     elif GITHUB_REF_TYPE == 'branch':
-        # Otherwise we know we are targetting the 'master' branch
+        # Otherwise we know we are targeting the 'master' branch
         docker_tags = ['latest']
 
     else:

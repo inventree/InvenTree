@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=requirements-dev.txt requirements-dev.in
 #
-asgiref==3.6.0
+asgiref==3.7.2
     # via
     #   -c requirements.txt
     #   django
@@ -86,7 +86,7 @@ pyyaml==6.0
     # via
     #   -c requirements.txt
     #   pre-commit
-requests==2.30.0
+requests==2.31.0
     # via
     #   -c requirements.txt
     #   coveralls
@@ -98,12 +98,15 @@ sqlparse==0.4.4
     #   django
     #   django-debug-toolbar
 tomli==2.0.1
-    # via build
-typing-extensions==4.5.0
+    # via
+    #   build
+    #   pyproject-hooks
+typing-extensions==4.6.2
     # via
     #   -c requirements.txt
+    #   asgiref
     #   django-test-migrations
-urllib3==1.26.15
+urllib3==1.26.16
     # via
     #   -c requirements.txt
     #   requests

@@ -125,7 +125,7 @@ class CreateAPI(CleanMixin, generics.CreateAPIView):
 
 
 class RetrieveAPI(generics.RetrieveAPIView):
-    """View for retreive API."""
+    """View for retrieve API."""
     pass
 
 

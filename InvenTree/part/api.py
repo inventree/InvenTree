@@ -268,7 +268,7 @@ class CategoryParameterList(ListCreateAPI):
 
 
 class CategoryParameterDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint fro the PartCategoryParameterTemplate model"""
+    """Detail endpoint for the PartCategoryParameterTemplate model"""
 
     queryset = PartCategoryParameterTemplate.objects.all()
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
@@ -486,10 +486,10 @@ class PartScheduling(RetrieveAPI):
 
             target_date = line.target_date or line.order.target_date
 
-            quantity = max(line.quantity - line.received, 0)
+            line_quantity = max(line.quantity - line.received, 0)
 
-            # Multiply by the pack_size of the SupplierPart
-            quantity *= line.part.pack_size
+            # Multiply by the pack quantity of the SupplierPart
+            quantity = line.part.base_quantity(line_quantity)
 
             add_schedule_entry(
                 target_date,
@@ -550,7 +550,7 @@ class PartScheduling(RetrieveAPI):
 
         This assumes that the user is responsible for correctly allocating parts.
 
-        However, it has the added benefit of side-stepping the various BOM substition options,
+        However, it has the added benefit of side-stepping the various BOM substitution options,
         and just looking at what stock items the user has actually allocated against the Build.
         """
 
@@ -565,10 +565,10 @@ class PartScheduling(RetrieveAPI):
 
             if bom_item.inherited:
                 # An "inherited" BOM item filters down to variant parts also
-                childs = bom_item.part.get_descendants(include_self=True)
+                children = bom_item.part.get_descendants(include_self=True)
                 builds = Build.objects.filter(
                     status__in=BuildStatus.ACTIVE_CODES,
-                    part__in=childs,
+                    part__in=children,
                 )
             else:
                 builds = Build.objects.filter(
@@ -591,7 +591,7 @@ class PartScheduling(RetrieveAPI):
                     # Non-trackable parts are allocated against the build itself
                     required_quantity = build.quantity * bom_item.quantity
 
-                # Grab all allocations against the spefied BomItem
+                # Grab all allocations against the specified BomItem
                 allocations = BuildItem.objects.filter(
                     bom_item=bom_item,
                     build=build,
@@ -804,19 +804,31 @@ class PartFilter(rest_filters.FilterSet):
     Uses the django_filters extension framework
     """
 
+    class Meta:
+        """Metaclass options for this filter set"""
+        model = Part
+        fields = []
+
+    has_units = rest_filters.BooleanFilter(label='Has units', method='filter_has_units')
+
+    def filter_has_units(self, queryset, name, value):
+        """Filter by whether the Part has units or not"""
+
+        if str2bool(value):
+            return queryset.exclude(units='')
+        else:
+            return queryset.filter(units='')
+
     # Filter by parts which have (or not) an IPN value
     has_ipn = rest_filters.BooleanFilter(label='Has IPN', method='filter_has_ipn')
 
     def filter_has_ipn(self, queryset, name, value):
         """Filter by whether the Part has an IPN (internal part number) or not"""
-        value = str2bool(value)
 
-        if value:
-            queryset = queryset.exclude(IPN='')
+        if str2bool(value):
+            return queryset.exclude(IPN='')
         else:
-            queryset = queryset.filter(IPN='')
-
-        return queryset
+            return queryset.filter(IPN='')
 
     # Regex filter for name
     name_regex = rest_filters.CharFilter(label='Filter by name (regex)', field_name='name', lookup_expr='iregex')
@@ -836,46 +848,36 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_low_stock(self, queryset, name, value):
         """Filter by "low stock" status."""
-        value = str2bool(value)
 
-        if value:
+        if str2bool(value):
             # Ignore any parts which do not have a specified 'minimum_stock' level
-            queryset = queryset.exclude(minimum_stock=0)
             # Filter items which have an 'in_stock' level lower than 'minimum_stock'
-            queryset = queryset.filter(Q(in_stock__lt=F('minimum_stock')))
+            return queryset.exclude(minimum_stock=0).filter(Q(in_stock__lt=F('minimum_stock')))
         else:
             # Filter items which have an 'in_stock' level higher than 'minimum_stock'
-            queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
-
-        return queryset
+            return queryset.filter(Q(in_stock__gte=F('minimum_stock')))
 
     # has_stock filter
     has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
 
     def filter_has_stock(self, queryset, name, value):
         """Filter by whether the Part has any stock"""
-        value = str2bool(value)
 
-        if value:
-            queryset = queryset.filter(Q(in_stock__gt=0))
+        if str2bool(value):
+            return queryset.filter(Q(in_stock__gt=0))
         else:
-            queryset = queryset.filter(Q(in_stock__lte=0))
-
-        return queryset
+            return queryset.filter(Q(in_stock__lte=0))
 
     # unallocated_stock filter
     unallocated_stock = rest_filters.BooleanFilter(label='Unallocated stock', method='filter_unallocated_stock')
 
     def filter_unallocated_stock(self, queryset, name, value):
         """Filter by whether the Part has unallocated stock"""
-        value = str2bool(value)
 
-        if value:
-            queryset = queryset.filter(Q(unallocated_stock__gt=0))
+        if str2bool(value):
+            return queryset.filter(Q(unallocated_stock__gt=0))
         else:
-            queryset = queryset.filter(Q(unallocated_stock__lte=0))
-
-        return queryset
+            return queryset.filter(Q(unallocated_stock__lte=0))
 
     convert_from = rest_filters.ModelChoiceFilter(label="Can convert from", queryset=Part.objects.all(), method='filter_convert_from')
 
@@ -894,9 +896,7 @@ class PartFilter(rest_filters.FilterSet):
 
         children = part.get_descendants(include_self=True)
 
-        queryset = queryset.exclude(id__in=children)
-
-        return queryset
+        return queryset.exclude(id__in=children)
 
     ancestor = rest_filters.ModelChoiceFilter(label='Ancestor', queryset=Part.objects.all(), method='filter_ancestor')
 
@@ -904,17 +904,14 @@ class PartFilter(rest_filters.FilterSet):
         """Limit queryset to descendants of the specified ancestor part"""
 
         descendants = part.get_descendants(include_self=False)
-        queryset = queryset.filter(id__in=descendants)
-
-        return queryset
+        return queryset.filter(id__in=descendants)
 
     variant_of = rest_filters.ModelChoiceFilter(label='Variant Of', queryset=Part.objects.all(), method='filter_variant_of')
 
     def filter_variant_of(self, queryset, name, part):
         """Limit queryset to direct children (variants) of the specified part"""
 
-        queryset = queryset.filter(id__in=part.get_children())
-        return queryset
+        return queryset.filter(id__in=part.get_children())
 
     in_bom_for = rest_filters.ModelChoiceFilter(label='In BOM Of', queryset=Part.objects.all(), method='filter_in_bom')
 
@@ -922,39 +919,30 @@ class PartFilter(rest_filters.FilterSet):
         """Limit queryset to parts in the BOM for the specified part"""
 
         bom_parts = part.get_parts_in_bom()
-        queryset = queryset.filter(id__in=[p.pk for p in bom_parts])
-        return queryset
+        return queryset.filter(id__in=[p.pk for p in bom_parts])
 
     has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method="filter_has_pricing")
 
     def filter_has_pricing(self, queryset, name, value):
         """Filter the queryset based on whether pricing information is available for the sub_part"""
 
-        value = str2bool(value)
-
         q_a = Q(pricing_data=None)
         q_b = Q(pricing_data__overall_min=None, pricing_data__overall_max=None)
 
-        if value:
-            queryset = queryset.exclude(q_a | q_b)
+        if str2bool(value):
+            return queryset.exclude(q_a | q_b)
         else:
-            queryset = queryset.filter(q_a | q_b)
-
-        return queryset
+            return queryset.filter(q_a | q_b)
 
     stocktake = rest_filters.BooleanFilter(label="Has stocktake", method='filter_has_stocktake')
 
     def filter_has_stocktake(self, queryset, name, value):
         """Filter the queryset based on whether stocktake data is available"""
 
-        value = str2bool(value)
-
-        if (value):
-            queryset = queryset.exclude(last_stocktake=None)
+        if str2bool(value):
+            return queryset.exclude(last_stocktake=None)
         else:
-            queryset = queryset.filter(last_stocktake=None)
-
-        return queryset
+            return queryset.filter(last_stocktake=None)
 
     is_template = rest_filters.BooleanFilter()
 
@@ -1044,7 +1032,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         return DownloadFile(filedata, filename)
 
     def list(self, request, *args, **kwargs):
-        """Overide the 'list' method, as the PartCategory objects are very expensive to serialize!
+        """Override the 'list' method, as the PartCategory objects are very expensive to serialize!
 
         So we will serialize them first, and keep them in memory, so that they do not have to be serialized multiple times...
         """
@@ -1061,7 +1049,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
         """
         Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        a) For HTTP requests (e.g. via the browsable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
         """
         if page is not None:
@@ -1225,7 +1213,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
     def filter_parameteric_data(self, queryset):
         """Filter queryset against part parameters.
 
-        Here we can perfom a number of different functions:
+        Here we can perform a number of different functions:
 
         Ordering Based on Parameter Value:
         - Used if the 'ordering' query param points to a parameter
@@ -1259,6 +1247,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         'unallocated_stock',
         'category',
         'last_stocktake',
+        'units',
     ]
 
     # Default ordering
@@ -1360,7 +1349,34 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         # Simple filter fields
         fields = [
             'units',
+            'checkbox',
         ]
+
+    has_choices = rest_filters.BooleanFilter(
+        method='filter_has_choices',
+        label='Has Choice',
+    )
+
+    def filter_has_choices(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with choices."""
+
+        if str2bool(value):
+            return queryset.exclude(Q(choices=None) | Q(choices=''))
+        else:
+            return queryset.filter(Q(choices=None) | Q(choices=''))
+
+    has_units = rest_filters.BooleanFilter(
+        method='filter_has_units',
+        label='Has Units',
+    )
+
+    def filter_has_units(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with units."""
+
+        if str2bool(value):
+            return queryset.exclude(Q(units=None) | Q(units=''))
+        else:
+            return queryset.filter(Q(units=None) | Q(units=''))
 
 
 class PartParameterTemplateList(ListCreateAPI):
@@ -1388,6 +1404,7 @@ class PartParameterTemplateList(ListCreateAPI):
     ordering_fields = [
         'name',
         'units',
+        'checkbox',
     ]
 
     def filter_queryset(self, queryset):
@@ -1475,7 +1492,7 @@ class PartParameterDetail(RetrieveUpdateDestroyAPI):
 
 
 class PartStocktakeFilter(rest_filters.FilterSet):
-    """Custom fitler for the PartStocktakeList endpoint"""
+    """Custom filter for the PartStocktakeList endpoint"""
 
     class Meta:
         """Metaclass options"""
@@ -1591,45 +1608,33 @@ class BomFilter(rest_filters.FilterSet):
     def filter_available_stock(self, queryset, name, value):
         """Filter the queryset based on whether each line item has any available stock"""
 
-        value = str2bool(value)
-
-        if value:
-            queryset = queryset.filter(available_stock__gt=0)
+        if str2bool(value):
+            return queryset.filter(available_stock__gt=0)
         else:
-            queryset = queryset.filter(available_stock=0)
-
-        return queryset
+            return queryset.filter(available_stock=0)
 
     on_order = rest_filters.BooleanFilter(label="On order", method="filter_on_order")
 
     def filter_on_order(self, queryset, name, value):
         """Filter the queryset based on whether each line item has any stock on order"""
 
-        value = str2bool(value)
-
-        if value:
-            queryset = queryset.filter(on_order__gt=0)
+        if str2bool(value):
+            return queryset.filter(on_order__gt=0)
         else:
-            queryset = queryset.filter(on_order=0)
-
-        return queryset
+            return queryset.filter(on_order=0)
 
     has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method="filter_has_pricing")
 
     def filter_has_pricing(self, queryset, name, value):
         """Filter the queryset based on whether pricing information is available for the sub_part"""
 
-        value = str2bool(value)
-
         q_a = Q(sub_part__pricing_data=None)
         q_b = Q(sub_part__pricing_data__overall_min=None, sub_part__pricing_data__overall_max=None)
 
-        if value:
-            queryset = queryset.exclude(q_a | q_b)
+        if str2bool(value):
+            return queryset.exclude(q_a | q_b)
         else:
-            queryset = queryset.filter(q_a | q_b)
-
-        return queryset
+            return queryset.filter(q_a | q_b)
 
 
 class BomMixin:
@@ -1697,7 +1702,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
 
         """
         Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        a) For HTTP requests (e.g. via the browsable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
         """
         if page is not None:
@@ -1743,7 +1748,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         There are multiple ways that an assembly can "use" a sub-part:
 
         A) Directly specifying the sub_part in a BomItem field
-        B) Specifing a "template" part with inherited=True
+        B) Specifying a "template" part with inherited=True
         C) Allowing variant parts to be substituted
         D) Allowing direct substitute parts to be specified
 
@@ -1887,7 +1892,10 @@ part_api_urls = [
         re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
 
         re_path(r'^parameters/', include([
-            re_path(r'^(?P<pk>\d+)/', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
+            re_path(r'^(?P<pk>\d+)/', include([
+                re_path(r'^metadata/', MetadataView.as_view(), {'model': PartCategoryParameterTemplate}, name='api-part-category-parameter-metadata'),
+                re_path(r'^.*$', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
+            ])),
             re_path(r'^.*$', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
         ])),
 
@@ -1905,7 +1913,10 @@ part_api_urls = [
 
     # Base URL for PartTestTemplate API endpoints
     re_path(r'^test-template/', include([
-        path(r'<int:pk>/', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': PartTestTemplate}, name='api-part-test-template-metadata'),
+            re_path(r'^.*$', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
+        ])),
         path('', PartTestTemplateList.as_view(), name='api-part-test-template-list'),
     ])),
 
@@ -1929,7 +1940,10 @@ part_api_urls = [
 
     # Base URL for PartRelated API endpoints
     re_path(r'^related/', include([
-        path(r'<int:pk>/', PartRelatedDetail.as_view(), name='api-part-related-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': PartRelated}, name='api-part-related-metadata'),
+            re_path(r'^.*$', PartRelatedDetail.as_view(), name='api-part-related-detail'),
+        ])),
         re_path(r'^.*$', PartRelatedList.as_view(), name='api-part-related-list'),
     ])),
 
@@ -1937,13 +1951,16 @@ part_api_urls = [
     re_path(r'^parameter/', include([
         path('template/', include([
             re_path(r'^(?P<pk>\d+)/', include([
-                re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameter}, name='api-part-parameter-template-metadata'),
+                re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameterTemplate}, name='api-part-parameter-template-metadata'),
                 re_path(r'^.*$', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
             ])),
             re_path(r'^.*$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
         ])),
 
-        path(r'<int:pk>/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameter}, name='api-part-parameter-metadata'),
+            re_path(r'^.*$', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
+        ])),
         re_path(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
     ])),
 
@@ -2007,7 +2024,10 @@ bom_api_urls = [
     re_path(r'^substitute/', include([
 
         # Detail view
-        path(r'<int:pk>/', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/?', MetadataView.as_view(), {'model': BomItemSubstitute}, name='api-bom-substitute-metadata'),
+            re_path(r'^.*$', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
+        ])),
 
         # Catch all
         re_path(r'^.*$', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),

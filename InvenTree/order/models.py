@@ -36,7 +36,8 @@ from company.models import Company, Contact, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
                               RoundingDecimalField)
-from InvenTree.helpers import decimal2string, getSetting, notify_responsible
+from InvenTree.helpers import decimal2string
+from InvenTree.helpers_model import getSetting, notify_responsible
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, MetadataMixin,
                               ReferenceIndexingMixin)
@@ -320,7 +321,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         - Specified as min_date, max_date
         - Both must be specified for filter to be applied
-        - Determine which "interesting" orders exist bewteen these dates
+        - Determine which "interesting" orders exist between these dates
 
         To be "interesting":
         - A "received" order where the received date lies within the date range
@@ -490,6 +491,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             trigger_event('purchaseorder.placed', id=self.pk)
 
+            # Notify users that the order has been placed
+            notify_responsible(
+                self,
+                PurchaseOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder
+            )
+
     @transaction.atomic
     def complete_order(self):
         """Marks the PurchaseOrder as COMPLETE.
@@ -608,11 +617,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Create a new stock item
         if line.part and quantity > 0:
 
-            # Take the 'pack_size' of the SupplierPart into account
-            pack_quantity = Decimal(quantity) * Decimal(line.part.pack_size)
+            # Calculate received quantity in base units
+            stock_quantity = line.part.base_quantity(quantity)
 
+            # Calculate unit purchase price (in base units)
             if line.purchase_price:
-                unit_purchase_price = line.purchase_price / line.part.pack_size
+                unit_purchase_price = line.purchase_price
+                unit_purchase_price /= line.part.base_quantity(1)
             else:
                 unit_purchase_price = None
 
@@ -629,7 +640,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     part=line.part.part,
                     supplier_part=line.part,
                     location=location,
-                    quantity=1 if serialize else pack_quantity,
+                    quantity=1 if serialize else stock_quantity,
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
@@ -662,7 +673,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 )
 
         # Update the number of parts received against the particular line item
-        # Note that this quantity does *not* take the pack_size into account, it is "number of packs"
+        # Note that this quantity does *not* take the pack_quantity into account, it is "number of packs"
         line.received += quantity
         line.save()
 
@@ -679,17 +690,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
         )
-
-
-@receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
-def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **kwargs):
-    """Callback function to be executed after a PurchaseOrder is saved."""
-    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
-        return
-
-    if created:
-        # Notify the responsible users that the purchase order has been created
-        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class SalesOrder(TotalPriceMixin, Order):
@@ -1231,7 +1231,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_destination(self):
         """Show where the line item is or should be placed.
 
-        NOTE: If a line item gets split when recieved, only an arbitrary
+        NOTE: If a line item gets split when received, only an arbitrary
               stock items location will be reported as the location for the
               entire line.
         """

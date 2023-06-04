@@ -698,6 +698,7 @@ class StockItemTest(StockAPITestCase):
             },
             expected_code=201
         )
+
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3)
@@ -1240,7 +1241,7 @@ class StockTestResultTest(StockAPITestCase):
     """Tests for StockTestResult APIs."""
 
     def get_url(self):
-        """Helper funtion to get test-result api url."""
+        """Helper function to get test-result api url."""
         return reverse('api-stock-test-result-list')
 
     def test_list(self):
@@ -1692,3 +1693,62 @@ class StockMergeTest(StockAPITestCase):
 
         # Total number of stock items has been reduced!
         self.assertEqual(StockItem.objects.filter(part=self.part).count(), n - 2)
+
+
+class StockMetadataAPITest(InvenTreeAPITestCase):
+    """Unit tests for the various metadata endpoints of API."""
+
+    fixtures = [
+        'category',
+        'part',
+        'bom',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'stock_tests',
+    ]
+
+    roles = [
+        'stock.change',
+        'stock_location.change',
+    ]
+
+    def metatester(self, apikey, model):
+        """Generic tester"""
+
+        modeldata = model.objects.first()
+
+        # Useless test unless a model object is found
+        self.assertIsNotNone(modeldata)
+
+        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+
+        # Metadata is initially null
+        self.assertIsNone(modeldata.metadata)
+
+        numstr = f'12{len(apikey)}'
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    f'abc-{numstr}': f'xyz-{apikey}-{numstr}',
+                }
+            },
+            expected_code=200
+        )
+
+        # Refresh
+        modeldata.refresh_from_db()
+        self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
+
+    def test_metadata(self):
+        """Test all endpoints"""
+
+        for apikey, model in {
+            'api-location-metadata': StockLocation,
+            'api-stock-test-result-metadata': StockItemTestResult,
+            'api-stock-item-metadata': StockItem,
+        }.items():
+            self.metatester(apikey, model)

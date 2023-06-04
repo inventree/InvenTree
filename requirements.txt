@@ -6,7 +6,7 @@
 #
 arrow==1.2.3
     # via django-q
-asgiref==3.6.0
+asgiref==3.7.2
     # via django
 attrs==23.1.0
     # via jsonschema
@@ -81,7 +81,7 @@ django-allauth-2fa==0.10.0
     # via -r requirements.in
 django-cleanup==7.0.0
     # via -r requirements.in
-django-cors-headers==3.14.0
+django-cors-headers==4.0.0
     # via -r requirements.in
 django-crispy-forms==1.14.0
     # via -r requirements.in
@@ -91,7 +91,7 @@ django-error-report @ git+https://github.com/matmair/django-error-report@0.3.0
     # via -r requirements.in
 django-filter==23.2
     # via -r requirements.in
-django-formtools==2.4
+django-formtools==2.4.1
     # via -r requirements.in
 django-ical==1.9.1
     # via -r requirements.in
@@ -107,7 +107,7 @@ django-money==2.1.1
     # via -r requirements.in
 django-mptt==0.14.0
     # via -r requirements.in
-django-otp==1.1.6
+django-otp==1.2.1
     # via django-allauth-2fa
 django-picklefield==3.1
     # via django-q
@@ -143,13 +143,13 @@ et-xmlfile==1.1.0
     # via openpyxl
 feedparser==6.0.10
     # via -r requirements.in
-fonttools[woff]==4.39.3
+fonttools[woff]==4.39.4
     # via weasyprint
 gunicorn==20.1.0
     # via -r requirements.in
 html5lib==1.1
     # via weasyprint
-icalendar==5.0.5
+icalendar==5.0.7
     # via django-ical
 idna==3.4
     # via requests
@@ -195,7 +195,7 @@ pycparser==2.21
     # via cffi
 pydyf==0.6.0
     # via weasyprint
-pyjwt[crypto]==2.6.0
+pyjwt[crypto]==2.7.0
     # via django-allauth
 pyphen==0.14.0
     # via weasyprint
@@ -235,14 +235,14 @@ redis==3.5.3
     #   django-redis
 regex==2023.5.5
     # via -r requirements.in
-requests==2.30.0
+requests==2.31.0
     # via
     #   coreapi
     #   django-allauth
     #   requests-oauthlib
 requests-oauthlib==1.3.1
     # via django-allauth
-sentry-sdk==1.22.1
+sentry-sdk==1.24.0
     # via
     #   -r requirements.in
     #   django-q-sentry
@@ -267,13 +267,15 @@ tinycss2==1.1.1
     #   bleach
     #   cssselect2
     #   weasyprint
-typing-extensions==4.5.0
-    # via qrcode
+typing-extensions==4.6.2
+    # via
+    #   asgiref
+    #   qrcode
 uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-spectacular
-urllib3==1.26.15
+urllib3==1.26.16
     # via
     #   requests
     #   sentry-sdk

@@ -40,7 +40,7 @@ def annotate_on_order_quantity(reference: str = ''):
     - Purchase order must be 'active' or 'pending'
     - Received quantity must be less than line item quantity
 
-    Note that in addition to the 'quantity' on order, we must also take into account 'pack_size'.
+    Note that in addition to the 'quantity' on order, we must also take into account 'pack_quantity'.
     """
 
     # Filter only 'active' purhase orders
@@ -53,7 +53,7 @@ def annotate_on_order_quantity(reference: str = ''):
     return Coalesce(
         SubquerySum(
             ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__quantity') * F(f'{reference}supplier_parts__pack_size'),
+                F(f'{reference}supplier_parts__purchase_order_line_items__quantity') * F(f'{reference}supplier_parts__pack_quantity_native'),
                 output_field=DecimalField(),
             ),
             filter=order_filter
@@ -63,7 +63,7 @@ def annotate_on_order_quantity(reference: str = ''):
     ) - Coalesce(
         SubquerySum(
             ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__received') * F(f'{reference}supplier_parts__pack_size'),
+                F(f'{reference}supplier_parts__purchase_order_line_items__received') * F(f'{reference}supplier_parts__pack_quantity_native'),
                 output_field=DecimalField(),
             ),
             filter=order_filter
@@ -78,7 +78,7 @@ def annotate_total_stock(reference: str = ''):
 
     - This function calculates the 'total stock' for a given part
     - Finds all stock items associated with each part (using the provided filter)
-    - Aggregates the 'quantity' of each relevent stock item
+    - Aggregates the 'quantity' of each relevant stock item
 
     Args:
         reference: The relationship reference of the part from the current model e.g. 'part'
@@ -103,7 +103,7 @@ def annotate_build_order_allocations(reference: str = ''):
 
     - This function calculates the total part quantity allocated to open build orders
     - Finds all build order allocations for each part (using the provided filter)
-    - Aggregates the 'allocated quantity' for each relevent build order allocation item
+    - Aggregates the 'allocated quantity' for each relevant build order allocation item
 
     Args:
         reference: The relationship reference of the part from the current model
@@ -128,7 +128,7 @@ def annotate_sales_order_allocations(reference: str = ''):
 
     - This function calculates the total part quantity allocated to open sales orders"
     - Finds all sales order allocations for each part (using the provided filter)
-    - Aggregates the 'allocated quantity' for each relevent sales order allocation item
+    - Aggregates the 'allocated quantity' for each relevant sales order allocation item
 
     Args:
         reference: The relationship reference of the part from the current model

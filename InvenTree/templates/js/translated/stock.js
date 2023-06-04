@@ -3,25 +3,61 @@
 {% load status_codes %}
 
 /* globals
+    addCachedAlert,
+    baseCurrency,
+    calculateTotalPrice,
+    clearFormInput,
     constructField,
+    constructForm,
     constructFormBody,
+    convertCurrency,
+    disableFormInput,
+    enableFormInput,
+    formatCurrency,
+    formatDecimal,
+    formatPriceRange,
+    getCurrencyConversionRates,
     getFormFieldValue,
+    getTableData,
     global_settings,
     handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
+    initializeRelatedField,
+    inventreeDelete,
     inventreeGet,
+    inventreeLoad,
     inventreePut,
+    inventreeSave,
     launchModalForm,
     linkButtonsToSelection,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
     makeIconBadge,
     makeIconButton,
+    makeRemoveButton,
+    orderParts,
+    partDetail,
+    renderClipboard,
+    renderDate,
     renderLink,
     scanItemsIntoLocation,
-    showAlertDialog,
+    setFormInputPlaceholder,
     setupFilterList,
+    shortenString,
+    showAlertDialog,
+    showAlertOrCache,
+    showMessage,
+    showModalSpinner,
     showApiError,
+    stockCodes,
     stockStatusDisplay,
+    thumbnailImage,
+    updateFieldValue,
+    withTitle,
+    wrapButtons,
+    yesNoLabel,
 */
 
 /* exported
@@ -792,7 +828,7 @@ function mergeStockItems(items, options={}) {
         }
 
         var part = item.part_detail;
-        var location = locationDetail(item, false);
+        let location_detail = locationDetail(item, false);
 
         var thumbnail = thumbnailImage(part.thumbnail || part.image);
 
@@ -824,7 +860,7 @@ function mergeStockItems(items, options={}) {
                     <div id='errors-items_item_${pk}'></div>
                 </div>
             </td>
-            <td id='location_${pk}'>${location}</td>
+            <td id='location_${pk}'>${location_detail}</td>
             <td id='buttons_${pk}'>${buttons}</td>
         </tr>
         `;

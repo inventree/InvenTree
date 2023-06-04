@@ -2,6 +2,7 @@
 
 import logging
 
+from django.core.exceptions import FieldError
 from django.db import migrations
 
 logger = logging.getLogger('inventree')
@@ -38,9 +39,12 @@ def fix_purchase_price(apps, schema_editor):
         supplier_part=None
     ).exclude(
         purchase_price=None
-    ).exclude(
-        supplier_part__pack_size=1
     )
+
+    try:
+        items = items.exclude(supplier_part__pack_size=1)
+    except FieldError:
+        pass
 
     n_updated = 0
 

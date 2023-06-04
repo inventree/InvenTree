@@ -3,10 +3,14 @@
 {% load inventree_extras %}
 
 /* globals
-    global_settings
+    buildCodes,
+    global_settings,
+    inventreeGet,
     purchaseOrderCodes,
     returnOrderCodes,
+    returnOrderLineItemCodes,
     salesOrderCodes,
+    stockCodes,
 */
 
 /* exported
@@ -449,7 +453,7 @@ function getBuildTableFilters() {
                 inventreeGet('{% url "api-owner-list" %}', {}, {
                     async: false,
                     success: function(response) {
-                        for (key in response) {
+                        for (var key in response) {
                             var owner = response[key];
                             ownersList[owner.pk] = {
                                 key: owner.pk,
@@ -626,6 +630,11 @@ function getPartTableFilters() {
             type: 'bool',
             title: '{% trans "Component" %}',
         },
+        has_units: {
+            type: 'bool',
+            title: '{% trans "Has Units" %}',
+            description: '{% trans "Part has defined units" %}',
+        },
         has_ipn: {
             type: 'bool',
             title: '{% trans "Has IPN" %}',
@@ -700,9 +709,28 @@ function getCompanyFilters() {
 }
 
 
+// Return a dictionary of filters for the "PartParameter" table
+function getPartParameterFilters() {
+    return {};
+}
+
+
 // Return a dictionary of filters for the "part parameter template" table
 function getPartParameterTemplateFilters() {
-    return {};
+    return {
+        checkbox: {
+            type: 'bool',
+            title: '{% trans "Checkbox" %}',
+        },
+        has_choices: {
+            type: 'bool',
+            title: '{% trans "Has Choices" %}',
+        },
+        has_units: {
+            type: 'bool',
+            title: '{% trans "Has Units" %}',
+        }
+    };
 }
 
 
@@ -738,6 +766,8 @@ function getAvailableTableFilters(tableKey) {
         return getStockLocationFilters();
     case 'parameters':
         return getParametricPartTableFilters();
+    case 'part-parameters':
+        return getPartParameterFilters();
     case 'part-parameter-templates':
         return getPartParameterTemplateFilters();
     case 'parts':

@@ -2,6 +2,7 @@
 
 import os
 from datetime import datetime
+from decimal import Decimal
 
 from django.apps import apps
 from django.core.exceptions import ValidationError
@@ -19,6 +20,7 @@ from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
+import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
@@ -223,7 +225,7 @@ class CompanyAttachment(InvenTreeAttachment):
     )
 
 
-class Contact(models.Model):
+class Contact(MetadataMixin, models.Model):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
@@ -361,7 +363,7 @@ class ManufacturerPartAttachment(InvenTreeAttachment):
 class ManufacturerPartParameter(models.Model):
     """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
 
-    This is used to represent parmeters / properties for a particular manufacturer part.
+    This is used to represent parameters / properties for a particular manufacturer part.
 
     Each parameter is a simple string (text) value.
     """
@@ -436,7 +438,8 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         multiple: Multiple that the part is provided in
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
-        pack_size: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
+        pack_quantity: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
+        pack_quantity_native: Pack quantity, converted to "native" units of the referenced part
         updated: Date that the SupplierPart was last updated
     """
 
@@ -475,6 +478,40 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         """
         super().clean()
 
+        self.pack_quantity = self.pack_quantity.strip()
+
+        # An empty 'pack_quantity' value is equivalent to '1'
+        if self.pack_quantity == '':
+            self.pack_quantity = '1'
+
+        # Validate that the UOM is compatible with the base part
+        if self.pack_quantity and self.part:
+            try:
+                # Attempt conversion to specified unit
+                native_value = InvenTree.conversion.convert_physical_value(
+                    self.pack_quantity, self.part.units
+                )
+
+                # If part units are not provided, value must be dimensionless
+                if not self.part.units and native_value.units not in ['', 'dimensionless']:
+                    raise ValidationError({
+                        'pack_quantity': _("Pack units must be compatible with the base part units")
+                    })
+
+                # Native value must be greater than zero
+                if float(native_value.magnitude) <= 0:
+                    raise ValidationError({
+                        'pack_quantity': _("Pack units must be greater than zero")
+                    })
+
+                # Update native pack units value
+                self.pack_quantity_native = Decimal(native_value.magnitude)
+
+            except ValidationError as e:
+                raise ValidationError({
+                    'pack_quantity': e.messages
+                })
+
         # Ensure that the linked manufacturer_part points to the same part!
         if self.manufacturer_part and self.part:
 
@@ -510,21 +547,23 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
         super().save(*args, **kwargs)
 
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
-                             related_name='supplier_parts',
-                             verbose_name=_('Base Part'),
-                             limit_choices_to={
-                                 'purchaseable': True,
-                             },
-                             help_text=_('Select part'),
-                             )
+    part = models.ForeignKey(
+        'part.Part', on_delete=models.CASCADE,
+        related_name='supplier_parts',
+        verbose_name=_('Base Part'),
+        limit_choices_to={
+            'purchaseable': True,
+        },
+        help_text=_('Select part'),
+    )
 
-    supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
-                                 related_name='supplied_parts',
-                                 limit_choices_to={'is_supplier': True},
-                                 verbose_name=_('Supplier'),
-                                 help_text=_('Select supplier'),
-                                 )
+    supplier = models.ForeignKey(
+        Company, on_delete=models.CASCADE,
+        related_name='supplied_parts',
+        limit_choices_to={'is_supplier': True},
+        verbose_name=_('Supplier'),
+        help_text=_('Select supplier'),
+    )
 
     SKU = models.CharField(
         max_length=100,
@@ -532,12 +571,13 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         help_text=_('Supplier stock keeping unit')
     )
 
-    manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
-                                          blank=True, null=True,
-                                          related_name='supplier_parts',
-                                          verbose_name=_('Manufacturer Part'),
-                                          help_text=_('Select manufacturer part'),
-                                          )
+    manufacturer_part = models.ForeignKey(
+        ManufacturerPart, on_delete=models.CASCADE,
+        blank=True, null=True,
+        related_name='supplier_parts',
+        verbose_name=_('Manufacturer Part'),
+        help_text=_('Select manufacturer part'),
+    )
 
     link = InvenTreeURLField(
         blank=True, null=True,
@@ -561,13 +601,25 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
 
-    pack_size = RoundingDecimalField(
+    pack_quantity = models.CharField(
+        max_length=25,
         verbose_name=_('Pack Quantity'),
-        help_text=_('Unit quantity supplied in a single pack'),
-        default=1,
-        max_digits=15, decimal_places=5,
-        validators=[MinValueValidator(0.001)],
+        help_text=_('Total quantity supplied in a single pack. Leave empty for single items.'),
+        blank=True,
     )
+
+    pack_quantity_native = RoundingDecimalField(
+        max_digits=20, decimal_places=10, default=1,
+        null=True,
+    )
+
+    def base_quantity(self, quantity=1) -> Decimal:
+        """Calculate the base unit quantiy for a given quantity."""
+
+        q = Decimal(quantity) * Decimal(self.pack_quantity_native)
+        q = round(q, 10).normalize()
+
+        return q
 
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
 
