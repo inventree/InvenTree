@@ -1857,7 +1857,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         StockItem.objects.create(part=cls.part, quantity=300)
 
         # Now create another 400 units which are LOST
-        StockItem.objects.create(part=cls.part, quantity=400, status=StockStatus.LOST)
+        StockItem.objects.create(part=cls.part, quantity=400, status=StockStatus.LOST.value)
 
     def get_part_data(self):
         """Helper function for retrieving part data"""
@@ -1992,7 +1992,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
             quantity=10,
             title='Making some assemblies',
             reference='BO-9999',
-            status=BuildStatus.PRODUCTION,
+            status=BuildStatus.PRODUCTION.value,
         )
 
         bom_item = BomItem.objects.get(pk=6)

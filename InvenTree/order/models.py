@@ -577,7 +577,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return self.lines.count() > 0 and self.pending_line_items().count() == 0
 
     @transaction.atomic
-    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, **kwargs):
+    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK.value, **kwargs):
         """Receive a line item (or partial line item) against this PurchaseOrder."""
         # Extract optional batch code for the new stock item
         batch_code = kwargs.get('batch_code', '')
