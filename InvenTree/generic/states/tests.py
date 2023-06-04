@@ -17,6 +17,8 @@ class GeneralStatus(StatusCode):
     PLACED = 20, _("Placed"), 'primary'
     COMPLETE = 30, _("Complete"), 'success'
     ABC = None  # This should be ignored
+    _DEF = None  # This should be ignored
+    jkl = None  # This should be ignored
 
     def GHI(self):  # This should be ignored
         """A invalid function"""
