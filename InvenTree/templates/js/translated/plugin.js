@@ -32,6 +32,7 @@ function loadPluginTable(table, options={}) {
         name: 'plugins',
         original: options.params,
         queryParams: filters,
+        sortable: true,
         formatNoMatches: function() {
             return '{% trans "No plugins found" %}';
         },
@@ -39,6 +40,7 @@ function loadPluginTable(table, options={}) {
             {
                 field: 'active',
                 title: '',
+                sortable: true,
                 formatter: function(value, row) {
                     if (row.active) {
                         return `<span class='fa fa-check-circle icon-green' title='{% trans "This plugin is active" %}'></span>`;
@@ -50,6 +52,7 @@ function loadPluginTable(table, options={}) {
             {
                 field: 'name',
                 title: '{% trans "Name" %}',
+                sortable: true,
                 formatter: function(value, row) {
                     let html = '';
 

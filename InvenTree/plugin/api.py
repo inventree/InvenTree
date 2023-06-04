@@ -70,6 +70,7 @@ class PluginList(ListAPI):
     ]
 
     ordering = [
+        'active',
         'key',
     ]
 
