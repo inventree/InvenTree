@@ -22,19 +22,6 @@ class GeneralStatus(StatusCode):
         """A invalid function"""
         pass
 
-    """
-    # Open orders
-    OPEN = [
-        PENDING,
-        PLACED,
-    ]
-
-    # Done orders
-    DONE = [
-        COMPLETE,
-    ]
-    """
-
 
 class GeneralStateTest(InvenTreeTestCase):
     """Test that the StatusCode class works."""
@@ -43,17 +30,6 @@ class GeneralStateTest(InvenTreeTestCase):
         self.assertEqual(GeneralStatus.PENDING, 10)
         self.assertEqual(GeneralStatus.PLACED, 20)
         self.assertEqual(GeneralStatus.COMPLETE, 30)
-
-        """
-        self.assertEqual(GeneralStatus.OPEN, [
-            10,
-            20,
-        ])
-
-        self.assertEqual(GeneralStatus.DONE, [
-            30,
-        ])
-        """
 
     def test_code_functions(self):
         """Test that the status code class functions work correctly"""
