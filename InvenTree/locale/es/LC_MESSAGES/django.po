@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-03 14:06+0000\n"
-"PO-Revision-Date: 2023-06-03 23:53\n"
+"PO-Revision-Date: 2023-06-04 23:49\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -1323,7 +1323,7 @@ msgstr "Debe proporcionarse una lista de salidas de construcción"
 #: templates/js/translated/stock.js:1023 templates/js/translated/stock.js:1937
 #: templates/js/translated/stock.js:2608
 msgid "Location"
-msgstr "Unicación"
+msgstr "Ubicación"
 
 #: build/serializers.py:416
 msgid "Stock location for scrapped outputs"
@@ -8370,7 +8370,7 @@ msgstr "Nueva Ubicación"
 #: stock/templates/stock/location.html:287
 #: templates/js/translated/stock.js:2318
 msgid "stock location"
-msgstr ""
+msgstr "ubicación de almacén"
 
 #: stock/templates/stock/location.html:304
 msgid "Scanned stock container into this location"
