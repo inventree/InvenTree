@@ -1,16 +1,9 @@
 """Generic implementation of status for InvenTree models."""
 import enum
 import re
-from typing import Any
 
 
-class MyMeta(enum.EnumMeta):
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
-        ret = super().__call__(*args, **kwds)
-        return ret
-
-
-class BaseEnum(enum.IntEnum, metaclass=MyMeta):
+class BaseEnum(enum.IntEnum):
     """An `Enum` capabile of having its members have docstrings.
 
     Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
@@ -63,12 +56,6 @@ class StatusCode(BaseEnum):
             obj.color = args[2] if len(args) > 2 else 'secondary'
 
         return obj
-
-    def __cal__(called):
-        return called.value
-
-    def __call__(self, *args, **kwargs):
-        return self.value
 
     @classmethod
     def _is_element(cls, d):
