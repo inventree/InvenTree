@@ -113,7 +113,7 @@ def inventreeCommitHash():
 
     if main_commit is None:
         return None
-    return main_commit.sha().hexdigest()[0:9]
+    return main_commit.sha().hexdigest()[0:7]
 
 
 def inventreeCommitDate():
