@@ -17,17 +17,13 @@ from django.core.files.storage import default_storage
 from django.http import StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _
 
-import moneyed.localization
 import regex
 from bleach import clean
-from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
 
 import common.models
 import InvenTree.version
-from common.notifications import (InvenTreeNotificationBodies,
-                                  NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
 from .settings import MEDIA_URL, STATIC_URL
@@ -865,123 +861,6 @@ def inheritors(cls):
     return subcls
 
 
-def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
-    """Notify all responsible parties of a change in an instance.
-
-    Parses the supplied content with the provided instance and sender and sends a notification to all responsible users,
-    excluding the optional excluded list.
-
-    Args:
-        instance: The newly created instance
-        sender: Sender model reference
-        content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
-        exclude (User, optional): User instance that should be excluded. Defaults to None.
-    """
-    if instance.responsible is not None:
-        # Setup context for notification parsing
-        content_context = {
-            'instance': str(instance),
-            'verbose_name': sender._meta.verbose_name,
-            'app_label': sender._meta.app_label,
-            'model_name': sender._meta.model_name,
-        }
-
-        # Setup notification context
-        context = {
-            'instance': instance,
-            'name': content.name.format(**content_context),
-            'message': content.message.format(**content_context),
-            'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
-            'template': {
-                'html': content.template.format(**content_context),
-                'subject': content.name.format(**content_context),
-            }
-        }
-
-        # Create notification
-        trigger_notification(
-            instance,
-            content.slug.format(**content_context),
-            targets=[instance.responsible],
-            target_exclude=[exclude],
-            context=context,
-        )
-
-
-def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None, max_decimal_places=None):
-    """Render a currency / Money object to a formatted string (e.g. for reports)
-
-    Arguments:
-        money: The Money instance to be rendered
-        decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
-        currency: Optionally convert to the specified currency
-        include_symbol: Render with the appropriate currency symbol
-        min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
-        max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
-    """
-
-    if money in [None, '']:
-        return '-'
-
-    if type(money) is not Money:
-        return '-'
-
-    if currency is not None:
-        # Attempt to convert to the provided currency
-        # If cannot be done, leave the original
-        try:
-            money = convert_money(money, currency)
-        except Exception:
-            pass
-
-    if decimal_places is None:
-        decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
-
-    if min_decimal_places is None:
-        min_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
-
-    if max_decimal_places is None:
-        max_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
-
-    value = Decimal(str(money.amount)).normalize()
-    value = str(value)
-
-    if '.' in value:
-        decimals = len(value.split('.')[-1])
-
-        decimals = max(decimals, min_decimal_places)
-        decimals = min(decimals, decimal_places)
-
-        decimal_places = decimals
-    else:
-        decimal_places = max(decimal_places, 2)
-
-    decimal_places = max(decimal_places, max_decimal_places)
-
-    return moneyed.localization.format_money(
-        money,
-        decimal_places=decimal_places,
-        include_symbol=include_symbol,
-    )
-
-
 def is_ajax(request):
     """Check if the current request is an AJAX request."""
     return request.headers.get('x-requested-with') == 'XMLHttpRequest'
-
-
-def getModelsWithMixin(mixin_class) -> list:
-    """Return a list of models that inherit from the given mixin class.
-
-    Args:
-        mixin_class: The mixin class to search for
-
-    Returns:
-        List of models that inherit from the given mixin class
-    """
-
-    from django.contrib.contenttypes.models import ContentType
-
-    db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
-
-    return [x for x in db_models if x is not None and issubclass(x, mixin_class)]
