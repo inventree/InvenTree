@@ -1321,7 +1321,7 @@ class StockTrackingList(ListAPI):
 
         if page is not None:
             return self.get_paginated_response(data)
-        if request.is_ajax():
+        if is_ajax(request):
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
