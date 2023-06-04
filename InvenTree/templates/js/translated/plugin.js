@@ -59,7 +59,7 @@ function loadPluginTable(table, options={}) {
                     if (row.active) {
                         html += `<strong>${value}</strong>`;
                         if (row.meta && row.meta.description) {
-                            html += `<br><small>${row.meta.description}</small>`;
+                            html += ` - <small>${row.meta.description}</small>`;
                         }
                     } else {
                         html += `<em>${value}</em>`;
