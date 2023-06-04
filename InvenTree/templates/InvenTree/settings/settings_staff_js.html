@@ -389,7 +389,7 @@ onPanelLoad('stocktake', function() {
 // Javascript for plugins panel
 onPanelLoad('plugin', function() {
 
-    {% plugins_enabled as plug %}
+{% plugins_enabled as plug %}
 
     loadPluginTable('#plugin-table', {
         custom: {% js_bool plug %},
@@ -399,18 +399,6 @@ onPanelLoad('plugin', function() {
     // Callback to install new plugin
     $("#install-plugin").click(function() {
         installPlugin();
-    });
-
-    // Callback to activate a plugin
-    $(".btn-plugin-enable").click(function() {
-        let pk = $(this).attr('pk');
-        activatePlugin(pk, true);
-    });
-
-    // Callback to deactivate a plugin
-    $(".btn-plugin-disable").click(function() {
-        let pk = $(this).attr('pk');
-        activatePlugin(pk, false);
     });
 
 {% endif %}

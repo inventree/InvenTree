@@ -53,6 +53,7 @@ class PluginConfigSerializer(serializers.ModelSerializer):
         """Meta for serializer."""
         model = PluginConfig
         fields = [
+            'pk',
             'key',
             'name',
             'active',

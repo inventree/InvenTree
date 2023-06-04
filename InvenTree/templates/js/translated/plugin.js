@@ -51,7 +51,7 @@ function loadPluginTable(table, options={}) {
             },
             {
                 field: 'name',
-                title: '{% trans "Name" %}',
+                title: '{% trans "Plugin Description" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     let html = '';
@@ -106,9 +106,9 @@ function loadPluginTable(table, options={}) {
                     // Check if custom plugins are enabled for this instance
                     if (options.custom && !row.is_builtin) {
                         if (row.active) {
-                            buttons += makeIconButton('fa-stop-circle icon-red', 'button-plugin-disable', row.pk, '{% trans "Disable Plugin" %}');
+                            buttons += makeIconButton('fa-stop-circle icon-red', 'btn-plugin-disable', row.pk, '{% trans "Disable Plugin" %}');
                         } else {
-                            buttons += makeIconButton('fa-play-circle icon-green', 'button-plugin-enable', row.pk, '{% trans "Enable Plugin" %}');
+                            buttons += makeIconButton('fa-play-circle icon-green', 'btn-plugin-enable', row.pk, '{% trans "Enable Plugin" %}');
                         }
                     }
 
@@ -117,6 +117,20 @@ function loadPluginTable(table, options={}) {
             },
         ]
     });
+
+    if (options.custom) {
+        // Callback to activate a plugin
+        $(table).on('click', '.btn-plugin-enable', function() {
+            let pk = $(this).attr('pk');
+            activatePlugin(pk, true);
+        });
+
+        // Callback to deactivate a plugin
+        $(table).on('click', '.btn-plugin-disable', function() {
+            let pk = $(this).attr('pk');
+            activatePlugin(pk, false);
+        });
+    }
 }
 
 

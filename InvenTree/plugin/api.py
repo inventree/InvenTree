@@ -70,7 +70,8 @@ class PluginList(ListAPI):
     ]
 
     ordering = [
-        'active',
+        '-active',
+        'name',
         'key',
     ]
 
