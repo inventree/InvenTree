@@ -22,18 +22,12 @@ from bleach import clean
 from djmoney.money import Money
 from PIL import Image
 
-import common.models
 import InvenTree.version
 from common.settings import currency_code_default
 
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = logging.getLogger('inventree')
-
-
-def getSetting(key, backup_value=None):
-    """Shortcut for reading a setting value from the database."""
-    return common.models.InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
 def generateTestKey(test_name):
