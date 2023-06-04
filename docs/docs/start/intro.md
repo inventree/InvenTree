@@ -81,7 +81,7 @@ Installing the required Python packages inside a virtual environment allows a lo
 You can read more about Python virtual environments [here](https://docs.python.org/3/tutorial/venv.html).
 
 !!! info "Virtual Environment"
-    The installation intstruction assume that a virtual environment is configured
+    The installation instruction assume that a virtual environment is configured
 
 `cd` into the InvenTree directory, and create a virtual environment with the following command:
 

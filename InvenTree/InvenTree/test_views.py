@@ -5,7 +5,7 @@ import os
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 
 
 class ViewTests(InvenTreeTestCase):

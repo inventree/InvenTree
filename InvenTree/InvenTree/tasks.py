@@ -12,7 +12,6 @@ from datetime import datetime, timedelta
 from typing import Callable, List
 
 from django.conf import settings
-from django.core import mail as django_mail
 from django.core.exceptions import AppRegistryNotReady
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
@@ -167,6 +166,7 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
     If workers are not running or force_sync flag
     is set then the task is ran synchronously.
     """
+
     try:
         import importlib
 
@@ -249,7 +249,7 @@ class ScheduledTask:
 
 
 class TaskRegister:
-    """Registery for periodicall tasks."""
+    """Registry for periodicall tasks."""
     task_list: List[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
@@ -558,27 +558,11 @@ def run_backup():
     record_task_success('run_backup')
 
 
-def send_email(subject, body, recipients, from_email=None, html_message=None):
-    """Send an email with the specified subject and body, to the specified recipients list."""
-    if type(recipients) == str:
-        recipients = [recipients]
-
-    offload_task(
-        django_mail.send_mail,
-        subject,
-        body,
-        from_email,
-        recipients,
-        fail_silently=False,
-        html_message=html_message
-    )
-
-
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(worker: bool = True):
     """Checks if migrations are needed.
 
-    If the setting auto_update is enabled we will start updateing.
+    If the setting auto_update is enabled we will start updating.
     """
     # Test if auto-updates are enabled
     if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):

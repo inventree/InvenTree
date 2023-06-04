@@ -17,7 +17,7 @@ Label templates are written using a mixture of [HTML](https://www.w3schools.com/
 
 A label template is a single `.html` file which is uploaded to the InvenTree server by the user.
 
-Below is a reasonably simple example of a label template which demostrates much of the available functionality. The template code shown below will produce the following label:
+Below is a reasonably simple example of a label template which demonstrates much of the available functionality. The template code shown below will produce the following label:
 
 {% with id="label_example", url="report/label_example.png", description="Example label" %}
 {% include 'img.html' %}
@@ -308,5 +308,14 @@ The part parameters can be accessed by parameter name lookup in the template, as
 Part: {{ part.name }}
 Length: {{ parameters.length }}
 
+{% endraw %}
+```
+
+Note that for parameters which include a `space` character in their name, lookup using the "dot" notation won't work! In this case, try using the [key lookup](./helpers.md#key-access) method:
+
+```html
+{% raw %}
+
+Voltage Rating: {% getkey parameters "Voltage Rating" %}
 {% endraw %}
 ```

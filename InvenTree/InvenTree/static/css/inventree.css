@@ -319,7 +319,6 @@ main {
 .filter-input {
     display: inline-block;
     *display: inline;
-    zoom: 1;
 }
 
 .filter-tag:hover {

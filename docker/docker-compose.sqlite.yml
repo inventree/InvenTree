@@ -6,7 +6,7 @@ version: "3.8"
 # - Runs the InvenTree background worker process
 # - Serves media and static content directly from Django webserver
 
-# IMPORANT NOTE:
+# IMPORTANT NOTE:
 # The InvenTree docker image does not clone source code from git.
 # Instead, you must specify *where* the source code is located,
 # (on your local machine).

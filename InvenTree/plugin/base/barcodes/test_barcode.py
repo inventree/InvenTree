@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from rest_framework import status
 
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 from stock.models import StockItem
 
 
@@ -48,7 +48,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
     def test_empty(self):
         """Test an empty barcode scan.
 
-        Ensure that all required data is in teh respomse.
+        Ensure that all required data is in the respomse.
         """
         response = self.postBarcode(self.scan_url, '')
 

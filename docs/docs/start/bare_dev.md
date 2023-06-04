@@ -40,7 +40,7 @@ To enable access to the InvenTree server from other computers on a local network
 
 ## Background Worker
 
-The backgroun task manager must also be started. The InvenTree server is already running in the foreground, so open a *new shell window* to start the server.
+The background task manager must also be started. The InvenTree server is already running in the foreground, so open a *new shell window* to start the server.
 
 ### Activate Virtual Environment
 

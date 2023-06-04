@@ -3,25 +3,61 @@
 {% load status_codes %}
 
 /* globals
+    addCachedAlert,
+    baseCurrency,
+    calculateTotalPrice,
+    clearFormInput,
     constructField,
+    constructForm,
     constructFormBody,
+    convertCurrency,
+    disableFormInput,
+    enableFormInput,
+    formatCurrency,
+    formatDecimal,
+    formatPriceRange,
+    getCurrencyConversionRates,
     getFormFieldValue,
+    getTableData,
     global_settings,
     handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
+    initializeRelatedField,
+    inventreeDelete,
     inventreeGet,
+    inventreeLoad,
     inventreePut,
+    inventreeSave,
     launchModalForm,
     linkButtonsToSelection,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
     makeIconBadge,
     makeIconButton,
+    makeRemoveButton,
+    orderParts,
+    partDetail,
+    renderClipboard,
+    renderDate,
     renderLink,
     scanItemsIntoLocation,
-    showAlertDialog,
+    setFormInputPlaceholder,
     setupFilterList,
+    shortenString,
+    showAlertDialog,
+    showAlertOrCache,
+    showMessage,
+    showModalSpinner,
     showApiError,
+    stockCodes,
     stockStatusDisplay,
+    thumbnailImage,
+    updateFieldValue,
+    withTitle,
+    wrapButtons,
+    yesNoLabel,
 */
 
 /* exported
@@ -792,7 +828,7 @@ function mergeStockItems(items, options={}) {
         }
 
         var part = item.part_detail;
-        var location = locationDetail(item, false);
+        let location_detail = locationDetail(item, false);
 
         var thumbnail = thumbnailImage(part.thumbnail || part.image);
 
@@ -824,7 +860,7 @@ function mergeStockItems(items, options={}) {
                     <div id='errors-items_item_${pk}'></div>
                 </div>
             </td>
-            <td id='location_${pk}'>${location}</td>
+            <td id='location_${pk}'>${location_detail}</td>
             <td id='buttons_${pk}'>${buttons}</td>
         </tr>
         `;
@@ -1617,26 +1653,29 @@ function loadStockTestResultsTable(table, options) {
 }
 
 
+/*
+ * Function to display a "location" of a StockItem.
+ *
+ * Complicating factors: A StockItem may not actually *be* in a location!
+ * - Could be at a customer
+ * - Could be installed in another stock item
+ * - Could be assigned to a sales order
+ * - Could be currently in production!
+ *
+ * So, instead of being naive, we'll check!
+ */
 function locationDetail(row, showLink=true) {
-    /*
-     * Function to display a "location" of a StockItem.
-     *
-     * Complicating factors: A StockItem may not actually *be* in a location!
-     * - Could be at a customer
-     * - Could be installed in another stock item
-     * - Could be assigned to a sales order
-     * - Could be currently in production!
-     *
-     * So, instead of being naive, we'll check!
-     */
 
     // Display text
-    var text = '';
+    let text = '';
 
     // URL (optional)
-    var url = '';
+    let url = '';
 
-    if (row.is_building && row.build) {
+    if (row.consumed_by) {
+        text = '{% trans "Consumed by build order" %}';
+        url = `/build/${row.consumed_by}/`;
+    } else if (row.is_building && row.build) {
         // StockItem is currently being built!
         text = '{% trans "In production" %}';
         url = `/build/${row.build}/`;
@@ -1827,6 +1866,8 @@ function loadStockTable(table, options) {
                 }
             } else if (row.belongs_to) {
                 html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
+            } else if (row.consumed_by) {
+                html += makeIconBadge('fa-tools', '{% trans "Stock item has been consumed by a build order" %}');
             }
 
             if (row.expired) {
@@ -1836,13 +1877,11 @@ function loadStockTable(table, options) {
             }
 
             // Special stock status codes
-
-            // REJECTED
-            if (row.status == {{ StockStatus.REJECTED }}) {
+            if (row.status == stockCodes.REJECTED.key) {
                 html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
-            } else if (row.status == {{ StockStatus.LOST }}) {
+            } else if (row.status == stockCodes.LOST.key) {
                 html += makeIconBadge('fa-question-circle', '{% trans "Stock item is lost" %}');
-            } else if (row.status == {{ StockStatus.DESTROYED }}) {
+            } else if (row.status == stockCodes.DESTROYED.key) {
                 html += makeIconBadge('fa-skull-crossbones', '{% trans "Stock item is destroyed" %}');
             }
 

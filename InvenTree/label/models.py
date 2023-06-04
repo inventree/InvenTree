@@ -15,7 +15,8 @@ from django.utils.translation import gettext_lazy as _
 
 import part.models
 import stock.models
-from InvenTree.helpers import get_base_url, normalize, validateFilterString
+from InvenTree.helpers import normalize, validateFilterString
+from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin.registry import registry
 

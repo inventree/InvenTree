@@ -147,6 +147,7 @@ class AbstractExtraLineMeta:
 
     fields = [
         'pk',
+        'description',
         'quantity',
         'reference',
         'notes',
@@ -557,14 +558,12 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         serial_numbers = data.get('serial_numbers', '').strip()
 
         base_part = line_item.part.part
-        pack_size = line_item.part.pack_size
-
-        pack_quantity = pack_size * quantity
+        base_quantity = line_item.part.base_quantity(quantity)
 
         # Does the quantity need to be "integer" (for trackable parts?)
         if base_part.trackable:
 
-            if Decimal(pack_quantity) != int(pack_quantity):
+            if Decimal(base_quantity) != int(base_quantity):
                 raise ValidationError({
                     'quantity': _('An integer quantity must be provided for trackable parts'),
                 })
@@ -575,7 +574,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
                 # Pass the serial numbers through to the parent serializer once validated
                 data['serials'] = extract_serial_numbers(
                     serial_numbers,
-                    pack_quantity,
+                    base_quantity,
                     base_part.get_latest_serial_number()
                 )
             except DjangoValidationError as e:
@@ -964,6 +963,7 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
             'order_detail',
             'allocations',
             'shipment_date',
+            'delivery_date',
             'checked_by',
             'reference',
             'tracking_number',
@@ -987,6 +987,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
 
         fields = [
             'shipment_date',
+            'delivery_date',
             'tracking_number',
             'invoice_number',
             'link',
@@ -1033,6 +1034,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
             invoice_number=data.get('invoice_number', shipment.invoice_number),
             link=data.get('link', shipment.link),
             shipment_date=shipment_date,
+            delivery_date=data.get('delivery_date', shipment.delivery_date),
         )
 
 
@@ -1445,7 +1447,7 @@ class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
         ])
 
 
-class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
+class ReturnOrderSerializer(AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer):
     """Serializer for the ReturnOrder model class"""
 
     class Meta:
@@ -1457,6 +1459,8 @@ class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
             'customer',
             'customer_detail',
             'customer_reference',
+            'order_currency',
+            'total_price',
         ])
 
         read_only_fields = [

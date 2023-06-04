@@ -25,18 +25,14 @@ def delete_scheduled(apps, schema_editor):
 
         # Ensure any parent / child relationships are updated!
         for item in items:
-            childs = StockItem.objects.filter(parent=item)
-            childs.update(parent=item.parent)
+            children = StockItem.objects.filter(parent=item)
+            children.update(parent=item.parent)
 
             item.delete()
 
     Task = apps.get_model('django_q', 'schedule')
 
     Task.objects.filter(func='stock.tasks.delete_old_stock_items').delete()
-
-
-def reverse(apps, schema_editor):  # pragma: no cover
-    pass
 
 
 class Migration(migrations.Migration):
@@ -48,6 +44,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             delete_scheduled,
-            reverse_code=reverse,
+            reverse_code=migrations.RunPython.noop,
         )
     ]

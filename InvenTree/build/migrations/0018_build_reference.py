@@ -23,13 +23,6 @@ def add_default_reference(apps, schema_editor):
         print(f"\nUpdated build reference for {count} existing BuildOrder objects")
 
 
-def reverse_default_reference(apps, schema_editor):  # pragma: no cover
-    """
-    Do nothing! But we need to have a function here so the whole process is reversible.
-    """
-    pass
-
-
 class Migration(migrations.Migration):
 
     atomic = False
@@ -49,7 +42,7 @@ class Migration(migrations.Migration):
         # Auto-populate the new reference field for any existing build order objects
         migrations.RunPython(
             add_default_reference,
-            reverse_code=reverse_default_reference
+            reverse_code=migrations.RunPython.noop
         ),
 
         # Now that each build has a non-empty, unique reference, update the field requirements!

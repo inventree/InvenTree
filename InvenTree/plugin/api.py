@@ -164,7 +164,7 @@ class PluginSettingList(ListAPI):
 
 
 def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
-    """Check that a plugin for the provided slug exsists and get the config.
+    """Check that a plugin for the provided slug exists and get the config.
 
     Args:
         plugin_slug (str): Slug for plugin.
@@ -232,7 +232,7 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         if key not in settings:
             raise NotFound(detail=f"Plugin '{plugin.slug}' has no setting matching '{key}'")
 
-        return PluginSetting.get_setting_object(key, plugin=plugin)
+        return PluginSetting.get_setting_object(key, plugin=plugin.plugin_config())
 
     # Staff permission required
     permission_classes = [
@@ -247,7 +247,7 @@ plugin_api_urls = [
     re_path(r'^plugins/', include([
         # Plugin settings URLs
         re_path(r'^settings/', include([
-            re_path(r'^(?P<plugin>\w+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),    # Used for admin interface
+            re_path(r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),    # Used for admin interface
             re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
         ])),
 
@@ -258,7 +258,7 @@ plugin_api_urls = [
             re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
         ])),
 
-        # Plugin managment
+        # Plugin management
         re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
         re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
 

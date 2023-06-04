@@ -37,6 +37,8 @@ jobs:
         filters: |
           server:
             - 'InvenTree/**'
+            - 'requirements.txt'
+            - 'requirements-dev.txt'
 
   pep_style:
     name: Style [Python]
@@ -47,7 +49,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           dev-install: true
@@ -62,7 +64,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           npm: true
@@ -137,7 +139,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
@@ -167,7 +169,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           install: true
@@ -189,7 +191,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
@@ -239,7 +241,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
@@ -284,7 +286,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libmysqlclient-dev

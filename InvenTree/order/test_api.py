@@ -15,10 +15,10 @@ from rest_framework import status
 
 from common.settings import currency_codes
 from company.models import Company
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
                                     StockStatus)
+from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from part.models import Part
 from stock.models import StockItem
@@ -509,23 +509,6 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
 
-    def test_po_metadata(self):
-        """Test the 'metadata' endpoint for the PurchaseOrder model"""
-        url = reverse('api-po-metadata', kwargs={'pk': 1})
-
-        self.patch(
-            url,
-            {
-                'metadata': {
-                    'yam': 'yum',
-                }
-            },
-            expected_code=200
-        )
-
-        order = models.PurchaseOrder.objects.get(pk=1)
-        self.assertEqual(order.get_metadata('yam'), 'yum')
-
     def test_po_calendar(self):
         """Test the calendar export endpoint"""
 
@@ -714,10 +697,10 @@ class PurchaseOrderDownloadTest(OrderTest):
             },
             expected_code=200,
             expected_fn='InvenTree_PurchaseOrders.csv',
-        ) as fo:
+        ) as file:
 
             data = self.process_csv(
-                fo,
+                file,
                 required_cols=self.required_cols,
                 excluded_cols=self.excluded_cols,
                 required_rows=models.PurchaseOrder.objects.count()
@@ -739,9 +722,9 @@ class PurchaseOrderDownloadTest(OrderTest):
             decode=False,
             expected_code=200,
             expected_fn='InvenTree_PurchaseOrderItems.xlsx',
-        ) as fo:
+        ) as file:
 
-            self.assertTrue(isinstance(fo, io.BytesIO))
+            self.assertTrue(isinstance(file, io.BytesIO))
 
 
 class PurchaseOrderReceiveTest(OrderTest):
@@ -1374,23 +1357,6 @@ class SalesOrderTest(OrderTest):
 
         self.assertEqual(so.status, SalesOrderStatus.CANCELLED)
 
-    def test_so_metadata(self):
-        """Test the 'metadata' API endpoint for the SalesOrder model"""
-        url = reverse('api-so-metadata', kwargs={'pk': 1})
-
-        self.patch(
-            url,
-            {
-                'metadata': {
-                    'xyz': 'abc',
-                }
-            },
-            expected_code=200
-        )
-
-        order = models.SalesOrder.objects.get(pk=1)
-        self.assertEqual(order.get_metadata('xyz'), 'abc')
-
     def test_so_calendar(self):
         """Test the calendar export endpoint"""
 
@@ -1592,8 +1558,8 @@ class SalesOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.xls',
             decode=False,
-        ) as fo:
-            self.assertTrue(isinstance(fo, io.BytesIO))
+        ) as file:
+            self.assertTrue(isinstance(file, io.BytesIO))
 
     def test_download_csv(self):
         """Tesst that the list of sales orders can be downloaded as a .csv file"""
@@ -1623,10 +1589,10 @@ class SalesOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.csv',
             decode=True
-        ) as fo:
+        ) as file:
 
             data = self.process_csv(
-                fo,
+                file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
                 required_rows=models.SalesOrder.objects.count()
@@ -1649,10 +1615,10 @@ class SalesOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.tsv',
             decode=True,
-        ) as fo:
+        ) as file:
 
             self.process_csv(
-                fo,
+                file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
                 required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatus.OPEN).count(),
@@ -1829,6 +1795,7 @@ class SalesOrderAllocateTest(OrderTest):
                 'link': 'http://test.com/link.html',
                 'tracking_number': 'TRK12345',
                 'shipment_date': '2020-12-05',
+                'delivery_date': '2023-12-05',
             },
             expected_code=201,
         )
@@ -1839,10 +1806,55 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(self.shipment.tracking_number, 'TRK12345')
         self.assertEqual(self.shipment.invoice_number, 'INV01234')
         self.assertEqual(self.shipment.link, 'http://test.com/link.html')
+        self.assertEqual(self.shipment.delivery_date, datetime(2023, 12, 5).date())
+        self.assertTrue(self.shipment.is_delivered())
+
+    def test_shipment_deliverydate(self):
+        """Test delivery date functions via API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        # Attempt remove delivery_date from shipment
+        response = self.patch(
+            url,
+            {
+                'delivery_date': None,
+            },
+            expected_code=200,
+        )
+
+        # Shipment should not be marked as delivered
+        self.assertFalse(self.shipment.is_delivered())
+
+        # Attempt to set delivery date
+        response = self.patch(
+            url,
+            {
+                'delivery_date': 'asfasd',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Date has wrong format', str(response.data))
+
+        response = self.patch(
+            url,
+            {
+                'delivery_date': '2023-05-15',
+            },
+            expected_code=200,
+        )
+        self.shipment.refresh_from_db()
+
+        # Shipment should now be marked as delivered
+        self.assertTrue(self.shipment.is_delivered())
+        self.assertEqual(self.shipment.delivery_date, datetime(2023, 5, 15).date())
 
     def test_sales_order_shipment_list(self):
         """Test the SalesOrderShipment list API endpoint"""
         url = reverse('api-so-shipment-list')
+
+        # Count before creation
+        countbefore = models.SalesOrderShipment.objects.count()
 
         # Create some new shipments via the API
         for order in models.SalesOrder.objects.all():
@@ -1873,7 +1885,7 @@ class SalesOrderAllocateTest(OrderTest):
         # List *all* shipments
         response = self.get(url, expected_code=200)
 
-        self.assertEqual(len(response.data), 1 + 3 * models.SalesOrder.objects.count())
+        self.assertEqual(len(response.data), countbefore + 3 * models.SalesOrder.objects.count())
 
 
 class ReturnOrderTests(InvenTreeAPITestCase):
@@ -2157,3 +2169,83 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(deltas['customer'], customer.pk)
         self.assertEqual(deltas['location'], 1)
         self.assertEqual(deltas['returnorder'], rma.pk)
+
+    def test_ro_calendar(self):
+        """Test the calendar export endpoint"""
+
+        # Full test is in test_po_calendar. Since these use the same backend, test only
+        # that the endpoint is available
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'return-order'})
+
+        # Test without completed orders
+        response = self.get(url, expected_code=200, format=None)
+        calendar = Calendar.from_ical(response.content)
+        self.assertIsInstance(calendar, Calendar)
+
+
+class OrderMetadataAPITest(InvenTreeAPITestCase):
+    """Unit tests for the various metadata endpoints of API."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+        'return_order',
+    ]
+
+    roles = [
+        'purchase_order.change',
+        'sales_order.change',
+        'return_order.change',
+    ]
+
+    def metatester(self, apikey, model):
+        """Generic tester"""
+
+        modeldata = model.objects.first()
+
+        # Useless test unless a model object is found
+        self.assertIsNotNone(modeldata)
+
+        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+
+        # Metadata is initially null
+        self.assertIsNone(modeldata.metadata)
+
+        numstr = f'12{len(apikey)}'
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    f'abc-{numstr}': f'xyz-{apikey}-{numstr}',
+                }
+            },
+            expected_code=200
+        )
+
+        # Refresh
+        modeldata.refresh_from_db()
+        self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
+
+    def test_metadata(self):
+        """Test all endpoints"""
+
+        for apikey, model in {
+            'api-po-metadata': models.PurchaseOrder,
+            'api-po-line-metadata': models.PurchaseOrderLineItem,
+            'api-po-extra-line-metadata': models.PurchaseOrderExtraLine,
+            'api-so-shipment-metadata': models.SalesOrderShipment,
+            'api-so-metadata': models.SalesOrder,
+            'api-so-line-metadata': models.SalesOrderLineItem,
+            'api-so-extra-line-metadata': models.SalesOrderExtraLine,
+            'api-return-order-metadata': models.ReturnOrder,
+            'api-return-order-line-metadata': models.ReturnOrderLineItem,
+            'api-return-order-extra-line-metadata': models.ReturnOrderExtraLine,
+        }.items():
+            self.metatester(apikey, model)

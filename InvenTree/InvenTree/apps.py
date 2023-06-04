@@ -11,6 +11,7 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError
 
+import InvenTree.conversion
 import InvenTree.tasks
 from InvenTree.config import get_setting
 from InvenTree.ready import canAppAccessDatabase, isInTestMode
@@ -29,8 +30,8 @@ class InvenTreeConfig(AppConfig):
         - Checking if migrations should be run
         - Cleaning up tasks
         - Starting regular tasks
-        - Updateing exchange rates
-        - Collecting notification mehods
+        - Updating exchange rates
+        - Collecting notification methods
         - Adding users set in the current environment
         """
         if canAppAccessDatabase() or settings.TESTING_ENV:
@@ -45,6 +46,9 @@ class InvenTreeConfig(AppConfig):
                 self.update_exchange_rates()
 
         self.collect_notification_methods()
+
+        # Ensure the unit registry is loaded
+        InvenTree.conversion.reload_unit_registry()
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
@@ -80,7 +84,7 @@ class InvenTreeConfig(AppConfig):
                 minutes=task.minutes,
             )
 
-        # Put at least one task onto the backround worker stack,
+        # Put at least one task onto the background worker stack,
         # which will be processed as soon as the worker comes online
         InvenTree.tasks.offload_task(
             InvenTree.tasks.heartbeat,
