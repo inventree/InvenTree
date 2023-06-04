@@ -9,11 +9,117 @@
 */
 
 /* exported
-    installPlugin,
     activatePlugin,
+    installPlugin,
+    loadPluginTable,
     locateItemOrLocation
 */
 
+
+/*
+ * Load the plugin table
+ */
+function loadPluginTable(table, options={}) {
+
+    options.params = options.params || {};
+
+    let filters = loadTableFilters('plugins', options.params);
+
+    setupFilterList('plugins', $(table), '#filter-list-plugins');
+
+    $(table).inventreeTable({
+        url: '{% url "api-plugin-list" %}',
+        name: 'plugins',
+        original: options.params,
+        queryParams: filters,
+        formatNoMatches: function() {
+            return '{% trans "No plugins found" %}';
+        },
+        columns: [
+            {
+                field: 'active',
+                title: '',
+                formatter: function(value, row) {
+                    if (row.active) {
+                        return `<span class='fa fa-check-circle icon-green' title='{% trans "This plugin is active" %}'></span>`;
+                    } else {
+                        return `<span class='fa fa-times-circle icon-red' title ='{% trans "This plugin is not active" %}'></span>`;
+                    }
+                }
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                formatter: function(value, row) {
+                    let html = '';
+
+                    if (row.active) {
+                        html += `<strong>${value}</strong>`;
+                        if (row.meta && row.meta.description) {
+                            html += `<br><small>${row.meta.description}</small>`;
+                        }
+                    } else {
+                        html += `<em>${value}</em>`;
+                    }
+
+                    if (row.is_builtin) {
+                        html += `<span class='badge bg-success rounded-pill badge-right'>{% trans "Builtin" %}</span>`;
+                    }
+
+                    if (row.is_sample) {
+                        html += `<span class='badge bg-info rounded-pill badge-right'>{% trans "Sample" %}</span>`;
+                    }
+
+                    return html;
+                }
+            },
+            {
+                field: 'meta.version',
+                title: '{% trans "Version" %}',
+                formatter: function(value, row) {
+                    if (value) {
+                        let html = value;
+
+                        if (row.meta.pub_date) {
+                            html += `<span class='badge rounded-pill bg-dark float-right'>${renderDate(row.meta.pub_date)}</span>`;
+                        }
+
+                        return html;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
+                field: 'meta.author',
+                title: '{% trans "Author" %}',
+            },
+            {
+                field: 'actions',
+                title: '',
+                formatter: function(value, row) {
+                    let buttons = '';
+
+                    // Check if custom plugins are enabled for this instance
+                    if (options.custom && !row.is_builtin) {
+                        if (row.active) {
+                            buttons += makeIconButton('fa-stop-circle icon-red', 'button-plugin-disable', row.pk, '{% trans "Disable Plugin" %}');
+                        } else {
+                            buttons += makeIconButton('fa-play-circle icon-green', 'button-plugin-enable', row.pk, '{% trans "Enable Plugin" %}');
+                        }
+                    }
+
+                    return wrapButtons(buttons);
+                }
+            },
+        ]
+    });
+}
+
+
+/*
+ * Install a new plugin via the API
+ */
 function installPlugin() {
     constructForm(`/api/plugins/install/`, {
         method: 'POST',

@@ -391,6 +391,10 @@ onPanelLoad('plugin', function() {
 
     {% plugins_enabled as plug %}
 
+    loadPluginTable('#plugin-table', {
+        custom: {% js_bool plug %},
+    });
+
 {% if plug %}
     // Callback to install new plugin
     $("#install-plugin").click(function() {
