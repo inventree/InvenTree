@@ -44,7 +44,7 @@ defusedxml==0.7.1
     #   python3-openid
 diff-match-patch==20230430
     # via django-import-export
-django==4.2.1
+django==4.1.9
     # via
     #   -r requirements.in
     #   django-allauth
