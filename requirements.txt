@@ -140,6 +140,8 @@ djangorestframework==3.14.0
     #   drf-spectacular
 drf-spectacular==0.26.2
     # via -r requirements.in
+dulwich==0.21.5
+    # via -r requirements.in
 et-xmlfile==1.1.0
     # via openpyxl
 feedparser==6.0.10
@@ -279,6 +281,7 @@ uritemplate==4.1.1
     #   drf-spectacular
 urllib3==1.26.16
     # via
+    #   dulwich
     #   requests
     #   sentry-sdk
 wcwidth==0.2.6
