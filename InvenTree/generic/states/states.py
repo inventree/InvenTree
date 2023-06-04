@@ -73,8 +73,6 @@ class StatusCode(BaseEnum):
             return False
         if type(value.value) != int:
             return False
-        # if value not in keys:
-        #     continue
         return True
 
     @classmethod
