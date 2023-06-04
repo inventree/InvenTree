@@ -75,6 +75,10 @@ nav:
     - Credits: credits.md
     - Privacy: privacy.md
     - Terminology: terminology.md
+    - Development:
+      - Developing InvenTree: develop/starting.md
+      - Contributing: develop/contributing.md
+      - Devcontainer: develop/devcontainer.md
   - Install:
     - Introduction: start/intro.md
     - Configuration: start/config.md
@@ -87,10 +91,6 @@ nav:
         - Installer: start/installer.md
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
-    - Development:
-        - Developing InvenTree: develop/starting.md
-        - Contributing: develop/contributing.md
-        - Devcontainer: develop/devcontainer.md
     - Serving Files: start/serving_files.md
     - Data Backup: start/backup.md
     - Migrating Data: start/migrate.md
@@ -209,6 +209,7 @@ nav:
 
 # Plugins
 plugins:
+  - include-markdown
   - search
   - git-revision-date-localized
   - mkdocs-simple-hooks:
