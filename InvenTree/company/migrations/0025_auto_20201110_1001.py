@@ -2,6 +2,7 @@
 
 from django.db import migrations, connection
 import djmoney.models.fields
+import common.models
 
 
 class Migration(migrations.Migration):
@@ -19,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='supplierpricebreak',
             name='price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[('AUD', 'Australian Dollar'), ('CAD', 'Canadian Dollar'), ('EUR', 'Euro'), ('NZD', 'New Zealand Dollar'), ('GBP', 'Pound Sterling'), ('USD', 'US Dollar'), ('JPY', 'Yen')], default='USD', editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=common.settings.currency_code_mappings, default='USD', editable=False, max_length=3),
         ),
     ]
