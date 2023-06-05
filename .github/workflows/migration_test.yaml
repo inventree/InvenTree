@@ -51,7 +51,7 @@ jobs:
       - name: Checkout Database
         uses: actions/checkout@v3
         with:
-          repository: https://github.com/inventree/test-db.git
+          repository: https://github.com/inventree/test-db/
           ssh-key: ${{ secrets.CI_DB_KEY }}
           ref: main
           path: test-db
