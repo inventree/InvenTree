@@ -48,11 +48,9 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true'
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-        with:
-          repository: git@github.com:inventree/test-db.git
-          ref: main
-          path: test-db
+      - name: Checkout Database
+        run: |
+          git clone git@github.com:inventree/test-db.git test-db --depth 1
 
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
