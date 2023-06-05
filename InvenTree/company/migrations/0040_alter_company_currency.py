@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='company',
             name='currency',
-            field=models.CharField(blank=True, default=common.settings.currency_code_default, help_text='Default currency used for this company', max_length=3, validators=[InvenTree.validators.validate_currency_code], verbose_name='Currency'),
+            field=models.CharField(blank=True, default=common.settings.currency_code_default(), help_text='Default currency used for this company', max_length=3, validators=[InvenTree.validators.validate_currency_code], verbose_name='Currency'),
         ),
     ]
