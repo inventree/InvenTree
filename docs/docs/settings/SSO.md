@@ -78,6 +78,9 @@ Configure the social application entry with the app details:
 - Add the *site* which you want to provide access for this SSO app
 - Save the new application entry when configuration is finished
 
+!!! warning "Site Selection"
+    You *must* assign the new application to at least one available site domain
+
 !!! tip "Fix Your Mistakes"
     You can always return to edit or adjust the social application details later
 
