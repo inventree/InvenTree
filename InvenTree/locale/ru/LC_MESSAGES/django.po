@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 11:04+0000\n"
-"PO-Revision-Date: 2023-06-03 23:52\n"
+"POT-Creation-Date: 2023-06-05 09:30+0000\n"
+"PO-Revision-Date: 2023-06-05 23:47\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -11074,10 +11074,8 @@ msgid "Minimum Stock Level"
 msgstr ""
 
 #: templates/js/translated/plugin.js:45
-#, fuzzy
-#| msgid "No parts found"
 msgid "No plugins found"
-msgstr "Детали не найдены"
+msgstr ""
 
 #: templates/js/translated/plugin.js:54
 msgid "This plugin is active"
@@ -11088,10 +11086,8 @@ msgid "This plugin is not active"
 msgstr ""
 
 #: templates/js/translated/plugin.js:62
-#, fuzzy
-#| msgid "Build Description"
 msgid "Plugin Description"
-msgstr "Описание сборки"
+msgstr ""
 
 #: templates/js/translated/plugin.js:81
 msgid "Sample"
@@ -11110,32 +11106,24 @@ msgid "The Plugin was installed"
 msgstr ""
 
 #: templates/js/translated/plugin.js:174
-#, fuzzy
-#| msgid "Are you sure you want to delete this stock location?"
 msgid "Are you sure you want to enable this plugin?"
-msgstr "Вы уверены, что хотите удалить место хранения?"
+msgstr ""
 
 #: templates/js/translated/plugin.js:178
-#, fuzzy
-#| msgid "Are you sure you want to delete this stock location?"
 msgid "Are you sure you want to disable this plugin?"
-msgstr "Вы уверены, что хотите удалить место хранения?"
+msgstr ""
 
 #: templates/js/translated/plugin.js:186
-#, fuzzy
-#| msgid "Salable"
 msgid "Enable"
-msgstr "Можно продавать"
+msgstr ""
 
 #: templates/js/translated/plugin.js:186
 msgid "Disable"
 msgstr ""
 
 #: templates/js/translated/plugin.js:200
-#, fuzzy
-#| msgid "Last updated"
 msgid "Plugin updated"
-msgstr "Последнее обновление"
+msgstr ""
 
 #: templates/js/translated/pricing.js:159
 msgid "Error fetching currency data"
@@ -12553,8 +12541,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12734,5 +12721,3 @@ msgstr "Разрешение на редактирование элементо�
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
 
-#~ msgid "No date found"
-#~ msgstr "Дата не найдена"
