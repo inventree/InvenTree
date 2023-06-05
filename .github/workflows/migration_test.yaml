@@ -17,7 +17,7 @@ env:
   python_version: 3.9
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
-  INVENTREE_DB_NAME: /home/runner/work/InvenTree/InvenTree/test-db/test-db.sqlite3
+  INVENTREE_DB_NAME: ../test-db/test-db.sqlite3
   INVENTREE_MEDIA_ROOT: ../test_inventree_media
   INVENTREE_STATIC_ROOT: ../test_inventree_static
   INVENTREE_BACKUP_DIR: ../test_inventree_backup
@@ -48,6 +48,10 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true'
 
     steps:
+
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+        name: Checkout Code
+
       - name: Checkout Database
         uses: actions/checkout@v3
         with:
@@ -57,9 +61,6 @@ jobs:
           ref: main
           path: test-db
 
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-        name: Checkout Code
-
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -68,6 +69,6 @@ jobs:
 
       - name: Apply Migrations
         run: |
+          pwd
           ls
-          ls /home/runner/work/InvenTree/
           invoke migrate
