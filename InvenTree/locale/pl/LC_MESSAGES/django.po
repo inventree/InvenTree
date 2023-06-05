@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 11:04+0000\n"
-"PO-Revision-Date: 2023-06-03 23:52\n"
+"POT-Creation-Date: 2023-06-05 09:30+0000\n"
+"PO-Revision-Date: 2023-06-05 23:47\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -7347,16 +7347,12 @@ msgid "Either packagename of URL must be provided"
 msgstr ""
 
 #: plugin/serializers.py:193
-#, fuzzy
-#| msgid "Inactive plugins"
 msgid "Activate Plugin"
-msgstr "Nieaktywne wtyczki"
+msgstr ""
 
 #: plugin/serializers.py:194
-#, fuzzy
-#| msgid "Inactive plugins"
 msgid "Activate this plugin"
-msgstr "Nieaktywne wtyczki"
+msgstr ""
 
 #: report/api.py:171
 msgid "No valid objects provided to template"
@@ -11078,78 +11074,56 @@ msgid "Minimum Stock Level"
 msgstr ""
 
 #: templates/js/translated/plugin.js:45
-#, fuzzy
-#| msgid "No parts found"
 msgid "No plugins found"
-msgstr "Nie znaleziono części"
+msgstr ""
 
 #: templates/js/translated/plugin.js:54
-#, fuzzy
-#| msgid "Is the plugin active"
 msgid "This plugin is active"
-msgstr "Czy wtyczka jest aktywna"
+msgstr ""
 
 #: templates/js/translated/plugin.js:56
-#, fuzzy
-#| msgid "Is the plugin active"
 msgid "This plugin is not active"
-msgstr "Czy wtyczka jest aktywna"
+msgstr ""
 
 #: templates/js/translated/plugin.js:62
-#, fuzzy
-#| msgid "Description"
 msgid "Plugin Description"
-msgstr "Opis"
+msgstr ""
 
 #: templates/js/translated/plugin.js:81
 msgid "Sample"
 msgstr ""
 
 #: templates/js/translated/plugin.js:117 templates/js/translated/plugin.js:183
-#, fuzzy
-#| msgid "Install Plugin"
 msgid "Disable Plugin"
-msgstr "Instaluj wtyczkę"
+msgstr ""
 
 #: templates/js/translated/plugin.js:119 templates/js/translated/plugin.js:183
-#, fuzzy
-#| msgid "Install Plugin"
 msgid "Enable Plugin"
-msgstr "Instaluj wtyczkę"
+msgstr ""
 
 #: templates/js/translated/plugin.js:158
 msgid "The Plugin was installed"
 msgstr ""
 
 #: templates/js/translated/plugin.js:174
-#, fuzzy
-#| msgid "Are you sure you want to delete this stock location?"
 msgid "Are you sure you want to enable this plugin?"
-msgstr "Czy na pewno chcesz skasować tą lokację?"
+msgstr ""
 
 #: templates/js/translated/plugin.js:178
-#, fuzzy
-#| msgid "Are you sure you want to delete this stock location?"
 msgid "Are you sure you want to disable this plugin?"
-msgstr "Czy na pewno chcesz skasować tą lokację?"
+msgstr ""
 
 #: templates/js/translated/plugin.js:186
-#, fuzzy
-#| msgid "Enabled"
 msgid "Enable"
-msgstr "Aktywne"
+msgstr ""
 
 #: templates/js/translated/plugin.js:186
-#, fuzzy
-#| msgid "Available"
 msgid "Disable"
-msgstr "Dostępne"
+msgstr ""
 
 #: templates/js/translated/plugin.js:200
-#, fuzzy
-#| msgid "Plugin Support"
 msgid "Plugin updated"
-msgstr "Obsługa wtyczek"
+msgstr ""
 
 #: templates/js/translated/pricing.js:159
 msgid "Error fetching currency data"
@@ -12567,8 +12541,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12747,3 +12720,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:247
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
