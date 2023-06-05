@@ -53,6 +53,7 @@ jobs:
         with:
           repository: inventree/test-db
           ssh-key: ${{ secrets.CI_DB_KEY }}
+          persist-credentials: true
           ref: main
           path: test-db
 
