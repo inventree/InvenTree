@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='supplierpricebreak',
             name='price',
-            field=djmoney.models.fields.MoneyField(decimal_places=4, default_currency='USD', help_text='Unit price at specified quantity', max_digits=19, null=True, verbose_name='Price'),
+            field=djmoney.models.fields.MoneyField(decimal_places=4, default_currency=common.settings.currency_code_default, help_text='Unit price at specified quantity', max_digits=19, null=True, verbose_name='Price'),
         ),
         migrations.AddField(
             model_name='supplierpricebreak',
             name='price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=common.settings.currency_code_mappings(), default='USD', editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=common.settings.currency_code_mappings(), default=common.settings.currency_code_default, editable=False, max_length=3),
         ),
     ]
