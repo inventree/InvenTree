@@ -1076,7 +1076,7 @@ function loadBuildOutputTable(build_info, options={}) {
             }
         });
 
-        // Callack for the "unallocate" button
+        // Callback for the "unallocate" button
         $(table).find('.button-output-unallocate').click(function() {
             var pk = $(this).attr('pk');
 
@@ -1738,7 +1738,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         // Reload table data
         $(table).bootstrapTable('load', bom_items);
 
-        // Find the top-level progess bar for this build output
+        // Find the top-level progress bar for this build output
         var output_progress_bar = $(`#output-progress-${outputId}`);
 
         if (output_progress_bar.exists()) {
@@ -1789,7 +1789,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     }
 
     function requiredQuantity(row) {
-        // Return the requied quantity for a given row
+        // Return the required quantity for a given row
 
         var quantity = 0;
 
@@ -1946,7 +1946,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         },
         buttons: constructExpandCollapseButtons(table),
         detailFormatter: function(index, row, element) {
-            // Contruct an 'inner table' which shows which stock items have been allocated
+            // Construct an 'inner table' which shows which stock items have been allocated
 
             var subTableId = `allocation-table-${outputId}-${row.pk}`;
 

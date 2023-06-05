@@ -34,4 +34,4 @@ class Command(BaseCommand):
                     self.stdout.write("Database configuration is not usable")
 
             if connected:
-                self.stdout.write("Database connection sucessful!")
+                self.stdout.write("Database connection successful!")

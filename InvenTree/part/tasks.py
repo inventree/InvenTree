@@ -189,7 +189,7 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
                 total_cost_max += pp
                 has_pricing = True
             except MissingRate:
-                logger.warning(f"MissingRate exception occured converting {entry.purchase_price} to {base_currency}")
+                logger.warning(f"MissingRate exception occurred converting {entry.purchase_price} to {base_currency}")
 
         if not has_pricing:
             # Fall back to the part pricing data

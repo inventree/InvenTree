@@ -51,3 +51,19 @@
     description: 'RMA from a customer'
     customer: 5
     status: 10  # Pending
+
+# 1 x R_4K7_0603
+- model: order.returnorderlineitem
+  pk: 1
+  fields:
+    order: 6
+    item: 1008
+    quantity: 1
+
+# An extra line item
+- model: order.returnorderextraline
+  pk: 1
+  fields:
+    order: 6
+    reference: 'Freight cost'
+    quantity: 1

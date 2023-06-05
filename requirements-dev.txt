@@ -105,12 +105,12 @@ tomli==2.0.1
     # via
     #   build
     #   pyproject-hooks
-typing-extensions==4.6.2
+typing-extensions==4.6.3
     # via
     #   -c requirements.txt
     #   asgiref
     #   django-test-migrations
-urllib3==1.26.16
+urllib3==2.0.2
     # via
     #   -c requirements.txt
     #   requests

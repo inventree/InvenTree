@@ -57,7 +57,7 @@ def update_news_feed():
 
     # Iterate over entries
     for entry in d.entries:
-        # Check if id already exsists
+        # Check if id already exists
         if entry.id in id_list:
             continue
 

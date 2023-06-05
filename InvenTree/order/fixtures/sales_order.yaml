@@ -37,3 +37,26 @@
     description: "One sales order, please"
     customer: 5
     status: 60  # Returned
+
+# 1 x R_4K7_0603
+- model: order.salesorderlineitem
+  pk: 1
+  fields:
+    order: 5
+    part: 5
+    quantity: 1
+
+# An extra line item
+- model: order.salesorderextraline
+  pk: 1
+  fields:
+    order: 5
+    reference: 'Freight cost'
+    quantity: 1
+
+# Shipment
+- model: order.salesordershipment
+  pk: 1
+  fields:
+    order: 1
+    reference: "Test Shipment, must be present for metadata test"

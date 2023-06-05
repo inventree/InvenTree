@@ -2,10 +2,17 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 117
+INVENTREE_API_VERSION = 119
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+
+v119 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4898
+    - Add Metadata to:  Part test templates, Part parameters, Part category parameter templates, BOM item substitute, Part relateds, Stock item test result
+
+v118 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4935
+    - Adds extra fields for the PartParameterTemplate model
 
 v117 -> 2023-05-22 : https://github.com/inventree/InvenTree/pull/4854
     - Part.units model now supports physical units (e.g. "kg", "m", "mm", etc)
@@ -203,7 +210,7 @@ v64 -> 2022-07-08 : https://github.com/inventree/InvenTree/pull/3310
     - Allow BOM List API endpoint to be filtered by "on_order" parameter
 
 v63 -> 2022-07-06 : https://github.com/inventree/InvenTree/pull/3301
-    - Allow BOM List API endpoint to be filtered by "available_stock" paramater
+    - Allow BOM List API endpoint to be filtered by "available_stock" parameter
 
 v62 -> 2022-07-05 : https://github.com/inventree/InvenTree/pull/3296
     - Allows search on BOM List API endpoint

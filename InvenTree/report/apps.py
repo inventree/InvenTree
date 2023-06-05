@@ -34,7 +34,7 @@ class ReportConfig(AppConfig):
             self.create_default_return_order_reports()
 
     def create_default_reports(self, model, reports):
-        """Copy defualt report files across to the media directory."""
+        """Copy default report files across to the media directory."""
         # Source directory for report templates
         src_dir = Path(__file__).parent.joinpath(
             'templates',

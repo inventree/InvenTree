@@ -141,7 +141,7 @@ class BomItemTest(TestCase):
 
     def test_substitutes(self):
         """Tests for BOM item substitutes."""
-        # We will make some subtitute parts for the "orphan" part
+        # We will make some substitute parts for the "orphan" part
         bom_item = BomItem.objects.get(
             part=self.bob,
             sub_part=self.orphan

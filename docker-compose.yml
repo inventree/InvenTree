@@ -6,7 +6,7 @@ version: "3.8"
 # - Runs the InvenTree background worker process
 # - Serves media and static content directly from Django webserver
 
-# IMPORANT NOTE:
+# IMPORTANT NOTE:
 # The InvenTree development image does not clone source code from git.
 # Instead, it runs from source code on your local machine.
 # The django server will auto-detect any code changes and reload the server.
