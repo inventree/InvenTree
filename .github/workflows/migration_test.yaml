@@ -71,4 +71,5 @@ jobs:
         run: |
           pwd
           ls
+          chmod +rw test-db/test-db.sqlite3
           invoke migrate
