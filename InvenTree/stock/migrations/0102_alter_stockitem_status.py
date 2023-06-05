@@ -2,10 +2,10 @@
 
 import django.core.validators
 from django.db import migrations, models
-from InvenTree.status_codes import StockStatus
 
 
 class Migration(migrations.Migration):
+    from InvenTree.status_codes import StockStatus
 
     dependencies = [
         ('stock', '0101_stockitemtestresult_metadata'),
