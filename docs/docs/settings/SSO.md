@@ -115,7 +115,7 @@ In the [settings screen](./global.md), navigate to the *Login Settings* panel. H
 
 ### Configure Email
 
-Note that [email settings](./email.md) must be correctly configured before SSO will be activated. Ensure that your email setup is correctly configured and operataional.
+Note that [email settings](./email.md) must be correctly configured before SSO will be activated. Ensure that your email setup is correctly configured and operational.
 
 ## Security Considerations
 
