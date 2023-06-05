@@ -7,6 +7,7 @@
     showMessage,
     inventreeGet,
     inventreePut,
+    loadTableFilters,
     makeIconButton,
     renderDate,
     setupFilterList,
