@@ -1078,10 +1078,10 @@ class PartAPITest(PartAPITestBase):
                 'export': 'csv',
             },
             expected_fn='InvenTree_Parts.csv',
-        ) as fo:
+        ) as file:
 
             data = self.process_csv(
-                fo,
+                file,
                 excluded_cols=excluded_cols,
                 required_cols=required_cols,
                 required_rows=Part.objects.count(),

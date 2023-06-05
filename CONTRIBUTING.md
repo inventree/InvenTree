@@ -1,4 +1,4 @@
-Hi there, thank you for your intrest in contributing!
+Hi there, thank you for your interest in contributing!
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
 ## Quickstart
@@ -50,7 +50,7 @@ The HEAD of the "main" or "master" branch of InvenTree represents the current "l
 - All feature branches are merged into master
 - All bug fixes are merged into master
 
-**No pushing to master:** New featues must be submitted as a pull request from a separate branch (one branch per feature).
+**No pushing to master:** New features must be submitted as a pull request from a separate branch (one branch per feature).
 
 ### Feature Branches
 
@@ -70,7 +70,7 @@ The HEAD of the "stable" branch represents the latest stable release code.
 #### Release Candidate Branches
 
 - Release candidate branches are made from master, and merged into stable.
-- RC branches are targetted at a major/minor version e.g. "0.5"
+- RC branches are targeted at a major/minor version e.g. "0.5"
 - When a release candidate branch is merged into *stable*, the release is tagged
 
 #### Bugfix Branches
@@ -137,7 +137,7 @@ invoke test --runtest order
 
 ## Code Style
 
-Sumbitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
+Submitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
 Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for python. Docstrings for general javascript code is encouraged! Docstyles are checked by `invoke style`.
 
 ### Django templates
@@ -227,7 +227,9 @@ The tags describe issues and PRs in multiple areas:
 |  | stock | Stock item management |
 |  | user interface | User interface |
 | Ecosystem Labels |  |  |
+|  | backport | Tags that the issue will be backported to a stable branch as a bug-fix |
 |  | demo | Relates to the InvenTree demo server or dataset |
 |  | docker | Docker / docker-compose |
 |  | CI | CI / unit testing ecosystem |
+|  | refactor | Refactoring existing code |
 |  | setup | Relates to the InvenTree setup / installation process |

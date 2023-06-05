@@ -168,7 +168,7 @@ Report templates are created (and edited) via the [admin interface](../settings/
     Only users with staff access can upload or edit report template files.
 
 !!! info "Editing Reports"
-    Existing reports can be edited from the admin interface, in the same location as described above. To change the contents of the template, re-upload a template file, to overrie the existing template data.
+    Existing reports can be edited from the admin interface, in the same location as described above. To change the contents of the template, re-upload a template file, to override the existing template data.
 
 ### Name and Description
 

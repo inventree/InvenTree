@@ -108,7 +108,7 @@ Any of the above patterns can be combined using multiple groups separated by the
 
 In the default implementation, InvenTree assumes that serial "numbers" are integer values in a simple incrementing sequence e.g. `{1, 2, 3, 4, 5, 6}`. When generating the *next* value for a serial number, the algorithm looks for the *most recent* serial number, and attempts to coerce that value into an integer, and then increment that value.
 
-While this approach is reasonably robust, it is definitely simplistic and is not expected to meet the requirements of every installation. For this reason, more complex serial number management is intented to be implemented using a custom plugin (see below).
+While this approach is reasonably robust, it is definitely simplistic and is not expected to meet the requirements of every installation. For this reason, more complex serial number management is intended to be implemented using a custom plugin (see below).
 
 #### Serial Number Errors
 

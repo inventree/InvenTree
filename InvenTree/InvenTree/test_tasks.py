@@ -70,11 +70,11 @@ class InvenTreeTaskTests(TestCase):
         with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree' not started - Malformed function path"):
             InvenTree.tasks.offload_task('InvenTree')
 
-        # Non exsistent app
+        # Non existent app
         with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTreeABC.test_tasks.doesnotmatter' not started - No module named 'InvenTreeABC.test_tasks'"):
             InvenTree.tasks.offload_task('InvenTreeABC.test_tasks.doesnotmatter')
 
-        # Non exsistent function
+        # Non existent function
         with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree.test_tasks.doesnotexsist' not started - No function named 'doesnotexsist'"):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexsist')
 

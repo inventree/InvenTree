@@ -418,7 +418,7 @@ class BuildReportTest(ReportTest):
 
 
 class BOMReportTest(ReportTest):
-    """Unit test class fot the BillOfMaterialsReport model"""
+    """Unit test class for the BillOfMaterialsReport model"""
     model = report_models.BillOfMaterialsReport
 
     list_url = 'api-bom-report-list'

@@ -53,10 +53,10 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
         max_levels (int, optional): Levels of items that should be included. None for np sublevels. Defaults to None.
 
     kwargs:
-        parameter_data (bool, optional): Additonal data that should be added. Defaults to False.
-        stock_data (bool, optional): Additonal data that should be added. Defaults to False.
-        supplier_data (bool, optional): Additonal data that should be added. Defaults to False.
-        manufacturer_data (bool, optional): Additonal data that should be added. Defaults to False.
+        parameter_data (bool, optional): Additional data that should be added. Defaults to False.
+        stock_data (bool, optional): Additional data that should be added. Defaults to False.
+        supplier_data (bool, optional): Additional data that should be added. Defaults to False.
+        manufacturer_data (bool, optional): Additional data that should be added. Defaults to False.
         pricing_data (bool, optional): Include pricing data in exported BOM. Defaults to False
         substitute_part_data (bool, optional): Include substitute part numbers in exported BOM. Defaults to False
 

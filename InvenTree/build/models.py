@@ -131,7 +131,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         # Order was completed within the specified range
         completed = Q(status=BuildStatus.COMPLETE) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
 
-        # Order target date falls witin specified range
+        # Order target date falls within specified range
         pending = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders
@@ -310,7 +310,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """Return the number of sub builds under this one.
 
         Args:
-            cascade: If True (defualt), include cascading builds under sub builds
+            cascade: If True (default), include cascading builds under sub builds
         """
         return self.sub_builds(cascade=cascade).count()
 

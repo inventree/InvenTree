@@ -77,4 +77,4 @@ This mixin defines the helper functions `plugin.get_setting` and `plugin.set_set
 api_url = self.get_setting('API_URL', cache = False)
 self.set_setting('API_URL', 'some value')
 ```
-`get_setting` has an additional parameter which lets control if the value is taken directly from the database or from the cache. If it is left away `False` ist the default that means the value is taken directly from the database.
+`get_setting` has an additional parameter which lets control if the value is taken directly from the database or from the cache. If it is left away `False` is the default that means the value is taken directly from the database.

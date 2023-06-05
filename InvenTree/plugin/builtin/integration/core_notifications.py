@@ -32,7 +32,7 @@ class InvenTreeCoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, Inve
     NAME = "InvenTreeCoreNotificationsPlugin"
     TITLE = _("InvenTree Notifications")
     AUTHOR = _('InvenTree contributors')
-    DESCRIPTION = _('Integrated outgoing notificaton methods')
+    DESCRIPTION = _('Integrated outgoing notification methods')
     VERSION = "1.0.0"
 
     SETTINGS = {

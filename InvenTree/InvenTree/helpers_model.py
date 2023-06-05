@@ -36,7 +36,7 @@ def construct_absolute_url(*arg, **kwargs):
     This is useful when (for example) sending an email to a user with a link
     to something in the InvenTree web framework.
     A URL is constructed in the following order:
-    1. If setings.SITE_URL is set (e.g. in the Django settings), use that
+    1. If settings.SITE_URL is set (e.g. in the Django settings), use that
     2. If the InvenTree setting INVENTREE_BASE_URL is set, use that
     3. Otherwise, use the current request URL (if available)
     """
@@ -150,7 +150,7 @@ def download_image_from_url(remote_url, timeout=2.5):
         raise ValueError(_("Image size is too large"))
 
     # Download the file, ensuring we do not exceed the reported size
-    fo = io.BytesIO()
+    file = io.BytesIO()
 
     dl_size = 0
     chunk_size = 64 * 1024
@@ -161,7 +161,7 @@ def download_image_from_url(remote_url, timeout=2.5):
         if dl_size > max_size:
             raise ValueError(_("Image download exceeded maximum size"))
 
-        fo.write(chunk)
+        file.write(chunk)
 
     if dl_size == 0:
         raise ValueError(_("Remote server returned empty response"))
@@ -169,7 +169,7 @@ def download_image_from_url(remote_url, timeout=2.5):
     # Now, attempt to convert the downloaded data to a valid image file
     # img.verify() will throw an exception if the image is not valid
     try:
-        img = Image.open(fo).convert()
+        img = Image.open(file).convert()
         img.verify()
     except Exception:
         raise TypeError(_("Supplied URL is not a valid image file"))

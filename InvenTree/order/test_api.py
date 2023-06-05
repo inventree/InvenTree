@@ -697,10 +697,10 @@ class PurchaseOrderDownloadTest(OrderTest):
             },
             expected_code=200,
             expected_fn='InvenTree_PurchaseOrders.csv',
-        ) as fo:
+        ) as file:
 
             data = self.process_csv(
-                fo,
+                file,
                 required_cols=self.required_cols,
                 excluded_cols=self.excluded_cols,
                 required_rows=models.PurchaseOrder.objects.count()
@@ -722,9 +722,9 @@ class PurchaseOrderDownloadTest(OrderTest):
             decode=False,
             expected_code=200,
             expected_fn='InvenTree_PurchaseOrderItems.xlsx',
-        ) as fo:
+        ) as file:
 
-            self.assertTrue(isinstance(fo, io.BytesIO))
+            self.assertTrue(isinstance(file, io.BytesIO))
 
 
 class PurchaseOrderReceiveTest(OrderTest):
@@ -1558,8 +1558,8 @@ class SalesOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.xls',
             decode=False,
-        ) as fo:
-            self.assertTrue(isinstance(fo, io.BytesIO))
+        ) as file:
+            self.assertTrue(isinstance(file, io.BytesIO))
 
     def test_download_csv(self):
         """Tesst that the list of sales orders can be downloaded as a .csv file"""
@@ -1589,10 +1589,10 @@ class SalesOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.csv',
             decode=True
-        ) as fo:
+        ) as file:
 
             data = self.process_csv(
-                fo,
+                file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
                 required_rows=models.SalesOrder.objects.count()
@@ -1615,10 +1615,10 @@ class SalesOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.tsv',
             decode=True,
-        ) as fo:
+        ) as file:
 
             self.process_csv(
-                fo,
+                file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
                 required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatus.OPEN).count(),
