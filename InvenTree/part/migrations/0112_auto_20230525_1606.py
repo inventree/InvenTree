@@ -2,7 +2,7 @@
 
 from django.core.exceptions import FieldDoesNotExist
 from django.db import migrations, models
-
+from django.db.utils import ProgrammingError
 
 def delete_columns(apps, schema_editor):
     """Hack method to delete columns (if they already exist).
@@ -22,14 +22,14 @@ def delete_columns(apps, schema_editor):
     # Check if the 'checkbox' column exists
     try:
         print("Checking for column 'checkbox' in table 'part_partparametertemplate'")
-        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN checkbox;")
-    except (AttributeError, FieldDoesNotExist):
+        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN IF EXISTS checkbox;")
+    except (AttributeError, ProgrammingError):
         print("Column 'checkbox' does not exist (skipping)")
 
     try:
         print("Checking for column 'choices' in table 'part_partparametertemplate'")
-        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN choices;")
-    except (AttributeError, FieldDoesNotExist):
+        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN IF EXISTS choices;")
+    except (AttributeError, ProgrammingError):
         print("Column 'choices' does not exist (skipping)")
 
 
