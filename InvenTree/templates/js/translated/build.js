@@ -3140,6 +3140,7 @@ function loadBuildLineTable(table, build_id, options={}) {
         search: true,
         sidePagination: 'server',
         showColumns: true,
+        uniqueId: 'pk',
         formatNoMatches: function() {
             return '{% trans "No build lines found" %}';
         },
@@ -3280,7 +3281,7 @@ function loadBuildLineTable(table, build_id, options={}) {
                         }
 
                         // Add a button to "allocate" stock for this line
-                        buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-allocated', pk, '{% trans "Allocate stock" %}');
+                        buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-allocate', pk, '{% trans "Allocate stock" %}');
                     }
 
                     if (row.allocated > 0) {
@@ -3291,5 +3292,35 @@ function loadBuildLineTable(table, build_id, options={}) {
                 }
             }
         ]
+    });
+
+    /* Add callbacks for allocation buttons */
+
+    // Callback to build stock
+    $(table).on('click', '.button-build', function() {
+        let pk = $(this).attr('pk');
+        let row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+        // Start a new "build" for this line
+        newBuildOrder({
+            part: row.part_detail.pk,
+            parent: build_id,
+            quantity: Math.max(row.quantity - row.allocated, 0),
+        });
+    });
+
+    // Callback to purchase stock
+    $(table).on('click', '.button-buy', function() {
+        let pk = $(this).attr('pk');
+    });
+
+    // Callback to allocate stock
+    $(table).on('click', '.button-allocate', function() {
+        let pk = $(this).attr('pk');
+    });
+
+    // Callback to un-allocate stock
+    $(table).on('click', '.button-unallocate', function() {
+        let pk = $(this).attr('pk');
     });
 }
