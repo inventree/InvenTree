@@ -54,6 +54,19 @@ def delete_columns(apps, schema_editor):
             schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN choices;")
         except (OperationalError):
             print("Column 'choices' does not exist (skipping)")
+    except (TransactionManagementError):
+        # TransactionManagementError caused by trying to run a transaction inside a transaction - mysql
+        in_atomic_block = schema_editor.connection.in_atomic_block
+        schema_editor.connection.in_atomic_block = False
+        try:
+            migrations.RemoveField(
+                model_name='part_partparametertemplate',
+                name='choices',
+            )
+        except (FieldDoesNotExist):
+            print("Column 'choices' does not exist (skipping) - mysql")
+        finally:
+            schema_editor.connection.in_atomic_block = in_atomic_block
 
 
 class Migration(migrations.Migration):
