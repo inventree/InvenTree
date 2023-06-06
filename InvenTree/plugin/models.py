@@ -76,11 +76,22 @@ class PluginConfig(models.Model):
         plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
+            """Return a meta-value associated with this plugin"""
+
+            # Ignore if the plugin config is not defined
             if not plugin:
                 return None
+
+            # Ignore if the plugin is not active
             if not self.active:
-                return _('Unvailable')
-            return str(getattr(plugin, name, None))
+                return None
+
+            result = getattr(plugin, name, None)
+
+            if result is not None:
+                result = str(result)
+
+            return result
 
         self.meta = {
             key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',

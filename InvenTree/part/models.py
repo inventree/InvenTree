@@ -1303,6 +1303,11 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         )
 
         for item in queryset.all():
+
+            if item.quantity <= 0:
+                # Ignore zero-quantity items
+                continue
+
             # Iterate through each item in the queryset, work out the limiting quantity
             quantity = item.available_stock + item.substitute_stock
 
