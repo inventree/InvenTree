@@ -2,7 +2,7 @@
 
 from django.core.exceptions import FieldDoesNotExist
 from django.db import migrations, models
-
+from django.db.utils import OperationalError
 
 def delete_columns(apps, schema_editor):
     """Hack method to delete columns (if they already exist).
@@ -22,17 +22,22 @@ def delete_columns(apps, schema_editor):
     # Check if the 'checkbox' column exists
     try:
         print("Checking for column 'checkbox' in table 'part_partparametertemplate'")
-        PartParameterTemplate._meta.get_field('checkbox')
-        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN checkbox;")
-    except (AttributeError, FieldDoesNotExist):
-        print("Column 'checkbox' does not exist (skipping)")
+        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN IF EXISTS checkbox;")
+    except (OperationalError):
+        # OperationalError caused by syntax not allowed in sqlite - try again without
+        try:
+            schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN checkbox;")
+        except (OperationalError):
+            print("Column 'checkbox' does not exist (skipping)")
 
     try:
         print("Checking for column 'choices' in table 'part_partparametertemplate'")
-        PartParameterTemplate._meta.get_field('choices')
-        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN choices;")
-    except (AttributeError, FieldDoesNotExist):
-        print("Column 'choices' does not exist (skipping)")
+        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN IF EXISTS choices;")
+    except (OperationalError):
+        try:
+            schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN choices;")
+        except (OperationalError):
+            print("Column 'choices' does not exist (skipping)")
 
 
 class Migration(migrations.Migration):
