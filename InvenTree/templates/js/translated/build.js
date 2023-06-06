@@ -3207,12 +3207,13 @@ function loadBuildLineTable(table, build_id, options={}) {
                 formatter: function(value, row) {
                     let text = row.bom_item_detail.quantity;
 
-                    if (row.part_detail.units) {
-                        text += ` <small>${row.part_detail.units}</small>`;
-
+                    if (row.bom_item_detail.overage) {
+                        text += ` <small>(+${row.bom_item_detail.overage}%)</small>`;
                     }
 
-                    // TODO: Integrate "overage" display here
+                    if (row.part_detail.units) {
+                        text += ` <span class='badge badge-right'>${row.part_detail.units}</small>`;
+                    }
 
                     return text;
                 }
@@ -3221,7 +3222,7 @@ function loadBuildLineTable(table, build_id, options={}) {
                 field: 'allocated',
                 title: '{% trans "Allocated" %}',
                 formatter: function(value, row) {
-                    return 'TODO: allocated';
+                    return makeProgressBar(row.allocated, row.quantity);
                 }
             },
             {

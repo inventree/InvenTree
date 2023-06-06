@@ -4,7 +4,9 @@ from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
-from django.db.models import Case, When, Value
+from django.db import models
+from django.db.models.functions import Coalesce
+from django.db.models import Case, Sum, When, Value
 from django.db.models import BooleanField
 
 from rest_framework import serializers
@@ -126,33 +128,6 @@ class BuildSerializer(InvenTreeModelSerializer):
         Build.validate_reference_field(reference)
 
         return reference
-
-
-class BuildLineSerializer(InvenTreeModelSerializer):
-    """Serializer for a BuildItem object."""
-
-    class Meta:
-        """Serializer metaclass"""
-
-        model = BuildLine
-        fields = [
-            'pk',
-            'build',
-            'bom_item',
-            'bom_item_detail',
-            'part_detail',
-            'quantity',
-        ]
-
-        read_only_fields = [
-            'build',
-            'bom_item',
-        ]
-
-    quantity = serializers.FloatField()
-
-    bom_item_detail = BomItemSerializer(source='bom_item', many=False, read_only=True)
-    part_detail = PartSerializer(source='bom_item.sub_part', many=False, read_only=True)
 
 
 class BuildOutputSerializer(serializers.Serializer):
@@ -1056,6 +1031,58 @@ class BuildItemSerializer(InvenTreeModelSerializer):
 
         if not stock_detail:
             self.fields.pop('stock_item_detail')
+
+
+class BuildLineSerializer(InvenTreeModelSerializer):
+    """Serializer for a BuildItem object."""
+
+    class Meta:
+        """Serializer metaclass"""
+
+        model = BuildLine
+        fields = [
+            'pk',
+            'build',
+            'bom_item',
+            'bom_item_detail',
+            'part_detail',
+            'quantity',
+            'allocations',
+            'allocated',
+        ]
+
+        read_only_fields = [
+            'build',
+            'bom_item',
+            'allocations',
+        ]
+
+    quantity = serializers.FloatField()
+
+    # Foreign key fields
+    bom_item_detail = BomItemSerializer(source='bom_item', many=False, read_only=True)
+    part_detail = PartSerializer(source='bom_item.sub_part', many=False, read_only=True)
+    allocations = BuildItemSerializer(many=True, read_only=True)
+
+    # Annotated (calculated) fields
+    allocated = serializers.FloatField(read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add extra annotations to the queryset:
+
+        - allocated: Total stock quantity allocated against this build line
+        - available: Total stock available for allocation against this build line
+        """
+
+        queryset = queryset.annotate(
+            allocated=Coalesce(
+                Sum('allocations__quantity'), 0,
+                output_field=models.DecimalField()
+            ),
+        )
+
+        return queryset
 
 
 class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):

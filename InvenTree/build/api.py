@@ -1,5 +1,6 @@
 """JSON API for the Build app."""
 
+from django.db.models import F
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
@@ -261,14 +262,45 @@ class BuildLineFilter(rest_filters.FilterSet):
             'bom_item',
         ]
 
+    # Fields on related models
+    consumable = rest_filters.BooleanFilter(label=_('Consumable'), field_name='bom_item__consumable')
+    optional = rest_filters.BooleanFilter(label=_('Optional'), field_name='bom_item__optional')
+    tracked = rest_filters.BooleanFilter(label=_('Tracked'), field_name='bom_item__sub_part__trackable')
 
-class BuildLineList(ListCreateAPI):
-    """API endpoint for accessing a list of BuildLine objects"""
+    allocated = rest_filters.BooleanFilter(label=_('Allocated'), method='filter_allocated')
+
+    def filter_allocated(self, queryset, name, value):
+        """Filter by whether each BuildLine is fully allocated"""
+
+        if str2bool(value):
+            return queryset.filter(allocated__gte=F('quantity'))
+        else:
+            return queryset.filter(allocated__lt=F('quantity'))
+
+
+class BuildLineEndpoint:
+    """Mixin class for BuildLine API endpoints."""
 
     queryset = BuildLine.objects.all()
     serializer_class = build.serializers.BuildLineSerializer
-    filterset_class = BuildLineFilter
 
+    def get_queryset(self):
+        """Override queryset to select-related and annotate"""
+        queryset = super().get_queryset()
+
+        queryset = queryset.select_related(
+            'build', 'bom_item',
+        )
+
+        queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset)
+
+        return queryset
+
+
+class BuildLineList(BuildLineEndpoint, ListCreateAPI):
+    """API endpoint for accessing a list of BuildLine objects"""
+
+    filterset_class = BuildLineFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
@@ -278,11 +310,9 @@ class BuildLineList(ListCreateAPI):
     search_fields = []
 
 
-class BuildLineDetail(RetrieveUpdateDestroyAPI):
+class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
-
-    queryset = BuildLine.objects.all()
-    serializer_class = build.serializers.BuildLineSerializer
+    pass
 
 
 class BuildOrderContextMixin:
