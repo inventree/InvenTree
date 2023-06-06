@@ -3128,9 +3128,9 @@ function loadBuildLineTable(table, build_id, options={}) {
     params.build = build_id;
 
     let filters = loadTableFilters('buildlines', params);
-    let filterTarget = options.filterTarget || '#buildline-filters';
+    let filterTarget = options.filterTarget || '#filter-list-buildlines';
 
-    setupFilterList('build', table, filterTarget);
+    setupFilterList('buildlines', $(table), filterTarget);
 
     $(table).inventreeTable({
         url: '{% url "api-build-line-list" %}',
