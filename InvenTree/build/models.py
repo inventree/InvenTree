@@ -337,33 +337,24 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         return self.status in BuildStatus.ACTIVE_CODES
 
     @property
-    def bom_items(self):
-        """Returns the BOM items for the part referenced by this BuildOrder."""
-        return self.part.get_bom_items()
+    def tracked_line_items(self):
+        """Returns the "trackable" BOM lines for this BuildOrder."""
 
-    @property
-    def tracked_bom_items(self):
-        """Returns the "trackable" BOM items for this BuildOrder."""
-        items = self.bom_items
-        items = items.filter(sub_part__trackable=True)
+        return self.build_lines.filter(bom_item__sub_part__trackable=True)
 
-        return items
-
-    def has_tracked_bom_items(self):
+    def has_tracked_line_items(self):
         """Returns True if this BuildOrder has trackable BomItems."""
-        return self.tracked_bom_items.count() > 0
+        return self.tracked_line_items.count() > 0
 
     @property
-    def untracked_bom_items(self):
+    def untracked_line_items(self):
         """Returns the "non trackable" BOM items for this BuildOrder."""
-        items = self.bom_items
-        items = items.filter(sub_part__trackable=False)
 
-        return items
+        return self.build_lines.filter(bom_item__sub_part__trackable=False)
 
-    def has_untracked_bom_items(self):
+    def has_untracked_line_items(self):
         """Returns True if this BuildOrder has non trackable BomItems."""
-        return self.untracked_bom_items.count() > 0
+        return self.has_untracked_line_items.count() > 0
 
     @property
     def remaining(self):
@@ -478,25 +469,6 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                 break
 
         return new_ref
-
-    @property
-    def can_complete(self):
-        """Returns True if this build can be "completed".
-
-        - Must not have any outstanding build outputs
-        - 'completed' value must meet (or exceed) the 'quantity' value
-        """
-        if self.incomplete_count > 0:
-            return False
-
-        if self.remaining > 0:
-            return False
-
-        if not self.are_untracked_parts_allocated():
-            return False
-
-        # No issues!
-        return True
 
     @transaction.atomic
     def complete_build(self, user):
@@ -1030,145 +1002,33 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         # Bulk-create the new BuildItem objects
         BuildItem.objects.bulk_create(new_items)
 
-    def required_quantity(self, bom_item, output=None):
-        """Get the quantity of a part required to complete the particular build output.
+    def is_fully_allocated(self):
+        """Test if the BuildOrder has been fully allocated.
 
-        Args:
-            bom_item: The Part object
-            output: The particular build output (StockItem)
+        This is *true* if *all* associated BuildLine items have sufficient allocation
+
+        Returns:
+            True if the BuildOrder has been fully allocated, otherwise False
         """
-        quantity = bom_item.quantity
 
-        if output:
-            quantity *= output.quantity
-        else:
-            quantity *= self.quantity
-
-        return quantity
-
-    def allocated_bom_items(self, bom_item, output=None):
-        """Return all BuildItem objects which allocate stock of <bom_item> to <output>.
-
-        Note that the bom_item may allow variants, or direct substitutes,
-        making things difficult.
-
-        Args:
-            bom_item: The BomItem object
-            output: Build output (StockItem).
-        """
-        allocations = BuildItem.objects.filter(
-            build=self,
-            bom_item=bom_item,
-            install_into=output,
-        )
-
-        return allocations
-
-    def allocated_quantity(self, bom_item, output=None):
-        """Return the total quantity of given part allocated to a given build output."""
-        allocations = self.allocated_bom_items(bom_item, output)
-
-        allocated = allocations.aggregate(
-            q=Coalesce(
-                Sum('quantity'),
-                0,
-                output_field=models.DecimalField(),
-            )
-        )
-
-        return allocated['q']
-
-    def unallocated_quantity(self, bom_item, output=None):
-        """Return the total unallocated (remaining) quantity of a part against a particular output."""
-        required = self.required_quantity(bom_item, output)
-        allocated = self.allocated_quantity(bom_item, output)
-
-        return max(required - allocated, 0)
-
-    def is_bom_item_allocated(self, bom_item, output=None):
-        """Test if the supplied BomItem has been fully allocated"""
-
-        if bom_item.consumable:
-            # Consumable BOM items do not need to be allocated
-            return True
-
-        return self.unallocated_quantity(bom_item, output) == 0
-
-    def is_fully_allocated(self, output):
-        """Returns True if the particular build output is fully allocated."""
-        # If output is not specified, we are talking about "untracked" items
-        if output is None:
-            bom_items = self.untracked_bom_items
-        else:
-            bom_items = self.tracked_bom_items
-
-        for bom_item in bom_items:
-
-            if not self.is_bom_item_allocated(bom_item, output):
+        for line in self.build_lines.all():
+            if not line.is_fully_allocated():
                 return False
 
-        # All parts must be fully allocated!
         return True
 
-    def is_partially_allocated(self, output):
-        """Returns True if the particular build output is (at least) partially allocated."""
-        # If output is not specified, we are talking about "untracked" items
-        if output is None:
-            bom_items = self.untracked_bom_items
-        else:
-            bom_items = self.tracked_bom_items
+    def is_over_allocated(self):
+        """Test if the BuildOrder has been over-allocated.
 
-        for bom_item in bom_items:
-
-            if self.allocated_quantity(bom_item, output) > 0:
-                return True
-
-        return False
-
-    def are_untracked_parts_allocated(self):
-        """Returns True if the un-tracked parts are fully allocated for this BuildOrder."""
-        return self.is_fully_allocated(None)
-
-    def has_overallocated_parts(self, output=None):
-        """Check if parts have been 'over-allocated' against the specified output.
-
-        Note: If output=None, test un-tracked parts
+        Returns:
+            True if any BuildLine has been over-allocated.
         """
 
-        bom_items = self.tracked_bom_items if output else self.untracked_bom_items
-
-        for bom_item in bom_items:
-            if self.allocated_quantity(bom_item, output) > self.required_quantity(bom_item, output):
+        for line in self.build_lines.all():
+            if line.is_over_allocated():
                 return True
 
         return False
-
-    def unallocated_bom_items(self, output):
-        """Return a list of bom items which have *not* been fully allocated against a particular output."""
-        unallocated = []
-
-        # If output is not specified, we are talking about "untracked" items
-        if output is None:
-            bom_items = self.untracked_bom_items
-        else:
-            bom_items = self.tracked_bom_items
-
-        for bom_item in bom_items:
-
-            if not self.is_bom_item_allocated(bom_item, output):
-                unallocated.append(bom_item)
-
-        return unallocated
-
-    @property
-    def required_parts(self):
-        """Returns a list of parts required to build this part (BOM)."""
-        parts = []
-
-        for item in self.bom_items:
-            parts.append(item.sub_part)
-
-        return parts
 
     @property
     def required_parts_to_complete_build(self):
@@ -1208,7 +1068,8 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         lines = []
 
-        for bom_item in self.bom_items.all():
+        # Iterate through each part required to build the parent part
+        for bom_item in self.part.get_bom_items.all():
 
             if prevent_duplicates:
                 if BuildLine.objects.filter(build=self, bom_item=bom_item).exists():
@@ -1239,17 +1100,23 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
 
     from . import tasks as build_tasks
 
-    if instance and created:
-        # A new Build has just been created
+    if instance:
 
-        # Generate initial BuildLine objects for the Build
-        instance.create_build_line_items()
+        if created:
+            # A new Build has just been created
 
-        # Run checks on required parts
-        InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
+            # Generate initial BuildLine objects for the Build
+            instance.create_build_line_items()
 
-        # Notify the responsible users that the build order has been created
-        InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
+            # Run checks on required parts
+            InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
+
+            # Notify the responsible users that the build order has been created
+            InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
+
+        else:
+            # TODO: Update BuildLine objects if the Build quantity has changed
+            ...
 
 
 class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
@@ -1308,6 +1175,30 @@ class BuildLine(models.Model):
         verbose_name=_('Quantity'),
         help_text=_('Required quantity for build order'),
     )
+
+    def allocated_quantity(self):
+        """Calculate the total allocated quantity for this BuildLine"""
+
+        # Queryset containing all BuildItem objects allocated against this BuildLine
+        allocations = self.allocations.all()
+
+        allocated = allocations.aggregate(
+            q=Coalesce(Sum('quantity'), 0, output_field=models.DecimalField())
+        )
+
+        return allocated['q']
+
+    def unallocated_quantity(self):
+        """Return the unallocated quantity for this BuildLine"""
+        return max(self.quantity - self.allocated_quantity(), 0)
+
+    def is_fully_allocated(self):
+        """Return True if this BuildLine is fully allocated"""
+        return self.allocated_quantity() >= self.quantity
+
+    def is_over_allocated(self):
+        """Return True if this BuildLine is over-allocated"""
+        return self.allocated_quantity() > self.quantity
 
 
 class BuildItem(InvenTree.models.MetadataMixin, models.Model):

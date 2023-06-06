@@ -648,8 +648,8 @@ class BuildCompleteSerializer(serializers.Serializer):
         build = self.context['build']
 
         return {
-            'overallocated': build.has_overallocated_parts(),
-            'allocated': build.are_untracked_parts_allocated(),
+            'overallocated': build.is_over_allocated(),
+            'allocated': build.is_fully_allocated(),
             'remaining': build.remaining,
             'incomplete': build.incomplete_count,
         }
@@ -666,7 +666,7 @@ class BuildCompleteSerializer(serializers.Serializer):
         """Check if the 'accept_overallocated' field is required"""
         build = self.context['build']
 
-        if build.has_overallocated_parts(output=None) and value == OverallocationChoice.REJECT:
+        if build.is_over_allocated(output=None) and value == OverallocationChoice.REJECT:
             raise ValidationError(_('Some stock items have been overallocated'))
 
         return value
@@ -682,7 +682,7 @@ class BuildCompleteSerializer(serializers.Serializer):
         """Check if the 'accept_unallocated' field is required"""
         build = self.context['build']
 
-        if not build.are_untracked_parts_allocated() and not value:
+        if not build.is_fully_allocated() and not value:
             raise ValidationError(_('Required stock has not been fully allocated'))
 
         return value
