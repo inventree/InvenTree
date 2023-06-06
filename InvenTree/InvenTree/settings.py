@@ -226,6 +226,7 @@ INSTALLED_APPS = [
     'formtools',                            # Form wizard tools
     'dbbackup',                             # Backups - django-dbbackup
     'taggit',                               # Tagging
+    'flags',                                # Flagging - django-flags
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
@@ -936,3 +937,14 @@ if DEBUG:
 
 logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+
+# Flags
+FLAGS = {
+    'EXPERIMENTAL': [
+        {'condition': 'boolean', 'value': DEBUG},
+        {'condition': 'parameter', 'value': 'experimental='},
+    ],  # Should experimental features be turned on?
+    'NEXT_GEN': [
+        {'condition': 'parameter', 'value': 'ngen='},
+    ],  # Should next-gen features be turned on?
+}
