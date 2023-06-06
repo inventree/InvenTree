@@ -14,7 +14,7 @@ def delete_columns(apps, schema_editor):
 
     Original error: https://github.com/inventree/InvenTree/pull/4898
     Attempted fix: https://github.com/inventree/InvenTree/pull/4961
-    This fix:
+    This fix: https://github.com/inventree/InvenTree/pull/4977
     """
 
     PartParameterTemplate = apps.get_model('part', 'PartParameterTemplate')
