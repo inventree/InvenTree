@@ -3,6 +3,8 @@
 # To enable backporting for a pullrequest, add the label "backport" to the PR.
 # Additionally, add a label with the prefix "backport-to-" and the target branch
 
+name: Backport
+
 on:
   pull_request_target:
     types: ["labeled", "closed"]

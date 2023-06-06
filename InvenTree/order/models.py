@@ -36,7 +36,8 @@ from company.models import Company, Contact, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
                               RoundingDecimalField)
-from InvenTree.helpers import decimal2string, getSetting, notify_responsible
+from InvenTree.helpers import decimal2string
+from InvenTree.helpers_model import getSetting, notify_responsible
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, MetadataMixin,
                               ReferenceIndexingMixin)
@@ -314,7 +315,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         - Specified as min_date, max_date
         - Both must be specified for filter to be applied
-        - Determine which "interesting" orders exist bewteen these dates
+        - Determine which "interesting" orders exist between these dates
 
         To be "interesting":
         - A "received" order where the received date lies within the date range
@@ -483,6 +484,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
             self.save()
 
             trigger_event('purchaseorder.placed', id=self.pk)
+
+            # Notify users that the order has been placed
+            notify_responsible(
+                self,
+                PurchaseOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder
+            )
 
     @transaction.atomic
     def complete_order(self):
@@ -675,17 +684,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
         )
-
-
-@receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
-def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **kwargs):
-    """Callback function to be executed after a PurchaseOrder is saved."""
-    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
-        return
-
-    if created:
-        # Notify the responsible users that the purchase order has been created
-        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class SalesOrder(TotalPriceMixin, Order):
@@ -1227,7 +1225,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_destination(self):
         """Show where the line item is or should be placed.
 
-        NOTE: If a line item gets split when recieved, only an arbitrary
+        NOTE: If a line item gets split when received, only an arbitrary
               stock items location will be reported as the location for the
               entire line.
         """

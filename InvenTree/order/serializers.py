@@ -1447,7 +1447,7 @@ class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
         ])
 
 
-class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
+class ReturnOrderSerializer(AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer):
     """Serializer for the ReturnOrder model class"""
 
     class Meta:
@@ -1459,6 +1459,8 @@ class ReturnOrderSerializer(AbstractOrderSerializer, InvenTreeModelSerializer):
             'customer',
             'customer_detail',
             'customer_reference',
+            'order_currency',
+            'total_price',
         ])
 
         read_only_fields = [

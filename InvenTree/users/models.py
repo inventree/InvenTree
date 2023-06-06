@@ -304,7 +304,7 @@ class RuleSet(models.Model):
             return self.name
 
     def save(self, *args, **kwargs):
-        """Intercept the 'save' functionality to make addtional permission changes:
+        """Intercept the 'save' functionality to make additional permission changes:
 
         It does not make sense to be able to change / create something,
         but not be able to view it!
@@ -356,7 +356,7 @@ def update_group_roles(group, debug=False):
     This function is called under the following conditions:
 
     a) Whenever the InvenTree database is launched
-    b) Whenver the group object is updated
+    b) Whenever the group object is updated
 
     The RuleSet model has complete control over the permissions applied to any group.
     """

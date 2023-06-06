@@ -78,7 +78,7 @@ def annotate_total_stock(reference: str = ''):
 
     - This function calculates the 'total stock' for a given part
     - Finds all stock items associated with each part (using the provided filter)
-    - Aggregates the 'quantity' of each relevent stock item
+    - Aggregates the 'quantity' of each relevant stock item
 
     Args:
         reference: The relationship reference of the part from the current model e.g. 'part'
@@ -103,7 +103,7 @@ def annotate_build_order_allocations(reference: str = ''):
 
     - This function calculates the total part quantity allocated to open build orders
     - Finds all build order allocations for each part (using the provided filter)
-    - Aggregates the 'allocated quantity' for each relevent build order allocation item
+    - Aggregates the 'allocated quantity' for each relevant build order allocation item
 
     Args:
         reference: The relationship reference of the part from the current model
@@ -128,7 +128,7 @@ def annotate_sales_order_allocations(reference: str = ''):
 
     - This function calculates the total part quantity allocated to open sales orders"
     - Finds all sales order allocations for each part (using the provided filter)
-    - Aggregates the 'allocated quantity' for each relevent sales order allocation item
+    - Aggregates the 'allocated quantity' for each relevant sales order allocation item
 
     Args:
         reference: The relationship reference of the part from the current model

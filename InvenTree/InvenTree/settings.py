@@ -480,7 +480,7 @@ if "postgres" in db_engine:  # pragma: no cover
     if "connect_timeout" not in db_options:
         # The DB server is in the same data center, it should not take very
         # long to connect to the database server
-        # # seconds, 2 is minium allowed by libpq
+        # # seconds, 2 is minimum allowed by libpq
         db_options["connect_timeout"] = int(
             get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 2)
         )
@@ -576,7 +576,7 @@ REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
 
-# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+# Default Sentry DSN (can be overridden if user wants custom sentry integration)
 SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', default_sentry_dsn())
 SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
 
@@ -598,7 +598,7 @@ cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=
 if cache_host:  # pragma: no cover
     # We are going to rely upon a possibly non-localhost for our cache,
     # so don't wait too long for the cache as nothing in the cache should be
-    # irreplacable.
+    # irreplaceable.
     _cache_options = {
         "CLIENT_CLASS": "django_redis.client.DefaultClient",
         "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
@@ -718,6 +718,7 @@ LANGUAGES = [
     ('es', _('Spanish')),
     ('es-mx', _('Spanish (Mexican)')),
     ('fa', _('Farsi / Persian')),
+    ('fi', _('Finnish')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('hu', _('Hungarian')),
@@ -909,7 +910,7 @@ PLUGINS_ENABLED = get_boolean_setting('INVENTREE_PLUGINS_ENABLED', 'plugins_enab
 PLUGIN_FILE = config.get_plugin_file()
 
 # Plugin test settings
-PLUGIN_TESTING = get_setting('INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING)                     # Are plugins beeing tested?
+PLUGIN_TESTING = get_setting('INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING)                     # Are plugins being tested?
 PLUGIN_TESTING_SETUP = get_setting('INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False)     # Load plugins from setup hooks in testing?
 PLUGIN_TESTING_EVENTS = False                                                                           # Flag if events are tested right now
 PLUGIN_RETRY = get_setting('INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5)                                 # How often should plugin loading be tried?

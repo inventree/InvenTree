@@ -30,8 +30,8 @@ class InvenTreeConfig(AppConfig):
         - Checking if migrations should be run
         - Cleaning up tasks
         - Starting regular tasks
-        - Updateing exchange rates
-        - Collecting notification mehods
+        - Updating exchange rates
+        - Collecting notification methods
         - Adding users set in the current environment
         """
         if canAppAccessDatabase() or settings.TESTING_ENV:
@@ -84,7 +84,7 @@ class InvenTreeConfig(AppConfig):
                 minutes=task.minutes,
             )
 
-        # Put at least one task onto the backround worker stack,
+        # Put at least one task onto the background worker stack,
         # which will be processed as soon as the worker comes online
         InvenTree.tasks.offload_task(
             InvenTree.tasks.heartbeat,

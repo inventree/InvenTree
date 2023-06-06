@@ -45,7 +45,7 @@ class WebhookView(CsrfExemptMixin, APIView):
     run_async = False
 
     def post(self, request, endpoint, *args, **kwargs):
-        """Process incomming webhook."""
+        """Process incoming webhook."""
         # get webhook definition
         self._get_webhook(endpoint, request, *args, **kwargs)
 
@@ -169,7 +169,7 @@ class CurrencyRefreshView(APIView):
 class SettingsList(ListAPI):
     """Generic ListView for settings.
 
-    This is inheritted by all list views for settings.
+    This is inherited by all list views for settings.
     """
 
     filter_backends = SEARCH_ORDER_FILTER

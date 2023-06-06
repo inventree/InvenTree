@@ -2,7 +2,23 @@
 {% load inventree_extras %}
 
 /* globals
+    calculateTotalPrice,
+    constructForm,
+    constructFormBody,
+    exportFormatOptions,
+    formatCurrency,
+    getFormFieldValue,
     inventreeGet,
+    inventreeLoad,
+    inventreeSave,
+    loadTableFilters,
+    makeCopyButton,
+    makeDeleteButton,
+    makeEditButton,
+    reloadBootstrapTable,
+    renderLink,
+    setupFilterList,
+    wrapButtons,
 */
 
 /* exported
@@ -138,10 +154,12 @@ function exportOrder(redirect_url, options={}) {
 var TotalPriceRef = ''; // reference to total price field
 var TotalPriceOptions = {}; // options to reload the price
 
+
 function loadOrderTotal(reference, options={}) {
     TotalPriceRef = reference;
     TotalPriceOptions = options;
 }
+
 
 function reloadTotal() {
     inventreeGet(
@@ -153,7 +171,7 @@ function reloadTotal() {
             }
         }
     );
-};
+}
 
 
 /*
