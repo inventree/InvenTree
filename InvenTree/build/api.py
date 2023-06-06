@@ -407,15 +407,19 @@ class BuildItemFilter(rest_filters.FilterSet):
         """Metaclass option"""
         model = BuildItem
         fields = [
-            'build',
+            'build_line',
             'stock_item',
-            'bom_item',
             'install_into',
         ]
 
     part = rest_filters.ModelChoiceFilter(
         queryset=part.models.Part.objects.all(),
         field_name='stock_item__part',
+    )
+
+    build = rest_filters.ModelChoiceFilter(
+        queryset=build.models.Build.objects.all(),
+        field_name='build_line__build',
     )
 
     tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
@@ -444,7 +448,6 @@ class BuildItemList(ListCreateAPI):
             params = self.request.query_params
 
             kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['build_detail'] = str2bool(params.get('build_detail', False))
             kwargs['location_detail'] = str2bool(params.get('location_detail', False))
             kwargs['stock_detail'] = str2bool(params.get('stock_detail', True))
         except AttributeError:
@@ -457,9 +460,8 @@ class BuildItemList(ListCreateAPI):
         queryset = BuildItem.objects.all()
 
         queryset = queryset.select_related(
-            'bom_item',
-            'bom_item__sub_part',
-            'build',
+            'build_line',
+            'build_line__build',
             'install_into',
             'stock_item',
             'stock_item__location',
@@ -469,7 +471,7 @@ class BuildItemList(ListCreateAPI):
         return queryset
 
     def filter_queryset(self, queryset):
-        """Customm query filtering for the BuildItem list."""
+        """Custom query filtering for the BuildItem list."""
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params

@@ -1328,7 +1328,7 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
     class Meta:
         """Model meta options"""
         unique_together = [
-            ('build', 'stock_item', 'install_into'),
+            ('build_line', 'stock_item', 'install_into'),
         ]
 
     @staticmethod
@@ -1523,23 +1523,6 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
         BuildLine,
         on_delete=models.SET_NULL, null=True,
         related_name='allocations',
-    )
-
-    build = models.ForeignKey(
-        Build,
-        on_delete=models.CASCADE,
-        related_name='allocated_stock',
-        verbose_name=_('Build'),
-        help_text=_('Build to allocate parts')
-    )
-
-    # Internal model which links part <-> sub_part
-    # We need to track this separately, to allow for "variant' stock
-    bom_item = models.ForeignKey(
-        part.models.BomItem,
-        on_delete=models.CASCADE,
-        related_name='allocate_build_items',
-        blank=True, null=True,
     )
 
     stock_item = models.ForeignKey(

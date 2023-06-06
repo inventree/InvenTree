@@ -87,14 +87,12 @@ class BuildItemAdmin(admin.ModelAdmin):
     """Class for managing the BuildItem model via the admin interface"""
 
     list_display = (
-        'build',
         'stock_item',
         'quantity'
     )
 
     autocomplete_fields = [
-        'build',
-        'bom_item',
+        'build_line',
         'stock_item',
         'install_into',
     ]
@@ -108,6 +106,12 @@ class BuildLineAdmin(admin.ModelAdmin):
         'bom_item',
         'quantity',
     )
+
+    search_fields = [
+        'build__title',
+        'build__reference',
+        'bom_item__sub_part__name',
+    ]
 
 
 admin.site.register(Build, BuildAdmin)

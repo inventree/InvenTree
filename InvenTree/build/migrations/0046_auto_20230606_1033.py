@@ -23,9 +23,7 @@ def add_build_line_links(apps, schema_editor):
         - The BuildLine objects should have been created in 0044_auto_20230528_1410.py
     """
 
-    Build = apps.get_model("build", "Build")
     BuildItem = apps.get_model("build", "BuildItem")
-    BomItem = apps.get_model("part", "BomItem")
     BuildLine = apps.get_model("build", "BuildLine")
 
     # Find any existing BuildItem objects
