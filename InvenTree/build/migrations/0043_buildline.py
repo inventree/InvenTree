@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantity', models.DecimalField(decimal_places=5, default=1, help_text='Required quantity for build order', max_digits=15, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Quantity')),
-                ('bom_item', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='build_lines', to='part.bomitem')),
+                ('bom_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='build_lines', to='part.bomitem')),
                 ('build', models.ForeignKey(help_text='Build object', on_delete=django.db.models.deletion.CASCADE, related_name='build_lines', to='build.build')),
             ],
             options={

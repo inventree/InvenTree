@@ -1296,8 +1296,7 @@ class BuildLine(models.Model):
 
     bom_item = models.ForeignKey(
         part.models.BomItem,
-        blank=True, null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='build_lines',
     )
 
