@@ -22,15 +22,22 @@ def delete_columns(apps, schema_editor):
     # Check if the 'checkbox' column exists
     try:
         print("Checking for column 'checkbox' in table 'part_partparametertemplate'")
-        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN checkbox;")
+        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN IF EXISTS checkbox;")
     except (OperationalError):
-        print("Column 'checkbox' does not exist (skipping)")
+        # OperationalError caused by syntax not allowed in sqlite - try again without
+        try:
+            schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN checkbox;")
+        except (OperationalError):
+            print("Column 'checkbox' does not exist (skipping)")
 
     try:
         print("Checking for column 'choices' in table 'part_partparametertemplate'")
-        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN choices;")
+        schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN IF EXISTS choices;")
     except (OperationalError):
-        print("Column 'choices' does not exist (skipping)")
+        try:
+            schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN choices;")
+        except (OperationalError):
+            print("Column 'choices' does not exist (skipping)")
 
 
 class Migration(migrations.Migration):
