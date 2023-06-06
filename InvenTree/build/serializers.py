@@ -756,34 +756,34 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     class Meta:
         """Serializer metaclass"""
         fields = [
-            'bom_item',
+            'build_item',
             'stock_item',
             'quantity',
             'output',
         ]
 
-    bom_item = serializers.PrimaryKeyRelatedField(
-        queryset=BomItem.objects.all(),
+    build_line = serializers.PrimaryKeyRelatedField(
+        queryset=BuildLine.objects.all(),
         many=False,
         allow_null=False,
         required=True,
-        label=_('BOM Item'),
+        label=_('Build Line Item'),
     )
 
-    def validate_bom_item(self, bom_item):
+    def validate_build_line(self, build_line):
         """Check if the parts match"""
         build = self.context['build']
 
         # BomItem should point to the same 'part' as the parent build
-        if build.part != bom_item.part:
+        if build.part != build_line.bom_item.part:
 
             # If not, it may be marked as "inherited" from a parent part
-            if bom_item.inherited and build.part in bom_item.part.get_descendants(include_self=False):
+            if build_line.bom_item.inherited and build.part in build_line.bom_item.part.get_descendants(include_self=False):
                 pass
             else:
                 raise ValidationError(_("bom_item.part must point to the same part as the build order"))
 
-        return bom_item
+        return build_line
 
     stock_item = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
@@ -826,8 +826,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         """Perform data validation for this item"""
         super().validate(data)
 
-        build = self.context['build']
-        bom_item = data['bom_item']
+        build_line = data['build_line']
         stock_item = data['stock_item']
         quantity = data['quantity']
         output = data.get('output', None)
@@ -849,20 +848,20 @@ class BuildAllocationItemSerializer(serializers.Serializer):
             })
 
         # Output *must* be set for trackable parts
-        if output is None and bom_item.sub_part.trackable:
+        if output is None and build_line.bom_item.sub_part.trackable:
             raise ValidationError({
                 'output': _('Build output must be specified for allocation of tracked parts'),
             })
 
         # Output *cannot* be set for un-tracked parts
-        if output is not None and not bom_item.sub_part.trackable:
+        if output is not None and not build_line.bom_item.sub_part.trackable:
 
             raise ValidationError({
                 'output': _('Build output cannot be specified for allocation of untracked parts'),
             })
 
         # Check if this allocation would be unique
-        if BuildItem.objects.filter(build=build, stock_item=stock_item, install_into=output).exists():
+        if BuildItem.objects.filter(build_line=build_line, stock_item=stock_item, install_into=output).exists():
             raise ValidationError(_('This stock item has already been allocated to this build output'))
 
         return data
@@ -896,24 +895,21 @@ class BuildAllocationSerializer(serializers.Serializer):
 
         items = data.get('items', [])
 
-        build = self.context['build']
-
         with transaction.atomic():
             for item in items:
-                bom_item = item['bom_item']
+                build_line = item['build_line']
                 stock_item = item['stock_item']
                 quantity = item['quantity']
                 output = item.get('output', None)
 
                 # Ignore allocation for consumable BOM items
-                if bom_item.consumable:
+                if build_line.bom_item.consumable:
                     continue
 
                 try:
                     # Create a new BuildItem to allocate stock
                     BuildItem.objects.create(
-                        build=build,
-                        bom_item=bom_item,
+                        build_line=build_line,
                         stock_item=stock_item,
                         quantity=quantity,
                         install_into=output

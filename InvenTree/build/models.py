@@ -1290,7 +1290,7 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
         - If a BomItem is already set, and it is valid, then we are ok!
         """
 
-        bom_item_valid = False
+        valid = False
 
         if self.bom_item and self.build:
             """
@@ -1305,14 +1305,14 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
             """
 
             if self.build.part == self.bom_item.part:
-                bom_item_valid = self.bom_item.is_stock_item_valid(self.stock_item)
+                valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
             elif self.bom_item.inherited:
                 if self.build.part in self.bom_item.part.get_descendants(include_self=False):
-                    bom_item_valid = self.bom_item.is_stock_item_valid(self.stock_item)
+                    valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
-        if not bom_item_valid:
+        if not valid:
 
             if self.build and self.stock_item:
                 ancestors = self.stock_item.part.get_ancestors(include_self=True, ascending=True)
@@ -1326,17 +1326,27 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
 
                     # A matching BOM item has been found!
                     if idx == 0 or bom_item.allow_variants:
-                        bom_item_valid = True
+                        valid = True
                         self.bom_item = bom_item
                         break
 
         # BomItem did not exist or could not be validated.
         # Search for a new one
-        if not bom_item_valid:
+        if not valid:
 
             raise ValidationError({
                 'stock_item': _("Selected stock item not found in BOM")
             })
+
+    @property
+    def build(self):
+        """Return the BuildOrder associated with this BuildItem"""
+        return self.build_line.build if self.build_line else None
+
+    @property
+    def bom_item(self):
+        """Return the BomItem associated with this BuildItem"""
+        return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic
     def complete_allocation(self, user, notes=''):
