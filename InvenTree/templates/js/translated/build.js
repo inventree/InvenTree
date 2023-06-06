@@ -3312,6 +3312,10 @@ function loadBuildLineTable(table, build_id, options={}) {
     // Callback to purchase stock
     $(table).on('click', '.button-buy', function() {
         let pk = $(this).attr('pk');
+        let row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+        // TODO: Refresh table after purchase order is created
+        orderParts([row.part_detail], {});
     });
 
     // Callback to allocate stock
