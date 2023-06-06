@@ -36,8 +36,8 @@ def delete_columns(apps, schema_editor):
         schema_editor.connection.in_atomic_block = False
         try:
             schema_editor.remove_field(
-                model_name="PartParameterTemplate",
-                name="checkbox",
+                model="PartParameterTemplate",
+                field="checkbox",
             )
         except (FieldDoesNotExist):
             print("Column 'checkbox' does not exist (skipping) - mysql")
