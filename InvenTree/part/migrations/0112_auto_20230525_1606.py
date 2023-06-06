@@ -5,6 +5,7 @@ from django.db import migrations, models
 from django.db.utils import OperationalError
 from django.db.transaction import TransactionManagementError
 
+
 def delete_columns(apps, schema_editor):
     """Hack method to delete columns (if they already exist).
 
@@ -35,9 +36,9 @@ def delete_columns(apps, schema_editor):
         in_atomic_block = schema_editor.connection.in_atomic_block
         schema_editor.connection.in_atomic_block = False
         try:
-            schema_editor.remove_field(
-                model="PartParameterTemplate",
-                field="checkbox",
+            migrations.RemoveField(
+                model_name='part_partparametertemplate',
+                name='checkbox',
             )
         except (FieldDoesNotExist):
             print("Column 'checkbox' does not exist (skipping) - mysql")
