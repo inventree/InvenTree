@@ -1,9 +1,8 @@
 """API serializers for the label app"""
 
+import label.models
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
                                    InvenTreeModelSerializer)
-
-from .models import PartLabel, StockItemLabel, StockLocationLabel
 
 
 class LabelSerializerBase(InvenTreeModelSerializer):
@@ -31,7 +30,7 @@ class StockItemLabelSerializer(LabelSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = StockItemLabel
+        model = label.models.StockItemLabel
         fields = LabelSerializerBase.label_fields()
 
 
@@ -41,7 +40,7 @@ class StockLocationLabelSerializer(LabelSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = StockLocationLabel
+        model = label.models.StockLocationLabel
         fields = LabelSerializerBase.label_fields()
 
 
@@ -51,5 +50,5 @@ class PartLabelSerializer(LabelSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = PartLabel
+        model = label.models.PartLabel
         fields = LabelSerializerBase.label_fields()
