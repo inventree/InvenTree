@@ -1318,6 +1318,7 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
 
     Attributes:
         build: Link to a Build object
+        build_line: Link to a BuildLine object (this is a "line item" within a build)
         bom_item: Link to a BomItem object (may or may not point to the same part as the build)
         stock_item: Link to a StockItem object
         quantity: Number of units allocated
@@ -1517,6 +1518,12 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
             return InvenTree.helpers.getMediaUrl(thumb_url)
         else:
             return InvenTree.helpers.getBlankThumbnail()
+
+    build_line = models.ForeignKey(
+        BuildLine,
+        on_delete=models.SET_NULL, null=True,
+        related_name='allocations',
+    )
 
     build = models.ForeignKey(
         Build,
