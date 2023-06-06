@@ -3259,7 +3259,35 @@ function loadBuildLineTable(table, build_id, options={}) {
                 switchable: false,
                 sortable: false,
                 formatter: function(value, row) {
-                    return 'TODO: actions';
+                    let buttons = '';
+                    let pk = row.pk;
+
+                    // Consumable items do not need to be allocated
+                    if (row.bom_item_detail.consumable) {
+                        return `<em>{% trans "Consumable Item" %}</em>`;
+                    }
+
+                    if (row.allocated < row.quantity) {
+
+                        // Add a button to "build" stock for this line
+                        if (row.part_detail.assembly) {
+                            buttons += makeIconButton('fa-tools icon-blue', 'button-build', pk, '{% trans "Build stock" %}');
+                        }
+
+                        // Add a button to "purchase" stock for this line
+                        if (row.part_detail.purchaseable) {
+                            buttons += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', pk, '{% trans "Order stock" %}');
+                        }
+
+                        // Add a button to "allocate" stock for this line
+                        buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-allocated', pk, '{% trans "Allocate stock" %}');
+                    }
+
+                    if (row.allocated > 0) {
+                        buttons += makeRemoveButton('button-unallocate', pk, '{% trans "Remove stock allocation" %}');
+                    }
+
+                    return wrapButtons(buttons);
                 }
             }
         ]
