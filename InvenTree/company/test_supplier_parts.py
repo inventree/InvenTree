@@ -88,7 +88,7 @@ class SupplierPartPackUnitsTests(InvenTreeTestCase):
         }
 
         # All these values are invalid for a part with dimension 'm'
-        # Either the values are invalid, or the units are incomaptible
+        # Either the values are invalid, or the units are incompatible
         fail_tests = [
             '-1',
             '-1m',

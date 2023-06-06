@@ -32,7 +32,7 @@ class MetaBase:
 
         Args:
             key (str): key for the value
-            old_key (str, optional): depreceated key - will throw warning
+            old_key (str, optional): deprecated key - will throw warning
             __default (optional): Value if nothing with key can be found. Defaults to None.
 
         Returns:
@@ -275,8 +275,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             pub_date = self.package.get('date')
         else:
             pub_date = datetime.fromisoformat(str(pub_date))
-        if not pub_date:
-            pub_date = _('No date found')  # pragma: no cover
+
         return pub_date
 
     @property

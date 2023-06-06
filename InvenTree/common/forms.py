@@ -46,7 +46,7 @@ class MatchFieldForm(forms.Form):
     """Step 2 of FileManagementFormView."""
 
     def __init__(self, *args, **kwargs):
-        """Setup filemanager and check columsn."""
+        """Setup filemanager and check columns."""
         # Get FileManager
         file_manager = None
         if 'file_manager' in kwargs:
@@ -106,7 +106,7 @@ class MatchItemForm(forms.Form):
                     # Set field name
                     field_name = col_guess.lower() + '-' + str(row['index'])
 
-                    # check if field def was overriden
+                    # check if field def was overridden
                     overriden_field = self.get_special_field(col_guess, row, file_manager)
                     if overriden_field:
                         self.fields[field_name] = overriden_field
@@ -174,5 +174,5 @@ class MatchItemForm(forms.Form):
                         )
 
     def get_special_field(self, col_guess, row, file_manager):
-        """Function to be overriden in inherited forms to add specific form settings."""
+        """Function to be overridden in inherited forms to add specific form settings."""
         return None

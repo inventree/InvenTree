@@ -1,6 +1,11 @@
 {% load i18n %}
 
 /* globals
+    getModelRenderer,
+    inventreeGet,
+    inventreePut,
+    sanitizeInputString,
+    user_settings,
 */
 
 /* exported
@@ -102,6 +107,10 @@ var searchQuery = null;
 var searchResultTypes = [];
 var searchRequest = null;
 
+
+/*
+ * Callback for when the search text is changed
+ */
 function searchTextChanged(event) {
 
     var text = $('#offcanvas-search').find('#search-input').val();
@@ -110,9 +119,12 @@ function searchTextChanged(event) {
 
     clearTimeout(searchInputTimer);
     searchInputTimer = setTimeout(updateSearch, 250);
-};
+}
 
 
+/*
+ * Update the search results
+ */
 function updateSearch() {
 
     if (searchText == searchTextCurrent) {

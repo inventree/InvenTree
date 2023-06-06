@@ -249,7 +249,7 @@ class ScheduledTask:
 
 
 class TaskRegister:
-    """Registery for periodicall tasks."""
+    """Registry for periodicall tasks."""
     task_list: List[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
@@ -568,7 +568,7 @@ def run_backup():
 def check_for_migrations(worker: bool = True):
     """Checks if migrations are needed.
 
-    If the setting auto_update is enabled we will start updateing.
+    If the setting auto_update is enabled we will start updating.
     """
     # Test if auto-updates are enabled
     if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):

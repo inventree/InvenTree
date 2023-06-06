@@ -51,7 +51,7 @@ class StockTestBase(InvenTreeTestCase):
 
 
 class StockTest(StockTestBase):
-    """Tests to ensure that the stock location tree functions correcly."""
+    """Tests to ensure that the stock location tree functions correctly."""
 
     def test_pathstring(self):
         """Check that pathstring updates occur as expected"""
@@ -145,7 +145,7 @@ class StockTest(StockTestBase):
                 item.save()
                 item.full_clean()
 
-        # Check that valid URLs pass - and check custon schemes
+        # Check that valid URLs pass - and check custom schemes
         for good_url in [
             'https://test.com',
             'https://digikey.com/datasheets?file=1010101010101.bin',
@@ -309,12 +309,12 @@ class StockTest(StockTestBase):
 
         self.assertFalse(self.drawer2.has_children)
 
-        childs = [item.pk for item in self.office.getUniqueChildren()]
+        children = [item.pk for item in self.office.getUniqueChildren()]
 
-        self.assertIn(self.drawer1.id, childs)
-        self.assertIn(self.drawer2.id, childs)
+        self.assertIn(self.drawer1.id, children)
+        self.assertIn(self.drawer2.id, children)
 
-        self.assertNotIn(self.bathroom.id, childs)
+        self.assertNotIn(self.bathroom.id, children)
 
     def test_items(self):
         """Test has_items."""
@@ -646,7 +646,7 @@ class StockTest(StockTestBase):
 
             self.assertEqual(item.serial_int, 0)
 
-        # Next, test for incremenet / decrement functionality
+        # Next, test for increment / decrement functionality
         item.serial = 100
         item.save()
 
@@ -754,7 +754,7 @@ class StockTest(StockTestBase):
         """Unit tests for stock location tree structure (MPTT).
 
         Ensure that the MPTT structure is rebuilt correctly,
-        and the corrent ancestor tree is observed.
+        and the current ancestor tree is observed.
 
         Ref: https://github.com/inventree/InvenTree/issues/2636
         Ref: https://github.com/inventree/InvenTree/issues/2733
@@ -1185,7 +1185,7 @@ class TestResultTest(StockTestBase):
         tests = item.testResultMap(include_installed=False)
         self.assertEqual(len(tests), 3)
 
-        # There are no "sub items" intalled at this stage
+        # There are no "sub items" installed at this stage
         tests = item.testResultMap(include_installed=False)
         self.assertEqual(len(tests), 3)
 

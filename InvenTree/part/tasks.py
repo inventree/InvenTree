@@ -21,6 +21,7 @@ import common.notifications
 import common.settings
 import company.models
 import InvenTree.helpers
+import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models
 import stock.models
@@ -41,7 +42,7 @@ def notify_low_stock(part: part.models.Part):
         'part': part,
         'name': name,
         'message': message,
-        'link': InvenTree.helpers.construct_absolute_url(part.get_absolute_url()),
+        'link': InvenTree.helpers_model.construct_absolute_url(part.get_absolute_url()),
         'template': {
             'html': 'email/low_stock_notification.html',
             'subject': name,
@@ -188,7 +189,7 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
                 total_cost_max += pp
                 has_pricing = True
             except MissingRate:
-                logger.warning(f"MissingRate exception occured converting {entry.purchase_price} to {base_currency}")
+                logger.warning(f"MissingRate exception occurred converting {entry.purchase_price} to {base_currency}")
 
         if not has_pricing:
             # Fall back to the part pricing data

@@ -12,11 +12,14 @@ from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.models.validators import MinMoneyValidator
 from rest_framework.fields import URLField as RestURLField
 
+import InvenTree.helpers
+
 from .validators import AllowedURLValidator, allowable_url_schemes
 
 
 class InvenTreeRestURLField(RestURLField):
     """Custom field for DRF with custom scheme vaildators."""
+
     def __init__(self, **kwargs):
         """Update schemes."""
 
@@ -109,6 +112,7 @@ class InvenTreeModelMoneyField(ModelMoneyField):
 
 class InvenTreeMoneyField(MoneyField):
     """Custom MoneyField for clean migrations while using dynamic currency settings."""
+
     def __init__(self, *args, **kwargs):
         """Override initial values with the real info from database."""
         kwargs.update(money_kwargs())
@@ -147,8 +151,6 @@ class DatePickerFormField(forms.DateField):
 
 def round_decimal(value, places, normalize=False):
     """Round value to the specified number of places."""
-
-    import InvenTree.helpers
 
     if type(value) in [Decimal, float]:
         value = round(value, places)

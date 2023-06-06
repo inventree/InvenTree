@@ -28,13 +28,13 @@ class MiddlewareTests(InvenTreeTestCase):
         self.client.logout()
 
         # check that static files go through
-        # TODO @matmair reenable this check
+        # TODO @matmair re-enable this check
         # self.check_path('/static/css/inventree.css', 302)
 
         # check that account things go through
         self.check_path(reverse('account_login'))
 
-        # logout goes diretly to login
+        # logout goes directly to login
         self.check_path(reverse('account_logout'))
 
         # check that frontend code is redirected to login

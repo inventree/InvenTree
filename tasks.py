@@ -131,7 +131,7 @@ def install(c):
 
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
-    """Sets up everything needed for the dev enviroment."""
+    """Sets up everything needed for the dev environment."""
     print("Installing required python packages from 'requirements-dev.txt'")
 
     # Install required Python packages with PIP
@@ -175,7 +175,7 @@ def clean_settings(c):
     manage(c, "clean_settings")
 
 
-@task(help={'mail': 'mail of the user whos MFA should be disabled'})
+@task(help={'mail': "mail of the user who's MFA should be disabled"})
 def remove_mfa(c, mail=''):
     """Remove MFA for a user."""
     if not mail:
@@ -520,7 +520,7 @@ def test_translations(c):
     file_path = pathlib.Path(settings.LOCALE_PATHS[0], 'xx', 'LC_MESSAGES', 'django.po')
     new_file_path = str(file_path) + '_new'
 
-    # complie regex
+    # compile regex
     reg = re.compile(
         r"[a-zA-Z0-9]{1}" +  # match any single letter and number  # noqa: W504
         r"(?![^{\(\<]*[}\)\>])" +  # that is not inside curly brackets, brackets or a tag  # noqa: W504
@@ -542,7 +542,7 @@ def test_translations(c):
                     file_new.write(line)
                 else:
                     if last_string:
-                        last_string = last_string + line  # a string is beeing read in -> continue appending
+                        last_string = last_string + line  # a string is being read in -> continue appending
                     file_new.write(line)
 
     # change out translation files
@@ -561,21 +561,35 @@ def test_translations(c):
     os.environ['TEST_TRANSLATIONS'] = 'True'
 
 
-@task
-def test(c, disable_pty=False):
-    """Run unit-tests for InvenTree codebase."""
+@task(
+    help={
+        'disable_pty': 'Disable PTY',
+        'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
+    }
+)
+def test(c, disable_pty=False, runtest=''):
+    """Run unit-tests for InvenTree codebase.
+
+    To run only certain test, use the argument --runtest.
+    This can filter all the way down to:
+        <module>.<file>.<class>.<method>
+
+    Example:
+        test --runtest=company.test_api
+    will run tests in the company/test_api.py file.
+    """
     # Run sanity check on the django install
     manage(c, 'check')
 
     pty = not disable_pty
 
     # Run coverage tests
-    manage(c, 'test --slowreport', pty=pty)
+    manage(c, f'test --slowreport {runtest}', pty=pty)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
-    """Setup a testing enviroment."""
+    """Setup a testing environment."""
 
     from InvenTree.InvenTree.config import get_media_dir
 

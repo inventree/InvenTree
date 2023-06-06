@@ -69,12 +69,6 @@
 
 {% if user.is_staff %}
     {% include "InvenTree/settings/settings_staff_js.html" %}
-    {% plugins_enabled as plug %}
-    {% if plug %}
-        $("#install-plugin").click(function() {
-            installPlugin();
-        });
-    {% endif %}
 {% endif %}
 
 enableSidebar('settings');

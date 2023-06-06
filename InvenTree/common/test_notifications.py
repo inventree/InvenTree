@@ -47,7 +47,7 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
         with self.assertRaises(NotImplementedError):
             NoNameNotificationMethod('', '', '', '', )
 
-        # a not existant context check
+        # a not existent context check
         with self.assertRaises(NotImplementedError):
             WrongContextNotificationMethod('', '', '', '', )
 
@@ -149,7 +149,7 @@ class NotificationUserSettingTests(BaseNotificationIntegrationTest):
             def send_bulk(self):
                 return True
 
-        # run thorugh notification
+        # run through notification
         self._notification_run(SampleImplementation)
         # make sure the array fits
         array = storage.get_usersettings(self.user)
