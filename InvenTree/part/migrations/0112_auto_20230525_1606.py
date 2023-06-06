@@ -35,7 +35,7 @@ def delete_columns(apps, schema_editor):
         in_atomic_block = schema_editor.connection.in_atomic_block
         schema_editor.connection.in_atomic_block = False
         try:
-            schema_editor.migrations.RemoveField(
+            schema_editor.remove_field(
                 model_name="PartParameterTemplate",
                 name="checkbox",
             )
