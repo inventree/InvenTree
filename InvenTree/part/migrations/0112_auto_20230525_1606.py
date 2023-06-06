@@ -30,7 +30,7 @@ def delete_columns(apps, schema_editor):
         try:
             schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN checkbox;")
         except (OperationalError):
-            print("Column 'checkbox' does not exist (skipping) - pqsl")
+            print("Column 'checkbox' does not exist (skipping)")
     except (TransactionManagementError):
         # TransactionManagementError caused by trying to run a transaction inside a transaction - mysql
         in_atomic_block = schema_editor.connection.in_atomic_block
