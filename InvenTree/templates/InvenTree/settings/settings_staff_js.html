@@ -309,11 +309,7 @@ onPanelLoad('part-parameters', function() {
 
     $("#new-param").click(function() {
         constructForm('{% url "api-part-parameter-template-list" %}', {
-            fields: {
-                name: {},
-                units: {},
-                description: {},
-            },
+            fields: partParameterTemplateFields(),
             method: 'POST',
             title: '{% trans "Create Part Parameter Template" %}',
             refreshTable: '#param-table',
@@ -388,4 +384,22 @@ onPanelLoad('stocktake', function() {
         });
     });
     {% endif %}
+});
+
+// Javascript for plugins panel
+onPanelLoad('plugin', function() {
+
+{% plugins_enabled as plug %}
+
+    loadPluginTable('#plugin-table', {
+        custom: {% js_bool plug %},
+    });
+
+{% if plug %}
+    // Callback to install new plugin
+    $("#install-plugin").click(function() {
+        installPlugin();
+    });
+
+{% endif %}
 });

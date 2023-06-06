@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='part',
             name='link',
-            field=InvenTree.fields.InvenTreeURLField(blank=True, help_text='Link to extenal URL', null=True),
+            field=InvenTree.fields.InvenTreeURLField(blank=True, help_text='Link to external URL', null=True),
         ),
         migrations.AlterField(
             model_name='part',

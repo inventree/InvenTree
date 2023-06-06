@@ -155,11 +155,11 @@ function detect_envs() {
 
 function create_initscripts() {
 
-  # Make sure python env exsists
+  # Make sure python env exists
   if test -f "${APP_HOME}/env"; then
-    echo "# python enviroment already present - skipping"
+    echo "# python environment already present - skipping"
   else
-    echo "# Setting up python enviroment"
+    echo "# Setting up python environment"
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && ${SETUP_PYTHON} -m venv env"
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install invoke wheel"
 

@@ -55,7 +55,7 @@ class TestBomItemMigrations(MigratorTestCase):
     migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
 
     def prepare(self):
-        """Create intial dataset"""
+        """Create initial dataset"""
 
         Part = self.old_state.apps.get_model('part', 'part')
         BomItem = self.old_state.apps.get_model('part', 'bomitem')

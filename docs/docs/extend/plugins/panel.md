@@ -21,36 +21,37 @@ Panel content can be rendered by returning HTML directly, or by rendering from a
 
 Each plugin can register templates simply by providing a 'templates' directory in its root path.
 
-The convention is that each 'templates' directory contains a subdirectory with the same name as the plugin :
-  * e.g. templates/myplugin/my_template.html
+The convention is that each 'templates' directory contains a subdirectory with the same name as the plugin (e.g. `templates/myplugin/my_template.html`)
 
 
-In this case, the template can then be loaded (from any plugin!) by loading "myplugin/my_template.html".
-
+In this case, the template can then be loaded (from any plugin!) by loading `myplugin/my_template.html`.
 
 
 ### Javascript
 
 Custom code can be provided which will run when the particular panel is first loaded (by selecting it from the side menu).
 
-To add some javascript code, you can add a reference to a function that will be called when the panel is loaded with the 'javascript' key in the panel description :
-```
-  {
-        'title': "Updates",
-        'description': "Latest updates for this part",
-        'javascript': 'alert("You just loaded this panel!")',
-    }
+To add some javascript code, you can add a reference to a function that will be called when the panel is loaded with the 'javascript' key in the panel description:
+
+```python
+{
+    'title': "Updates",
+    'description': "Latest updates for this part",
+    'javascript': 'alert("You just loaded this panel!")',
+}
 ```
 
-Or to add a template file that will be rendered as javascript code, from the plugin template folder, with the 'javascript_template' key in the panel description :
- ```
-  {
-        'title': "Updates",
-        'description': "Latest updates for this part",
-        'javascript_template': 'pluginTemplatePath/myJavascriptFile.js',
-    }
+Or to add a template file that will be rendered as javascript code, from the plugin template folder, with the 'javascript_template' key in the panel description:
+
+```python
+{
+    'title': "Updates",
+    'description': "Latest updates for this part",
+    'javascript_template': 'pluginTemplatePath/myJavascriptFile.js',
+}
 ```
-note : see convention for template directory above.
+
+Note : see convention for template directory above.
 
 ## Example Implementation
 

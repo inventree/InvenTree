@@ -51,7 +51,7 @@ If you wish for a new database entry to be created for a particular data row, th
 
 #### Non-Empty ID
 
-If the `id` field in a given data row is *not* empty, then InvenTree inteprets that particular row as an *existing* row to override / update.
+If the `id` field in a given data row is *not* empty, then InvenTree interprets that particular row as an *existing* row to override / update.
 
 In this case, InvenTree will search the database for an entry with the matching `id`. If a matching entry is found, then the entry is updated with the provided data.
 

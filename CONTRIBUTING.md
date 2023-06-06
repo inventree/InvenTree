@@ -1,4 +1,4 @@
-Hi there, thank you for your intrest in contributing!
+Hi there, thank you for your interest in contributing!
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
 ## Quickstart
@@ -50,7 +50,7 @@ The HEAD of the "main" or "master" branch of InvenTree represents the current "l
 - All feature branches are merged into master
 - All bug fixes are merged into master
 
-**No pushing to master:** New featues must be submitted as a pull request from a separate branch (one branch per feature).
+**No pushing to master:** New features must be submitted as a pull request from a separate branch (one branch per feature).
 
 ### Feature Branches
 
@@ -70,7 +70,7 @@ The HEAD of the "stable" branch represents the latest stable release code.
 #### Release Candidate Branches
 
 - Release candidate branches are made from master, and merged into stable.
-- RC branches are targetted at a major/minor version e.g. "0.5"
+- RC branches are targeted at a major/minor version e.g. "0.5"
 - When a release candidate branch is merged into *stable*, the release is tagged
 
 #### Bugfix Branches
@@ -123,9 +123,21 @@ The InvenTree code base makes use of [GitHub actions](https://github.com/feature
 
 The various github actions can be found in the `./github/workflows` directory
 
+### Run tests locally
+
+To run test locally, use:
+```
+invoke test
+```
+
+To run only partial tests, for example for a module use:
+```
+invoke test --runtest order
+```
+
 ## Code Style
 
-Sumbitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
+Submitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
 Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for python. Docstrings for general javascript code is encouraged! Docstyles are checked by `invoke style`.
 
 ### Django templates
@@ -193,7 +205,9 @@ The tags describe issues and PRs in multiple areas:
 |  | bug | Identifies a bug which needs to be addressed |
 |  | dependency | Relates to a project dependency |
 |  | duplicate | Duplicate of another issue or PR |
-|  | enhancement | This is an suggested enhancement or new feature |
+|  | enhancement | This is an suggested enhancement, extending the functionality of an existing feature |
+|  | experimental | This is a new *experimental* feature which needs to be enabled manually |
+|  | feature | This is a new feature, introducing novel functionality |
 |  | help wanted | Assistance required |
 |  | invalid | This issue or PR is considered invalid |
 |  | inactive | Indicates lack of activity |
@@ -215,7 +229,9 @@ The tags describe issues and PRs in multiple areas:
 |  | stock | Stock item management |
 |  | user interface | User interface |
 | Ecosystem Labels |  |  |
+|  | backport | Tags that the issue will be backported to a stable branch as a bug-fix |
 |  | demo | Relates to the InvenTree demo server or dataset |
 |  | docker | Docker / docker-compose |
 |  | CI | CI / unit testing ecosystem |
+|  | refactor | Refactoring existing code |
 |  | setup | Relates to the InvenTree setup / installation process |
