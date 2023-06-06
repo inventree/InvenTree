@@ -16,4 +16,14 @@ class Migration(migrations.Migration):
             name='build_line',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='allocations', to='build.buildline'),
         ),
+        migrations.AlterField(
+            model_name='builditem',
+            name='bom_item',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='allocate_build_items', to='part.bomitem'),
+        ),
+        migrations.AlterField(
+            model_name='builditem',
+            name='build',
+            field=models.ForeignKey(blank=True, help_text='Build to allocate parts', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='allocated_stock', to='build.build', verbose_name='Build'),
+        ),
     ]
