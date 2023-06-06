@@ -3138,6 +3138,7 @@ function loadBuildLineTable(table, build_id, options={}) {
         name: 'buildlines',
         original: params,
         search: true,
+        sidePagination: 'server',
         showColumns: true,
         formatNoMatches: function() {
             return '{% trans "No build lines found" %}';
@@ -3154,6 +3155,7 @@ function loadBuildLineTable(table, build_id, options={}) {
                 title: '{% trans "Required Part" %}',
                 switchable: false,
                 sortable: true,
+                sortName: 'part',
                 formatter: function(value, row) {
                     if (value == null) {
                         return `BOM item deleted`;
@@ -3170,6 +3172,10 @@ function loadBuildLineTable(table, build_id, options={}) {
 
                     if (row.bom_item_detail) {
                         html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
+                    }
+
+                    if (row.part_detail.trackable) {
+                        html += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
                     }
 
                     return html;
@@ -3203,6 +3209,7 @@ function loadBuildLineTable(table, build_id, options={}) {
             },
             {
                 field: 'unit_quantity',
+                sortable: true,
                 title: '{% trans "Unit Quantity" %}',
                 formatter: function(value, row) {
                     let text = row.bom_item_detail.quantity;
@@ -3212,15 +3219,29 @@ function loadBuildLineTable(table, build_id, options={}) {
                     }
 
                     if (row.part_detail.units) {
-                        text += ` <span class='badge badge-right'>${row.part_detail.units}</small>`;
+                        text += ` <span class='badge bg-dark rounded-pill badge-right'>${row.part_detail.units}</small>`;
                     }
 
                     return text;
                 }
             },
             {
+                field: 'quantity',
+                title: '{% trans "Required Quantity" %}',
+                sortable: true,
+            },
+            {
+                field: 'available',
+                title: '{% trans "Available" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    return 'TODO: available';
+                }
+            },
+            {
                 field: 'allocated',
                 title: '{% trans "Allocated" %}',
+                sortable: true,
                 formatter: function(value, row) {
                     return makeProgressBar(row.allocated, row.quantity);
                 }

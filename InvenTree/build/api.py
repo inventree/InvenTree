@@ -304,10 +304,27 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
+        'part',
+        'allocated',
+        'reference',
         'quantity',
+        'consumable',
+        'optional',
+        'unit_quantity',
     ]
 
-    search_fields = []
+    ordering_field_aliases = {
+        'part': 'bom_item__sub_part__name',
+        'reference': 'bom_item__reference',
+        'unit_quantity': 'bom_item__quantity',
+        'consumable': 'bom_item__consumable',
+        'optional': 'bom_item__optional',
+    }
+
+    search_fields = [
+        'bom_item__sub_part__name',
+        'bom_item__reference',
+    ]
 
 
 class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
