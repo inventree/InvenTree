@@ -283,8 +283,9 @@ class Address(models.Model):
 
     def __init__(self, *args, **kwargs):
         """Custom init function"""
+        if 'confirm_primary' in kwargs:
+            self.confirm_primary = kwargs.pop('confirm_primary', None)
         super().__init__(*args, **kwargs)
-        self.confirm_primary = False
 
     def __str__(self):
         """Defines string representation of address to supple a one-line to API calls"""
@@ -376,12 +377,21 @@ class Address(models.Model):
 @receiver(pre_save, sender=Address)
 def check_primary(sender, instance, **kwargs):
     """Removes primary flag from current primary address if the to-be-saved address is marked as primary"""
-    if instance.primary is True:
-        if instance.company.primary_address is not None:
-            if instance.id != instance.company.primary_address.id:
-                adr = Address.objects.get(id=instance.company.primary_address.id)
-                adr.primary = False
-                adr.save()
+
+    if instance.company.primary_address is None:
+        instance.primary = True
+
+    # If confirm_primary is not present, this function does not need to do anything
+    if not hasattr(instance, 'confirm_primary') or \
+       instance.primary is False or \
+       instance.company.primary_address is None or \
+       instance.id == instance.company.primary_address.id:
+        return
+
+    if instance.confirm_primary is True:
+        adr = Address.objects.get(id=instance.company.primary_address.id)
+        adr.primary = False
+        adr.save()
 
 
 class ManufacturerPart(MetadataMixin, models.Model):

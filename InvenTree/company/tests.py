@@ -204,13 +204,22 @@ class AddressTest(TestCase):
         # Testing the constraint itself
         # Intentionally throwing exceptions breaks unit tests unless performed in an atomic block
         with transaction.atomic():
-            self.assertRaises(IntegrityError, Address.objects.create, company=self.c, primary=True)
+            self.assertRaises(IntegrityError, Address.objects.create, company=self.c, primary=True, confirm_primary=False)
 
         Address.objects.create(company=c2, primary=True, line1="Hellothere", line2="generalkenobi")
 
         with transaction.atomic():
             self.assertRaises(IntegrityError, Address.objects.create, company=c2, primary=True)
         self.assertEqual(Address.objects.count(), 3)
+
+    def test_first_address_is_primary(self):
+        """Test that first address related to company is always set ot primary"""
+
+        addr = Address.objects.create(company=self.c)
+
+        self.assertTrue(addr.primary)
+
+        self.assertRaises(IntegrityError, Address.objects.create, company=self.c, primary=True)
 
     def test_model_str(self):
         """Test value of __str__"""
@@ -232,7 +241,6 @@ class AddressTest(TestCase):
         self.assertEqual(str(addr), f'{l1}, {l2}, {pcd}, {pct}, {pv}, {cn}')
 
         addr2 = Address.objects.create(company=self.c,
-                                       primary=True,
                                        title=t,
                                        line1=l1,
                                        postal_code=pcd)

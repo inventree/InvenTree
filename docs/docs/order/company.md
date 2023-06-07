@@ -47,7 +47,33 @@ A *contact* can be assigned to orders, (such as [purchase orders](./purchase_ord
 
 A company can have multiple registered addresses for use with all types of orders.
 An address is broken down to internationally recognised elements that are designed to allow for formatting an address according to user needs.
-Addresses can be accessed by the <span class='badge inventree nav main'><span class='fas fa-map-marked'></span> Contacts</span> navigation tab.
+Addresses are composed differently across the world, and Inventree reflects this by splitting addresses into components:
+- Line 1: Main street address
+- Line 2: Extra street address line
+- Postal Code: Also known as ZIP code, this is normally a number 3-5 digits in length
+- City: The city tied to the postal code
+- Province: The larger region the address is located in. Also known as State in the US
+- Country: Country the address is located in, written in CAPS
+
+Here are a couple of examples of how the address structure differs by country, but these components can construct a correctly formatted address for any given country.
+
+UK address format:
+Recipient
+Line 1
+Line 2
+City
+Postal Code
+Country
+
+US Address Format:
+Recipient
+Line 1
+Line 2
+City State Postal Code
+Country
+
+
+Addresses can be accessed by the <span class='badge inventree nav main'><span class='fas fa-map-marked'></span> Addresses</span> navigation tab.
 
 #### Primary Address
 
