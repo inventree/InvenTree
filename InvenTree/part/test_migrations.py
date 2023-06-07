@@ -194,7 +194,7 @@ class PartUnitsMigrationTest(MigratorTestCase):
 class TestPartParameterTemplateMigration(MigratorTestCase):
     """Test for data migration of PartParameterTemplate
 
-    Ref:
+    Ref: https://github.com/inventree/InvenTree/pull/4987
     """
 
     migrate_from = ('part', '0110_alter_part_units')
