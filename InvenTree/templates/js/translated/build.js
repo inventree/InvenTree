@@ -3129,6 +3129,122 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
 
 
 /*
+ * Render a table of BuildItem objects, which are allocated against a particular BuildLine
+ */
+function renderBuildLineAllocationTable(element, build_line, options={}) {
+
+    let output = options.output || 'untracked';
+    let tableId = `allocation-table-${output}-${build_line.pk}`;
+
+    // Construct a table element
+    let html = `
+    <div class='sub-table'>
+        <table class='table table-condensed table-striped' id='${tableId}'></table>
+    </div>`;
+
+    element.html(html);
+
+    let sub_table = $(`#${tableId}`);
+
+    // Load the allocation items into the table
+    sub_table.bootstrapTable({
+        data: build_line.allocations,
+        showHeader: false,
+        columns: [
+            {
+                field: 'part',
+                title: '{% trans "Part" %}',
+                formatter: function(value, row) {
+                    let html = imageHoverIcon(row.part_detail.thumbnail);
+                    html += renderLink(row.part_detail.full_name, `/part/${value}/`);
+                    return html;
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Allocated Quantity" %}',
+                formatter: function(value, row) {
+                    let text = '';
+                    let url = '';
+                    let serial = row.serial;
+
+                    if (row.stock_item_detail) {
+                        serial = row.stock_item_detail.serial;
+                    }
+
+                    if (serial && row.quantity == 1) {
+                        text = `{% trans "Serial Number" %}: ${serial}`;
+                    } else {
+                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                        if (row.part_detail && row.part_detail.units) {
+                            text += ` <small>${row.part_detail.units}</small>`;
+                        }
+                    }
+
+                    var pk = row.stock_item || row.pk;
+
+                    url = `/stock/item/${pk}/`;
+
+                    return renderLink(text, url);
+                }
+            },
+            {
+                field: 'location',
+                title: '{% trans "Location" %}',
+                formatter: function(value, row) {
+                    if (row.location_detail) {
+                        var text = shortenString(row.location_detail.pathstring);
+                        var url = `/stock/location/${row.location}/`;
+
+                        return renderLink(text, url);
+                    } else {
+                        return '<i>{% trans "No location set" %}</i>';
+                    }
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                formatter: function(value, row) {
+                    let buttons = '';
+                    buttons += makeEditButton('button-allocation-edit', row.pk, '{% trans "Edit stock allocation" %}');
+                    buttons += makeDeleteButton('button-allocation-delete', row.pk, '{% trans "Delete stock allocation" %}');
+                    return wrapButtons(buttons);
+                }
+            }
+        ]
+    });
+
+    // Callbacks
+    $(sub_table).on('click', '.button-allocation-edit', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-build-item-list" %}${pk}/`, {
+            fields: {
+                quantity: {},
+            },
+            title: '{% trans "Edit Allocation" %}',
+            onSuccess: function() {
+                $(options.parent_table).bootstrapTable('refresh');
+            },
+        });
+    });
+
+    $(sub_table).on('click', '.button-allocation-delete', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-build-item-list" %}${pk}/`, {
+            method: 'DELETE',
+            title: '{% trans "Remove Allocation" %}',
+            onSuccess: function() {
+                $(options.parent_table).bootstrapTable('refresh');
+            },
+        });
+    });
+}
+
+
+/*
  * Load a table of BuildLine objects associated with a Build
  *
  * @param {int} build_id - The ID of the Build object
@@ -3154,6 +3270,17 @@ function loadBuildLineTable(table, build_id, options={}) {
         sidePagination: 'server',
         showColumns: true,
         uniqueId: 'pk',
+        buttons: constructExpandCollapseButtons(table),
+        detailView: true,
+        detailFilter: function(index, row) {
+            // Detail view is available if there is any allocated stock
+            return row.allocated > 0;
+        },
+        detailFormatter: function(_index, row, element) {
+            renderBuildLineAllocationTable(element, row, {
+                parent_table: table,
+            });
+        },
         formatNoMatches: function() {
             return '{% trans "No build lines found" %}';
         },

@@ -1004,7 +1004,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
     build = serializers.PrimaryKeyRelatedField(source='build_line.build', many=False, read_only=True)
 
     # Extra (optional) detail fields
-    part_detail = PartSerializer(source='stock_item.part', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='stock_item.part', many=False, read_only=True)
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
     location_detail = LocationSerializer(source='stock_item.location', read_only=True)
 
@@ -1012,8 +1012,8 @@ class BuildItemSerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """Determine which extra details fields should be included"""
-        part_detail = kwargs.pop('part_detail', False)
-        location_detail = kwargs.pop('location_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
+        location_detail = kwargs.pop('location_detail', True)
         stock_detail = kwargs.pop('stock_detail', False)
 
         super().__init__(*args, **kwargs)
