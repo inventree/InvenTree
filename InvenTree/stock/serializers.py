@@ -44,6 +44,50 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         ]
 
 
+class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for the StockItemTestResult model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemTestResult
+
+        fields = [
+            'pk',
+            'stock_item',
+            'key',
+            'test',
+            'result',
+            'value',
+            'attachment',
+            'notes',
+            'user',
+            'user_detail',
+            'date'
+        ]
+
+        read_only_fields = [
+            'pk',
+            'user',
+            'date',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Add detail fields."""
+        user_detail = kwargs.pop('user_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if user_detail is not True:
+            self.fields.pop('user_detail')
+
+    user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
+
+    key = serializers.CharField(read_only=True)
+
+    attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=False)
+
+
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
     """Brief serializers for a StockItem."""
 
@@ -126,6 +170,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
+            'test_detail',
 
             'tags',
         ]
@@ -234,11 +279,11 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
+    # Optional detail fields, which can be appended via query parameters
     supplier_part_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
-
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
+    tests = StockItemTestResultSerializer(source='test_results', many=True, read_only=True)
 
     quantity = InvenTreeDecimalField()
 
@@ -266,17 +311,21 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
         supplier_part_detail = kwargs.pop('supplier_part_detail', False)
+        tests = kwargs.pop('tests', False)
 
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
-        if part_detail is not True:
+        if not part_detail:
             self.fields.pop('part_detail')
 
-        if location_detail is not True:
+        if not location_detail:
             self.fields.pop('location_detail')
 
-        if supplier_part_detail is not True:
+        if not supplier_part_detail:
             self.fields.pop('supplier_part_detail')
+
+        if not tests:
+            self.fields.pop('tests')
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
@@ -651,50 +700,6 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
         fields = InvenTree.serializers.InvenTreeAttachmentSerializer.attachment_fields([
             'stock_item',
         ])
-
-
-class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for the StockItemTestResult model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItemTestResult
-
-        fields = [
-            'pk',
-            'stock_item',
-            'key',
-            'test',
-            'result',
-            'value',
-            'attachment',
-            'notes',
-            'user',
-            'user_detail',
-            'date'
-        ]
-
-        read_only_fields = [
-            'pk',
-            'user',
-            'date',
-        ]
-
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
-        user_detail = kwargs.pop('user_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if user_detail is not True:
-            self.fields.pop('user_detail')
-
-    user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
-
-    key = serializers.CharField(read_only=True)
-
-    attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=False)
 
 
 class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
