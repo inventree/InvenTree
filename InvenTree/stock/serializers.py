@@ -170,7 +170,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
-            'test_detail',
+            'tests',
 
             'tags',
         ]
