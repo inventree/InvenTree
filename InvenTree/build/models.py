@@ -566,20 +566,20 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         trigger_event('build.cancelled', id=self.pk)
 
     @transaction.atomic
-    def unallocateStock(self, bom_item=None, output=None):
-        """Unallocate stock from this Build.
+    def unallocateStock(self, build_line=None, output=None):
+        """Un-allocate stock from this Build.
 
         Args:
-            bom_item: Specify a particular BomItem to unallocate stock against
-            output: Specify a particular StockItem (output) to unallocate stock against
+            build_line: Specify a particular BuildLine instance to un-allocate stock against
+            output: Specify a particular StockItem (output) to un-allocate stock against
         """
         allocations = BuildItem.objects.filter(
-            build=self,
+            build_line__build=self,
             install_into=output
         )
 
-        if bom_item:
-            allocations = allocations.filter(bom_item=bom_item)
+        if build_line:
+            allocations = allocations.filter(build_line=build_line)
 
         allocations.delete()
 
@@ -712,7 +712,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """Remove a build output from the database.
 
         Executes:
-        - Unallocate any build items against the output
+        - Deallocate any build items against the output
         - Delete the output StockItem
         """
         if not output:
@@ -724,7 +724,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         if output.build != self:
             raise ValidationError(_("Build output does not match Build Order"))
 
-        # Unallocate all build items against the output
+        # Deallocate all build items against the output
         self.unallocateStock(output=output)
 
         # Remove the build output from the database

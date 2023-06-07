@@ -416,7 +416,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
             'fa-minus-circle icon-red',
             'button-output-unallocate',
             output_id,
-            '{% trans "Unallocate stock from build output" %}',
+            '{% trans "Deallocate stock from build output" %}',
         );
     }
 
@@ -448,7 +448,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
 
 
 /*
- * Unallocate stock against a particular build order
+ * Deallocate stock against a particular build order
  *
  * Options:
  * - output: pk value for a stock item "build output"
@@ -460,7 +460,7 @@ function unallocateStock(build_id, options={}) {
 
     var html = `
     <div class='alert alert-block alert-warning'>
-    {% trans "Are you sure you wish to unallocate stock items from this build?" %}
+    {% trans "Are you sure you wish to deallocate stock items from this build?" %}
     </dvi>
     `;
 
@@ -473,12 +473,12 @@ function unallocateStock(build_id, options={}) {
                 hidden: true,
                 value: options.output,
             },
-            bom_item: {
+            build_line: {
                 hidden: true,
-                value: options.bom_item,
+                value: options.build_line,
             },
         },
-        title: '{% trans "Unallocate Stock Items" %}',
+        title: '{% trans "Deallocate Stock Items" %}',
         onSuccess: function(response, opts) {
             if (options.onSuccess) {
                 options.onSuccess(response, opts);
@@ -2274,7 +2274,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     html += makeRemoveButton(
                         'button-unallocate',
                         row.sub_part,
-                        '{% trans "Unallocate stock" %}',
+                        '{% trans "Deallocate stock" %}',
                         {
                             disabled: allocatedQuantity(row) == 0,
                         }
@@ -3336,12 +3336,22 @@ function loadBuildLineTable(table, build_id, options={}) {
         let pk = $(this).attr('pk');
         let row = $(table).bootstrapTable('getRowByUniqueId', pk);
 
-        // TODO: Refresh table after
-        allocateStockToBuild(build_id, [row], {});
+        allocateStockToBuild(build_id, [row], {
+            success: function() {
+                $(table).bootstrapTable('refresh');
+            }
+        });
     });
 
     // Callback to un-allocate stock
     $(table).on('click', '.button-unallocate', function() {
         let pk = $(this).attr('pk');
+
+        unallocateStock(build_id, {
+            build_line: pk,
+            onSuccess: function() {
+                $(table).bootstrapTable('refresh');
+            }
+        });
     });
 }

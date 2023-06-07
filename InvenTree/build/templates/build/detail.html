@@ -180,8 +180,8 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.build.add and build.active %}
-                <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
-                    <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
+                <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Deallocate stock" %}'>
+                    <span class='fas fa-minus-circle'></span> {% trans "Deallocate Stock" %}
                 </button>
                 <button class='btn btn-primary' type='button' id='btn-auto-allocate' title='{% trans "Automatically allocate stock to build" %}'>
                     <span class='fas fa-magic'></span> {% trans "Auto Allocate" %}
@@ -495,7 +495,9 @@ function allocateSelectedLines() {
 $('#btn-unallocate').on('click', function() {
     unallocateStock({{ build.id }}, {
         table: '#allocation-table-untracked',
-        onSuccess: loadUntrackedStockTable,
+        onSuccess: function() {
+            $('#build-lines-table').bootstrapTable('refresh');
+        },
     });
 });
 

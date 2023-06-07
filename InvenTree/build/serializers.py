@@ -22,7 +22,6 @@ from InvenTree.status_codes import StockStatus
 from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
-from part.models import BomItem
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
@@ -708,12 +707,12 @@ class BuildUnallocationSerializer(serializers.Serializer):
     - bom_item: Filter against a particular BOM line item
     """
 
-    bom_item = serializers.PrimaryKeyRelatedField(
-        queryset=BomItem.objects.all(),
+    build_line = serializers.PrimaryKeyRelatedField(
+        queryset=BuildLine.objects.all(),
         many=False,
         allow_null=True,
         required=False,
-        label=_('BOM Item'),
+        label=_('Build Line'),
     )
 
     output = serializers.PrimaryKeyRelatedField(
@@ -745,7 +744,7 @@ class BuildUnallocationSerializer(serializers.Serializer):
         data = self.validated_data
 
         build.unallocateStock(
-            bom_item=data['bom_item'],
+            build_line=data['build_line'],
             output=data['output']
         )
 
