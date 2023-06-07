@@ -640,7 +640,7 @@ class BuildCompleteSerializer(serializers.Serializer):
         """Check if the 'accept_overallocated' field is required"""
         build = self.context['build']
 
-        if build.is_over_allocated(output=None) and value == OverallocationChoice.REJECT:
+        if build.is_over_allocated() and value == OverallocationChoice.REJECT:
             raise ValidationError(_('Some stock items have been overallocated'))
 
         return value
