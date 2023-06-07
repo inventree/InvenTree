@@ -81,6 +81,7 @@ class RuleSet(models.Model):
             'common_newsfeedentry',
             'taggit_tag',
             'taggit_taggeditem',
+            'missing_models',
         ],
         'part_category': [
             'part_partcategory',
