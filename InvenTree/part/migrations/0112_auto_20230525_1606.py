@@ -3,6 +3,7 @@
 from django.core.exceptions import FieldDoesNotExist
 from django.db import migrations, models
 from django.db.utils import OperationalError
+from django.db.transaction import TransactionManagementError
 
 def delete_columns(apps, schema_editor):
     """Hack method to delete columns (if they already exist).
@@ -29,6 +30,19 @@ def delete_columns(apps, schema_editor):
             schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN checkbox;")
         except (OperationalError):
             print("Column 'checkbox' does not exist (skipping)")
+    except (TransactionManagementError):
+        # TransactionManagementError caused by trying to run a transaction inside a transaction - mysql
+        in_atomic_block = schema_editor.connection.in_atomic_block
+        schema_editor.connection.in_atomic_block = False
+        try:
+            migrations.RemoveField(
+                model_name='part_partparametertemplate',
+                name='checkbox',
+            )
+        except (FieldDoesNotExist):
+            print("Column 'checkbox' does not exist (skipping) - mysql")
+        finally:
+            schema_editor.connection.in_atomic_block = in_atomic_block
 
     try:
         print("Checking for column 'choices' in table 'part_partparametertemplate'")
@@ -38,6 +52,19 @@ def delete_columns(apps, schema_editor):
             schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN choices;")
         except (OperationalError):
             print("Column 'choices' does not exist (skipping)")
+    except (TransactionManagementError):
+        # TransactionManagementError caused by trying to run a transaction inside a transaction - mysql
+        in_atomic_block = schema_editor.connection.in_atomic_block
+        schema_editor.connection.in_atomic_block = False
+        try:
+            migrations.RemoveField(
+                model_name='part_partparametertemplate',
+                name='choices',
+            )
+        except (FieldDoesNotExist):
+            print("Column 'choices' does not exist (skipping) - mysql")
+        finally:
+            schema_editor.connection.in_atomic_block = in_atomic_block
 
 
 class Migration(migrations.Migration):
