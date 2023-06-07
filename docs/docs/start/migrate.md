@@ -43,7 +43,7 @@ This step ensures that the required database tables exist, and are at the correc
 
 ### Import Data
 
-The new database should now be correctly initialized with the correct table structures requried to import the data. Run the following command to load the databased dump file into the new database.
+The new database should now be correctly initialized with the correct table structures required to import the data. Run the following command to load the databased dump file into the new database.
 
 !!! warning "Empty Database"
     If the database is not *empty* (i.e. it contains data records) then the data import process will fail. If errors occur during the import process, run `invoke import-records` with the `-c` option to clear all existing data from the database.
@@ -85,7 +85,7 @@ Download the specific version of InvenTree you wish to update to.
 
 ### Run Update Process
 
-Run the update and migration script using `invoke update`. This ensures that the database schema and records are udpated in the correct order.
+Run the update and migration script using `invoke update`. This ensures that the database schema and records are updated in the correct order.
 
 ### Restart Server
 

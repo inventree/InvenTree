@@ -6,7 +6,7 @@ title: Stock Adjustments
 
 InvenTree provides simple yet powerful management of stock levels. Multiple stock adjustment options are available, and each type of adjustment is automatically tracked to maintain a complete stock history.
 
-Stock adjustements can be accessed in any stock items table using the "Stock Options" dropdown entries:
+Stock adjustments can be accessed in any stock items table using the "Stock Options" dropdown entries:
 
 {% with id="stock_options", url="stock/stock_options.png", description="Stock Options" %}
 {% include 'img.html' %}
@@ -52,8 +52,8 @@ The conditions for merging stock items are the following:
 
 - a stock item cannot be merged with itself
 - only stock items referring to the same part can be merged
-- supplier parts between all items have to match, unless user explicitely allows supplier parts to be different (see below)
-- stock status between all items have to match, unless user explicitely allows stock status to be different (see below).
+- supplier parts between all items have to match, unless user explicitly allows supplier parts to be different (see below)
+- stock status between all items have to match, unless user explicitly allows stock status to be different (see below).
 
 Moreover, if one of the item:
 
@@ -61,7 +61,7 @@ Moreover, if one of the item:
 - or is installed in another item
 - or contains other items
 - or is assigned to a customer
-- or is currenty in production
+- or is currently in production
 - or is serialized
 
 then the merge would not be possible.

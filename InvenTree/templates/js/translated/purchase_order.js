@@ -1924,7 +1924,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 });
             });
 
-            // Callback for bulk deleting mutliple lines
+            // Callback for bulk deleting multiple lines
             $('#po-lines-bulk-delete').off('click').on('click', function() {
                 var rows = getTableData('   #po-line-table');
 

@@ -112,7 +112,7 @@ Set this option to *True* to signal that stock items can be used interchangeably
 
 **Substitute Stock**
 
-Set this option to *True* to allow substitute parts (as specifed by the BOM) to be allocated, if the primary parts are not available.
+Set this option to *True* to allow substitute parts (as specified by the BOM) to be allocated, if the primary parts are not available.
 
 ## Allocating Tracked Stock
 

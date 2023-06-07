@@ -18,6 +18,7 @@
     showApiError,
     showMessage,
     showModalSpinner,
+    toBool,
 */
 
 /* exported
@@ -990,15 +991,17 @@ function updateFieldValue(name, value, field, options) {
         return;
     }
 
+    if (field.type == null) {
+        field.type = guessFieldType(el);
+    }
+
     switch (field.type) {
     case 'decimal':
         // Strip trailing zeros
         el.val(formatDecimal(value));
         break;
     case 'boolean':
-        if (value == true || value.toString().toLowerCase() == 'true') {
-            el.prop('checked');
-        }
+        el.prop('checked', toBool(value));
         break;
     case 'related field':
         // Clear?
@@ -1069,6 +1072,34 @@ function validateFormField(name, options) {
 
 
 /*
+ * Introspect the HTML element to guess the field type
+ */
+function guessFieldType(element) {
+
+    if (!element.exists) {
+        console.error(`Could not find element '${element}' for guessFieldType`);
+        return null;
+    }
+
+    switch (element.attr('type')) {
+    case 'number':
+        return 'decimal';
+    case 'checkbox':
+        return 'boolean';
+    case 'date':
+        return 'date';
+    case 'datetime':
+        return 'datetime';
+    case 'text':
+        return 'string';
+    default:
+        // Unknown field type
+        return null;
+    }
+}
+
+
+/*
  * Extract and field value before sending back to the server
  *
  * arguments:
@@ -1088,9 +1119,16 @@ function getFormFieldValue(name, field={}, options={}) {
 
     var value = null;
 
+    let guessed_type = guessFieldType(el);
+
+    // If field type is not specified, try to guess it
+    if (field.type == null || guessed_type == 'boolean') {
+        field.type = guessed_type;
+    }
+
     switch (field.type) {
     case 'boolean':
-        value = el.is(':checked');
+        value = toBool(el.prop("checked"));
         break;
     case 'date':
     case 'datetime':
@@ -1145,7 +1183,7 @@ function handleFormSuccess(response, options) {
     var msg_target = null;
 
     if (persist) {
-        // If the modal is persistant, the target for any messages should be the modal!
+        // If the modal is persistent, the target for any messages should be the modal!
         msg_target = $(options.modal).find('#pre-form-content');
     }
 
@@ -1906,7 +1944,7 @@ function initializeRelatedField(field, fields, options={}) {
                 var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
-                // Return a simple renderering
+                // Return a simple rendering
                 console.warn(`templateResult() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
@@ -1936,7 +1974,7 @@ function initializeRelatedField(field, fields, options={}) {
                 var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
-                // Return a simple renderering
+                // Return a simple rendering
                 console.warn(`templateSelection() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
@@ -1988,7 +2026,7 @@ function initializeRelatedField(field, fields, options={}) {
 
 
 /*
- * Set the value of a select2 instace for a "related field",
+ * Set the value of a select2 instance for a "related field",
  * e.g. with data returned from a secondary modal
  *
  * arguments:
@@ -2402,7 +2440,7 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
             opts.push(`value='${parameters.value}'`);
         }
     } else if (parameters.default != null) {
-        // Otherwise, a defualt value?
+        // Otherwise, a default value?
         opts.push(`value='${parameters.default}'`);
     }
 

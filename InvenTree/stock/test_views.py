@@ -97,16 +97,16 @@ class StockOwnershipTest(StockViewTestCase):
         InvenTreeSetting.set_setting('STOCK_OWNERSHIP_CONTROL', True, self.user)
         self.assertEqual(True, InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL'))
 
-    def assert_ownership(self, assertio: bool = True, user=None):
+    def assert_ownership(self, assertion: bool = True, user=None):
         """Helper function to check ownership control."""
         if user is None:
             user = self.user
 
         item = StockItem.objects.get(pk=self.test_item_id)
-        self.assertEqual(assertio, item.check_ownership(user))
+        self.assertEqual(assertion, item.check_ownership(user))
 
         location = StockLocation.objects.get(pk=self.test_location_id)
-        self.assertEqual(assertio, location.check_ownership(user))
+        self.assertEqual(assertion, location.check_ownership(user))
 
     def assert_api_change(self):
         """Helper function to get response to API change."""

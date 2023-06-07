@@ -158,7 +158,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     def address(self):
         """Return the string representation for the primary address
 
-        This property exists for backwards compability
+        This property exists for backwards compatibility
         """
 
         addr = self.primary_address
@@ -237,7 +237,7 @@ class CompanyAttachment(InvenTreeAttachment):
     )
 
 
-class Contact(models.Model):
+class Contact(MetadataMixin, models.Model):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
@@ -504,7 +504,7 @@ class ManufacturerPartAttachment(InvenTreeAttachment):
 class ManufacturerPartParameter(models.Model):
     """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
 
-    This is used to represent parmeters / properties for a particular manufacturer part.
+    This is used to represent parameters / properties for a particular manufacturer part.
 
     Each parameter is a simple string (text) value.
     """

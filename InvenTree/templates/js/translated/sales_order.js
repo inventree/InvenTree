@@ -1534,7 +1534,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
 
 
 /**
- * Display an "allocations" sub table, showing stock items allocated againt a sales order
+ * Display an "allocations" sub table, showing stock items allocated against a sales order
  * @param {*} index
  * @param {*} row
  * @param {*} element
@@ -1557,7 +1557,7 @@ function showAllocationSubTable(index, row, element, options) {
 
             var pk = $(this).attr('pk');
 
-            // Edit the sales order alloction
+            // Edit the sales order allocation
             constructForm(
                 `/api/order/so-allocation/${pk}/`,
                 {
