@@ -743,7 +743,7 @@ class BuildUnallocationSerializer(serializers.Serializer):
 
         data = self.validated_data
 
-        build.unallocateStock(
+        build.deallocate_stock(
             build_line=data['build_line'],
             output=data['output']
         )

@@ -493,7 +493,7 @@ function allocateSelectedLines() {
 }
 
 $('#btn-unallocate').on('click', function() {
-    unallocateStock({{ build.id }}, {
+    deallocateStock({{ build.id }}, {
         table: '#allocation-table-untracked',
         onSuccess: function() {
             $('#build-lines-table').bootstrapTable('refresh');

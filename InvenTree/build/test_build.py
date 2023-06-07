@@ -361,7 +361,7 @@ class BuildTest(BuildTestBase):
 
         self.assertEqual(len(unallocated), 1)
 
-        self.build.unallocateStock()
+        self.build.deallocate_stock()
 
         unallocated = self.build.unallocated_bom_items(None)
 
@@ -425,10 +425,10 @@ class BuildTest(BuildTestBase):
             }
         )
 
-        self.assertTrue(self.build.has_overallocated_parts(None))
+        self.assertTrue(self.build.is_overallocated())
 
         self.build.trim_allocated_stock()
-        self.assertFalse(self.build.has_overallocated_parts(None))
+        self.assertFalse(self.build.is_overallocated())
 
         self.build.complete_build_output(self.output_1, None)
         self.build.complete_build_output(self.output_2, None)

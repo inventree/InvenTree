@@ -454,7 +454,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
  * - output: pk value for a stock item "build output"
  * - bom_item: pk value for a particular BOMItem (build item)
  */
-function unallocateStock(build_id, options={}) {
+function deallocateStock(build_id, options={}) {
 
     var url = `{% url "api-build-list" %}${build_id}/unallocate/`;
 
@@ -1081,7 +1081,7 @@ function loadBuildOutputTable(build_info, options={}) {
         $(table).find('.button-output-unallocate').click(function() {
             var pk = $(this).attr('pk');
 
-            unallocateStock(build_info.pk, {
+            deallocateStock(build_info.pk, {
                 output: pk,
                 table: table
             });
@@ -1909,7 +1909,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             var idx = $(this).closest('tr').attr('data-index');
             var row = $(table).bootstrapTable('getData')[idx];
 
-            unallocateStock(buildId, {
+            deallocateStock(buildId, {
                 bom_item: row.pk,
                 output: outputId == 'untracked' ? null : outputId,
                 table: table,
@@ -3347,7 +3347,7 @@ function loadBuildLineTable(table, build_id, options={}) {
     $(table).on('click', '.button-unallocate', function() {
         let pk = $(this).attr('pk');
 
-        unallocateStock(build_id, {
+        deallocateStock(build_id, {
             build_line: pk,
             onSuccess: function() {
                 $(table).bootstrapTable('refresh');
