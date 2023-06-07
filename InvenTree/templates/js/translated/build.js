@@ -1429,13 +1429,15 @@ function loadBuildOutputTable(build_info, options={}) {
                         }
                     }
 
+                    text = renderLink(text, url);
+
                     if (row.batch) {
                         text += ` <small>({% trans "Batch" %}: ${row.batch})</small>`;
                     }
 
                     text += stockStatusDisplay(row.status, {classes: 'float-right'});
 
-                    return renderLink(text, url);
+                    return text;
                 },
                 sorter: function(a, b, row_a, row_b) {
                     // Sort first by quantity, and then by serial number
