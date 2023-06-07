@@ -349,7 +349,10 @@ class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
 
 
 class PartTestTemplateList(ListCreateAPI):
-    """API endpoint for listing (and creating) a PartTestTemplate."""
+    """API endpoint for listing (and creating) a PartTestTemplate.
+
+    TODO: Add filterset class for this view
+    """
 
     queryset = PartTestTemplate.objects.all()
     serializer_class = part_serializers.PartTestTemplateSerializer
