@@ -67,7 +67,7 @@
                     <td>{% trans "Completed Outputs" %}</td>
                     <td>{% progress_bar build.completed build.quantity id='build-completed-2' max_width='150px' %}</td>
                 </tr>
-                {% if build.active and has_untracked_bom_items %}
+                {% if build.active %}
                 <tr>
                     <td><span class='fas fa-list'></span></td>
                     <td>{% trans "Allocated Parts" %}</td>
@@ -179,7 +179,7 @@
             <h4>{% trans "Allocate Stock to Build" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.build.add and build.active and has_untracked_bom_items %}
+                {% if roles.build.add and build.active %}
                 <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
                     <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
                 </button>
@@ -458,38 +458,39 @@ $("#btn-auto-allocate").on('click', function() {
     );
 });
 
-$("#btn-allocate").on('click', function() {
+function allocateSelectedLines() {
 
-    var bom_items = $("#allocation-table-untracked").bootstrapTable("getData");
+    let data = getTableData('#build-lines-table');
 
-    var incomplete_bom_items = [];
+    let unallocated_lines = [];
 
-    bom_items.forEach(function(bom_item) {
-        if (bom_item.required > bom_item.allocated) {
-            incomplete_bom_items.push(bom_item);
+    data.forEach(function(line) {
+        if (line.allocated < line.quantity) {
+            unallocated_lines.push(line);
         }
     });
 
-    if (incomplete_bom_items.length == 0) {
+    if (unallocated_lines.length == 0) {
         showAlertDialog(
             '{% trans "Allocation Complete" %}',
-            '{% trans "All untracked stock items have been allocated" %}',
+            '{% trans "All lines have been fully allocated" %}',
         );
     } else {
 
         allocateStockToBuild(
             {{ build.pk }},
-            {{ build.part.pk }},
-            incomplete_bom_items,
+            unallocated_lines,
             {
                 {% if build.take_from %}
                 source_location: {{ build.take_from.pk }},
                 {% endif %}
-                success: loadUntrackedStockTable,
+                success: function() {
+                    $('#build-lines-table').bootstrapTable('refresh');
+                },
             }
         );
     }
-});
+}
 
 $('#btn-unallocate').on('click', function() {
     unallocateStock({{ build.id }}, {
@@ -499,20 +500,11 @@ $('#btn-unallocate').on('click', function() {
 });
 
 $('#allocate-selected-items').click(function() {
+    allocateSelectedLines();
+});
 
-    var bom_items = getTableData('#allocation-table-untracked');
-
-    allocateStockToBuild(
-        {{ build.pk }},
-        {{ build.part.pk }},
-        bom_items,
-        {
-            {% if build.take_from %}
-            source_location: {{ build.take_from.pk }},
-            {% endif %}
-            success: loadUntrackedStockTable,
-        }
-    );
+$("#btn-allocate").on('click', function() {
+    allocateSelectedLines();
 });
 
 {% endif %}
