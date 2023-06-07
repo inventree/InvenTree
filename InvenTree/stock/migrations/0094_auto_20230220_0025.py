@@ -16,12 +16,12 @@ def fix_purchase_price(apps, schema_editor):
     Due to an existing bug, if a PurchaseOrderLineItem was received,
     which had:
 
-    a) A SupplierPart with a non-unity pack size
+    a) A SupplierPart with a non-unity pack quantity
     b) A defined purchase_price
 
     then the StockItem.purchase_price was not calculated correctly!
 
-    Specifically, the purchase_price was not divided through by the pack_size attribute.
+    Specifically, the purchase_price was not divided through by the pack_quantity attribute.
 
     This migration fixes this by looking through all stock items which:
 
@@ -57,7 +57,7 @@ def fix_purchase_price(apps, schema_editor):
             if line.part == item.supplier_part:
                 # Unit price matches original PurchaseOrder (and is thus incorrect)
                 if item.purchase_price == line.purchase_price:
-                    item.purchase_price /= item.supplier_part.pack_size
+                    item.purchase_price /= item.supplier_part.pack_quantity
                     item.save()
 
                     n_updated += 1
