@@ -444,8 +444,6 @@ $('#btn-create-output').click(function() {
 
 $("#btn-auto-allocate").on('click', function() {
 
-    // TODO: Auto-allocate stock
-
     autoAllocateStockToBuild(
         {{ build.pk }},
         [],
@@ -453,7 +451,9 @@ $("#btn-auto-allocate").on('click', function() {
             {% if build.take_from %}
             location: {{ build.take_from.pk }},
             {% endif %}
-            onSuccess: loadUntrackedStockTable,
+            onSuccess: function() {
+                $('#build-lines-table').bootstrapTable('refresh');
+            },
         }
     );
 });

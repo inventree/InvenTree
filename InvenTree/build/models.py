@@ -911,8 +911,11 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         new_items = []
 
-        # Get a list of all 'untracked' BOM items
-        for bom_item in self.untracked_bom_items:
+        # Auto-allocation is only possible for "untracked" line items
+        for line_item in self.untracked_line_items.all():
+
+            # Find the referenced BomItem
+            bom_item = line_item.bom_item
 
             if bom_item.consumable:
                 # Do not auto-allocate stock to consumable BOM items
@@ -924,7 +927,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
             variant_parts = bom_item.sub_part.get_descendants(include_self=False)
 
-            unallocated_quantity = self.unallocated_quantity(bom_item)
+            unallocated_quantity = line_item.unallocated_quantity()
 
             if unallocated_quantity <= 0:
                 # This BomItem is fully allocated, we can continue
@@ -982,8 +985,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
                         try:
                             new_items.append(BuildItem(
-                                build=self,
-                                bom_item=bom_item,
+                                build_line=line_item,
                                 stock_item=stock_item,
                                 quantity=quantity,
                             ))
