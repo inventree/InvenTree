@@ -96,6 +96,9 @@ In any case, the URL is is specific to your installation and the SSO provider. T
 !!! success "Works for Local Installs"
     Your server does not need to be "public facing" for this to work. For example the URL `http://localhost:1234/accounts/github/login/callback/` would be perfectly valid!
 
+!!! warning "Proxy Support"
+    If your InvenTree server is running behind a proxy, you will need to ensure that the "public facing" host address matches the internal host address of the server, and that this host address also matches the configured callback URL
+
 ### Enable SSO Settings
 
 Now that the social application is created, you need to enable SSO authentication for the InvenTree server.
