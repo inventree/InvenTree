@@ -35,10 +35,7 @@ def delete_columns(apps, schema_editor):
         in_atomic_block = schema_editor.connection.in_atomic_block
         schema_editor.connection.in_atomic_block = False
         try:
-            migrations.RemoveField(
-                model_name='part_partparametertemplate',
-                name='checkbox',
-            )
+            schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN checkbox;")
         except (FieldDoesNotExist):
             print("Column 'checkbox' does not exist (skipping) - mysql")
         finally:
@@ -57,10 +54,7 @@ def delete_columns(apps, schema_editor):
         in_atomic_block = schema_editor.connection.in_atomic_block
         schema_editor.connection.in_atomic_block = False
         try:
-            migrations.RemoveField(
-                model_name='part_partparametertemplate',
-                name='choices',
-            )
+            schema_editor.execute("ALTER TABLE part_partparametertemplate DROP COLUMN choices;")
         except (FieldDoesNotExist):
             print("Column 'choices' does not exist (skipping) - mysql")
         finally:
