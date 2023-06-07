@@ -13,7 +13,7 @@
     imageHoverIcon,
     inventreeGet,
     inventreePut,
-    hideformInput,
+    hideFormInput,
     loadTableFilters,
     makeDeleteButton,
     makeEditButton,

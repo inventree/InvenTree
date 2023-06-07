@@ -213,7 +213,7 @@ class AddressTest(TestCase):
         self.assertEqual(Address.objects.count(), 3)
 
     def test_first_address_is_primary(self):
-        """Test that first address related to company is always set ot primary"""
+        """Test that first address related to company is always set to primary"""
 
         addr = Address.objects.create(company=self.c)
 
