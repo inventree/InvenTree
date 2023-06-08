@@ -2424,7 +2424,7 @@ function loadBuildLineTable(table, build_id, options={}) {
                 sortable: true,
             },
             {
-                field: 'available',
+                field: 'available_stock',
                 title: '{% trans "Available" %}',
                 sortable: true,
                 formatter: function(value, row) {
@@ -2442,7 +2442,7 @@ function loadBuildLineTable(table, build_id, options={}) {
                         text += `${formatDecimal(available)}`;
 
                         if (row.part_detail.units) {
-                            text += `<small>[${row.part_detail.units}]</small>`;
+                            text += ` <small>[${row.part_detail.units}]</small>`;
                         }
                     }
 

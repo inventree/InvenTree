@@ -311,6 +311,7 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
         'consumable',
         'optional',
         'unit_quantity',
+        'available_stock',
     ]
 
     ordering_field_aliases = {
