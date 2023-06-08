@@ -486,7 +486,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         # Ensure that there are no longer any BuildItem objects
         # which point to this Build Order
-        self.allocated_stock.all().delete()
+        BuildItem.objects.filter(build_line__build=self).delete()
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
@@ -761,8 +761,11 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
     @transaction.atomic
     def subtract_allocated_stock(self, user):
         """Called when the Build is marked as "complete", this function removes the allocated untracked items from stock."""
-        items = self.allocated_stock.filter(
-            stock_item__part__trackable=False
+
+        # Find all BuildItem objects which point to this build
+        items = BuildItem.objects.filter(
+            build_line__build=self,
+            build_line__bom_item__sub_part__trackable=False
         )
 
         # Remove stock
