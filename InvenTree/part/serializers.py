@@ -553,6 +553,9 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             ),
         )
 
+        # TODO: This could do with some refactoring
+        # TODO: Note that BomItemSerializer and BuildLineSerializer have very similar code
+
         queryset = queryset.annotate(
             ordering=part.filters.annotate_on_order_quantity(),
             in_stock=part.filters.annotate_total_stock(),

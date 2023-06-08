@@ -5,9 +5,10 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
 from django.db import models
-from django.db.models.functions import Coalesce
+from django.db.models import ExpressionWrapper, F, FloatField
 from django.db.models import Case, Sum, When, Value
 from django.db.models import BooleanField
+from django.db.models.functions import Coalesce
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -22,6 +23,7 @@ from InvenTree.status_codes import StockStatus
 from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
+import part.filters
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
@@ -1043,7 +1045,13 @@ class BuildLineSerializer(InvenTreeModelSerializer):
             'part_detail',
             'quantity',
             'allocations',
+
+            # Annotated fields
             'allocated',
+            'on_order',
+            'available_stock',
+            'available_substitute_stock',
+            'available_variant_stock',
         ]
 
         read_only_fields = [
@@ -1061,6 +1069,10 @@ class BuildLineSerializer(InvenTreeModelSerializer):
 
     # Annotated (calculated) fields
     allocated = serializers.FloatField(read_only=True)
+    on_order = serializers.FloatField(read_only=True)
+    available_stock = serializers.FloatField(read_only=True)
+    available_substitute_stock = serializers.FloatField(read_only=True)
+    available_variant_stock = serializers.FloatField(read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1068,13 +1080,86 @@ class BuildLineSerializer(InvenTreeModelSerializer):
 
         - allocated: Total stock quantity allocated against this build line
         - available: Total stock available for allocation against this build line
+        - on_order: Total stock on order for this build line
         """
 
+        # Pre-fetch related fields
+        queryset = queryset.prefetch_related(
+            'bom_item__sub_part__stock_items',
+            'bom_item__sub_part__stock_items__allocations',
+            'bom_item__sub_part__stock_items__sales_order_allocations',
+
+            'bom_item__substitutes',
+            'bom_item__substitutes__part__stock_items',
+            'bom_item__substitutes__part__stock_items__allocations',
+            'bom_item__substitutes__part__stock_items__sales_order_allocations',
+        )
+
+        # Annotate the "allocated" quantity
+        # Difficulty: Easy
         queryset = queryset.annotate(
             allocated=Coalesce(
                 Sum('allocations__quantity'), 0,
                 output_field=models.DecimalField()
             ),
+        )
+
+        ref = 'bom_item__sub_part__'
+
+        # Annotate the "on_order" quantity
+        # Difficulty: Medium
+        queryset = queryset.annotate(
+            on_order=part.filters.annotate_on_order_quantity(reference=ref),
+        )
+
+        # Annotate the "available" quantity
+        # TODO: In the future, this should be refactored.
+        # TODO: Note that part.serializers.BomItemSerializer also has a similar annotation
+        queryset = queryset.alias(
+            total_stock=part.filters.annotate_total_stock(reference=ref),
+            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(reference=ref),
+            allocated_to_build_orders=part.filters.annotate_build_order_allocations(reference=ref),
+        )
+
+        # Calculate 'available_stock' based on previously annotated fields
+        queryset = queryset.annotate(
+            available_stock=ExpressionWrapper(
+                F('total_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        ref = 'bom_item__substitutes__part__'
+
+        # Extract similar information for any 'substitute' parts
+        queryset = queryset.alias(
+            substitute_stock=part.filters.annotate_total_stock(reference=ref),
+            substitute_build_allocations=part.filters.annotate_build_order_allocations(reference=ref),
+            substitute_sales_allocations=part.filters.annotate_sales_order_allocations(reference=ref)
+        )
+
+        # Calculate 'available_substitute_stock' field
+        queryset = queryset.annotate(
+            available_substitute_stock=ExpressionWrapper(
+                F('substitute_stock') - F('substitute_build_allocations') - F('substitute_sales_allocations'),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        # Annotate the queryset with 'available variant stock' information
+        variant_stock_query = part.filters.variant_stock_query(reference='bom_item__sub_part__')
+
+        queryset = queryset.alias(
+            variant_stock_total=part.filters.annotate_variant_quantity(variant_stock_query, reference='quantity'),
+            variant_bo_allocations=part.filters.annotate_variant_quantity(variant_stock_query, reference='sales_order_allocations__quantity'),
+            variant_so_allocations=part.filters.annotate_variant_quantity(variant_stock_query, reference='allocations__quantity'),
+        )
+
+        queryset = queryset.annotate(
+            available_variant_stock=ExpressionWrapper(
+                F('variant_stock_total') - F('variant_bo_allocations') - F('variant_so_allocations'),
+                output_field=FloatField(),
+            )
         )
 
         return queryset
