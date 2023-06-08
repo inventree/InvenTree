@@ -76,7 +76,7 @@ nav:
     - Privacy: privacy.md
     - Terminology: terminology.md
     - Development:
-      - Developing InvenTree: develop/starting.md
+      - Getting started: develop/starting.md
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
   - Install:
