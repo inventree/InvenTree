@@ -1255,6 +1255,52 @@ function loadBuildOutputTable(build_info, options={}) {
         );
     });
 
+    // Complete multiple outputs
+    $('#multi-output-complete').click(function() {
+        var outputs = getTableData(table);
+
+        completeBuildOutputs(
+            build_info.pk,
+            outputs,
+            {
+                success: function() {
+                    // Reload the "in progress" table
+                    $('#build-output-table').bootstrapTable('refresh');
+
+                    // Reload the "completed" table
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
+    // Delete multiple build outputs
+    $('#multi-output-delete').click(function() {
+        var outputs = getTableData(table);
+
+        deleteBuildOutputs(
+            build_info.pk,
+            outputs,
+            {
+                success: function() {
+                    // Reload the "in progress" table
+                    $('#build-output-table').bootstrapTable('refresh');
+
+                    // Reload the "completed" table
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
+    $('#outputs-expand').click(function() {
+        $(table).bootstrapTable('expandAllRows');
+    });
+
+    $('#outputs-collapse').click(function() {
+        $(table).bootstrapTable('collapseAllRows');
+    });
+
     return;
     inventreeGet(
         '{% url "api-build-line-list" %}',
@@ -1753,52 +1799,6 @@ function loadBuildOutputTable(build_info, options={}) {
                 }
             }
         );
-    });
-
-    // Complete multiple outputs
-    $('#multi-output-complete').click(function() {
-        var outputs = getTableData(table);
-
-        completeBuildOutputs(
-            build_info.pk,
-            outputs,
-            {
-                success: function() {
-                    // Reload the "in progress" table
-                    $('#build-output-table').bootstrapTable('refresh');
-
-                    // Reload the "completed" table
-                    $('#build-stock-table').bootstrapTable('refresh');
-                }
-            }
-        );
-    });
-
-    // Delete multiple build outputs
-    $('#multi-output-delete').click(function() {
-        var outputs = getTableData(table);
-
-        deleteBuildOutputs(
-            build_info.pk,
-            outputs,
-            {
-                success: function() {
-                    // Reload the "in progress" table
-                    $('#build-output-table').bootstrapTable('refresh');
-
-                    // Reload the "completed" table
-                    $('#build-stock-table').bootstrapTable('refresh');
-                }
-            }
-        );
-    });
-
-    $('#outputs-expand').click(function() {
-        $(table).bootstrapTable('expandAllRows');
-    });
-
-    $('#outputs-collapse').click(function() {
-        $(table).bootstrapTable('collapseAllRows');
     });
 }
 
