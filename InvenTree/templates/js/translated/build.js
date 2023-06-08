@@ -923,6 +923,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
         name: 'buildorderallocation',
         groupBy: false,
         search: false,
+        sortable: true,
         paginationVAlign: 'bottom',
         original: options.params,
         formatNoMatches: function() {
@@ -936,29 +937,35 @@ function loadBuildOrderAllocationTable(table, options={}) {
             },
             {
                 field: 'build',
+                sortable: true,
                 switchable: false,
                 title: '{% trans "Build Order" %}',
                 formatter: function(value, row) {
+                    let ref = `${row.build_detail.reference}`;
+                    let html = renderLink(ref, `/build/${row.build}/`);
 
-                    var ref = `${row.build_detail.reference}`;
+                    html += `- <small>${row.build_detail.title}</small>`;
 
-                    return renderLink(ref, `/build/${row.build}/`);
+                    html += buildStatusDisplay(row.build_detail.status, {
+                        classes: 'float-right',
+                    });
+
+                    return html;
                 }
             },
             {
-                field: 'item',
-                title: '{% trans "Stock Item" %}',
+                field: 'quantity',
+                sortable: true,
+                title: '{% trans "Allocated Quantity" %}',
                 formatter: function(value, row) {
-                    // Render a link to the particular stock item
-
-                    var link = `/stock/item/${row.stock_item}/`;
-                    var text = `{% trans "Stock Item" %} ${row.stock_item}`;
+                    let link = `/stock/item/${row.stock_item}/`;
+                    let text = formatDecimal(value);
 
                     return renderLink(text, link);
                 }
             },
             {
-                field: 'location',
+                field: 'location_detail',
                 title: '{% trans "Location" %}',
                 formatter: function(value, row) {
 
@@ -966,17 +973,12 @@ function loadBuildOrderAllocationTable(table, options={}) {
                         return '{% trans "Location not specified" %}';
                     }
 
-                    var link = `/stock/location/${value}`;
-                    var text = row.location_detail.description;
+                    let item = row.stock_item_detail;
+                    item.location_detail = row.location_detail;
 
-                    return renderLink(text, link);
+                    return locationDetail(item, true);
                 }
             },
-            {
-                field: 'quantity',
-                title: '{% trans "Quantity" %}',
-                sortable: true,
-            }
         ]
     });
 }

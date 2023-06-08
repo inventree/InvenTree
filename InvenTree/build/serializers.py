@@ -1000,6 +1000,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
             'location_detail',
             'part_detail',
             'stock_item_detail',
+            'build_detail',
         ]
 
     # Annotated fields
@@ -1009,6 +1010,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='stock_item.part', many=False, read_only=True)
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
     location_detail = LocationSerializer(source='stock_item.location', read_only=True)
+    build_detail = BuildSerializer(source='build_line.build', many=False, read_only=True)
 
     quantity = InvenTreeDecimalField()
 
@@ -1017,6 +1019,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
         part_detail = kwargs.pop('part_detail', True)
         location_detail = kwargs.pop('location_detail', True)
         stock_detail = kwargs.pop('stock_detail', False)
+        build_detail = kwargs.pop('build_detail', False)
 
         super().__init__(*args, **kwargs)
 
@@ -1028,6 +1031,9 @@ class BuildItemSerializer(InvenTreeModelSerializer):
 
         if not stock_detail:
             self.fields.pop('stock_item_detail')
+
+        if not build_detail:
+            self.fields.pop('build_detail')
 
 
 class BuildLineSerializer(InvenTreeModelSerializer):

@@ -494,9 +494,9 @@ class BuildItemList(ListCreateAPI):
         try:
             params = self.request.query_params
 
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
-            kwargs['stock_detail'] = str2bool(params.get('stock_detail', True))
+            for key in ['part_detail', 'location_detail', 'stock_detail', 'build_detail']:
+                if key in params:
+                    kwargs[key] = str2bool(params.get(key, False))
         except AttributeError:
             pass
 
