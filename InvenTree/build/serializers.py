@@ -534,21 +534,18 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         outputs = data.get('outputs', [])
 
         # Mark the specified build outputs as "complete"
-        try:
-            with transaction.atomic():
-                for item in outputs:
+        with transaction.atomic():
+            for item in outputs:
 
-                    output = item['output']
+                output = item['output']
 
-                    build.complete_build_output(
-                        output,
-                        request.user,
-                        location=location,
-                        status=status,
-                        notes=notes,
-                    )
-        except Exception as exc:
-            raise exc
+                build.complete_build_output(
+                    output,
+                    request.user,
+                    location=location,
+                    status=status,
+                    notes=notes,
+                )
 
 
 class BuildCancelSerializer(serializers.Serializer):
