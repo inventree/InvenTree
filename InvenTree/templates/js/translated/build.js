@@ -1149,6 +1149,26 @@ function loadBuildOutputTable(build_info, options={}) {
         );
     }
 
+    // Callback function to construct a child table
+    function constructOutputSubTable(index, row, element) {
+        let sub_table_id = `output-table-${row.pk}`;
+
+        element.html(`
+        <div class='sub-table'>
+            <table class='table table-striped table-condensed' id='${sub_table_id}'></table>
+        </div>
+        `);
+
+        loadBuildLineTable(
+            `#${sub_table_id}`,
+            build_info.pk,
+            {
+                output: row.pk,
+                data: row.lines,
+            }
+        );
+    }
+
     // Now, construct the actual table
     $(table).inventreeTable({
         url: '{% url "api-stock-list" %}',
@@ -1165,7 +1185,7 @@ function loadBuildOutputTable(build_info, options={}) {
             return has_tracked_lines;
         },
         detailFormatter: function(index, row, element) {
-            return '';  // TODO
+            return constructOutputSubTable(index, row, element);
         },
         formatNoMatches: function() {
             return '{% trans "No active build outputs found" %}';
@@ -1433,9 +1453,9 @@ function loadBuildOutputTable(build_info, options={}) {
             var pk = $(this).attr('pk');
 
             // Find the "allocation" sub-table associated with this output
-            var subtable = $(`#output-sub-table-${pk}`);
+            var sub_table = $(`#output-sub-table-${pk}`);
 
-            if (subtable.exists()) {
+            if (sub_table.exists()) {
                 var rows = getTableData(`#output-sub-table-${pk}`);
 
                 allocateStockToBuild(
@@ -2600,7 +2620,6 @@ function allocateStockToBuild(build_id, line_items, options={}) {
         return;
     }
 
-    let output_quantity = null;
     let build = null;
 
     // Extract build information
@@ -3538,25 +3557,29 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
  */
 function loadBuildLineTable(table, build_id, options={}) {
 
+    let name = 'build-lines';
     let params = options.params || {};
+    let output = options.output;
 
     params.build = build_id;
+
+    if (output) {
+        params.output = output;
+        name += `-${output}`;
+    } else {
+        // Default to untracked parts for the build
+        params.tracked = false;
+    }
 
     let filters = loadTableFilters('buildlines', params);
     let filterTarget = options.filterTarget || '#filter-list-buildlines';
 
     setupFilterList('buildlines', $(table), filterTarget);
+    // If data is passed directly to this function, do not request data from the server
 
-    $(table).inventreeTable({
-        url: '{% url "api-build-line-list" %}',
-        queryParams: filters,
-        name: 'buildlines',
-        original: params,
-        search: true,
-        sidePagination: 'server',
-        showColumns: true,
+    let table_options = {
+        name: name,
         uniqueId: 'pk',
-        buttons: constructExpandCollapseButtons(table),
         detailView: true,
         detailFilter: function(index, row) {
             // Detail view is available if there is any allocated stock
@@ -3674,13 +3697,6 @@ function loadBuildLineTable(table, build_id, options={}) {
                 }
             },
             {
-                field: 'consumed',
-                title: '{% trans "Consumed" %}',
-                formatter: function(value, row) {
-                    return 'TODO: consumed';
-                }
-            },
-            {
                 field: 'actions',
                 title: '',
                 switchable: false,
@@ -3723,7 +3739,31 @@ function loadBuildLineTable(table, build_id, options={}) {
                 }
             }
         ]
-    });
+    };
+
+    if (options.data) {
+        Object.assign(table_options, {
+            data: options.data,
+            sidePagination: 'client',
+            showColumns: false,
+            pagination: false,
+            disablePagination: true,
+            search: false,
+        });
+    } else {
+        Object.assign(table_options, {
+            url: '{% url "api-build-line-list" %}',
+            queryParams: filters,
+            original: params,
+            search: true,
+            sidePagination: 'server',
+            pagination: true,
+            showColumns: true,
+            buttons: constructExpandCollapseButtons(table),
+        });
+    }
+
+    $(table).inventreeTable(table_options);
 
     /* Add callbacks for allocation buttons */
 
@@ -3755,6 +3795,7 @@ function loadBuildLineTable(table, build_id, options={}) {
         let row = $(table).bootstrapTable('getRowByUniqueId', pk);
 
         allocateStockToBuild(build_id, [row], {
+            output: options.output,
             success: function() {
                 $(table).bootstrapTable('refresh');
             }
