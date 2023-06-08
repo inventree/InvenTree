@@ -1362,7 +1362,7 @@ function handleNestedArrayErrors(errors, field_name, options={}) {
             // Find the target (nested) field
             var target = `${field_name}_${sub_field_name}_${nest_id}`;
 
-            addFieldErrorMessage(target, errors, options);
+            addFieldErrorMessage(target, sub_errors, options);
         }
     }
 }
