@@ -13,7 +13,7 @@
     formatDecimal,
     FullCalendar,
     getFormFieldValue,
-    getTableData,0
+    getTableData,
     handleFormErrors,
     handleFormSuccess,
     imageHoverIcon,
@@ -1017,8 +1017,10 @@ function sumAllocationsForBomRow(bom_row, allocations) {
 /*
  * Display a "build output" table for a particular build.
  *
- * This displays a list of "active" (i.e. "in production") build outputs for a given build.
- * Additionally, if any tracked items are present in the build, the allocated items are displayed
+ * This displays a list of "active" (i.e. "in production") build outputs (stock items) for a given build.
+ *
+ * - Any required tests are displayed here for each output
+ * - Additionally, if any tracked items are present in the build, the allocated items are displayed
  *
  */
 function loadBuildOutputTable(build_info, options={}) {
@@ -1083,6 +1085,77 @@ function loadBuildOutputTable(build_info, options={}) {
         }
     );
 
+    // Callback function to load the allocated stock items
+    function reloadOutputAllocations() {
+        inventreeGet(
+            '{% url "api-build-line-list" %}',
+            {
+                build: build_info.pk,
+                tracked: true,
+            },
+            {
+                success: function(response) {
+                    let build_lines = response.results || response;
+                    let table_data = $(table).bootstrapTable('getData');
+
+                    /* Iterate through each active build output and update allocations
+                     * For each build output, we need to:
+                     * - Append any existing allocations
+                     * - Work out how many lines are "fully allocated"
+                     */
+                    for (var ii = 0; ii < table_data.length; ii++) {
+                        let output = table_data[ii];
+
+                        let fully_allocated = 0;
+
+                        // Construct a list of allocations for this output
+                        let lines = [];
+
+                        // Iterate through each tracked build line item
+                        for (let jj = 0; jj < build_lines.length; jj++) {
+
+                            // Create a local copy of the build line
+                            let line = Object.assign({}, build_lines[jj]);
+
+                            let required = line.bom_item_detail.quantity * output.quantity;
+
+                            let allocations = [];
+                            let allocated = 0;
+
+                            // Iterate through each allocation for this line item
+                            for (let kk = 0; kk < line.allocations.length; kk++) {
+                                let allocation = line.allocations[kk];
+
+                                if (allocation.install_into == output.pk) {
+                                    allocations.push(allocation);
+                                    allocated += allocation.quantity;
+                                }
+                            }
+
+                            line.allocations = allocations;
+                            line.allocated = allocated;
+
+                            if (allocated >= required) {
+                                fully_allocated += 1;
+                            }
+
+                            lines.push(line);
+                        }
+
+                        // Push the row back in
+                        output.lines = lines;
+                        output.fully_allocated = fully_allocated;
+                        table_data[ii] = output;
+                    }
+
+                    // Update the table data
+                    $(table).bootstrapTable('load', table_data);
+                    console.log("reloaded table data: " + table_data.length + " rows");
+                }
+            }
+        );
+    }
+
     // Now, construct the actual table
     $(table).inventreeTable({
         url: '{% url "api-stock-list" %}',
@@ -1094,9 +1167,10 @@ function loadBuildOutputTable(build_info, options={}) {
         sortable: true,
         search: true,
         sidePagination: 'client',
-        detailView: false, // TODO
+        detailView: true,
         detailFilter: function(index, row) {
-            return false; // TODO
+            // Only show detail view if there are any allocations
+            return row.allocations && row.allocations.length;
         },
         detailFormatter: function(index, row, element) {
             return '';  // TODO
@@ -1105,7 +1179,7 @@ function loadBuildOutputTable(build_info, options={}) {
             return '{% trans "No active build outputs found" %}';
         },
         onLoadSuccess: function() {
-            // Reload allocation data
+            reloadOutputAllocations();
         },
         buttons: constructExpandCollapseButtons(table),
         columns: [
@@ -1157,12 +1231,16 @@ function loadBuildOutputTable(build_info, options={}) {
             },
             {
                 field: 'allocated',
-                title: '{% trans "Allocated" %}',
+                title: '{% trans "Allocated Lines" %}',
                 visible: true,
                 sortable: true,
                 switchable: true,
                 formatter: function(value, row) {
-                    return 'TODO: Allocated';
+                    if (!row.lines) {
+                        return '-';
+                    }
+
+                    return makeProgressBar(row.fully_allocated, row.lines.length);
                 }
             },
             {
