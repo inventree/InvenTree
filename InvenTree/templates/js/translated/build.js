@@ -2429,7 +2429,58 @@ function loadBuildLineTable(table, build_id, options={}) {
                 title: '{% trans "Available" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    return 'TODO: available';
+                    var url = `/part/${row.part_detail.pk}/?display=part-stock`;
+                    // Calculate the "available" quantity
+                    let available = row.available_stock + row.available_substitute_stock;
+
+                    if (row.bom_item_detail.allow_variants) {
+                        available += row.available_variant_stock;
+                    }
+
+                    let text = '';
+
+                    if (available > 0) {
+                        text += `${formatDecimal(available)}`;
+
+                        if (row.part_detail.units) {
+                            text += `<small>[${row.part_detail.units}]</small>`;
+                        }
+                    }
+
+                    let icons = '';
+
+                    if (row.bom_item_detail.consumable) {
+                        icons += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Consumable item" %}'></span>`;
+                    } else {
+                        if (available < (row.quantity - row.allocated)) {
+                            icons += makeIconBadge('fa-times-circle icon-red', '{% trans "Insufficient stock available" %}');
+                        } else {
+                            icons += makeIconBadge('fa-check-circle icon-green', '{% trans "Sufficient stock available" %}');
+                        }
+
+                        if (available <= 0) {
+                            icons += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                        } else {
+                            let extra = '';
+                            if ((row.available_substitute_stock > 0) && (row.available_variant_stock > 0)) {
+                                extra = '{% trans "Includes variant and substitute stock" %}';
+                            } else if (row.available_variant_stock > 0) {
+                                extra = '{% trans "Includes variant stock" %}';
+                            } else if (row.available_substitute_stock > 0) {
+                                extra = '{% trans "Includes substitute stock" %}';
+                            }
+
+                            if (extra) {
+                                icons += makeIconBadge('fa-info-circle icon-blue', extra);
+                            }
+                        }
+                    }
+
+                    if (row.on_order && row.on_order > 0) {
+                        icons += makeIconBadge('fa-shopping-cart', `{% trans "On Order" %}: ${formatDecimal(row.on_order)}`);
+                    }
+
+                    return renderLink(text, url) + icons;
                 }
             },
             {
