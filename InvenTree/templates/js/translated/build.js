@@ -408,10 +408,10 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
             '{% trans "Allocate stock items to this build output" %}',
         );
 
-        // Add a button to unallocate stock from this build output
+        // Add a button to deallocate stock from this build output
         html += makeIconButton(
             'fa-minus-circle icon-red',
-            'button-output-unallocate',
+            'button-output-deallocate',
             output_id,
             '{% trans "Deallocate stock from build output" %}',
         );
@@ -1134,6 +1134,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
                             line.allocations = allocations;
                             line.allocated = allocated;
+                            line.quantity = required;
 
                             if (allocated >= required) {
                                 fully_allocated += 1;
@@ -1150,7 +1151,6 @@ function loadBuildOutputTable(build_info, options={}) {
 
                     // Update the table data
                     $(table).bootstrapTable('load', table_data);
-                    console.log("reloaded table data: " + table_data.length + " rows");
                 }
             }
         );
@@ -1230,7 +1230,7 @@ function loadBuildOutputTable(build_info, options={}) {
                 }
             },
             {
-                field: 'allocated',
+                field: 'fully_allocated',
                 title: '{% trans "Allocated Lines" %}',
                 visible: true,
                 sortable: true,
@@ -1272,8 +1272,29 @@ function loadBuildOutputTable(build_info, options={}) {
 
     /* Callbacks for the build output buttons */
 
-    // Deallocate stock button
+    // Allocate stock button
     $(table).on('click', '.button-output-allocate', function() {
+        let pk = $(this).attr('pk');
+
+        // Retrieve build output row
+        let output = $(table).bootstrapTable('getRowByUniqueId', pk);
+        let lines = output.lines || [];
+
+        allocateStockToBuild(
+            build_info.pk,
+            lines,
+            {
+                output: pk,
+                success: function() {
+                    $(table).bootstrapTable('refresh');
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
+    // Deallocate stock button
+    $(table).on('click', '.button-output-deallocate', function() {
         let pk = $(this).attr('pk');
 
         deallocateStock(build_info.pk, {
@@ -1371,6 +1392,25 @@ function loadBuildOutputTable(build_info, options={}) {
         );
     });
 
+    // Scrap multiple outputs
+    $('#multi-output-scrap').click(function() {
+        var outputs = getTableData(table);
+
+        scrapBuildOutputs(
+            build_info.pk,
+            outputs,
+            {
+                success: function() {
+                    // Reload the "in progress" table
+                    $('#build-output-table').bootstrapTable('refresh');
+
+                    // Reload the "completed" table
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
     $('#outputs-expand').click(function() {
         $(table).bootstrapTable('expandAllRows');
     });
@@ -1393,8 +1433,6 @@ function loadBuildOutputTable(build_info, options={}) {
             }
         }
     );
-
-    console.log("tracked lines:", tracked_lines);
 
     function setupBuildOutputButtonCallbacks() {
 
@@ -1859,25 +1897,6 @@ function loadBuildOutputTable(build_info, options={}) {
     });
 
     // Add callbacks for the various table menubar buttons
-
-    // Scrap multiple outputs
-    $('#multi-output-scrap').click(function() {
-        var outputs = getTableData(table);
-
-        scrapBuildOutputs(
-            build_info.pk,
-            outputs,
-            {
-                success: function() {
-                    // Reload the "in progress" table
-                    $('#build-output-table').bootstrapTable('refresh');
-
-                    // Reload the "completed" table
-                    $('#build-stock-table').bootstrapTable('refresh');
-                }
-            }
-        );
-    });
 }
 
 
@@ -2589,6 +2608,7 @@ function allocateStockToBuild(build_id, line_items, options={}) {
         return;
     }
 
+    let output_quantity = null;
     let build = null;
 
     // Extract build information
@@ -2696,7 +2716,7 @@ function allocateStockToBuild(build_id, line_items, options={}) {
     var table_entries = '';
 
     for (var idx = 0; idx < line_items.length; idx++) {
-        var item = line_items[idx];
+        let item = line_items[idx];
 
         // Ignore "consumable" BOM items
         if (item.part_detail.consumable) {
