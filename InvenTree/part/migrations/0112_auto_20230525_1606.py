@@ -15,8 +15,6 @@ Original error: https://github.com/inventree/InvenTree/pull/4898
 """
 
 from django.db import migrations, models
-from django.db.utils import OperationalError
-from django.db.transaction import TransactionManagementError
 
 
 class RemoveFieldOrSkip(migrations.RemoveField):
