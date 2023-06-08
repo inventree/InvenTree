@@ -105,6 +105,10 @@ main {
     font-size: 110%;
 }
 
+.bg-qr-code {
+    background-color: #FFF !important;
+}
+
 .qr-code {
     max-width: 400px;
     max-height: 400px;
