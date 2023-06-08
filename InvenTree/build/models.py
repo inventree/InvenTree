@@ -1232,6 +1232,10 @@ class BuildLine(models.Model):
 
     def is_fully_allocated(self):
         """Return True if this BuildLine is fully allocated"""
+
+        if self.bom_item.consumable:
+            return True
+
         return self.allocated_quantity() >= self.quantity
 
     def is_over_allocated(self):
