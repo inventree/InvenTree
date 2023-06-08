@@ -205,10 +205,13 @@ The tags describe issues and PRs in multiple areas:
 |  | bug | Identifies a bug which needs to be addressed |
 |  | dependency | Relates to a project dependency |
 |  | duplicate | Duplicate of another issue or PR |
-|  | enhancement | This is an suggested enhancement or new feature |
+|  | enhancement | This is an suggested enhancement, extending the functionality of an existing feature |
+|  | experimental | This is a new *experimental* feature which needs to be enabled manually |
+|  | feature | This is a new feature, introducing novel functionality |
 |  | help wanted | Assistance required |
 |  | invalid | This issue or PR is considered invalid |
 |  | inactive | Indicates lack of activity |
+|  | migration | Database migration, requires special attention |
 |  | question | This is a question |
 |  | roadmap | This is a roadmap feature with no immediate plans for implementation |
 |  | security | Relates to a security issue |
