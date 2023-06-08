@@ -1169,6 +1169,32 @@ function loadBuildOutputTable(build_info, options={}) {
         );
     }
 
+    // Return the "passed test count" for a given row
+    function getPassedTestCount(row) {
+        let passed_tests = 0;
+
+        // Iterate through the available test templates
+        test_templates.forEach(function(test) {
+            // Iterate through all the "test results" for the given stock item
+            // If the keys match, update the result
+            // As they are returned in order, the "latest" result is the one we use
+
+            let final_result = false;
+
+            row.tests.forEach(function(result) {
+                if (result.key == test.key) {
+                    final_result = result.result;
+                }
+            });
+
+            if (final_result) {
+                passed_tests += 1;
+            }
+        });
+
+        return passed_tests;
+    }
+
     // Now, construct the actual table
     $(table).inventreeTable({
         url: '{% url "api-stock-list" %}',
@@ -1258,11 +1284,15 @@ function loadBuildOutputTable(build_info, options={}) {
             {
                 field: 'tests',
                 title: '{% trans "Completed Tests" %}',
-                sortable: true,
-                visible: true, // TODO: Hide if no tests are defined
+                visible: test_templates.length > 0,
                 switchable: true,
                 formatter: function(value, row) {
-                    return 'TODO: tests';
+                    if (row.tests) {
+                        return makeProgressBar(
+                            getPassedTestCount(row),
+                            test_templates.length
+                        );
+                    }
                 }
             },
             {
