@@ -209,7 +209,9 @@ nav:
 
 # Plugins
 plugins:
-  - include-markdown
+  - include-markdown:
+      opening_tag: "{!"
+      closing_tag: "!}"
   - search
   - git-revision-date-localized
   - mkdocs-simple-hooks:
