@@ -209,7 +209,7 @@ nav:
 
 # Plugins
 plugins:
-  - include-markdown
+  # - include-markdown
   - search
   - git-revision-date-localized
   - mkdocs-simple-hooks:
