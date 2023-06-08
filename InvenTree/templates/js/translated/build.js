@@ -24,6 +24,7 @@
     launchModalForm,
     linkButtonsToSelection,
     loadTableFilters,
+    locationDetail,
     makeDeleteButton,
     makeEditButton,
     makeRemoveButton,
@@ -2362,11 +2363,7 @@ function loadBuildLineTable(table, build_id, options={}) {
                     // Part thumbnail
                     html += imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
 
-                    let bom_item = row.bom_item_detail;
-
-                    if (bom_item.allow_variants)
-
-                    if (row.bom_item_detail) {
+                    if (row.bom_item_detail.allow_variants) {
                         html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
                     }
 
