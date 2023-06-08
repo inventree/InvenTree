@@ -1019,6 +1019,34 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         return True
 
+    def is_output_fully_allocated(self, output):
+        """Determine if the specified output (StockItem) has been fully allocated for this build
+
+        Args:
+            output: StockItem object
+
+        To determine if the output has been fully allocated,
+        we need to test all "trackable" BuildLine objects
+        """
+
+        for line in self.build_lines.filter(bom_item__sub_part__trackable=True):
+            # Grab all BuildItem objects which point to this output
+            allocations = BuildItem.objects.filter(
+                build_line=line,
+                install_into=output,
+            )
+
+            allocated = allocations.aggregate(
+                q=Coalesce(Sum('quantity'), 0, output_field=models.DecimalField())
+            )
+
+            # The amount allocated against an output must at least equal the BOM quantity
+            if allocated['q'] < line.bom_item.quantity:
+                return False
+
+        # At this stage, we can assume that the output is fully allocated
+        return True
+
     def is_over_allocated(self):
         """Test if the BuildOrder has been over-allocated.
 
@@ -1177,6 +1205,11 @@ class BuildLine(models.Model):
         verbose_name=_('Quantity'),
         help_text=_('Required quantity for build order'),
     )
+
+    @property
+    def part(self):
+        """Return the sub_part reference from the link bom_item"""
+        return self.bom_item.sub_part
 
     def allocated_quantity(self):
         """Calculate the total allocated quantity for this BuildLine"""

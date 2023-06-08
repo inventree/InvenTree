@@ -171,7 +171,7 @@ class BuildOutputSerializer(serializers.Serializer):
         if to_complete:
 
             # The build output must have all tracked parts allocated
-            if not build.is_fully_allocated(output):
+            if not build.is_output_fully_allocated(output):
 
                 # Check if the user has specified that incomplete allocations are ok
                 accept_incomplete = InvenTree.helpers.str2bool(self.context['request'].data.get('accept_incomplete_allocation', False))
@@ -534,18 +534,21 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         outputs = data.get('outputs', [])
 
         # Mark the specified build outputs as "complete"
-        with transaction.atomic():
-            for item in outputs:
+        try:
+            with transaction.atomic():
+                for item in outputs:
 
-                output = item['output']
+                    output = item['output']
 
-                build.complete_build_output(
-                    output,
-                    request.user,
-                    location=location,
-                    status=status,
-                    notes=notes,
-                )
+                    build.complete_build_output(
+                        output,
+                        request.user,
+                        location=location,
+                        status=status,
+                        notes=notes,
+                    )
+        except Exception as exc:
+            raise exc
 
 
 class BuildCancelSerializer(serializers.Serializer):
