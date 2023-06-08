@@ -1033,7 +1033,7 @@ function loadBuildOutputTable(build_info, options={}) {
     let test_templates = null;
 
     // tracked line items for this build
-    let tracked_lines = null;
+    let has_tracked_lines = false;
 
     // Mandatory query filters
     params.part_detail = true;
@@ -1055,21 +1055,6 @@ function loadBuildOutputTable(build_info, options={}) {
         singular_name: '{% trans "build output" %}',
         plural_name: '{% trans "build outputs" %}',
     });
-
-    // Request list of tracked build lines for this build
-    inventreeGet(
-        '{% url "api-build-line-list" %}',
-        {
-            build: build_info.pk,
-            tracked: true,
-        },
-        {
-            async: false,
-            success: function(data) {
-                tracked_lines = data.results || data;
-            }
-        }
-    );
 
     // Request list of required tests for the part being assembled
     inventreeGet(
@@ -1097,6 +1082,8 @@ function loadBuildOutputTable(build_info, options={}) {
                 success: function(response) {
                     let build_lines = response.results || response;
                     let table_data = $(table).bootstrapTable('getData');
+
+                    has_tracked_lines = build_lines.length > 0;
 
                     /* Iterate through each active build output and update allocations
                      * For each build output, we need to:
@@ -1151,6 +1138,12 @@ function loadBuildOutputTable(build_info, options={}) {
 
                     // Update the table data
                     $(table).bootstrapTable('load', table_data);
+
+                    if (has_tracked_lines) {
+                        $(table).bootstrapTable('showColumn', 'fully_allocated');
+                    } else {
+                        $(table).bootstrapTable('hideColumn', 'fully_allocated');
+                    }
                 }
             }
         );
@@ -1169,8 +1162,7 @@ function loadBuildOutputTable(build_info, options={}) {
         sidePagination: 'client',
         detailView: true,
         detailFilter: function(index, row) {
-            // Only show detail view if there are any allocations
-            return row.allocations && row.allocations.length;
+            return has_tracked_lines;
         },
         detailFormatter: function(index, row, element) {
             return '';  // TODO
@@ -1232,9 +1224,9 @@ function loadBuildOutputTable(build_info, options={}) {
             {
                 field: 'fully_allocated',
                 title: '{% trans "Allocated Lines" %}',
-                visible: true,
+                visible: false,
                 sortable: true,
-                switchable: true,
+                switchable: false,
                 formatter: function(value, row) {
                     if (!row.lines) {
                         return '-';
@@ -1262,7 +1254,7 @@ function loadBuildOutputTable(build_info, options={}) {
                         row.pk,
                         build_info,
                         {
-                            has_tracked_lines: tracked_lines.length > 0,
+                            has_tracked_lines: has_tracked_lines,
                         }
                     )
                 }
