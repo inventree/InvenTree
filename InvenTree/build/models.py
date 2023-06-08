@@ -733,30 +733,32 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
     @transaction.atomic
     def trim_allocated_stock(self):
         """Called after save to reduce allocated stock if the build order is now overallocated."""
-        allocations = BuildItem.objects.filter(build=self)
 
         # Only need to worry about untracked stock here
-        for bom_item in self.untracked_bom_items:
-            reduce_by = self.allocated_quantity(bom_item) - self.required_quantity(bom_item)
-            if reduce_by <= 0:
-                continue  # all OK
+        for build_line in self.untracked_line_items:
 
-            # find builditem(s) to trim
-            for a in allocations.filter(bom_item=bom_item):
+            reduce_by = build_line.allocated_quantity() - build_line.quantity
+
+            if reduce_by <= 0:
+                continue
+
+            # Find BuildItem objects to trim
+            for item in BuildItem.objects.filter(build_line=build_line):
+
                 # Previous item completed the job
-                if reduce_by == 0:
+                if reduce_by <= 0:
                     break
 
                 # Easy case - this item can just be reduced.
-                if a.quantity > reduce_by:
-                    a.quantity -= reduce_by
-                    a.save()
+                if item.quantity > reduce_by:
+                    item.quantity -= reduce_by
+                    item.save()
                     break
 
                 # Harder case, this item needs to be deleted, and any remainder
                 # taken from the next items in the list.
-                reduce_by -= a.quantity
-                a.delete()
+                reduce_by -= item.quantity
+                item.delete()
 
     @transaction.atomic
     def subtract_allocated_stock(self, user):
