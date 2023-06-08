@@ -114,7 +114,7 @@ jobs:
       - name: Check Config
         run: |
           pip install pyyaml
-          pip install docs/requirements.txt
+          pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         run: |
