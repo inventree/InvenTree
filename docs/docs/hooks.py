@@ -84,8 +84,8 @@ def fetch_rtd_versions():
     print("Discovered the following versions:")
     print(versions)
 
-    with open(output_filename, 'w') as fo:
-        json.dump(versions, fo, indent=2)
+    with open(output_filename, 'w') as file:
+        json.dump(versions, file, indent=2)
 
 
 def get_release_data():

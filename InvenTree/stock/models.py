@@ -256,7 +256,7 @@ def generate_batch_code():
     now = datetime.now()
 
     # Pass context data through to the template randering.
-    # The folowing context variables are availble for custom batch code generation
+    # The following context variables are available for custom batch code generation
     context = {
         'date': now,
         'year': now.year,
@@ -624,7 +624,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         except PartModels.Part.DoesNotExist:
             # This gets thrown if self.supplier_part is null
-            # TODO - Find a test than can be perfomed...
+            # TODO - Find a test than can be performed...
             pass
 
         # Ensure that the item cannot be assigned to itself
@@ -1261,6 +1261,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         # Mark this stock item as *not* belonging to anyone
         self.belongs_to = None
+        self.consumed_by = None
         self.location = location
 
         self.save()
@@ -2109,7 +2110,7 @@ class StockItemTracking(models.Model):
     """Stock tracking entry - used for tracking history of a particular StockItem.
 
     Note: 2021-05-11
-    The legacy StockTrackingItem model contained very litle information about the "history" of the item.
+    The legacy StockTrackingItem model contained very little information about the "history" of the item.
     In fact, only the "quantity" of the item was recorded at each interaction.
     Also, the "title" was translated at time of generation, and thus was not really translateable.
     The "new" system tracks all 'delta' changes to the model,
@@ -2170,7 +2171,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
     return os.path.join('stock_files', str(instance.stock_item.pk), os.path.basename(filename))
 
 
-class StockItemTestResult(models.Model):
+class StockItemTestResult(MetadataMixin, models.Model):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
 
     This is useful for tracking unit acceptance tests, and particularly useful when integrated

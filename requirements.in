@@ -30,6 +30,7 @@ djangorestframework                     # DRF framework
 djangorestframework-simplejwt[crypto]   # JWT authentication
 django-xforwardedfor-middleware         # IP forwarding metadata
 dj-rest-auth                            # Authentication API endpoints
+dulwich                                 # pure Python git integration
 drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server

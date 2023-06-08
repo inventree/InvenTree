@@ -49,14 +49,14 @@ class CategoryTest(TestCase):
         self.assertEqual(len(self.electronics.children.all()), 3)
         self.assertEqual(len(self.mechanical.children.all()), 1)
 
-    def test_unique_childs(self):
+    def test_unique_children(self):
         """Test the 'unique_children' functionality."""
-        childs = [item.pk for item in self.electronics.getUniqueChildren()]
+        children = [item.pk for item in self.electronics.getUniqueChildren()]
 
-        self.assertIn(self.transceivers.id, childs)
-        self.assertIn(self.ic.id, childs)
+        self.assertIn(self.transceivers.id, children)
+        self.assertIn(self.ic.id, children)
 
-        self.assertNotIn(self.fasteners.id, childs)
+        self.assertNotIn(self.fasteners.id, children)
 
     def test_unique_parents(self):
         """Test the 'unique_parents' functionality."""
@@ -168,7 +168,7 @@ class CategoryTest(TestCase):
             parts_parameters = self.fasteners.get_parts_parameters(prefetch=fasteners)
             part_infos = ['pk', 'name', 'description']
             for part_parameter in parts_parameters:
-                # Remove part informations
+                # Remove part information
                 for item in part_infos:
                     part_parameter.pop(item)
                 self.assertEqual(len(part_parameter), 1)

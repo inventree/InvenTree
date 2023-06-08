@@ -89,8 +89,8 @@ Each part object has access to a lot of context variables about the part. The fo
 | creation_date | Date that this part was added to the database
 | creation_user | User who added this part to the database
 | responsible | User who is responsible for this part (optional)
-| starred | Wether the part is starred or not |
-| disabled | Wether the part is disabled or not |
+| starred | Whether the part is starred or not |
+| disabled | Whether the part is disabled or not |
 | total_stock | The total amount in stock |
 | quantity_being_built | The amount being built |
 | required_build_order_quantity | The amount required for build orders |
@@ -98,7 +98,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | build_order_allocations | Query set with all build order allocations for that part |
 | required_sales_order_quantity | The amount required for sales orders |
 | allocated_sales_order_quantity | The amount allocated for sales orders |
-| available | Wether the part is available or not |
+| available | Whether the part is available or not |
 | on_order | The amount that are on order |
 | required | The total amount required for build orders and sales orders |
 | allocated | The total amount allocated for build orders and sales orders |
@@ -197,7 +197,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | pretty_name | The IPN, supplier name, supplier SKU and (if not null) manufacturer string joined by `|`. Ex. `P00037 | Company | 000021` |
 | unit_pricing | The price for one unit. |
 | price_breaks | Return the associated price breaks in the correct order |
-| has_price_breaks | Wether this [SupplierPart](./context_variables.md#supplierpart) has price breaks |
+| has_price_breaks | Whether this [SupplierPart](./context_variables.md#supplierpart) has price breaks |
 | manufacturer_string | Format a MPN string for this [SupplierPart](./context_variables.md#supplierpart). Concatenates manufacture name and part number. |
 
 ### Manufacturers
@@ -232,7 +232,7 @@ A [Sales Order](../order/sales_order.md) object has the following context variab
 
 #### Return Order
 
-A [Return Order](../order/return_order.md) object has the following context variables avaiable.
+A [Return Order](../order/return_order.md) object has the following context variables available.
 
 | Variable | Description |
 | --- | --- |

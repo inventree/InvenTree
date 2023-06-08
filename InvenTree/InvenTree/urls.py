@@ -64,7 +64,7 @@ apipatterns = [
     # Plugin endpoints
     path('', include(plugin_api_urls)),
 
-    # Common endpoints enpoint
+    # Common endpoints endpoint
     path('', include(common_api_urls)),
 
     # OpenAPI Schema
@@ -107,7 +107,7 @@ dynamic_javascript_urls = [
     re_path(r'^settings.js', DynamicJsView.as_view(template_name='js/dynamic/settings.js'), name='settings.js'),
 ]
 
-# These javascript files are pased through the Django translation layer
+# These javascript files are passed through the Django translation layer
 translated_javascript_urls = [
     re_path(r'^api.js', DynamicJsView.as_view(template_name='js/translated/api.js'), name='api.js'),
     re_path(r'^attachment.js', DynamicJsView.as_view(template_name='js/translated/attachment.js'), name='attachment.js'),

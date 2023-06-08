@@ -17,7 +17,7 @@ To access the admin interface, select the "Admin" option from the drop-down user
 
 
 !!! info "Staff Only"
-    Only users with staff acccess will be able to see the "Admin" option
+    Only users with staff access will be able to see the "Admin" option
 
 An adminstation panel will be presented as shown below:
 
@@ -26,7 +26,7 @@ An adminstation panel will be presented as shown below:
 {% endwith %}
 
 !!! info "Admin URL"
-    To directly access the admin iterface, append /admin/ to the InvenTree site URL - e.g. http://localhost:8000/admin/
+    To directly access the admin interface, append /admin/ to the InvenTree site URL - e.g. http://localhost:8000/admin/
 
 ### View Database Objects
 
@@ -49,7 +49,7 @@ Some admin views support filtering of results against specified criteria. For ex
 
 ### Edit Database Objects
 
-Individual database objects can be edited directly in the admin interface. The image below shows an exmple of editing a Part object:
+Individual database objects can be edited directly in the admin interface. The image below shows an example of editing a Part object:
 
 {% with id="edit_part", url="admin/edit_part.png", description="Edit Part object" %}
 {% include 'img.html' %}
