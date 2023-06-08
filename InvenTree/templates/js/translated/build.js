@@ -1036,7 +1036,13 @@ function loadBuildOutputTable(build_info, options={}) {
         {
             async: false,
             success: function(response) {
-                test_templates = response;
+                test_templates = [];
+                response.forEach(function(item) {
+                    // Only include "required" tests
+                    if (item.required) {
+                        test_templates.push(item);
+                    }
+                });
             }
         }
     );
@@ -1254,7 +1260,7 @@ function loadBuildOutputTable(build_info, options={}) {
             },
             {
                 field: 'tests',
-                title: '{% trans "Completed Tests" %}',
+                title: '{% trans "Required Tests" %}',
                 visible: test_templates.length > 0,
                 switchable: true,
                 formatter: function(value, row) {
