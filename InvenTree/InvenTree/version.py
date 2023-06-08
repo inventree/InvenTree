@@ -3,10 +3,11 @@
 Provides information on the current InvenTree version
 """
 
-import datetime
 import os
 import pathlib
 import re
+from datetime import datetime as dt
+from datetime import timedelta as td
 
 import django
 
@@ -126,4 +127,6 @@ def inventreeCommitDate():
 
     if main_commit is None:
         return None
-    return str(datetime.datetime.fromtimestamp(main_commit.commit_time).date())
+
+    commit_dt = dt.fromtimestamp(main_commit.commit_time) + td(seconds=main_commit.commit_timezone)
+    return str(commit_dt.date())
