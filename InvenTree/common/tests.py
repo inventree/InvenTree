@@ -902,7 +902,7 @@ class CommonTest(InvenTreeAPITestCase):
         self.assertFalse(response.data['state'])
 
         # Try with param -> true
-        response = self.get(reverse('api-flag-detail', kwargs={'key': 'NEXT_GEN'}), {'ngen': 'true'}, expected_code=200)
+        response = self.get(reverse('api-flag-detail', kwargs={'key': 'NEXT_GEN'}), {'ngen': ''}, expected_code=200)
         self.assertTrue(response.data['state'])
 
         # Try non existent flag
