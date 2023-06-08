@@ -99,7 +99,7 @@ jobs:
           python3 ci/version_check.py
 
   mkdocs:
-    name: Style [documentation]
+    name: Style [Documentation]
     runs-on: ubuntu-20.04
 
     needs: paths-filter
@@ -114,6 +114,7 @@ jobs:
       - name: Check Config
         run: |
           pip install pyyaml
+          pip install docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         run: |
