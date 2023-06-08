@@ -275,8 +275,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             pub_date = self.package.get('date')
         else:
             pub_date = datetime.fromisoformat(str(pub_date))
-        if not pub_date:
-            pub_date = _('No date found')  # pragma: no cover
+
         return pub_date
 
     @property
