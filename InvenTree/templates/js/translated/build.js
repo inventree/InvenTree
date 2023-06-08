@@ -398,7 +398,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
     var html = '';
 
     // Tracked parts? Must be individually allocated
-    if (options.has_bom_items) {
+    if (options.has_tracked_lines) {
 
         // Add a button to allocate stock against this build output
         html += makeIconButton(
@@ -1030,6 +1030,9 @@ function loadBuildOutputTable(build_info, options={}) {
     // test templates for the part being assembled
     let test_templates = null;
 
+    // tracked line items for this build
+    let tracked_lines = null;
+
     // Mandatory query filters
     params.part_detail = true;
     params.tests = true;
@@ -1051,8 +1054,22 @@ function loadBuildOutputTable(build_info, options={}) {
         plural_name: '{% trans "build outputs" %}',
     });
 
-    // Request list of required tests for the part being assembled
+    // Request list of tracked build lines for this build
+    inventreeGet(
+        '{% url "api-build-line-list" %}',
+        {
+            build: build_info.pk,
+            tracked: true,
+        },
+        {
+            async: false,
+            success: function(data) {
+                tracked_lines = data.results || data;
+            }
+        }
+    );
 
+    // Request list of required tests for the part being assembled
     inventreeGet(
         '{% url "api-part-test-template-list" %}',
         {
@@ -1103,7 +1120,9 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Part" %}',
                 switchable: false,
                 formatter: function(value, row) {
-                    return 'TODO: Part';
+                    return imageHoverIcon(row.part_detail.thumbnail) +
+                        renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`) +
+                        makePartIcons(row.part_detail);
                 }
             },
             {
@@ -1112,7 +1131,28 @@ function loadBuildOutputTable(build_info, options={}) {
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
-                    return 'TODO: Quantity';
+                    let text = '';
+
+                    if (row.serial && row.quantity == 1) {
+                        text = `{% trans "Serial Number" %}: ${row.serial}`;
+                    } else {
+                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+
+                    }
+
+                    text = renderLink(text, `/stock/item/${row.pk}/`);
+
+                    if (row.part_detail && row.part_detail.units) {
+                        text += ` <small>[${row.part_detail.units}]</small>`;
+                    }
+
+                    if (row.batch) {
+                        text += ` <small>({% trans "Batch" %}: ${row.batch})</small>`;
+                    }
+
+                    text += stockStatusDisplay(row.status, {classes: 'float-right'});
+
+                    return text;
                 }
             },
             {
@@ -1140,17 +1180,82 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '',
                 switchable: false,
                 formatter: function(value, row) {
-                    return 'TODO: Actions';
+                    return makeBuildOutputButtons(
+                        row.pk,
+                        build_info,
+                        {
+                            has_tracked_lines: tracked_lines.length > 0,
+                        }
+                    )
                 }
             }
         ]
     });
 
+    /* Callbacks for the build output buttons */
+
+    // Deallocate stock button
+    $(table).on('click', '.button-output-allocate', function() {
+        let pk = $(this).attr('pk');
+
+        deallocateStock(build_info.pk, {
+            output: pk,
+            table: table
+        });
+    });
+
+    // Complete build output button
+    $(table).on('click', '.button-output-complete', function() {
+        let pk = $(this).attr('pk');
+        let output = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+        completeBuildOutputs(
+            build_info.pk,
+            [output],
+            {
+                success: function() {
+                    $(table).bootstrapTable('refresh');
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
+    // Scrap build output button
+    $(table).on('click', '.button-output-scrap', function() {
+        let pk = $(this).attr('pk');
+        let output = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+        scrapBuildOutputs(
+            build_info.pk,
+            [output],
+            {
+                success: function() {
+                    $(table).bootstrapTable('refresh');
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
+    // Remove build output button
+    $(table).on('click', '.button-output-remove', function() {
+        let pk = $(this).attr('pk');
+        let output = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+        deleteBuildOutputs(
+            build_info.pk,
+            [output],
+            {
+                success: function() {
+                    $(table).bootstrapTable('refresh');
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
     return;
-
-    // First thing we do is request a list of all the "tracked" BOM lines for this build
-    let tracked_lines = [];
-
     inventreeGet(
         '{% url "api-build-line-list" %}',
         {
