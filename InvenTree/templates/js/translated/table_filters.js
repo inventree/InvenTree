@@ -426,6 +426,17 @@ function getPartTestTemplateFilters() {
 }
 
 
+// Return a dictionary of filters for the "plugins" table
+function getPluginTableFilters() {
+    return {
+        active: {
+            type: 'bool',
+            title: '{% trans "Active" %}',
+        },
+    };
+}
+
+
 // Return a dictionary of filters for the "build" table
 function getBuildTableFilters() {
 
@@ -774,6 +785,8 @@ function getAvailableTableFilters(tableKey) {
         return getPartTableFilters();
     case 'parttests':
         return getPartTestTemplateFilters();
+    case 'plugins':
+        return getPluginTableFilters();
     case 'purchaseorder':
         return getPurchaseOrderFilters();
     case 'purchaseorderlineitem':

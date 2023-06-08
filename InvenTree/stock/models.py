@@ -1261,6 +1261,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         # Mark this stock item as *not* belonging to anyone
         self.belongs_to = None
+        self.consumed_by = None
         self.location = location
 
         self.save()
