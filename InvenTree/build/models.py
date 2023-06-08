@@ -1104,7 +1104,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         lines = []
 
         # Iterate through each part required to build the parent part
-        for bom_item in self.part.get_bom_items.all():
+        for bom_item in self.part.get_bom_items():
 
             if prevent_duplicates:
                 if BuildLine.objects.filter(build=self, bom_item=bom_item).exists():

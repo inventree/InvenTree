@@ -2414,11 +2414,11 @@ function loadBuildLineTable(table, build_id, options={}) {
                     let text = row.bom_item_detail.quantity;
 
                     if (row.bom_item_detail.overage) {
-                        text += ` <small>(+${row.bom_item_detail.overage}%)</small>`;
+                        text += ` <span class='badge bg-dark rounded-pill badge-right'>(+${row.bom_item_detail.overage})</span>`;
                     }
 
                     if (row.part_detail.units) {
-                        text += ` <span class='badge bg-dark rounded-pill badge-right'>${row.part_detail.units}</small>`;
+                        text += ` <small> [${row.part_detail.units}]</small>`;
                     }
 
                     return text;
