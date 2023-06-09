@@ -1,0 +1,15 @@
+The web interface uses:
+
+UI:
+- mantine as UI intercafe
+
+Tools:
+- yarn for packaging
+
+## Setup dev enviroment
+1. Install yarn
+2. Install packages (from src) `yarn`
+3. Run dev server with `yarn dev`
+
+## Material used
+https://github.com/mantinedev/ui.mantine.dev

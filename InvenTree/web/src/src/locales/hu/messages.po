@@ -1,0 +1,443 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2022-11-27 02:47+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: hu\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/App.tsx:174
+msgid "Cancel"
+msgstr ""
+
+#: src/App.tsx:174
+#: src/pages/Index/Profile/UserPanel.tsx:108
+msgid "Submit"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:37
+msgid "login"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:37
+msgid "register"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:56
+msgid "Welcome {actionname} to"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:61
+msgid "Placeholder"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:64
+msgid "Or continue with email"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:73
+#: src/components/HostOptionsForm.tsx:22
+#: src/components/HostOptionsForm.tsx:33
+msgid "Name"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:74
+msgid "Your name"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:84
+msgid "Username"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:90
+msgid "Invalid email"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:95
+msgid "Password"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:96
+msgid "Your password"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:101
+msgid "Password should include at least 6 characters"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:114
+msgid "Already have an account? Login"
+msgstr ""
+
+#: src/components/AuthenticationForm.tsx:115
+msgid "Don't have an account? Register"
+msgstr ""
+
+#: src/components/DashboardItemProxy.tsx:32
+msgid "Title"
+msgstr ""
+
+#: src/components/HostOptionsForm.tsx:21
+#: src/components/HostOptionsForm.tsx:32
+msgid "Host"
+msgstr ""
+
+#: src/components/HostOptionsForm.tsx:36
+msgid "No one here..."
+msgstr ""
+
+#: src/components/HostOptionsForm.tsx:40
+msgid "Add Host"
+msgstr ""
+
+#: src/components/HostOptionsForm.tsx:42
+msgid "Save"
+msgstr ""
+
+#: src/components/items/ErrorItem.tsx:7
+msgid "Unknown error"
+msgstr ""
+
+#: src/components/items/ErrorItem.tsx:10
+msgid "An error occured:"
+msgstr ""
+
+#: src/components/items/InvenTreeLogo.tsx:11
+msgid "InvenTree Logo"
+msgstr ""
+
+#: src/components/items/ScanButton.tsx:12
+msgid "Scan QR code"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:43
+msgid "Unknown response"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:63
+msgid "Error while getting camera"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:75
+msgid "Error while scanning"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:84
+msgid "Error while stopping"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:95
+msgid "Scanning"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:95
+msgid "Not scanning"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:98
+msgid "Select Camera"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:101
+msgid "Start scanning"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:102
+msgid "Stop scanning"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:104
+msgid "No scans yet!"
+msgstr ""
+
+#: src/components/modals/QrCodeModal.tsx:111
+msgid "Close modal"
+msgstr ""
+
+#: src/components/nav/Header.tsx:80
+msgid "Notifications"
+msgstr ""
+
+#: src/components/nav/Header.tsx:81
+#: src/pages/Index/Profile/Profile.tsx:17
+msgid "Profile"
+msgstr ""
+
+#: src/components/nav/Header.tsx:83
+#: src/pages/Index/Profile/SettingsPanel.tsx:54
+msgid "Settings"
+msgstr ""
+
+#: src/components/nav/Header.tsx:84
+msgid "Current language {locale}"
+msgstr ""
+
+#: src/components/nav/Header.tsx:85
+msgid "Switch to pseudo language"
+msgstr ""
+
+#: src/components/nav/Header.tsx:86
+msgid "Account settings"
+msgstr ""
+
+#: src/components/nav/Header.tsx:87
+msgid "Logout"
+msgstr ""
+
+#: src/defaults.tsx:22
+#: src/pages/Index/Home.tsx:7
+msgid "Home"
+msgstr ""
+
+#: src/defaults.tsx:23
+#: src/pages/Index/Part.tsx:7
+msgid "Part"
+msgstr "Alkatrész"
+
+#: src/defaults.tsx:29
+msgid "Website"
+msgstr ""
+
+#: src/defaults.tsx:34
+msgid "GitHub"
+msgstr ""
+
+#: src/defaults.tsx:39
+msgid "Demo"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:17
+msgid "Subscribed Parts"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:24
+msgid "Subscribed Categories"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:31
+msgid "Latest Parts"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:38
+msgid "BOM Waiting Validation"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:45
+msgid "Recently Updated"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:52
+msgid "Low Stock"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:59
+msgid "Depleted Stock"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:66
+msgid "Required for Build Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:73
+msgid "Expired Stock"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:80
+msgid "Stale Stock"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:87
+msgid "Build Orders In Progress"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:94
+msgid "Overdue Build Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:101
+msgid "Outstanding Purchase Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:108
+msgid "Overdue Purchase Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:115
+msgid "Outstanding Sales Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:122
+msgid "Overdue Sales Orders"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:129
+msgid "Current News"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:139
+msgid "Dashboard"
+msgstr ""
+
+#: src/pages/Index/Dashboard.tsx:140
+msgid "Autoupdate"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:23
+msgid "User"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:24
+#: src/pages/Index/Profile/Profile.tsx:34
+msgid "User Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:25
+#: src/pages/Index/Profile/Profile.tsx:37
+msgid "Notification Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:26
+msgid "Global Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:27
+#: src/pages/Index/Profile/Profile.tsx:159
+#: src/pages/Index/Profile/Profile.tsx:173
+msgid "Plugin Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:34
+msgid "Settings for the current user"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:37
+msgid "Settings for the notifications"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:41
+msgid "Global Server Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:42
+msgid "Global Settings for this instance"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:45
+msgid "Server Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:62
+msgid "Login Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:74
+msgid "Barcode Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:81
+msgid "Label Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:87
+msgid "Report Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:96
+msgid "Part Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:119
+msgid "Pricing Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:129
+msgid "Stock Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:141
+msgid "Build Order Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:146
+msgid "Purchase Order Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:152
+msgid "Sales Order Settings"
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:173
+msgid "Plugin Settings for this instance"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:27
+#~ msgid "Data is current beeing loaded"
+#~ msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:35
+#: src/pages/Index/Profile/SettingsPanel.tsx:39
+msgid "Failed to load"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:55
+msgid "Show internal names"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:82
+msgid "Input {0} is not known"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:88
+msgid "Saved changes {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:88
+msgid "Changed to {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:97
+msgid "Error while saving {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:97
+msgid "Error was {err}"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:134
+msgid "Plugin: {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:135
+msgid "Method: {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/UserPanel.tsx:77
+msgid "Userinfo"
+msgstr ""
+
+#: src/pages/Index/Profile/UserPanel.tsx:87
+msgid "First name: {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/UserPanel.tsx:95
+msgid "Last name: {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/UserPanel.tsx:103
+msgid "Username: {0}"
+msgstr ""
+
+#: src/pages/Login.tsx:27
+msgid "No selection"
+msgstr ""
+
+#: src/pages/Login.tsx:72
+msgid "Edit host options"
+msgstr ""
