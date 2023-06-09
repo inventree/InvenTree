@@ -22,10 +22,12 @@ def spa_bundle():
 
     manifest_data = json.load(manifest.open())
     index = manifest_data.get("index.html")
+
+    dynmanic_files = index.get("dynamicImports", [])
     imports_files = "".join(
         [
             f'<script type="module" src="{settings.STATIC_URL}web/{manifest_data[file]["file"]}"></script>'
-            for file in index["dynamicImports"]
+            for file in dynmanic_files
         ]
     )
 
