@@ -197,10 +197,13 @@ new_frontendpatterns = [
 
 ]
 
-frontendpatterns = [
-    re_path('', include(classic_frontendpatterns)),
-    re_path('', include(new_frontendpatterns)),
-]
+# Load patterns for frontend according to settings
+frontendpatterns = []
+if settings.ENABLE_CLASSIC_FRONTEND:
+    frontendpatterns.append(re_path('', include(classic_frontendpatterns)))
+if settings.ENABLE_PLATFORM_FRONTEND:
+    frontendpatterns.append(re_path('', include(new_frontendpatterns)))
+
 
 # Append custom plugin URLs (if plugin support is enabled)
 if settings.PLUGINS_ENABLED:
