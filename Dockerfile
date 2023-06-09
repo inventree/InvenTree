@@ -55,10 +55,19 @@ LABEL org.label-schema.schema-version="1.0" \
 
 # Install required system packages
 RUN apt-get update && apt-get install -y  --no-install-recommends \
-    gnupg \
+    git gnupg gettext \
+    # Image format support
+    # libjpeg-dev webp libwebp-dev \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
-    poppler-utils libpango-1.0-0 libpangoft2-1.0-0 && \
-    apt-get autoclean && apt-get autoremove && apt-get clean
+    poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
+    # SQLite support
+    sqlite3 \
+    # PostgreSQL support
+    libpq-dev postgresql-client \
+    # MySQL / MariaDB support
+    default-libmysqlclient-dev mariadb-client && \
+    apt-get autoclean && apt-get autoremove && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Update pip
 RUN pip install --upgrade pip
@@ -66,19 +75,9 @@ RUN pip install --upgrade pip
 
 FROM inventree_base as build_base
 
-# Install required system packages
-RUN apt-get install -y  --no-install-recommends \
-    git gcc g++ gettext gnupg libffi-dev libssl-dev \
-    # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
-    poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
-    # Image format support
-    libjpeg-dev webp libwebp-dev \
-    # SQLite support
-    sqlite3 \
-    # PostgreSQL support
-    libpq-dev postgresql-client \
-    # MySQL / MariaDB support
-    default-libmysqlclient-dev mariadb-client && \
+# Install build required system packages
+RUN apt-get update && apt-get install -y  --no-install-recommends \
+    gcc g++ libffi-dev libssl-dev && \
     apt-get autoclean && apt-get autoremove
 
 # For ARMv7 architecture, add the pinwheels repo (for cryptography library)
@@ -93,10 +92,6 @@ RUN \
 COPY ./docker/requirements.txt base_requirements.txt
 RUN pip install --user --disable-pip-version-check -U -r base_requirements.txt
 
-# InvenTree production image:
-# - Copies required files from local directory
-# - Installs required python packages from requirements.txt
-# - Starts a gunicorn webserver
 
 FROM build_base as pre_production
 
@@ -115,6 +110,10 @@ WORKDIR ${INVENTREE_MNG_DIR}
 RUN pip3 install --user --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
 
+# InvenTree production image:
+# - Copies required files from local directory
+# - Installs required python packages from requirements.txt
+# - Starts a gunicorn webserver
 FROM inventree_base as production
 
 ENV INVENTREE_DEBUG=False
@@ -127,9 +126,7 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 COPY InvenTree ${INVENTREE_HOME}/InvenTree
 
 # Copy other key files
-COPY requirements.txt ${INVENTREE_HOME}/requirements.txt
-COPY tasks.py ${INVENTREE_HOME}/tasks.py
-COPY docker/gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
+COPY requirements.txt tasks.py docker/gunicorn.conf.py ${INVENTREE_HOME}
 COPY docker/init.sh ${INVENTREE_MNG_DIR}/init.sh
 
 # Copy dependencies
