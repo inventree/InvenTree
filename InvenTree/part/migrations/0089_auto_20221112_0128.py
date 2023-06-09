@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
             name='PartPricing',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('currency', models.CharField(choices=[('AUD', 'Australian Dollar'), ('CAD', 'Canadian Dollar'), ('CNY', 'Chinese Yuan'), ('EUR', 'Euro'), ('GBP', 'British Pound'), ('JPY', 'Japanese Yen'), ('NZD', 'New Zealand Dollar'), ('USD', 'US Dollar')], default=common.settings.currency_code_default, help_text='Currency used to cache pricing calculations', max_length=10, verbose_name='Currency')),
+                ('currency', models.CharField(choices=common.settings.currency_code_mappings(), default=common.settings.currency_code_default, help_text='Currency used to cache pricing calculations', max_length=10, verbose_name='Currency')),
                 ('updated', models.DateTimeField(auto_now=True, help_text='Timestamp of last pricing update', verbose_name='Updated')),
                 ('scheduled_for_update', models.BooleanField(default=False)),
                 ('bom_cost_min_currency', djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3)),

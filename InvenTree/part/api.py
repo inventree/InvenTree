@@ -29,8 +29,9 @@ from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
 from InvenTree.permissions import RolePermission
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import (BuildStatusGroups,
+                                    PurchaseOrderStatusGroups,
+                                    SalesOrderStatusGroups)
 from part.admin import PartCategoryResource, PartResource
 
 from . import serializers as part_serializers
@@ -482,7 +483,7 @@ class PartScheduling(RetrieveAPI):
         # Add purchase order (incoming stock) information
         po_lines = order.models.PurchaseOrderLineItem.objects.filter(
             part__part=part,
-            order__status__in=PurchaseOrderStatus.OPEN,
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
         )
 
         for line in po_lines:
@@ -505,7 +506,7 @@ class PartScheduling(RetrieveAPI):
         # Add sales order (outgoing stock) information
         so_lines = order.models.SalesOrderLineItem.objects.filter(
             part=part,
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatusGroups.OPEN,
         )
 
         for line in so_lines:
@@ -525,7 +526,7 @@ class PartScheduling(RetrieveAPI):
         # Add build orders (incoming stock) information
         build_orders = Build.objects.filter(
             part=part,
-            status__in=BuildStatus.ACTIVE_CODES
+            status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         for build in build_orders:
@@ -570,12 +571,12 @@ class PartScheduling(RetrieveAPI):
                 # An "inherited" BOM item filters down to variant parts also
                 children = bom_item.part.get_descendants(include_self=True)
                 builds = Build.objects.filter(
-                    status__in=BuildStatus.ACTIVE_CODES,
+                    status__in=BuildStatusGroups.ACTIVE_CODES,
                     part__in=children,
                 )
             else:
                 builds = Build.objects.filter(
-                    status__in=BuildStatus.ACTIVE_CODES,
+                    status__in=BuildStatusGroups.ACTIVE_CODES,
                     part=bom_item.part,
                 )
 
@@ -1200,7 +1201,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
         if stock_to_build is not None:
             # Get active builds
-            builds = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES)
+            builds = Build.objects.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
             # Store parts with builds needing stock
             parts_needed_to_complete_builds = []
             # Filter required parts

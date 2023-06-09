@@ -26,6 +26,11 @@ def currency_code_default():
     return code
 
 
+def all_currency_codes():
+    """Returns a list of all currency codes."""
+    return [(a, CURRENCIES[a].name) for a in CURRENCIES]
+
+
 def currency_code_mappings():
     """Returns the current currency choices."""
     return [(a, CURRENCIES[a].name) for a in settings.CURRENCIES]

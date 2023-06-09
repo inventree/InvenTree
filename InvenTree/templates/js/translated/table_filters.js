@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load status_codes %}
+{% load generic %}
 {% load inventree_extras %}
 
 /* globals

@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 
 {% block sidebar %}
 {% include "build/sidebar.html" %}
@@ -60,7 +60,7 @@
                 <tr>
                     <td><span class='fas fa-info'></span></td>
                     <td>{% trans "Status" %}</td>
-                    <td>{% build_status_label build.status %}</td>
+                    <td>{% status_label 'build' build.status %}</td>
                 </tr>
                 <tr>
                     <td><span class='fas fa-check-circle'></span></td>

@@ -196,6 +196,7 @@ INSTALLED_APPS = [
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'plugin.apps.PluginAppConfig',
+    'generic',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Core django modules
