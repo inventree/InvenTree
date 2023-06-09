@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 
 /* globals
     addCachedAlert,
