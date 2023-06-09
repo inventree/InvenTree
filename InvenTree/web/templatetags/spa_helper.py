@@ -32,13 +32,3 @@ def spa_bundle():
     return mark_safe(
         f"""<script type="module" src="{settings.STATIC_URL}web/{index['file']}"></script>{imports_files}"""
     )
-
-
-@register.simple_tag
-def tracking_code():
-    """Render tracking code."""
-    if settings.TRACKING_ID and settings.TRACKING_URL:
-        return mark_safe(
-            f"""<script async defer data-website-id="{settings.TRACKING_ID}" src="{settings.TRACKING_URL}"></script>"""
-        )
-    return ""
