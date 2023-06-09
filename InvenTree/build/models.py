@@ -541,13 +541,14 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
-        # Handle stock allocations
-        for build_item in self.allocated_stock.all():
+        # Find all BuildItem objects associated with this Build
+        items = BuildItem.objects.filter(build_line__build=self)
 
-            if remove_allocated_stock:
-                build_item.complete_allocation(user)
+        if remove_allocated_stock:
+            for item in items:
+                item.complete_allocation(user)
 
-            build_item.delete()
+        items.delete()
 
         # Remove incomplete outputs (if required)
         if remove_incomplete_outputs:
@@ -1103,11 +1104,15 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         lines = []
 
-        # Iterate through each part required to build the parent part
-        for bom_item in self.part.get_bom_items():
+        bom_items = self.part.get_bom_items()
 
+        logger.info(f"Creating BuildLine objects for BuildOrder {self.pk} ({len(bom_items)} items))")
+
+        # Iterate through each part required to build the parent part
+        for bom_item in bom_items:
             if prevent_duplicates:
                 if BuildLine.objects.filter(build=self, bom_item=bom_item).exists():
+                    logger.info(f"BuildLine already exists for BuildOrder {self.pk} and BomItem {bom_item.pk}")
                     continue
 
             # Calculate required quantity
@@ -1123,7 +1128,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         BuildLine.objects.bulk_create(lines)
 
-        logger.info(f"Created {len(lines)} BuildLine objects for BuildOrder {self.pk}")
+        logger.info(f"Created {len(lines)} BuildLine objects for BuildOrder")
 
 
 @receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
@@ -1253,7 +1258,6 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
     Attributes:
         build: Link to a Build object
         build_line: Link to a BuildLine object (this is a "line item" within a build)
-        bom_item: Link to a BomItem object (may or may not point to the same part as the build)
         stock_item: Link to a StockItem object
         quantity: Number of units allocated
         install_into: Destination stock item (or None)
@@ -1325,8 +1329,10 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
                     'quantity': _('Quantity must be 1 for serialized stock')
                 })
 
-        except (stock.models.StockItem.DoesNotExist, part.models.Part.DoesNotExist):
-            pass
+        except stock.models.StockItem.DoesNotExist:
+            raise ValidationError("Stock item must be specified")
+        except part.models.Part.DoesNotExist:
+            raise ValidationError("Part must be specified")
 
         """
         Attempt to find the "BomItem" which links this BuildItem to the build.
@@ -1363,23 +1369,25 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
 
                 for idx, ancestor in enumerate(ancestors):
 
-                    try:
-                        bom_item = part.models.BomItem.objects.get(part=self.build.part, sub_part=ancestor)
-                    except part.models.BomItem.DoesNotExist:
-                        continue
+                    build_line = BuildLine.objects.filter(
+                        build=self.build,
+                        bom_item__part=ancestor,
+                    )
 
-                    # A matching BOM item has been found!
-                    if idx == 0 or bom_item.allow_variants:
-                        valid = True
-                        self.bom_item = bom_item
-                        break
+                    if build_line.exists():
+                        line = build_line.first()
+
+                        if idx == 0 or line.bom_item.allow_variants:
+                            valid = True
+                            self.build_line = line
+                            break
 
         # BomItem did not exist or could not be validated.
         # Search for a new one
         if not valid:
 
             raise ValidationError({
-                'stock_item': _("Selected stock item not found in BOM")
+                'stock_item': _("Selected stock item does not match BOM line")
             })
 
     @property

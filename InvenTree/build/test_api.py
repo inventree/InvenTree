@@ -582,6 +582,9 @@ class BuildAllocationTest(BuildAPITest):
 
         self.build = Build.objects.get(pk=1)
 
+        # Regenerate BuildLine objects
+        self.build.create_build_line_items()
+
         # Record number of build items which exist at the start of each test
         self.n = BuildItem.objects.count()
 
@@ -634,7 +637,7 @@ class BuildAllocationTest(BuildAPITest):
             {
                 "items": [
                     {
-                        "bom_item": 1,  # M2x4 LPHS
+                        "build_line": 1,  # M2x4 LPHS
                         "stock_item": 2,  # 5,000 screws available
                     }
                 ]
@@ -666,7 +669,7 @@ class BuildAllocationTest(BuildAPITest):
             {
                 "items": [
                     {
-                        "bom_item": 1,
+                        "build_line": 1,
                         "quantity": 5000,
                     }
                 ]
@@ -681,12 +684,13 @@ class BuildAllocationTest(BuildAPITest):
 
     def test_invalid_bom_item(self):
         """Test by passing an invalid BOM item."""
+
         data = self.post(
             self.url,
             {
                 "items": [
                     {
-                        "bom_item": 5,
+                        "build_line": 2,
                         "stock_item": 11,
                         "quantity": 500,
                     }
@@ -695,7 +699,7 @@ class BuildAllocationTest(BuildAPITest):
             expected_code=400
         ).data
 
-        self.assertIn('must point to the same part', str(data))
+        self.assertIn('Selected stock item does not match BOM line', str(data))
 
     def test_valid_data(self):
         """Test with valid data.
@@ -707,7 +711,7 @@ class BuildAllocationTest(BuildAPITest):
             {
                 "items": [
                     {
-                        "bom_item": 1,
+                        "build_line": 1,
                         "stock_item": 2,
                         "quantity": 5000,
                     }
@@ -749,16 +753,22 @@ class BuildOverallocationTest(BuildAPITest):
         cls.state = {}
         cls.allocation = {}
 
-        for i, bi in enumerate(cls.build.part.bom_items.all()):
-            rq = cls.build.required_quantity(bi, None) + i + 1
-            si = StockItem.objects.filter(part=bi.sub_part, quantity__gte=rq).first()
+        items_to_create = []
 
-            cls.state[bi.sub_part] = (si, si.quantity, rq)
-            BuildItem.objects.create(
-                build=cls.build,
+        for idx, build_line in enumerate(cls.build.build_lines.all()):
+            required = build_line.quantity + idx + 1
+            sub_part = build_line.bom_item.sub_part
+            si = StockItem.objects.filter(part=sub_part, quantity__gte=required).first()
+
+            cls.state[sub_part] = (si, si.quantity, required)
+
+            items_to_create.append(BuildItem(
+                build_line=build_line,
                 stock_item=si,
-                quantity=rq,
-            )
+                quantity=required,
+            ))
+
+        BuildItem.objects.bulk_create(items_to_create)
 
         # create and complete outputs
         cls.build.create_build_output(cls.build.quantity)
@@ -822,9 +832,10 @@ class BuildOverallocationTest(BuildAPITest):
         self.assertTrue(self.build.is_complete)
 
         # Check stock items have reduced only by bom requirement (overallocation trimmed)
-        for bi in self.build.part.bom_items.all():
-            si, oq, _ = self.state[bi.sub_part]
-            rq = self.build.required_quantity(bi, None)
+        for line in self.build.build_lines.all():
+
+            si, oq, _ = self.state[line.bom_item.sub_part]
+            rq = line.quantity
             si.refresh_from_db()
             self.assertEqual(si.quantity, oq - rq)
 
