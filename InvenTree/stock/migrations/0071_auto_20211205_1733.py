@@ -42,6 +42,7 @@ def reverse(apps, schema_editor):  # pragma: no cover
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('django_q', '0007_ormq'),
         ('stock', '0070_auto_20211128_0151'),
     ]
 
