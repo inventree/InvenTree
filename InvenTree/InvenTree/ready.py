@@ -24,7 +24,7 @@ def isInMainThread():
     """
     if '--noreload' in sys.argv or "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
         return True
-    
+
     print("IS_IN_MAIN_THREAD", os.environ.get('RUN_MAIN', None) == 'true')
     return True
 
