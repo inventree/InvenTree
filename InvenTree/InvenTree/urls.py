@@ -29,6 +29,7 @@ from report.api import report_api_urls
 from stock.api import stock_api_urls
 from stock.urls import stock_urls
 from users.api import user_urls
+from web.urls import urlpatterns as plattform_urls
 
 from .api import APISearchView, InfoView, NotFoundView
 from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
@@ -163,6 +164,9 @@ frontendpatterns = [
     re_path(r'^settings/', include(settings_urls)),
     re_path(r'^about/', AboutView.as_view(), name='about'),
     re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
+
+    # Modern Platform
+    re_path(r'^platform/', include(plattform_urls)),
 
     # admin sites
     re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
