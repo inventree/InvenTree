@@ -94,5 +94,7 @@ def isPluginRegistryLoaded():
         return True
 
     from plugin import registry
+    print("IS_PLUGIN_REGISTRY_LOADED", not registry.is_loading)
+    return True
 
     return not registry.is_loading
