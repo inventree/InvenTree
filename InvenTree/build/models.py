@@ -470,6 +470,25 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         return new_ref
 
+    @property
+    def can_complete(self):
+        """Returns True if this BuildOrder is ready to be completed
+
+        - Must not have any outstanding build outputs
+        - Completed count must meet the required quantity
+        """
+
+        if self.incomplete_count > 0:
+            return False
+
+        if self.remaining > 0:
+            return False
+
+        if not self.is_fully_allocated():
+            return False
+
+        return True
+
     @transaction.atomic
     def complete_build(self, user):
         """Mark this build as complete."""

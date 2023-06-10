@@ -596,7 +596,7 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(self.build.part.bom_items.count(), 4)
 
         # No items yet allocated to this build
-        self.assertEqual(self.build.allocated_stock.count(), 0)
+        self.assertEqual(BuildItem.objects.filter(build_line__build=self.build).count(), 0)
 
     def test_get(self):
         """A GET request to the endpoint should return an error."""
@@ -661,7 +661,7 @@ class BuildAllocationTest(BuildAPITest):
             expected_code=400
         ).data
 
-        self.assertIn("This field is required", str(data["items"][0]["bom_item"]))
+        self.assertIn("This field is required", str(data["items"][0]["build_line"]))
 
         # Missing stock_item
         data = self.post(
