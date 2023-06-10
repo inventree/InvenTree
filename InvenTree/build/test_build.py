@@ -304,6 +304,8 @@ class BuildTest(BuildTestBase):
             allocations: Map of {StockItem: quantity}
         """
 
+        items_to_create = []
+
         for item, quantity in allocations.items():
 
             # Find an appropriate BuildLine to allocate against
@@ -312,12 +314,14 @@ class BuildTest(BuildTestBase):
                 bom_item__sub_part=item.part
             ).first()
 
-            BuildItem.objects.create(
+            items_to_create.append(BuildItem(
                 build_line=line,
                 stock_item=item,
                 quantity=quantity,
                 install_into=output
-            )
+            ))
+
+        BuildItem.objects.bulk_create(items_to_create)
 
     def test_partial_allocation(self):
         """Test partial allocation of stock"""
