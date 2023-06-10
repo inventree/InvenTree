@@ -9,7 +9,7 @@ ruby -v
 env
 
 VERSION="$APP_PKG_VERSION-$APP_PKG_ITERATION"
-echo "Setting VERSION information to $_VERSION"
+echo "Setting VERSION information to $VERSION"
 echo "$VERSION" > VERSION
 
 # cleanup
