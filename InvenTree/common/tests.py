@@ -879,7 +879,7 @@ class CommonTest(InvenTreeAPITestCase):
         """Test flag URLs."""
         # Not superuser
         response = self.get(reverse('api-flag-list'), expected_code=200)
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['key'], 'EXPERIMENTAL')
 
         # Turn into superuser
@@ -888,7 +888,7 @@ class CommonTest(InvenTreeAPITestCase):
 
         # Successful checks
         response = self.get(reverse('api-flag-list'), expected_code=200)
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['key'], 'EXPERIMENTAL')
         self.assertTrue(response.data[0]['conditions'])
 
