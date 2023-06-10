@@ -166,3 +166,15 @@ def inventreePublisher():
         return publisher
 
     return None
+
+
+def inventreePlatform():
+    """Returns the platform for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    platform = os.environ.get('INVENTREE_PKG_PLATFORM', '')
+
+    if platform:
+        return platform
+
+    return None
