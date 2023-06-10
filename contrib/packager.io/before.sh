@@ -30,7 +30,7 @@ curl -L \
 echo "Extracting info from github"
 DATE=$(jq -r '.commit.committer.date' commit.json)
 BRANCH=$(jq -r '.[].name' branches.json)
-NODE_ID=$(jq -r '.commit.node_id' commit.json)
+NODE_ID=$(jq -r '.node_id' commit.json)
 SIGNATURE=$(jq -r '.commit.verification.signature' commit.json)
 
 echo "Defining VERSION information"
