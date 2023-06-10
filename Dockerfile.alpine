@@ -1,4 +1,4 @@
-FROM python:3.10-alpine3.18 as base
+FROM python:3.10-alpine3.18 as production
 
 # Build arguments for this image
 ARG commit_hash=""

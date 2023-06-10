@@ -57,7 +57,7 @@ LABEL org.label-schema.schema-version="1.0" \
 RUN apt-get update && apt-get install -y  --no-install-recommends \
     git gnupg gettext \
     # Image format support
-    # libjpeg-dev webp libwebp-dev \
+    libjpeg-dev webp libwebp-dev \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
     poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
     # SQLite support
