@@ -1173,6 +1173,20 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         logger.info(f"Created {len(lines)} BuildLine objects for BuildOrder")
 
+    @transaction.atomic
+    def update_build_line_items(self):
+        """Rebuild required quantity field for each BuildLine object"""
+
+        lines_to_update = []
+
+        for line in self.build_lines.all():
+            line.quantity = line.bom_item.get_required_quantity(self.quantity)
+            lines_to_update.append(line)
+
+        BuildLine.objects.bulk_update(lines_to_update, ['quantity'])
+
+        logger.info(f"Updated {len(lines_to_update)} BuildLine objects for BuildOrder")
+
 
 @receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
 def after_save_build(sender, instance: Build, created: bool, **kwargs):
@@ -1198,8 +1212,8 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
 
         else:
-            # TODO: Update BuildLine objects if the Build quantity has changed
-            ...
+            # Update BuildLine objects if the Build quantity has changed
+            instance.update_build_line_items()
 
 
 class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
