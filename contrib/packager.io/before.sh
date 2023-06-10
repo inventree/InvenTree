@@ -33,16 +33,11 @@ BRANCH=$(jq -r '.[].name' branches.json)
 NODE_ID=$(jq -r '.node_id' commit.json)
 SIGNATURE=$(jq -r '.commit.verification.signature' commit.json)
 
-echo "Defining VERSION information"
-# PUBLISHER=$(git config --get remote.origin.url | sed -e 's/.*\///' -e 's/\.git//')
-PUBLISHER='non'
-
 echo "Write VERSION information"
 echo "INVENTREE_COMMIT_HASH='$SHA'" >> VERSION
 echo "INVENTREE_COMMIT_DATE='$DATE'" >> VERSION
 echo "INVENTREE_PKG_INSTALLER='PKG'" >> VERSION
 echo "INVENTREE_PKG_BRANCH='$BRANCH'" >> VERSION
-echo "INVENTREE_PKG_PUBLISHER='$PUBLISHER'" >> VERSION
 echo "INVENTREE_PKG_PLATFORM='$TARGET'" >> VERSION
 echo "NODE_ID='$NODE_ID'" >> VERSION
 echo "SIGNATURE='$SIGNATURE'" >> VERSION
