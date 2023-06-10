@@ -130,3 +130,39 @@ def inventreeCommitDate():
 
     commit_dt = dt.fromtimestamp(main_commit.commit_time) + td(seconds=main_commit.commit_timezone)
     return str(commit_dt.date())
+
+
+def inventreeInstaller():
+    """Returns the installer for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    installer = os.environ.get('INVENTREE_PKG_INSTALLER', '')
+
+    if installer:
+        return installer
+
+    return None
+
+
+def inventreeBranch():
+    """Returns the branch for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    branch = os.environ.get('INVENTREE_PKG_BRANCH', '')
+
+    if branch:
+        return branch
+
+    return None
+
+
+def inventreePublisher():
+    """Returns the publisher for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    publisher = os.environ.get('INVENTREE_PKG_PUBLISHER', '')
+
+    if publisher:
+        return publisher
+
+    return None
