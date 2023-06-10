@@ -972,7 +972,7 @@ function loadBomTable(table, options={}) {
             }
 
             if (row.overage) {
-                text += `<small> (${row.overage})    </small>`;
+                text += `<small> (+${row.overage})</small>`;
             }
 
             return text;
