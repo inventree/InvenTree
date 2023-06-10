@@ -3,10 +3,7 @@
 # packager.io before script
 #
 
-set -eux
-uname -a
-ruby -v
-env
+set -eu
 
 VERSION="$APP_PKG_VERSION-$APP_PKG_ITERATION"
 echo "Setting VERSION information to $VERSION"
