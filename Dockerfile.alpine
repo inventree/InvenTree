@@ -1,0 +1,90 @@
+FROM python:3.10-alpine3.18 as base
+
+# Build arguments for this image
+ARG commit_hash=""
+ARG commit_date=""
+ARG commit_tag=""
+
+ENV PYTHONUNBUFFERED 1
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+
+ENV INVENTREE_DEBUG=False
+ENV INVENTREE_COMMIT_HASH="${commit_hash}"
+ENV INVENTREE_COMMIT_DATE="${commit_date}"
+
+ENV INVENTREE_LOG_LEVEL="WARNING"
+ENV INVENTREE_DOCKER="true"
+
+# InvenTree paths
+ENV INVENTREE_HOME="/home/inventree"
+ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
+ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
+ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
+ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
+ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
+ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
+
+# InvenTree configuration files
+ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
+ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
+ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DATA_DIR}/plugins.txt"
+
+# Worker configuration (can be altered by user)
+ENV INVENTREE_GUNICORN_WORKERS="4"
+ENV INVENTREE_BACKGROUND_WORKERS="4"
+
+# Default web server address:port
+ENV INVENTREE_WEB_ADDR=0.0.0.0
+ENV INVENTREE_WEB_PORT=8000
+
+LABEL org.label-schema.schema-version="1.0" \
+      org.label-schema.build-date=${DATE} \
+      org.label-schema.vendor="inventree" \
+      org.label-schema.name="inventree/inventree" \
+      org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
+      org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git" \
+      org.label-schema.vcs-ref=${commit_tag}
+
+RUN apk add --no-cache \
+    git gnupg gettext py-cryptography bash \
+    # Image format support
+    libjpeg libwebp zlib \
+    # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine
+    py3-pip py3-pillow py3-cffi py3-brotli pango \
+    # SQLite support
+    sqlite \
+    # PostgreSQL support
+    postgresql-libs postgresql-client \
+    # MySQL / MariaDB support
+    mariadb-client && \
+    # fonts
+    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
+
+EXPOSE 8000
+
+RUN mkdir -p ${INVENTREE_HOME}
+WORKDIR ${INVENTREE_HOME}
+
+COPY ./docker/requirements.txt base_requirements.txt
+COPY ./requirements.txt ./
+
+RUN apk add --no-cache --virtual .build-deps \
+    gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev \
+    # Image format dev libs
+    jpeg-dev openjpeg-dev libwebp-dev zlib-dev \
+    # DB specific dev libs
+    postgresql-dev sqlite-dev mariadb-dev && \
+    pip install -r base_requirements.txt -r requirements.txt --no-cache-dir && \
+    apk --purge del .build-deps
+
+COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
+COPY InvenTree ./InvenTree
+
+RUN chmod +x init.sh
+
+ENTRYPOINT ["/bin/bash", "./init.sh"]
+
+# Launch the production server
+# TODO: Work out why environment variables cannot be interpolated in this command
+# TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
+CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
