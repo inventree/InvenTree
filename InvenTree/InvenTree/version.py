@@ -153,7 +153,10 @@ def inventreeBranch():
     if branch:
         return branch
 
-    return None
+    if main_commit is None:
+        return None
+
+    return main_repo.refs.follow(b'HEAD')[0][1]
 
 
 def inventreePlatform():
