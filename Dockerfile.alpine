@@ -49,7 +49,7 @@ RUN apk add --no-cache \
     git gnupg gettext py-cryptography bash \
     # Image format support
     libjpeg libwebp zlib \
-    # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine
+    # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     py3-pip py3-pillow py3-cffi py3-brotli pango \
     # SQLite support
     sqlite \
