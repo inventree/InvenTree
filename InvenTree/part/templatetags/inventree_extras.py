@@ -288,6 +288,24 @@ def inventree_commit_date(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_installer(*args, **kwargs):
+    """Return InvenTree package installer string."""
+    return version.inventreeInstaller()
+
+
+@register.simple_tag()
+def inventree_branch(*args, **kwargs):
+    """Return InvenTree git branch string."""
+    return version.inventreeBranch()
+
+
+@register.simple_tag()
+def inventree_platform(*args, **kwargs):
+    """Return InvenTree platform string."""
+    return version.inventreePlatform()
+
+
+@register.simple_tag()
 def inventree_github_url(*args, **kwargs):
     """Return URL for InvenTree github site."""
     return "https://github.com/InvenTree/InvenTree/"

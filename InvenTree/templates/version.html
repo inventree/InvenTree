@@ -3,7 +3,10 @@ InvenTree-Version: {% inventree_version %}
 Django Version: {% django_version %}
 {% inventree_commit_hash as hash %}{% if hash %}Commit Hash: {{ hash }}{% endif %}
 {% inventree_commit_date as commit_date %}{% if commit_date %}Commit Date: {% render_date commit_date %}{% endif %}
+{% inventree_branch as branch %}{% if branch %}Commit Branch: {{ branch }}{% endif %}
 Database: {% inventree_db_engine %}
 Debug-Mode: {% inventree_in_debug_mode %}
 Deployed using Docker: {% inventree_docker_mode %}
+{% inventree_installer as installer %}{% if installer %}Commit Date: {{ installer }}{% endif %}
+{% inventree_platform as platform %}{% if platform %}Commit Date: {{ platform }}{% endif %}
 Active plugins: {% plugins_info %}
