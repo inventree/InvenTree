@@ -16,15 +16,18 @@ from rest_framework.response import Response
 from common.models import InvenTreeSetting, ProjectCode
 from common.settings import settings
 from company.models import SupplierPart
+from generic.states import StatusView
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView, MetadataView, StatusView)
+                           ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
-from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
-                                    ReturnOrderStatus, SalesOrderStatus)
+from InvenTree.status_codes import (PurchaseOrderStatus,
+                                    PurchaseOrderStatusGroups,
+                                    ReturnOrderLineStatus, ReturnOrderStatus,
+                                    SalesOrderStatus, SalesOrderStatusGroups)
 from order import models, serializers
 from order.admin import (PurchaseOrderExtraLineResource,
                          PurchaseOrderLineItemResource, PurchaseOrderResource,
@@ -431,9 +434,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         """Filter by "pending" status (order status = pending)"""
 
         if str2bool(value):
-            return queryset.filter(order__status__in=PurchaseOrderStatus.OPEN)
+            return queryset.filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
         else:
-            return queryset.exclude(order__status__in=PurchaseOrderStatus.OPEN)
+            return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
@@ -448,7 +451,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
             return queryset.filter(q)
         else:
             # Only count "pending" orders
-            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatus.OPEN)
+            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
 
 class PurchaseOrderLineItemMixin:
@@ -984,12 +987,12 @@ class SalesOrderAllocationList(ListAPI):
                 # Filter only "open" orders
                 # Filter only allocations which have *not* shipped
                 queryset = queryset.filter(
-                    line__order__status__in=SalesOrderStatus.OPEN,
+                    line__order__status__in=SalesOrderStatusGroups.OPEN,
                     shipment__shipment_date=None,
                 )
             else:
                 queryset = queryset.exclude(
-                    line__order__status__in=SalesOrderStatus.OPEN,
+                    line__order__status__in=SalesOrderStatusGroups.OPEN,
                     shipment__shipment_date=None
                 )
 
@@ -1471,21 +1474,21 @@ class OrderCalendarExport(ICalFeed):
             if obj['include_completed'] is False:
                 # Do not include completed orders from list in this case
                 # Completed status = 30
-                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE)
+                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE.value)
             else:
                 outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
         elif obj["ordertype"] == 'sales-order':
             if obj['include_completed'] is False:
                 # Do not include completed (=shipped) orders from list in this case
                 # Shipped status = 20
-                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED)
+                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED.value)
             else:
                 outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
         elif obj["ordertype"] == 'return-order':
             if obj['include_completed'] is False:
                 # Do not include completed orders from list in this case
                 # Complete status = 30
-                outlist = models.ReturnOrder.objects.filter(target_date__isnull=False).filter(status__lt=ReturnOrderStatus.COMPLETE)
+                outlist = models.ReturnOrder.objects.filter(target_date__isnull=False).filter(status__lt=ReturnOrderStatus.COMPLETE.value)
             else:
                 outlist = models.ReturnOrder.objects.filter(target_date__isnull=False)
         else:

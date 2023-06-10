@@ -6,7 +6,7 @@ title: Serving Static and Media Files
 
 In production, the InvenTree web server software *does not* provide hosting of static files, or user-uploaded (media) files.
 
-When running in [production mode](./production.md) (i.e. the `INVENTREE_DEBUG` flag is disabled), a separate web server is required for serving *static* and *media* files. In `DEBUG` mode, the django webserver facilitates delivery of *static* and *media* files, but this is explicitly not suitable for a production environment.
+When running in [production mode](./bare_prod.md) (i.e. the `INVENTREE_DEBUG` flag is disabled), a separate web server is required for serving *static* and *media* files. In `DEBUG` mode, the django webserver facilitates delivery of *static* and *media* files, but this is explicitly not suitable for a production environment.
 
 !!! into "Read More"
     You can find further information in the [django documentation](https://docs.djangoproject.com/en/dev/howto/static-files/deployment/).

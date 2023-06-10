@@ -2,7 +2,7 @@
 
 {% load static %}
 {% load i18n %}
-{% load status_codes %}
+{% load generic %}
 {% load inventree_extras %}
 
 {% block page_title %}
@@ -150,7 +150,7 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
         <td>
-            {% build_status_label build.status %}
+            {% status_label 'build' build.status %}
         </td>
     </tr>
     {% if build.target_date %}
@@ -217,7 +217,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block page_data %}
 <h3>
-    {% build_status_label build.status large=True %}
+    {% status_label 'build' build.status large=True %}
     {% if build.is_overdue %}
     <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
     {% endif %}

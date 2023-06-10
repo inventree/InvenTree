@@ -21,7 +21,7 @@ from mptt.exceptions import InvalidMove
 
 from rest_framework import serializers
 
-from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
+from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode, BuildStatusGroups
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
@@ -69,7 +69,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
 
-    OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+    OVERDUE_FILTER = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     # Global setting for specifying reference pattern
     REFERENCE_PATTERN_SETTING = 'BUILDORDER_REFERENCE_PATTERN'
@@ -129,10 +129,10 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             return queryset
 
         # Order was completed within the specified range
-        completed = Q(status=BuildStatus.COMPLETE) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
+        completed = Q(status=BuildStatus.COMPLETE.value) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
 
         # Order target date falls within specified range
-        pending = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders
 
@@ -231,7 +231,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
     status = models.PositiveIntegerField(
         verbose_name=_('Build Status'),
-        default=BuildStatus.PENDING,
+        default=BuildStatus.PENDING.value,
         choices=BuildStatus.items(),
         validators=[MinValueValidator(0)],
         help_text=_('Build status code')
@@ -331,7 +331,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
     @property
     def active(self):
         """Return True if this build is active."""
-        return self.status in BuildStatus.ACTIVE_CODES
+        return self.status in BuildStatusGroups.ACTIVE_CODES
 
     @property
     def bom_items(self):
@@ -503,7 +503,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         self.completion_date = datetime.now().date()
         self.completed_by = user
-        self.status = BuildStatus.COMPLETE
+        self.status = BuildStatus.COMPLETE.value
         self.save()
 
         # Remove untracked allocated stock
@@ -585,7 +585,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         self.completion_date = datetime.now().date()
         self.completed_by = user
 
-        self.status = BuildStatus.CANCELLED
+        self.status = BuildStatus.CANCELLED.value
         self.save()
 
         trigger_event('build.cancelled', id=self.pk)
@@ -729,7 +729,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             _add_tracking_entry(output, user)
 
         if self.status == BuildStatus.PENDING:
-            self.status = BuildStatus.PRODUCTION
+            self.status = BuildStatus.PRODUCTION.value
             self.save()
 
     @transaction.atomic
@@ -831,7 +831,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         # Update build output item
         output.is_building = False
-        output.status = StockStatus.REJECTED
+        output.status = StockStatus.REJECTED.value
         output.location = location
         output.save(add_note=False)
 
@@ -851,7 +851,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             notes=notes,
             deltas={
                 'location': location.pk,
-                'status': StockStatus.REJECTED,
+                'status': StockStatus.REJECTED.value,
                 'buildorder': self.pk,
             }
         )
@@ -865,7 +865,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
-        status = kwargs.get('status', StockStatus.OK)
+        status = kwargs.get('status', StockStatus.OK.value)
         notes = kwargs.get('notes', '')
 
         # List the allocated BuildItem objects for the given output
@@ -1187,7 +1187,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         - PENDING
         - HOLDING
         """
-        return self.status in BuildStatus.ACTIVE_CODES
+        return self.status in BuildStatusGroups.ACTIVE_CODES
 
     @property
     def is_complete(self):

@@ -298,7 +298,7 @@ class BuildTest(BuildAPITest):
             expected_code=400,
         )
 
-        bo.status = BuildStatus.CANCELLED
+        bo.status = BuildStatus.CANCELLED.value
         bo.save()
 
         # Now, we should be able to delete
@@ -843,7 +843,7 @@ class BuildListTest(BuildAPITest):
         builds = self.get(self.url, data={'active': True})
         self.assertEqual(len(builds.data), 1)
 
-        builds = self.get(self.url, data={'status': BuildStatus.COMPLETE})
+        builds = self.get(self.url, data={'status': BuildStatus.COMPLETE.value})
         self.assertEqual(len(builds.data), 4)
 
         builds = self.get(self.url, data={'overdue': False})
@@ -863,7 +863,7 @@ class BuildListTest(BuildAPITest):
             reference="BO-0006",
             quantity=10,
             title='Just some thing',
-            status=BuildStatus.PRODUCTION,
+            status=BuildStatus.PRODUCTION.value,
             target_date=in_the_past
         )
 
