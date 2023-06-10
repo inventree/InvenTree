@@ -476,6 +476,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         - Must not have any outstanding build outputs
         - Completed count must meet the required quantity
+        - Untracked parts must be allocated
         """
 
         if self.incomplete_count > 0:
@@ -484,7 +485,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         if self.remaining > 0:
             return False
 
-        if not self.is_fully_allocated():
+        if not self.is_fully_allocated(tracked=False):
             return False
 
         return True
@@ -505,7 +506,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         # Ensure that there are no longer any BuildItem objects
         # which point to this Build Order
-        BuildItem.objects.filter(build_line__build=self).delete()
+        self.allocated_stock.delete()
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
@@ -561,7 +562,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
         # Find all BuildItem objects associated with this Build
-        items = BuildItem.objects.filter(build_line__build=self)
+        items = self.allocated_stock
 
         if remove_allocated_stock:
             for item in items:
@@ -593,8 +594,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             build_line: Specify a particular BuildLine instance to un-allocate stock against
             output: Specify a particular StockItem (output) to un-allocate stock against
         """
-        allocations = BuildItem.objects.filter(
-            build_line__build=self,
+        allocations = self.allocated_stock.filter(
             install_into=output
         )
 
@@ -780,13 +780,19 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                 reduce_by -= item.quantity
                 item.delete()
 
+    @property
+    def allocated_stock(self):
+        """Returns a QuerySet object of all BuildItem objects which point back to this Build"""
+        return BuildItem.objects.filter(
+            build_line__build=self
+        )
+
     @transaction.atomic
     def subtract_allocated_stock(self, user):
         """Called when the Build is marked as "complete", this function removes the allocated untracked items from stock."""
 
         # Find all BuildItem objects which point to this build
-        items = BuildItem.objects.filter(
-            build_line__build=self,
+        items = self.allocated_stock.filter(
             build_line__bom_item__sub_part__trackable=False
         )
 
@@ -1029,20 +1035,38 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         # Bulk-create the new BuildItem objects
         BuildItem.objects.bulk_create(new_items)
 
-    def is_fully_allocated(self):
+    def unallocated_lines(self, tracked=None):
+        """Returns a list of BuildLine objects which have not been fully allocated."""
+
+        lines = self.build_lines.all()
+
+        if tracked is True:
+            lines = lines.filter(bom_item__sub_part__trackable=True)
+        elif tracked is False:
+            lines = lines.filter(bom_item__sub_part__trackable=False)
+
+        unallocated_lines = []
+
+        for line in lines:
+            if not line.is_fully_allocated():
+                unallocated_lines.append(line)
+
+        return unallocated_lines
+
+    def is_fully_allocated(self, tracked=None):
         """Test if the BuildOrder has been fully allocated.
 
         This is *true* if *all* associated BuildLine items have sufficient allocation
+
+        Arguments:
+            tracked: If True, only consider tracked BuildLine items. If False, only consider untracked BuildLine items.
 
         Returns:
             True if the BuildOrder has been fully allocated, otherwise False
         """
 
-        for line in self.build_lines.all():
-            if not line.is_fully_allocated():
-                return False
-
-        return True
+        lines = self.unallocated_lines(tracked=tracked)
+        return len(lines) == 0
 
     def is_output_fully_allocated(self, output):
         """Determine if the specified output (StockItem) has been fully allocated for this build
@@ -1072,7 +1096,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         # At this stage, we can assume that the output is fully allocated
         return True
 
-    def is_over_allocated(self):
+    def is_overallocated(self):
         """Test if the BuildOrder has been over-allocated.
 
         Returns:
@@ -1080,7 +1104,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """
 
         for line in self.build_lines.all():
-            if line.is_over_allocated():
+            if line.is_overallocated():
                 return True
 
         return False
@@ -1264,7 +1288,7 @@ class BuildLine(models.Model):
 
         return self.allocated_quantity() >= self.quantity
 
-    def is_over_allocated(self):
+    def is_overallocated(self):
         """Return True if this BuildLine is over-allocated"""
         return self.allocated_quantity() > self.quantity
 
