@@ -7,6 +7,6 @@ Django Version: {% django_version %}
 Database: {% inventree_db_engine %}
 Debug-Mode: {% inventree_in_debug_mode %}
 Deployed using Docker: {% inventree_docker_mode %}
-{% inventree_installer as installer %}{% if installer %}Commit Date: {{ installer }}{% endif %}
-{% inventree_platform as platform %}{% if platform %}Commit Date: {{ platform }}{% endif %}
+{% inventree_installer as installer %}{% if installer %}Installer: {{ installer }}{% endif %}
+{% inventree_platform as platform %}{% if platform %}Platform: {{ platform }}{% endif %}
 Active plugins: {% plugins_info %}
