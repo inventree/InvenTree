@@ -17,7 +17,7 @@ def currency_code_default():
     try:
         code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', create=False, cache=False)
     except Exception:  # pragma: no cover
-        logger.error(f"Error getting default currency code")
+        logger.error("Error getting default currency code")
         code = ''
 
     if code not in CURRENCIES:
