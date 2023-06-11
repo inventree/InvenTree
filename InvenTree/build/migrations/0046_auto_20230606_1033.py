@@ -32,16 +32,19 @@ def add_build_line_links(apps, schema_editor):
     n_missing = 0
 
     for item in build_items:
+
         # Find the relevant BuildLine object
-        try:
-            line = BuildLine.objects.get(
-                build=item.build,
-                bom_item=item.bom_item
-            )
-        except BuildLine.DoesNotExist:
-            # This should not happen!
+        line = BuildLine.objects.filter(
+            build=item.build,
+            bom_item=item.bom_item
+        ).first()
+
+        if line is None:
             logger.warning(f"BuildLine does not exist for BuildItem {item.pk}")
             n_missing += 1
+
+            if item.build is None or item.bom_item is None:
+                continue
 
             # Create one!
             line = BuildLine.objects.create(
@@ -56,7 +59,7 @@ def add_build_line_links(apps, schema_editor):
         item.save()
 
     if build_items.count() > 0:
-        logger.info(f"add_build_line_links: Updated {build_items.count()} BuildItem objects (skipped {n_missing})")
+        logger.info(f"add_build_line_links: Updated {build_items.count()} BuildItem objects (added {n_missing})")
 
 
 def reverse_build_links(apps, schema_editor):
@@ -87,6 +90,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             add_build_line_links,
-            reverse_build_links,
+            reverse_code=reverse_build_links,
         )
     ]

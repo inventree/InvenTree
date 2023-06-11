@@ -37,7 +37,6 @@ def add_lines_to_builds(apps, schema_editor):
 
     # Get database models
     Build = apps.get_model("build", "Build")
-    BuildItem = apps.get_model("build", "BuildItem")
     BuildLine = apps.get_model("build", "BuildLine")
 
     Part = apps.get_model("part", "Part")
@@ -45,10 +44,13 @@ def add_lines_to_builds(apps, schema_editor):
 
     build_lines = []
 
-    for build in Build.objects.all():
-        # Create a BuildOrderLine for each BuildItem
+    builds = Build.objects.all()
 
-        # TODO: Only create lines for *active* build orders?
+    if builds.count() > 0:
+        print(f"Creating BuildOrderLine objects for {builds.count()} existing builds")
+
+    for build in builds:
+        # Create a BuildOrderLine for each BuildItem
 
         bom_items = get_bom_items_for_part(build.part, Part, BomItem)
 
