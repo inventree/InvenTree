@@ -51,8 +51,9 @@ from InvenTree.helpers import (decimal2money, decimal2string, normalize,
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
                               InvenTreeBarcodeMixin, InvenTreeNotesMixin,
                               InvenTreeTree, MetadataMixin)
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import (BuildStatusGroups, PurchaseOrderStatus,
+                                    PurchaseOrderStatusGroups,
+                                    SalesOrderStatus, SalesOrderStatusGroups)
 from order import models as OrderModels
 from stock import models as StockModels
 
@@ -1070,7 +1071,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
             part__in=self.get_used_in(),
-            status__in=BuildStatus.ACTIVE_CODES
+            status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         return builds
@@ -1104,7 +1105,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatusGroups.OPEN,
             part=self
         )
 
@@ -1117,7 +1118,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Return the quantity of this part required for active sales orders."""
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatusGroups.OPEN,
             part=self
         )
 
@@ -1329,7 +1330,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         Builds marked as 'complete' or 'cancelled' are ignored
         """
-        return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES)
+        return self.builds.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     @property
     def quantity_being_built(self):
@@ -1401,13 +1402,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         if pending is True:
             # Look only for 'open' orders which have not shipped
             queryset = queryset.filter(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
                 shipment__shipment_date=None,
             )
         elif pending is False:
             # Look only for 'closed' orders or orders which have shipped
             queryset = queryset.exclude(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
                 shipment__shipment_date=None,
             )
 
@@ -2161,7 +2162,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
             # Look at any incomplete line item for open orders
             lines = sp.purchase_order_line_items.filter(
-                order__status__in=PurchaseOrderStatus.OPEN,
+                order__status__in=PurchaseOrderStatusGroups.OPEN,
                 quantity__gt=F('received'),
             )
 
@@ -2559,7 +2560,7 @@ class PartPricing(common.models.MetaMixin):
 
         # Find all line items for completed orders which reference this part
         line_items = OrderModels.PurchaseOrderLineItem.objects.filter(
-            order__status=PurchaseOrderStatus.COMPLETE,
+            order__status=PurchaseOrderStatus.COMPLETE.value,
             received__gt=0,
             part__part=self.part,
         )

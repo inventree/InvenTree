@@ -345,7 +345,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.purchase_cost_min)
         self.assertIsNone(pricing.purchase_cost_max)
 
-        po.status = PurchaseOrderStatus.COMPLETE
+        po.status = PurchaseOrderStatus.COMPLETE.value
         po.save()
 
         pricing.update_purchase_cost()

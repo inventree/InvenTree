@@ -41,9 +41,12 @@ from InvenTree.helpers_model import getSetting, notify_responsible
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, MetadataMixin,
                               ReferenceIndexingMixin)
-from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
-                                    ReturnOrderStatus, SalesOrderStatus,
-                                    StockHistoryCode, StockStatus)
+from InvenTree.status_codes import (PurchaseOrderStatus,
+                                    PurchaseOrderStatusGroups,
+                                    ReturnOrderLineStatus, ReturnOrderStatus,
+                                    ReturnOrderStatusGroups, SalesOrderStatus,
+                                    SalesOrderStatusGroups, StockHistoryCode,
+                                    StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
 
@@ -300,7 +303,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @classmethod
     def get_status_class(cls):
         """Return the PurchasOrderStatus class"""
-        return PurchaseOrderStatus
+        return PurchaseOrderStatusGroups
 
     @classmethod
     def api_defaults(cls, request):
@@ -339,10 +342,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
             return queryset
 
         # Construct a queryset for "received" orders within the range
-        received = Q(status=PurchaseOrderStatus.COMPLETE) & Q(complete_date__gte=min_date) & Q(complete_date__lte=max_date)
+        received = Q(status=PurchaseOrderStatus.COMPLETE.value) & Q(complete_date__gte=min_date) & Q(complete_date__lte=max_date)
 
         # Construct a queryset for "pending" orders within the range
-        pending = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = Q(status__in=PurchaseOrderStatusGroups.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders within the range
 
@@ -367,7 +370,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         ]
     )
 
-    status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
+    status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING.value, choices=PurchaseOrderStatus.items(),
                                          help_text=_('Purchase order status'))
 
     @property
@@ -485,7 +488,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Order must be currently PENDING.
         """
         if self.status == PurchaseOrderStatus.PENDING:
-            self.status = PurchaseOrderStatus.PLACED
+            self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = datetime.now().date()
             self.save()
 
@@ -506,7 +509,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Order must be currently PLACED.
         """
         if self.status == PurchaseOrderStatus.PLACED:
-            self.status = PurchaseOrderStatus.COMPLETE
+            self.status = PurchaseOrderStatus.COMPLETE.value
             self.complete_date = datetime.now().date()
 
             self.save()
@@ -526,7 +529,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @property
     def is_open(self):
         """Return True if the PurchaseOrder is 'open'"""
-        return self.status in PurchaseOrderStatus.OPEN
+        return self.status in PurchaseOrderStatusGroups.OPEN
 
     def can_cancel(self):
         """A PurchaseOrder can only be cancelled under the following circumstances.
@@ -543,7 +546,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def cancel_order(self):
         """Marks the PurchaseOrder as CANCELLED."""
         if self.can_cancel():
-            self.status = PurchaseOrderStatus.CANCELLED
+            self.status = PurchaseOrderStatus.CANCELLED.value
             self.save()
 
             trigger_event('purchaseorder.cancelled', id=self.pk)
@@ -580,7 +583,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return self.lines.count() > 0 and self.pending_line_items().count() == 0
 
     @transaction.atomic
-    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, **kwargs):
+    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK.value, **kwargs):
         """Receive a line item (or partial line item) against this PurchaseOrder."""
         # Extract optional batch code for the new stock item
         batch_code = kwargs.get('batch_code', '')
@@ -707,7 +710,7 @@ class SalesOrder(TotalPriceMixin, Order):
     @classmethod
     def get_status_class(cls):
         """Return the SalesOrderStatus class"""
-        return SalesOrderStatus
+        return SalesOrderStatusGroups
 
     @classmethod
     def api_defaults(cls, request):
@@ -745,10 +748,10 @@ class SalesOrder(TotalPriceMixin, Order):
             return queryset
 
         # Construct a queryset for "completed" orders within the range
-        completed = Q(status__in=SalesOrderStatus.COMPLETE) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
+        completed = Q(status__in=SalesOrderStatusGroups.COMPLETE) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
 
         # Construct a queryset for "pending" orders within the range
-        pending = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = Q(status__in=SalesOrderStatusGroups.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO: Construct a queryset for "overdue" orders within the range
 
@@ -789,7 +792,7 @@ class SalesOrder(TotalPriceMixin, Order):
         return self.customer
 
     status = models.PositiveIntegerField(
-        default=SalesOrderStatus.PENDING,
+        default=SalesOrderStatus.PENDING.value,
         choices=SalesOrderStatus.items(),
         verbose_name=_('Status'), help_text=_('Purchase order status')
     )
@@ -819,7 +822,7 @@ class SalesOrder(TotalPriceMixin, Order):
     @property
     def is_open(self):
         """Return True if this order is 'open' (either 'pending' or 'in_progress')"""
-        return self.status in SalesOrderStatus.OPEN
+        return self.status in SalesOrderStatusGroups.OPEN
 
     @property
     def stock_allocations(self):
@@ -887,7 +890,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Change this order from 'PENDING' to 'IN_PROGRESS'"""
 
         if self.status == SalesOrderStatus.PENDING:
-            self.status = SalesOrderStatus.IN_PROGRESS
+            self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = datetime.now().date()
             self.save()
 
@@ -898,7 +901,7 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_complete(**kwargs):
             return False
 
-        self.status = SalesOrderStatus.SHIPPED
+        self.status = SalesOrderStatus.SHIPPED.value
         self.shipped_by = user
         self.shipment_date = datetime.now()
 
@@ -927,7 +930,7 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_cancel():
             return False
 
-        self.status = SalesOrderStatus.CANCELLED
+        self.status = SalesOrderStatus.CANCELLED.value
         self.save()
 
         for line in self.lines.all():
@@ -1702,7 +1705,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     @classmethod
     def get_status_class(cls):
         """Return the ReturnOrderStatus class"""
-        return ReturnOrderStatus
+        return ReturnOrderStatusGroups
 
     @classmethod
     def api_defaults(cls, request):
@@ -1748,7 +1751,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         return self.customer
 
     status = models.PositiveIntegerField(
-        default=ReturnOrderStatus.PENDING,
+        default=ReturnOrderStatus.PENDING.value,
         choices=ReturnOrderStatus.items(),
         verbose_name=_('Status'), help_text=_('Return order status')
     )
@@ -1779,7 +1782,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     @property
     def is_open(self):
         """Return True if this order is outstanding"""
-        return self.status in ReturnOrderStatus.OPEN
+        return self.status in ReturnOrderStatusGroups.OPEN
 
     @property
     def is_received(self):
@@ -1790,7 +1793,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     def cancel_order(self):
         """Cancel this ReturnOrder (if not already cancelled)"""
         if self.status != ReturnOrderStatus.CANCELLED:
-            self.status = ReturnOrderStatus.CANCELLED
+            self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
 
             trigger_event('returnorder.cancelled', id=self.pk)
@@ -1800,7 +1803,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Complete this ReturnOrder (if not already completed)"""
 
         if self.status == ReturnOrderStatus.IN_PROGRESS:
-            self.status = ReturnOrderStatus.COMPLETE
+            self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = datetime.now().date()
             self.save()
 
@@ -1815,7 +1818,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Issue this ReturnOrder (if currently pending)"""
 
         if self.status == ReturnOrderStatus.PENDING:
-            self.status = ReturnOrderStatus.IN_PROGRESS
+            self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = datetime.now().date()
             self.save()
 
@@ -1839,7 +1842,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         stock_item = line.item
 
         deltas = {
-            'status': StockStatus.QUARANTINED,
+            'status': StockStatus.QUARANTINED.value,
             'returnorder': self.pk,
             'location': location.pk,
         }
@@ -1848,7 +1851,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = StockStatus.QUARANTINED
+        stock_item.status = StockStatus.QUARANTINED.value
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
@@ -1932,7 +1935,7 @@ class ReturnOrderLineItem(OrderLineItem):
         return self.received_date is not None
 
     outcome = models.PositiveIntegerField(
-        default=ReturnOrderLineStatus.PENDING,
+        default=ReturnOrderLineStatus.PENDING.value,
         choices=ReturnOrderLineStatus.items(),
         verbose_name=_('Outcome'), help_text=_('Outcome for this line item')
     )
