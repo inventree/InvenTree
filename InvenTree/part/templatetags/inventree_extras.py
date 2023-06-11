@@ -306,6 +306,12 @@ def inventree_target(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_platform(*args, **kwargs):
+    """Return InvenTree platform string."""
+    return version.inventreePlatform()
+
+
+@register.simple_tag()
 def inventree_github_url(*args, **kwargs):
     """Return URL for InvenTree github site."""
     return "https://github.com/InvenTree/InvenTree/"

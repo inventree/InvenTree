@@ -5,6 +5,7 @@ Provides information on the current InvenTree version
 
 import os
 import pathlib
+import platform
 import re
 from datetime import datetime as dt
 from datetime import timedelta as td
@@ -170,3 +171,9 @@ def inventreeTarget():
     # First look in the environment variables, e.g. if running in docker
 
     return os.environ.get('INVENTREE_PKG_TARGET', None)
+
+
+def inventreePlatform():
+    """Returns the platform for the instance."""
+
+    return platform.platform(aliased=True)
