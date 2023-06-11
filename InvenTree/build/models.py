@@ -416,6 +416,11 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         return quantity
 
+    def is_partially_allocated(self):
+        """Test is this build order has any stock allocated against it"""
+
+        return self.allocated_stock.count() > 0
+
     @property
     def incomplete_outputs(self):
         """Return all the "incomplete" build outputs."""

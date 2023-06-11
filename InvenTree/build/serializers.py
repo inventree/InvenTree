@@ -565,7 +565,7 @@ class BuildCancelSerializer(serializers.Serializer):
         build = self.context['build']
 
         return {
-            'has_allocated_stock': build.is_partially_allocated(None),
+            'has_allocated_stock': build.is_partially_allocated(),
             'incomplete_outputs': build.incomplete_count,
             'completed_outputs': build.complete_count,
         }
