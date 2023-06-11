@@ -35,6 +35,10 @@ class StatusCode(BaseEnum):
     ```python
     PENDING = 10, _("Pending"), 'secondary'
     ```
+
+    The values of the status can be accessed with `StatusCode.PENDING.value`.
+
+    Additionally there are helpers to access all additional attributes `text`, `label`, `color`.
     """
 
     def __new__(cls, *args):

@@ -2,6 +2,7 @@
 
 import django.core.validators
 from django.db import migrations, models
+import InvenTree.status_codes
 
 
 class Migration(migrations.Migration):
@@ -14,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='stockitem',
             name='status',
-            field=models.PositiveIntegerField(choices=[(10, 'OK'), (50, 'Attention needed'), (55, 'Damaged'), (60, 'Destroyed'), (65, 'Rejected'), (70, 'Lost'), (75, 'Quarantined'), (85, 'Returned')], default=10, validators=[django.core.validators.MinValueValidator(0)]),
+            field=models.PositiveIntegerField(choices=InvenTree.status_codes.StockStatus.items(), default=10, validators=[django.core.validators.MinValueValidator(0)]),
         ),
     ]
