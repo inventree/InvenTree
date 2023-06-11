@@ -26,3 +26,14 @@ The version information contains the following information extracted form the in
 | Installer | Yes | PKG | environment: `INVENTREE_PKG_INSTALLER`, instance |
 | Target | No | ubuntu:20.04 | environment: `INVENTREE_PKG_TARGET` |
 | Active plugins | Yes | [{'name': 'InvenTreeBarcode', 'slug': 'inventreebarcode', 'version': '2.0.0'}] | instance |
+
+
+### Installer codes
+
+The installer code is used to identify the way InvenTree was installed. If you vendor InvenTree, you can and should set the installer code to your own value to make sure debugging goes smoothly.
+
+| Code | Description | Official |
+| --- | --- | --- |
+| PKG | Installed using a package manager | Yes |
+| GIT | Installed using git | Yes |
+| DOC | Installed using docker | Yes |
