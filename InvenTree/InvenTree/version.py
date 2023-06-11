@@ -10,6 +10,7 @@ from datetime import datetime as dt
 from datetime import timedelta as td
 
 import django
+from django.conf import settings
 
 from dulwich.repo import NotGitRepository, Repo
 
@@ -140,6 +141,10 @@ def inventreeInstaller():
 
     if installer:
         return installer
+    elif settings.DOCKER:
+        return 'DOC'
+    elif main_commit is not None:
+        return 'GIT'
 
     return None
 
