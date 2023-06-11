@@ -5,7 +5,6 @@ Provides information on the current InvenTree version
 
 import os
 import pathlib
-import platform
 import re
 from datetime import datetime as dt
 from datetime import timedelta as td
@@ -161,13 +160,8 @@ def inventreeBranch():
     return branch.removeprefix('refs/heads/')
 
 
-def inventreePlatform():
-    """Returns the platform for the running codebase - if set."""
+def inventreeTarget():
+    """Returns the target platform for the running codebase - if set."""
     # First look in the environment variables, e.g. if running in docker
 
-    env_platform = os.environ.get('INVENTREE_PKG_PLATFORM', '')
-
-    if env_platform:
-        return env_platform
-
-    return platform.platform(aliased=True)
+    return os.environ.get('INVENTREE_PKG_TARGET', None)

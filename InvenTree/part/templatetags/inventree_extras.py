@@ -300,9 +300,9 @@ def inventree_branch(*args, **kwargs):
 
 
 @register.simple_tag()
-def inventree_platform(*args, **kwargs):
-    """Return InvenTree platform string."""
-    return version.inventreePlatform()
+def inventree_target(*args, **kwargs):
+    """Return InvenTree target string."""
+    return version.inventreeTarget()
 
 
 @register.simple_tag()
