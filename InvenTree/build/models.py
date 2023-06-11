@@ -1009,6 +1009,11 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                 # or all items are "interchangeable" and we don't care where we take stock from
 
                 for stock_item in available_stock:
+
+                    # Skip inactive parts
+                    if not stock_item.part.active:
+                        continue
+
                     # How much of the stock item is "available" for allocation?
                     quantity = min(unallocated_quantity, stock_item.unallocated_quantity())
 

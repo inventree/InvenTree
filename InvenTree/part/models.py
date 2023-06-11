@@ -3702,7 +3702,7 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
 
         Includes:
         - The referenced sub_part
-        - Any directly specvified substitute parts
+        - Any directly specified substitute parts
         - If allow_variants is True, all variants of sub_part
         """
         # Set of parts we will allow
@@ -3723,11 +3723,6 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         valid_parts = []
 
         for p in parts:
-
-            # Inactive parts cannot be 'auto allocated'
-            if not p.active:
-                continue
-
             # Trackable status must be the same as the sub_part
             if p.trackable != self.sub_part.trackable:
                 continue
@@ -3972,10 +3967,10 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         # Base quantity requirement
         base_quantity = self.quantity * build_quantity
 
-        # Overage requiremet
-        ovrg_quantity = self.get_overage_quantity(base_quantity)
+        # Overage requirement
+        overage_quantity = self.get_overage_quantity(base_quantity)
 
-        required = float(base_quantity) + float(ovrg_quantity)
+        required = float(base_quantity) + float(overage_quantity)
 
         return required
 
