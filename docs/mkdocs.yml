@@ -94,6 +94,7 @@ nav:
     - Serving Files: start/serving_files.md
     - Data Backup: start/backup.md
     - Migrating Data: start/migrate.md
+    - Advanced Topics: start/advanced.md
   - Parts:
     - Parts: part/part.md
     - Creating Parts: part/create.md
