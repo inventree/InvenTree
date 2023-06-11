@@ -75,6 +75,10 @@ nav:
     - Credits: credits.md
     - Privacy: privacy.md
     - Terminology: terminology.md
+    - Development:
+      - Getting started: develop/starting.md
+      - Contributing: develop/contributing.md
+      - Devcontainer: develop/devcontainer.md
   - Install:
     - Introduction: start/intro.md
     - Configuration: start/config.md
@@ -85,13 +89,12 @@ nav:
     - Bare Metal:
         - Introduction: start/install.md
         - Installer: start/installer.md
-        - Production: start/production.md
-        - Development: start/development.md
-    - Development:
-        - Devcontainer: start/devcontainer.md
+        - Production: start/bare_prod.md
+        - Development: start/bare_dev.md
     - Serving Files: start/serving_files.md
     - Data Backup: start/backup.md
     - Migrating Data: start/migrate.md
+    - Advanced Topics: start/advanced.md
   - Parts:
     - Parts: part/part.md
     - Creating Parts: part/create.md
@@ -207,6 +210,9 @@ nav:
 
 # Plugins
 plugins:
+  - include-markdown:
+      opening_tag: "{!"
+      closing_tag: "!}"
   - search
   - git-revision-date-localized
   - mkdocs-simple-hooks:

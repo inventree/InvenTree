@@ -259,13 +259,13 @@ The InvenTree database is now setup and ready to run. A simple development serve
 
 The InvenTree development server is useful for testing and configuration - and it may be wholly sufficient for a small-scale installation.
 
-Refer to the [development server instructions](./development.md) for further information.
+Refer to the [development server instructions](./bare_dev.md) for further information.
 
 ### Production Server
 
 In a production environment, a more robust server setup is required.
 
-Refer to the [production server instructions](./production.md) for further information.
+Refer to the [production server instructions](./bare_prod.md) for further information.
 
 ## Updating InvenTree
 

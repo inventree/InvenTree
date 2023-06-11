@@ -9,9 +9,10 @@ from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
-from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView, StatusView
+from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
+from generic.states import StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatus, BuildStatusGroups
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
 import build.admin
@@ -41,9 +42,9 @@ class BuildFilter(rest_filters.FilterSet):
     def filter_active(self, queryset, name, value):
         """Filter the queryset to either include or exclude orders which are active."""
         if str2bool(value):
-            return queryset.filter(status__in=BuildStatus.ACTIVE_CODES)
+            return queryset.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
         else:
-            return queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
+            return queryset.exclude(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     overdue = rest_filters.BooleanFilter(label='Build is overdue', method='filter_overdue')
 

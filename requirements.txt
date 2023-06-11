@@ -224,6 +224,8 @@ python-dateutil==2.8.2
     #   arrow
     #   django-recurrence
     #   icalendar
+python-dotenv==1.0.0
+    # via -r requirements.in
 python-fsutil==0.10.0
     # via django-maintenance-mode
 python3-openid==3.2.0
