@@ -2370,7 +2370,7 @@ class PartPricing(common.models.MetaMixin):
             return
 
         # If running data migrations, skip pricing update
-        if InvenTree.ready.isRunningDataMigrations():
+        if InvenTree.ready.isRunningMigrations():
             return
 
         if not self.part or not self.part.pk or not Part.objects.filter(pk=self.part.pk).exists():
@@ -2430,7 +2430,7 @@ class PartPricing(common.models.MetaMixin):
             return
 
         # If running data migrations, skip pricing update
-        if InvenTree.ready.isRunningDataMigrations():
+        if InvenTree.ready.isRunningMigrations():
             return
 
         if self.pk is not None:
