@@ -483,5 +483,5 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
 
         # Try to update pricing (should fail gracefully as the Part has been deleted)
-        p.schedule_pricing_update(create=False)
+        p.schedule_pricing_update(create=False, test=True)
         self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())

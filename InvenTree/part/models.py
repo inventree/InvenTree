@@ -10,6 +10,7 @@ import re
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator
@@ -1747,7 +1748,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         return pricing
 
-    def schedule_pricing_update(self, create: bool = False):
+    def schedule_pricing_update(self, create: bool = False, test: bool = False):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
@@ -1757,6 +1758,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         Arguments:
             create: Whether or not a new PartPricing object should be created if it does not already exist
+            test: Whether or not the pricing update is allowed during unit tests
         """
 
         try:
@@ -1768,7 +1770,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             pricing = self.pricing
 
             if create or pricing.pk:
-                pricing.schedule_for_update()
+                pricing.schedule_for_update(test=test)
         except IntegrityError:
             # If this part instance has been deleted,
             # some post-delete or post-save signals may still be fired
@@ -2360,8 +2362,12 @@ class PartPricing(common.models.MetaMixin):
 
         return result
 
-    def schedule_for_update(self, counter: int = 0):
+    def schedule_for_update(self, counter: int = 0, test: bool = False):
         """Schedule this pricing to be updated"""
+
+        # If we are running within CI, only schedule the update if the test flag is set
+        if settings.TESTING and not test:
+            return
 
         if not self.part or not self.part.pk or not Part.objects.filter(pk=self.part.pk).exists():
             logger.warning("Referenced part instance does not exist - skipping pricing update.")
