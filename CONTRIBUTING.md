@@ -146,7 +146,7 @@ Django are checked by [djlint](https://github.com/Riverside-Healthcare/djlint) t
 
 The following rules out of the [default set](https://djlint.com/docs/linter/) are not applied:
 ```bash
-D018: (Django) Internal links should use the {% url ... %} pattern
+D018: (Django) Internal links should use the { % url ... % } pattern
 H006: Img tag should have height and width attributes
 H008: Attributes should be double quoted
 H021: Inline styles should be avoided
@@ -187,16 +187,16 @@ user_facing_string = _('This string will be exposed to the translation engine!')
 HTML and javascript files are passed through the django templating engine. Translatable strings are implemented as follows:
 
 ```html
-{% load i18n %}
+{ % load i18n % }
 
-<span>{% trans "This string will be translated" %} - this string will not!</span>
+<span>{ % trans "This string will be translated" % } - this string will not!</span>
 ```
 
 ## Github use
 ### Tags
 The tags describe issues and PRs in multiple areas:
 | Area | Name | Description |
-|---|---|---|
+| --- | --- | --- |
 | Triage Labels |  |  |
 |  | triage:not-checked | Item was not checked by the core team  |
 |  | triage:not-approved | Item is not green-light by maintainer |
@@ -205,10 +205,13 @@ The tags describe issues and PRs in multiple areas:
 |  | bug | Identifies a bug which needs to be addressed |
 |  | dependency | Relates to a project dependency |
 |  | duplicate | Duplicate of another issue or PR |
-|  | enhancement | This is an suggested enhancement or new feature |
+|  | enhancement | This is an suggested enhancement, extending the functionality of an existing feature |
+|  | experimental | This is a new *experimental* feature which needs to be enabled manually |
+|  | feature | This is a new feature, introducing novel functionality |
 |  | help wanted | Assistance required |
 |  | invalid | This issue or PR is considered invalid |
 |  | inactive | Indicates lack of activity |
+|  | migration | Database migration, requires special attention |
 |  | question | This is a question |
 |  | roadmap | This is a roadmap feature with no immediate plans for implementation |
 |  | security | Relates to a security issue |

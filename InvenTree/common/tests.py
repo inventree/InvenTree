@@ -875,6 +875,43 @@ class CommonTest(InvenTreeAPITestCase):
         self.user.is_superuser = False
         self.user.save()
 
+    def test_flag_api(self):
+        """Test flag URLs."""
+        # Not superuser
+        response = self.get(reverse('api-flag-list'), expected_code=200)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['key'], 'EXPERIMENTAL')
+
+        # Turn into superuser
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Successful checks
+        response = self.get(reverse('api-flag-list'), expected_code=200)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['key'], 'EXPERIMENTAL')
+        self.assertTrue(response.data[0]['conditions'])
+
+        response = self.get(reverse('api-flag-detail', kwargs={'key': 'EXPERIMENTAL'}), expected_code=200)
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data['key'], 'EXPERIMENTAL')
+        self.assertTrue(response.data['conditions'])
+
+        # Try without param -> false
+        response = self.get(reverse('api-flag-detail', kwargs={'key': 'NEXT_GEN'}), expected_code=200)
+        self.assertFalse(response.data['state'])
+
+        # Try with param -> true
+        response = self.get(reverse('api-flag-detail', kwargs={'key': 'NEXT_GEN'}), {'ngen': ''}, expected_code=200)
+        self.assertTrue(response.data['state'])
+
+        # Try non existent flag
+        response = self.get(reverse('api-flag-detail', kwargs={'key': 'NON_EXISTENT'}), expected_code=404)
+
+        # Turn into normal user again
+        self.user.is_superuser = False
+        self.user.save()
+
 
 class ColorThemeTest(TestCase):
     """Tests for ColorTheme."""
