@@ -1,9 +1,5 @@
 // Main App
 export default function App() {
-  if (x === -0) {
-    // doSomething()...
-    console.log(x);
-  }
   // Main App component
   return (
     <>
