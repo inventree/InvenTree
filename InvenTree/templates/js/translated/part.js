@@ -3297,7 +3297,7 @@ function updatePartQuantityTotals(el,part_id){
                 </tr>`
             html+=`
                 <tr>
-                    <td><span class='fas fa-map-marker'></span></td>
+                    <td><span><span class='fas fa-map-marker-alt'></span></span></td>
                     <td>{% trans "In Stock" %}</td>
                     <td>${formatDecimal(part.total_in_stock)} {% include "part/part_units.html" %}`
                     
@@ -3316,7 +3316,7 @@ function updatePartQuantityTotals(el,part_id){
             if(part.minimum_stock)
                 html+=`
                     <tr>
-                        <td><span class='fas fa-flag'></span></td>
+                        <td><span><span class='fas fa-flag'></span></span></td>
                         <td>{% trans "Minimum Stock" %}</td>
                         <td>${part.minimum_stock} {% include "part/part_units.html" %}</td>
                     </tr>
@@ -3324,7 +3324,7 @@ function updatePartQuantityTotals(el,part_id){
             if(response.on_order>0)
                 html+=`
                     <tr>
-                        <td><span class='fas fa-shopping-cart'></span></td>
+                        <td><span><span class='fas fa-shopping-cart'></span></span></td>
                         <td>{% trans "On Order" %}</td>
                         <td>${response.on_order } {% include "part/part_units.html" %}</td>
                     </tr>
@@ -3333,7 +3333,7 @@ function updatePartQuantityTotals(el,part_id){
                 if (response.required_build_order_quantity > 0 || response.allocated_build_order_quantity > 0)
                     html+=`
                         <tr>
-                            <td><span class='fas fa-tools'></span></td>
+                            <td><span><span class='fas fa-tools'></span></span></td>
                             <td>{% trans "Allocated to Build Orders" %}</td>
                             <td> ${makeProgressBar(response.allocated_build_order_quantity,required_build_order_quantity,{id:'build-order-allocated' ,max_width:'150px'})} </td>
                         </tr>`
@@ -3342,7 +3342,7 @@ function updatePartQuantityTotals(el,part_id){
         
                 html+=`
                     <tr>
-                        <td><span class='fas fa-truck'></span></td>
+                        <td><span><span class='fas fa-truck'></span></span></td>
                         <td>{% trans "Allocated to Sales Orders" %}</td>
                         <td> ${makeProgressBar(response.allocated_sales_order_quantity,response.required_sales_order_quantity,{
                             max_width: '150px',
@@ -3351,17 +3351,17 @@ function updatePartQuantityTotals(el,part_id){
                     </tr>`
         
             if (part.assembly){
-
-                html+= `
-                <tr>
-                    <td><span class='fas fa-tools'></span></td>
-                    <td>{% trans "Can Build" %}</td>
-                    <td>${formatDecimal(canBuildQuantity(part))}</td>
-                </tr>`
+                // we cant get the can build for now
+                // html+= `
+                // <tr>
+                //     <td><span class='fas fa-tools'></span></td>
+                //     <td>{% trans "Can Build" %}</td>
+                //     <td>${formatDecimal(canBuildQuantity(part))}</td>
+                // </tr>`
                 if (response.quantity_being_built > 0)
                 html+= `
                 <tr>
-                    <td><span class='fas fa-tools'></span></td>
+                    <td><span><span class='fas fa-tools'></span></span></td>
                     <td>{% trans "Building" %}</td>
                     <td>${formatDecimal(response.quantity_being_built)}</td>
                 </tr>

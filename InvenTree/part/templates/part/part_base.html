@@ -491,7 +491,10 @@
                 success: function(items) {
                     adjustStock(action, items, {
                         success: function() {
-                            location.reload();
+                            // location.reload()
+                            $("#stock-table").bootstrapTable('refresh')
+                            // $(table).bootstrapTable('refresh');
+                            updatePartQuantityTotals($('#details-right-part'),{{ part.pk }})
                         }
                     });
                 },
