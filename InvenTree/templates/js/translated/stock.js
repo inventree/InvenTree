@@ -1261,16 +1261,6 @@ function adjustStock(action, items, options={}) {
                 {
                     method: 'POST',
                     success: function(response) {
-                        var stockTotale=0
-                        response.items.forEach(element => {
-                            stockTotale+=element.quantity;
-                        });
-                        var index = 0
-                        $("#details-right-part tr").each(function() {
-                            if(index<2) 
-                                $(this).find("td").eq(2).html(index==0?`<h5>${formatDecimal(stockTotale)}</h5>`:formatDecimal(stockTotale));    
-                            index+=1
-                        });
                         // Hide the modal
                         $(opts.modal).modal('hide');
 
@@ -2208,7 +2198,7 @@ function loadStockTable(table, options) {
         adjustStock(action, items, {
             success: function() {                   
                 $(table).bootstrapTable('refresh');
-                $('#details-right-part');
+                updatePartQuantityTotals($('#details-right-part'),options.params.part)
             }
         });
     }
@@ -2230,8 +2220,6 @@ function loadStockTable(table, options) {
 
     $('#multi-item-stocktake').click(function() {
         stockAdjustment('count');
-        
-         
     });
 
     $('#multi-item-remove').click(function() {

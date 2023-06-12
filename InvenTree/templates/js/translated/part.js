@@ -29,6 +29,7 @@
     makeEditButton,
     makeIconBadge,
     makeIconButton,
+    makeProgressBar,
     moment,
     orderParts,
     purchaseOrderStatusDisplay,
@@ -3274,4 +3275,99 @@ function loadPartSchedulingChart(canvas_id, part_id) {
             },
         }
     });
+}
+function updatePartQuantityTotals(el,part_id){
+    var part=null
+    var html=`<col width='25'>`
+    inventreeGet(`{% url "api-part-list" %}${part_id}/`, {}, {
+        async:false,
+        success:function(data){
+        part=data
+        }
+    });
+    inventreeGet(`{% url "api-part-list" %}${part_id}/requirements/`, {}, {
+        async:false,
+        success:function (response) {
+            console.log(part,response)
+            html+=`
+                <tr>
+                    <td><h5><span class='fas fa-boxes'></span></h5></td>
+                    <td><h5>{% trans "Available Stock" %}</h5></td>
+                    <td><h5>${formatDecimal(response.available_stock)} {% include "part/part_units.html" %}</h5></td>
+                </tr>`
+            html+=`
+                <tr>
+                    <td><span class='fas fa-map-marker'></span></td>
+                    <td>{% trans "In Stock" %}</td>
+                    <td>${formatDecimal(part.total_in_stock)} {% include "part/part_units.html" %}`
+                    
+            if (part.total_stock == 0)
+                html+= `
+                    <span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>
+                `
+            else if (part.total_stock < part.minimum_stock) 
+                html+=`
+                    <span class='badge badge-right rounded-pill bg-warning'>{% trans "Low Stock" %}</span>
+                `
+            html+=`
+                    </td>
+                </tr>
+                `
+            if(part.minimum_stock)
+                html+=`
+                    <tr>
+                        <td><span class='fas fa-flag'></span></td>
+                        <td>{% trans "Minimum Stock" %}</td>
+                        <td>${part.minimum_stock} {% include "part/part_units.html" %}</td>
+                    </tr>
+                    `
+            if(response.on_order>0)
+                html+=`
+                    <tr>
+                        <td><span class='fas fa-shopping-cart'></span></td>
+                        <td>{% trans "On Order" %}</td>
+                        <td>${response.on_order } {% include "part/part_units.html" %}</td>
+                    </tr>
+                    `     
+            if(part.component) 
+                if (response.required_build_order_quantity > 0 || response.allocated_build_order_quantity > 0)
+                    html+=`
+                        <tr>
+                            <td><span class='fas fa-tools'></span></td>
+                            <td>{% trans "Allocated to Build Orders" %}</td>
+                            <td> ${makeProgressBar(response.allocated_build_order_quantity,required_build_order_quantity,{id:'build-order-allocated' ,max_width:'150px'})} </td>
+                        </tr>`
+            if (part.salable) 
+                if (response.required_sales_order_quantity > 0 || response.allocated_sales_order_quantity > 0 )
+        
+                html+=`
+                    <tr>
+                        <td><span class='fas fa-truck'></span></td>
+                        <td>{% trans "Allocated to Sales Orders" %}</td>
+                        <td> ${makeProgressBar(response.allocated_sales_order_quantity,response.required_sales_order_quantity,{
+                            max_width: '150px',
+                            id:'sales-order-allocated'
+                        })}</td>
+                    </tr>`
+        
+            if (part.assembly){
+
+                html+= `
+                <tr>
+                    <td><span class='fas fa-tools'></span></td>
+                    <td>{% trans "Can Build" %}</td>
+                    <td>${formatDecimal(canBuildQuantity(part))}</td>
+                </tr>`
+                if (response.quantity_being_built > 0)
+                html+= `
+                <tr>
+                    <td><span class='fas fa-tools'></span></td>
+                    <td>{% trans "Building" %}</td>
+                    <td>${formatDecimal(response.quantity_being_built)}</td>
+                </tr>
+                `
+            }
+            }
+        });
+        el.html(html)
 }
