@@ -2363,6 +2363,16 @@ class PartPricing(common.models.MetaMixin):
     def schedule_for_update(self, counter: int = 0):
         """Schedule this pricing to be updated"""
 
+        import InvenTree.ready
+
+        # If importing data, skip pricing update
+        if InvenTree.ready.isImportingData():
+            return
+
+        # If running data migrations, skip pricing update
+        if InvenTree.ready.isRunningDataMigrations():
+            return
+
         if not self.part or not self.part.pk or not Part.objects.filter(pk=self.part.pk).exists():
             logger.warning("Referenced part instance does not exist - skipping pricing update.")
             return
@@ -2414,6 +2424,14 @@ class PartPricing(common.models.MetaMixin):
 
     def update_pricing(self, counter: int = 0, cascade: bool = True):
         """Recalculate all cost data for the referenced Part instance"""
+
+        # If importing data, skip pricing update
+        if InvenTree.ready.isImportingData():
+            return
+
+        # If running data migrations, skip pricing update
+        if InvenTree.ready.isRunningDataMigrations():
+            return
 
         if self.pk is not None:
             try:
