@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-09 00:32+0000\n"
-"PO-Revision-Date: 2023-06-09 10:27\n"
+"POT-Creation-Date: 2023-06-11 14:33+0000\n"
+"PO-Revision-Date: 2023-06-12 00:12\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
@@ -497,111 +497,111 @@ msgstr "URL til ekstern billedfil"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Download af billeder fra ekstern URL er ikke aktiveret"
 
-#: InvenTree/settings.py:714
+#: InvenTree/settings.py:721
 msgid "Czech"
 msgstr "Tjekkisk"
 
-#: InvenTree/settings.py:715
+#: InvenTree/settings.py:722
 msgid "Danish"
 msgstr "Dansk"
 
-#: InvenTree/settings.py:716
+#: InvenTree/settings.py:723
 msgid "German"
 msgstr "Tysk"
 
-#: InvenTree/settings.py:717
+#: InvenTree/settings.py:724
 msgid "Greek"
 msgstr "Græsk"
 
-#: InvenTree/settings.py:718
+#: InvenTree/settings.py:725
 msgid "English"
 msgstr "Engelsk"
 
-#: InvenTree/settings.py:719
+#: InvenTree/settings.py:726
 msgid "Spanish"
 msgstr "Spansk"
 
-#: InvenTree/settings.py:720
+#: InvenTree/settings.py:727
 msgid "Spanish (Mexican)"
 msgstr "Spansk (Mexikansk)"
 
-#: InvenTree/settings.py:721
+#: InvenTree/settings.py:728
 msgid "Farsi / Persian"
 msgstr "Farsi / Persisk"
 
-#: InvenTree/settings.py:722
+#: InvenTree/settings.py:729
 msgid "Finnish"
 msgstr ""
 
-#: InvenTree/settings.py:723
+#: InvenTree/settings.py:730
 msgid "French"
 msgstr "Fransk"
 
-#: InvenTree/settings.py:724
+#: InvenTree/settings.py:731
 msgid "Hebrew"
 msgstr "Hebraisk"
 
-#: InvenTree/settings.py:725
+#: InvenTree/settings.py:732
 msgid "Hungarian"
 msgstr "Ungarsk"
 
-#: InvenTree/settings.py:726
+#: InvenTree/settings.py:733
 msgid "Italian"
 msgstr "Italiensk"
 
-#: InvenTree/settings.py:727
+#: InvenTree/settings.py:734
 msgid "Japanese"
 msgstr "Japansk"
 
-#: InvenTree/settings.py:728
+#: InvenTree/settings.py:735
 msgid "Korean"
 msgstr "Koreansk"
 
-#: InvenTree/settings.py:729
+#: InvenTree/settings.py:736
 msgid "Dutch"
 msgstr "Hollandsk"
 
-#: InvenTree/settings.py:730
+#: InvenTree/settings.py:737
 msgid "Norwegian"
 msgstr "Norsk"
 
-#: InvenTree/settings.py:731
+#: InvenTree/settings.py:738
 msgid "Polish"
 msgstr "Polsk"
 
-#: InvenTree/settings.py:732
+#: InvenTree/settings.py:739
 msgid "Portuguese"
 msgstr "Portugisisk"
 
-#: InvenTree/settings.py:733
+#: InvenTree/settings.py:740
 msgid "Portuguese (Brazilian)"
 msgstr "Portugisisk (Brasilien)"
 
-#: InvenTree/settings.py:734
+#: InvenTree/settings.py:741
 msgid "Russian"
 msgstr "Russisk"
 
-#: InvenTree/settings.py:735
+#: InvenTree/settings.py:742
 msgid "Slovenian"
 msgstr "Slovensk"
 
-#: InvenTree/settings.py:736
+#: InvenTree/settings.py:743
 msgid "Swedish"
 msgstr "Svensk"
 
-#: InvenTree/settings.py:737
+#: InvenTree/settings.py:744
 msgid "Thai"
 msgstr "Thailandsk"
 
-#: InvenTree/settings.py:738
+#: InvenTree/settings.py:745
 msgid "Turkish"
 msgstr "Tyrkisk"
 
-#: InvenTree/settings.py:739
+#: InvenTree/settings.py:746
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
 
-#: InvenTree/settings.py:740
+#: InvenTree/settings.py:747
 msgid "Chinese"
 msgstr "Kinesisk"
 
@@ -9204,44 +9204,48 @@ msgstr ""
 msgid "Update Available"
 msgstr ""
 
-#: templates/about.html:42
+#: templates/about.html:43
+msgid "Commit Branch"
+msgstr ""
+
+#: templates/about.html:49
 msgid "InvenTree Documentation"
 msgstr ""
 
-#: templates/about.html:47
+#: templates/about.html:54
 msgid "API Version"
 msgstr ""
 
-#: templates/about.html:52
+#: templates/about.html:59
 msgid "Python Version"
 msgstr ""
 
-#: templates/about.html:57
+#: templates/about.html:64
 msgid "Django Version"
 msgstr ""
 
-#: templates/about.html:62
+#: templates/about.html:69
 msgid "View Code on GitHub"
 msgstr ""
 
-#: templates/about.html:67
+#: templates/about.html:74
 msgid "Credits"
 msgstr ""
 
-#: templates/about.html:72
+#: templates/about.html:79
 msgid "Mobile App"
 msgstr ""
 
-#: templates/about.html:77
+#: templates/about.html:84
 msgid "Submit Bug Report"
 msgstr ""
 
-#: templates/about.html:84 templates/clip.html:4
+#: templates/about.html:91 templates/clip.html:4
 #: templates/js/translated/helpers.js:585
 msgid "copy to clipboard"
 msgstr ""
 
-#: templates/about.html:84
+#: templates/about.html:91
 msgid "copy version information"
 msgstr ""
 
