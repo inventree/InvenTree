@@ -222,7 +222,7 @@ class TestManufacturerPart(MigratorTestCase):
 class TestCurrencyMigration(MigratorTestCase):
     """Tests for upgrade from basic currency support to django-money."""
 
-    migrate_from = ('company', '0025_auto_20201110_1001')
+    migrate_from = ('company', '0020_auto_20200413_0839')
     migrate_to = ('company', '0026_auto_20201110_1011')
 
     def prepare(self):
