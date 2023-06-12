@@ -13,7 +13,8 @@
     formatDecimal,
     FullCalendar,
     getFormFieldValue,
-    getTableData,0
+    getTableData,
+    global_settings,
     handleFormErrors,
     handleFormSuccess,
     imageHoverIcon,
