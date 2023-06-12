@@ -5,11 +5,13 @@ Provides information on the current InvenTree version
 
 import os
 import pathlib
+import platform
 import re
 from datetime import datetime as dt
 from datetime import timedelta as td
 
 import django
+from django.conf import settings
 
 from dulwich.repo import NotGitRepository, Repo
 
@@ -130,3 +132,48 @@ def inventreeCommitDate():
 
     commit_dt = dt.fromtimestamp(main_commit.commit_time) + td(seconds=main_commit.commit_timezone)
     return str(commit_dt.date())
+
+
+def inventreeInstaller():
+    """Returns the installer for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    installer = os.environ.get('INVENTREE_PKG_INSTALLER', '')
+
+    if installer:
+        return installer
+    elif settings.DOCKER:
+        return 'DOC'
+    elif main_commit is not None:
+        return 'GIT'
+
+    return None
+
+
+def inventreeBranch():
+    """Returns the branch for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    branch = os.environ.get('INVENTREE_PKG_BRANCH', '')
+
+    if branch:
+        return branch
+
+    if main_commit is None:
+        return None
+
+    branch = main_repo.refs.follow(b'HEAD')[0][1].decode()
+    return branch.removeprefix('refs/heads/')
+
+
+def inventreeTarget():
+    """Returns the target platform for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    return os.environ.get('INVENTREE_PKG_TARGET', None)
+
+
+def inventreePlatform():
+    """Returns the platform for the instance."""
+
+    return platform.platform(aliased=True)
