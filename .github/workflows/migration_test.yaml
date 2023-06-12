@@ -17,7 +17,7 @@ env:
   python_version: 3.9
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
-  INVENTREE_DB_NAME: ../test-db/test-db.sqlite3
+  INVENTREE_DB_NAME: db.sqlite3
   INVENTREE_MEDIA_ROOT: ../test_inventree_media
   INVENTREE_STATIC_ROOT: ../test_inventree_static
   INVENTREE_BACKUP_DIR: ../test_inventree_backup
@@ -41,29 +41,37 @@ jobs:
             - 'requirements.txt'
             - 'requirements-dev.txt'
 
-  run-migrations:
+  migrations-checks:
     name: Run Database Migrations
     runs-on: ubuntu-latest
     needs: paths-filter
     if: needs.paths-filter.outputs.server == 'true'
 
     steps:
-
       - uses: actions/checkout@v3
         name: Checkout Code
-
-      - name: Checkout Database
-        run: |
-          git clone https://github.com/inventree/test-db --depth 1 test-db
-
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           install: true
-
-      - name: Apply Migrations
+      - name: Fetch Database
         run: |
-          pwd
-          ls
-          chmod +rw test-db/test-db.sqlite3
+          git clone --depth 1 https://github.com/inventree/test-db ./test-db
+
+      - name: Latest Database
+        run: |
+          cp test-db/latest.sqlite3 ./db.sqlite3
+          chmod +rw db.sqlite3
+          invoke migrate
+
+      - name: 0.10.0 Database
+        run: |
+          cp test-db/0.10.0.sqlite3 ./db.sqlite3
+          chmod +rw db.sqlite3
+          invoke migrate
+
+      - name: 0.11.0 Database
+        run: |
+          cp test-db/0.11.0.sqlite3 ./db.sqlite3
+          chmod +rw db.sqlite3
           invoke migrate
