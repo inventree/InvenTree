@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(help_text='Part description', max_length=250)),
                 ('keywords', models.CharField(blank=True, help_text='Part keywords to improve visibility in search results', max_length=250)),
                 ('IPN', models.CharField(blank=True, help_text='Internal Part Number', max_length=100)),
-                ('URL', models.URLField(blank=True, help_text='Link to extenal URL')),
+                ('URL', models.URLField(blank=True, help_text='Link to external URL')),
                 ('image', models.ImageField(blank=True, max_length=255, null=True, upload_to=part.models.rename_part_image)),
                 ('minimum_stock', models.PositiveIntegerField(default=0, help_text='Minimum allowed stock level', validators=[django.core.validators.MinValueValidator(0)])),
                 ('units', models.CharField(blank=True, default='pcs', help_text='Stock keeping units for this part', max_length=20)),

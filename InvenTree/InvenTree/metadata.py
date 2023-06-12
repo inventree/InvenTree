@@ -28,7 +28,7 @@ class InvenTreeMetadata(SimpleMetadata):
     """
 
     def determine_metadata(self, request, view):
-        """Overwrite the metadata to adapt to hte request user."""
+        """Overwrite the metadata to adapt to the request user."""
         self.request = request
         self.view = view
 
@@ -36,7 +36,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
         """
         Custom context information to pass through to the OPTIONS endpoint,
-        if the "context=True" is supplied to the OPTIONS requst
+        if the "context=True" is supplied to the OPTIONS request
 
         Serializer class can supply context data by defining a get_context_data() method (no arguments)
         """

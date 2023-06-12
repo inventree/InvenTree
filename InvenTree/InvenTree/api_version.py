@@ -2,13 +2,35 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 114
+INVENTREE_API_VERSION = 120
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v114 -> 2023-05-14 : https://github.com/inventree/InvenTree/pull/4804
+
+v120 -> 2023-06-12 : https://github.com/inventree/InvenTree/pull/4804
     - Adds 'project_code' field to build order API endpoints
+
+v119 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4898
+    - Add Metadata to:  Part test templates, Part parameters, Part category parameter templates, BOM item substitute, Related Parts, Stock item test result
+
+v118 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4935
+    - Adds extra fields for the PartParameterTemplate model
+
+v117 -> 2023-05-22 : https://github.com/inventree/InvenTree/pull/4854
+    - Part.units model now supports physical units (e.g. "kg", "m", "mm", etc)
+    - Replaces SupplierPart "pack_size" field with "pack_quantity"
+    - New field supports physical units, and allows for conversion between compatible units
+
+v116 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4823
+    - Updates to part parameter implementation, to use physical units
+
+v115 - > 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
+    - Adds ability to partially scrap a build output
+
+v114 -> 2023-05-16 : https://github.com/inventree/InvenTree/pull/4825
+    - Adds "delivery_date" to shipments
+>>>>>>> inventree/master
 
 v113 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
     - Adds API endpoints for scrapping a build output
@@ -192,7 +214,7 @@ v64 -> 2022-07-08 : https://github.com/inventree/InvenTree/pull/3310
     - Allow BOM List API endpoint to be filtered by "on_order" parameter
 
 v63 -> 2022-07-06 : https://github.com/inventree/InvenTree/pull/3301
-    - Allow BOM List API endpoint to be filtered by "available_stock" paramater
+    - Allow BOM List API endpoint to be filtered by "available_stock" parameter
 
 v62 -> 2022-07-05 : https://github.com/inventree/InvenTree/pull/3296
     - Allows search on BOM List API endpoint

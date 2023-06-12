@@ -17,7 +17,7 @@ import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
 
-from stock.models import StockItem, StockLocation
+from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
 from common.serializers import ProjectCodeSerializer
@@ -96,7 +96,7 @@ class BuildSerializer(InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Add custom annotations to the BuildSerializer queryset, performing database queries as efficiently as possible.
 
-        The following annoted fields are added:
+        The following annotated fields are added:
 
         - overdue: True if the build is outstanding *and* the completion date has past
         """
@@ -186,6 +186,45 @@ class BuildOutputSerializer(serializers.Serializer):
         return output
 
 
+class BuildOutputQuantitySerializer(BuildOutputSerializer):
+    """Serializer for a single build output, with additional quantity field"""
+
+    class Meta:
+        """Serializer metaclass"""
+        fields = BuildOutputSerializer.Meta.fields + [
+            'quantity',
+        ]
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=0,
+        required=True,
+        label=_('Quantity'),
+        help_text=_('Enter quantity for build output'),
+    )
+
+    def validate(self, data):
+        """Validate the serializer data"""
+
+        data = super().validate(data)
+
+        output = data.get('output')
+        quantity = data.get('quantity')
+
+        if quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Quantity must be greater than zero')
+            })
+
+        if quantity > output.quantity:
+            raise ValidationError({
+                'quantity': _("Quantity cannot be greater than the output quantity")
+            })
+
+        return data
+
+
 class BuildOutputCreateSerializer(serializers.Serializer):
     """Serializer for creating a new BuildOutput against a BuildOrder.
 
@@ -231,6 +270,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     batch_code = serializers.CharField(
         required=False,
         allow_blank=True,
+        default=generate_batch_code,
         label=_('Batch Code'),
         help_text=_('Batch code for this build output'),
     )
@@ -367,7 +407,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
             'notes',
         ]
 
-    outputs = BuildOutputSerializer(
+    outputs = BuildOutputQuantitySerializer(
         many=True,
         required=True,
     )
@@ -417,8 +457,10 @@ class BuildOutputScrapSerializer(serializers.Serializer):
         with transaction.atomic():
             for item in outputs:
                 output = item['output']
+                quantity = item['quantity']
                 build.scrap_build_output(
                     output,
+                    quantity,
                     data.get('location', None),
                     user=request.user,
                     notes=data.get('notes', ''),
@@ -453,8 +495,8 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=list(StockStatus.items()),
-        default=StockStatus.OK,
+        choices=StockStatus.items(),
+        default=StockStatus.OK.value,
         label=_("Status"),
     )
 

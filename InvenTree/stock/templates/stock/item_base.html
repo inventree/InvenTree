@@ -2,7 +2,7 @@
 {% load static %}
 {% load plugin_extras %}
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 {% load i18n %}
 {% load l10n %}
 
@@ -358,6 +358,12 @@
             <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
         </td>
     </tr>
+    {% elif item.consumed_by %}
+    <tr>
+        <td><span class='fas fa-tools'></span></td>
+        <td>{% trans "Consumed By" %}</td>
+        <td><a href='{% url "build-detail" item.consumed_by.pk %}'>{{ item.consumed_by }}</td>
+    </tr>
     {% elif item.sales_order %}
     <tr>
         <td><span class='fas fa-th-list'></span></td>
@@ -415,7 +421,7 @@
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
-        <td>{% stock_status_label item.status %}</td>
+        <td>{% status_label 'stock' item.status %}</td>
     </tr>
     {% if item.expiry_date %}
     <tr>

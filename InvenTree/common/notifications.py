@@ -62,11 +62,11 @@ class NotificationMethod:
     def check_context(self, context):
         """Check that all values defined in the methods CONTEXT were provided in the current context."""
         def check(ref, obj):
-            # the obj is not accesible so we are on the end
+            # the obj is not accessible so we are on the end
             if not isinstance(obj, (list, dict, tuple, )):
                 return ref
 
-            # check if the ref exsists
+            # check if the ref exists
             if isinstance(ref, str):
                 if not obj.get(ref):
                     return ref
@@ -150,16 +150,16 @@ class SingleNotificationMethod(NotificationMethod):
     """NotificationMethod that sends notifications one by one."""
 
     def send(self, target):
-        """This function must be overriden."""
-        raise NotImplementedError('The `send` method must be overriden!')
+        """This function must be overridden."""
+        raise NotImplementedError('The `send` method must be overridden!')
 
 
 class BulkNotificationMethod(NotificationMethod):
     """NotificationMethod that sends all notifications in bulk."""
 
     def send_bulk(self):
-        """This function must be overriden."""
-        raise NotImplementedError('The `send` method must be overriden!')
+        """This function must be overridden."""
+        raise NotImplementedError('The `send` method must be overridden!')
 # endregion
 
 
@@ -268,7 +268,7 @@ class NotificationBody:
         message (str): Notification message as text. Should not be longer than 120 chars.
         template (str): Reference to the html template for the notification.
 
-    The strings support f-string sytle fomratting with context variables parsed at runtime.
+    The strings support f-string style formatting with context variables parsed at runtime.
 
     Context variables:
         instance: Text representing the instance

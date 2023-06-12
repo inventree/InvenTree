@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from rest_framework.exceptions import NotFound
 
-from InvenTree.unit_tests import InvenTreeAPITestCase, PluginMixin
+from InvenTree.unit_test import InvenTreeAPITestCase, PluginMixin
 from plugin.api import check_plugin
 from plugin.models import PluginConfig
 
@@ -54,7 +54,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         ).data
         self.assertEqual(data['success'], True)
 
-        # valid - github url and packagename
+        # valid - github url and package name
         data = self.post(
             url,
             {
@@ -139,7 +139,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         }, follow=True)
         self.assertEqual(response.status_code, 200)
 
-        # deactivate plugin - deactivate again -> nothing will hapen but the nothing 'changed' function is triggered
+        # deactivate plugin - deactivate again -> nothing will happen but the nothing 'changed' function is triggered
         response = self.client.post(url, {
             'action': 'plugin_deactivate',
             'index': 0,

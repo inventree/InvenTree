@@ -2,6 +2,7 @@
 {% load inventree_extras %}
 
 /* globals
+    Chart,
 */
 
 /* exported

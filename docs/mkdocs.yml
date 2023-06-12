@@ -11,16 +11,20 @@ repo_name: inventree/inventree
 # Theme
 theme:
   name: material
+  font:
+    text: Roboto
   custom_dir: _includes/overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
+      primary: blue
       accent: light blue
       toggle:
         icon: material/toggle-switch
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
+      primary: blue
       accent: light blue
       toggle:
         icon: material/toggle-switch-off-outline
@@ -30,8 +34,19 @@ theme:
   icon:
     repo: fontawesome/brands/github
   features:
+    - header.autohide
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    # - navigation.sections
+    - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
     - toc.autohide
+    - toc.follow
 edit_uri: "" # Disable "Edit" button
 extra_css:
   - stylesheets/brands.css
@@ -60,6 +75,10 @@ nav:
     - Credits: credits.md
     - Privacy: privacy.md
     - Terminology: terminology.md
+    - Development:
+      - Getting started: develop/starting.md
+      - Contributing: develop/contributing.md
+      - Devcontainer: develop/devcontainer.md
   - Install:
     - Introduction: start/intro.md
     - Configuration: start/config.md
@@ -70,13 +89,12 @@ nav:
     - Bare Metal:
         - Introduction: start/install.md
         - Installer: start/installer.md
-        - Production: start/production.md
-        - Development: start/development.md
-    - Development:
-        - Devcontainer: start/devcontainer.md
+        - Production: start/bare_prod.md
+        - Development: start/bare_dev.md
     - Serving Files: start/serving_files.md
     - Data Backup: start/backup.md
     - Migrating Data: start/migrate.md
+    - Advanced Topics: start/advanced.md
   - Parts:
     - Parts: part/part.md
     - Creating Parts: part/create.md
@@ -170,7 +188,7 @@ nav:
       - Overview: extend/plugins.md
       - Installation: extend/plugins/install.md
       - Developing a Plugin: extend/how_to_plugin.md
-      - Model Meatadata: extend/plugins/metadata.md
+      - Model Metadata: extend/plugins/metadata.md
       - Tags: extend/plugins/tags.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md
@@ -192,6 +210,9 @@ nav:
 
 # Plugins
 plugins:
+  - include-markdown:
+      opening_tag: "{!"
+      closing_tag: "!}"
   - search
   - git-revision-date-localized
   - mkdocs-simple-hooks:
@@ -224,6 +245,10 @@ extra:
   # analytics:
   #  provider: google
   #  property: UA-143467500-1
+
+  version:
+    default: stable
+    provider: mike
 
   social:
     - icon: fontawesome/brands/github

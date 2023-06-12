@@ -11,7 +11,7 @@ from build.models import Build, BuildItem
 from stock.models import StockItem
 
 from InvenTree.status_codes import BuildStatus, StockStatus
-from InvenTree.unit_tests import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 
 
 class TestBuildAPI(InvenTreeAPITestCase):
@@ -298,7 +298,7 @@ class BuildTest(BuildAPITest):
             expected_code=400,
         )
 
-        bo.status = BuildStatus.CANCELLED
+        bo.status = BuildStatus.CANCELLED.value
         bo.save()
 
         # Now, we should be able to delete
@@ -541,10 +541,10 @@ class BuildTest(BuildAPITest):
             {
                 'export': 'csv',
             }
-        ) as fo:
+        ) as file:
 
             data = self.process_csv(
-                fo,
+                file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
                 required_rows=Build.objects.count()
@@ -843,7 +843,7 @@ class BuildListTest(BuildAPITest):
         builds = self.get(self.url, data={'active': True})
         self.assertEqual(len(builds.data), 1)
 
-        builds = self.get(self.url, data={'status': BuildStatus.COMPLETE})
+        builds = self.get(self.url, data={'status': BuildStatus.COMPLETE.value})
         self.assertEqual(len(builds.data), 4)
 
         builds = self.get(self.url, data={'overdue': False})
@@ -863,7 +863,7 @@ class BuildListTest(BuildAPITest):
             reference="BO-0006",
             quantity=10,
             title='Just some thing',
-            status=BuildStatus.PRODUCTION,
+            status=BuildStatus.PRODUCTION.value,
             target_date=in_the_past
         )
 
@@ -1027,12 +1027,15 @@ class BuildOutputScrapTest(BuildAPITest):
                 'outputs': [
                     {
                         'output': outputs[0].pk,
+                        'quantity': outputs[0].quantity,
                     },
                     {
                         'output': outputs[1].pk,
+                        'quantity': outputs[1].quantity,
                     },
                     {
                         'output': outputs[2].pk,
+                        'quantity': outputs[2].quantity,
                     },
                 ],
                 'location': 1,

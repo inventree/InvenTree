@@ -14,33 +14,20 @@ from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
-from django.core.validators import URLValidator
-from django.db.utils import OperationalError, ProgrammingError
 from django.http import StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _
 
-import moneyed.localization
 import regex
-import requests
 from bleach import clean
-from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
 
-import common.models
 import InvenTree.version
-from common.notifications import (InvenTreeNotificationBodies,
-                                  NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = logging.getLogger('inventree')
-
-
-def getSetting(key, backup_value=None):
-    """Shortcut for reading a setting value from the database."""
-    return common.models.InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
 def generateTestKey(test_name):
@@ -83,156 +70,6 @@ def getMediaUrl(filename):
 def getStaticUrl(filename):
     """Return the qualified access path for the given file, under the static media directory."""
     return os.path.join(STATIC_URL, str(filename))
-
-
-def construct_absolute_url(*arg, **kwargs):
-    """Construct (or attempt to construct) an absolute URL from a relative URL.
-
-    This is useful when (for example) sending an email to a user with a link
-    to something in the InvenTree web framework.
-
-    A URL is constructed in the following order:
-
-    1. If setings.SITE_URL is set (e.g. in the Django settings), use that
-    2. If the InvenTree setting INVENTREE_BASE_URL is set, use that
-    3. Otherwise, use the current request URL (if available)
-    """
-
-    relative_url = '/'.join(arg)
-
-    # If a site URL is provided, use that
-    site_url = getattr(settings, 'SITE_URL', None)
-
-    if not site_url:
-        # Otherwise, try to use the InvenTree setting
-        try:
-            site_url = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
-        except ProgrammingError:
-            pass
-        except OperationalError:
-            pass
-
-    if not site_url:
-        # Otherwise, try to use the current request
-        request = kwargs.get('request', None)
-
-        if request:
-            site_url = request.build_absolute_uri('/')
-
-    if not site_url:
-        # No site URL available, return the relative URL
-        return relative_url
-
-    # Strip trailing slash from base url
-    if site_url.endswith('/'):
-        site_url = site_url[:-1]
-
-    if relative_url.startswith('/'):
-        relative_url = relative_url[1:]
-
-    return f"{site_url}/{relative_url}"
-
-
-def get_base_url(**kwargs):
-    """Return the base URL for the InvenTree server"""
-    return construct_absolute_url('', **kwargs)
-
-
-def download_image_from_url(remote_url, timeout=2.5):
-    """Download an image file from a remote URL.
-
-    This is a potentially dangerous operation, so we must perform some checks:
-
-    - The remote URL is available
-    - The Content-Length is provided, and is not too large
-    - The file is a valid image file
-
-    Arguments:
-        remote_url: The remote URL to retrieve image
-        max_size: Maximum allowed image size (default = 1MB)
-        timeout: Connection timeout in seconds (default = 5)
-
-    Returns:
-        An in-memory PIL image file, if the download was successful
-
-    Raises:
-        requests.exceptions.ConnectionError: Connection could not be established
-        requests.exceptions.Timeout: Connection timed out
-        requests.exceptions.HTTPError: Server responded with invalid response code
-        ValueError: Server responded with invalid 'Content-Length' value
-        TypeError: Response is not a valid image
-    """
-
-    # Check that the provided URL at least looks valid
-    validator = URLValidator()
-    validator(remote_url)
-
-    # Calculate maximum allowable image size (in bytes)
-    max_size = int(common.models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
-
-    # Add user specified user-agent to request (if specified)
-    user_agent = common.models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
-    if user_agent:
-        headers = {"User-Agent": user_agent}
-    else:
-        headers = None
-
-    try:
-        response = requests.get(
-            remote_url,
-            timeout=timeout,
-            allow_redirects=True,
-            stream=True,
-            headers=headers,
-        )
-        # Throw an error if anything goes wrong
-        response.raise_for_status()
-    except requests.exceptions.ConnectionError as exc:
-        raise Exception(_("Connection error") + f": {str(exc)}")
-    except requests.exceptions.Timeout as exc:
-        raise exc
-    except requests.exceptions.HTTPError:
-        raise requests.exceptions.HTTPError(_("Server responded with invalid status code") + f": {response.status_code}")
-    except Exception as exc:
-        raise Exception(_("Exception occurred") + f": {str(exc)}")
-
-    if response.status_code != 200:
-        raise Exception(_("Server responded with invalid status code") + f": {response.status_code}")
-
-    try:
-        content_length = int(response.headers.get('Content-Length', 0))
-    except ValueError:
-        raise ValueError(_("Server responded with invalid Content-Length value"))
-
-    if content_length > max_size:
-        raise ValueError(_("Image size is too large"))
-
-    # Download the file, ensuring we do not exceed the reported size
-    fo = io.BytesIO()
-
-    dl_size = 0
-    chunk_size = 64 * 1024
-
-    for chunk in response.iter_content(chunk_size=chunk_size):
-        dl_size += len(chunk)
-
-        if dl_size > max_size:
-            raise ValueError(_("Image download exceeded maximum size"))
-
-        fo.write(chunk)
-
-    if dl_size == 0:
-        raise ValueError(_("Remote server returned empty response"))
-
-    # Now, attempt to convert the downloaded data to a valid image file
-    # img.verify() will throw an exception if the image is not valid
-    try:
-        img = Image.open(fo).convert()
-        img.verify()
-    except Exception:
-        raise TypeError(_("Supplied URL is not a valid image file"))
-
-    return img
 
 
 def TestIfImage(img):
@@ -655,7 +492,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
         serial = serial.strip()
 
-        # Ignore blank / emtpy serials
+        # Ignore blank / empty serials
         if len(serial) == 0:
             return
 
@@ -1016,120 +853,3 @@ def inheritors(cls):
                 subcls.add(child)
                 work.append(child)
     return subcls
-
-
-def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
-    """Notify all responsible parties of a change in an instance.
-
-    Parses the supplied content with the provided instance and sender and sends a notification to all responsible users,
-    excluding the optional excluded list.
-
-    Args:
-        instance: The newly created instance
-        sender: Sender model reference
-        content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
-        exclude (User, optional): User instance that should be excluded. Defaults to None.
-    """
-    if instance.responsible is not None:
-        # Setup context for notification parsing
-        content_context = {
-            'instance': str(instance),
-            'verbose_name': sender._meta.verbose_name,
-            'app_label': sender._meta.app_label,
-            'model_name': sender._meta.model_name,
-        }
-
-        # Setup notification context
-        context = {
-            'instance': instance,
-            'name': content.name.format(**content_context),
-            'message': content.message.format(**content_context),
-            'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
-            'template': {
-                'html': content.template.format(**content_context),
-                'subject': content.name.format(**content_context),
-            }
-        }
-
-        # Create notification
-        trigger_notification(
-            instance,
-            content.slug.format(**content_context),
-            targets=[instance.responsible],
-            target_exclude=[exclude],
-            context=context,
-        )
-
-
-def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None, max_decimal_places=None):
-    """Render a currency / Money object to a formatted string (e.g. for reports)
-
-    Arguments:
-        money: The Money instance to be rendered
-        decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
-        currency: Optionally convert to the specified currency
-        include_symbol: Render with the appropriate currency symbol
-        min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
-        max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
-    """
-
-    if money in [None, '']:
-        return '-'
-
-    if type(money) is not Money:
-        return '-'
-
-    if currency is not None:
-        # Attempt to convert to the provided currency
-        # If cannot be done, leave the original
-        try:
-            money = convert_money(money, currency)
-        except Exception:
-            pass
-
-    if decimal_places is None:
-        decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
-
-    if min_decimal_places is None:
-        min_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN', 0)
-
-    if max_decimal_places is None:
-        max_decimal_places = common.models.InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES', 6)
-
-    value = Decimal(str(money.amount)).normalize()
-    value = str(value)
-
-    if '.' in value:
-        decimals = len(value.split('.')[-1])
-
-        decimals = max(decimals, min_decimal_places)
-        decimals = min(decimals, decimal_places)
-
-        decimal_places = decimals
-    else:
-        decimal_places = max(decimal_places, 2)
-
-    decimal_places = max(decimal_places, max_decimal_places)
-
-    return moneyed.localization.format_money(
-        money,
-        decimal_places=decimal_places,
-        include_symbol=include_symbol,
-    )
-
-
-def getModelsWithMixin(mixin_class) -> list:
-    """Return a list of models that inherit from the given mixin class.
-
-    Args:
-        mixin_class: The mixin class to search for
-
-    Returns:
-        List of models that inherit from the given mixin class
-    """
-
-    from django.contrib.contenttypes.models import ContentType
-
-    db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
-
-    return [x for x in db_models if x is not None and issubclass(x, mixin_class)]

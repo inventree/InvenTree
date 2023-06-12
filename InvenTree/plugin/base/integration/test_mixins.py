@@ -8,7 +8,7 @@ from django.urls import include, re_path, reverse
 
 from error_report.models import Error
 
-from InvenTree.unit_tests import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 from plugin import InvenTreePlugin
 from plugin.base.integration.mixins import PanelMixin
 from plugin.helpers import MixinNotImplementedError

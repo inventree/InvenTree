@@ -2,14 +2,14 @@
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
-from InvenTree import unit_tests
+from InvenTree import unit_test
 
 
 class TestForwardMigrations(MigratorTestCase):
     """Test entire schema migration sequence for the build app."""
 
-    migrate_from = ('build', unit_tests.getOldestMigrationFile('build'))
-    migrate_to = ('build', unit_tests.getNewestMigrationFile('build'))
+    migrate_from = ('build', unit_test.getOldestMigrationFile('build'))
+    migrate_to = ('build', unit_test.getNewestMigrationFile('build'))
 
     def prepare(self):
         """Create initial data!"""
@@ -51,7 +51,7 @@ class TestForwardMigrations(MigratorTestCase):
 class TestReferenceMigration(MigratorTestCase):
     """Test custom migration which adds 'reference' field to Build model."""
 
-    migrate_from = ('build', unit_tests.getOldestMigrationFile('build'))
+    migrate_from = ('build', unit_test.getOldestMigrationFile('build'))
     migrate_to = ('build', '0018_build_reference')
 
     def prepare(self):
@@ -107,7 +107,7 @@ class TestReferencePatternMigration(MigratorTestCase):
     """
 
     migrate_from = ('build', '0019_auto_20201019_1302')
-    migrate_to = ('build', unit_tests.getNewestMigrationFile('build'))
+    migrate_to = ('build', unit_test.getNewestMigrationFile('build'))
 
     def prepare(self):
         """Create some initial data prior to migration"""

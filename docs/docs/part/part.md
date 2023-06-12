@@ -4,7 +4,7 @@ title: Parts
 
 ## Part
 
-The *Part* is the core element of the InvenTree ecosystem. A Part object is the archetype of any stock item in your inventory. Parts are arranged in heirarchical categories which are used to organise and filter parts by function.
+The *Part* is the core element of the InvenTree ecosystem. A Part object is the archetype of any stock item in your inventory. Parts are arranged in hierarchical categories which are used to organise and filter parts by function.
 
 ## Part Category
 
@@ -55,7 +55,19 @@ Trackable parts can be assigned batch numbers or serial numbers which uniquely i
 
 ### Purchaseable
 
-If a part is designated as *Purchaseable* it can be purchased from external suppliers. Setting this flag allows parts to be added to [purchase orders](../order/purchase_order.md).
+If a part is designated as *Purchaseable* it can be purchased from external suppliers. Setting this flag allows parts be linked to supplier parts and procured via purchase orders.
+
+#### Suppliers
+
+A [Supplier](../order/company.md#suppliers) is an external vendor who provides goods or services.
+
+#### Supplier Parts
+
+Purchaseable parts can be linked to [Supplier Parts](../order/company.md#supplier-parts). A supplier part represents an individual piece or unit that is procured from an external vendor.
+
+#### Purchase Orders
+
+A [Purchase Order](../order/purchase_order.md) allows parts to be ordered from an external supplier.
 
 ### Salable
 
@@ -64,6 +76,31 @@ If a part is designated as *Salable* it can be sold to external customers. Setti
 ### Active
 
 By default, all parts are *Active*. Marking a part as inactive means it is not available for many actions, but the part remains in the database. If a part becomes obsolete, it is recommended that it is marked as inactive, rather than deleting it from the database.
+
+## Units of Measure
+
+Each type of part can define a custom "unit of measure" which is a standardized unit which is used to track quantities for a particular part. By default, the "unit of measure" for each part is blank, which means that each part is tracked in dimensionless quantities of "pieces".
+
+### Physical Units
+
+It is possible to track parts using physical quantity values, such as *metres* or *litres*. For example, it would make sense to track a "wire" in units of "metres":
+
+{% with id="part_units", url="part/part_units.png", description="Parts units" %}
+{% include 'img.html' %}
+{% endwith %}
+
+### Supplier Part Units
+
+By default, units of measure for [supplier parts](../order/company.md#supplier-parts) are specified in the same unit as their base part. However, supplier part units can be changed to any unit *which is compatible with the base unit*.
+
+!!! info "Example: Supplier Part Units"
+    If the base part has a unit of `metres` then valid units for any supplier parts would include `feet`, `cm`, `inches` (etc)
+
+If an incompatible unit type is specified, an error will be displayed:
+
+{% with id="part_units_invalid", url="part/part_units_invalid.png", description="Invalid supplier part units" %}
+{% include 'img.html' %}
+{% endwith %}
 
 ## Part Images
 
@@ -95,7 +132,7 @@ In the web interface, part images can be uploaded directly from the [part view](
 
 #### API
 
-Image upload is supported via the [InvenTree API](../api/api.md), allowing images to be associated with parts programatically. Further, this means that the [Python interface](../api/python/python.md) also supports image upload.
+Image upload is supported via the [InvenTree API](../api/api.md), allowing images to be associated with parts programmatically. Further, this means that the [Python interface](../api/python/python.md) also supports image upload.
 
 #### Mobile App
 

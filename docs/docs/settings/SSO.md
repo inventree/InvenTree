@@ -78,6 +78,9 @@ Configure the social application entry with the app details:
 - Add the *site* which you want to provide access for this SSO app
 - Save the new application entry when configuration is finished
 
+!!! warning "Site Selection"
+    You *must* assign the new application to at least one available site domain
+
 !!! tip "Fix Your Mistakes"
     You can always return to edit or adjust the social application details later
 
@@ -92,6 +95,9 @@ In any case, the URL is is specific to your installation and the SSO provider. T
 
 !!! success "Works for Local Installs"
     Your server does not need to be "public facing" for this to work. For example the URL `http://localhost:1234/accounts/github/login/callback/` would be perfectly valid!
+
+!!! warning "Proxy Support"
+    If your InvenTree server is running behind a proxy, you will need to ensure that the "public facing" host address matches the internal host address of the server, and that this host address also matches the configured callback URL
 
 ### Enable SSO Settings
 
@@ -112,7 +118,7 @@ In the [settings screen](./global.md), navigate to the *Login Settings* panel. H
 
 ### Configure Email
 
-Note that [email settings](./email.md) must be correctly configured before SSO will be activated. Ensure that your email setup is correctly configured and operataional.
+Note that [email settings](./email.md) must be correctly configured before SSO will be activated. Ensure that your email setup is correctly configured and operational.
 
 ## Security Considerations
 

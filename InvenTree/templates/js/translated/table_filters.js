@@ -1,12 +1,16 @@
 {% load i18n %}
-{% load status_codes %}
+{% load generic %}
 {% load inventree_extras %}
 
 /* globals
-    global_settings
+    buildCodes,
+    global_settings,
+    inventreeGet,
     purchaseOrderCodes,
     returnOrderCodes,
+    returnOrderLineItemCodes,
     salesOrderCodes,
+    stockCodes,
 */
 
 /* exported
@@ -422,6 +426,17 @@ function getPartTestTemplateFilters() {
 }
 
 
+// Return a dictionary of filters for the "plugins" table
+function getPluginTableFilters() {
+    return {
+        active: {
+            type: 'bool',
+            title: '{% trans "Active" %}',
+        },
+    };
+}
+
+
 // Return a dictionary of filters for the "build" table
 function getBuildTableFilters() {
 
@@ -449,7 +464,7 @@ function getBuildTableFilters() {
                 inventreeGet('{% url "api-owner-list" %}', {}, {
                     async: false,
                     success: function(response) {
-                        for (key in response) {
+                        for (var key in response) {
                             var owner = response[key];
                             ownersList[owner.pk] = {
                                 key: owner.pk,
@@ -633,6 +648,11 @@ function getPartTableFilters() {
             type: 'bool',
             title: '{% trans "Component" %}',
         },
+        has_units: {
+            type: 'bool',
+            title: '{% trans "Has Units" %}',
+            description: '{% trans "Part has defined units" %}',
+        },
         has_ipn: {
             type: 'bool',
             title: '{% trans "Has IPN" %}',
@@ -707,6 +727,38 @@ function getCompanyFilters() {
 }
 
 
+// Return a dictionary of filters for the "PartParameter" table
+function getPartParameterFilters() {
+    return {};
+}
+
+
+// Return a dictionary of filters for the "part parameter template" table
+function getPartParameterTemplateFilters() {
+    return {
+        checkbox: {
+            type: 'bool',
+            title: '{% trans "Checkbox" %}',
+        },
+        has_choices: {
+            type: 'bool',
+            title: '{% trans "Has Choices" %}',
+        },
+        has_units: {
+            type: 'bool',
+            title: '{% trans "Has Units" %}',
+        }
+    };
+}
+
+
+// Return a dictionary of filters for the "parameteric part" table
+function getParametricPartTableFilters() {
+    let filters = getPartTableFilters();
+
+    return filters;
+}
+
 
 // Return a dictionary of filters for a given table, based on the name of the table
 function getAvailableTableFilters(tableKey) {
@@ -730,10 +782,18 @@ function getAvailableTableFilters(tableKey) {
         return getBuildItemTableFilters();
     case 'location':
         return getStockLocationFilters();
+    case 'parameters':
+        return getParametricPartTableFilters();
+    case 'part-parameters':
+        return getPartParameterFilters();
+    case 'part-parameter-templates':
+        return getPartParameterTemplateFilters();
     case 'parts':
         return getPartTableFilters();
     case 'parttests':
         return getPartTestTemplateFilters();
+    case 'plugins':
+        return getPluginTableFilters();
     case 'purchaseorder':
         return getPurchaseOrderFilters();
     case 'purchaseorderlineitem':

@@ -1,8 +1,14 @@
 {% load i18n %}
 
 /* global
+    constructFormBody,
+    exportFormatOptions,
+    getFormFieldValue,
     inventreeLoad,
     inventreeSave,
+    sanitizeData,
+    sanitizeInputString,
+    user_settings,
 */
 
 /* exported
@@ -58,7 +64,7 @@ function constructOrderTableButtons(options={}) {
 
     var display_mode = options.display;
 
-    var key = `${options.prefix || order}-table-display-mode`;
+    var key = `${options.prefix || 'order'}-table-display-mode`;
 
     // If display mode is not provided, look up from session
     if (!display_mode) {
@@ -262,7 +268,7 @@ function reloadTableFilters(table, filters, options={}) {
     }
 
     // More complex refresh with new filters supplied
-    var options = table.bootstrapTable('getOptions');
+    options = table.bootstrapTable('getOptions');
 
     // Construct a new list of filters to use for the query
     var params = {};
@@ -494,17 +500,17 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         var bb = sortName.split('.').reduce(extract, b);
 
         // Extract parent information
-        var aparent = a._data && a._data['parent-index'];
+        var apparent = a._data && a._data['parent-index'];
         var bparent = b._data && b._data['parent-index'];
 
         // If either of the comparisons are in a group
-        if (aparent || bparent) {
+        if (apparent || bparent) {
 
             // If the parents are different (or one item does not have a parent,
             // then we need to extract the parent value for the selected column.
 
-            if (aparent != bparent) {
-                if (aparent) {
+            if (apparent != bparent) {
+                if (apparent) {
                     aa = a._data['table'].options.groupByFormatter(sortName, 0, a._data['group-data']);
                 }
 
@@ -559,7 +565,7 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         },
         formatShowingRows: function(pageFrom, pageTo, totalRows) {
 
-            if (totalRows === undefined || totalRows === NaN) {
+            if (totalRows === undefined || isNaN(totalRows)) {
                 return '{% trans "Showing all rows" %}';
             } else {
                 return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;

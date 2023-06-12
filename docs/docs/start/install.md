@@ -259,13 +259,13 @@ The InvenTree database is now setup and ready to run. A simple development serve
 
 The InvenTree development server is useful for testing and configuration - and it may be wholly sufficient for a small-scale installation.
 
-Refer to the [development server instructions](./development.md) for further information.
+Refer to the [development server instructions](./bare_dev.md) for further information.
 
 ### Production Server
 
 In a production environment, a more robust server setup is required.
 
-Refer to the [production server instructions](./production.md) for further information.
+Refer to the [production server instructions](./bare_prod.md) for further information.
 
 ## Updating InvenTree
 
@@ -307,7 +307,7 @@ invoke update
 
 This command performs the following steps:
 
-* Ensure all rquired packages are installed and up to date
+* Ensure all required packages are installed and up to date
 * Perform required database schema changes
 * Run the user through any steps which require interaction
 * Collect any new or updated static files

@@ -12,7 +12,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
@@ -35,6 +35,7 @@ from taggit.managers import TaggableManager
 
 import common.models
 import common.settings
+import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
@@ -45,12 +46,14 @@ from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2money, decimal2string, normalize
+from InvenTree.helpers import (decimal2money, decimal2string, normalize,
+                               str2bool)
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
                               InvenTreeBarcodeMixin, InvenTreeNotesMixin,
                               InvenTreeTree, MetadataMixin)
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import (BuildStatusGroups, PurchaseOrderStatus,
+                                    PurchaseOrderStatusGroups,
+                                    SalesOrderStatus, SalesOrderStatusGroups)
 from order import models as OrderModels
 from stock import models as StockModels
 
@@ -380,7 +383,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     """
 
     objects = PartManager()
-    tags = TaggableManager()
+
+    tags = TaggableManager(blank=True)
 
     class Meta:
         """Metaclass defines extra model properties"""
@@ -569,7 +573,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Ensure that the IPN (internal part number) is valid for this Part"
 
         - Validation is handled by custom plugins
-        - By default, no validation checks are perfomed
+        - By default, no validation checks are performed
         """
 
         from plugin.registry import registry
@@ -981,7 +985,10 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         max_length=20, default="",
         blank=True, null=True,
         verbose_name=_('Units'),
-        help_text=_('Units of measure for this part')
+        help_text=_('Units of measure for this part'),
+        validators=[
+            validators.validate_physical_units,
+        ]
     )
 
     assembly = models.BooleanField(
@@ -1064,7 +1071,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
             part__in=self.get_used_in(),
-            status__in=BuildStatus.ACTIVE_CODES
+            status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         return builds
@@ -1098,7 +1105,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatusGroups.OPEN,
             part=self
         )
 
@@ -1111,7 +1118,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Return the quantity of this part required for active sales orders."""
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatusGroups.OPEN,
             part=self
         )
 
@@ -1296,6 +1303,11 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         )
 
         for item in queryset.all():
+
+            if item.quantity <= 0:
+                # Ignore zero-quantity items
+                continue
+
             # Iterate through each item in the queryset, work out the limiting quantity
             quantity = item.available_stock + item.substitute_stock
 
@@ -1318,7 +1330,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         Builds marked as 'complete' or 'cancelled' are ignored
         """
-        return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES)
+        return self.builds.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     @property
     def quantity_being_built(self):
@@ -1390,13 +1402,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         if pending is True:
             # Look only for 'open' orders which have not shipped
             queryset = queryset.filter(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
                 shipment__shipment_date=None,
             )
         elif pending is False:
             # Look only for 'closed' orders or orders which have shipped
             queryset = queryset.exclude(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
                 shipment__shipment_date=None,
             )
 
@@ -1537,7 +1549,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         A) This part may be directly specified in a BomItem instance
         B) This part may be a *variant* of a part which is directly specified in a BomItem instance
-        C) This part may be a *substitute* for a part which is directly specifed in a BomItem instance
+        C) This part may be a *substitute* for a part which is directly specified in a BomItem instance
 
         So we construct a query for each case, and combine them...
         """
@@ -2139,7 +2151,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     def on_order(self):
         """Return the total number of items on order for this part.
 
-        Note that some supplier parts may have a different pack_size attribute,
+        Note that some supplier parts may have a different pack_quantity attribute,
         and this needs to be taken into account!
         """
 
@@ -2150,7 +2162,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
             # Look at any incomplete line item for open orders
             lines = sp.purchase_order_line_items.filter(
-                order__status__in=PurchaseOrderStatus.OPEN,
+                order__status__in=PurchaseOrderStatusGroups.OPEN,
                 quantity__gt=F('received'),
             )
 
@@ -2158,7 +2170,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                 remaining = line.quantity - line.received
 
                 if remaining > 0:
-                    quantity += remaining * sp.pack_size
+                    quantity += sp.base_quantity(remaining)
 
         return quantity
 
@@ -2167,7 +2179,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         return self.parameters.order_by('template__name')
 
     def parameters_map(self):
-        """Return a map (dict) of parameter values assocaited with this Part instance, of the form.
+        """Return a map (dict) of parameter values associated with this Part instance, of the form.
 
         Example:
         {
@@ -2288,6 +2300,13 @@ def after_save_part(sender, instance: Part, created, **kwargs):
         except PicklingError:
             # Can sometimes occur if the referenced Part has issues
             pass
+
+        # Schedule a background task to rebuild any supplier parts
+        InvenTree.tasks.offload_task(
+            part_tasks.rebuild_supplier_parts,
+            instance.pk,
+            force_async=True
+        )
 
 
 class PartPricing(common.models.MetaMixin):
@@ -2541,7 +2560,7 @@ class PartPricing(common.models.MetaMixin):
 
         # Find all line items for completed orders which reference this part
         line_items = OrderModels.PurchaseOrderLineItem.objects.filter(
-            order__status=PurchaseOrderStatus.COMPLETE,
+            order__status=PurchaseOrderStatus.COMPLETE.value,
             received__gt=0,
             part__part=self.part,
         )
@@ -2558,7 +2577,7 @@ class PartPricing(common.models.MetaMixin):
                 continue
 
             # Take supplier part pack size into account
-            purchase_cost = self.convert(line.purchase_price / line.part.pack_size)
+            purchase_cost = self.convert(line.purchase_price / line.part.pack_quantity_native)
 
             if purchase_cost is None:
                 continue
@@ -2649,7 +2668,7 @@ class PartPricing(common.models.MetaMixin):
                         continue
 
                     # Ensure we take supplier part pack size into account
-                    cost = self.convert(pb.price / sp.pack_size)
+                    cost = self.convert(pb.price / sp.pack_quantity_native)
 
                     if cost is None:
                         continue
@@ -3181,11 +3200,11 @@ class PartCategoryStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
 
 
-class PartTestTemplate(models.Model):
+class PartTestTemplate(MetadataMixin, models.Model):
     """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
-    defined in a heirarchy.
+    defined in a hierarchy.
 
     Test names are simply strings, rather than enforcing any sort of structure or pattern.
     It is up to the user to determine what tests are defined (and how they are run).
@@ -3294,6 +3313,9 @@ class PartParameterTemplate(MetadataMixin, models.Model):
     Attributes:
         name: The name (key) of the Parameter [string]
         units: The units of the Parameter [string]
+        description: Description of the parameter [string]
+        checkbox: Boolean flag to indicate whether the parameter is a checkbox [bool]
+        choices: List of valid choices for the parameter [string]
     """
 
     @staticmethod
@@ -3307,6 +3329,47 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         if self.units:
             s += " ({units})".format(units=self.units)
         return s
+
+    def clean(self):
+        """Custom cleaning step for this model:
+
+        - A 'checkbox' field cannot have 'choices' set
+        - A 'checkbox' field cannot have 'units' set
+        """
+
+        super().clean()
+
+        # Check that checkbox parameters do not have units or choices
+        if self.checkbox:
+            if self.units:
+                raise ValidationError({
+                    'units': _('Checkbox parameters cannot have units')
+                })
+
+            if self.choices:
+                raise ValidationError({
+                    'choices': _('Checkbox parameters cannot have choices')
+                })
+
+        # Check that 'choices' are in fact valid
+        self.choices = self.choices.strip()
+
+        if self.choices:
+            choice_set = set()
+
+            for choice in self.choices.split(','):
+                choice = choice.strip()
+
+                # Ignore empty choices
+                if not choice:
+                    continue
+
+                if choice in choice_set:
+                    raise ValidationError({
+                        'choices': _('Choices must be unique')
+                    })
+
+                choice_set.add(choice)
 
     def validate_unique(self, exclude=None):
         """Ensure that PartParameterTemplates cannot be created with the same name.
@@ -3324,6 +3387,14 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         except PartParameterTemplate.DoesNotExist:
             pass
 
+    def get_choices(self):
+        """Return a list of choices for this parameter template"""
+
+        if not self.choices:
+            return []
+
+        return [x.strip() for x in self.choices.split(',') if x.strip()]
+
     name = models.CharField(
         max_length=100,
         verbose_name=_('Name'),
@@ -3331,7 +3402,14 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         unique=True
     )
 
-    units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
+    units = models.CharField(
+        max_length=25,
+        verbose_name=_('Units'), help_text=_('Physical units for this parameter'),
+        blank=True,
+        validators=[
+            validators.validate_physical_units,
+        ]
+    )
 
     description = models.CharField(
         max_length=250,
@@ -3340,8 +3418,38 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         blank=True,
     )
 
+    checkbox = models.BooleanField(
+        default=False,
+        verbose_name=_('Checkbox'),
+        help_text=_('Is this parameter a checkbox?')
+    )
 
-class PartParameter(models.Model):
+    choices = models.CharField(
+        max_length=5000,
+        verbose_name=_('Choices'),
+        help_text=_('Valid choices for this parameter (comma-separated)'),
+        blank=True,
+    )
+
+
+@receiver(post_save, sender=PartParameterTemplate, dispatch_uid='post_save_part_parameter_template')
+def post_save_part_parameter_template(sender, instance, created, **kwargs):
+    """Callback function when a PartParameterTemplate is created or saved"""
+
+    import part.tasks as part_tasks
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+
+        if not created:
+            # Schedule a background task to rebuild the parameters against this template
+            InvenTree.tasks.offload_task(
+                part_tasks.rebuild_parameters,
+                instance.pk,
+                force_async=True
+            )
+
+
+class PartParameter(MetadataMixin, models.Model):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
@@ -3362,18 +3470,109 @@ class PartParameter(models.Model):
 
     def __str__(self):
         """String representation of a PartParameter (used in the admin interface)"""
-        return "{part} : {param} = {data}{units}".format(
+        return "{part} : {param} = {data} ({units})".format(
             part=str(self.part.full_name),
             param=str(self.template.name),
             data=str(self.data),
             units=str(self.template.units)
         )
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
+    def save(self, *args, **kwargs):
+        """Custom save method for the PartParameter model."""
 
-    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', verbose_name=_('Template'), help_text=_('Parameter Template'))
+        # Validate the PartParameter before saving
+        self.calculate_numeric_value()
 
-    data = models.CharField(max_length=500, verbose_name=_('Data'), help_text=_('Parameter Value'))
+        # Convert 'boolean' values to 'True' / 'False'
+        if self.template.checkbox:
+            self.data = str2bool(self.data)
+            self.data_numeric = 1 if self.data else 0
+
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Validate the PartParameter before saving to the database."""
+
+        super().clean()
+
+        # Validate the parameter data against the template units
+        if self.template.units:
+            try:
+                InvenTree.conversion.convert_physical_value(self.data, self.template.units)
+            except ValidationError as e:
+                raise ValidationError({
+                    'data': e.message
+                })
+
+        # Validate the parameter data against the template choices
+        if choices := self.template.get_choices():
+            if self.data not in choices:
+                raise ValidationError({
+                    'data': _('Invalid choice for parameter value')
+                })
+
+        self.calculate_numeric_value()
+
+        # Run custom validation checks (via plugins)
+        from plugin.registry import registry
+
+        for plugin in registry.with_mixin('validation'):
+
+            # Note: The validate_part_parameter function may raise a ValidationError
+            try:
+                result = plugin.validate_part_parameter(self, self.data)
+                if result:
+                    break
+            except ValidationError as exc:
+                # Re-throw the ValidationError against the 'data' field
+                raise ValidationError({
+                    'data': exc.message
+                })
+
+    def calculate_numeric_value(self):
+        """Calculate a numeric value for the parameter data.
+
+        - If a 'units' field is provided, then the data will be converted to the base SI unit.
+        - Otherwise, we'll try to do a simple float cast
+        """
+
+        if self.template.units:
+            try:
+                converted = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
+                self.data_numeric = float(converted.magnitude)
+            except (ValidationError, ValueError):
+                self.data_numeric = None
+
+        # No units provided, so try to cast to a float
+        else:
+            try:
+                self.data_numeric = float(self.data)
+            except ValueError:
+                self.data_numeric = None
+
+    part = models.ForeignKey(
+        Part, on_delete=models.CASCADE, related_name='parameters',
+        verbose_name=_('Part'), help_text=_('Parent Part')
+    )
+
+    template = models.ForeignKey(
+        PartParameterTemplate, on_delete=models.CASCADE, related_name='instances',
+        verbose_name=_('Template'), help_text=_('Parameter Template')
+    )
+
+    data = models.CharField(
+        max_length=500,
+        verbose_name=_('Data'), help_text=_('Parameter Value'),
+        validators=[
+            MinLengthValidator(1),
+        ]
+    )
+
+    data_numeric = models.FloatField(
+        default=None,
+        null=True,
+        blank=True,
+    )
 
     @classmethod
     def create(cls, part, template, data, save=False):
@@ -3384,7 +3583,7 @@ class PartParameter(models.Model):
         return part_parameter
 
 
-class PartCategoryParameterTemplate(models.Model):
+class PartCategoryParameterTemplate(MetadataMixin, models.Model):
     """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate.
 
     Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
@@ -3824,7 +4023,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         instance.part.schedule_pricing_update(create=False)
 
 
-class BomItemSubstitute(models.Model):
+class BomItemSubstitute(MetadataMixin, models.Model):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
@@ -3883,7 +4082,7 @@ class BomItemSubstitute(models.Model):
     )
 
 
-class PartRelated(models.Model):
+class PartRelated(MetadataMixin, models.Model):
     """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
     class Meta:

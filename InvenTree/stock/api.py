@@ -22,8 +22,9 @@ from build.models import Build
 from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
+from generic.states import StatusView
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView, MetadataView, StatusView)
+                           ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
                                SEARCH_ORDER_FILTER_ALIAS)
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
@@ -356,6 +357,7 @@ class StockFilter(rest_filters.FilterSet):
             'belongs_to',
             'build',
             'customer',
+            'consumed_by',
             'sales_order',
             'purchase_order',
             'tags__name',
@@ -363,7 +365,7 @@ class StockFilter(rest_filters.FilterSet):
         ]
 
     # Relationship filters
-    manufactuer = rest_filters.ModelChoiceFilter(label='Manufacturer', queryset=Company.objects.filter(is_manufacturer=True), field_name='manufacturer_part__manufacturer')
+    manufacturer = rest_filters.ModelChoiceFilter(label='Manufacturer', queryset=Company.objects.filter(is_manufacturer=True), field_name='manufacturer_part__manufacturer')
     supplier = rest_filters.ModelChoiceFilter(label='Supplier', queryset=Company.objects.filter(is_supplier=True), field_name='supplier_part__supplier')
 
     # Part name filters
@@ -443,7 +445,8 @@ class StockFilter(rest_filters.FilterSet):
         """
         if str2bool(value):
             # The 'quantity' field is greater than the calculated 'allocated' field
-            return queryset.filter(Q(quantity__gt=F('allocated')))
+            # Note that the item must also be "in stock"
+            return queryset.filter(StockItem.IN_STOCK_FILTER).filter(Q(quantity__gt=F('allocated')))
         else:
             # The 'quantity' field is less than (or equal to) the calculated 'allocated' field
             return queryset.filter(Q(quantity__lte=F('allocated')))
@@ -612,7 +615,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     'supplier_part': _('The given supplier part does not exist'),
                 })
 
-            if supplier_part.pack_size != 1:
+            if supplier_part.base_quantity() != 1:
                 # Skip this check if pack size is 1 - makes no difference
                 # use_pack_size = True -> Multiply quantity by pack size
                 # use_pack_size = False -> Use quantity as is
@@ -622,10 +625,9 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     })
                 else:
                     if bool(data.get('use_pack_size')):
-                        data['quantity'] = int(quantity) * float(supplier_part.pack_size)
-                        quantity = data.get('quantity', None)
+                        quantity = data['quantity'] = supplier_part.base_quantity(quantity)
                         # Divide purchase price by pack size, to save correct price per stock item
-                        data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_size)
+                        data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_quantity_native)
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
@@ -826,7 +828,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         """
         Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        a) For HTTP requests (e.g. via the browsable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
 
         Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft
@@ -1429,7 +1431,10 @@ stock_api_urls = [
 
     # StockItemTestResult API endpoints
     re_path(r'^test/', include([
-        path(r'<int:pk>/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        path(r'<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockItemTestResult}, name='api-stock-test-result-metadata'),
+            re_path(r'^.*$', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        ])),
         re_path(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 

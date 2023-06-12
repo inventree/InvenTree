@@ -71,7 +71,7 @@ If a user is subscribed to a particular part, it will be indicated as shown belo
 {% include 'img.html' %}
 {% endwith %}
 
-If the user is not subscibed, the subscription icon is greyed out, as shown here:
+If the user is not subscribed, the subscription icon is greyed out, as shown here:
 
 {% with id="part_sub_off", url="part/part_subscribe_off.png", description="Subscribe" %}
 {% include 'img.html' %}

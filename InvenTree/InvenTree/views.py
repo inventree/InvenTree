@@ -357,7 +357,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         - Updates model with POST field data
         - Performs form and object validation
         - If errors exist, re-render the form
-        - Otherwise, return sucess status
+        - Otherwise, return success status
         """
         self.request = request
 
@@ -386,7 +386,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 
         if valid:
 
-            # Save the updated objec to the database
+            # Save the updated object to the database
             self.save(self.object, form)
 
             self.object = self.get_object()

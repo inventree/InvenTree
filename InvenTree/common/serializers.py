@@ -1,11 +1,14 @@
 """JSON serializers for common components."""
 
+
 from django.urls import reverse
 
+from flags.state import flag_state
 from rest_framework import serializers
 
 import common.models as common_models
-from InvenTree.helpers import construct_absolute_url, get_objectreference
+from InvenTree.helpers import get_objectreference
+from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.serializers import (InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
 
@@ -266,3 +269,19 @@ class ProjectCodeSerializer(InvenTreeModelSerializer):
             'code',
             'description'
         ]
+
+
+class FlagSerializer(serializers.Serializer):
+    """Serializer for feature flags."""
+
+    def to_representation(self, instance):
+        """Return the configuration data as a dictionary."""
+        request = self.context.get('request')
+        if not isinstance(instance, str):
+            instance = list(instance.keys())[0]
+        data = {'key': instance, 'state': flag_state(instance, request=request)}
+
+        if request and request.user.is_superuser:
+            data['conditions'] = self.instance[instance]
+
+        return data

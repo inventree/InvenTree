@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from common.models import InvenTreeSetting
 from InvenTree.helpers import validateFilterString
-from InvenTree.unit_tests import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from stock.models import StockItem
 

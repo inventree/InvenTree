@@ -26,7 +26,7 @@ def update_stock_history(apps, schema_editor):
     n = 0
 
     for item in items:
-        # Find newest relevent history
+        # Find newest relevant history
         history = StockItemTracking.objects.filter(
             item=item,
             tracking_type__in=[StockHistoryCode.SENT_TO_CUSTOMER, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER]
@@ -43,18 +43,13 @@ def update_stock_history(apps, schema_editor):
         history.deltas['salesorder'] = item.sales_order.pk
 
         # Change the history type
-        history.tracking_type = StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+        history.tracking_type = StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value
 
         history.save()
         n += 1
 
     if n > 0:
         print(f"Updated {n} StockItemTracking entries with SalesOrder data")
-
-
-def nope(apps, schema_editor):
-    """Provided for reverse migration compatibility"""
-    pass
 
 
 class Migration(migrations.Migration):
@@ -65,6 +60,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            update_stock_history, reverse_code=nope,
+            update_stock_history, reverse_code=migrations.RunPython.noop,
         )
     ]

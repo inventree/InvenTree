@@ -76,11 +76,22 @@ class PluginConfig(models.Model):
         plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
+            """Return a meta-value associated with this plugin"""
+
+            # Ignore if the plugin config is not defined
             if not plugin:
                 return None
+
+            # Ignore if the plugin is not active
             if not self.active:
-                return _('Unvailable')
-            return str(getattr(plugin, name, None))
+                return None
+
+            result = getattr(plugin, name, None)
+
+            if result is not None:
+                result = str(result)
+
+            return result
 
         self.meta = {
             key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',
@@ -133,6 +144,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
     """This model represents settings for individual plugins."""
 
     typ = 'plugin'
+    extra_unique_fields = ['plugin']
 
     class Meta:
         """Meta for PluginSetting."""
@@ -165,27 +177,18 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
             plugin = kwargs.pop('plugin', None)
 
             if plugin:
-
-                if issubclass(plugin.__class__, InvenTreePlugin):
-                    plugin = plugin.plugin_config()
-
                 mixin_settings = getattr(registry, 'mixins_settings')
                 if mixin_settings:
                     kwargs['settings'] = mixin_settings.get(plugin.key, {})
 
         return super().get_setting_definition(key, **kwargs)
 
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'plugin': self.plugin,
-        }
-
 
 class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     """This model represents notification settings for a user."""
 
     typ = 'notification'
+    extra_unique_fields = ['method', 'user']
 
     class Meta:
         """Meta for NotificationUserSetting."""
@@ -201,13 +204,6 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
         kwargs['settings'] = storage.user_settings
 
         return super().get_setting_definition(key, **kwargs)
-
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'method': self.method,
-            'user': self.user,
-        }
 
     method = models.CharField(
         max_length=255,

@@ -2,19 +2,49 @@
 {% load inventree_extras %}
 
 /* globals
+    addClearCallback,
     buildStatusDisplay,
+    clearEvents,
+    constructExpandCollapseButtons,
+    constructField,
     constructForm,
+    constructOrderTableButtons,
+    endDate,
+    formatDecimal,
+    FullCalendar,
+    getFormFieldValue,
+    getTableData,0
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
+    initializeRelatedField,
     inventreeGet,
+    inventreeLoad,
+    inventreePut,
     launchModalForm,
     linkButtonsToSelection,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
+    makeRemoveButton,
     makeIconBadge,
     makeIconButton,
     makePartIcons,
     makeProgressBar,
+    orderParts,
+    renderDate,
     renderLink,
     setupFilterList,
+    shortenString,
+    showAlertDialog,
+    showApiError,
+    startDate,
+    stockStatusDisplay,
+    showApiErrors,
+    thumbnailImage,
+    updateFieldValue,
+    wrapButtons,
+    yesNoLabel,
 */
 
 /* exported
@@ -472,7 +502,7 @@ function unallocateStock(build_id, options={}) {
 /*
  * Helper function to render a single build output in a modal form
  */
-function renderBuildOutput(output, opts={}) {
+function renderBuildOutput(output, options={}) {
     let pk = output.pk;
 
     let output_html = imageHoverIcon(output.part_detail.thumbnail);
@@ -503,10 +533,31 @@ function renderBuildOutput(output, opts={}) {
         }
     );
 
+    let quantity_field = '';
+
+    if (options.adjust_quantity) {
+        quantity_field = constructField(
+            `outputs_quantity_${pk}`,
+            {
+                type: 'decimal',
+                value: output.quantity,
+                min_value: 0,
+                max_value: output.quantity,
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        quantity_field = `<td>${quantity_field}</td>`;
+    }
+
     let html = `
     <tr id='output_row_${pk}'>
         <td>${field}</td>
         <td>${output.part_detail.full_name}</td>
+        ${quantity_field}
         <td>${buttons}</td>
     </tr>`;
 
@@ -654,21 +705,24 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
     let table_entries = '';
 
     outputs.forEach(function(output) {
-        table_entries += renderBuildOutput(output);
+        table_entries += renderBuildOutput(output, {
+            adjust_quantity: true,
+        });
     });
 
     var html = `
     <div class='alert alert-block alert-danger'>
     {% trans "Selected build outputs will be marked as scrapped" %}
     <ul>
-    <li>{% trans "Scrapped output are given the 'rejected' status" %}</li>
-    <li>{% trans "Allocated stock items will no longer be available" %}</li>
-    <li>{% trans "The completion status of the build order will not be adjusted" %}</li>
+        <li>{% trans "Scrapped output are marked as rejected" %}</li>
+        <li>{% trans "Allocated stock items will no longer be available" %}</li>
+        <li>{% trans "The completion status of the build order will not be adjusted" %}</li>
     </ul>
     </div>
     <table class='table table-striped table-condensed' id='build-scrap-table'>
         <thead>
             <th colspan='2'>{% trans "Output" %}</th>
+            <th>{% trans "Quantity" %}</th>
             <th><!-- Actions --></th>
         </thead>
         <tbody>
@@ -680,7 +734,11 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
         method: 'POST',
         preFormContent: html,
         fields: {
-            location: {},
+            location: {
+                filters: {
+                    structural: false,
+                }
+            },
             notes: {},
             discard_allocations: {},
         },
@@ -706,11 +764,14 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
             outputs.forEach(function(output) {
                 let pk = output.pk;
                 let row = $(opts.modal).find(`#output_row_${pk}`);
+                let quantity = getFormFieldValue(`outputs_quantity_${pk}`, {}, opts);
 
                 if (row.exists()) {
                     data.outputs.push({
                         output: pk,
+                        quantity: quantity,
                     });
+
                     output_pk_values.push(pk);
                 }
             });
@@ -1024,7 +1085,7 @@ function loadBuildOutputTable(build_info, options={}) {
             }
         });
 
-        // Callack for the "unallocate" button
+        // Callback for the "unallocate" button
         $(table).find('.button-output-unallocate').click(function() {
             var pk = $(this).attr('pk');
 
@@ -1686,7 +1747,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         // Reload table data
         $(table).bootstrapTable('load', bom_items);
 
-        // Find the top-level progess bar for this build output
+        // Find the top-level progress bar for this build output
         var output_progress_bar = $(`#output-progress-${outputId}`);
 
         if (output_progress_bar.exists()) {
@@ -1737,7 +1798,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     }
 
     function requiredQuantity(row) {
-        // Return the requied quantity for a given row
+        // Return the required quantity for a given row
 
         var quantity = 0;
 
@@ -1894,7 +1955,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         },
         buttons: constructExpandCollapseButtons(table),
         detailFormatter: function(index, row, element) {
-            // Contruct an 'inner table' which shows which stock items have been allocated
+            // Construct an 'inner table' which shows which stock items have been allocated
 
             var subTableId = `allocation-table-${outputId}-${row.pk}`;
 
@@ -2665,6 +2726,8 @@ function loadBuildTable(table, options) {
 
     var filters = loadTableFilters('build', params);
 
+    var calendar = null;
+
     var filterTarget = options.filterTarget || null;
 
     setupFilterList('build', table, filterTarget, {
@@ -2934,7 +2997,7 @@ function loadBuildTable(table, options) {
                 if (!loaded_calendar) {
                     loaded_calendar = true;
 
-                    var el = document.getElementById('build-order-calendar');
+                    let el = document.getElementById('build-order-calendar');
 
                     calendar = new FullCalendar.Calendar(el, {
                         initialView: 'dayGridMonth',

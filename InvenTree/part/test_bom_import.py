@@ -5,7 +5,7 @@ from django.urls import reverse
 
 import tablib
 
-from InvenTree.unit_tests import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 
 
