@@ -10,6 +10,7 @@ import re
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator
@@ -1747,7 +1748,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         return pricing
 
-    def schedule_pricing_update(self, create: bool = False):
+    def schedule_pricing_update(self, create: bool = False, test: bool = False):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
@@ -1757,6 +1758,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         Arguments:
             create: Whether or not a new PartPricing object should be created if it does not already exist
+            test: Whether or not the pricing update is allowed during unit tests
         """
 
         try:
@@ -1768,7 +1770,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             pricing = self.pricing
 
             if create or pricing.pk:
-                pricing.schedule_for_update()
+                pricing.schedule_for_update(test=test)
         except IntegrityError:
             # If this part instance has been deleted,
             # some post-delete or post-save signals may still be fired
@@ -2360,10 +2362,14 @@ class PartPricing(common.models.MetaMixin):
 
         return result
 
-    def schedule_for_update(self, counter: int = 0):
+    def schedule_for_update(self, counter: int = 0, test: bool = False):
         """Schedule this pricing to be updated"""
 
         import InvenTree.ready
+
+        # If we are running within CI, only schedule the update if the test flag is set
+        if settings.TESTING and not test:
+            return
 
         # If importing data, skip pricing update
         if InvenTree.ready.isImportingData():
@@ -3720,7 +3726,7 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
 
         Includes:
         - The referenced sub_part
-        - Any directly specvified substitute parts
+        - Any directly specified substitute parts
         - If allow_variants is True, all variants of sub_part
         """
         # Set of parts we will allow
@@ -3741,11 +3747,6 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         valid_parts = []
 
         for p in parts:
-
-            # Inactive parts cannot be 'auto allocated'
-            if not p.active:
-                continue
-
             # Trackable status must be the same as the sub_part
             if p.trackable != self.sub_part.trackable:
                 continue
@@ -3990,10 +3991,10 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         # Base quantity requirement
         base_quantity = self.quantity * build_quantity
 
-        # Overage requiremet
-        ovrg_quantity = self.get_overage_quantity(base_quantity)
+        # Overage requirement
+        overage_quantity = self.get_overage_quantity(base_quantity)
 
-        required = float(base_quantity) + float(ovrg_quantity)
+        required = float(base_quantity) + float(overage_quantity)
 
         return required
 

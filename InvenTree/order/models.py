@@ -833,10 +833,10 @@ class SalesOrder(TotalPriceMixin, Order):
 
         return True
 
-    def is_over_allocated(self):
+    def is_overallocated(self):
         """Return true if any lines in the order are over-allocated."""
         for line in self.lines.all():
-            if line.is_over_allocated():
+            if line.is_overallocated():
                 return True
 
         return False
@@ -1358,7 +1358,7 @@ class SalesOrderLineItem(OrderLineItem):
 
         return self.allocated_quantity() >= self.quantity
 
-    def is_over_allocated(self):
+    def is_overallocated(self):
         """Return True if this line item is over allocated."""
         return self.allocated_quantity() > self.quantity
 

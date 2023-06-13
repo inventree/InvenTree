@@ -95,9 +95,13 @@ def allow_table_event(table_name):
 
     We *do not* want events to be fired for some tables!
     """
+    # Prevent table events during the data import process
     if isImportingData():
-        # Prevent table events during the data import process
         return False  # pragma: no cover
+
+    # Prevent table events when in testing mode (saves a lot of time)
+    if settings.TESTING:
+        return False
 
     table_name = table_name.lower().strip()
 

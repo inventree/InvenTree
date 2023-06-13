@@ -525,8 +525,10 @@ class SettingsView(TemplateView):
 
         # When were the rates last updated?
         try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            ctx["rates_updated"] = backend.last_update
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
+            if backend.exists():
+                backend = backend.first()
+                ctx["rates_updated"] = backend.last_update
         except Exception:
             ctx["rates_updated"] = None
 
