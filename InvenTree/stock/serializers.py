@@ -126,6 +126,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             # Annotated fields
             'allocated',
             'expired',
+            'installed_items',
             'stale',
             'tracking_items',
 
@@ -232,6 +233,11 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             )
         )
 
+        # Annotate with the total number of "installed items"
+        queryset = queryset.annotate(
+            installed_items=SubqueryCount('installed_parts')
+        )
+
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -245,10 +251,11 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     quantity = InvenTreeDecimalField()
 
     # Annotated fields
-    tracking_items = serializers.IntegerField(read_only=True, required=False)
     allocated = serializers.FloatField(required=False)
     expired = serializers.BooleanField(required=False, read_only=True)
+    installed_items = serializers.IntegerField(read_only=True, required=False)
     stale = serializers.BooleanField(required=False, read_only=True)
+    tracking_items = serializers.IntegerField(read_only=True, required=False)
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
