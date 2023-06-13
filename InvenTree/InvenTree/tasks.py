@@ -186,6 +186,8 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
             task.run()
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not started - Function not found")
+        except Exception as exc:
+            raise_warning(f"WARNING: '{taskname}' not started due to {type(exc)}")
     else:
 
         if callable(taskname):

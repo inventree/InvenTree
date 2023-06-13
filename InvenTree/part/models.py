@@ -2365,8 +2365,18 @@ class PartPricing(common.models.MetaMixin):
     def schedule_for_update(self, counter: int = 0, test: bool = False):
         """Schedule this pricing to be updated"""
 
+        import InvenTree.ready
+
         # If we are running within CI, only schedule the update if the test flag is set
         if settings.TESTING and not test:
+            return
+
+        # If importing data, skip pricing update
+        if InvenTree.ready.isImportingData():
+            return
+
+        # If running data migrations, skip pricing update
+        if InvenTree.ready.isRunningMigrations():
             return
 
         if not self.part or not self.part.pk or not Part.objects.filter(pk=self.part.pk).exists():
@@ -2420,6 +2430,14 @@ class PartPricing(common.models.MetaMixin):
 
     def update_pricing(self, counter: int = 0, cascade: bool = True):
         """Recalculate all cost data for the referenced Part instance"""
+
+        # If importing data, skip pricing update
+        if InvenTree.ready.isImportingData():
+            return
+
+        # If running data migrations, skip pricing update
+        if InvenTree.ready.isRunningMigrations():
+            return
 
         if self.pk is not None:
             try:
