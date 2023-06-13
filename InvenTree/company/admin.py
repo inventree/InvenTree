@@ -9,9 +9,9 @@ from import_export.fields import Field
 from InvenTree.admin import InvenTreeResource
 from part.models import Part
 
-from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
-                     ManufacturerPartParameter, SupplierPart,
-                     SupplierPriceBreak)
+from .models import (Address, Company, ManufacturerPart,
+                     ManufacturerPartAttachment, ManufacturerPartParameter,
+                     SupplierPart, SupplierPriceBreak)
 
 
 class CompanyResource(InvenTreeResource):
@@ -187,6 +187,33 @@ class SupplierPriceBreakAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('part',)
 
 
+class AddressResource(InvenTreeResource):
+    """Class for managing Address data import/export"""
+
+    class Meta:
+        """Metaclass defining extra options"""
+        model = Address
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+
+    company = Field(attribute='company', widget=widgets.ForeignKeyWidget(Company))
+
+
+class AddressAdmin(ImportExportModelAdmin):
+    """Admin class for the Address model"""
+
+    resource_class = AddressResource
+
+    list_display = ('company', 'line1', 'postal_code', 'country')
+
+    search_fields = [
+        'company',
+        'country',
+        'postal_code',
+    ]
+
+
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(SupplierPart, SupplierPartAdmin)
 admin.site.register(SupplierPriceBreak, SupplierPriceBreakAdmin)
@@ -194,3 +221,5 @@ admin.site.register(SupplierPriceBreak, SupplierPriceBreakAdmin)
 admin.site.register(ManufacturerPart, ManufacturerPartAdmin)
 admin.site.register(ManufacturerPartAttachment, ManufacturerPartAttachmentAdmin)
 admin.site.register(ManufacturerPartParameter, ManufacturerPartParameterAdmin)
+
+admin.site.register(Address, AddressAdmin)

@@ -981,17 +981,7 @@ function loadAddressTable(table, options={}) {
             {
                 field: 'primary',
                 title: '{% trans "Primary" %}',
-                sortable: true,
                 switchable: false,
-                sorter: function(a, b, c, d) {
-                    if (a == true) {
-                        return 1;
-                    } else if (b == true) {
-                        return -1;
-                    }
-                    return 0;
-                },
-
                 formatter: function(value) {
                     let checked = '';
                     if (value == true) {

@@ -70,7 +70,7 @@ class AddressSerializer(InvenTreeModelSerializer):
             'confirm_primary'
         ]
 
-    confirm_primary = serializers.BooleanField(default=False, read_only=True)
+    confirm_primary = serializers.BooleanField(default=False)
 
 
 class AddressBriefSerializer(InvenTreeModelSerializer):
