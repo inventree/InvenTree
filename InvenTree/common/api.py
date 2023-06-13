@@ -2,6 +2,7 @@
 
 import json
 
+from django.conf import settings
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -121,8 +122,13 @@ class CurrencyExchangeView(APIView):
 
         # Information on last update
         try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            updated = backend.last_update
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
+
+            if backend.exists():
+                backend = backend.first()
+                updated = backend.last_update
+            else:
+                updated = None
         except Exception:
             updated = None
 
@@ -480,6 +486,29 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
+class FlagList(ListAPI):
+    """List view for feature flags."""
+
+    queryset = settings.FLAGS
+    serializer_class = common.serializers.FlagSerializer
+    permission_classes = [permissions.AllowAny, ]
+
+
+class FlagDetail(RetrieveAPI):
+    """Detail view for an individual feature flag."""
+
+    serializer_class = common.serializers.FlagSerializer
+    permission_classes = [permissions.AllowAny, ]
+
+    def get_object(self):
+        """Attempt to find a config object with the provided key."""
+        key = self.kwargs['key']
+        value = settings.FLAGS.get(key, None)
+        if not value:
+            raise NotFound()
+        return {key: value}
+
+
 settings_api_urls = [
     # User settings
     re_path(r'^user/', include([
@@ -552,6 +581,11 @@ common_api_urls = [
         re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),
     ])),
 
+    # Flags
+    path('flags/', include([
+        path('<str:key>/', FlagDetail.as_view(), name='api-flag-detail'),
+        re_path(r'^.*$', FlagList.as_view(), name='api-flag-list'),
+    ])),
 ]
 
 admin_api_urls = [

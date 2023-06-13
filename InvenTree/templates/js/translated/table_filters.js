@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load status_codes %}
+{% load generic %}
 {% load inventree_extras %}
 
 /* globals
@@ -480,8 +480,8 @@ function getBuildTableFilters() {
 }
 
 
-// Return a dictionary of filters for the "build item" table
-function getBuildItemTableFilters() {
+// Return a dictionary of filters for the "build lines" table
+function getBuildLineTableFilters() {
     return {
         allocated: {
             type: 'bool',
@@ -490,6 +490,10 @@ function getBuildItemTableFilters() {
         available: {
             type: 'bool',
             title: '{% trans "Available" %}',
+        },
+        tracked: {
+            type: 'bool',
+            title: '{% trans "Tracked" %}',
         },
         consumable: {
             type: 'bool',
@@ -771,8 +775,8 @@ function getAvailableTableFilters(tableKey) {
         return getBOMTableFilters();
     case 'build':
         return getBuildTableFilters();
-    case 'builditems':
-        return getBuildItemTableFilters();
+    case 'buildlines':
+        return getBuildLineTableFilters();
     case 'location':
         return getStockLocationFilters();
     case 'parameters':

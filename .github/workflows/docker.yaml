@@ -29,9 +29,6 @@ jobs:
 
   # Build the docker image
   build:
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.event_name }}
-      cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -123,6 +120,8 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
+          sbom: true
+          provenance: false
           target: production
           tags: ${{ env.docker_tags }}
           build-args: |

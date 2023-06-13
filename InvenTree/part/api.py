@@ -29,8 +29,9 @@ from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
                               UpdateAPI)
 from InvenTree.permissions import RolePermission
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import (BuildStatusGroups,
+                                    PurchaseOrderStatusGroups,
+                                    SalesOrderStatusGroups)
 from part.admin import PartCategoryResource, PartResource
 
 from . import serializers as part_serializers
@@ -349,7 +350,10 @@ class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
 
 
 class PartTestTemplateList(ListCreateAPI):
-    """API endpoint for listing (and creating) a PartTestTemplate."""
+    """API endpoint for listing (and creating) a PartTestTemplate.
+
+    TODO: Add filterset class for this view
+    """
 
     queryset = PartTestTemplate.objects.all()
     serializer_class = part_serializers.PartTestTemplateSerializer
@@ -479,7 +483,7 @@ class PartScheduling(RetrieveAPI):
         # Add purchase order (incoming stock) information
         po_lines = order.models.PurchaseOrderLineItem.objects.filter(
             part__part=part,
-            order__status__in=PurchaseOrderStatus.OPEN,
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
         )
 
         for line in po_lines:
@@ -502,7 +506,7 @@ class PartScheduling(RetrieveAPI):
         # Add sales order (outgoing stock) information
         so_lines = order.models.SalesOrderLineItem.objects.filter(
             part=part,
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatusGroups.OPEN,
         )
 
         for line in so_lines:
@@ -522,7 +526,7 @@ class PartScheduling(RetrieveAPI):
         # Add build orders (incoming stock) information
         build_orders = Build.objects.filter(
             part=part,
-            status__in=BuildStatus.ACTIVE_CODES
+            status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         for build in build_orders:
@@ -567,12 +571,12 @@ class PartScheduling(RetrieveAPI):
                 # An "inherited" BOM item filters down to variant parts also
                 children = bom_item.part.get_descendants(include_self=True)
                 builds = Build.objects.filter(
-                    status__in=BuildStatus.ACTIVE_CODES,
+                    status__in=BuildStatusGroups.ACTIVE_CODES,
                     part__in=children,
                 )
             else:
                 builds = Build.objects.filter(
-                    status__in=BuildStatus.ACTIVE_CODES,
+                    status__in=BuildStatusGroups.ACTIVE_CODES,
                     part=bom_item.part,
                 )
 
@@ -944,6 +948,28 @@ class PartFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(last_stocktake=None)
 
+    stock_to_build = rest_filters.BooleanFilter(label='Required for Build Order', method='filter_stock_to_build')
+
+    def filter_stock_to_build(self, queryset, name, value):
+        """Filter the queryset based on whether part stock is required for a pending BuildOrder"""
+
+        if str2bool(value):
+            # Return parts which are required for a build order, but have not yet been allocated
+            return queryset.filter(required_for_build_orders__gt=F('allocated_to_build_orders'))
+        else:
+            # Return parts which are not required for a build order, or have already been allocated
+            return queryset.filter(required_for_build_orders__lte=F('allocated_to_build_orders'))
+
+    depleted_stock = rest_filters.BooleanFilter(label='Depleted Stock', method='filter_depleted_stock')
+
+    def filter_deployed_stock(self, queryset, name, value):
+        """Filter the queryset based on whether the part is fully depleted of stock"""
+
+        if str2bool(value):
+            return queryset.filter(Q(in_stock=0) & ~Q(stock_item_count=0))
+        else:
+            return queryset.exclude(Q(in_stock=0) & ~Q(stock_item_count=0))
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1179,32 +1205,6 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
                         queryset = queryset.filter(category=cat_id)
                 except (ValueError, PartCategory.DoesNotExist):
                     pass
-
-        # Filer by 'depleted_stock' status -> has no stock and stock items
-        depleted_stock = params.get('depleted_stock', None)
-
-        if depleted_stock is not None:
-            depleted_stock = str2bool(depleted_stock)
-
-            if depleted_stock:
-                queryset = queryset.filter(Q(in_stock=0) & ~Q(stock_item_count=0))
-
-        # Filter by "parts which need stock to complete build"
-        stock_to_build = params.get('stock_to_build', None)
-
-        # TODO: This is super expensive, database query wise...
-        # TODO: Need to figure out a cheaper way of making this filter query
-
-        if stock_to_build is not None:
-            # Get active builds
-            builds = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES)
-            # Store parts with builds needing stock
-            parts_needed_to_complete_builds = []
-            # Filter required parts
-            for build in builds:
-                parts_needed_to_complete_builds += [part.pk for part in build.required_parts_to_complete_build]
-
-            queryset = queryset.filter(pk__in=parts_needed_to_complete_builds)
 
         queryset = self.filter_parameteric_data(queryset)
 
