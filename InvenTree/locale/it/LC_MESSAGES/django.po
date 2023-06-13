@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-12 21:36+0000\n"
-"PO-Revision-Date: 2023-06-09 10:27\n"
+"POT-Creation-Date: 2023-06-12 10:11+0000\n"
+"PO-Revision-Date: 2023-06-13 00:17\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -9189,10 +9189,8 @@ msgid "Update Available"
 msgstr "Aggiornamento Disponibile"
 
 #: templates/about.html:43
-#, fuzzy
-#| msgid "Commit Hash"
 msgid "Commit Branch"
-msgstr "Commit Hash"
+msgstr ""
 
 #: templates/about.html:49
 msgid "InvenTree Documentation"
@@ -12534,11 +12532,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12717,14 +12713,3 @@ msgstr "Permessi per modificare gli elementi"
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
 
-#~ msgid "Check plugin signatures"
-#~ msgstr "Controlla le firme del plugin"
-
-#~ msgid "Check and show signatures for plugins"
-#~ msgstr "Controlla e mostra le firme per i plugin"
-
-#~ msgid "Sign Status"
-#~ msgstr "Stato Firma"
-
-#~ msgid "Sign Key"
-#~ msgstr "Chiave Di Firma"
