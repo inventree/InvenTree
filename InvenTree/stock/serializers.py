@@ -89,14 +89,12 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
         model = StockItem
         fields = [
-            'allocated',
             'batch',
             'belongs_to',
             'build',
             'consumed_by',
             'customer',
             'delete_on_deplete',
-            'expired',
             'expiry_date',
             'is_building',
             'link',
@@ -114,18 +112,22 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'sales_order',
             'sales_order_reference',
             'serial',
-            'stale',
             'status',
             'status_text',
             'stocktake_date',
             'supplier_part',
             'supplier_part_detail',
-            'tracking_items',
             'barcode_hash',
             'updated',
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
+
+            # Annotated fields
+            'allocated',
+            'expired',
+            'stale',
+            'tracking_items',
 
             'tags',
         ]
