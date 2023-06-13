@@ -1,0 +1,19 @@
+{% extends "label/label_base.html" %}
+{% load barcode %}
+
+<!--
+This is an example template for printing labels against BuildLine objects.
+Refer to the documentation for a full list of available template variables.
+-->
+
+{% block style %}
+
+{% endblock style %}
+
+{% block content %}
+
+Build Order: {{ build.reference }}<br>
+Required Part: {{ part.full_name }}<br>
+Required Quantity: {{ quantity }}<br>
+
+{% endblock content %}

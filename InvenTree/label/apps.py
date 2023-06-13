@@ -114,7 +114,7 @@ class LabelConfig(AppConfig):
                     'file': 'buildline_label.html',
                     'name': 'Build Line Label',
                     'description': 'Example build line label',
-                    'width': 100,
+                    'width': 125,
                     'height': 48,
                 },
             ]
