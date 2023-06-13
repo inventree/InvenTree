@@ -2332,7 +2332,7 @@ function loadBuildLineTable(table, build_id, options={}) {
         setupFilterList('buildlines', $(table), filterTarget, {
             labels: {
                 url: '{% url "api-buildline-label-list" %}',
-                key: 'item',
+                key: 'line',
             },
             singular_name: '{% trans "build line" %}',
             plural_name: '{% trans "build lines" %}',
