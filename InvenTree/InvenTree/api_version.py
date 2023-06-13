@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 120
+INVENTREE_API_VERSION = 121
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v121 -> 2023-06-13 : https://github.com/inventree/InvenTree/pull/5034
+    - Adds BuildLineLabel label type
 
 v120 -> 2023-06-07 : https://github.com/inventree/InvenTree/pull/4855
     - Major overhaul of the build order API
