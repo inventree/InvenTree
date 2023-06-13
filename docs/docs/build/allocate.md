@@ -82,9 +82,9 @@ Stock can be manually allocated to the build as required, using the *Allocate st
 
 Stock allocations can be manually adjusted or deleted using the action buttons available in each row of the allocation table.
 
-### Unallocate Stock
+### Deallocate Stock
 
-The *Unallocate Stock* button can be used to remove all allocations of untracked stock items against the build order.
+The *Deallocate Stock* button can be used to remove all allocations of untracked stock items against the build order.
 
 ## Automatic Stock Allocation
 

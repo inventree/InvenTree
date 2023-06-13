@@ -1,8 +1,12 @@
 """User-configurable settings for the common app."""
 
+import logging
+
 from django.conf import settings
 
 from moneyed import CURRENCIES
+
+logger = logging.getLogger('inventree')
 
 
 def currency_code_default():

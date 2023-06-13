@@ -2,11 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 119
+INVENTREE_API_VERSION = 120
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
+v120 -> 2023-06-07 : https://github.com/inventree/InvenTree/pull/4855
+    - Major overhaul of the build order API
+    - Adds new BuildLine model
 
 v119 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4898
     - Add Metadata to:  Part test templates, Part parameters, Part category parameter templates, BOM item substitute, Part relateds, Stock item test result
