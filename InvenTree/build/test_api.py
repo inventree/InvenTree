@@ -718,12 +718,24 @@ class BuildAllocationTest(BuildAPITest):
 
         This should result in creation of a new BuildItem object
         """
+
+        # Find the correct BuildLine
+        si = StockItem.objects.get(pk=2)
+
+        right_line = None
+
+        for line in self.build.build_lines.all():
+
+            if line.bom_item.sub_part.pk == si.part.pk:
+                right_line = line
+                break
+
         self.post(
             self.url,
             {
                 "items": [
                     {
-                        "build_line": 1,
+                        "build_line": right_line.pk,
                         "stock_item": 2,
                         "quantity": 5000,
                     }
