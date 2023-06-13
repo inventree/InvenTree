@@ -685,12 +685,24 @@ class BuildAllocationTest(BuildAPITest):
     def test_invalid_bom_item(self):
         """Test by passing an invalid BOM item."""
 
+        # Find the right (in this case, wrong) BuildLine instance
+
+        si = StockItem.objects.get(pk=11)
+        lines = self.build.build_lines.all()
+
+        wrong_line = None
+
+        for line in lines:
+            if line.bom_item.sub_part.pk != si.pk:
+                wrong_line = line
+                break
+
         data = self.post(
             self.url,
             {
                 "items": [
                     {
-                        "build_line": 2,
+                        "build_line": wrong_line.pk,
                         "stock_item": 11,
                         "quantity": 500,
                     }
