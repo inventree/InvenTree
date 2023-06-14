@@ -2164,6 +2164,35 @@ function loadStockTable(table, options) {
         title: '{% trans "Notes" %}',
     });
 
+    // Function to request subset of items which are installed *within* a particular item
+    function requestInstalledItems(stock_item) {
+        inventreeGet(
+            '{% url "api-stock-list" %}',
+            {
+                installed_in: stock_item,
+            },
+            {
+                success: function(response) {
+                    // Add the returned stock items into the table
+                    let row  = table.bootstrapTable('getRowByUniqueId', stock_item);
+                    row.installed_items_received = true;
+
+                    table.bootstrapTable('updateByUniqueId', stock_item, row, true);
+                    table.bootstrapTable('append', response);
+
+                    // Auto-expand the newly added data
+                    $(`.treegrid-${stock_item}`).treegrid('expand');
+                },
+                error: function(xhr) {
+                    console.error(`Error requesting installed items for ${stock_item}`);
+                    showApiError(xhr);
+                }
+            }
+        );
+    }
+
+    let parent_id = 'top-level';
+
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
@@ -2177,6 +2206,10 @@ function loadStockTable(table, options) {
         showColumns: true,
         showFooter: true,
         columns: columns,
+        treeEnable: true,
+        rootParentId: parent_id,
+        idField: 'pk',
+        treeShowField: 'part',
     });
 
     var buttons = [
