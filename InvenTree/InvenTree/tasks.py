@@ -497,7 +497,7 @@ def check_for_updates():
 def update_exchange_rates():
     """Update currency exchange rates."""
     try:
-        from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+        from djmoney.contrib.exchange.models import Rate
 
         from common.settings import currency_code_default, currency_codes
         from InvenTree.exchange import InvenTreeExchange
@@ -509,22 +509,9 @@ def update_exchange_rates():
         # Other error?
         return
 
-    # Test to see if the database is ready yet
-    try:
-        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-    except ExchangeBackend.DoesNotExist:
-        pass
-    except Exception:  # pragma: no cover
-        # Some other error
-        logger.warning("update_exchange_rates: Database not ready")
-        return
-
     backend = InvenTreeExchange()
-    logger.info(f"Updating exchange rates from {backend.url}")
-
     base = currency_code_default()
-
-    logger.info(f"Using base currency '{base}'")
+    logger.info(f"Updating exchange rates using base currency '{base}'")
 
     try:
         backend.update_rates(base_currency=base)
