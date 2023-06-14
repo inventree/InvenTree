@@ -144,6 +144,8 @@ backendpatterns = [
 
 frontendpatterns = [
 
+    path('datawizard/', include('data_wizard.urls')),
+
     # Apps
     re_path(r'^build/', include(build_urls)),
     re_path(r'^common/', include(common_urls)),

@@ -192,6 +192,10 @@ INSTALLED_APPS = [
     # Admin site integration
     'django.contrib.admin',
 
+    # django-data-wizard
+    'data_wizard',
+    'data_wizard.sources',
+
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
