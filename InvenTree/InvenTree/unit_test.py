@@ -2,13 +2,17 @@
 
 import csv
 import io
+import json
 import re
+from contextlib import contextmanager
 from pathlib import Path
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
+from django.db import connections
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework.test import APITestCase
@@ -240,6 +244,30 @@ class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
 
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
+
+    @contextmanager
+    def assertNumQueriesLessThan(self, value, using='default', verbose=False, debug=False):
+        """Context manager to check that the number of queries is less than a certain value.
+
+        Example:
+        with self.assertNumQueriesLessThan(10):
+            # Do some stuff
+        Ref: https://stackoverflow.com/questions/1254170/django-is-there-a-way-to-count-sql-queries-from-an-unit-test/59089020#59089020
+        """
+        with CaptureQueriesContext(connections[using]) as context:
+            yield   # your test will be run here
+
+        if verbose:
+            msg = "\r\n%s" % json.dumps(context.captured_queries, indent=4)
+        else:
+            msg = None
+
+        n = len(context.captured_queries)
+
+        if debug:
+            print(f"Expected less than {value} queries, got {n} queries")
+
+        self.assertLess(n, value, msg=msg)
 
     def checkResponse(self, url, method, expected_code, response):
         """Debug output for an unexpected response"""
