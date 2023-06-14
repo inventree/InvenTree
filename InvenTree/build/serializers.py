@@ -23,6 +23,7 @@ from InvenTree.status_codes import StockStatus
 from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
+from common.serializers import ProjectCodeSerializer
 import part.filters
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
@@ -49,6 +50,8 @@ class BuildSerializer(InvenTreeModelSerializer):
             'parent',
             'part',
             'part_detail',
+            'project_code',
+            'project_code_detail',
             'overdue',
             'reference',
             'sales_order',
@@ -89,6 +92,8 @@ class BuildSerializer(InvenTreeModelSerializer):
     responsible_detail = OwnerSerializer(source='responsible', read_only=True)
 
     barcode_hash = serializers.CharField(read_only=True)
+
+    project_code_detail = ProjectCodeSerializer(source='project_code', many=False, read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):

@@ -226,7 +226,7 @@ class SettingsTest(InvenTreeTestCase):
 
         cache.clear()
 
-        # Generate a number of new usesr
+        # Generate a number of new users
         for idx in range(5):
             get_user_model().objects.create(
                 username=f"User_{idx}",
@@ -417,7 +417,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
             self.assertTrue(str2bool(response.data['value']))
 
-        # Assign some falsey values
+        # Assign some false(ish) values
         for v in ['false', False, '0', 'n', 'FalSe']:
             self.patch(
                 url,
@@ -535,7 +535,7 @@ class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
 
     def test_api_list(self):
         """Test list URL."""
-        url = reverse('api-notifcation-setting-list')
+        url = reverse('api-notification-setting-list')
 
         self.get(url, expected_code=200)
 
@@ -583,7 +583,7 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
         # Failure mode tests
 
-        # Non - exsistant plugin
+        # Non-existent plugin
         url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'doesnotexist', 'key': 'doesnotmatter'})
         response = self.get(url, expected_code=404)
         self.assertIn("Plugin 'doesnotexist' not installed", str(response.data))
@@ -729,7 +729,7 @@ class WebhookMessageTests(TestCase):
 
 
 class NotificationTest(InvenTreeAPITestCase):
-    """Tests for NotificationEntriy."""
+    """Tests for NotificationEntry."""
 
     fixtures = [
         'users',
@@ -785,7 +785,7 @@ class NotificationTest(InvenTreeAPITestCase):
         messages = NotificationMessage.objects.all()
 
         # As there are three staff users (including the 'test' user) we expect 30 notifications
-        # However, one user is marked as i nactive
+        # However, one user is marked as inactive
         self.assertEqual(messages.count(), 20)
 
         # Only 10 messages related to *this* user

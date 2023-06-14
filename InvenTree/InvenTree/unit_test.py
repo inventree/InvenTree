@@ -233,6 +233,11 @@ class ExchangeRateMixin:
         Rate.objects.bulk_create(items)
 
 
+class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
+    """Testcase with user setup buildin."""
+    pass
+
+
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
@@ -408,8 +413,3 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             data.append(entry)
 
         return data
-
-
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup buildin."""
-    pass
