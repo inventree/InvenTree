@@ -167,4 +167,31 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         if kind in settings.IGNORED_ERRORS:
             return
 
-        return super().process_exception(request, exception)
+        import traceback
+
+        from django.views.debug import ExceptionReporter
+
+        from error_report.models import Error
+        from error_report.settings import ERROR_DETAIL_SETTINGS
+
+        # Error reporting is disabled
+        if not ERROR_DETAIL_SETTINGS.get('ERROR_DETAIL_ENABLE', True):
+            return
+
+        path = request.build_absolute_uri()
+
+        # Truncate the path to a reasonable length
+        # Otherwise we get a database error,
+        # because the path field is limited to 200 characters
+        if len(path) > 200:
+            path = path[:195] + '...'
+
+        error = Error.objects.create(
+            kind=kind.__name__,
+            html=ExceptionReporter(request, kind, info, data).get_traceback_html(),
+            path=path,
+            info=info,
+            data='\n'.join(traceback.format_exception(kind, info, data)),
+        )
+
+        error.save()
