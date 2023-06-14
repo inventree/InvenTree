@@ -2349,8 +2349,17 @@ function loadBuildLineTable(table, build_id, options={}) {
     let filters = loadTableFilters('buildlines', params);
     let filterTarget = options.filterTarget || '#filter-list-buildlines';
 
-    setupFilterList('buildlines', $(table), filterTarget);
-    // If data is passed directly to this function, do not request data from the server
+    // If data is passed directly to this function, do not setup filters
+    if (!options.data) {
+        setupFilterList('buildlines', $(table), filterTarget, {
+            labels: {
+                url: '{% url "api-buildline-label-list" %}',
+                key: 'line',
+            },
+            singular_name: '{% trans "build line" %}',
+            plural_name: '{% trans "build lines" %}',
+        });
+    }
 
     let table_options = {
         name: name,

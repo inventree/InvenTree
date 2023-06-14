@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 121
+INVENTREE_API_VERSION = 122
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v122 -> 2023-06-14 : https://github.com/inventree/InvenTree/pull/5034
+    - Adds new BuildLineLabel label type
 
 v121 -> 2023-06-14 : https://github.com/inventree/InvenTree/pull/4808
     - Adds "ProjectCode" link to Build model
@@ -13,9 +16,6 @@ v121 -> 2023-06-14 : https://github.com/inventree/InvenTree/pull/4808
 v120 -> 2023-06-07 : https://github.com/inventree/InvenTree/pull/4855
     - Major overhaul of the build order API
     - Adds new BuildLine model
-
-v120 -> 2023-06-12 : https://github.com/inventree/InvenTree/pull/4804
-    - Adds 'project_code' field to build order API endpoints
 
 v119 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4898
     - Add Metadata to:  Part test templates, Part parameters, Part category parameter templates, BOM item substitute, Related Parts, Stock item test result
