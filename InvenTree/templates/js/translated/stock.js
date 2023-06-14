@@ -1769,18 +1769,33 @@ function loadStockTable(table, options) {
     ];
 
     col = {
-        field: 'part_detail.full_name',
+        field: 'part',
         title: '{% trans "Part" %}',
         sortName: 'part__name',
         visible: params['part_detail'],
         switchable: params['part_detail'],
         formatter: function(value, row) {
 
-            return partDetail(row.part_detail, {
+            let html = '';
+
+            if (row.installed_items > 0) {
+                if (row.installed_items_received) {
+                    // Data received, ignore
+                } else {
+                    html += `
+                    <a href='#' pk='${row.pk}' class='load-sub-items' id='load-sub-items-${row.pk}'>
+                        <span class='fas fa-sync-alt' title='{% trans "Load installed items" %}'></span>
+                    </a>`;
+                }
+            };
+
+            html += partDetail(row.part_detail, {
                 thumb: true,
                 link: true,
                 icons: true,
             });
+
+            return html;
         }
     };
 
@@ -1791,7 +1806,7 @@ function loadStockTable(table, options) {
     columns.push(col);
 
     col = {
-        field: 'part_detail.IPN',
+        field: 'IPN',
         title: '{% trans "IPN" %}',
         sortName: 'part__IPN',
         visible: params['part_detail'],
