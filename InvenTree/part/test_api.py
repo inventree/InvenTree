@@ -1997,10 +1997,14 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         bom_item = BomItem.objects.get(pk=6)
 
+        line = build.models.BuildLine.objects.get(
+            bom_item=bom_item,
+            build=bo,
+        )
+
         # Allocate multiple stock items against this build order
         build.models.BuildItem.objects.create(
-            build=bo,
-            bom_item=bom_item,
+            build_line=line,
             stock_item=StockItem.objects.get(pk=1000),
             quantity=10,
         )
@@ -2021,8 +2025,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         # Allocate further stock against the build
         build.models.BuildItem.objects.create(
-            build=bo,
-            bom_item=bom_item,
+            build_line=line,
             stock_item=StockItem.objects.get(pk=1001),
             quantity=10,
         )

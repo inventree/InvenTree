@@ -7,6 +7,9 @@ INVENTREE_API_VERSION = 120
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
+v120 -> 2023-06-07 : https://github.com/inventree/InvenTree/pull/4855
+    - Major overhaul of the build order API
+    - Adds new BuildLine model
 
 v120 -> 2023-06-12 : https://github.com/inventree/InvenTree/pull/4804
     - Adds 'project_code' field to build order API endpoints
