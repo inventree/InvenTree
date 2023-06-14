@@ -391,7 +391,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
 
     MPN = serializers.CharField(read_only=True)
 
-    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
+    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', part_detail=False, read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 

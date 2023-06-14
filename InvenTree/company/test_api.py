@@ -600,7 +600,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
         self.assertIsNone(sp.availability_updated)
         self.assertEqual(sp.available, 0)
 
-        # Now, *update* the availabile quantity via the API
+        # Now, *update* the available quantity via the API
         self.patch(
             reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
             {

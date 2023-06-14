@@ -108,6 +108,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Build Description" %}</td>
         <td>{{ build.title }}</td>
     </tr>
+    {% include "project_code_data.html" with instance=build %}
     {% include "barcode_data.html" with instance=build %}
 </table>
 
