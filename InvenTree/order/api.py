@@ -13,7 +13,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from common.models import InvenTreeSetting, ProjectCode
+import common.models as common_models
 from common.settings import settings
 from company.models import SupplierPart
 from generic.states import StatusView
@@ -139,7 +139,7 @@ class OrderFilter(rest_filters.FilterSet):
             return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
     project_code = rest_filters.ModelChoiceFilter(
-        queryset=ProjectCode.objects.all(),
+        queryset=common_models.ProjectCode.objects.all(),
         field_name='project_code'
     )
 
@@ -1457,7 +1457,7 @@ class OrderCalendarExport(ICalFeed):
         else:
             ordertype_title = _('Unknown')
 
-        return f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {ordertype_title}'
+        return f'{common_models.InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {ordertype_title}'
 
     def product_id(self, obj):
         """Return calendar product id."""

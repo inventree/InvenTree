@@ -53,6 +53,7 @@ django==3.2.19
     #   django-dbbackup
     #   django-error-report
     #   django-filter
+    #   django-flags
     #   django-formtools
     #   django-ical
     #   django-import-export
@@ -91,6 +92,8 @@ django-dbbackup==4.0.2
 django-error-report==0.2.0
     # via -r requirements.in
 django-filter==23.2
+    # via -r requirements.in
+django-flags==5.0.12
     # via -r requirements.in
 django-formtools==2.4.1
     # via -r requirements.in
@@ -213,6 +216,8 @@ python-dateutil==2.8.2
     #   arrow
     #   django-recurrence
     #   icalendar
+python-dotenv==1.0.0
+    # via -r requirements.in
 python-fsutil==0.10.0
     # via django-maintenance-mode
 python3-openid==3.2.0

@@ -99,6 +99,28 @@ def annotate_total_stock(reference: str = ''):
     )
 
 
+def annotate_build_order_requirements(reference: str = ''):
+    """Annotate the total quantity of each part required for build orders.
+
+    - Only interested in 'active' build orders
+    - We are looking for any BuildLine items which required this part (bom_item.sub_part)
+    - We are interested in the 'quantity' of each BuildLine item
+
+    """
+
+    # Active build orders only
+    build_filter = Q(build__status__in=BuildStatusGroups.ACTIVE_CODES)
+
+    return Coalesce(
+        SubquerySum(
+            f'{reference}used_in__build_lines__quantity',
+            filter=build_filter,
+        ),
+        Decimal(0),
+        output_field=models.DecimalField(),
+    )
+
+
 def annotate_build_order_allocations(reference: str = ''):
     """Annotate the total quantity of each part allocated to build orders:
 
@@ -112,7 +134,7 @@ def annotate_build_order_allocations(reference: str = ''):
     """
 
     # Build filter only returns 'active' build orders
-    build_filter = Q(build__status__in=BuildStatusGroups.ACTIVE_CODES)
+    build_filter = Q(build_line__build__status__in=BuildStatusGroups.ACTIVE_CODES)
 
     return Coalesce(
         SubquerySum(

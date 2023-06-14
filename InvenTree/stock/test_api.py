@@ -557,6 +557,42 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(len(dataset), 17)
 
+    def test_query_count(self):
+        """Test that the number of queries required to fetch stock items is reasonable."""
+
+        def get_stock(data):
+            """Helper function to fetch stock items."""
+            response = self.client.get(self.list_url, data=data)
+            self.assertEqual(response.status_code, 200)
+            return response.data
+
+        # Create a bunch of StockItem objects
+        prt = Part.objects.first()
+
+        StockItem.objects.bulk_create([
+            StockItem(
+                part=prt,
+                quantity=1,
+                level=0, tree_id=0, lft=0, rght=0,
+            ) for _ in range(100)
+        ])
+
+        # List *all* stock items
+        with self.assertNumQueriesLessThan(25):
+            get_stock({})
+
+        # List all stock items, with part detail
+        with self.assertNumQueriesLessThan(20):
+            get_stock({'part_detail': True})
+
+        # List all stock items, with supplier_part detail
+        with self.assertNumQueriesLessThan(20):
+            get_stock({'supplier_part_detail': True})
+
+        # List all stock items, with 'location' and 'tests' detail
+        with self.assertNumQueriesLessThan(20):
+            get_stock({'location_detail': True, 'tests': True})
+
 
 class StockItemTest(StockAPITestCase):
     """Series of API tests for the StockItem API."""
