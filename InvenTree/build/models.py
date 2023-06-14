@@ -32,9 +32,10 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 
+import common.models
+from common.notifications import trigger_notification
 from plugin.events import trigger_event
 
-import common.notifications
 import part.models
 import stock.models
 import users.models
@@ -301,6 +302,14 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         help_text=_('Priority of this build order')
     )
 
+    project_code = models.ForeignKey(
+        common.models.ProjectCode,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Project code for this build order'),
+    )
+
     def sub_builds(self, cascade=True):
         """Return all Build Order objects under this one."""
         if cascade:
@@ -547,7 +556,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             }
         }
 
-        common.notifications.trigger_notification(
+        trigger_notification(
             build,
             'build.completed',
             targets=targets,

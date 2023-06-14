@@ -525,7 +525,7 @@ settings_api_urls = [
         path(r'<int:pk>/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
 
         # Notification Settings List
-        re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notifcation-setting-list'),
+        re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notification-setting-list'),
     ])),
 
     # Global settings

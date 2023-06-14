@@ -136,6 +136,7 @@ class RuleSet(models.Model):
             'stock_stockitem',
             'stock_stocklocation',
             'report_buildreport',
+            'label_buildlinelabel',
         ],
         'purchase_order': [
             'company_company',
