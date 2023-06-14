@@ -14,7 +14,6 @@
     FullCalendar,
     getFormFieldValue,
     getTableData,
-    getTableData,
     global_settings,
     handleFormErrors,
     handleFormSuccess,
