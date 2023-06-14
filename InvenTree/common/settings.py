@@ -1,20 +1,23 @@
 """User-configurable settings for the common app."""
 
+import logging
+
 from django.conf import settings
 
 from moneyed import CURRENCIES
 
+logger = logging.getLogger('inventree')
+
 
 def currency_code_default():
     """Returns the default currency code (or USD if not specified)"""
-    from django.db.utils import ProgrammingError
 
     from common.models import InvenTreeSetting
 
     try:
         code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', create=False, cache=False)
-    except ProgrammingError:  # pragma: no cover
-        # database is not initialized yet
+    except Exception:  # pragma: no cover
+        # Database may not yet be ready, no need to throw an error here
         code = ''
 
     if code not in CURRENCIES:
@@ -42,4 +45,4 @@ def stock_expiry_enabled():
     """Returns True if the stock expiry feature is enabled."""
     from common.models import InvenTreeSetting
 
-    return InvenTreeSetting.get_setting('STOCK_ENABLE_EXPIRY')
+    return InvenTreeSetting.get_setting('STOCK_ENABLE_EXPIRY', False, create=False)

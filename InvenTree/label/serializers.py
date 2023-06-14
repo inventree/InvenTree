@@ -52,3 +52,13 @@ class PartLabelSerializer(LabelSerializerBase):
 
         model = label.models.PartLabel
         fields = LabelSerializerBase.label_fields()
+
+
+class BuildLineLabelSerializer(LabelSerializerBase):
+    """Serializes a BuildLineLabel object"""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = label.models.BuildLineLabel
+        fields = LabelSerializerBase.label_fields()
