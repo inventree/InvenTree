@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('common', '0019_projectcode_metadata'),
-        ('build', '0042_alter_build_notes'),
+        ('build', '0047_auto_20230606_1058'),
     ]
 
     operations = [
