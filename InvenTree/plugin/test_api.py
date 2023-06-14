@@ -54,7 +54,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         ).data
         self.assertEqual(data['success'], True)
 
-        # valid - github url and packagename
+        # valid - github url and package name
         data = self.post(
             url,
             {

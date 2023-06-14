@@ -234,6 +234,7 @@ INSTALLED_APPS = [
     'formtools',                            # Form wizard tools
     'dbbackup',                             # Backups - django-dbbackup
     'taggit',                               # Tagging
+    'flags',                                # Flagging - django-flags
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
@@ -944,3 +945,23 @@ if DEBUG:
 
 logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+
+# Flags
+FLAGS = {
+    'EXPERIMENTAL': [
+        {'condition': 'boolean', 'value': DEBUG},
+        {'condition': 'parameter', 'value': 'experimental='},
+    ],  # Should experimental features be turned on?
+    'NEXT_GEN': [
+        {'condition': 'parameter', 'value': 'ngen='},
+    ],  # Should next-gen features be turned on?
+}
+
+# Get custom flags from environment/yaml
+CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
+if CUSTOM_FLAGS:
+    if not isinstance(CUSTOM_FLAGS, dict):
+        logger.error(f"Invalid custom flags, must be valid dict: {CUSTOM_FLAGS}")
+    else:
+        logger.info(f"Custom flags: {CUSTOM_FLAGS}")
+        FLAGS.update(CUSTOM_FLAGS)

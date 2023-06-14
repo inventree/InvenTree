@@ -10,6 +10,7 @@ from django.views.decorators.cache import cache_page, never_cache
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import NotFound
 
+import build.models
 import common.models
 import InvenTree.helpers
 import label.models
@@ -368,6 +369,31 @@ class PartLabelPrint(PartLabelMixin, LabelPrintMixin, RetrieveAPI):
     pass
 
 
+class BuildLineLabelMixin:
+    """Mixin class for BuildLineLabel endpoints"""
+
+    queryset = label.models.BuildLineLabel.objects.all()
+    serializer_class = label.serializers.BuildLineLabelSerializer
+
+    ITEM_MODEL = build.models.BuildLine
+    ITEM_KEY = 'line'
+
+
+class BuildLineLabelList(BuildLineLabelMixin, LabelListView):
+    """API endpoint for viewing a list of BuildLineLabel objects"""
+    pass
+
+
+class BuildLineLabelDetail(BuildLineLabelMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single BuildLineLabel object"""
+    pass
+
+
+class BuildLineLabelPrint(BuildLineLabelMixin, LabelPrintMixin, RetrieveAPI):
+    """API endpoint for printing a BuildLineLabel object"""
+    pass
+
+
 label_api_urls = [
 
     # Stock item labels
@@ -407,5 +433,18 @@ label_api_urls = [
 
         # List view
         re_path(r'^.*$', PartLabelList.as_view(), name='api-part-label-list'),
+    ])),
+
+    # BuildLine labels
+    re_path(r'^buildline/', include([
+        # Detail views
+        path(r'<int:pk>/', include([
+            re_path(r'^print/', BuildLineLabelPrint.as_view(), name='api-buildline-label-print'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': label.models.BuildLineLabel}, name='api-buildline-label-metadata'),
+            re_path(r'^.*$', BuildLineLabelDetail.as_view(), name='api-buildline-label-detail'),
+        ])),
+
+        # List view
+        re_path(r'^.*$', BuildLineLabelList.as_view(), name='api-buildline-label-list'),
     ])),
 ]

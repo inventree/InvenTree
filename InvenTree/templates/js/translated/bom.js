@@ -972,7 +972,7 @@ function loadBomTable(table, options={}) {
             }
 
             if (row.overage) {
-                text += `<small> (${row.overage})    </small>`;
+                text += `<small> (+${row.overage})</small>`;
             }
 
             return text;
@@ -1161,6 +1161,8 @@ function loadBomTable(table, options={}) {
                 }
             }
 
+            text = renderLink(text, url);
+
             if (row.on_order && row.on_order > 0) {
                 text += makeIconBadge(
                     'fa-shopping-cart',
@@ -1168,7 +1170,7 @@ function loadBomTable(table, options={}) {
                 );
             }
 
-            return renderLink(text, url);
+            return text;
         }
     });
 

@@ -13,6 +13,11 @@ def isImportingData():
     return 'loaddata' in sys.argv
 
 
+def isRunningMigrations():
+    """Return True if the database is currently running migrations."""
+    return 'migrate' in sys.argv or 'makemigrations' in sys.argv
+
+
 def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False):
     """Returns True if the apps.py file can access database records.
 

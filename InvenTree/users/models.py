@@ -81,6 +81,7 @@ class RuleSet(models.Model):
             'common_newsfeedentry',
             'taggit_tag',
             'taggit_taggeditem',
+            'flags_flagstate',
         ],
         'part_category': [
             'part_partcategory',
@@ -130,10 +131,12 @@ class RuleSet(models.Model):
             'part_bomitemsubstitute',
             'build_build',
             'build_builditem',
+            'build_buildline',
             'build_buildorderattachment',
             'stock_stockitem',
             'stock_stocklocation',
             'report_buildreport',
+            'label_buildlinelabel',
         ],
         'purchase_order': [
             'company_company',

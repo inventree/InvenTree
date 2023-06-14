@@ -226,7 +226,7 @@ class SettingsTest(InvenTreeTestCase):
 
         cache.clear()
 
-        # Generate a number of new usesr
+        # Generate a number of new users
         for idx in range(5):
             get_user_model().objects.create(
                 username=f"User_{idx}",
@@ -417,7 +417,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
             self.assertTrue(str2bool(response.data['value']))
 
-        # Assign some falsey values
+        # Assign some false(ish) values
         for v in ['false', False, '0', 'n', 'FalSe']:
             self.patch(
                 url,
@@ -535,7 +535,7 @@ class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
 
     def test_api_list(self):
         """Test list URL."""
-        url = reverse('api-notifcation-setting-list')
+        url = reverse('api-notification-setting-list')
 
         self.get(url, expected_code=200)
 
@@ -583,7 +583,7 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
         # Failure mode tests
 
-        # Non - exsistant plugin
+        # Non-existent plugin
         url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'doesnotexist', 'key': 'doesnotmatter'})
         response = self.get(url, expected_code=404)
         self.assertIn("Plugin 'doesnotexist' not installed", str(response.data))
@@ -729,7 +729,7 @@ class WebhookMessageTests(TestCase):
 
 
 class NotificationTest(InvenTreeAPITestCase):
-    """Tests for NotificationEntriy."""
+    """Tests for NotificationEntry."""
 
     fixtures = [
         'users',
@@ -785,7 +785,7 @@ class NotificationTest(InvenTreeAPITestCase):
         messages = NotificationMessage.objects.all()
 
         # As there are three staff users (including the 'test' user) we expect 30 notifications
-        # However, one user is marked as i nactive
+        # However, one user is marked as inactive
         self.assertEqual(messages.count(), 20)
 
         # Only 10 messages related to *this* user
@@ -870,6 +870,43 @@ class CommonTest(InvenTreeAPITestCase):
             self.assertEqual(item['key'], 'INVENTREE_DEBUG')
             self.assertEqual(item['env_var'], 'INVENTREE_DEBUG')
             self.assertEqual(item['config_key'], 'debug')
+
+        # Turn into normal user again
+        self.user.is_superuser = False
+        self.user.save()
+
+    def test_flag_api(self):
+        """Test flag URLs."""
+        # Not superuser
+        response = self.get(reverse('api-flag-list'), expected_code=200)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['key'], 'EXPERIMENTAL')
+
+        # Turn into superuser
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Successful checks
+        response = self.get(reverse('api-flag-list'), expected_code=200)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['key'], 'EXPERIMENTAL')
+        self.assertTrue(response.data[0]['conditions'])
+
+        response = self.get(reverse('api-flag-detail', kwargs={'key': 'EXPERIMENTAL'}), expected_code=200)
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data['key'], 'EXPERIMENTAL')
+        self.assertTrue(response.data['conditions'])
+
+        # Try without param -> false
+        response = self.get(reverse('api-flag-detail', kwargs={'key': 'NEXT_GEN'}), expected_code=200)
+        self.assertFalse(response.data['state'])
+
+        # Try with param -> true
+        response = self.get(reverse('api-flag-detail', kwargs={'key': 'NEXT_GEN'}), {'ngen': ''}, expected_code=200)
+        self.assertTrue(response.data['state'])
+
+        # Try non existent flag
+        response = self.get(reverse('api-flag-detail', kwargs={'key': 'NON_EXISTENT'}), expected_code=404)
 
         # Turn into normal user again
         self.user.is_superuser = False
