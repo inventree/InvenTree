@@ -77,7 +77,7 @@ apipatterns = [
     # Third party API endpoints
     path('auth/', include('dj_rest_auth.urls')),
     path('auth/registration/', include('dj_rest_auth.registration.urls')),
-    path("", include(social_auth_urlpatterns)),
+    path('auth/social/', include(social_auth_urlpatterns)),
     path('auth/social/', SocialAccountListView.as_view(), name='social_account_list'),
     path('auth/social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),
 
