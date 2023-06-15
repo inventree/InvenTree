@@ -1781,13 +1781,15 @@ function loadStockTable(table, options) {
             if (row.installed_items > 0) {
                 if (row.installed_items_received) {
                     // Data received, ignore
+                } else if (row.installed_items_requested) {
+                    html += `<span class='fas fa-sync fa-spin'></span>`;
                 } else {
                     html += `
                     <a href='#' pk='${row.pk}' class='load-sub-items' id='load-sub-items-${row.pk}'>
                         <span class='fas fa-sync-alt' title='{% trans "Load installed items" %}'></span>
                     </a>`;
                 }
-            };
+            }
 
             html += partDetail(row.part_detail, {
                 thumb: true,
@@ -2184,7 +2186,9 @@ function loadStockTable(table, options) {
         inventreeGet(
             '{% url "api-stock-list" %}',
             {
-                installed_in: stock_item,
+                belongs_to: stock_item,
+                part_detail: true,
+                supplier_detail: true,
             },
             {
                 success: function(response) {
@@ -2223,8 +2227,30 @@ function loadStockTable(table, options) {
         columns: columns,
         treeEnable: true,
         rootParentId: parent_id,
+        parentIdField: 'belongs_to',
+        uniqueId: 'pk',
         idField: 'pk',
         treeShowField: 'part',
+        onPostBody: function() {
+            table.treegrid({
+                treeColumn: 1,
+            });
+
+            table.treegrid('collapseAll');
+
+            // Callback for 'load sub-items' button
+            table.find('.load-sub-items').click(function(event) {
+                event.preventDefault();
+
+                let pk = $(this).attr('pk');
+                let row = table.bootstrapTable('getRowByUniqueId', pk);
+
+                requestInstalledItems(row.pk);
+
+                row.installed_items_requested = true;
+                table.bootstrapTable('updateByUniqueId', pk, row, true);
+            });
+        }
     });
 
     var buttons = [
