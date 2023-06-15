@@ -1724,6 +1724,9 @@ function loadStockTable(table, options) {
     options.params['location_detail'] = true;
     options.params['part_detail'] = true;
 
+    // Determine if installed items are displayed in the table
+    let show_installed_items = global_settings.STOCK_SHOW_INSTALLED_ITEMS;
+
     var params = options.params || {};
 
     const filterTarget = options.filterTarget || '#filter-list-stock';
@@ -1778,7 +1781,7 @@ function loadStockTable(table, options) {
 
             let html = '';
 
-            if (row.installed_items > 0) {
+            if (show_installed_items && row.installed_items > 0) {
                 if (row.installed_items_received) {
                     // Data received, ignore
                 } else if (row.installed_items_requested) {
@@ -2225,31 +2228,34 @@ function loadStockTable(table, options) {
         showColumns: true,
         showFooter: true,
         columns: columns,
-        treeEnable: true,
+        treeEnable: show_installed_items,
         rootParentId: parent_id,
         parentIdField: 'belongs_to',
         uniqueId: 'pk',
         idField: 'pk',
         treeShowField: 'part',
         onPostBody: function() {
-            table.treegrid({
-                treeColumn: 1,
-            });
 
-            table.treegrid('collapseAll');
+            if (show_installed_items) {
+                table.treegrid({
+                    treeColumn: 1,
+                });
 
-            // Callback for 'load sub-items' button
-            table.find('.load-sub-items').click(function(event) {
-                event.preventDefault();
+                table.treegrid('collapseAll');
 
-                let pk = $(this).attr('pk');
-                let row = table.bootstrapTable('getRowByUniqueId', pk);
+                // Callback for 'load sub-items' button
+                table.find('.load-sub-items').click(function(event) {
+                    event.preventDefault();
 
-                requestInstalledItems(row.pk);
+                    let pk = $(this).attr('pk');
+                    let row = table.bootstrapTable('getRowByUniqueId', pk);
 
-                row.installed_items_requested = true;
-                table.bootstrapTable('updateByUniqueId', pk, row, true);
-            });
+                    requestInstalledItems(row.pk);
+
+                    row.installed_items_requested = true;
+                    table.bootstrapTable('updateByUniqueId', pk, row, true);
+                });
+            }
         }
     });
 
