@@ -53,7 +53,7 @@ for provider in providers.registry.get_list():
     # Try to extract the adapter class
     adapters = [cls for cls in prov_mod.__dict__.values() if isinstance(cls, type) and not cls == OAuth2Adapter and issubclass(cls, OAuth2Adapter)]
     if len(adapters) != 1:
-        logger.error(f'Found handler that is not yes ready for platform UI: `{provider.id}`')
+        logger.error(f'Found handler that is not yet ready for platform UI: `{provider.id}`. Open an feature request on GitHub if you need it implemented.')
         continue
     adapter = adapters[0]
     provider_urlpatterns += [path(f'{provider.id}/', include(handle_oauth2()))]
