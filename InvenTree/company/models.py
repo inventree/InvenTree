@@ -274,7 +274,7 @@ class Address(models.Model):
         primary: True if this is the company's primary address
         line1: First line of address
         line2: Optional line two for address
-        postal_code: postal code, city and state
+        postal_code: Postal code, city and state
         country: Location country
         shipping_notes: Notes for couriers transporting shipments to this address
         internal_shipping_notes: Internal notes regarding shipping to this address
