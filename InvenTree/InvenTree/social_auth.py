@@ -70,6 +70,15 @@ def handle_twitter():
     ]
 
 
+legacy = {
+    'twitter': 'twitter_oauth2',
+    'bitbucket': 'bitbucket_oauth2',
+    'linkedin': 'linkedin_oauth2',
+    'vimeo': 'vimeo_oauth2',
+    'openid': 'openid_connect',
+}  # legacy connectors
+
+
 # Collect urls for all loaded providers
 social_auth_urlpatterns = []
 
@@ -88,8 +97,9 @@ for provider in providers.registry.get_list():
     if len(adapters) == 1:
         urls = handle_oauth2(adapter=adapters[0])
     else:
-        if provider.id == 'twitter':
-            urls = handle_twitter()
+        if provider.id in legacy:
+            logger.warning(f'`{provider.id}` is not supported on platform UI. Use `{legacy[provider.id]}` instead.')
+            continue
         elif provider.id == 'keycloak':
             urls = handle_keycloak()
         else:
