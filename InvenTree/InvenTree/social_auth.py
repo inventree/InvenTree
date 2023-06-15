@@ -7,6 +7,10 @@ from django.urls import include, path
 from allauth.socialaccount import providers
 from allauth.socialaccount.providers.oauth2.views import (OAuth2Adapter,
                                                           OAuth2LoginView)
+from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
+from dj_rest_auth.registration.views import SocialConnectView, SocialLoginView
+from dj_rest_auth.social_serializers import (TwitterConnectSerializer,
+                                             TwitterLoginSerializer)
 
 logger = logging.getLogger('inventree')
 
@@ -32,11 +36,27 @@ class GenericOAuth2ApiConnectView(GenericOAuth2ApiLoginView):
         return super().dispatch(request, *args, **kwargs)
 
 
-def handle_oauth2():
+def handle_oauth2(adapter: OAuth2Adapter):
     """Define urls for oauth2 endpoints."""
     return [
         path('login/', GenericOAuth2ApiLoginView.adapter_view(adapter), name=f'{provider.id}_api_login'),
         path('connect/', GenericOAuth2ApiConnectView.adapter_view(adapter), name=f'{provider.id}_api_connet'),
+    ]
+
+
+def handle_twitter():
+    """Define urls for twitter."""
+    class TwitterLogin(SocialLoginView):
+        serializer_class = TwitterLoginSerializer
+        adapter_class = TwitterOAuthAdapter
+
+    class TwitterConnect(SocialConnectView):
+        serializer_class = TwitterConnectSerializer
+        adapter_class = TwitterOAuthAdapter
+
+    return [
+        path('login/', TwitterLogin.as_view(), name='twitter_api_login'),
+        path('twitter/connect/', TwitterConnect.as_view(), name='twitter_api_connet'),
     ]
 
 
@@ -52,11 +72,18 @@ for provider in providers.registry.get_list():
 
     # Try to extract the adapter class
     adapters = [cls for cls in prov_mod.__dict__.values() if isinstance(cls, type) and not cls == OAuth2Adapter and issubclass(cls, OAuth2Adapter)]
-    if len(adapters) != 1:
-        logger.error(f'Found handler that is not yet ready for platform UI: `{provider.id}`. Open an feature request on GitHub if you need it implemented.')
-        continue
-    adapter = adapters[0]
-    provider_urlpatterns += [path(f'{provider.id}/', include(handle_oauth2()))]
+
+    # Get urls
+    urls = []
+    if len(adapters) == 1:
+        urls = handle_oauth2(adapter=adapters[0])
+    else:
+        if provider.id == 'twitter':
+            urls = handle_twitter()
+        else:
+            logger.error(f'Found handler that is not yet ready for platform UI: `{provider.id}`. Open an feature request on GitHub if you need it implemented.')
+            continue
+    provider_urlpatterns += [path(f'{provider.id}/', include(urls))]
 
 
 social_auth_urlpatterns += provider_urlpatterns
