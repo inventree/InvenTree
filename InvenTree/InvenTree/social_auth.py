@@ -5,6 +5,8 @@ from importlib import import_module
 from django.urls import include, path
 
 from allauth.socialaccount import providers
+from allauth.socialaccount.providers.keycloak.views import \
+    KeycloakOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.views import (OAuth2Adapter,
                                                           OAuth2LoginView)
 from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
@@ -44,6 +46,14 @@ def handle_oauth2(adapter: OAuth2Adapter):
     ]
 
 
+def handle_keycloak():
+    """Define urls for keycloak."""
+    return [
+        path('login/', GenericOAuth2ApiLoginView.adapter_view(KeycloakOAuth2Adapter), name='keycloak_api_login'),
+        path('connect/', GenericOAuth2ApiConnectView.adapter_view(KeycloakOAuth2Adapter), name='keycloak_api_connet'),
+    ]
+
+
 def handle_twitter():
     """Define urls for twitter."""
     class TwitterLogin(SocialLoginView):
@@ -80,6 +90,8 @@ for provider in providers.registry.get_list():
     else:
         if provider.id == 'twitter':
             urls = handle_twitter()
+        elif provider.id == 'keycloak':
+            urls = handle_keycloak()
         else:
             logger.error(f'Found handler that is not yet ready for platform UI: `{provider.id}`. Open an feature request on GitHub if you need it implemented.')
             continue
