@@ -804,15 +804,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
 
-        # Also ensure that we pre-fecth all the related items
-        queryset = queryset.prefetch_related(
-            'part',
-            'part__category',
-            'location',
-            'test_results',
-            'tags',
-        )
-
         return queryset
 
     def filter_queryset(self, queryset):
