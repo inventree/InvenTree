@@ -1,4 +1,5 @@
 """API endpoints for social authentication with allauth."""
+import logging
 from importlib import import_module
 
 from django.urls import include, path
@@ -6,6 +7,8 @@ from django.urls import include, path
 from allauth.socialaccount import providers
 from allauth.socialaccount.providers.oauth2.views import (OAuth2Adapter,
                                                           OAuth2LoginView)
+
+logger = logging.getLogger('inventree')
 
 
 class GenericOAuth2ApiLoginView(OAuth2LoginView):
@@ -29,10 +32,16 @@ class GenericOAuth2ApiConnectView(GenericOAuth2ApiLoginView):
         return super().dispatch(request, *args, **kwargs)
 
 
-social_auth_urlpatterns = []
+def handle_oauth2():
+    """Define urls for oauth2 endpoints."""
+    return [
+        path('login/', GenericOAuth2ApiLoginView.adapter_view(adapter), name=f'{provider.id}_api_login'),
+        path('connect/', GenericOAuth2ApiConnectView.adapter_view(adapter), name=f'{provider.id}_api_connet'),
+    ]
 
-# google, apple, microsoft, github, twitter, discord, keycloak, OIDC, saml
-# keycloak, OIDC, saml
+
+# Collect urls for all loaded providers
+social_auth_urlpatterns = []
 
 provider_urlpatterns = []
 for provider in providers.registry.get_list():
@@ -44,13 +53,10 @@ for provider in providers.registry.get_list():
     # Try to extract the adapter class
     adapters = [cls for cls in prov_mod.__dict__.values() if isinstance(cls, type) and not cls == OAuth2Adapter and issubclass(cls, OAuth2Adapter)]
     if len(adapters) != 1:
+        logger.error(f'Found handler that is not yes ready for platform UI: `{provider.id}`')
         continue
     adapter = adapters[0]
+    provider_urlpatterns += [path(f'{provider.id}/', include(handle_oauth2()))]
 
-    provider_urlpatterns += [path(f'{provider.id}/', include([
-        path('login/', GenericOAuth2ApiLoginView.adapter_view(adapter), name=f'{provider.id}_api_login'),
-        path('connect/', GenericOAuth2ApiConnectView.adapter_view(adapter), name=f'{provider.id}_api_connet'),]
-    )
-    )]
 
 social_auth_urlpatterns += provider_urlpatterns
