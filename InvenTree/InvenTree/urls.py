@@ -33,7 +33,7 @@ from stock.urls import stock_urls
 from users.api import user_urls
 
 from .api import APISearchView, InfoView, NotFoundView
-from .social_auth import social_auth_urlpatterns
+from .social_auth_urls import social_auth_urlpatterns
 from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
                     CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
