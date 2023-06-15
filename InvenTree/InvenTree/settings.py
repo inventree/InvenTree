@@ -245,7 +245,6 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
-    'rest_framework_simplejwt',             # JWT authentication for API
     'dj_rest_auth',                         # Authentication APIs - dj-rest-auth
     'dj_rest_auth.registration',            # Registration APIs - dj-rest-auth'
     'drf_spectacular',                      # API documentation
@@ -365,7 +364,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -385,13 +383,20 @@ if DEBUG:
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 # dj-rest-auth
-REST_USE_JWT = True
+# JWT switch
+USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
+REST_USE_JWT = USE_JWT
 OLD_PASSWORD_FIELD_ENABLED = True
 REST_AUTH_REGISTER_SERIALIZERS = {'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'}
 
 # JWT settings - rest_framework_simplejwt
-JWT_AUTH_COOKIE = 'inventree-auth'
-JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
+if USE_JWT:
+    JWT_AUTH_COOKIE = 'inventree-auth'
+    JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] + (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    )
+    INSTALLED_APPS.append('rest_framework_simplejwt')
 
 # WSGI default setting
 SPECTACULAR_SETTINGS = {
