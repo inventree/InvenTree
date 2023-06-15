@@ -44,7 +44,7 @@ def handle_oauth2(adapter: OAuth2Adapter):
     """Define urls for oauth2 endpoints."""
     return [
         path('login/', GenericOAuth2ApiLoginView.adapter_view(adapter), name=f'{provider.id}_api_login'),
-        path('connect/', GenericOAuth2ApiConnectView.adapter_view(adapter), name=f'{provider.id}_api_connet'),
+        path('connect/', GenericOAuth2ApiConnectView.adapter_view(adapter), name=f'{provider.id}_api_connect'),
     ]
 
 
@@ -109,7 +109,7 @@ class SocialProvierListView(ListAPIView):
                 'id': provider.id,
                 'name': provider.name,
                 'login': request.build_absolute_uri(reverse(f'{provider.id}_api_login')),
-                'connect': request.build_absolute_uri(reverse(f'{provider.id}_api_connet')),
+                'connect': request.build_absolute_uri(reverse(f'{provider.id}_api_connect')),
             }
             try:
                 provider_data['display_name'] = provider.get_app(request).name
