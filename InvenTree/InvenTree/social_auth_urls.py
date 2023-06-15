@@ -2,13 +2,19 @@
 import logging
 from importlib import import_module
 
-from django.urls import include, path
+from django.urls import include, path, reverse
 
 from allauth.socialaccount import providers
+from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.keycloak.views import \
     KeycloakOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.views import (OAuth2Adapter,
                                                           OAuth2LoginView)
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+from common.models import InvenTreeSetting
 
 logger = logging.getLogger('inventree')
 
@@ -89,3 +95,33 @@ for provider in providers.registry.get_list():
 
 
 social_auth_urlpatterns += provider_urlpatterns
+
+
+class SocialProvierListView(ListAPIView):
+    """List of available social providers."""
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        """Get the list of providers."""
+        provider_list = []
+        for provider in providers.registry.get_list():
+            provider_data = {
+                'id': provider.id,
+                'name': provider.name,
+                'login': request.build_absolute_uri(reverse(f'{provider.id}_api_login')),
+                'connect': request.build_absolute_uri(reverse(f'{provider.id}_api_connet')),
+            }
+            try:
+                provider_data['display_name'] = provider.get_app(request).name
+            except SocialApp.DoesNotExist:
+                provider_data['display_name'] = provider.name
+
+            provider_list.append(provider_data)
+
+        data = {
+            'sso_enabled': InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO'),
+            'sso_registration': InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'),
+            'mfa_required': InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA'),
+            'providers': provider_list
+        }
+        return Response(data)
