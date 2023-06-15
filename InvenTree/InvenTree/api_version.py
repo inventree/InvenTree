@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 122
+INVENTREE_API_VERSION = 123
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v123 -> 2023-06-15 : https://github.com/inventree/InvenTree/pull/5019
+    - Add Metadata to: Plugin Config
 
 v122 -> 2023-06-14 : https://github.com/inventree/InvenTree/pull/5034
     - Adds new BuildLineLabel label type
