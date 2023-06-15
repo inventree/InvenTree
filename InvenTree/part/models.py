@@ -2176,6 +2176,16 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         return quantity
 
+    def get_parameter(self, name):
+        """Return the parameter with the given name.
+
+        If no matching parameter is found, return None.
+        """
+        try:
+            return self.parameters.get(template__name=name)
+        except PartParameter.DoesNotExist:
+            return None
+
     def get_parameters(self):
         """Return all parameters for this part, ordered by name."""
         return self.parameters.order_by('template__name')
