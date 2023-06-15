@@ -9,10 +9,6 @@ from allauth.socialaccount.providers.keycloak.views import \
     KeycloakOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.views import (OAuth2Adapter,
                                                           OAuth2LoginView)
-from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
-from dj_rest_auth.registration.views import SocialConnectView, SocialLoginView
-from dj_rest_auth.social_serializers import (TwitterConnectSerializer,
-                                             TwitterLoginSerializer)
 
 logger = logging.getLogger('inventree')
 
@@ -51,22 +47,6 @@ def handle_keycloak():
     return [
         path('login/', GenericOAuth2ApiLoginView.adapter_view(KeycloakOAuth2Adapter), name='keycloak_api_login'),
         path('connect/', GenericOAuth2ApiConnectView.adapter_view(KeycloakOAuth2Adapter), name='keycloak_api_connet'),
-    ]
-
-
-def handle_twitter():
-    """Define urls for twitter."""
-    class TwitterLogin(SocialLoginView):
-        serializer_class = TwitterLoginSerializer
-        adapter_class = TwitterOAuthAdapter
-
-    class TwitterConnect(SocialConnectView):
-        serializer_class = TwitterConnectSerializer
-        adapter_class = TwitterOAuthAdapter
-
-    return [
-        path('login/', TwitterLogin.as_view(), name='twitter_api_login'),
-        path('twitter/connect/', TwitterConnect.as_view(), name='twitter_api_connet'),
     ]
 
 
