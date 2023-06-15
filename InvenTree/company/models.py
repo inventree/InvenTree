@@ -270,7 +270,7 @@ class Address(models.Model):
 
     Attributes:
         company: Company link for this address
-        title: human readable name for the address
+        title: Human-readable name for the address
         primary: True if this is the company's primary address
         line1: First line of address
         line2: Optional line two for address
