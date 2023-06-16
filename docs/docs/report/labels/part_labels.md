@@ -34,9 +34,9 @@ The following context variables are made available to the Part label template:
 | qr_data | String data which can be rendered to a QR code |
 | parameters | Map (Python dictionary) object containing the parameters associated with the part instance |
 
-#### Parameters
+#### Parameter Values
 
-The part parameters can be accessed by parameter name lookup in the template, as follows:
+The part parameter *values* can be accessed by parameter name lookup in the template, as follows:
 
 ```html
 {% raw %}
@@ -47,7 +47,8 @@ Length: {{ parameters.length }}
 {% endraw %}
 ```
 
-Note that for parameters which include a `space` character in their name, lookup using the "dot" notation won't work! In this case, try using the [key lookup](../helpers.md#key-access) method:
+!!! warning "Spaces"
+    Note that for parameters which include a `space` character in their name, lookup using the "dot" notation won't work! In this case, try using the [key lookup](../helpers.md#key-access) method:
 
 ```html
 {% raw %}
@@ -55,3 +56,36 @@ Note that for parameters which include a `space` character in their name, lookup
 Voltage Rating: {% getkey parameters "Voltage Rating" %}
 {% endraw %}
 ```
+
+#### Parameter Data
+
+If you require access to the parameter data itself, and not just the "value" of a particular parameter, you can use the `part_parameter` [helper function](../helpers.md#part-parameters).
+
+For example, the following label template can be used to generate a label which contains parameter data in addition to parameter units:
+
+```html
+{% raw %}
+{% extends "label/label_base.html" %}
+
+{% load report %}
+
+{% block content %}
+
+{% part_parameter part "Width" as width %}
+{% part_parameter part "Length" as length %}
+
+<div>
+    Part: {{ part.full_name }}<br>
+    Width: {{ width.data }} [{{ width.units }}]<br>
+    Length: {{ length.data }} [{{ length.units }}]
+</div>
+
+{% endblock content %}
+{% endraw %}
+```
+
+The following label is produced:
+
+{% with id="report-parameters", url="report/label_with_parameters.png", description="Label with parameters" %}
+{% include 'img.html' %}
+{% endwith %}
