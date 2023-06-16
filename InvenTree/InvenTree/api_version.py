@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 123
+INVENTREE_API_VERSION = 124
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v124 -> 2023-06-17 : https://github.com/inventree/InvenTree/pull/5057
+    - Add "created_before" and "created_after" filters to the Part API
 
 v123 -> 2023-06-15 : https://github.com/inventree/InvenTree/pull/5019
     - Add Metadata to: Plugin Config
