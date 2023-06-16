@@ -14,11 +14,13 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import InvenTree.helpers
+import InvenTree.helpers_model
 from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
 from common.settings import currency_code_default
 from InvenTree import settings, version
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginSetting
+from plugin.plugin import InvenTreePlugin
 
 register = template.Library()
 
@@ -104,7 +106,7 @@ def render_date(context, date_object):
 def render_currency(money, **kwargs):
     """Render a currency / Money object"""
 
-    return InvenTree.helpers.render_currency(money, **kwargs)
+    return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
 @register.simple_tag()
@@ -223,7 +225,7 @@ def inventree_splash(**kwargs):
 @register.simple_tag()
 def inventree_base_url(*args, **kwargs):
     """Return the base URL of the InvenTree server"""
-    return InvenTree.helpers.get_base_url()
+    return InvenTree.helpers_model.get_base_url()
 
 
 @register.simple_tag()
@@ -286,6 +288,30 @@ def inventree_commit_date(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_installer(*args, **kwargs):
+    """Return InvenTree package installer string."""
+    return version.inventreeInstaller()
+
+
+@register.simple_tag()
+def inventree_branch(*args, **kwargs):
+    """Return InvenTree git branch string."""
+    return version.inventreeBranch()
+
+
+@register.simple_tag()
+def inventree_target(*args, **kwargs):
+    """Return InvenTree target string."""
+    return version.inventreeTarget()
+
+
+@register.simple_tag()
+def inventree_platform(*args, **kwargs):
+    """Return InvenTree platform string."""
+    return version.inventreePlatform()
+
+
+@register.simple_tag()
 def inventree_github_url(*args, **kwargs):
     """Return URL for InvenTree github site."""
     return "https://github.com/InvenTree/InvenTree/"
@@ -293,7 +319,7 @@ def inventree_github_url(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
-    """Return URL for InvenTree documenation site."""
+    """Return URL for InvenTree documentation site."""
     tag = version.inventreeDocsVersion()
 
     return f"https://docs.inventree.org/en/{tag}"
@@ -313,7 +339,7 @@ def default_currency(*args, **kwargs):
 
 @register.simple_tag()
 def setting_object(key, *args, **kwargs):
-    """Return a setting object speciifed by the given key.
+    """Return a setting object specified by the given key.
 
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
@@ -325,6 +351,8 @@ def setting_object(key, *args, **kwargs):
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
         plugin = kwargs['plugin']
+        if issubclass(plugin.__class__, InvenTreePlugin):
+            plugin = plugin.plugin_config()
 
         return PluginSetting.get_setting_object(key, plugin=plugin, cache=cache)
 
@@ -601,7 +629,7 @@ else:  # pragma: no cover
         bits = token.split_contents()
         loc_name = settings.STATICFILES_I18_PREFIX
 
-        # change path to called ressource
+        # change path to called resource
         bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
         token.contents = ' '.join(bits)
 

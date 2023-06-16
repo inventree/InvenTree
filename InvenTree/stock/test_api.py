@@ -10,13 +10,14 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 import tablib
+from djmoney.money import Money
 from rest_framework import status
 
 import company.models
 import part.models
 from common.models import InvenTreeSetting
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import StockStatus
+from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from stock.models import StockItem, StockItemTestResult, StockLocation
 
@@ -384,11 +385,11 @@ class StockItemListTest(StockAPITestCase):
     def test_filter_by_status(self):
         """Filter StockItem by 'status' field."""
         codes = {
-            StockStatus.OK: 27,
-            StockStatus.DESTROYED: 1,
-            StockStatus.LOST: 1,
-            StockStatus.DAMAGED: 0,
-            StockStatus.REJECTED: 0,
+            StockStatus.OK.value: 27,
+            StockStatus.DESTROYED.value: 1,
+            StockStatus.LOST.value: 1,
+            StockStatus.DAMAGED.value: 0,
+            StockStatus.REJECTED.value: 0,
         }
 
         for code in codes.keys():
@@ -556,6 +557,42 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(len(dataset), 17)
 
+    def test_query_count(self):
+        """Test that the number of queries required to fetch stock items is reasonable."""
+
+        def get_stock(data):
+            """Helper function to fetch stock items."""
+            response = self.client.get(self.list_url, data=data)
+            self.assertEqual(response.status_code, 200)
+            return response.data
+
+        # Create a bunch of StockItem objects
+        prt = Part.objects.first()
+
+        StockItem.objects.bulk_create([
+            StockItem(
+                part=prt,
+                quantity=1,
+                level=0, tree_id=0, lft=0, rght=0,
+            ) for _ in range(100)
+        ])
+
+        # List *all* stock items
+        with self.assertNumQueriesLessThan(25):
+            get_stock({})
+
+        # List all stock items, with part detail
+        with self.assertNumQueriesLessThan(20):
+            get_stock({'part_detail': True})
+
+        # List all stock items, with supplier_part detail
+        with self.assertNumQueriesLessThan(20):
+            get_stock({'supplier_part_detail': True})
+
+        # List all stock items, with 'location' and 'tests' detail
+        with self.assertNumQueriesLessThan(20):
+            get_stock({'location_detail': True, 'tests': True})
+
 
 class StockItemTest(StockAPITestCase):
     """Series of API tests for the StockItem API."""
@@ -663,6 +700,114 @@ class StockItemTest(StockAPITestCase):
             },
             expected_code=201
         )
+
+    def test_stock_item_create_withsupplierpart(self):
+        """Test creation of a StockItem via the API, including SupplierPart data."""
+
+        # POST with non-existent supplier part
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 1,
+                'location': 1,
+                'quantity': 4,
+                'supplier_part': 1000991
+            },
+            expected_code=400
+        )
+
+        self.assertIn('The given supplier part does not exist', str(response.data))
+
+        # POST with valid supplier part, no pack size defined
+        # Get current count of number of parts
+        part_4 = part.models.Part.objects.get(pk=4)
+        current_count = part_4.available_stock
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'location': 1,
+                'quantity': 3,
+                'supplier_part': 5,
+                'purchase_price': 123.45,
+                'purchase_price_currency': 'USD',
+            },
+            expected_code=201
+        )
+
+        # Reload part, count stock again
+        part_4 = part.models.Part.objects.get(pk=4)
+        self.assertEqual(part_4.available_stock, current_count + 3)
+        stock_4 = StockItem.objects.get(pk=response.data['pk'])
+        self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
+
+        # POST with valid supplier part, no pack size defined
+        # Send use_pack_size along, make sure this doesn't break stuff
+        # Get current count of number of parts
+        part_4 = part.models.Part.objects.get(pk=4)
+        current_count = part_4.available_stock
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'location': 1,
+                'quantity': 12,
+                'supplier_part': 5,
+                'use_pack_size': True,
+                'purchase_price': 123.45,
+                'purchase_price_currency': 'USD',
+            },
+            expected_code=201
+        )
+        # Reload part, count stock again
+        part_4 = part.models.Part.objects.get(pk=4)
+        self.assertEqual(part_4.available_stock, current_count + 12)
+        stock_4 = StockItem.objects.get(pk=response.data['pk'])
+        self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
+
+        # POST with valid supplier part, WITH pack size defined - but ignore
+        # Supplier part 6 is a 100-pack, otherwise same as SP 5
+        current_count = part_4.available_stock
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'location': 1,
+                'quantity': 3,
+                'supplier_part': 6,
+                'use_pack_size': False,
+                'purchase_price': 123.45,
+                'purchase_price_currency': 'USD',
+            },
+            expected_code=201
+        )
+        # Reload part, count stock again
+        part_4 = part.models.Part.objects.get(pk=4)
+        self.assertEqual(part_4.available_stock, current_count + 3)
+        stock_4 = StockItem.objects.get(pk=response.data['pk'])
+        self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
+
+        # POST with valid supplier part, WITH pack size defined and used
+        # Supplier part 6 is a 100-pack, otherwise same as SP 5
+        current_count = part_4.available_stock
+        response = self.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'location': 1,
+                'quantity': 3,
+                'supplier_part': 6,
+                'use_pack_size': True,
+                'purchase_price': 123.45,
+                'purchase_price_currency': 'USD',
+            },
+            expected_code=201
+        )
+        # Reload part, count stock again
+        part_4 = part.models.Part.objects.get(pk=4)
+        self.assertEqual(part_4.available_stock, current_count + 3 * 100)
+        stock_4 = StockItem.objects.get(pk=response.data['pk'])
+        self.assertEqual(stock_4.purchase_price, Money('1.234500', 'USD'))
 
     def test_creation_with_serials(self):
         """Test that serialized stock items can be created via the API."""
@@ -1132,7 +1277,7 @@ class StockTestResultTest(StockAPITestCase):
     """Tests for StockTestResult APIs."""
 
     def get_url(self):
-        """Helper funtion to get test-result api url."""
+        """Helper function to get test-result api url."""
         return reverse('api-stock-test-result-list')
 
     def test_list(self):
@@ -1356,7 +1501,7 @@ class StockAssignTest(StockAPITestCase):
 
         stock_item = StockItem.objects.create(
             part=part.models.Part.objects.get(pk=1),
-            status=StockStatus.DESTROYED,
+            status=StockStatus.DESTROYED.value,
             quantity=5,
         )
 
@@ -1584,3 +1729,62 @@ class StockMergeTest(StockAPITestCase):
 
         # Total number of stock items has been reduced!
         self.assertEqual(StockItem.objects.filter(part=self.part).count(), n - 2)
+
+
+class StockMetadataAPITest(InvenTreeAPITestCase):
+    """Unit tests for the various metadata endpoints of API."""
+
+    fixtures = [
+        'category',
+        'part',
+        'bom',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'stock_tests',
+    ]
+
+    roles = [
+        'stock.change',
+        'stock_location.change',
+    ]
+
+    def metatester(self, apikey, model):
+        """Generic tester"""
+
+        modeldata = model.objects.first()
+
+        # Useless test unless a model object is found
+        self.assertIsNotNone(modeldata)
+
+        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+
+        # Metadata is initially null
+        self.assertIsNone(modeldata.metadata)
+
+        numstr = f'12{len(apikey)}'
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    f'abc-{numstr}': f'xyz-{apikey}-{numstr}',
+                }
+            },
+            expected_code=200
+        )
+
+        # Refresh
+        modeldata.refresh_from_db()
+        self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
+
+    def test_metadata(self):
+        """Test all endpoints"""
+
+        for apikey, model in {
+            'api-location-metadata': StockLocation,
+            'api-stock-test-result-metadata': StockItemTestResult,
+            'api-stock-item-metadata': StockItem,
+        }.items():
+            self.metatester(apikey, model)

@@ -226,7 +226,7 @@ function enableBreadcrumbTree(options) {
     $('#breadcrumb-tree-toggle').click(function() {
         // Add callback to "collapse" and "expand" the sidebar
 
-        // Toggle treeview visibilty
+        // Toggle treeview visibility
         $('#breadcrumb-tree-collapse').toggle();
 
     });

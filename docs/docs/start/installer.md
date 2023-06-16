@@ -77,10 +77,10 @@ By default, InvenTree is served internally on port 6000 and then proxied via Ngi
 This only serves an HTTP version of InvenTree, to use HTTPS (recommended for production) or customise any further an additional config file should be used.
 
 #### Extra python packages
-Extra python packages can be installed by setting the enviroment variable `SETUP_EXTRA_PIP`.
+Extra python packages can be installed by setting the environment variable `SETUP_EXTRA_PIP`.
 
 #### Database Options
-The used database backend can be configured with enviroment variables (before the first setup) or in the config file after the installation. Check the [configuration section](./config.md#database-options) for more information.
+The used database backend can be configured with environment variables (before the first setup) or in the config file after the installation. Check the [configuration section](./config.md#database-options) for more information.
 
 ## Moving Data
 To change the data storage location, link the new location to `/opt/inventree/data`.

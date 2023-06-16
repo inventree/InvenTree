@@ -18,18 +18,43 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 
+import InvenTree.conversion
 import InvenTree.format
 import InvenTree.helpers
+import InvenTree.helpers_model
 import InvenTree.tasks
 from common.models import InvenTreeSetting
 from common.settings import currency_codes
 from InvenTree.sanitizer import sanitize_svg
+from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, status, version
 from .tasks import offload_task
 from .validators import validate_overage
+
+
+class ConversionTest(TestCase):
+    """Tests for conversion of physical units"""
+
+    def test_dimensionless_units(self):
+        """Tests for 'dimensonless' unit quantities"""
+
+        # Test some dimensionless units
+        tests = {
+            'ea': 1,
+            'each': 1,
+            '3 piece': 3,
+            '5 dozen': 60,
+            '3 hundred': 300,
+            '2 thousand': 2000,
+            '12 pieces': 12,
+        }
+
+        for val, expected in tests.items():
+            q = InvenTree.conversion.convert_physical_value(val).to_base_units()
+            self.assertEqual(q.magnitude, expected)
 
 
 class ValidatorTest(TestCase):
@@ -258,12 +283,12 @@ class TestHelpers(TestCase):
             "\\invalid-url"
         ]:
             with self.assertRaises(django_exceptions.ValidationError):
-                helpers.download_image_from_url(url)
+                InvenTree.helpers_model.download_image_from_url(url)
 
         def dl_helper(url, expected_error, timeout=2.5, retries=3):
             """Helper function for unit testing downloads.
 
-            As the httpstat.us service occassionaly refuses a connection,
+            As the httpstat.us service occasionally refuses a connection,
             we will simply try multiple times
             """
 
@@ -273,7 +298,7 @@ class TestHelpers(TestCase):
                 while tries < retries:
 
                     try:
-                        helpers.download_image_from_url(url, timeout=timeout)
+                        InvenTree.helpers_model.download_image_from_url(url, timeout=timeout)
                         break
                     except Exception as exc:
                         if type(exc) is expected_error:
@@ -299,20 +324,20 @@ class TestHelpers(TestCase):
 
         # Attempt to download an image which is too large
         with self.assertRaises(ValueError):
-            helpers.download_image_from_url(large_img, timeout=10)
+            InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
 
         # Increase allowable download size
         InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None)
 
         # Download a valid image (should not throw an error)
-        helpers.download_image_from_url(large_img, timeout=10)
+        InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function"""
 
         from InvenTree.models import InvenTreeBarcodeMixin
 
-        models = helpers.getModelsWithMixin(InvenTreeBarcodeMixin)
+        models = InvenTree.helpers_model.getModelsWithMixin(InvenTreeBarcodeMixin)
 
         self.assertIn(Part, models)
         self.assertIn(StockLocation, models)
@@ -517,7 +542,7 @@ class TestSerialNumberExtraction(TestCase):
         self.assertEqual(sn, ['5', '6', '7', '8'])
 
     def test_failures(self):
-        """Test wron serial numbers."""
+        """Test wrong serial numbers."""
         e = helpers.extract_serial_numbers
 
         # Test duplicates
@@ -711,7 +736,7 @@ class TestStatus(TestCase):
         self.assertEqual(ready.isImportingData(), False)
 
 
-class TestSettings(helpers.InvenTreeTestCase):
+class TestSettings(InvenTreeTestCase):
     """Unit tests for settings."""
 
     superuser = True
@@ -850,7 +875,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
 
 
-class TestInstanceName(helpers.InvenTreeTestCase):
+class TestInstanceName(InvenTreeTestCase):
     """Unit tests for instance name."""
 
     def test_instance_name(self):
@@ -878,7 +903,7 @@ class TestInstanceName(helpers.InvenTreeTestCase):
         self.assertEqual(site_obj.domain, 'http://127.1.2.3')
 
 
-class TestOffloadTask(helpers.InvenTreeTestCase):
+class TestOffloadTask(InvenTreeTestCase):
     """Tests for offloading tasks to the background worker"""
 
     fixtures = [
@@ -975,7 +1000,7 @@ class TestOffloadTask(helpers.InvenTreeTestCase):
             self.assertTrue(result)
 
 
-class BarcodeMixinTest(helpers.InvenTreeTestCase):
+class BarcodeMixinTest(InvenTreeTestCase):
     """Tests for the InvenTreeBarcodeMixin mixin class"""
 
     def test_barcode_model_type(self):
@@ -1008,7 +1033,7 @@ class SanitizerTest(TestCase):
     """Simple tests for sanitizer functions."""
 
     def test_svg_sanitizer(self):
-        """Test that SVGs are sanitized acordingly."""
+        """Test that SVGs are sanitized accordingly."""
         valid_string = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" height="400" width="400">{0}
         <path id="path1" d="m -151.78571,359.62883 v 112.76373 l 97.068507,-56.04253 V 303.14815 Z" style="fill:#ddbc91;"></path>
         </svg>"""

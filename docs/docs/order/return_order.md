@@ -4,7 +4,7 @@ title: Return Order
 
 ## Return Orders
 
-Return Orders allow stock items (which have been sold or allocted to a customer) to be to be returned into stock, typically for the purpose of repair or refund.
+Return Orders allow stock items (which have been sold or allocated to a customer) to be to be returned into stock, typically for the purpose of repair or refund.
 
 !!! tip "An Order By Any Other Name"
     A Return Order may also be known as an [RMA](https://en.wikipedia.org/wiki/Return_merchandise_authorization)
@@ -73,7 +73,7 @@ The order can be assigned to a responsible *owner*, which is either a user or gr
 
 ## Return Order Detail
 
-Indvidual Return Orders can be viewed via the Return Order detail page:
+Individual Return Orders can be viewed via the Return Order detail page:
 
 {% with id="return-order-detail", url="order/return_order_detail.png", description="Return Order Detail" %}
 {% include "img.html" %}
@@ -99,3 +99,12 @@ While [line items](#line-items) must reference a particular stock item, extra li
 ## Return Order Reports
 
 Custom [reports](../report/return_order.md) can be generated against each Return Order.
+
+### Calendar view
+
+Using the button to the top right of the list of Return Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
+
+This view can be accessed externally as an ICS calendar using a URL like the following:
+`http://inventree.example.org/api/order/calendar/return-order/calendar.ics`
+
+by default, completed orders are not exported. These can be included by appending `?include_completed=True` to the URL.

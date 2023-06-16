@@ -12,9 +12,10 @@ from allauth.account.models import EmailAddress
 from plugin.events import trigger_event
 import common.notifications
 import build.models
-import InvenTree.helpers
+import InvenTree.email
+import InvenTree.helpers_model
 import InvenTree.tasks
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.ready import isImportingData
 
 import part.models as part_models
@@ -64,7 +65,7 @@ def check_build_stock(build: build.models.Build):
             # There is not sufficient stock for this part
 
             lines.append({
-                'link': InvenTree.helpers.construct_absolute_url(sub_part.get_absolute_url()),
+                'link': InvenTree.helpers_model.construct_absolute_url(sub_part.get_absolute_url()),
                 'part': sub_part,
                 'in_stock': in_stock,
                 'allocated': allocated,
@@ -88,7 +89,7 @@ def check_build_stock(build: build.models.Build):
         logger.info(f"Notifying users of stock required for build {build.pk}")
 
         context = {
-            'link': InvenTree.helpers.construct_absolute_url(build.get_absolute_url()),
+            'link': InvenTree.helpers_model.construct_absolute_url(build.get_absolute_url()),
             'build': build,
             'part': build.part,
             'lines': lines,
@@ -101,7 +102,7 @@ def check_build_stock(build: build.models.Build):
 
         recipients = emails.values_list('email', flat=True)
 
-        InvenTree.tasks.send_email(subject, '', recipients, html_message=html_message)
+        InvenTree.email.send_email(subject, '', recipients, html_message=html_message)
 
 
 def notify_overdue_build_order(bo: build.models.Build):
@@ -121,7 +122,7 @@ def notify_overdue_build_order(bo: build.models.Build):
         'order': bo,
         'name': name,
         'message': _(f"Build order {bo} is now overdue"),
-        'link': InvenTree.helpers.construct_absolute_url(
+        'link': InvenTree.helpers_model.construct_absolute_url(
             bo.get_absolute_url(),
         ),
         'template': {
@@ -157,7 +158,7 @@ def check_overdue_build_orders():
 
     overdue_orders = build.models.Build.objects.filter(
         target_date=yesterday,
-        status__in=BuildStatus.ACTIVE_CODES
+        status__in=BuildStatusGroups.ACTIVE_CODES
     )
 
     for bo in overdue_orders:

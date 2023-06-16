@@ -105,6 +105,10 @@ main {
     font-size: 110%;
 }
 
+.bg-qr-code {
+    background-color: #FFF !important;
+}
+
 .qr-code {
     max-width: 400px;
     max-height: 400px;
@@ -219,8 +223,7 @@ main {
 }
 
 .sub-table {
-    margin-left: 45px;
-    margin-right: 45px;
+    margin-left: 60px;
 }
 
 .detail-icon .glyphicon {
@@ -301,16 +304,14 @@ main {
 .filter-tag {
     display: inline-block;
     *display: inline;
-    zoom: 1;
-    padding-top: 3px;
-    padding-left: 3px;
-    padding-right: 3px;
-    border: 1px solid #aaa;
-    border-radius: 3px;
-    background: #eee;
-    margin: 1px;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin: 5px;
+    padding: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    color: var(--bs-body-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--secondary-color);
     white-space: nowrap;
 }
 
@@ -321,7 +322,6 @@ main {
 .filter-input {
     display: inline-block;
     *display: inline;
-    zoom: 1;
 }
 
 .filter-tag:hover {

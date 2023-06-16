@@ -2,14 +2,14 @@
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
-from InvenTree import helpers
+from InvenTree import unit_test
 
 
 class TestForwardMigrations(MigratorTestCase):
     """Unit testing class for testing 'company' app migrations"""
 
-    migrate_from = ('company', helpers.getOldestMigrationFile('company'))
-    migrate_to = ('company', helpers.getNewestMigrationFile('company'))
+    migrate_from = ('company', unit_test.getOldestMigrationFile('company'))
+    migrate_to = ('company', unit_test.getNewestMigrationFile('company'))
 
     def prepare(self):
         """Create some simple Company data, and ensure that it migrates OK."""
@@ -48,7 +48,8 @@ class TestManufacturerField(MigratorTestCase):
         # Create an initial part
         part = Part.objects.create(
             name='Screw',
-            description='A single screw'
+            description='A single screw',
+            level=0, tree_id=0, lft=0, rght=0
         )
 
         # Create a company to act as the supplier
@@ -277,3 +278,51 @@ class TestCurrencyMigration(MigratorTestCase):
         for pb in PB.objects.all():
             # Test that a price has been assigned
             self.assertIsNotNone(pb.price)
+
+
+class TestSupplierPartQuantity(MigratorTestCase):
+    """Test that the supplier part quantity is correctly migrated."""
+
+    migrate_from = ('company', '0058_auto_20230515_0004')
+    migrate_to = ('company', unit_test.getNewestMigrationFile('company'))
+
+    def prepare(self):
+        """Prepare a number of SupplierPart objects"""
+
+        Part = self.old_state.apps.get_model('part', 'part')
+        Company = self.old_state.apps.get_model('company', 'company')
+        SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
+
+        self.part = Part.objects.create(
+            name="PART", description="A purchaseable part",
+            purchaseable=True,
+            level=0, tree_id=0, lft=0, rght=0
+        )
+
+        self.supplier = Company.objects.create(name='Supplier', description='A supplier', is_supplier=True)
+
+        self.supplier_parts = []
+
+        for i in range(10):
+            self.supplier_parts.append(
+                SupplierPart.objects.create(
+                    part=self.part,
+                    supplier=self.supplier,
+                    SKU=f'SKU-{i}',
+                    pack_size=i + 1,
+                )
+            )
+
+    def test_supplier_part_quantity(self):
+        """Test that the supplier part quantity is correctly migrated."""
+
+        SupplierPart = self.new_state.apps.get_model('company', 'supplierpart')
+
+        for i, sp in enumerate(SupplierPart.objects.all()):
+
+            self.assertEqual(sp.pack_quantity, str(i + 1))
+            self.assertEqual(sp.pack_quantity_native, i + 1)
+
+            # And the 'pack_size' attribute has been removed
+            with self.assertRaises(AttributeError):
+                sp.pack_size

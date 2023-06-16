@@ -822,11 +822,9 @@
                 part_detail: true,
                 supplier_part_detail: true,
             },
-            groupByField: 'location',
             buttons: [
                 '#stock-options',
             ],
-            url: "{% url 'api-stock-list' %}",
         });
 
         $('#item-create').click(function () {
@@ -848,47 +846,13 @@
             }
         );
 
-        $('#param-table').inventreeTable({
-        });
-
         {% if roles.part.add %}
         $('#param-create').click(function() {
-
-            constructForm('{% url "api-part-parameter-list" %}', {
-                method: 'POST',
-                fields: {
-                    part: {
-                        value: {{ part.pk }},
-                        hidden: true,
-                    },
-                    template: {
-                        filters: {
-                            ordering: 'name',
-                        },
-                    },
-                    data: {},
-                },
-                title: '{% trans "Add Parameter" %}',
-                refreshTable: '#parameter-table',
+            createPartParameter({{ part.pk }}, {
+                refreshTable: '#parameter-table'
             });
         });
         {% endif %}
-
-        $('.param-edit').click(function() {
-            var button = $(this);
-
-            launchModalForm(button.attr('url'), {
-                reload: true,
-            });
-        });
-
-        $('.param-delete').click(function() {
-            var button = $(this);
-
-            launchModalForm(button.attr('url'), {
-                reload: true,
-            });
-        });
     });
 
     onPanelLoad("part-attachments", function() {

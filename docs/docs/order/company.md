@@ -54,7 +54,7 @@ To access the customer page, click on the <span class="badge inventree nav main"
 
 ### Add Customer
 
-Once the customer page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Customer</span> button: the "Create new Customer" form opens. Fill-in the manufacturer informations (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
+Once the customer page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Customer</span> button: the "Create new Customer" form opens. Fill-in the manufacturer information (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
 
 ## Manufacturers
 
@@ -71,7 +71,7 @@ To access the list of manufacturers , click on the <span class="badge inventree 
 
 ### Add Manufacturer
 
-Once the manufacturer page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Manufacturer</span> button: the "Create new Manufacturer" form opens. Fill-in the manufacturer informations (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
+Once the manufacturer page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Manufacturer</span> button: the "Create new Manufacturer" form opens. Fill-in the manufacturer information (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
 
 !!! info "Manufacturer vs Supplier"
 	In the case the manufacturer sells directly to customers, you may want to enable the checkbox `is supplier` before submitting the form (you can also enable it later on). Purchase orders rely exclusively on [supplier parts](#supplier-parts), therefore the manufacturer will need to be set as a supplier too.
@@ -123,7 +123,7 @@ To access the supplier page, click on the <span class="badge inventree nav main"
 
 ### Add Supplier
 
-Once the supplier page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Supplier</span> button: the "Create new Supplier" form opens. Fill-in the supplier informations (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
+Once the supplier page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Supplier</span> button: the "Create new Supplier" form opens. Fill-in the supplier information (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
 
 !!! info "Supplier vs Manufacturer"
 	In the case the supplier is a manufacturer who sells directly to customers, you may want to enable the checkbox `is manufacturer` before submitting the form (you can also enable it later on).

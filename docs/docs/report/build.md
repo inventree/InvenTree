@@ -18,8 +18,11 @@ In addition to the default report context variables, the following context varia
 | --- | --- |
 | build | The build object the report is being generated against |
 | part | The [Part](./context_variables.md#part) object that the build references |
+| line_items | A shortcut for [build.line_items](#build) |
+| bom_items | A shortcut for [build.bom_items](#build) |
+| build_outputs | A shortcut for [build.build_outputs](#build) |
 | reference | The build order reference string |
-| quantity | Build order quantity |
+| quantity | Build order quantity (number of assemblies being built) |
 
 #### build
 
@@ -29,7 +32,9 @@ The following variables are accessed by build.variable
 | --- | --- |
 | active | Boolean that tells if the build is active |
 | batch | Batch code transferred to build parts (optional) |
-| bom_items | A query set with all BOM items for the build |
+| line_items | A query set with all the build line items associated with the build |
+| bom_items | A query set with all BOM items for the part being assembled |
+| build_outputs | A queryset containing all build output ([Stock Item](../stock/stock.md)) objects associated with this build |
 | can_complete | Boolean that tells if the build can be completed. Means: All material allocated and all parts have been build. |
 | are_untracked_parts_allocated | Boolean that tells if all bom_items have allocated stock_items. |
 | creation_date | Date where the build has been created |
@@ -42,7 +47,8 @@ The following variables are accessed by build.variable
 | notes | Text notes |
 | parent | Reference to a parent build object if this is a sub build |
 | part | The [Part](./context_variables.md#part) to be built (from component BOM items) |
-| quantity | Build order quantity |
+| quantity | Build order quantity (total number of assembly outputs) |
+| completed | The number out outputs which have been completed |
 | reference | Build order reference (required, must be unique) |
 | required_parts | A query set with all parts that are required for the build |
 | responsible | Owner responsible for completing the build. This can be a user or a group. Depending on that further context variables differ |
@@ -59,19 +65,38 @@ The following variables are accessed by build.variable
 As usual items in a query sets can be selected by adding a .n to the set e.g. build.required_parts.0
 will result in the first part of the list. Each query set has again its own context variables.
 
+#### line_items
+
+The `line_items` variable is a list of all build line items associated with the selected build. The following attributes are available for each individual line_item instance:
+
+| Attribute | Description |
+| --- | --- |
+| .build | A reference back to the parent build order |
+| .bom_item | A reference to the BOMItem which defines this line item |
+| .quantity | The required quantity which is to be allocated against this line item |
+| .part | A shortcut for .bom_item.sub_part |
+| .allocations | A list of BuildItem objects which allocate stock items against this line item |
+| .allocated_quantity | The total stock quantity which has been allocated against this line |
+| .unallocated_quantity | The remaining quantity to allocate |
+| .is_fully_allocated | Boolean value, returns True if the line item has sufficient stock allocated against it |
+| .is_overallocated | Boolean value, returns True if the line item has more allocated stock than is required |
+
 #### bom_items
 
-| Variable | Description |
+| Attribute | Description |
 | --- | --- |
 | .reference | The reference designators of the components |
-| .quantity | The number of components |
+| .quantity | The number of components required to build |
+| .overage | The extra amount required to assembly |
+| .consumable | Boolean field, True if this is a "consumable" part which is not tracked through builds |
 | .sub_part | The part at this position |
 | .substitutes.all | A query set with all allowed substitutes for that part |
+| .note | Extra text field which can contain additional information |
 
 
 #### allocated_stock.all
 
-| Variable | Description |
+| Attribute | Description |
 | --- | --- |
 | .bom_item | The bom item where this part belongs to |
 | .stock_item | The allocated [StockItem](./context_variables.md#stockitem) |

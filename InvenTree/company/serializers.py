@@ -265,7 +265,8 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
             'pk',
             'barcode_hash',
             'packaging',
-            'pack_size',
+            'pack_quantity',
+            'pack_quantity_native',
             'part',
             'part_detail',
             'pretty_name',
@@ -327,15 +328,13 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
 
     pretty_name = serializers.CharField(read_only=True)
 
-    pack_size = serializers.FloatField(label=_('Pack Quantity'))
-
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
 
     manufacturer = serializers.CharField(read_only=True)
 
     MPN = serializers.CharField(read_only=True)
 
-    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
+    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', part_detail=False, read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 

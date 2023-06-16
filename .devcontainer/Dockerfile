@@ -4,6 +4,8 @@
 ARG VARIANT="3.10-bullseye"
 FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
 
+ARG WORKSPACE="/workspaces/InvenTree"
+
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
@@ -42,6 +44,6 @@ RUN pip install --disable-pip-version-check -U -r base_requirements.txt
 # preserve command history between container starts
 # Ref: https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
 # Folder will be created in 'postCreateCommand' in devcontainer.json as it's not preserved due to the bind mount
-RUN echo "export PROMPT_COMMAND='history -a' && export HISTFILE=/workspaces/InvenTree/dev/commandhistory/.bash_history" >> "/home/vscode/.bashrc"
+RUN echo "export PROMPT_COMMAND='history -a' && export HISTFILE=${WORKSPACE}/dev/commandhistory/.bash_history" >> "/home/vscode/.bashrc"
 
-WORKDIR /workspaces/InvenTree
+WORKDIR ${WORKSPACE}

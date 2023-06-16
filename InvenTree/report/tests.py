@@ -16,7 +16,7 @@ from PIL import Image
 import report.models as report_models
 from build.models import Build
 from common.models import InvenTreeSetting, InvenTreeUserSetting
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
 from stock.models import StockItem, StockItemAttachment
@@ -418,7 +418,7 @@ class BuildReportTest(ReportTest):
 
 
 class BOMReportTest(ReportTest):
-    """Unit test class fot the BillOfMaterialsReport model"""
+    """Unit test class for the BillOfMaterialsReport model"""
     model = report_models.BillOfMaterialsReport
 
     list_url = 'api-bom-report-list'

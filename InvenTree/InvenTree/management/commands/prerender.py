@@ -23,8 +23,8 @@ def render_file(file_name, source, target, locales, ctx):
 
         with open(target_file, 'w') as localised_file:
             with lang_over(locale):
-                renderd = render_to_string(os.path.join(source, file_name), ctx)
-                localised_file.write(renderd)
+                rendered = render_to_string(os.path.join(source, file_name), ctx)
+                localised_file.write(rendered)
 
 
 class Command(BaseCommand):

@@ -11,13 +11,24 @@ Custom labels can be generated using simple HTML templates, with support for QR-
 
 Simple (generic) label templates are supplied 'out of the box' with InvenTree - however support is provided for generation of extremely specific custom labels, to meet any particular requirement.
 
+## Label Types
+
+The following types of labels are available
+
+| Label Type | Description |
+| --- | --- |
+| [Part Labels](./labels/part_labels.md) | Print labels for individual parts |
+| [Stock Labels](./labels/stock_labels.md) | Print labels for individual stock items |
+| [Location Labels](./labels/location_labels.md) | Print labels for individual stock locations
+| [Build Labels](./labels/build_labels.md) | Print labels for individual build order line items |
+
 ## Label Templates
 
 Label templates are written using a mixture of [HTML](https://www.w3schools.com/html/) and [CSS](https://www.w3schools.com/css). [Weasyprint](https://weasyprint.org/) templates support a *subset* of HTML and CSS features. In addition to supporting HTML and CSS formatting, the label templates support the Django templating engine, allowing conditional formatting of the label data.
 
 A label template is a single `.html` file which is uploaded to the InvenTree server by the user.
 
-Below is a reasonably simple example of a label template which demostrates much of the available functionality. The template code shown below will produce the following label:
+Below is a reasonably simple example of a label template which demonstrates much of the available functionality. The template code shown below will produce the following label:
 
 {% with id="label_example", url="report/label_example.png", description="Example label" %}
 {% include 'img.html' %}
@@ -186,127 +197,6 @@ To extend this template in a custom uploaded label, simply extend as follows:
 {% block content %}
 <!-- HTML content goes here! -->
 {% endblock %}
-
-{% endraw %}
-```
-
-## Stock Item Labels
-
-Stock Item label templates are used to generate labels for individual Stock Items.
-
-### Creating Stock Item Label Templates
-
-Stock Item label templates are added (and edited) via the admin interface.
-
-### Printing Stock Item Labels
-
-Stock Item labels can be printed using the following approaches:
-
-To print a single stock item from the Stock Item detail view, select the *Print Label* option as shown below:
-
-{% with id='item_label_single', url='report/label_stock_print_single.png', description='Print single stock item label' %}
-{% include 'img.html' %}
-{% endwith %}
-
-To print multiple stock items from the Stock table view, select the *Print Labels* option as shown below:
-
-{% with id='item_label_multiple', url='report/label_stock_print_multiple.png', description='Print multiple stock item labels' %}
-{% include 'img.html' %}
-{% endwith %}
-
-### Context Data
-
-The following variables are made available to the StockItem label template:
-
-| Variable | Description |
-| -------- | ----------- |
-| item | The [StockItem](./context_variables.md#stockitem) object itself |
-| part | The [Part](./context_variables.md#part) object which is referenced by the [StockItem](./context_variables.md#stockitem) object |
-| name | The `name` field of the associated Part object |
-| ipn | The `IPN` field of the associated Part object |
-| revision | The `revision` field of the associated Part object |
-| quantity | The `quantity` field of the StockItem object |
-| serial | The `serial` field of the StockItem object |
-| uid | The `uid` field of the StockItem object |
-| tests | Dict object of TestResult data associated with the StockItem |
-| parameters | Dict object containing the parameters associated with the base Part |
-
-### URL-style QR code
-
-Stock Item labels support [QR code](./barcodes.md#qr-code) containing the stock item URL, which can be
-scanned and opened directly
-on a portable device using the camera or a QR code scanner. To generate a URL-style QR code for stock item in the [label HTML template](./labels.md#label-templates), add the
-following HTML tag:
-
-``` html
-{% raw %}
-<img class='custom_qr_class' src='{% qrcode qr_url %}'>
-{% endraw %}
-```
-
-Make sure to customize the `custom_qr_class` CSS class to define the position of the QR code
-on the label.
-
-## Stock Location Labels
-
-Stock Location label templates are used to generate labels for individual Stock Locations.
-
-### Creating Stock Location Label Templates
-
-Stock Location label templates are added (and edited) via the admin interface.
-
-### Printing Stock Location Labels
-
-To print a single label from the Stock Location detail view, select the *Print Label* option.
-
-### Context Data
-
-The following variables are made available to the StockLocation label template:
-
-| Variable | Description |
-| -------- | ----------- |
-| location | The [StockLocation](./context_variables.md#stocklocation) object itself |
-
-## Part Labels
-
-Part label templates are used to generate labels for individual Part instances.
-
-### Creating Part Label Templates
-
-Part label templates are added (and edited) via the admin interface.
-
-### Printing Part Labels
-
-Part label can be printed using the following approaches:
-
-To print a single part label from the Part detail view, select the *Print Label* option.
-
-To print multiple part labels, select multiple parts in the part table and select the *Print Labels* option.
-
-### Context Data
-
-The following context variables are made available to the Part label template:
-
-| Variable | Description |
-| -------- | ----------- |
-| part | The [Part](./context_variables.md#part) object |
-| category | The [Part Category](./context_variables.md#part-category) which contains the Part |
-| name | The name of the part |
-| description | The description text for the part |
-| IPN | Internal part number (IPN) for the part |
-| revision | Part revision code |
-| qr_data | String data which can be rendered to a QR code |
-| parameters | Map (Python dictionary) object containing the parameters associated with the part instance |
-
-#### Parameters
-
-The part parameters can be accessed by parameter name lookup in the template, as follows:
-
-```html
-{% raw %}
-
-Part: {{ part.name }}
-Length: {{ parameters.length }}
 
 {% endraw %}
 ```
