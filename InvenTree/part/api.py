@@ -990,6 +990,10 @@ class PartFilter(rest_filters.FilterSet):
 
     tags_slug = rest_filters.CharFilter(field_name='tags__slug', lookup_expr='iexact')
 
+    # Created date filters
+    created_before = rest_filters.DateFilter(label='Updated before', field_name='creation_date', lookup_expr='lte')
+    created_after = rest_filters.DateFilter(label='Updated after', field_name='creation_date', lookup_expr='gte')
+
 
 class PartMixin:
     """Mixin class for Part API endpoints"""
