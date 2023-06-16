@@ -565,11 +565,12 @@ def test_translations(c):
     help={
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
+        'parallel': 'Run tests in parallel',
         'tag': 'Specify which tests to run, by tag',
         'exclude': 'Specify which tests to exclude, by tag',
     }
 )
-def test(c, disable_pty=False, runtest='', report=False, tag='', exclude=''):
+def test(c, disable_pty=False, runtest='', parallel=False, report=False, tag='', exclude=''):
     """Run unit-tests for InvenTree codebase.
 
     To run only certain test, use the argument --runtest.
@@ -585,7 +586,10 @@ def test(c, disable_pty=False, runtest='', report=False, tag='', exclude=''):
 
     pty = not disable_pty
 
-    args = '--parallel'
+    args = ''
+
+    if parallel:
+        args += ' --parallel'
 
     if report:
         args += ' --slowreport'

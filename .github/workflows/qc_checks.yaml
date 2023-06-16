@@ -249,7 +249,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke test --parallel
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -294,6 +294,6 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke test --parallel
       - name: Data Export Test
         uses: ./.github/actions/migration
