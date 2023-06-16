@@ -60,19 +60,14 @@ function addHeaderAction(label, title, icon, options) {
         </div>`
     );
 
+    let table_name = `#table-${label}`;
+
     // Connect a callback to the table
+    $(table_name).on('load-success.bs.table', function(data) {
 
-    $(`#table-${label}`).on('load-success.bs.table', function(data) {
+        let options = $(table_name).bootstrapTable('getOptions');
 
-        let count = 0;
-
-        console.log(label, '->', data);
-
-        if (data.data && data.data.count) {
-            count = data.data.count;
-        } else {
-            count = $(`#table-${label}`).bootstrapTable('getData').length;
-        }
+        let count = options.totalRows;
 
         let badge = $(`#sidebar-badge-${label}`);
 
