@@ -3608,6 +3608,21 @@ class PartParameter(MetadataMixin, models.Model):
         blank=True,
     )
 
+    @property
+    def units(self):
+        """Return the units associated with the template"""
+        return self.template.units
+
+    @property
+    def name(self):
+        """Return the name of the template"""
+        return self.template.name
+
+    @property
+    def description(self):
+        """Return the description of the template"""
+        return self.template.description
+
     @classmethod
     def create(cls, part, template, data, save=False):
         """Custom save method for the PartParameter class"""
