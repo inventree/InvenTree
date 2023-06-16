@@ -61,10 +61,20 @@ function addHeaderAction(label, title, icon, options) {
     );
 
     // Connect a callback to the table
-    $(`#table-${label}`).on('load-success.bs.table', function() {
-        var count = $(`#table-${label}`).bootstrapTable('getData').length;
 
-        var badge = $(`#sidebar-badge-${label}`);
+    $(`#table-${label}`).on('load-success.bs.table', function(data) {
+
+        let count = 0;
+
+        console.log(label, '->', data);
+
+        if (data.data && data.data.count) {
+            count = data.data.count;
+        } else {
+            count = $(`#table-${label}`).bootstrapTable('getData').length;
+        }
+
+        let badge = $(`#sidebar-badge-${label}`);
 
         badge.html(count);
 
@@ -150,14 +160,13 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 {% endif %}
 
 {% if roles.stock.view %}
-
 {% if setting_stock_recent %}
 addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
 loadStockTable($('#table-recently-updated-stock'), {
     params: {
         part_detail: true,
         ordering: "-updated",
-        limit: {% settings_value "STOCK_RECENT_COUNT" user=request.user %},
+        updated_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),
     },
     name: 'recently-updated-stock',
 });

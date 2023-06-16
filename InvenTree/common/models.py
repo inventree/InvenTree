@@ -1796,13 +1796,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'STOCK_RECENT_COUNT': {
-            'name': _('Recent Stock Count'),
-            'description': _('Number of recent stock items to display on index page'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
-        },
-
         'HOMEPAGE_STOCK_LOW': {
             'name': _('Show low stock'),
             'description': _('Show low stock items on the homepage'),
