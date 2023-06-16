@@ -63,6 +63,20 @@ class TestParams(TestCase):
 
             self.assertEqual(len(p.metadata.keys()), 4)
 
+    def test_get_parameter(self):
+        """Test the Part.get_parameter method"""
+
+        prt = Part.objects.get(pk=3)
+
+        # Check that we can get a parameter by name
+        for name in ['Length', 'Width', 'Thickness']:
+            param = prt.get_parameter(name)
+            self.assertEqual(param.template.name, name)
+
+        # Check that an incorrect name returns None
+        param = prt.get_parameter('Not a parameter')
+        self.assertIsNone(param)
+
 
 class TestCategoryTemplates(TransactionTestCase):
     """Test class for PartCategoryParameterTemplate model"""

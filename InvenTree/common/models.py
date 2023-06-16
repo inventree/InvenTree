@@ -1467,6 +1467,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'STOCK_SHOW_INSTALLED_ITEMS': {
+            'name': _('Show Installed Stock Items'),
+            'description': _('Display installed stock items in stock tables'),
+            'default': False,
+            'validator': bool,
+        },
+
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _('Required pattern for generating Build Order reference field'),
