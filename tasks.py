@@ -589,7 +589,7 @@ def test(c, disable_pty=False, runtest='', parallel=False, report=False, tag='',
     args = ''
 
     if parallel:
-        args += ' --parallel'
+        args += ' --parallel 4'
 
     if report:
         args += ' --slowreport'
@@ -660,7 +660,7 @@ def coverage(c):
     manage(c, 'check')
 
     # Run coverage tests
-    c.run('coverage run {manage} test --parallel {apps}'.format(
+    c.run('coverage run {manage} test --parallel 4 {apps}'.format(
         manage=managePyPath(),
         apps=' '.join(apps())
     ))
