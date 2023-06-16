@@ -144,7 +144,15 @@ class CategoryTest(TestCase):
         self.assertEqual(self.electronics.partcount(), 3)
 
         self.assertEqual(self.mechanical.partcount(), 9)
+        self.assertEqual(self.mechanical.partcount(active=True), 9)
+
+        # Mark one part as inactive and retry
+        part = Part.objects.get(pk=1)
+        part.active = False
+        part.save()
+
         self.assertEqual(self.mechanical.partcount(active=True), 8)
+
         self.assertEqual(self.mechanical.partcount(False), 7)
 
         self.assertEqual(self.electronics.item_count, self.electronics.partcount())

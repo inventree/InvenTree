@@ -56,6 +56,7 @@ class PluginConfigAdmin(admin.ModelAdmin):
     list_filter = ['active']
     actions = [plugin_activate, plugin_deactivate, ]
     inlines = [PluginSettingInline, ]
+    exclude = ['metadata', ]
 
 
 class NotificationUserSettingAdmin(admin.ModelAdmin):

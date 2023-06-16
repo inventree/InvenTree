@@ -350,7 +350,10 @@ class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
 
 
 class PartTestTemplateList(ListCreateAPI):
-    """API endpoint for listing (and creating) a PartTestTemplate."""
+    """API endpoint for listing (and creating) a PartTestTemplate.
+
+    TODO: Add filterset class for this view
+    """
 
     queryset = PartTestTemplate.objects.all()
     serializer_class = part_serializers.PartTestTemplateSerializer
@@ -945,6 +948,28 @@ class PartFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(last_stocktake=None)
 
+    stock_to_build = rest_filters.BooleanFilter(label='Required for Build Order', method='filter_stock_to_build')
+
+    def filter_stock_to_build(self, queryset, name, value):
+        """Filter the queryset based on whether part stock is required for a pending BuildOrder"""
+
+        if str2bool(value):
+            # Return parts which are required for a build order, but have not yet been allocated
+            return queryset.filter(required_for_build_orders__gt=F('allocated_to_build_orders'))
+        else:
+            # Return parts which are not required for a build order, or have already been allocated
+            return queryset.filter(required_for_build_orders__lte=F('allocated_to_build_orders'))
+
+    depleted_stock = rest_filters.BooleanFilter(label='Depleted Stock', method='filter_depleted_stock')
+
+    def filter_deployed_stock(self, queryset, name, value):
+        """Filter the queryset based on whether the part is fully depleted of stock"""
+
+        if str2bool(value):
+            return queryset.filter(Q(in_stock=0) & ~Q(stock_item_count=0))
+        else:
+            return queryset.exclude(Q(in_stock=0) & ~Q(stock_item_count=0))
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1180,32 +1205,6 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
                         queryset = queryset.filter(category=cat_id)
                 except (ValueError, PartCategory.DoesNotExist):
                     pass
-
-        # Filer by 'depleted_stock' status -> has no stock and stock items
-        depleted_stock = params.get('depleted_stock', None)
-
-        if depleted_stock is not None:
-            depleted_stock = str2bool(depleted_stock)
-
-            if depleted_stock:
-                queryset = queryset.filter(Q(in_stock=0) & ~Q(stock_item_count=0))
-
-        # Filter by "parts which need stock to complete build"
-        stock_to_build = params.get('stock_to_build', None)
-
-        # TODO: This is super expensive, database query wise...
-        # TODO: Need to figure out a cheaper way of making this filter query
-
-        if stock_to_build is not None:
-            # Get active builds
-            builds = Build.objects.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
-            # Store parts with builds needing stock
-            parts_needed_to_complete_builds = []
-            # Filter required parts
-            for build in builds:
-                parts_needed_to_complete_builds += [part.pk for part in build.required_parts_to_complete_build]
-
-            queryset = queryset.filter(pk__in=parts_needed_to_complete_builds)
 
         queryset = self.filter_parameteric_data(queryset)
 
