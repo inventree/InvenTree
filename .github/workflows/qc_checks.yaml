@@ -39,6 +39,7 @@ jobs:
             - 'InvenTree/**'
             - 'requirements.txt'
             - 'requirements-dev.txt'
+            - '.github/**'
 
   pep_style:
     name: Style [Python]
