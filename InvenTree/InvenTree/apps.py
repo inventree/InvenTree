@@ -11,6 +11,7 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError
 
+import InvenTree.conversion
 import InvenTree.tasks
 from InvenTree.config import get_setting
 from InvenTree.ready import canAppAccessDatabase, isInTestMode
@@ -29,8 +30,8 @@ class InvenTreeConfig(AppConfig):
         - Checking if migrations should be run
         - Cleaning up tasks
         - Starting regular tasks
-        - Updateing exchange rates
-        - Collecting notification mehods
+        - Updating exchange rates
+        - Collecting notification methods
         - Adding users set in the current environment
         """
         if canAppAccessDatabase() or settings.TESTING_ENV:
@@ -45,6 +46,9 @@ class InvenTreeConfig(AppConfig):
                 self.update_exchange_rates()
 
         self.collect_notification_methods()
+
+        # Ensure the unit registry is loaded
+        InvenTree.conversion.reload_unit_registry()
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
@@ -80,7 +84,7 @@ class InvenTreeConfig(AppConfig):
                 minutes=task.minutes,
             )
 
-        # Put at least one task onto the backround worker stack,
+        # Put at least one task onto the background worker stack,
         # which will be processed as soon as the worker comes online
         InvenTree.tasks.offload_task(
             InvenTree.tasks.heartbeat,
@@ -122,19 +126,22 @@ class InvenTreeConfig(AppConfig):
         update = False
 
         try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
 
-            last_update = backend.last_update
+            if backend.exists():
+                backend = backend.first()
 
-            if last_update is None:
-                # Never been updated
-                logger.info("Exchange backend has never been updated")
-                update = True
+                last_update = backend.last_update
 
-            # Backend currency has changed?
-            if base_currency != backend.base_currency:
-                logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
-                update = True
+                if last_update is None:
+                    # Never been updated
+                    logger.info("Exchange backend has never been updated")
+                    update = True
+
+                # Backend currency has changed?
+                if base_currency != backend.base_currency:
+                    logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
+                    update = True
 
         except (ExchangeBackend.DoesNotExist):
             logger.info("Exchange backend not found - updating")

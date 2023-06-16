@@ -12,7 +12,6 @@ from datetime import datetime, timedelta
 from typing import Callable, List
 
 from django.conf import settings
-from django.core import mail as django_mail
 from django.core.exceptions import AppRegistryNotReady
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
@@ -167,6 +166,7 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
     If workers are not running or force_sync flag
     is set then the task is ran synchronously.
     """
+
     try:
         import importlib
 
@@ -186,6 +186,8 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
             task.run()
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not started - Function not found")
+        except Exception as exc:
+            raise_warning(f"WARNING: '{taskname}' not started due to {type(exc)}")
     else:
 
         if callable(taskname):
@@ -249,7 +251,7 @@ class ScheduledTask:
 
 
 class TaskRegister:
-    """Registery for periodicall tasks."""
+    """Registry for periodicall tasks."""
     task_list: List[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
@@ -495,7 +497,7 @@ def check_for_updates():
 def update_exchange_rates():
     """Update currency exchange rates."""
     try:
-        from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+        from djmoney.contrib.exchange.models import Rate
 
         from common.settings import currency_code_default, currency_codes
         from InvenTree.exchange import InvenTreeExchange
@@ -507,22 +509,9 @@ def update_exchange_rates():
         # Other error?
         return
 
-    # Test to see if the database is ready yet
-    try:
-        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-    except ExchangeBackend.DoesNotExist:
-        pass
-    except Exception:  # pragma: no cover
-        # Some other error
-        logger.warning("update_exchange_rates: Database not ready")
-        return
-
     backend = InvenTreeExchange()
-    logger.info(f"Updating exchange rates from {backend.url}")
-
     base = currency_code_default()
-
-    logger.info(f"Using base currency '{base}'")
+    logger.info(f"Updating exchange rates using base currency '{base}'")
 
     try:
         backend.update_rates(base_currency=base)
@@ -558,27 +547,11 @@ def run_backup():
     record_task_success('run_backup')
 
 
-def send_email(subject, body, recipients, from_email=None, html_message=None):
-    """Send an email with the specified subject and body, to the specified recipients list."""
-    if type(recipients) == str:
-        recipients = [recipients]
-
-    offload_task(
-        django_mail.send_mail,
-        subject,
-        body,
-        from_email,
-        recipients,
-        fail_silently=False,
-        html_message=html_message
-    )
-
-
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(worker: bool = True):
     """Checks if migrations are needed.
 
-    If the setting auto_update is enabled we will start updateing.
+    If the setting auto_update is enabled we will start updating.
     """
     # Test if auto-updates are enabled
     if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):

@@ -4,7 +4,7 @@ from django.urls import reverse
 
 import part.models
 import stock.models
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 
 
 class TestInvenTreeBarcode(InvenTreeAPITestCase):
@@ -20,7 +20,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     ]
 
     def test_assign_errors(self):
-        """Test error cases for assigment action."""
+        """Test error cases for assignment action."""
 
         def test_assert_error(barcode_data):
             response = self.post(
@@ -44,7 +44,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         test_assert_error('{"part": 10004}')
 
     def assign(self, data, expected_code=None):
-        """Peform a 'barcode assign' request"""
+        """Perform a 'barcode assign' request"""
 
         return self.post(
             reverse('api-barcode-link'),

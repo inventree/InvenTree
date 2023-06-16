@@ -7,7 +7,7 @@ title: User Permissions
 InvenTree provides access control to various features and data, by assigning each *user* to one (or more) *groups* which have multiple *roles* assigned.
 
 !!! info "Superuser"
-    The superuser account is afforded *all* permissions across an InvenTree intallation. This includes the admin interface, web interface, and API.
+    The superuser account is afforded *all* permissions across an InvenTree installation. This includes the admin interface, web interface, and API.
 
 ### User
 

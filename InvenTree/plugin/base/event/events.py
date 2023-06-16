@@ -24,7 +24,7 @@ def trigger_event(event, *args, **kwargs):
         # Do nothing if plugins are not enabled
         return  # pragma: no cover
 
-    # Make sure the database can be accessed and is not beeing tested rn
+    # Make sure the database can be accessed and is not being tested rn
     if not canAppAccessDatabase() and not settings.PLUGIN_TESTING_EVENTS:
         logger.debug(f"Ignoring triggered event '{event}' - database not ready")
         return
@@ -79,7 +79,6 @@ def process_event(plugin_slug, event, *args, **kwargs):
     This function is run by the background worker process.
     This function may queue multiple functions to be handled by the background worker.
     """
-    logger.info(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
 
     plugin = registry.plugins.get(plugin_slug, None)
 
@@ -88,6 +87,7 @@ def process_event(plugin_slug, event, *args, **kwargs):
         return
 
     plugin.process_event(event, *args, **kwargs)
+    logger.debug(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
 
 
 def allow_table_event(table_name):
@@ -95,9 +95,13 @@ def allow_table_event(table_name):
 
     We *do not* want events to be fired for some tables!
     """
+    # Prevent table events during the data import process
     if isImportingData():
-        # Prevent table events during the data import process
         return False  # pragma: no cover
+
+    # Prevent table events when in testing mode (saves a lot of time)
+    if settings.TESTING:
+        return False
 
     table_name = table_name.lower().strip()
 

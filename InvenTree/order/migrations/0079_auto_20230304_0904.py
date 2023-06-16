@@ -108,11 +108,6 @@ def update_sales_order_price(apps, schema_editor):
         logger.info(f"'total_price' field could not be updated for {invalid_count} SalesOrder instances")
 
 
-def reverse(apps, schema_editor):
-    """Reverse migration (does nothing)"""
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -122,10 +117,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             update_purchase_order_price,
-            reverse_code=reverse
+            reverse_code=migrations.RunPython.noop
         ),
         migrations.RunPython(
             update_sales_order_price,
-            reverse_code=reverse,
+            reverse_code=migrations.RunPython.noop,
         )
     ]

@@ -4,9 +4,9 @@ from django.urls import reverse
 
 from rest_framework import status
 
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 
-from .models import Company, Contact, SupplierPart
+from .models import Company, Contact, ManufacturerPart, SupplierPart
 
 
 class CompanyTest(InvenTreeAPITestCase):
@@ -233,7 +233,10 @@ class ContactTest(InvenTreeAPITestCase):
     def test_edit(self):
         """Test that we can edit a Contact via the API"""
 
-        url = reverse('api-contact-detail', kwargs={'pk': 1})
+        # Get the first contact
+        contact = Contact.objects.first()
+        # Use this contact in the tests
+        url = reverse('api-contact-detail', kwargs={'pk': contact.pk})
 
         # Retrieve detail view
         data = self.get(url, expected_code=200).data
@@ -259,13 +262,16 @@ class ContactTest(InvenTreeAPITestCase):
             expected_code=200
         )
 
-        contact = Contact.objects.get(pk=1)
+        # Get the contact again
+        contact = Contact.objects.first()
         self.assertEqual(contact.role, 'x')
 
     def test_delete(self):
         """Tests that we can delete a Contact via the API"""
 
-        url = reverse('api-contact-detail', kwargs={'pk': 6})
+        # Get the last contact
+        contact = Contact.objects.first()
+        url = reverse('api-contact-detail', kwargs={'pk': contact.pk})
 
         # Delete (without required permissions)
         self.delete(url, expected_code=403)
@@ -462,7 +468,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
         self.assertIsNone(sp.availability_updated)
         self.assertEqual(sp.available, 0)
 
-        # Now, *update* the availabile quantity via the API
+        # Now, *update* the available quantity via the API
         self.patch(
             reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
             {
@@ -490,3 +496,63 @@ class SupplierPartTest(InvenTreeAPITestCase):
         sp = SupplierPart.objects.get(pk=response.data['pk'])
         self.assertEqual(sp.available, 999)
         self.assertIsNotNone(sp.availability_updated)
+
+
+class CompanyMetadataAPITest(InvenTreeAPITestCase):
+    """Unit tests for the various metadata endpoints of API."""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'company',
+        'contact',
+        'manufacturer_part',
+        'supplier_part',
+    ]
+
+    roles = [
+        'company.change',
+        'purchase_order.change',
+        'part.change',
+    ]
+
+    def metatester(self, apikey, model):
+        """Generic tester"""
+
+        modeldata = model.objects.first()
+
+        # Useless test unless a model object is found
+        self.assertIsNotNone(modeldata)
+
+        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+
+        # Metadata is initially null
+        self.assertIsNone(modeldata.metadata)
+
+        numstr = f'12{len(apikey)}'
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    f'abc-{numstr}': f'xyz-{apikey}-{numstr}',
+                }
+            },
+            expected_code=200
+        )
+
+        # Refresh
+        modeldata.refresh_from_db()
+        self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
+
+    def test_metadata(self):
+        """Test all endpoints"""
+
+        for apikey, model in {
+            'api-manufacturer-part-metadata': ManufacturerPart,
+            'api-supplier-part-metadata': SupplierPart,
+            'api-company-metadata': Company,
+            'api-contact-metadata': Contact,
+        }.items():
+            self.metatester(apikey, model)

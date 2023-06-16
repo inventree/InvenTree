@@ -11,6 +11,13 @@ The ScheduleMixin class provides a plugin with the ability to call functions at 
 - Plugin member functions can be called
 - Global functions can be specified using dotted notation
 
+!!! tip "Enable Schedule Integration"
+    The *Enable Schedule Integration* option but be enabled, for scheduled plugin events to be activated.
+
+{% with id="schedule", url="plugin/enable_schedule.png", description="Enable schedule integration" %}
+{% include 'img.html' %}
+{% endwith %}
+
 ### Example
 
 An example of a plugin which supports scheduled tasks:
@@ -50,3 +57,6 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
         secret_value = self.get_setting('SECRET')
         print(f"foo - SECRET = {secret_value})
 ```
+
+!!! info "More Info"
+    For more information on any of the methods described below, refer to the InvenTree source code. [A working example is available as a starting point](https://github.com/inventree/InvenTree/blob/master/InvenTree/plugin/samples/integration/scheduled_task.py).

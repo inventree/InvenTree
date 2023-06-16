@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 from plugin import InvenTreePlugin
 from plugin.mixins import ActionMixin
 
@@ -59,7 +59,7 @@ class ActionMixinTests(TestCase):
             "info": None,
         })
 
-        # overriden functions
+        # overridden functions
         self.assertEqual(self.action_plugin.perform_action(), self.ACTION_RETURN + 'action')
         self.assertEqual(self.action_plugin.get_result(), self.ACTION_RETURN + 'result')
         self.assertEqual(self.action_plugin.get_info(), self.ACTION_RETURN + 'info')

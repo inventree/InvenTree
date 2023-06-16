@@ -22,6 +22,7 @@ from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
+from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
@@ -64,6 +65,12 @@ BASE_DIR = config.get_base_dir()
 
 # Load configuration data
 CONFIG = config.load_config_data(set_cache=True)
+
+# Load VERSION data if it exists
+version_file = BASE_DIR.parent.joinpath('VERSION')
+if version_file.exists():
+    print('load version from file')
+    load_dotenv(version_file)
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -197,6 +204,7 @@ INSTALLED_APPS = [
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'plugin.apps.PluginAppConfig',
+    'generic',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Core django modules
@@ -227,6 +235,7 @@ INSTALLED_APPS = [
     'formtools',                            # Form wizard tools
     'dbbackup',                             # Backups - django-dbbackup
     'taggit',                               # Tagging
+    'flags',                                # Flagging - django-flags
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
@@ -481,7 +490,7 @@ if "postgres" in db_engine:  # pragma: no cover
     if "connect_timeout" not in db_options:
         # The DB server is in the same data center, it should not take very
         # long to connect to the database server
-        # # seconds, 2 is minium allowed by libpq
+        # # seconds, 2 is minimum allowed by libpq
         db_options["connect_timeout"] = int(
             get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 2)
         )
@@ -577,7 +586,7 @@ REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
 
-# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+# Default Sentry DSN (can be overridden if user wants custom sentry integration)
 SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', default_sentry_dsn())
 SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
 
@@ -599,7 +608,7 @@ cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=
 if cache_host:  # pragma: no cover
     # We are going to rely upon a possibly non-localhost for our cache,
     # so don't wait too long for the cache as nothing in the cache should be
-    # irreplacable.
+    # irreplaceable.
     _cache_options = {
         "CLIENT_CLASS": "django_redis.client.DefaultClient",
         "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
@@ -719,6 +728,7 @@ LANGUAGES = [
     ('es', _('Spanish')),
     ('es-mx', _('Spanish (Mexican)')),
     ('fa', _('Farsi / Persian')),
+    ('fi', _('Finnish')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('hu', _('Hungarian')),
@@ -764,6 +774,11 @@ CURRENCIES = get_setting(
     ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD'],
     typecast=list,
 )
+
+# Ensure that at least one currency value is available
+if len(CURRENCIES) == 0:  # pragma: no cover
+    logger.warning("No currencies selected: Defaulting to USD")
+    CURRENCIES = ['USD']
 
 # Maximum number of decimal places for currency rendering
 CURRENCY_DECIMAL_PLACES = 6
@@ -905,7 +920,7 @@ PLUGINS_ENABLED = get_boolean_setting('INVENTREE_PLUGINS_ENABLED', 'plugins_enab
 PLUGIN_FILE = config.get_plugin_file()
 
 # Plugin test settings
-PLUGIN_TESTING = get_setting('INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING)                     # Are plugins beeing tested?
+PLUGIN_TESTING = get_setting('INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING)                     # Are plugins being tested?
 PLUGIN_TESTING_SETUP = get_setting('INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False)     # Load plugins from setup hooks in testing?
 PLUGIN_TESTING_EVENTS = False                                                                           # Flag if events are tested right now
 PLUGIN_RETRY = get_setting('INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5)                                 # How often should plugin loading be tried?
@@ -931,3 +946,23 @@ if DEBUG:
 
 logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+
+# Flags
+FLAGS = {
+    'EXPERIMENTAL': [
+        {'condition': 'boolean', 'value': DEBUG},
+        {'condition': 'parameter', 'value': 'experimental='},
+    ],  # Should experimental features be turned on?
+    'NEXT_GEN': [
+        {'condition': 'parameter', 'value': 'ngen='},
+    ],  # Should next-gen features be turned on?
+}
+
+# Get custom flags from environment/yaml
+CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
+if CUSTOM_FLAGS:
+    if not isinstance(CUSTOM_FLAGS, dict):
+        logger.error(f"Invalid custom flags, must be valid dict: {CUSTOM_FLAGS}")
+    else:
+        logger.info(f"Custom flags: {CUSTOM_FLAGS}")
+        FLAGS.update(CUSTOM_FLAGS)

@@ -1,8 +1,8 @@
 ---
-title: Production Server
+title: Bare Metal Production Server
 ---
 
-## Production Server
+## Bare Metal Production Server
 
 !!! warning "Installation"
     Before continuing, ensure that the [installation steps](./install.md) have been completed.

@@ -1,7 +1,17 @@
 {% load i18n %}
 
 /* globals
+    constructForm,
+    getTableData,
+    enableDragAndDrop,
+    makeDeleteButton,
+    makeEditButton,
+    makeIcon,
+    reloadBootstrapTable,
+    renderDate,
     renderLink,
+    setupFilterList,
+    showApiError,
     wrapButtons,
 */
 

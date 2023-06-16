@@ -100,7 +100,7 @@
     salable: true
     purchaseable: false
     category: 7
-    active: False
+    active: True
     IPN: BOB
     revision: A2
     tree_id: 0
@@ -188,3 +188,9 @@
     level: 0
     lft: 0
     rght: 0
+
+- model: part.partrelated
+  pk: 1
+  fields:
+    part_1: 10003
+    part_2: 10004

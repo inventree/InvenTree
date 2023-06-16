@@ -36,7 +36,7 @@ If the *Create Initial Stock* setting is enabled, then an extra section is avail
 
 If this setting is enabled, the following elements are available in the form:
 
-{% with id="initial_stock", url="part/part_initial_stock.png", descript="Inital stock" %}
+{% with id="initial_stock", url="part/part_initial_stock.png", descript="Initial stock" %}
 {% include "img.html" %}
 {% endwith %}
 

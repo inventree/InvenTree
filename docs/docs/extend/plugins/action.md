@@ -15,4 +15,4 @@ POST {
 }
 ```
 
-For an example of a very simple action plugin, refer to `/InvenTree/plugin/builtin/action/simpleactionplugin.py`
+For an example of a very simple action plugin, refer to `/InvenTree/plugin/samples/integratoni/simpleactionplugin.py`

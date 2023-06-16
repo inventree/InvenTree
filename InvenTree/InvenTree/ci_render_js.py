@@ -1,12 +1,12 @@
 """Pull rendered copies of the templated.
 
-Only used for testing the js files! - This file is omited from coverage.
+Only used for testing the js files! - This file is omitted from coverage.
 """
 
 import os  # pragma: no cover
 import pathlib  # pragma: no cover
 
-from InvenTree.helpers import InvenTreeTestCase  # pragma: no cover
+from InvenTree.unit_test import InvenTreeTestCase  # pragma: no cover
 
 
 class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
@@ -17,7 +17,7 @@ class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
     """
 
     def download_file(self, filename, prefix):
-        """Function to `download`(copy) a file to a temporay firectory."""
+        """Function to `download`(copy) a file to a temporary firectory."""
         url = os.path.join(prefix, filename)
 
         response = self.client.get(url)

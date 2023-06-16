@@ -4,13 +4,13 @@
 import logging
 from datetime import timedelta
 
-from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import Success
 from django_q.monitor import Stat
 
+import InvenTree.email
 import InvenTree.ready
 
 logger = logging.getLogger("inventree")
@@ -38,38 +38,14 @@ def is_worker_running(**kwargs):
     )
 
     # If any results are returned, then the background worker is running!
-    return results.exists()
+    try:
+        result = results.exists()
+    except Exception:
+        # We may throw an exception if the database is not ready,
+        # or if the django_q table is not yet created (i.e. in CI testing)
+        result = False
 
-
-def is_email_configured():
-    """Check if email backend is configured.
-
-    NOTE: This does not check if the configuration is valid!
-    """
-    configured = True
-
-    if InvenTree.ready.isInTestMode():
-        return False
-
-    if InvenTree.ready.isImportingData():
-        return False
-
-    if not settings.EMAIL_HOST:
-        configured = False
-
-        # Display warning unless in test mode
-        if not settings.TESTING:  # pragma: no cover
-            logger.debug("EMAIL_HOST is not configured")
-
-    # Display warning unless in test mode
-    if not settings.TESTING:  # pragma: no cover
-        logger.debug("EMAIL_HOST_USER is not configured")
-
-    # Display warning unless in test mode
-    if not settings.TESTING:  # pragma: no cover
-        logger.debug("EMAIL_HOST_PASSWORD is not configured")
-
-    return configured
+    return result
 
 
 def check_system_health(**kwargs):
@@ -91,7 +67,7 @@ def check_system_health(**kwargs):
         result = False
         logger.warning(_("Background worker check failed"))
 
-    if not is_email_configured():  # pragma: no cover
+    if not InvenTree.email.is_email_configured():  # pragma: no cover
         result = False
         logger.warning(_("Email backend not configured"))
 

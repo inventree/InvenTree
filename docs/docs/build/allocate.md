@@ -17,17 +17,17 @@ Before continuing, it is important that the difference between *untracked* and *
 
 #### Untracked Stock
 
-*Untracked* stock items disappear from the database once they are "used". Once stock items for these parts are removed from the InvenTree database (e.g. used to create an assembly), the tracking information for these stock items disappears. The stock items no longer persist in the database.
+*Untracked* stock items are consumed against the build order, once the order is completed. When a build order is completed, any allocated stock items which are not [trackable](../part/trackable.md) are marked as *consumed*. These items remain in the InvenTree database, but are unavailable for use in any stock operations.
 
 !!! info "Example: Untracked Parts"
-    You require 15 x 47K resistors to make a batch of PCBs. You have a reel of 1,000 resistors which you allocate to the build. At completion of the build, the stock quantity is reduced to 985
+    You require 15 x 47K resistors to make a batch of PCBs. You have a reel of 1,000 resistors which you allocate to the build. At completion of the build, the available stock quantity is reduced to 985.
 
 #### Tracked Stock
 
-*Tracked* stock items, on the other hand, require special attention. These are parts which we wish to track indefinitely, even if they are "consumed" to create an assembly. *Tracked* stock items are not deleted as they are consumed. Instead, they are installed *within* the assembled unit
+[Tracked](../part/trackable.md) stock items, on the other hand, require special attention. These are parts which we wish to track against specific [build outputs](./output.md). When the build order is completed, *tracked* stock items are installed *within* the assembled build output.
 
 !!! info "Example: Tracked Parts"
-    The assembled PCB (in the example above) is a *trackable* part, and is given a serial number #001. The PCB is then used to make a larger assembly in a subsequent build order. At the completion of that build order, the tracked PCB is *installed* in the assembly, rather than being deleted from stock.
+    The assembled PCB (in the example above) is a *trackable* part, and is given a serial number #001. The PCB is then used to make a larger assembly in a subsequent build order. At the completion of that build order, the tracked PCB is *installed* in the assembly.
 
 #### BOM Considerations
 
@@ -82,9 +82,9 @@ Stock can be manually allocated to the build as required, using the *Allocate st
 
 Stock allocations can be manually adjusted or deleted using the action buttons available in each row of the allocation table.
 
-### Unallocate Stock
+### Deallocate Stock
 
-The *Unallocate Stock* button can be used to remove all allocations of untracked stock items against the build order.
+The *Deallocate Stock* button can be used to remove all allocations of untracked stock items against the build order.
 
 ## Automatic Stock Allocation
 
@@ -112,7 +112,7 @@ Set this option to *True* to signal that stock items can be used interchangeably
 
 **Substitute Stock**
 
-Set this option to *True* to allow substitute parts (as specifed by the BOM) to be allocated, if the primary parts are not available.
+Set this option to *True* to allow substitute parts (as specified by the BOM) to be allocated, if the primary parts are not available.
 
 ## Allocating Tracked Stock
 
@@ -131,16 +131,6 @@ Here we can see that the incomplete build outputs (serial numbers 15 and 14) now
 - Serial number 15 has been fully allocated, and can be completed
 - Serial number 14 has not been fully allocated, and cannot yet be completed
 
-## Completing a Build Output
-
-An individual build output is completed by selecting the "Complete build output" button associated with that build output:
-
-{% with id="build_output_complete", url="build/build_output_complete.png", description="Complete build output" %}
-{% include "img.html" %}
-{% endwith %}
-
-Here the user can select the destination location for the build output, as well as the stock item status.
-
 ### Allocated Stock
 
 *Tracked* stock items which are allocated against the selected build output will be removed from stock, and installed "inside" the output assembly. The allocated stock items will still exist in the InvenTree database, however will no longer be available for regular stock actions.
@@ -151,7 +141,7 @@ Here the user can select the destination location for the build output, as well 
 ## Completing a Build
 
 !!! warning "Complete Build Outputs"
-    A build order cannot be completed if there are outstanding build outputs. Ensure that all build outputs are completed first.
+    A build order cannot be completed if there are outstanding build outputs. Ensure that all [build outputs](./output.md) are completed first.
 
 Once all build outputs have been completed, the build order itself can be completed by selecting the *Complete Build* button:
 
@@ -161,4 +151,4 @@ Once all build outputs have been completed, the build order itself can be comple
 
 ### Allocated Stock
 
-All *untracked* stock items which are allocated against this build will be removed from stock.
+All *untracked* stock items which are allocated against this build will be removed from stock, and *consumed* by the build order. These consumed items can be later viewed in the [consumed stock tab](./build.md#consumed-stock).

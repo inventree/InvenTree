@@ -1,7 +1,7 @@
 {% extends "order/order_base.html" %}
 
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 {% load i18n %}
 {% load static %}
 
@@ -129,6 +129,7 @@
 {% endblock page_content %}
 
 {% block js_ready %}
+{% settings_value "PURCHASEORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
 
 {{ block.super }}
 
@@ -173,7 +174,7 @@
         filterkey: "postock"
     });
 
-{% if order.status == PurchaseOrderStatus.PENDING %}
+{% if order.is_open or allow_extra_editing %}
 $('#new-po-line').click(function() {
 
     createPurchaseOrderLineItem({{ order.pk }}, {
