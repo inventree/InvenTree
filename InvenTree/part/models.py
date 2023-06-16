@@ -41,6 +41,7 @@ import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
 import part.settings as part_settings
+import users.models as UserModels
 from build import models as BuildModels
 from common.models import InvenTreeSetting
 from common.settings import currency_code_default
