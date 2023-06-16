@@ -510,6 +510,15 @@ class StockFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(belongs_to=None)
 
+    has_installed_items = rest_filters.BooleanFilter(label='Has installed items', method='filter_has_installed')
+
+    def filter_has_installed(self, queryset, name, value):
+        """Filter stock items by "belongs_to" field being empty."""
+        if str2bool(value):
+            return queryset.filter(installed_items__gt=0)
+        else:
+            return queryset.filter(installed_items=0)
+
     sent_to_customer = rest_filters.BooleanFilter(label='Sent to customer', method='filter_sent_to_customer')
 
     def filter_sent_to_customer(self, queryset, name, value):
@@ -794,15 +803,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
-
-        # Also ensure that we pre-fecth all the related items
-        queryset = queryset.prefetch_related(
-            'part',
-            'part__category',
-            'location',
-            'test_results',
-            'tags',
-        )
 
         return queryset
 

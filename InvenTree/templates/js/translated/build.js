@@ -14,6 +14,7 @@
     FullCalendar,
     getFormFieldValue,
     getTableData,
+    global_settings,
     handleFormErrors,
     handleFormSuccess,
     imageHoverIcon,
@@ -64,7 +65,7 @@
 
 
 function buildFormFields() {
-    return {
+    let fields = {
         reference: {
             icon: 'fa-hashtag',
         },
@@ -76,6 +77,9 @@ function buildFormFields() {
         },
         title: {},
         quantity: {},
+        project_code: {
+            icon: 'fa-list',
+        },
         priority: {},
         parent: {
             filters: {
@@ -111,6 +115,12 @@ function buildFormFields() {
             icon: 'fa-users',
         },
     };
+
+    if (!global_settings.PROJECT_CODES_ENABLED) {
+        delete fields.project_code;
+    }
+
+    return fields;
 }
 
 /*
@@ -2021,6 +2031,18 @@ function loadBuildTable(table, options) {
                 switchable: true,
             },
             {
+                field: 'project_code',
+                title: '{% trans "Project Code" %}',
+                sortable: true,
+                switchable: global_settings.PROJECT_CODES_ENABLED,
+                visible: global_settings.PROJECT_CODES_ENABLED,
+                formatter: function(value, row) {
+                    if (row.project_code_detail) {
+                        return `<span title='${row.project_code_detail.description}'>${row.project_code_detail.code}</span>`;
+                    }
+                }
+            },
+            {
                 field: 'priority',
                 title: '{% trans "Priority" %}',
                 switchable: true,
@@ -2327,8 +2349,17 @@ function loadBuildLineTable(table, build_id, options={}) {
     let filters = loadTableFilters('buildlines', params);
     let filterTarget = options.filterTarget || '#filter-list-buildlines';
 
-    setupFilterList('buildlines', $(table), filterTarget);
-    // If data is passed directly to this function, do not request data from the server
+    // If data is passed directly to this function, do not setup filters
+    if (!options.data) {
+        setupFilterList('buildlines', $(table), filterTarget, {
+            labels: {
+                url: '{% url "api-buildline-label-list" %}',
+                key: 'line',
+            },
+            singular_name: '{% trans "build line" %}',
+            plural_name: '{% trans "build lines" %}',
+        });
+    }
 
     let table_options = {
         name: name,

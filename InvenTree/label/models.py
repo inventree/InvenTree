@@ -13,6 +13,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import build.models
 import part.models
 import stock.models
 from InvenTree.helpers import normalize, validateFilterString
@@ -55,6 +56,13 @@ def validate_stock_location_filters(filters):
 def validate_part_filters(filters):
     """Validate query filters for the PartLabel model"""
     filters = validateFilterString(filters, model=part.models.Part)
+
+    return filters
+
+
+def validate_build_line_filters(filters):
+    """Validate query filters for the BuildLine model"""
+    filters = validateFilterString(filters, model=build.models.BuildLine)
 
     return filters
 
@@ -329,4 +337,39 @@ class PartLabel(LabelTemplate):
             'qr_data': part.format_barcode(brief=True),
             'qr_url': request.build_absolute_uri(part.get_absolute_url()),
             'parameters': part.parameters_map(),
+        }
+
+
+class BuildLineLabel(LabelTemplate):
+    """Template for printing labels against BuildLine objects"""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the BuildLineLabel model"""
+        return reverse('api-buildline-label-list')
+
+    SUBDIR = 'buildline'
+
+    filters = models.CharField(
+        blank=True, max_length=250,
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
+        verbose_name=_('Filters'),
+        validators=[
+            validate_build_line_filters
+        ]
+    )
+
+    def get_context_data(self, request):
+        """Generate context data for each provided BuildLine object."""
+
+        build_line = self.object_to_print
+
+        return {
+            'build_line': build_line,
+            'build': build_line.build,
+            'bom_item': build_line.bom_item,
+            'part': build_line.bom_item.sub_part,
+            'quantity': build_line.quantity,
+            'allocated_quantity': build_line.allocated_quantity,
+            'allocations': build_line.allocations,
         }

@@ -133,14 +133,12 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
         model = StockItem
         fields = [
-            'allocated',
             'batch',
             'belongs_to',
             'build',
             'consumed_by',
             'customer',
             'delete_on_deplete',
-            'expired',
             'expiry_date',
             'is_building',
             'link',
@@ -158,19 +156,24 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'sales_order',
             'sales_order_reference',
             'serial',
-            'stale',
             'status',
             'status_text',
             'stocktake_date',
             'supplier_part',
             'supplier_part_detail',
-            'tracking_items',
             'barcode_hash',
             'updated',
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
             'tests',
+
+            # Annotated fields
+            'allocated',
+            'expired',
+            'installed_items',
+            'stale',
+            'tracking_items',
 
             'tags',
         ]
@@ -231,10 +234,17 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
 
         queryset = queryset.prefetch_related(
+            'location',
             'sales_order',
             'purchase_order',
             'part',
+            'part__category',
             'part__pricing_data',
+            'supplier_part',
+            'supplier_part__manufacturer_part',
+            'supplier_part__tags',
+            'test_results',
+            'tags',
         )
 
         # Annotate the queryset with the total allocated to sales orders
@@ -275,12 +285,17 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             )
         )
 
+        # Annotate with the total number of "installed items"
+        queryset = queryset.annotate(
+            installed_items=SubqueryCount('installed_parts')
+        )
+
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
     # Optional detail fields, which can be appended via query parameters
-    supplier_part_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
+    supplier_part_detail = SupplierPartSerializer(source='supplier_part', supplier_detail=False, manufacturer_detail=False, part_detail=False, many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
     tests = StockItemTestResultSerializer(source='test_results', many=True, read_only=True)
@@ -288,10 +303,11 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     quantity = InvenTreeDecimalField()
 
     # Annotated fields
-    tracking_items = serializers.IntegerField(read_only=True, required=False)
     allocated = serializers.FloatField(required=False)
     expired = serializers.BooleanField(required=False, read_only=True)
+    installed_items = serializers.IntegerField(read_only=True, required=False)
     stale = serializers.BooleanField(required=False, read_only=True)
+    tracking_items = serializers.IntegerField(read_only=True, required=False)
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),

@@ -181,7 +181,7 @@ def encode_svg_image(filename):
 
 
 @register.simple_tag()
-def part_image(part):
+def part_image(part: Part):
     """Return a fully-qualified path for a part image.
 
     Arguments:
@@ -198,6 +198,23 @@ def part_image(part):
         raise TypeError("part_image tag requires a Part instance")
 
     return uploaded_image(img)
+
+
+@register.simple_tag()
+def part_parameter(part: Part, parameter_name: str):
+    """Return a PartParameter object for the given part and parameter name
+
+    Arguments:
+        part: A Part object
+        parameter_name: The name of the parameter to retrieve
+
+    Returns:
+        A PartParameter object, or None if not found
+    """
+    if type(part) is Part:
+        return part.get_parameter(parameter_name)
+    else:
+        return None
 
 
 @register.simple_tag()
