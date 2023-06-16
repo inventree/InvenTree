@@ -118,7 +118,7 @@ addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
     params: {
         ordering: "-creation_date",
-        limit: {% settings_value "PART_RECENT_COUNT" user=request.user %},
+        created_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),
         {% if hide_inactive %}
         active: true,
         {% endif %}
