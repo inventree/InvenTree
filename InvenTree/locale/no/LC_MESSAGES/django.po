@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-14 08:35+0000\n"
-"PO-Revision-Date: 2023-06-15 00:10\n"
+"POT-Creation-Date: 2023-06-15 06:44+0000\n"
+"PO-Revision-Date: 2023-06-16 00:06\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -58,8 +58,8 @@ msgstr "Oppgi dato"
 #: part/models.py:3029 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
 #: stock/admin.py:121 stock/models.py:2160 stock/models.py:2268
-#: stock/serializers.py:398 stock/serializers.py:531 stock/serializers.py:612
-#: stock/serializers.py:851 stock/serializers.py:950 stock/serializers.py:1082
+#: stock/serializers.py:407 stock/serializers.py:540 stock/serializers.py:621
+#: stock/serializers.py:860 stock/serializers.py:959 stock/serializers.py:1091
 #: stock/templates/stock/stock_sidebar.html:25
 #: templates/js/translated/barcode.js:143 templates/js/translated/bom.js:1226
 #: templates/js/translated/company.js:1294 templates/js/translated/order.js:347
@@ -68,7 +68,7 @@ msgstr "Oppgi dato"
 #: templates/js/translated/return_order.js:760
 #: templates/js/translated/sales_order.js:1055
 #: templates/js/translated/sales_order.js:1959
-#: templates/js/translated/stock.js:1460 templates/js/translated/stock.js:2164
+#: templates/js/translated/stock.js:1460 templates/js/translated/stock.js:2184
 msgid "Notes"
 msgstr "Notater"
 
@@ -247,7 +247,7 @@ msgstr "Vedlegg"
 msgid "Select file to attach"
 msgstr "Velg fil å legge ved"
 
-#: InvenTree/models.py:493 common/models.py:2688 company/models.py:132
+#: InvenTree/models.py:493 common/models.py:2695 company/models.py:132
 #: company/models.py:306 company/models.py:584 order/models.py:240
 #: order/models.py:1097 order/models.py:1457 part/admin.py:39
 #: part/models.py:902 part/templates/part/part_scheduling.html:11
@@ -277,13 +277,13 @@ msgstr "Kommentar"
 msgid "File comment"
 msgstr "Kommentar til fil"
 
-#: InvenTree/models.py:503 InvenTree/models.py:504 common/models.py:2147
-#: common/models.py:2148 common/models.py:2361 common/models.py:2362
-#: common/models.py:2618 common/models.py:2619 part/models.py:3037
+#: InvenTree/models.py:503 InvenTree/models.py:504 common/models.py:2154
+#: common/models.py:2155 common/models.py:2368 common/models.py:2369
+#: common/models.py:2625 common/models.py:2626 part/models.py:3037
 #: part/models.py:3125 part/models.py:3204 part/models.py:3224
-#: plugin/models.py:217 plugin/models.py:218
+#: plugin/models.py:218 plugin/models.py:219
 #: report/templates/report/inventree_test_report_base.html:105
-#: templates/js/translated/stock.js:2773
+#: templates/js/translated/stock.js:2853
 msgid "User"
 msgstr "Bruker"
 
@@ -324,9 +324,9 @@ msgstr "Duplikatnavn kan ikke eksistere under samme overordnede"
 msgid "Invalid choice"
 msgstr "Ugyldig valg"
 
-#: InvenTree/models.py:648 InvenTree/models.py:649 common/models.py:2347
+#: InvenTree/models.py:648 InvenTree/models.py:649 common/models.py:2354
 #: company/models.py:390 label/models.py:111 part/models.py:848
-#: part/models.py:3424 plugin/models.py:41 report/models.py:160
+#: part/models.py:3424 plugin/models.py:42 report/models.py:160
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
 #: templates/InvenTree/settings/plugin.html:78
@@ -336,7 +336,7 @@ msgstr "Ugyldig valg"
 #: templates/js/translated/company.js:871
 #: templates/js/translated/company.js:1071 templates/js/translated/part.js:1160
 #: templates/js/translated/part.js:1447 templates/js/translated/part.js:1583
-#: templates/js/translated/part.js:2699 templates/js/translated/stock.js:2464
+#: templates/js/translated/part.js:2699 templates/js/translated/stock.js:2544
 msgid "Name"
 msgstr "Navn"
 
@@ -369,8 +369,8 @@ msgstr "Navn"
 #: templates/js/translated/purchase_order.js:1990
 #: templates/js/translated/return_order.js:302
 #: templates/js/translated/sales_order.js:790
-#: templates/js/translated/stock.js:1439 templates/js/translated/stock.js:1817
-#: templates/js/translated/stock.js:2496 templates/js/translated/stock.js:2568
+#: templates/js/translated/stock.js:1439 templates/js/translated/stock.js:1837
+#: templates/js/translated/stock.js:2576 templates/js/translated/stock.js:2648
 msgid "Description"
 msgstr "Beskrivelse"
 
@@ -383,7 +383,7 @@ msgid "parent"
 msgstr "overkategori"
 
 #: InvenTree/models.py:671 InvenTree/models.py:672
-#: templates/js/translated/part.js:2744 templates/js/translated/stock.js:2505
+#: templates/js/translated/part.js:2744 templates/js/translated/stock.js:2585
 msgid "Path"
 msgstr "Sti"
 
@@ -745,7 +745,7 @@ msgstr "Skill ut fra overordnet artikkel"
 msgid "Split child item"
 msgstr "Skill ut fra underartikkel"
 
-#: InvenTree/status_codes.py:120 templates/js/translated/stock.js:2243
+#: InvenTree/status_codes.py:120 templates/js/translated/stock.js:2323
 msgid "Merged stock items"
 msgstr "Sammenslåtte lagervarer"
 
@@ -894,7 +894,7 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:105
 #: templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
-#: templates/js/translated/build.js:953 templates/js/translated/stock.js:2629
+#: templates/js/translated/build.js:953 templates/js/translated/stock.js:2709
 msgid "Build Order"
 msgstr "Build ordre"
 
@@ -963,7 +963,7 @@ msgstr "Build order som denne build er tildelt til"
 #: report/templates/report/inventree_po_report_base.html:27
 #: report/templates/report/inventree_return_order_report_base.html:24
 #: report/templates/report/inventree_so_report_base.html:27
-#: stock/serializers.py:201 stock/serializers.py:565
+#: stock/serializers.py:204 stock/serializers.py:574
 #: templates/InvenTree/search.html:82
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -990,9 +990,9 @@ msgstr "Build order som denne build er tildelt til"
 #: templates/js/translated/sales_order.js:1584
 #: templates/js/translated/sales_order.js:1782
 #: templates/js/translated/stock.js:643 templates/js/translated/stock.js:809
-#: templates/js/translated/stock.js:1021 templates/js/translated/stock.js:1773
-#: templates/js/translated/stock.js:2594 templates/js/translated/stock.js:2831
-#: templates/js/translated/stock.js:2968
+#: templates/js/translated/stock.js:1021 templates/js/translated/stock.js:1776
+#: templates/js/translated/stock.js:2674 templates/js/translated/stock.js:2911
+#: templates/js/translated/stock.js:3048
 msgid "Part"
 msgstr "Del"
 
@@ -1167,7 +1167,7 @@ msgstr "Prosjekt utdata samsvarer ikke Prosjekt Order"
 #: build/models.py:835 build/serializers.py:220 build/serializers.py:259
 #: build/serializers.py:819 order/models.py:444 order/serializers.py:379
 #: order/serializers.py:501 part/serializers.py:1099 part/serializers.py:1420
-#: stock/models.py:593 stock/models.py:1387 stock/serializers.py:371
+#: stock/models.py:593 stock/models.py:1387 stock/serializers.py:380
 msgid "Quantity must be greater than zero"
 msgstr "Mengden må være større enn null"
 
@@ -1181,7 +1181,7 @@ msgstr ""
 
 #: build/models.py:1274 build/models.py:1556 build/serializers.py:206
 #: build/serializers.py:244 build/templates/build/build_base.html:103
-#: build/templates/build/detail.html:34 common/models.py:2169
+#: build/templates/build/detail.html:34 common/models.py:2176
 #: order/models.py:1077 order/models.py:1649 order/serializers.py:1233
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:277
 #: part/forms.py:47 part/models.py:3016 part/models.py:3798
@@ -1193,7 +1193,7 @@ msgstr ""
 #: report/templates/report/inventree_so_report_base.html:29
 #: report/templates/report/inventree_test_report_base.html:90
 #: report/templates/report/inventree_test_report_base.html:170
-#: stock/admin.py:103 stock/serializers.py:362
+#: stock/admin.py:103 stock/serializers.py:371
 #: stock/templates/stock/item_base.html:288
 #: stock/templates/stock/item_base.html:296
 #: stock/templates/stock/item_base.html:343
@@ -1220,8 +1220,8 @@ msgstr ""
 #: templates/js/translated/sales_order.js:1684
 #: templates/js/translated/sales_order.js:1804
 #: templates/js/translated/stock.js:531 templates/js/translated/stock.js:669
-#: templates/js/translated/stock.js:840 templates/js/translated/stock.js:2758
-#: templates/js/translated/stock.js:2843
+#: templates/js/translated/stock.js:840 templates/js/translated/stock.js:2838
+#: templates/js/translated/stock.js:2923
 msgid "Quantity"
 msgstr "Antall"
 
@@ -1255,8 +1255,8 @@ msgid "Selected stock item does not match BOM line"
 msgstr ""
 
 #: build/models.py:1543 build/serializers.py:799 order/serializers.py:1059
-#: order/serializers.py:1080 stock/serializers.py:469 stock/serializers.py:782
-#: stock/serializers.py:908 stock/templates/stock/item_base.html:10
+#: order/serializers.py:1080 stock/serializers.py:478 stock/serializers.py:791
+#: stock/serializers.py:917 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:195
 #: templates/js/translated/build.js:1639
@@ -1267,7 +1267,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:1591
 #: templates/js/translated/sales_order.js:1678
 #: templates/js/translated/stock.js:644 templates/js/translated/stock.js:810
-#: templates/js/translated/stock.js:2714
+#: templates/js/translated/stock.js:2794
 msgid "Stock Item"
 msgstr "Lagervare"
 
@@ -1321,7 +1321,7 @@ msgid "Integer quantity required, as the bill of materials contains trackable pa
 msgstr "Heltallsverdi kreves, da stykklisten inneholder sporbare deler"
 
 #: build/serializers.py:284 order/serializers.py:514 order/serializers.py:1237
-#: stock/serializers.py:380 templates/js/translated/purchase_order.js:1123
+#: stock/serializers.py:389 templates/js/translated/purchase_order.js:1123
 #: templates/js/translated/stock.js:334 templates/js/translated/stock.js:532
 msgid "Serial Numbers"
 msgstr "Serienummer"
@@ -1338,7 +1338,7 @@ msgstr "Automatisk tildeling av serienummer"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Automatisk tildeling av nødvendige artikler med tilsvarende serienummer"
 
-#: build/serializers.py:334 stock/api.py:692
+#: build/serializers.py:334 stock/api.py:701
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Følgende serienummer finnes allerede eller er ugyldige"
 
@@ -1348,8 +1348,8 @@ msgstr "En liste over produksjonsartikler må oppgis"
 
 #: build/serializers.py:423 build/serializers.py:496 order/serializers.py:487
 #: order/serializers.py:606 order/serializers.py:1588 part/serializers.py:866
-#: stock/serializers.py:391 stock/serializers.py:526 stock/serializers.py:607
-#: stock/serializers.py:943 stock/serializers.py:1185
+#: stock/serializers.py:400 stock/serializers.py:535 stock/serializers.py:616
+#: stock/serializers.py:952 stock/serializers.py:1194
 #: stock/templates/stock/item_base.html:390
 #: templates/js/translated/barcode.js:530
 #: templates/js/translated/barcode.js:778 templates/js/translated/build.js:980
@@ -1361,8 +1361,8 @@ msgstr "En liste over produksjonsartikler må oppgis"
 #: templates/js/translated/sales_order.js:1613
 #: templates/js/translated/sales_order.js:1692
 #: templates/js/translated/stock.js:645 templates/js/translated/stock.js:811
-#: templates/js/translated/stock.js:1023 templates/js/translated/stock.js:1937
-#: templates/js/translated/stock.js:2608
+#: templates/js/translated/stock.js:1023 templates/js/translated/stock.js:1957
+#: templates/js/translated/stock.js:2688
 msgid "Location"
 msgstr "Plassering"
 
@@ -1395,8 +1395,8 @@ msgstr "Plassering for ferdige produksjonsartikler"
 #: templates/js/translated/purchase_order.js:1682
 #: templates/js/translated/return_order.js:319
 #: templates/js/translated/sales_order.js:807
-#: templates/js/translated/stock.js:1912 templates/js/translated/stock.js:2732
-#: templates/js/translated/stock.js:2859
+#: templates/js/translated/stock.js:1932 templates/js/translated/stock.js:2812
+#: templates/js/translated/stock.js:2939
 msgid "Status"
 msgstr "Status"
 
@@ -1496,7 +1496,7 @@ msgstr ""
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part må peke på den samme delen som produksjonsordren"
 
-#: build/serializers.py:805 stock/serializers.py:795
+#: build/serializers.py:805 stock/serializers.py:804
 msgid "Item must be in stock"
 msgstr "Artikkelen må være på lager"
 
@@ -1730,7 +1730,7 @@ msgstr "Fullførte byggeresultater"
 #: templates/js/translated/pricing.js:915
 #: templates/js/translated/sales_order.js:757
 #: templates/js/translated/sales_order.js:980
-#: templates/js/translated/stock.js:2661
+#: templates/js/translated/stock.js:2741
 msgid "Sales Order"
 msgstr "Salgsordre"
 
@@ -1787,8 +1787,8 @@ msgstr "Tildelte deler"
 #: templates/js/translated/build.js:1249
 #: templates/js/translated/model_renderers.js:212
 #: templates/js/translated/purchase_order.js:1244
-#: templates/js/translated/stock.js:1093 templates/js/translated/stock.js:1926
-#: templates/js/translated/stock.js:2866
+#: templates/js/translated/stock.js:1093 templates/js/translated/stock.js:1946
+#: templates/js/translated/stock.js:2946
 #: templates/js/translated/table_filters.js:259
 #: templates/js/translated/table_filters.js:350
 msgid "Batch"
@@ -2157,7 +2157,7 @@ msgstr "Tidsintervall for å se etter oppdateringer(sett til null for å skru av
 
 #: common/models.py:1028 common/models.py:1046 common/models.py:1053
 #: common/models.py:1064 common/models.py:1075 common/models.py:1299
-#: common/models.py:1323 common/models.py:1446 common/models.py:1688
+#: common/models.py:1323 common/models.py:1446 common/models.py:1695
 msgid "days"
 msgstr "dager"
 
@@ -2631,682 +2631,690 @@ msgid "Stock location default icon (empty means no icon)"
 msgstr "Lagerplassering standard ikon (tomt betyr ingen ikon)"
 
 #: common/models.py:1471
+msgid "Show Installed Stock Items"
+msgstr ""
+
+#: common/models.py:1472
+msgid "Display installed stock items in stock tables"
+msgstr ""
+
+#: common/models.py:1478
 msgid "Build Order Reference Pattern"
 msgstr "Produksjonsordre-referansemønster"
 
-#: common/models.py:1472
+#: common/models.py:1479
 msgid "Required pattern for generating Build Order reference field"
 msgstr "Nødvendig mønster for å generere Produksjonsordre-referansefeltet"
 
-#: common/models.py:1478
+#: common/models.py:1485
 msgid "Enable Return Orders"
 msgstr "Aktiver returordrer"
 
-#: common/models.py:1479
+#: common/models.py:1486
 msgid "Enable return order functionality in the user interface"
 msgstr "Aktiver returordrefunksjonalitet i brukergrensesnittet"
 
-#: common/models.py:1485
+#: common/models.py:1492
 msgid "Return Order Reference Pattern"
 msgstr "Returordre-referansemønster"
 
-#: common/models.py:1486
+#: common/models.py:1493
 msgid "Required pattern for generating Return Order reference field"
 msgstr "Påkrevd mønster for å generere returordrereferansefelt"
 
-#: common/models.py:1492
+#: common/models.py:1499
 msgid "Edit Completed Return Orders"
 msgstr "Rediger fullførte returordrer"
 
-#: common/models.py:1493
+#: common/models.py:1500
 msgid "Allow editing of return orders after they have been completed"
 msgstr "Tillat redigering av returordrer etter de er fullført"
 
-#: common/models.py:1499
+#: common/models.py:1506
 msgid "Sales Order Reference Pattern"
 msgstr "Salgsordre-referansemønster"
 
-#: common/models.py:1500
+#: common/models.py:1507
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "Påkrevd mønster for å generere salgsordrereferansefelt"
 
-#: common/models.py:1506
+#: common/models.py:1513
 msgid "Sales Order Default Shipment"
 msgstr "Salgsordre standard fraktmetode"
 
-#: common/models.py:1507
+#: common/models.py:1514
 msgid "Enable creation of default shipment with sales orders"
 msgstr "Aktiver opprettelse av standard forsendelse med salgsordrer"
 
-#: common/models.py:1513
+#: common/models.py:1520
 msgid "Edit Completed Sales Orders"
 msgstr "Rediger fullførte salgsordrer"
 
-#: common/models.py:1514
+#: common/models.py:1521
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Tillat redigering av salgsordrer etter de har blitt sendt eller fullført"
 
-#: common/models.py:1520
+#: common/models.py:1527
 msgid "Purchase Order Reference Pattern"
 msgstr "Referansemønster for innkjøpsordre"
 
-#: common/models.py:1521
+#: common/models.py:1528
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Obligatorisk mønster for generering av referansefelt for innkjøpsordre"
 
-#: common/models.py:1527
+#: common/models.py:1534
 msgid "Edit Completed Purchase Orders"
 msgstr "Rediger fullførte innkjøpsordre"
 
-#: common/models.py:1528
+#: common/models.py:1535
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "Tillat redigering av innkjøpsordre etter at de har blitt sendt eller fullført"
 
-#: common/models.py:1535
+#: common/models.py:1542
 msgid "Enable password forgot"
 msgstr "Aktiver passord glemt"
 
-#: common/models.py:1536
+#: common/models.py:1543
 msgid "Enable password forgot function on the login pages"
 msgstr "Ativer funskjon for glemt passord på innloggingssidene"
 
-#: common/models.py:1542
+#: common/models.py:1549
 msgid "Enable registration"
 msgstr "Aktiver registrering"
 
-#: common/models.py:1543
+#: common/models.py:1550
 msgid "Enable self-registration for users on the login pages"
 msgstr "Aktiver egenregistrerting for brukerer på påloggingssidene"
 
-#: common/models.py:1549
+#: common/models.py:1556
 msgid "Enable SSO"
 msgstr "Aktiver SSO"
 
-#: common/models.py:1550
+#: common/models.py:1557
 msgid "Enable SSO on the login pages"
 msgstr "Aktiver SSO på innloggingssidene"
 
-#: common/models.py:1556
+#: common/models.py:1563
 msgid "Enable SSO registration"
 msgstr "Aktiver SSO-registrering"
 
-#: common/models.py:1557
+#: common/models.py:1564
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Aktiver selvregistrering via SSO for brukere på innloggingssiden"
 
-#: common/models.py:1563
+#: common/models.py:1570
 msgid "Email required"
 msgstr "E-postadresse kreves"
 
-#: common/models.py:1564
+#: common/models.py:1571
 msgid "Require user to supply mail on signup"
 msgstr "Krevt at brukere angir e-post ved registrering"
 
-#: common/models.py:1570
+#: common/models.py:1577
 msgid "Auto-fill SSO users"
 msgstr "Auto-utfyll SSO-brukere"
 
-#: common/models.py:1571
+#: common/models.py:1578
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Fyll automatisk ut brukeropplysninger fra SSO-kontodata"
 
-#: common/models.py:1577
+#: common/models.py:1584
 msgid "Mail twice"
 msgstr "E-post to ganger"
 
-#: common/models.py:1578
+#: common/models.py:1585
 msgid "On signup ask users twice for their mail"
 msgstr "Spør brukeren om e-post to ganger ved registrering"
 
-#: common/models.py:1584
+#: common/models.py:1591
 msgid "Password twice"
 msgstr "Passord to ganger"
 
-#: common/models.py:1585
+#: common/models.py:1592
 msgid "On signup ask users twice for their password"
 msgstr "Spør brukeren om passord to ganger ved registrering"
 
-#: common/models.py:1591
+#: common/models.py:1598
 msgid "Allowed domains"
 msgstr "Tillatte domener"
 
-#: common/models.py:1592
+#: common/models.py:1599
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "Begrens registrering til bestemte domener (kommaseparert, begynner med @)"
 
-#: common/models.py:1598
+#: common/models.py:1605
 msgid "Group on signup"
 msgstr "Gruppe ved registrering"
 
-#: common/models.py:1599
+#: common/models.py:1606
 msgid "Group to which new users are assigned on registration"
 msgstr "Gruppe nye brukere blir tilknyttet ved registrering"
 
-#: common/models.py:1605
+#: common/models.py:1612
 msgid "Enforce MFA"
 msgstr "Krev MFA"
 
-#: common/models.py:1606
+#: common/models.py:1613
 msgid "Users must use multifactor security."
 msgstr "Brukere må bruke flerfaktorsikkerhet."
 
-#: common/models.py:1612
+#: common/models.py:1619
 msgid "Check plugins on startup"
 msgstr "Sjekk utvidelser ved oppstart"
 
-#: common/models.py:1613
+#: common/models.py:1620
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Sjekk at alle utvidelser er installert ved oppstart - aktiver i containermiljøer"
 
-#: common/models.py:1621
+#: common/models.py:1628
 msgid "Enable URL integration"
 msgstr "Aktiver URL-integrasjon"
 
-#: common/models.py:1622
+#: common/models.py:1629
 msgid "Enable plugins to add URL routes"
 msgstr "Tillat utvidelser å legge til URL-ruter"
 
-#: common/models.py:1629
+#: common/models.py:1636
 msgid "Enable navigation integration"
 msgstr "Aktiver navigasjonsintegrasjon"
 
-#: common/models.py:1630
+#: common/models.py:1637
 msgid "Enable plugins to integrate into navigation"
 msgstr "Tillat utvidelser å integrere mot navigasjon"
 
-#: common/models.py:1637
+#: common/models.py:1644
 msgid "Enable app integration"
 msgstr "Aktiver app-integrasjon"
 
-#: common/models.py:1638
+#: common/models.py:1645
 msgid "Enable plugins to add apps"
 msgstr "Tillat utvidelser å legge til apper"
 
-#: common/models.py:1645
+#: common/models.py:1652
 msgid "Enable schedule integration"
 msgstr "Aktiver tidsplanintegrasjon"
 
-#: common/models.py:1646
+#: common/models.py:1653
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Tillat utvidelser å kjøre planlagte oppgaver"
 
-#: common/models.py:1653
+#: common/models.py:1660
 msgid "Enable event integration"
 msgstr "Aktiver hendelsesintegrasjon"
 
-#: common/models.py:1654
+#: common/models.py:1661
 msgid "Enable plugins to respond to internal events"
 msgstr "Tillat utvidelser å reagere på interne hendelser"
 
-#: common/models.py:1661
+#: common/models.py:1668
 msgid "Enable project codes"
 msgstr "Aktiver prosjektkoder"
 
-#: common/models.py:1662
+#: common/models.py:1669
 msgid "Enable project codes for tracking projects"
 msgstr "Aktiver prosjektkoder for å spore prosjekter"
 
-#: common/models.py:1668
+#: common/models.py:1675
 msgid "Stocktake Functionality"
 msgstr "Varetellingsfunksjonalitet"
 
-#: common/models.py:1669
+#: common/models.py:1676
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
 msgstr "Aktiver varetellingsfunksjonalitet for å registrere lagernivåer og regne ut lagerverdi"
 
-#: common/models.py:1675
+#: common/models.py:1682
 msgid "Automatic Stocktake Period"
 msgstr "Automatisk varetellingsperiode"
 
-#: common/models.py:1676
+#: common/models.py:1683
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
 msgstr "Antall dager mellom automatisk varetellingsregistrering (sett til null for å deaktivere)"
 
-#: common/models.py:1685
+#: common/models.py:1692
 msgid "Report Deletion Interval"
 msgstr "Rapportslettingsintervall"
 
-#: common/models.py:1686
+#: common/models.py:1693
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr "Varetellingsrapporter vil slettes etter angitt antall dager"
 
-#: common/models.py:1703 common/models.py:2140
+#: common/models.py:1710 common/models.py:2147
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Innstillingsnøkkel (må være unik - ufølsom for store og små bokstaver"
 
-#: common/models.py:1722
+#: common/models.py:1729
 msgid "No Printer (Export to PDF)"
 msgstr "Ingen skriver (Eksporter til PDF)"
 
-#: common/models.py:1744
+#: common/models.py:1751
 msgid "Hide inactive parts"
 msgstr "Skjul inaktive elementer"
 
-#: common/models.py:1745
+#: common/models.py:1752
 msgid "Hide inactive parts in results displayed on the homepage"
 msgstr "Skjul inaktive deler i resultater som vises på hjemmesiden"
 
-#: common/models.py:1751
+#: common/models.py:1758
 msgid "Show subscribed parts"
 msgstr "Vis abonnerte deler"
 
-#: common/models.py:1752
+#: common/models.py:1759
 msgid "Show subscribed parts on the homepage"
 msgstr "Vis abonnerte deler på startsiden"
 
-#: common/models.py:1758
+#: common/models.py:1765
 msgid "Show subscribed categories"
 msgstr "Vis abonnerte kategorier"
 
-#: common/models.py:1759
+#: common/models.py:1766
 msgid "Show subscribed part categories on the homepage"
 msgstr "Vis abonnerte delkatekorier på startsiden"
 
-#: common/models.py:1765
+#: common/models.py:1772
 msgid "Show latest parts"
 msgstr "Vis nyeste deler"
 
-#: common/models.py:1766
+#: common/models.py:1773
 msgid "Show latest parts on the homepage"
 msgstr "Vis nyeste deler på startsiden"
 
-#: common/models.py:1772
+#: common/models.py:1779
 msgid "Recent Part Count"
 msgstr "Antall nye deler"
 
-#: common/models.py:1773
+#: common/models.py:1780
 msgid "Number of recent parts to display on index page"
 msgstr "Antall nye deler som skal vises på startsiden"
 
-#: common/models.py:1779
+#: common/models.py:1786
 msgid "Show unvalidated BOMs"
 msgstr "Vis uvaliderte stykklister"
 
-#: common/models.py:1780
+#: common/models.py:1787
 msgid "Show BOMs that await validation on the homepage"
 msgstr "Vis stykklister som venter på validering på startsiden"
 
-#: common/models.py:1786
+#: common/models.py:1793
 msgid "Show recent stock changes"
 msgstr "Vis nylige lagerendringer"
 
-#: common/models.py:1787
+#: common/models.py:1794
 msgid "Show recently changed stock items on the homepage"
 msgstr "Vis nylig endrede lagervarer på startsiden"
 
-#: common/models.py:1793
+#: common/models.py:1800
 msgid "Recent Stock Count"
 msgstr "Antall nylig lagerbeholdning"
 
-#: common/models.py:1794
+#: common/models.py:1801
 msgid "Number of recent stock items to display on index page"
 msgstr "Antall nylige lagervarer som skal vises på startsiden"
 
-#: common/models.py:1800
+#: common/models.py:1807
 msgid "Show low stock"
 msgstr "Vis lav lagerbeholdning"
 
-#: common/models.py:1801
+#: common/models.py:1808
 msgid "Show low stock items on the homepage"
 msgstr "Vis lave lagervarer på startsiden"
 
-#: common/models.py:1807
+#: common/models.py:1814
 msgid "Show depleted stock"
 msgstr "Vis tomme lagervarer"
 
-#: common/models.py:1808
+#: common/models.py:1815
 msgid "Show depleted stock items on the homepage"
 msgstr "Vis tom lagerbeholdning på startsiden"
 
-#: common/models.py:1814
+#: common/models.py:1821
 msgid "Show needed stock"
 msgstr "Vis nødvendig lagerbeholdning"
 
-#: common/models.py:1815
+#: common/models.py:1822
 msgid "Show stock items needed for builds on the homepage"
 msgstr "Vis lagervarer som trengs for produksjon på startsiden"
 
-#: common/models.py:1821
+#: common/models.py:1828
 msgid "Show expired stock"
 msgstr "Vis utløpt lagerbeholdning"
 
-#: common/models.py:1822
+#: common/models.py:1829
 msgid "Show expired stock items on the homepage"
 msgstr "Vis utløpte lagervarer på startsiden"
 
-#: common/models.py:1828
+#: common/models.py:1835
 msgid "Show stale stock"
 msgstr "Vis foreldet lagerbeholdning"
 
-#: common/models.py:1829
+#: common/models.py:1836
 msgid "Show stale stock items on the homepage"
 msgstr "Vis foreldet lagerbeholdning på startsiden"
 
-#: common/models.py:1835
+#: common/models.py:1842
 msgid "Show pending builds"
 msgstr "Vis ventende produksjoner"
 
-#: common/models.py:1836
+#: common/models.py:1843
 msgid "Show pending builds on the homepage"
 msgstr "Vi ventende produksjoner på startsiden"
 
-#: common/models.py:1842
+#: common/models.py:1849
 msgid "Show overdue builds"
 msgstr "Vis forfalte produksjoner"
 
-#: common/models.py:1843
+#: common/models.py:1850
 msgid "Show overdue builds on the homepage"
 msgstr "Vis forfalte produksjoner på startsiden"
 
-#: common/models.py:1849
+#: common/models.py:1856
 msgid "Show outstanding POs"
 msgstr "Vis utestående Innkjøpsordrer"
 
-#: common/models.py:1850
+#: common/models.py:1857
 msgid "Show outstanding POs on the homepage"
 msgstr "Vis utestående Innkjøpsordrer på startsiden"
 
-#: common/models.py:1856
+#: common/models.py:1863
 msgid "Show overdue POs"
 msgstr "Vis forfalte Innkjøpsordrer"
 
-#: common/models.py:1857
+#: common/models.py:1864
 msgid "Show overdue POs on the homepage"
 msgstr "Vis forfalte Innkjøpsordrer på startsiden"
 
-#: common/models.py:1863
+#: common/models.py:1870
 msgid "Show outstanding SOs"
 msgstr "Vis utestående Salgsordrer"
 
-#: common/models.py:1864
+#: common/models.py:1871
 msgid "Show outstanding SOs on the homepage"
 msgstr "Vis utestående Salgsordrer på startsiden"
 
-#: common/models.py:1870
+#: common/models.py:1877
 msgid "Show overdue SOs"
 msgstr "Vis forfalte SOer"
 
-#: common/models.py:1871
+#: common/models.py:1878
 msgid "Show overdue SOs on the homepage"
 msgstr "Vis forfalte SOer på startsiden"
 
-#: common/models.py:1877
+#: common/models.py:1884
 msgid "Show pending SO shipments"
 msgstr "Vis ventende SO-forsendelser"
 
-#: common/models.py:1878
+#: common/models.py:1885
 msgid "Show pending SO shipments on the homepage"
 msgstr "Vis ventende SO forsendelser på startsiden"
 
-#: common/models.py:1884
+#: common/models.py:1891
 msgid "Show News"
 msgstr "Vis Nyheter"
 
-#: common/models.py:1885
+#: common/models.py:1892
 msgid "Show news on the homepage"
 msgstr "Vis nyheter på startsiden"
 
-#: common/models.py:1891
+#: common/models.py:1898
 msgid "Inline label display"
 msgstr "Innebygd etikettvisning"
 
-#: common/models.py:1892
+#: common/models.py:1899
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr "Vis PDF-etiketter i nettleseren fremfor å lastes ned som en fil"
 
-#: common/models.py:1898
+#: common/models.py:1905
 msgid "Default label printer"
 msgstr "Standard etikettskriver"
 
-#: common/models.py:1899
+#: common/models.py:1906
 msgid "Configure which label printer should be selected by default"
 msgstr "Konfigurer hvilken etikettskriver som skal være valgt som standard"
 
-#: common/models.py:1905
+#: common/models.py:1912
 msgid "Inline report display"
 msgstr "Innebygd rapportvisning"
 
-#: common/models.py:1906
+#: common/models.py:1913
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr "Vis PDF-rapporter i nettleseren fremfor å lastes ned som en fil"
 
-#: common/models.py:1912
+#: common/models.py:1919
 msgid "Search Parts"
 msgstr "Søk i Deler"
 
-#: common/models.py:1913
+#: common/models.py:1920
 msgid "Display parts in search preview window"
 msgstr "Vis deler i forhåndsvsningsvinduet for søk"
 
-#: common/models.py:1919
+#: common/models.py:1926
 msgid "Search Supplier Parts"
 msgstr "Søk i Leverandørdeler"
 
-#: common/models.py:1920
+#: common/models.py:1927
 msgid "Display supplier parts in search preview window"
 msgstr "Vis leverandørdeler i forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1926
+#: common/models.py:1933
 msgid "Search Manufacturer Parts"
 msgstr "Søk i Produsentdeler"
 
-#: common/models.py:1927
+#: common/models.py:1934
 msgid "Display manufacturer parts in search preview window"
 msgstr "Vis produsentdeler i forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1933
+#: common/models.py:1940
 msgid "Hide Inactive Parts"
 msgstr "Skjul Inaktive Deler"
 
-#: common/models.py:1934
+#: common/models.py:1941
 msgid "Excluded inactive parts from search preview window"
 msgstr "Ekskluder inaktive deler fra forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1940
+#: common/models.py:1947
 msgid "Search Categories"
 msgstr "Søk i kategorier"
 
-#: common/models.py:1941
+#: common/models.py:1948
 msgid "Display part categories in search preview window"
 msgstr "Vis delkategorier i forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1947
+#: common/models.py:1954
 msgid "Search Stock"
 msgstr "Søk i lagerbeholdning"
 
-#: common/models.py:1948
+#: common/models.py:1955
 msgid "Display stock items in search preview window"
 msgstr "Vis lagervarer i forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1954
+#: common/models.py:1961
 msgid "Hide Unavailable Stock Items"
 msgstr "Skjul utilgjengelige Lagervarer"
 
-#: common/models.py:1955
+#: common/models.py:1962
 msgid "Exclude stock items which are not available from the search preview window"
 msgstr "Ekskluder lagervarer som ikke er tilgjengelige fra forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1961
+#: common/models.py:1968
 msgid "Search Locations"
 msgstr "Søk i Plasseringer"
 
-#: common/models.py:1962
+#: common/models.py:1969
 msgid "Display stock locations in search preview window"
 msgstr "Vis lagerplasseringer i forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1968
+#: common/models.py:1975
 msgid "Search Companies"
 msgstr "Søk i Firma"
 
-#: common/models.py:1969
+#: common/models.py:1976
 msgid "Display companies in search preview window"
 msgstr "Vis firma i forhåndsvsningsvinduet for søk"
 
-#: common/models.py:1975
+#: common/models.py:1982
 msgid "Search Build Orders"
 msgstr "Søk i Produksjonsordrer"
 
-#: common/models.py:1976
+#: common/models.py:1983
 msgid "Display build orders in search preview window"
 msgstr "Vis produksjonsordrer i forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1982
+#: common/models.py:1989
 msgid "Search Purchase Orders"
 msgstr "Søk i Innkjøpsordrer"
 
-#: common/models.py:1983
+#: common/models.py:1990
 msgid "Display purchase orders in search preview window"
 msgstr "Vis innkjøpsordrer i forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1989
+#: common/models.py:1996
 msgid "Exclude Inactive Purchase Orders"
 msgstr "Ekskluder inaktive Innkjøpsordrer"
 
-#: common/models.py:1990
+#: common/models.py:1997
 msgid "Exclude inactive purchase orders from search preview window"
 msgstr "Ekskluder inaktive innkjøpsordrer fra forhåndsvisningsvinduet for søk"
 
-#: common/models.py:1996
+#: common/models.py:2003
 msgid "Search Sales Orders"
 msgstr "Søk i Salgsordrer"
 
-#: common/models.py:1997
+#: common/models.py:2004
 msgid "Display sales orders in search preview window"
 msgstr "Vis salgsordrer i forhåndsvisningsvinduet for søk"
 
-#: common/models.py:2003
+#: common/models.py:2010
 msgid "Exclude Inactive Sales Orders"
 msgstr "Ekskluder Inaktive Salgsordrer"
 
-#: common/models.py:2004
+#: common/models.py:2011
 msgid "Exclude inactive sales orders from search preview window"
 msgstr "Ekskluder inaktive salgsordrer fra forhåndsvisningsvinduet for søk"
 
-#: common/models.py:2010
+#: common/models.py:2017
 msgid "Search Return Orders"
 msgstr "Søk i Returordrer"
 
-#: common/models.py:2011
+#: common/models.py:2018
 msgid "Display return orders in search preview window"
 msgstr "Vis returordrer i forhåndsvisningsvinduet for søk"
 
-#: common/models.py:2017
+#: common/models.py:2024
 msgid "Exclude Inactive Return Orders"
 msgstr "Ekskluder Inaktive Returordrer"
 
-#: common/models.py:2018
+#: common/models.py:2025
 msgid "Exclude inactive return orders from search preview window"
 msgstr "Ekskluder inaktive returordrer fra forhåndsvisningsvinduet for søk"
 
-#: common/models.py:2024
+#: common/models.py:2031
 msgid "Search Preview Results"
 msgstr "Forhåndsvisning av søkeresultater"
 
-#: common/models.py:2025
+#: common/models.py:2032
 msgid "Number of results to show in each section of the search preview window"
 msgstr "Antall resultater å vise i hver seksjon av søkeresultatsforhåndsvisningen"
 
-#: common/models.py:2031
+#: common/models.py:2038
 msgid "Regex Search"
 msgstr "Regex-søk"
 
-#: common/models.py:2032
+#: common/models.py:2039
 msgid "Enable regular expressions in search queries"
 msgstr "Aktiver regulære uttrykk i søkeord"
 
-#: common/models.py:2038
+#: common/models.py:2045
 msgid "Whole Word Search"
 msgstr "Helordsøk"
 
-#: common/models.py:2039
+#: common/models.py:2046
 msgid "Search queries return results for whole word matches"
 msgstr "Søk returnerer resultater for treff med hele ord"
 
-#: common/models.py:2045
+#: common/models.py:2052
 msgid "Show Quantity in Forms"
 msgstr "Vis antall i skjemaer"
 
-#: common/models.py:2046
+#: common/models.py:2053
 msgid "Display available part quantity in some forms"
 msgstr "Vis antall tilgjengelige deler i noen skjemaer"
 
-#: common/models.py:2052
+#: common/models.py:2059
 msgid "Escape Key Closes Forms"
 msgstr "Escape-knappen lukker skjemaer"
 
-#: common/models.py:2053
+#: common/models.py:2060
 msgid "Use the escape key to close modal forms"
 msgstr "Bruk Escape-knappen for å lukke modal-skjemaer"
 
-#: common/models.py:2059
+#: common/models.py:2066
 msgid "Fixed Navbar"
 msgstr "Fast navigasjonsbar"
 
-#: common/models.py:2060
+#: common/models.py:2067
 msgid "The navbar position is fixed to the top of the screen"
 msgstr "Navigasjonsbarens posisjon er fast på toppen av skjermen"
 
-#: common/models.py:2066
+#: common/models.py:2073
 msgid "Date Format"
 msgstr "Datoformat"
 
-#: common/models.py:2067
+#: common/models.py:2074
 msgid "Preferred format for displaying dates"
 msgstr "Foretrukket format for å vise datoer"
 
-#: common/models.py:2081 part/templates/part/detail.html:41
+#: common/models.py:2088 part/templates/part/detail.html:41
 msgid "Part Scheduling"
 msgstr "Delplanlegging"
 
-#: common/models.py:2082
+#: common/models.py:2089
 msgid "Display part scheduling information"
 msgstr "Vis delplanleggingsinformasjon"
 
-#: common/models.py:2088 part/templates/part/detail.html:62
+#: common/models.py:2095 part/templates/part/detail.html:62
 msgid "Part Stocktake"
 msgstr "Lagertelling for Del"
 
-#: common/models.py:2089
+#: common/models.py:2096
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
 msgstr "Vis lagertellingsinformasjon for del (om lagertellingsfunksjonalitet er aktivert)"
 
-#: common/models.py:2095
+#: common/models.py:2102
 msgid "Table String Length"
 msgstr "Tabellstrenglengde"
 
-#: common/models.py:2096
+#: common/models.py:2103
 msgid "Maximimum length limit for strings displayed in table views"
 msgstr "Maksimal lengdegrense for strenger vist i tabeller"
 
-#: common/models.py:2105
+#: common/models.py:2112
 msgid "Default part label template"
 msgstr ""
 
-#: common/models.py:2106
+#: common/models.py:2113
 msgid "The part label template to be automatically selected"
 msgstr ""
 
-#: common/models.py:2114
+#: common/models.py:2121
 msgid "Default stock item template"
 msgstr ""
 
-#: common/models.py:2115
+#: common/models.py:2122
 msgid "The stock item label template to be automatically selected"
 msgstr ""
 
-#: common/models.py:2123
+#: common/models.py:2130
 msgid "Default stock location label template"
 msgstr ""
 
-#: common/models.py:2124
+#: common/models.py:2131
 msgid "The stock location label template to be automatically selected"
 msgstr ""
 
-#: common/models.py:2170
+#: common/models.py:2177
 msgid "Price break quantity"
 msgstr "Antall for prisbrudd"
 
-#: common/models.py:2177 company/serializers.py:434 order/admin.py:43
+#: common/models.py:2184 company/serializers.py:434 order/admin.py:43
 #: order/models.py:1136 order/models.py:1943
 #: templates/js/translated/company.js:1433 templates/js/translated/part.js:1856
 #: templates/js/translated/pricing.js:621
@@ -3314,24 +3322,24 @@ msgstr "Antall for prisbrudd"
 msgid "Price"
 msgstr "Pris"
 
-#: common/models.py:2178
+#: common/models.py:2185
 msgid "Unit price at specified quantity"
 msgstr "Enhetspris på spesifisert antall"
 
-#: common/models.py:2338 common/models.py:2516
+#: common/models.py:2345 common/models.py:2523
 msgid "Endpoint"
 msgstr "Endepunkt"
 
-#: common/models.py:2339
+#: common/models.py:2346
 msgid "Endpoint at which this webhook is received"
 msgstr "Endepunktet hvor denne webhooken er mottatt"
 
-#: common/models.py:2348
+#: common/models.py:2355
 msgid "Name for this webhook"
 msgstr "Navn for webhooken"
 
-#: common/models.py:2353 part/admin.py:50 part/models.py:1024
-#: plugin/models.py:47 templates/js/translated/table_filters.js:105
+#: common/models.py:2360 part/admin.py:50 part/models.py:1024
+#: plugin/models.py:48 templates/js/translated/table_filters.js:105
 #: templates/js/translated/table_filters.js:189
 #: templates/js/translated/table_filters.js:434
 #: templates/js/translated/table_filters.js:450
@@ -3339,100 +3347,100 @@ msgstr "Navn for webhooken"
 msgid "Active"
 msgstr "Aktiv"
 
-#: common/models.py:2354
+#: common/models.py:2361
 msgid "Is this webhook active"
 msgstr "Er webhooken aktiv"
 
-#: common/models.py:2368
+#: common/models.py:2375
 msgid "Token"
 msgstr "Sjetong"
 
-#: common/models.py:2369
+#: common/models.py:2376
 msgid "Token for access"
 msgstr "Nøkkel for tilgang"
 
-#: common/models.py:2376
+#: common/models.py:2383
 msgid "Secret"
 msgstr "Hemmelig"
 
-#: common/models.py:2377
+#: common/models.py:2384
 msgid "Shared secret for HMAC"
 msgstr "Delt hemmlighet for HMAC"
 
-#: common/models.py:2483
+#: common/models.py:2490
 msgid "Message ID"
 msgstr "Melding ID"
 
-#: common/models.py:2484
+#: common/models.py:2491
 msgid "Unique identifier for this message"
 msgstr "Unik Id for denne meldingen"
 
-#: common/models.py:2492
+#: common/models.py:2499
 msgid "Host"
 msgstr "Vert"
 
-#: common/models.py:2493
+#: common/models.py:2500
 msgid "Host from which this message was received"
 msgstr "Verten denne meldingen ble mottatt fra"
 
-#: common/models.py:2500
+#: common/models.py:2507
 msgid "Header"
 msgstr "Tittel"
 
-#: common/models.py:2501
+#: common/models.py:2508
 msgid "Header of this message"
 msgstr "Overskrift for denne meldingen"
 
-#: common/models.py:2507
+#: common/models.py:2514
 msgid "Body"
 msgstr "Brødtekst"
 
-#: common/models.py:2508
+#: common/models.py:2515
 msgid "Body of this message"
 msgstr "Innholdet i meldingen"
 
-#: common/models.py:2517
+#: common/models.py:2524
 msgid "Endpoint on which this message was received"
 msgstr "Endepunktet meldingen ble mottatt fra"
 
-#: common/models.py:2522
+#: common/models.py:2529
 msgid "Worked on"
 msgstr "Arbeidet med"
 
-#: common/models.py:2523
+#: common/models.py:2530
 msgid "Was the work on this message finished?"
 msgstr "Var arbeidet med denne meldingen ferdig?"
 
-#: common/models.py:2677
+#: common/models.py:2684
 msgid "Id"
 msgstr "Id"
 
-#: common/models.py:2683 templates/js/translated/news.js:44
+#: common/models.py:2690 templates/js/translated/news.js:44
 msgid "Title"
 msgstr "Tittel"
 
-#: common/models.py:2693 templates/js/translated/news.js:60
+#: common/models.py:2700 templates/js/translated/news.js:60
 msgid "Published"
 msgstr "Publisert"
 
-#: common/models.py:2698 templates/InvenTree/settings/plugin_settings.html:32
+#: common/models.py:2705 templates/InvenTree/settings/plugin_settings.html:32
 #: templates/js/translated/news.js:56 templates/js/translated/plugin.js:106
 msgid "Author"
 msgstr "Forfatter"
 
-#: common/models.py:2703 templates/js/translated/news.js:52
+#: common/models.py:2710 templates/js/translated/news.js:52
 msgid "Summary"
 msgstr "Sammendrag"
 
-#: common/models.py:2708
+#: common/models.py:2715
 msgid "Read"
 msgstr "Les"
 
-#: common/models.py:2709
+#: common/models.py:2716
 msgid "Was this news item read?"
 msgstr "Er dette nyhetselementet lest?"
 
-#: common/models.py:2729 company/models.py:143 part/models.py:915
+#: common/models.py:2736 company/models.py:143 part/models.py:915
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report_base.html:35
@@ -3442,7 +3450,7 @@ msgstr "Er dette nyhetselementet lest?"
 msgid "Image"
 msgstr "Bilde"
 
-#: common/models.py:2730
+#: common/models.py:2737
 msgid "Image file"
 msgstr "Bildefil"
 
@@ -3603,7 +3611,7 @@ msgid "Company"
 msgstr "Firma"
 
 #: company/models.py:278 company/models.py:553 stock/models.py:675
-#: stock/serializers.py:200 stock/templates/stock/item_base.html:143
+#: stock/serializers.py:203 stock/templates/stock/item_base.html:143
 #: templates/js/translated/bom.js:621
 msgid "Base Part"
 msgstr "Basisdel"
@@ -3747,7 +3755,7 @@ msgstr "Leverandørens delbeskrivelse"
 #: report/templates/report/inventree_po_report_base.html:32
 #: report/templates/report/inventree_return_order_report_base.html:27
 #: report/templates/report/inventree_so_report_base.html:32
-#: stock/serializers.py:474
+#: stock/serializers.py:483
 msgid "Note"
 msgstr "Notat"
 
@@ -3763,7 +3771,7 @@ msgstr "Minimum betaling (f.eks. lageravgift på lager)"
 #: stock/admin.py:119 stock/models.py:701
 #: stock/templates/stock/item_base.html:241
 #: templates/js/translated/company.js:1256
-#: templates/js/translated/stock.js:2160
+#: templates/js/translated/stock.js:2180
 msgid "Packaging"
 msgstr "Emballasje"
 
@@ -3878,13 +3886,13 @@ msgstr "Slett bilde"
 #: company/templates/company/company_base.html:87 order/models.py:783
 #: order/models.py:1742 order/templates/order/return_order_base.html:132
 #: order/templates/order/sales_order_base.html:145 stock/models.py:720
-#: stock/models.py:721 stock/serializers.py:837
+#: stock/models.py:721 stock/serializers.py:846
 #: stock/templates/stock/item_base.html:401
 #: templates/email/overdue_sales_order.html:16
 #: templates/js/translated/company.js:494
 #: templates/js/translated/return_order.js:284
 #: templates/js/translated/sales_order.js:772
-#: templates/js/translated/stock.js:2696
+#: templates/js/translated/stock.js:2776
 #: templates/js/translated/table_filters.js:728
 msgid "Customer"
 msgstr "Kunde"
@@ -4160,7 +4168,7 @@ msgstr "Kontakter"
 #: stock/templates/stock/item_base.html:234
 #: templates/js/translated/company.js:1210
 #: templates/js/translated/purchase_order.js:747
-#: templates/js/translated/stock.js:2016
+#: templates/js/translated/stock.js:2036
 msgid "Supplier Part"
 msgstr "Leverandørdel"
 
@@ -4253,7 +4261,7 @@ msgstr "Oppdater Delens Tilgjengelighet"
 #: stock/templates/stock/location.html:194
 #: stock/templates/stock/location_sidebar.html:7
 #: templates/InvenTree/search.html:155 templates/js/translated/part.js:1034
-#: templates/js/translated/search.js:214 templates/js/translated/stock.js:2514
+#: templates/js/translated/search.js:214 templates/js/translated/stock.js:2594
 #: users/models.py:41
 msgid "Stock Items"
 msgstr "Lagervarer"
@@ -4393,7 +4401,7 @@ msgstr "Ingen samsvarende innkjøpsordre funnet"
 #: templates/js/translated/purchase_order.js:154
 #: templates/js/translated/purchase_order.js:748
 #: templates/js/translated/purchase_order.js:1637
-#: templates/js/translated/stock.js:1996 templates/js/translated/stock.js:2644
+#: templates/js/translated/stock.js:2016 templates/js/translated/stock.js:2724
 msgid "Purchase Order"
 msgstr "Innkjøpsordre"
 
@@ -4402,7 +4410,7 @@ msgstr "Innkjøpsordre"
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
 #: templates/js/translated/return_order.js:269
-#: templates/js/translated/stock.js:2678
+#: templates/js/translated/stock.js:2758
 msgid "Return Order"
 msgstr "Returordre"
 
@@ -4601,9 +4609,9 @@ msgstr "Mottatt"
 msgid "Number of items received"
 msgstr "Antall enheter mottatt"
 
-#: order/models.py:1215 stock/models.py:823 stock/serializers.py:304
+#: order/models.py:1215 stock/models.py:823 stock/serializers.py:313
 #: stock/templates/stock/item_base.html:184
-#: templates/js/translated/stock.js:2047
+#: templates/js/translated/stock.js:2067
 msgid "Purchase Price"
 msgstr "Innkjøpspris"
 
@@ -5348,7 +5356,7 @@ msgstr ""
 
 #: part/admin.py:36 part/models.py:890 part/templates/part/part_base.html:271
 #: templates/js/translated/part.js:1200 templates/js/translated/part.js:2233
-#: templates/js/translated/stock.js:1795
+#: templates/js/translated/stock.js:1815
 msgid "IPN"
 msgstr ""
 
@@ -5528,7 +5536,7 @@ msgstr ""
 msgid "Default location for parts in this category"
 msgstr ""
 
-#: part/models.py:134 stock/models.py:124 templates/js/translated/stock.js:2520
+#: part/models.py:134 stock/models.py:124 templates/js/translated/stock.js:2600
 #: templates/js/translated/table_filters.js:209
 #: templates/js/translated/table_filters.js:229
 msgid "Structural"
@@ -5870,7 +5878,7 @@ msgstr "Total tilgjengelig lagerbeholdning på tidspunkt for varetelling"
 #: templates/js/translated/part.js:1059 templates/js/translated/pricing.js:812
 #: templates/js/translated/pricing.js:936
 #: templates/js/translated/purchase_order.js:1691
-#: templates/js/translated/stock.js:2558
+#: templates/js/translated/stock.js:2638
 msgid "Date"
 msgstr "Dato"
 
@@ -6189,7 +6197,7 @@ msgstr "Del-forhold kan ikke opprettes mellom en del og seg selv"
 msgid "Duplicate relationship already exists"
 msgstr "Duplikatforhold eksisterer allerede"
 
-#: part/serializers.py:152 part/serializers.py:175 stock/serializers.py:309
+#: part/serializers.py:152 part/serializers.py:175 stock/serializers.py:318
 msgid "Purchase currency of this stock item"
 msgstr "Innkjøpsvaluta for lagervaren"
 
@@ -6594,7 +6602,7 @@ msgstr "Legg til lagertellingsinformasjon"
 #: part/templates/part/detail.html:67 part/templates/part/part_sidebar.html:50
 #: stock/admin.py:130 templates/InvenTree/settings/part_stocktake.html:29
 #: templates/InvenTree/settings/sidebar.html:51
-#: templates/js/translated/stock.js:1952 users/models.py:39
+#: templates/js/translated/stock.js:1972 users/models.py:39
 msgid "Stocktake"
 msgstr "Lagertelling"
 
@@ -6960,7 +6968,7 @@ msgstr "Varianter"
 #: templates/InvenTree/settings/sidebar.html:49
 #: templates/js/translated/part.js:1216 templates/js/translated/part.js:2120
 #: templates/js/translated/part.js:2284 templates/js/translated/stock.js:1022
-#: templates/js/translated/stock.js:1829 templates/navbar.html:31
+#: templates/js/translated/stock.js:1849 templates/navbar.html:31
 msgid "Stock"
 msgstr "Lagerbeholdning"
 
@@ -6993,7 +7001,7 @@ msgstr "Oppdater delprising"
 #: stock/templates/stock/item_base.html:442
 #: templates/js/translated/company.js:1313
 #: templates/js/translated/company.js:1323
-#: templates/js/translated/stock.js:1982
+#: templates/js/translated/stock.js:2002
 msgid "Last Updated"
 msgstr "Sist oppdatert"
 
@@ -7228,43 +7236,43 @@ msgstr ""
 msgid "Open link"
 msgstr ""
 
-#: plugin/models.py:27
+#: plugin/models.py:28
 msgid "Plugin Configuration"
 msgstr ""
 
-#: plugin/models.py:28
+#: plugin/models.py:29
 msgid "Plugin Configurations"
 msgstr ""
 
-#: plugin/models.py:33
+#: plugin/models.py:34
 msgid "Key"
 msgstr ""
 
-#: plugin/models.py:34
+#: plugin/models.py:35
 msgid "Key of plugin"
 msgstr ""
 
-#: plugin/models.py:42
+#: plugin/models.py:43
 msgid "PluginName of the plugin"
 msgstr ""
 
-#: plugin/models.py:48
+#: plugin/models.py:49
 msgid "Is the plugin active"
 msgstr ""
 
-#: plugin/models.py:124
+#: plugin/models.py:125
 msgid "Sample plugin"
 msgstr ""
 
-#: plugin/models.py:133
+#: plugin/models.py:134
 msgid "Builtin Plugin"
 msgstr ""
 
-#: plugin/models.py:159 templates/InvenTree/settings/plugin_settings.html:9
+#: plugin/models.py:160 templates/InvenTree/settings/plugin_settings.html:9
 msgid "Plugin"
 msgstr ""
 
-#: plugin/models.py:210
+#: plugin/models.py:211
 msgid "Method"
 msgstr ""
 
@@ -7551,7 +7559,7 @@ msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:168
 #: stock/admin.py:104 templates/js/translated/stock.js:667
-#: templates/js/translated/stock.js:838 templates/js/translated/stock.js:2849
+#: templates/js/translated/stock.js:838 templates/js/translated/stock.js:2929
 msgid "Serial"
 msgstr ""
 
@@ -7619,7 +7627,7 @@ msgstr ""
 
 #: stock/admin.py:131 stock/models.py:789
 #: stock/templates/stock/item_base.html:429
-#: templates/js/translated/stock.js:1966
+#: templates/js/translated/stock.js:1986
 msgid "Expiry Date"
 msgstr ""
 
@@ -7627,23 +7635,23 @@ msgstr ""
 msgid "External Location"
 msgstr ""
 
-#: stock/api.py:604
+#: stock/api.py:613
 msgid "Quantity is required"
 msgstr ""
 
-#: stock/api.py:611
+#: stock/api.py:620
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:637
+#: stock/api.py:646
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:646
+#: stock/api.py:655
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:664
+#: stock/api.py:673
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -7672,7 +7680,7 @@ msgstr ""
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr ""
 
-#: stock/models.py:132 templates/js/translated/stock.js:2529
+#: stock/models.py:132 templates/js/translated/stock.js:2609
 #: templates/js/translated/table_filters.js:213
 msgid "External"
 msgstr ""
@@ -7689,7 +7697,7 @@ msgstr ""
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr ""
 
-#: stock/models.py:583 stock/serializers.py:219
+#: stock/models.py:583 stock/serializers.py:222
 msgid "Stock item cannot be created for virtual parts"
 msgstr ""
 
@@ -7823,7 +7831,7 @@ msgstr "Serienumre må være en liste over tall"
 msgid "Quantity does not match serial numbers"
 msgstr "Antallet stemmer ikke overens med serienumrene"
 
-#: stock/models.py:1403 stock/serializers.py:430
+#: stock/models.py:1403 stock/serializers.py:439
 msgid "Serial numbers already exist"
 msgstr "Seriernummer eksisterer allerede"
 
@@ -7851,7 +7859,7 @@ msgstr "Lagervare er for tiden i produksjon"
 msgid "Serialized stock cannot be merged"
 msgstr "Serialisert lagerbeholdning kan ikke slås sammen"
 
-#: stock/models.py:1496 stock/serializers.py:987
+#: stock/models.py:1496 stock/serializers.py:996
 msgid "Duplicate stock items"
 msgstr "Duplisert lagervare"
 
@@ -7907,128 +7915,128 @@ msgstr "Testnotater"
 msgid "Serial number is too large"
 msgstr "Serienummeret er for høyt"
 
-#: stock/serializers.py:211
+#: stock/serializers.py:214
 msgid "Use pack size when adding: the quantity defined is the number of packs"
 msgstr ""
 
-#: stock/serializers.py:306
+#: stock/serializers.py:315
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr ""
 
-#: stock/serializers.py:363
+#: stock/serializers.py:372
 msgid "Enter number of stock items to serialize"
 msgstr "Angi antall lagervarer som skal serialiseres"
 
-#: stock/serializers.py:375
+#: stock/serializers.py:384
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "Antall kan ikke overstige tilgjengelig lagerbeholdning ({q})"
 
-#: stock/serializers.py:381
+#: stock/serializers.py:390
 msgid "Enter serial numbers for new items"
 msgstr "Angi serienummer for nye artikler"
 
-#: stock/serializers.py:392 stock/serializers.py:944 stock/serializers.py:1186
+#: stock/serializers.py:401 stock/serializers.py:953 stock/serializers.py:1195
 msgid "Destination stock location"
 msgstr "Til Lagerplassering"
 
-#: stock/serializers.py:399
+#: stock/serializers.py:408
 msgid "Optional note field"
 msgstr "Valgfritt notatfelt"
 
-#: stock/serializers.py:409
+#: stock/serializers.py:418
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "Serienummer kan ikke tilordnes denne delen"
 
-#: stock/serializers.py:470
+#: stock/serializers.py:479
 msgid "Select stock item to install"
 msgstr "Velg lagervare å montere"
 
-#: stock/serializers.py:483
+#: stock/serializers.py:492
 msgid "Stock item is unavailable"
 msgstr "Lagervaren er utilgjengelig"
 
-#: stock/serializers.py:490
+#: stock/serializers.py:499
 msgid "Selected part is not in the Bill of Materials"
 msgstr "Valgt del er ikke i stykklisten"
 
-#: stock/serializers.py:527
+#: stock/serializers.py:536
 msgid "Destination location for uninstalled item"
 msgstr "Lagerplassering for den avinstallerte artikkelen"
 
-#: stock/serializers.py:532 stock/serializers.py:613
+#: stock/serializers.py:541 stock/serializers.py:622
 msgid "Add transaction note (optional)"
 msgstr "Legg til transaksjonsnotat (valgfritt)"
 
-#: stock/serializers.py:566
+#: stock/serializers.py:575
 msgid "Select part to convert stock item into"
 msgstr "Velg del å konvertere lagervare til"
 
-#: stock/serializers.py:577
+#: stock/serializers.py:586
 msgid "Selected part is not a valid option for conversion"
 msgstr "Valgt del er ikke et gyldig alternativ for konvertering"
 
-#: stock/serializers.py:608
+#: stock/serializers.py:617
 msgid "Destination location for returned item"
 msgstr "Lagerplassering for returnert artikkel"
 
-#: stock/serializers.py:799
+#: stock/serializers.py:808
 msgid "Part must be salable"
 msgstr "Delen må være salgbar"
 
-#: stock/serializers.py:803
+#: stock/serializers.py:812
 msgid "Item is allocated to a sales order"
 msgstr "Artikkelen er tildelt en salgsordre"
 
-#: stock/serializers.py:807
+#: stock/serializers.py:816
 msgid "Item is allocated to a build order"
 msgstr "Artikkelen er tildelt en produksjonsordre"
 
-#: stock/serializers.py:838
+#: stock/serializers.py:847
 msgid "Customer to assign stock items"
 msgstr "Kunde å tilordne lagervarer"
 
-#: stock/serializers.py:844
+#: stock/serializers.py:853
 msgid "Selected company is not a customer"
 msgstr ""
 
-#: stock/serializers.py:852
+#: stock/serializers.py:861
 msgid "Stock assignment notes"
 msgstr ""
 
-#: stock/serializers.py:862 stock/serializers.py:1093
+#: stock/serializers.py:871 stock/serializers.py:1102
 msgid "A list of stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:951
+#: stock/serializers.py:960
 msgid "Stock merging notes"
 msgstr ""
 
-#: stock/serializers.py:956
+#: stock/serializers.py:965
 msgid "Allow mismatched suppliers"
 msgstr ""
 
-#: stock/serializers.py:957
+#: stock/serializers.py:966
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr ""
 
-#: stock/serializers.py:962
+#: stock/serializers.py:971
 msgid "Allow mismatched status"
 msgstr ""
 
-#: stock/serializers.py:963
+#: stock/serializers.py:972
 msgid "Allow stock items with different status codes to be merged"
 msgstr ""
 
-#: stock/serializers.py:973
+#: stock/serializers.py:982
 msgid "At least two stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:1055
+#: stock/serializers.py:1064
 msgid "StockItem primary key value"
 msgstr ""
 
-#: stock/serializers.py:1083
+#: stock/serializers.py:1092
 msgid "Stock transaction notes"
 msgstr ""
 
@@ -8069,7 +8077,7 @@ msgstr ""
 msgid "Installed Stock Items"
 msgstr ""
 
-#: stock/templates/stock/item.html:152 templates/js/translated/stock.js:2996
+#: stock/templates/stock/item.html:152 templates/js/translated/stock.js:3076
 msgid "Install Stock Item"
 msgstr ""
 
@@ -8265,7 +8273,7 @@ msgid "No stocktake performed"
 msgstr "Ingen lagertelling utført"
 
 #: stock/templates/stock/item_base.html:503
-#: templates/js/translated/stock.js:1745
+#: templates/js/translated/stock.js:1748
 msgid "stock item"
 msgstr ""
 
@@ -8372,7 +8380,7 @@ msgid "New Location"
 msgstr "Ny plassering"
 
 #: stock/templates/stock/location.html:287
-#: templates/js/translated/stock.js:2318
+#: templates/js/translated/stock.js:2398
 msgid "stock location"
 msgstr ""
 
@@ -10175,7 +10183,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:2008 templates/js/translated/build.js:2383
 #: templates/js/translated/part.js:2208 templates/js/translated/part.js:2692
-#: templates/js/translated/stock.js:1759 templates/js/translated/stock.js:2458
+#: templates/js/translated/stock.js:1762 templates/js/translated/stock.js:2538
 msgid "Select"
 msgstr ""
 
@@ -10187,7 +10195,7 @@ msgstr ""
 msgid "Progress"
 msgstr ""
 
-#: templates/js/translated/build.js:2104 templates/js/translated/stock.js:2779
+#: templates/js/translated/build.js:2104 templates/js/translated/stock.js:2859
 msgid "No user information"
 msgstr ""
 
@@ -10994,7 +11002,7 @@ msgid "No category"
 msgstr ""
 
 #: templates/js/translated/part.js:2390 templates/js/translated/part.js:2611
-#: templates/js/translated/stock.js:2417
+#: templates/js/translated/stock.js:2497
 msgid "Display as list"
 msgstr ""
 
@@ -11022,7 +11030,7 @@ msgstr ""
 msgid "No subcategories found"
 msgstr ""
 
-#: templates/js/translated/part.js:2631 templates/js/translated/stock.js:2437
+#: templates/js/translated/part.js:2631 templates/js/translated/stock.js:2517
 msgid "Display as tree"
 msgstr ""
 
@@ -11942,172 +11950,176 @@ msgstr ""
 msgid "No stock location set"
 msgstr ""
 
-#: templates/js/translated/stock.js:1746
+#: templates/js/translated/stock.js:1749
 msgid "stock items"
 msgstr ""
 
-#: templates/js/translated/stock.js:1850
-msgid "Stock item is in production"
-msgstr ""
-
-#: templates/js/translated/stock.js:1855
-msgid "Stock item assigned to sales order"
-msgstr ""
-
-#: templates/js/translated/stock.js:1858
-msgid "Stock item assigned to customer"
-msgstr ""
-
-#: templates/js/translated/stock.js:1861
-msgid "Serialized stock item has been allocated"
-msgstr ""
-
-#: templates/js/translated/stock.js:1863
-msgid "Stock item has been fully allocated"
-msgstr ""
-
-#: templates/js/translated/stock.js:1865
-msgid "Stock item has been partially allocated"
-msgstr ""
-
-#: templates/js/translated/stock.js:1868
-msgid "Stock item has been installed in another item"
+#: templates/js/translated/stock.js:1792
+msgid "Load installed items"
 msgstr ""
 
 #: templates/js/translated/stock.js:1870
-msgid "Stock item has been consumed by a build order"
+msgid "Stock item is in production"
 msgstr ""
 
-#: templates/js/translated/stock.js:1874
-msgid "Stock item has expired"
+#: templates/js/translated/stock.js:1875
+msgid "Stock item assigned to sales order"
 msgstr ""
 
-#: templates/js/translated/stock.js:1876
-msgid "Stock item will expire soon"
+#: templates/js/translated/stock.js:1878
+msgid "Stock item assigned to customer"
 msgstr ""
 
 #: templates/js/translated/stock.js:1881
-msgid "Stock item has been rejected"
+msgid "Serialized stock item has been allocated"
 msgstr ""
 
 #: templates/js/translated/stock.js:1883
-msgid "Stock item is lost"
+msgid "Stock item has been fully allocated"
 msgstr ""
 
 #: templates/js/translated/stock.js:1885
+msgid "Stock item has been partially allocated"
+msgstr ""
+
+#: templates/js/translated/stock.js:1888
+msgid "Stock item has been installed in another item"
+msgstr ""
+
+#: templates/js/translated/stock.js:1890
+msgid "Stock item has been consumed by a build order"
+msgstr ""
+
+#: templates/js/translated/stock.js:1894
+msgid "Stock item has expired"
+msgstr ""
+
+#: templates/js/translated/stock.js:1896
+msgid "Stock item will expire soon"
+msgstr ""
+
+#: templates/js/translated/stock.js:1901
+msgid "Stock item has been rejected"
+msgstr ""
+
+#: templates/js/translated/stock.js:1903
+msgid "Stock item is lost"
+msgstr ""
+
+#: templates/js/translated/stock.js:1905
 msgid "Stock item is destroyed"
 msgstr ""
 
-#: templates/js/translated/stock.js:1889
+#: templates/js/translated/stock.js:1909
 #: templates/js/translated/table_filters.js:296
 msgid "Depleted"
 msgstr ""
 
-#: templates/js/translated/stock.js:2031
+#: templates/js/translated/stock.js:2051
 msgid "Supplier part not specified"
 msgstr ""
 
-#: templates/js/translated/stock.js:2078
+#: templates/js/translated/stock.js:2098
 msgid "Stock Value"
 msgstr ""
 
-#: templates/js/translated/stock.js:2170
+#: templates/js/translated/stock.js:2221
 msgid "No stock items matching query"
 msgstr ""
 
-#: templates/js/translated/stock.js:2319
+#: templates/js/translated/stock.js:2399
 msgid "stock locations"
 msgstr ""
 
-#: templates/js/translated/stock.js:2476
+#: templates/js/translated/stock.js:2556
 msgid "Load Subloactions"
 msgstr ""
 
-#: templates/js/translated/stock.js:2583
+#: templates/js/translated/stock.js:2663
 msgid "Details"
 msgstr ""
 
-#: templates/js/translated/stock.js:2587
+#: templates/js/translated/stock.js:2667
 msgid "No changes"
 msgstr ""
 
-#: templates/js/translated/stock.js:2599
+#: templates/js/translated/stock.js:2679
 msgid "Part information unavailable"
 msgstr ""
 
-#: templates/js/translated/stock.js:2621
+#: templates/js/translated/stock.js:2701
 msgid "Location no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2638
+#: templates/js/translated/stock.js:2718
 msgid "Build order no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2653
+#: templates/js/translated/stock.js:2733
 msgid "Purchase order no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2670
+#: templates/js/translated/stock.js:2750
 msgid "Sales Order no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2687
+#: templates/js/translated/stock.js:2767
 msgid "Return Order no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2706
+#: templates/js/translated/stock.js:2786
 msgid "Customer no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2724
+#: templates/js/translated/stock.js:2804
 msgid "Stock item no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2742
+#: templates/js/translated/stock.js:2822
 msgid "Added"
 msgstr ""
 
-#: templates/js/translated/stock.js:2750
+#: templates/js/translated/stock.js:2830
 msgid "Removed"
 msgstr ""
 
-#: templates/js/translated/stock.js:2826
+#: templates/js/translated/stock.js:2906
 msgid "No installed items"
 msgstr ""
 
-#: templates/js/translated/stock.js:2876 templates/js/translated/stock.js:2911
+#: templates/js/translated/stock.js:2956 templates/js/translated/stock.js:2991
 msgid "Uninstall Stock Item"
 msgstr ""
 
-#: templates/js/translated/stock.js:2929
+#: templates/js/translated/stock.js:3009
 msgid "Select stock item to uninstall"
 msgstr ""
 
-#: templates/js/translated/stock.js:2950
+#: templates/js/translated/stock.js:3030
 msgid "Install another stock item into this item"
 msgstr ""
 
-#: templates/js/translated/stock.js:2951
+#: templates/js/translated/stock.js:3031
 msgid "Stock items can only be installed if they meet the following criteria"
 msgstr ""
 
-#: templates/js/translated/stock.js:2953
+#: templates/js/translated/stock.js:3033
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
 msgstr ""
 
-#: templates/js/translated/stock.js:2954
+#: templates/js/translated/stock.js:3034
 msgid "The Stock Item is currently available in stock"
 msgstr ""
 
-#: templates/js/translated/stock.js:2955
+#: templates/js/translated/stock.js:3035
 msgid "The Stock Item is not already installed in another item"
 msgstr ""
 
-#: templates/js/translated/stock.js:2956
+#: templates/js/translated/stock.js:3036
 msgid "The Stock Item is tracked by either a batch code or serial number"
 msgstr ""
 
-#: templates/js/translated/stock.js:2969
+#: templates/js/translated/stock.js:3049
 msgid "Select part to install"
 msgstr ""
 
