@@ -21,7 +21,7 @@ from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
-from common.models import InvenTreeSetting
+import common.models as common_models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers_model import download_image_from_url
@@ -724,7 +724,7 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         if not url:
             return
 
-        if not InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL'):
+        if not common_models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL'):
             raise ValidationError(_("Downloading images from remote URL is not enabled"))
 
         try:

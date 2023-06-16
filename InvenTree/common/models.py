@@ -1467,6 +1467,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'STOCK_SHOW_INSTALLED_ITEMS': {
+            'name': _('Show Installed Stock Items'),
+            'description': _('Display installed stock items in stock tables'),
+            'default': False,
+            'validator': bool,
+        },
+
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _('Required pattern for generating Build Order reference field'),
@@ -1614,13 +1621,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': str(os.getenv('INVENTREE_DOCKER', False)).lower() in ['1', 'true'],
             'validator': bool,
             'requires_restart': True,
-        },
-
-        'PLUGIN_CHECK_SIGNATURES': {
-            'name': _('Check plugin signatures'),
-            'description': _('Check and show signatures for plugins'),
-            'default': False,
-            'validator': bool,
         },
 
         # Settings for plugin mixin features
