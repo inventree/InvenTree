@@ -309,6 +309,7 @@ class Address(models.Model):
         constraints = [
             UniqueConstraint(fields=['company'], condition=Q(primary=True), name='one_primary_per_company')
         ]
+        verbose_name_plural = "Addresses"
 
     @staticmethod
     def get_api_url():
@@ -345,8 +346,8 @@ class Address(models.Model):
                                    blank=True)
 
     postal_city = models.CharField(max_length=50,
-                                   verbose_name=_('City'),
-                                   help_text=_('Postal code city'),
+                                   verbose_name=_('City/Region'),
+                                   help_text=_('Postal code city/region'),
                                    blank=True)
 
     province = models.CharField(max_length=50,

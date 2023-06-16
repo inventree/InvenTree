@@ -178,7 +178,6 @@ function renderContact(data, parameters={}) {
 
 // Renderer for "Address" model
 function renderAddress(data, parameters={}) {
-    console.log(data)
     return renderModel(
         {
             text: [data.title, data.country, data.postal_code, data.postal_city, data.province, data.line1, data.line2].filter(Boolean).join(', '),

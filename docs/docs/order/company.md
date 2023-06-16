@@ -51,7 +51,7 @@ Addresses are composed differently across the world, and Inventree reflects this
 - Line 1: Main street address
 - Line 2: Extra street address line
 - Postal Code: Also known as ZIP code, this is normally a number 3-5 digits in length
-- City: The city tied to the postal code
+- City: The city/region tied to the postal code
 - Province: The larger region the address is located in. Also known as State in the US
 - Country: Country the address is located in, written in CAPS
 
