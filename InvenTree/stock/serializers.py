@@ -722,7 +722,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
             transaction_notes.append(
                 StockItemTracking(
                     item=item,
-                    tracking_type=InvenTree.status_codes.StockHistoryCode.EDITED,
+                    tracking_type=InvenTree.status_codes.StockHistoryCode.EDITED.value,
                     date=now,
                     deltas=deltas,
                     user=user,
