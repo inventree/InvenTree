@@ -34,8 +34,8 @@ To get "up and running" with a development environment, complete with a set of [
 
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
-docker compose run --rm inventree-dev-server invoke install
-docker compose run --rm inventree-dev-server invoke setup-test --dev
+docker compose run inventree-dev-server invoke install
+docker compose run inventree-dev-server invoke setup-test --dev
 docker compose up -d
 ```
 
@@ -68,7 +68,7 @@ If desired, the user may edit the environment variables, located in the `.env` f
 Perform the initial database setup by running the following command:
 
 ```bash
-docker compose run --rm inventree-dev-server invoke update
+docker compose run inventree-dev-server invoke update
 ```
 
 If this is the first time you are configuring the development server, this command will build a development version of the inventree docker image.
@@ -83,20 +83,12 @@ This command also performs the following steps:
 !!! info "Grab a coffee"
     This initial build process may take a few minutes!
 
-### Create Admin Account
-
-If you are creating the initial database, you need to create an admin (superuser) account for the database. Run the command below, and follow the prompts:
-
-```
-docker compose run  -rm inventree-dev-server invoke superuser
-```
-
 ### Import Demo Data
 
 To fill the database with a demo dataset, run the following command:
 
 ```
-docker compose run --rm inventree-dev-server invoke setup-test --dev
+docker compose run inventree-dev-server invoke setup-test --dev
 ```
 
 ### Start Docker Containers
@@ -105,6 +97,14 @@ Now that the database has been created, migrations applied, and you have created
 
 ```
 docker compose up -d
+```
+
+### Create Admin Account
+
+If you are creating the initial database, you need to create an admin (superuser) account for the database. Run the command below, and follow the prompts:
+
+```
+docker compose run inventree-dev-server invoke superuser
 ```
 
 This command launches the remaining containers:
