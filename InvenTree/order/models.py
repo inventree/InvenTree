@@ -32,7 +32,7 @@ import stock.models
 import users.models as UserModels
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
-from company.models import Company, Contact, SupplierPart
+from company.models import Address, Company, Contact, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
                               RoundingDecimalField)
@@ -269,6 +269,15 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
         blank=True, null=True,
         verbose_name=_('Contact'),
         help_text=_('Point of contact for this order'),
+        related_name='+',
+    )
+
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Address'),
+        help_text=_('Company address for this order'),
         related_name='+',
     )
 
