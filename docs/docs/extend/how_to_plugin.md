@@ -1,8 +1,9 @@
 ---
-title: How to plugin
+title: Developing Plugins
 ---
 
-## How to write a plugin
+## How to Develop a Plugin
+
 A short introductory guide for plugin beginners.
 
 ### Should it be a plugin?
@@ -17,7 +18,7 @@ If you add a lot of code (over ~1000 LOC) maybe split it into multiple plugins t
 Great. Now please read the [plugin documentation](./plugins.md) to get an overview of the architecture. It is rather short as a the (builtin) mixins come with extensive docstrings.
 
 ### Pick your building blocks
-Consider the usecase for your plugin and define the exact function of the plugin, maybe wrtie it down in a short readme. Then pick the mixins you need (they help reduce custom code and keep the system reliable if internal calls change).
+Consider the usecase for your plugin and define the exact function of the plugin, maybe write it down in a short readme. Then pick the mixins you need (they help reduce custom code and keep the system reliable if internal calls change).
 
 - Is it just a simple REST-endpoint that runs a function ([ActionMixin](./plugins/action.md)) or a parser for a custom barcode format ([BarcodeMixin](./plugins/barcode.md))?
 - How does the user interact with the plugin? Is it a UI separate from the main InvenTree UI ([UrlsMixin](./plugins/urls.md)), does it need multiple pages with navigation-links ([NavigationMixin](./plugins/navigation.md)).
@@ -52,7 +53,7 @@ from plugin.mixins import APICallMixin, SettingsMixin, ScheduleMixin, BarcodeMix
 
 
 !!! tip "Package-Discovery can be tricky"
-    Most problems with packaging stem from problems with dicovery. [This guide](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#automatic-discovery) by the PyPA contains a lot of information about discovery during packaging. Theses mechanisms generally apply to most discovery processes in InvenTree and the wider Django ecosystem.
+    Most problems with packaging stem from problems with discovery. [This guide](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#automatic-discovery) by the PyPA contains a lot of information about discovery during packaging. These mechanisms generally apply to most discovery processes in InvenTree and the wider Django ecosystem.
 
 The recommended way of distribution is as a [PEP 561](https://peps.python.org/pep-0561/) compliant package. If you can use the official Package Index (PyPi - [official website](https://pypi.org/)) as a registry.
 Please follow PyPAs official [packaging guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/) to ensure your package installs correctly suing InvenTrees install mechanisms.

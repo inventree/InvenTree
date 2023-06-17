@@ -40,13 +40,12 @@
 
 <link rel="stylesheet" href="{% get_color_theme_css user.get_username %}">
 
-
 <title>
-    {% inventree_title %} | {% block head_title %}{% endblock %}
+    {% inventree_title %} | {% block head_title %}{% endblock head_title %}
 </title>
 
 {% block extra_head %}
-{% endblock %}
+{% endblock extra_head %}
 </head>
 
 <body class='login-screen' style='background: url({% inventree_splash %}); background-size: cover;'>
@@ -59,13 +58,12 @@
 
     <div class='main body-wrapper login-screen d-flex'>
 
-
         <div class='login-container'>
         <div class="row">
             <div class='container-fluid'>
 
                 <div class='clearfix content-heading login-header d-flex flex-wrap'>
-                    <img class="pull-left" src="{% inventree_logo %}" width="60" height="60"/>
+                    <img class="pull-left" src="{% inventree_logo %}" alt='{% trans "InvenTree logo" %}' width="60" height="60"/>
                     {% include "spacer.html" %}
                     <span class='float-right'><h3>{% inventree_title %}</h3></span>
                 </div>
@@ -73,14 +71,14 @@
                 <div class='container-fluid'>
                     <hr>
                     {% block content %}
-                    {% endblock %}
+                    {% endblock content %}
                 </div>
         </div>
 
         </div>
 
         {% block extra_body %}
-        {% endblock %}
+        {% endblock extra_body %}
     </div>
 
 
@@ -97,7 +95,7 @@ $(document).ready(function () {
 
     {% if messages %}
     {% for message in messages %}
-    showMessage("{{ messsage }}");
+    showMessage("{{ message }}");
     {% endfor %}
     {% endif %}
 

@@ -7,6 +7,7 @@ import requests
 
 import part.models
 import stock.models
+from InvenTree.helpers import generateTestKey
 from plugin.helpers import (MixinNotImplementedError, render_template,
                             render_text)
 
@@ -20,6 +21,7 @@ class ValidationMixin:
 
     - Part names
     - Part IPN (internal part number) values
+    - Part parameter values
     - Serial numbers
     - Batch codes
 
@@ -149,6 +151,21 @@ class ValidationMixin:
         """
         return None
 
+    def validate_part_parameter(self, parameter, data):
+        """Validate a parameter value.
+
+        Arguments:
+            parameter: The parameter we are validating
+            data: The proposed parameter value
+
+        Returns:
+            None or True (refer to class docstring)
+
+        Raises:
+            ValidationError if the proposed parameter value is objectionable
+        """
+        pass
+
 
 class NavigationMixin:
     """Mixin that enables custom navigation links with the plugin."""
@@ -201,7 +218,7 @@ class APICallMixin:
 
     Steps to set up:
     1. Add this mixin before (left of) SettingsMixin and PluginBase
-    2. Add two settings for the required url and token/passowrd (use `SettingsMixin`)
+    2. Add two settings for the required url and token/password (use `SettingsMixin`)
     3. Save the references to keys of the settings in `API_URL_SETTING` and `API_TOKEN_SETTING`
     4. (Optional) Set `API_TOKEN` to the name required for the token by the external API - Defaults to `Bearer`
     5. (Optional) Override the `api_url` property method if the setting needs to be extended
@@ -444,14 +461,15 @@ class PanelMixin:
         Returns:
             Array of panels
         """
-        import InvenTree.helpers
 
         panels = []
 
         # Construct an updated context object for template rendering
         ctx = self.get_panel_context(view, request, context)
 
-        for panel in self.get_custom_panels(view, request):
+        custom_panels = self.get_custom_panels(view, request) or []
+
+        for panel in custom_panels:
 
             content_template = panel.get('content_template', None)
             javascript_template = panel.get('javascript_template', None)
@@ -482,7 +500,7 @@ class PanelMixin:
             panel['slug'] = self.slug
 
             # Add a 'key' for the panel, which is mostly guaranteed to be unique
-            panel['key'] = InvenTree.helpers.generateTestKey(self.slug + panel.get('title', 'panel'))
+            panel['key'] = generateTestKey(self.slug + panel.get('title', 'panel'))
 
             panels.append(panel)
 

@@ -98,7 +98,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
                 break
 
         def append_permission_level(permission_level, next_level):
-            """Appen permission level"""
+            """Append permission level"""
             if not permission_level:
                 return next_level
 

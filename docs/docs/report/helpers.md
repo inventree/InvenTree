@@ -14,6 +14,56 @@ Some common functions are provided for use in custom report and label templates.
 !!! tip "Use the Source, Luke"
     To see the full range of available helper functions, refer to the source file [report.py](https://github.com/inventree/InvenTree/blob/master/InvenTree/report/templatetags/report.py) where these functions are defined!
 
+## Assigning Variables
+
+When making use of helper functions within a template, it can be useful to store the result of the function to a variable, rather than immediately rendering the output.
+
+For example, using the [render_currency](#rendering-currency) helper function, we can store the output to a variable which can be used at a later point in the template:
+
+```html
+{% raw %}
+
+{% load report %}
+
+{% render_currency 12.3 currency='USD' as myvar %}
+...
+...
+Result: {{ myvar }}
+
+{% endraw %}
+```
+
+## Data Structure Access
+
+A number of helper functions are available for accessing data contained in a particular structure format:
+
+### Index Access
+
+To return the element at a given index in a container which supports indexed access (such as a [list](https://www.w3schools.com/python/python_lists.asp)), use the `getindex` function:
+
+```html
+{% raw %}
+{% getindex my_list 1 as value %}
+Item: {{ value }}
+{% endraw %}
+```
+
+### Key Access
+
+To return an element corresponding to a certain key in a container which supports key access (such as a [dictionary](https://www.w3schools.com/python/python_dictionaries.asp)), use the `getkey` function:
+
+
+```html
+{% raw %}
+<ul>
+    {% for key in keys %}
+    {% getkey my_container key as value %}
+    <li>{{ key }} = {{ value }}</li>
+    {% endfor %}
+</ul>
+{% endraw %}
+```
+
 ## Rendering Currency
 
 The helper function `render_currency` allows for simple rendering of currency data. This function can also convert the specified amount of currency into a different target currency:
@@ -34,6 +84,16 @@ Total Price: {% render_currency order.total_price currency='NZD' decimal_places=
 {% endraw %}
 ```
 
+The following keyword arguments are available to the `render_currency` function:
+
+| Argument | Description |
+| --- | --- |
+| currency | Specify the currency code to render in (will attempt conversion if different to provided currency) |
+| decimal_places | Specify the number of decimal places to render |
+| min_decimal_places | Specify the minimum number of decimal places to render (ignored if *decimal_places* is specified) |
+| max_decimal_places | Specify the maximum number of decimal places to render (ignored if *decimal_places* is specified) |
+| include_symbol | Include currency symbol in rendered value (default = True) |
+
 ## Maths Operations
 
 Simple mathematical operators are available, as demonstrated in the example template below:
@@ -46,7 +106,9 @@ Simple mathematical operators are available, as demonstrated in the example temp
 {% add 1 3 %} <!-- Add two numbers together -->
 {% subtract 4 3 %} <!-- Subtract 3 from 4 -->
 {% multiply 1.2 3.4 %} <!-- Multiply two numbers -->
-{% divide 10 2 %} <!-- Divide 10 by 2 -->
+{% divide 10 2  as division_result %} <!-- Divide 10 by 2 -->
+
+Division Result: {{ division_result }}
 
 {% endraw %}
 ```
@@ -85,6 +147,19 @@ You can access an uploaded image file if you know the *path* of the image, relat
 
 !!! warning "Invalid Image"
     If the supplied file is not a valid image, it will be replaced with a placeholder image file
+
+
+### SVG Images
+
+SVG images need to be handled in a slightly different manner. When embedding an uploaded SVG image, use the `{% raw %}{% encode_svg_image ... %}{% endraw %}` tag:
+
+```html
+{% raw %}
+<!-- Load the report helper functions -->
+{% load report %}
+<img src='{% encode_svg_image svg_image_file %}'/>
+{% endraw %}
+```
 
 ### Part images
 
@@ -149,3 +224,31 @@ You can add asset images to the reports and labels by using the `{% raw %}{% ass
 <img src="{% asset 'my_awesome_logo.png' %}"/>
 {% endraw %}
 ```
+
+## Part Parameters
+
+If you need to load a part parameter for a particular Part, within the context of your template, you can use the `part_parameter` template tag.
+
+The following example assumes that you have a report or label which contains a valid [Part](../part/part.md) instance:
+
+```
+{% raw %}
+{% load report %}
+
+{% part_parameter part "length" as length %}
+
+Part: {{ part.name }}<br>
+Length: {{ length.data }} [{{ length.units }}]
+
+{% endraw %}
+```
+
+A [Part Parameter](../part/parameter.md) has the following available attributes:
+
+| Attribute | Description |
+| --- | --- |
+| Name | The *name* of the parameter (e.g. "Length") |
+| Description | The *description* of the parameter |
+| Data | The *value* of the parameter (e.g. "123.4") |
+| Units | The *units* of the parameter (e.g. "km") |
+| Template | A reference to a [PartParameterTemplate](../part/parameter.md#parameter-templates) |

@@ -8,6 +8,7 @@
 ![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
+[![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7179/badge)](https://bestpractices.coreinfrastructure.org/projects/7179)
 
 [![Coveralls](https://img.shields.io/coveralls/github/inventree/InvenTree)](https://coveralls.io/github/inventree/InvenTree)
 [![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
@@ -132,7 +133,7 @@ There are several options to deploy InvenTree.
 <div align="center"><h4>
     <a href="https://docs.inventree.org/en/latest/start/docker/">Docker</a>
     <span> · </span>
-    <a href="https://marketplace.digitalocean.com/apps/inventree?refcode=d6172576d014"><img src="https://www.deploytodo.com/do-btn-blue-ghost.svg" alt="Deploy to DO" width="auto" height="40" /></a>
+    <a href="https://inventree.org/digitalocean"><img src="https://www.deploytodo.com/do-btn-blue-ghost.svg" alt="Deploy to DO" width="auto" height="40" /></a>
     <span> · </span>
     <a href="https://docs.inventree.org/en/latest/start/install/">Bare Metal</a>
 </h4></div>
@@ -170,6 +171,13 @@ We would like to acknowledge a few special projects:
  - [Readme Template](https://github.com/Louis3797/awesome-readme-template) for the template of this page
 
 Find a full list of used third-party libraries in [our documentation](https://docs.inventree.org/en/latest/credits/).
+
+<p>This project is supported by:</p>
+<p>
+  <a href="https://inventree.org/digitalocean">
+    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px">
+  </a>
+</p>
 
 <!-- License -->
 ## :warning: License

@@ -15,7 +15,7 @@ from inventree.part import Part, PartCategory
 from inventree.stock import StockItem
 
 ## Create a new PartCategory object,
-## underneath the existing category with pk 7. Leave the parent empty fpr a top level category
+## underneath the existing category with pk 7. Leave the parent empty for a top level category
 furniture = PartCategory.create(api, {
     'name': 'Furniture',
     'description': 'Chairs, tables, etc',

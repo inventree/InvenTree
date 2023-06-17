@@ -46,12 +46,12 @@ class LabelConfig(AppConfig):
     def create_labels(self):
         """Create all default templates."""
         # Test if models are ready
-        from .models import PartLabel, StockItemLabel, StockLocationLabel
-        assert bool(StockLocationLabel is not None)
+        import label.models
+        assert bool(label.models.StockLocationLabel is not None)
 
         # Create the categories
         self.create_labels_category(
-            StockItemLabel,
+            label.models.StockItemLabel,
             'stockitem',
             [
                 {
@@ -65,7 +65,7 @@ class LabelConfig(AppConfig):
         )
 
         self.create_labels_category(
-            StockLocationLabel,
+            label.models.StockLocationLabel,
             'stocklocation',
             [
                 {
@@ -86,7 +86,7 @@ class LabelConfig(AppConfig):
         )
 
         self.create_labels_category(
-            PartLabel,
+            label.models.PartLabel,
             'part',
             [
                 {
@@ -102,6 +102,20 @@ class LabelConfig(AppConfig):
                     'description': 'Simple part label with Code128 barcode',
                     'width': 70,
                     'height': 24,
+                },
+            ]
+        )
+
+        self.create_labels_category(
+            label.models.BuildLineLabel,
+            'buildline',
+            [
+                {
+                    'file': 'buildline_label.html',
+                    'name': 'Build Line Label',
+                    'description': 'Example build line label',
+                    'width': 125,
+                    'height': 48,
                 },
             ]
         )
@@ -125,7 +139,7 @@ class LabelConfig(AppConfig):
             logger.info(f"Creating required directory: '{dst_dir}'")
             dst_dir.mkdir(parents=True, exist_ok=True)
 
-        # Create lables
+        # Create labels
         for label in labels:
             self.create_template_label(model, src_dir, ref_name, label)
 
@@ -156,7 +170,7 @@ class LabelConfig(AppConfig):
 
         if to_copy:
             logger.info(f"Copying label template '{dst_file}'")
-            # Ensure destionation dir exists
+            # Ensure destination dir exists
             dst_file.parent.mkdir(parents=True, exist_ok=True)
 
             # Copy file

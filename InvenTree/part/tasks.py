@@ -7,6 +7,7 @@ import time
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
@@ -18,7 +19,9 @@ from djmoney.money import Money
 import common.models
 import common.notifications
 import common.settings
+import company.models
 import InvenTree.helpers
+import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models
 import stock.models
@@ -39,7 +42,7 @@ def notify_low_stock(part: part.models.Part):
         'part': part,
         'name': name,
         'message': message,
-        'link': InvenTree.helpers.construct_absolute_url(part.get_absolute_url()),
+        'link': InvenTree.helpers_model.construct_absolute_url(part.get_absolute_url()),
         'template': {
             'html': 'email/low_stock_notification.html',
             'subject': name,
@@ -151,7 +154,9 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
     """
 
     # Grab all "available" stock items for the Part
-    stock_entries = target.stock_entries(in_stock=True, include_variants=True)
+    # We do not include variant stock when performing a stocktake,
+    # otherwise the stocktake entries will be duplicated
+    stock_entries = target.stock_entries(in_stock=True, include_variants=False)
 
     # Cache min/max pricing information for this Part
     pricing = target.pricing
@@ -184,7 +189,7 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
                 total_cost_max += pp
                 has_pricing = True
             except MissingRate:
-                logger.warning(f"MissingRate exception occured converting {entry.purchase_price} to {base_currency}")
+                logger.warning(f"MissingRate exception occurred converting {entry.purchase_price} to {base_currency}")
 
         if not has_pricing:
             # Fall back to the part pricing data
@@ -426,3 +431,59 @@ def scheduled_stocktake_reports():
 
     # Record the date of this report
     common.models.InvenTreeSetting.set_setting('STOCKTAKE_RECENT_REPORT', datetime.now().isoformat(), None)
+
+
+def rebuild_parameters(template_id):
+    """Rebuild all parameters for a given template.
+
+    This function is called when a base template is changed,
+    which may cause the base unit to be adjusted.
+    """
+
+    try:
+        template = part.models.PartParameterTemplate.objects.get(pk=template_id)
+    except part.models.PartParameterTemplate.DoesNotExist:
+        return
+
+    parameters = part.models.PartParameter.objects.filter(template=template)
+
+    n = 0
+
+    for parameter in parameters:
+        # Update the parameter if the numeric value has changed
+        value_old = parameter.data_numeric
+        parameter.calculate_numeric_value()
+
+        if value_old != parameter.data_numeric:
+            parameter.full_clean()
+            parameter.save()
+            n += 1
+
+    logger.info(f"Rebuilt {n} parameters for template '{template.name}'")
+
+
+def rebuild_supplier_parts(part_id):
+    """Rebuild all SupplierPart objects for a given part.
+
+    This function is called when a bart part is changed,
+    which may cause the native units of any supplier parts to be updated
+    """
+
+    try:
+        prt = part.models.Part.objects.get(pk=part_id)
+    except part.models.Part.DoesNotExist:
+        return
+
+    supplier_parts = company.models.SupplierPart.objects.filter(part=prt)
+
+    n = supplier_parts.count()
+
+    for supplier_part in supplier_parts:
+        # Re-save the part, to ensure that the units have updated correctly
+        try:
+            supplier_part.full_clean()
+            supplier_part.save()
+        except ValidationError:
+            pass
+
+    logger.info(f"Rebuilt {n} supplier parts for part '{prt.name}'")

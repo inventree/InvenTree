@@ -21,10 +21,10 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
-import common.models
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
+import InvenTree.helpers_model
 from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
@@ -60,6 +60,27 @@ class MetadataMixin(models.Model):
         """Meta for MetadataMixin."""
         abstract = True
 
+    def save(self, *args, **kwargs):
+        """Save the model instance, and perform validation on the metadata field."""
+        self.validate_metadata()
+        super().save(*args, **kwargs)
+
+    def clean(self, *args, **kwargs):
+        """Perform model validation on the metadata field."""
+        super().clean()
+
+        self.validate_metadata()
+
+    def validate_metadata(self):
+        """Validate the metadata field."""
+
+        # Ensure that the 'metadata' field is a valid dict object
+        if self.metadata is None:
+            self.metadata = {}
+
+        if type(self.metadata) is not dict:
+            raise ValidationError({'metadata': _('Metadata must be a python dict object')})
+
     metadata = models.JSONField(
         blank=True, null=True,
         verbose_name=_('Plugin Metadata'),
@@ -80,16 +101,16 @@ class MetadataMixin(models.Model):
 
         return self.metadata.get(key, backup_value)
 
-    def set_metadata(self, key: str, data, commit: bool = True):
+    def set_metadata(self, key: str, data, commit: bool = True, overwrite: bool = False):
         """Save the provided metadata under the provided key.
 
         Args:
             key (str): Key for saving metadata
             data (Any): Data object to save - must be able to be rendered as a JSON string
             commit (bool, optional): If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted. Defaults to True.
+            overwrite (bool): If true, delete existing metadata before adding new value
         """
-        if self.metadata is None:
-            # Handle a null field value
+        if overwrite or self.metadata is None:
             self.metadata = {}
 
         self.metadata[key] = data
@@ -104,7 +125,7 @@ class DataImportMixin(object):
     Models which implement this mixin should provide information on the fields available for import
     """
 
-    # Define a map of fields avaialble for import
+    # Define a map of fields available for import
     IMPORT_FIELDS = {}
 
     @classmethod
@@ -186,7 +207,9 @@ class ReferenceIndexingMixin(models.Model):
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        return common.models.InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
+        # import at function level to prevent cyclic imports
+        from common.models import InvenTreeSetting
+        return InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
 
     @classmethod
     def get_reference_context(cls):
@@ -689,12 +712,12 @@ class InvenTreeTree(MPTTModel):
         available = contents.get_all_objects_for_this_type()
 
         # List of child IDs
-        childs = self.getUniqueChildren()
+        children = self.getUniqueChildren()
 
         acceptable = [None]
 
         for a in available:
-            if a.id not in childs:
+            if a.id not in children:
                 acceptable.append(a)
 
         return acceptable
@@ -868,7 +891,7 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
             users = get_user_model().objects.filter(is_staff=True)
 
-            link = InvenTree.helpers.construct_absolute_url(
+            link = InvenTree.helpers_model.construct_absolute_url(
                 reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
             )
 

@@ -79,6 +79,9 @@ class RuleSet(models.Model):
             'plugin_pluginsetting',
             'plugin_notificationusersetting',
             'common_newsfeedentry',
+            'taggit_tag',
+            'taggit_taggeditem',
+            'flags_flagstate',
         ],
         'part_category': [
             'part_partcategory',
@@ -128,15 +131,18 @@ class RuleSet(models.Model):
             'part_bomitemsubstitute',
             'build_build',
             'build_builditem',
+            'build_buildline',
             'build_buildorderattachment',
             'stock_stockitem',
             'stock_stocklocation',
             'report_buildreport',
+            'label_buildlinelabel',
         ],
         'purchase_order': [
             'company_company',
             'company_companyattachment',
             'company_contact',
+            'company_address',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_supplierpart',
@@ -151,6 +157,7 @@ class RuleSet(models.Model):
             'company_company',
             'company_companyattachment',
             'company_contact',
+            'company_address',
             'order_salesorder',
             'order_salesorderallocation',
             'order_salesorderattachment',
@@ -163,6 +170,7 @@ class RuleSet(models.Model):
             'company_company',
             'company_companyattachment',
             'company_contact',
+            'company_address',
             'order_returnorder',
             'order_returnorderlineitem',
             'order_returnorderextraline',
@@ -301,7 +309,7 @@ class RuleSet(models.Model):
             return self.name
 
     def save(self, *args, **kwargs):
-        """Intercept the 'save' functionality to make addtional permission changes:
+        """Intercept the 'save' functionality to make additional permission changes:
 
         It does not make sense to be able to change / create something,
         but not be able to view it!
@@ -353,7 +361,7 @@ def update_group_roles(group, debug=False):
     This function is called under the following conditions:
 
     a) Whenever the InvenTree database is launched
-    b) Whenver the group object is updated
+    b) Whenever the group object is updated
 
     The RuleSet model has complete control over the permissions applied to any group.
     """

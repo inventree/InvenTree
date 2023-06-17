@@ -19,11 +19,12 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
+from taggit.serializers import TaggitSerializer
 
-from common.models import InvenTreeSetting
+import common.models as common_models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
-from InvenTree.helpers import download_image_from_url
+from InvenTree.helpers_model import download_image_from_url
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -33,7 +34,7 @@ class InvenTreeMoneySerializer(MoneyField):
     """
 
     def __init__(self, *args, **kwargs):
-        """Overrite default values."""
+        """Override default values."""
         kwargs["max_digits"] = kwargs.get("max_digits", 19)
         self.decimal_places = kwargs["decimal_places"] = kwargs.get("decimal_places", 6)
         kwargs["required"] = kwargs.get("required", False)
@@ -262,6 +263,28 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             raise ValidationError(data)
 
         return data
+
+
+class InvenTreeTaggitSerializer(TaggitSerializer):
+    """Updated from https://github.com/glemmaPaul/django-taggit-serializer."""
+
+    def update(self, instance, validated_data):
+        """Overridden update method to re-add the tagmanager."""
+        to_be_tagged, validated_data = self._pop_tags(validated_data)
+
+        tag_object = super().update(instance, validated_data)
+
+        for key in to_be_tagged.keys():
+            # re-add the tagmanager
+            new_tagobject = tag_object.__class__.objects.get(id=tag_object.id)
+            setattr(tag_object, key, getattr(new_tagobject, key))
+
+        return self._save_tags(tag_object, to_be_tagged)
+
+
+class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
+    """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
+    pass
 
 
 class UserSerializer(InvenTreeModelSerializer):
@@ -701,7 +724,7 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         if not url:
             return
 
-        if not InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL'):
+        if not common_models.InvenTreeSetting.get_setting('INVENTREE_DOWNLOAD_FROM_URL'):
             raise ValidationError(_("Downloading images from remote URL is not enabled"))
 
         try:

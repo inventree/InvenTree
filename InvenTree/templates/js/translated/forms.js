@@ -3,6 +3,8 @@
 
 /* globals
     createNewModal,
+    enableSubmitButton,
+    formatDecimal,
     inventreeFormDataUpload,
     inventreeGet,
     inventreePut,
@@ -10,8 +12,13 @@
     modalEnable,
     modalShowSubmitButton,
     getModelRenderer,
+    reloadBootstrapTable,
+    sanitizeInputString,
     showAlertOrCache,
     showApiError,
+    showMessage,
+    showModalSpinner,
+    toBool,
 */
 
 /* exported
@@ -617,10 +624,12 @@ function constructFormBody(fields, options) {
 
     if (options.preFormContent) {
 
+        let content = '';
+
         if (typeof(options.preFormContent) === 'function') {
-            var content = options.preFormContent(options);
+            content = options.preFormContent(options);
         } else {
-            var content = options.preFormContent;
+            content = options.preFormContent;
         }
 
         $(modal).find('#pre-form-content').html(content);
@@ -982,15 +991,17 @@ function updateFieldValue(name, value, field, options) {
         return;
     }
 
+    if (field.type == null) {
+        field.type = guessFieldType(el);
+    }
+
     switch (field.type) {
     case 'decimal':
         // Strip trailing zeros
         el.val(formatDecimal(value));
         break;
     case 'boolean':
-        if (value == true || value.toString().toLowerCase() == 'true') {
-            el.prop('checked');
-        }
+        el.prop('checked', toBool(value));
         break;
     case 'related field':
         // Clear?
@@ -1061,6 +1072,34 @@ function validateFormField(name, options) {
 
 
 /*
+ * Introspect the HTML element to guess the field type
+ */
+function guessFieldType(element) {
+
+    if (!element.exists) {
+        console.error(`Could not find element '${element}' for guessFieldType`);
+        return null;
+    }
+
+    switch (element.attr('type')) {
+    case 'number':
+        return 'decimal';
+    case 'checkbox':
+        return 'boolean';
+    case 'date':
+        return 'date';
+    case 'datetime':
+        return 'datetime';
+    case 'text':
+        return 'string';
+    default:
+        // Unknown field type
+        return null;
+    }
+}
+
+
+/*
  * Extract and field value before sending back to the server
  *
  * arguments:
@@ -1080,9 +1119,16 @@ function getFormFieldValue(name, field={}, options={}) {
 
     var value = null;
 
+    let guessed_type = guessFieldType(el);
+
+    // If field type is not specified, try to guess it
+    if (field.type == null || guessed_type == 'boolean') {
+        field.type = guessed_type;
+    }
+
     switch (field.type) {
     case 'boolean':
-        value = el.is(':checked');
+        value = toBool(el.prop("checked"));
         break;
     case 'date':
     case 'datetime':
@@ -1137,7 +1183,7 @@ function handleFormSuccess(response, options) {
     var msg_target = null;
 
     if (persist) {
-        // If the modal is persistant, the target for any messages should be the modal!
+        // If the modal is persistent, the target for any messages should be the modal!
         msg_target = $(options.modal).find('#pre-form-content');
     }
 
@@ -1270,7 +1316,7 @@ function handleNestedArrayErrors(errors, field_name, options={}) {
 
     // Nest list must be provided!
     if (!nest_list) {
-        console.warn(`handleNestedArrayErrors missing nesting options for field '${fieldName}'`);
+        console.warn(`handleNestedArrayErrors missing nesting options for field '${field_name}'`);
         return;
     }
 
@@ -1287,9 +1333,9 @@ function handleNestedArrayErrors(errors, field_name, options={}) {
         var nest_id = nest_list[idx];
 
         // Here, error_item is a map of field names to error messages
-        for (sub_field_name in error_item) {
+        for (var sub_field_name in error_item) {
 
-            var errors = error_item[sub_field_name];
+            var sub_errors = error_item[sub_field_name];
 
             if (sub_field_name == 'non_field_errors') {
 
@@ -1301,11 +1347,11 @@ function handleNestedArrayErrors(errors, field_name, options={}) {
                     row = $(`#items_${nest_id}`);
                 }
 
-                for (var ii = errors.length - 1; ii >= 0; ii--) {
+                for (var ii = sub_errors.length - 1; ii >= 0; ii--) {
 
                     var html = `
                     <div id='error_${ii}_non_field_error' class='help-block form-field-error form-error-message'>
-                        <strong>${errors[ii]}</strong>
+                        <strong>${sub_errors[ii]}</strong>
                     </div>`;
 
                     row.after(html);
@@ -1316,7 +1362,7 @@ function handleNestedArrayErrors(errors, field_name, options={}) {
             // Find the target (nested) field
             var target = `${field_name}_${sub_field_name}_${nest_id}`;
 
-            addFieldErrorMessage(target, errors, options);
+            addFieldErrorMessage(target, sub_errors, options);
         }
     }
 }
@@ -1443,7 +1489,7 @@ function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
         return;
     }
 
-    field_name = getFieldName(name, options);
+    let field_name = getFieldName(name, options);
 
     var field_dom = null;
 
@@ -1898,7 +1944,7 @@ function initializeRelatedField(field, fields, options={}) {
                 var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
-                // Return a simple renderering
+                // Return a simple rendering
                 console.warn(`templateResult() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
@@ -1928,7 +1974,7 @@ function initializeRelatedField(field, fields, options={}) {
                 var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
-                // Return a simple renderering
+                // Return a simple rendering
                 console.warn(`templateSelection() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
@@ -1980,7 +2026,7 @@ function initializeRelatedField(field, fields, options={}) {
 
 
 /*
- * Set the value of a select2 instace for a "related field",
+ * Set the value of a select2 instance for a "related field",
  * e.g. with data returned from a secondary modal
  *
  * arguments:
@@ -2179,7 +2225,16 @@ function constructField(name, parameters, options={}) {
         hover_title = ` title='${parameters.help_text}'`;
     }
 
-    html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title}>`;
+    var css = '';
+
+    if (parameters.css) {
+        let str = Object.keys(parameters.css).map(function(key) {
+            return `${key}: ${parameters.css[key]};`;
+        })
+        css = ` style="${str}"`;
+    }
+
+    html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title} ${css}>`;
 
     // Add a label
     if (!options.hideLabels) {
@@ -2336,6 +2391,7 @@ function constructInput(name, parameters, options={}) {
         break;
     case 'raw':
         func = constructRawInput;
+        break;
     default:
         // Unsupported field type!
         break;
@@ -2384,7 +2440,7 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
             opts.push(`value='${parameters.value}'`);
         }
     } else if (parameters.default != null) {
-        // Otherwise, a defualt value?
+        // Otherwise, a default value?
         opts.push(`value='${parameters.default}'`);
     }
 

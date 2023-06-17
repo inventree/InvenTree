@@ -40,7 +40,7 @@ The InvenTree server tries to locate the `config.yaml` configuration file on sta
 The configuration file *template* can be found on [GitHub](https://github.com/inventree/InvenTree/blob/master/InvenTree/config_template.yaml)
 
 !!! info "Template File"
-    The default configuration file (as defined by the template linked above) will be copied to the specifed configuration file location on first run, if a configuration file is not found in that location.
+    The default configuration file (as defined by the template linked above) will be copied to the specified configuration file location on first run, if a configuration file is not found in that location.
 
 !!! tip "Restart Server"
     The contents of the configuration file are read when the InevnTree server first launches. If any changes are made to the configuration file, ensure that the server is restarted, so that the changes can be made operational.
@@ -56,6 +56,15 @@ The following basic options are available:
 | INVENTREE_TIMZONE | timezome | Server timezone | UTC |
 | ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
+| INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
+
+### Base URL Configuration
+
+The base URL of the InvenTree site is required for constructing absolute URLs in a number of circumstances. To construct a URL, the InvenTree iterates through the following options in decreasing order of importance:
+
+1. Static configuration (i.e. set using environment variable or configuration file as above)
+2. Global settings (i.e. configured at run-time in the [global settings](../settings/global.md))
+3. Using the hostname supplied by the user request
 
 ## Administrator Account
 

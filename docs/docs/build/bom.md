@@ -23,12 +23,6 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | Optional | A boolean field which indicates if this BOM Line Item is "optional" |
 | Note | Optional note field for additional information
 
-!!! missing "Overage"
-    While the overage field exists, it is currently non-functional and has no effect on BOM operation
-
-!!! missing "Optional"
-    The Optional field is currently for indication only - it does not serve a functional purpose (yet)
-
 ### Consumable BOM Line Items
 
 If a BOM line item is marked as *consumable*, this means that while the part and quantity information is tracked in the BOM, this line item does not get allocated to a [Build Order](./build.md). This may be useful for certain items that the user does not wish to track through the build process, as they may be low value, in abundant stock, or otherwise complicated to track.
@@ -58,7 +52,7 @@ When using the InvenTree [template / variant](../part/template.md) feature, it m
 
 If a BOM Line Item is designed as *Inherited*, it will be automatically included in the BOM of any part which is a variant (or sub-variant) of the part for which the BOM Line Item is defined.
 
-This is particulary useful if a template part is defined with the "common" BOM items which exist for all variants of that template.
+This is particularly useful if a template part is defined with the "common" BOM items which exist for all variants of that template.
 
 Consider the example diagram below:
 
@@ -140,7 +134,7 @@ To process with BOM validation, click on the <span class='fas fa-clipboard-check
 
 ## Multi Level BOMs
 
-Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimted number of levels.
+Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimited number of levels.
 
 When viewing a BOM table, sub-assemblies are not loaded by default, but can be loaded "on demand" by pressing the <span class='fas fa-sync-alt'></span> icon associated with the particular subassembly:
 

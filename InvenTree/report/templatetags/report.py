@@ -1,5 +1,6 @@
 """Custom template tags for report generation."""
 
+import base64
 import logging
 import os
 
@@ -8,6 +9,7 @@ from django.conf import settings
 from django.utils.safestring import SafeString, mark_safe
 
 import InvenTree.helpers
+import InvenTree.helpers_model
 from common.models import InvenTreeSetting
 from company.models import Company
 from part.models import Part
@@ -97,12 +99,13 @@ def asset(filename):
 
 
 @register.simple_tag()
-def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png'):
+def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png', validate=True):
     """Return a fully-qualified path for an 'uploaded' image.
 
     Arguments:
         filename: The filename of the image relative to the MEDIA_ROOT directory
         replace_missing: Optionally return a placeholder image if the provided filename does not exist
+        validate: Optionally validate that the file is a valid image file (default = True)
 
     Returns:
         A fully qualified path to the image
@@ -125,7 +128,7 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         except Exception:
             exists = False
 
-    if exists and not InvenTree.helpers.TestIfImage(full_path):
+    if exists and validate and not InvenTree.helpers.TestIfImage(full_path):
         logger.warning(f"File '{filename}' is not a valid image")
         exists = False
 
@@ -149,7 +152,36 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
 
 
 @register.simple_tag()
-def part_image(part):
+def encode_svg_image(filename):
+    """Return a base64-encoded svg image data string"""
+
+    if type(filename) is SafeString:
+        # Prepend an empty string to enforce 'stringiness'
+        filename = '' + filename
+
+    # Check if the file exists
+    if not filename:
+        exists = False
+    else:
+        try:
+            full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
+            exists = full_path.exists() and full_path.is_file()
+        except Exception:
+            exists = False
+
+    if not exists:
+        raise FileNotFoundError(f"Image file '{filename}' not found")
+
+    # Read the file data
+    with open(full_path, 'rb') as f:
+        data = f.read()
+
+    # Return the base64-encoded data
+    return "data:image/svg+xml;charset=utf-8;base64," + base64.b64encode(data).decode('utf-8')
+
+
+@register.simple_tag()
+def part_image(part: Part):
     """Return a fully-qualified path for a part image.
 
     Arguments:
@@ -166,6 +198,23 @@ def part_image(part):
         raise TypeError("part_image tag requires a Part instance")
 
     return uploaded_image(img)
+
+
+@register.simple_tag()
+def part_parameter(part: Part, parameter_name: str):
+    """Return a PartParameter object for the given part and parameter name
+
+    Arguments:
+        part: A Part object
+        parameter_name: The name of the parameter to retrieve
+
+    Returns:
+        A PartParameter object, or None if not found
+    """
+    if type(part) is Part:
+        return part.get_parameter(parameter_name)
+    else:
+        return None
 
 
 @register.simple_tag()
@@ -205,14 +254,11 @@ def logo_image(**kwargs):
 def internal_link(link, text):
     """Make a <a></a> href which points to an InvenTree URL.
 
-    Important Note: This only works if the INVENTREE_BASE_URL parameter is set!
-
-    If the INVENTREE_BASE_URL parameter is not configured,
-    the text will be returned (unlinked)
+    Uses the InvenTree.helpers_model.construct_absolute_url function to build the URL.
     """
     text = str(text)
 
-    url = InvenTree.helpers.construct_absolute_url(link)
+    url = InvenTree.helpers_model.construct_absolute_url(link)
 
     # If the base URL is not set, just return the text
     if not url:
@@ -249,7 +295,7 @@ def divide(x, y):
 def render_currency(money, **kwargs):
     """Render a currency / Money object"""
 
-    return InvenTree.helpers.render_currency(money, **kwargs)
+    return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
 @register.simple_tag

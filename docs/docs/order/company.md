@@ -43,6 +43,44 @@ The list of contacts associated with a particular company is available in the <s
 
 A *contact* can be assigned to orders, (such as [purchase orders](./purchase_order.md) or [sales orders](./sales_order.md)).
 
+### Addresses
+
+A company can have multiple registered addresses for use with all types of orders.
+An address is broken down to internationally recognised elements that are designed to allow for formatting an address according to user needs.
+Addresses are composed differently across the world, and Inventree reflects this by splitting addresses into components:
+- Line 1: Main street address
+- Line 2: Extra street address line
+- Postal Code: Also known as ZIP code, this is normally a number 3-5 digits in length
+- City: The city/region tied to the postal code
+- Province: The larger region the address is located in. Also known as State in the US
+- Country: Country the address is located in, written in CAPS
+
+Here are a couple of examples of how the address structure differs by country, but these components can construct a correctly formatted address for any given country.
+
+UK address format:
+Recipient
+Line 1
+Line 2
+City
+Postal Code
+Country
+
+US Address Format:
+Recipient
+Line 1
+Line 2
+City State Postal Code
+Country
+
+
+Addresses can be accessed by the <span class='badge inventree nav main'><span class='fas fa-map-marked'></span> Addresses</span> navigation tab.
+
+#### Primary Address
+
+Each company can have exactly one (1) primary address.
+This address is the default shown on the company profile, and the one that is automatically suggested when creating an order.
+Marking a new address as primary will remove the mark from the old primary address.
+
 ## Customers
 
 A *customer* is an external client to whom parts or services are sold.
@@ -54,7 +92,7 @@ To access the customer page, click on the <span class="badge inventree nav main"
 
 ### Add Customer
 
-Once the customer page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Customer</span> button: the "Create new Customer" form opens. Fill-in the manufacturer informations (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
+Once the customer page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Customer</span> button: the "Create new Customer" form opens. Fill-in the manufacturer information (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
 
 ## Manufacturers
 
@@ -71,7 +109,7 @@ To access the list of manufacturers , click on the <span class="badge inventree 
 
 ### Add Manufacturer
 
-Once the manufacturer page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Manufacturer</span> button: the "Create new Manufacturer" form opens. Fill-in the manufacturer informations (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
+Once the manufacturer page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Manufacturer</span> button: the "Create new Manufacturer" form opens. Fill-in the manufacturer information (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
 
 !!! info "Manufacturer vs Supplier"
 	In the case the manufacturer sells directly to customers, you may want to enable the checkbox `is supplier` before submitting the form (you can also enable it later on). Purchase orders rely exclusively on [supplier parts](#supplier-parts), therefore the manufacturer will need to be set as a supplier too.
@@ -123,7 +161,7 @@ To access the supplier page, click on the <span class="badge inventree nav main"
 
 ### Add Supplier
 
-Once the supplier page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Supplier</span> button: the "Create new Supplier" form opens. Fill-in the supplier informations (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
+Once the supplier page is loaded, click on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Supplier</span> button: the "Create new Supplier" form opens. Fill-in the supplier information (`Company name` and `Company description` are required) then click on <span class="badge inventree confirm">Submit</span>
 
 !!! info "Supplier vs Manufacturer"
 	In the case the supplier is a manufacturer who sells directly to customers, you may want to enable the checkbox `is manufacturer` before submitting the form (you can also enable it later on).

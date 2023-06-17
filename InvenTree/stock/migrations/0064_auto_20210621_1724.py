@@ -60,12 +60,6 @@ def extract_purchase_price(apps, schema_editor):
     if update_count > 0:  # pragma: no cover
         print(f"Updated pricing for {update_count} stock items")
 
-def reverse_operation(apps, schema_editor):  # pragma: no cover
-    """
-    DO NOTHING!
-    """
-    pass
-
 
 class Migration(migrations.Migration):
 
@@ -74,5 +68,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(extract_purchase_price, reverse_code=reverse_operation)
+        migrations.RunPython(extract_purchase_price, reverse_code=migrations.RunPython.noop)
     ]

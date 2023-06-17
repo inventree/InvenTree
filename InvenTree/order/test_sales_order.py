@@ -102,7 +102,7 @@ class SalesOrderTest(TestCase):
         self.assertEqual(self.line.allocated_quantity(), 0)
         self.assertEqual(self.line.fulfilled_quantity(), 0)
         self.assertFalse(self.line.is_fully_allocated())
-        self.assertFalse(self.line.is_over_allocated())
+        self.assertFalse(self.line.is_overallocated())
 
         self.assertTrue(self.order.is_pending)
         self.assertFalse(self.order.is_fully_allocated())
@@ -257,6 +257,13 @@ class SalesOrderTest(TestCase):
         # Shipment should have default reference of '1'
         self.assertEqual('1', order_2.pending_shipments()[0].reference)
 
+    def test_shipment_delivery(self):
+        """Test the shipment delivery settings"""
+
+        # Shipment delivery date should be empty before setting date
+        self.assertIsNone(self.shipment.delivery_date)
+        self.assertFalse(self.shipment.is_delivered())
+
     def test_overdue_notification(self):
         """Test overdue sales order notification"""
 
@@ -302,8 +309,6 @@ class SalesOrderTest(TestCase):
         """Unit tests for the metadata field."""
         for model in [SalesOrder, SalesOrderLineItem, SalesOrderExtraLine, SalesOrderShipment]:
             p = model.objects.first()
-
-            self.assertIsNone(p.metadata)
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

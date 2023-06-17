@@ -3,7 +3,6 @@
 from django.contrib.auth import authenticate, login
 from django.db import transaction
 from django.db.models import F, Q
-from django.db.utils import ProgrammingError
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
@@ -14,17 +13,21 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from common.models import InvenTreeSetting, ProjectCode
+import common.models as common_models
 from common.settings import settings
 from company.models import SupplierPart
+from generic.states import StatusView
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView, MetadataView, StatusView)
+                           ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
                               RetrieveUpdateDestroyAPI)
-from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
-                                    ReturnOrderStatus, SalesOrderStatus)
+from InvenTree.status_codes import (PurchaseOrderStatus,
+                                    PurchaseOrderStatusGroups,
+                                    ReturnOrderLineStatus, ReturnOrderStatus,
+                                    SalesOrderStatus, SalesOrderStatusGroups)
 from order import models, serializers
 from order.admin import (PurchaseOrderExtraLineResource,
                          PurchaseOrderLineItemResource, PurchaseOrderResource,
@@ -136,7 +139,7 @@ class OrderFilter(rest_filters.FilterSet):
             return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
     project_code = rest_filters.ModelChoiceFilter(
-        queryset=ProjectCode.objects.all(),
+        queryset=common_models.ProjectCode.objects.all(),
         field_name='project_code'
     )
 
@@ -431,9 +434,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         """Filter by "pending" status (order status = pending)"""
 
         if str2bool(value):
-            return queryset.filter(order__status__in=PurchaseOrderStatus.OPEN)
+            return queryset.filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
         else:
-            return queryset.exclude(order__status__in=PurchaseOrderStatus.OPEN)
+            return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
@@ -448,7 +451,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
             return queryset.filter(q)
         else:
             # Only count "pending" orders
-            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatus.OPEN)
+            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
 
 class PurchaseOrderLineItemMixin:
@@ -984,12 +987,12 @@ class SalesOrderAllocationList(ListAPI):
                 # Filter only "open" orders
                 # Filter only allocations which have *not* shipped
                 queryset = queryset.filter(
-                    line__order__status__in=SalesOrderStatus.OPEN,
+                    line__order__status__in=SalesOrderStatusGroups.OPEN,
                     shipment__shipment_date=None,
                 )
             else:
                 queryset = queryset.exclude(
-                    line__order__status__in=SalesOrderStatus.OPEN,
+                    line__order__status__in=SalesOrderStatusGroups.OPEN,
                     shipment__shipment_date=None
                 )
 
@@ -1019,6 +1022,15 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
             return queryset.exclude(shipment_date=None)
         else:
             return queryset.filter(shipment_date=None)
+
+    delivered = rest_filters.BooleanFilter(label='delivered', method='filter_delivered')
+
+    def filter_delivered(self, queryset, name, value):
+        """Filter SalesOrder list by 'delivered' status (boolean)"""
+        if str2bool(value):
+            return queryset.exclude(delivery_date=None)
+        else:
+            return queryset.filter(delivery_date=None)
 
 
 class SalesOrderShipmentList(ListCreateAPI):
@@ -1371,11 +1383,8 @@ class OrderCalendarExport(ICalFeed):
         whether or not to show completed orders. Defaults to false
     """
 
-    try:
-        instance_url = InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
-    except ProgrammingError:  # pragma: no cover
-        # database is not initialized yet
-        instance_url = ''
+    instance_url = get_base_url()
+
     instance_url = instance_url.replace("http://", "").replace("https://", "")
     timezone = settings.TIME_ZONE
     file_name = "calendar.ics"
@@ -1443,17 +1452,19 @@ class OrderCalendarExport(ICalFeed):
             ordertype_title = _('Purchase Order')
         elif obj["ordertype"] == 'sales-order':
             ordertype_title = _('Sales Order')
+        elif obj["ordertype"] == 'return-order':
+            ordertype_title = _('Return Order')
         else:
             ordertype_title = _('Unknown')
 
-        return f'{InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {ordertype_title}'
+        return f'{common_models.InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {ordertype_title}'
 
     def product_id(self, obj):
         """Return calendar product id."""
         return f'//{self.instance_url}//{self.title(obj)}//EN'
 
     def items(self, obj):
-        """Return a list of PurchaseOrders.
+        """Return a list of Orders.
 
         Filters:
         - Only return those which have a target_date set
@@ -1463,26 +1474,35 @@ class OrderCalendarExport(ICalFeed):
             if obj['include_completed'] is False:
                 # Do not include completed orders from list in this case
                 # Completed status = 30
-                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE)
+                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE.value)
             else:
                 outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
-        else:
+        elif obj["ordertype"] == 'sales-order':
             if obj['include_completed'] is False:
                 # Do not include completed (=shipped) orders from list in this case
                 # Shipped status = 20
-                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED)
+                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED.value)
             else:
                 outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
+        elif obj["ordertype"] == 'return-order':
+            if obj['include_completed'] is False:
+                # Do not include completed orders from list in this case
+                # Complete status = 30
+                outlist = models.ReturnOrder.objects.filter(target_date__isnull=False).filter(status__lt=ReturnOrderStatus.COMPLETE.value)
+            else:
+                outlist = models.ReturnOrder.objects.filter(target_date__isnull=False)
+        else:
+            outlist = []
 
         return outlist
 
     def item_title(self, item):
-        """Set the event title to the purchase order reference"""
-        return item.reference
+        """Set the event title to the order reference"""
+        return f"{item.reference}"
 
     def item_description(self, item):
         """Set the event description"""
-        return item.description
+        return f"Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}"
 
     def item_start_datetime(self, item):
         """Set event start to target date. Goal is all-day event."""
@@ -1507,9 +1527,7 @@ class OrderCalendarExport(ICalFeed):
     def item_link(self, item):
         """Set the item link."""
 
-        # Do not use instance_url as here, as the protocol needs to be included
-        site_url = InvenTreeSetting.get_setting("INVENTREE_BASE_URL")
-        return f'{site_url}{item.get_absolute_url()}'
+        return construct_absolute_url(item.get_absolute_url())
 
 
 order_api_urls = [
@@ -1634,6 +1652,7 @@ order_api_urls = [
             re_path(r'complete/', ReturnOrderComplete.as_view(), name='api-return-order-complete'),
             re_path(r'issue/', ReturnOrderIssue.as_view(), name='api-return-order-issue'),
             re_path(r'receive/', ReturnOrderReceive.as_view(), name='api-return-order-receive'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': models.ReturnOrder}, name='api-return-order-metadata'),
             re_path(r'.*$', ReturnOrderDetail.as_view(), name='api-return-order-detail'),
         ])),
 
@@ -1644,9 +1663,12 @@ order_api_urls = [
         re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
     ])),
 
-    # API endpoints for reutrn order lines
+    # API endpoints for return order lines
     re_path(r'^ro-line/', include([
-        path('<int:pk>/', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
+        path('<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderLineItem}, name='api-return-order-line-metadata'),
+            re_path(r'^.*$', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
+        ])),
 
         # Return order line item status code information
         re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: ReturnOrderLineStatus}, name='api-return-order-line-status-codes'),
@@ -1656,10 +1678,13 @@ order_api_urls = [
 
     # API endpoints for return order extra line
     re_path(r'^ro-extra-line/', include([
-        path('<int:pk>/', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),
+        path('<int:pk>/', include([
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderExtraLine}, name='api-return-order-extra-line-metadata'),
+            re_path(r'^.*$', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),
+        ])),
         path('', ReturnOrderExtraLineList.as_view(), name='api-return-order-extra-line-list'),
     ])),
 
-    # API endpoint for subscribing to ICS calendar of purchase/sales orders
-    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order)/calendar.ics', OrderCalendarExport(), name='api-po-so-calendar'),
+    # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
+    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order)/calendar.ics', OrderCalendarExport(), name='api-po-so-calendar'),
 ]

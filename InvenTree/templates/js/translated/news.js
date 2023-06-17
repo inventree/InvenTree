@@ -1,6 +1,15 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+
+/* globals
+    getReadEditButton,
+    inventreePut,
+    renderDate,
+    setupFilterList,
+*/
+
+
 /* exported
     loadNewsFeedTable,
 */

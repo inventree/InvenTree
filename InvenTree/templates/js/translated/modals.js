@@ -2,7 +2,9 @@
 
 /* globals
     inventreeGet,
+    QRCode,
     showAlertOrCache,
+    user_settings,
 */
 
 /* exported
@@ -172,7 +174,7 @@ function enableSubmitButton(options, enable=true) {
 }
 
 
-function makeOption(text, value, title) {
+function makeOption(text, value, title, selected) {
     /* Format an option for a select element
      */
 
@@ -182,13 +184,16 @@ function makeOption(text, value, title) {
         html += ` title='${title}'`;
     }
 
+    if (selected) {
+        html += 'selected="selected"';
+    }
     html += `>${text}</option>`;
 
     return html;
 }
 
 /*
- * Programatically generate a list of <option> elements,
+ * Programmatically generate a list of <option> elements,
  * from the (assumed array) of elements.
  * For each element, we pass the element to the supplied functions,
  * which (in turn) generate display / value / title values.
@@ -198,8 +203,9 @@ function makeOption(text, value, title) {
  * - textFunc: Function which takes an element and generates the text to be displayed
  * - valueFunc: optional function which takes an element and generates the value
  * - titleFunc: optional function which takes an element and generates a title
+ * - selectedFunc: optional function which takes an element and generate true if the given item should be added as selected
  */
-function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
+function makeOptionsList(elements, textFunc, valueFunc, titleFunc, selectedFunc) {
 
     var options = [];
 
@@ -208,6 +214,7 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
         var text = textFunc(element);
         var value = null;
         var title = null;
+        var selected = null;
 
         if (valueFunc) {
             value = valueFunc(element);
@@ -219,7 +226,11 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
             title = titleFunc(element);
         }
 
-        options.push(makeOption(text, value, title));
+        if (selectedFunc) {
+            selected = selectedFunc(element);
+        }
+
+        options.push(makeOption(text, value, title, selected));
     });
 
     return options;
@@ -261,7 +272,7 @@ function setFieldOptions(fieldName, optionList, options={}) {
 
 
 /**
- * Clear (emtpy) the options list for a particular field
+ * Clear (empty) the options list for a particular field
  */
 function clearFieldOptions(fieldName) {
 
@@ -358,7 +369,7 @@ function getFieldValue(fieldName, options={}) {
 
 /* Replacement function for the 'matcher' parameter for a select2 dropdown.
 
-Intead of performing an exact match search, a partial match search is performed.
+Instead of performing an exact match search, a partial match search is performed.
 This splits the search term by the space ' ' character and matches each segment.
 Segments can appear out of order and are not case sensitive
 
@@ -658,7 +669,7 @@ function showQuestionDialog(title, content, options={}) {
      *   accept_text - Text for the accept button (default = 'Accept')
      *   cancel_text - Text for the cancel button (default = 'Cancel')
      *   accept - Function to run if the user presses 'Accept'
-     *   cancel - Functino to run if the user presses 'Cancel'
+     *   cancel - Function to run if the user presses 'Cancel'
      */
 
     options.title = title;
@@ -856,7 +867,7 @@ function insertActionButton(modal, options) {
     // check if button already present
     var already_present = false;
     for (var child=element[0].firstElementChild; child; child=child.nextElementSibling) {
-        if (item.firstElementChild.name == options.name) {
+        if (child.firstElementChild.name == options.name) {
             already_present = true;
         }
     }
@@ -872,8 +883,8 @@ function insertActionButton(modal, options) {
     }
 }
 
+/* Attach a provided list of buttons */
 function attachButtons(modal, buttons) {
-    /* Attach a provided list of buttons */
 
     for (var i = 0; i < buttons.length; i++) {
         insertActionButton(modal, buttons[i]);
@@ -881,14 +892,14 @@ function attachButtons(modal, buttons) {
 }
 
 
+/* Attach a 'callback' function to a given field in the modal form.
+ * When the value of that field is changed, the callback function is performed.
+ *
+ * options:
+ * - field: The name of the field to attach to
+ * - action: A function to perform
+ */
 function attachFieldCallback(modal, callback) {
-    /* Attach a 'callback' function to a given field in the modal form.
-     * When the value of that field is changed, the callback function is performed.
-     *
-     * options:
-     * - field: The name of the field to attach to
-     * - action: A function to perform
-     */
 
     // Find the field input in the form
     var field = getFieldByName(modal, callback.field);
@@ -905,8 +916,8 @@ function attachFieldCallback(modal, callback) {
 }
 
 
+/* Attach a provided list of callback functions */
 function attachCallbacks(modal, callbacks) {
-    /* Attach a provided list of callback functions */
 
     for (var i = 0; i < callbacks.length; i++) {
         attachFieldCallback(modal, callbacks[i]);
@@ -914,13 +925,13 @@ function attachCallbacks(modal, callbacks) {
 }
 
 
+/* Update a modal form after data are received from the server.
+ * Manages POST requests until the form is successfully submitted.
+ *
+ * The server should respond with a JSON object containing a boolean value 'form_valid'
+ * Form submission repeats (after user interaction) until 'form_valid' = true
+ */
 function handleModalForm(url, options) {
-    /* Update a modal form after data are received from the server.
-     * Manages POST requests until the form is successfully submitted.
-     *
-     * The server should respond with a JSON object containing a boolean value 'form_valid'
-     * Form submission repeats (after user interaction) until 'form_valid' = true
-     */
 
     var modal = options.modal || '#modal-form';
 

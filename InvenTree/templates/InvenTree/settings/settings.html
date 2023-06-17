@@ -6,15 +6,15 @@
 {% load plugin_extras %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Settings" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block sidebar %}
 {% include "InvenTree/settings/sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
 
@@ -36,6 +36,7 @@
 {% include "InvenTree/settings/label.html" %}
 {% include "InvenTree/settings/report.html" %}
 {% include "InvenTree/settings/part.html" %}
+{% include "InvenTree/settings/part_parameters.html" %}
 {% include "InvenTree/settings/part_stocktake.html" %}
 {% include "InvenTree/settings/category.html" %}
 {% include "InvenTree/settings/pricing.html" %}
@@ -55,11 +56,11 @@
 
 {% endif %}
 
-{% endblock %}
+{% endblock content %}
 
 {% block js_load %}
 {{ block.super }}
-{% endblock %}
+{% endblock js_load %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -68,14 +69,8 @@
 
 {% if user.is_staff %}
     {% include "InvenTree/settings/settings_staff_js.html" %}
-    {% plugins_enabled as plug %}
-    {% if plug %}
-        $("#install-plugin").click(function() {
-            installPlugin();
-        });
-    {% endif %}
 {% endif %}
 
 enableSidebar('settings');
 
-{% endblock %}
+{% endblock js_ready %}

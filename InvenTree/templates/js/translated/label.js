@@ -1,5 +1,6 @@
 {% load i18n %}
-
+{% load static %}
+{% load inventree_extras %}
 /* globals
     attachSelect,
     closeModal,
@@ -8,10 +9,13 @@
     modalEnable,
     modalSetContent,
     modalSetTitle,
+    modalShowSubmitButton,
     modalSubmit,
     openModal,
     plugins_enabled,
     showAlertDialog,
+    showMessage,
+    user_settings,
 */
 
 /* exported
@@ -26,7 +30,6 @@
  * (via AJAX) from the server.
  */
 function selectLabel(labels, items, options={}) {
-
     // Array of available plugins for label printing
     var plugins = [];
 
@@ -75,7 +78,6 @@ function selectLabel(labels, items, options={}) {
     }
 
     var modal = options.modal || '#modal-form';
-
     var label_list = makeOptionsList(
         labels,
         function(item) {
@@ -89,6 +91,16 @@ function selectLabel(labels, items, options={}) {
         },
         function(item) {
             return item.pk;
+        },
+        null,
+        function(item) {
+            if (options.key == 'part')
+                return item.key == user_settings.DEFAULT_PART_LABEL_TEMPLATE;
+            else if (options.key == 'location')
+                return item.key == user_settings.DEFAULT_LOCATION_LABEL_TEMPLATE;
+            else if (options.key == 'stock')
+                return item.key == user_settings.DEFAULT_STOCK_LABEL_TEMPLATE;
+            return '';
         }
     );
 
@@ -96,10 +108,10 @@ function selectLabel(labels, items, options={}) {
     var html = '';
 
     if (items.length > 0) {
-
+        let item_name = items.length == 1 ? options.singular_name : options.plural_name;
         html += `
         <div class='alert alert-block alert-info'>
-        ${items.length} {% trans "stock items selected" %}
+        ${items.length} ${item_name} {% trans "selected" %}
         </div>`;
     }
 
@@ -208,7 +220,10 @@ function printLabels(options) {
                     } else {
                         window.open(href);
                     }
-                }
+                },
+                plural_name: options.plural_name,
+                singular_name: options.singular_name,
+                key: options.key,
             });
         }
     });

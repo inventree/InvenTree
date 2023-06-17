@@ -1,5 +1,14 @@
 {% load i18n %}
 
+/* globals
+    EasyMDE,
+    inventreeFormDataUpload,
+    inventreeGet,
+    inventreePut,
+    showApiError,
+    user_settings,
+*/
+
 /* exported
     blankImage,
     deleteButton,
@@ -23,22 +32,52 @@
     yesNoLabel,
     withTitle,
     wrapButtons,
+    renderClipboard,
 */
 
 /* exported
     makeIcon,
+    trueFalseLabel,
+    yesNoLabel,
 */
 
 
-function yesNoLabel(value, options={}) {
-    var text = '';
-    var color = '';
+/*
+ * Convert a value (which may be a string) to a boolean value
+ *
+ * @param {string} value: Input value
+ * @returns {boolean} true or false
+ */
+function toBool(value) {
 
-    if (value) {
-        text = '{% trans "YES" %}';
+    if (typeof value == 'string') {
+
+        if (value.length == 0) {
+            return false;
+        }
+
+        value = value.toLowerCase();
+
+        if (['true', 't', 'yes', 'y', '1', 'on', 'ok'].includes(value)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return value == true;
+    }
+}
+
+
+function yesNoLabel(value, options={}) {
+    let text = '';
+    let color = '';
+
+    if (toBool(value)) {
+        text = options.pass || '{% trans "YES" %}';
         color = 'bg-success';
     } else {
-        text = '{% trans "NO" %}';
+        text = options.fail || '{% trans "NO" %}';
         color = 'bg-warning';
     }
 
@@ -47,6 +86,14 @@ function yesNoLabel(value, options={}) {
     }
 
     return `<span class='badge rounded-pill ${color}'>${text}</span>`;
+}
+
+
+function trueFalseLabel(value, options={}) {
+    options.pass = '{% trans "True" %}';
+    options.fail = '{% trans "False" %}';
+
+    return yesNoLabel(value, options);
 }
 
 
@@ -275,7 +322,7 @@ function makeRemoveButton(cls, pk, title, options={}) {
 
 
 /*
- * Render a progessbar!
+ * Render a progressbar!
  *
  * @param value is the current value of the progress bar
  * @param maximum is the maximum value of the progress bar
@@ -335,8 +382,6 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var id = options.id || 'progress-bar';
 
-    var style = '';
-
     if (opts.max_width) {
         style += `max-width: ${options.max_width}; `;
     }
@@ -358,7 +403,7 @@ function renderLink(text, url, options={}) {
         return text;
     }
 
-    var max_length = options.max_length || 0;
+    var max_length = options.max_length || user_settings.TABLE_STRING_MAX_LENGTH || 100;
 
     if (max_length > 0) {
         text = shortenString(text, {
@@ -376,7 +421,13 @@ function renderLink(text, url, options={}) {
         extras += ` download`;
     }
 
-    return `<a href="${url}" ${extras}>${text}</a>`;
+    let suffix = '';
+    if (options.external) {
+        extras += ` target="_blank" rel="noopener noreferrer"`;
+
+        suffix = ` <i class="fas fa-external-link-alt fa-xs d-none d-xl-inline"></i>`;
+    }
+    return `<a href="${url}" ${extras}>${text}${suffix}</a>`;
 }
 
 
@@ -507,6 +558,7 @@ function sanitizeInputString(s, options={}) {
     }
 
     // Remove ASCII control characters
+    // eslint-disable-next-line no-control-regex
     s = s.replace(/[\x00-\x1F\x7F]+/g, '');
 
     // Remove Unicode control characters
@@ -515,4 +567,26 @@ function sanitizeInputString(s, options={}) {
     s = s.trim();
 
     return s;
+}
+
+/*
+ * Inserts HTML data equal to clip.html into input string
+ * Enables insertion of clipboard icons in dynamic tables
+ *
+ * clipString relies on ClipboardJS in the same manner as clip.html
+ * Thus, this functionality will break if the call to
+ * attachClipboard('.clip-btn') in script/inventree/inventree.js is altered
+ */
+function renderClipboard(s, prepend=false) {
+    if (!s || typeof s != 'string') {
+        return s;
+    }
+
+    let clipString = `<span class="d-none d-xl-inline"><button class="btn clip-btn" type="button" data-bs-toggle='tooltip' title='{% trans "copy to clipboard" %}'><em class="fas fa-copy"></em></button></span>`;
+
+    if (prepend === true) {
+        return `<div class="flex-cell">${clipString+s}</div>`;
+    } else {
+        return `<div class="flex-cell">${s+clipString}</div>`;
+    }
 }

@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
+from taggit.serializers import TagListSerializerField
 
 import part.filters
 from InvenTree.serializers import (InvenTreeAttachmentSerializer,
@@ -14,12 +15,15 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeMoneySerializer, RemoteImageMixin)
+                                   InvenTreeMoneySerializer,
+                                   InvenTreeTagModelSerializer,
+                                   RemoteImageMixin)
 from part.serializers import PartBriefSerializer
 
-from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
-                     ManufacturerPartAttachment, ManufacturerPartParameter,
-                     SupplierPart, SupplierPriceBreak)
+from .models import (Address, Company, CompanyAttachment, Contact,
+                     ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
@@ -40,6 +44,53 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     image = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+
+class AddressSerializer(InvenTreeModelSerializer):
+    """Serializer for the Address Model"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = Address
+        fields = [
+            'pk',
+            'company',
+            'title',
+            'primary',
+            'line1',
+            'line2',
+            'postal_code',
+            'postal_city',
+            'province',
+            'country',
+            'shipping_notes',
+            'internal_shipping_notes',
+            'link',
+            'confirm_primary'
+        ]
+
+    confirm_primary = serializers.BooleanField(default=False)
+
+
+class AddressBriefSerializer(InvenTreeModelSerializer):
+    """Serializer for Address Model (limited)"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = Address
+        fields = [
+            'pk',
+            'line1',
+            'line2',
+            'postal_code',
+            'postal_city',
+            'province',
+            'country',
+            'shipping_notes',
+            'internal_shipping_notes'
+        ]
 
 
 class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
@@ -70,11 +121,13 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'parts_supplied',
             'parts_manufactured',
             'remote_image',
+            'address_count',
+            'primary_address'
         ]
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Annoate the supplied queryset with aggregated information"""
+        """Annotate the supplied queryset with aggregated information"""
         # Add count of parts manufactured
         queryset = queryset.annotate(
             parts_manufactured=SubqueryCount('manufactured_parts')
@@ -84,7 +137,13 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             parts_supplied=SubqueryCount('supplied_parts')
         )
 
+        queryset = queryset.annotate(
+            address_count=SubqueryCount('addresses')
+        )
+
         return queryset
+
+    primary_address = AddressSerializer(required=False, allow_null=True, read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -92,6 +151,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
+    address_count = serializers.IntegerField(read_only=True)
 
     currency = InvenTreeCurrencySerializer(help_text=_('Default currency used for this supplier'), required=True)
 
@@ -149,7 +209,7 @@ class ContactSerializer(InvenTreeModelSerializer):
         ]
 
 
-class ManufacturerPartSerializer(InvenTreeModelSerializer):
+class ManufacturerPartSerializer(InvenTreeTagModelSerializer):
     """Serializer for ManufacturerPart object."""
 
     class Meta:
@@ -166,7 +226,11 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
             'description',
             'MPN',
             'link',
+
+            'tags',
         ]
+
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
@@ -236,7 +300,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
 
 
-class SupplierPartSerializer(InvenTreeModelSerializer):
+class SupplierPartSerializer(InvenTreeTagModelSerializer):
     """Serializer for SupplierPart object."""
 
     class Meta:
@@ -258,7 +322,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'pk',
             'barcode_hash',
             'packaging',
-            'pack_size',
+            'pack_quantity',
+            'pack_quantity_native',
             'part',
             'part_detail',
             'pretty_name',
@@ -267,12 +332,16 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier_detail',
             'url',
             'updated',
+
+            'tags',
         ]
 
         read_only_fields = [
             'availability_updated',
             'barcode_hash',
         ]
+
+    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
@@ -316,15 +385,13 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     pretty_name = serializers.CharField(read_only=True)
 
-    pack_size = serializers.FloatField(label=_('Pack Quantity'))
-
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
 
     manufacturer = serializers.CharField(read_only=True)
 
     MPN = serializers.CharField(read_only=True)
 
-    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
+    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', part_detail=False, read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 

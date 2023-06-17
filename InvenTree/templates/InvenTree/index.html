@@ -5,21 +5,21 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Index" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block sidebar %}
 <!-- Sidebar data is filled dynamically for the index page-->
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
 
 <div id='detail-panels'>
 </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 
@@ -60,11 +60,16 @@ function addHeaderAction(label, title, icon, options) {
         </div>`
     );
 
-    // Connect a callback to the table
-    $(`#table-${label}`).on('load-success.bs.table', function() {
-        var count = $(`#table-${label}`).bootstrapTable('getData').length;
+    let table_name = `#table-${label}`;
 
-        var badge = $(`#sidebar-badge-${label}`);
+    // Connect a callback to the table
+    $(table_name).on('load-success.bs.table', function(data) {
+
+        let options = $(table_name).bootstrapTable('getOptions');
+
+        let count = options.totalRows;
+
+        let badge = $(`#sidebar-badge-${label}`);
 
         badge.html(count);
 
@@ -113,7 +118,7 @@ addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
     params: {
         ordering: "-creation_date",
-        limit: {% settings_value "PART_RECENT_COUNT" user=request.user %},
+        created_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),
         {% if hide_inactive %}
         active: true,
         {% endif %}
@@ -150,17 +155,15 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 {% endif %}
 
 {% if roles.stock.view %}
-
 {% if setting_stock_recent %}
 addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
 loadStockTable($('#table-recently-updated-stock'), {
     params: {
         part_detail: true,
         ordering: "-updated",
-        limit: {% settings_value "STOCK_RECENT_COUNT" user=request.user %},
+        updated_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),
     },
     name: 'recently-updated-stock',
-    grouping: false,
 });
 {% endif %}
 
@@ -202,7 +205,6 @@ loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
     name: "to_build_parts",
 });
 {% endif %}
-
 
 {% if expiry %}
 
@@ -302,7 +304,8 @@ loadPurchaseOrderTable("#table-po-overdue", {
 
 {% settings_value 'HOMEPAGE_SO_OUTSTANDING' user=request.user as setting_so_outstanding %}
 {% settings_value 'HOMEPAGE_SO_OVERDUE' user=request.user as setting_so_overdue %}
-{% to_list setting_so_outstanding setting_so_overdue as settings_list_so %}
+{% settings_value 'HOMEPAGE_SO_SHIPMENTS_PENDING' user=request.user as setting_so_shipments_pending %}
+{% to_list setting_so_outstanding setting_so_overdue setting_so_shipments_pending as settings_list_so %}
 
 {% if roles.sales_order.view and True in settings_list_so %}
 addHeaderTitle('{% trans "Sales Orders" %}');
@@ -329,6 +332,17 @@ loadSalesOrderTable("#table-so-overdue", {
 });
 {% endif %}
 
+{% if setting_so_shipments_pending %}
+addHeaderAction('so-shipments', '{% trans "Pending Shipments" %}', 'fa-truck-loading');
+loadSalesOrderShipmentTable("#table-so-shipments", {
+    url: "{% url 'api-so-shipment-list' %}",
+    params: {
+        shipped: false,
+    },
+    show_so_reference: true,
+});
+{% endif %}
+
 {% endif %}
 
 {% settings_value 'HOMEPAGE_NEWS' user=request.user as setting_news %}
@@ -349,4 +363,4 @@ enableSidebar(
     }
 );
 
-{% endblock %}
+{% endblock js_ready %}

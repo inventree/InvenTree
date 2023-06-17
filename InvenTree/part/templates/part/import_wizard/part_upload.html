@@ -7,7 +7,7 @@
 {% url 'part-index' as url %}
 {% trans "Return to Parts" as text %}
 {% include "sidebar_link.html" with url=url text=text icon="fa-undo" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
     {% trans "Import Parts from File" as header_text %}
@@ -66,7 +66,7 @@
         {% endif %}
         </div>
     </div>
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -113,4 +113,4 @@ function downloadPartImportTemplate(options={}) {
     });
 }
 
-{% endblock %}
+{% endblock js_ready %}

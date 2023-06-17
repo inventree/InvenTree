@@ -7,7 +7,7 @@
 
 {% block sidebar %}
 {% include "stock/stock_sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
 
@@ -165,7 +165,7 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -315,11 +315,9 @@
             ancestor: {{ item.id }},
         },
         name: 'item-childs',
-        groupByField: 'location',
         buttons: [
             '#stock-options',
         ],
-        url: "{% url 'api-stock-list' %}",
     });
     {% endif %}
 
@@ -334,4 +332,4 @@
 
     enableSidebar('stockitem');
 
-{% endblock %}
+{% endblock js_ready %}

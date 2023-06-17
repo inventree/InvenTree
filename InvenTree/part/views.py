@@ -27,7 +27,7 @@ from .models import Part, PartCategory
 from .part import MakePartTemplate
 
 
-class PartIndex(InvenTreeRoleMixin, ListView):
+class PartIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
     """View for displaying list of Part objects."""
 
     model = Part
@@ -233,7 +233,7 @@ class PartImport(FileManagementFormView):
                 image=part_data.get('image', None),
             )
 
-            # check if theres a category assigned, if not skip this part or else bad things happen
+            # check if there's a category assigned, if not skip this part or else bad things happen
             if not optional_matches['Category']:
                 import_error.append(_("Can't import part {name} because there is no category assigned").format(name=new_part.name))
                 continue
@@ -260,7 +260,7 @@ class PartImport(FileManagementFormView):
             messages.success(self.request, alert)
         if import_error:
             error_text = '\n'.join([f'<li><strong>{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
-            messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
+            messages.error(self.request, f"<strong>{_('Some errors occurred:')}</strong><br><ul>{error_text}</ul>")
 
         return HttpResponseRedirect(reverse('part-index'))
 

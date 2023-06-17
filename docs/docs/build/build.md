@@ -26,7 +26,7 @@ To navigate to the Build Order display, select *Build* from the main navigation 
 {% include "img.html" %}
 {% endwith %}
 
-#### Tree Vieww
+#### Tree View
 
 *Tree View* also provides a tabulated view of Build Orders. Orders are displayed in a hierarchical manner, showing any parent / child relationships between different build orders.
 
@@ -66,8 +66,7 @@ The following parameters are available for each Build Order, and can be edited b
 
 A *Build Output* creates a new stock instance of the assembly part, of a specified quantity. Each *Build Order* requires at least one build output. Multiple build outputs can be specified if the build is completed in batches.
 
-!!! info "Example - Build Outputs"
-	For example, let's say we wish to create 10 new "Widgets". We create a new build for the widget, which signals an *intent* to assemble the "Widget" in quantity 10. We can produce 5 widgets in a single day, and so we create 2 build outputs, each of quantity 5.
+Read more about build outputs [here](./output.md).
 
 ### Build Status
 
@@ -84,7 +83,7 @@ Each *Build Order* has an associated *Status* flag, which indicates the state of
 
 When a *Build Order* is created, we then have the ability to *allocate* stock items against that build order. The particular parts we need to allocate against the build are specified by the BOM for the part we are assembling.
 
-- A *Stock Alloction* links a certain quantity of a given *Stock Item* to the build.
+- A *Stock Allocation* links a certain quantity of a given *Stock Item* to the build.
 - At least one stock allocation is required for each line in the BOM
 - Multiple stock allocations can be made against a BOM line if a particular stock item does not have sufficient quantity for the build
 
@@ -123,9 +122,16 @@ The allocation table (as shown above) shows the stock allocation progress for th
 !!! info "Completed Builds"
 	The *Allocate Stock* tab is not available if the build has been completed!
 
+### Consumed Stock
+
+The *Consumed Stock* tab displays all stock items which have been *consumed* by this build order. These stock items remain in the database after the build order has been completed, but are no longer available for use.
+
+- [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
+- [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
+
 ### Build Outputs
 
-The *Build Outputs* tab shows the outputs (created stock items) associated with this build.
+The *Build Outputs* tab shows the [build outputs](./output.md) (created stock items) associated with this build.
 
 As shown below, there are separate panels for *incomplete* and *completed* build outputs.
 
@@ -192,7 +198,7 @@ To complete a build, click on <span class='fas fa-tools'></span> icon on the bui
 The form will validate the build order is ready to be completed, and will prevent you from continuing if any of the below conditions are present unless you select one of the presented options to override the validation and accept completion of the build anyway.
 
 !!! info "Incomplete Build"
-	If the warning message `Required build quantity has not been completed` is shown, you have build ouputs that have not yet been completed.
+	If the warning message `Required build quantity has not been completed` is shown, you have build outputs that have not yet been completed.
 
 	In the unlikely event that you wish to proceed despite this, you can toggle the `Accept Incomplete` option to true to override the error and allow completion without the required number of build outputs.
 

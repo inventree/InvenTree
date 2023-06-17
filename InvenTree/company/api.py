@@ -14,11 +14,12 @@ from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
-from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
-                     ManufacturerPartAttachment, ManufacturerPartParameter,
-                     SupplierPart, SupplierPriceBreak)
-from .serializers import (CompanyAttachmentSerializer, CompanySerializer,
-                          ContactSerializer,
+from .models import (Address, Company, CompanyAttachment, Contact,
+                     ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
+from .serializers import (AddressSerializer, CompanyAttachmentSerializer,
+                          CompanySerializer, ContactSerializer,
                           ManufacturerPartAttachmentSerializer,
                           ManufacturerPartParameterSerializer,
                           ManufacturerPartSerializer, SupplierPartSerializer,
@@ -135,6 +136,32 @@ class ContactDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ContactSerializer
 
 
+class AddressList(ListCreateDestroyAPIView):
+    """API endpoint for list view of Address model"""
+
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    filterset_fields = [
+        'company',
+    ]
+
+    ordering_fields = [
+        'title',
+    ]
+
+    ordering = 'title'
+
+
+class AddressDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single Address object"""
+
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+
+
 class ManufacturerPartFilter(rest_filters.FilterSet):
     """Custom API filters for the ManufacturerPart list endpoint."""
 
@@ -146,6 +173,8 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
             'manufacturer',
             'MPN',
             'part',
+            'tags__name',
+            'tags__slug',
         ]
 
     # Filter by 'active' status of linked part
@@ -163,6 +192,7 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
         'part',
         'manufacturer',
         'supplier_parts',
+        'tags',
     )
 
     serializer_class = ManufacturerPartSerializer
@@ -193,6 +223,8 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
         'part__IPN',
         'part__name',
         'part__description',
+        'tags__name',
+        'tags__slug',
     ]
 
 
@@ -303,6 +335,8 @@ class SupplierPartFilter(rest_filters.FilterSet):
             'part',
             'manufacturer_part',
             'SKU',
+            'tags__name',
+            'tags__slug',
         ]
 
     # Filter by 'active' status of linked part
@@ -323,7 +357,9 @@ class SupplierPartList(ListCreateDestroyAPIView):
     - POST: Create a new SupplierPart object
     """
 
-    queryset = SupplierPart.objects.all()
+    queryset = SupplierPart.objects.all().prefetch_related(
+        'tags',
+    )
     filterset_class = SupplierPartFilter
 
     def get_queryset(self, *args, **kwargs):
@@ -381,7 +417,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'manufacturer',
         'MPN',
         'packaging',
-        'pack_size',
+        'pack_quantity',
         'in_stock',
         'updated',
     ]
@@ -391,6 +427,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'supplier': 'supplier__name',
         'manufacturer': 'manufacturer_part__manufacturer__name',
         'MPN': 'manufacturer_part__MPN',
+        'pack_quantity': ['pack_quantity_native', 'pack_quantity'],
     }
 
     search_fields = [
@@ -403,6 +440,8 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'part__name',
         'part__description',
         'part__keywords',
+        'tags__name',
+        'tags__slug',
     ]
 
 
@@ -549,8 +588,16 @@ company_api_urls = [
     ])),
 
     re_path(r'^contact/', include([
-        path('<int:pk>/', ContactDetail.as_view(), name='api-contact-detail'),
+        re_path(r'^(?P<pk>\d+)/?', include([
+            re_path('^metadata/', MetadataView.as_view(), {'model': Contact}, name='api-contact-metadata'),
+            re_path('^.*$', ContactDetail.as_view(), name='api-contact-detail'),
+        ])),
         re_path(r'^.*$', ContactList.as_view(), name='api-contact-list'),
+    ])),
+
+    re_path(r'^address/', include([
+        path('<int:pk>/', AddressDetail.as_view(), name='api-address-detail'),
+        re_path(r'^.*$', AddressList.as_view(), name='api-address-list'),
     ])),
 
     re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),

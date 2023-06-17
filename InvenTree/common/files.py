@@ -84,7 +84,7 @@ class FileManager:
         self.HEADERS = self.REQUIRED_HEADERS + self.ITEM_MATCH_HEADERS + self.OPTIONAL_MATCH_HEADERS + self.OPTIONAL_HEADERS
 
     def setup(self):
-        """Setup headers should be overriden in usage to set the Different Headers."""
+        """Setup headers should be overridden in usage to set the Different Headers."""
         if not self.name:
             return
 

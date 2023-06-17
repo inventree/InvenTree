@@ -18,7 +18,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
     SLUG = "validator"
     TITLE = "Custom Validator Plugin"
     DESCRIPTION = "A sample plugin for demonstrating custom validation functionality"
-    VERSION = "0.2"
+    VERSION = "0.3.0"
 
     SETTINGS = {
         'ILLEGAL_PART_CHARS': {
@@ -77,6 +77,17 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         if self.get_setting('IPN_MUST_CONTAIN_Q') and 'Q' not in ipn:
             raise ValidationError("IPN must contain 'Q'")
+
+    def validate_part_parameter(self, parameter, data):
+        """Validate part parameter data.
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
+
+        if parameter.template.name.lower() in ['length', 'width']:
+            d = int(data)
+            if d >= 100:
+                raise ValidationError("Value must be less than 100")
 
     def validate_serial_number(self, serial: str, part):
         """Validate serial number for a given StockItem

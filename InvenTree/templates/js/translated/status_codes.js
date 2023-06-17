@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load status_codes %}
+{% load generic %}
 {% load inventree_extras %}
 
 /* globals
@@ -54,7 +54,6 @@ function renderStatusLabel(key, codes, options={}) {
 
     return `<span class='${classes}'>${text}</span>`;
 }
-
 
 {% include "status_codes.html" with label='stock' data=StockStatus.list %}
 {% include "status_codes.html" with label='stockHistory' data=StockHistoryCode.list %}

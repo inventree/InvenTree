@@ -38,7 +38,7 @@ The bulk of the InvenTree code base supports the custom web server application. 
 
 The webserver code also provides a first-party API for performing database query actions.
 
-Once a database is setup, you need a way of accessing the data. InvenTree provides a "server" application out of the box, but this may not scale particularly well with multiple users.  Instead, InvenTree can be served using a webserver such as [Gunicorn](https://gunicorn.org/). For more information see the [deployment documentation](./production.md).
+Once a database is setup, you need a way of accessing the data. InvenTree provides a "server" application out of the box, but this may not scale particularly well with multiple users.  Instead, InvenTree can be served using a webserver such as [Gunicorn](https://gunicorn.org/). For more information see the [deployment documentation](./bare_prod.md).
 
 ### Background Tasks
 
@@ -81,7 +81,7 @@ Installing the required Python packages inside a virtual environment allows a lo
 You can read more about Python virtual environments [here](https://docs.python.org/3/tutorial/venv.html).
 
 !!! info "Virtual Environment"
-    The installation intstruction assume that a virtual environment is configured
+    The installation instruction assume that a virtual environment is configured
 
 `cd` into the InvenTree directory, and create a virtual environment with the following command:
 
@@ -143,7 +143,7 @@ If you do not wish to use the docker container, you will need to manually instal
 
 Refer to the following guides for further instructions:
 
-- [**Bare metal development server setup guide**](./development.md)
+- [**Bare metal development server setup guide**](./bare_dev.md)
 - [**Bare metal production server setup guide**](./install.md)
 
 ## Debug Mode

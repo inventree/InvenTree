@@ -43,7 +43,7 @@ class LocateMixin:
 
         An attempt is only made if the StockItem is *in stock*
 
-        Note: A custom implemenation could always change this behaviour
+        Note: A custom implementation could always change this behaviour
         """
         logger.info(f"LocateMixin: Attempting to locate StockItem pk={item_pk}")
 

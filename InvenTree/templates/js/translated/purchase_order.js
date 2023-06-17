@@ -2,20 +2,60 @@
 {% load inventree_extras %}
 
 /* globals
+    addClearCallback,
+    addFieldCallback,
+    barcodeDialog,
+    calculateTotalPrice,
+    clearEvents,
+    closeModal,
+    constructFormBody,
     companyFormFields,
+    constructField,
     constructForm,
+    constructOrderTableButtons,
     createSupplierPart,
+    endDate,
+    formatCurrency,
+    formatDecimal,
+    FullCalendar,
+    initializeChoiceField,
+    initializeRelatedField,
+    getFormFieldElement,
+    getFormFieldValue,
+    getTableData,
     global_settings,
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
     inventreeGet,
+    inventreeLoad,
+    inventreePut,
     launchModalForm,
+    linkButtonsToSelection,
     loadTableFilters,
+    makeCopyButton,
+    makeDeleteButton,
+    makeEditButton,
     makeIconBadge,
+    makeIconButton,
+    makeProgressBar,
+    makeRemoveButton,
     purchaseOrderStatusDisplay,
-    receivePurchaseOrderItems,
+    reloadBootstrapTable,
+    renderClipboard,
+    renderDate,
     renderLink,
+    showAlertDialog,
+    showApiError,
+    showBarcodeMessage,
+    setRelatedFieldData,
     setupFilterList,
+    startDate,
+    stockCodes,
     supplierPartFields,
+    thumbnailImage,
+    updateFieldValue,
+    wrapButtons,
 */
 
 /* exported
@@ -76,6 +116,18 @@ function purchaseOrderFields(options={}) {
         },
         contact: {
             icon: 'fa-user',
+            adjustFilters: function(filters) {
+                let supplier = getFormFieldValue('supplier', {}, {modal: options.modal});
+
+                if (supplier) {
+                    filters.company = supplier;
+                }
+
+                return filters;
+            }
+        },
+        address: {
+            icon: 'fa-map',
             adjustFilters: function(filters) {
                 let supplier = getFormFieldValue('supplier', {}, {modal: options.modal});
 
@@ -169,7 +221,7 @@ function createPurchaseOrder(options={}) {
             title: '{% trans "Duplication Options" %}',
             collapsible: false,
         };
-    };
+    }
 
     constructForm('{% url "api-po-list" %}', {
         method: 'POST',
@@ -229,8 +281,8 @@ function poLineItemFields(options={}) {
                 supplier: options.supplier,
             },
             onEdit: function(value, name, field, opts) {
-                // If the pack_size != 1, add a note to the field
-                var pack_size = 1;
+                // If the pack_quantity != 1, add a note to the field
+                var pack_quantity = 1;
                 var units = '';
                 var supplier_part_id = value;
                 var quantity = getFormFieldValue('quantity', {}, opts);
@@ -250,14 +302,14 @@ function poLineItemFields(options={}) {
                     {
                         success: function(response) {
                             // Extract information from the returned query
-                            pack_size = response.pack_size || 1;
+                            pack_quantity = response.pack_quantity_native || 1;
                             units = response.part_detail.units || '';
                         },
                     }
                 ).then(function() {
                     // Update pack size information
-                    if (pack_size != 1) {
-                        var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
+                    if (pack_quantity != 1) {
+                        var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${formatDecimal(pack_quantity)} ${units}`;
                         $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
                     }
                 }).then(function() {
@@ -273,8 +325,7 @@ function poLineItemFields(options={}) {
                                 success: function(response) {
                                     // Returned prices are in increasing order of quantity
                                     if (response.length > 0) {
-                                        var idx = 0;
-                                        var index = 0;
+                                        let index = 0;
 
                                         for (var idx = 0; idx < response.length; idx++) {
                                             if (response[idx].quantity > quantity) {
@@ -766,7 +817,7 @@ function orderParts(parts_list, options) {
                 // Callback function when supplier part is changed
                 // This is used to update the "pack size" attribute
                 var onSupplierPartChanged = function(value, name, field, opts) {
-                    var pack_size = 1;
+                    var pack_quantity = 1;
                     var units = '';
 
                     $(opts.modal).find(`#info-pack-size-${pk}`).remove();
@@ -779,13 +830,13 @@ function orderParts(parts_list, options) {
                             },
                             {
                                 success: function(response) {
-                                    pack_size = response.pack_size || 1;
+                                    pack_quantity = response.pack_quantity_native || 1;
                                     units = response.part_detail.units || '';
                                 }
                             }
                         ).then(function() {
-                            if (pack_size != 1) {
-                                var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_size} ${units}`;
+                            if (pack_quantity != 1) {
+                                var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_quantity} ${units}`;
                                 $(opts.modal).find(`#id_quantity_${pk}`).after(`<div class='form-info-message' id='info-pack-size-${pk}'>${txt}</div>`);
                             }
                         });
@@ -1021,15 +1072,17 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         }
 
         var units = line_item.part_detail.units || '';
-        var pack_size = line_item.supplier_part_detail.pack_size || 1;
-        var pack_size_div = '';
+        let pack_quantity = line_item.supplier_part_detail.pack_quantity;
+        let native_pack_quantity = line_item.supplier_part_detail.pack_quantity_native || 1;
 
-        var received = quantity * pack_size;
+        let pack_size_div = '';
 
-        if (pack_size != 1) {
+        var received = quantity * native_pack_quantity;
+
+        if (native_pack_quantity != 1) {
             pack_size_div = `
             <div class='alert alert-small alert-block alert-info'>
-                {% trans "Pack Quantity" %}: ${pack_size} ${units}<br>
+                {% trans "Pack Quantity" %}: ${pack_quantity}<br>
                 {% trans "Received Quantity" %}: <span class='pack_received_quantity' id='items_received_quantity_${pk}'>${received}</span> ${units}
             </div>`;
         }
@@ -1304,13 +1357,13 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 );
 
                 // Add change callback for quantity field
-                if (item.supplier_part_detail.pack_size != 1) {
+                if (item.supplier_part_detail.pack_quantity_native != 1) {
                     $(opts.modal).find(`#id_items_quantity_${pk}`).change(function() {
                         var value = $(opts.modal).find(`#id_items_quantity_${pk}`).val();
 
                         var el = $(opts.modal).find(`#quantity_${pk}`).find('.pack_received_quantity');
 
-                        var actual = value * item.supplier_part_detail.pack_size;
+                        var actual = value * item.supplier_part_detail.pack_quantity_native;
                         actual = formatDecimal(actual);
                         el.text(actual);
                     });
@@ -1709,9 +1762,9 @@ function loadPurchaseOrderTable(table, options) {
         onLoadSuccess: function() {
 
             if (display_mode == 'calendar') {
-                var el = document.getElementById('purchase-order-calendar');
+                let el = document.getElementById('purchase-order-calendar');
 
-                calendar = new FullCalendar.Calendar(el, {
+                let calendar = new FullCalendar.Calendar(el, {
                     initialView: 'dayGridMonth',
                     nowIndicator: true,
                     aspectRatio: 2.5,
@@ -1871,7 +1924,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 });
             });
 
-            // Callback for bulk deleting mutliple lines
+            // Callback for bulk deleting multiple lines
             $('#po-lines-bulk-delete').off('click').on('click', function() {
                 var rows = getTableData('   #po-line-table');
 
@@ -1955,7 +2008,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "SKU" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
-                        return renderLink(value, `/supplier-part/${row.part}/`);
+                        return renderClipboard(renderLink(value, `/supplier-part/${row.part}/`));
                     } else {
                         return '-';
                     }
@@ -1967,7 +2020,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "Link" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
-                        return renderLink(value, value);
+                        return renderLink(value, value, {external: true});
                     } else {
                         return '';
                     }
@@ -1980,7 +2033,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row, index, field) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {
-                        return renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`);
+                        return renderClipboard(renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`));
                     } else {
                         return '-';
                     }
@@ -2005,10 +2058,10 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
                     let data = value;
 
-                    if (row.supplier_part_detail && row.supplier_part_detail.pack_size != 1.0) {
-                        var pack_size = row.supplier_part_detail.pack_size;
-                        var total = value * pack_size;
-                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_size}${units} - {% trans "Total Quantity" %}: ${total}${units}'></span>`;
+                    if (row.supplier_part_detail && row.supplier_part_detail.pack_quantity_native != 1.0) {
+                        let pack_quantity = row.supplier_part_detail.pack_quantity;
+                        let total = value * row.supplier_part_detail.pack_quantity_native;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_quantity} - {% trans "Total Quantity" %}: ${total}${units}'></span>`;
                     }
 
                     return data;
@@ -2024,7 +2077,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             {
                 sortable: false,
                 switchable: true,
-                field: 'supplier_part_detail.pack_size',
+                field: 'supplier_part_detail.pack_quantity',
                 title: '{% trans "Pack Quantity" %}',
                 formatter: function(value, row) {
                     var units = row.part_detail.units;

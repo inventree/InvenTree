@@ -91,7 +91,7 @@ def construct_format_regex(fmt_string: str) -> str:
         # Add a named capture group for the format entry
         if name:
 
-            # Check if integer values are requried
+            # Check if integer values are required
             if format.endswith('d'):
                 chr = '\d'
             else:

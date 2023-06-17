@@ -2,25 +2,25 @@
 {% load static %}
 {% load plugin_extras %}
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 {% load i18n %}
 {% load l10n %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Stock Item" %} - {{ item }}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumbs %}
 <a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><span class="fas fa-bars"></span></a>
 {% include 'stock/loc_link.html' with location=item.location %}
-{% endblock %}
+{% endblock breadcrumbs %}
 
 {% block breadcrumb_tree %}
 <div id="breadcrumb-tree"></div>
 {% endblock breadcrumb_tree %}
 
 {% block heading %}
-    {% trans "Stock Item" %}: {{ item.part.full_name}}
+    {% trans "Stock Item" %}: {{ item.part.full_name }}
 {% endblock heading %}
 
 {% block actions %}
@@ -131,7 +131,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.preview.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
+<img class='part-thumb' alt='{% trans "Image" %}' {% if item.part.image %}src="{{ item.part.image.preview.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
 {% endblock thumbnail %}
 
 {% block details %}
@@ -199,7 +199,7 @@
     <tr>
         <td><span class='fas fa-link'></span>
         <td>{% trans "External Link" %}</td>
-        <td><a href="{{ item.link }}">{{ item.link }}</a></td>
+        <td>{% include 'clip_link.html' with link=item.link %}</td>
     </tr>
     {% endif %}
     {% if item.supplier_part.manufacturer_part %}
@@ -358,6 +358,12 @@
             <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
         </td>
     </tr>
+    {% elif item.consumed_by %}
+    <tr>
+        <td><span class='fas fa-tools'></span></td>
+        <td>{% trans "Consumed By" %}</td>
+        <td><a href='{% url "build-detail" item.consumed_by.pk %}'>{{ item.consumed_by }}</td>
+    </tr>
     {% elif item.sales_order %}
     <tr>
         <td><span class='fas fa-th-list'></span></td>
@@ -415,7 +421,7 @@
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
-        <td>{% stock_status_label item.status %}</td>
+        <td>{% status_label 'stock' item.status %}</td>
     </tr>
     {% if item.expiry_date %}
     <tr>
@@ -446,10 +452,8 @@
         {% endif %}
     </tr>
 
-
 </table>
 {% endblock details_right %}
-
 
 {% block js_ready %}
 {{ block.super }}
@@ -496,6 +500,7 @@ $("#stock-test-report").click(function() {
 $("#print-label").click(function() {
     printLabels({
         items: [{{ item.pk }}],
+        singular_name: '{% trans "stock item" %}',
         url: '{% url "api-stockitem-label-list" %}',
         key: 'item',
     });
@@ -530,7 +535,7 @@ $('#stock-edit-status').click(function () {
 $("#show-qr-code").click(function() {
     showQRDialog(
         '{% trans "Stock Item QR Code" %}',
-        '{"stockitem": {{ item.pk }}}',
+        '{"stockitem": {{ item.pk }} }',
     );
 });
 
@@ -703,4 +708,4 @@ enableBreadcrumbTree({
     }
 });
 
-{% endblock %}
+{% endblock js_ready %}

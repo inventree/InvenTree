@@ -11,16 +11,20 @@ repo_name: inventree/inventree
 # Theme
 theme:
   name: material
+  font:
+    text: Roboto
   custom_dir: _includes/overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
+      primary: blue
       accent: light blue
       toggle:
         icon: material/toggle-switch
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
+      primary: blue
       accent: light blue
       toggle:
         icon: material/toggle-switch-off-outline
@@ -30,8 +34,19 @@ theme:
   icon:
     repo: fontawesome/brands/github
   features:
+    - header.autohide
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    # - navigation.sections
+    - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
     - toc.autohide
+    - toc.follow
 edit_uri: "" # Disable "Edit" button
 extra_css:
   - stylesheets/brands.css
@@ -60,21 +75,26 @@ nav:
     - Credits: credits.md
     - Privacy: privacy.md
     - Terminology: terminology.md
+    - Development:
+      - Getting started: develop/starting.md
+      - Contributing: develop/contributing.md
+      - Devcontainer: develop/devcontainer.md
   - Install:
     - Introduction: start/intro.md
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
-        - Development: start/docker_dev.md
         - Production: start/docker_prod.md
+        - Development: start/docker_dev.md
     - Bare Metal:
         - Introduction: start/install.md
         - Installer: start/installer.md
-        - Development: start/development.md
-        - Production: start/production.md
+        - Production: start/bare_prod.md
+        - Development: start/bare_dev.md
     - Serving Files: start/serving_files.md
     - Data Backup: start/backup.md
     - Migrating Data: start/migrate.md
+    - Advanced Topics: start/advanced.md
   - Parts:
     - Parts: part/part.md
     - Creating Parts: part/create.md
@@ -97,7 +117,9 @@ nav:
     - Test Results: stock/test.md
   - Build:
     - Build Orders: build/build.md
+    - Build Outputs: build/output.md
     - Allocating Stock: build/allocate.md
+    - Example Build Order: build/example.md
     - Bill of Materials: build/bom.md
     - Importing BOM Data: build/bom_import.md
     - Exporting BOM Data: build/bom_export.md
@@ -106,6 +128,7 @@ nav:
     - Purchase Orders: order/purchase_order.md
     - Sales Orders: order/sales_order.md
     - Return Orders: order/return_order.md
+    - Project Codes: order/project_codes.md
   - Report:
     - Templates: report/report.md
     - Report Types:
@@ -115,7 +138,12 @@ nav:
       - Sales Order: report/sales_order.md
       - Return Order: report/return_order.md
       - BOM: report/bom.md
-    - Labels: report/labels.md
+    - Labels:
+      - Custom Labels: report/labels.md
+      - Part Labels: report/labels/part_labels.md
+      - Stock Labels: report/labels/stock_labels.md
+      - Location Labels: report/labels/location_labels.md
+      - Build Labels: report/labels/build_labels.md
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md
     - Context Variables: report/context_variables.md
@@ -165,7 +193,8 @@ nav:
       - Overview: extend/plugins.md
       - Installation: extend/plugins/install.md
       - Developing a Plugin: extend/how_to_plugin.md
-      - Model Meatadata: extend/plugins/metadata.md
+      - Model Metadata: extend/plugins/metadata.md
+      - Tags: extend/plugins/tags.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md
       - API Mixin: extend/plugins/api.md
@@ -186,6 +215,9 @@ nav:
 
 # Plugins
 plugins:
+  - include-markdown:
+      opening_tag: "{!"
+      closing_tag: "!}"
   - search
   - git-revision-date-localized
   - mkdocs-simple-hooks:
@@ -218,6 +250,10 @@ extra:
   # analytics:
   #  provider: google
   #  property: UA-143467500-1
+
+  version:
+    default: stable
+    provider: mike
 
   social:
     - icon: fontawesome/brands/github

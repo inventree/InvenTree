@@ -160,7 +160,7 @@ Pricing data is cached in the [default currency](#default-currency), which ensur
 
 #### Data Updates
 
-The pricing data caching is intented to occur *automatically*, and generally be up-to-date without user interaction. Pricing data is re-calculated and cached by the [background worker](../settings/tasks.md) in the following ways:
+The pricing data caching is intended to occur *automatically*, and generally be up-to-date without user interaction. Pricing data is re-calculated and cached by the [background worker](../settings/tasks.md) in the following ways:
 
 - **Automatically** - If the underlying pricing data changes, part pricing is scheduled to be updated
 - **Periodically** - A daily task ensures that any outdated or missing pricing is kept updated

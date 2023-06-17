@@ -2,11 +2,13 @@
 
 from django.db import migrations
 import djmoney.models.fields
+import common.settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('common', '0004_inventreesetting'),
         ('order', '0037_auto_20201110_0911'),
     ]
 
@@ -14,11 +16,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='purchaseorderlineitem',
             name='purchase_price',
-            field=djmoney.models.fields.MoneyField(decimal_places=4, default_currency='USD', help_text='Unit purchase price', max_digits=19, null=True, verbose_name='Purchase Price'),
+            field=djmoney.models.fields.MoneyField(decimal_places=4, default_currency=common.settings.currency_code_default(), help_text='Unit purchase price', max_digits=19, null=True, verbose_name='Purchase Price'),
         ),
         migrations.AddField(
             model_name='purchaseorderlineitem',
             name='purchase_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[('AUD', 'Australian Dollar'), ('CAD', 'Canadian Dollar'), ('EUR', 'Euro'), ('NZD', 'New Zealand Dollar'), ('GBP', 'Pound Sterling'), ('USD', 'US Dollar'), ('JPY', 'Yen')], default='USD', editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=common.settings.currency_code_mappings(), default=common.settings.currency_code_default(), editable=False, max_length=3),
         ),
     ]

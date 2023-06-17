@@ -6,10 +6,10 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Search Results" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block content %}
 
@@ -22,7 +22,7 @@
 <div id='detail-panels'>
 </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -156,7 +156,6 @@
 
     loadStockTable($('#table-stock'), {
         filterKey: 'stocksearch',
-        url: "{% url 'api-stock-list' %}",
         params: {
             original_search: search_text,
             part_detail: true,
@@ -236,4 +235,4 @@
         }
     );
 
-{% endblock %}
+{% endblock js_ready %}

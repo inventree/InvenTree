@@ -14,7 +14,7 @@ from common.models import (InvenTreeSetting, InvenTreeUserSetting,
                            NotificationEntry, NotificationMessage)
 from common.notifications import UIMessageNotification, storage
 from InvenTree import version
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 
 from .models import (Part, PartCategory, PartCategoryStar, PartRelated,
                      PartStar, PartStocktake, PartTestTemplate,
@@ -277,7 +277,6 @@ class PartTest(TestCase):
         """Unit tests for the metadata field."""
         for model in [Part]:
             p = model.objects.first()
-            self.assertIsNone(p.metadata)
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)
@@ -295,8 +294,10 @@ class PartTest(TestCase):
         """Unit tests for the PartRelated model"""
 
         # Create a part relationship
+        # Count before creation
+        countbefore = PartRelated.objects.count()
         PartRelated.objects.create(part_1=self.r1, part_2=self.r2)
-        self.assertEqual(PartRelated.objects.count(), 1)
+        self.assertEqual(PartRelated.objects.count(), countbefore + 1)
 
         # Creating a duplicate part relationship should fail
         with self.assertRaises(ValidationError):
@@ -322,7 +323,7 @@ class PartTest(TestCase):
         # Delete a part, ensure the relationship also gets deleted
         self.r1.delete()
 
-        self.assertEqual(PartRelated.objects.count(), 0)
+        self.assertEqual(PartRelated.objects.count(), countbefore)
         self.assertEqual(len(self.r2.get_related_parts()), 0)
 
         # Add multiple part relationships to self.r2
@@ -331,12 +332,12 @@ class PartTest(TestCase):
 
         n = Part.objects.count() - 1
 
-        self.assertEqual(PartRelated.objects.count(), n)
+        self.assertEqual(PartRelated.objects.count(), n + countbefore)
         self.assertEqual(len(self.r2.get_related_parts()), n)
 
-        # Deleting r2 should remove *all* relationships
+        # Deleting r2 should remove *all* newly created relationships
         self.r2.delete()
-        self.assertEqual(PartRelated.objects.count(), 0)
+        self.assertEqual(PartRelated.objects.count(), countbefore)
 
     def test_stocktake(self):
         """Test for adding stocktake data"""
@@ -514,7 +515,7 @@ class PartSettingsTest(InvenTreeTestCase):
             Part.objects.create(name='zyx', description='A part', IPN='UNIQUE')
 
         # However, *blank* / empty IPN values should be allowed, even if duplicates are not
-        # Note that leading / trailling whitespace characters are trimmed, too
+        # Note that leading / trailing whitespace characters are trimmed, too
         Part.objects.create(name='abc', revision='1', description='A part', IPN=None)
         Part.objects.create(name='abc', revision='2', description='A part', IPN='')
         Part.objects.create(name='abc', revision='3', description='A part', IPN=None)

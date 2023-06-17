@@ -31,8 +31,8 @@ from allauth_2fa.views import TwoFactorRemove
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
-from common.models import ColorTheme, InvenTreeSetting
-from common.settings import currency_code_default, currency_codes
+import common.models as common_models
+import common.settings as common_settings
 from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
@@ -357,7 +357,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         - Updates model with POST field data
         - Performs form and object validation
         - If errors exist, re-render the form
-        - Otherwise, return sucess status
+        - Otherwise, return success status
         """
         self.request = request
 
@@ -386,7 +386,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 
         if valid:
 
-            # Save the updated objec to the database
+            # Save the updated object to the database
             self.save(self.object, form)
 
             self.object = self.get_object()
@@ -514,10 +514,10 @@ class SettingsView(TemplateView):
         """Add data for template."""
         ctx = super().get_context_data(**kwargs).copy()
 
-        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+        ctx['settings'] = common_models.InvenTreeSetting.objects.all().order_by('key')
 
-        ctx["base_currency"] = currency_code_default()
-        ctx["currencies"] = currency_codes
+        ctx["base_currency"] = common_settings.currency_code_default()
+        ctx["currencies"] = common_settings.currency_codes
 
         ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
 
@@ -525,8 +525,10 @@ class SettingsView(TemplateView):
 
         # When were the rates last updated?
         try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            ctx["rates_updated"] = backend.last_update
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
+            if backend.exists():
+                backend = backend.first()
+                ctx["rates_updated"] = backend.last_update
         except Exception:
             ctx["rates_updated"] = None
 
@@ -620,8 +622,8 @@ class AppearanceSelectView(RedirectView):
     def get_user_theme(self):
         """Get current user color theme."""
         try:
-            user_theme = ColorTheme.objects.filter(user=self.request.user).get()
-        except ColorTheme.DoesNotExist:
+            user_theme = common_models.ColorTheme.objects.filter(user=self.request.user).get()
+        except common_models.ColorTheme.DoesNotExist:
             user_theme = None
 
         return user_theme
@@ -635,7 +637,7 @@ class AppearanceSelectView(RedirectView):
 
         # Create theme entry if user did not select one yet
         if not user_theme:
-            user_theme = ColorTheme()
+            user_theme = common_models.ColorTheme()
             user_theme.user = request.user
 
         user_theme.name = theme

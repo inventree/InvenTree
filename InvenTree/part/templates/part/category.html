@@ -5,7 +5,7 @@
 
 {% block sidebar %}
 {% include 'part/category_sidebar.html' %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block breadcrumb_tree %}
 <div id="breadcrumb-tree"></div>
@@ -22,7 +22,7 @@
 {% else %}
 {% trans "Parts" %}
 {% endif %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if category and user.is_staff and roles.part_category.change %}
@@ -69,7 +69,7 @@
 </div>
 {% endif %}
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block details_left %}
 <table class='table table-striped table-condensed'>
@@ -245,11 +245,11 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_load %}
 {{ block.super }}
-{% endblock %}
+{% endblock js_load %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -284,15 +284,6 @@
         );
     });
 
-    onPanelLoad('parameters', function() {
-        loadParametricPartTable(
-            "#parametric-part-table",
-            {
-                category: {{ category.pk }},
-            }
-        );
-    });
-
     $("#toggle-starred").click(function() {
         toggleStar({
             url: '{% url "api-part-category-detail" category.pk %}',
@@ -301,6 +292,19 @@
     });
 
     {% endif %}
+
+    onPanelLoad('parameters', function() {
+        loadParametricPartTable(
+            "#parametric-part-table",
+            {
+                params: {
+                    {% if category %}
+                    category: {{ category.pk }},
+                    {% endif %}
+                },
+            }
+        );
+    });
 
     // Enable breadcrumb tree view
     enableBreadcrumbTree({
@@ -352,7 +356,6 @@
         editCategory({{ category.pk }});
     });
 
-
     $('#cat-delete').click(function() {
         deletePartCategory({{ category.pk }}, {
             {% if category.parent %}
@@ -384,4 +387,4 @@
     // Enable left-hand navigation sidebar
     enableSidebar('category');
 
-{% endblock %}
+{% endblock js_ready %}

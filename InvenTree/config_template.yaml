@@ -71,6 +71,10 @@ language: en-us
 # Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone: UTC
 
+# Base URL for the InvenTree server
+# Use the environment variable INVENTREE_BASE_URL
+# base_url: 'http://localhost:8000'
+
 # Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD
 
@@ -224,3 +228,11 @@ remote_login_header: HTTP_REMOTE_USER
 #   splash: splash_screen.jpg
 #   hide_admin_link: true
 #   hide_password_reset: true
+
+# Custom flags
+# InvenTree uses django-flags; read more in their docs at https://cfpb.github.io/django-flags/conditions/
+# Use environment variable INVENTREE_FLAGS or the settings below
+# flags:
+#  MY_FLAG:
+#     - condition: 'parameter'
+#       value: 'my_flag_param1'

@@ -12,5 +12,6 @@ site/
 
 # Temp files
 releases.json
+versions.json
 
 .vscode/

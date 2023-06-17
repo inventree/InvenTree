@@ -1,13 +1,13 @@
 {% extends "order/sales_order_base.html" %}
 
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 {% load i18n %}
 {% load static %}
 
 {% block sidebar %}
-{% include "order/so_sidebar.html"  %}
-{% endblock %}
+{% include "order/so_sidebar.html" %}
+{% endblock sidebar %}
 
 {% block page_content %}
 {% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
@@ -158,7 +158,7 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -297,7 +297,6 @@
         });
     });
 
-
     loadOrderTotal(
         '#soTotalPrice',
         {
@@ -307,4 +306,4 @@
 
     enableSidebar('salesorder');
 
-{% endblock %}
+{% endblock js_ready %}

@@ -4,6 +4,20 @@
 /* Functions for retrieving and displaying pricing data */
 
 /* globals
+    constructForm,
+    global_settings,
+    imageHoverIcon,
+    inventreeGet,
+    loadBarChart,
+    loadDoughnutChart,
+    makeEditButton,
+    makeDeleteButton,
+    randomColor,
+    renderDate,
+    renderLink,
+    shortenString,
+    withTitle,
+    wrapButtons,
 */
 
 /* exported
@@ -51,7 +65,7 @@ function formatCurrency(value, options={}) {
     // Extract default currency information
     let currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
 
-    // Exctract locale information
+    // Extract locale information
     let locale = options.locale || navigator.language || 'en-US';
 
     let formatter = new Intl.NumberFormat(
@@ -76,7 +90,11 @@ function formatPriceRange(price_min, price_max, options={}) {
     var p_min = price_min || price_max;
     var p_max = price_max || price_min;
 
-    var quantity = options.quantity || 1;
+    var quantity = 1;
+
+    if ('quantity' in options) {
+        quantity = options.quantity;
+    }
 
     if (p_min == null && p_max == null) {
         return null;
@@ -146,7 +164,7 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
         var common_currency = true;
 
         for (var idx = 0; idx < dataset.length; idx++) {
-            var row = dataset[idx];
+            let row = dataset[idx];
 
             var row_currency = currency_func(row);
 
@@ -173,7 +191,7 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
     var total = null;
 
     for (var ii = 0; ii < dataset.length; ii++) {
-        var row = dataset[ii];
+        let row = dataset[ii];
 
         // Pass the row back to the decoder
         var value = value_func(row);
@@ -454,7 +472,7 @@ function loadPartSupplierPricingTable(options={}) {
             data = data.sort((a, b) => (a.quantity - b.quantity));
 
             var graphLabels = Array.from(data, (x) => (`${x.part_detail.SKU} - {% trans "Quantity" %} ${x.quantity}`));
-            var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_size));
+            var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_quantity_native));
 
             if (chart) {
                 chart.destroy();
@@ -514,7 +532,7 @@ function loadPartSupplierPricingTable(options={}) {
                     }
 
                     // Convert to unit pricing
-                    var unit_price = row.price / row.part_detail.pack_size;
+                    var unit_price = row.price / row.part_detail.pack_quantity_native;
 
                     var html = formatCurrency(unit_price, {
                         currency: row.price_currency
@@ -807,9 +825,12 @@ function loadPurchasePriceHistoryTable(options={}) {
                         return '-';
                     }
 
-                    return formatCurrency(row.purchase_price / row.supplier_part_detail.pack_size, {
-                        currency: row.purchase_price_currency
-                    });
+                    return formatCurrency(
+                        row.purchase_price / row.supplier_part_detail.pack_quantity_native,
+                        {
+                            currency: row.purchase_price_currency
+                        }
+                    );
                 }
             },
         ]
