@@ -731,7 +731,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
             )
 
         # Update status
-        StockItem.objects.bulk_update(items_to_update, ['status'])
+        StockItem.objects.bulk_update(items_to_update, ['status', 'updated'])
 
         # Create entries
         StockItemTracking.objects.bulk_create(transaction_notes)
