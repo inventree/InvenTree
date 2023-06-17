@@ -157,9 +157,18 @@ d674d203ae87   postgres:13           "docker-entrypoint.s…"   4 weeks ago   Up
 You should have 1 inventree-dev-worker, 1 inventree-dev-server, and 1 inventree-dev-db in that list.
 If, however, you don't have these, refer to [Start Docker Containers](#Start Docker Containers) and then return here.
 
+Running this command will remove **all** stopped one-time run InvenTree containers:
 ```
 docker container prune --filter label="com.docker.compose.project=inventree" --filter label="com.docker.compose.oneoff=True"
 ```
+
+The following output will appear:
+```
+WARNING! This will remove all stopped containers.
+Are you sure you want to continue? [y/N] y
+Deleted Containers:
+[IDs of any container that was deleted, one per line]
+``` 
 
 ## Restarting Services
 
