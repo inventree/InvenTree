@@ -40,6 +40,7 @@ jobs:
             - 'InvenTree/**'
             - 'requirements.txt'
             - 'requirements-dev.txt'
+            - '.github/'
 
   migrations-checks:
     name: Run Database Migrations
