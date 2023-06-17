@@ -108,6 +108,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Build Description" %}</td>
         <td>{{ build.title }}</td>
     </tr>
+    {% include "project_code_data.html" with instance=build %}
     {% include "barcode_data.html" with instance=build %}
 </table>
 
@@ -174,7 +175,7 @@ src="{% static 'img/blank_image.png' %}"
             {% else %}
             <span class='fa fa-times-circle icon-red'></span>
             {% endif %}
-        <td>{% trans "Completed" %}</td>
+        <td>{% trans "Completed Outputs" %}</td>
         <td>{% progress_bar build.completed build.quantity id='build-completed' max_width='150px' %}</td>
     </tr>
     {% if build.parent %}

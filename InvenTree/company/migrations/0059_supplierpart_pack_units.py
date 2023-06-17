@@ -8,6 +8,7 @@ import InvenTree.fields
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('stock', '0094_auto_20230220_0025'),
         ('company', '0058_auto_20230515_0004'),
     ]
 

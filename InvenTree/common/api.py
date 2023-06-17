@@ -122,8 +122,13 @@ class CurrencyExchangeView(APIView):
 
         # Information on last update
         try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            updated = backend.last_update
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
+
+            if backend.exists():
+                backend = backend.first()
+                updated = backend.last_update
+            else:
+                updated = None
         except Exception:
             updated = None
 
@@ -520,7 +525,7 @@ settings_api_urls = [
         path(r'<int:pk>/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
 
         # Notification Settings List
-        re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notifcation-setting-list'),
+        re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notification-setting-list'),
     ])),
 
     # Global settings

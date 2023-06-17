@@ -48,7 +48,8 @@ class TestManufacturerField(MigratorTestCase):
         # Create an initial part
         part = Part.objects.create(
             name='Screw',
-            description='A single screw'
+            description='A single screw',
+            level=0, tree_id=0, lft=0, rght=0
         )
 
         # Create a company to act as the supplier
