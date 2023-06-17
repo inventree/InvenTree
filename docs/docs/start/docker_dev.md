@@ -103,6 +103,9 @@ docker compose up -d
 
 If you are creating the initial database, you need to create an admin (superuser) account for the database. Run the command below, and follow the prompts:
 
+!!! info "Containers must be running"
+    For the `invoke superuser` command to execute properly, ensure you have run the `docker compose up -d` command.
+
 ```
 docker compose run inventree-dev-server invoke superuser
 ```
@@ -114,6 +117,49 @@ This command launches the remaining containers:
 
 !!! success "Check Connection"
     Check that the server is running at [http://localhost:8000](http://localhost:8000). The server may take a few minutes to be ready.
+
+## Running commands in the container
+
+Using `docker compoase run [...]` commands creates a new container to run this specific command.
+This will eventually clutter your docker with many dead containers that take up space on the system.
+
+You can access the running containers directly with the following:
+```
+docker exec -it inventree-dev-server /bin/bash
+```
+You then run the following to access the virtualenv:
+```
+source data/env/bin/activate
+```
+
+This sets up a bash terminal where you can run `invoke` commands directly.
+
+!!! warning "Tests"
+    It is not recommended to run `invoke test` in your currently active inventree-dev-server container.
+
+### Cleaning up old containers
+
+To clean out old containers, follow this guide:
+
+Run the following command:
+```
+docker container ls --filter name=inventree*
+```
+This should yield 3 lines of output looking something like this:
+
+```
+CONTAINER ID   IMAGE                 COMMAND                  CREATED       STATUS      PORTS                    NAMES
+c2f4043bb98d   inventree-dev-image   "/bin/bash ./docker/…"   3 days ago    Up 3 days                            inventree-dev-worker
+4f8e1b25aeba   inventree-dev-image   "/bin/bash ./docker/…"   3 days ago    Up 3 days   0.0.0.0:8000->8000/tcp   inventree-dev-server
+d674d203ae87   postgres:13           "docker-entrypoint.s…"   4 weeks ago   Up 4 days   5432/tcp                 inventree-dev-db
+```
+
+You should have 1 inventree-dev-worker, 1 inventree-dev-server, and 1 inventree-dev-db in that list.
+If, however, you don't have these, refer to [Start Docker Containers](#Start Docker Containers) and then return here.
+
+```
+docker container prune --filter label="com.docker.compose.project=inventree" --filter label="com.docker.compose.oneoff=True"
+```
 
 ## Restarting Services
 
