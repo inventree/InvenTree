@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 124
+INVENTREE_API_VERSION = 125
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v125 -> 2023-06-17 : https://github.com/inventree/InvenTree/pull/5064
+    - Adds API endpoint for setting the "status" field for multiple stock items simultaneously
 
 v124 -> 2023-06-17 : https://github.com/inventree/InvenTree/pull/5057
     - Add "created_before" and "created_after" filters to the Part API
