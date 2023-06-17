@@ -653,7 +653,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
             'status',
             'note',
         ]
-    
+
     items = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
         many=True,
@@ -683,6 +683,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
         required=False, allow_blank=True,
     )
 
+    @transaction.atomic
     def save(self):
         """Save the serializer to change the status of the selected stock items"""
 
@@ -699,9 +700,42 @@ class StockChangeStatusSerializer(serializers.Serializer):
         items_to_update = []
         transaction_notes = []
 
+        deltas = {
+            'status': status,
+        }
+
+        now = datetime.now()
+
+        # Instead of performing database updates for each item,
+        # perform bulk database updates (much more efficient)
+
         for item in items:
-            print("item:", item)
-            
+            # Ignore items which are already in the desired status
+            if item.status == status:
+                continue
+
+            item.updated = now
+            item.status = status
+            items_to_update.append(item)
+
+            # Create a new transaction note for each item
+            transaction_notes.append(
+                StockItemTracking(
+                    item=item,
+                    tracking_type=InvenTree.status_codes.StockHistoryCode.EDITED,
+                    date=now,
+                    deltas=deltas,
+                    user=user,
+                    notes=note,
+                )
+            )
+
+        # Update status
+        StockItem.objects.bulk_update(items_to_update, ['status'])
+
+        # Create entries
+        StockItemTracking.objects.bulk_create(transaction_notes)
+
 
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a simple tree view."""
