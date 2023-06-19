@@ -1869,14 +1869,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
     var filters = loadTableFilters('purchaseorderlineitem', options.params);
 
-    setupFilterList(
-        'purchaseorderlineitem',
-        $(table),
-        options.filter_target || '#filter-list-purchase-order-lines',
-        {
-            download: true
-        }
-    );
+    setupFilterList('purchaseorderlineitem', $(table), options.filter_target || '#filter-list-purchase-order-lines', {
+        download: true,
+    });
 
     function setupCallbacks() {
         if (options.allow_edit) {

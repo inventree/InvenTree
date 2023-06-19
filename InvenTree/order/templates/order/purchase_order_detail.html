@@ -38,22 +38,6 @@
     </div>
     <div class='panel-content'>
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            {% if roles.purchase_order.change %}
-            {% if order.is_open or allow_extra_editing %}
-            <div class='btn-group' role='group'>
-                <!-- Multiple-select actions -->
-                <button id='multi-select-options' class='btn btn-primary dropdown-toggle' data-bs-toggle='dropdown'>
-                    <span class='fas fa-tools'></span> <span class='caret'></span>
-                </button>
-                <ul class='dropdown-menu'>
-                    <li><a class='dropdown-item' href='#' id='po-lines-bulk-delete' title='{% trans "Delete Line Items" %}'>
-                        <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Line Items" %}
-                    </a></li>
-                </ul>
-            </div>
-            {% endif %}
-            {% endif %}
-
             {% include "filter_list.html" with id="purchase-order-lines" %}
         </div>
 

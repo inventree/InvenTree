@@ -292,6 +292,8 @@ function makeFilterActionButton(button, options={}) {
 function makeCustomActionGroup(action_group, table) {
 
     let buttons = [];
+    let title = action_group.title || '{% trans "Actions" %}';
+    let icon = action_group.icon || 'fa-tools';
 
     // Construct the HTML for each button
     action_group.actions.forEach(function(action) {
@@ -305,8 +307,8 @@ function makeCustomActionGroup(action_group, table) {
 
     let html = `
     <div class='btn-group' role='group'>
-    <button id='${action_group.label}-actions' title='${action_group.title}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
-        <span class='fas ${action_group.icon}'></span>
+    <button id='${action_group.label}-actions' title='${title}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas ${icon}'></span>
     </button>
     <ul class='dropdown-menu' role='menu'>
     `;
