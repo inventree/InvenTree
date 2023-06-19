@@ -243,30 +243,6 @@
             <div class='button-toolbar container-fluid'>
                 {% if build.active %}
                 <div class='btn-group'>
-
-                    <!-- Build output actions -->
-                    <div class='btn-group'>
-                        <button id='output-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Output Actions" %}'>
-                            <span class='fas fa-tools'></span> <span class='caret'></span>
-                        </button>
-                        <ul class='dropdown-menu'>
-                            {% if roles.build.add %}
-                            <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected build outputs" %}'>
-                                <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
-                            </a></li>
-                            {% endif %}
-                            {% if roles.build.change %}
-                            <li><a class='dropdown-item' href='#' id='multi-output-scrap' title='{% trans "Scrap selected build outputs" %}'>
-                                <span class='fas fa-times-circle icon-red'></span> {% trans "Scrap outputs" %}
-                            </a></li>
-                            {% endif %}
-                            {% if roles.build.delete %}
-                            <li><a class='dropdown-item' href='#' id='multi-output-delete' title='{% trans "Delete selected build outputs" %}'>
-                                <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete outputs" %}
-                            </a></li>
-                            {% endif %}
-                        </ul>
-                    </div>
                     {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
                 {% endif %}

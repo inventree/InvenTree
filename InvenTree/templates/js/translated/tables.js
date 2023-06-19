@@ -38,10 +38,10 @@ function reloadBootstrapTable(table) {
         if (tbl.exists()) {
             tbl.bootstrapTable('refresh');
         } else {
-            console.error(`Invalid table name passed to reloadTable(): ${table}`);
+            console.error(`Invalid table name passed to reloadBootstrapTable(): ${table}`);
         }
     } else {
-        console.error(`Null value passed to reloadTable()`);
+        console.error(`Null value passed to reloadBootstrapTable()`);
     }
 }
 

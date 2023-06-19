@@ -387,7 +387,7 @@ function createBuildOutput(build_id, options) {
                     fields: fields,
                     preFormContent: html,
                     onSuccess: function(response) {
-                        location.reload();
+                        reloadBootstrapTable(options.table || '#build-output-table');
                     },
                 });
 
@@ -996,6 +996,70 @@ function loadBuildOrderAllocationTable(table, options={}) {
 
 
 /*
+ * Construct a set of actions for the build output table
+ */
+function makeBuildOutputActions(build_info) {
+
+    return [
+        {
+            label: 'complete',
+            title: '{% trans "Complete outputs" %}',
+            icon: 'fa-check-circle icon-green',
+            permission: 'build.add',
+            callback: function(data) {
+                completeBuildOutputs(
+                    build_info.pk,
+                    data,
+                    {
+                        success: function() {
+                            $('#build-output-table').bootstrapTable('refresh');  // Reload the "in progress" table
+                            $('#build-stock-table').bootstrapTable('refresh');  // Reload the "completed" table
+                        }
+                    }
+                );
+            },
+        },
+        {
+            label: 'scrap',
+            title: '{% trans "Scrap outputs" %}',
+            icon: 'fa-times-circle icon-red',
+            permission: 'build.change',
+            callback: function(data) {
+                scrapBuildOutputs(
+                    build_info.pk,
+                    data,
+                    {
+                        success: function() {
+                            $('#build-output-table').bootstrapTable('refresh');  // Reload the "in progress" table
+                            $('#build-stock-table').bootstrapTable('refresh');  // Reload the "completed" table
+                        }
+                    }
+                );
+            },
+        },
+        {
+            label: 'delete',
+            title: '{% trans "Delete outputs" %}',
+            icon: 'fa-trash-alt icon-red',
+            permission: 'build.delete',
+            callback: function(data) {
+                deleteBuildOutputs(
+                    build_info.pk,
+                    data,
+                    {
+                        success: function() {
+                            $('#build-output-table').bootstrapTable('refresh');  // Reload the "in progress" table
+                            $('#build-stock-table').bootstrapTable('refresh');  // Reload the "completed" table
+                        }
+                    }
+                )
+            },
+        }
+    ];
+}
+
+
+/*
  * Display a "build output" table for a particular build.
  *
  * This displays a list of "active" (i.e. "in production") build outputs (stock items) for a given build.
@@ -1035,6 +1099,12 @@ function loadBuildOutputTable(build_info, options={}) {
         },
         singular_name: '{% trans "build output" %}',
         plural_name: '{% trans "build outputs" %}',
+        custom_actions: [{
+            label: 'buildoutput',
+            icon: 'fa-tools',
+            title: '{% trans "Build output actions" %}',
+            actions: makeBuildOutputActions(build_info),
+        }]
     });
 
     // Request list of required tests for the part being assembled
@@ -1383,49 +1453,11 @@ function loadBuildOutputTable(build_info, options={}) {
         );
     });
 
-    // Complete multiple outputs
-    $('#multi-output-complete').click(function() {
-        var outputs = getTableData(table);
-
-        completeBuildOutputs(
-            build_info.pk,
-            outputs,
-            {
-                success: function() {
-                    // Reload the "in progress" table
-                    $('#build-output-table').bootstrapTable('refresh');
-
-                    // Reload the "completed" table
-                    $('#build-stock-table').bootstrapTable('refresh');
-                }
-            }
-        );
-    });
-
     // Delete multiple build outputs
     $('#multi-output-delete').click(function() {
         var outputs = getTableData(table);
 
         deleteBuildOutputs(
-            build_info.pk,
-            outputs,
-            {
-                success: function() {
-                    // Reload the "in progress" table
-                    $('#build-output-table').bootstrapTable('refresh');
-
-                    // Reload the "completed" table
-                    $('#build-stock-table').bootstrapTable('refresh');
-                }
-            }
-        );
-    });
-
-    // Scrap multiple outputs
-    $('#multi-output-scrap').click(function() {
-        var outputs = getTableData(table);
-
-        scrapBuildOutputs(
             build_info.pk,
             outputs,
             {
