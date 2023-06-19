@@ -30,8 +30,4 @@ class Migration(migrations.Migration):
                 ('company', models.ForeignKey(help_text='Select company', on_delete=django.db.models.deletion.CASCADE, related_name='addresses', to='company.company', verbose_name='Company')),
             ],
         ),
-        migrations.AddConstraint(
-            model_name='address',
-            constraint=models.UniqueConstraint(condition=models.Q(('primary', True)), fields=('company',), name='one_primary_per_company'),
-        ),
     ]
