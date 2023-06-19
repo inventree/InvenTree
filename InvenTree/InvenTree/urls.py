@@ -94,6 +94,7 @@ notifications_urls = [
 # These javascript files are served "dynamically" - i.e. rendered on demand
 dynamic_javascript_urls = [
     re_path(r'^calendar.js', DynamicJsView.as_view(template_name='js/dynamic/calendar.js'), name='calendar.js'),
+    re_path(r'^index.js', DynamicJsView.as_view(template_name='js/dynamic/index.js'), name='index.js'),
     re_path(r'^nav.js', DynamicJsView.as_view(template_name='js/dynamic/nav.js'), name='nav.js'),
     re_path(r'^settings.js', DynamicJsView.as_view(template_name='js/dynamic/settings.js'), name='settings.js'),
 ]
