@@ -37,7 +37,7 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
+        <div id='order-toolbar-buttons'>
             {% include "filter_list.html" with id="purchase-order-lines" %}
         </div>
 
@@ -61,10 +61,8 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-extra-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="purchase-order-extra-lines" %}
-            </div>
+        <div id='order-extra-toolbar-buttons'>
+            {% include "filter_list.html" with id="purchase-order-extra-lines" %}
         </div>
         <table class='table table-striped table-condensed' id='po-extra-lines-table' data-toolbar='#order-extra-toolbar-buttons'>
         </table>

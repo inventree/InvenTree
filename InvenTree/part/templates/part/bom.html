@@ -23,9 +23,7 @@
 {% endif %}
 
 <div id='bom-button-toolbar'>
-    <div class="btn-group" role="group" aria-label="...">
-        {% include "filter_list.html" with id="bom" %}
-    </div>
+    {% include "filter_list.html" with id="bom" %}
 </div>
 
 <table class='table table-bom table-condensed' data-toolbar="#bom-button-toolbar" id='bom-table'>

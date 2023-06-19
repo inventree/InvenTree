@@ -1,9 +1,7 @@
 {% load i18n %}
 
 <div id='attachment-buttons'>
-    <div class='btn-group' role='group'>
-        {% include "filter_list.html" with id="attachments" %}
-    </div>
+    {% include "filter_list.html" with id="attachments" %}
 </div>
 
 <div class='dropzone' id='attachment-dropzone'>

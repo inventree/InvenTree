@@ -169,9 +169,7 @@
         </div>
     </div>
     <div id='part-button-toolbar'>
-        <div class='btn-group' role='group'>
-            {% include "filter_list.html" with id="parts" %}
-        </div>
+        {% include "filter_list.html" with id="parts" %}
     </div>
     <div class='panel-content'>
         <table class='table table-striped table-condensed' data-toolbar='#part-button-toolbar' id='part-table'>
@@ -194,9 +192,7 @@
     </div>
     <div class='panel-content'>
         <div id='param-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="parameters" %}
-            </div>
+            {% include "filter_list.html" with id="parameters" %}
         </div>
 
         <table class='table table-striped table-condensed' data-toolbar='#param-button-toolbar' id='parametric-part-table'>
@@ -220,9 +216,7 @@
     </div>
     <div class='panel-content'>
         <div id='subcategory-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="category" %}
-            </div>
+            {% include "filter_list.html" with id="category" %}
         </div>
 
         <table class='table table-striped table-condensed' id='subcategory-table' data-toolbar='#subcategory-button-toolbar'></table>

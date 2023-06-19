@@ -26,11 +26,7 @@
     <div class='panel-content'>
         {% if roles.purchase_order.change %}
         <div id='supplier-part-button-toolbar'>
-            <div class='button-toolbar container-fluid'>
-                <div class='btn-group' role='group'>
-                    {% include "filter_list.html" with id="supplier-part" %}
-                </div>
-            </div>
+            {% include "filter_list.html" with id="supplier-part" %}
         </div>
         {% endif %}
 
@@ -56,11 +52,7 @@
     <div class='panel-content'>
         {% if roles.purchase_order.change %}
         <div id='manufacturer-part-button-toolbar'>
-            <div class='button-toolbar container-fluid'>
-                <div class='btn-group' role='group'>
-                    {% include "filter_list.html" with id="manufacturer-part" %}
-                </div>
-            </div>
+            {% include "filter_list.html" with id="manufacturer-part" %}
         </div>
         {% endif %}
         <table class='table table-striped table-condensed' id='manufacturer-part-table' data-toolbar='#manufacturer-part-button-toolbar'>
@@ -93,9 +85,7 @@
     </div>
     <div class='panel-content'>
         <div id='po-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                {% include "filter_list.html" with id="purchaseorder" %}
-            </div>
+            {% include "filter_list.html" with id="purchaseorder" %}
         </div>
 
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#po-button-bar'>
@@ -121,9 +111,7 @@
     </div>
     <div class='panel-content'>
         <div id='so-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                {% include "filter_list.html" with id="salesorder" %}
-            </div>
+            {% include "filter_list.html" with id="salesorder" %}
         </div>
 
         <table class='table table-striped table-condensed po-table' id='sales-order-table' data-toolbar='#so-button-bar'>
@@ -139,9 +127,7 @@
     </div>
     <div class='panel-content'>
         <div id='assigned-stock-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="customerstock" %}
-            </div>
+            {% include "filter_list.html" with id="customerstock" %}
         </div>
 
         <table class='table table-striped table-condensed' id='assigned-stock-table' data-toolbar='#assigned-stock-button-toolbar'></table>
@@ -166,11 +152,7 @@
     </div>
     <div class='panel-content'>
         <div id='table-buttons'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                <div class='btn-group'>
-                    {% include "filter_list.html" with id="returnorder" %}
-                </div>
-            </div>
+            {% include "filter_list.html" with id="returnorder" %}
         </div>
         <table class='table table-striped table-condensed' data-toolbar='#table-buttons' id='return-order-table'>
         </table>
@@ -211,9 +193,7 @@
     </div>
     <div class='panel-content'>
         <div id='contacts-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="contacts" %}
-            </div>
+            {% include "filter_list.html" with id="contacts" %}
         </div>
 
         <table class='table table-striped table-condensed' id='contacts-table' data-toolbar='#contacts-button-toolbar'></table>
@@ -236,9 +216,7 @@
     </div>
     <div class='panel-content'>
         <div id='addresses-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="addresses" %}
-            </div>
+            {% include "filter_list.html" with id="addresses" %}
         </div>
 
         <table class='table table-striped table-condensed' id='addresses-table' data-toolbar='#addresses-button-toolbar'></table>
