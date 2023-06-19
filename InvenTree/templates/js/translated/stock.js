@@ -1717,7 +1717,7 @@ function makeStockActions(table) {
             title: '{% trans "Add stock" %}',
             permission: 'stock.change',
             callback: function(data) {
-                stockAdjustment('add', data);
+                stockAdjustment('add', data, table);
             }
         },
         {
@@ -1726,7 +1726,7 @@ function makeStockActions(table) {
             title: '{% trans "Remove stock" %}',
             permission: 'stock.change',
             callback: function(data) {
-                stockAdjustment('take', data);
+                stockAdjustment('take', data, table);
             },
         },
         {
@@ -1735,7 +1735,7 @@ function makeStockActions(table) {
             title: '{% trans "Count stock" %}',
             permission: 'stock.change',
             callback: function(data) {
-                stockAdjustment('count', data);
+                stockAdjustment('count', data, table);
             },
         },
         {
@@ -1744,7 +1744,7 @@ function makeStockActions(table) {
             title: '{% trans "Transfer stock" %}',
             permission: 'stock.change',
             callback: function(data) {
-                stockAdjustment('move', data);
+                stockAdjustment('move', data, table);
             }
         },
         {
@@ -1811,7 +1811,7 @@ function makeStockActions(table) {
             title: '{% trans "Delete stock" %}',
             permission: 'stock.delete',
             callback: function(data) {
-                stockAdjustment('delete', data);
+                stockAdjustment('delete', data, table);
             },
         }
     ];
@@ -3128,7 +3128,7 @@ function installStockItem(stock_item_id, part_id, options={}) {
 }
 
 // Perform the specified stock adjustment action against the selected items
-function stockAdjustment(action, items) {
+function stockAdjustment(action, items, table) {
     adjustStock(action, items, {
         success: function() {
             $(table).bootstrapTable('refresh');
