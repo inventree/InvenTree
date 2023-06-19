@@ -93,6 +93,7 @@ addHeaderTitle('{% trans "Parts" %}');
 {% if setting_part_starred %}
 addHeaderAction('starred-parts', '{% trans "Subscribed Parts" %}', 'fa-bell');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
+    name: 'starred-parts',
     params: {
         starred: true,
         {% if hide_inactive %}
@@ -116,6 +117,7 @@ loadPartCategoryTable($('#table-starred-categories'), {
 {% if setting_part_latest %}
 addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
+    name: 'latest-parts',
     params: {
         ordering: "-creation_date",
         created_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),
@@ -130,6 +132,7 @@ loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
 {% if setting_bom_validation %}
 addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-times-circle');
 loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
+    name: 'parts-invalid-bom',
     params: {
         "bom_valid": false,
         {% if hide_inactive %}
@@ -170,6 +173,7 @@ loadStockTable($('#table-recently-updated-stock'), {
 {% if setting_stock_low %}
 addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-flag');
 loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
+    name: 'parts-low-stock',
     params: {
         low_stock: true,
         {% if hide_inactive %}
@@ -183,6 +187,7 @@ loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
 {% if setting_stock_depleted %}
 addHeaderAction('depleted-stock', '{% trans "Depleted Stock" %}', 'fa-times');
 loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
+    name: 'parts-depleted-stock',
     params: {
         depleted_stock: true,
         {% if hide_inactive %}
@@ -196,6 +201,7 @@ loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
 {% if setting_stock_needed %}
 addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
 loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
+    name: 'parts-required-to-build',
     params: {
         stock_to_build: true,
         {% if hide_inactive %}

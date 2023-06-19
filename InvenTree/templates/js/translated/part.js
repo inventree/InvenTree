@@ -2175,12 +2175,14 @@ function loadPartTable(table, url, options={}) {
 
     options.params = options.params || {};
 
+    let table_name = options.name || 'parts';
+
     // Ensure category detail is included
     options.params['category_detail'] = true;
 
     var params = options.params || {};
 
-    var filters = loadTableFilters('parts', options.params);
+    var filters = loadTableFilters(table_name, options.params);
 
     setupFilterList('parts', $(table), options.filterTarget, {
         download: true,
@@ -2356,6 +2358,7 @@ function loadPartTable(table, url, options={}) {
     $(table).inventreeTable({
         url: url,
         method: 'get',
+        name: table_name,
         queryParams: filters,
         groupBy: false,
         name: options.name || 'part',
