@@ -170,21 +170,6 @@
     </div>
     <div id='part-button-toolbar'>
         <div class='btn-group' role='group'>
-            <div class='btn-group' role='group'>
-                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
-                    <span class='fas fa-tools' title='{% trans "Options" %}'></span>
-                </button>
-                <ul class='dropdown-menu'>
-                    {% if roles.part.change %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-category' title='{% trans "Set category" %}'>
-                        <span class='fas fa-sitemap'></span> {% trans "Set Category" %}
-                    </a></li>
-                    {% endif %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-order' title='{% trans "Order parts" %}'>
-                        <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
-                    </a></li>
-                </ul>
-            </div>
             {% include "filter_list.html" with id="parts" %}
         </div>
     </div>
