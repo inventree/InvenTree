@@ -33,6 +33,7 @@
     modalSetContent,
     partFields,
     partGroups,
+    reloadBootstrapTable,
     renderLink,
     setupFilterList,
     shortenString,

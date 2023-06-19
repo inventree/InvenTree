@@ -3128,12 +3128,7 @@ function installStockItem(stock_item_id, part_id, options={}) {
 }
 
 // Perform the specified stock adjustment action against the selected items
-function stockAdjustment(action, items=null) {
-
-    if (items == null) {
-        items = getTableData(table);
-    }
-
+function stockAdjustment(action, items) {
     adjustStock(action, items, {
         success: function() {
             $(table).bootstrapTable('refresh');
