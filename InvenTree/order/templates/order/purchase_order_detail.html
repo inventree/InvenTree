@@ -187,8 +187,9 @@ $('#new-po-line').click(function() {
         }
     });
 });
+{% endif %}
 
-{% elif order.status == PurchaseOrderStatus.PLACED %}
+{% if order.status == PurchaseOrderStatus.PLACED %}
 
     $('#receive-selected-items').click(function() {
         let items = getTableData('#po-line-table');
