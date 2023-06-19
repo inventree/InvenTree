@@ -1,6 +1,7 @@
 {% load i18n %}
 
 /* globals
+    checkPermission,
     downloadTableData,
     getAvailableTableFilters,
     getTableData,

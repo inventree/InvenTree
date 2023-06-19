@@ -33,6 +33,7 @@
     makePartIcons,
     makeProgressBar,
     orderParts,
+    reloadBootstrapTable,
     renderDate,
     renderLink,
     setupFilterList,

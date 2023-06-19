@@ -18,6 +18,7 @@
     makeDeleteButton,
     makeEditButton,
     makeIconBadge,
+    orderParts,
     renderClipboard,
     renderDate,
     renderLink,
