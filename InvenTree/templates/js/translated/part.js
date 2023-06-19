@@ -23,7 +23,6 @@
     inventreeLoad,
     inventreePut,
     inventreeSave,
-    linkButtonsToSelection,
     loadTableFilters,
     makeDeleteButton,
     makeEditButton,
@@ -2159,6 +2158,69 @@ function partGridTile(part) {
 }
 
 
+/*
+ * Update the category for a set of parts
+ */
+function setPartCategory(data, options={}) {
+
+    let parts = [];
+
+    data.forEach(function(item) {
+        parts.push(item.pk);
+    });
+
+    var html = `
+    <div class='alert alert-block alert-info'>
+        {% trans "Set the part category for the selected parts" %}
+    </div>
+    `;
+
+    constructForm('{% url "api-part-change-category" %}',{
+        title: '{% trans "Set Part Category" %}',
+        method: 'POST',
+        preFormContent: html,
+        fields: {
+            category: {},
+        },
+        processBeforeUpload: function(data) {
+            data.parts = parts;
+            return data;
+        },
+        onSuccess: function() {
+            $(options.table).bootstrapTable('refresh');
+        }
+    });
+}
+
+
+/*
+ * Construct a set of custom actions for the part table
+ */
+function makePartActions(table) {
+
+    return [
+        {
+            label: 'set-category',
+            title: '{% trans "Set category" %}',
+            icon: 'fa-sitemap',
+            permission: 'part.change',
+            callback: function(data) {
+                setPartCategory(data, {table: table});
+            }
+        },
+        {
+            label: 'order',
+            title: '{% trans "Order parts" %}',
+            icon: 'fa-shopping-cart',
+            permission: 'purchase_order.add',
+            callback: function(data) {
+                orderParts(data);
+            },
+        }
+    ]
+}
+
+
 /* Load part listing data into specified table.
  *
  * Args:
@@ -2190,6 +2252,14 @@ function loadPartTable(table, url, options={}) {
         },
         singular_name: '{% trans "part" %}',
         plural_name: '{% trans "parts" %}',
+        custom_actions: [
+            {
+                label: 'parts',
+                icon: 'fa-tools',
+                title: '{% trans "Part actions" %}',
+                actions: makePartActions(table),
+            }
+        ]
     });
 
     var columns = [
@@ -2437,97 +2507,6 @@ function loadPartTable(table, url, options={}) {
 
             return html;
         }
-    });
-
-    if (options.buttons) {
-        linkButtonsToSelection($(table), options.buttons);
-    }
-
-    /* Button callbacks for part table buttons */
-
-    // Callback function for the "order parts" button
-    $('#multi-part-order').click(function() {
-        var selections = getTableData(table);
-
-        var parts = [];
-
-        selections.forEach(function(part) {
-            parts.push(part);
-        });
-
-        orderParts(parts, {});
-    });
-
-    // Callback function for the "set category" button
-    $('#multi-part-category').click(function() {
-        var selections = getTableData(table);
-        var parts = [];
-
-        selections.forEach(function(item) {
-            parts.push(item.pk);
-        });
-
-        var html = `
-        <div class='alert alert-block alert-info'>
-            {% trans "Set the part category for the selected parts" %}
-        </div>
-        `;
-
-        constructFormBody({}, {
-            title: '{% trans "Set Part Category" %}',
-            preFormContent: html,
-            fields: {
-                category: {
-                    label: '{% trans "Category" %}',
-                    help_text: '{% trans "Select Part Category" %}',
-                    required: true,
-                    type: 'related field',
-                    model: 'partcategory',
-                    api_url: '{% url "api-part-category-list" %}',
-                }
-            },
-            onSubmit: function(fields, opts) {
-                var category = getFormFieldValue('category', fields['category'], opts);
-
-                if (category == null) {
-                    handleFormErrors(
-                        {
-                            'category': ['{% trans "Category is required" %}']
-                        },
-                        opts.fields,
-                        opts
-                    );
-                    return;
-                }
-
-                // Set the category for each part in sequence
-                function setCategory() {
-                    if (parts.length > 0) {
-                        var part = parts.shift();
-
-                        inventreePut(
-                            `{% url "api-part-list" %}${part}/`,
-                            {
-                                category: category,
-                            },
-                            {
-                                method: 'PATCH',
-                                complete: setCategory,
-                            }
-                        );
-                    } else {
-                        // We are done!
-                        $(opts.modal).modal('hide');
-
-                        $(table).bootstrapTable('refresh');
-                    }
-                }
-
-                // Start the ball rolling
-                showModalSpinner(opts.modal);
-                setCategory();
-            },
-        });
     });
 }
 

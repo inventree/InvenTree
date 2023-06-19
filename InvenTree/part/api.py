@@ -1271,6 +1271,13 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
     ]
 
 
+class PartChangeCategory(CreateAPI):
+    """API endpoint to change the location of multiple parts in bulk"""
+
+    serializer_class = part_serializers.PartSetCategorySerializer
+    queryset = Part.objects.none()
+
+
 class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single Part object."""
 
@@ -2019,6 +2026,8 @@ part_api_urls = [
         # Part detail endpoint
         re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
     ])),
+
+    re_path(r'^change_category/', PartChangeCategory.as_view(), name='api-part-change-category'),
 
     re_path(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]

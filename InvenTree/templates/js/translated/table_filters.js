@@ -52,6 +52,12 @@ function constructHasProjectCodeFilter() {
 }
 
 
+// Reset a dictionary of filters for the attachment table
+function getAttachmentFilters() {
+    return {};
+}
+
+
 // Return a dictionary of filters for the return order table
 function getReturnOrderFilters() {
     var filters = {
@@ -487,6 +493,11 @@ function getBuildTableFilters() {
 }
 
 
+function getBuildItemTableFilters() {
+    return {};
+}
+
+
 // Return a dictionary of filters for the "build lines" table
 function getBuildLineTableFilters() {
     return {
@@ -770,6 +781,16 @@ function getAvailableTableFilters(tableKey) {
     tableKey = tableKey.toLowerCase();
 
     switch (tableKey) {
+    case 'attachments':
+        return getAttachmentFilters();
+    case 'build':
+        return getBuildTableFilters();
+    case 'builditems':
+        return getBuildItemTableFilters();
+    case 'buildlines':
+        return getBuildLineTableFilters();
+    case 'bom':
+        return getBOMTableFilters();
     case 'category':
         return getPartCategoryFilters();
     case 'company':
@@ -778,12 +799,6 @@ function getAvailableTableFilters(tableKey) {
         return getContactFilters();
     case 'customerstock':
         return getCustomerStockFilters();
-    case 'bom':
-        return getBOMTableFilters();
-    case 'build':
-        return getBuildTableFilters();
-    case 'buildlines':
-        return getBuildLineTableFilters();
     case 'location':
         return getStockLocationFilters();
     case 'parameters':

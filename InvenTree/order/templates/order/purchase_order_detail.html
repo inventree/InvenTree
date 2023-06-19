@@ -37,23 +37,7 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            {% if roles.purchase_order.change %}
-            {% if order.is_open or allow_extra_editing %}
-            <div class='btn-group' role='group'>
-                <!-- Multiple-select actions -->
-                <button id='multi-select-options' class='btn btn-primary dropdown-toggle' data-bs-toggle='dropdown'>
-                    <span class='fas fa-tools'></span> <span class='caret'></span>
-                </button>
-                <ul class='dropdown-menu'>
-                    <li><a class='dropdown-item' href='#' id='po-lines-bulk-delete' title='{% trans "Delete Line Items" %}'>
-                        <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Line Items" %}
-                    </a></li>
-                </ul>
-            </div>
-            {% endif %}
-            {% endif %}
-
+        <div id='order-toolbar-buttons'>
             {% include "filter_list.html" with id="purchase-order-lines" %}
         </div>
 
@@ -77,10 +61,8 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-extra-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="purchase-order-extra-lines" %}
-            </div>
+        <div id='order-extra-toolbar-buttons'>
+            {% include "filter_list.html" with id="purchase-order-extra-lines" %}
         </div>
         <table class='table table-striped table-condensed' id='po-extra-lines-table' data-toolbar='#order-extra-toolbar-buttons'>
         </table>
