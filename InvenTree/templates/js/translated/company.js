@@ -1453,6 +1453,43 @@ function loadManufacturerPartParameterTable(table, url, options) {
 }
 
 
+// Construct a set of actions for the supplier part table
+function makeSupplierPartActions(options={}) {
+    return [
+        {
+            label: 'order',
+            title: '{% trans "Order parts" %}',
+            icon: 'fa-shopping-cart',
+            permission: 'purchase_order.add',
+            callback: function(data) {
+                let parts = []
+
+                data.forEach(function(entry) {
+                    parts.push(entry.part_detail);
+                });
+
+                orderParts(parts, {
+                    supplier: options.supplier_id,
+                });
+            },
+        },
+        {
+            label: 'delete',
+            title: '{% trans "Delete supplier parts" %}',
+            icon: 'fa-trash-alt icon-red',
+            permission: 'purchase_order.delete',
+            callback: function(data) {
+                deleteSupplierParts(data, {
+                    success: function() {
+                        $('#supplier-part-table').bootstrapTable('refresh');
+                    }
+                });
+            },
+        }
+    ];
+}
+
+
 /*
  * Load supplier part table
  */
@@ -1464,7 +1501,18 @@ function loadSupplierPartTable(table, url, options) {
     // Load filters
     var filters = loadTableFilters('supplierpart', params);
 
-    setupFilterList('supplierpart', $(table));
+    setupFilterList('supplierpart', $(table), '#filter-list-supplier-part', {
+        custom_actions: [
+            {
+                label: 'supplier-part',
+                title: '{% trans "Supplier part actions" %}',
+                icon: 'fa-tools',
+                actions: makeSupplierPartActions({
+                    supplier_id: options.params.supplier,
+                }),
+            }
+        ]
+    });
 
     $(table).inventreeTable({
         url: url,
