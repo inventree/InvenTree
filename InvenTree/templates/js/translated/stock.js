@@ -1746,7 +1746,17 @@ function loadStockTable(table, options) {
             key: 'item',
         },
         singular_name: '{% trans "stock item" %}',
-        plural_name: '{% trans "stock items" %}'
+        plural_name: '{% trans "stock items" %}',
+        barcode_actions: [
+            {
+                icon: 'fa-sitemap',
+                label: 'scantolocation',
+                title: '{% trans "Scan to location" %}',
+                callback: function(items) {
+                    scanItemsIntoLocation(items);
+                }
+            }
+        ]
     });
 
     // Override the default values, or add new ones
@@ -2282,20 +2292,6 @@ function loadStockTable(table, options) {
         });
     }
 
-    // Automatically link button callbacks
-    if (global_settings.BARCODE_ENABLE) {
-        $('#multi-item-barcode-scan-into-location').click(function() {
-            var selections = getTableData(table);
-
-            var items = [];
-
-            selections.forEach(function(item) {
-                items.push(item);
-            });
-
-            scanItemsIntoLocation(items);
-        });
-    }
 
     // Callback for 'stocktake' button
     $('#multi-item-stocktake').click(function() {

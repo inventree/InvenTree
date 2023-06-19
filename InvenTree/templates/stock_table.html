@@ -11,17 +11,6 @@
 <div id='{{ prefix }}button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
         <div class='btn-group' role='group'>
-            {% if barcodes %}
-            <!-- Barcode actions menu -->
-            <div class='btn-group' role='group'>
-                <button id='stock-barcode-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Barcode Actions" %}'>
-                    <span class='fas fa-qrcode'></span> <span class='caret'></span>
-                </button>
-                <ul class='dropdown-menu'>
-                    <li><a class='dropdown-item' href='#' id='multi-item-barcode-scan-into-location' title='{% trans "Scan to Location" %}'><span class='fas fa-sitemap'></span> {% trans "Scan to Location" %}</a></li>
-                </ul>
-            </div>
-            {% endif %}
             {% if not read_only %}
             {% if roles.stock.change or roles.stock.delete %}
             <div class="btn-group" role="group">
