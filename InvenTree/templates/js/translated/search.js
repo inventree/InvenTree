@@ -22,40 +22,6 @@ function closeSearchPanel() {
 }
 
 
-// Keep track of the roles / permissions available to the current user
-var search_user_roles = null;
-
-
-/*
- * Check if the user has the specified role and permission
- */
-function checkPermission(role, permission='view') {
-
-    if (!search_user_roles) {
-        return false;
-    }
-
-    if (!(role in search_user_roles)) {
-        return false;
-    }
-
-    var roles = search_user_roles[role];
-
-    if (!roles) {
-        return false;
-    }
-
-    var found = false;
-
-    search_user_roles[role].forEach(function(p) {
-        if (String(p).valueOf() == String(permission).valueOf()) {
-            found = true;
-        }
-    });
-
-    return found;
-}
-
 
 /*
  * Callback when the search panel is opened.
@@ -70,15 +36,6 @@ function openSearchPanel() {
     search_input.focus();
 
     clearSearchResults();
-
-    // Request user roles if we do not have them
-    if (search_user_roles == null) {
-        inventreeGet('{% url "api-user-roles" %}', {}, {
-            success: function(response) {
-                search_user_roles = response.roles || {};
-            }
-        });
-    }
 
     // Callback for text input changed
     search_input.on('keyup change', searchTextChanged);
