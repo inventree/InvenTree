@@ -386,14 +386,6 @@
     <div class='panel-content'>
         <div id='supplier-button-toolbar'>
             <div class='btn-group'>
-                <div id='opt-dropdown' class="btn-group">
-                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>
-                            <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}
-                        </a></li>
-                    </ul>
-                </div>
                 {% include "filter_list.html" with id="supplier-part" %}
             </div>
         </div>
@@ -417,13 +409,7 @@
         <div class='panel-content'>
             <div id='manufacturer-button-toolbar'>
                 <div class='btn-group'>
-                    <div id='opt-dropdown' class="btn-group">
-                        <button id='manufacturer-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a class='dropdown-item' href='#' id='manufacturer-part-delete' title='{% trans "Delete manufacturer parts" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
-                        </ul>
-                        {% include "filter_list.html" with id="manufacturer-part" %}
-                    </div>
+                    {% include "filter_list.html" with id="manufacturer-part" %}
                 </div>
             </div>
             <table class='table table-condensed table-striped' id='manufacturer-part-table' data-toolbar='#manufacturer-button-toolbar'></table>
