@@ -30,7 +30,6 @@
     inventreePut,
     inventreeSave,
     launchModalForm,
-    linkButtonsToSelection,
     loadTableFilters,
     makeDeleteButton,
     makeEditButton,
@@ -2401,11 +2400,6 @@ function loadStockTable(table, options) {
         buttons.push('#stock-barcode-options');
     }
 
-    linkButtonsToSelection(
-        table,
-        buttons,
-    );
-
     // Callback for 'change status' button
     $('#multi-item-status').click(function() {
         let selections = getTableData(table);
@@ -2921,10 +2915,6 @@ function loadStockTrackingTable(table, options) {
         columns: cols,
         url: options.url,
     });
-
-    if (options.buttons) {
-        linkButtonsToSelection(table, options.buttons);
-    }
 
     table.on('click', '.btn-entry-edit', function() {
         var button = $(this);

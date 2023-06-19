@@ -23,7 +23,6 @@
     inventreeLoad,
     inventreePut,
     inventreeSave,
-    linkButtonsToSelection,
     loadTableFilters,
     makeDeleteButton,
     makeEditButton,
@@ -2509,10 +2508,6 @@ function loadPartTable(table, url, options={}) {
             return html;
         }
     });
-
-    if (options.buttons) {
-        linkButtonsToSelection($(table), options.buttons);
-    }
 }
 
 

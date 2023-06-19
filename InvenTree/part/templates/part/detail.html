@@ -526,8 +526,6 @@
             }
         );
 
-        linkButtonsToSelection($("#supplier-part-table"), ['#supplier-part-options']);
-
         loadManufacturerPartTable(
             '#manufacturer-part-table',
             "{% url 'api-manufacturer-part-list' %}",
@@ -539,8 +537,6 @@
                 },
             }
         );
-
-        linkButtonsToSelection($("#manufacturer-part-table"), ['#manufacturer-part-options']);
 
         $("#manufacturer-part-delete").click(function() {
 
@@ -624,12 +620,6 @@
             parent_id: {{ part.id }} ,
             sub_part_detail: true,
         });
-
-        linkButtonsToSelection($("#bom-table"),
-            [
-                "#bom-item-delete",
-            ]
-        );
 
         $('#bom-item-delete').click(function() {
 

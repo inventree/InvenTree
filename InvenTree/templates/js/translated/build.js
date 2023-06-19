@@ -23,7 +23,6 @@
     inventreeLoad,
     inventreePut,
     launchModalForm,
-    linkButtonsToSelection,
     loadTableFilters,
     locationDetail,
     makeDeleteButton,
@@ -2212,13 +2211,6 @@ function loadBuildTable(table, options) {
             }
         }
     });
-
-    linkButtonsToSelection(
-        table,
-        [
-            '#build-print-options',
-        ]
-    );
 }
 
 

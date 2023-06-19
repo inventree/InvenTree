@@ -220,25 +220,6 @@ function enableButtons(elements, enabled) {
 }
 
 
-/* Link a bootstrap-table object to one or more buttons.
- * The buttons will only be enabled if there is at least one row selected
- */
-function linkButtonsToSelection(table, buttons) {
-
-    if (typeof table === 'string') {
-        table = $(table);
-    }
-
-    // Initially set the enable state of the buttons
-    enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-
-    // Add a callback
-    table.on('check.bs.table uncheck.bs.table check-some.bs.table uncheck-some.bs.table check-all.bs.table uncheck-all.bs.table', function() {
-        enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-    });
-}
-
-
 /**
  * Returns true if the input looks like a valid number
  * @param {String} n
@@ -473,11 +454,6 @@ $.fn.inventreeTable = function(options) {
         } else {
             console.error(`Could not get list of visible columns for table '${tableName}'`);
         }
-    }
-
-    // Optionally, link buttons to the table selection
-    if (options.buttons) {
-        linkButtonsToSelection(table, options.buttons);
     }
 };
 

@@ -31,7 +31,6 @@
     inventreeLoad,
     inventreePut,
     launchModalForm,
-    linkButtonsToSelection,
     loadTableFilters,
     makeCopyButton,
     makeDeleteButton,
@@ -2215,12 +2214,4 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             }
         ]
     });
-
-    linkButtonsToSelection(
-        table,
-        [
-            '#multi-select-options',
-        ]
-    );
-
 }
