@@ -15,6 +15,13 @@ var user_roles = null;
  */
 function checkPermission(role, permission='view') {
 
+    // Allow permission to be specified in dotted notation, e.g. 'part.add'
+    if (role.indexOf('.') > 0) {
+        let parts = role.split('.');
+        role = parts[0];
+        permission = parts[1];
+    }
+
     // Request user roles if we do not have them
     if (user_roles == null) {
         inventreeGet('{% url "api-user-roles" %}', {}, {
