@@ -213,9 +213,6 @@
         <div id='build-lines-toolbar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
                 <div class='btn-group'>
-                    <button id='allocate-selected-items' class='btn btn-success' title='{% trans "Allocate selected items" %}'>
-                        <span class='fas fa-sign-in-alt'></span>
-                    </button>
                     {% include "filter_list.html" with id='buildlines' %}
                 </div>
             </div>
@@ -475,10 +472,6 @@ $('#btn-unallocate').on('click', function() {
             $('#build-lines-table').bootstrapTable('refresh');
         },
     });
-});
-
-$('#allocate-selected-items').click(function() {
-    allocateSelectedLines();
 });
 
 $("#btn-allocate").on('click', function() {
