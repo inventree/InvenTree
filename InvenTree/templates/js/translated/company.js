@@ -1213,6 +1213,43 @@ function deleteManufacturerPartParameters(selections, options={}) {
 }
 
 
+// Construct a set of actions for the manufacturer part table
+function makeManufacturerPartActions(options={}) {
+    return [
+        {
+            label: 'order',
+            title: '{% trans "Order parts" %}',
+            icon: 'fa-shopping-cart',
+            permission: 'purchase_order.add',
+            callback: function(data) {
+                let parts = [];
+
+                data.forEach(function(item) {
+                    let part = item.part_detail;
+                    part.manufacturer_part = item.pk;
+                    parts.push(part);
+                });
+
+                orderParts(parts);
+            },
+        },
+        {
+            label: 'delete',
+            title: '{% trans "Delete manufacturer parts" %}',
+            icon: 'fa-trash-alt icon-red',
+            permission: 'purchase_order.delete',
+            callback: function(data) {
+                deleteManufacturerParts(data, {
+                    success: function() {
+                        $('#manufacturer-part-table').bootstrapTable('refresh');
+                    }
+                });
+            },
+        }
+    ];
+}
+
+
 /*
  * Load manufacturer part table
  */
@@ -1226,7 +1263,18 @@ function loadManufacturerPartTable(table, url, options) {
 
     var filterTarget = options.filterTarget || '#filter-list-manufacturer-part';
 
-    setupFilterList('manufacturer-part', $(table), filterTarget);
+    setupFilterList('manufacturer-part', $(table), filterTarget, {
+        custom_actions: [
+            {
+                label: 'manufacturer-part',
+                title: '{% trans "Manufacturer part actions" %}',
+                icon: 'fa-tools',
+                actions: makeManufacturerPartActions({
+                    manufacturer_id: options.params.manufacturer,
+                })
+            }
+        ]
+    });
 
     $(table).inventreeTable({
         url: url,

@@ -58,24 +58,6 @@
         <div id='manufacturer-part-button-toolbar'>
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
-                    <div class='btn-group' role='group'>
-                        <button class="btn btn-primary dropdown-toggle" id='manufacturer-table-options' type="button" data-bs-toggle="dropdown">
-                            <span class='fas fa-tools'></span>
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            {% if roles.purchase_order.add %}
-                            <li><a class='dropdown-item' href='#' id='multi-manufacturer-part-order' title='{% trans "Order parts" %}'>
-                                <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
-                            </a></li>
-                            {% endif %}
-                            {% if roles.purchase_order.delete %}
-                            <li><a class='dropdown-item' href='#' id='multi-manufacturer-part-delete' title='{% trans "Delete parts" %}'>
-                                <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Parts" %}
-                            </a></li>
-                            {% endif %}
-                        </ul>
-                    </div>
                     {% include "filter_list.html" with id="manufacturer-part" %}
                 </div>
             </div>
@@ -480,32 +462,6 @@
             },
         }
     );
-
-    $("#multi-manufacturer-part-delete").click(function() {
-        var selections = getTableData('#manufacturer-part-table');
-
-        deleteManufacturerParts(selections, {
-            success: function() {
-                $("#manufacturer-part-table").bootstrapTable('refresh');
-            }
-        });
-    });
-
-    $("#multi-manufacturer-part-order").click(function() {
-        var selections = getTableData('#manufacturer-part-table');
-
-        var parts = [];
-
-        selections.forEach(function(item) {
-            var part = item.part_detail;
-            part.manufacturer_part = item.pk;
-            parts.push(part);
-        });
-
-        orderParts(
-            parts,
-        );
-    });
 
     {% endif %}
 
