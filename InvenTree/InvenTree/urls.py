@@ -94,7 +94,6 @@ notifications_urls = [
 # These javascript files are served "dynamically" - i.e. rendered on demand
 dynamic_javascript_urls = [
     re_path(r'^calendar.js', DynamicJsView.as_view(template_name='js/dynamic/calendar.js'), name='calendar.js'),
-    re_path(r'^index.js', DynamicJsView.as_view(template_name='js/dynamic/index.js'), name='index.js'),
     re_path(r'^nav.js', DynamicJsView.as_view(template_name='js/dynamic/nav.js'), name='nav.js'),
     re_path(r'^settings.js', DynamicJsView.as_view(template_name='js/dynamic/settings.js'), name='settings.js'),
 ]
@@ -111,6 +110,7 @@ translated_javascript_urls = [
     re_path(r'^filters.js', DynamicJsView.as_view(template_name='js/translated/filters.js'), name='filters.js'),
     re_path(r'^forms.js', DynamicJsView.as_view(template_name='js/translated/forms.js'), name='forms.js'),
     re_path(r'^helpers.js', DynamicJsView.as_view(template_name='js/translated/helpers.js'), name='helpers.js'),
+    re_path(r'^index.js', DynamicJsView.as_view(template_name='js/translated/index.js'), name='index.js'),
     re_path(r'^label.js', DynamicJsView.as_view(template_name='js/translated/label.js'), name='label.js'),
     re_path(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/translated/model_renderers.js'), name='model_renderers.js'),
     re_path(r'^modals.js', DynamicJsView.as_view(template_name='js/translated/modals.js'), name='modals.js'),
