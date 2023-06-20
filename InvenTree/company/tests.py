@@ -5,7 +5,6 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from part.models import Part
@@ -199,17 +198,23 @@ class AddressTest(TestCase):
         c2 = Company.objects.create(name='Test Corp2.', description='We make stuff good')
         Address.objects.create(company=self.c, primary=True)
         Address.objects.create(company=self.c, primary=False)
+
         self.assertEqual(Address.objects.count(), 2)
 
         # Testing the constraint itself
         # Intentionally throwing exceptions breaks unit tests unless performed in an atomic block
         with transaction.atomic():
-            self.assertRaises(IntegrityError, Address.objects.create, company=self.c, primary=True, confirm_primary=False)
+            with self.assertRaises(ValidationError):
+                addr = Address(company=self.c, primary=True, confirm_primary=False)
+                addr.validate_unique()
 
         Address.objects.create(company=c2, primary=True, line1="Hellothere", line2="generalkenobi")
 
         with transaction.atomic():
-            self.assertRaises(IntegrityError, Address.objects.create, company=c2, primary=True)
+            with self.assertRaises(ValidationError):
+                addr = Address(company=c2, primary=True, confirm_primary=False)
+                addr.validate_unique()
+
         self.assertEqual(Address.objects.count(), 3)
 
     def test_first_address_is_primary(self):
