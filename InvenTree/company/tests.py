@@ -219,7 +219,10 @@ class AddressTest(TestCase):
 
         self.assertTrue(addr.primary)
 
-        self.assertRaises(IntegrityError, Address.objects.create, company=self.c, primary=True)
+        # Create another address, which should error out if primary is not set to False
+        with self.assertRaises(ValidationError):
+            addr = Address(company=self.c, primary=True)
+            addr.validate_unique()
 
     def test_model_str(self):
         """Test value of __str__"""
