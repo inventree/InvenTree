@@ -17,7 +17,7 @@ env:
   python_version: 3.9
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
-  INVENTREE_DB_NAME: db.sqlite3
+  INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
   INVENTREE_MEDIA_ROOT: ../test_inventree_media
   INVENTREE_STATIC_ROOT: ../test_inventree_static
   INVENTREE_BACKUP_DIR: ../test_inventree_backup
@@ -61,18 +61,20 @@ jobs:
 
       - name: Latest Database
         run: |
-          cp test-db/latest.sqlite3 ./db.sqlite3
-          chmod +rw db.sqlite3
+          cp test-db/latest.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-      - name: 0.10.0 Database
-        run: |
-          cp test-db/stable_0.10.0.sqlite3 ./db.sqlite3
-          chmod +rw db.sqlite3
+          - name: 0.10.0 Database
+          run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-      - name: 0.11.0 Database
-        run: |
-          cp test-db/stable_0.11.0.sqlite3 ./db.sqlite3
-          chmod +rw db.sqlite3
+          - name: 0.11.0 Database
+          run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
