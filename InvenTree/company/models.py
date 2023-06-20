@@ -306,9 +306,6 @@ class Address(models.Model):
 
     class Meta:
         """Metaclass defines extra model options"""
-        constraints = [
-            UniqueConstraint(fields=['company'], condition=Q(primary=True), name='one_primary_per_company')
-        ]
         verbose_name_plural = "Addresses"
 
     @staticmethod
