@@ -269,10 +269,6 @@ main {
 }
 
 /* Styles for table buttons and filtering */
-.button-toolbar .btn {
-    margin-left: 1px;
-    margin-right: 1px;
-}
 
 .filter-list {
     display: inline-block;

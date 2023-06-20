@@ -291,6 +291,56 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(source='pricing_data.overall_max', allow_null=True, read_only=True)
 
 
+class PartSetCategorySerializer(serializers.Serializer):
+    """Serializer for changing PartCategory for multiple Part objects"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = [
+            'parts',
+            'category',
+        ]
+
+    parts = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        many=True, required=True, allow_null=False,
+        label=_('Parts'),
+    )
+
+    def validate_parts(self, parts):
+        """Validate the selected parts"""
+        if len(parts) == 0:
+            raise serializers.ValidationError(_("No parts selected"))
+
+        return parts
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.filter(structural=False),
+        many=False, required=True, allow_null=False,
+        label=_('Category'),
+        help_text=_('Select category',)
+    )
+
+    @transaction.atomic
+    def save(self):
+        """Save the serializer to change the location of the selected parts"""
+
+        data = self.validated_data
+        parts = data['parts']
+        category = data['category']
+
+        parts_to_save = []
+
+        for p in parts:
+            if p.category == category:
+                continue
+
+            p.category = category
+            parts_to_save.append(p)
+
+        Part.objects.bulk_update(parts_to_save, ['category'])
+
+
 class DuplicatePartSerializer(serializers.Serializer):
     """Serializer for specifying options when duplicating a Part.
 

@@ -38,10 +38,10 @@ function reloadBootstrapTable(table) {
         if (tbl.exists()) {
             tbl.bootstrapTable('refresh');
         } else {
-            console.error(`Invalid table name passed to reloadTable(): ${table}`);
+            console.error(`Invalid table name passed to reloadBootstrapTable(): ${table}`);
         }
     } else {
-        console.error(`Null value passed to reloadTable()`);
+        console.error(`Null value passed to reloadBootstrapTable()`);
     }
 }
 
@@ -217,25 +217,6 @@ function enableButtons(elements, enabled) {
     for (let item of elements) {
         $(item).prop('disabled', !enabled);
     }
-}
-
-
-/* Link a bootstrap-table object to one or more buttons.
- * The buttons will only be enabled if there is at least one row selected
- */
-function linkButtonsToSelection(table, buttons) {
-
-    if (typeof table === 'string') {
-        table = $(table);
-    }
-
-    // Initially set the enable state of the buttons
-    enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-
-    // Add a callback
-    table.on('check.bs.table uncheck.bs.table check-some.bs.table uncheck-some.bs.table check-all.bs.table uncheck-all.bs.table', function() {
-        enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-    });
 }
 
 
@@ -473,11 +454,6 @@ $.fn.inventreeTable = function(options) {
         } else {
             console.error(`Could not get list of visible columns for table '${tableName}'`);
         }
-    }
-
-    // Optionally, link buttons to the table selection
-    if (options.buttons) {
-        linkButtonsToSelection(table, options.buttons);
     }
 };
 
