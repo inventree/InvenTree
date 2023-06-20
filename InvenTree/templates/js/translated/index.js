@@ -1,9 +1,16 @@
 {% load i18n %}
 
 /* globals
+    addSidebarHeader,
+    addSidebarItem,
     checkPermission,
     global_settings,
+    imageHoverIcon,
+    makeProgressBar,
+    renderLink,
+    shortenString,
     user_settings,
+    withTitle,
 */
 
 /* exported
@@ -24,50 +31,50 @@ function addHeaderTitle(title) {
 
 function addHeaderAction(label, title, icon, options) {
 
-  // Construct a "badge" to add to the sidebar item
-  var badge = `
-  <span id='sidebar-badge-${label}' class='sidebar-item-badge badge rounded-pill badge-right bg-dark'>
-      <span class='fas fa-spin fa-spinner'></span>
-  </span>
-  `;
+    // Construct a "badge" to add to the sidebar item
+    var badge = `
+    <span id='sidebar-badge-${label}' class='sidebar-item-badge badge rounded-pill badge-right bg-dark'>
+        <span class='fas fa-spin fa-spinner'></span>
+    </span>
+    `;
 
-  addSidebarItem({
-      label: label,
-      text: title,
-      icon: icon,
-      content_after: badge
-  });
+    addSidebarItem({
+        label: label,
+        text: title,
+        icon: icon,
+        content_after: badge
+    });
 
-  // Add a detail item to the detail item-panel
-  $("#detail-panels").append(
-      `<div class='panel panel-inventree panel-hidden' id='panel-${label}'>
-          <div class='panel-heading'>
-              <h4>${title}</h4>
-          </div>
-          <div class='panel-content'>
-              <table class='table table-condensed table-striped' id='table-${label}'></table>
-          </div>
-      </div>`
-  );
+    // Add a detail item to the detail item-panel
+    $("#detail-panels").append(
+        `<div class='panel panel-inventree panel-hidden' id='panel-${label}'>
+            <div class='panel-heading'>
+                <h4>${title}</h4>
+            </div>
+            <div class='panel-content'>
+                <table class='table table-condensed table-striped' id='table-${label}'></table>
+            </div>
+        </div>`
+    );
 
-  let table_name = `#table-${label}`;
+    let table_name = `#table-${label}`;
 
-  // Connect a callback to the table
-  $(table_name).on('load-success.bs.table', function(data) {
+    // Connect a callback to the table
+    $(table_name).on('load-success.bs.table', function(data) {
 
-      let options = $(table_name).bootstrapTable('getOptions');
+        let options = $(table_name).bootstrapTable('getOptions');
 
-      let count = options.totalRows;
+        let count = options.totalRows;
 
-      let badge = $(`#sidebar-badge-${label}`);
+        let badge = $(`#sidebar-badge-${label}`);
 
-      badge.html(count);
+        badge.html(count);
 
-      if (count > 0) {
-          badge.removeClass('bg-dark');
-          badge.addClass('bg-primary');
-      }
-  });
+        if (count > 0) {
+            badge.removeClass('bg-dark');
+            badge.addClass('bg-primary');
+        }
+    });
 }
 
 
