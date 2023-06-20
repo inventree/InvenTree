@@ -306,15 +306,22 @@ class Address(models.Model):
 
     class Meta:
         """Metaclass defines extra model options"""
-        constraints = [
-            UniqueConstraint(fields=['company'], condition=Q(primary=True), name='one_primary_per_company')
-        ]
         verbose_name_plural = "Addresses"
 
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the Contcat model"""
         return reverse('api-address-list')
+
+    def validate_unique(self, exclude=None):
+        """Ensure that only one primary address exists per company"""
+
+        super().validate_unique(exclude=exclude)
+
+        if self.primary:
+            # Check that no other primary address exists for this company
+            if Address.objects.filter(company=self.company, primary=True).exclude(pk=self.pk).exists():
+                raise ValidationError({'primary': _('Company already has a primary address')})
 
     company = models.ForeignKey(Company, related_name='addresses',
                                 on_delete=models.CASCADE,
