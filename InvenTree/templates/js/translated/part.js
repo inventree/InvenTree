@@ -2435,7 +2435,6 @@ function loadPartTable(table, url, options={}) {
         name: table_name,
         queryParams: filters,
         groupBy: false,
-        name: options.name || 'part',
         original: params,
         sidePagination: 'server',
         pagination: 'true',

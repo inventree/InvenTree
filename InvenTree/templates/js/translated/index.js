@@ -24,7 +24,7 @@
  */
 function addHeaderTitle(title) {
     addSidebarHeader({
-      text: title,
+        text: title,
     });
 }
 
