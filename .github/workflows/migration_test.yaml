@@ -72,8 +72,8 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-          - name: 0.11.0 Database
-          run: |
+      - name: 0.11.0 Database
+        run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
