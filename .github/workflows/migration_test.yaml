@@ -1,0 +1,80 @@
+# This workflow ensures that any database migrations apply cleanly to a "production" database
+# On a PR to master, the workflow will run against a "sample" production database,
+# which is sitting at the current "master" migration level
+# On a push to master, the workflow will also commit any migrations to the "production" database
+
+name: Migration Testing
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  python_version: 3.9
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  INVENTREE_DB_ENGINE: sqlite3
+  INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
+  INVENTREE_MEDIA_ROOT: ../test_inventree_media
+  INVENTREE_STATIC_ROOT: ../test_inventree_static
+  INVENTREE_BACKUP_DIR: ../test_inventree_backup
+
+jobs:
+  paths-filter:
+    name: Filter
+    runs-on: ubuntu-latest
+
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+
+    steps:
+    - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          server:
+            - 'InvenTree/**'
+            - 'requirements.txt'
+            - 'requirements-dev.txt'
+            - '.github/**'
+
+  migrations-checks:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true'
+
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout Code
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          install: true
+      - name: Fetch Database
+        run: |
+          git clone --depth 1 https://github.com/inventree/test-db ./test-db
+
+      - name: Latest Database
+        run: |
+          cp test-db/latest.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.10.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.11.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
