@@ -1843,44 +1843,48 @@ function loadStockTable(table, options) {
 
     var params = options.params || {};
 
-    const filterTarget = options.filterTarget || '#filter-list-stock';
+    let filters = {};
 
-    const filterKey = options.filterKey || options.name || 'stock';
+    if (!options.disableFilters) {
 
-    let filters = loadTableFilters(filterKey, params);
+        const filterTarget = options.filterTarget || '#filter-list-stock';
+        const filterKey = options.filterKey || options.name || 'stock';
 
-    setupFilterList(filterKey, table, filterTarget, {
-        download: true,
-        report: {
-            url: '{% url "api-stockitem-testreport-list" %}',
-            key: 'item',
-        },
-        labels: {
-            url: '{% url "api-stockitem-label-list" %}',
-            key: 'item',
-        },
-        singular_name: '{% trans "stock item" %}',
-        plural_name: '{% trans "stock items" %}',
-        barcode_actions: [
-            {
-                icon: 'fa-sitemap',
-                label: 'scantolocation',
-                title: '{% trans "Scan to location" %}',
-                permission: 'stock.change',
-                callback: function(items) {
-                    scanItemsIntoLocation(items);
+        filters = loadTableFilters(filterKey, params);
+
+        setupFilterList(filterKey, table, filterTarget, {
+            download: true,
+            report: {
+                url: '{% url "api-stockitem-testreport-list" %}',
+                key: 'item',
+            },
+            labels: {
+                url: '{% url "api-stockitem-label-list" %}',
+                key: 'item',
+            },
+            singular_name: '{% trans "stock item" %}',
+            plural_name: '{% trans "stock items" %}',
+            barcode_actions: [
+                {
+                    icon: 'fa-sitemap',
+                    label: 'scantolocation',
+                    title: '{% trans "Scan to location" %}',
+                    permission: 'stock.change',
+                    callback: function(items) {
+                        scanItemsIntoLocation(items);
+                    }
                 }
-            }
-        ],
-        custom_actions: [
-            {
-                actions: makeStockActions(table),
-                icon: 'fa-boxes',
-                title: '{% trans "Stock Actions" %}',
-                label: 'stock',
-            }
-        ]
-    });
+            ],
+            custom_actions: [
+                {
+                    actions: makeStockActions(table),
+                    icon: 'fa-boxes',
+                    title: '{% trans "Stock Actions" %}',
+                    label: 'stock',
+                }
+            ]
+        });
+    }
 
     // Override the default values, or add new ones
     for (var key in params) {

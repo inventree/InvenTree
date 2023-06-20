@@ -2244,25 +2244,29 @@ function loadPartTable(table, url, options={}) {
 
     var params = options.params || {};
 
-    var filters = loadTableFilters(table_name, options.params);
+    let filters = {};
 
-    setupFilterList('parts', $(table), options.filterTarget, {
-        download: true,
-        labels: {
-            url: '{% url "api-part-label-list" %}',
-            key: 'part',
-        },
-        singular_name: '{% trans "part" %}',
-        plural_name: '{% trans "parts" %}',
-        custom_actions: [
-            {
-                label: 'parts',
-                icon: 'fa-tools',
-                title: '{% trans "Part actions" %}',
-                actions: makePartActions(table),
-            }
-        ]
-    });
+    if (!options.disableFilters) {
+        filters = loadTableFilters(table_name, options.params);
+
+        setupFilterList('parts', $(table), options.filterTarget, {
+            download: true,
+            labels: {
+                url: '{% url "api-part-label-list" %}',
+                key: 'part',
+            },
+            singular_name: '{% trans "part" %}',
+            plural_name: '{% trans "parts" %}',
+            custom_actions: [
+                {
+                    label: 'parts',
+                    icon: 'fa-tools',
+                    title: '{% trans "Part actions" %}',
+                    actions: makePartActions(table),
+                }
+            ]
+        });
+    }
 
     var columns = [
         {
