@@ -962,7 +962,7 @@ class PartFilter(rest_filters.FilterSet):
 
     depleted_stock = rest_filters.BooleanFilter(label='Depleted Stock', method='filter_depleted_stock')
 
-    def filter_deployed_stock(self, queryset, name, value):
+    def filter_depleted_stock(self, queryset, name, value):
         """Filter the queryset based on whether the part is fully depleted of stock"""
 
         if str2bool(value):

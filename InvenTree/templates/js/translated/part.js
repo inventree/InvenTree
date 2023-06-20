@@ -2237,30 +2237,36 @@ function loadPartTable(table, url, options={}) {
 
     options.params = options.params || {};
 
+    let table_name = options.name || 'parts';
+
     // Ensure category detail is included
     options.params['category_detail'] = true;
 
     var params = options.params || {};
 
-    var filters = loadTableFilters('parts', options.params);
+    let filters = {};
 
-    setupFilterList('parts', $(table), options.filterTarget, {
-        download: true,
-        labels: {
-            url: '{% url "api-part-label-list" %}',
-            key: 'part',
-        },
-        singular_name: '{% trans "part" %}',
-        plural_name: '{% trans "parts" %}',
-        custom_actions: [
-            {
-                label: 'parts',
-                icon: 'fa-tools',
-                title: '{% trans "Part actions" %}',
-                actions: makePartActions(table),
-            }
-        ]
-    });
+    if (!options.disableFilters) {
+        filters = loadTableFilters(table_name, options.params);
+
+        setupFilterList('parts', $(table), options.filterTarget, {
+            download: true,
+            labels: {
+                url: '{% url "api-part-label-list" %}',
+                key: 'part',
+            },
+            singular_name: '{% trans "part" %}',
+            plural_name: '{% trans "parts" %}',
+            custom_actions: [
+                {
+                    label: 'parts',
+                    icon: 'fa-tools',
+                    title: '{% trans "Part actions" %}',
+                    actions: makePartActions(table),
+                }
+            ]
+        });
+    }
 
     var columns = [
         {
@@ -2426,9 +2432,9 @@ function loadPartTable(table, url, options={}) {
     $(table).inventreeTable({
         url: url,
         method: 'get',
+        name: table_name,
         queryParams: filters,
         groupBy: false,
-        name: options.name || 'part',
         original: params,
         sidePagination: 'server',
         pagination: 'true',
