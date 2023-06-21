@@ -130,15 +130,12 @@ InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en
 <!-- Contributing -->
 ## :wave: Contributing
 
-Contributions are welcomed and encouraged. Please help to make this project even better!
-Refer to the [contribution page](CONTRIBUTING.md).
+Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](CONTRIBUTING.md).
 
 <!-- Translation -->
 ## :scroll: Translation
 
 Native language translation of the InvenTree web application is [community contributed via crowdin](https://crowdin.com/project/inventree). **Contributions are welcomed and encouraged**.
-
-To contribute to the translation effort, navigate to the [InvenTree crowdin project](https://crowdin.com/project/inventree), create a free account, and start making translations suggestions for your language of choice!
 
 <!-- Sponsor -->
 ## :money_with_wings: Sponsor
