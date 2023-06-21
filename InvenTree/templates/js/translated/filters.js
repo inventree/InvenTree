@@ -74,8 +74,7 @@ function loadTableFilters(tableKey, query={}) {
     });
 
     // Override configurable filters with hard-coded query
-    Object.assign(filters, query);
-
+    filters = Object.assign(filters, query);
     return filters;
 }
 
@@ -488,9 +487,9 @@ function setupFilterList(tableKey, table, target, options={}) {
     `);
 
     for (var key in filters) {
-        var value = getFilterOptionValue(tableKey, key, filters[key]);
-        var title = getFilterTitle(tableKey, key);
-        var description = getFilterDescription(tableKey, key);
+        let value = getFilterOptionValue(tableKey, key, filters[key]);
+        let title = getFilterTitle(tableKey, key);
+        let description = getFilterDescription(tableKey, key);
 
         var filter_tag = `
         <div title='${description}' class='filter-tag'>

@@ -1086,11 +1086,7 @@ function loadBuildOutputTable(build_info, options={}) {
     params.is_building = true;
     params.build = build_info.pk;
 
-    var filters = {};
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = Object.assign({}, params);
 
     setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems', {
         labels: {

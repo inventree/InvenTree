@@ -1886,10 +1886,7 @@ function loadStockTable(table, options) {
         });
     }
 
-    // Override the default values, or add new ones
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    filters = Object.assign(filters, params);
 
     var col = null;
 
@@ -2450,9 +2447,7 @@ function loadStockLocationTable(table, options) {
         plural_name: '{% trans "stock locations" %}',
     });
 
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    filters = Object.assign(filters, params);
 
     // Function to request sub-location items
     function requestSubItems(parent_pk) {
