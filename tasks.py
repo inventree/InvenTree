@@ -596,7 +596,7 @@ def test(c, disable_pty=False, runtest='', migrations=False, report=False, cover
     if migrations:
         cmd += ' --tag migration_test'
     else:
-        cmd += ' --exclude_tag migration_test'
+        cmd += ' --exclude-tag migration_test'
 
     if runtest:
         cmd += ' ' + runtest
