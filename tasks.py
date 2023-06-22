@@ -588,7 +588,14 @@ def test(c, disable_pty=False, runtest='', migrations=False, report=False, cover
 
     _apps = ' '.join(apps())
 
-    cmd = f'test {_apps}'
+    cmd = 'test'
+
+    if runtest:
+        # Specific tests to run
+        cmd += f' {runtest}'
+    else:
+        # Run all tests
+        cmd += f' {_apps}'
 
     if report:
         cmd += ' --slowreport'
@@ -597,9 +604,6 @@ def test(c, disable_pty=False, runtest='', migrations=False, report=False, cover
         cmd += ' --tag migration_test'
     else:
         cmd += ' --exclude-tag migration_test'
-
-    if runtest:
-        cmd += ' ' + runtest
 
     if coverage:
         # Run tests within coverage environment, and generate report
