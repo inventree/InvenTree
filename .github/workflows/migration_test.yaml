@@ -36,11 +36,50 @@ jobs:
       id: filter
       with:
         filters: |
+          migrations:
+            - '**/migrations/**'
           server:
             - 'InvenTree/**'
             - 'requirements.txt'
             - 'requirements-dev.txt'
             - '.github/**'
+
+  migration-tests:
+    name: Run Migration Unit Tests
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: needs.paths-filter.outputs.migrations == 'true'
+
+    env:
+      INVENTREE_DB_ENGINE: django.db.backends.postgresql
+      INVENTREE_DB_USER: inventree
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_PORT: 5432
+      INVENTREE_DEBUG: info
+      INVENTREE_PLUGINS_ENABLED: false
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg2
+          dev-install: true
+          update: true
+      - name: Run Tests
+        run: invoke test --migrations --report
+      - name: Data Export Test
 
   migrations-checks:
     name: Run Database Migrations
