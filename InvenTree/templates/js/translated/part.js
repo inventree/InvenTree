@@ -1895,11 +1895,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
 
     options.params.part = part_id;
 
-    var filters = {};
-
-    for (var key in options.params) {
-        filters[key] = options.params[key];
-    }
+    var filters = Object.assign({}, options.params);
 
     setupFilterList('related', $(table), options.filterTarget);
 
@@ -2242,8 +2238,6 @@ function loadPartTable(table, url, options={}) {
     // Ensure category detail is included
     options.params['category_detail'] = true;
 
-    var params = options.params || {};
-
     let filters = {};
 
     if (!options.disableFilters) {
@@ -2267,6 +2261,9 @@ function loadPartTable(table, url, options={}) {
             ]
         });
     }
+
+    // Update fields with passed parameters
+    filters = Object.assign(filters, options.params);
 
     var columns = [
         {
@@ -2435,7 +2432,7 @@ function loadPartTable(table, url, options={}) {
         name: table_name,
         queryParams: filters,
         groupBy: false,
-        original: params,
+        original: options.params,
         sidePagination: 'server',
         pagination: 'true',
         formatNoMatches: function() {
@@ -2781,10 +2778,7 @@ function loadPartTestTemplateTable(table, options) {
 
     setupFilterList('parttests', table, filterListElement);
 
-    // Override the default values, or add new ones
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    filters = Object.assign(filters, params);
 
     table.inventreeTable({
         method: 'get',

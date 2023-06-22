@@ -471,7 +471,7 @@ function getBuildTableFilters() {
                     async: false,
                     success: function(response) {
                         for (var key in response) {
-                            var owner = response[key];
+                            let owner = response[key];
                             ownersList[owner.pk] = {
                                 key: owner.pk,
                                 value: `${owner.name} (${owner.label})`,

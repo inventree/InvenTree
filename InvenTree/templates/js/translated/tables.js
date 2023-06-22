@@ -252,17 +252,11 @@ function reloadTableFilters(table, filters, options={}) {
     options = table.bootstrapTable('getOptions');
 
     // Construct a new list of filters to use for the query
-    var params = {};
-
-    for (var k in filters) {
-        params[k] = filters[k];
-    }
+    let params = Object.assign({}, filters);
 
     // Original query params will override
-    if (options.original != null) {
-        for (var key in options.original) {
-            params[key] = options.original[key];
-        }
+    if (options.original) {
+        params = Object.assign(params, options.original);
     }
 
     // Store the total set of query params
@@ -318,9 +312,7 @@ function convertQueryParameters(params, filters) {
 
     }
 
-    for (var key in filters) {
-        params[key] = filters[key];
-    }
+    params = Object.assign(params, filters);
 
     // Add "order" back in (if it was originally specified by InvenTree)
     // Annoyingly, "order" shadows some field names in InvenTree...
