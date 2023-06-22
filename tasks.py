@@ -591,9 +591,9 @@ def test(c, disable_pty=False, runtest='', migrations=False, report=False):
         cmd += ' --slowreport'
 
     if migrations:
-        cmd += ' --tag=migration_test'
+        cmd += ' --tag migration_test'
     else:
-        cmd += ' --exclude_tag=migration_test'
+        cmd += ' --exclude_tag migration_test'
 
     if runtest:
         cmd += ' ' + runtest
@@ -654,7 +654,7 @@ def coverage(c):
     manage(c, 'check')
 
     # Run coverage tests
-    c.run('coverage run {manage} test {apps} --exclude_tag=migration_test'.format(
+    c.run('coverage run {manage} test {apps} --exclude_tag migration_test'.format(
         manage=managePyPath(),
         apps=' '.join(apps())
     ))
