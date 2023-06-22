@@ -565,9 +565,11 @@ def test_translations(c):
     help={
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
+        'migrations': 'Run migration unit tests',
+        'report': 'Display a report of slow tests',
     }
 )
-def test(c, disable_pty=False, runtest=''):
+def test(c, disable_pty=False, runtest='', migrations=False, report=False):
     """Run unit-tests for InvenTree codebase.
 
     To run only certain test, use the argument --runtest.
@@ -583,8 +585,21 @@ def test(c, disable_pty=False, runtest=''):
 
     pty = not disable_pty
 
+    cmd = 'test'
+
+    if report:
+        cmd += ' --slowreport'
+
+    if migrations:
+        cmd += ' --tag=migration_test'
+    else:
+        cmd += ' --exclude_tag=migration_test'
+
+    if runtest:
+        cmd += ' ' + runtest
+
     # Run coverage tests
-    manage(c, f'test --slowreport {runtest}', pty=pty)
+    manage(c, cmd, pty=pty)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
@@ -639,7 +654,7 @@ def coverage(c):
     manage(c, 'check')
 
     # Run coverage tests
-    c.run('coverage run {manage} test {apps}'.format(
+    c.run('coverage run {manage} test {apps} --exclude_tag=migration_test'.format(
         manage=managePyPath(),
         apps=' '.join(apps())
     ))
