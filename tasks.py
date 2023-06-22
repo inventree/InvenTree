@@ -567,9 +567,10 @@ def test_translations(c):
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
+        'coverage': 'Run code coverage analysis (requires coverage package)',
     }
 )
-def test(c, disable_pty=False, runtest='', migrations=False, report=False):
+def test(c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False):
     """Run unit-tests for InvenTree codebase.
 
     To run only certain test, use the argument --runtest.
@@ -585,7 +586,9 @@ def test(c, disable_pty=False, runtest='', migrations=False, report=False):
 
     pty = not disable_pty
 
-    cmd = 'test'
+    _apps = ' '.join(apps())
+
+    cmd = f'test {_apps}'
 
     if report:
         cmd += ' --slowreport'
@@ -598,8 +601,13 @@ def test(c, disable_pty=False, runtest='', migrations=False, report=False):
     if runtest:
         cmd += ' ' + runtest
 
-    # Run coverage tests
-    manage(c, cmd, pty=pty)
+    if coverage:
+        # Run tests within coverage environment, and generate report
+        c.run(f'coverage run {managePyPath()} {cmd}')
+        c.run('coverage html -i')
+    else:
+        # Run simple test runner, without coverage
+        manage(c, cmd, pty=pty)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
@@ -642,25 +650,6 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
     # Set up development setup if flag is set
     if dev:
         setup_dev(c)
-
-
-@task
-def coverage(c):
-    """Run code-coverage of the InvenTree codebase, using the 'coverage' code-analysis tools.
-
-    Generates a code coverage report (available in the htmlcov directory)
-    """
-    # Run sanity check on the django install
-    manage(c, 'check')
-
-    # Run coverage tests
-    c.run('coverage run {manage} test {apps} --exclude_tag migration_test'.format(
-        manage=managePyPath(),
-        apps=' '.join(apps())
-    ))
-
-    # Generate coverage report
-    c.run('coverage html -i')
 
 
 @task(help={
