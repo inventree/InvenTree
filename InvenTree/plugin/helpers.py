@@ -1,6 +1,5 @@
 """Helpers for plugin app."""
 
-import datetime
 import inspect
 import logging
 import pathlib
@@ -13,8 +12,6 @@ from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError
-
-from dulwich.repo import NotGitRepository, Repo
 
 logger = logging.getLogger('inventree')
 
@@ -112,9 +109,13 @@ def get_entrypoints():
 def get_git_log(path):
     """Get dict with info of the last commit to file named in path."""
 
+    # import datetime
+    # from dulwich.repo import NotGitRepository, Repo
+
     output = None
     path = path.replace(str(settings.BASE_DIR.parent), '')[1:]
 
+    """
     try:
         walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
         try:
@@ -131,6 +132,8 @@ def get_git_log(path):
             ]
     except NotGitRepository:
         pass
+
+    """
 
     if not output:
         output = 5 * ['']  # pragma: no cover
