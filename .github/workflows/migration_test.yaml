@@ -79,7 +79,6 @@ jobs:
           update: true
       - name: Run Tests
         run: invoke test --migrations --report
-      - name: Data Export Test
 
   migrations-checks:
     name: Run Database Migrations
