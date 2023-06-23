@@ -204,12 +204,9 @@ jobs:
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py
       - name: Coverage Tests
-        run: invoke coverage
-      #- name: Upload Coverage Report
-      #  uses: coverallsapp/github-action@v2
-      #  with:
-      #    github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v3
+        run: invoke test --coverage
+      - name: Upload Coverage Report
+        uses: coverallsapp/github-action@v2
         with:
           name: my-artifact
           path: |

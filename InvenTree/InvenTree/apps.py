@@ -48,7 +48,7 @@ class InvenTreeConfig(AppConfig):
         self.collect_notification_methods()
 
         # Ensure the unit registry is loaded
-        InvenTree.conversion.reload_unit_registry()
+        InvenTree.conversion.get_unit_registry()
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()

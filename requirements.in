@@ -28,7 +28,9 @@ django-taggit                           # Tagging support
 django-user-sessions                    # user sessions in DB
 django-weasyprint                       # django weasyprint integration
 djangorestframework                     # DRF framework
+djangorestframework-simplejwt[crypto]   # JWT authentication
 django-xforwardedfor-middleware         # IP forwarding metadata
+dj-rest-auth                            # Authentication API endpoints
 dulwich                                 # pure Python git integration
 drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser

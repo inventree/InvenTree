@@ -26,15 +26,11 @@
 {% block page_info %}
 
 <div class='panel-content'>
-    <div id='table-buttons'>
-        <div class='button-toolbar container-fluid' style='float: right;'>
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="returnorder" %}
-            </div>
-        </div>
+    <div id='return-order-table-buttons'>
+        {% include "filter_list.html" with id="returnorder" %}
     </div>
 
-    <table class='table table-striped table-condensed' data-toolbar='#table-buttons' id='return-order-table'>
+    <table class='table table-striped table-condensed' data-toolbar='#return-order-table-buttons' id='return-order-table'>
     </table>
 
     <div id='return-order-calendar'></div>

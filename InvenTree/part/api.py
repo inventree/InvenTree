@@ -597,8 +597,8 @@ class PartScheduling(RetrieveAPI):
 
                 # Grab all allocations against the specified BomItem
                 allocations = BuildItem.objects.filter(
-                    bom_item=bom_item,
-                    build=build,
+                    build_line__bom_item=bom_item,
+                    build_line__build=build,
                 )
 
                 # Total allocated for *this* part
@@ -962,7 +962,7 @@ class PartFilter(rest_filters.FilterSet):
 
     depleted_stock = rest_filters.BooleanFilter(label='Depleted Stock', method='filter_depleted_stock')
 
-    def filter_deployed_stock(self, queryset, name, value):
+    def filter_depleted_stock(self, queryset, name, value):
         """Filter the queryset based on whether the part is fully depleted of stock"""
 
         if str2bool(value):
@@ -1271,6 +1271,13 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
     ]
 
 
+class PartChangeCategory(CreateAPI):
+    """API endpoint to change the location of multiple parts in bulk"""
+
+    serializer_class = part_serializers.PartSetCategorySerializer
+    queryset = Part.objects.none()
+
+
 class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single Part object."""
 
@@ -1454,13 +1461,8 @@ class PartParameterTemplateDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
 
-class PartParameterList(ListCreateAPI):
-    """API endpoint for accessing a list of PartParameter objects.
-
-    - GET: Return list of PartParameter objects
-    - POST: Create a new PartParameter object
-    """
-
+class PartParameterAPIMixin:
+    """Mixin class for PartParameter API endpoints."""
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
 
@@ -1478,9 +1480,25 @@ class PartParameterList(ListCreateAPI):
 
         return self.serializer_class(*args, **kwargs)
 
-    filter_backends = [
-        DjangoFilterBackend
+
+class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
+    """API endpoint for accessing a list of PartParameter objects.
+
+    - GET: Return list of PartParameter objects
+    - POST: Create a new PartParameter object
+    """
+
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    ordering_fields = [
+        'name',
+        'data',
     ]
+
+    ordering_field_aliases = {
+        'name': 'template__name',
+        'data': ['data_numeric', 'data'],
+    }
 
     filterset_fields = [
         'part',
@@ -1488,11 +1506,9 @@ class PartParameterList(ListCreateAPI):
     ]
 
 
-class PartParameterDetail(RetrieveUpdateDestroyAPI):
+class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
-
-    queryset = PartParameter.objects.all()
-    serializer_class = part_serializers.PartParameterSerializer
+    pass
 
 
 class PartStocktakeFilter(rest_filters.FilterSet):
@@ -2019,6 +2035,8 @@ part_api_urls = [
         # Part detail endpoint
         re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
     ])),
+
+    re_path(r'^change_category/', PartChangeCategory.as_view(), name='api-part-change-category'),
 
     re_path(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
