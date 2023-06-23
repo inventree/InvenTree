@@ -16,11 +16,6 @@ on:
 env:
   python_version: 3.9
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  INVENTREE_DB_ENGINE: sqlite3
-  INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-  INVENTREE_MEDIA_ROOT: ../test_inventree_media
-  INVENTREE_STATIC_ROOT: ../test_inventree_static
-  INVENTREE_BACKUP_DIR: ../test_inventree_backup
 
 jobs:
   paths-filter:
@@ -38,11 +33,7 @@ jobs:
         filters: |
           migrations:
             - '**/migrations/**'
-          server:
-            - 'InvenTree/**'
-            - 'requirements.txt'
-            - 'requirements-dev.txt'
-            - '.github/**'
+            - '.github/workflows**'
 
   migration-tests:
     name: Run Migration Unit Tests
@@ -84,7 +75,14 @@ jobs:
     name: Run Database Migrations
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true'
+    if: needs.paths-filter.outputs.migrations == 'true'
+
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
+      INVENTREE_MEDIA_ROOT: ../test_inventree_media
+      INVENTREE_STATIC_ROOT: ../test_inventree_static
+      INVENTREE_BACKUP_DIR: ../test_inventree_backup
 
     steps:
       - uses: actions/checkout@v3
