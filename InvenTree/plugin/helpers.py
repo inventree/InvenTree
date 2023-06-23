@@ -109,28 +109,79 @@ def get_entrypoints():
 
 
 # region git-helpers
-def get_git_log(path):
+def get_git_log(org_path):
     """Get dict with info of the last commit to file named in path."""
+    from plugin import registry
 
     output = None
-    path = path.replace(str(settings.BASE_DIR.parent), '')[1:]
+    commit = None
 
+    # Discover if there is a git repo between the path and the plugins folder
+    start_path = pathlib.Path(org_path)
+
+    # 1: Is the plugin in InvenTree's path?
     try:
-        walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
+        rev = start_path.relative_to(settings.BASE_DIR)
+
+        itterlist = []
+        last = settings.BASE_DIR
+        for opt in rev.parts:
+            new = last.joinpath(opt)
+            last = new
+            itterlist.append(new)
+
+        # Append base
+        itterlist.append(settings.BASE_DIR.parent)
+
+        # Reverse list
+        itterlist.reverse()
+
+        # Try to discover
+        for prt in itterlist:
+            try:
+                rep = Repo(prt)
+                commit = rep[rep.head()]
+                break
+            except NotGitRepository:
+                pass
+            except Exception as _aa:
+                print(_aa)
+    except Exception as _e:
+        print(_e)
+
+    # 2: Is the plugin in an external dir that is mounted?
+    if not commit:
+        builtins = ['plugin.builtin', 'plugin.samples']
+
+        for base_path in [item for item in registry.plugin_roots if item not in builtins]:
+            end_path = pathlib.Path(base_path)
+
+            try:
+                rev = start_path.relative_to(end_path)
+                print(rev)
+            except Exception as _e:
+                print(_e)
+
+    # 3: Now we try the walker
+    if not commit:
+        path = org_path.replace(str(settings.BASE_DIR.parent), '')[1:]
         try:
-            commit = next(iter(walker)).commit
-        except StopIteration:
+            walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
+            try:
+                commit = next(iter(walker)).commit
+            except StopIteration:
+                pass
+        except NotGitRepository:
             pass
-        else:
-            output = [
-                commit.sha().hexdigest(),
-                commit.author.decode().split('<')[0][:-1],
-                commit.author.decode().split('<')[1][:-1],
-                datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
-                commit.message.decode().split('\n')[0],
-            ]
-    except NotGitRepository:
-        pass
+
+    if commit:
+        output = [
+            commit.sha().hexdigest(),
+            commit.author.decode().split('<')[0][:-1],
+            commit.author.decode().split('<')[1][:-1],
+            datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
+            commit.message.decode().split('\n')[0],
+        ]
 
     if not output:
         output = 5 * ['']  # pragma: no cover

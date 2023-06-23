@@ -55,6 +55,8 @@ class PluginsRegistry:
         self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
         self.mixin_modules: Dict[str, any] = {}                 # Holds all discovered mixins
 
+        self.plugin_roots = []                                  # Holds all paths from which git plugins are discovered
+
         self.errors = {}                                        # Holds discovering errors
 
         # flags
@@ -273,8 +275,11 @@ class PluginsRegistry:
 
         collected_plugins = []
 
+        # Discover plugin dirs
+        self.plugin_roots = self.plugin_dirs()
+
         # Collect plugins from paths
-        for plugin in self.plugin_dirs():
+        for plugin in self.plugin_roots:
 
             logger.debug(f"Loading plugins from directory '{plugin}'")
 
