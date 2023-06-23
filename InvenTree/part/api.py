@@ -597,8 +597,8 @@ class PartScheduling(RetrieveAPI):
 
                 # Grab all allocations against the specified BomItem
                 allocations = BuildItem.objects.filter(
-                    bom_item=bom_item,
-                    build=build,
+                    build_line__bom_item=bom_item,
+                    build_line__build=build,
                 )
 
                 # Total allocated for *this* part
