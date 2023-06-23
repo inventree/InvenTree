@@ -16,6 +16,11 @@ on:
 env:
   python_version: 3.9
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  INVENTREE_MEDIA_ROOT: ../test_inventree_media
+  INVENTREE_STATIC_ROOT: ../test_inventree_static
+  INVENTREE_BACKUP_DIR: ../test_inventree_backup
+  INVENTREE_DEBUG: info
+  INVENTREE_PLUGINS_ENABLED: false
 
 jobs:
   paths-filter:
@@ -47,8 +52,6 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: '127.0.0.1'
       INVENTREE_DB_PORT: 5432
-      INVENTREE_DEBUG: info
-      INVENTREE_PLUGINS_ENABLED: false
 
     services:
       postgres:
@@ -80,9 +83,6 @@ jobs:
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-      INVENTREE_MEDIA_ROOT: ../test_inventree_media
-      INVENTREE_STATIC_ROOT: ../test_inventree_static
-      INVENTREE_BACKUP_DIR: ../test_inventree_backup
 
     steps:
       - uses: actions/checkout@v3
