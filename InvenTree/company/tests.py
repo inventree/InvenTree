@@ -4,11 +4,13 @@ import os
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from part.models import Part
 
-from .models import (Company, Contact, ManufacturerPart, SupplierPart,
+from .models import (Address, Company, Contact, ManufacturerPart, SupplierPart,
                      rename_company_image)
 
 
@@ -35,7 +37,6 @@ class CompanySimpleTest(TestCase):
         Company.objects.create(name='ABC Co.',
                                description='Seller of ABC products',
                                website='www.abc-sales.com',
-                               address='123 Sales St.',
                                is_customer=False,
                                is_supplier=True)
 
@@ -172,6 +173,79 @@ class ContactSimpleTest(TestCase):
         # Remove the parent company
         Company.objects.get(pk=self.c.pk).delete()
         self.assertEqual(Contact.objects.count(), 0)
+
+
+class AddressTest(TestCase):
+    """Unit tests for the Address model"""
+
+    def setUp(self):
+        """Initialization for the tests in this class"""
+        # Create a simple company
+        self.c = Company.objects.create(name='Test Corp.', description='We make stuff good')
+
+    def test_create(self):
+        """Test that object creation with only company supplied is successful"""
+        Address.objects.create(company=self.c)
+        self.assertEqual(Address.objects.count(), 1)
+
+    def test_delete(self):
+        """Test Address deletion"""
+        addr = Address.objects.create(company=self.c)
+        addr.delete()
+        self.assertEqual(Address.objects.count(), 0)
+
+    def test_primary_constraint(self):
+        """Test that there can only be one company-'primary=true' pair"""
+        c2 = Company.objects.create(name='Test Corp2.', description='We make stuff good')
+        Address.objects.create(company=self.c, primary=True)
+        Address.objects.create(company=self.c, primary=False)
+        self.assertEqual(Address.objects.count(), 2)
+
+        # Testing the constraint itself
+        # Intentionally throwing exceptions breaks unit tests unless performed in an atomic block
+        with transaction.atomic():
+            self.assertRaises(IntegrityError, Address.objects.create, company=self.c, primary=True, confirm_primary=False)
+
+        Address.objects.create(company=c2, primary=True, line1="Hellothere", line2="generalkenobi")
+
+        with transaction.atomic():
+            self.assertRaises(IntegrityError, Address.objects.create, company=c2, primary=True)
+        self.assertEqual(Address.objects.count(), 3)
+
+    def test_first_address_is_primary(self):
+        """Test that first address related to company is always set to primary"""
+
+        addr = Address.objects.create(company=self.c)
+
+        self.assertTrue(addr.primary)
+
+        self.assertRaises(IntegrityError, Address.objects.create, company=self.c, primary=True)
+
+    def test_model_str(self):
+        """Test value of __str__"""
+        t = "Test address"
+        l1 = "Busy street 56"
+        l2 = "Red building"
+        pcd = "12345"
+        pct = "City"
+        pv = "Province"
+        cn = "COUNTRY"
+        addr = Address.objects.create(company=self.c,
+                                      title=t,
+                                      line1=l1,
+                                      line2=l2,
+                                      postal_code=pcd,
+                                      postal_city=pct,
+                                      province=pv,
+                                      country=cn)
+        self.assertEqual(str(addr), f'{l1}, {l2}, {pcd}, {pct}, {pv}, {cn}')
+
+        addr2 = Address.objects.create(company=self.c,
+                                       title=t,
+                                       line1=l1,
+                                       postal_code=pcd)
+
+        self.assertEqual(str(addr2), f'{l1}, {pcd}')
 
 
 class ManufacturerPartSimpleTest(TestCase):

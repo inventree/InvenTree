@@ -43,6 +43,7 @@ class RuleSet(models.Model):
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
         ('return_order', _('Return Orders')),
+        ('approval', _('Approvals')),
     ]
 
     RULESET_NAMES = [
@@ -142,6 +143,7 @@ class RuleSet(models.Model):
             'company_company',
             'company_companyattachment',
             'company_contact',
+            'company_address',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_supplierpart',
@@ -156,6 +158,7 @@ class RuleSet(models.Model):
             'company_company',
             'company_companyattachment',
             'company_contact',
+            'company_address',
             'order_salesorder',
             'order_salesorderallocation',
             'order_salesorderattachment',
@@ -168,12 +171,17 @@ class RuleSet(models.Model):
             'company_company',
             'company_companyattachment',
             'company_contact',
+            'company_address',
             'order_returnorder',
             'order_returnorderlineitem',
             'order_returnorderextraline',
             'order_returnorderattachment',
             'report_returnorderreport',
-        ]
+        ],
+        'approval': [
+            'approval_approval',
+            'approval_approvaldecision'
+        ],
     }
 
     # Database models we ignore permission sets for

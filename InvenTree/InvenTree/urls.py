@@ -11,6 +11,7 @@ from django.views.generic.base import RedirectView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 
+from approval.api import approval_api_urls
 from build.api import build_api_urls
 from build.urls import build_urls
 from common.api import admin_api_urls, common_api_urls, settings_api_urls
@@ -58,6 +59,7 @@ apipatterns = [
     re_path(r'^report/', include(report_api_urls)),
     re_path(r'^user/', include(user_urls)),
     re_path(r'^admin/', include(admin_api_urls)),
+    re_path(r'^approval/', include(approval_api_urls)),
 
     # Plugin endpoints
     path('', include(plugin_api_urls)),

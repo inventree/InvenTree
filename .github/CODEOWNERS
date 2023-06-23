@@ -5,6 +5,9 @@
 /InvenTree/plugin/      @SchrodingersGat @matmair
 /InvenTree/plugins/     @SchrodingersGat @matmair
 
+# specialised modules
+/InvenTree/approvals    @matmair
+
 # Installer functions
 .pkgr.yml               @matmair
 Procfile                @matmair

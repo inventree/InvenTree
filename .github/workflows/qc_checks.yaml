@@ -205,11 +205,16 @@ jobs:
         run: python3 ci/check_migration_files.py
       - name: Coverage Tests
         run: invoke coverage
-      - name: Upload Coverage Report
-        uses: coverallsapp/github-action@v2
+      #- name: Upload Coverage Report
+      #  uses: coverallsapp/github-action@v2
+      #  with:
+      #    github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
+          name: my-artifact
+          path: |
+            **/htmlcov/*
+            InvenTree/htmlcov/*
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04

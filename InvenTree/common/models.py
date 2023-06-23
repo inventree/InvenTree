@@ -1699,6 +1699,21 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        # Approval settings
+        'APPROVAL_MINIMUM_APPROVERS': {
+            'name': _('Minimum Approvers'),
+            'description': _('Minimum number of approvers required for approval'),
+            'default': 2,
+            'validator': [int, MinValueValidator(1)]
+        },
+
+        'APPROVAL_MAXIMUM_DENIERS': {
+            'name': _('Maximum Deniers'),
+            'description': _('Maximum number of deniers required for denial'),
+            'default': 1,
+            'validator': [int, MinValueValidator(1)]
+        },
+
     }
 
     typ = 'inventree'
@@ -1775,13 +1790,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PART_RECENT_COUNT': {
-            'name': _('Recent Part Count'),
-            'description': _('Number of recent parts to display on index page'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
-        },
-
         'HOMEPAGE_BOM_REQUIRES_VALIDATION': {
             'name': _('Show unvalidated BOMs'),
             'description': _('Show BOMs that await validation on the homepage'),
@@ -1794,13 +1802,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Show recently changed stock items on the homepage'),
             'default': True,
             'validator': bool,
-        },
-
-        'STOCK_RECENT_COUNT': {
-            'name': _('Recent Stock Count'),
-            'description': _('Number of recent stock items to display on index page'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
         },
 
         'HOMEPAGE_STOCK_LOW': {

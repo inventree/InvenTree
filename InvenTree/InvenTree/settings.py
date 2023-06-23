@@ -204,6 +204,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'plugin.apps.PluginAppConfig',
     'generic',
+    'approval.apps.ApprovalConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Core django modules

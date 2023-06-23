@@ -1138,7 +1138,7 @@ function adjustStock(action, items, options={}) {
     if (itemCount == 0) {
         showAlertDialog(
             '{% trans "Select Stock Items" %}',
-            '{% trans "You must select at least one available stock item" %}',
+            '{% trans "Select at least one available stock item" %}',
         );
 
         return;
@@ -2297,22 +2297,27 @@ function loadStockTable(table, options) {
         });
     }
 
+    // Callback for 'stocktake' button
     $('#multi-item-stocktake').click(function() {
         stockAdjustment('count');
     });
 
+    // Callback for 'remove stock' button
     $('#multi-item-remove').click(function() {
         stockAdjustment('take');
     });
 
+    // Callback for 'add stock' button
     $('#multi-item-add').click(function() {
         stockAdjustment('add');
     });
 
+    // Callback for 'move stock' button
     $('#multi-item-move').click(function() {
         stockAdjustment('move');
     });
 
+    // Callback for 'merge stock' button
     $('#multi-item-merge').click(function() {
         var items = getTableData(table);
 
@@ -2327,6 +2332,7 @@ function loadStockTable(table, options) {
         });
     });
 
+    // Callback for 'assign stock' button
     $('#multi-item-assign').click(function() {
 
         var items = getTableData(table);
@@ -2338,6 +2344,7 @@ function loadStockTable(table, options) {
         });
     });
 
+    // Callback for 'un-assign stock' button
     $('#multi-item-order').click(function() {
 
         var selections = getTableData(table);
@@ -2355,6 +2362,7 @@ function loadStockTable(table, options) {
         orderParts(parts, {});
     });
 
+    // Callback for 'delete stock' button
     $('#multi-item-delete').click(function() {
         var selections = getTableData(table);
 
@@ -2365,6 +2373,46 @@ function loadStockTable(table, options) {
         });
 
         stockAdjustment('delete');
+    });
+
+    // Callback for 'change status' button
+    $('#multi-item-status').click(function() {
+        let selections = getTableData(table);
+        let items = [];
+
+        selections.forEach(function(item) {
+            items.push(item.pk);
+        });
+
+        if (items.length == 0) {
+            showAlertDialog(
+                '{% trans "Select Stock Items" %}',
+                '{% trans "Select one or more stock items" %}'
+            );
+            return;
+        }
+
+        let html = `
+        <div class='alert alert-info alert-block>
+        {% trans "Selected stock items" %}: ${items.length}
+        </div>`;
+
+        constructForm('{% url "api-stock-change-status" %}', {
+            title: '{% trans "Change Stock Status" %}',
+            method: 'POST',
+            preFormContent: html,
+            fields: {
+                status: {},
+                note: {},
+            },
+            processBeforeUpload: function(data) {
+                data.items = items;
+                return data;
+            },
+            onSuccess: function() {
+                $(table).bootstrapTable('refresh');
+            }
+        });
     });
 }
 
