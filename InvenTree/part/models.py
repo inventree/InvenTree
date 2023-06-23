@@ -455,17 +455,20 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """
 
         if self.pk:
-            previous = Part.objects.get(pk=self.pk)
+            try:
+                previous = Part.objects.get(pk=self.pk)
 
-            # Image has been changed
-            if previous.image is not None and self.image != previous.image:
+                # Image has been changed
+                if previous.image is not None and self.image != previous.image:
 
-                # Are there any (other) parts which reference the image?
-                n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
+                    # Are there any (other) parts which reference the image?
+                    n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
 
-                if n_refs == 0:
-                    logger.info(f"Deleting unused image file '{previous.image}'")
-                    previous.image.delete(save=False)
+                    if n_refs == 0:
+                        logger.info(f"Deleting unused image file '{previous.image}'")
+                        previous.image.delete(save=False)
+            except Part.DoesNotExist:
+                pass
 
         self.full_clean()
 
