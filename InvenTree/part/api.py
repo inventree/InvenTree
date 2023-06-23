@@ -1488,16 +1488,16 @@ class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
     - POST: Create a new PartParameter object
     """
 
-    filter_backends = [
-        SEARCH_ORDER_FILTER_ALIAS,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
         'name',
+        'data',
     ]
 
     ordering_field_aliases = {
         'name': 'template__name',
+        'data': ['data_numeric', 'data'],
     }
 
     filterset_fields = [
