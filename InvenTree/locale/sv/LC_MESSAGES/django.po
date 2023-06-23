@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-22 00:30+0000\n"
-"PO-Revision-Date: 2023-06-22 07:45\n"
+"POT-Creation-Date: 2023-06-23 07:27+0000\n"
+"PO-Revision-Date: 2023-06-23 07:42\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -25,19 +25,19 @@ msgstr "API-slutpunkt hittades inte"
 msgid "User does not have permission to view this model"
 msgstr "Användaren har inte behörighet att se denna modell"
 
-#: InvenTree/conversion.py:62
+#: InvenTree/conversion.py:73
 msgid "No value provided"
 msgstr ""
 
-#: InvenTree/conversion.py:84
+#: InvenTree/conversion.py:95
 msgid "Provided value is not a valid number"
 msgstr ""
 
-#: InvenTree/conversion.py:86
+#: InvenTree/conversion.py:97
 msgid "Provided value has an invalid unit"
 msgstr ""
 
-#: InvenTree/conversion.py:88
+#: InvenTree/conversion.py:99
 msgid "Provided value could not be converted to the specified unit"
 msgstr ""
 
@@ -7281,17 +7281,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:462
+#: plugin/registry.py:466
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:464
+#: plugin/registry.py:468
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:466
+#: plugin/registry.py:470
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
