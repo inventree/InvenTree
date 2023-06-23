@@ -2414,46 +2414,6 @@ function loadStockTable(table, options) {
 
 
     });
-
-    // Callback for 'change status' button
-    $('#multi-item-status').click(function() {
-        let selections = getTableData(table);
-        let items = [];
-
-        selections.forEach(function(item) {
-            items.push(item.pk);
-        });
-
-        if (items.length == 0) {
-            showAlertDialog(
-                '{% trans "Select Stock Items" %}',
-                '{% trans "Select one or more stock items" %}'
-            );
-            return;
-        }
-
-        let html = `
-        <div class='alert alert-info alert-block>
-        {% trans "Selected stock items" %}: ${items.length}
-        </div>`;
-
-        constructForm('{% url "api-stock-change-status" %}', {
-            title: '{% trans "Change Stock Status" %}',
-            method: 'POST',
-            preFormContent: html,
-            fields: {
-                status: {},
-                note: {},
-            },
-            processBeforeUpload: function(data) {
-                data.items = items;
-                return data;
-            },
-            onSuccess: function() {
-                $(table).bootstrapTable('refresh');
-            }
-        });
-    });
 }
 
 

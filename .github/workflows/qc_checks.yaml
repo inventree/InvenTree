@@ -208,10 +208,8 @@ jobs:
       - name: Upload Coverage Report
         uses: coverallsapp/github-action@v2
         with:
-          name: my-artifact
-          path: |
-            **/htmlcov/*
-            InvenTree/htmlcov/*
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04

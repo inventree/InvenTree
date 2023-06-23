@@ -1,1 +1,1 @@
-"""Approvals can be used to impelemnt apprival or voting processes based on sets of rules."""
+"""Approvals can be used to implement apprival or voting processes based on sets of rules."""

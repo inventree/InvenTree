@@ -6,14 +6,14 @@ from .models import Approval, ApprovalDecision
 
 
 class ApprovalDecisionInline(admin.TabularInline):
-    """Inline for supplier-part pricing"""
+    """Inline for ApprovalDecision."""
 
     model = ApprovalDecision
 
 
 @admin.register(Approval)
 class ApprovalAdmin(admin.ModelAdmin):
-    """Admin class for the SupplierPart model"""
+    """Admin class for Approval model."""
 
     resource_class = ApprovalDecisionInline
 

@@ -1,4 +1,4 @@
-"""Unit tests for the BuildOrder API"""
+"""Unit tests for the Approval API."""
 
 from datetime import datetime, timedelta
 
