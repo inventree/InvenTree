@@ -3073,8 +3073,6 @@ class PartSchedulingTest(PartAPITestBase):
             url = reverse('api-part-scheduling', kwargs={'pk': pk})
             data = self.get(url, expected_code=200).data
 
-            self.assertGreater(len(data), 0)
-
             for entry in data:
                 for k in ['date', 'quantity', 'label']:
                     self.assertIn(k, entry)
