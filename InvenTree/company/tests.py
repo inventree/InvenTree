@@ -198,6 +198,7 @@ class AddressTest(TestCase):
         c2 = Company.objects.create(name='Test Corp2.', description='We make stuff good')
         Address.objects.create(company=self.c, primary=True)
         Address.objects.create(company=self.c, primary=False)
+
         self.assertEqual(Address.objects.count(), 2)
 
         # Testing the constraint itself
