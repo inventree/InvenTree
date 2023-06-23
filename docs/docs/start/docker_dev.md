@@ -87,7 +87,7 @@ This command also performs the following steps:
 
 To fill the database with a demo dataset, run the following command:
 
-```
+```bash
 docker compose run inventree-dev-server invoke setup-test --dev
 ```
 
@@ -95,7 +95,7 @@ docker compose run inventree-dev-server invoke setup-test --dev
 
 Now that the database has been created, migrations applied, and you have created an admin account, we are ready to launch the InvenTree containers:
 
-```
+```bash
 docker compose up -d
 ```
 
@@ -106,7 +106,7 @@ If you are creating the initial database, you need to create an admin (superuser
 !!! info "Containers must be running"
     For the `invoke superuser` command to execute properly, ensure you have run the `docker compose up -d` command.
 
-```
+```bash
 docker compose run inventree-dev-server invoke superuser
 ```
 
@@ -120,46 +120,64 @@ This command launches the remaining containers:
 
 ## Running commands in the container
 
-Using `docker compoase run [...]` commands creates a new container to run this specific command.
+Using `docker compose run [...]` commands creates a new container to run this specific command.
 This will eventually clutter your docker with many dead containers that take up space on the system.
 
 You can access the running containers directly with the following:
-```
+```bash
 docker exec -it inventree-dev-server /bin/bash
 ```
+
 You then run the following to access the virtualenv:
-```
+```bash
 source data/env/bin/activate
 ```
 
 This sets up a bash terminal where you can run `invoke` commands directly.
 
 !!! warning "Tests"
-    It is not recommended to run `invoke test` in your currently active inventree-dev-server container.
+    Running `invoke test` in your currently active inventree-dev-server container may result in tests taking longer than usual.
 
 ### Cleaning up old containers
 
-To clean out old containers, follow this guide:
+If you have Docker Desktop installed, you will be able to removed containers directly in the GUI.
+Your active containers are grouped under "inventree" in Docker Desktop.
+The main dev-server, dev-db, and dev-worker containers are all listed without the "inventree" prefix.
+One time run containers, like those executed via `docker compose run [...]` are suffixed with `run-1a2b3c4d5e6f` where the hex string varies.
+
+To remove such containers, either click the garbage bin on the end of the line, or mark the containers, and click the delete button that shows up.
+This is the recommended procedure for container cleanup.
+
+#### Advanced cleanup
+!!! warning "Advanced users only"
+    This section requires good knowledge of Docker and how it operates.
+    Never perform these commands if you do not understand what they do
+
+If you're running a container with the general boilerplate commands used with invoke (invoke test, invoke update, etc) and no custom parameters or execution, you can add the `--rm` flag to `docker compose run`, and the container will delete itself when it goes down.
+Do note that any data not stored in a volume, i.e. only in the container, will be lost when the container stops.
+
+To clean out old containers using the command line, follow this guide:
 
 Run the following command:
-```
-docker container ls --filter name=inventree*
-```
-This should yield 3 lines of output looking something like this:
-
-```
-CONTAINER ID   IMAGE                 COMMAND                  CREATED       STATUS      PORTS                    NAMES
-c2f4043bb98d   inventree-dev-image   "/bin/bash ./docker/…"   3 days ago    Up 3 days                            inventree-dev-worker
-4f8e1b25aeba   inventree-dev-image   "/bin/bash ./docker/…"   3 days ago    Up 3 days   0.0.0.0:8000->8000/tcp   inventree-dev-server
-d674d203ae87   postgres:13           "docker-entrypoint.s…"   4 weeks ago   Up 4 days   5432/tcp                 inventree-dev-db
+```bash
+docker ps -a --filter status=exited
 ```
 
-You should have 1 inventree-dev-worker, 1 inventree-dev-server, and 1 inventree-dev-db in that list.
-If, however, you don't have these, refer to [Start Docker Containers](#Start Docker Containers) and then return here.
+This gives you a list of all stopped containers.
+Find the containers you wish to delete, copy the container IDs and add them to this command:
 
-Running this command will remove **all** stopped one-time run InvenTree containers:
+```bash
+docker rm [ID1] [ID2] [IDn]
 ```
-docker container prune --filter label="com.docker.compose.project=inventree" --filter label="com.docker.compose.oneoff=True"
+When executed, this removed all containers whose IDs were pasted.
+
+!!! warning "Execute at own risk"
+    The command below does not forgive errors.
+    Execute this only if you know what you're doing
+
+Running this command will remove **all** stopped one-time run InvenTree containers matching parameters:
+```bash
+docker container prune --filter label="com.docker.compose.oneoff=True" --filter label="com.docker.compose.service=inventree-dev-server"
 ```
 
 The following output will appear:
@@ -168,7 +186,7 @@ WARNING! This will remove all stopped containers.
 Are you sure you want to continue? [y/N] y
 Deleted Containers:
 [IDs of any container that was deleted, one per line]
-``` 
+```
 
 ## Restarting Services
 

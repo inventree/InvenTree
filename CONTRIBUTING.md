@@ -33,7 +33,7 @@ Run the following command to set up all toolsets for development.
 invoke setup-dev
 ```
 
-*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.*
+*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce errors.*
 
 ## Branches and Versioning
 
