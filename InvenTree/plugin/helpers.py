@@ -109,31 +109,34 @@ def get_entrypoints():
 def get_git_log(path):
     """Get dict with info of the last commit to file named in path."""
 
-    # import datetime
-    # from dulwich.repo import NotGitRepository, Repo
+    import datetime
+
+    from dulwich.repo import NotGitRepository, Repo
+
+    from InvenTree.ready import isInTestMode
 
     output = None
     path = path.replace(str(settings.BASE_DIR.parent), '')[1:]
 
-    """
-    try:
-        walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
-        try:
-            commit = next(iter(walker)).commit
-        except StopIteration:
-            pass
-        else:
-            output = [
-                commit.sha().hexdigest(),
-                commit.author.decode().split('<')[0][:-1],
-                commit.author.decode().split('<')[1][:-1],
-                datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
-                commit.message.decode().split('\n')[0],
-            ]
-    except NotGitRepository:
-        pass
+    # only do this if we are not in test mode
+    if not isInTestMode():  # pragma: no cover
 
-    """
+        try:
+            walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
+            try:
+                commit = next(iter(walker)).commit
+            except StopIteration:
+                pass
+            else:
+                output = [
+                    commit.sha().hexdigest(),
+                    commit.author.decode().split('<')[0][:-1],
+                    commit.author.decode().split('<')[1][:-1],
+                    datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
+                    commit.message.decode().split('\n')[0],
+                ]
+        except NotGitRepository:
+            pass
 
     if not output:
         output = 5 * ['']  # pragma: no cover
