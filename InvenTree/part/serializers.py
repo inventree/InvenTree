@@ -242,7 +242,7 @@ class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         Allows us to optionally include or exclude particular information
         """
 
-        template_detail = kwargs.pop('template_detail', False)
+        template_detail = kwargs.pop('template_detail', True)
 
         super().__init__(*args, **kwargs)
 

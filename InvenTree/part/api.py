@@ -1461,13 +1461,8 @@ class PartParameterTemplateDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
 
-class PartParameterList(ListCreateAPI):
-    """API endpoint for accessing a list of PartParameter objects.
-
-    - GET: Return list of PartParameter objects
-    - POST: Create a new PartParameter object
-    """
-
+class PartParameterAPIMixin:
+    """Mixin class for PartParameter API endpoints."""
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
 
@@ -1485,9 +1480,25 @@ class PartParameterList(ListCreateAPI):
 
         return self.serializer_class(*args, **kwargs)
 
-    filter_backends = [
-        DjangoFilterBackend
+
+class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
+    """API endpoint for accessing a list of PartParameter objects.
+
+    - GET: Return list of PartParameter objects
+    - POST: Create a new PartParameter object
+    """
+
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    ordering_fields = [
+        'name',
+        'data',
     ]
+
+    ordering_field_aliases = {
+        'name': 'template__name',
+        'data': ['data_numeric', 'data'],
+    }
 
     filterset_fields = [
         'part',
@@ -1495,11 +1506,9 @@ class PartParameterList(ListCreateAPI):
     ]
 
 
-class PartParameterDetail(RetrieveUpdateDestroyAPI):
+class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
-
-    queryset = PartParameter.objects.all()
-    serializer_class = part_serializers.PartParameterSerializer
+    pass
 
 
 class PartStocktakeFilter(rest_filters.FilterSet):
