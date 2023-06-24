@@ -856,10 +856,10 @@ class PartFilter(rest_filters.FilterSet):
         if str2bool(value):
             # Ignore any parts which do not have a specified 'minimum_stock' level
             # Filter items which have an 'in_stock' level lower than 'minimum_stock'
-            return queryset.exclude(minimum_stock=0).filter(Q(in_stock__lt=F('minimum_stock')))
+            return queryset.exclude(minimum_stock=0).filter(Q(total_in_stock__lt=F('minimum_stock')))
         else:
             # Filter items which have an 'in_stock' level higher than 'minimum_stock'
-            return queryset.filter(Q(in_stock__gte=F('minimum_stock')))
+            return queryset.filter(Q(total_in_stock__gte=F('minimum_stock')))
 
     # has_stock filter
     has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
