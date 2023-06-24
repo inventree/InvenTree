@@ -36,7 +36,7 @@ class ApprovalRule:
         """Check if the rule is fulfilled.
 
         Returns:
-            bool: True if the approval is acceptred, False if the approval is rejected, None if unconclusive.
+            bool: True if the approval is accepted, False if the approval is rejected, None if unconclusive.
         """
         ...
 
