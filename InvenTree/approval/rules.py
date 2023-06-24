@@ -38,7 +38,7 @@ class ApprovalRule:
         Returns:
             bool: True if the approval is acceptred, False if the approval is rejected, None if unconclusive.
         """
-        raise NotImplementedError('A ApprovalRule must implement a `check` method')
+        ...
 
 
 class RuleRegistryClass:
