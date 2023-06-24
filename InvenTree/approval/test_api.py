@@ -10,6 +10,8 @@ from approval.models import Approval, ApprovalState
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import PurchaseOrder
 
+from .rules import ApprovalRule
+
 
 class MixinApproval:
     """Mixin for approval tests."""
@@ -97,6 +99,16 @@ class TestApprovalFunctions(MixinApproval, InvenTreeAPITestCase):
         approval.add_decision(self.user1, True)
         approval.add_decision(self.user, True)
         self.state_check(approval, 20, usr=self.user)
+
+    def test_rules(self):
+        """Test rule implementation."""
+
+        class WrongRule(ApprovalRule):
+            """Test rule implementation."""
+            pass
+
+        with self.assertRaises(NotImplementedError):
+            WrongRule()
 
 
 class TestApprovalApi(MixinApproval, InvenTreeAPITestCase):
