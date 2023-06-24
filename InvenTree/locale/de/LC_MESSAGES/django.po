@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-24 04:38+0000\n"
-"PO-Revision-Date: 2023-06-23 07:41\n"
+"POT-Creation-Date: 2023-06-23 22:42+0000\n"
+"PO-Revision-Date: 2023-06-24 07:43\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4380,10 +4380,8 @@ msgstr "Filter"
 #: label/templates/label/stockitem/qr.html:21
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
-#, fuzzy
-#| msgid "Show QR Code"
 msgid "QR Code"
-msgstr "QR-Code anzeigen"
+msgstr ""
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
@@ -12696,11 +12694,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
+msgstr "Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
 "%(site_name)s anzumelden.<br>Als letzten Schritt füllen Sie bitte folgendes Formular aus:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12835,11 +12831,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Query filters (comma-separated list of key=value pairs),"
-#~ msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
-
-#~ msgid "Query filters (comma-separated list of key=value pairs"
-#~ msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
-
-#~ msgid "Part query filters (comma-separated value of key=value pairs)"
-#~ msgstr "Teile-Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
