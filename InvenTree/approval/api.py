@@ -4,7 +4,7 @@ from django.urls import include, path, re_path
 from rest_framework import serializers
 
 from InvenTree.api import MetadataView
-from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.serializers import InvenTreeModelSerializer
 
 from .models import Approval, ApprovalDecision
@@ -139,12 +139,37 @@ class ApprovalDecisionDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ApprovalDecisionSerializer
 
 
+class ApprovalApproveSerializer(InvenTreeModelSerializer):
+    """Serializes an ApprovalDecision object"""
+
+    class Meta:
+        """Meta data for ApprovalDecisionSerializer"""
+        model = ApprovalDecision
+        exclude = ['metadata',]
+
+    def is_valid(self, *, raise_exception=False):
+        """Insert data to save request."""
+        request = self.context['request']
+        self.initial_data['user'] = request.user.pk
+        self.initial_data['approval'] = request.parser_context['kwargs'].get('pk', None)
+        self.initial_data['decision'] = True
+        return super().is_valid(raise_exception=raise_exception)
+
+
+class ApproveView(CreateAPI):
+    """API endpoint to approve approval."""
+
+    queryset = ApprovalDecision.objects.all()
+    serializer_class = ApprovalApproveSerializer
+
+
 approval_api_urls = [
     path(r'<int:pk>/', include([
         re_path(r"^decision/", include([
             re_path(r"^$", ApprovalDecisionList.as_view(), name="api-approval-decision-list",),
             re_path(r"^(?P<pk>\d+)/", ApprovalDecisionDetail.as_view(), name="api-approval-decision-detail",),
         ])),
+        re_path('approve/', ApproveView.as_view(), name='api-approval-approve'),
         re_path(r'^metadata/', MetadataView.as_view(), {'model': Approval}, name='api-approval-metadata'),
         re_path(r'^.*$', ApprovalDetail.as_view(), name='api-approval-detail'),
     ])),
