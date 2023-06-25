@@ -108,7 +108,7 @@ class TestApprovalFunctions(MixinApproval, InvenTreeAPITestCase):
             pass
 
         with self.assertRaises(NotImplementedError):
-            WrongRule()
+            WrongRule().check('', '', '')
 
 
 class TestApprovalApi(MixinApproval, InvenTreeAPITestCase):
