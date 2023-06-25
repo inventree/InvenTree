@@ -293,10 +293,12 @@ def notify_users(users, instance, sender, content: NotificationBody = InvenTreeN
         'message': content.message.format(**content_context),
         'link': InvenTree.helpers_model.construct_absolute_url(instance.get_absolute_url()),
         'template': {
-            'html': content.template.format(**content_context),
             'subject': content.name.format(**content_context),
         }
     }
+
+    if content.template:
+        context['template']['html'] = content.template.format(**content_context)
 
     # Create notification
     trigger_notification(
