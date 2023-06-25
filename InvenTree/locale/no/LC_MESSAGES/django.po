@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-23 22:42+0000\n"
-"PO-Revision-Date: 2023-06-24 07:43\n"
+"PO-Revision-Date: 2023-06-25 07:46\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -39,7 +39,7 @@ msgstr "Angitt verdi har en ugyldig enhet"
 
 #: InvenTree/conversion.py:99
 msgid "Provided value could not be converted to the specified unit"
-msgstr ""
+msgstr "Oppgitt verdi kunne ikke konverteres til den angitte enheten"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -123,7 +123,7 @@ msgstr "Det oppgitte e-postdomenet er ikke godkjent."
 
 #: InvenTree/forms.py:345
 msgid "Registration is disabled."
-msgstr ""
+msgstr "Registrering er deaktivert."
 
 #: InvenTree/helpers.py:462 order/models.py:455 order/models.py:624
 msgid "Invalid quantity provided"
@@ -537,7 +537,7 @@ msgstr "Farsi / Persisk"
 
 #: InvenTree/settings.py:749
 msgid "Finnish"
-msgstr ""
+msgstr "Finsk"
 
 #: InvenTree/settings.py:750
 msgid "French"
@@ -821,7 +821,7 @@ msgstr "Avvis"
 
 #: InvenTree/validators.py:32 InvenTree/validators.py:34
 msgid "Invalid physical unit"
-msgstr ""
+msgstr "Ugyldig fysisk enhet"
 
 #: InvenTree/validators.py:40
 msgid "Not a valid currency code"
@@ -886,7 +886,7 @@ msgstr "Valgfritt"
 #: build/api.py:288 templates/js/translated/table_filters.js:360
 #: templates/js/translated/table_filters.js:514
 msgid "Tracked"
-msgstr ""
+msgstr "Spores"
 
 #: build/api.py:290 part/admin.py:64 templates/js/translated/build.js:1666
 #: templates/js/translated/build.js:2545
@@ -1148,7 +1148,7 @@ msgstr "Prosjektkode"
 
 #: build/models.py:310
 msgid "Project code for this build order"
-msgstr ""
+msgstr "Prosjektkode for denne produksjonsordren"
 
 #: build/models.py:545
 #, python-brace-format
@@ -1259,7 +1259,7 @@ msgstr "Mengden må være 1 for serialisert lagervare"
 
 #: build/models.py:1449
 msgid "Selected stock item does not match BOM line"
-msgstr ""
+msgstr "Valgt lagervare samsvarer ikke med BOM-linjen"
 
 #: build/models.py:1543 build/serializers.py:799 order/serializers.py:1065
 #: order/serializers.py:1086 stock/serializers.py:479 stock/serializers.py:887
@@ -1562,7 +1562,7 @@ msgstr "Valgfrie artikler"
 
 #: build/serializers.py:974
 msgid "Allocate optional BOM items to build order"
-msgstr "Tildel valgfrie stykklistevarer til produksjonsordre"
+msgstr "Tildel valgfrie BOM-artikler til produksjonsordre"
 
 #: build/tasks.py:101
 msgid "Stock required for build order"
@@ -1579,7 +1579,7 @@ msgstr "Produksjonsordre {bo} er nå forfalt"
 
 #: build/templates/build/build_base.html:18
 msgid "Part thumbnail"
-msgstr ""
+msgstr "Miniatyrbilde for del"
 
 #: build/templates/build/build_base.html:39
 #: company/templates/company/supplier_part.html:36
@@ -2224,11 +2224,11 @@ msgstr "Tillat endring av IPN-verdien mens du redigerer en del"
 
 #: common/models.py:1134
 msgid "Copy Part BOM Data"
-msgstr "Kopier stykklistedata fra del"
+msgstr "Kopier BOM-data fra del"
 
 #: common/models.py:1135
 msgid "Copy BOM data by default when duplicating a part"
-msgstr "Kopier stykklistedata som standard når du dupliserer en del"
+msgstr "Kopier BOM-data som standard når du dupliserer en del"
 
 #: common/models.py:1141
 msgid "Copy Part Parameter Data"
@@ -3563,86 +3563,86 @@ msgstr ""
 
 #: company/models.py:332
 msgid "Address title"
-msgstr ""
+msgstr "Adressetittel"
 
 #: company/models.py:333
 msgid "Title describing the address entry"
-msgstr ""
+msgstr "Tittel som beskriver addressen"
 
 #: company/models.py:337
 msgid "Primary address"
-msgstr ""
+msgstr "Hovedadresse"
 
 #: company/models.py:338
 msgid "Set as primary address"
-msgstr ""
+msgstr "Sett som hovedadresse"
 
 #: company/models.py:341 templates/js/translated/company.js:941
 #: templates/js/translated/company.js:1002
 msgid "Line 1"
-msgstr ""
+msgstr "Linje 1"
 
 #: company/models.py:342
 msgid "Address line 1"
-msgstr ""
+msgstr "Adresselinje 1"
 
 #: company/models.py:346 templates/js/translated/company.js:942
 #: templates/js/translated/company.js:1008
 msgid "Line 2"
-msgstr ""
+msgstr "Linje 2"
 
 #: company/models.py:347
 msgid "Address line 2"
-msgstr ""
+msgstr "Adresselinje 2"
 
 #: company/models.py:351 company/models.py:352
 #: templates/js/translated/company.js:1014
 msgid "Postal code"
-msgstr ""
+msgstr "Postnummer"
 
 #: company/models.py:356
 msgid "City/Region"
-msgstr ""
+msgstr "Poststed/område"
 
 #: company/models.py:357
 msgid "Postal code city/region"
-msgstr ""
+msgstr "Postnummerets by/område"
 
 #: company/models.py:361
 msgid "State/Province"
-msgstr ""
+msgstr "Delstat/provins"
 
 #: company/models.py:362
 msgid "State or province"
-msgstr ""
+msgstr "Delstat eller provins"
 
 #: company/models.py:366 templates/js/translated/company.js:1032
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: company/models.py:367
 msgid "Address country"
-msgstr ""
+msgstr "Adressens land"
 
 #: company/models.py:371
 msgid "Courier shipping notes"
-msgstr ""
+msgstr "Notater til transportør"
 
 #: company/models.py:372
 msgid "Notes for shipping courier"
-msgstr ""
+msgstr "Notater for transportør"
 
 #: company/models.py:376
 msgid "Internal shipping notes"
-msgstr ""
+msgstr "Interne fraktnotater"
 
 #: company/models.py:377
 msgid "Shipping notes for internal use"
-msgstr ""
+msgstr "Fraktnotater for internt bruk"
 
 #: company/models.py:382
 msgid "Link to address information (external)"
-msgstr ""
+msgstr "Lenke til adresseinformasjon (ekstern)"
 
 #: company/models.py:427 company/models.py:702 stock/models.py:675
 #: stock/serializers.py:204 stock/templates/stock/item_base.html:143
@@ -4098,7 +4098,7 @@ msgstr ""
 #: company/templates/company/detail.html:210
 #: company/templates/company/detail.html:211
 msgid "Add Address"
-msgstr ""
+msgstr "Legg til adresse"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -4182,7 +4182,7 @@ msgstr "Kontakter"
 
 #: company/templates/company/sidebar.html:35
 msgid "Addresses"
-msgstr ""
+msgstr "Adresser"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:684
@@ -4368,7 +4368,7 @@ msgstr "Mønster for generering av etikett-filnavn"
 #: label/models.py:250 label/models.py:291 label/models.py:319
 #: label/models.py:355
 msgid "Query filters (comma-separated list of key=value pairs)"
-msgstr ""
+msgstr "Søkefiltre (kommaseparert liste over nøkkel=verdi-par)"
 
 #: label/models.py:251 label/models.py:292 label/models.py:320
 #: label/models.py:356 report/models.py:294 report/models.py:454
@@ -4381,7 +4381,7 @@ msgstr "Filtre"
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
 msgid "QR Code"
-msgstr ""
+msgstr "QR-kode"
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
@@ -4665,7 +4665,7 @@ msgstr "Dato for forsendelse"
 
 #: order/models.py:1427 templates/js/translated/sales_order.js:1036
 msgid "Delivery Date"
-msgstr ""
+msgstr "Leveringsdato"
 
 #: order/models.py:1428
 msgid "Date of delivery of shipment"
@@ -5053,11 +5053,11 @@ msgstr "Ufullstendig"
 #: order/templates/order/return_order_base.html:158
 #: report/templates/report/inventree_build_order_base.html:121
 msgid "Issued"
-msgstr ""
+msgstr "Utstedt"
 
 #: order/templates/order/order_base.html:224
 msgid "Total cost"
-msgstr ""
+msgstr "Total kostnad"
 
 #: order/templates/order/order_base.html:228
 #: order/templates/order/return_order_base.html:200
@@ -5227,7 +5227,7 @@ msgstr "Ordrenotater"
 #: order/templates/order/return_order_base.html:18
 #: order/templates/order/sales_order_base.html:18
 msgid "Customer logo thumbnail"
-msgstr ""
+msgstr "Miniatyrbilde for kundelogo"
 
 #: order/templates/order/return_order_base.html:61
 msgid "Print return order report"
@@ -5345,41 +5345,41 @@ msgstr "Oppdaterte {part} enhetspris til {price} og antall til {qty}"
 #: part/admin.py:33 part/admin.py:273 part/models.py:3719 part/tasks.py:288
 #: stock/admin.py:101
 msgid "Part ID"
-msgstr ""
+msgstr "Del-ID"
 
 #: part/admin.py:34 part/admin.py:275 part/models.py:3723 part/tasks.py:289
 #: stock/admin.py:102
 msgid "Part Name"
-msgstr ""
+msgstr "Delnavn"
 
 #: part/admin.py:35 part/tasks.py:290
 msgid "Part Description"
-msgstr ""
+msgstr "Delbeskrivelse"
 
 #: part/admin.py:36 part/models.py:893 part/templates/part/part_base.html:271
 #: templates/js/translated/part.js:1199 templates/js/translated/part.js:2306
 #: templates/js/translated/stock.js:1949
 msgid "IPN"
-msgstr ""
+msgstr "IPN"
 
 #: part/admin.py:37 part/models.py:900 part/templates/part/part_base.html:279
 #: report/models.py:179 templates/js/translated/part.js:1204
 #: templates/js/translated/part.js:2312
 msgid "Revision"
-msgstr ""
+msgstr "Revisjon"
 
 #: part/admin.py:38 part/admin.py:198 part/models.py:879
 #: part/templates/part/category.html:93 part/templates/part/part_base.html:300
 msgid "Keywords"
-msgstr ""
+msgstr "Nøkkelord"
 
 #: part/admin.py:42 part/admin.py:192 part/tasks.py:291
 msgid "Category ID"
-msgstr ""
+msgstr "Kategori-ID"
 
 #: part/admin.py:43 part/admin.py:193 part/tasks.py:292
 msgid "Category Name"
-msgstr ""
+msgstr "Kategorinavn"
 
 #: part/admin.py:44 part/admin.py:197
 msgid "Default Location ID"
@@ -5401,23 +5401,23 @@ msgstr ""
 #: templates/js/translated/company.js:1720
 #: templates/js/translated/table_filters.js:307
 msgid "In Stock"
-msgstr ""
+msgstr "På lager"
 
 #: part/admin.py:62 part/bom.py:178 part/templates/part/part_base.html:212
 #: templates/js/translated/bom.js:1187 templates/js/translated/build.js:2537
 #: templates/js/translated/part.js:686 templates/js/translated/part.js:2118
 #: templates/js/translated/table_filters.js:146
 msgid "On Order"
-msgstr ""
+msgstr "I bestilling"
 
 #: part/admin.py:63 part/templates/part/part_sidebar.html:27
 msgid "Used In"
-msgstr ""
+msgstr "Brukt i"
 
 #: part/admin.py:65 part/templates/part/part_base.html:243 stock/admin.py:124
 #: templates/js/translated/part.js:691 templates/js/translated/part.js:2122
 msgid "Building"
-msgstr ""
+msgstr "Produseres"
 
 #: part/admin.py:66 part/models.py:2967 templates/js/translated/part.js:942
 msgid "Minimum Cost"
@@ -5429,16 +5429,16 @@ msgstr ""
 
 #: part/admin.py:195 part/admin.py:270 stock/admin.py:42 stock/admin.py:116
 msgid "Parent ID"
-msgstr ""
+msgstr "Overordnet ID"
 
 #: part/admin.py:196 part/admin.py:272 stock/admin.py:43
 msgid "Parent Name"
-msgstr ""
+msgstr "Overordnet navn"
 
 #: part/admin.py:199 part/templates/part/category.html:87
 #: part/templates/part/category.html:100
 msgid "Category Path"
-msgstr ""
+msgstr "Sti til kategori"
 
 #: part/admin.py:202 part/models.py:393 part/serializers.py:307
 #: part/templates/part/cat_link.html:3 part/templates/part/category.html:23
@@ -5453,11 +5453,11 @@ msgstr "Deler"
 
 #: part/admin.py:265
 msgid "BOM Level"
-msgstr ""
+msgstr "BOM-nivå"
 
 #: part/admin.py:267
 msgid "BOM Item ID"
-msgstr ""
+msgstr "BOM artikkel-ID"
 
 #: part/admin.py:271
 msgid "Parent IPN"
@@ -5470,20 +5470,20 @@ msgstr ""
 #: part/admin.py:280 templates/js/translated/pricing.js:358
 #: templates/js/translated/pricing.js:1010
 msgid "Minimum Price"
-msgstr ""
+msgstr "Minstepris"
 
 #: part/admin.py:281 templates/js/translated/pricing.js:353
 #: templates/js/translated/pricing.js:1018
 msgid "Maximum Price"
-msgstr ""
+msgstr "Makspris"
 
 #: part/api.py:501
 msgid "Incoming Purchase Order"
-msgstr ""
+msgstr "Innkommende innkjøpsordre"
 
 #: part/api.py:521
 msgid "Outgoing Sales Order"
-msgstr ""
+msgstr "Utgående salgsordre"
 
 #: part/api.py:539
 msgid "Stock produced by Build Order"
@@ -5495,15 +5495,15 @@ msgstr ""
 
 #: part/api.py:773
 msgid "Valid"
-msgstr ""
+msgstr "Gyldig"
 
 #: part/api.py:774
 msgid "Validate entire Bill of Materials"
-msgstr ""
+msgstr "Godkjenn hele Stykklisten"
 
 #: part/api.py:780
 msgid "This option must be selected"
-msgstr ""
+msgstr "Dette alternativet må være valgt"
 
 #: part/bom.py:175 part/models.py:128 part/models.py:927
 #: part/templates/part/category.html:115 part/templates/part/part_base.html:369
@@ -5512,12 +5512,12 @@ msgstr ""
 
 #: part/bom.py:176 templates/email/low_stock_notification.html:16
 msgid "Total Stock"
-msgstr ""
+msgstr "Total lagerbeholdning"
 
 #: part/bom.py:177 part/templates/part/part_base.html:194
 #: templates/js/translated/sales_order.js:1885
 msgid "Available Stock"
-msgstr ""
+msgstr "Tilgjengelig lagerbeholdning"
 
 #: part/forms.py:48
 msgid "Input quantity for price calculation"
@@ -5526,13 +5526,13 @@ msgstr ""
 #: part/models.py:76 part/models.py:3668 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
-msgstr ""
+msgstr "Delkategori"
 
 #: part/models.py:77 part/templates/part/category.html:135
 #: templates/InvenTree/search.html:97 templates/js/translated/search.js:158
 #: users/models.py:37
 msgid "Part Categories"
-msgstr ""
+msgstr "Delkategorier"
 
 #: part/models.py:129
 msgid "Default location for parts in this category"
@@ -5542,11 +5542,11 @@ msgstr ""
 #: templates/js/translated/table_filters.js:215
 #: templates/js/translated/table_filters.js:235
 msgid "Structural"
-msgstr ""
+msgstr "Strukturell"
 
 #: part/models.py:136
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
-msgstr ""
+msgstr "Deler kan ikke tilordnes direkte til en strukturell kategori, men kan tilordnes til underkategorier."
 
 #: part/models.py:140
 msgid "Default keywords"
@@ -5701,11 +5701,11 @@ msgstr "Er dette en virtuell del, som et softwareprodukt eller en lisens?"
 
 #: part/models.py:1035
 msgid "BOM checksum"
-msgstr "Kontrollsum for stykkliste"
+msgstr "Kontrollsum for BOM"
 
 #: part/models.py:1035
 msgid "Stored BOM checksum"
-msgstr "Lagret sjekkliste-kontrollsum"
+msgstr "Lagret BOM-kontrollsum"
 
 #: part/models.py:1038
 msgid "BOM checked by"
@@ -5739,7 +5739,7 @@ msgstr "Valuta som brukes til å bufre prisberegninger"
 
 #: part/models.py:2907
 msgid "Minimum BOM Cost"
-msgstr "Minimal stykklistekostnad"
+msgstr "Minimal BOM-kostnad"
 
 #: part/models.py:2908
 msgid "Minimum cost of component parts"
@@ -5747,7 +5747,7 @@ msgstr "Minste kostnad for komponentdeler"
 
 #: part/models.py:2913
 msgid "Maximum BOM Cost"
-msgstr "Maksimal stykklistekostnad"
+msgstr "Maksimal BOM-kostnad"
 
 #: part/models.py:2914
 msgid "Maximum cost of component parts"
@@ -6074,11 +6074,11 @@ msgstr "Nivå"
 
 #: part/models.py:3732
 msgid "BOM level"
-msgstr "Stykklistenivå"
+msgstr "BOM-nivå"
 
 #: part/models.py:3738 part/models.py:4116
 msgid "BOM Item"
-msgstr "Stykklisteartikkel"
+msgstr "BOM-artikkel"
 
 #: part/models.py:3811
 msgid "Select parent part"
@@ -6090,19 +6090,19 @@ msgstr "Underordnet del"
 
 #: part/models.py:3820
 msgid "Select part to be used in BOM"
-msgstr "Velg del som skal brukes i stykkliste"
+msgstr "Velg del som skal brukes i BOM"
 
 #: part/models.py:3826
 msgid "BOM quantity for this BOM item"
-msgstr "Stykklisteantall for denne stykklisteartikkelen"
+msgstr "BOM-antall for denne BOM-artikkelen"
 
 #: part/models.py:3831
 msgid "This BOM item is optional"
-msgstr "Denne stykklisteartikkelen er valgfri"
+msgstr "Denne BOM-artikkelen er valgfri"
 
 #: part/models.py:3837
 msgid "This BOM item is consumable (it is not tracked in build orders)"
-msgstr "Denne sykklisteartikkelen er forbruksvare (den spores ikke i produksjonsordrer)"
+msgstr "Denne BOM-artikkelen er forbruksvare (den spores ikke i produksjonsordrer)"
 
 #: part/models.py:3841 part/templates/part/upload_bom.html:55
 msgid "Overage"
@@ -6114,11 +6114,11 @@ msgstr "Forventet produksjonssvinn (absolutt eller prosent)"
 
 #: part/models.py:3845
 msgid "BOM item reference"
-msgstr "Stykklisteartikkel-referanse"
+msgstr "BOM-artikkelreferanse"
 
 #: part/models.py:3848
 msgid "BOM item notes"
-msgstr "Stykklisteartikkel-notater"
+msgstr "BOM-artikkelnotater"
 
 #: part/models.py:3852
 msgid "Checksum"
@@ -6126,7 +6126,7 @@ msgstr "Kontrollsum"
 
 #: part/models.py:3852
 msgid "BOM line checksum"
-msgstr "Stykklistelinje kontrollsum"
+msgstr "BOM-linje kontrollsum"
 
 #: part/models.py:3857 templates/js/translated/table_filters.js:150
 msgid "Validated"
@@ -6134,7 +6134,7 @@ msgstr "Godkjent"
 
 #: part/models.py:3858
 msgid "This BOM item has been validated"
-msgstr "Denne stykklisteartikkelen er godkjent"
+msgstr "Denne BOM-artikkelen er godkjent"
 
 #: part/models.py:3863 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1042
@@ -6145,7 +6145,7 @@ msgstr "Arves"
 
 #: part/models.py:3864
 msgid "This BOM item is inherited by BOMs for variant parts"
-msgstr "Denne stykklisteartikkelen er arvet fra stykkliste for variantdeler"
+msgstr "Denne BOM-artikkelen er arvet fra stykkliste for variantdeler"
 
 #: part/models.py:3869 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1034
@@ -6154,7 +6154,7 @@ msgstr "Tillat Varianter"
 
 #: part/models.py:3870
 msgid "Stock items for variant parts can be used for this BOM item"
-msgstr "Lagervarer for variantdeler kan brukes for denne stykklisteartikkelen"
+msgstr "Lagervarer for variantdeler kan brukes for denne BOM-artikkelen"
 
 #: part/models.py:3956 stock/models.py:577
 msgid "Quantity must be integer value for trackable parts"
@@ -6166,7 +6166,7 @@ msgstr "Underordnet del må angis"
 
 #: part/models.py:4083
 msgid "BOM Item Substitute"
-msgstr "Stykklisteartikkel-erstatning"
+msgstr "BOM-artikkel erstatning"
 
 #: part/models.py:4104
 msgid "Substitute part cannot be the same as the master part"
@@ -6174,7 +6174,7 @@ msgstr "Erstatningsdel kan ikke være samme som hoveddelen"
 
 #: part/models.py:4117
 msgid "Parent BOM item"
-msgstr "Overordnet stykklisteartikkel"
+msgstr "Overordnet BOM-artikkel"
 
 #: part/models.py:4125
 msgid "Substitute part"
@@ -6206,11 +6206,11 @@ msgstr "Innkjøpsvaluta for lagervaren"
 
 #: part/serializers.py:313
 msgid "No parts selected"
-msgstr ""
+msgstr "Ingen deler valgt"
 
 #: part/serializers.py:321
 msgid "Select category"
-msgstr ""
+msgstr "Velg kategori"
 
 #: part/serializers.py:352
 msgid "Original Part"
@@ -6303,15 +6303,15 @@ msgstr "Innledende lagerbeholdning"
 
 #: part/serializers.py:687
 msgid "Create Part with initial stock quantity"
-msgstr ""
+msgstr "Lag en del med innledende lagermengde"
 
 #: part/serializers.py:692
 msgid "Supplier Information"
-msgstr ""
+msgstr "Leverandøropplysninger"
 
 #: part/serializers.py:692
 msgid "Add initial supplier information for this part"
-msgstr ""
+msgstr "Legg til innledende leverandørinformasjon for denne delen"
 
 #: part/serializers.py:698
 msgid "Copy Category Parameters"
@@ -6371,7 +6371,7 @@ msgstr "Fjern eksisterende data"
 
 #: part/serializers.py:1317
 msgid "Remove existing BOM items before copying"
-msgstr "Fjern eksisterende BOM produkter før kopiering"
+msgstr "Fjern eksisterende BOM-artikler før kopiering"
 
 #: part/serializers.py:1322
 msgid "Include Inherited"
@@ -6379,7 +6379,7 @@ msgstr "Inkluder arvet"
 
 #: part/serializers.py:1323
 msgid "Include BOM items which are inherited from templated parts"
-msgstr "Inkluder BOM elementer som er arvet fra mal-deler"
+msgstr "Inkluder BOM-artikler som er arvet fra maldeler"
 
 #: part/serializers.py:1328
 msgid "Skip Invalid Rows"
@@ -6399,15 +6399,15 @@ msgstr "Kopier erstatningsdeler når BOM elementer dupliseres"
 
 #: part/serializers.py:1375
 msgid "Clear Existing BOM"
-msgstr ""
+msgstr "Nullstill eksisterende BOM"
 
 #: part/serializers.py:1376
 msgid "Delete existing BOM items before uploading"
-msgstr ""
+msgstr "Fjern eksisterende BOM-artikler før opplastning"
 
 #: part/serializers.py:1406
 msgid "No part column specified"
-msgstr ""
+msgstr "Ingen del-kolonne angitt"
 
 #: part/serializers.py:1449
 msgid "Multiple matching parts found"
@@ -6419,19 +6419,19 @@ msgstr ""
 
 #: part/serializers.py:1455
 msgid "Part is not designated as a component"
-msgstr ""
+msgstr "Delen er ikke betegnet som en komponent"
 
 #: part/serializers.py:1464
 msgid "Quantity not provided"
-msgstr ""
+msgstr "Antall ikke oppgitt"
 
 #: part/serializers.py:1472
 msgid "Invalid quantity"
-msgstr ""
+msgstr "Ugyldig antall"
 
 #: part/serializers.py:1493
 msgid "At least one BOM item is required"
-msgstr ""
+msgstr "Minst en BOM-artikkel kreves"
 
 #: part/tasks.py:39
 msgid "Low stock notification"
@@ -6466,7 +6466,7 @@ msgstr "En ny lagertellingsrapport er tilgjengelig for nedlasting"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
-msgstr "Du har ikke rettigheter til å redigere stykklisten."
+msgstr "Du har ikke rettigheter til å redigere BOMen."
 
 #: part/templates/part/bom.html:15
 msgid "The BOM this part has been changed, and must be validated"
@@ -6634,45 +6634,45 @@ msgstr "Relaterte Deler"
 
 #: part/templates/part/detail.html:236 part/templates/part/detail.html:237
 msgid "Add Related"
-msgstr ""
+msgstr "Legg til relatert"
 
 #: part/templates/part/detail.html:255 part/templates/part/part_sidebar.html:17
 #: report/templates/report/inventree_bill_of_materials_report.html:100
 msgid "Bill of Materials"
-msgstr ""
+msgstr "Stykkliste (BOM)"
 
 #: part/templates/part/detail.html:260
 msgid "Export actions"
-msgstr ""
+msgstr "Eksporthandlinger"
 
 #: part/templates/part/detail.html:264 templates/js/translated/bom.js:340
 msgid "Export BOM"
-msgstr ""
+msgstr "Eksporter BOM"
 
 #: part/templates/part/detail.html:266
 msgid "Print BOM Report"
-msgstr ""
+msgstr "Skriv ut BOM-rapport"
 
 #: part/templates/part/detail.html:272
 msgid "BOM actions"
-msgstr "Stykklistehandlinger"
+msgstr "BOM-handlinger"
 
 #: part/templates/part/detail.html:276
 msgid "Upload BOM"
-msgstr ""
+msgstr "Last opp BOM"
 
 #: part/templates/part/detail.html:278
 msgid "Validate BOM"
-msgstr ""
+msgstr "Godkjenn BOM"
 
 #: part/templates/part/detail.html:283 part/templates/part/detail.html:284
 #: templates/js/translated/bom.js:1299 templates/js/translated/bom.js:1300
 msgid "Add BOM Item"
-msgstr ""
+msgstr "Legg til BOM-artikkel"
 
 #: part/templates/part/detail.html:297
 msgid "Assemblies"
-msgstr ""
+msgstr "Sammenstillinger"
 
 #: part/templates/part/detail.html:313
 msgid "Part Builds"
@@ -6684,40 +6684,40 @@ msgstr ""
 
 #: part/templates/part/detail.html:352
 msgid "Part Suppliers"
-msgstr ""
+msgstr "Deleleverandører"
 
 #: part/templates/part/detail.html:372
 msgid "Part Manufacturers"
-msgstr ""
+msgstr "Deleprodusenter"
 
 #: part/templates/part/detail.html:654
 msgid "Related Part"
-msgstr ""
+msgstr "Relatert Del"
 
 #: part/templates/part/detail.html:662
 msgid "Add Related Part"
-msgstr ""
+msgstr "Legg til relatert del"
 
 #: part/templates/part/detail.html:747
 msgid "Add Test Result Template"
-msgstr ""
+msgstr "Legg til Testresultatmal"
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
 msgid "Insufficient privileges."
-msgstr ""
+msgstr "Utilstrekkelige rettigheter."
 
 #: part/templates/part/import_wizard/part_upload.html:8
 msgid "Return to Parts"
-msgstr ""
+msgstr "Tilbake til deler"
 
 #: part/templates/part/import_wizard/part_upload.html:13
 msgid "Import Parts from File"
-msgstr ""
+msgstr "Importer deler fra fil"
 
 #: part/templates/part/import_wizard/part_upload.html:31
 msgid "Requirements for part import"
-msgstr ""
+msgstr "Krav for import av deler"
 
 #: part/templates/part/import_wizard/part_upload.html:33
 msgid "The part import file must contain the required named columns as provided in the "
@@ -6735,13 +6735,13 @@ msgstr ""
 #: templates/js/translated/bom.js:309 templates/js/translated/bom.js:343
 #: templates/js/translated/order.js:129 templates/js/translated/tables.js:189
 msgid "Format"
-msgstr ""
+msgstr "Format"
 
 #: part/templates/part/import_wizard/part_upload.html:93
 #: templates/js/translated/bom.js:310 templates/js/translated/bom.js:344
 #: templates/js/translated/order.js:130
 msgid "Select file format"
-msgstr ""
+msgstr "Velg filformat"
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
@@ -6749,55 +6749,55 @@ msgstr ""
 
 #: part/templates/part/part_base.html:27 part/templates/part/part_base.html:31
 msgid "You are subscribed to notifications for this part"
-msgstr ""
+msgstr "Du abonnerer på varsler for denne delen"
 
 #: part/templates/part/part_base.html:35
 msgid "Subscribe to notifications for this part"
-msgstr ""
+msgstr "Abonner på varsler for denne delen"
 
 #: part/templates/part/part_base.html:54
 #: stock/templates/stock/item_base.html:63
 #: stock/templates/stock/location.html:73
 msgid "Print Label"
-msgstr ""
+msgstr "Skriv ut etikett"
 
 #: part/templates/part/part_base.html:60
 msgid "Show pricing information"
-msgstr ""
+msgstr "Vis prisinformasjon"
 
 #: part/templates/part/part_base.html:65
 #: stock/templates/stock/item_base.html:111
 #: stock/templates/stock/location.html:81
 msgid "Stock actions"
-msgstr ""
+msgstr "Lagerhandlinger"
 
 #: part/templates/part/part_base.html:72
 msgid "Count part stock"
-msgstr ""
+msgstr "Tell delbeholdning"
 
 #: part/templates/part/part_base.html:78
 msgid "Transfer part stock"
-msgstr ""
+msgstr "Overfør delbeholdning"
 
 #: part/templates/part/part_base.html:93 templates/js/translated/part.js:2258
 msgid "Part actions"
-msgstr ""
+msgstr "Delhandlinger"
 
 #: part/templates/part/part_base.html:96
 msgid "Duplicate part"
-msgstr ""
+msgstr "Dupliser del"
 
 #: part/templates/part/part_base.html:99
 msgid "Edit part"
-msgstr ""
+msgstr "Rediger del"
 
 #: part/templates/part/part_base.html:102
 msgid "Delete part"
-msgstr ""
+msgstr "Slett del"
 
 #: part/templates/part/part_base.html:121
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "Delen er en maldel (varianter kan lages fra denne delen)"
 
 #: part/templates/part/part_base.html:125
 msgid "Part can be assembled from other parts"
@@ -6921,7 +6921,7 @@ msgstr "Ingen leverandørpriser tilgjengelig"
 #: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:87
 #: part/templates/part/prices.html:239
 msgid "BOM Pricing"
-msgstr "Stykklistepriser"
+msgstr "BOM-prising"
 
 #: part/templates/part/part_pricing.html:66
 msgid "Unit Purchase Price"
@@ -6933,7 +6933,7 @@ msgstr "Total Innkjøpspris"
 
 #: part/templates/part/part_pricing.html:83
 msgid "No BOM pricing available"
-msgstr "Ingen Stykklisteprising tilgjengelig"
+msgstr "Ingen BOM-prising tilgjengelig"
 
 #: part/templates/part/part_pricing.html:92
 msgid "Internal Price"
@@ -7078,27 +7078,27 @@ msgstr "Stykkliste opplastningskrav"
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
 msgid "Upload BOM File"
-msgstr ""
+msgstr "Last opp BOM-fil"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
-msgstr ""
+msgstr "Send inn BOM-data"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
-msgstr ""
+msgstr "Krav for BOM-opplastning"
 
 #: part/templates/part/upload_bom.html:39
 msgid "The BOM file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "BOM-filen må inneholde de nødvendige navngitte kolonnene som i "
 
 #: part/templates/part/upload_bom.html:39
 msgid "BOM Upload Template"
-msgstr ""
+msgstr "BOM-opplastningsmalen"
 
 #: part/templates/part/upload_bom.html:40
 msgid "Each part must already exist in the database"
-msgstr ""
+msgstr "Hver del må allerede finnes i databasen"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
@@ -7212,19 +7212,19 @@ msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:47
 msgid "Allow sending of slack channel messages for event notifications"
-msgstr ""
+msgstr "Tillat sending av Slack-kanalmeldinger for hendelsesvarsler"
 
 #: plugin/builtin/integration/core_notifications.py:52
 msgid "Slack incoming webhook url"
-msgstr ""
+msgstr "Slack innkommende webhook"
 
 #: plugin/builtin/integration/core_notifications.py:53
 msgid "URL that is used to send messages to a slack channel"
-msgstr ""
+msgstr "URL brukt til å sende meldinger til en Slack-kanal"
 
 #: plugin/builtin/integration/core_notifications.py:163
 msgid "Open link"
-msgstr ""
+msgstr "Åpne lenke"
 
 #: plugin/models.py:28
 msgid "Plugin Configuration"
@@ -7524,34 +7524,34 @@ msgstr "Test"
 #: report/templates/report/inventree_test_report_base.html:103
 #: stock/models.py:2249
 msgid "Result"
-msgstr ""
+msgstr "Resultat"
 
 #: report/templates/report/inventree_test_report_base.html:130
 msgid "Pass"
-msgstr ""
+msgstr "Bestått"
 
 #: report/templates/report/inventree_test_report_base.html:132
 msgid "Fail"
-msgstr ""
+msgstr "Mislykket"
 
 #: report/templates/report/inventree_test_report_base.html:139
 msgid "No result (required)"
-msgstr ""
+msgstr "Ingen resultat (obligatorisk)"
 
 #: report/templates/report/inventree_test_report_base.html:141
 msgid "No result"
-msgstr ""
+msgstr "Ingen resultat"
 
 #: report/templates/report/inventree_test_report_base.html:154
 #: stock/templates/stock/stock_sidebar.html:16
 msgid "Installed Items"
-msgstr ""
+msgstr "Installerte artikler"
 
 #: report/templates/report/inventree_test_report_base.html:168
 #: stock/admin.py:104 templates/js/translated/stock.js:666
 #: templates/js/translated/stock.js:837 templates/js/translated/stock.js:2971
 msgid "Serial"
-msgstr ""
+msgstr "Serienummer"
 
 #: stock/admin.py:39 stock/admin.py:108
 msgid "Location ID"
@@ -7568,32 +7568,32 @@ msgstr ""
 
 #: stock/admin.py:100
 msgid "Stock Item ID"
-msgstr ""
+msgstr "Lagervare-ID"
 
 #: stock/admin.py:107
 msgid "Status Code"
-msgstr ""
+msgstr "Statuskode"
 
 #: stock/admin.py:110
 msgid "Supplier Part ID"
-msgstr ""
+msgstr "Leverandørdel-ID"
 
 #: stock/admin.py:111
 msgid "Supplier ID"
-msgstr ""
+msgstr "Leverandør-ID"
 
 #: stock/admin.py:112
 msgid "Supplier Name"
-msgstr ""
+msgstr "Leverandørnavn"
 
 #: stock/admin.py:113
 msgid "Customer ID"
-msgstr ""
+msgstr "Kunde-ID"
 
 #: stock/admin.py:114 stock/models.py:708
 #: stock/templates/stock/item_base.html:355
 msgid "Installed In"
-msgstr ""
+msgstr "Installert i"
 
 #: stock/admin.py:115
 msgid "Build ID"
@@ -7601,25 +7601,25 @@ msgstr ""
 
 #: stock/admin.py:117
 msgid "Sales Order ID"
-msgstr ""
+msgstr "Salgsordre-ID"
 
 #: stock/admin.py:118
 msgid "Purchase Order ID"
-msgstr ""
+msgstr "Innkjøpsordre-ID"
 
 #: stock/admin.py:125
 msgid "Review Needed"
-msgstr ""
+msgstr "Gjennomgang kreves"
 
 #: stock/admin.py:126
 msgid "Delete on Deplete"
-msgstr ""
+msgstr "Slett når oppbrukt"
 
 #: stock/admin.py:131 stock/models.py:789
 #: stock/templates/stock/item_base.html:429
 #: templates/js/translated/stock.js:2120
 msgid "Expiry Date"
-msgstr ""
+msgstr "Utløpsdato"
 
 #: stock/api.py:426 templates/js/translated/table_filters.js:379
 msgid "External Location"
@@ -7627,23 +7627,23 @@ msgstr ""
 
 #: stock/api.py:619
 msgid "Quantity is required"
-msgstr ""
+msgstr "Antall kreves"
 
 #: stock/api.py:626
 msgid "Valid part must be supplied"
-msgstr ""
+msgstr "Gyldig del må oppgis"
 
 #: stock/api.py:652
 msgid "The given supplier part does not exist"
-msgstr ""
+msgstr "Oppgitt leverandørdel eksisterer ikke"
 
 #: stock/api.py:661
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
-msgstr ""
+msgstr "Leverandørdelen har en pakkestørrelse definert, men flagget \"use_pack_size\" er ikke satt"
 
 #: stock/api.py:679
 msgid "Serial numbers cannot be supplied for a non-trackable part"
-msgstr ""
+msgstr "Serienumre kan ikke angis for en ikke-sporbar del"
 
 #: stock/models.py:54 stock/models.py:692
 #: stock/templates/stock/location.html:17
@@ -7977,7 +7977,7 @@ msgstr ""
 
 #: stock/serializers.py:670
 msgid "No stock items selected"
-msgstr ""
+msgstr "Ingen lagervarer valgt"
 
 #: stock/serializers.py:904
 msgid "Part must be salable"
@@ -8482,7 +8482,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:77
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "BOM venter godkjenning"
 
 #: templates/InvenTree/index.html:106
 msgid "Recently Updated"
@@ -9724,15 +9724,15 @@ msgstr ""
 
 #: templates/js/translated/bom.js:78
 msgid "Create BOM Item"
-msgstr ""
+msgstr "Opprett BOM-artikkel"
 
 #: templates/js/translated/bom.js:132
 msgid "Display row data"
-msgstr ""
+msgstr "Vis raddata"
 
 #: templates/js/translated/bom.js:188
 msgid "Row Data"
-msgstr ""
+msgstr "Raddata"
 
 #: templates/js/translated/bom.js:189 templates/js/translated/bom.js:700
 #: templates/js/translated/modals.js:71 templates/js/translated/modals.js:622
@@ -9740,153 +9740,153 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:802 templates/modals.html:15
 #: templates/modals.html:27 templates/modals.html:39 templates/modals.html:50
 msgid "Close"
-msgstr ""
+msgstr "Lukk"
 
 #: templates/js/translated/bom.js:306
 msgid "Download BOM Template"
-msgstr ""
+msgstr "Lat ned BOM-mal"
 
 #: templates/js/translated/bom.js:351
 msgid "Multi Level BOM"
-msgstr ""
+msgstr "Flernivå-BOM"
 
 #: templates/js/translated/bom.js:352
 msgid "Include BOM data for subassemblies"
-msgstr ""
+msgstr "Inkluder BOM-data for undersammenstillinger"
 
 #: templates/js/translated/bom.js:357
 msgid "Levels"
-msgstr ""
+msgstr "Nivåer"
 
 #: templates/js/translated/bom.js:358
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
-msgstr ""
+msgstr "Velg maksimalt antall BOM-nivåer å eksportere (0 = alle nivåer)"
 
 #: templates/js/translated/bom.js:365
 msgid "Include Alternative Parts"
-msgstr ""
+msgstr "Inkluder alternative deler"
 
 #: templates/js/translated/bom.js:366
 msgid "Include alternative parts in exported BOM"
-msgstr ""
+msgstr "Inkluder alternative deler i eksportert BOM"
 
 #: templates/js/translated/bom.js:371
 msgid "Include Parameter Data"
-msgstr ""
+msgstr "Inkluder parameterdata"
 
 #: templates/js/translated/bom.js:372
 msgid "Include part parameter data in exported BOM"
-msgstr ""
+msgstr "Inkluder delparameterdata i eksportert BOM"
 
 #: templates/js/translated/bom.js:377
 msgid "Include Stock Data"
-msgstr ""
+msgstr "Inkluder lagerbeholdningsdata"
 
 #: templates/js/translated/bom.js:378
 msgid "Include part stock data in exported BOM"
-msgstr ""
+msgstr "Inkluder delbeholdningsdata i eksportert BOM"
 
 #: templates/js/translated/bom.js:383
 msgid "Include Manufacturer Data"
-msgstr ""
+msgstr "Inkluder Produsentdata"
 
 #: templates/js/translated/bom.js:384
 msgid "Include part manufacturer data in exported BOM"
-msgstr ""
+msgstr "Inkluder delprodusentdata i eksportert BOM"
 
 #: templates/js/translated/bom.js:389
 msgid "Include Supplier Data"
-msgstr ""
+msgstr "Inkluder Leverandørdata"
 
 #: templates/js/translated/bom.js:390
 msgid "Include part supplier data in exported BOM"
-msgstr ""
+msgstr "Inkluder delleverandørdata i eksportert BOM"
 
 #: templates/js/translated/bom.js:395
 msgid "Include Pricing Data"
-msgstr ""
+msgstr "Inkluder prisdata"
 
 #: templates/js/translated/bom.js:396
 msgid "Include part pricing data in exported BOM"
-msgstr ""
+msgstr "Inkluder delprisdata i eksportert BOM"
 
 #: templates/js/translated/bom.js:591
 msgid "Remove substitute part"
-msgstr ""
+msgstr "Fjern erstatningsdel"
 
 #: templates/js/translated/bom.js:645
 msgid "Select and add a new substitute part using the input below"
-msgstr ""
+msgstr "Velg og legg til en ny erstatningsdel ved hjelp av inntastingen under"
 
 #: templates/js/translated/bom.js:656
 msgid "Are you sure you wish to remove this substitute part link?"
-msgstr ""
+msgstr "Er du sikker på at du vil fjerne koblingen til denne erstatningsdelen?"
 
 #: templates/js/translated/bom.js:662
 msgid "Remove Substitute Part"
-msgstr ""
+msgstr "Fjern Erstatningsdel"
 
 #: templates/js/translated/bom.js:701
 msgid "Add Substitute"
-msgstr ""
+msgstr "Legg til Erstatning"
 
 #: templates/js/translated/bom.js:702
 msgid "Edit BOM Item Substitutes"
-msgstr ""
+msgstr "Rediger BOM-artikkelerstatninger"
 
 #: templates/js/translated/bom.js:764
 msgid "All selected BOM items will be deleted"
-msgstr ""
+msgstr "Alle valgte BOM-artikler vil bli slettet"
 
 #: templates/js/translated/bom.js:780
 msgid "Delete selected BOM items?"
-msgstr ""
+msgstr "Slett valgte BOM-artikler?"
 
 #: templates/js/translated/bom.js:826
 msgid "Delete items"
-msgstr ""
+msgstr "Slett artikler"
 
 #: templates/js/translated/bom.js:924
 msgid "Load BOM for subassembly"
-msgstr ""
+msgstr "Last inn BOM for undersammenstillinger"
 
 #: templates/js/translated/bom.js:934
 msgid "Substitutes Available"
-msgstr ""
+msgstr "Erstatninger tilgjengelig"
 
 #: templates/js/translated/bom.js:938 templates/js/translated/build.js:2425
 msgid "Variant stock allowed"
-msgstr ""
+msgstr "Variantbeholdning tillatt"
 
 #: templates/js/translated/bom.js:1002
 msgid "Substitutes"
-msgstr ""
+msgstr "Erstatninger"
 
 #: templates/js/translated/bom.js:1122
 msgid "BOM pricing is complete"
-msgstr ""
+msgstr "BOM-prising er komplett"
 
 #: templates/js/translated/bom.js:1127
 msgid "BOM pricing is incomplete"
-msgstr ""
+msgstr "BOM-prising er ufullstendig"
 
 #: templates/js/translated/bom.js:1134
 msgid "No pricing available"
-msgstr ""
+msgstr "Ingen prising tilgjengelig"
 
 #: templates/js/translated/bom.js:1165 templates/js/translated/build.js:2519
 #: templates/js/translated/sales_order.js:1899
 msgid "No Stock Available"
-msgstr ""
+msgstr "Ingen lagerbeholdning tilgjengelig"
 
 #: templates/js/translated/bom.js:1170 templates/js/translated/build.js:2523
 msgid "Includes variant and substitute stock"
-msgstr ""
+msgstr "Inkluderer variant- og erstatningsbeholdning"
 
 #: templates/js/translated/bom.js:1172 templates/js/translated/build.js:2525
 #: templates/js/translated/part.js:1229
 msgid "Includes variant stock"
-msgstr ""
+msgstr "Inkluderer variantbeholdning"
 
 #: templates/js/translated/bom.js:1174 templates/js/translated/build.js:2527
 msgid "Includes substitute stock"
@@ -9898,7 +9898,7 @@ msgstr "Forbruksvare"
 
 #: templates/js/translated/bom.js:1264
 msgid "Validate BOM Item"
-msgstr "Godkjenn stykklisteartikkel"
+msgstr "Godkjenn BOM-artikkel"
 
 #: templates/js/translated/bom.js:1266
 msgid "This line has been validated"
@@ -9910,11 +9910,11 @@ msgstr "Rediger erstatningsdeler"
 
 #: templates/js/translated/bom.js:1270 templates/js/translated/bom.js:1465
 msgid "Edit BOM Item"
-msgstr "Rediger stykklisteartikkel"
+msgstr "Rediger BOM-artikkel"
 
 #: templates/js/translated/bom.js:1272
 msgid "Delete BOM Item"
-msgstr "Slett stykklisteartikkel"
+msgstr "Slett BOM-artikkel"
 
 #: templates/js/translated/bom.js:1292
 msgid "View BOM"
@@ -9922,7 +9922,7 @@ msgstr "Vis stykkliste"
 
 #: templates/js/translated/bom.js:1376
 msgid "No BOM items found"
-msgstr "Ingen stykklisteartikler funnet"
+msgstr "Ingen BOM-artikler funnet"
 
 #: templates/js/translated/bom.js:1636 templates/js/translated/build.js:2410
 msgid "Required Part"
@@ -10972,7 +10972,7 @@ msgstr "Du har avsluttet abonnementet på varsler for denne artikkelen"
 
 #: templates/js/translated/part.js:596
 msgid "Validating the BOM will mark each line item as valid"
-msgstr "Godkjenning av stykkliste vil merke hvert linjeelement som godkjent"
+msgstr "Godkjenning av BOM vil merke hvert linjeelement som godkjent"
 
 #: templates/js/translated/part.js:606
 msgid "Validate Bill of Materials"
@@ -11252,7 +11252,7 @@ msgstr ""
 
 #: templates/js/translated/pricing.js:321
 msgid "No BOM data available"
-msgstr ""
+msgstr "Ingen BOM-data tilgjengelig"
 
 #: templates/js/translated/pricing.js:463
 msgid "No supplier pricing data available"
@@ -12220,7 +12220,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:3075
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
-msgstr ""
+msgstr "Lagervaren peker til en Del som er BOMen for denne lagervaren"
 
 #: templates/js/translated/stock.js:3076
 msgid "The Stock Item is currently available in stock"
