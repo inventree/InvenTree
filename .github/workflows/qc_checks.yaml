@@ -324,8 +324,8 @@ jobs:
         env:
           POSTGRES_USER: inventree
           POSTGRES_PASSWORD: password
-          ports:
-            - 5432:5432
+        ports:
+          - 5432:5432
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
