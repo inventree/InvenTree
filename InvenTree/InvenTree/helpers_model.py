@@ -262,32 +262,47 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
-    if instance.responsible is not None:
-        # Setup context for notification parsing
-        content_context = {
-            'instance': str(instance),
-            'verbose_name': sender._meta.verbose_name,
-            'app_label': sender._meta.app_label,
-            'model_name': sender._meta.model_name,
-        }
+    notify_users([instance.responsible], instance, sender, content=content, exclude=exclude)
 
-        # Setup notification context
-        context = {
-            'instance': instance,
-            'name': content.name.format(**content_context),
-            'message': content.message.format(**content_context),
-            'link': InvenTree.helpers_model.construct_absolute_url(instance.get_absolute_url()),
-            'template': {
-                'html': content.template.format(**content_context),
-                'subject': content.name.format(**content_context),
-            }
-        }
 
-        # Create notification
-        trigger_notification(
-            instance,
-            content.slug.format(**content_context),
-            targets=[instance.responsible],
-            target_exclude=[exclude],
-            context=context,
-        )
+def notify_users(users, instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
+    """Notify all passed users or groups.
+
+    Parses the supplied content with the provided instance and sender and sends a notification to all users,
+    excluding the optional excluded list.
+
+    Args:
+        users: List of users or groups to notify
+        instance: The newly created instance
+        sender: Sender model reference
+        content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        exclude (User, optional): User instance that should be excluded. Defaults to None.
+    """
+    # Setup context for notification parsing
+    content_context = {
+        'instance': str(instance),
+        'verbose_name': sender._meta.verbose_name,
+        'app_label': sender._meta.app_label,
+        'model_name': sender._meta.model_name,
+    }
+
+    # Setup notification context
+    context = {
+        'instance': instance,
+        'name': content.name.format(**content_context),
+        'message': content.message.format(**content_context),
+        'link': InvenTree.helpers_model.construct_absolute_url(instance.get_absolute_url()),
+        'template': {
+            'html': content.template.format(**content_context),
+            'subject': content.name.format(**content_context),
+        }
+    }
+
+    # Create notification
+    trigger_notification(
+        instance,
+        content.slug.format(**content_context),
+        targets=users,
+        target_exclude=[exclude],
+        context=context,
+    )
