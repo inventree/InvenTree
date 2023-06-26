@@ -385,7 +385,7 @@ jobs:
         invoke migrate
 
   plattform_ui:
-    name: Platform UI tests
+    name: Tests - UI Platform
     runs-on: ubuntu-20.04
     timeout-minutes: 60
     needs: paths-filter
