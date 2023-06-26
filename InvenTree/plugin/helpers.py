@@ -114,67 +114,40 @@ def get_git_log(org_path):
     from plugin import registry
 
     output = None
-    commit = None
+    repo = None
 
     # Discover if there is a git repo between the path and the plugins folder
     start_path = pathlib.Path(org_path)
 
     # 1: Is the plugin in InvenTree's path?
-    try:
-        rev = start_path.relative_to(settings.BASE_DIR)
-
-        itterlist = []
-        last = settings.BASE_DIR
-        for opt in rev.parts:
-            new = last.joinpath(opt)
-            last = new
-            itterlist.append(new)
-
-        # Append base
-        itterlist.append(settings.BASE_DIR.parent)
-
-        # Reverse list
-        itterlist.reverse()
-
-        # Try to discover
-        for prt in itterlist:
-            try:
-                rep = Repo(prt)
-                commit = rep[rep.head()]
-                break
-            except NotGitRepository:
-                pass
-            except Exception as _aa:
-                print(_aa)
-    except Exception as _e:
-        print(_e)
+    repo = try_repo_discovery(start_path.relative_to(settings.BASE_DIR), settings.BASE_DIR, extra=settings.BASE_DIR.parent)
 
     # 2: Is the plugin in an external dir that is mounted?
-    if not commit:
+    if not repo:
         builtins = ['plugin.builtin', 'plugin.samples']
 
         for base_path in [item for item in registry.plugin_roots if item not in builtins]:
             end_path = pathlib.Path(base_path)
-
-            try:
-                rev = start_path.relative_to(end_path)
-                print(rev)
-            except Exception as _e:
-                print(_e)
+            repo = try_repo_discovery(start_path.relative_to(end_path), end_path, extra=end_path.parent)
 
     # 3: Now we try the walker
-    if not commit:
+    if not repo:
         path = org_path.replace(str(settings.BASE_DIR.parent), '')[1:]
         try:
-            walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
-            try:
-                commit = next(iter(walker)).commit
-            except StopIteration:
-                pass
+            repo = Repo.discover(path)
         except NotGitRepository:
             pass
 
-    if commit:
+    if repo:
+        # Get commit for file
+        path = org_path.replace(str(settings.BASE_DIR.parent), '')[1:]
+        walker = repo.get_walker(paths=[path.encode()], max_entries=1)
+        try:
+            commit = next(iter(walker)).commit
+            print(repo)
+        except StopIteration:
+            pass
+
         output = [
             commit.sha().hexdigest(),
             commit.author.decode().split('<')[0][:-1],
@@ -187,6 +160,39 @@ def get_git_log(org_path):
         output = 5 * ['']  # pragma: no cover
 
     return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4]}
+
+
+def try_repo_discovery(parts: list[str], start: pathlib.Path, extra: pathlib.Path = None):
+    """Try to discover a git repo in a path snippet.
+
+    Args:
+        parts: Path parts to try
+        start: Starting path
+        extra: Extra path to append to the path snippet
+    """
+    partpaths = []
+    last = start
+    for opt in parts.parts:
+        new = last.joinpath(opt)
+        last = new
+        partpaths.append(new)
+
+    # Append extras (if set)
+    if extra:
+        partpaths.append(extra)
+
+    # Reverse list
+    partpaths.reverse()
+
+    # Try to discover a repo - the first one wins
+    repo = None
+    for part in partpaths:
+        try:
+            repo = Repo(part)
+            break
+        except NotGitRepository:
+            pass
+    return repo
 # endregion
 
 
