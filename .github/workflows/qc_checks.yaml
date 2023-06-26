@@ -395,9 +395,6 @@ jobs:
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
       INVENTREE_DEBUG: info
       INVENTREE_PLUGINS_ENABLED: false
-      INVENTREE_ADMIN_USER: 'testuser'
-      INVENTREE_ADMIN_EMAIL': 'admin@example.com'
-      INVENTREE_ADMIN_PASSWORD': 'inventree'
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
