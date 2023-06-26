@@ -16,7 +16,7 @@ test('Check classic index site', async ({ page }) => {
 
   await page.waitForLoadState('networkidle');
   await expect(page).toHaveTitle('InvenTree Demo Server | Index');
-  await expect(page.getByRole('button', { name: 'admin' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'testuser' })).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'Parts', exact: true })
   ).toBeVisible();
