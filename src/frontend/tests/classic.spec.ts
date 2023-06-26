@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import exp from 'constants';
 
-test('Check class index site', async ({ page }) => {
+test('Check classic index site', async ({ page }) => {
   await page.goto('./api/');
   await page.goto('./index/');
   await expect(page).toHaveTitle('InvenTree Demo Server | Sign In');
