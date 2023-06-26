@@ -581,9 +581,12 @@ def test_translations(c):
     help={
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
+        'migrations': 'Run migration unit tests',
+        'report': 'Display a report of slow tests',
+        'coverage': 'Run code coverage analysis (requires coverage package)',
     }
 )
-def test(c, disable_pty=False, runtest=''):
+def test(c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False):
     """Run unit-tests for InvenTree codebase.
 
     To run only certain test, use the argument --runtest.
@@ -599,8 +602,32 @@ def test(c, disable_pty=False, runtest=''):
 
     pty = not disable_pty
 
-    # Run coverage tests
-    manage(c, f'test --slowreport {runtest}', pty=pty)
+    _apps = ' '.join(apps())
+
+    cmd = 'test'
+
+    if runtest:
+        # Specific tests to run
+        cmd += f' {runtest}'
+    else:
+        # Run all tests
+        cmd += f' {_apps}'
+
+    if report:
+        cmd += ' --slowreport'
+
+    if migrations:
+        cmd += ' --tag migration_test'
+    else:
+        cmd += ' --exclude-tag migration_test'
+
+    if coverage:
+        # Run tests within coverage environment, and generate report
+        c.run(f'coverage run {managePyPath()} {cmd}')
+        c.run('coverage html -i')
+    else:
+        # Run simple test runner, without coverage
+        manage(c, cmd, pty=pty)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
@@ -643,25 +670,6 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
     # Set up development setup if flag is set
     if dev:
         setup_dev(c)
-
-
-@task
-def coverage(c):
-    """Run code-coverage of the InvenTree codebase, using the 'coverage' code-analysis tools.
-
-    Generates a code coverage report (available in the htmlcov directory)
-    """
-    # Run sanity check on the django install
-    manage(c, 'check')
-
-    # Run coverage tests
-    c.run('coverage run {manage} test {apps}'.format(
-        manage=managePyPath(),
-        apps=' '.join(apps())
-    ))
-
-    # Generate coverage report
-    c.run('coverage html -i')
 
 
 @task(help={

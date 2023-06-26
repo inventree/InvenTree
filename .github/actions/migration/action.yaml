@@ -1,5 +1,5 @@
 name: 'Migration test'
-description: 'Run migration test sequenze'
+description: 'Run migration test sequence'
 author: 'InvenTree'
 
 runs:

@@ -20,9 +20,10 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    RemoteImageMixin)
 from part.serializers import PartBriefSerializer
 
-from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
-                     ManufacturerPartAttachment, ManufacturerPartParameter,
-                     SupplierPart, SupplierPriceBreak)
+from .models import (Address, Company, CompanyAttachment, Contact,
+                     ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
@@ -43,6 +44,53 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     image = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+
+class AddressSerializer(InvenTreeModelSerializer):
+    """Serializer for the Address Model"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = Address
+        fields = [
+            'pk',
+            'company',
+            'title',
+            'primary',
+            'line1',
+            'line2',
+            'postal_code',
+            'postal_city',
+            'province',
+            'country',
+            'shipping_notes',
+            'internal_shipping_notes',
+            'link',
+            'confirm_primary'
+        ]
+
+    confirm_primary = serializers.BooleanField(default=False)
+
+
+class AddressBriefSerializer(InvenTreeModelSerializer):
+    """Serializer for Address Model (limited)"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = Address
+        fields = [
+            'pk',
+            'line1',
+            'line2',
+            'postal_code',
+            'postal_city',
+            'province',
+            'country',
+            'shipping_notes',
+            'internal_shipping_notes'
+        ]
 
 
 class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
@@ -73,11 +121,13 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'parts_supplied',
             'parts_manufactured',
             'remote_image',
+            'address_count',
+            'primary_address'
         ]
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Annoate the supplied queryset with aggregated information"""
+        """Annotate the supplied queryset with aggregated information"""
         # Add count of parts manufactured
         queryset = queryset.annotate(
             parts_manufactured=SubqueryCount('manufactured_parts')
@@ -87,7 +137,13 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             parts_supplied=SubqueryCount('supplied_parts')
         )
 
+        queryset = queryset.annotate(
+            address_count=SubqueryCount('addresses')
+        )
+
         return queryset
+
+    primary_address = AddressSerializer(required=False, allow_null=True, read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -95,6 +151,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
+    address_count = serializers.IntegerField(read_only=True)
 
     currency = InvenTreeCurrencySerializer(help_text=_('Default currency used for this supplier'), required=True)
 
