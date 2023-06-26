@@ -29,6 +29,7 @@ jobs:
     outputs:
       server: ${{ steps.filter.outputs.server }}
       migrations: ${{ steps.filter.outputs.migrations }}
+      frontend: ${{ steps.filter.outputs.frontend }}
 
     steps:
     - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
@@ -43,6 +44,8 @@ jobs:
           migrations:
             - '**/migrations/**'
             - '.github/workflows**'
+          frontend:
+            - 'src/frontend/**'
 
   pep_style:
     name: Style [Python]
@@ -380,3 +383,28 @@ jobs:
         cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
         chmod +rw /home/runner/work/InvenTree/db.sqlite3
         invoke migrate
+
+  plattform_ui:
+    name: Platform UI tests
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+    needs: paths-filter
+    if: needs.paths-filter.outputs.frontend == 'true'
+
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: cd src/frontend && yarn install
+      - name: Install Playwright Browsers
+        run: cd src/frontend && npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: cd src/frontend &&  npx playwright test
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: src/frontend/playwright-report/
+          retention-days: 30
