@@ -201,6 +201,7 @@ def remove_mfa(c, mail=''):
 def static(c):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, "prerender")
+    frontend_build(c)
     manage(c, "collectstatic --no-input")
 
 
