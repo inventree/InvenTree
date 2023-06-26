@@ -398,6 +398,7 @@ jobs:
         with:
           npm: true
           install: true
+          update: true
       - name: Set up test data
         run: invoke setup-test -i
       - name: Install dependencies
