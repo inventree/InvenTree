@@ -113,24 +113,38 @@ def get_git_log(org_path):
     """Get dict with info of the last commit to file named in path."""
     from plugin import registry
 
+    builtins = ['plugin.builtin', 'plugin.samples']
+
     output = None
     repo = None
 
     # Discover if there is a git repo between the path and the plugins folder
     start_path = pathlib.Path(org_path)
 
+    # Check if the plugin is external
+    is_external = False
+
+    ext_paths = [item for item in registry.plugin_roots if item not in builtins]
+    for ext in ext_paths:
+        if settings.BASE_DIR.joinpath(ext) in start_path.parents:
+            is_external = True
+
     # 1: Is the plugin in InvenTree's path?
-    repo = try_repo_discovery(start_path.relative_to(settings.BASE_DIR), settings.BASE_DIR, extra=settings.BASE_DIR.parent)
+    if not is_external:
+        repo = try_repo_discovery(start_path.relative_to(settings.BASE_DIR), settings.BASE_DIR, extra=settings.BASE_DIR.parent)
 
     # 2: Is the plugin in an external dir that is mounted?
-    if not repo:
-        builtins = ['plugin.builtin', 'plugin.samples']
+    if is_external and not repo:
+        for base_path in ext_paths:
+            try:
+                end_path = pathlib.Path(base_path).absolute()
+                rev = start_path.relative_to(end_path)
+            except ValueError:
+                end_path = settings.BASE_DIR.joinpath(base_path).absolute()
+                rev = start_path.relative_to(end_path)
+            repo = try_repo_discovery(rev, end_path, extra=end_path.parent)
 
-        for base_path in [item for item in registry.plugin_roots if item not in builtins]:
-            end_path = pathlib.Path(base_path)
-            repo = try_repo_discovery(start_path.relative_to(end_path), end_path, extra=end_path.parent)
-
-    # 3: Now we try the walker
+    # 3: Now we try the general discovery
     if not repo:
         path = org_path.replace(str(settings.BASE_DIR.parent), '')[1:]
         try:
@@ -140,21 +154,24 @@ def get_git_log(org_path):
 
     if repo:
         # Get commit for file
-        path = org_path.replace(str(settings.BASE_DIR.parent), '')[1:]
+        path = str(start_path.relative_to(repo.path))
         walker = repo.get_walker(paths=[path.encode()], max_entries=1)
+        start = datetime.datetime.now()
+        commit = None
         try:
             commit = next(iter(walker)).commit
-            print(repo)
         except StopIteration:
             pass
+        print(f'Load Timing for {path}:', datetime.datetime.now() - start)
 
-        output = [
-            commit.sha().hexdigest(),
-            commit.author.decode().split('<')[0][:-1],
-            commit.author.decode().split('<')[1][:-1],
-            datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
-            commit.message.decode().split('\n')[0],
-        ]
+        if commit:
+            output = [
+                commit.sha().hexdigest(),
+                commit.author.decode().split('<')[0][:-1],
+                commit.author.decode().split('<')[1][:-1],
+                datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
+                commit.message.decode().split('\n')[0],
+            ]
 
     if not output:
         output = 5 * ['']  # pragma: no cover
