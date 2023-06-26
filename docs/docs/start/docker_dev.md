@@ -93,7 +93,7 @@ docker compose run inventree-dev-server invoke setup-test --dev
 
 ### Start Docker Containers
 
-Now that the database has been created, migrations applied, and you have created an admin account, we are ready to launch the InvenTree containers:
+Now that the database has been created, and migrations applied, we are ready to launch the InvenTree containers:
 
 ```bash
 docker compose up -d
