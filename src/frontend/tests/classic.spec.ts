@@ -9,14 +9,14 @@ test('Check classic index site', async ({ page }) => {
     page.getByRole('heading', { name: 'InvenTree Demo Server' })
   ).toBeVisible();
 
-  await page.getByLabel('username').fill('testuser');
-  await page.getByLabel('password').fill('inventree');
+  await page.getByLabel('username').fill('allaccess');
+  await page.getByLabel('password').fill('nolimits');
   await page.click('button', { text: 'Sign In' });
   await page.waitForURL('**/index/');
 
   await page.waitForLoadState('networkidle');
   await expect(page).toHaveTitle('InvenTree Demo Server | Index');
-  await expect(page.getByRole('button', { name: 'testuser' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'allaccess' })).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'Parts', exact: true })
   ).toBeVisible();
