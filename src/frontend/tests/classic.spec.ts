@@ -12,7 +12,7 @@ test('Check classic index site', async ({ page }) => {
   await page.getByLabel('username').fill('admin');
   await page.getByLabel('password').fill('inventree');
   await page.click('button', { text: 'Sign In' });
-  await page.waitForURL('./index/');
+  await page.waitForURL('**/index/');
 
   await page.waitForLoadState('networkidle');
   await expect(page).toHaveTitle('InvenTree Demo Server | Index');
