@@ -3169,7 +3169,11 @@ function setStockStatus(items, options={}) {
             note: {},
         },
         processBeforeUpload: function(data) {
-            data.items = items;
+            let item_pk_values = [];
+            items.forEach(function(item) {
+                item_pk_values.push(item.pk);
+            });
+            data.items = item_pk_values;
             return data;
         },
         onSuccess: function() {
