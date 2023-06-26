@@ -398,6 +398,7 @@ jobs:
         with:
           npm: true
           install: true
+          update: true
       - name: Install dependencies
         run: cd src/frontend && yarn install
       - name: Install Playwright Browsers
