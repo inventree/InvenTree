@@ -393,7 +393,7 @@ jobs:
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: True
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
