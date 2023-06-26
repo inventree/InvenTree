@@ -9,8 +9,8 @@ test('Check classic index site', async ({ page }) => {
     page.getByRole('heading', { name: 'InvenTree Demo Server' })
   ).toBeVisible();
 
-  await page.getByLabel('username').fill('admin');
-  await page.getByLabel('password').fill('inventree');
+  await page.getByLabel('username').fill('allaccess');
+  await page.getByLabel('password').fill('nolimits');
   await page.click('button', { text: 'Sign In' });
   await page.waitForURL('**/index/');
 
