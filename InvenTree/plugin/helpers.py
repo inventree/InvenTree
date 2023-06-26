@@ -122,6 +122,7 @@ def get_git_log(org_path):
 
     output = None
     repo = None
+    is_external = False
 
     # Discover if there is a git repo between the path and the plugins folder
     start_path = pathlib.Path(org_path)
@@ -129,6 +130,7 @@ def get_git_log(org_path):
     # Check if the plugin is external
     for ext_dir in [item for item in registry.plugin_roots if item not in builtins]:
         if settings.BASE_DIR.joinpath(ext_dir) in start_path.parents:
+            is_external = True
             # 1: Discover external plugin directory
             try:
                 end_path = pathlib.Path(ext_dir).absolute()
@@ -139,7 +141,7 @@ def get_git_log(org_path):
             repo = try_repo_discovery(rev, end_path, extra=end_path.parent)
 
     # 2: Is the plugin in InvenTree's path?
-    if not repo:
+    if not is_external and not repo:
         repo = try_repo_discovery(start_path.relative_to(settings.BASE_DIR), settings.BASE_DIR, extra=settings.BASE_DIR.parent)
 
     # 3: Now we try the general discovery
