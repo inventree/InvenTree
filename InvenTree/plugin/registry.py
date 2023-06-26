@@ -9,6 +9,7 @@ import importlib
 import logging
 import os
 import subprocess
+import time
 from pathlib import Path
 from typing import Dict, List, OrderedDict
 
@@ -439,13 +440,16 @@ class PluginsRegistry:
                     continue  # continue -> the plugin is not loaded
 
                 # Initialize package - we can be sure that an admin has activated the plugin
-                logger.info(f'Loading plugin `{plg_name}`')
+                logger.debug(f'Loading plugin `{plg_name}`')
 
                 try:
+                    t_start = time.time()
                     plg_i: InvenTreePlugin = plg()
-                    logger.debug(f'Loaded plugin `{plg_name}`')
+                    dt = time.time() - t_start
+                    logger.info(f'Loaded plugin `{plg_name}` in {dt:.3f}s')
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
+                    logger.warning(f"Plugin `{plg_name}` could not be loaded")
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)

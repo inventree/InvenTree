@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q, Sum, UniqueConstraint
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -72,7 +72,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         name: Brief name of the company
         description: Longer form description
         website: URL for the company website
-        address: Postal address
+        address: One-line string representation of primary address
         phone: contact phone number
         email: contact email address
         link: Secondary URL e.g. for link to internal Wiki page
@@ -114,10 +114,6 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         help_text=_('Company website URL')
     )
 
-    address = models.CharField(max_length=200,
-                               verbose_name=_('Address'),
-                               blank=True, help_text=_('Company address'))
-
     phone = models.CharField(max_length=50,
                              verbose_name=_('Phone number'),
                              blank=True, help_text=_('Contact phone number'))
@@ -157,6 +153,22 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         help_text=_('Default currency used for this company'),
         validators=[InvenTree.validators.validate_currency_code],
     )
+
+    @property
+    def address(self):
+        """Return the string representation for the primary address
+
+        This property exists for backwards compatibility
+        """
+
+        addr = self.primary_address
+
+        return str(addr) if addr is not None else None
+
+    @property
+    def primary_address(self):
+        """Returns address object of primary address. Parsed by serializer"""
+        return Address.objects.filter(company=self.id).filter(primary=True).first()
 
     @property
     def currency_code(self):
@@ -251,6 +263,143 @@ class Contact(MetadataMixin, models.Model):
     email = models.EmailField(blank=True)
 
     role = models.CharField(max_length=100, blank=True)
+
+
+class Address(models.Model):
+    """An address represents a physical location where the company is located. It is possible for a company to have multiple locations
+
+    Attributes:
+        company: Company link for this address
+        title: Human-readable name for the address
+        primary: True if this is the company's primary address
+        line1: First line of address
+        line2: Optional line two for address
+        postal_code: Postal code, city and state
+        country: Location country
+        shipping_notes: Notes for couriers transporting shipments to this address
+        internal_shipping_notes: Internal notes regarding shipping to this address
+        link: External link to additional address information
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Custom init function"""
+        if 'confirm_primary' in kwargs:
+            self.confirm_primary = kwargs.pop('confirm_primary', None)
+        super().__init__(*args, **kwargs)
+
+    def __str__(self):
+        """Defines string representation of address to supple a one-line to API calls"""
+        available_lines = [self.line1,
+                           self.line2,
+                           self.postal_code,
+                           self.postal_city,
+                           self.province,
+                           self.country
+                           ]
+
+        populated_lines = []
+        for line in available_lines:
+            if len(line) > 0:
+                populated_lines.append(line)
+
+        return ", ".join(populated_lines)
+
+    class Meta:
+        """Metaclass defines extra model options"""
+        verbose_name_plural = "Addresses"
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the Contcat model"""
+        return reverse('api-address-list')
+
+    def validate_unique(self, exclude=None):
+        """Ensure that only one primary address exists per company"""
+
+        super().validate_unique(exclude=exclude)
+
+        if self.primary:
+            # Check that no other primary address exists for this company
+            if Address.objects.filter(company=self.company, primary=True).exclude(pk=self.pk).exists():
+                raise ValidationError({'primary': _('Company already has a primary address')})
+
+    company = models.ForeignKey(Company, related_name='addresses',
+                                on_delete=models.CASCADE,
+                                verbose_name=_('Company'),
+                                help_text=_('Select company'))
+
+    title = models.CharField(max_length=100,
+                             verbose_name=_('Address title'),
+                             help_text=_('Title describing the address entry'),
+                             blank=False)
+
+    primary = models.BooleanField(default=False,
+                                  verbose_name=_('Primary address'),
+                                  help_text=_('Set as primary address'))
+
+    line1 = models.CharField(max_length=50,
+                             verbose_name=_('Line 1'),
+                             help_text=_('Address line 1'),
+                             blank=True)
+
+    line2 = models.CharField(max_length=50,
+                             verbose_name=_('Line 2'),
+                             help_text=_('Address line 2'),
+                             blank=True)
+
+    postal_code = models.CharField(max_length=10,
+                                   verbose_name=_('Postal code'),
+                                   help_text=_('Postal code'),
+                                   blank=True)
+
+    postal_city = models.CharField(max_length=50,
+                                   verbose_name=_('City/Region'),
+                                   help_text=_('Postal code city/region'),
+                                   blank=True)
+
+    province = models.CharField(max_length=50,
+                                verbose_name=_('State/Province'),
+                                help_text=_('State or province'),
+                                blank=True)
+
+    country = models.CharField(max_length=50,
+                               verbose_name=_('Country'),
+                               help_text=_('Address country'),
+                               blank=True)
+
+    shipping_notes = models.CharField(max_length=100,
+                                      verbose_name=_('Courier shipping notes'),
+                                      help_text=_('Notes for shipping courier'),
+                                      blank=True)
+
+    internal_shipping_notes = models.CharField(max_length=100,
+                                               verbose_name=_('Internal shipping notes'),
+                                               help_text=_('Shipping notes for internal use'),
+                                               blank=True)
+
+    link = InvenTreeURLField(blank=True,
+                             verbose_name=_('Link'),
+                             help_text=_('Link to address information (external)'))
+
+
+@receiver(pre_save, sender=Address)
+def check_primary(sender, instance, **kwargs):
+    """Removes primary flag from current primary address if the to-be-saved address is marked as primary"""
+
+    if instance.company.primary_address is None:
+        instance.primary = True
+
+    # If confirm_primary is not present, this function does not need to do anything
+    if not hasattr(instance, 'confirm_primary') or \
+       instance.primary is False or \
+       instance.company.primary_address is None or \
+       instance.id == instance.company.primary_address.id:
+        return
+
+    if instance.confirm_primary is True:
+        adr = Address.objects.get(id=instance.company.primary_address.id)
+        adr.primary = False
+        adr.save()
 
 
 class ManufacturerPart(MetadataMixin, models.Model):

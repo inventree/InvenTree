@@ -93,9 +93,7 @@
     </div>
     <div class='panel-content'>
         <div id='test-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="parttests" %}
-            </div>
+            {% include "filter_list.html" with id="parttests" %}
         </div>
 
         <table class='table table-striped table-condensed' data-toolbar='#test-button-toolbar' id='test-template-table'></table>
@@ -116,9 +114,7 @@
     </div>
     <div class='panel-content'>
         <div id='po-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                {% include "filter_list.html" with id="partpurchaseorders" %}
-            </div>
+            {% include "filter_list.html" with id="partpurchaseorders" %}
         </div>
 
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#po-button-bar'>
@@ -132,9 +128,7 @@
     </div>
     <div class='panel-content'>
         <div id='so-button-bar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="salesorder" %}
-            </div>
+            {% include "filter_list.html" with id="salesorder" %}
         </div>
 
         <table class='table table-striped table-condensed po-table' id='sales-order-table' data-toolbar='#so-button-bar'>
@@ -145,11 +139,8 @@
         <h4>{% trans "Sales Order Allocations" %}</h4>
     </div>
     <div class='panel-content'>
-
         <div id='sales-order-allocation-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="salesorderallocation" %}
-            </div>
+            {% include "filter_list.html" with id="salesorderallocation" %}
         </div>
         <table class='table table-striped table-condensed' id='sales-order-allocation-table' data-toolbar='#sales-order-allocation-button-toolbar'></table>
     </div>
@@ -190,11 +181,7 @@
     </div>
     <div class='panel-content'>
         <div id='variant-button-toolbar'>
-            <div class='button-toolbar container-fluid'>
-                <div class='btn-group' role='group'>
-                    {% include "filter_list.html" with id="variants" %}
-                </div>
-            </div>
+            {% include "filter_list.html" with id="variants" %}
         </div>
 
         <table class='table table-striped table-condensed' id='variants-table' data-toolbar='#variant-button-toolbar'>
@@ -218,11 +205,7 @@
     </div>
     <div class='panel-content'>
         <div id='param-button-toolbar'>
-            <div class='button-toolbar container-fluid'>
-                <div class='btn-group' role='group'>
-                    {% include "filter_list.html" with id="parameters" %}
-                </div>
-            </div>
+            {% include "filter_list.html" with id="parameters" %}
         </div>
         <table id='parameter-table' class='table table-condensed table-striped' data-toolbar="#param-button-toolbar"></table>
     </div>
@@ -259,9 +242,7 @@
     </div>
     <div class='panel-content'>
         <div id='related-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="related" %}
-            </div>
+            {% include "filter_list.html" with id="related" %}
         </div>
 
         <table id='related-parts-table' class='table table-striped table-condensed' data-toolbar='#related-button-toolbar'></table>
@@ -317,9 +298,7 @@
     </div>
     <div class='panel-content'>
         <div id='assembly-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="usedin" %}
-            </div>
+            {% include "filter_list.html" with id="usedin" %}
         </div>
 
         <table class="table table-striped table-condensed" id='used-table' data-toolbar='#assembly-button-toolbar'>
@@ -346,9 +325,7 @@
     </div>
     <div class='panel-content'>
         <div id='build-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="build" %}
-            </div>
+            {% include "filter_list.html" with id="build" %}
         </div>
 
         <table class='table table-striped table-condensed' data-toolbar='#build-button-toolbar' id='build-table'>
@@ -362,9 +339,7 @@
     </div>
     <div class='panel-content'>
         <div id='build-allocation-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="buildorderallocation" %}
-            </div>
+            {% include "filter_list.html" with id="buildorderallocation" %}
         </div>
         <table class='table table-striped table-condensed' id='build-order-allocation-table' data-toolbar='#build-allocation-button-toolbar'></table>
     </div>
@@ -385,17 +360,7 @@
     </div>
     <div class='panel-content'>
         <div id='supplier-button-toolbar'>
-            <div class='btn-group'>
-                <div id='opt-dropdown' class="btn-group">
-                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>
-                            <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}
-                        </a></li>
-                    </ul>
-                </div>
-                {% include "filter_list.html" with id="supplier-part" %}
-            </div>
+            {% include "filter_list.html" with id="supplier-part" %}
         </div>
 
         <table class="table table-striped table-condensed" id='supplier-part-table' data-toolbar='#supplier-button-toolbar'>
@@ -416,15 +381,7 @@
     <div class='panel-content'>
         <div class='panel-content'>
             <div id='manufacturer-button-toolbar'>
-                <div class='btn-group'>
-                    <div id='opt-dropdown' class="btn-group">
-                        <button id='manufacturer-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a class='dropdown-item' href='#' id='manufacturer-part-delete' title='{% trans "Delete manufacturer parts" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
-                        </ul>
-                        {% include "filter_list.html" with id="manufacturer-part" %}
-                    </div>
-                </div>
+                {% include "filter_list.html" with id="manufacturer-part" %}
             </div>
             <table class='table table-condensed table-striped' id='manufacturer-part-table' data-toolbar='#manufacturer-button-toolbar'></table>
         </div>
@@ -526,8 +483,6 @@
             }
         );
 
-        linkButtonsToSelection($("#supplier-part-table"), ['#supplier-part-options']);
-
         loadManufacturerPartTable(
             '#manufacturer-part-table',
             "{% url 'api-manufacturer-part-list' %}",
@@ -539,8 +494,6 @@
                 },
             }
         );
-
-        linkButtonsToSelection($("#manufacturer-part-table"), ['#manufacturer-part-options']);
 
         $("#manufacturer-part-delete").click(function() {
 
@@ -624,12 +577,6 @@
             parent_id: {{ part.id }} ,
             sub_part_detail: true,
         });
-
-        linkButtonsToSelection($("#bom-table"),
-            [
-                "#bom-item-delete",
-            ]
-        );
 
         $('#bom-item-delete').click(function() {
 

@@ -536,6 +536,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'part',
         'location',
         'bom',
+        'build',
         'company',
         'test_templates',
         'manufacturer_part',
@@ -3056,3 +3057,22 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
             'api-bom-item-metadata': BomItem,
         }.items():
             self.metatester(apikey, model)
+
+
+class PartSchedulingTest(PartAPITestBase):
+    """Unit tests for the 'part scheduling' API endpoint"""
+
+    def test_get_schedule(self):
+        """Test that the scheduling endpoint returns OK"""
+
+        part_ids = [
+            1, 3, 100, 101,
+        ]
+
+        for pk in part_ids:
+            url = reverse('api-part-scheduling', kwargs={'pk': pk})
+            data = self.get(url, expected_code=200).data
+
+            for entry in data:
+                for k in ['date', 'quantity', 'label']:
+                    self.assertIn(k, entry)

@@ -24,7 +24,7 @@ INVENTREE_SW_VERSION = "0.12.0 dev"
 try:
     main_repo = Repo(pathlib.Path(__file__).parent.parent.parent)
     main_commit = main_repo[main_repo.head()]
-except NotGitRepository:
+except (NotGitRepository, FileNotFoundError):
     main_commit = None
 
 
