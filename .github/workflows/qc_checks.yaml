@@ -397,7 +397,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           npm: true
-          install: false
+          install: true
       - name: Set up test data
         run: invoke setup-test -i
       - name: Install dependencies
