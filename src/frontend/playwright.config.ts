@@ -26,7 +26,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'invoke server -a 127.0.0.1:8000 -c',
+    command: 'invoke server -a 127.0.0.1:8000',
     url: 'http://127.0.0.1:8000/api/',
     reuseExistingServer: !process.env.CI,
     stdout: 'pipe',
