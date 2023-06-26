@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
             Site.objects.create(
                 name="Test Site",
-                domain="http://127.0.0.1:8000",
+                domain="127.0.0.1",
             )
         except Exception as _e:
             print("Error creating Site", _e)

@@ -33,7 +33,7 @@ from . import config
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv
+TESTING = 'test' in sys.argv or 'TESTING' in os.environ
 
 if TESTING:
 
