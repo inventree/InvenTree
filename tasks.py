@@ -488,12 +488,14 @@ def wait(c):
     return manage(c, "wait_for_db")
 
 
-@task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
-def server(c, address="127.0.0.1:8000"):
+@task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)', 'create_site': 'Create a new site (default=False)'})
+def server(c, address="127.0.0.1:8000", create_site=False):
     """Launch a (deveopment) server using Django's in-built webserver.
 
     Note: This is *not* sufficient for a production installation.
     """
+    if create_site:
+        manage(c, "create_site")
     manage(c, "runserver {address}".format(address=address), pty=True)
 
 
