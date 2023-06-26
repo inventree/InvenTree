@@ -30,6 +30,7 @@ import InvenTree.validators
 import order.validators
 import stock.models
 import users.models as UserModels
+from approval.models import Approval
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Address, Company, Contact, SupplierPart
@@ -494,12 +495,26 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
-        if self.status == PurchaseOrderStatus.PENDING:
-            self.status = PurchaseOrderStatus.PLACED.value
-            self.issue_date = datetime.now().date()
-            self.save()
+        if self.status in (PurchaseOrderStatus.PENDING.value, PurchaseOrderStatus.PENDING_PLACING.value):
+            not_approved = getSetting('PURCHASEORDER_REQUIRE_APPROVAL') and not self.approved
+            if not_approved:
+                Approval.objects.create(
+                    name=self.name,
+                    content_object=self,
+                    created_by=self.created_by,
+                    modified_by=self.created_by,
+                )
 
-            trigger_event('purchaseorder.placed', id=self.pk)
+                self.status = PurchaseOrderStatus.PENDING_APPROVAL.value
+                self.save()
+
+                trigger_event('purchaseorder.approval_start', id=self.pk)
+            else:
+                self.status = PurchaseOrderStatus.PLACED.value
+                self.issue_date = datetime.now().date()
+                self.save()
+
+                trigger_event('purchaseorder.placed', id=self.pk)
 
             # Notify users that the order has been placed
             notify_responsible(

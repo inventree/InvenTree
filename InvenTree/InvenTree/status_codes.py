@@ -10,6 +10,8 @@ class PurchaseOrderStatus(StatusCode):
 
     # Order status codes
     PENDING = 10, _("Pending"), 'secondary'     # Order is pending (not yet placed)
+    PENDING_PLACING = 15, _("Pending placing"), 'secondary'  # Order is pending an action for being placed
+    PENDING_APPROVAL = 16, _("Pending approval"), 'secondary'  # Order is pending approval
     PLACED = 20, _("Placed"), 'primary'         # Order has been placed with supplier
     COMPLETE = 30, _("Complete"), 'success'     # Order has been completed
     CANCELLED = 40, _("Cancelled"), 'danger'    # Order was cancelled
@@ -23,6 +25,7 @@ class PurchaseOrderStatusGroups:
     # Open orders
     OPEN = [
         PurchaseOrderStatus.PENDING.value,
+        PurchaseOrderStatus.PENDING_PLACING.value,
         PurchaseOrderStatus.PLACED.value,
     ]
 

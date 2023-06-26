@@ -1537,6 +1537,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'PURCHASEORDER_REQUIRE_APPROVAL': {
+            'name': _('Purchase Orders Require Approval'),
+            'description': _('Purchase orders require approval before they can be placed'),
+            'default': False,
+            'validator': bool,
+        },
+
         # login / SSO
         'LOGIN_ENABLE_PWD_FORGOT': {
             'name': _('Enable password forgot'),
