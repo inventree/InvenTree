@@ -14,4 +14,9 @@ test('Basic Platform UI test', async ({ page }) => {
 
   await page.goto('./platform/');
   await page.waitForURL('./platform/');
+
+  await expect(page).toHaveTitle('InvenTree Demo Server');
+  await expect(
+    page.getByRole('heading', { name: 'Welcome to the new frontend!' })
+  ).toBeVisible();
 });
