@@ -397,7 +397,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           npm: true
-          install: true
+          install: false
           update: true
       - name: Install dependencies
         run: cd src/frontend && yarn install
