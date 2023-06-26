@@ -279,7 +279,7 @@ class NotificationBody:
     name: str
     slug: str
     message: str
-    template: str
+    template: str = None
 
 
 class InvenTreeNotificationBodies:

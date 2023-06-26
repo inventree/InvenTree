@@ -16,7 +16,7 @@ from rest_framework import status
 import company.models
 import part.models
 from common.models import InvenTreeSetting
-from InvenTree.status_codes import StockStatus
+from InvenTree.status_codes import StockHistoryCode, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from stock.models import StockItem, StockItemTestResult, StockLocation
@@ -1152,6 +1152,51 @@ class StockItemTest(StockAPITestCase):
 
             stock_item.refresh_from_db()
             self.assertEqual(stock_item.part, variant)
+
+    def test_set_status(self):
+        """Test API endpoint for setting StockItem status"""
+
+        url = reverse('api-stock-change-status')
+
+        prt = Part.objects.first()
+
+        # Create a bunch of items
+        items = [
+            StockItem.objects.create(part=prt, quantity=10) for _ in range(10)
+        ]
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.OK.value)
+
+        data = {
+            'items': [item.pk for item in items],
+            'status': StockStatus.DAMAGED.value,
+        }
+
+        self.post(url, data, expected_code=201)
+
+        # Check that the item has been updated correctly
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.DAMAGED.value)
+            self.assertEqual(item.tracking_info.count(), 1)
+
+        # Same test, but with one item unchanged
+        items[0].status = StockStatus.ATTENTION.value
+        items[0].save()
+
+        data['status'] = StockStatus.ATTENTION.value
+
+        self.post(url, data, expected_code=201)
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.ATTENTION.value)
+            self.assertEqual(item.tracking_info.count(), 2)
+
+            tracking = item.tracking_info.last()
+            self.assertEqual(tracking.tracking_type, StockHistoryCode.EDITED.value)
 
 
 class StocktakeTest(StockAPITestCase):

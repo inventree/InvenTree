@@ -247,7 +247,7 @@ class StockItemLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs),'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_stock_item_filters
@@ -288,7 +288,7 @@ class StockLocationLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_stock_location_filters]
@@ -316,7 +316,7 @@ class PartLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Part query filters (comma-separated value of key=value pairs)'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_part_filters

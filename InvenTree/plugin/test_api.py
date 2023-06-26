@@ -10,7 +10,7 @@ from plugin.models import PluginConfig
 
 
 class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
-    """Tests the plugin API endpoints."""
+    """Tests the plugin API endpoints"""
 
     roles = [
         'admin.add',

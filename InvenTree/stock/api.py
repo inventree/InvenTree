@@ -158,6 +158,12 @@ class StockAdjustView(CreateAPI):
         return context
 
 
+class StockChangeStatus(StockAdjustView):
+    """API endpoint to change the status code of multiple StockItem objects."""
+
+    serializer_class = StockSerializers.StockChangeStatusSerializer
+
+
 class StockCount(StockAdjustView):
     """Endpoint for counting stock (performing a stocktake)."""
 
@@ -1371,6 +1377,7 @@ stock_api_urls = [
     re_path(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
     re_path(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
     re_path(r'^merge/', StockMerge.as_view(), name='api-stock-merge'),
+    re_path(r'^change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
 
     # StockItemAttachment API endpoints
     re_path(r'^attachment/', include([

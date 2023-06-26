@@ -2,10 +2,22 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 123
+INVENTREE_API_VERSION = 127
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v127 -> 2023-06-24 : https://github.com/inventree/InvenTree/pull/5094
+    - Enhancements for the PartParameter API endpoints
+
+v126 -> 2023-06-19 : https://github.com/inventree/InvenTree/pull/5075
+    - Adds API endpoint for setting the "category" for multiple parts simultaneously
+
+v125 -> 2023-06-17 : https://github.com/inventree/InvenTree/pull/5064
+    - Adds API endpoint for setting the "status" field for multiple stock items simultaneously
+
+v124 -> 2023-06-17 : https://github.com/inventree/InvenTree/pull/5057
+    - Add "created_before" and "created_after" filters to the Part API
 
 v123 -> 2023-06-15 : https://github.com/inventree/InvenTree/pull/5019
     - Add Metadata to: Plugin Config
