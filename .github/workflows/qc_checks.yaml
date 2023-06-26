@@ -409,8 +409,6 @@ jobs:
           update: true
       - name: Set up test data
         run: invoke setup-test -i
-      - name: Set credentials
-        run: invoke setup-test -c
       - name: Install dependencies
         run: cd src/frontend && yarn install
       - name: Install Playwright Browsers
