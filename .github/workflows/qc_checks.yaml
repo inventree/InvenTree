@@ -399,7 +399,7 @@ jobs:
           npm: true
           install: false
       - name: Set up test data
-        run: invoke setup-test --ignore_update
+        run: invoke setup-test -i
       - name: Install dependencies
         run: cd src/frontend && yarn install
       - name: Install Playwright Browsers
