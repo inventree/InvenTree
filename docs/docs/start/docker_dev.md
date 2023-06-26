@@ -140,7 +140,7 @@ This sets up a bash terminal where you can run `invoke` commands directly.
 
 ### Cleaning up old containers
 
-If you have Docker Desktop installed, you will be able to removed containers directly in the GUI.
+If you have Docker Desktop installed, you will be able to remove containers directly in the GUI.
 Your active containers are grouped under "inventree" in Docker Desktop.
 The main dev-server, dev-db, and dev-worker containers are all listed without the "inventree" prefix.
 One time run containers, like those executed via `docker compose run [...]` are suffixed with `run-1a2b3c4d5e6f` where the hex string varies.
@@ -169,7 +169,7 @@ Find the containers you wish to delete, copy the container IDs and add them to t
 ```bash
 docker rm [ID1] [ID2] [IDn]
 ```
-When executed, this removed all containers whose IDs were pasted.
+When executed, this removes all containers whose IDs were pasted.
 
 !!! warning "Execute at own risk"
     The command below does not forgive errors.
@@ -229,7 +229,7 @@ Any updates which require a database schema change must be reflected in the data
 To run database migrations inside the docker container, run the following command:
 
 ```
-docker compose run --rm inventree-dev-server invoke update
+docker compose run inventree-dev-server invoke update
 ```
 
 ### Docker Image Updates
