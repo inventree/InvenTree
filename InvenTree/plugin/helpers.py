@@ -122,27 +122,20 @@ def get_git_log(org_path):
     start_path = pathlib.Path(org_path)
 
     # Check if the plugin is external
-    is_external = False
-
-    ext_paths = [item for item in registry.plugin_roots if item not in builtins]
-    for ext in ext_paths:
-        if settings.BASE_DIR.joinpath(ext) in start_path.parents:
-            is_external = True
-
-    # 1: Is the plugin in InvenTree's path?
-    if not is_external:
-        repo = try_repo_discovery(start_path.relative_to(settings.BASE_DIR), settings.BASE_DIR, extra=settings.BASE_DIR.parent)
-
-    # 2: Is the plugin in an external dir that is mounted?
-    if is_external and not repo:
-        for base_path in ext_paths:
+    for ext_dir in [item for item in registry.plugin_roots if item not in builtins]:
+        if settings.BASE_DIR.joinpath(ext_dir) in start_path.parents:
+            # 1: Discover external plugin directory
             try:
-                end_path = pathlib.Path(base_path).absolute()
+                end_path = pathlib.Path(ext_dir).absolute()
                 rev = start_path.relative_to(end_path)
             except ValueError:
-                end_path = settings.BASE_DIR.joinpath(base_path).absolute()
+                end_path = settings.BASE_DIR.joinpath(ext_dir).absolute()
                 rev = start_path.relative_to(end_path)
             repo = try_repo_discovery(rev, end_path, extra=end_path.parent)
+
+    # 2: Is the plugin in InvenTree's path?
+    if not repo:
+        repo = try_repo_discovery(start_path.relative_to(settings.BASE_DIR), settings.BASE_DIR, extra=settings.BASE_DIR.parent)
 
     # 3: Now we try the general discovery
     if not repo:
