@@ -19,7 +19,7 @@ pip install invoke && invoke setup-dev --tests
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 docker compose run inventree-dev-server invoke install
-docker compose run inventree-dev-server invoke setup-test
+docker compose run inventree-dev-server invoke setup-test --dev
 docker compose up -d
 ```
 
@@ -33,7 +33,7 @@ Run the following command to set up all toolsets for development.
 invoke setup-dev
 ```
 
-*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.*
+*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce errors.*
 
 ## Branches and Versioning
 

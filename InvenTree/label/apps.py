@@ -35,7 +35,7 @@ class LabelConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the label app is loaded."""
-        if canAppAccessDatabase():
+        if canAppAccessDatabase(allow_test=False):
 
             try:
                 self.create_labels()  # pragma: no cover

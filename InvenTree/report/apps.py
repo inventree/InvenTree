@@ -25,7 +25,7 @@ class ReportConfig(AppConfig):
         logging.getLogger('weasyprint').setLevel(logging.WARNING)
 
         # Create entries for default report templates
-        if canAppAccessDatabase(allow_test=True):
+        if canAppAccessDatabase(allow_test=False):
             self.create_default_test_reports()
             self.create_default_build_reports()
             self.create_default_bill_of_materials_reports()

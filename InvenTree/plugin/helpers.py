@@ -1,6 +1,5 @@
 """Helpers for plugin app."""
 
-import datetime
 import inspect
 import logging
 import pathlib
@@ -115,6 +114,12 @@ def get_git_log(org_path):
 
     builtins = ['plugin.builtin', 'plugin.samples']
 
+    import datetime
+
+    from dulwich.repo import NotGitRepository, Repo
+
+    from InvenTree.ready import isInTestMode
+
     output = None
     repo = None
 
@@ -145,15 +150,29 @@ def get_git_log(org_path):
         except NotGitRepository:
             pass
 
-    if repo:
+    # only do this if we are not in test mode
+    if not isInTestMode() and repo:  # pragma: no cover
         # Get commit for file
         path = str(start_path.relative_to(repo.path))
         walker = repo.get_walker(paths=[path.encode()], max_entries=1)
         start = datetime.datetime.now()
         commit = None
+
         try:
-            commit = next(iter(walker)).commit
-        except StopIteration:
+            walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
+            try:
+                commit = next(iter(walker)).commit
+            except StopIteration:
+                pass
+            else:
+                output = [
+                    commit.sha().hexdigest(),
+                    commit.author.decode().split('<')[0][:-1],
+                    commit.author.decode().split('<')[1][:-1],
+                    datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
+                    commit.message.decode().split('\n')[0],
+                ]
+        except NotGitRepository:
             pass
         print(f'Load Timing for {path}:', datetime.datetime.now() - start)
 

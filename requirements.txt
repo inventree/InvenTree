@@ -35,6 +35,7 @@ coreschema==0.0.4
 cryptography==41.0.1
     # via
     #   -r requirements.in
+    #   djangorestframework-simplejwt
     #   pyjwt
 cssselect2==0.7.0
     # via weasyprint
@@ -44,9 +45,12 @@ defusedxml==0.7.1
     #   python3-openid
 diff-match-patch==20230430
     # via django-import-export
+dj-rest-auth==4.0.1
+    # via -r requirements.in
 django==3.2.19
     # via
     #   -r requirements.in
+    #   dj-rest-auth
     #   django-allauth
     #   django-allauth-2fa
     #   django-cors-headers
@@ -74,6 +78,7 @@ django==3.2.19
     #   django-weasyprint
     #   django-xforwardedfor-middleware
     #   djangorestframework
+    #   djangorestframework-simplejwt
     #   drf-spectacular
 django-allauth==0.54.0
     # via
@@ -140,7 +145,11 @@ django-xforwardedfor-middleware==2.0
 djangorestframework==3.14.0
     # via
     #   -r requirements.in
+    #   dj-rest-auth
+    #   djangorestframework-simplejwt
     #   drf-spectacular
+djangorestframework-simplejwt[crypto]==5.2.2
+    # via -r requirements.in
 drf-spectacular==0.26.2
     # via -r requirements.in
 dulwich==0.21.5
@@ -202,7 +211,9 @@ pycparser==2.21
 pydyf==0.6.0
     # via weasyprint
 pyjwt[crypto]==2.7.0
-    # via django-allauth
+    # via
+    #   django-allauth
+    #   djangorestframework-simplejwt
 pyphen==0.14.0
     # via weasyprint
 pypng==0.20220715.0

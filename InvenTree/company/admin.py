@@ -9,7 +9,7 @@ from import_export.fields import Field
 from InvenTree.admin import InvenTreeResource
 from part.models import Part
 
-from .models import (Address, Company, ManufacturerPart,
+from .models import (Address, Company, Contact, ManufacturerPart,
                      ManufacturerPartAttachment, ManufacturerPartParameter,
                      SupplierPart, SupplierPriceBreak)
 
@@ -214,6 +214,33 @@ class AddressAdmin(ImportExportModelAdmin):
     ]
 
 
+class ContactResource(InvenTreeResource):
+    """Class for managing Contact data import/export"""
+
+    class Meta:
+        """Metaclass defining extra options"""
+        model = Contact
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+
+    company = Field(attribute='company', widget=widgets.ForeignKeyWidget(Company))
+
+
+class ContactAdmin(ImportExportModelAdmin):
+    """Admin class for the Contact model"""
+
+    resource_class = ContactResource
+
+    list_display = ('company', 'name', 'role', 'email', 'phone')
+
+    search_fields = [
+        'company',
+        'name',
+        'email',
+    ]
+
+
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(SupplierPart, SupplierPartAdmin)
 admin.site.register(SupplierPriceBreak, SupplierPriceBreakAdmin)
@@ -223,3 +250,4 @@ admin.site.register(ManufacturerPartAttachment, ManufacturerPartAttachmentAdmin)
 admin.site.register(ManufacturerPartParameter, ManufacturerPartParameterAdmin)
 
 admin.site.register(Address, AddressAdmin)
+admin.site.register(Contact, ContactAdmin)

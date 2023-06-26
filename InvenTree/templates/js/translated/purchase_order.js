@@ -31,7 +31,6 @@
     inventreeLoad,
     inventreePut,
     launchModalForm,
-    linkButtonsToSelection,
     loadTableFilters,
     makeCopyButton,
     makeDeleteButton,
@@ -606,7 +605,7 @@ function newSupplierPartFromOrderWizard(e) {
 /*
  * Create a new form to order parts based on the list of provided parts.
  */
-function orderParts(parts_list, options) {
+function orderParts(parts_list, options={}) {
 
     var parts = [];
 
@@ -786,7 +785,7 @@ function orderParts(parts_list, options) {
         supplier_part_filters.manufacturer_part = options.manufacturer_part;
     }
 
-    // Construct API filtres for the PurchaseOrder field
+    // Construct API filters for the PurchaseOrder field
     var order_filters = {
         status: {{ PurchaseOrderStatus.PENDING }},
         supplier_detail: true,
@@ -821,6 +820,10 @@ function orderParts(parts_list, options) {
                     var units = '';
 
                     $(opts.modal).find(`#info-pack-size-${pk}`).remove();
+
+                    if (typeof value === 'object') {
+                        value = value.pk;
+                    }
 
                     if (value != null) {
                         inventreeGet(
@@ -1866,14 +1869,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
     var filters = loadTableFilters('purchaseorderlineitem', options.params);
 
-    setupFilterList(
-        'purchaseorderlineitem',
-        $(table),
-        options.filter_target || '#filter-list-purchase-order-lines',
-        {
-            download: true
-        }
-    );
+    setupFilterList('purchaseorderlineitem', $(table), options.filter_target || '#filter-list-purchase-order-lines', {
+        download: true,
+    });
 
     function setupCallbacks() {
         if (options.allow_edit) {
@@ -2211,12 +2209,4 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             }
         ]
     });
-
-    linkButtonsToSelection(
-        table,
-        [
-            '#multi-select-options',
-        ]
-    );
-
 }
