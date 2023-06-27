@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/components/AuthenticationForm.tsx:36
+#: src/components/AuthenticationForm.tsx:37
 msgid "login"
 msgstr "login"
 
-#: src/components/AuthenticationForm.tsx:36
+#: src/components/AuthenticationForm.tsx:37
 msgid "register"
 msgstr "register"
 
@@ -25,82 +25,82 @@ msgstr "register"
 msgid "Welcome {actionname} to"
 msgstr "Welcome {actionname} to"
 
-#: src/components/AuthenticationForm.tsx:65
+#: src/components/AuthenticationForm.tsx:61
 msgid "Placeholder"
 msgstr "Placeholder"
 
-#: src/components/AuthenticationForm.tsx:70
+#: src/components/AuthenticationForm.tsx:64
 msgid "Or continue with email"
 msgstr "Or continue with email"
 
-#: src/components/AuthenticationForm.tsx:82
-#: src/components/HostOptionsForm.tsx:41
-#: src/components/HostOptionsForm.tsx:68
+#: src/components/AuthenticationForm.tsx:73
+#: src/components/HostOptionsForm.tsx:22
+#: src/components/HostOptionsForm.tsx:33
 msgid "Name"
 msgstr "Name"
 
-#: src/components/AuthenticationForm.tsx:83
+#: src/components/AuthenticationForm.tsx:74
 msgid "Your name"
 msgstr "Your name"
 
-#: src/components/AuthenticationForm.tsx:93
+#: src/components/AuthenticationForm.tsx:84
 msgid "Username"
 msgstr "Username"
 
-#: src/components/AuthenticationForm.tsx:99
+#: src/components/AuthenticationForm.tsx:90
 msgid "Invalid email"
 msgstr "Invalid email"
 
-#: src/components/AuthenticationForm.tsx:104
+#: src/components/AuthenticationForm.tsx:95
 msgid "Password"
 msgstr "Password"
 
-#: src/components/AuthenticationForm.tsx:105
+#: src/components/AuthenticationForm.tsx:96
 msgid "Your password"
 msgstr "Your password"
 
-#: src/components/AuthenticationForm.tsx:112
+#: src/components/AuthenticationForm.tsx:101
 msgid "Password should include at least 6 characters"
 msgstr "Password should include at least 6 characters"
 
-#: src/components/AuthenticationForm.tsx:127
+#: src/components/AuthenticationForm.tsx:114
 msgid "Already have an account? Login"
 msgstr "Already have an account? Login"
 
-#: src/components/AuthenticationForm.tsx:129
+#: src/components/AuthenticationForm.tsx:115
 msgid "Don't have an account? Register"
 msgstr "Don't have an account? Register"
 
-#: src/components/DashboardItemProxy.tsx:31
+#: src/components/DashboardItemProxy.tsx:32
 msgid "Title"
 msgstr "Title"
 
-#: src/components/HostOptionsForm.tsx:35
-#: src/components/HostOptionsForm.tsx:65
+#: src/components/HostOptionsForm.tsx:21
+#: src/components/HostOptionsForm.tsx:32
 msgid "Host"
 msgstr "Host"
 
-#: src/components/HostOptionsForm.tsx:73
+#: src/components/HostOptionsForm.tsx:36
 msgid "No one here..."
 msgstr "No one here..."
 
-#: src/components/HostOptionsForm.tsx:84
+#: src/components/HostOptionsForm.tsx:40
 msgid "Add Host"
 msgstr "Add Host"
 
-#: src/components/HostOptionsForm.tsx:88
+#: src/components/HostOptionsForm.tsx:42
 msgid "Save"
 msgstr "Save"
 
-#: src/components/items/ErrorItem.tsx:5
+#: src/components/items/ErrorItem.tsx:4
 msgid "Unknown error"
 msgstr "Unknown error"
 
-#: src/components/items/ErrorItem.tsx:10
+#: src/components/items/ErrorItem.tsx:6
 msgid "An error occured:"
 msgstr "An error occured:"
 
-#: src/components/items/InvenTreeLogo.tsx:10
+#: src/components/items/InvenTreeLogo.tsx:11
 msgid "InvenTree Logo"
 msgstr "InvenTree Logo"
 
@@ -108,121 +108,121 @@ msgstr "InvenTree Logo"
 msgid "Scan QR code"
 msgstr "Scan QR code"
 
-#: src/components/modals/QrCodeModal.tsx:67
+#: src/components/modals/QrCodeModal.tsx:43
 msgid "Unknown response"
 msgstr "Unknown response"
 
-#: src/components/modals/QrCodeModal.tsx:97
+#: src/components/modals/QrCodeModal.tsx:63
 msgid "Error while getting camera"
 msgstr "Error while getting camera"
 
-#: src/components/modals/QrCodeModal.tsx:120
+#: src/components/modals/QrCodeModal.tsx:75
 msgid "Error while scanning"
 msgstr "Error while scanning"
 
-#: src/components/modals/QrCodeModal.tsx:134
+#: src/components/modals/QrCodeModal.tsx:84
 msgid "Error while stopping"
 msgstr "Error while stopping"
 
-#: src/components/modals/QrCodeModal.tsx:149
+#: src/components/modals/QrCodeModal.tsx:95
 msgid "Scanning"
 msgstr "Scanning"
 
-#: src/components/modals/QrCodeModal.tsx:149
+#: src/components/modals/QrCodeModal.tsx:95
 msgid "Not scanning"
 msgstr "Not scanning"
 
-#: src/components/modals/QrCodeModal.tsx:154
+#: src/components/modals/QrCodeModal.tsx:98
 msgid "Select Camera"
 msgstr "Select Camera"
 
-#: src/components/modals/QrCodeModal.tsx:164
+#: src/components/modals/QrCodeModal.tsx:101
 msgid "Start scanning"
 msgstr "Start scanning"
 
-#: src/components/modals/QrCodeModal.tsx:171
+#: src/components/modals/QrCodeModal.tsx:102
 msgid "Stop scanning"
 msgstr "Stop scanning"
 
-#: src/components/modals/QrCodeModal.tsx:176
+#: src/components/modals/QrCodeModal.tsx:104
 msgid "No scans yet!"
 msgstr "No scans yet!"
 
-#: src/components/modals/QrCodeModal.tsx:196
+#: src/components/modals/QrCodeModal.tsx:111
 msgid "Close modal"
 msgstr "Close modal"
 
-#: src/components/nav/Header.tsx:94
+#: src/components/nav/Header.tsx:80
 msgid "Notifications"
 msgstr "Notifications"
 
-#: src/components/nav/Header.tsx:101
-#: src/pages/Index/Profile/Profile.tsx:15
+#: src/components/nav/Header.tsx:81
+#: src/pages/Index/Profile/Profile.tsx:17
 msgid "Profile"
 msgstr "Profile"
 
-#: src/components/nav/Header.tsx:105
-#: src/pages/Index/Profile/SettingsPanel.tsx:96
+#: src/components/nav/Header.tsx:83
+#: src/pages/Index/Profile/SettingsPanel.tsx:59
 msgid "Settings"
 msgstr "Settings"
 
-#: src/components/nav/Header.tsx:108
+#: src/components/nav/Header.tsx:84
 msgid "Current language {locale}"
 msgstr "Current language {locale}"
 
-#: src/components/nav/Header.tsx:111
+#: src/components/nav/Header.tsx:85
 msgid "Switch to pseudo language"
 msgstr "Switch to pseudo language"
 
-#: src/components/nav/Header.tsx:114
+#: src/components/nav/Header.tsx:86
 msgid "Account settings"
 msgstr "Account settings"
 
-#: src/components/nav/Header.tsx:117
+#: src/components/nav/Header.tsx:87
 msgid "Logout"
 msgstr "Logout"
 
-#: src/context/ThemeContext.tsx:54
-msgid "Cancel"
-msgstr "Cancel"
-
-#: src/context/ThemeContext.tsx:54
-#: src/pages/Index/Profile/UserPanel.tsx:131
+#: src/context/ThemeContext.tsx:38
+#: src/pages/Index/Profile/UserPanel.tsx:108
 msgid "Submit"
 msgstr "Submit"
 
-#: src/defaults.tsx:21
-#: src/pages/Index/Home.tsx:8
+#: src/context/ThemeContext.tsx:38
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/defaults.tsx:22
+#: src/pages/Index/Home.tsx:7
 msgid "Home"
 msgstr "Home"
 
-#: src/defaults.tsx:22
-#: src/pages/Index/Part.tsx:8
+#: src/defaults.tsx:23
+#: src/pages/Index/Part.tsx:7
 msgid "Part"
 msgstr "Part"
 
-#: src/defaults.tsx:28
+#: src/defaults.tsx:29
 msgid "Website"
 msgstr "Website"
 
-#: src/defaults.tsx:33
+#: src/defaults.tsx:34
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/defaults.tsx:38
+#: src/defaults.tsx:39
 msgid "Demo"
 msgstr "Demo"
 
-#: src/pages/ErrorPage.tsx:11
-#: src/pages/ErrorPage.tsx:24
+#: src/pages/ErrorPage.tsx:12
+#: src/pages/ErrorPage.tsx:25
 msgid "Error"
 msgstr "Error"
 
-#: src/pages/ErrorPage.tsx:16
+#: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
 msgstr "Error: {0}"
 
-#: src/pages/ErrorPage.tsx:27
+#: src/pages/ErrorPage.tsx:26
 msgid "Sorry, an unexpected error has occurred."
 msgstr "Sorry, an unexpected error has occurred."
 
@@ -294,11 +294,11 @@ msgstr "Overdue Sales Orders"
 msgid "Current News"
 msgstr "Current News"
 
-#: src/pages/Index/Dashboard.tsx:139
+#: src/pages/Index/Dashboard.tsx:138
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: src/pages/Index/Dashboard.tsx:142
+#: src/pages/Index/Dashboard.tsx:139
 msgid "Autoupdate"
 msgstr "Autoupdate"
 
@@ -306,101 +306,101 @@ msgstr "Autoupdate"
 msgid "User"
 msgstr "User"
 
-#: src/pages/Index/Profile/Profile.tsx:26
-#: src/pages/Index/Profile/Profile.tsx:45
+#: src/pages/Index/Profile/Profile.tsx:24
+#: src/pages/Index/Profile/Profile.tsx:34
 msgid "User Settings"
 msgstr "User Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:29
-#: src/pages/Index/Profile/Profile.tsx:140
+#: src/pages/Index/Profile/Profile.tsx:25
+#: src/pages/Index/Profile/Profile.tsx:101
 msgid "Notification Settings"
 msgstr "Notification Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:32
+#: src/pages/Index/Profile/Profile.tsx:26
 msgid "Global Settings"
 msgstr "Global Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:35
-#: src/pages/Index/Profile/Profile.tsx:311
-#: src/pages/Index/Profile/Profile.tsx:328
+#: src/pages/Index/Profile/Profile.tsx:27
+#: src/pages/Index/Profile/Profile.tsx:223
+#: src/pages/Index/Profile/Profile.tsx:237
 msgid "Plugin Settings"
 msgstr "Plugin Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:46
+#: src/pages/Index/Profile/Profile.tsx:34
 msgid "Settings for the current user"
 msgstr "Settings for the current user"
 
-#: src/pages/Index/Profile/Profile.tsx:50
+#: src/pages/Index/Profile/Profile.tsx:37
 msgid "Home Page Settings"
 msgstr "Home Page Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:75
+#: src/pages/Index/Profile/Profile.tsx:60
 msgid "Search Settings"
 msgstr "Search Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:114
-#: src/pages/Index/Profile/Profile.tsx:210
+#: src/pages/Index/Profile/Profile.tsx:79
+#: src/pages/Index/Profile/Profile.tsx:145
 msgid "Label Settings"
 msgstr "Label Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:119
-#: src/pages/Index/Profile/Profile.tsx:218
+#: src/pages/Index/Profile/Profile.tsx:84
+#: src/pages/Index/Profile/Profile.tsx:151
 msgid "Report Settings"
 msgstr "Report Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:124
+#: src/pages/Index/Profile/Profile.tsx:89
 msgid "Display Settings"
 msgstr "Display Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:141
+#: src/pages/Index/Profile/Profile.tsx:101
 msgid "Settings for the notifications"
 msgstr "Settings for the notifications"
 
-#: src/pages/Index/Profile/Profile.tsx:147
+#: src/pages/Index/Profile/Profile.tsx:105
 msgid "Global Server Settings"
 msgstr "Global Server Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:148
+#: src/pages/Index/Profile/Profile.tsx:106
 msgid "Global Settings for this instance"
 msgstr "Global Settings for this instance"
 
-#: src/pages/Index/Profile/Profile.tsx:152
+#: src/pages/Index/Profile/Profile.tsx:109
 msgid "Server Settings"
 msgstr "Server Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:186
+#: src/pages/Index/Profile/Profile.tsx:126
 msgid "Login Settings"
 msgstr "Login Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:201
+#: src/pages/Index/Profile/Profile.tsx:138
 msgid "Barcode Settings"
 msgstr "Barcode Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:229
+#: src/pages/Index/Profile/Profile.tsx:160
 msgid "Part Settings"
 msgstr "Part Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:254
+#: src/pages/Index/Profile/Profile.tsx:183
 msgid "Pricing Settings"
 msgstr "Pricing Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:269
+#: src/pages/Index/Profile/Profile.tsx:193
 msgid "Stock Settings"
 msgstr "Stock Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:283
+#: src/pages/Index/Profile/Profile.tsx:205
 msgid "Build Order Settings"
 msgstr "Build Order Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:288
+#: src/pages/Index/Profile/Profile.tsx:210
 msgid "Purchase Order Settings"
 msgstr "Purchase Order Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:299
+#: src/pages/Index/Profile/Profile.tsx:216
 msgid "Sales Order Settings"
 msgstr "Sales Order Settings"
 
-#: src/pages/Index/Profile/Profile.tsx:329
+#: src/pages/Index/Profile/Profile.tsx:237
 msgid "Plugin Settings for this instance"
 msgstr "Plugin Settings for this instance"
 
@@ -408,63 +408,63 @@ msgstr "Plugin Settings for this instance"
 #~ msgid "Data is current beeing loaded"
 #~ msgstr "Data is current beeing loaded"
 
-#: src/pages/Index/Profile/SettingsPanel.tsx:68
-#: src/pages/Index/Profile/SettingsPanel.tsx:75
+#: src/pages/Index/Profile/SettingsPanel.tsx:37
+#: src/pages/Index/Profile/SettingsPanel.tsx:41
 msgid "Failed to load"
 msgstr "Failed to load"
 
-#: src/pages/Index/Profile/SettingsPanel.tsx:99
+#: src/pages/Index/Profile/SettingsPanel.tsx:60
 msgid "Show internal names"
 msgstr "Show internal names"
 
-#: src/pages/Index/Profile/SettingsPanel.tsx:145
+#: src/pages/Index/Profile/SettingsPanel.tsx:87
 msgid "Input {0} is not known"
 msgstr "Input {0} is not known"
 
-#: src/pages/Index/Profile/SettingsPanel.tsx:158
+#: src/pages/Index/Profile/SettingsPanel.tsx:93
 msgid "Saved changes {0}"
 msgstr "Saved changes {0}"
 
-#: src/pages/Index/Profile/SettingsPanel.tsx:159
+#: src/pages/Index/Profile/SettingsPanel.tsx:93
 msgid "Changed to {0}"
 msgstr "Changed to {0}"
 
-#: src/pages/Index/Profile/SettingsPanel.tsx:173
+#: src/pages/Index/Profile/SettingsPanel.tsx:102
 msgid "Error while saving {0}"
 msgstr "Error while saving {0}"
 
-#: src/pages/Index/Profile/SettingsPanel.tsx:174
+#: src/pages/Index/Profile/SettingsPanel.tsx:102
 msgid "Error was {err}"
 msgstr "Error was {err}"
 
-#: src/pages/Index/Profile/SettingsPanel.tsx:254
+#: src/pages/Index/Profile/SettingsPanel.tsx:144
 msgid "Plugin: {0}"
 msgstr "Plugin: {0}"
 
-#: src/pages/Index/Profile/SettingsPanel.tsx:259
+#: src/pages/Index/Profile/SettingsPanel.tsx:145
 msgid "Method: {0}"
 msgstr "Method: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:89
+#: src/pages/Index/Profile/UserPanel.tsx:77
 msgid "Userinfo"
 msgstr "Userinfo"
 
-#: src/pages/Index/Profile/UserPanel.tsx:102
+#: src/pages/Index/Profile/UserPanel.tsx:87
 msgid "First name: {0}"
 msgstr "First name: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:113
+#: src/pages/Index/Profile/UserPanel.tsx:95
 msgid "Last name: {0}"
 msgstr "Last name: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:124
+#: src/pages/Index/Profile/UserPanel.tsx:103
 msgid "Username: {0}"
 msgstr "Username: {0}"
 
-#: src/pages/Login.tsx:24
+#: src/pages/Login.tsx:28
 msgid "No selection"
 msgstr "No selection"
 
-#: src/pages/Login.tsx:80
+#: src/pages/Login.tsx:73
 msgid "Edit host options"
 msgstr "Edit host options"
