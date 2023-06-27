@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { api } from '../App';
 import { defaultUser, emptyServerAPI } from '../defaults';
 import { UserProps, ServerAPIProps } from './states';
