@@ -17,7 +17,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { api } from '../../../App';
@@ -158,7 +158,7 @@ function SettingsBlock(
           title: t`Saved changes ${item.key}`,
           message: t`Changed to ${res.data.value}`,
           color: 'teal',
-          icon: <IconCheck size={18} />
+          icon: <IconCheck />
         });
         if (item.type == SettingType.Boolean) {
           setfnc(res.data.value === 'False' ? false : true);
@@ -173,7 +173,7 @@ function SettingsBlock(
           title: t`Error while saving ${item.key}`,
           message: err_msg ? err_msg : t`Error was ${err}`,
           color: 'red',
-          icon: <IconX size={18} />
+          icon: <IconX />
         });
       });
   }

@@ -16,7 +16,7 @@ import {
 } from '@mantine/hooks';
 import { ContextModalProps } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
-import { IconX } from '@tabler/icons';
+import { IconX } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
 import { Html5QrcodeResult } from 'html5-qrcode/core';
@@ -97,7 +97,7 @@ export function QrCodeModal({
           title: t`Error while getting camera`,
           message: err,
           color: 'red',
-          icon: <IconX size={18} />
+          icon: <IconX />
         });
       });
   }
@@ -120,7 +120,7 @@ export function QrCodeModal({
             title: t`Error while scanning`,
             message: err,
             color: 'red',
-            icon: <IconX size={18} />
+            icon: <IconX />
           });
         });
       setIsScanning(true);
@@ -134,7 +134,7 @@ export function QrCodeModal({
           title: t`Error while stopping`,
           message: err,
           color: 'red',
-          icon: <IconX size={18} />
+          icon: <IconX />
         });
       });
       setIsScanning(false);

@@ -9,7 +9,7 @@ import {
   Space
 } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
-import { IconTrash, IconSquarePlus } from '@tabler/icons';
+import { IconTrash, IconSquarePlus } from '@tabler/icons-react';
 import { HostList } from '../context/states';
 import { Trans, t } from '@lingui/macro';
 
@@ -49,7 +49,7 @@ export function HostOptionsForm({
               deleteItem(key);
             }}
           >
-            <IconTrash size={16} />
+            <IconTrash />
           </ActionIcon>
         </>
       )}
@@ -80,7 +80,7 @@ export function HostOptionsForm({
               form.setFieldValue(`${randomId()}`, { name: '', host: '' })
             }
           >
-            <IconSquarePlus size={16} />
+            <IconSquarePlus />
             <Trans>Add Host</Trans>
           </Button>
           <Space sx={{ flex: 1 }} />

@@ -31,7 +31,7 @@ export function UserPanel() {
   // view
   const { theme } = InvenTreeStyle();
   const PRIMARY_COL_HEIGHT = 300;
-  const SECONDARY_COL_HEIGHT = PRIMARY_COL_HEIGHT / 2 - theme.spacing.md / 2;
+  const SECONDARY_COL_HEIGHT = PRIMARY_COL_HEIGHT / 2 - 8;
 
   // data
   function fetchData() {

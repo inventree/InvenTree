@@ -7,7 +7,7 @@ import {
 } from '@mantine/core';
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
-import { NotificationsProvider } from '@mantine/notifications';
+import { Notifications } from '@mantine/notifications';
 import { QrCodeModal } from '../components/modals/QrCodeModal';
 import { useLocalState } from './LocalState';
 
@@ -49,14 +49,13 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
       toggleColorScheme={toggleColorScheme}
     >
       <MantineProvider theme={myTheme} withGlobalStyles withNormalizeCSS>
-        <NotificationsProvider>
-          <ModalsProvider
-            labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
-            modals={{ qr: QrCodeModal }}
-          >
-            {children}
-          </ModalsProvider>
-        </NotificationsProvider>
+        <Notifications />
+        <ModalsProvider
+          labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
+          modals={{ qr: QrCodeModal }}
+        >
+          {children}
+        </ModalsProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   );

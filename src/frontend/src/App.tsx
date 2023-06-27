@@ -44,38 +44,41 @@ export function setApiDefaults() {
 export const queryClient = new QueryClient();
 
 // Routes
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Layout />,
-    errorElement: <ErrorPage />,
-    children: [
-      { index: true, element: <Dashboard /> },
-      {
-        path: 'home/',
-        element: <Home />
-      },
-      {
-        path: 'part/',
-        element: <Part />
-      },
-      {
-        path: '/profile/:tabValue',
-        element: <Profile />
-      }
-    ]
-  },
-  {
-    path: '/login',
-    element: <Login />,
-    errorElement: <ErrorPage />
-  },
-  {
-    path: '/logout',
-    element: <Logout />,
-    errorElement: <ErrorPage />
-  }
-]);
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <Layout />,
+      errorElement: <ErrorPage />,
+      children: [
+        { index: true, element: <Dashboard /> },
+        {
+          path: 'home/',
+          element: <Home />
+        },
+        {
+          path: 'part/',
+          element: <Part />
+        },
+        {
+          path: '/profile/:tabValue',
+          element: <Profile />
+        }
+      ]
+    },
+    {
+      path: '/login',
+      element: <Login />,
+      errorElement: <ErrorPage />
+    },
+    {
+      path: '/logout',
+      element: <Logout />,
+      errorElement: <ErrorPage />
+    }
+  ],
+  { basename: '/platform' }
+);
 
 // Main App
 export default function App() {

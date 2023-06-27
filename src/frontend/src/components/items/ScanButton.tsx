@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { ActionIcon } from '@mantine/core';
 import { openContextModal } from '@mantine/modals';
-import { IconQrcode } from '@tabler/icons';
+import { IconQrcode } from '@tabler/icons-react';
 
 export function ScanButton() {
   return (
@@ -14,7 +14,7 @@ export function ScanButton() {
         })
       }
     >
-      <IconQrcode size={16} />
+      <IconQrcode />
     </ActionIcon>
   );
 }

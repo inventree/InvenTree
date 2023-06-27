@@ -15,7 +15,7 @@ import {
   IconLogout,
   IconSettings,
   IconUserCircle
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { languages } from '../../context/LanguageContext';
@@ -72,7 +72,6 @@ export function Header() {
             <Menu
               width={260}
               position="bottom-end"
-              transition="pop-top-right"
               onClose={() => setUserMenuOpened(false)}
               onOpen={() => setUserMenuOpened(true)}
             >
@@ -86,24 +85,16 @@ export function Header() {
                     <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
                       {username}
                     </Text>
-                    <IconChevronDown size={12} stroke={1.5} />
+                    <IconChevronDown />
                   </Group>
                 </UnstyledButton>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item
-                  icon={
-                    <IconHeart
-                      size={14}
-                      color={theme.colors.red[6]}
-                      stroke={1.5}
-                    />
-                  }
-                >
+                <Menu.Item icon={<IconHeart />}>
                   <Trans>Notifications</Trans>
                 </Menu.Item>
                 <Menu.Item
-                  icon={<IconUserCircle size={14} stroke={1.5} />}
+                  icon={<IconUserCircle />}
                   component={Link}
                   to="/profile/user"
                 >
@@ -113,26 +104,16 @@ export function Header() {
                 <Menu.Label>
                   <Trans>Settings</Trans>
                 </Menu.Label>
-                <Menu.Item
-                  icon={<IconLanguage size={14} stroke={1.5} />}
-                  onClick={switchLanguage}
-                >
+                <Menu.Item icon={<IconLanguage />} onClick={switchLanguage}>
                   <Trans>Current language {locale}</Trans>
                 </Menu.Item>
-                <Menu.Item
-                  icon={<IconLanguage size={14} stroke={1.5} />}
-                  onClick={enablePsuedo}
-                >
+                <Menu.Item icon={<IconLanguage />} onClick={enablePsuedo}>
                   <Trans>Switch to pseudo language</Trans>
                 </Menu.Item>
-                <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>
+                <Menu.Item icon={<IconSettings />}>
                   <Trans>Account settings</Trans>
                 </Menu.Item>
-                <Menu.Item
-                  icon={<IconLogout size={14} stroke={1.5} />}
-                  component={Link}
-                  to="/logout"
-                >
+                <Menu.Item icon={<IconLogout />} component={Link} to="/logout">
                   <Trans>Logout</Trans>
                 </Menu.Item>
               </Menu.Dropdown>
@@ -155,11 +136,7 @@ export function Header() {
           }
         >
           <Tabs.List>
-            <Tabs.Tab
-              value={'/'}
-              key={'dash'}
-              icon={<IconDashboard size={14} />}
-            />
+            <Tabs.Tab value={'/'} key={'dash'} icon={<IconDashboard />} />
             {items}
           </Tabs.List>
         </Tabs>
