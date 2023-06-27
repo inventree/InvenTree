@@ -140,6 +140,8 @@ function SettingsBlock(
 ): JSX.Element {
   const { classes } = InvenTreeStyle();
 
+  if (item === undefined) return <></>;
+
   let control = (
     <Text>
       <Trans>Input {item.type} is not known</Trans>
