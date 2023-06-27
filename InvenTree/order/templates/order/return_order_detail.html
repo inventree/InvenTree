@@ -1,7 +1,7 @@
 {% extends "order/return_order_base.html" %}
 
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 {% load i18n %}
 {% load static %}
 
@@ -34,10 +34,8 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="returnorderlines" %}
-            </div>
+        <div id='order-toolbar-buttons'>
+            {% include "filter_list.html" with id="returnorderlines" %}
         </div>
         <table class='table table-striped table-condensed' id='return-order-lines-table' data-toolbar='#order-toolbar-buttons'>
         </table>
@@ -58,10 +56,8 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-extra-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="return-order-extra-lines" %}
-            </div>
+        <div id='order-extra-toolbar-buttons'>
+            {% include "filter_list.html" with id="return-order-extra-lines" %}
         </div>
         <table class='table table-striped table-condensed' id='return-order-extra-lines-table' data-toolbar='#order-extra-toolbar-buttons'>
         </table>

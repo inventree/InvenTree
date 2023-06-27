@@ -35,7 +35,7 @@ class LabelConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the label app is loaded."""
-        if canAppAccessDatabase():
+        if canAppAccessDatabase(allow_test=False):
 
             try:
                 self.create_labels()  # pragma: no cover
@@ -46,12 +46,12 @@ class LabelConfig(AppConfig):
     def create_labels(self):
         """Create all default templates."""
         # Test if models are ready
-        from .models import PartLabel, StockItemLabel, StockLocationLabel
-        assert bool(StockLocationLabel is not None)
+        import label.models
+        assert bool(label.models.StockLocationLabel is not None)
 
         # Create the categories
         self.create_labels_category(
-            StockItemLabel,
+            label.models.StockItemLabel,
             'stockitem',
             [
                 {
@@ -65,7 +65,7 @@ class LabelConfig(AppConfig):
         )
 
         self.create_labels_category(
-            StockLocationLabel,
+            label.models.StockLocationLabel,
             'stocklocation',
             [
                 {
@@ -86,7 +86,7 @@ class LabelConfig(AppConfig):
         )
 
         self.create_labels_category(
-            PartLabel,
+            label.models.PartLabel,
             'part',
             [
                 {
@@ -102,6 +102,20 @@ class LabelConfig(AppConfig):
                     'description': 'Simple part label with Code128 barcode',
                     'width': 70,
                     'height': 24,
+                },
+            ]
+        )
+
+        self.create_labels_category(
+            label.models.BuildLineLabel,
+            'buildline',
+            [
+                {
+                    'file': 'buildline_label.html',
+                    'name': 'Build Line Label',
+                    'description': 'Example build line label',
+                    'width': 125,
+                    'height': 48,
                 },
             ]
         )

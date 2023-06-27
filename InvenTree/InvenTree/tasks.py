@@ -91,13 +91,15 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     """
 
     from common.models import InvenTreeSetting
+    from InvenTree.ready import isInTestMode
 
     if n_days <= 0:
         logger.info(f"Specified interval for task '{task_name}' < 1 - task will not run")
         return False
 
     # Sleep a random number of seconds to prevent worker conflict
-    time.sleep(random.randint(1, 5))
+    if not isInTestMode():
+        time.sleep(random.randint(1, 5))
 
     attempt_key = f'_{task_name}_ATTEMPT'
     success_key = f'_{task_name}_SUCCESS'
@@ -186,6 +188,8 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
             task.run()
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not started - Function not found")
+        except Exception as exc:
+            raise_warning(f"WARNING: '{taskname}' not started due to {type(exc)}")
     else:
 
         if callable(taskname):
@@ -495,7 +499,7 @@ def check_for_updates():
 def update_exchange_rates():
     """Update currency exchange rates."""
     try:
-        from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+        from djmoney.contrib.exchange.models import Rate
 
         from common.settings import currency_code_default, currency_codes
         from InvenTree.exchange import InvenTreeExchange
@@ -507,22 +511,9 @@ def update_exchange_rates():
         # Other error?
         return
 
-    # Test to see if the database is ready yet
-    try:
-        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-    except ExchangeBackend.DoesNotExist:
-        pass
-    except Exception:  # pragma: no cover
-        # Some other error
-        logger.warning("update_exchange_rates: Database not ready")
-        return
-
     backend = InvenTreeExchange()
-    logger.info(f"Updating exchange rates from {backend.url}")
-
     base = currency_code_default()
-
-    logger.info(f"Using base currency '{base}'")
+    logger.info(f"Updating exchange rates using base currency '{base}'")
 
     try:
         backend.update_rates(base_currency=base)

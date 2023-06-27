@@ -25,7 +25,7 @@ import InvenTree.status
 import part.filters
 import part.tasks
 import stock.models
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
@@ -242,7 +242,7 @@ class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         Allows us to optionally include or exclude particular information
         """
 
-        template_detail = kwargs.pop('template_detail', False)
+        template_detail = kwargs.pop('template_detail', True)
 
         super().__init__(*args, **kwargs)
 
@@ -289,6 +289,56 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     # Pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(source='pricing_data.overall_min', allow_null=True, read_only=True)
     pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(source='pricing_data.overall_max', allow_null=True, read_only=True)
+
+
+class PartSetCategorySerializer(serializers.Serializer):
+    """Serializer for changing PartCategory for multiple Part objects"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = [
+            'parts',
+            'category',
+        ]
+
+    parts = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        many=True, required=True, allow_null=False,
+        label=_('Parts'),
+    )
+
+    def validate_parts(self, parts):
+        """Validate the selected parts"""
+        if len(parts) == 0:
+            raise serializers.ValidationError(_("No parts selected"))
+
+        return parts
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.filter(structural=False),
+        many=False, required=True, allow_null=False,
+        label=_('Category'),
+        help_text=_('Select category',)
+    )
+
+    @transaction.atomic
+    def save(self):
+        """Save the serializer to change the location of the selected parts"""
+
+        data = self.validated_data
+        parts = data['parts']
+        category = data['category']
+
+        parts_to_save = []
+
+        for p in parts:
+            if p.category == category:
+                continue
+
+            p.category = category
+            parts_to_save.append(p)
+
+        Part.objects.bulk_update(parts_to_save, ['category'])
 
 
 class DuplicatePartSerializer(serializers.Serializer):
@@ -410,8 +460,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         partial = True
         fields = [
             'active',
-            'allocated_to_build_orders',
-            'allocated_to_sales_orders',
             'assembly',
             'barcode_hash',
             'category',
@@ -423,9 +471,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'description',
             'full_name',
             'image',
-            'in_stock',
-            'ordering',
-            'building',
             'IPN',
             'is_template',
             'keywords',
@@ -441,19 +486,27 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'revision',
             'salable',
             'starred',
-            'stock_item_count',
-            'suppliers',
             'thumbnail',
-            'total_in_stock',
             'trackable',
-            'unallocated_stock',
             'units',
             'variant_of',
-            'variant_stock',
             'virtual',
             'pricing_min',
             'pricing_max',
             'responsible',
+
+            # Annotated fields
+            'allocated_to_build_orders',
+            'allocated_to_sales_orders',
+            'building',
+            'in_stock',
+            'ordering',
+            'required_for_build_orders',
+            'stock_item_count',
+            'suppliers',
+            'total_in_stock',
+            'unallocated_stock',
+            'variant_stock',
 
             # Fields only used for Part creation
             'duplicate',
@@ -532,7 +585,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
         # Filter to limit builds to "active"
         build_filter = Q(
-            status__in=BuildStatus.ACTIVE_CODES
+            status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         # Annotate with the total 'building' quantity
@@ -552,6 +605,9 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
                 output_field=models.DecimalField(),
             ),
         )
+
+        # TODO: This could do with some refactoring
+        # TODO: Note that BomItemSerializer and BuildLineSerializer have very similar code
 
         queryset = queryset.annotate(
             ordering=part.filters.annotate_on_order_quantity(),
@@ -578,6 +634,11 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             )
         )
 
+        # Annotate with the total 'required for builds' quantity
+        queryset = queryset.annotate(
+            required_for_build_orders=part.filters.annotate_build_order_requirements(),
+        )
+
         return queryset
 
     def get_starred(self, part):
@@ -587,17 +648,18 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
     # Extra detail for the category
     category_detail = CategorySerializer(source='category', many=False, read_only=True)
 
-    # Calculated fields
+    # Annotated fields
     allocated_to_build_orders = serializers.FloatField(read_only=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
-    unallocated_stock = serializers.FloatField(read_only=True)
     building = serializers.FloatField(read_only=True)
     in_stock = serializers.FloatField(read_only=True)
-    variant_stock = serializers.FloatField(read_only=True)
-    total_in_stock = serializers.FloatField(read_only=True)
     ordering = serializers.FloatField(read_only=True)
+    required_for_build_orders = serializers.IntegerField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True)
     suppliers = serializers.IntegerField(read_only=True)
+    total_in_stock = serializers.FloatField(read_only=True)
+    unallocated_stock = serializers.FloatField(read_only=True)
+    variant_stock = serializers.FloatField(read_only=True)
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(required=False, allow_null=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)

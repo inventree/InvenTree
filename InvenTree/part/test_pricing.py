@@ -345,7 +345,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.purchase_cost_min)
         self.assertIsNone(pricing.purchase_cost_max)
 
-        po.status = PurchaseOrderStatus.COMPLETE
+        po.status = PurchaseOrderStatus.COMPLETE.value
         po.save()
 
         pricing.update_purchase_cost()
@@ -444,11 +444,6 @@ class PartPricingTests(InvenTreeTestCase):
         # Check that PartPricing objects have been created
         self.assertEqual(part.models.PartPricing.objects.count(), 101)
 
-        # Check that background-tasks have been created
-        from django_q.models import OrmQ
-
-        self.assertEqual(OrmQ.objects.count(), 101)
-
     def test_delete_part_with_stock_items(self):
         """Test deleting a part instance with stock items.
 
@@ -473,6 +468,9 @@ class PartPricingTests(InvenTreeTestCase):
                 purchase_price=Money(10, 'USD')
             )
 
+        # Manually schedule a pricing update (does not happen automatically in testing)
+        p.schedule_pricing_update(create=True, test=True)
+
         # Check that a PartPricing object exists
         self.assertTrue(part.models.PartPricing.objects.filter(part=p).exists())
 
@@ -483,5 +481,5 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
 
         # Try to update pricing (should fail gracefully as the Part has been deleted)
-        p.schedule_pricing_update(create=False)
+        p.schedule_pricing_update(create=False, test=True)
         self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())

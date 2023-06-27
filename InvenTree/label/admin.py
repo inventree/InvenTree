@@ -13,3 +13,4 @@ class LabelAdmin(admin.ModelAdmin):
 admin.site.register(label.models.StockItemLabel, LabelAdmin)
 admin.site.register(label.models.StockLocationLabel, LabelAdmin)
 admin.site.register(label.models.PartLabel, LabelAdmin)
+admin.site.register(label.models.BuildLineLabel, LabelAdmin)

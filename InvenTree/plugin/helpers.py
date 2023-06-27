@@ -1,6 +1,5 @@
 """Helpers for plugin app."""
 
-import datetime
 import inspect
 import logging
 import pathlib
@@ -13,8 +12,6 @@ from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError
-
-from dulwich.repo import NotGitRepository, Repo
 
 logger = logging.getLogger('inventree')
 
@@ -112,58 +109,39 @@ def get_entrypoints():
 def get_git_log(path):
     """Get dict with info of the last commit to file named in path."""
 
+    import datetime
+
+    from dulwich.repo import NotGitRepository, Repo
+
+    from InvenTree.ready import isInTestMode
+
     output = None
     path = path.replace(str(settings.BASE_DIR.parent), '')[1:]
 
-    try:
-        walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
+    # only do this if we are not in test mode
+    if not isInTestMode():  # pragma: no cover
+
         try:
-            commit = next(iter(walker)).commit
-        except StopIteration:
+            walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
+            try:
+                commit = next(iter(walker)).commit
+            except StopIteration:
+                pass
+            else:
+                output = [
+                    commit.sha().hexdigest(),
+                    commit.author.decode().split('<')[0][:-1],
+                    commit.author.decode().split('<')[1][:-1],
+                    datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
+                    commit.message.decode().split('\n')[0],
+                ]
+        except NotGitRepository:
             pass
-        else:
-            output = [
-                commit.sha().hexdigest(),
-                commit.author.decode().split('<')[0][:-1],
-                commit.author.decode().split('<')[1][:-1],
-                datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
-                commit.message.decode().split('\n')[0],
-                'E',
-                None
-            ]
-    except NotGitRepository:
-        pass
 
     if not output:
-        output = 7 * ['']  # pragma: no cover
+        output = 5 * ['']  # pragma: no cover
 
-    return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
-
-
-class GitStatus:
-    """Class for resolving git gpg singing state."""
-
-    class Definition:
-        """Definition of a git gpg sing state."""
-
-        key: str = 'N'
-        status: int = 2
-        msg: str = ''
-
-        def __init__(self, key: str = 'N', status: int = 2, msg: str = '') -> None:
-            """Define a git Status -> needed for lookup."""
-            self.key = key
-            self.status = status
-            self.msg = msg
-
-    N = Definition(key='N', status=2, msg='no signature',)
-    G = Definition(key='G', status=0, msg='valid signature',)
-    B = Definition(key='B', status=2, msg='bad signature',)
-    U = Definition(key='U', status=1, msg='good signature, unknown validity',)
-    X = Definition(key='X', status=1, msg='good signature, expired',)
-    Y = Definition(key='Y', status=1, msg='good signature, expired key',)
-    R = Definition(key='R', status=2, msg='good signature, revoked key',)
-    E = Definition(key='E', status=1, msg='cannot be checked',)
+    return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4]}
 # endregion
 
 

@@ -19,7 +19,7 @@ pip install invoke && invoke setup-dev --tests
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 docker compose run inventree-dev-server invoke install
-docker compose run inventree-dev-server invoke setup-test
+docker compose run inventree-dev-server invoke setup-test --dev
 docker compose up -d
 ```
 
@@ -33,7 +33,7 @@ Run the following command to set up all toolsets for development.
 invoke setup-dev
 ```
 
-*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.*
+*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce errors.*
 
 ## Branches and Versioning
 
@@ -146,7 +146,7 @@ Django are checked by [djlint](https://github.com/Riverside-Healthcare/djlint) t
 
 The following rules out of the [default set](https://djlint.com/docs/linter/) are not applied:
 ```bash
-D018: (Django) Internal links should use the {% url ... %} pattern
+D018: (Django) Internal links should use the { % url ... % } pattern
 H006: Img tag should have height and width attributes
 H008: Attributes should be double quoted
 H021: Inline styles should be avoided
@@ -187,16 +187,16 @@ user_facing_string = _('This string will be exposed to the translation engine!')
 HTML and javascript files are passed through the django templating engine. Translatable strings are implemented as follows:
 
 ```html
-{% load i18n %}
+{ % load i18n % }
 
-<span>{% trans "This string will be translated" %} - this string will not!</span>
+<span>{ % trans "This string will be translated" % } - this string will not!</span>
 ```
 
 ## Github use
 ### Tags
 The tags describe issues and PRs in multiple areas:
 | Area | Name | Description |
-|---|---|---|
+| --- | --- | --- |
 | Triage Labels |  |  |
 |  | triage:not-checked | Item was not checked by the core team  |
 |  | triage:not-approved | Item is not green-light by maintainer |
