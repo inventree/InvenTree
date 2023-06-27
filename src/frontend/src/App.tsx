@@ -19,7 +19,6 @@ import { Logout } from './pages/Logout';
 import { ThemeContext } from './context/ThemeContext';
 import { LanguageContext } from './context/LanguageContext';
 import { useApiState } from './context/ApiState';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 const LOAD_SENTRY = false;
 

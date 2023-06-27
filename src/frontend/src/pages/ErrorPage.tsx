@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouteError } from 'react-router-dom';
 import { LanguageContext } from '../context/LanguageContext';
 import { ErrorResponse } from '../context/states';
-import Container from 'react-bootstrap/Container';
+import { Container } from '@mantine/core';
 
 export default function ErrorPage() {
   const error = useRouteError() as ErrorResponse;
