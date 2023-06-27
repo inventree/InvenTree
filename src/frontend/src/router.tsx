@@ -1,12 +1,28 @@
 import { createBrowserRouter } from 'react-router-dom';
-import ErrorPage from './pages/ErrorPage';
-import { Dashboard } from './pages/Index/Dashboard';
-import { Home } from './pages/Index/Home';
-import { Part } from './pages/Index/Part';
-import { Profile } from './pages/Index/Profile/Profile';
+import { lazy, Suspense } from 'react';
 import Layout from './pages/layout';
-import { Login } from './pages/Login';
-import { Logout } from './pages/Logout';
+import Loading from './Loading';
+
+// Lazy loading helper
+const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
+  (
+    <Suspense fallback={<Loading />}>
+      <Component {...props} />
+    </Suspense>
+  );
+
+// Lazy loaded pages
+export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
+export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
+export const Dashboard = Loadable(
+  lazy(() => import('./pages/Index/Dashboard'))
+);
+export const Part = Loadable(lazy(() => import('./pages/Index/Part')));
+export const Profile = Loadable(
+  lazy(() => import('./pages/Index/Profile/Profile'))
+);
+export const Login = Loadable(lazy(() => import('./pages/Login')));
+export const Logout = Loadable(lazy(() => import('./pages/Logout')));
 
 // Routes
 export const router = createBrowserRouter(

@@ -4,7 +4,7 @@ import { StylishText } from '../../components/items/StylishText';
 import { useLocalState } from '../../context/LocalState';
 import { Trans, t } from '@lingui/macro';
 
-export function Dashboard() {
+export default function Dashboard() {
   const [autoupdate, toggleAutoupdate] = useLocalState((state) => [
     state.autoupdate,
     state.toggleAutoupdate

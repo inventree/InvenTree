@@ -1,7 +1,7 @@
 import { StylishText } from '../../components/items/StylishText';
 import { Trans } from '@lingui/macro';
 
-export function Home() {
+export default function Home() {
   return (
     <>
       <StylishText>

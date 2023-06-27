@@ -5,7 +5,7 @@ import { Trans, t } from '@lingui/macro';
 import { UserPanel } from './UserPanel';
 import { SettingsPanel } from './SettingsPanel';
 
-export function Profile() {
+export default function Profile() {
   const navigate = useNavigate();
   const { tabValue } = useParams();
 

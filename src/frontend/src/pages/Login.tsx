@@ -10,7 +10,7 @@ import { HostList } from '../context/states';
 import { Trans, t } from '@lingui/macro';
 import { useApiState } from '../context/ApiState';
 
-export function Login() {
+export default function Login() {
   const { handleLogin } = useAuth();
   const navigate = useNavigate();
   const [hostKey, setHost, hostList, lastUsername] = useLocalState((state) => [
