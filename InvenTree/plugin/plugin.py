@@ -349,10 +349,6 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     def _get_package_commit(self):
         """Get last git commit for the plugin."""
 
-        import cProfile
-
-        cProfile.runctx('get_git_log(str(self.file()))', globals(), locals(), filename=f'get-git-log-{self.slug}.prof')
-
         return get_git_log(str(self.file()))
 
     @classmethod
