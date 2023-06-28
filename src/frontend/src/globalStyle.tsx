@@ -30,19 +30,9 @@ export const InvenTreeStyle = createStyles((theme) => ({
     borderRadius: theme.defaultRadius,
     transition: 'background-color 100ms ease',
 
-    '&:hover': {
-      backgroundColor:
-        theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
-    },
-
     [theme.fn.smallerThan('xs')]: {
       display: 'none'
     }
-  },
-
-  layoutHeaderUserActive: {
-    backgroundColor:
-      theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
   },
 
   layoutContent: {
