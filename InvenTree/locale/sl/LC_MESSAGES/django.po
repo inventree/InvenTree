@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-26 07:13+0000\n"
-"PO-Revision-Date: 2023-06-24 07:43\n"
+"POT-Creation-Date: 2023-06-28 05:24+0000\n"
+"PO-Revision-Date: 2023-06-28 09:16\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -365,7 +365,7 @@ msgstr "Ime"
 #: templates/js/translated/bom.js:633 templates/js/translated/bom.js:951
 #: templates/js/translated/build.js:2058 templates/js/translated/company.js:517
 #: templates/js/translated/company.js:1361
-#: templates/js/translated/company.js:1672 templates/js/translated/index.js:114
+#: templates/js/translated/company.js:1672 templates/js/translated/index.js:119
 #: templates/js/translated/order.js:298 templates/js/translated/part.js:1211
 #: templates/js/translated/part.js:1455 templates/js/translated/part.js:1593
 #: templates/js/translated/part.js:1928 templates/js/translated/part.js:2320
@@ -982,7 +982,7 @@ msgstr "Nalog izgradnje na katerega se ta izgradnaj nanaša"
 #: templates/js/translated/company.js:347
 #: templates/js/translated/company.js:1147
 #: templates/js/translated/company.js:1302
-#: templates/js/translated/company.js:1590 templates/js/translated/index.js:104
+#: templates/js/translated/company.js:1590 templates/js/translated/index.js:109
 #: templates/js/translated/part.js:1913 templates/js/translated/part.js:1985
 #: templates/js/translated/part.js:2289 templates/js/translated/pricing.js:369
 #: templates/js/translated/purchase_order.js:757
@@ -1345,7 +1345,7 @@ msgstr ""
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:334 stock/api.py:707
+#: build/serializers.py:334 stock/api.py:720
 msgid "The following serial numbers already exist or are invalid"
 msgstr ""
 
@@ -1896,7 +1896,7 @@ msgstr ""
 #: order/templates/order/return_order_sidebar.html:7
 #: order/templates/order/sales_order_detail.html:124
 #: order/templates/order/so_sidebar.html:15 part/templates/part/detail.html:217
-#: part/templates/part/part_sidebar.html:61 stock/templates/stock/item.html:109
+#: part/templates/part/part_sidebar.html:61 stock/templates/stock/item.html:110
 #: stock/templates/stock/stock_sidebar.html:23
 msgid "Attachments"
 msgstr ""
@@ -1905,11 +1905,11 @@ msgstr ""
 msgid "Build Notes"
 msgstr ""
 
-#: build/templates/build/detail.html:425
+#: build/templates/build/detail.html:422
 msgid "Allocation Complete"
 msgstr ""
 
-#: build/templates/build/detail.html:426
+#: build/templates/build/detail.html:423
 msgid "All lines have been fully allocated"
 msgstr ""
 
@@ -3839,7 +3839,7 @@ msgstr ""
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
 #: templates/js/translated/bom.js:1145 templates/js/translated/build.js:2486
-#: templates/js/translated/index.js:118
+#: templates/js/translated/index.js:123
 #: templates/js/translated/model_renderers.js:219
 #: templates/js/translated/part.js:669 templates/js/translated/part.js:671
 #: templates/js/translated/part.js:676
@@ -4271,7 +4271,7 @@ msgstr ""
 msgid "Link Barcode to Supplier Part"
 msgstr ""
 
-#: company/templates/company/supplier_part.html:361
+#: company/templates/company/supplier_part.html:360
 msgid "Update Part Availability"
 msgstr ""
 
@@ -7625,23 +7625,23 @@ msgstr ""
 msgid "External Location"
 msgstr ""
 
-#: stock/api.py:619
+#: stock/api.py:632
 msgid "Quantity is required"
 msgstr ""
 
-#: stock/api.py:626
+#: stock/api.py:639
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:652
+#: stock/api.py:665
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:661
+#: stock/api.py:674
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:679
+#: stock/api.py:692
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -8047,44 +8047,44 @@ msgstr ""
 msgid "Child Stock Items"
 msgstr ""
 
-#: stock/templates/stock/item.html:71
+#: stock/templates/stock/item.html:72
 msgid "This stock item does not have any child items"
 msgstr ""
 
-#: stock/templates/stock/item.html:80
+#: stock/templates/stock/item.html:81
 #: stock/templates/stock/stock_sidebar.html:12
 msgid "Test Data"
 msgstr ""
 
-#: stock/templates/stock/item.html:84 stock/templates/stock/item_base.html:66
+#: stock/templates/stock/item.html:85 stock/templates/stock/item_base.html:66
 msgid "Test Report"
 msgstr ""
 
-#: stock/templates/stock/item.html:88 stock/templates/stock/item.html:278
+#: stock/templates/stock/item.html:89 stock/templates/stock/item.html:279
 msgid "Delete Test Data"
 msgstr ""
 
-#: stock/templates/stock/item.html:92
+#: stock/templates/stock/item.html:93
 msgid "Add Test Data"
 msgstr ""
 
-#: stock/templates/stock/item.html:124
+#: stock/templates/stock/item.html:125
 msgid "Stock Item Notes"
 msgstr ""
 
-#: stock/templates/stock/item.html:139
+#: stock/templates/stock/item.html:140
 msgid "Installed Stock Items"
 msgstr ""
 
-#: stock/templates/stock/item.html:144 templates/js/translated/stock.js:3118
+#: stock/templates/stock/item.html:145 templates/js/translated/stock.js:3118
 msgid "Install Stock Item"
 msgstr ""
 
-#: stock/templates/stock/item.html:266
+#: stock/templates/stock/item.html:267
 msgid "Delete all test results for this stock item"
 msgstr ""
 
-#: stock/templates/stock/item.html:295 templates/js/translated/stock.js:1610
+#: stock/templates/stock/item.html:296 templates/js/translated/stock.js:1610
 msgid "Add Test Result"
 msgstr ""
 
@@ -10668,11 +10668,11 @@ msgstr ""
 msgid "False"
 msgstr ""
 
-#: templates/js/translated/index.js:99
+#: templates/js/translated/index.js:104
 msgid "No parts required for builds"
 msgstr ""
 
-#: templates/js/translated/index.js:125
+#: templates/js/translated/index.js:130
 msgid "Allocated Stock"
 msgstr ""
 
@@ -12694,8 +12694,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12830,3 +12829,4 @@ msgstr ""
 #: users/models.py:253
 msgid "Permission to delete items"
 msgstr ""
+
