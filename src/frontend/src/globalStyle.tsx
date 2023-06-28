@@ -66,11 +66,11 @@ export const InvenTreeStyle = createStyles((theme) => ({
 
   tabsList: {
     borderBottom: '0 !important',
-    '& > button:first-child': {
+    '& > button:first-of-type': {
       paddingLeft: '0 !important'
     },
 
-    '& > button:last-child': {
+    '& > button:last-of-type': {
       paddingRight: '0 !important'
     }
   },
