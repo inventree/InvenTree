@@ -1152,12 +1152,13 @@ function adjustStock(action, items, options={}) {
         // If a common location is specified, use that as the default
         let commonLocation = null;
 
-        for (var ii = 0; ii < items.length; ii++) {
-            let item = items[ii];
+        for (const item of items) {
 
             if (item.location == commonLocation) {
                 continue;
-            } else if (commonLocation == null) {
+            }
+
+            if (commonLocation == null) {
                 commonLocation = item.location;
             } else {
                 commonLocation = null;
