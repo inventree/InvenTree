@@ -40,7 +40,14 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
     white: whiteColor,
     black: blackColor,
     loader: loader,
-    defaultRadius: radius
+    defaultRadius: radius,
+    breakpoints: {
+      xs: '30em',
+      sm: '48em',
+      md: '64em',
+      lg: '74em',
+      xl: '90em'
+    }
   };
 
   return (
