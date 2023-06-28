@@ -60,7 +60,7 @@ export function Header() {
 
   return (
     <div className={classes.layoutHeader}>
-      <Container className={classes.layoutHeaderSection}>
+      <Container className={classes.layoutHeaderSection} size={'xl'}>
         <Group position="apart">
           <Group>
             <InvenTreeLogo />
@@ -121,7 +121,7 @@ export function Header() {
           </Group>
         </Group>
       </Container>
-      <Container>
+      <Container size={'xl'}>
         <Tabs
           defaultValue="Home"
           variant="outline"

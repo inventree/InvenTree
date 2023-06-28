@@ -13,7 +13,7 @@ export default function Layout() {
     <ProtectedRoute>
       <Flex direction="column" mih="100vh">
         <Header />
-        <Container className={classes.layoutContent}>
+        <Container className={classes.layoutContent} size={'xl'}>
           <Outlet />
         </Container>
         <Space h="xl" />

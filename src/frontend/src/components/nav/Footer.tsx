@@ -19,7 +19,7 @@ export function Footer() {
 
   return (
     <div className={classes.layoutFooter}>
-      <Container className={classes.layoutFooterInner}>
+      <Container className={classes.layoutFooterInner} size={'xl'}>
         <InvenTreeLogo />
         <Group className={classes.layoutFooterLinks}>{items}</Group>
       </Container>
