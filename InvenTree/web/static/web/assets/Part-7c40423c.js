@@ -1,0 +1,1 @@
+import{j as r,T as t}from"./index-ccb15012.js";import{S as s}from"./StylishText-bb948740.js";function i(){return r.jsx(r.Fragment,{children:r.jsx(s,{children:r.jsx(t,{id:"vgP+9p"})})})}export{i as default};
