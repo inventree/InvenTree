@@ -1,1 +1,0 @@
-import{j as r,T as s}from"./index-ccb15012.js";import{S as t}from"./StylishText-bb948740.js";function n(){return r.jsx(r.Fragment,{children:r.jsx(t,{children:r.jsx(s,{id:"i0qMbr"})})})}export{n as default};
