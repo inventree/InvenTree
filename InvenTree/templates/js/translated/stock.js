@@ -1148,7 +1148,26 @@ function adjustStock(action, items, options={}) {
     var extraFields = {};
 
     if (specifyLocation) {
+
+        // If a common location is specified, use that as the default
+        let commonLocation = null;
+
+        for (const item of items) {
+
+            if (item.location == commonLocation) {
+                continue;
+            }
+
+            if (commonLocation == null) {
+                commonLocation = item.location;
+            } else {
+                commonLocation = null;
+                break;
+            }
+        }
+
         extraFields.location = {
+            value: commonLocation,
             filters: {
                 structural: false,
             },

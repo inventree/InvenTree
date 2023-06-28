@@ -459,7 +459,8 @@ def rebuild_parameters(template_id):
             parameter.save()
             n += 1
 
-    logger.info(f"Rebuilt {n} parameters for template '{template.name}'")
+    if n > 0:
+        logger.info(f"Rebuilt {n} parameters for template '{template.name}'")
 
 
 def rebuild_supplier_parts(part_id):
@@ -486,4 +487,5 @@ def rebuild_supplier_parts(part_id):
         except ValidationError:
             pass
 
-    logger.info(f"Rebuilt {n} supplier parts for part '{prt.name}'")
+    if n > 0:
+        logger.info(f"Rebuilt {n} supplier parts for part '{prt.name}'")
