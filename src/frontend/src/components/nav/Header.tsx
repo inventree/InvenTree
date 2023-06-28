@@ -124,7 +124,6 @@ export function Header() {
       <Container size={'xl'}>
         <Tabs
           defaultValue="Home"
-          variant="outline"
           classNames={{
             root: classes.tabs,
             tabsList: classes.tabsList,

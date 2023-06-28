@@ -65,7 +65,14 @@ export const InvenTreeStyle = createStyles((theme) => ({
   },
 
   tabsList: {
-    borderBottom: '0 !important'
+    borderBottom: '0 !important',
+    '& > button:first-child': {
+      paddingLeft: '0 !important'
+    },
+
+    '& > button:last-child': {
+      paddingRight: '0 !important'
+    }
   },
 
   tab: {
@@ -78,15 +85,6 @@ export const InvenTreeStyle = createStyles((theme) => ({
         theme.colorScheme === 'dark'
           ? theme.colors.dark[5]
           : theme.colors.gray[1]
-    },
-
-    '&[data-active]': {
-      backgroundColor:
-        theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-      borderColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[7]
-          : theme.colors.gray[2]
     }
   },
 
