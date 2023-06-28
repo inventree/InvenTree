@@ -66,6 +66,11 @@ function addHeaderAction(label, title, icon, options) {
 
         let count = options.totalRows;
 
+        if (count == undefined || count == null) {
+            let data = $(table_name).bootstrapTable('getData');
+            count = data.length;
+        }
+
         let badge = $(`#sidebar-badge-${label}`);
 
         badge.html(count);
