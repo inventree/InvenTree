@@ -32,7 +32,7 @@ export function AuthenticationForm({
     initialValues: { username: '', password: '' }
   });
   const simpleForm = useForm({ initialValues: { email: '' } });
-  const [classicLoginMode, setMode] = useDisclosure(false);
+  const [classicLoginMode, setMode] = useDisclosure(true);
   const navigate = useNavigate();
 
   function handleLogin() {
