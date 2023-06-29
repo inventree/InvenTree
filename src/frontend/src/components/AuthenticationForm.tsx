@@ -1,135 +1,151 @@
-import { useToggle, upperFirst } from '@mantine/hooks';
-import { useForm } from '@mantine/form';
-import {
-  TextInput,
-  PasswordInput,
-  Text,
-  Paper,
-  Group,
-  Button,
-  Divider,
-  Anchor,
-  Stack,
-  Center
-} from '@mantine/core';
-import { EditButton } from './items/EditButton';
 import { Trans, t } from '@lingui/macro';
+import {
+  Anchor,
+  Button,
+  Group,
+  Paper,
+  PasswordInput,
+  Stack,
+  Text,
+  TextInput
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
+import { doClassicLogin, doSimpleLogin } from '../functions/auth';
+import { EditButton } from './items/EditButton';
 
 export function AuthenticationForm({
-  Login,
-  Register,
   hostname,
-  lastUsername,
   editing,
   setEditing,
   selectElement
 }: {
-  Login: (username: string, password: string) => void;
-  Register: (name: string, username: string, password: string) => void;
   hostname: string;
-  lastUsername: string;
   editing: boolean;
   setEditing: (value?: React.SetStateAction<boolean> | undefined) => void;
   selectElement: JSX.Element;
 }) {
-  const [action, toggleAction] = useToggle(['login', 'register']);
-  const actionname = action === 'login' ? t`login` : t`register`;
-  const form = useForm({
-    initialValues: {
-      email: lastUsername,
-      name: '',
-      password: '',
-      terms: false
-    }
+  const classicForm = useForm({
+    initialValues: { username: '', password: '' }
   });
-  const submit = () => {
-    if (action === 'login') {
-      Login(form.values.email, form.values.password);
+  const simpleForm = useForm({ initialValues: { email: '' } });
+  const [classicLoginMode, setMode] = useDisclosure(false);
+  const navigate = useNavigate();
+
+  function handleLogin() {
+    if (classicLoginMode === true) {
+      doClassicLogin(
+        classicForm.values.username,
+        classicForm.values.password
+      ).then((ret) => {
+        if (ret === false) {
+          notifications.show({
+            title: t`Login failed`,
+            message: t`Check your your input and try again.`,
+            color: 'red'
+          });
+        } else {
+          notifications.show({
+            title: t`Login successfull`,
+            message: t`Welcome back!`,
+            color: 'green',
+            icon: <IconCheck size="1rem" />
+          });
+          navigate('/home');
+        }
+      });
     } else {
-      Register(form.values.name, form.values.email, form.values.password);
+      doSimpleLogin(simpleForm.values.email).then((ret) => {
+        if (ret?.status === 'ok') {
+          notifications.show({
+            title: t`Mail delivery successfull`,
+            message: t`Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too.`,
+            color: 'green',
+            icon: <IconCheck size="1rem" />,
+            autoClose: false
+          });
+        } else {
+          notifications.show({
+            title: t`Input error`,
+            message: t`Check your your input and try again.`,
+            color: 'red'
+          });
+        }
+      });
     }
-  };
+  }
 
   return (
     <Paper radius="md" p="xl" withBorder>
       <Text size="lg" weight={500}>
-        <Trans>Welcome {actionname} to </Trans>
         <Group>
           {!editing ? hostname : selectElement}
           {EditButton(setEditing, editing)}
         </Group>
       </Text>
-      <Center>
-        <Group grow mb="md" mt="md">
-          <Text>
-            <Trans>Placeholder</Trans>
-          </Text>
-        </Group>
-      </Center>
-      <Divider
-        label={<Trans>Or continue with email</Trans>}
-        labelPosition="center"
-        my="lg"
-      />
-      <form
-        onSubmit={form.onSubmit(() => {
-          submit();
-        })}
-      >
-        <Stack>
-          {action === 'register' && (
+      <form onSubmit={classicForm.onSubmit(() => {})}>
+        {classicLoginMode ? (
+          <Stack>
             <TextInput
-              label={<Trans>Name</Trans>}
-              placeholder={t`Your name`}
-              value={form.values.name}
-              onChange={(event) =>
-                form.setFieldValue('name', event.currentTarget.value)
-              }
+              required
+              label={t`Username`}
+              placeholder="code@mjmair.com"
+              {...classicForm.getInputProps('username')}
             />
-          )}
-
-          <TextInput
-            required
-            label={<Trans>Username</Trans>}
-            placeholder="hello@mantine.dev"
-            value={form.values.email}
-            onChange={(event) =>
-              form.setFieldValue('email', event.currentTarget.value)
-            }
-            error={form.errors.email && <Trans>Invalid email</Trans>}
-          />
-
-          <PasswordInput
-            required
-            label={<Trans>Password</Trans>}
-            placeholder={t`Your password`}
-            value={form.values.password}
-            onChange={(event) =>
-              form.setFieldValue('password', event.currentTarget.value)
-            }
-            error={
-              form.errors.password && (
-                <Trans>Password should include at least 6 characters</Trans>
-              )
-            }
-          />
-        </Stack>
+            <PasswordInput
+              required
+              label={t`Password`}
+              placeholder={t`Your password`}
+              {...classicForm.getInputProps('password')}
+            />
+            <Group position="apart" mt="0">
+              <Anchor
+                component="button"
+                type="button"
+                color="dimmed"
+                size="xs"
+                onClick={() => navigate('/reset-password')}
+              >
+                <Trans>Reset password</Trans>
+              </Anchor>
+            </Group>
+          </Stack>
+        ) : (
+          <Stack>
+            <TextInput
+              required
+              label={t`Email`}
+              description={t`We will send you a link to login - if you are registered`}
+              placeholder="code@mjmair.com"
+              {...simpleForm.getInputProps('email')}
+            />
+          </Stack>
+        )}
 
         <Group position="apart" mt="xl">
           <Anchor
             component="button"
             type="button"
             color="dimmed"
-            onClick={() => toggleAction()}
             size="xs"
+            onClick={() => setMode.toggle()}
           >
-            {action === 'register' ? (
-              <Trans>Already have an account? Login</Trans>
+            {classicLoginMode ? (
+              <Trans>Send me an email</Trans>
             ) : (
-              <Trans>Don't have an account? Register</Trans>
+              <Trans>I will use username and password</Trans>
             )}
           </Anchor>
-          <Button type="submit">{upperFirst(actionname)}</Button>
+          <Button type="submit" onClick={handleLogin}>
+            {classicLoginMode ? (
+              <Trans>Log in</Trans>
+            ) : (
+              <Trans>Send mail</Trans>
+            )}
+          </Button>
         </Group>
       </form>
     </Paper>

@@ -1,10 +1,19 @@
-import { Outlet } from 'react-router-dom';
-import { Header } from '../components/nav/Header';
 import { Container, Flex, Space } from '@mantine/core';
-
+import { Navigate, Outlet } from 'react-router-dom';
 import { Footer } from '../components/nav/Footer';
+import { Header } from '../components/nav/Header';
+import { useSessionState } from '../context/SessionState';
 import { InvenTreeStyle } from '../globalStyle';
-import { ProtectedRoute } from '../context/AuthContext';
+
+export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const [token] = useSessionState((state) => [state.token]);
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
 
 export default function Layout() {
   const { classes } = InvenTreeStyle();

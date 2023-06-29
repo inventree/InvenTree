@@ -18,10 +18,11 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { languages } from '../../context/LanguageContext';
 import { useApiState } from '../../context/ApiState';
+import { languages } from '../../context/LanguageContext';
 import { useLocalState } from '../../context/LocalState';
 import { tabs } from '../../defaults';
+import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
 import { ColorToggle } from '../items/ColorToggle';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
@@ -38,7 +39,7 @@ export function Header() {
     state.language
   ]);
   const [username, servername] = useApiState((state) => [
-    state.user.name,
+    state.user?.name,
     state.server.instance
   ]);
 
@@ -76,11 +77,7 @@ export function Header() {
               onOpen={() => setUserMenuOpened(true)}
             >
               <Menu.Target>
-                <UnstyledButton
-                  className={cx(classes.layoutHeaderUser, {
-                    [classes.layoutHeaderUserActive]: userMenuOpened
-                  })}
-                >
+                <UnstyledButton className={classes.layoutHeaderUser}>
                   <Group spacing={7}>
                     <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
                       {username}
@@ -113,7 +110,12 @@ export function Header() {
                 <Menu.Item icon={<IconSettings />}>
                   <Trans>Account settings</Trans>
                 </Menu.Item>
-                <Menu.Item icon={<IconLogout />} component={Link} to="/logout">
+                <Menu.Item
+                  icon={<IconLogout />}
+                  onClick={() => {
+                    doClassicLogout();
+                  }}
+                >
                   <Trans>Logout</Trans>
                 </Menu.Item>
               </Menu.Dropdown>

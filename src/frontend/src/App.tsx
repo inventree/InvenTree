@@ -4,13 +4,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
 import { useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { useApiState } from './context/ApiState';
+import { LanguageContext } from './context/LanguageContext';
 import { useLocalState } from './context/LocalState';
 import { useSessionState } from './context/SessionState';
-import { defaultHostList } from './defaults';
 import { ThemeContext } from './context/ThemeContext';
-import { LanguageContext } from './context/LanguageContext';
-import { useApiState } from './context/ApiState';
+import { defaultHostList } from './defaults';
 import { router } from './router';
 
 const LOAD_SENTRY = false;
@@ -60,11 +59,9 @@ export default function App() {
   return (
     <LanguageContext>
       <ThemeContext>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
       </ThemeContext>
     </LanguageContext>
   );

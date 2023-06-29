@@ -3,8 +3,8 @@ import { persist } from 'zustand/middleware';
 import { setApiDefaults } from '../App';
 
 interface SessionStateProps {
-  token: string;
-  setToken: (newToken: string) => void;
+  token: string | undefined;
+  setToken: (newToken: string | undefined) => void;
 }
 
 export const useSessionState = create<SessionStateProps>()(
