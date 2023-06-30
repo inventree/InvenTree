@@ -2,6 +2,7 @@
 Django>=3.2.14,<4                       # Django package
 coreapi                                 # API documentation for djangorestframework
 cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
+data-wizard                             # Data import wizard
 django-allauth                          # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files

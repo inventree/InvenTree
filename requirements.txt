@@ -28,6 +28,8 @@ cffi==1.15.1
     #   weasyprint
 charset-normalizer==3.1.0
     # via requests
+click==8.1.3
+    # via itertable
 coreapi==2.3.3
     # via -r requirements.in
 coreschema==0.0.4
@@ -39,6 +41,8 @@ cryptography==41.0.1
     #   pyjwt
 cssselect2==0.7.0
     # via weasyprint
+data-wizard==2.0.0
+    # via -r requirements.in
 defusedxml==0.7.1
     # via
     #   odfpy
@@ -145,6 +149,7 @@ django-xforwardedfor-middleware==2.0
 djangorestframework==3.14.0
     # via
     #   -r requirements.in
+    #   data-wizard
     #   dj-rest-auth
     #   djangorestframework-simplejwt
     #   drf-spectacular
@@ -162,6 +167,10 @@ fonttools[woff]==4.39.4
     # via weasyprint
 gunicorn==20.1.0
     # via -r requirements.in
+html-json-forms==1.1.1
+    # via
+    #   data-wizard
+    #   natural-keys
 html5lib==1.1
     # via weasyprint
 icalendar==5.0.7
@@ -172,6 +181,8 @@ importlib-metadata==6.6.0
     # via markdown
 inflection==0.5.1
     # via drf-spectacular
+itertable==2.2.0
+    # via data-wizard
 itypes==1.2.0
     # via coreapi
 jinja2==3.1.2
@@ -184,12 +195,16 @@ markuppy==1.14
     # via tablib
 markupsafe==2.1.3
     # via jinja2
+natural-keys==2.1.0
+    # via data-wizard
 oauthlib==3.2.2
     # via requests-oauthlib
 odfpy==1.4.1
     # via tablib
 openpyxl==3.1.2
-    # via tablib
+    # via
+    #   itertable
+    #   tablib
 pdf2image==1.16.3
     # via -r requirements.in
 pillow==9.5.0
@@ -225,6 +240,7 @@ python-barcode[images]==0.14.0
 python-dateutil==2.8.2
     # via
     #   arrow
+    #   data-wizard
     #   django-recurrence
     #   icalendar
 python-dotenv==1.0.0
@@ -259,6 +275,7 @@ requests==2.31.0
     # via
     #   coreapi
     #   django-allauth
+    #   itertable
     #   requests-oauthlib
 requests-oauthlib==1.3.1
     # via django-allauth
