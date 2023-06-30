@@ -403,9 +403,6 @@
 
     onPanelLoad('stock', function() {
         loadStockTable($("#stock-table"), {
-            buttons: [
-                '#stock-options',
-            ],
             params: {
                 {% if location %}
                 location: {{ location.pk }},
