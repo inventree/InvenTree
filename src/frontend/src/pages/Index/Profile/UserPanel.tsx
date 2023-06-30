@@ -23,6 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { api, queryClient } from '../../../App';
 import { EditButton } from '../../../components/items/EditButton';
+import { Placeholder } from '../../../components/items/Placeholder';
 import { useLocalState } from '../../../context/LocalState';
 import { SizeMarks } from '../../../defaults';
 import { InvenTreeStyle } from '../../../globalStyle';
@@ -191,7 +192,9 @@ export function UserTheme({ height }: { height: number }) {
 
   return (
     <Container w="100%" mih={height}>
-      <Title order={3}>Design</Title>
+      <Title order={3}>
+        Design <Placeholder />
+      </Title>
       <Table>
         <tbody>
           <tr>

@@ -1,12 +1,17 @@
-import { StylishText } from '../../components/items/StylishText';
 import { Trans } from '@lingui/macro';
+import { Group } from '@mantine/core';
+import { Placeholder } from '../../components/items/Placeholder';
+import { StylishText } from '../../components/items/StylishText';
 
 export default function Home() {
   return (
     <>
-      <StylishText>
-        <Trans>Home</Trans>
-      </StylishText>
+      <Group>
+        <StylishText>
+          <Trans>Home</Trans>
+        </StylishText>
+        <Placeholder />
+      </Group>
     </>
   );
 }
