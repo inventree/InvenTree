@@ -153,6 +153,8 @@ backendpatterns = [
 
     re_path(r'^api/', include(apipatterns)),
     re_path(r'^api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
+
+    re_path(r'^import/', include('data_wizard.urls')),
 ]
 
 frontendpatterns = [
