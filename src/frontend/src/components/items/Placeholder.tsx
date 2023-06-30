@@ -1,13 +1,13 @@
 import { Trans, t } from '@lingui/macro';
 import { Badge, Tooltip } from '@mantine/core';
 
-export function Placeholder() {
+export function PlaceholderPill() {
   return (
     <Tooltip
       multiline
       width={220}
       withArrow
-      label={t`Use this button to save this information in your profile, after that you will be able to access it any time and share it via email.`}
+      label={t`This feature/button/site is a placeholder for a feature that is not implemented, only partial or inteded for testing.`}
     >
       <Badge color="teal" variant="outline">
         <Trans>PLH</Trans>

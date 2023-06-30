@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { Group } from '@mantine/core';
-import { Placeholder } from '../../components/items/Placeholder';
+import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
         <StylishText>
           <Trans>Home</Trans>
         </StylishText>
-        <Placeholder />
+        <PlaceholderPill />
       </Group>
     </>
   );

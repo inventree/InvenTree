@@ -26,7 +26,7 @@ import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
 import { ColorToggle } from '../items/ColorToggle';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
-import { Placeholder } from '../items/Placeholder';
+import { PlaceholderPill } from '../items/Placeholder';
 import { ScanButton } from '../items/ScanButton';
 
 export function Header() {
@@ -90,7 +90,7 @@ export function Header() {
               <Menu.Dropdown>
                 <Menu.Item icon={<IconHeart />}>
                   <Trans>Notifications</Trans>
-                  <Placeholder />
+                  <PlaceholderPill />
                 </Menu.Item>
                 <Menu.Item
                   icon={<IconUserCircle />}
@@ -111,7 +111,7 @@ export function Header() {
                 </Menu.Item>
                 <Menu.Item icon={<IconSettings />}>
                   <Trans>Account settings</Trans>
-                  <Placeholder />
+                  <PlaceholderPill />
                 </Menu.Item>
                 <Menu.Item
                   icon={<IconLogout />}
