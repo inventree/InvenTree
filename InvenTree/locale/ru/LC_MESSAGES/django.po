@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-29 12:40+0000\n"
-"PO-Revision-Date: 2023-06-30 09:10\n"
+"PO-Revision-Date: 2023-07-01 09:21\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -817,11 +817,11 @@ msgstr "Возврат"
 
 #: InvenTree/status_codes.py:203
 msgid "Reject"
-msgstr ""
+msgstr "Отклонить"
 
 #: InvenTree/validators.py:32 InvenTree/validators.py:34
 msgid "Invalid physical unit"
-msgstr ""
+msgstr "Неверная физическая единица"
 
 #: InvenTree/validators.py:40
 msgid "Not a valid currency code"
@@ -853,7 +853,7 @@ msgstr "Пароли должны совпадать"
 
 #: InvenTree/views.py:452
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Указан неверный пароль"
 
 #: InvenTree/views.py:653 templates/navbar.html:157
 msgid "System Information"
@@ -861,18 +861,18 @@ msgstr "Информация о системе"
 
 #: InvenTree/views.py:660 templates/navbar.html:168
 msgid "About InvenTree"
-msgstr ""
+msgstr "О программе InvenTree"
 
 #: build/api.py:242
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Сборка должна быть отменена перед удалением"
 
 #: build/api.py:286 part/models.py:3836 templates/js/translated/bom.js:985
 #: templates/js/translated/bom.js:1025 templates/js/translated/build.js:2445
 #: templates/js/translated/table_filters.js:166
 #: templates/js/translated/table_filters.js:518
 msgid "Consumable"
-msgstr ""
+msgstr "Расходники"
 
 #: build/api.py:287 part/models.py:3830 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:989 templates/js/translated/bom.js:1016
@@ -881,19 +881,19 @@ msgstr ""
 #: templates/js/translated/table_filters.js:191
 #: templates/js/translated/table_filters.js:522
 msgid "Optional"
-msgstr ""
+msgstr "Необязательно"
 
 #: build/api.py:288 templates/js/translated/table_filters.js:360
 #: templates/js/translated/table_filters.js:514
 msgid "Tracked"
-msgstr ""
+msgstr "Отслеживается"
 
 #: build/api.py:290 part/admin.py:64 templates/js/translated/build.js:1666
 #: templates/js/translated/build.js:2545
 #: templates/js/translated/sales_order.js:1918
 #: templates/js/translated/table_filters.js:506
 msgid "Allocated"
-msgstr ""
+msgstr "Выделено"
 
 #: build/models.py:73 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -1184,7 +1184,7 @@ msgstr ""
 
 #: build/models.py:1260
 msgid "Build object"
-msgstr ""
+msgstr "Построить объект"
 
 #: build/models.py:1274 build/models.py:1556 build/serializers.py:206
 #: build/serializers.py:244 build/templates/build/build_base.html:103
@@ -1297,7 +1297,7 @@ msgstr ""
 #: build/serializers.py:156 build/serializers.py:828
 #: templates/js/translated/build.js:1295
 msgid "Build Output"
-msgstr ""
+msgstr "Вывод результата сборки"
 
 #: build/serializers.py:168
 msgid "Build output does not match the parent build"
@@ -1379,11 +1379,11 @@ msgstr ""
 
 #: build/serializers.py:430
 msgid "Discard Allocations"
-msgstr ""
+msgstr "Отклонить распределения"
 
 #: build/serializers.py:431
 msgid "Discard any stock allocations for scrapped outputs"
-msgstr ""
+msgstr "Отменить любые распределения запасов для отбракованных выходов"
 
 #: build/serializers.py:436
 msgid "Reason for scrapping build output(s)"
@@ -1445,15 +1445,15 @@ msgstr ""
 
 #: build/serializers.py:639
 msgid "Overallocated Stock"
-msgstr ""
+msgstr "Перераспределенные запасы"
 
 #: build/serializers.py:641
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr ""
+msgstr "Как вы хотите обработать дополнительные товары, назначенные для заказа на сборку"
 
 #: build/serializers.py:651
 msgid "Some stock items have been overallocated"
-msgstr ""
+msgstr "Некоторые товары на складе перераспределены"
 
 #: build/serializers.py:656
 msgid "Accept Unallocated"
@@ -1534,7 +1534,7 @@ msgstr ""
 
 #: build/serializers.py:955
 msgid "Exclude Location"
-msgstr ""
+msgstr "Исключить местоположение"
 
 #: build/serializers.py:956
 msgid "Exclude stock items from this selected location"
@@ -1550,7 +1550,7 @@ msgstr ""
 
 #: build/serializers.py:967
 msgid "Substitute Stock"
-msgstr ""
+msgstr "Заменить запасы"
 
 #: build/serializers.py:968
 msgid "Allow allocation of substitute parts"
@@ -1558,7 +1558,7 @@ msgstr ""
 
 #: build/serializers.py:973
 msgid "Optional Items"
-msgstr ""
+msgstr "Необязательные элементы"
 
 #: build/serializers.py:974
 msgid "Allocate optional BOM items to build order"
@@ -1570,7 +1570,7 @@ msgstr "Для заказа сборки необходим остаток"
 
 #: build/tasks.py:119
 msgid "Overdue Build Order"
-msgstr ""
+msgstr "Просроченный заказ сборки"
 
 #: build/tasks.py:124
 #, python-brace-format
@@ -1579,7 +1579,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:18
 msgid "Part thumbnail"
-msgstr ""
+msgstr "Миниатюра детали"
 
 #: build/templates/build/build_base.html:39
 #: company/templates/company/supplier_part.html:36
@@ -1602,7 +1602,7 @@ msgstr "Действия со штрих-кодом"
 #: stock/templates/stock/item_base.html:45
 #: stock/templates/stock/location.html:56 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr ""
+msgstr "Показать QR-код"
 
 #: build/templates/build/build_base.html:46
 #: company/templates/company/supplier_part.html:42
@@ -1615,7 +1615,7 @@ msgstr ""
 #: templates/js/translated/barcode.js:479
 #: templates/js/translated/barcode.js:484
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Отвязать штрих-код"
 
 #: build/templates/build/build_base.html:48
 #: company/templates/company/supplier_part.html:44
@@ -1626,7 +1626,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:50
 #: stock/templates/stock/location.html:60
 msgid "Link Barcode"
-msgstr ""
+msgstr "Привязать штрих-код"
 
 #: build/templates/build/build_base.html:57
 #: order/templates/order/order_base.html:46
@@ -1653,7 +1653,7 @@ msgstr "Отменить сборку"
 
 #: build/templates/build/build_base.html:77
 msgid "Duplicate Build"
-msgstr ""
+msgstr "Дублировать сборку"
 
 #: build/templates/build/build_base.html:80
 msgid "Delete Build"
@@ -1670,11 +1670,11 @@ msgstr "Описание сборки"
 
 #: build/templates/build/build_base.html:118
 msgid "No build outputs have been created for this build order"
-msgstr ""
+msgstr "Нет результатов сборки для этого заказа сборки"
 
 #: build/templates/build/build_base.html:125
 msgid "Build Order is ready to mark as completed"
-msgstr ""
+msgstr "Заказ на сборку готов к отметке как выполненный"
 
 #: build/templates/build/build_base.html:130
 msgid "Build Order cannot be completed as outstanding outputs remain"
@@ -1751,7 +1751,7 @@ msgstr "Выдано"
 #: build/templates/build/build_base.html:212
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2075
 msgid "Priority"
-msgstr ""
+msgstr "Приоритет"
 
 #: build/templates/build/build_base.html:274
 msgid "Delete Build Order"
@@ -1759,11 +1759,11 @@ msgstr "Удалить заказ на сборку"
 
 #: build/templates/build/build_base.html:284
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "Создать QR-код заказа"
 
 #: build/templates/build/build_base.html:296
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Привязать штрих-код для заказа сборки"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1965,7 +1965,7 @@ msgstr "Выберите {name} файл для загрузки"
 
 #: common/models.py:68
 msgid "Updated"
-msgstr ""
+msgstr "Обновлено"
 
 #: common/models.py:69
 msgid "Timestamp of last update"
@@ -2034,7 +2034,7 @@ msgstr ""
 
 #: common/models.py:943
 msgid "Use instance name"
-msgstr ""
+msgstr "Название инстанса"
 
 #: common/models.py:944
 msgid "Use the instance name in the title-bar"
@@ -2082,7 +2082,7 @@ msgstr ""
 
 #: common/models.py:986
 msgid "Download Size Limit"
-msgstr ""
+msgstr "Ограничение размера загрузки"
 
 #: common/models.py:987
 msgid "Maximum allowable download size for remote image"
@@ -2106,7 +2106,7 @@ msgstr ""
 
 #: common/models.py:1011
 msgid "Tree Depth"
-msgstr ""
+msgstr "Глубина дерева"
 
 #: common/models.py:1012
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
@@ -2114,7 +2114,7 @@ msgstr ""
 
 #: common/models.py:1021
 msgid "Update Check Interval"
-msgstr ""
+msgstr "Интервал проверки обновлений"
 
 #: common/models.py:1022
 msgid "How often to check for updates (set to zero to disable)"
@@ -2124,11 +2124,11 @@ msgstr ""
 #: common/models.py:1064 common/models.py:1075 common/models.py:1299
 #: common/models.py:1323 common/models.py:1446 common/models.py:1695
 msgid "days"
-msgstr ""
+msgstr "дней"
 
 #: common/models.py:1032
 msgid "Automatic Backup"
-msgstr ""
+msgstr "Автоматическое резервное копирование"
 
 #: common/models.py:1033
 msgid "Enable automatic backup of database and media files"
@@ -2136,7 +2136,7 @@ msgstr ""
 
 #: common/models.py:1039
 msgid "Auto Backup Interval"
-msgstr ""
+msgstr "Интервал автосохранения"
 
 #: common/models.py:1040
 msgid "Specify number of days between automated backup events"
@@ -2168,15 +2168,15 @@ msgstr ""
 
 #: common/models.py:1083 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Поддержка штрих-кодов"
 
 #: common/models.py:1084
 msgid "Enable barcode scanner support"
-msgstr ""
+msgstr "Включить поддержку сканера штрих-кодов"
 
 #: common/models.py:1090
 msgid "Barcode Input Delay"
-msgstr ""
+msgstr "Задержка сканирования штрих-кода"
 
 #: common/models.py:1091
 msgid "Barcode input processing delay time"
@@ -2184,7 +2184,7 @@ msgstr ""
 
 #: common/models.py:1101
 msgid "Barcode Webcam Support"
-msgstr ""
+msgstr "Поддержка веб-камер штрих-кодов"
 
 #: common/models.py:1102
 msgid "Allow barcode scanning via webcam in browser"
@@ -2192,7 +2192,7 @@ msgstr ""
 
 #: common/models.py:1108
 msgid "Part Revisions"
-msgstr ""
+msgstr "Ревизия деталей"
 
 #: common/models.py:1109
 msgid "Enable revision field for Part"
