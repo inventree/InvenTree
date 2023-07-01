@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-29 12:40+0000\n"
-"PO-Revision-Date: 2023-06-30 09:10\n"
+"PO-Revision-Date: 2023-07-01 09:21\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -2433,7 +2433,7 @@ msgstr ""
 
 #: common/models.py:1315
 msgid "Only use active variant parts for calculating variant pricing"
-msgstr ""
+msgstr "Gebruik alleen actieve variantonderdelen voor het berekenen van variantprijzen"
 
 #: common/models.py:1321
 msgid "Pricing Rebuild Interval"
@@ -2853,19 +2853,19 @@ msgstr ""
 
 #: common/models.py:1751
 msgid "Hide inactive parts"
-msgstr ""
+msgstr "Inactieve Onderdelen Verbergen"
 
 #: common/models.py:1752
 msgid "Hide inactive parts in results displayed on the homepage"
-msgstr ""
+msgstr "Verberg inactieve delen bij items op de homepage"
 
 #: common/models.py:1758
 msgid "Show subscribed parts"
-msgstr ""
+msgstr "Toon geabonneerde onderdelen"
 
 #: common/models.py:1759
 msgid "Show subscribed parts on the homepage"
-msgstr ""
+msgstr "Toon geabonneerde onderdelen op de homepage"
 
 #: common/models.py:1765
 msgid "Show subscribed categories"
@@ -3033,23 +3033,23 @@ msgstr "Zoek Onderdelen"
 
 #: common/models.py:1906
 msgid "Display parts in search preview window"
-msgstr ""
+msgstr "Onderdelen weergeven in zoekscherm"
 
 #: common/models.py:1912
 msgid "Search Supplier Parts"
-msgstr ""
+msgstr "Zoek leveranciersonderdelen"
 
 #: common/models.py:1913
 msgid "Display supplier parts in search preview window"
-msgstr ""
+msgstr "Leveranciersonderdelen weergeven in zoekscherm"
 
 #: common/models.py:1919
 msgid "Search Manufacturer Parts"
-msgstr ""
+msgstr "Fabrikant onderdelen zoeken"
 
 #: common/models.py:1920
 msgid "Display manufacturer parts in search preview window"
-msgstr ""
+msgstr "Fabrikant onderdelen weergeven in zoekscherm"
 
 #: common/models.py:1926
 msgid "Hide Inactive Parts"
@@ -3057,7 +3057,7 @@ msgstr "Inactieve Onderdelen Verbergen"
 
 #: common/models.py:1927
 msgid "Excluded inactive parts from search preview window"
-msgstr ""
+msgstr "Inactieve verkooporders weglaten in het zoekvenster"
 
 #: common/models.py:1933
 msgid "Search Categories"
@@ -3454,7 +3454,7 @@ msgstr ""
 
 #: common/views.py:481
 msgid "Parts imported"
-msgstr ""
+msgstr "Geïmporteerde onderdelen"
 
 #: common/views.py:509 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -3977,7 +3977,7 @@ msgstr "Afbeelding Downloaden"
 #: company/templates/company/manufacturer_part_sidebar.html:7
 #: templates/InvenTree/search.html:120 templates/js/translated/search.js:147
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Leveranciersonderdeel"
 
 #: company/templates/company/detail.html:19
 msgid "Create new supplier part"
@@ -5449,7 +5449,7 @@ msgstr ""
 #: templates/js/translated/part.js:2736 templates/js/translated/search.js:130
 #: templates/navbar.html:24 users/models.py:38
 msgid "Parts"
-msgstr ""
+msgstr "Onderdelen"
 
 #: part/admin.py:265
 msgid "BOM Level"
@@ -5546,7 +5546,7 @@ msgstr ""
 
 #: part/models.py:136
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
-msgstr ""
+msgstr "Onderdelen mogen niet rechtstreeks aan een structurele categorie worden toegewezen, maar kunnen worden toegewezen aan subcategorieën."
 
 #: part/models.py:140
 msgid "Default keywords"
@@ -6206,7 +6206,7 @@ msgstr ""
 
 #: part/serializers.py:313
 msgid "No parts selected"
-msgstr ""
+msgstr "Geen onderdelen geselecteerd"
 
 #: part/serializers.py:321
 msgid "Select category"
