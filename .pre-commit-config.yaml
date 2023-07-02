@@ -70,4 +70,5 @@ repos:
       - babel-eslint@6.1.2
       - "@typescript-eslint/eslint-plugin@latest"
       - "@typescript-eslint/parser"
+      - "@trivago/prettier-plugin-sort-imports"
     files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
