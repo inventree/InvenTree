@@ -7,7 +7,7 @@ export function ErrorItem({ id, error }: { id: string; error?: any }) {
   return (
     <>
       <p>
-        <Trans>An error occured:</Trans>
+        <Trans>An error occurred:</Trans>
       </p>
       {error_message}
     </>

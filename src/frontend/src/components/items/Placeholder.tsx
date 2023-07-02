@@ -7,7 +7,7 @@ export function PlaceholderPill() {
       multiline
       width={220}
       withArrow
-      label={t`This feature/button/site is a placeholder for a feature that is not implemented, only partial or inteded for testing.`}
+      label={t`This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing.`}
     >
       <Badge color="teal" variant="outline">
         <Trans>PLH</Trans>
