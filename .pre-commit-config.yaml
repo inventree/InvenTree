@@ -59,6 +59,9 @@ repos:
   hooks:
     - id: prettier
       files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
+      additional_dependencies:
+      - "prettier@^2.4.1"
+      - "@trivago/prettier-plugin-sort-imports"
 - repo: https://github.com/pre-commit/mirrors-eslint
   rev: "v8.42.0"
   hooks:
@@ -70,5 +73,4 @@ repos:
       - babel-eslint@6.1.2
       - "@typescript-eslint/eslint-plugin@latest"
       - "@typescript-eslint/parser"
-      - "@trivago/prettier-plugin-sort-imports"
     files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
