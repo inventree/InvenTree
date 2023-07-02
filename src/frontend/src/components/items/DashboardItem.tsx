@@ -1,4 +1,5 @@
-import { LoadingOverlay, Group, Paper, Text } from '@mantine/core';
+import { Group, LoadingOverlay, Paper, Text } from '@mantine/core';
+
 import { InvenTreeStyle } from '../../globalStyle';
 
 export interface StatisticItemProps {

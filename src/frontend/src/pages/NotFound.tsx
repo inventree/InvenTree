@@ -2,6 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Button, Center, Container, Stack, Text, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+
 import { LanguageContext } from '../context/LanguageContext';
 
 export default function NotFound() {

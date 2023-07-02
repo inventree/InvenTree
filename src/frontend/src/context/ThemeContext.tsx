@@ -8,6 +8,7 @@ import {
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
+
 import { QrCodeModal } from '../components/modals/QrCodeModal';
 import { useLocalState } from './LocalState';
 

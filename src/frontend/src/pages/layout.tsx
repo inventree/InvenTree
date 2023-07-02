@@ -1,5 +1,6 @@
 import { Container, Flex, Space } from '@mantine/core';
 import { Navigate, Outlet } from 'react-router-dom';
+
 import { Footer } from '../components/nav/Footer';
 import { Header } from '../components/nav/Header';
 import { useSessionState } from '../context/SessionState';

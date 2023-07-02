@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { useEffect } from 'react';
+
 import { api } from '../App';
 import { useLocalState } from './LocalState';
 

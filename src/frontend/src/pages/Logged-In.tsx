@@ -2,6 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { api } from '../App';
 import { ApiPaths, url } from '../context/ApiState';
 import { doTokenLogin } from '../functions/auth';

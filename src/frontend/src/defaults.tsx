@@ -1,6 +1,7 @@
-import { HostList } from './context/states';
-import { MantineSize } from '@mantine/core';
 import { Trans } from '@lingui/macro';
+import { MantineSize } from '@mantine/core';
+
+import { HostList } from './context/states';
 
 export const defaultHostList: HostList = {
   'mantine-u56l5jt85': {

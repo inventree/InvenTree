@@ -1,4 +1,4 @@
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import {
   Badge,
   Button,
@@ -21,6 +21,7 @@ import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
 import { Html5QrcodeResult } from 'html5-qrcode/core';
 import { useEffect, useState } from 'react';
+
 import { api } from '../../App';
 
 export function QrCodeModal({

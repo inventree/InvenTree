@@ -1,5 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { Group } from '@mantine/core';
+
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 

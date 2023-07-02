@@ -1,4 +1,5 @@
 import { Text } from '@mantine/core';
+
 import { InvenTreeStyle } from '../../globalStyle';
 
 export function StylishText({ children }: { children: JSX.Element | string }) {

@@ -1,8 +1,9 @@
-import { Group, SimpleGrid, Chip } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import { Chip, Group, SimpleGrid } from '@mantine/core';
+
 import { DashboardItemProxy } from '../../components/DashboardItemProxy';
 import { StylishText } from '../../components/items/StylishText';
 import { useLocalState } from '../../context/LocalState';
-import { Trans, t } from '@lingui/macro';
 
 export default function Dashboard() {
   const [autoupdate, toggleAutoupdate] = useLocalState((state) => [

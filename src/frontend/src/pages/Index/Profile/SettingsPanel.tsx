@@ -1,4 +1,4 @@
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import {
   Accordion,
   Badge,
@@ -20,6 +20,7 @@ import { showNotification } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+
 import { api } from '../../../App';
 import { Setting, SettingTyp, SettingType } from '../../../context/states';
 import { InvenTreeStyle } from '../../../globalStyle';

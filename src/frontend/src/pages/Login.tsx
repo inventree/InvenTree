@@ -1,6 +1,7 @@
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { Center, Container, Group, Select, Stack, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
+
 import { AuthenticationForm } from '../components/AuthenticationForm';
 import { HostOptionsForm } from '../components/HostOptionsForm';
 import { EditButton } from '../components/items/EditButton';

@@ -1,17 +1,18 @@
-import { useForm } from '@mantine/form';
+import { Trans, t } from '@lingui/macro';
 import {
-  TextInput,
-  Group,
   ActionIcon,
   Box,
-  Text,
   Button,
-  Space
+  Group,
+  Space,
+  Text,
+  TextInput
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import { randomId } from '@mantine/hooks';
-import { IconTrash, IconSquarePlus } from '@tabler/icons-react';
+import { IconSquarePlus, IconTrash } from '@tabler/icons-react';
+
 import { HostList } from '../context/states';
-import { Trans, t } from '@lingui/macro';
 
 export function HostOptionsForm({
   data,

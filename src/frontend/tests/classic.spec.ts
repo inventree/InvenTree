@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import exp from 'constants';
+import { expect, test } from '@playwright/test';
 
 test('Check classic index site', async ({ page }) => {
   await page.goto('./api/');

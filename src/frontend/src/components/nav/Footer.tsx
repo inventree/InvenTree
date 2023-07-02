@@ -1,7 +1,8 @@
-import { InvenTreeLogo } from '../items/InvenTreeLogo';
-import { Container, Group, Anchor } from '@mantine/core';
-import { InvenTreeStyle } from '../../globalStyle';
+import { Anchor, Container, Group } from '@mantine/core';
+
 import { links } from '../../defaults';
+import { InvenTreeStyle } from '../../globalStyle';
+import { InvenTreeLogo } from '../items/InvenTreeLogo';
 
 export function Footer() {
   const { classes } = InvenTreeStyle();

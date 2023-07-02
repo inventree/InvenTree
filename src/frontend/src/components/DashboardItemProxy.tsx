@@ -1,9 +1,10 @@
+import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+
 import { api } from '../App';
 import { StatisticItem } from './items/DashboardItem';
-import { useEffect, useState } from 'react';
 import { ErrorItem } from './items/ErrorItem';
-import { t } from '@lingui/macro';
 
 export function DashboardItemProxy({
   id,
