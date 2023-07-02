@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-29 12:40+0000\n"
-"PO-Revision-Date: 2023-07-01 09:21\n"
+"PO-Revision-Date: 2023-07-02 21:26\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1148,7 +1148,7 @@ msgstr "Project Code"
 
 #: build/models.py:310
 msgid "Project code for this build order"
-msgstr ""
+msgstr "Project code voor deze build order"
 
 #: build/models.py:545
 #, python-brace-format
@@ -1433,7 +1433,7 @@ msgstr "Verwijder alle productieuitvoeren die niet zijn voltooid"
 
 #: build/serializers.py:614
 msgid "Not permitted"
-msgstr ""
+msgstr "Niet toegestaan"
 
 #: build/serializers.py:615
 msgid "Accept as consumed by this build order"
@@ -1579,7 +1579,7 @@ msgstr "Productieorder {bo} is nu achterstallig"
 
 #: build/templates/build/build_base.html:18
 msgid "Part thumbnail"
-msgstr ""
+msgstr "Miniatuurweergave van onderdeel"
 
 #: build/templates/build/build_base.html:39
 #: company/templates/company/supplier_part.html:36
@@ -1879,7 +1879,7 @@ msgstr "Nieuwe Productieuitvoer"
 
 #: build/templates/build/detail.html:232 build/templates/build/sidebar.html:15
 msgid "Consumed Stock"
-msgstr ""
+msgstr "Verbruikte voorraad"
 
 #: build/templates/build/detail.html:244
 msgid "Completed Build Outputs"
@@ -2009,12 +2009,12 @@ msgstr "Geen groep"
 
 #: common/models.py:869
 msgid "An empty domain is not allowed."
-msgstr ""
+msgstr "Een leeg domein is niet toegestaan."
 
 #: common/models.py:871
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
-msgstr ""
+msgstr "Ongeldige domeinnaam: {domain}"
 
 #: common/models.py:928
 msgid "Restart required"
@@ -2098,7 +2098,7 @@ msgstr ""
 
 #: common/models.py:1004
 msgid "Require confirm"
-msgstr ""
+msgstr "Bevestiging vereist"
 
 #: common/models.py:1005
 msgid "Require explicit user confirmation for certain action."
