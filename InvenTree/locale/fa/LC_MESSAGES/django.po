@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 12:40+0000\n"
-"PO-Revision-Date: 2023-06-30 09:11\n"
+"POT-Creation-Date: 2023-07-02 23:57+0000\n"
+"PO-Revision-Date: 2023-07-03 21:44\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -1150,43 +1150,43 @@ msgstr ""
 msgid "Project code for this build order"
 msgstr ""
 
-#: build/models.py:545
+#: build/models.py:550
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr ""
 
-#: build/models.py:551
+#: build/models.py:556
 msgid "A build order has been completed"
 msgstr ""
 
-#: build/models.py:753 build/models.py:831
+#: build/models.py:758 build/models.py:836
 msgid "No build output specified"
 msgstr ""
 
-#: build/models.py:756
+#: build/models.py:761
 msgid "Build output is already completed"
 msgstr ""
 
-#: build/models.py:759
+#: build/models.py:764
 msgid "Build output does not match Build Order"
 msgstr ""
 
-#: build/models.py:835 build/serializers.py:220 build/serializers.py:259
+#: build/models.py:840 build/serializers.py:220 build/serializers.py:259
 #: build/serializers.py:819 order/models.py:453 order/serializers.py:385
 #: order/serializers.py:507 part/serializers.py:1149 part/serializers.py:1470
 #: stock/models.py:593 stock/models.py:1387 stock/serializers.py:381
 msgid "Quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:840 build/serializers.py:225
+#: build/models.py:845 build/serializers.py:225
 msgid "Quantity cannot be greater than the output quantity"
 msgstr ""
 
-#: build/models.py:1260
+#: build/models.py:1265
 msgid "Build object"
 msgstr ""
 
-#: build/models.py:1274 build/models.py:1556 build/serializers.py:206
+#: build/models.py:1279 build/models.py:1561 build/serializers.py:206
 #: build/serializers.py:244 build/templates/build/build_base.html:103
 #: build/templates/build/detail.html:34 common/models.py:2162
 #: order/models.py:1086 order/models.py:1658 order/serializers.py:1239
@@ -1232,36 +1232,36 @@ msgstr ""
 msgid "Quantity"
 msgstr ""
 
-#: build/models.py:1275
+#: build/models.py:1280
 msgid "Required quantity for build order"
 msgstr ""
 
-#: build/models.py:1357
+#: build/models.py:1362
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr ""
 
-#: build/models.py:1366
+#: build/models.py:1371
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr ""
 
-#: build/models.py:1376 order/models.py:1614
+#: build/models.py:1381 order/models.py:1614
 msgid "Stock item is over-allocated"
 msgstr ""
 
-#: build/models.py:1382 order/models.py:1617
+#: build/models.py:1387 order/models.py:1617
 msgid "Allocation quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:1388
+#: build/models.py:1393
 msgid "Quantity must be 1 for serialized stock"
 msgstr ""
 
-#: build/models.py:1449
+#: build/models.py:1454
 msgid "Selected stock item does not match BOM line"
 msgstr ""
 
-#: build/models.py:1543 build/serializers.py:799 order/serializers.py:1065
+#: build/models.py:1548 build/serializers.py:799 order/serializers.py:1065
 #: order/serializers.py:1086 stock/serializers.py:479 stock/serializers.py:887
 #: stock/serializers.py:1013 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1278,19 +1278,19 @@ msgstr ""
 msgid "Stock Item"
 msgstr ""
 
-#: build/models.py:1544
+#: build/models.py:1549
 msgid "Source stock item"
 msgstr ""
 
-#: build/models.py:1557
+#: build/models.py:1562
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
-#: build/models.py:1565
+#: build/models.py:1570
 msgid "Install into"
 msgstr ""
 
-#: build/models.py:1566
+#: build/models.py:1571
 msgid "Destination stock item"
 msgstr ""
 
