@@ -20,14 +20,16 @@ import part.models
 from InvenTree.api import MetadataView
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
-from stock.models import StockItem, StockItemAttachment
+from stock.models import StockItem, StockItemAttachment, StockLocation
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     ReturnOrderReport, SalesOrderReport, TestReport)
+                     ReturnOrderReport, SalesOrderReport, TestReport,
+                     StockLocationReport)
 from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           PurchaseOrderReportSerializer,
                           ReturnOrderReportSerializer,
-                          SalesOrderReportSerializer, TestReportSerializer)
+                          SalesOrderReportSerializer, TestReportSerializer,
+                          StockLocationReportSerializer)
 
 
 class ReportListView(ListAPI):
@@ -448,6 +450,30 @@ class ReturnOrderReportPrint(ReturnOrderReportMixin, ReportPrintMixin, RetrieveA
     pass
 
 
+class StockLocationReportMixin(ReportFilterMixin):
+    """Mixin for StockLocation report template"""
+
+    ITEM_MODEL = StockLocation
+    ITEM_KEY = 'location'
+    queryset = StockLocationReport.objects.all()
+    serializer_class = StockLocationReportSerializer
+
+
+class StockLocationReportList(StockLocationReportMixin, ReportListView):
+    """API list endpoint for the StockLocationReportList model"""
+    pass
+
+
+class StockLocationReportDetail(StockLocationReportMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single StockLocationReportDetail object."""
+    pass
+
+
+class StockLocationReportPrint(StockLocationReportMixin, ReportPrintMixin, RetrieveAPI):
+    """API endpoint for printing a StockLocationReportPrint object"""
+    pass
+
+
 report_api_urls = [
 
     # Purchase order reports
@@ -524,4 +550,18 @@ report_api_urls = [
         # List view
         re_path(r'^.*$', StockItemTestReportList.as_view(), name='api-stockitem-testreport-list'),
     ])),
+
+    # Stock Location reports (Stock Location Reports -> sir)
+    re_path(r'slr/', include([
+        # Detail views
+        path(r'<int:pk>/', include([
+            re_path(r'print/?', StockLocationReportPrint.as_view(), name='api-stocklocation-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'report': StockLocationReport}, name='api-stocklocation-report-metadata'),
+            re_path(r'^.*$', StockLocationReportDetail.as_view(), name='api-stocklocation-report-detail'),
+        ])),
+
+        # List view
+        re_path(r'^.*$', StockLocationReportList.as_view(), name='api-stocklocation-report-list'),
+    ])),  
+
 ]
