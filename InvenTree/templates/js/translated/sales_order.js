@@ -116,6 +116,18 @@ function salesOrderFields(options={}) {
                 return filters;
             }
         },
+        address: {
+            icon: 'fa-map',
+            adjustFilters: function(filters) {
+                let customer = getFormFieldValue('customer', {}, {modal: options.modal});
+
+                if (customer) {
+                    filters.company = customer;
+                }
+
+                return filters;
+            }
+        },
         responsible: {
             icon: 'fa-user',
         }
@@ -1727,12 +1739,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.error('function called without order ID');
+        console.error('loadSalesOrderLineItemTable called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.error('function called without order status');
+        console.error('loadSalesOrderLineItemTable called without order status');
         return;
     }
 

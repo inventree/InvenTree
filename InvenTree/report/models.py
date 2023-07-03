@@ -7,7 +7,6 @@ import sys
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template import Context, Template
@@ -304,19 +303,6 @@ class TestReport(ReportTemplateBase):
         help_text=_('Include test results for stock items installed inside assembled item')
     )
 
-    def matches_stock_item(self, item):
-        """Test if this report template matches a given StockItem objects."""
-        try:
-            filters = validateFilterString(self.filters)
-            items = stock.models.StockItem.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            return False
-
-        # Ensure the provided StockItem object matches the filters
-        items = items.filter(pk=item.pk)
-
-        return items.exists()
-
     def get_test_keys(self, stock_item):
         """Construct a flattened list of test 'keys' for this StockItem:
 
@@ -392,6 +378,8 @@ class BuildReport(ReportTemplateBase):
         return {
             'build': my_build,
             'part': my_build.part,
+            'build_outputs': my_build.build_outputs.all(),
+            'line_items': my_build.build_lines.all(),
             'bom_items': my_build.part.get_bom_items(),
             'reference': my_build.reference,
             'quantity': my_build.quantity,

@@ -221,9 +221,7 @@
     </div>
     <div class='panel-content'>
         <div id='sublocation-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="location" %}
-            </div>
+            {% include "filter_list.html" with id="location" %}
         </div>
 
         <table class='table table-striped table-condensed' data-toolbar='#sublocation-button-toolbar' id='sublocation-table'></table>
@@ -269,13 +267,6 @@
             allowTreeView: true,
         });
     });
-
-    linkButtonsToSelection(
-        $('#sublocation-table'),
-        [
-            '#location-print-options',
-        ]
-    );
 
     {% if labels_enabled %}
     $('#print-label').click(function() {
@@ -412,9 +403,6 @@
 
     onPanelLoad('stock', function() {
         loadStockTable($("#stock-table"), {
-            buttons: [
-                '#stock-options',
-            ],
             params: {
                 {% if location %}
                 location: {{ location.pk }},

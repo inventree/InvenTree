@@ -33,6 +33,7 @@
     modalSetContent,
     partFields,
     partGroups,
+    reloadBootstrapTable,
     renderLink,
     setupFilterList,
     shortenString,
@@ -817,7 +818,24 @@ function loadBomTable(table, options={}) {
 
     Object.assign(filters, params);
 
-    setupFilterList('bom', $(table));
+    setupFilterList('bom', $(table), '#filter-list-bom', {
+        custom_actions: [{
+            label: 'actions',
+            actions: [{
+                label: 'delete',
+                title: '{% trans "Delete items" %}',
+                icon: 'fa-trash-alt icon-red',
+                permission: 'part.change',
+                callback: function(data) {
+                    deleteBomItems(data, {
+                        success: function() {
+                            reloadBootstrapTable('#bom-table');
+                        }
+                    });
+                }
+            }]
+        }]
+    });
 
     function availableQuantity(row) {
 
@@ -972,7 +990,7 @@ function loadBomTable(table, options={}) {
             }
 
             if (row.overage) {
-                text += `<small> (${row.overage})    </small>`;
+                text += `<small> (+${row.overage})</small>`;
             }
 
             return text;
@@ -1161,6 +1179,8 @@ function loadBomTable(table, options={}) {
                 }
             }
 
+            text = renderLink(text, url);
+
             if (row.on_order && row.on_order > 0) {
                 text += makeIconBadge(
                     'fa-shopping-cart',
@@ -1168,7 +1188,7 @@ function loadBomTable(table, options={}) {
                 );
             }
 
-            return renderLink(text, url);
+            return text;
         }
     });
 

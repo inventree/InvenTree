@@ -1,10 +1,18 @@
 
-<tr>
-    <td colspan='2'><b><i>Release {{ prefix }}.x</i></b></td>
-    <td colspan='2'></td>
-</tr>
+<div class='md-typeset__scrollwrap'>
+    <div class='md-typeset__table'>
+        <table>
+            <thead>
+                <tr>
+                    <th><span class='fas fa-clipboard-list'></span> Release</th>
+                    <th><span class='fas fa-calendar-alt'></span> Date</th>
+                    <th><span class='fab fa-github'></span> GitHub</th>
+                    <th><span class='fab fa-docker'></span> Docker</th>
+                </tr>
+            </thead>
+            <tbody>
+
 {% for release in config.releases %}
-{% if release.prefix == prefix %}
 <tr>
     <td>
         {% if release.local_path %}
@@ -25,5 +33,8 @@
         {% endif %}
     </td>
 </tr>
-{% endif %}
 {% endfor %}
+</tbody>
+</table>
+</div>
+</div>
