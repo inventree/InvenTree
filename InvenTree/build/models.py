@@ -361,6 +361,11 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         return self.build_lines.filter(bom_item__sub_part__trackable=False)
 
+    @property
+    def are_untracked_parts_allocated(self):
+        """Returns True if all untracked parts are allocated for this BuildOrder."""
+        return self.is_fully_allocated(tracked=False)
+
     def has_untracked_line_items(self):
         """Returns True if this BuildOrder has non trackable BomItems."""
         return self.has_untracked_line_items.count() > 0
