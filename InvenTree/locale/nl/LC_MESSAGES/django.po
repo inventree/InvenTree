@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 12:40+0000\n"
-"PO-Revision-Date: 2023-07-02 21:26\n"
+"POT-Creation-Date: 2023-07-02 23:57+0000\n"
+"PO-Revision-Date: 2023-07-03 21:43\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1150,43 +1150,43 @@ msgstr "Project Code"
 msgid "Project code for this build order"
 msgstr "Project code voor deze build order"
 
-#: build/models.py:545
+#: build/models.py:550
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "Productieorder {build} is voltooid"
 
-#: build/models.py:551
+#: build/models.py:556
 msgid "A build order has been completed"
 msgstr "Een productieorder is voltooid"
 
-#: build/models.py:753 build/models.py:831
+#: build/models.py:758 build/models.py:836
 msgid "No build output specified"
 msgstr "Geen productie uitvoer opgegeven"
 
-#: build/models.py:756
+#: build/models.py:761
 msgid "Build output is already completed"
 msgstr "Productie uitvoer is al voltooid"
 
-#: build/models.py:759
+#: build/models.py:764
 msgid "Build output does not match Build Order"
 msgstr "Productuitvoer komt niet overeen met de Productieorder"
 
-#: build/models.py:835 build/serializers.py:220 build/serializers.py:259
+#: build/models.py:840 build/serializers.py:220 build/serializers.py:259
 #: build/serializers.py:819 order/models.py:453 order/serializers.py:385
 #: order/serializers.py:507 part/serializers.py:1149 part/serializers.py:1470
 #: stock/models.py:593 stock/models.py:1387 stock/serializers.py:381
 msgid "Quantity must be greater than zero"
 msgstr "Hoeveelheid moet groter zijn dan nul"
 
-#: build/models.py:840 build/serializers.py:225
+#: build/models.py:845 build/serializers.py:225
 msgid "Quantity cannot be greater than the output quantity"
 msgstr ""
 
-#: build/models.py:1260
+#: build/models.py:1265
 msgid "Build object"
 msgstr ""
 
-#: build/models.py:1274 build/models.py:1556 build/serializers.py:206
+#: build/models.py:1279 build/models.py:1561 build/serializers.py:206
 #: build/serializers.py:244 build/templates/build/build_base.html:103
 #: build/templates/build/detail.html:34 common/models.py:2162
 #: order/models.py:1086 order/models.py:1658 order/serializers.py:1239
@@ -1232,36 +1232,36 @@ msgstr ""
 msgid "Quantity"
 msgstr "Hoeveelheid"
 
-#: build/models.py:1275
+#: build/models.py:1280
 msgid "Required quantity for build order"
 msgstr ""
 
-#: build/models.py:1357
+#: build/models.py:1362
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Productieartikel moet een productieuitvoer specificeren, omdat het hoofdonderdeel gemarkeerd is als traceerbaar"
 
-#: build/models.py:1366
+#: build/models.py:1371
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Toegewezen hoeveelheid ({q}) mag de beschikbare voorraad ({a}) niet overschrijden"
 
-#: build/models.py:1376 order/models.py:1614
+#: build/models.py:1381 order/models.py:1614
 msgid "Stock item is over-allocated"
 msgstr "Voorraad item is te veel toegewezen"
 
-#: build/models.py:1382 order/models.py:1617
+#: build/models.py:1387 order/models.py:1617
 msgid "Allocation quantity must be greater than zero"
 msgstr "Toewijzing hoeveelheid moet groter zijn dan nul"
 
-#: build/models.py:1388
+#: build/models.py:1393
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Hoeveelheid moet 1 zijn voor geserialiseerde voorraad"
 
-#: build/models.py:1449
+#: build/models.py:1454
 msgid "Selected stock item does not match BOM line"
 msgstr ""
 
-#: build/models.py:1543 build/serializers.py:799 order/serializers.py:1065
+#: build/models.py:1548 build/serializers.py:799 order/serializers.py:1065
 #: order/serializers.py:1086 stock/serializers.py:479 stock/serializers.py:887
 #: stock/serializers.py:1013 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1278,19 +1278,19 @@ msgstr ""
 msgid "Stock Item"
 msgstr "Voorraadartikel"
 
-#: build/models.py:1544
+#: build/models.py:1549
 msgid "Source stock item"
 msgstr "Bron voorraadartikel"
 
-#: build/models.py:1557
+#: build/models.py:1562
 msgid "Stock quantity to allocate to build"
 msgstr "Voorraad hoeveelheid toe te wijzen aan productie"
 
-#: build/models.py:1565
+#: build/models.py:1570
 msgid "Install into"
 msgstr "Installeren in"
 
-#: build/models.py:1566
+#: build/models.py:1571
 msgid "Destination stock item"
 msgstr "Bestemming voorraadartikel"
 
@@ -3213,7 +3213,7 @@ msgstr ""
 
 #: common/models.py:2074 part/templates/part/detail.html:41
 msgid "Part Scheduling"
-msgstr ""
+msgstr "Onderdeel planning"
 
 #: common/models.py:2075
 msgid "Display part scheduling information"
@@ -3221,7 +3221,7 @@ msgstr ""
 
 #: common/models.py:2081 part/templates/part/detail.html:62
 msgid "Part Stocktake"
-msgstr ""
+msgstr "Voorraadcontrole onderdeel"
 
 #: common/models.py:2082
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
@@ -3901,7 +3901,7 @@ msgstr "Bedrijf verwijderen"
 #: report/templates/report/inventree_test_report_base.html:84
 #: report/templates/report/inventree_test_report_base.html:163
 msgid "Part image"
-msgstr ""
+msgstr "Afbeelding onderdeel"
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:12
@@ -3987,7 +3987,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:123
 #: part/templates/part/detail.html:356
 msgid "New Supplier Part"
-msgstr ""
+msgstr "Nieuw leveranciers onderdeel"
 
 #: company/templates/company/detail.html:41 templates/InvenTree/search.html:105
 #: templates/js/translated/search.js:151
@@ -4214,13 +4214,13 @@ msgstr ""
 #: company/templates/company/supplier_part.html:65
 #: templates/js/translated/company.js:293
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "Bewerk Leveranciers onderdeel"
 
 #: company/templates/company/supplier_part.html:69
 #: company/templates/company/supplier_part.html:70
 #: templates/js/translated/company.js:268
 msgid "Duplicate Supplier Part"
-msgstr ""
+msgstr "Dupliceer Leveranciers onderdeel"
 
 #: company/templates/company/supplier_part.html:74
 msgid "Delete Supplier Part"
@@ -4228,7 +4228,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:75
 msgid "Delete Supplier  Part"
-msgstr ""
+msgstr "Verwijder leveranciers onderdeel"
 
 #: company/templates/company/supplier_part.html:134
 msgid "No supplier information available"
@@ -4265,15 +4265,15 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:277
 msgid "Supplier Part QR Code"
-msgstr ""
+msgstr "QR-code voor leveranciers onderdelen"
 
 #: company/templates/company/supplier_part.html:288
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Koppel barcode aan leveranciers onderdeel"
 
 #: company/templates/company/supplier_part.html:360
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Beschikbaarheid van onderdeel bijwerken"
 
 #: company/templates/company/supplier_part_sidebar.html:5 part/tasks.py:293
 #: part/templates/part/category.html:182
@@ -5345,16 +5345,16 @@ msgstr "{part} stukprijs bijgewerkt naar {price} en aantal naar {qty}"
 #: part/admin.py:33 part/admin.py:273 part/models.py:3719 part/tasks.py:288
 #: stock/admin.py:101
 msgid "Part ID"
-msgstr ""
+msgstr "Onderdeel-id"
 
 #: part/admin.py:34 part/admin.py:275 part/models.py:3723 part/tasks.py:289
 #: stock/admin.py:102
 msgid "Part Name"
-msgstr ""
+msgstr "Onderdeel naam"
 
 #: part/admin.py:35 part/tasks.py:290
 msgid "Part Description"
-msgstr ""
+msgstr "Onderdeel omschrijving"
 
 #: part/admin.py:36 part/models.py:893 part/templates/part/part_base.html:271
 #: templates/js/translated/part.js:1199 templates/js/translated/part.js:2306
@@ -5526,13 +5526,13 @@ msgstr ""
 #: part/models.py:76 part/models.py:3668 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
-msgstr ""
+msgstr "Onderdeel Categorie"
 
 #: part/models.py:77 part/templates/part/category.html:135
 #: templates/InvenTree/search.html:97 templates/js/translated/search.js:158
 #: users/models.py:37
 msgid "Part Categories"
-msgstr ""
+msgstr "Onderdeel Categorieën"
 
 #: part/models.py:129
 msgid "Default location for parts in this category"
@@ -5600,7 +5600,7 @@ msgstr ""
 
 #: part/models.py:850 part/models.py:3724
 msgid "Part name"
-msgstr ""
+msgstr "Onderdeel naam"
 
 #: part/models.py:856
 msgid "Is Template"
@@ -5633,11 +5633,11 @@ msgstr ""
 
 #: part/models.py:888
 msgid "Part category"
-msgstr ""
+msgstr "Onderdeel Categorie"
 
 #: part/models.py:894
 msgid "Internal Part Number"
-msgstr ""
+msgstr "Intern Onderdeelnummer"
 
 #: part/models.py:899
 msgid "Part revision or version number"
@@ -5653,7 +5653,7 @@ msgstr ""
 
 #: part/models.py:971
 msgid "Default supplier part"
-msgstr ""
+msgstr "Standaardleverancier"
 
 #: part/models.py:978
 msgid "Default Expiry"
@@ -5669,7 +5669,7 @@ msgstr ""
 
 #: part/models.py:992
 msgid "Units of measure for this part"
-msgstr ""
+msgstr "Eenheden voor dit onderdeel"
 
 #: part/models.py:1001
 msgid "Can this part be built from other parts?"
@@ -5859,7 +5859,7 @@ msgstr ""
 
 #: part/models.py:3017
 msgid "Part for stocktake"
-msgstr ""
+msgstr "Onderdeel voor voorraadcontrole"
 
 #: part/models.py:3022
 msgid "Item Count"
@@ -5923,7 +5923,7 @@ msgstr ""
 
 #: part/models.py:3130 templates/InvenTree/settings/settings_staff_js.html:356
 msgid "Part Count"
-msgstr ""
+msgstr "Aantal onderdelen"
 
 #: part/models.py:3131
 msgid "Number of parts covered by stocktake"
