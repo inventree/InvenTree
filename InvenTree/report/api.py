@@ -562,6 +562,6 @@ report_api_urls = [
 
         # List view
         re_path(r'^.*$', StockLocationReportList.as_view(), name='api-stocklocation-report-list'),
-    ])),  
+    ])),
 
 ]

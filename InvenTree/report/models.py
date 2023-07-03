@@ -638,7 +638,7 @@ class StockLocationReport(ReportTemplateBase):
     def getSubdir(cls):
         """Return the subdirectory where StockLocationReport templates are located"""
         return 'slr'
-   
+
     filters = models.CharField(
         blank=True,
         max_length=250,
