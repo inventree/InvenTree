@@ -100,8 +100,9 @@ sqlparse==0.4.4
 tomli==2.0.1
     # via
     #   build
+    #   pip-tools
     #   pyproject-hooks
-typing-extensions==4.6.3
+typing-extensions==4.7.1
     # via
     #   -c requirements.txt
     #   asgiref
