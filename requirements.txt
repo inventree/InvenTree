@@ -55,7 +55,7 @@ django==3.2.19
     #   django-allauth-2fa
     #   django-cors-headers
     #   django-dbbackup
-    #   django-error-report
+    #   django-error-report-2
     #   django-filter
     #   django-flags
     #   django-formtools
@@ -94,7 +94,7 @@ django-crispy-forms==1.14.0
     # via -r requirements.in
 django-dbbackup==4.0.2
     # via -r requirements.in
-django-error-report==0.2.0
+django-error-report-2==0.4.0
     # via -r requirements.in
 django-filter==23.2
     # via -r requirements.in
