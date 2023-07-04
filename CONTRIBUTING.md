@@ -135,6 +135,12 @@ To run only partial tests, for example for a module use:
 invoke test --runtest order
 ```
 
+To see all the available options:
+
+```
+invoke test --help
+```
+
 ## Code Style
 
 Submitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
