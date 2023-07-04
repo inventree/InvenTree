@@ -3532,15 +3532,6 @@ class PartParameter(MetadataMixin, models.Model):
 
         super().clean()
 
-        # Validate the parameter data against the template units
-        if self.template.units:
-            try:
-                InvenTree.conversion.convert_physical_value(self.data, self.template.units)
-            except ValidationError as e:
-                raise ValidationError({
-                    'data': e.message
-                })
-
         # Validate the parameter data against the template choices
         if choices := self.template.get_choices():
             if self.data not in choices:
