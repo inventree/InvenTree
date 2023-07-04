@@ -284,6 +284,17 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'barcode_hash',
         ]
 
+    def __init__(self, *args, **kwargs):
+        """Custom initialization routine for the PartBrief serializer"""
+
+        pricing = kwargs.pop('pricing', True)
+
+        super().__init__(*args, **kwargs)
+
+        if not pricing:
+            self.fields.pop('pricing_min')
+            self.fields.pop('pricing_max')
+
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     # Pricing fields
@@ -532,6 +543,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         category_detail = kwargs.pop('category_detail', False)
         parameters = kwargs.pop('parameters', False)
         create = kwargs.pop('create', False)
+        pricing = kwargs.pop('pricing', True)
 
         super().__init__(*args, **kwargs)
 
@@ -545,6 +557,10 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields()[1:]:
                 self.fields.pop(f)
+
+        if not pricing:
+            self.fields.pop('pricing_min')
+            self.fields.pop('pricing_max')
 
     def get_api_url(self):
         """Return the API url associated with this serializer"""
@@ -1087,7 +1103,7 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
             'part_detail',
         ]
 
-    part_detail = PartBriefSerializer(source='part', read_only=True, many=False)
+    part_detail = PartBriefSerializer(source='part', read_only=True, many=False, pricing=False)
 
 
 class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -1132,14 +1148,19 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', False)
+        pricing = kwargs.pop('pricing', True)
 
         super(BomItemSerializer, self).__init__(*args, **kwargs)
 
-        if part_detail is not True:
+        if not part_detail:
             self.fields.pop('part_detail')
 
-        if sub_part_detail is not True:
+        if not sub_part_detail:
             self.fields.pop('sub_part_detail')
+
+        if not pricing:
+            self.fields.pop('pricing_min')
+            self.fields.pop('pricing_max')
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 
