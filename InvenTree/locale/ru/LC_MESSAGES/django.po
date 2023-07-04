@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-04 21:22+0000\n"
-"PO-Revision-Date: 2023-07-03 21:44\n"
+"PO-Revision-Date: 2023-07-04 21:46\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -3559,7 +3559,7 @@ msgstr ""
 
 #: company/models.py:329
 msgid "Select company"
-msgstr ""
+msgstr "Выберите компанию"
 
 #: company/models.py:332
 msgid "Address title"
@@ -3773,7 +3773,7 @@ msgstr "Код поставщика"
 
 #: company/models.py:728
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "Выберите производителя части"
 
 #: company/models.py:734
 msgid "URL for external supplier part link"
@@ -4443,7 +4443,7 @@ msgstr ""
 
 #: order/models.py:210
 msgid "Contact does not match selected company"
-msgstr ""
+msgstr "Контакт не соответствует выбранной компании"
 
 #: order/models.py:232
 msgid "Order description (optional)"
@@ -4451,7 +4451,7 @@ msgstr ""
 
 #: order/models.py:237
 msgid "Select project code for this order"
-msgstr ""
+msgstr "Выберите код проекта для этого заказа"
 
 #: order/models.py:240 order/models.py:1107 order/models.py:1467
 msgid "Link to external page"
@@ -4779,7 +4779,7 @@ msgstr ""
 
 #: order/models.py:1930
 msgid "Select item to return from customer"
-msgstr ""
+msgstr "Выберите товар возврата от клиента"
 
 #: order/models.py:1935
 msgid "Received Date"
@@ -4848,7 +4848,7 @@ msgstr ""
 
 #: order/serializers.py:494 order/serializers.py:613 order/serializers.py:1595
 msgid "Select destination location for received items"
-msgstr ""
+msgstr "Выберите место назначения для полученных товаров"
 
 #: order/serializers.py:513 templates/js/translated/purchase_order.js:1115
 msgid "Enter batch code for incoming stock items"
@@ -5078,14 +5078,14 @@ msgstr ""
 #: part/templates/part/import_wizard/match_fields.html:9
 #: templates/patterns/wizard/match_fields.html:8
 msgid "Missing selections for the following required columns"
-msgstr ""
+msgstr "Отсутствует выбор для следующих обязательных столбцов"
 
 #: order/templates/order/order_wizard/match_fields.html:20
 #: part/templates/part/import_wizard/ajax_match_fields.html:20
 #: part/templates/part/import_wizard/match_fields.html:20
 #: templates/patterns/wizard/match_fields.html:19
 msgid "Duplicate selections found, see below. Fix them then retry submitting."
-msgstr ""
+msgstr "Найдены дубликаты выделений, смотрите ниже. Исправьте их и попробуйте повторить отправку."
 
 #: order/templates/order/order_wizard/match_fields.html:29
 #: order/templates/order/order_wizard/match_parts.html:21
@@ -5093,7 +5093,7 @@ msgstr ""
 #: part/templates/part/import_wizard/match_references.html:21
 #: templates/patterns/wizard/match_fields.html:28
 msgid "Submit Selections"
-msgstr ""
+msgstr "Отправить выбранные"
 
 #: order/templates/order/order_wizard/match_fields.html:35
 #: part/templates/part/import_wizard/ajax_match_fields.html:28
@@ -5114,7 +5114,7 @@ msgstr ""
 #: part/templates/part/import_wizard/match_fields.html:60
 #: templates/patterns/wizard/match_fields.html:59
 msgid "Duplicate selection"
-msgstr ""
+msgstr "Дублировать выбранное"
 
 #: order/templates/order/order_wizard/match_fields.html:71
 #: order/templates/order/order_wizard/match_parts.html:52
@@ -5503,7 +5503,7 @@ msgstr ""
 
 #: part/api.py:780
 msgid "This option must be selected"
-msgstr ""
+msgstr "Необходимо выбрать эту опцию"
 
 #: part/bom.py:175 part/models.py:128 part/models.py:927
 #: part/templates/part/category.html:115 part/templates/part/part_base.html:369
@@ -6190,7 +6190,7 @@ msgstr "Часть 2"
 
 #: part/models.py:4135
 msgid "Select Related Part"
-msgstr ""
+msgstr "Выберите связанную часть"
 
 #: part/models.py:4153
 msgid "Part relationship cannot be created between a part and itself"
@@ -6206,7 +6206,7 @@ msgstr "Валюта покупки этой единицы хранения"
 
 #: part/serializers.py:324
 msgid "No parts selected"
-msgstr ""
+msgstr "Не выбран ни один элемент"
 
 #: part/serializers.py:332
 msgid "Select category"
@@ -6741,7 +6741,7 @@ msgstr ""
 #: templates/js/translated/bom.js:310 templates/js/translated/bom.js:344
 #: templates/js/translated/order.js:130
 msgid "Select file format"
-msgstr ""
+msgstr "Выбрать формат файла"
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
@@ -6977,7 +6977,7 @@ msgstr "Протестировать шаблон"
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
-msgstr ""
+msgstr "Выбрать из существующих изображений"
 
 #: part/templates/part/prices.html:11
 msgid "Pricing Overview"
@@ -7664,7 +7664,7 @@ msgstr ""
 
 #: stock/models.py:119 stock/models.py:829
 msgid "Select Owner"
-msgstr ""
+msgstr "Выберите владельца"
 
 #: stock/models.py:126
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
@@ -7726,7 +7726,7 @@ msgstr "Базовая деталь"
 
 #: stock/models.py:685
 msgid "Select a matching supplier part for this stock item"
-msgstr ""
+msgstr "Выберите соответствующего поставщика части для этого товара на складе"
 
 #: stock/models.py:695
 msgid "Where is this stock item located?"
@@ -7940,7 +7940,7 @@ msgstr ""
 
 #: stock/serializers.py:480
 msgid "Select stock item to install"
-msgstr ""
+msgstr "Выберите товар на складе для установки"
 
 #: stock/serializers.py:485 stock/serializers.py:543 stock/serializers.py:624
 #: stock/serializers.py:682
@@ -7973,11 +7973,11 @@ msgstr ""
 
 #: stock/serializers.py:663
 msgid "Select stock items to change status"
-msgstr ""
+msgstr "Выберите товары на складе для изменения статуса"
 
 #: stock/serializers.py:670
 msgid "No stock items selected"
-msgstr ""
+msgstr "Не выбрано ни одного товара на складе"
 
 #: stock/serializers.py:904
 msgid "Part must be salable"
@@ -9115,7 +9115,7 @@ msgstr "Настройки темы"
 
 #: templates/InvenTree/settings/user_display.html:39
 msgid "Select theme"
-msgstr ""
+msgstr "Выберите тему"
 
 #: templates/InvenTree/settings/user_display.html:50
 msgid "Set Theme"
@@ -9127,7 +9127,7 @@ msgstr "Настройки языка"
 
 #: templates/InvenTree/settings/user_display.html:67
 msgid "Select language"
-msgstr ""
+msgstr "Выберите язык"
 
 #: templates/InvenTree/settings/user_display.html:83
 #, python-format
@@ -9577,7 +9577,7 @@ msgstr "Код ошибки"
 
 #: templates/js/translated/attachment.js:114
 msgid "All selected attachments will be deleted"
-msgstr ""
+msgstr "Все выбранные вложения будут удалены"
 
 #: templates/js/translated/attachment.js:129
 msgid "Delete Attachments"
@@ -12694,8 +12694,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12830,3 +12829,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:253
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
