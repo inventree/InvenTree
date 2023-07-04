@@ -1148,7 +1148,26 @@ function adjustStock(action, items, options={}) {
     var extraFields = {};
 
     if (specifyLocation) {
+
+        // If a common location is specified, use that as the default
+        let commonLocation = null;
+
+        for (const item of items) {
+
+            if (item.location == commonLocation) {
+                continue;
+            }
+
+            if (commonLocation == null) {
+                commonLocation = item.location;
+            } else {
+                commonLocation = null;
+                break;
+            }
+        }
+
         extraFields.location = {
+            value: commonLocation,
             filters: {
                 structural: false,
             },
@@ -1834,14 +1853,14 @@ function makeStockActions(table) {
  */
 function loadStockTable(table, options) {
 
+    options.params = options.params || {};
+
     // List of user-params which override the default filters
     options.params['location_detail'] = true;
     options.params['part_detail'] = true;
 
     // Determine if installed items are displayed in the table
     let show_installed_items = global_settings.STOCK_SHOW_INSTALLED_ITEMS;
-
-    var params = options.params || {};
 
     let filters = {};
 
@@ -1850,7 +1869,7 @@ function loadStockTable(table, options) {
         const filterTarget = options.filterTarget || '#filter-list-stock';
         const filterKey = options.filterKey || options.name || 'stock';
 
-        filters = loadTableFilters(filterKey, params);
+        filters = loadTableFilters(filterKey, options.params);
 
         setupFilterList(filterKey, table, filterTarget, {
             download: true,
@@ -1886,7 +1905,7 @@ function loadStockTable(table, options) {
         });
     }
 
-    filters = Object.assign(filters, params);
+    filters = Object.assign(filters, options.params);
 
     var col = null;
 
@@ -1909,8 +1928,8 @@ function loadStockTable(table, options) {
         field: 'part',
         title: '{% trans "Part" %}',
         sortName: 'part__name',
-        visible: params['part_detail'],
-        switchable: params['part_detail'],
+        visible: options.params['part_detail'],
+        switchable: options.params['part_detail'],
         formatter: function(value, row) {
 
             let html = '';
@@ -1948,8 +1967,8 @@ function loadStockTable(table, options) {
         field: 'IPN',
         title: '{% trans "IPN" %}',
         sortName: 'part__IPN',
-        visible: params['part_detail'],
-        switchable: params['part_detail'],
+        visible: options.params['part_detail'],
+        switchable: options.params['part_detail'],
         formatter: function(value, row) {
             var ipn = row.part_detail.IPN;
             if (ipn) {
@@ -1969,8 +1988,8 @@ function loadStockTable(table, options) {
     columns.push({
         field: 'part_detail.description',
         title: '{% trans "Description" %}',
-        visible: params['part_detail'],
-        switchable: params['part_detail'],
+        visible: options.params['part_detail'],
+        switchable: options.params['part_detail'],
         formatter: function(value, row) {
             var description = row.part_detail.description;
             return withTitle(shortenString(description), description);
@@ -2168,8 +2187,8 @@ function loadStockTable(table, options) {
 
         field: 'supplier_part',
         title: '{% trans "Supplier Part" %}',
-        visible: params['supplier_part_detail'] || false,
-        switchable: params['supplier_part_detail'] || false,
+        visible: options.params['supplier_part_detail'] || false,
+        switchable: options.params['supplier_part_detail'] || false,
         formatter: function(value, row) {
             if (!value) {
                 return '-';
@@ -2358,7 +2377,7 @@ function loadStockTable(table, options) {
         queryParams: filters,
         sidePagination: 'server',
         name: 'stock',
-        original: params,
+        original: options.params,
         showColumns: true,
         showFooter: true,
         columns: columns,

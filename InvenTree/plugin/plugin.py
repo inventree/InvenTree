@@ -348,6 +348,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     # region package info
     def _get_package_commit(self):
         """Get last git commit for the plugin."""
+
         return get_git_log(str(self.file()))
 
     @classmethod
