@@ -1513,28 +1513,6 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
                 }
             )
 
-    def getStockItemThumbnail(self):
-        """Return qualified URL for part thumbnail image."""
-        thumb_url = None
-
-        if self.stock_item and self.stock_item.part:
-            try:
-                # Try to extract the thumbnail
-                thumb_url = self.stock_item.part.image.thumbnail.url
-            except Exception:
-                pass
-
-        if thumb_url is None and self.bom_item and self.bom_item.sub_part:
-            try:
-                thumb_url = self.bom_item.sub_part.image.thumbnail.url
-            except Exception:
-                pass
-
-        if thumb_url is not None:
-            return InvenTree.helpers.getMediaUrl(thumb_url)
-        else:
-            return InvenTree.helpers.getBlankThumbnail()
-
     build_line = models.ForeignKey(
         BuildLine,
         on_delete=models.SET_NULL, null=True,
