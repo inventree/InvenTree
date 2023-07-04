@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-04 21:22+0000\n"
-"PO-Revision-Date: 2023-07-03 21:43\n"
+"PO-Revision-Date: 2023-07-04 21:46\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2144,7 +2144,7 @@ msgstr "Anzahl der Tage zwischen automatischen Sicherungen"
 
 #: common/models.py:1050
 msgid "Task Deletion Interval"
-msgstr "Löschinterval für Aufgaben"
+msgstr "Aufgabenlöschinterval"
 
 #: common/models.py:1051
 msgid "Background task results will be deleted after specified number of days"
@@ -3598,11 +3598,11 @@ msgstr ""
 #: company/models.py:351 company/models.py:352
 #: templates/js/translated/company.js:1014
 msgid "Postal code"
-msgstr ""
+msgstr "Postleitzahl"
 
 #: company/models.py:356
 msgid "City/Region"
-msgstr ""
+msgstr "Stadt/Region"
 
 #: company/models.py:357
 msgid "Postal code city/region"
@@ -3614,11 +3614,11 @@ msgstr ""
 
 #: company/models.py:362
 msgid "State or province"
-msgstr ""
+msgstr "Bundesland"
 
 #: company/models.py:366 templates/js/translated/company.js:1032
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: company/models.py:367
 msgid "Address country"
@@ -3630,15 +3630,15 @@ msgstr ""
 
 #: company/models.py:372
 msgid "Notes for shipping courier"
-msgstr ""
+msgstr "Notizen für Versandkurier"
 
 #: company/models.py:376
 msgid "Internal shipping notes"
-msgstr ""
+msgstr "Interne Versandnotizen"
 
 #: company/models.py:377
 msgid "Shipping notes for internal use"
-msgstr ""
+msgstr "Versandnotizen für interne Verwendung"
 
 #: company/models.py:382
 msgid "Link to address information (external)"
@@ -4066,17 +4066,17 @@ msgstr "Zugeordneter Bestand"
 #: templates/js/translated/search.js:232 templates/navbar.html:65
 #: users/models.py:45
 msgid "Return Orders"
-msgstr ""
+msgstr "Rücksendeaufträge"
 
 #: company/templates/company/detail.html:146
 #: order/templates/order/return_orders.html:20
 msgid "Create new return order"
-msgstr ""
+msgstr "Neuen Rücksendeauftrag hinzufügen"
 
 #: company/templates/company/detail.html:147
 #: order/templates/order/return_orders.html:21
 msgid "New Return Order"
-msgstr ""
+msgstr "Neuer Rücksendeauftrag"
 
 #: company/templates/company/detail.html:168
 msgid "Company Notes"
@@ -4084,21 +4084,21 @@ msgstr "Firmenbemerkungen"
 
 #: company/templates/company/detail.html:183
 msgid "Company Contacts"
-msgstr ""
+msgstr "Unternehmenskontakte"
 
 #: company/templates/company/detail.html:187
 #: company/templates/company/detail.html:188
 msgid "Add Contact"
-msgstr ""
+msgstr "Kontakt hinzufügen"
 
 #: company/templates/company/detail.html:206
 msgid "Company addresses"
-msgstr ""
+msgstr "Geschäftsadressen"
 
 #: company/templates/company/detail.html:210
 #: company/templates/company/detail.html:211
 msgid "Add Address"
-msgstr ""
+msgstr "Adresse hinzufügen"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -4178,11 +4178,11 @@ msgstr "Zugewiesene Lagerartikel"
 
 #: company/templates/company/sidebar.html:33
 msgid "Contacts"
-msgstr ""
+msgstr "Kontakte"
 
 #: company/templates/company/sidebar.html:35
 msgid "Addresses"
-msgstr ""
+msgstr "Adressen"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:684
@@ -4381,13 +4381,13 @@ msgstr "Filter"
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
 msgid "QR Code"
-msgstr ""
+msgstr "QR-Code"
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
 #: templates/qr_code.html:7
 msgid "QR code"
-msgstr ""
+msgstr "QR-Code"
 
 #: order/admin.py:30 order/models.py:73
 #: report/templates/report/inventree_po_report_base.html:31
@@ -4423,7 +4423,7 @@ msgstr "Bestellung"
 #: templates/js/translated/return_order.js:278
 #: templates/js/translated/stock.js:2823
 msgid "Return Order"
-msgstr ""
+msgstr "Rücksendeauftrag"
 
 #: order/api.py:1458 templates/js/translated/sales_order.js:1039
 msgid "Unknown"
@@ -4665,7 +4665,7 @@ msgstr "Versanddatum"
 
 #: order/models.py:1427 templates/js/translated/sales_order.js:1033
 msgid "Delivery Date"
-msgstr ""
+msgstr "Lieferdatum"
 
 #: order/models.py:1428
 msgid "Date of delivery of shipment"
@@ -4783,7 +4783,7 @@ msgstr ""
 
 #: order/models.py:1935
 msgid "Received Date"
-msgstr ""
+msgstr "Empfangsdatum"
 
 #: order/models.py:1936
 msgid "The date this this return item was received"
@@ -12694,11 +12694,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
+msgstr "Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
 "%(site_name)s anzumelden.<br>Als letzten Schritt füllen Sie bitte folgendes Formular aus:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12832,3 +12830,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:253
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
