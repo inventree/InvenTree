@@ -30,7 +30,7 @@ coveralls==2.1.2
     # via -r requirements-dev.in
 distlib==0.3.6
     # via virtualenv
-django==4.1.9
+django==4.1.10
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
@@ -68,7 +68,7 @@ packaging==23.1
     # via build
 pep8-naming==0.13.3
     # via -r requirements-dev.in
-pip-tools==6.13.0
+pip-tools==6.14.0
     # via -r requirements-dev.in
 platformdirs==3.8.0
     # via virtualenv
