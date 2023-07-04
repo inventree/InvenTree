@@ -552,6 +552,19 @@ class StockFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(purchase_price=None)
 
+    ancestor = rest_filters.ModelChoiceFilter(
+        label='Ancestor',
+        queryset=StockItem.objects.all(),
+        method='filter_ancestor'
+    )
+
+    def filter_ancestor(self, queryset, name, ancestor):
+        """Filter based on ancestor stock item"""
+
+        return queryset.filter(
+            parent__in=ancestor.get_descendants(include_self=True)
+        )
+
     # Update date filters
     updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
     updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
@@ -928,19 +941,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 raise ValidationError({"part": "Invalid Part ID specified"})
-
-        # Does the client wish to filter by the 'ancestor'?
-        anc_id = params.get('ancestor', None)
-
-        if anc_id:
-            try:
-                ancestor = StockItem.objects.get(pk=anc_id)
-
-                # Only allow items which are descendants of the specified StockItem
-                queryset = queryset.filter(id__in=[item.pk for item in ancestor.children.all()])
-
-            except (ValueError, Part.DoesNotExist):
-                raise ValidationError({"ancestor": "Invalid ancestor ID specified"})
 
         # Does the client wish to filter by stock location?
         loc_id = params.get('location', None)

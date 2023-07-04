@@ -308,10 +308,6 @@ class BuildLineEndpoint:
         """Override queryset to select-related and annotate"""
         queryset = super().get_queryset()
 
-        queryset = queryset.select_related(
-            'build', 'bom_item',
-        )
-
         queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset)
 
         return queryset
