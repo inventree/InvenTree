@@ -53,7 +53,7 @@ The following basic options are available:
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | True |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
-| INVENTREE_TIMZONE | timezome | Server timezone | UTC |
+| INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
 | ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
 | INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
