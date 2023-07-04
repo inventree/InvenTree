@@ -833,7 +833,6 @@ TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
 USE_I18N = True
 
-USE_L10N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
