@@ -94,7 +94,7 @@ django-crispy-forms==1.14.0
     # via -r requirements.in
 django-dbbackup==4.0.2
     # via -r requirements.in
-django-error-report-2==0.4.0a0
+django-error-report-2==0.4.1
     # via -r requirements.in
 django-filter==23.2
     # via -r requirements.in
