@@ -155,7 +155,7 @@ Frontend code (Javascript) is checked using [eslint](https://eslint.org/). While
 
 ### Running Checks Locally
 
-If you have followed the [setup devtools procedure](#setup-devtools), then code style checking is performend automatically whenever you commit changes to the code.
+If you have followed the setup devtools procedure, then code style checking is performend automatically whenever you commit changes to the code.
 
 ### Django templates
 
