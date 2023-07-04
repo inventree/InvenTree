@@ -84,7 +84,7 @@ django-allauth==0.54.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
-django-allauth-2fa==0.10.0
+django-allauth-2fa==0.11.0
     # via -r requirements.in
 django-cleanup==8.0.0
     # via -r requirements.in
@@ -94,7 +94,7 @@ django-crispy-forms==1.14.0
     # via -r requirements.in
 django-dbbackup==4.0.2
     # via -r requirements.in
-django-error-report-2==0.4.0
+django-error-report-2==0.4.0a0
     # via -r requirements.in
 django-filter==23.2
     # via -r requirements.in
