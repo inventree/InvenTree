@@ -23,13 +23,13 @@ from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment, StockLocation
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     ReturnOrderReport, SalesOrderReport, TestReport,
-                     StockLocationReport)
+                     ReturnOrderReport, SalesOrderReport, StockLocationReport,
+                     TestReport)
 from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           PurchaseOrderReportSerializer,
                           ReturnOrderReportSerializer,
-                          SalesOrderReportSerializer, TestReportSerializer,
-                          StockLocationReportSerializer)
+                          SalesOrderReportSerializer,
+                          StockLocationReportSerializer, TestReportSerializer)
 
 
 class ReportListView(ListAPI):

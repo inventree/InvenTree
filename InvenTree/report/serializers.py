@@ -4,7 +4,8 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
                                    InvenTreeModelSerializer)
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     ReturnOrderReport, SalesOrderReport, TestReport, StockLocationReport)
+                     ReturnOrderReport, SalesOrderReport, StockLocationReport,
+                     TestReport)
 
 
 class ReportSerializerBase(InvenTreeModelSerializer):

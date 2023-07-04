@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
                      ReportAsset, ReportSnippet, ReturnOrderReport,
-                     SalesOrderReport, TestReport, StockLocationReport)
+                     SalesOrderReport, StockLocationReport, TestReport)
 
 
 class ReportTemplateAdmin(admin.ModelAdmin):

@@ -5,7 +5,6 @@
 {% load barcode %}
 {% load inventree_extras %}
 
-
 {% block page_margin %}
 margin: 2cm;
 margin-top: 4cm;
@@ -109,7 +108,7 @@ table td.expand {
     <tbody>
         {% for line in stock_items.all %}
         <tr>
-            <td> 
+            <td>
                 <div class='part-text'>
                 {{ line.part.full_name }}
                 </div>
@@ -121,6 +120,5 @@ table td.expand {
         {% endfor %}
     </tbody>
 </table>
-
 
 {% endblock page_content %}
