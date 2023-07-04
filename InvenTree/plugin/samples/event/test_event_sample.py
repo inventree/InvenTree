@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.test import TestCase
 
+from common.models import InvenTreeSetting
 from plugin import InvenTreePlugin, registry
 from plugin.base.event.events import trigger_event
 from plugin.helpers import MixinNotImplementedError
@@ -20,6 +21,8 @@ class EventPluginSampleTests(TestCase):
         config = registry.get_plugin('sampleevent').plugin_config()
         config.active = True
         config.save()
+
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True)
 
         # Enable event testing
         settings.PLUGIN_TESTING_EVENTS = True
