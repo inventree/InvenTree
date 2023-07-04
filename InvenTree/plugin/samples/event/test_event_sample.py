@@ -22,7 +22,7 @@ class EventPluginSampleTests(TestCase):
         config.active = True
         config.save()
 
-        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True)
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         # Enable event testing
         settings.PLUGIN_TESTING_EVENTS = True
