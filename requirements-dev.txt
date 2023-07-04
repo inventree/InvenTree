@@ -30,7 +30,7 @@ coveralls==2.1.2
     # via -r requirements-dev.in
 distlib==0.3.6
     # via virtualenv
-django==3.2.19
+django==3.2.20
     # via
     #   -c requirements.txt
     #   django-debug-toolbar

@@ -47,7 +47,7 @@ diff-match-patch==20230430
     # via django-import-export
 dj-rest-auth==4.0.1
     # via -r requirements.in
-django==3.2.19
+django==3.2.20
     # via
     #   -r requirements.in
     #   dj-rest-auth
@@ -168,7 +168,7 @@ icalendar==5.0.7
     # via django-ical
 idna==3.4
     # via requests
-importlib-metadata==6.6.0
+importlib-metadata==6.7.0
     # via markdown
 inflection==0.5.1
     # via drf-spectacular
