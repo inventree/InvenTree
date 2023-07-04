@@ -102,9 +102,9 @@ sqlparse==0.4.4
     #   django
     #   django-debug-toolbar
 tomli==2.0.1
-+    # via
-+    #   build
-+    #   pyproject-hooks
+    # via
+    #   build
+    #   pyproject-hooks
 typing-extensions==4.6.3
     # via
     #   -c requirements.txt
