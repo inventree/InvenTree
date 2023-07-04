@@ -2173,9 +2173,6 @@ function loadBuildTable(table, options) {
         customView: function(data) {
             return `<div id='build-order-calendar'></div>`;
         },
-        onRefresh: function() {
-            loadBuildTable(table, options);
-        },
         onLoadSuccess: function() {
 
             if (tree_enable) {
