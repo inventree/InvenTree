@@ -182,13 +182,15 @@ class LabelConfig(AppConfig):
 
         logger.info(f"Creating entry for {model} '{label['name']}'")
 
-        model.objects.create(
-            name=label['name'],
-            description=label['description'],
-            label=filename,
-            filters='',
-            enabled=True,
-            width=label['width'],
-            height=label['height'],
-        )
-        return
+        try:
+            model.objects.create(
+                name=label['name'],
+                description=label['description'],
+                label=filename,
+                filters='',
+                enabled=True,
+                width=label['width'],
+                height=label['height'],
+            )
+        except Exception:
+            logger.warning(f"Failed to create label '{label['name']}'")
