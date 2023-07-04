@@ -97,9 +97,14 @@ sqlparse==0.4.4
     #   -c requirements.txt
     #   django
     #   django-debug-toolbar
+tomli==2.0.1
+    # via
+    #   build
+    #   pyproject-hooks
 typing-extensions==4.6.3
     # via
     #   -c requirements.txt
+    #   asgiref
     #   django-test-migrations
 urllib3==2.0.3
     # via

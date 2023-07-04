@@ -167,6 +167,8 @@ icalendar==5.0.7
     # via django-ical
 idna==3.4
     # via requests
+importlib-metadata==6.7.0
+    # via markdown
 inflection==0.5.1
     # via drf-spectacular
 itypes==1.2.0
@@ -284,7 +286,9 @@ tinycss2==1.1.1
     #   cssselect2
     #   weasyprint
 typing-extensions==4.6.3
-    # via qrcode
+    # via
+    #   asgiref
+    #   qrcode
 uritemplate==4.1.1
     # via
     #   coreapi
@@ -310,6 +314,8 @@ xlrd==2.0.1
     # via tablib
 xlwt==1.3.0
     # via tablib
+zipp==3.15.0
+    # via importlib-metadata
 zopfli==0.2.2
     # via fonttools
 
