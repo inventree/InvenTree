@@ -20,9 +20,15 @@ def trigger_event(event, *args, **kwargs):
     This event will be stored in the database,
     and the worker will respond to it later on.
     """
+    from common.models import InvenTreeSetting
+
     if not settings.PLUGINS_ENABLED:
         # Do nothing if plugins are not enabled
         return  # pragma: no cover
+
+    if not InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS', False):
+        # Do nothing if plugin events are not enabled
+        return
 
     # Make sure the database can be accessed and is not being tested rn
     if not canAppAccessDatabase() and not settings.PLUGIN_TESTING_EVENTS:
