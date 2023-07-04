@@ -38,7 +38,7 @@ def trigger_event(event, *args, **kwargs):
     logger.debug(f"Event triggered: '{event}'")
 
     # By default, force the event to be processed asynchronously
-    if 'force_async' not in kwargs:
+    if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
         kwargs['force_async'] = True
 
     offload_task(
@@ -73,8 +73,10 @@ def register_event(event, *args, **kwargs):
 
                         logger.debug(f"Registering callback for plugin '{slug}'")
 
-                        # This task *must* be processed by the background worker
-                        kwargs['force_async'] = True
+                        # This task *must* be processed by the background worker,
+                        # unless we are running CI tests
+                        if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
+                            kwargs['force_async'] = True
 
                         # Offload a separate task for each plugin
                         offload_task(
