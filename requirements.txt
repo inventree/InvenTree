@@ -192,7 +192,7 @@ openpyxl==3.1.2
     # via tablib
 pdf2image==1.16.3
     # via -r requirements.in
-pillow==10.0.0
+pillow==9.5.0
     # via
     #   -r requirements.in
     #   django-stdimage
