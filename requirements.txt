@@ -6,8 +6,6 @@
 #
 asgiref==3.7.2
     # via django
-async-timeout==4.0.2
-    # via redis
 attrs==23.1.0
     # via jsonschema
 babel==2.12.1
@@ -190,7 +188,7 @@ openpyxl==3.1.2
     # via tablib
 pdf2image==1.16.3
     # via -r requirements.in
-pillow==10.0.0
+pillow==9.5.0
     # via
     #   -r requirements.in
     #   django-stdimage
@@ -246,7 +244,7 @@ qrcode[pil]==7.4.2
     #   django-allauth-2fa
 rapidfuzz==0.7.6
     # via -r requirements.in
-redis==4.6.0
+redis==3.5.3
     # via django-redis
 regex==2023.6.3
     # via -r requirements.in

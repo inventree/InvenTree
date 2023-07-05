@@ -36,7 +36,7 @@ drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
-pillow                                  # Image manipulation
+pillow==9.5.0                           # Image manipulation # FIXED 2023-07-04 as we require PIL.Image.ANTIALIAS
 pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management

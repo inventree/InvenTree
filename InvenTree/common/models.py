@@ -1249,6 +1249,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'PART_PARAMETER_ENFORCE_UNITS': {
+            'name': _('Enforce Parameter Units'),
+            'description': _('If units are provided, parameter values must match the specified units'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PRICING_DECIMAL_PLACES_MIN': {
             'name': _('Minimum Pricing Decimal Places'),
             'description': _('Minimum number of decimal places to display when rendering pricing data'),
