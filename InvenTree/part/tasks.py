@@ -168,7 +168,7 @@ def scheduled_stocktake_reports():
         return
 
     # How long ago was last full stocktake report generated?
-    last_report = common.models.InvenTreeSetting.get_setting('STOCKTAKE_RECENT_REPORT', '', cache=False)
+    last_report = common.models.InvenTreeSetting.get_setting('_STOCKTAKE_RECENT_REPORT', '', cache=False)
 
     try:
         last_report = datetime.fromisoformat(last_report)
@@ -187,7 +187,7 @@ def scheduled_stocktake_reports():
     part.stocktake.generate_stocktake_report(update_parts=True)
 
     # Record the date of this report
-    common.models.InvenTreeSetting.set_setting('STOCKTAKE_RECENT_REPORT', datetime.now().isoformat(), None)
+    common.models.InvenTreeSetting.set_setting('_STOCKTAKE_RECENT_REPORT', datetime.now().isoformat(), None)
 
 
 def rebuild_parameters(template_id):
