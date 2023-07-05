@@ -122,12 +122,16 @@ def generate_stocktake_report(**kwargs):
         part: Optional Part instance to filter by (including variant parts)
         category: Optional PartCategory to filter results
         location: Optional StockLocation to filter results
+        exclude_external: If True, exclude stock items in external locations (default = False)
         generate_report: If True, generate a stocktake report from the calculated data (default=True)
         update_parts: If True, save stocktake information against each filtered Part (default = True)
     """
 
     # Determine if external locations should be excluded
-    exclude_external = common.models.InvenTreeSetting.get_setting('STOCKTAKE_EXCLUDE_EXTERNAL', False)
+    exclude_external = kwargs.get(
+        'exclude_exernal',
+        common.models.InvenTreeSetting.get_setting('STOCKTAKE_EXCLUDE_EXTERNAL', False)
+    )
 
     parts = part.models.Part.objects.all()
     user = kwargs.get('user', None)

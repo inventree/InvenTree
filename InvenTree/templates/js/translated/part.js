@@ -849,6 +849,10 @@ function generateStocktakeReport(options={}) {
         fields.location = options.location;
     }
 
+    fields.exclude_external = {
+        value: global_settings.STOCKTAKE_EXCLUDE_EXTERNAL,
+    };
+
     if (options.generate_report) {
         fields.generate_report = options.generate_report;
     }
