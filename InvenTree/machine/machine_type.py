@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, Literal
+from typing import TYPE_CHECKING, Dict, Literal, Type
 
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 
@@ -30,6 +30,8 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
     DESCRIPTION: str
 
     MACHINE_SETTINGS: Dict[str, SettingsKeyType]
+
+    required_attributes = ["SLUG", "NAME", "DESCRIPTION"]
 
     def init_machine(self, machine: "BaseMachineType"):
         """This method get called for each active machine using that driver while initialization
@@ -65,7 +67,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
     MACHINE_SETTINGS: Dict[str, SettingsKeyType]
 
-    base_driver: BaseDriver
+    base_driver: Type[BaseDriver]
 
     # used by the ClassValidationMixin
     required_attributes = ["SLUG", "NAME", "DESCRIPTION", "base_driver"]
@@ -118,7 +120,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
             self.errors.append(e)
 
     # --- helper functions
-    def get_setting(self, key, config_type: Literal["M", "D"], cache=False):
+    def get_setting(self, key, config_type_str: Literal["M", "D"], cache=False):
         """Return the 'value' of the setting associated with this machine.
 
         Arguments:
@@ -128,10 +130,10 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         """
         from machine.models import MachineSetting
 
-        config_type = MachineSetting.get_config_type(config_type)
+        config_type = MachineSetting.get_config_type(config_type_str)
         return MachineSetting.get_setting(key, machine_config=self.machine_config, config_type=config_type, cache=cache)
 
-    def set_setting(self, key, config_type: Literal["M", "D"], value):
+    def set_setting(self, key, config_type_str: Literal["M", "D"], value):
         """Set plugin setting value by key.
 
         Arguments:
@@ -141,5 +143,5 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         """
         from machine.models import MachineSetting
 
-        config_type = MachineSetting.get_config_type(config_type)
+        config_type = MachineSetting.get_config_type(config_type_str)
         MachineSetting.set_setting(key, value, None, machine_config=self.machine_config, config_type=config_type)

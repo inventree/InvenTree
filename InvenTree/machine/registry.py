@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Set, Type, Union
 from uuid import UUID
 
 from machine.machine_type import BaseDriver, BaseMachineType
@@ -14,12 +14,12 @@ class MachinesRegistry:
         Set up all needed references for internal and external states.
         """
 
-        self.machine_types: Dict[str, BaseMachineType] = {}
-        self.drivers: Dict[str, BaseDriver] = {}
+        self.machine_types: Dict[str, Type[BaseMachineType]] = {}
+        self.drivers: Dict[str, Type[BaseDriver]] = {}
         self.driver_instances: Dict[str, BaseDriver] = {}
         self.machines: Dict[str, BaseMachineType] = {}
 
-        self.base_drivers: List[BaseDriver] = []
+        self.base_drivers: List[Type[BaseDriver]] = []
         self.errors = []
 
     def initialize(self):
@@ -33,10 +33,10 @@ class MachinesRegistry:
 
         logger.debug("Collecting machine types")
 
-        machine_types: Dict[str, BaseMachineType] = {}
-        base_drivers: List[BaseDriver] = []
+        machine_types: Dict[str, Type[BaseMachineType]] = {}
+        base_drivers: List[Type[BaseDriver]] = []
 
-        discovered_machine_types: List[BaseMachineType] = InvenTree.helpers.inheritors(BaseMachineType)
+        discovered_machine_types: Set[Type[BaseMachineType]] = InvenTree.helpers.inheritors(BaseMachineType)
         for machine_type in discovered_machine_types:
             try:
                 machine_type.validate()
@@ -61,9 +61,9 @@ class MachinesRegistry:
 
         logger.debug("Collecting machine drivers")
 
-        drivers: Dict[str, BaseDriver] = {}
+        drivers: Dict[str, Type[BaseDriver]] = {}
 
-        discovered_drivers: List[BaseDriver] = InvenTree.helpers.inheritors(BaseDriver)
+        discovered_drivers: Set[Type[BaseDriver]] = InvenTree.helpers.inheritors(BaseDriver)
         for driver in discovered_drivers:
             # skip discovered drivers that define a base driver for a machine type
             if driver in self.base_drivers:

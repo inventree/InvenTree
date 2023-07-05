@@ -55,8 +55,9 @@ class MachineConfig(models.Model):
             registry.add_machine(self, initialize=True)
 
     def delete(self, *args, **kwargs):
-        # remove machine first from registry
-        registry.remove_machine(self.machine)
+        # remove machine from registry first
+        if self.machine:
+            registry.remove_machine(self.machine)
 
         return super().delete(*args, **kwargs)
 
@@ -71,7 +72,7 @@ class MachineConfig(models.Model):
     @admin.display(boolean=True, description=_("Driver available"))
     def is_driver_available(self) -> bool:
         """Status if driver for machine is available"""
-        return self.machine and self.machine.driver is not None
+        return self.machine is not None and self.machine.driver is not None
 
     @admin.display(boolean=True, description=_("Machine has no errors"))
     def no_errors(self) -> bool:
@@ -133,7 +134,7 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         """
         if 'settings' not in kwargs:
             machine_config: MachineConfig = kwargs.pop('machine_config', None)
-            if machine_config:
+            if machine_config and machine_config.machine:
                 config_type = kwargs.get("config_type", None)
                 if config_type == cls.ConfigType.DRIVER:
                     kwargs['settings'] = getattr(machine_config.machine.driver, "MACHINE_SETTINGS", {})
