@@ -4,8 +4,6 @@
 #
 #    pip-compile --output-file=requirements.txt requirements.in
 #
-arrow==1.2.3
-    # via django-q
 asgiref==3.7.2
     # via django
 attrs==23.1.0
@@ -14,8 +12,6 @@ babel==2.12.1
     # via py-moneyed
 bleach[css]==6.0.0
     # via django-markdownify
-blessed==1.20.0
-    # via django-q
 brotli==1.0.9
     # via fonttools
 certifi==2023.5.7
@@ -67,7 +63,7 @@ django==3.2.20
     #   django-mptt
     #   django-otp
     #   django-picklefield
-    #   django-q
+    #   django-q2
     #   django-recurrence
     #   django-redis
     #   django-sql-utils
@@ -84,7 +80,7 @@ django-allauth==0.54.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
-django-allauth-2fa==0.10.0
+django-allauth-2fa==0.11.0
     # via -r requirements.in
 django-cleanup==8.0.0
     # via -r requirements.in
@@ -119,10 +115,10 @@ django-mptt==0.11.0
 django-otp==1.2.2
     # via django-allauth-2fa
 django-picklefield==3.1
-    # via django-q
-django-q==1.3.9
-    # via -r requirements.in
+    # via django-q2
 django-q-sentry==0.1.6
+    # via -r requirements.in
+django-q2==1.5.4
     # via -r requirements.in
 django-recurrence==1.11.1
     # via django-ical
@@ -224,7 +220,6 @@ python-barcode[images]==0.14.0
     # via -r requirements.in
 python-dateutil==2.8.2
     # via
-    #   arrow
     #   django-recurrence
     #   icalendar
 python-dotenv==1.0.0
@@ -250,9 +245,7 @@ qrcode[pil]==7.4.2
 rapidfuzz==0.7.6
     # via -r requirements.in
 redis==3.5.3
-    # via
-    #   django-q
-    #   django-redis
+    # via django-redis
 regex==2023.6.3
     # via -r requirements.in
 requests==2.31.0
@@ -271,7 +264,6 @@ sgmllib3k==1.0.0
 six==1.16.0
     # via
     #   bleach
-    #   blessed
     #   html5lib
     #   python-dateutil
 sqlparse==0.4.4
@@ -300,8 +292,6 @@ urllib3==2.0.3
     #   dulwich
     #   requests
     #   sentry-sdk
-wcwidth==0.2.6
-    # via blessed
 weasyprint==54.3
     # via
     #   -r requirements.in
