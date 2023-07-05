@@ -1685,6 +1685,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
         },
 
+        'STOCKTAKE_EXCLUDE_EXTERNAL': {
+            'name': _('Exclude External Locations'),
+            'description': _('Exclude stock items in external locations from stocktake calculations'),
+            'validator': bool,
+            'default': False,
+        },
+
         'STOCKTAKE_AUTO_DAYS': {
             'name': _('Automatic Stocktake Period'),
             'description': _('Number of days between automatic stocktake recording (set to zero to disable)'),
