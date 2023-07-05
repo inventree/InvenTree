@@ -18,7 +18,7 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models
 import part.stocktake
-from InvenTree.tasks import ScheduledTask, scheduled_task
+from InvenTree.tasks import ScheduledTask, check_daily_holdoff, scheduled_task
 
 logger = logging.getLogger("inventree")
 
@@ -167,21 +167,9 @@ def scheduled_stocktake_reports():
         logger.info("Stocktake auto reports are disabled, exiting")
         return
 
-    # How long ago was last full stocktake report generated?
-    last_report = common.models.InvenTreeSetting.get_setting('_STOCKTAKE_RECENT_REPORT', '', cache=False)
-
-    try:
-        last_report = datetime.fromisoformat(last_report)
-    except ValueError:
-        last_report = None
-
-    if last_report:
-        # Do not attempt if the last report was within the minimum reporting period
-        threshold = datetime.now() - timedelta(days=report_n_days)
-
-        if last_report > threshold:
-            logger.info("Automatic stocktake report was recently generated - exiting")
-            return
+    if not check_daily_holdoff('_STOCKTAKE_RECENT_REPORT', report_n_days):
+        logger.info("Stocktake report was recently generated - exiting")
+        return
 
     # Let's start a new stocktake report for all parts
     part.stocktake.generate_stocktake_report(update_parts=True)
