@@ -149,6 +149,9 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
         commit: If True (default) save the result to the database
         user: User who requested this stocktake
 
+    kwargs:
+        exclude_external: If True, exclude stock items in external locations (default = False)
+
     Returns:
         PartStocktake: A new PartStocktake model instance (for the specified Part)
     """
@@ -157,6 +160,11 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
     # We do not include variant stock when performing a stocktake,
     # otherwise the stocktake entries will be duplicated
     stock_entries = target.stock_entries(in_stock=True, include_variants=False)
+
+    exclude_external = kwargs.get('exclude_external', False)
+
+    if exclude_external:
+        stock_entries = stock_entries.exclude(location__external=True)
 
     # Cache min/max pricing information for this Part
     pricing = target.pricing
@@ -237,6 +245,9 @@ def generate_stocktake_report(**kwargs):
         update_parts: If True, save stocktake information against each filtered Part (default = True)
     """
 
+    # Determine if external locations should be excluded
+    exclude_external = common.models.InvenTreeSetting.get_setting('STOCKTAKE_EXCLUDE_EXTERNAL', False)
+
     parts = part.models.Part.objects.all()
     user = kwargs.get('user', None)
 
@@ -263,6 +274,9 @@ def generate_stocktake_report(**kwargs):
 
         # Items which exist within these locations
         items = stock.models.StockItem.objects.filter(location__in=locations)
+
+        if exclude_external:
+            items = items.exclude(location__external=True)
 
         # List of parts which exist within these locations
         unique_parts = items.order_by().values('part').distinct()
@@ -312,7 +326,7 @@ def generate_stocktake_report(**kwargs):
     for p in parts:
 
         # Create a new stocktake for this part (do not commit, this will take place later on)
-        stocktake = perform_stocktake(p, user, commit=False)
+        stocktake = perform_stocktake(p, user, commit=False, exclude_external=exclude_external)
 
         if stocktake.quantity == 0:
             # Skip rows with zero total quantity
