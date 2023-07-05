@@ -102,7 +102,7 @@ class SalesOrderTest(TestCase):
         self.assertEqual(self.line.allocated_quantity(), 0)
         self.assertEqual(self.line.fulfilled_quantity(), 0)
         self.assertFalse(self.line.is_fully_allocated())
-        self.assertFalse(self.line.is_over_allocated())
+        self.assertFalse(self.line.is_overallocated())
 
         self.assertTrue(self.order.is_pending)
         self.assertFalse(self.order.is_fully_allocated())

@@ -10,6 +10,7 @@ import re
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator
@@ -51,8 +52,9 @@ from InvenTree.helpers import (decimal2money, decimal2string, normalize,
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
                               InvenTreeBarcodeMixin, InvenTreeNotesMixin,
                               InvenTreeTree, MetadataMixin)
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import (BuildStatusGroups, PurchaseOrderStatus,
+                                    PurchaseOrderStatusGroups,
+                                    SalesOrderStatus, SalesOrderStatusGroups)
 from order import models as OrderModels
 from stock import models as StockModels
 
@@ -453,17 +455,20 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """
 
         if self.pk:
-            previous = Part.objects.get(pk=self.pk)
+            try:
+                previous = Part.objects.get(pk=self.pk)
 
-            # Image has been changed
-            if previous.image is not None and self.image != previous.image:
+                # Image has been changed
+                if previous.image is not None and self.image != previous.image:
 
-                # Are there any (other) parts which reference the image?
-                n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
+                    # Are there any (other) parts which reference the image?
+                    n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
 
-                if n_refs == 0:
-                    logger.info(f"Deleting unused image file '{previous.image}'")
-                    previous.image.delete(save=False)
+                    if n_refs == 0:
+                        logger.info(f"Deleting unused image file '{previous.image}'")
+                        previous.image.delete(save=False)
+            except Part.DoesNotExist:
+                pass
 
         self.full_clean()
 
@@ -572,7 +577,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Ensure that the IPN (internal part number) is valid for this Part"
 
         - Validation is handled by custom plugins
-        - By default, no validation checks are perfomed
+        - By default, no validation checks are performed
         """
 
         from plugin.registry import registry
@@ -1070,7 +1075,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
             part__in=self.get_used_in(),
-            status__in=BuildStatus.ACTIVE_CODES
+            status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
         return builds
@@ -1104,7 +1109,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatusGroups.OPEN,
             part=self
         )
 
@@ -1117,7 +1122,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Return the quantity of this part required for active sales orders."""
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status__in=SalesOrderStatus.OPEN,
+            order__status__in=SalesOrderStatusGroups.OPEN,
             part=self
         )
 
@@ -1302,6 +1307,11 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         )
 
         for item in queryset.all():
+
+            if item.quantity <= 0:
+                # Ignore zero-quantity items
+                continue
+
             # Iterate through each item in the queryset, work out the limiting quantity
             quantity = item.available_stock + item.substitute_stock
 
@@ -1324,7 +1334,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         Builds marked as 'complete' or 'cancelled' are ignored
         """
-        return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES)
+        return self.builds.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     @property
     def quantity_being_built(self):
@@ -1396,13 +1406,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         if pending is True:
             # Look only for 'open' orders which have not shipped
             queryset = queryset.filter(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
                 shipment__shipment_date=None,
             )
         elif pending is False:
             # Look only for 'closed' orders or orders which have shipped
             queryset = queryset.exclude(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
                 shipment__shipment_date=None,
             )
 
@@ -1437,13 +1447,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             ],
         )
 
-    def stock_entries(self, include_variants=True, in_stock=None):
+    def stock_entries(self, include_variants=True, in_stock=None, location=None):
         """Return all stock entries for this Part.
 
-        - If this is a template part, include variants underneath this.
-
-        Note: To return all stock-entries for all part variants under this one,
-        we need to be creative with the filtering.
+        Arguments:
+            include_variants: If True, include stock entries for all part variants
+            in_stock: If True, filter by stock entries which are 'in stock'
+            location: If set, filter by stock entries in the specified location
         """
         if include_variants:
             query = StockModels.StockItem.objects.filter(part__in=self.get_descendants(include_self=True))
@@ -1454,6 +1464,10 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             query = query.filter(StockModels.StockItem.IN_STOCK_FILTER)
         elif in_stock is False:
             query = query.exclude(StockModels.StockItem.IN_STOCK_FILTER)
+
+        if location:
+            locations = location.get_descendants(include_self=True)
+            query = query.filter(location__in=locations)
 
         return query
 
@@ -1543,7 +1557,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         A) This part may be directly specified in a BomItem instance
         B) This part may be a *variant* of a part which is directly specified in a BomItem instance
-        C) This part may be a *substitute* for a part which is directly specifed in a BomItem instance
+        C) This part may be a *substitute* for a part which is directly specified in a BomItem instance
 
         So we construct a query for each case, and combine them...
         """
@@ -1741,7 +1755,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         return pricing
 
-    def schedule_pricing_update(self, create: bool = False):
+    def schedule_pricing_update(self, create: bool = False, test: bool = False):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
@@ -1751,6 +1765,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         Arguments:
             create: Whether or not a new PartPricing object should be created if it does not already exist
+            test: Whether or not the pricing update is allowed during unit tests
         """
 
         try:
@@ -1762,7 +1777,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             pricing = self.pricing
 
             if create or pricing.pk:
-                pricing.schedule_for_update()
+                pricing.schedule_for_update(test=test)
         except IntegrityError:
             # If this part instance has been deleted,
             # some post-delete or post-save signals may still be fired
@@ -2156,7 +2171,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
             # Look at any incomplete line item for open orders
             lines = sp.purchase_order_line_items.filter(
-                order__status__in=PurchaseOrderStatus.OPEN,
+                order__status__in=PurchaseOrderStatusGroups.OPEN,
                 quantity__gt=F('received'),
             )
 
@@ -2168,12 +2183,22 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         return quantity
 
+    def get_parameter(self, name):
+        """Return the parameter with the given name.
+
+        If no matching parameter is found, return None.
+        """
+        try:
+            return self.parameters.get(template__name=name)
+        except PartParameter.DoesNotExist:
+            return None
+
     def get_parameters(self):
         """Return all parameters for this part, ordered by name."""
         return self.parameters.order_by('template__name')
 
     def parameters_map(self):
-        """Return a map (dict) of parameter values assocaited with this Part instance, of the form.
+        """Return a map (dict) of parameter values associated with this Part instance, of the form.
 
         Example:
         {
@@ -2354,8 +2379,22 @@ class PartPricing(common.models.MetaMixin):
 
         return result
 
-    def schedule_for_update(self, counter: int = 0):
+    def schedule_for_update(self, counter: int = 0, test: bool = False):
         """Schedule this pricing to be updated"""
+
+        import InvenTree.ready
+
+        # If we are running within CI, only schedule the update if the test flag is set
+        if settings.TESTING and not test:
+            return
+
+        # If importing data, skip pricing update
+        if InvenTree.ready.isImportingData():
+            return
+
+        # If running data migrations, skip pricing update
+        if InvenTree.ready.isRunningMigrations():
+            return
 
         if not self.part or not self.part.pk or not Part.objects.filter(pk=self.part.pk).exists():
             logger.warning("Referenced part instance does not exist - skipping pricing update.")
@@ -2408,6 +2447,14 @@ class PartPricing(common.models.MetaMixin):
 
     def update_pricing(self, counter: int = 0, cascade: bool = True):
         """Recalculate all cost data for the referenced Part instance"""
+
+        # If importing data, skip pricing update
+        if InvenTree.ready.isImportingData():
+            return
+
+        # If running data migrations, skip pricing update
+        if InvenTree.ready.isRunningMigrations():
+            return
 
         if self.pk is not None:
             try:
@@ -2554,7 +2601,7 @@ class PartPricing(common.models.MetaMixin):
 
         # Find all line items for completed orders which reference this part
         line_items = OrderModels.PurchaseOrderLineItem.objects.filter(
-            order__status=PurchaseOrderStatus.COMPLETE,
+            order__status=PurchaseOrderStatus.COMPLETE.value,
             received__gt=0,
             part__part=self.part,
         )
@@ -3198,7 +3245,7 @@ class PartTestTemplate(MetadataMixin, models.Model):
     """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
-    defined in a heirarchy.
+    defined in a hierarchy.
 
     Test names are simply strings, rather than enforcing any sort of structure or pattern.
     It is up to the user to determine what tests are defined (and how they are run).
@@ -3490,19 +3537,38 @@ class PartParameter(MetadataMixin, models.Model):
         super().clean()
 
         # Validate the parameter data against the template units
-        if self.template.units:
-            try:
-                InvenTree.conversion.convert_physical_value(self.data, self.template.units)
-            except ValidationError as e:
-                raise ValidationError({
-                    'data': e.message
-                })
+        if InvenTreeSetting.get_setting('PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False):
+            if self.template.units:
+                try:
+                    InvenTree.conversion.convert_physical_value(self.data, self.template.units)
+                except ValidationError as e:
+                    raise ValidationError({
+                        'data': e.message
+                    })
 
         # Validate the parameter data against the template choices
         if choices := self.template.get_choices():
             if self.data not in choices:
                 raise ValidationError({
                     'data': _('Invalid choice for parameter value')
+                })
+
+        self.calculate_numeric_value()
+
+        # Run custom validation checks (via plugins)
+        from plugin.registry import registry
+
+        for plugin in registry.with_mixin('validation'):
+
+            # Note: The validate_part_parameter function may raise a ValidationError
+            try:
+                result = plugin.validate_part_parameter(self, self.data)
+                if result:
+                    break
+            except ValidationError as exc:
+                # Re-throw the ValidationError against the 'data' field
+                raise ValidationError({
+                    'data': exc.message
                 })
 
     def calculate_numeric_value(self):
@@ -3549,6 +3615,21 @@ class PartParameter(MetadataMixin, models.Model):
         null=True,
         blank=True,
     )
+
+    @property
+    def units(self):
+        """Return the units associated with the template"""
+        return self.template.units
+
+    @property
+    def name(self):
+        """Return the name of the template"""
+        return self.template.name
+
+    @property
+    def description(self):
+        """Return the description of the template"""
+        return self.template.description
 
     @classmethod
     def create(cls, part, template, data, save=False):
@@ -3678,7 +3759,7 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
 
         Includes:
         - The referenced sub_part
-        - Any directly specvified substitute parts
+        - Any directly specified substitute parts
         - If allow_variants is True, all variants of sub_part
         """
         # Set of parts we will allow
@@ -3699,11 +3780,6 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         valid_parts = []
 
         for p in parts:
-
-            # Inactive parts cannot be 'auto allocated'
-            if not p.active:
-                continue
-
             # Trackable status must be the same as the sub_part
             if p.trackable != self.sub_part.trackable:
                 continue
@@ -3948,10 +4024,10 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         # Base quantity requirement
         base_quantity = self.quantity * build_quantity
 
-        # Overage requiremet
-        ovrg_quantity = self.get_overage_quantity(base_quantity)
+        # Overage requirement
+        overage_quantity = self.get_overage_quantity(base_quantity)
 
-        required = float(base_quantity) + float(ovrg_quantity)
+        required = float(base_quantity) + float(overage_quantity)
 
         return required
 

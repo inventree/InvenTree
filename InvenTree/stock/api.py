@@ -21,9 +21,10 @@ import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
-from company.serializers import CompanySerializer, SupplierPartSerializer
+from company.serializers import CompanySerializer
+from generic.states import StatusView
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView, MetadataView, StatusView)
+                           ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
                                SEARCH_ORDER_FILTER_ALIAS)
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
@@ -155,6 +156,12 @@ class StockAdjustView(CreateAPI):
         context['request'] = self.request
 
         return context
+
+
+class StockChangeStatus(StockAdjustView):
+    """API endpoint to change the status code of multiple StockItem objects."""
+
+    serializer_class = StockSerializers.StockChangeStatusSerializer
 
 
 class StockCount(StockAdjustView):
@@ -364,7 +371,7 @@ class StockFilter(rest_filters.FilterSet):
         ]
 
     # Relationship filters
-    manufactuer = rest_filters.ModelChoiceFilter(label='Manufacturer', queryset=Company.objects.filter(is_manufacturer=True), field_name='manufacturer_part__manufacturer')
+    manufacturer = rest_filters.ModelChoiceFilter(label='Manufacturer', queryset=Company.objects.filter(is_manufacturer=True), field_name='manufacturer_part__manufacturer')
     supplier = rest_filters.ModelChoiceFilter(label='Supplier', queryset=Company.objects.filter(is_supplier=True), field_name='supplier_part__supplier')
 
     # Part name filters
@@ -509,6 +516,15 @@ class StockFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(belongs_to=None)
 
+    has_installed_items = rest_filters.BooleanFilter(label='Has installed items', method='filter_has_installed')
+
+    def filter_has_installed(self, queryset, name, value):
+        """Filter stock items by "belongs_to" field being empty."""
+        if str2bool(value):
+            return queryset.filter(installed_items__gt=0)
+        else:
+            return queryset.filter(installed_items=0)
+
     sent_to_customer = rest_filters.BooleanFilter(label='Sent to customer', method='filter_sent_to_customer')
 
     def filter_sent_to_customer(self, queryset, name, value):
@@ -536,6 +552,19 @@ class StockFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(purchase_price=None)
 
+    ancestor = rest_filters.ModelChoiceFilter(
+        label='Ancestor',
+        queryset=StockItem.objects.all(),
+        method='filter_ancestor'
+    )
+
+    def filter_ancestor(self, queryset, name, ancestor):
+        """Filter based on ancestor stock item"""
+
+        return queryset.filter(
+            parent__in=ancestor.get_descendants(include_self=True)
+        )
+
     # Update date filters
     updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
     updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
@@ -551,6 +580,28 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
     serializer_class = StockSerializers.StockItemSerializer
     queryset = StockItem.objects.all()
     filterset_class = StockFilter
+
+    def get_serializer(self, *args, **kwargs):
+        """Set context before returning serializer.
+
+        Extra detail may be provided to the serializer via query parameters:
+
+        - part_detail: Include detail about the StockItem's part
+        - location_detail: Include detail about the StockItem's location
+        - supplier_part_detail: Include detail about the StockItem's supplier_part
+        - tests: Include detail about the StockItem's test results
+        """
+        try:
+            params = self.request.query_params
+
+            for key in ['part_detail', 'location_detail', 'supplier_part_detail', 'tests']:
+                kwargs[key] = str2bool(params.get(key, False))
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
 
     def get_serializer_context(self):
         """Extend serializer context."""
@@ -742,8 +793,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         """
         queryset = self.filter_queryset(self.get_queryset())
 
-        params = request.query_params
-
         page = self.paginate_queryset(queryset)
 
         if page is not None:
@@ -753,81 +802,9 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         data = serializer.data
 
-        # Keep track of which related models we need to query
-        location_ids = set()
-        part_ids = set()
-        supplier_part_ids = set()
-
-        # Iterate through each StockItem and grab some data
-        for item in data:
-            loc = item['location']
-            if loc:
-                location_ids.add(loc)
-
-            part = item['part']
-            if part:
-                part_ids.add(part)
-
-            sp = item['supplier_part']
-
-            if sp:
-                supplier_part_ids.add(sp)
-
-        # Do we wish to include Part detail?
-        if str2bool(params.get('part_detail', False)):
-
-            # Fetch only the required Part objects from the database
-            parts = Part.objects.filter(pk__in=part_ids).prefetch_related(
-                'category',
-            )
-
-            part_map = {}
-
-            for part in parts:
-                part_map[part.pk] = PartBriefSerializer(part).data
-
-            # Now update each StockItem with the related Part data
-            for stock_item in data:
-                part_id = stock_item['part']
-                stock_item['part_detail'] = part_map.get(part_id, None)
-
-        # Do we wish to include SupplierPart detail?
-        if str2bool(params.get('supplier_part_detail', False)):
-
-            supplier_parts = SupplierPart.objects.filter(pk__in=supplier_part_ids)
-
-            supplier_part_map = {}
-
-            for part in supplier_parts:
-                supplier_part_map[part.pk] = SupplierPartSerializer(part).data
-
-            for stock_item in data:
-                part_id = stock_item['supplier_part']
-                stock_item['supplier_part_detail'] = supplier_part_map.get(part_id, None)
-
-        # Do we wish to include StockLocation detail?
-        if str2bool(params.get('location_detail', False)):
-
-            # Fetch only the required StockLocation objects from the database
-            locations = StockLocation.objects.filter(pk__in=location_ids).prefetch_related(
-                'parent',
-                'children',
-            )
-
-            location_map = {}
-
-            # Serialize each StockLocation object
-            for location in locations:
-                location_map[location.pk] = StockSerializers.LocationBriefSerializer(location).data
-
-            # Now update each StockItem with the related StockLocation data
-            for stock_item in data:
-                loc_id = stock_item['location']
-                stock_item['location_detail'] = location_map.get(loc_id, None)
-
         """
         Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        a) For HTTP requests (e.g. via the browsable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
 
         Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft
@@ -845,14 +822,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
-
-        # Also ensure that we pre-fecth all the related items
-        queryset = queryset.prefetch_related(
-            'part',
-            'part__category',
-            'location',
-            'tags',
-        )
 
         return queryset
 
@@ -972,19 +941,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 raise ValidationError({"part": "Invalid Part ID specified"})
-
-        # Does the client wish to filter by the 'ancestor'?
-        anc_id = params.get('ancestor', None)
-
-        if anc_id:
-            try:
-                ancestor = StockItem.objects.get(pk=anc_id)
-
-                # Only allow items which are descendants of the specified StockItem
-                queryset = queryset.filter(id__in=[item.pk for item in ancestor.children.all()])
-
-            except (ValueError, Part.DoesNotExist):
-                raise ValidationError({"ancestor": "Invalid ancestor ID specified"})
 
         # Does the client wish to filter by stock location?
         loc_id = params.get('location', None)
@@ -1421,6 +1377,7 @@ stock_api_urls = [
     re_path(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
     re_path(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
     re_path(r'^merge/', StockMerge.as_view(), name='api-stock-merge'),
+    re_path(r'^change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
 
     # StockItemAttachment API endpoints
     re_path(r'^attachment/', include([

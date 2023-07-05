@@ -105,6 +105,10 @@ main {
     font-size: 110%;
 }
 
+.bg-qr-code {
+    background-color: #FFF !important;
+}
+
 .qr-code {
     max-width: 400px;
     max-height: 400px;
@@ -219,8 +223,7 @@ main {
 }
 
 .sub-table {
-    margin-left: 45px;
-    margin-right: 45px;
+    margin-left: 60px;
 }
 
 .detail-icon .glyphicon {
@@ -266,10 +269,6 @@ main {
 }
 
 /* Styles for table buttons and filtering */
-.button-toolbar .btn {
-    margin-left: 1px;
-    margin-right: 1px;
-}
 
 .filter-list {
     display: inline-block;

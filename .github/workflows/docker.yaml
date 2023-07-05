@@ -29,9 +29,6 @@ jobs:
 
   # Build the docker image
   build:
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.event_name }}
-      cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -81,6 +78,7 @@ jobs:
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
           docker-compose run inventree-dev-server invoke test --disable-pty
+          docker-compose run inventree-dev-server invoke test --migrations --disable-pty
           docker-compose down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
@@ -121,8 +119,10 @@ jobs:
         uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v3.2.0
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           push: true
+          sbom: true
+          provenance: false
           target: production
           tags: ${{ env.docker_tags }}
           build-args: |

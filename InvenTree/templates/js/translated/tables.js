@@ -38,10 +38,10 @@ function reloadBootstrapTable(table) {
         if (tbl.exists()) {
             tbl.bootstrapTable('refresh');
         } else {
-            console.error(`Invalid table name passed to reloadTable(): ${table}`);
+            console.error(`Invalid table name passed to reloadBootstrapTable(): ${table}`);
         }
     } else {
-        console.error(`Null value passed to reloadTable()`);
+        console.error(`Null value passed to reloadBootstrapTable()`);
     }
 }
 
@@ -220,25 +220,6 @@ function enableButtons(elements, enabled) {
 }
 
 
-/* Link a bootstrap-table object to one or more buttons.
- * The buttons will only be enabled if there is at least one row selected
- */
-function linkButtonsToSelection(table, buttons) {
-
-    if (typeof table === 'string') {
-        table = $(table);
-    }
-
-    // Initially set the enable state of the buttons
-    enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-
-    // Add a callback
-    table.on('check.bs.table uncheck.bs.table check-some.bs.table uncheck-some.bs.table check-all.bs.table uncheck-all.bs.table', function() {
-        enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-    });
-}
-
-
 /**
  * Returns true if the input looks like a valid number
  * @param {String} n
@@ -271,17 +252,11 @@ function reloadTableFilters(table, filters, options={}) {
     options = table.bootstrapTable('getOptions');
 
     // Construct a new list of filters to use for the query
-    var params = {};
-
-    for (var k in filters) {
-        params[k] = filters[k];
-    }
+    let params = Object.assign({}, filters);
 
     // Original query params will override
-    if (options.original != null) {
-        for (var key in options.original) {
-            params[key] = options.original[key];
-        }
+    if (options.original) {
+        params = Object.assign(params, options.original);
     }
 
     // Store the total set of query params
@@ -337,9 +312,7 @@ function convertQueryParameters(params, filters) {
 
     }
 
-    for (var key in filters) {
-        params[key] = filters[key];
-    }
+    params = Object.assign(params, filters);
 
     // Add "order" back in (if it was originally specified by InvenTree)
     // Annoyingly, "order" shadows some field names in InvenTree...
@@ -474,11 +447,6 @@ $.fn.inventreeTable = function(options) {
             console.error(`Could not get list of visible columns for table '${tableName}'`);
         }
     }
-
-    // Optionally, link buttons to the table selection
-    if (options.buttons) {
-        linkButtonsToSelection(table, options.buttons);
-    }
 };
 
 
@@ -500,17 +468,17 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         var bb = sortName.split('.').reduce(extract, b);
 
         // Extract parent information
-        var aparent = a._data && a._data['parent-index'];
+        var apparent = a._data && a._data['parent-index'];
         var bparent = b._data && b._data['parent-index'];
 
         // If either of the comparisons are in a group
-        if (aparent || bparent) {
+        if (apparent || bparent) {
 
             // If the parents are different (or one item does not have a parent,
             // then we need to extract the parent value for the selected column.
 
-            if (aparent != bparent) {
-                if (aparent) {
+            if (apparent != bparent) {
+                if (apparent) {
                     aa = a._data['table'].options.groupByFormatter(sortName, 0, a._data['group-data']);
                 }
 

@@ -55,7 +55,7 @@ class TestBomItemMigrations(MigratorTestCase):
     migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
 
     def prepare(self):
-        """Create intial dataset"""
+        """Create initial dataset"""
 
         Part = self.old_state.apps.get_model('part', 'part')
         BomItem = self.old_state.apps.get_model('part', 'bomitem')
@@ -189,3 +189,38 @@ class PartUnitsMigrationTest(MigratorTestCase):
         self.assertEqual(part_2.units, 'inch')
         self.assertEqual(part_3.units, '')
         self.assertEqual(part_4.units, 'percent')
+
+
+class TestPartParameterTemplateMigration(MigratorTestCase):
+    """Test for data migration of PartParameterTemplate
+
+    Ref: https://github.com/inventree/InvenTree/pull/4987
+    """
+
+    migrate_from = ('part', '0110_alter_part_units')
+    migrate_to = ('part', '0113_auto_20230531_1205')
+
+    def prepare(self):
+        """Prepare some parts with units"""
+
+        PartParameterTemplate = self.old_state.apps.get_model('part', 'partparametertemplate')
+
+        # Create a test template
+        template = PartParameterTemplate.objects.create(name='Template 1', description='a part parameter template')
+
+        # Ensure that the 'choices' and 'checkbox' fields do not exist
+        with self.assertRaises(AttributeError):
+            template.choices
+
+        with self.assertRaises(AttributeError):
+            template.checkbox
+
+    def test_units_migration(self):
+        """Test that the new fields have been added correctly"""
+
+        PartParameterTemplate = self.new_state.apps.get_model('part', 'partparametertemplate')
+
+        template = PartParameterTemplate.objects.get(name='Template 1')
+
+        self.assertEqual(template.choices, '')
+        self.assertEqual(template.checkbox, False)

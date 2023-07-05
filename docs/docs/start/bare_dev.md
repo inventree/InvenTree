@@ -1,8 +1,8 @@
 ---
-title: Development Server
+title: Bare Metal Development Server
 ---
 
-## Development Server
+## Bare Metal Development Server
 
 !!! warning "Installation"
     Before continuing, ensure that the [installation steps](./install.md) have been completed.
@@ -10,7 +10,7 @@ title: Development Server
 InvenTree includes a simple server application, suitable for use in a development environment.
 
 !!! warning "Deployment"
-    Refer to the [production server instructions](./production.md) to implement a much more robust server setup.
+    Refer to the [production server instructions](./bare_prod.md) to implement a much more robust server setup.
 
 ### Running on a Local Machine
 
@@ -40,7 +40,7 @@ To enable access to the InvenTree server from other computers on a local network
 
 ## Background Worker
 
-The backgroun task manager must also be started. The InvenTree server is already running in the foreground, so open a *new shell window* to start the server.
+The background task manager must also be started. The InvenTree server is already running in the foreground, so open a *new shell window* to start the server.
 
 ### Activate Virtual Environment
 

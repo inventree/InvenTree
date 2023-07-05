@@ -116,6 +116,18 @@ function salesOrderFields(options={}) {
                 return filters;
             }
         },
+        address: {
+            icon: 'fa-map',
+            adjustFilters: function(filters) {
+                let customer = getFormFieldValue('customer', {}, {modal: options.modal});
+
+                if (customer) {
+                    filters.company = customer;
+                }
+
+                return filters;
+            }
+        },
         responsible: {
             icon: 'fa-user',
         }
@@ -722,9 +734,6 @@ function loadSalesOrderTable(table, options) {
         }),
         customView: function(data) {
             return `<div id='purchase-order-calendar'></div>`;
-        },
-        onRefresh: function() {
-            loadSalesOrderTable(table, options);
         },
         onLoadSuccess: function() {
 
@@ -1522,7 +1531,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
 
 
 /**
- * Display an "allocations" sub table, showing stock items allocated againt a sales order
+ * Display an "allocations" sub table, showing stock items allocated against a sales order
  * @param {*} index
  * @param {*} row
  * @param {*} element
@@ -1545,7 +1554,7 @@ function showAllocationSubTable(index, row, element, options) {
 
             var pk = $(this).attr('pk');
 
-            // Edit the sales order alloction
+            // Edit the sales order allocation
             constructForm(
                 `/api/order/so-allocation/${pk}/`,
                 {
@@ -1727,12 +1736,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.error('function called without order ID');
+        console.error('loadSalesOrderLineItemTable called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.error('function called without order status');
+        console.error('loadSalesOrderLineItemTable called without order status');
         return;
     }
 

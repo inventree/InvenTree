@@ -288,6 +288,30 @@ def inventree_commit_date(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_installer(*args, **kwargs):
+    """Return InvenTree package installer string."""
+    return version.inventreeInstaller()
+
+
+@register.simple_tag()
+def inventree_branch(*args, **kwargs):
+    """Return InvenTree git branch string."""
+    return version.inventreeBranch()
+
+
+@register.simple_tag()
+def inventree_target(*args, **kwargs):
+    """Return InvenTree target string."""
+    return version.inventreeTarget()
+
+
+@register.simple_tag()
+def inventree_platform(*args, **kwargs):
+    """Return InvenTree platform string."""
+    return version.inventreePlatform()
+
+
+@register.simple_tag()
 def inventree_github_url(*args, **kwargs):
     """Return URL for InvenTree github site."""
     return "https://github.com/InvenTree/InvenTree/"
@@ -295,7 +319,7 @@ def inventree_github_url(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
-    """Return URL for InvenTree documenation site."""
+    """Return URL for InvenTree documentation site."""
     tag = version.inventreeDocsVersion()
 
     return f"https://docs.inventree.org/en/{tag}"
@@ -605,7 +629,7 @@ else:  # pragma: no cover
         bits = token.split_contents()
         loc_name = settings.STATICFILES_I18_PREFIX
 
-        # change path to called ressource
+        # change path to called resource
         bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
         token.contents = ' '.join(bits)
 

@@ -4,15 +4,28 @@ Provides information on the current InvenTree version
 """
 
 import os
+import pathlib
+import platform
 import re
-import subprocess
+from datetime import datetime as dt
+from datetime import timedelta as td
 
 import django
+from django.conf import settings
+
+from dulwich.repo import NotGitRepository, Repo
 
 from .api_version import INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.12.0 dev"
+INVENTREE_SW_VERSION = "0.13.0 dev"
+
+# Discover git
+try:
+    main_repo = Repo(pathlib.Path(__file__).parent.parent.parent)
+    main_commit = main_repo[main_repo.head()]
+except (NotGitRepository, FileNotFoundError):
+    main_commit = None
 
 
 def inventreeInstanceName():
@@ -93,30 +106,6 @@ def inventreeDjangoVersion():
     return django.get_version()
 
 
-git_available: bool = None  # is git available and used by the install?
-
-
-def check_for_git():
-    """Check if git is available on the install."""
-    global git_available
-
-    if git_available is not None:
-        return git_available
-
-    try:
-        subprocess.check_output('git --version'.split(), stderr=subprocess.DEVNULL)
-    except Exception:
-        git_available = False
-
-    if git_available is None:
-        try:
-            subprocess.check_output('git status'.split(), stderr=subprocess.DEVNULL)
-            git_available = True
-            return True
-        except Exception:
-            git_available = False
-
-
 def inventreeCommitHash():
     """Returns the git commit hash for the running codebase."""
     # First look in the environment variables, i.e. if running in docker
@@ -125,13 +114,9 @@ def inventreeCommitHash():
     if commit_hash:
         return commit_hash
 
-    if not check_for_git():
+    if main_commit is None:
         return None
-
-    try:
-        return str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
-    except Exception:  # pragma: no cover
-        return None
+    return main_commit.sha().hexdigest()[0:7]
 
 
 def inventreeCommitDate():
@@ -142,11 +127,56 @@ def inventreeCommitDate():
     if commit_date:
         return commit_date.split(' ')[0]
 
-    if not check_for_git():
+    if main_commit is None:
+        return None
+
+    commit_dt = dt.fromtimestamp(main_commit.commit_time) + td(seconds=main_commit.commit_timezone)
+    return str(commit_dt.date())
+
+
+def inventreeInstaller():
+    """Returns the installer for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    installer = os.environ.get('INVENTREE_PKG_INSTALLER', '')
+
+    if installer:
+        return installer
+    elif settings.DOCKER:
+        return 'DOC'
+    elif main_commit is not None:
+        return 'GIT'
+
+    return None
+
+
+def inventreeBranch():
+    """Returns the branch for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    branch = os.environ.get('INVENTREE_PKG_BRANCH', '')
+
+    if branch:
+        return branch
+
+    if main_commit is None:
         return None
 
     try:
-        d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip()
-        return d.split(' ')[0]
-    except Exception:  # pragma: no cover
-        return None
+        branch = main_repo.refs.follow(b'HEAD')[0][1].decode()
+        return branch.removeprefix('refs/heads/')
+    except IndexError:
+        return None  # pragma: no cover
+
+
+def inventreeTarget():
+    """Returns the target platform for the running codebase - if set."""
+    # First look in the environment variables, e.g. if running in docker
+
+    return os.environ.get('INVENTREE_PKG_TARGET', None)
+
+
+def inventreePlatform():
+    """Returns the platform for the instance."""
+
+    return platform.platform(aliased=True)

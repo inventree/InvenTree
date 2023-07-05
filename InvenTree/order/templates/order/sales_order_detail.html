@@ -1,7 +1,7 @@
 {% extends "order/sales_order_base.html" %}
 
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 {% load i18n %}
 {% load static %}
 
@@ -29,10 +29,8 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="sales-order-lines" %}
-            </div>
+        <div id='order-toolbar-buttons'>
+            {% include "filter_list.html" with id="sales-order-lines" %}
         </div>
         <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
         </table>
@@ -54,10 +52,8 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-extra-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="sales-order-extra-lines" %}
-            </div>
+        <div id='order-extra-toolbar-buttons'>
+            {% include "filter_list.html" with id="sales-order-extra-lines" %}
         </div>
         <table class='table table-striped table-condensed' id='so-extra-lines-table' data-toolbar='#order-extra-toolbar-buttons'>
         </table>
@@ -89,10 +85,8 @@
     </div>
     <div class='panel-content'>
         {% if roles.sales_order.change %}
-        <div id='pending-shipment-toolbar' class='btn-group' style='float: right;'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="pending-shipments" %}
-            </div>
+        <div id='pending-shipment-toolbar'>
+            {% include "filter_list.html" with id="pending-shipments" %}
         </div>
         {% endif %}
         <table class='table table-striped table-condensed' id='pending-shipments-table' data-toolbar='#pending-shipment-toolbar'></table>
@@ -105,10 +99,8 @@
         <h4>{% trans "Completed Shipments" %}</h4>
     </div>
     <div class='panel-content'>
-        <div id='completed-shipment-toolbar' class='btn-group' style='float: right;'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="completed-shipments" %}
-            </div>
+        <div id='completed-shipment-toolbar'>
+            {% include "filter_list.html" with id="completed-shipments" %}
         </div>
         <table class='table table-striped table-condensed' id='completed-shipments-table' data-toolbar='#completed-shipment-toolbar'></table>
     </div>
@@ -119,10 +111,8 @@
         <h4>{% trans "Build Orders" %}</h4>
     </div>
     <div class='panel-content'>
-        <div id='builds-toolbar' class='btn-group' style='float: right;'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id='build' %}
-            </div>
+        <div id='builds-toolbar'>
+            {% include "filter_list.html" with id='build' %}
         </div>
         <table class='table table-striped table-condensed' id='builds-table' data-toolbar='#builds-toolbar'></table>
     </div>

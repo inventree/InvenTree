@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
+from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI, UpdateAPI)
@@ -70,6 +71,8 @@ class PluginList(ListAPI):
     ]
 
     ordering = [
+        '-active',
+        'name',
         'key',
     ]
 
@@ -120,10 +123,17 @@ class PluginInstall(CreateAPI):
 
 
 class PluginActivate(UpdateAPI):
-    """Endpoint for activating a plugin."""
+    """Endpoint for activating a plugin.
+
+    - PATCH: Activate a plugin
+
+    Pass a boolean value for the 'active' field.
+    If not provided, it is assumed to be True,
+    and the plugin will be activated.
+    """
 
     queryset = PluginConfig.objects.all()
-    serializer_class = PluginSerializers.PluginConfigEmptySerializer
+    serializer_class = PluginSerializers.PluginActivateSerializer
     permission_classes = [IsSuperuser, ]
 
     def get_object(self):
@@ -134,9 +144,8 @@ class PluginActivate(UpdateAPI):
 
     def perform_update(self, serializer):
         """Activate the plugin."""
-        instance = serializer.instance
-        instance.active = True
-        instance.save()
+
+        serializer.save()
 
 
 class PluginSettingList(ListAPI):
@@ -257,6 +266,9 @@ plugin_api_urls = [
             re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-detail-activate'),
             re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
         ])),
+
+        # Metadata
+        re_path('^metadata/', MetadataView.as_view(), {'model': PluginConfig}, name='api-plugin-metadata'),
 
         # Plugin management
         re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),

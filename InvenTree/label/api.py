@@ -10,8 +10,11 @@ from django.views.decorators.cache import cache_page, never_cache
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import NotFound
 
+import build.models
 import common.models
 import InvenTree.helpers
+import label.models
+import label.serializers
 from InvenTree.api import MetadataView
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
@@ -20,10 +23,6 @@ from part.models import Part
 from plugin.base.label import label as plugin_label
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
-
-from .models import PartLabel, StockItemLabel, StockLocationLabel
-from .serializers import (PartLabelSerializer, StockItemLabelSerializer,
-                          StockLocationLabelSerializer)
 
 
 class LabelFilterMixin:
@@ -92,11 +91,11 @@ class LabelListView(LabelFilterMixin, ListAPI):
             """
             valid_label_ids = set()
 
-            for label in queryset.all():
+            for lbl in queryset.all():
                 matches = True
 
                 try:
-                    filters = InvenTree.helpers.validateFilterString(label.filters)
+                    filters = InvenTree.helpers.validateFilterString(lbl.filters)
                 except ValidationError:
                     continue
 
@@ -113,7 +112,7 @@ class LabelListView(LabelFilterMixin, ListAPI):
 
                 # Matched all items
                 if matches:
-                    valid_label_ids.add(label.pk)
+                    valid_label_ids.add(lbl.pk)
                 else:
                     continue
 
@@ -285,8 +284,8 @@ class LabelPrintMixin(LabelFilterMixin):
 class StockItemLabelMixin:
     """Mixin for StockItemLabel endpoints"""
 
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
+    queryset = label.models.StockItemLabel.objects.all()
+    serializer_class = label.serializers.StockItemLabelSerializer
 
     ITEM_MODEL = StockItem
     ITEM_KEY = 'item'
@@ -317,8 +316,8 @@ class StockItemLabelPrint(StockItemLabelMixin, LabelPrintMixin, RetrieveAPI):
 class StockLocationLabelMixin:
     """Mixin for StockLocationLabel endpoints"""
 
-    queryset = StockLocationLabel.objects.all()
-    serializer_class = StockLocationLabelSerializer
+    queryset = label.models.StockLocationLabel.objects.all()
+    serializer_class = label.serializers.StockLocationLabelSerializer
 
     ITEM_MODEL = StockLocation
     ITEM_KEY = 'location'
@@ -348,8 +347,8 @@ class StockLocationLabelPrint(StockLocationLabelMixin, LabelPrintMixin, Retrieve
 
 class PartLabelMixin:
     """Mixin for PartLabel endpoints"""
-    queryset = PartLabel.objects.all()
-    serializer_class = PartLabelSerializer
+    queryset = label.models.PartLabel.objects.all()
+    serializer_class = label.serializers.PartLabelSerializer
 
     ITEM_MODEL = Part
     ITEM_KEY = 'part'
@@ -370,6 +369,31 @@ class PartLabelPrint(PartLabelMixin, LabelPrintMixin, RetrieveAPI):
     pass
 
 
+class BuildLineLabelMixin:
+    """Mixin class for BuildLineLabel endpoints"""
+
+    queryset = label.models.BuildLineLabel.objects.all()
+    serializer_class = label.serializers.BuildLineLabelSerializer
+
+    ITEM_MODEL = build.models.BuildLine
+    ITEM_KEY = 'line'
+
+
+class BuildLineLabelList(BuildLineLabelMixin, LabelListView):
+    """API endpoint for viewing a list of BuildLineLabel objects"""
+    pass
+
+
+class BuildLineLabelDetail(BuildLineLabelMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single BuildLineLabel object"""
+    pass
+
+
+class BuildLineLabelPrint(BuildLineLabelMixin, LabelPrintMixin, RetrieveAPI):
+    """API endpoint for printing a BuildLineLabel object"""
+    pass
+
+
 label_api_urls = [
 
     # Stock item labels
@@ -377,7 +401,7 @@ label_api_urls = [
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
-            re_path(r'metadata/', MetadataView.as_view(), {'model': StockItemLabel}, name='api-stockitem-label-metadata'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': label.models.StockItemLabel}, name='api-stockitem-label-metadata'),
             re_path(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
         ])),
 
@@ -390,7 +414,7 @@ label_api_urls = [
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
-            re_path(r'metadata/', MetadataView.as_view(), {'model': StockLocationLabel}, name='api-stocklocation-label-metadata'),
+            re_path(r'metadata/', MetadataView.as_view(), {'model': label.models.StockLocationLabel}, name='api-stocklocation-label-metadata'),
             re_path(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
         ])),
 
@@ -403,11 +427,24 @@ label_api_urls = [
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'^print/', PartLabelPrint.as_view(), name='api-part-label-print'),
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': PartLabel}, name='api-part-label-metadata'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': label.models.PartLabel}, name='api-part-label-metadata'),
             re_path(r'^.*$', PartLabelDetail.as_view(), name='api-part-label-detail'),
         ])),
 
         # List view
         re_path(r'^.*$', PartLabelList.as_view(), name='api-part-label-list'),
+    ])),
+
+    # BuildLine labels
+    re_path(r'^buildline/', include([
+        # Detail views
+        path(r'<int:pk>/', include([
+            re_path(r'^print/', BuildLineLabelPrint.as_view(), name='api-buildline-label-print'),
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': label.models.BuildLineLabel}, name='api-buildline-label-metadata'),
+            re_path(r'^.*$', BuildLineLabelDetail.as_view(), name='api-buildline-label-detail'),
+        ])),
+
+        # List view
+        re_path(r'^.*$', BuildLineLabelList.as_view(), name='api-buildline-label-list'),
     ])),
 ]

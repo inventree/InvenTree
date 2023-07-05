@@ -9,6 +9,7 @@ import importlib
 import logging
 import os
 import subprocess
+import time
 from pathlib import Path
 from typing import Dict, List, OrderedDict
 
@@ -58,9 +59,8 @@ class PluginsRegistry:
         self.errors = {}                                        # Holds discovering errors
 
         # flags
-        self.is_loading = False                                 # Are plugins beeing loaded right now
+        self.is_loading = False                                 # Are plugins being loaded right now
         self.apps_loading = True                                # Marks if apps were reloaded yet
-        self.git_is_modern = True                               # Is a modern version of git available
 
         self.installed_apps = []                                # Holds all added plugin_paths
 
@@ -152,7 +152,7 @@ class PluginsRegistry:
                         print('[PLUGIN] Max retries, breaking loading')
                     break
                 if settings.PLUGIN_TESTING:
-                    print(f'[PLUGIN] Above error occured during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
+                    print(f'[PLUGIN] Above error occurred during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
 
                 # now the loading will re-start up with init
 
@@ -199,7 +199,7 @@ class PluginsRegistry:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
             force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
-        # Do not reload whe currently loading
+        # Do not reload when currently loading
         if self.is_loading:
             return  # pragma: no cover
 
@@ -440,13 +440,16 @@ class PluginsRegistry:
                     continue  # continue -> the plugin is not loaded
 
                 # Initialize package - we can be sure that an admin has activated the plugin
-                logger.info(f'Loading plugin `{plg_name}`')
+                logger.debug(f'Loading plugin `{plg_name}`')
 
                 try:
+                    t_start = time.time()
                     plg_i: InvenTreePlugin = plg()
-                    logger.debug(f'Loaded plugin `{plg_name}`')
+                    dt = time.time() - t_start
+                    logger.info(f'Loaded plugin `{plg_name}` in {dt:.3f}s')
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
+                    logger.warning(f"Plugin `{plg_name}` could not be loaded")
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)

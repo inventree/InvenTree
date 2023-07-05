@@ -10,6 +10,6 @@ class NoIntegrationPlugin(InvenTreePlugin):
 
 
 class WrongIntegrationPlugin(UrlsMixin, InvenTreePlugin):
-    """A basic wron plugin with urls."""
+    """A basic wrong plugin with urls."""
 
     NAME = "WrongIntegrationPlugin"

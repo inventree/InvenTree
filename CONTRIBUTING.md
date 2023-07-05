@@ -1,4 +1,4 @@
-Hi there, thank you for your intrest in contributing!
+Hi there, thank you for your interest in contributing!
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
 ## Quickstart
@@ -19,7 +19,7 @@ pip install invoke && invoke setup-dev --tests
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 docker compose run inventree-dev-server invoke install
-docker compose run inventree-dev-server invoke setup-test
+docker compose run inventree-dev-server invoke setup-test --dev
 docker compose up -d
 ```
 
@@ -33,7 +33,7 @@ Run the following command to set up all toolsets for development.
 invoke setup-dev
 ```
 
-*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce the style errors.*
+*We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce errors.*
 
 ## Branches and Versioning
 
@@ -50,7 +50,7 @@ The HEAD of the "main" or "master" branch of InvenTree represents the current "l
 - All feature branches are merged into master
 - All bug fixes are merged into master
 
-**No pushing to master:** New featues must be submitted as a pull request from a separate branch (one branch per feature).
+**No pushing to master:** New features must be submitted as a pull request from a separate branch (one branch per feature).
 
 ### Feature Branches
 
@@ -70,7 +70,7 @@ The HEAD of the "stable" branch represents the latest stable release code.
 #### Release Candidate Branches
 
 - Release candidate branches are made from master, and merged into stable.
-- RC branches are targetted at a major/minor version e.g. "0.5"
+- RC branches are targeted at a major/minor version e.g. "0.5"
 - When a release candidate branch is merged into *stable*, the release is tagged
 
 #### Bugfix Branches
@@ -135,10 +135,27 @@ To run only partial tests, for example for a module use:
 invoke test --runtest order
 ```
 
+To see all the available options:
+
+```
+invoke test --help
+```
+
 ## Code Style
 
-Sumbitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
-Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for python. Docstrings for general javascript code is encouraged! Docstyles are checked by `invoke style`.
+Code style is automatically checked as part of the project's CI pipeline on GitHub. This means that any pull requests which do not conform to the style guidelines will fail CI checks.
+
+### Backend Code
+
+Backend code (Python) is checked against the [PEP style guidelines](https://peps.python.org/pep-0008/). Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for python.
+
+### Frontend Code
+
+Frontend code (Javascript) is checked using [eslint](https://eslint.org/). While docstrings are not enforced for front-end code, good code documentation is encouraged!
+
+### Running Checks Locally
+
+If you have followed the setup devtools procedure, then code style checking is performend automatically whenever you commit changes to the code.
 
 ### Django templates
 
@@ -146,7 +163,7 @@ Django are checked by [djlint](https://github.com/Riverside-Healthcare/djlint) t
 
 The following rules out of the [default set](https://djlint.com/docs/linter/) are not applied:
 ```bash
-D018: (Django) Internal links should use the {% url ... %} pattern
+D018: (Django) Internal links should use the { % url ... % } pattern
 H006: Img tag should have height and width attributes
 H008: Attributes should be double quoted
 H021: Inline styles should be avoided
@@ -187,16 +204,16 @@ user_facing_string = _('This string will be exposed to the translation engine!')
 HTML and javascript files are passed through the django templating engine. Translatable strings are implemented as follows:
 
 ```html
-{% load i18n %}
+{ % load i18n % }
 
-<span>{% trans "This string will be translated" %} - this string will not!</span>
+<span>{ % trans "This string will be translated" % } - this string will not!</span>
 ```
 
 ## Github use
 ### Tags
 The tags describe issues and PRs in multiple areas:
 | Area | Name | Description |
-|---|---|---|
+| --- | --- | --- |
 | Triage Labels |  |  |
 |  | triage:not-checked | Item was not checked by the core team  |
 |  | triage:not-approved | Item is not green-light by maintainer |
@@ -205,10 +222,13 @@ The tags describe issues and PRs in multiple areas:
 |  | bug | Identifies a bug which needs to be addressed |
 |  | dependency | Relates to a project dependency |
 |  | duplicate | Duplicate of another issue or PR |
-|  | enhancement | This is an suggested enhancement or new feature |
+|  | enhancement | This is an suggested enhancement, extending the functionality of an existing feature |
+|  | experimental | This is a new *experimental* feature which needs to be enabled manually |
+|  | feature | This is a new feature, introducing novel functionality |
 |  | help wanted | Assistance required |
 |  | invalid | This issue or PR is considered invalid |
 |  | inactive | Indicates lack of activity |
+|  | migration | Database migration, requires special attention |
 |  | question | This is a question |
 |  | roadmap | This is a roadmap feature with no immediate plans for implementation |
 |  | security | Relates to a security issue |
@@ -227,7 +247,9 @@ The tags describe issues and PRs in multiple areas:
 |  | stock | Stock item management |
 |  | user interface | User interface |
 | Ecosystem Labels |  |  |
+|  | backport | Tags that the issue will be backported to a stable branch as a bug-fix |
 |  | demo | Relates to the InvenTree demo server or dataset |
 |  | docker | Docker / docker-compose |
 |  | CI | CI / unit testing ecosystem |
+|  | refactor | Refactoring existing code |
 |  | setup | Relates to the InvenTree setup / installation process |

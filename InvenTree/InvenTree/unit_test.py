@@ -2,13 +2,17 @@
 
 import csv
 import io
+import json
 import re
+from contextlib import contextmanager
 from pathlib import Path
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
+from django.db import connections
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework.test import APITestCase
@@ -233,8 +237,37 @@ class ExchangeRateMixin:
         Rate.objects.bulk_create(items)
 
 
+class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
+    """Testcase with user setup buildin."""
+    pass
+
+
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
+
+    @contextmanager
+    def assertNumQueriesLessThan(self, value, using='default', verbose=False, debug=False):
+        """Context manager to check that the number of queries is less than a certain value.
+
+        Example:
+        with self.assertNumQueriesLessThan(10):
+            # Do some stuff
+        Ref: https://stackoverflow.com/questions/1254170/django-is-there-a-way-to-count-sql-queries-from-an-unit-test/59089020#59089020
+        """
+        with CaptureQueriesContext(connections[using]) as context:
+            yield   # your test will be run here
+
+        if verbose:
+            msg = "\r\n%s" % json.dumps(context.captured_queries, indent=4)
+        else:
+            msg = None
+
+        n = len(context.captured_queries)
+
+        if debug:
+            print(f"Expected less than {value} queries, got {n} queries")
+
+        self.assertLess(n, value, msg=msg)
 
     def checkResponse(self, url, method, expected_code, response):
         """Debug output for an unexpected response"""
@@ -354,27 +387,27 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         if decode:
             # Decode data and return as StringIO file object
-            fo = io.StringIO()
-            fo.name = fo
-            fo.write(response.getvalue().decode('UTF-8'))
+            file = io.StringIO()
+            file.name = file
+            file.write(response.getvalue().decode('UTF-8'))
         else:
             # Return a a BytesIO file object
-            fo = io.BytesIO()
-            fo.name = fn
-            fo.write(response.getvalue())
+            file = io.BytesIO()
+            file.name = fn
+            file.write(response.getvalue())
 
-        fo.seek(0)
+        file.seek(0)
 
-        return fo
+        return file
 
-    def process_csv(self, fo, delimiter=',', required_cols=None, excluded_cols=None, required_rows=None):
+    def process_csv(self, file_object, delimiter=',', required_cols=None, excluded_cols=None, required_rows=None):
         """Helper function to process and validate a downloaded csv file."""
         # Check that the correct object type has been passed
-        self.assertTrue(isinstance(fo, io.StringIO))
+        self.assertTrue(isinstance(file_object, io.StringIO))
 
-        fo.seek(0)
+        file_object.seek(0)
 
-        reader = csv.reader(fo, delimiter=delimiter)
+        reader = csv.reader(file_object, delimiter=delimiter)
 
         headers = []
         rows = []
@@ -408,8 +441,3 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             data.append(entry)
 
         return data
-
-
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup buildin."""
-    pass

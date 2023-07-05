@@ -1249,6 +1249,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'PART_PARAMETER_ENFORCE_UNITS': {
+            'name': _('Enforce Parameter Units'),
+            'description': _('If units are provided, parameter values must match the specified units'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PRICING_DECIMAL_PLACES_MIN': {
             'name': _('Minimum Pricing Decimal Places'),
             'description': _('Minimum number of decimal places to display when rendering pricing data'),
@@ -1467,6 +1474,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'STOCK_SHOW_INSTALLED_ITEMS': {
+            'name': _('Show Installed Stock Items'),
+            'description': _('Display installed stock items in stock tables'),
+            'default': False,
+            'validator': bool,
+        },
+
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _('Required pattern for generating Build Order reference field'),
@@ -1616,13 +1630,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'requires_restart': True,
         },
 
-        'PLUGIN_CHECK_SIGNATURES': {
-            'name': _('Check plugin signatures'),
-            'description': _('Check and show signatures for plugins'),
-            'default': False,
-            'validator': bool,
-        },
-
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
@@ -1674,6 +1681,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'STOCKTAKE_ENABLE': {
             'name': _('Stocktake Functionality'),
             'description': _('Enable stocktake functionality for recording stock levels and calculating stock value'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'STOCKTAKE_EXCLUDE_EXTERNAL': {
+            'name': _('Exclude External Locations'),
+            'description': _('Exclude stock items in external locations from stocktake calculations'),
             'validator': bool,
             'default': False,
         },
@@ -1775,13 +1789,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'PART_RECENT_COUNT': {
-            'name': _('Recent Part Count'),
-            'description': _('Number of recent parts to display on index page'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
-        },
-
         'HOMEPAGE_BOM_REQUIRES_VALIDATION': {
             'name': _('Show unvalidated BOMs'),
             'description': _('Show BOMs that await validation on the homepage'),
@@ -1794,13 +1801,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Show recently changed stock items on the homepage'),
             'default': True,
             'validator': bool,
-        },
-
-        'STOCK_RECENT_COUNT': {
-            'name': _('Recent Stock Count'),
-            'description': _('Number of recent stock items to display on index page'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
         },
 
         'HOMEPAGE_STOCK_LOW': {
@@ -2395,7 +2395,7 @@ class WebhookEndpoint(models.Model):
         self.verify = self.VERIFICATION_METHOD
 
     def process_webhook(self):
-        """Process the webhook incomming.
+        """Process the webhook incoming.
 
         This does not deal with the data itself - that happens in process_payload.
         Do not touch or pickle data here - it was not verified to be safe.
@@ -2532,7 +2532,7 @@ class WebhookMessage(models.Model):
 
 
 class NotificationEntry(MetaMixin):
-    """A NotificationEntry records the last time a particular notifaction was sent out.
+    """A NotificationEntry records the last time a particular notification was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
 

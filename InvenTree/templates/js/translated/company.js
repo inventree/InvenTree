@@ -1,42 +1,52 @@
 {% load i18n %}
 
 /* globals
+    clearFormErrors,
     constructLabel,
     constructForm,
+    enableSubmitButton,
     formatCurrency,
     formatDecimal,
     formatDate,
+    handleFormErrors,
     handleFormSuccess,
     imageHoverIcon,
     inventreeGet,
     inventreePut,
+    hideFormInput,
     loadTableFilters,
     makeDeleteButton,
     makeEditButton,
     makeIconBadge,
+    orderParts,
     renderClipboard,
     renderDate,
     renderLink,
     renderPart,
     setupFilterList,
+    showFormInput,
     thumbnailImage,
     wrapButtons,
 */
 
 /* exported
+    createAddress,
     createCompany,
     createContact,
     createManufacturerPart,
     createSupplierPart,
     createSupplierPartPriceBreak,
+    deleteAddress,
     deleteContacts,
     deleteManufacturerParts,
     deleteManufacturerPartParameters,
     deleteSupplierParts,
     duplicateSupplierPart,
+    editAddress,
     editCompany,
     editContact,
     editSupplierPartPriceBreak,
+    loadAddressTable,
     loadCompanyTable,
     loadContactTable,
     loadManufacturerPartTable,
@@ -289,7 +299,7 @@ function editSupplierPart(part, options={}) {
 /*
  * Delete one or more SupplierPart objects from the database.
  * - User will be provided with a modal form, showing all the parts to be deleted.
- * - Delete operations are performed sequentialy, not simultaneously
+ * - Delete operations are performed sequentially, not simultaneously
  */
 function deleteSupplierParts(parts, options={}) {
 
@@ -400,9 +410,6 @@ function companyFormFields() {
         description: {},
         website: {
             icon: 'fa-globe',
-        },
-        address: {
-            icon: 'fa-envelope',
         },
         currency: {
             icon: 'fa-dollar-sign',
@@ -782,10 +789,328 @@ function loadContactTable(table, options={}) {
     });
 }
 
+/*
+ * Construct a set of form fields for the Address model
+ */
+function addressFields(options={}) {
+
+    let fields = {
+        company: {
+            icon: 'fa-building',
+        },
+        primary: {
+            onEdit: function(val, name, field, opts) {
+
+                if (val === false) {
+
+                    hideFormInput("confirm_primary", opts);
+                    $('#id_confirm_primary').prop("checked", false);
+                    clearFormErrors(opts);
+                    enableSubmitButton(opts, true);
+
+                } else if (val === true) {
+
+                    showFormInput("confirm_primary", opts);
+                    if($('#id_confirm_primary').prop("checked") === false) {
+                        handleFormErrors({'confirm_primary': 'WARNING: Setting this address as primary will remove primary flag from other addresses'}, field, {});
+                        enableSubmitButton(opts, false);
+                    }
+                }
+            }
+        },
+        confirm_primary: {
+            help_text: "Confirm",
+            onEdit: function(val, name, field, opts) {
+
+                if (val === true) {
+
+                    clearFormErrors(opts);
+                    enableSubmitButton(opts, true);
+
+                } else if (val === false) {
+
+                    handleFormErrors({'confirm_primary': 'WARNING: Setting this address as primary will remove primary flag from other addresses'}, field, {});
+                    enableSubmitButton(opts, false);
+                }
+            },
+            css: {
+                display: 'none'
+            }
+        },
+        title: {},
+        line1: {
+            icon: 'fa-map'
+        },
+        line2: {
+            icon: 'fa-map',
+        },
+        postal_code: {
+            icon: 'fa-map-pin',
+        },
+        postal_city: {
+            icon: 'fa-city'
+        },
+        province: {
+            icon: 'fa-map'
+        },
+        country: {
+            icon: 'fa-map'
+        },
+        shipping_notes: {
+            icon: 'fa-shuttle-van'
+        },
+        internal_shipping_notes: {
+            icon: 'fa-clipboard'
+        },
+        link: {
+            icon: 'fa-link'
+        }
+    };
+
+    if (options.company) {
+        fields.company.value = options.company;
+    }
+
+    return fields;
+}
+
+/*
+ * Launches a form to create a new Address
+ */
+function createAddress(options={}) {
+    let fields = options.fields || addressFields(options);
+
+    constructForm('{% url "api-address-list" %}', {
+        method: 'POST',
+        fields: fields,
+        title: '{% trans "Create New Address" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+/*
+ * Launches a form to edit an existing Address
+ */
+function editAddress(pk, options={}) {
+    let fields = options.fields || addressFields(options);
+
+    constructForm(`{% url "api-address-list" %}${pk}/`, {
+        fields: fields,
+        title: '{% trans "Edit Address" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+/*
+ * Launches a form to delete one (or more) addresses
+ */
+function deleteAddress(addresses, options={}) {
+
+    if (addresses.length == 0) {
+        return;
+    }
+
+    function renderAddress(address) {
+        return `
+        <tr>
+            <td>${address.title}</td>
+            <td>${address.line1}</td>
+            <td>${address.line2}</td>
+        </tr>`;
+    }
+
+    let rows = '';
+    let ids = [];
+
+    addresses.forEach(function(address) {
+        rows += renderAddress(address);
+        ids.push(address.pk);
+    });
+
+    let html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected addresses will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Line 1" %}</th>
+        <th>{% trans "Line 2" %}</th>
+    </tr>
+    ${rows}
+    </table>`;
+
+    constructForm('{% url "api-address-list" %}', {
+        method: 'DELETE',
+        multi_delete: true,
+        title: '{% trans "Delete Addresses" %}',
+        preFormContent: html,
+        form_data: {
+            items: ids,
+        },
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+function loadAddressTable(table, options={}) {
+    var params = options.params || {};
+
+    var filters = loadTableFilters('address', params);
+
+    setupFilterList('address', $(table), '#filter-list-addresses');
+
+    $(table).inventreeTable({
+        url: '{% url "api-address-list" %}',
+        queryParams: filters,
+        original: params,
+        idField: 'pk',
+        uniqueId: 'pk',
+        sidePagination: 'server',
+        sortable: true,
+        formatNoMatches: function() {
+            return '{% trans "No addresses found" %}';
+        },
+        showColumns: true,
+        name: 'addresses',
+        columns: [
+            {
+                field: 'primary',
+                title: '{% trans "Primary" %}',
+                switchable: false,
+                formatter: function(value) {
+                    let checked = '';
+                    if (value == true) {
+                        checked = 'checked="checked"';
+                    }
+                    return `<input type="checkbox" ${checked} disabled="disabled" value="${value? 1 : 0}">`;
+                }
+            },
+            {
+                field: 'title',
+                title: '{% trans "Title" %}',
+                sortable: true,
+                switchable: false,
+            },
+            {
+                field: 'line1',
+                title: '{% trans "Line 1" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'line2',
+                title: '{% trans "Line 2" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'postal_code',
+                title: '{% trans "Postal code" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'postal_city',
+                title: '{% trans "Postal city" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'province',
+                title: '{% trans "State/province" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'country',
+                title: '{% trans "Country" %}',
+                sortable: false,
+                switchable: false,
+            },
+            {
+                field: 'shipping_notes',
+                title: '{% trans "Courier notes" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                field: 'internal_shipping_notes',
+                title: '{% trans "Internal notes" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                field: 'link',
+                title: '{% trans "External Link" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                field: 'actions',
+                title: '',
+                sortable: false,
+                switchable: false,
+                visible: options.allow_edit || options.allow_delete,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    let html = '';
+
+                    if (options.allow_edit) {
+                        html += makeEditButton('btn-address-edit', pk, '{% trans "Edit Address" %}');
+                    }
+
+                    if (options.allow_delete) {
+                        html += makeDeleteButton('btn-address-delete', pk, '{% trans "Delete Address" %}');
+                    }
+
+                    return wrapButtons(html);
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Edit button callback
+            if (options.allow_edit) {
+                $(table).find('.btn-address-edit').click(function() {
+                    var pk = $(this).attr('pk');
+                    editAddress(pk, {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    });
+                });
+            }
+
+            // Delete button callback
+            if (options.allow_delete) {
+                $(table).find('.btn-address-delete').click(function() {
+                    var pk = $(this).attr('pk');
+
+                    var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                    if (row && row.pk) {
+
+                        deleteAddress([row], {
+                            onSuccess: function() {
+                                $(table).bootstrapTable('refresh');
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+}
 
 /* Delete one or more ManufacturerPart objects from the database.
  * - User will be provided with a modal form, showing all the parts to be deleted.
- * - Delete operations are performed sequentialy, not simultaneously
+ * - Delete operations are performed sequentially, not simultaneously
  */
 function deleteManufacturerParts(selections, options={}) {
 
@@ -889,6 +1214,43 @@ function deleteManufacturerPartParameters(selections, options={}) {
 }
 
 
+// Construct a set of actions for the manufacturer part table
+function makeManufacturerPartActions(options={}) {
+    return [
+        {
+            label: 'order',
+            title: '{% trans "Order parts" %}',
+            icon: 'fa-shopping-cart',
+            permission: 'purchase_order.add',
+            callback: function(data) {
+                let parts = [];
+
+                data.forEach(function(item) {
+                    let part = item.part_detail;
+                    part.manufacturer_part = item.pk;
+                    parts.push(part);
+                });
+
+                orderParts(parts);
+            },
+        },
+        {
+            label: 'delete',
+            title: '{% trans "Delete manufacturer parts" %}',
+            icon: 'fa-trash-alt icon-red',
+            permission: 'purchase_order.delete',
+            callback: function(data) {
+                deleteManufacturerParts(data, {
+                    success: function() {
+                        $('#manufacturer-part-table').bootstrapTable('refresh');
+                    }
+                });
+            },
+        }
+    ];
+}
+
+
 /*
  * Load manufacturer part table
  */
@@ -902,7 +1264,18 @@ function loadManufacturerPartTable(table, url, options) {
 
     var filterTarget = options.filterTarget || '#filter-list-manufacturer-part';
 
-    setupFilterList('manufacturer-part', $(table), filterTarget);
+    setupFilterList('manufacturer-part', $(table), filterTarget, {
+        custom_actions: [
+            {
+                label: 'manufacturer-part',
+                title: '{% trans "Manufacturer part actions" %}',
+                icon: 'fa-tools',
+                actions: makeManufacturerPartActions({
+                    manufacturer_id: options.params.manufacturer,
+                })
+            }
+        ]
+    });
 
     $(table).inventreeTable({
         url: url,
@@ -1129,6 +1502,43 @@ function loadManufacturerPartParameterTable(table, url, options) {
 }
 
 
+// Construct a set of actions for the supplier part table
+function makeSupplierPartActions(options={}) {
+    return [
+        {
+            label: 'order',
+            title: '{% trans "Order parts" %}',
+            icon: 'fa-shopping-cart',
+            permission: 'purchase_order.add',
+            callback: function(data) {
+                let parts = []
+
+                data.forEach(function(entry) {
+                    parts.push(entry.part_detail);
+                });
+
+                orderParts(parts, {
+                    supplier: options.supplier_id,
+                });
+            },
+        },
+        {
+            label: 'delete',
+            title: '{% trans "Delete supplier parts" %}',
+            icon: 'fa-trash-alt icon-red',
+            permission: 'purchase_order.delete',
+            callback: function(data) {
+                deleteSupplierParts(data, {
+                    success: function() {
+                        $('#supplier-part-table').bootstrapTable('refresh');
+                    }
+                });
+            },
+        }
+    ];
+}
+
+
 /*
  * Load supplier part table
  */
@@ -1140,7 +1550,18 @@ function loadSupplierPartTable(table, url, options) {
     // Load filters
     var filters = loadTableFilters('supplierpart', params);
 
-    setupFilterList('supplierpart', $(table));
+    setupFilterList('supplierpart', $(table), '#filter-list-supplier-part', {
+        custom_actions: [
+            {
+                label: 'supplier-part',
+                title: '{% trans "Supplier part actions" %}',
+                icon: 'fa-tools',
+                actions: makeSupplierPartActions({
+                    supplier_id: options.params.supplier,
+                }),
+            }
+        ]
+    });
 
     $(table).inventreeTable({
         url: url,

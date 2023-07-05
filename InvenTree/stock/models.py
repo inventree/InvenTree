@@ -34,8 +34,8 @@ from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, InvenTreeTree,
                               MetadataMixin, extract_int)
-from InvenTree.status_codes import (SalesOrderStatus, StockHistoryCode,
-                                    StockStatus)
+from InvenTree.status_codes import (SalesOrderStatusGroups, StockHistoryCode,
+                                    StockStatus, StockStatusGroups)
 from part import models as PartModels
 from plugin.events import trigger_event
 from users.models import Owner
@@ -256,7 +256,7 @@ def generate_batch_code():
     now = datetime.now()
 
     # Pass context data through to the template randering.
-    # The folowing context variables are availble for custom batch code generation
+    # The following context variables are available for custom batch code generation
     context = {
         'date': now,
         'year': now.year,
@@ -334,7 +334,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         customer=None,
         consumed_by=None,
         is_building=False,
-        status__in=StockStatus.AVAILABLE_CODES
+        status__in=StockStatusGroups.AVAILABLE_CODES
     )
 
     # A query filter which can be used to filter StockItem objects which have expired
@@ -624,7 +624,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         except PartModels.Part.DoesNotExist:
             # This gets thrown if self.supplier_part is null
-            # TODO - Find a test than can be perfomed...
+            # TODO - Find a test than can be performed...
             pass
 
         # Ensure that the item cannot be assigned to itself
@@ -806,7 +806,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
     )
 
     status = models.PositiveIntegerField(
-        default=StockStatus.OK,
+        default=StockStatus.OK.value,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
@@ -1082,12 +1082,12 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         if active is True:
             query = query.filter(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
                 shipment__shipment_date=None
             )
         elif active is False:
             query = query.exclude(
-                line__order__status__in=SalesOrderStatus.OPEN
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
             ).exclude(
                 shipment__shipment_date=None
             )
@@ -1261,6 +1261,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         # Mark this stock item as *not* belonging to anyone
         self.belongs_to = None
+        self.consumed_by = None
         self.location = location
 
         self.save()
@@ -1345,7 +1346,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         entry = StockItemTracking.objects.create(
             item=self,
-            tracking_type=entry_type,
+            tracking_type=entry_type.value,
             user=user,
             date=datetime.now(),
             notes=notes,
@@ -2109,7 +2110,7 @@ class StockItemTracking(models.Model):
     """Stock tracking entry - used for tracking history of a particular StockItem.
 
     Note: 2021-05-11
-    The legacy StockTrackingItem model contained very litle information about the "history" of the item.
+    The legacy StockTrackingItem model contained very little information about the "history" of the item.
     In fact, only the "quantity" of the item was recorded at each interaction.
     Also, the "title" was translated at time of generation, and thus was not really translateable.
     The "new" system tracks all 'delta' changes to the model,

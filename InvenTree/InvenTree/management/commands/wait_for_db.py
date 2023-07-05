@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         while not connected:
 
-            time.sleep(5)
+            time.sleep(2)
 
             try:
                 connection.ensure_connection()
@@ -34,4 +34,4 @@ class Command(BaseCommand):
                     self.stdout.write("Database configuration is not usable")
 
             if connected:
-                self.stdout.write("Database connection sucessful!")
+                self.stdout.write("Database connection successful!")

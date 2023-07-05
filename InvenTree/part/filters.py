@@ -28,8 +28,9 @@ from sql_util.utils import SubquerySum
 
 import part.models
 import stock.models
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import (BuildStatusGroups,
+                                    PurchaseOrderStatusGroups,
+                                    SalesOrderStatusGroups)
 
 
 def annotate_on_order_quantity(reference: str = ''):
@@ -46,7 +47,7 @@ def annotate_on_order_quantity(reference: str = ''):
     # Filter only 'active' purhase orders
     # Filter only line with outstanding quantity
     order_filter = Q(
-        order__status__in=PurchaseOrderStatus.OPEN,
+        order__status__in=PurchaseOrderStatusGroups.OPEN,
         quantity__gt=F('received'),
     )
 
@@ -78,7 +79,7 @@ def annotate_total_stock(reference: str = ''):
 
     - This function calculates the 'total stock' for a given part
     - Finds all stock items associated with each part (using the provided filter)
-    - Aggregates the 'quantity' of each relevent stock item
+    - Aggregates the 'quantity' of each relevant stock item
 
     Args:
         reference: The relationship reference of the part from the current model e.g. 'part'
@@ -98,12 +99,34 @@ def annotate_total_stock(reference: str = ''):
     )
 
 
+def annotate_build_order_requirements(reference: str = ''):
+    """Annotate the total quantity of each part required for build orders.
+
+    - Only interested in 'active' build orders
+    - We are looking for any BuildLine items which required this part (bom_item.sub_part)
+    - We are interested in the 'quantity' of each BuildLine item
+
+    """
+
+    # Active build orders only
+    build_filter = Q(build__status__in=BuildStatusGroups.ACTIVE_CODES)
+
+    return Coalesce(
+        SubquerySum(
+            f'{reference}used_in__build_lines__quantity',
+            filter=build_filter,
+        ),
+        Decimal(0),
+        output_field=models.DecimalField(),
+    )
+
+
 def annotate_build_order_allocations(reference: str = ''):
     """Annotate the total quantity of each part allocated to build orders:
 
     - This function calculates the total part quantity allocated to open build orders
     - Finds all build order allocations for each part (using the provided filter)
-    - Aggregates the 'allocated quantity' for each relevent build order allocation item
+    - Aggregates the 'allocated quantity' for each relevant build order allocation item
 
     Args:
         reference: The relationship reference of the part from the current model
@@ -111,7 +134,7 @@ def annotate_build_order_allocations(reference: str = ''):
     """
 
     # Build filter only returns 'active' build orders
-    build_filter = Q(build__status__in=BuildStatus.ACTIVE_CODES)
+    build_filter = Q(build_line__build__status__in=BuildStatusGroups.ACTIVE_CODES)
 
     return Coalesce(
         SubquerySum(
@@ -128,7 +151,7 @@ def annotate_sales_order_allocations(reference: str = ''):
 
     - This function calculates the total part quantity allocated to open sales orders"
     - Finds all sales order allocations for each part (using the provided filter)
-    - Aggregates the 'allocated quantity' for each relevent sales order allocation item
+    - Aggregates the 'allocated quantity' for each relevant sales order allocation item
 
     Args:
         reference: The relationship reference of the part from the current model
@@ -137,7 +160,7 @@ def annotate_sales_order_allocations(reference: str = ''):
 
     # Order filter only returns incomplete shipments for open orders
     order_filter = Q(
-        line__order__status__in=SalesOrderStatus.OPEN,
+        line__order__status__in=SalesOrderStatusGroups.OPEN,
         shipment__shipment_date=None,
     )
 

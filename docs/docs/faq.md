@@ -6,7 +6,7 @@ title: FAQ
 
 Below is a list of frequently asked questions. If you are having issues with InvenTree please consult this list first!
 
-## Installation Isues
+## Installation Issues
 
 ### Installing on Windows
 
@@ -68,7 +68,7 @@ For more information, refer to the installation guides:
 - [Bare Metal Installation](./start/install.md#updating-inventree)
 
 !!! warning "Invoke Update"
-    You must ensure that the `invoke update` command is perfomed *every time* you update InvenTree
+    You must ensure that the `invoke update` command is performed *every time* you update InvenTree
 
 ### Feature *x* does not work after update
 
@@ -98,7 +98,7 @@ invoke worker
 ```
 
 !!! info "Supervisor"
-    A better option is to manage the background worker process using a process manager such as supervisor. Refer to the [production server guide](./start/production.md).
+    A better option is to manage the background worker process using a process manager such as supervisor. Refer to the [production server guide](./start/bare_prod.md).
 
 ## Docker Issues
 
@@ -118,7 +118,7 @@ It means that the user running the InvenTree server does not have permission to 
 
 Ensure that the user running the InvenTree server has permission to create the required directories. For example, if running the server as the `inventree` user, ensure that the `inventree` user has permission to create the required directories.
 
-If you are using Docker to run the InvenTree server, ensure that the user that runs the docker deamon has permission to create the required directories in the volume.
+If you are using Docker to run the InvenTree server, ensure that the user that runs the docker daemon has permission to create the required directories in the volume.
 
 ### Failed to mount local volume
 

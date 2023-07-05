@@ -68,7 +68,7 @@ Images are served from the `./docs/assets/images` folder and can be added as fol
 ```
 
 Replace:
-* `image_id` with a short unique indentifier for the image (most commonly, `image_id` is same as `image_name`)
+* `image_id` with a short unique identifier for the image (most commonly, `image_id` is same as `image_name`)
 * `folder` with the folder in `docs/assets/images` in which the image is stored
 * `image_name` with the name of the image
 * `.png` with the image extension (PNG or JPEG are preferred formats)

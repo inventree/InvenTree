@@ -17,7 +17,7 @@ from common.settings import currency_codes
 from company.models import Company
 from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderLineStatus,
                                     ReturnOrderStatus, SalesOrderStatus,
-                                    StockStatus)
+                                    SalesOrderStatusGroups, StockStatus)
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from part.models import Part
@@ -562,7 +562,7 @@ class PurchaseOrderTest(OrderTest):
         # Test without completed orders
         response = self.get(url, expected_code=200, format=None)
 
-        number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE))
+        number_orders = len(models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE.value))
 
         # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
@@ -697,10 +697,10 @@ class PurchaseOrderDownloadTest(OrderTest):
             },
             expected_code=200,
             expected_fn='InvenTree_PurchaseOrders.csv',
-        ) as fo:
+        ) as file:
 
             data = self.process_csv(
-                fo,
+                file,
                 required_cols=self.required_cols,
                 excluded_cols=self.excluded_cols,
                 required_rows=models.PurchaseOrder.objects.count()
@@ -722,9 +722,9 @@ class PurchaseOrderDownloadTest(OrderTest):
             decode=False,
             expected_code=200,
             expected_fn='InvenTree_PurchaseOrderItems.xlsx',
-        ) as fo:
+        ) as file:
 
-            self.assertTrue(isinstance(fo, io.BytesIO))
+            self.assertTrue(isinstance(file, io.BytesIO))
 
 
 class PurchaseOrderReceiveTest(OrderTest):
@@ -743,7 +743,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         # Mark the order as "placed" so we can receive line items
         order = models.PurchaseOrder.objects.get(pk=1)
-        order.status = PurchaseOrderStatus.PLACED
+        order.status = PurchaseOrderStatus.PLACED.value
         order.save()
 
     def test_empty(self):
@@ -944,7 +944,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         # Before posting "valid" data, we will mark the purchase order as "pending"
         # In this case we do expect an error!
         order = models.PurchaseOrder.objects.get(pk=1)
-        order.status = PurchaseOrderStatus.PENDING
+        order.status = PurchaseOrderStatus.PENDING.value
         order.save()
 
         response = self.post(
@@ -956,7 +956,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertIn('can only be received against', str(response.data))
 
         # Now, set the PurchaseOrder back to "PLACED" so the items can be received
-        order.status = PurchaseOrderStatus.PLACED
+        order.status = PurchaseOrderStatus.PLACED.value
         order.save()
 
         # Receive two separate line items against this order
@@ -1388,7 +1388,7 @@ class SalesOrderTest(OrderTest):
         # Test without completed orders
         response = self.get(url, expected_code=200, format=None)
 
-        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED))
+        number_orders = len(models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED.value))
 
         # Transform content to a Calendar object
         calendar = Calendar.from_ical(response.content)
@@ -1558,8 +1558,8 @@ class SalesOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.xls',
             decode=False,
-        ) as fo:
-            self.assertTrue(isinstance(fo, io.BytesIO))
+        ) as file:
+            self.assertTrue(isinstance(file, io.BytesIO))
 
     def test_download_csv(self):
         """Tesst that the list of sales orders can be downloaded as a .csv file"""
@@ -1589,10 +1589,10 @@ class SalesOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.csv',
             decode=True
-        ) as fo:
+        ) as file:
 
             data = self.process_csv(
-                fo,
+                file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
                 required_rows=models.SalesOrder.objects.count()
@@ -1615,13 +1615,13 @@ class SalesOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.tsv',
             decode=True,
-        ) as fo:
+        ) as file:
 
             self.process_csv(
-                fo,
+                file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
-                required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatus.OPEN).count(),
+                required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatusGroups.OPEN).count(),
                 delimiter='\t',
             )
 

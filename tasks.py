@@ -131,7 +131,7 @@ def install(c):
 
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
-    """Sets up everything needed for the dev enviroment."""
+    """Sets up everything needed for the dev environment."""
     print("Installing required python packages from 'requirements-dev.txt'")
 
     # Install required Python packages with PIP
@@ -175,7 +175,7 @@ def clean_settings(c):
     manage(c, "clean_settings")
 
 
-@task(help={'mail': 'mail of the user whos MFA should be disabled'})
+@task(help={'mail': "mail of the user who's MFA should be disabled"})
 def remove_mfa(c, mail=''):
     """Remove MFA for a user."""
     if not mail:
@@ -520,7 +520,7 @@ def test_translations(c):
     file_path = pathlib.Path(settings.LOCALE_PATHS[0], 'xx', 'LC_MESSAGES', 'django.po')
     new_file_path = str(file_path) + '_new'
 
-    # complie regex
+    # compile regex
     reg = re.compile(
         r"[a-zA-Z0-9]{1}" +  # match any single letter and number  # noqa: W504
         r"(?![^{\(\<]*[}\)\>])" +  # that is not inside curly brackets, brackets or a tag  # noqa: W504
@@ -542,7 +542,7 @@ def test_translations(c):
                     file_new.write(line)
                 else:
                     if last_string:
-                        last_string = last_string + line  # a string is beeing read in -> continue appending
+                        last_string = last_string + line  # a string is being read in -> continue appending
                     file_new.write(line)
 
     # change out translation files
@@ -565,9 +565,12 @@ def test_translations(c):
     help={
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
+        'migrations': 'Run migration unit tests',
+        'report': 'Display a report of slow tests',
+        'coverage': 'Run code coverage analysis (requires coverage package)',
     }
 )
-def test(c, disable_pty=False, runtest=''):
+def test(c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False):
     """Run unit-tests for InvenTree codebase.
 
     To run only certain test, use the argument --runtest.
@@ -583,13 +586,37 @@ def test(c, disable_pty=False, runtest=''):
 
     pty = not disable_pty
 
-    # Run coverage tests
-    manage(c, f'test --slowreport {runtest}', pty=pty)
+    _apps = ' '.join(apps())
+
+    cmd = 'test'
+
+    if runtest:
+        # Specific tests to run
+        cmd += f' {runtest}'
+    else:
+        # Run all tests
+        cmd += f' {_apps}'
+
+    if report:
+        cmd += ' --slowreport'
+
+    if migrations:
+        cmd += ' --tag migration_test'
+    else:
+        cmd += ' --exclude-tag migration_test'
+
+    if coverage:
+        # Run tests within coverage environment, and generate report
+        c.run(f'coverage run {managePyPath()} {cmd}')
+        c.run('coverage html -i')
+    else:
+        # Run simple test runner, without coverage
+        manage(c, cmd, pty=pty)
 
 
 @task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
-    """Setup a testing enviroment."""
+    """Setup a testing environment."""
 
     from InvenTree.InvenTree.config import get_media_dir
 
@@ -627,25 +654,6 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
     # Set up development setup if flag is set
     if dev:
         setup_dev(c)
-
-
-@task
-def coverage(c):
-    """Run code-coverage of the InvenTree codebase, using the 'coverage' code-analysis tools.
-
-    Generates a code coverage report (available in the htmlcov directory)
-    """
-    # Run sanity check on the django install
-    manage(c, 'check')
-
-    # Run coverage tests
-    c.run('coverage run {manage} test {apps}'.format(
-        manage=managePyPath(),
-        apps=' '.join(apps())
-    ))
-
-    # Generate coverage report
-    c.run('coverage html -i')
 
 
 @task(help={

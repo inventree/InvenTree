@@ -36,7 +36,7 @@ def construct_absolute_url(*arg, **kwargs):
     This is useful when (for example) sending an email to a user with a link
     to something in the InvenTree web framework.
     A URL is constructed in the following order:
-    1. If setings.SITE_URL is set (e.g. in the Django settings), use that
+    1. If settings.SITE_URL is set (e.g. in the Django settings), use that
     2. If the InvenTree setting INVENTREE_BASE_URL is set, use that
     3. Otherwise, use the current request URL (if available)
     """
@@ -150,7 +150,7 @@ def download_image_from_url(remote_url, timeout=2.5):
         raise ValueError(_("Image size is too large"))
 
     # Download the file, ensuring we do not exceed the reported size
-    fo = io.BytesIO()
+    file = io.BytesIO()
 
     dl_size = 0
     chunk_size = 64 * 1024
@@ -161,7 +161,7 @@ def download_image_from_url(remote_url, timeout=2.5):
         if dl_size > max_size:
             raise ValueError(_("Image download exceeded maximum size"))
 
-        fo.write(chunk)
+        file.write(chunk)
 
     if dl_size == 0:
         raise ValueError(_("Remote server returned empty response"))
@@ -169,7 +169,7 @@ def download_image_from_url(remote_url, timeout=2.5):
     # Now, attempt to convert the downloaded data to a valid image file
     # img.verify() will throw an exception if the image is not valid
     try:
-        img = Image.open(fo).convert()
+        img = Image.open(file).convert()
         img.verify()
     except Exception:
         raise TypeError(_("Supplied URL is not a valid image file"))
@@ -262,32 +262,49 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
-    if instance.responsible is not None:
-        # Setup context for notification parsing
-        content_context = {
-            'instance': str(instance),
-            'verbose_name': sender._meta.verbose_name,
-            'app_label': sender._meta.app_label,
-            'model_name': sender._meta.model_name,
-        }
+    notify_users([instance.responsible], instance, sender, content=content, exclude=exclude)
 
-        # Setup notification context
-        context = {
-            'instance': instance,
-            'name': content.name.format(**content_context),
-            'message': content.message.format(**content_context),
-            'link': InvenTree.helpers_model.construct_absolute_url(instance.get_absolute_url()),
-            'template': {
-                'html': content.template.format(**content_context),
-                'subject': content.name.format(**content_context),
-            }
-        }
 
-        # Create notification
-        trigger_notification(
-            instance,
-            content.slug.format(**content_context),
-            targets=[instance.responsible],
-            target_exclude=[exclude],
-            context=context,
-        )
+def notify_users(users, instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
+    """Notify all passed users or groups.
+
+    Parses the supplied content with the provided instance and sender and sends a notification to all users,
+    excluding the optional excluded list.
+
+    Args:
+        users: List of users or groups to notify
+        instance: The newly created instance
+        sender: Sender model reference
+        content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        exclude (User, optional): User instance that should be excluded. Defaults to None.
+    """
+    # Setup context for notification parsing
+    content_context = {
+        'instance': str(instance),
+        'verbose_name': sender._meta.verbose_name,
+        'app_label': sender._meta.app_label,
+        'model_name': sender._meta.model_name,
+    }
+
+    # Setup notification context
+    context = {
+        'instance': instance,
+        'name': content.name.format(**content_context),
+        'message': content.message.format(**content_context),
+        'link': InvenTree.helpers_model.construct_absolute_url(instance.get_absolute_url()),
+        'template': {
+            'subject': content.name.format(**content_context),
+        }
+    }
+
+    if content.template:
+        context['template']['html'] = content.template.format(**content_context)
+
+    # Create notification
+    trigger_notification(
+        instance,
+        content.slug.format(**content_context),
+        targets=users,
+        target_exclude=[exclude],
+        context=context,
+    )

@@ -14,6 +14,11 @@ def isImportingData():
     return 'loaddata' in sys.argv
 
 
+def isRunningMigrations():
+    """Return True if the database is currently running migrations."""
+    return 'migrate' in sys.argv or 'makemigrations' in sys.argv
+
+
 def isInMainThread():
     """Django starts two processes, one for the actual dev server and the other to reload the application.
 
@@ -78,13 +83,13 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, 
 def isPluginRegistryLoaded():
     """The plugin registry reloads all apps onetime after starting so that the discovered AppConfigs are added to Django.
 
-    This triggeres the ready function of AppConfig to execute twice. Add this check to prevent from running two times.
+    This triggers the ready function of AppConfig to execute twice. Add this check to prevent from running two times.
 
     Returns: 'False' if the apps have not been reloaded already to prevent running the ready function twice
     """
     from django.conf import settings
 
-    # If plugins are not enabled, there wont be a second load
+    # If plugins are not enabled, there won't be a second load
     if not settings.PLUGINS_ENABLED:
         return True
 

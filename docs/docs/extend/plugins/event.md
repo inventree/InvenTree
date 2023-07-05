@@ -8,6 +8,15 @@ The `EventMixin` class enables plugins to respond to certain triggered events.
 
 When a certain (server-side) event occurs, the background worker passes the event information to any plugins which inherit from the `EventMixin` base class.
 
+!!! tip "Enable Event Integration"
+    The *Enable Event Integration* option must first be enabled to allow plugins to respond to events.
+
+{% with id="events", url="plugin/enable_events.png", description="Enable event integration" %}
+{% include 'img.html' %}
+{% endwith %}
+
+### Example
+
 Implementing classes must provide a `process_event` function:
 
 ```python
@@ -29,7 +38,7 @@ class EventPlugin(EventMixin, InvenTreePlugin):
 
 ### Events
 
-Events are passed through using a string identifier, e.g. 'build.completed'
+Events are passed through using a string identifier, e.g. `build.completed`
 
 The arguments (and keyword arguments) passed to the receiving function depend entirely on the type of event.
 
