@@ -4,6 +4,7 @@ import django.core.exceptions as django_exceptions
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
+from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 from .models import (Part, PartCategory, PartCategoryParameterTemplate,
@@ -168,10 +169,23 @@ class ParameterTests(TestCase):
             param = PartParameter(part=prt, template=template, data=value)
             param.full_clean()
 
+        bad_values = ['3 Amps', '-3 zogs', '3.14F']
+
+        # Disable enforcing of part parameter units
+        InvenTreeSetting.set_setting('PART_PARAMETER_ENFORCE_UNITS', False, change_user=None)
+
         # Invalid units also pass, but will be converted to the template units
-        for value in ['3 Amps', '-3 zogs', '3.14F']:
+        for value in bad_values:
             param = PartParameter(part=prt, template=template, data=value)
             param.full_clean()
+
+        # Enable enforcing of part parameter units
+        InvenTreeSetting.set_setting('PART_PARAMETER_ENFORCE_UNITS', True, change_user=None)
+
+        for value in bad_values:
+            param = PartParameter(part=prt, template=template, data=value)
+            with self.assertRaises(django_exceptions.ValidationError):
+                param.full_clean()
 
     def test_param_unit_conversion(self):
         """Test that parameters are correctly converted to template units"""
