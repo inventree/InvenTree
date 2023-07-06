@@ -361,6 +361,11 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         return self.build_lines.filter(bom_item__sub_part__trackable=False)
 
+    @property
+    def are_untracked_parts_allocated(self):
+        """Returns True if all untracked parts are allocated for this BuildOrder."""
+        return self.is_fully_allocated(tracked=False)
+
     def has_untracked_line_items(self):
         """Returns True if this BuildOrder has non trackable BomItems."""
         return self.has_untracked_line_items.count() > 0
@@ -1507,28 +1512,6 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
                     'quantity': float(item.quantity),
                 }
             )
-
-    def getStockItemThumbnail(self):
-        """Return qualified URL for part thumbnail image."""
-        thumb_url = None
-
-        if self.stock_item and self.stock_item.part:
-            try:
-                # Try to extract the thumbnail
-                thumb_url = self.stock_item.part.image.thumbnail.url
-            except Exception:
-                pass
-
-        if thumb_url is None and self.bom_item and self.bom_item.sub_part:
-            try:
-                thumb_url = self.bom_item.sub_part.image.thumbnail.url
-            except Exception:
-                pass
-
-        if thumb_url is not None:
-            return InvenTree.helpers.getMediaUrl(thumb_url)
-        else:
-            return InvenTree.helpers.getBlankThumbnail()
 
     build_line = models.ForeignKey(
         BuildLine,

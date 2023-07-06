@@ -1012,7 +1012,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
     build = serializers.PrimaryKeyRelatedField(source='build_line.build', many=False, read_only=True)
 
     # Extra (optional) detail fields
-    part_detail = PartBriefSerializer(source='stock_item.part', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='stock_item.part', many=False, read_only=True, pricing=False)
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
     location_detail = LocationSerializer(source='stock_item.location', read_only=True)
     build_detail = BuildSerializer(source='build_line.build', many=False, read_only=True)
@@ -1063,6 +1063,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
             'available_stock',
             'available_substitute_stock',
             'available_variant_stock',
+            'total_available_stock',
         ]
 
         read_only_fields = [
@@ -1074,8 +1075,8 @@ class BuildLineSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
 
     # Foreign key fields
-    bom_item_detail = BomItemSerializer(source='bom_item', many=False, read_only=True)
-    part_detail = PartSerializer(source='bom_item.sub_part', many=False, read_only=True)
+    bom_item_detail = BomItemSerializer(source='bom_item', many=False, read_only=True, pricing=False)
+    part_detail = PartSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
     allocations = BuildItemSerializer(many=True, read_only=True)
 
     # Annotated (calculated) fields
@@ -1084,6 +1085,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
     available_stock = serializers.FloatField(read_only=True)
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
+    total_available_stock = serializers.FloatField(read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1094,16 +1096,28 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         - on_order: Total stock on order for this build line
         """
 
+        queryset = queryset.select_related(
+            'build', 'bom_item',
+        )
+
         # Pre-fetch related fields
         queryset = queryset.prefetch_related(
+            'bom_item__sub_part',
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
             'bom_item__sub_part__stock_items__sales_order_allocations',
+            'bom_item__sub_part__tags',
 
             'bom_item__substitutes',
             'bom_item__substitutes__part__stock_items',
             'bom_item__substitutes__part__stock_items__allocations',
             'bom_item__substitutes__part__stock_items__sales_order_allocations',
+
+            'allocations',
+            'allocations__stock_item',
+            'allocations__stock_item__part',
+            'allocations__stock_item__location',
+            'allocations__stock_item__location__tags',
         )
 
         # Annotate the "allocated" quantity
@@ -1169,6 +1183,14 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         queryset = queryset.annotate(
             available_variant_stock=ExpressionWrapper(
                 F('variant_stock_total') - F('variant_bo_allocations') - F('variant_so_allocations'),
+                output_field=FloatField(),
+            )
+        )
+
+        # Annotate with the 'total available stock'
+        queryset = queryset.annotate(
+            total_available_stock=ExpressionWrapper(
+                F('available_stock') + F('available_substitute_stock') + F('available_variant_stock'),
                 output_field=FloatField(),
             )
         )

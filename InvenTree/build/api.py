@@ -1,6 +1,6 @@
 """JSON API for the Build app."""
 
-from django.db.models import F
+from django.db.models import F, Q
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
@@ -297,6 +297,25 @@ class BuildLineFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(allocated__lt=F('quantity'))
 
+    available = rest_filters.BooleanFilter(label=_('Available'), method='filter_available')
+
+    def filter_available(self, queryset, name, value):
+        """Filter by whether there is sufficient stock available for each BuildLine:
+
+        To determine this, we need to know:
+
+        - The quantity required for each BuildLine
+        - The quantity available for each BuildLine
+        - The quantity allocated for each BuildLine
+        """
+
+        flt = Q(quantity__lte=F('total_available_stock') + F('allocated'))
+
+        if str2bool(value):
+            return queryset.filter(flt)
+        else:
+            return queryset.exclude(flt)
+
 
 class BuildLineEndpoint:
     """Mixin class for BuildLine API endpoints."""
@@ -307,10 +326,6 @@ class BuildLineEndpoint:
     def get_queryset(self):
         """Override queryset to select-related and annotate"""
         queryset = super().get_queryset()
-
-        queryset = queryset.select_related(
-            'build', 'bom_item',
-        )
 
         queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset)
 

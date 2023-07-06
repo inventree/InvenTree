@@ -2173,9 +2173,6 @@ function loadBuildTable(table, options) {
         customView: function(data) {
             return `<div id='build-order-calendar'></div>`;
         },
-        onRefresh: function() {
-            loadBuildTable(table, options);
-        },
         onLoadSuccess: function() {
 
             if (tree_enable) {
@@ -2255,16 +2252,16 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
             {
                 field: 'part',
                 title: '{% trans "Part" %}',
-                formatter: function(value, row) {
+                formatter: function(_value, row) {
                     let html = imageHoverIcon(row.part_detail.thumbnail);
-                    html += renderLink(row.part_detail.full_name, `/part/${value}/`);
+                    html += renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
                     return html;
                 }
             },
             {
                 field: 'quantity',
                 title: '{% trans "Allocated Quantity" %}',
-                formatter: function(value, row) {
+                formatter: function(_value, row) {
                     let text = '';
                     let url = '';
                     let serial = row.serial;
@@ -2294,8 +2291,8 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
                 title: '{% trans "Location" %}',
                 formatter: function(value, row) {
                     if (row.location_detail) {
-                        var text = shortenString(row.location_detail.pathstring);
-                        var url = `/stock/location/${row.location}/`;
+                        let text = shortenString(row.location_detail.pathstring);
+                        let url = `/stock/location/${row.location_detail.pk}/`;
 
                         return renderLink(text, url);
                     } else {

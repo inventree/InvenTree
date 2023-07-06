@@ -92,6 +92,12 @@ If a part parameter is created with a value which is incompatible with the units
 {% include 'img.html' %}
 {% endwith %}
 
+This behaviour can be disabled if required, so that any parameter value is accepted:
+
+{% with id="enforce_units", url="part/part_parameters_enforce.png", description="Enforce part parameters" %}
+{% include 'img.html' %}
+{% endwith %}
+
 ### Parameter Sorting
 
 Parameter sorting takes unit conversion into account, meaning that values provided in different (but compatible) units are sorted correctly:
