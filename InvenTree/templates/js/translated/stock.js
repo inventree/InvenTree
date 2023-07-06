@@ -2068,13 +2068,36 @@ function loadStockTable(table, options) {
             // Display "total" stock quantity of all rendered rows
             let total = 0;
 
+            // Keep track of the whether all units are the same
+            // If different units are found, we cannot aggregate the quantities
+            let units = new Set();
+
             data.forEach(function(row) {
+
+                units.add(row.part_detail.units || null);
+
                 if (row.quantity != null) {
                     total += row.quantity;
                 }
             });
 
-            return total;
+            if (data.length == 0) {
+                return '-';
+            } else if (units.size > 1) {
+                return '-';
+            } else {
+                let output = `${total}`;
+
+                if (units.size == 1) {
+                    let unit = units.values().next().value;
+
+                    if (unit) {
+                        output += ` [${unit}]`;
+                    }
+                }
+
+                return output;
+            }
         }
     };
 

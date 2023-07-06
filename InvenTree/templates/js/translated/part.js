@@ -2372,6 +2372,38 @@ function loadPartTable(table, url, options={}) {
             });
 
             return text;
+        },
+        footerFormatter: function(data) {
+            // Display "total" stock quantity of all rendered rows
+            // Requires that all parts have the same base units!
+
+            let total = 0;
+            let units = new Set();
+
+            data.forEach(function(row) {
+                units.add(row.units || null);
+                if (row.total_in_stock != null) {
+                    total += row.total_in_stock;
+                }
+            });
+
+            if (data.length == 0) {
+                return '-';
+            } else if (units.size > 1) {
+                return '-';
+            } else {
+                let output = `${total}`;
+
+                if (units.size == 1) {
+                    let unit = units.values().next().value;
+
+                    if (unit) {
+                        output += ` [${unit}]`;
+                    }
+                }
+
+                return output;
+            }
         }
     });
 
@@ -2447,6 +2479,7 @@ function loadPartTable(table, url, options={}) {
         showColumns: true,
         showCustomView: grid_view,
         showCustomViewButton: false,
+        showFooter: true,
         onPostBody: function() {
             grid_view = inventreeLoad('part-grid-view') == 1;
             if (grid_view) {
