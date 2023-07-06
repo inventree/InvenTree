@@ -10,7 +10,6 @@ from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
 import tablib
-from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
@@ -32,10 +31,20 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
 
     kwargs:
         exclude_external: If True, exclude stock items in external locations (default = False)
+        location: Optional StockLocation to filter results for generated report
 
     Returns:
         PartStocktake: A new PartStocktake model instance (for the specified Part)
+
+    Note that while we record a *total stocktake* for the Part instance which gets saved to the database,
+    the user may have requested a stocktake limited to a particular location.
+
+    In this case, the stocktake *report* will be limited to the specified location.
     """
+
+    # Determine which locations are "valid" for the generated report
+    location = kwargs.get('location', None)
+    locations = location.get_descendants(include_self=True) if location else []
 
     # Grab all "available" stock items for the Part
     # We do not include variant stock when performing a stocktake,
@@ -58,41 +67,59 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
 
     base_currency = common.settings.currency_code_default()
 
+    # Keep track of total quantity and cost for this part
     total_quantity = 0
     total_cost_min = Money(0, base_currency)
     total_cost_max = Money(0, base_currency)
 
+    # Separately, keep track of stock quantity and value within the specified location
+    location_item_count = 0
+    location_quantity = 0
+    location_cost_min = Money(0, base_currency)
+    location_cost_max = Money(0, base_currency)
+
     for entry in stock_entries:
 
-        # Update total quantity value
-        total_quantity += entry.quantity
-
-        has_pricing = False
+        entry_cost_min = None
+        entry_cost_max = None
 
         # Update price range values
         if entry.purchase_price:
-            # If purchase price is available, use that
-            try:
-                pp = convert_money(entry.purchase_price, base_currency) * entry.quantity
-                total_cost_min += pp
-                total_cost_max += pp
-                has_pricing = True
-            except MissingRate:
-                logger.warning(f"MissingRate exception occurred converting {entry.purchase_price} to {base_currency}")
+            entry_cost_min = entry.purchase_price
+            entry_cost_max = entry.purchase_price
 
-        if not has_pricing:
-            # Fall back to the part pricing data
-            p_min = pricing.overall_min or pricing.overall_max
-            p_max = pricing.overall_max or pricing.overall_min
+        else:
+            # If no purchase price is available, fall back to the part pricing data
+            entry_cost_min = pricing.overall_min or pricing.overall_max
+            entry_cost_max = pricing.overall_max or pricing.overall_min
 
-            if p_min or p_max:
-                try:
-                    total_cost_min += convert_money(p_min, base_currency) * entry.quantity
-                    total_cost_max += convert_money(p_max, base_currency) * entry.quantity
-                except MissingRate:
-                    logger.warning(f"MissingRate exception occurred converting {p_min}:{p_max} to {base_currency}")
+        # Convert to base currency
+        try:
+            entry_cost_min = convert_money(entry_cost_min, base_currency) * entry.quantity
+            entry_cost_max = convert_money(entry_cost_max, base_currency) * entry.quantity
+        except Exception:
+            logger.warning(f"Could not convert {entry.purchase_price} to {base_currency}")
+
+            entry_cost_min = Money(0, base_currency)
+            entry_cost_max = Money(0, base_currency)
+
+        # Update total cost values
+        total_quantity += entry.quantity
+        total_cost_min += entry_cost_min
+        total_cost_max += entry_cost_max
+
+        # Test if this stock item is within the specified location
+        if location and entry.location not in locations:
+            continue
+
+        # Update location cost values
+        location_item_count += 1
+        location_quantity += entry.quantity
+        location_cost_min += entry_cost_min
+        location_cost_max += entry_cost_max
 
     # Construct PartStocktake instance
+    # Note that we use the *total* values for the PartStocktake instance
     instance = part.models.PartStocktake(
         part=target,
         item_count=stock_entries.count(),
@@ -105,6 +132,12 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
 
     if commit:
         instance.save()
+
+    # Add location-specific data to the instance
+    instance.location_item_count = location_item_count
+    instance.location_quantity = location_quantity
+    instance.location_cost_min = location_cost_min
+    instance.location_cost_max = location_cost_max
 
     return instance
 
@@ -211,7 +244,11 @@ def generate_stocktake_report(**kwargs):
     for p in parts:
 
         # Create a new stocktake for this part (do not commit, this will take place later on)
-        stocktake = perform_stocktake(p, user, commit=False, exclude_external=exclude_external)
+        stocktake = perform_stocktake(
+            p, user, commit=False,
+            exclude_external=exclude_external,
+            location=location,
+        )
 
         if stocktake.quantity == 0:
             # Skip rows with zero total quantity
@@ -228,10 +265,10 @@ def generate_stocktake_report(**kwargs):
             p.description,
             p.category.pk if p.category else '',
             p.category.name if p.category else '',
-            stocktake.item_count,
-            stocktake.quantity,
-            InvenTree.helpers.normalize(stocktake.cost_min.amount),
-            InvenTree.helpers.normalize(stocktake.cost_max.amount),
+            stocktake.location_item_count,
+            stocktake.location_quantity,
+            InvenTree.helpers.normalize(stocktake.location_cost_min.amount),
+            InvenTree.helpers.normalize(stocktake.location_cost_max.amount),
         ])
 
     # Save a new PartStocktakeReport instance
