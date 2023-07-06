@@ -88,7 +88,7 @@ This container uses the official [redis image](https://hub.docker.com/_/redis).
 
 !!! info "Redis on Docker"
     Docker adds an additional network layer - that might lead to lower performance than bare metal.
-    To optimise and configure your redis deployment follow the [official docker guide](https://redis.io/docs/stack/get-started/install/docker/#configuration).
+    To optimise and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
 
 !!! warning "Disabled by default"
     The *redis* container is not enabled in the default configuration. This is provided as an example for users wishing to use redis.
