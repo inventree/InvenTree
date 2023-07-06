@@ -10,7 +10,6 @@ from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
 import tablib
-from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
@@ -98,8 +97,8 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
         try:
             entry_cost_min = convert_money(entry_cost_min, base_currency) * entry.quantity
             entry_cost_max = convert_money(entry_cost_max, base_currency) * entry.quantity
-        except MissingRate:
-            logger.warning(f"MissingRate exception occurred converting {entry.purchase_price} to {base_currency}")
+        except Exception:
+            logger.warning(f"Could not convert {entry.purchase_price} to {base_currency}")
 
             entry_cost_min = Money(0, base_currency)
             entry_cost_max = Money(0, base_currency)
