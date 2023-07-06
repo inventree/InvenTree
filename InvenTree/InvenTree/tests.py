@@ -56,6 +56,23 @@ class ConversionTest(TestCase):
             q = InvenTree.conversion.convert_physical_value(val).to_base_units()
             self.assertEqual(q.magnitude, expected)
 
+    def test_invalid_values(self):
+        """Test conversion of invalid inputs"""
+
+        inputs = [
+            '-',
+            ';;',
+            '-x',
+            '?',
+            '--',
+            '+',
+            '++',
+        ]
+
+        for val in inputs:
+            with self.assertRaises(ValidationError):
+                InvenTree.conversion.convert_physical_value(val)
+
 
 class ValidatorTest(TestCase):
     """Simple tests for custom field validators."""
