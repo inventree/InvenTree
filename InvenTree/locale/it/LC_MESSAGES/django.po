@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-06 03:11+0000\n"
-"PO-Revision-Date: 2023-07-05 21:44\n"
+"PO-Revision-Date: 2023-07-06 22:01\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -2852,16 +2852,12 @@ msgid "Enable stocktake functionality for recording stock levels and calculating
 msgstr "Abilita la funzionalità d'inventario per la registrazione dei livelli di magazzino e il calcolo del valore di magazzino"
 
 #: common/models.py:1689
-#, fuzzy
-#| msgid "External Location"
 msgid "Exclude External Locations"
-msgstr "Ubicazione Esterna"
+msgstr ""
 
 #: common/models.py:1690
-#, fuzzy
-#| msgid "Exclude stock items older than this number of days from pricing calculations"
 msgid "Exclude stock items in external locations from stocktake calculations"
-msgstr "Escludere dal calcolo dei prezzi gli articoli in giacenza più vecchi di questo numero di giorni"
+msgstr ""
 
 #: common/models.py:1696
 msgid "Automatic Stocktake Period"
@@ -6363,10 +6359,8 @@ msgid "Exclude External Stock"
 msgstr ""
 
 #: part/serializers.py:939
-#, fuzzy
-#| msgid "Exclude stock items from this selected location"
 msgid "Exclude stock items in external locations"
-msgstr "Escludi gli elementi stock da questa ubicazione selezionata"
+msgstr ""
 
 #: part/serializers.py:944
 msgid "Generate Report"
@@ -12742,11 +12736,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12880,3 +12872,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:254
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
