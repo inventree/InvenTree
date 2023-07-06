@@ -1404,6 +1404,7 @@ function createPartParameter(part_id, options={}) {
 function editPartParameter(param_id, options={}) {
     options.fields = partParameterFields();
     options.title = '{% trans "Edit Parameter" %}';
+    options.focus = 'data';
 
     options.processBeforeUpload = function(data) {
         // Convert data to string
