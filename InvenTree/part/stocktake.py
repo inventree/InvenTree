@@ -32,6 +32,7 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
 
     kwargs:
         exclude_external: If True, exclude stock items in external locations (default = False)
+        location: Optional StockLocation to filter results for generated report
 
     Returns:
         PartStocktake: A new PartStocktake model instance (for the specified Part)
@@ -211,7 +212,11 @@ def generate_stocktake_report(**kwargs):
     for p in parts:
 
         # Create a new stocktake for this part (do not commit, this will take place later on)
-        stocktake = perform_stocktake(p, user, commit=False, exclude_external=exclude_external)
+        stocktake = perform_stocktake(
+            p, user, commit=False,
+            exclude_external=exclude_external,
+            location=location,
+        )
 
         if stocktake.quantity == 0:
             # Skip rows with zero total quantity
