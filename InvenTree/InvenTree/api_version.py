@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 127
+INVENTREE_API_VERSION = 128
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v128 -> 2023-07-06 : https://github.com/inventree/InvenTree/pull/5186
+    - Adds 'available' filter for BuildLine API endpoint
 
 v127 -> 2023-06-24 : https://github.com/inventree/InvenTree/pull/5094
     - Enhancements for the PartParameter API endpoints
