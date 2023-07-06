@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-06 03:11+0000\n"
-"PO-Revision-Date: 2023-07-05 21:44\n"
+"PO-Revision-Date: 2023-07-06 22:01\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -391,7 +391,7 @@ msgstr "üst"
 #: InvenTree/models.py:671 InvenTree/models.py:672
 #: templates/js/translated/part.js:2764 templates/js/translated/stock.js:2673
 msgid "Path"
-msgstr ""
+msgstr "Yol"
 
 #: InvenTree/models.py:767
 msgid "Markdown notes (optional)"
@@ -399,15 +399,15 @@ msgstr ""
 
 #: InvenTree/models.py:794
 msgid "Barcode Data"
-msgstr ""
+msgstr "Barkod Verisi"
 
 #: InvenTree/models.py:795
 msgid "Third party barcode data"
-msgstr ""
+msgstr "Üçüncü parti barkod verisi"
 
 #: InvenTree/models.py:800
 msgid "Barcode Hash"
-msgstr ""
+msgstr "Barkod Hash"
 
 #: InvenTree/models.py:801
 msgid "Unique hash of barcode data"
@@ -419,7 +419,7 @@ msgstr ""
 
 #: InvenTree/models.py:900
 msgid "Server Error"
-msgstr ""
+msgstr "Sunucu Hatası"
 
 #: InvenTree/models.py:901
 msgid "An error has been logged by the server."
@@ -493,7 +493,7 @@ msgstr "Tekrarlanan kolon ismi:'{col}'"
 #: InvenTree/serializers.py:713
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:714
 msgid "URL of remote image file"
@@ -505,11 +505,11 @@ msgstr ""
 
 #: InvenTree/settings.py:741
 msgid "Czech"
-msgstr ""
+msgstr "Çekçe"
 
 #: InvenTree/settings.py:742
 msgid "Danish"
-msgstr ""
+msgstr "Danca"
 
 #: InvenTree/settings.py:743
 msgid "German"
@@ -533,11 +533,11 @@ msgstr "İspanyolca(Meksika)"
 
 #: InvenTree/settings.py:748
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsça"
 
 #: InvenTree/settings.py:749
 msgid "Finnish"
-msgstr ""
+msgstr "Fince"
 
 #: InvenTree/settings.py:750
 msgid "French"
@@ -577,11 +577,11 @@ msgstr "Polonyaca"
 
 #: InvenTree/settings.py:759
 msgid "Portuguese"
-msgstr ""
+msgstr "Portekizce"
 
 #: InvenTree/settings.py:760
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portekizce (Brezilya)"
 
 #: InvenTree/settings.py:761
 msgid "Russian"
@@ -801,7 +801,7 @@ msgstr "Üretim"
 
 #: InvenTree/status_codes.py:191
 msgid "Return"
-msgstr ""
+msgstr "Geri Dön"
 
 #: InvenTree/status_codes.py:194
 msgid "Repair"
@@ -2852,10 +2852,8 @@ msgid "Enable stocktake functionality for recording stock levels and calculating
 msgstr ""
 
 #: common/models.py:1689
-#, fuzzy
-#| msgid "Include locations"
 msgid "Exclude External Locations"
-msgstr "Konumları dahil et"
+msgstr ""
 
 #: common/models.py:1690
 msgid "Exclude stock items in external locations from stocktake calculations"
@@ -6361,10 +6359,8 @@ msgid "Exclude External Stock"
 msgstr ""
 
 #: part/serializers.py:939
-#, fuzzy
-#| msgid "Include stock in sublocations"
 msgid "Exclude stock items in external locations"
-msgstr "Alt konumlardaki stoku dahil et"
+msgstr ""
 
 #: part/serializers.py:944
 msgid "Generate Report"
@@ -12740,8 +12736,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12876,3 +12871,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:254
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
