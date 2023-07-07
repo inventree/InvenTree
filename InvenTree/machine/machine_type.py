@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Dict, Literal, Type
 
+from generic.states import StatusCode
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 
 # Import only for typechecking, otherwise this throws cyclic import errors
@@ -12,6 +13,11 @@ else:  # pragma: no cover
 
     class SettingsKeyType:
         pass
+
+
+class MachineStatus(StatusCode):
+    """Base class for representing a set of machine status codes"""
+    pass
 
 
 class BaseDriver(ClassValidationMixin, ClassProviderMixin):
@@ -56,27 +62,36 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         NAME: User friendly name for displaying
         DESCRIPTION: Description of what this machine type can do (default: "")
 
+        base_driver: Reference to the base driver for this machine type
+
         MACHINE_SETTINGS: Machine type specific settings dict (optional)
 
-        base_driver: Reference to the base driver for this machine type
+        MACHINE_STATUS: Set of status codes this machine type can have
+        default_machine_status: Default machine status with which this machine gets initialized
     """
 
     SLUG: str
     NAME: str
     DESCRIPTION: str
 
-    MACHINE_SETTINGS: Dict[str, SettingsKeyType]
-
     base_driver: Type[BaseDriver]
 
+    MACHINE_SETTINGS: Dict[str, SettingsKeyType]
+
+    MACHINE_STATUS: Type[MachineStatus]
+    default_machine_status: MachineStatus
+
     # used by the ClassValidationMixin
-    required_attributes = ["SLUG", "NAME", "DESCRIPTION", "base_driver"]
+    required_attributes = ["SLUG", "NAME", "DESCRIPTION", "base_driver", "MACHINE_STATUS", "default_machine_status"]
 
     def __init__(self, machine_config: MachineConfig) -> None:
         from machine import registry
 
         self.errors = []
         self.initialized = False
+
+        self.status = self.default_machine_status
+        self.status_text = ""
 
         self.machine_config = machine_config
         self.driver = registry.get_driver_instance(self.machine_config.driver_key)
@@ -145,3 +160,14 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
         config_type = MachineSetting.get_config_type(config_type_str)
         MachineSetting.set_setting(key, value, None, machine_config=self.machine_config, config_type=config_type)
+
+    def set_status(self, status: MachineStatus):
+        """Set the machine status code. There are predefined ones for each MachineType.
+
+        Import the MachineType to access it's `MACHINE_STATUS` enum.
+        """
+        self.status = status
+
+    def set_status_text(self, status_text: str):
+        """Set the machine status text. It can be any arbitrary text."""
+        self.status_text = status_text

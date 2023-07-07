@@ -3,7 +3,7 @@ from typing import Literal
 
 from django.contrib import admin
 from django.db import models
-from django.utils.html import format_html_join
+from django.utils.html import escape, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -74,7 +74,7 @@ class MachineConfig(models.Model):
         """Status if driver for machine is available"""
         return self.machine is not None and self.machine.driver is not None
 
-    @admin.display(boolean=True, description=_("Machine has no errors"))
+    @admin.display(boolean=True, description=_("No errors"))
     def no_errors(self) -> bool:
         """Status if machine has errors"""
         return len(self.errors) == 0
@@ -82,6 +82,18 @@ class MachineConfig(models.Model):
     @admin.display(description=_("Errors"))
     def get_admin_errors(self):
         return format_html_join(mark_safe("<br>"), "{}", ((str(error),) for error in self.errors)) or mark_safe(f"<i>{_('No errors')}</i>")
+
+    @admin.display(description=_("Machine status"))
+    def get_machine_status(self):
+        if self.machine is None:
+            return None
+
+        out = mark_safe(self.machine.status.render(self.machine.status))
+
+        if self.machine.status_text:
+            out += escape(f" ({self.machine.status_text})")
+
+        return out
 
 
 class MachineSetting(common.models.BaseInvenTreeSetting):
