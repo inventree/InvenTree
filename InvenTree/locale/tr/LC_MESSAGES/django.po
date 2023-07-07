@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-06 03:11+0000\n"
-"PO-Revision-Date: 2023-07-06 22:01\n"
+"PO-Revision-Date: 2023-07-07 22:03\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -589,7 +589,7 @@ msgstr "Rusça"
 
 #: InvenTree/settings.py:762
 msgid "Slovenian"
-msgstr ""
+msgstr "Slovakça"
 
 #: InvenTree/settings.py:763
 msgid "Swedish"
@@ -658,7 +658,7 @@ msgstr "İade"
 
 #: InvenTree/status_codes.py:41 InvenTree/status_codes.py:170
 msgid "In Progress"
-msgstr ""
+msgstr "Devam Ediyor"
 
 #: InvenTree/status_codes.py:42 order/models.py:1345
 #: templates/js/translated/sales_order.js:1518
@@ -689,7 +689,7 @@ msgstr "Reddedildi"
 
 #: InvenTree/status_codes.py:72
 msgid "Quarantined"
-msgstr ""
+msgstr "Karantinaya alındı"
 
 #: InvenTree/status_codes.py:91
 msgid "Legacy stock tracking entry"
@@ -725,7 +725,7 @@ msgstr "Konum değişti"
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr ""
+msgstr "Stok Güncellendi"
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
