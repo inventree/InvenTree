@@ -23,6 +23,7 @@ import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status
 import part.filters
+import part.stocktake
 import part.tasks
 import stock.models
 from InvenTree.status_codes import BuildStatusGroups
@@ -932,6 +933,12 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
         label=_('Location'), help_text=_('Limit stocktake report to a particular stock location, and any child locations')
     )
 
+    exclude_external = serializers.BooleanField(
+        default=True,
+        label=_('Exclude External Stock'),
+        help_text=_('Exclude stock items in external locations')
+    )
+
     generate_report = serializers.BooleanField(
         default=True,
         label=_('Generate Report'),
@@ -965,12 +972,13 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
 
         # Generate a new report
         offload_task(
-            part.tasks.generate_stocktake_report,
+            part.stocktake.generate_stocktake_report,
             force_async=True,
             user=user,
             part=data.get('part', None),
             category=data.get('category', None),
             location=data.get('location', None),
+            exclude_external=data.get('exclude_external', True),
             generate_report=data.get('generate_report', True),
             update_parts=data.get('update_parts', True),
         )

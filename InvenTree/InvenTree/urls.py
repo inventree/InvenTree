@@ -38,9 +38,9 @@ from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
                     CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
-                    CustomTwoFactorRemove, DatabaseStatsView, DynamicJsView,
-                    EditUserView, IndexView, NotificationsView, SearchView,
-                    SetPasswordView, SettingsView, auth_request)
+                    DatabaseStatsView, DynamicJsView, EditUserView, IndexView,
+                    NotificationsView, SearchView, SetPasswordView,
+                    SettingsView, auth_request)
 
 admin.site.site_header = "InvenTree Admin"
 
@@ -190,10 +190,6 @@ frontendpatterns = [
     re_path(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
     re_path(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
     re_path(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
-
-    # Temporary fix for django-allauth-2fa # TODO remove
-    # See https://github.com/inventree/InvenTree/security/advisories/GHSA-8j76-mm54-52xq
-    re_path(r'^accounts/two_factor/remove/?$', CustomTwoFactorRemove.as_view(), name='two-factor-remove'),
 
     # Override login page
     re_path("accounts/login/", CustomLoginView.as_view(), name="account_login"),
