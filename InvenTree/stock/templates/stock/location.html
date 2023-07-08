@@ -70,7 +70,8 @@
         <span class='fas fa-print'></span> <span class='caret'></span>
     </button>
     <ul class='dropdown-menu'>
-        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a>
+        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='print-location-report'><span class='fas fa-tag'></span> {% trans "Print Location Report" %}</a></li>
     </ul>
 </div>
 {% endif %}
@@ -278,6 +279,17 @@
             singular_name: '{% trans "stock location" %}',
             key: 'location',
             url: '{% url "api-stocklocation-label-list" %}',
+        });
+    });
+    {% endif %}
+
+    {% if report_enabled %}
+    $('#print-location-report').click(function() {
+
+        printReports({
+            items: [{{ location.pk }}],
+            key: 'location',
+            url: '{% url "api-stocklocation-report-list" %}',
         });
     });
     {% endif %}
