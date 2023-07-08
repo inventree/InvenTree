@@ -21,10 +21,10 @@ dependencies:
   - curl
   - python3.9
   - python3.9-venv
-  - python3.9-pip
-  - python3.9-cffi
-  - python3.9-brotli
-  - python3.9-wheel
+  - python3-pip
+  - python3-cffi
+  - python3-brotli
+  - python3-wheel
   - libpango-1.0-0
   - libharfbuzz0b
   - libpangoft2-1.0-0
