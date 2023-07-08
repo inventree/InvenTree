@@ -49,10 +49,6 @@ export const router = createBrowserRouter(
           element: <Home />
         },
         {
-          path: 'part/',
-          element: <Part />
-        },
-        {
           path: '/profile/:tabValue',
           element: <Profile />
         }
