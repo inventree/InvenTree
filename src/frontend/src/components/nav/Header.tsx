@@ -50,18 +50,35 @@ export function Header() {
     useLocalState.setState({ language: 'pseudo-LOCALE' });
   }
 
-  const items = tabs.map((tab) => (
-    <Tabs.Tab value={tab.name} key={tab.name}>
-      {tab.text}
-    </Tabs.Tab>
-  ));
-
+  const navTabs = (
+    <Tabs
+      defaultValue="home"
+      classNames={{
+        root: classes.tabs,
+        tabsList: classes.tabsList,
+        tab: classes.tab
+      }}
+      value={tabValue}
+      onTabChange={(value) =>
+        value == '/' ? navigate('/') : navigate(`/${value}`)
+      }
+    >
+      <Tabs.List>
+        {tabs.map((tab) => (
+          <Tabs.Tab value={tab.name} key={tab.name}>
+            {tab.text}
+          </Tabs.Tab>
+        ))}
+      </Tabs.List>
+    </Tabs>
+  );
   return (
     <div className={classes.layoutHeader}>
       <Container className={classes.layoutHeaderSection} size={'xl'}>
         <Group position="apart">
           <Group>
             <MegaHoverMenu />
+            {navTabs}
           </Group>
           <Group>
             <ScanButton />
@@ -120,22 +137,6 @@ export function Header() {
             </Menu>
           </Group>
         </Group>
-      </Container>
-      <Container size={'xl'}>
-        <Tabs
-          defaultValue="home"
-          classNames={{
-            root: classes.tabs,
-            tabsList: classes.tabsList,
-            tab: classes.tab
-          }}
-          value={tabValue}
-          onTabChange={(value) =>
-            value == '/' ? navigate('/') : navigate(`/${value}`)
-          }
-        >
-          <Tabs.List>{items}</Tabs.List>
-        </Tabs>
       </Container>
     </div>
   );
