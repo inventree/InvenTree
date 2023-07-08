@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import exp from 'constants';
 
 test('Check classic index site', async ({ page }) => {
