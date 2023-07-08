@@ -1155,7 +1155,7 @@ function loadBomTable(table, options={}) {
 
             var available_stock = availableQuantity(row);
 
-            var text = `${available_stock}`;
+            var text = renderLink(`${available_stock}`, url);
 
             if (row.sub_part_detail && row.sub_part_detail.units) {
                 text += ` <small>${row.sub_part_detail.units}</small>`;
@@ -1178,8 +1178,6 @@ function loadBomTable(table, options={}) {
                     text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                 }
             }
-
-            text = renderLink(text, url);
 
             if (row.on_order && row.on_order > 0) {
                 text += makeIconBadge(

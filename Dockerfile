@@ -127,6 +127,11 @@ CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./Inve
 
 FROM inventree_base as dev
 
+# Install nodejs / npm / yarn
+RUN apt install -y curl nodejs npm
+RUN npm cache clean -f && npm install -g n && n stable
+RUN npm install -g yarn
+
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
 

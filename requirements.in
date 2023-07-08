@@ -19,7 +19,7 @@ django-markdownify                      # Markdown rendering
 django-money<3.0.0                      # Django app for currency management  # FIXED 2022-06-26 to make sure py-moneyed is not conflicting
 django-mptt==0.11.0                     # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
-django-q                                # Background task scheduling
+django-q2                               # Background task scheduling
 django-q-sentry                         # sentry.io integration for django-q
 django-sql-utils                        # Advanced query annotation / aggregation
 django-sslserver                        # Secure HTTP development server
@@ -36,7 +36,7 @@ drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
-pillow                                  # Image manipulation
+pillow==9.5.0                           # Image manipulation # FIXED 2023-07-04 as we require PIL.Image.ANTIALIAS
 pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
