@@ -15,9 +15,6 @@ const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
 // Lazy loaded pages
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
-export const Dashboard = Loadable(
-  lazy(() => import('./pages/Index/Dashboard'))
-);
 export const Part = Loadable(lazy(() => import('./pages/Index/Part')));
 export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
@@ -43,7 +40,10 @@ export const router = createBrowserRouter(
       element: <Layout />,
       errorElement: <ErrorPage />,
       children: [
-        { index: true, element: <Dashboard /> },
+        {
+          index: true,
+          element: <Home />
+        },
         {
           path: 'home/',
           element: <Home />

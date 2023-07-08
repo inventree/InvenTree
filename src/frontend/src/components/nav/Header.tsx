@@ -11,7 +11,6 @@ import {
 import { Anchor, Button, Divider, HoverCard, SimpleGrid } from '@mantine/core';
 import {
   IconChevronDown,
-  IconDashboard,
   IconHeart,
   IconLanguage,
   IconLogout,
@@ -124,7 +123,7 @@ export function Header() {
       </Container>
       <Container size={'xl'}>
         <Tabs
-          defaultValue="Home"
+          defaultValue="home"
           classNames={{
             root: classes.tabs,
             tabsList: classes.tabsList,
@@ -135,10 +134,7 @@ export function Header() {
             value == '/' ? navigate('/') : navigate(`/${value}`)
           }
         >
-          <Tabs.List>
-            <Tabs.Tab value={'/'} key={'dash'} icon={<IconDashboard />} />
-            {items}
-          </Tabs.List>
+          <Tabs.List>{items}</Tabs.List>
         </Tabs>
       </Container>
     </div>
