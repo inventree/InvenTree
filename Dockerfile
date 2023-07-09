@@ -1,4 +1,4 @@
-FROM python:3.10-alpine3.18 as production
+FROM python:3.10-alpine3.18 as base
 
 # Build arguments for this image
 ARG commit_hash=""
@@ -8,10 +8,6 @@ ARG commit_tag=""
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV INVOKE_RUN_SHELL="/bin/ash"
-
-ENV INVENTREE_DEBUG=False
-ENV INVENTREE_COMMIT_HASH="${commit_hash}"
-ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
 ENV INVENTREE_LOG_LEVEL="WARNING"
 ENV INVENTREE_DOCKER="true"
@@ -79,11 +75,21 @@ RUN apk add --no-cache --virtual .build-deps \
     apk --purge del .build-deps
 
 COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
-COPY InvenTree ./InvenTree
 
 RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/sh", "./init.sh"]
+
+
+FROM base as production
+
+ENV INVENTREE_DEBUG=False
+
+# As .git directory is not available in production image, we pass the commit information via ENV
+ENV INVENTREE_COMMIT_HASH="${commit_hash}"
+ENV INVENTREE_COMMIT_DATE="${commit_date}"
+
+COPY InvenTree ./InvenTree
 
 # Launch the production server
 # TODO: Work out why environment variables cannot be interpolated in this command
