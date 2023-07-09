@@ -37,10 +37,8 @@ export const useApiState = create<ApiStateProps>((set, get) => ({
 export enum ApiPaths {
   user_me = 'api-user-me',
   user_token = 'api-user-token',
-  user_check = 'api-user-check',
   user_simple_login = 'api-user-simple-login',
   user_reset = 'api-user-reset',
-  user_reset_validate = 'api-user-reset-validate',
   user_reset_set = 'api-user-reset-set'
 }
 
@@ -54,8 +52,6 @@ export function url(path: ApiPaths, pk?: any): string {
       return 'email/generate/';
     case ApiPaths.user_reset:
       return '/auth/password/reset/';
-    case ApiPaths.user_reset_validate:
-      return '/password_reset/validate_token/';
     case ApiPaths.user_reset_set:
       return '/auth/password/reset/confirm/';
 
