@@ -7,7 +7,7 @@ import { DataTable } from 'mantine-datatable';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 
-import { PartTable } from '../../components/tables/PartTable';
+import { PartTable } from '../../components/tables/PartTables';
 
 export default function Part() {
   return (
