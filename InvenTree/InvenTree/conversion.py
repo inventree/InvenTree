@@ -1,11 +1,16 @@
 """Helper functions for converting between units."""
 
+import logging
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import pint
 
 _unit_registry = None
+
+
+logger = logging.getLogger('inventree')
 
 
 def get_unit_registry():
@@ -26,6 +31,9 @@ def reload_unit_registry():
     This function is called at startup, and whenever the database is updated.
     """
 
+    import time
+    t_start = time.time()
+
     global _unit_registry
 
     _unit_registry = pint.UnitRegistry()
@@ -38,6 +46,9 @@ def reload_unit_registry():
     _unit_registry.define('thousand = 1000')
 
     # TODO: Allow for custom units to be defined in the database
+
+    dt = time.time() - t_start
+    logger.debug(f'Loaded unit registry in {dt:.3f}s')
 
 
 def convert_physical_value(value: str, unit: str = None):
@@ -80,7 +91,7 @@ def convert_physical_value(value: str, unit: str = None):
         # At this point we *should* have a valid pint value
         # To double check, look at the maginitude
         float(val.magnitude)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, AttributeError):
         error = _('Provided value is not a valid number')
     except (pint.errors.UndefinedUnitError, pint.errors.DefinitionSyntaxError):
         error = _('Provided value has an invalid unit')

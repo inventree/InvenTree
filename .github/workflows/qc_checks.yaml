@@ -28,6 +28,7 @@ jobs:
 
     outputs:
       server: ${{ steps.filter.outputs.server }}
+      migrations: ${{ steps.filter.outputs.migrations }}
 
     steps:
     - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
@@ -39,6 +40,9 @@ jobs:
             - 'InvenTree/**'
             - 'requirements.txt'
             - 'requirements-dev.txt'
+          migrations:
+            - '**/migrations/**'
+            - '.github/workflows**'
 
   pep_style:
     name: Style [Python]
@@ -99,7 +103,7 @@ jobs:
           python3 ci/version_check.py
 
   mkdocs:
-    name: Style [documentation]
+    name: Style [Documentation]
     runs-on: ubuntu-20.04
 
     needs: paths-filter
@@ -204,7 +208,7 @@ jobs:
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py
       - name: Coverage Tests
-        run: invoke coverage
+        run: invoke test --coverage
       - name: Upload Coverage Report
         uses: coverallsapp/github-action@v2
         with:
@@ -297,3 +301,89 @@ jobs:
         run: invoke test
       - name: Data Export Test
         uses: ./.github/actions/migration
+
+  migration-tests:
+    name: Run Migration Unit Tests
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
+
+    env:
+      INVENTREE_DB_ENGINE: django.db.backends.postgresql
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_DB_USER: inventree
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_PORT: 5432
+      INVENTREE_DEBUG: info
+      INVENTREE_PLUGINS_ENABLED: false
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg2
+          dev-install: true
+          update: true
+      - name: Run Tests
+        run: invoke test --migrations --report
+
+  migrations-checks:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
+
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
+      INVENTREE_DEBUG: info
+      INVENTREE_PLUGINS_ENABLED: false
+
+    steps:
+    - uses: actions/checkout@v3
+      name: Checkout Code
+    - name: Environment Setup
+      uses: ./.github/actions/setup
+      with:
+        install: true
+    - name: Fetch Database
+      run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
+
+    - name: Latest Database
+      run: |
+        cp test-db/latest.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+        chmod +rw /home/runner/work/InvenTree/db.sqlite3
+        invoke migrate
+
+    - name: 0.10.0 Database
+      run: |
+        rm /home/runner/work/InvenTree/db.sqlite3
+        cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+        chmod +rw /home/runner/work/InvenTree/db.sqlite3
+        invoke migrate
+
+    - name: 0.11.0 Database
+      run: |
+        rm /home/runner/work/InvenTree/db.sqlite3
+        cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+        chmod +rw /home/runner/work/InvenTree/db.sqlite3
+        invoke migrate
+
+    - name: 0.12.0 Database
+      run: |
+        rm /home/runner/work/InvenTree/db.sqlite3
+        cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+        chmod +rw /home/runner/work/InvenTree/db.sqlite3
+        invoke migrate

@@ -14,6 +14,7 @@
     renderBuild,
     renderCompany,
     renderContact,
+    renderAddress,
     renderGroup,
     renderManufacturerPart,
     renderOwner,
@@ -52,6 +53,8 @@ function getModelRenderer(model) {
         return renderCompany;
     case 'contact':
         return renderContact;
+    case 'address':
+        return renderAddress;
     case 'stockitem':
         return renderStockItem;
     case 'stocklocation':
@@ -126,15 +129,19 @@ function renderModel(data, options={}) {
         }
     }
 
-    let text = `<span>${data.text}</span>`;
+    let text = data.text;
+
+    if (showLink && data.url) {
+        text = renderLink(text, data.url);
+    }
+
+    text = `<span>${text}</span>`;
 
     if (data.textSecondary) {
         text += ` - <small><em>${data.textSecondary}</em></small>`;
     }
 
-    if (showLink && data.url) {
-        text = renderLink(text, data.url);
-    }
+
 
     html += text;
 
@@ -167,6 +174,17 @@ function renderContact(data, parameters={}) {
     return renderModel(
         {
             text: data.name,
+        },
+        parameters
+    );
+}
+
+
+// Renderer for "Address" model
+function renderAddress(data, parameters={}) {
+    return renderModel(
+        {
+            text: [data.title, data.country, data.postal_code, data.postal_city, data.province, data.line1, data.line2].filter(Boolean).join(', '),
         },
         parameters
     );

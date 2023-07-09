@@ -7,7 +7,6 @@ import sys
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template import Context, Template
@@ -73,6 +72,11 @@ def validate_sales_order_filters(filters):
 def validate_return_order_filters(filters):
     """Validate filter string against ReturnOrder model"""
     return validateFilterString(filters, model=order.models.ReturnOrder)
+
+
+def validate_stock_location_report_filters(filters):
+    """Validate filter string against StockLocation model."""
+    return validateFilterString(filters, model=stock.models.StockLocation)
 
 
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
@@ -304,19 +308,6 @@ class TestReport(ReportTemplateBase):
         help_text=_('Include test results for stock items installed inside assembled item')
     )
 
-    def matches_stock_item(self, item):
-        """Test if this report template matches a given StockItem objects."""
-        try:
-            filters = validateFilterString(self.filters)
-            items = stock.models.StockItem.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            return False
-
-        # Ensure the provided StockItem object matches the filters
-        items = items.filter(pk=item.pk)
-
-        return items.exists()
-
     def get_test_keys(self, stock_item):
         """Construct a flattened list of test 'keys' for this StockItem:
 
@@ -392,6 +383,8 @@ class BuildReport(ReportTemplateBase):
         return {
             'build': my_build,
             'part': my_build.part,
+            'build_outputs': my_build.build_outputs.all(),
+            'line_items': my_build.build_lines.all(),
             'bom_items': my_build.part.get_bom_items(),
             'reference': my_build.reference,
             'quantity': my_build.quantity,
@@ -631,3 +624,39 @@ class ReportAsset(models.Model):
         verbose_name=_('Description'),
         help_text=_("Asset file description")
     )
+
+
+class StockLocationReport(ReportTemplateBase):
+    """Render a StockLocationReport against a StockLocation object."""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the StockLocationReport model"""
+        return reverse('api-stocklocation-report-list')
+
+    @classmethod
+    def getSubdir(cls):
+        """Return the subdirectory where StockLocationReport templates are located"""
+        return 'slr'
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_("stock location query filters (comma-separated list of key=value pairs)"),
+        validators=[
+            validate_stock_location_report_filters
+        ]
+    )
+
+    def get_context_data(self, request):
+        """Return custom context data for the StockLocationReport template"""
+        stock_location = self.object_to_print
+
+        if type(stock_location) != stock.models.StockLocation:
+            raise TypeError('Provided model is not a StockLocation object -> ' + str(type(stock_location)))
+
+        return {
+            'stock_location': stock_location,
+            'stock_items': stock_location.get_stock_items(),
+        }

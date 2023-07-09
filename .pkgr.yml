@@ -15,6 +15,8 @@ env:
   - INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
   - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
 after_install: contrib/packager.io/postinstall.sh
+before:
+  - contrib/packager.io/before.sh
 dependencies:
   - curl
   - python3
@@ -33,3 +35,4 @@ dependencies:
 targets:
   ubuntu-20.04: true
   debian-11: true
+  debian-12: true
