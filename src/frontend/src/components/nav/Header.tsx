@@ -17,12 +17,12 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { useApiState } from '../../context/ApiState';
-import { languages } from '../../context/LanguageContext';
-import { useLocalState } from '../../context/LocalState';
+import { languages } from '../../contexts/LanguageContext';
 import { tabs } from '../../defaults';
 import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
+import { useApiState } from '../../states/ApiState';
+import { useLocalState } from '../../states/LocalState';
 import { ColorToggle } from '../items/ColorToggle';
 import { PlaceholderPill } from '../items/Placeholder';
 import { ScanButton } from '../items/ScanButton';

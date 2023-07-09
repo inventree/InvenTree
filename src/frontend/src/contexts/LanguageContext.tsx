@@ -3,7 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { useEffect } from 'react';
 
 import { api } from '../App';
-import { useLocalState } from './LocalState';
+import { useLocalState } from '../states/LocalState';
 
 // Definitions
 export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';

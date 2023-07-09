@@ -1,7 +1,7 @@
 import { Center, Loader, Stack } from '@mantine/core';
 import { Suspense, lazy } from 'react';
 
-export function Loading() {
+function LoadingFallback() {
   return (
     <Stack>
       <Center>
@@ -13,7 +13,7 @@ export function Loading() {
 
 export const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
   (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<LoadingFallback />}>
       <Component {...props} />
     </Suspense>
   );

@@ -5,9 +5,9 @@ import { IconCheck } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../App';
-import { ApiPaths, url } from '../context/ApiState';
-import { doTokenLogin } from '../functions/auth';
+import { api } from '../../App';
+import { doTokenLogin } from '../../functions/auth';
+import { ApiPaths, url } from '../../states/ApiState';
 
 export default function Logged_In() {
   const navigate = useNavigate();

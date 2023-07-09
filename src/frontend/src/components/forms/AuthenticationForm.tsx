@@ -15,8 +15,8 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
-import { doClassicLogin, doSimpleLogin } from '../functions/auth';
-import { EditButton } from './items/EditButton';
+import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
+import { EditButton } from '../items/EditButton';
 
 export function AuthenticationForm({
   hostname,

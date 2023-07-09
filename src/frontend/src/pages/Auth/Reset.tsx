@@ -11,9 +11,9 @@ import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../App';
-import { ApiPaths, url } from '../context/ApiState';
-import { LanguageContext } from '../context/LanguageContext';
+import { api } from '../../App';
+import { LanguageContext } from '../../contexts/LanguageContext';
+import { ApiPaths, url } from '../../states/ApiState';
 
 export default function Reset() {
   const simpleForm = useForm({ initialValues: { email: '' } });

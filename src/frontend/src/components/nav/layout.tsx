@@ -1,10 +1,10 @@
 import { Container, Flex, Space } from '@mantine/core';
 import { Navigate, Outlet } from 'react-router-dom';
 
-import { Footer } from '../components/nav/Footer';
-import { Header } from '../components/nav/Header';
-import { useSessionState } from '../context/SessionState';
-import { InvenTreeStyle } from '../globalStyle';
+import { InvenTreeStyle } from '../../globalStyle';
+import { useSessionState } from '../../states/SessionState';
+import { Footer } from './Footer';
+import { Header } from './Header';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const [token] = useSessionState((state) => [state.token]);

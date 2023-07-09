@@ -3,9 +3,9 @@ import { QueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { lazy } from 'react';
 
-import { Loadable } from './Loading';
-import { useLocalState } from './context/LocalState';
-import { useSessionState } from './context/SessionState';
+import { Loadable } from './functions/loading';
+import { useLocalState } from './states/LocalState';
+import { useSessionState } from './states/SessionState';
 
 // API
 export const api = axios.create({});
@@ -28,11 +28,11 @@ function checkMobile() {
 export default function App() {
   // Check if mobile
   if (checkMobile()) {
-    const MobileAppView = Loadable(lazy(() => import('./MobileAppView')));
+    const MobileAppView = Loadable(lazy(() => import('./views/MobileAppView')));
     return <MobileAppView />;
   }
 
   // Main App component
-  const DesktopAppView = Loadable(lazy(() => import('./DesktopAppView')));
+  const DesktopAppView = Loadable(lazy(() => import('./views/DesktopAppView')));
   return <DesktopAppView />;
 }

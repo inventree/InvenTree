@@ -1,21 +1,23 @@
 import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
-import { Loadable } from './Loading';
+import { Loadable } from './functions/loading';
 
 // Lazy loaded pages
-export const Layout = Loadable(lazy(() => import('./pages/layout')));
+export const LayoutComponent = Loadable(
+  lazy(() => import('./components/nav/Layout'))
+);
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
 export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
 );
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
-export const Login = Loadable(lazy(() => import('./pages/Login')));
-export const Logged_In = Loadable(lazy(() => import('./pages/Logged-In')));
-export const Reset = Loadable(lazy(() => import('./pages/Reset')));
+export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
+export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
+export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
 export const Set_Password = Loadable(
-  lazy(() => import('./pages/Set-Password'))
+  lazy(() => import('./pages/Auth/Set-Password'))
 );
 
 // Routes
@@ -28,7 +30,7 @@ export const router = createBrowserRouter(
     },
     {
       path: '/',
-      element: <Layout />,
+      element: <LayoutComponent />,
       errorElement: <ErrorPage />,
       children: [
         {

@@ -3,7 +3,7 @@ import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { Locales } from './LanguageContext';
+import { Locales } from '../contexts/LanguageContext';
 import { HostList } from './states';
 
 interface LocalStateProps {

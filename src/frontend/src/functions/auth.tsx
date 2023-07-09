@@ -3,9 +3,9 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
-import { ApiPaths, url, useApiState } from '../context/ApiState';
-import { useLocalState } from '../context/LocalState';
-import { useSessionState } from '../context/SessionState';
+import { ApiPaths, url, useApiState } from '../states/ApiState';
+import { useLocalState } from '../states/LocalState';
+import { useSessionState } from '../states/SessionState';
 
 export const doClassicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();

@@ -3,12 +3,12 @@ import { Center, Container, Group, Select, Stack, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
 
-import { AuthenticationForm } from '../components/AuthenticationForm';
-import { HostOptionsForm } from '../components/HostOptionsForm';
-import { EditButton } from '../components/items/EditButton';
-import { useLocalState } from '../context/LocalState';
-import { HostList } from '../context/states';
-import { defaultHostKey } from '../defaults';
+import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
+import { HostOptionsForm } from '../../components/forms/HostOptionsForm';
+import { EditButton } from '../../components/items/EditButton';
+import { defaultHostKey } from '../../defaults';
+import { useLocalState } from '../../states/LocalState';
+import { HostList } from '../../states/states';
 
 export default function Login() {
   const [hostKey, setHost, hostList] = useLocalState((state) => [

@@ -2,13 +2,13 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
 
-import { queryClient, setApiDefaults } from './App';
-import { useApiState } from './context/ApiState';
-import { BaseContext } from './context/BaseContext';
-import { useLocalState } from './context/LocalState';
-import { useSessionState } from './context/SessionState';
-import { defaultHostList } from './defaults';
-import { router } from './router';
+import { queryClient, setApiDefaults } from '../App';
+import { BaseContext } from '../contexts/BaseContext';
+import { defaultHostList } from '../defaults';
+import { router } from '../router';
+import { useApiState } from '../states/ApiState';
+import { useLocalState } from '../states/LocalState';
+import { useSessionState } from '../states/SessionState';
 
 export default function DesktopAppView() {
   const [hostList] = useLocalState((state) => [state.hostList]);

@@ -12,7 +12,7 @@ import { useForm } from '@mantine/form';
 import { randomId } from '@mantine/hooks';
 import { IconSquarePlus, IconTrash } from '@tabler/icons-react';
 
-import { HostList } from '../context/states';
+import { HostList } from '../../states/states';
 
 export function HostOptionsForm({
   data,

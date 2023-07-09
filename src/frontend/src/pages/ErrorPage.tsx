@@ -4,8 +4,8 @@ import { useDocumentTitle } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useRouteError } from 'react-router-dom';
 
-import { LanguageContext } from '../context/LanguageContext';
-import { ErrorResponse } from '../context/states';
+import { LanguageContext } from '../contexts/LanguageContext';
+import { ErrorResponse } from '../states/states';
 
 export default function ErrorPage() {
   const error = useRouteError() as ErrorResponse;

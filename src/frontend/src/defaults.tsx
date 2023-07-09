@@ -2,7 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import { Image, MantineSize, Text } from '@mantine/core';
 
 import { MenuLinkItem } from './components/nav/MegaHoverMenu';
-import { HostList } from './context/states';
+import { HostList } from './states/states';
 
 export const defaultHostList: HostList = {
   'mantine-u56l5jt85': {

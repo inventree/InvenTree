@@ -12,10 +12,10 @@ import {
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 
-import { useApiState } from '../../context/ApiState';
-import { useLocalState } from '../../context/LocalState';
 import { menuItems } from '../../defaults';
 import { InvenTreeStyle } from '../../globalStyle';
+import { useApiState } from '../../states/ApiState';
+import { useLocalState } from '../../states/LocalState';
 import { DocTooltip } from '../items/DocTooltip';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 

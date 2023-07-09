@@ -1,8 +1,8 @@
 import { Trans } from '@lingui/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
-import { BaseContext } from './context/BaseContext';
-import { docLinks } from './defaults';
+import { BaseContext } from '../contexts/BaseContext';
+import { docLinks } from '../defaults';
 
 export default function MobileAppView() {
   return (

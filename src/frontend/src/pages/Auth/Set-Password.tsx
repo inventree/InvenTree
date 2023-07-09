@@ -12,9 +12,9 @@ import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { api } from '../App';
-import { ApiPaths, url } from '../context/ApiState';
-import { LanguageContext } from '../context/LanguageContext';
+import { api } from '../../App';
+import { LanguageContext } from '../../contexts/LanguageContext';
+import { ApiPaths, url } from '../../states/ApiState';
 
 export default function Set_Password() {
   const simpleForm = useForm({ initialValues: { password: '' } });

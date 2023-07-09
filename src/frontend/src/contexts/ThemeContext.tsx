@@ -10,7 +10,7 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 
 import { QrCodeModal } from '../components/modals/QrCodeModal';
-import { useLocalState } from './LocalState';
+import { useLocalState } from '../states/LocalState';
 
 export function ThemeContext({ children }: { children: JSX.Element }) {
   const [primaryColor, whiteColor, blackColor, radius, loader] = useLocalState(
