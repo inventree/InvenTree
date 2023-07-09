@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
-import { defaultUser, emptyServerAPI } from '../defaults';
+import { emptyServerAPI } from '../defaults';
 import { ServerAPIProps, UserProps } from './states';
 
 interface ApiStateProps {
@@ -13,7 +13,7 @@ interface ApiStateProps {
 }
 
 export const useApiState = create<ApiStateProps>((set, get) => ({
-  user: defaultUser,
+  user: undefined,
   setUser: (newUser: UserProps) => set({ user: newUser }),
   server: emptyServerAPI,
   setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
