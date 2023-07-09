@@ -53,7 +53,7 @@ RUN apk add --no-cache \
     # PostgreSQL support
     postgresql-libs postgresql-client \
     # MySQL / MariaDB support
-    mariadb-client && \
+    mariadb-connector-c-dev mariadb-client && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
 
