@@ -280,6 +280,7 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
+    "sesame.backends.ModelBackend",                             # Magic link login django-sesame
 ])
 
 DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
@@ -604,6 +605,10 @@ DATABASES = {
 # login settings
 REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
+
+# Magic login django-sesame
+SESAME_MAX_AGE = 300
+LOGIN_REDIRECT_URL = "/platform/logged-in/"
 
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
