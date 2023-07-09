@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { Image, MantineSize, Text } from '@mantine/core';
 
 import { MenuLinkItem } from './components/nav/MegaHoverMenu';
@@ -7,7 +7,7 @@ import { HostList } from './context/states';
 export const defaultHostList: HostList = {
   'mantine-u56l5jt85': {
     host: 'https://demo.inventree.org/api/',
-    name: 'InvenTree Demo'
+    name: t`InvenTree Demo`
   },
   'mantine-g8t1zrj50': {
     host: 'https://sample.app.invenhost.com/api/',
@@ -15,7 +15,7 @@ export const defaultHostList: HostList = {
   },
   'mantine-cqj63coxn': {
     host: 'http://localhost:8000/api/',
-    name: 'Localhost'
+    name: t`Local Server`
   }
 };
 export const defaultHostKey = 'mantine-cqj63coxn';
