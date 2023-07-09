@@ -28,7 +28,7 @@ export function InvenTreeTable({
 }) {
 
     const [page, setPage] = useState(1);
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: '', direction: 'asc' });
 
     const handleSortStatusChange = (status: DataTableSortStatus) => {
         setPage(1);
@@ -36,33 +36,35 @@ export function InvenTreeTable({
     };
 
     // Function to perform API query to fetch required data
-    function fetchTableData() {
+    const fetchTableData = async() => {
         
         let queryParams = Object.assign({}, params);
 
+        // Handle pagination
         if (paginated) {
             queryParams.limit = PAGE_SIZE;
             queryParams.offset = (page - 1) * PAGE_SIZE;
         }
+
+        // Handle sorting
+        if (sortStatus.columnAccessor) {
+            if (sortStatus.direction == 'asc') {
+                queryParams.ordering = sortStatus.columnAccessor;
+            } else {
+                queryParams.ordering = `-${sortStatus.columnAccessor}`;
+            }
+        }
             
         return api
             .get(`http://localhost:8000/api/${url}`, {params: queryParams})
-            .then(function(response) {
-                if ('results' in response.data) {
-                    // Handle paginated response
-                    return response.data.results;
-                } else {
-                    // Handle non-paginated response
-                    return response.data;
-                }
-            });
+            .then((response) => response.data);
     }
 
-    const { isLoading, error, data, isFetching } = useQuery({
-        queryKey: [`table-${tableKey}`],
-        queryFn: fetchTableData,
-        refetchOnWindowFocus: false,
-    });
+    const { data, isFetching } = useQuery(
+        [`table-${tableKey}`, sortStatus.columnAccessor, sortStatus.direction, page],
+        async() => fetchTableData(),
+        { refetchOnWindowFocus: false }
+    );
 
     const PAGE_SIZE = 25;
 
@@ -71,8 +73,14 @@ export function InvenTreeTable({
 
     return <DataTable
         withBorder
+        totalRecords={data?.count ?? data?.length ?? 0}
+        recordsPerPage={PAGE_SIZE}
+        page={page}
+        onPageChange={setPage}
+        sortStatus={sortStatus}
+        onSortStatusChange={handleSortStatusChange}
         fetching={isFetching}
-        records={data || []}
+        records={data?.results ?? data ?? []}
         columns={columns}
     />;
 }
