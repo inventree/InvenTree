@@ -1,4 +1,4 @@
-FROM python:3.10-alpine3.18 as base
+FROM python:3.10-alpine3.18 as inventree_base
 
 # Build arguments for this image
 ARG commit_hash=""
@@ -81,7 +81,7 @@ RUN chmod +x init.sh
 ENTRYPOINT ["/bin/sh", "./init.sh"]
 
 
-FROM base as production
+FROM inventree_base as production
 
 ENV INVENTREE_DEBUG=False
 
@@ -95,3 +95,24 @@ COPY InvenTree ./InvenTree
 # TODO: Work out why environment variables cannot be interpolated in this command
 # TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
+
+
+FROM inventree_base as dev
+
+ # The development image requires the source code to be mounted to /home/inventree/
+ # So from here, we don't actually "do" anything, apart from some file management
+
+ ENV INVENTREE_DEBUG=True
+
+ # Location for python virtual environment
+ # If the INVENTREE_PY_ENV variable is set, the entrypoint script will use it!
+ ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
+
+ WORKDIR ${INVENTREE_HOME}
+
+ # Entrypoint ensures that we are running in the python virtual environment
+ ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
+
+ # Launch the development server
+ CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
+ 
