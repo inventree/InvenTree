@@ -23,13 +23,13 @@ class MachineConfig(models.Model):
         help_text=_("Name of machine")
     )
 
-    machine_type_key = models.CharField(
+    machine_type = models.CharField(
         max_length=255,
         verbose_name=_("Machine Type"),
         help_text=_("Type of machine"),
     )
 
-    driver_key = models.CharField(
+    driver = models.CharField(
         max_length=255,
         verbose_name=_("Driver"),
         help_text=_("Driver used for the machine")

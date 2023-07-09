@@ -18,8 +18,8 @@ class MachineConfigAdminForm(forms.ModelForm):
     # TODO: add conditional choices like shown here
     # Ref: https://www.reddit.com/r/django/comments/18cj55/conditional_choices_for_model_field_based_on/
     # Ref: https://gist.github.com/blackrobot/4956070
-    driver_key = forms.ChoiceField(label=_("Driver"), choices=get_driver_choices)
-    machine_type_key = forms.ChoiceField(label=_("Machine Type"), choices=get_machine_type_choices)
+    driver = forms.ChoiceField(label=_("Driver"), choices=get_driver_choices)
+    machine_type = forms.ChoiceField(label=_("Machine Type"), choices=get_machine_type_choices)
 
 
 class MachineSettingInline(admin.TabularInline):
@@ -53,14 +53,14 @@ class MachineConfigAdmin(admin.ModelAdmin):
 
     form = MachineConfigAdminForm
     list_filter = ["active"]
-    list_display = ["name", "machine_type_key", "driver_key", "active", "is_driver_available", "no_errors", "get_machine_status"]
+    list_display = ["name", "machine_type", "driver", "active", "is_driver_available", "no_errors", "get_machine_status"]
     readonly_fields = ["is_driver_available", "get_admin_errors", "get_machine_status"]
     inlines = [MachineSettingInline]
 
     def get_readonly_fields(self, request, obj):
         # if update, don't allow changes on machine_type and driver
         if obj is not None:
-            return ["machine_type_key", "driver_key", *self.readonly_fields]
+            return ["machine_type", "driver", *self.readonly_fields]
 
         return self.readonly_fields
 

@@ -123,10 +123,10 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         self.status_text = ""
 
         self.pk = machine_config.pk
-        self.driver = registry.get_driver_instance(machine_config.driver_key)
+        self.driver = registry.get_driver_instance(machine_config.driver)
 
         if not self.driver:
-            self.errors.append(f"Driver '{machine_config.driver_key}' not found")
+            self.errors.append(f"Driver '{machine_config.driver}' not found")
         if self.driver and not isinstance(self.driver, self.base_driver):
             self.errors.append(f"'{self.driver.NAME}' is incompatible with machine type '{self.NAME}'")
 

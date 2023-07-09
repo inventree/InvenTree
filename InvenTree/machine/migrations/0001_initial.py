@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('name', models.CharField(help_text='Name of machine', max_length=255, unique=True, verbose_name='Name')),
-                ('machine_type_key', models.CharField(help_text='Type of machine', max_length=255, verbose_name='Machine Type')),
-                ('driver_key', models.CharField(help_text='Driver used for the machine', max_length=255, verbose_name='Driver')),
+                ('machine_type', models.CharField(help_text='Type of machine', max_length=255, verbose_name='Machine Type')),
+                ('driver', models.CharField(help_text='Driver used for the machine', max_length=255, verbose_name='Driver')),
                 ('active', models.BooleanField(default=True, help_text='Machines can be disabled', verbose_name='Active')),
             ],
         ),

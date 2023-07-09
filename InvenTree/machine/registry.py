@@ -108,9 +108,9 @@ class MachinesRegistry:
                 machine.initialize()
 
     def add_machine(self, machine_config, initialize=True):
-        machine_type = self.machine_types.get(machine_config.machine_type_key, None)
+        machine_type = self.machine_types.get(machine_config.machine_type, None)
         if machine_type is None:
-            self.errors.append(f"Machine type '{machine_config.machine_type_key}' not found")
+            self.errors.append(f"Machine type '{machine_config.machine_type}' not found")
             return
 
         machine: BaseMachineType = machine_type(machine_config)
