@@ -25,11 +25,13 @@ export function DocTooltip({
 
     // dynamically set height of scroll area based on content to remove unnecessary scroll bar
     useEffect(() => {
-      let tmp_ref = ref.current?.clientHeight;
-      if (tmp_ref > 250) {
+      if (ref.current == null) return;
+
+      let height = ref.current['clientHeight'];
+      if (height > 250) {
         setHeight(250);
       } else {
-        setHeight(tmp_ref + 1);
+        setHeight(height + 1);
       }
     });
 
