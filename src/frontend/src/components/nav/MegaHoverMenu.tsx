@@ -6,10 +6,11 @@ import {
   Group,
   HoverCard,
   SimpleGrid,
+  Skeleton,
   Text,
   UnstyledButton
 } from '@mantine/core';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useApiState } from '../../context/ApiState';
 import { useLocalState } from '../../context/LocalState';
@@ -33,6 +34,13 @@ export function MegaHoverMenu() {
     state.hostList
   ]);
   const [servername] = useApiState((state) => [state.server.instance]);
+  const [instanceName, setInstanceName] = useState<string>();
+
+  useEffect(() => {
+    if (hostKey && hostList[hostKey]) {
+      setInstanceName(hostList[hostKey].name);
+    }
+  }, [hostKey]);
 
   return (
     <HoverCard width={600} position="bottom" shadow="md" withinPortal>
@@ -49,7 +57,19 @@ export function MegaHoverMenu() {
               <Trans>Home</Trans>
             </Text>
           </Anchor>
-          {hostList[hostKey].name}|{servername}
+          <Group spacing={'xs'}>
+            {instanceName ? (
+              instanceName
+            ) : (
+              <Skeleton height={20} width={40} radius={0} />
+            )}{' '}
+            |{' '}
+            {servername ? (
+              servername
+            ) : (
+              <Skeleton height={20} width={40} radius={0} />
+            )}
+          </Group>
           <Anchor href="#" fz="xs">
             <Trans>View all</Trans>
           </Anchor>
