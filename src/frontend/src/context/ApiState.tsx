@@ -53,11 +53,11 @@ export function url(path: ApiPaths, pk?: any): string {
     case ApiPaths.user_simple_login:
       return '/api/email_login/';
     case ApiPaths.user_reset:
-      return '/api/password_reset/';
+      return '/auth/password/reset/';
     case ApiPaths.user_reset_validate:
-      return '/api/password_reset/validate_token/';
+      return '/password_reset/validate_token/';
     case ApiPaths.user_reset_set:
-      return '/api/password_reset/confirm/';
+      return '/auth/password/reset/confirm/';
 
     default:
       return '';

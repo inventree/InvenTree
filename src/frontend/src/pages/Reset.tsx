@@ -20,23 +20,27 @@ export default function Reset() {
   const navigate = useNavigate();
 
   function handleReset() {
-    api.post(url(ApiPaths.user_reset), simpleForm.values).then((val) => {
-      if (val.status === 200) {
-        notifications.show({
-          title: t`Mail delivery successfull`,
-          message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
-          color: 'green',
-          autoClose: false
-        });
-        navigate('/login');
-      } else {
-        notifications.show({
-          title: t`Reset failed`,
-          message: t`Check your your input and try again.`,
-          color: 'red'
-        });
-      }
-    });
+    api
+      .post(url(ApiPaths.user_reset), simpleForm.values, {
+        headers: { Authorization: '' }
+      })
+      .then((val) => {
+        if (val.status === 200) {
+          notifications.show({
+            title: t`Mail delivery successfull`,
+            message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
+            color: 'green',
+            autoClose: false
+          });
+          navigate('/login');
+        } else {
+          notifications.show({
+            title: t`Reset failed`,
+            message: t`Check your your input and try again.`,
+            color: 'red'
+          });
+        }
+      });
   }
 
   return (

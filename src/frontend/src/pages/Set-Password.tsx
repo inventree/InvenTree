@@ -22,6 +22,7 @@ export default function Set_Password() {
   const navigate = useNavigate();
 
   const token = searchParams.get('token');
+  const uid = searchParams.get('uid');
 
   function invalidToken() {
     notifications.show({
@@ -42,7 +43,7 @@ export default function Set_Password() {
 
   useEffect(() => {
     // make sure we have a token
-    if (!token) {
+    if (!token || !uid) {
       notifications.show({
         title: t`No token provided`,
         message: t`You need to provide a token to set a new password. Check your inbox for a reset link.`,
@@ -50,27 +51,21 @@ export default function Set_Password() {
       });
       navigate('/login');
     }
-
-    // make sure the token is valid
-    api
-      .post(url(ApiPaths.user_reset_validate), { token })
-      .then((val) => {
-        if (val.status != 200) {
-          invalidToken();
-        }
-      })
-      .catch(() => {
-        invalidToken();
-      });
   }, [token]);
 
   function handleSet() {
     // Set password with call to backend
     api
-      .post(url(ApiPaths.user_reset_set), {
-        token: token,
-        password: simpleForm.values.password
-      })
+      .post(
+        url(ApiPaths.user_reset_set),
+        {
+          uid: uid,
+          token: token,
+          new_password1: simpleForm.values.password,
+          new_password2: simpleForm.values.password
+        },
+        { headers: { Authorization: '' } }
+      )
       .then((val) => {
         if (val.status === 200) {
           notifications.show({
@@ -85,7 +80,14 @@ export default function Set_Password() {
         }
       })
       .catch((err) => {
-        passwordError(err.response.data);
+        if (
+          err.response.status === 400 &&
+          err.response.data?.token == 'Invalid value'
+        ) {
+          invalidToken();
+        } else {
+          passwordError(err.response.data);
+        }
       });
   }
 
