@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { HostOptionsForm } from '../../components/forms/HostOptionsForm';
 import { EditButton } from '../../components/items/EditButton';
-import { defaultHostKey } from '../../defaults';
+import { defaultHostKey } from '../../defaults/defaultHostList';
 import { useLocalState } from '../../states/LocalState';
 import { HostList } from '../../states/states';
 

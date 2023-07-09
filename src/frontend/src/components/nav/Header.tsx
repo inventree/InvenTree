@@ -18,7 +18,7 @@ import {
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { languages } from '../../contexts/LanguageContext';
-import { tabs } from '../../defaults';
+import { navTabs } from '../../defaults/links';
 import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useApiState } from '../../states/ApiState';
@@ -127,7 +127,7 @@ function NavigationTabs({ tabValue }: { tabValue: string | undefined }) {
       }
     >
       <Tabs.List>
-        {tabs.map((tab) => (
+        {navTabs.map((tab) => (
           <Tabs.Tab value={tab.name} key={tab.name}>
             {tab.text}
           </Tabs.Tab>

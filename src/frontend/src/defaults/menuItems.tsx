@@ -1,48 +1,6 @@
-import { Trans, t } from '@lingui/macro';
-import { Image, MantineSize, Text } from '@mantine/core';
+import { Image, Text } from '@mantine/core';
 
-import { MenuLinkItem } from './components/nav/MegaHoverMenu';
-import { HostList } from './states/states';
-
-export const defaultHostList: HostList = {
-  'mantine-u56l5jt85': {
-    host: 'https://demo.inventree.org/api/',
-    name: t`InvenTree Demo`
-  },
-  'mantine-g8t1zrj50': {
-    host: 'https://sample.app.invenhost.com/api/',
-    name: 'InvenHost: Sample'
-  },
-  'mantine-cqj63coxn': {
-    host: 'http://localhost:8000/api/',
-    name: t`Local Server`
-  }
-};
-export const defaultHostKey = 'mantine-cqj63coxn';
-
-export const docLinks = {
-  app: 'https://docs.inventree.org/en/latest/app/app/'
-};
-
-export const tabs = [{ text: <Trans>Home</Trans>, name: 'home' }];
-
-export const links = [
-  {
-    link: 'https://inventree.org/',
-    label: <Trans>Website</Trans>,
-    key: 'website'
-  },
-  {
-    link: 'https://github.com/invenhost/InvenTree',
-    label: <Trans>GitHub</Trans>,
-    key: 'github'
-  },
-  {
-    link: 'https://demo.inventree.org/',
-    label: <Trans>Demo</Trans>,
-    key: 'demo'
-  }
-];
+import { MenuLinkItem } from '../components/nav/MegaHoverMenu';
 
 export const menuItems: MenuLinkItem[] = [
   {
@@ -140,28 +98,4 @@ export const menuItems: MenuLinkItem[] = [
     title: 'Notifications',
     description: 'Combusken battles with the intensely hot flames it spews'
   }
-];
-
-export const emptyServerAPI = {
-  server: null,
-  version: null,
-  instance: null,
-  apiVersion: null,
-  worker_running: null,
-  worker_pending_tasks: null,
-  plugins_enabled: null,
-  active_plugins: []
-};
-
-export interface SiteMarkProps {
-  value: number;
-  label: MantineSize;
-}
-
-export const SizeMarks: SiteMarkProps[] = [
-  { value: 0, label: 'xs' },
-  { value: 25, label: 'sm' },
-  { value: 50, label: 'md' },
-  { value: 75, label: 'lg' },
-  { value: 100, label: 'xl' }
 ];

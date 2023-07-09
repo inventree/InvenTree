@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 
-import { menuItems } from '../../defaults';
+import { menuItems } from '../../defaults/menuItems';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';

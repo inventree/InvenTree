@@ -25,7 +25,7 @@ import { useState } from 'react';
 import { api, queryClient } from '../../../App';
 import { EditButton } from '../../../components/items/EditButton';
 import { PlaceholderPill } from '../../../components/items/Placeholder';
-import { SizeMarks } from '../../../defaults';
+import { SizeMarks } from '../../../defaults/defaults';
 import { InvenTreeStyle } from '../../../globalStyle';
 import { useLocalState } from '../../../states/LocalState';
 

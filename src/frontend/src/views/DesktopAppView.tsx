@@ -4,7 +4,7 @@ import { RouterProvider } from 'react-router-dom';
 
 import { queryClient, setApiDefaults } from '../App';
 import { BaseContext } from '../contexts/BaseContext';
-import { defaultHostList } from '../defaults';
+import { defaultHostList } from '../defaults/defaultHostList';
 import { router } from '../router';
 import { useApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';

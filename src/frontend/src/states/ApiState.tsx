@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
-import { emptyServerAPI } from '../defaults';
+import { emptyServerAPI } from '../defaults/defaults';
 import { ServerAPIProps, UserProps } from './states';
 
 interface ApiStateProps {
