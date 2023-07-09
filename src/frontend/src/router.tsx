@@ -1,15 +1,7 @@
-import { Suspense, lazy } from 'react';
+import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
-import Loading from './Loading';
-
-// Lazy loading helper
-const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
-  (
-    <Suspense fallback={<Loading />}>
-      <Component {...props} />
-    </Suspense>
-  );
+import { Loadable } from './Loading';
 
 // Lazy loaded pages
 export const Layout = Loadable(lazy(() => import('./pages/layout')));
