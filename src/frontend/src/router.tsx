@@ -2,7 +2,6 @@ import { Suspense, lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
 import Loading from './Loading';
-import Layout from './pages/layout';
 
 // Lazy loading helper
 const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
@@ -13,6 +12,7 @@ const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
   );
 
 // Lazy loaded pages
+export const Layout = Loadable(lazy(() => import('./pages/layout')));
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
 export const Part = Loadable(lazy(() => import('./pages/Index/Part')));
