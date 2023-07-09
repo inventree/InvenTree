@@ -1,12 +1,14 @@
 import { Trans, t } from '@lingui/macro';
 import { Center, Container, Group, Select, Stack, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
+import { useEffect } from 'react';
 
 import { AuthenticationForm } from '../components/AuthenticationForm';
 import { HostOptionsForm } from '../components/HostOptionsForm';
 import { EditButton } from '../components/items/EditButton';
 import { useLocalState } from '../context/LocalState';
 import { HostList } from '../context/states';
+import { defaultHostKey } from '../defaults';
 
 export default function Login() {
   const [hostKey, setHost, hostList, lastUsername] = useLocalState((state) => [
@@ -36,6 +38,12 @@ export default function Login() {
     }
     setHostListEdit();
   }
+  // Set default host to localhost if no host is selected
+  useEffect(() => {
+    if (hostKey === '') {
+      ChangeHost(defaultHostKey);
+    }
+  }, []);
 
   // Subcomponents
   function SelectHost() {

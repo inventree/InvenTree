@@ -18,6 +18,7 @@ export const defaultHostList: HostList = {
     name: 'Localhost'
   }
 };
+export const defaultHostKey = 'mantine-cqj63coxn';
 
 export const tabs = [{ text: <Trans>Home</Trans>, name: 'home' }];
 
