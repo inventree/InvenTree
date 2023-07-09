@@ -132,8 +132,8 @@ msgid "Send mail"
 msgstr ""
 
 #: src/components/DashboardItemProxy.tsx:32
-msgid "Title"
-msgstr ""
+#~ msgid "Title"
+#~ msgstr ""
 
 #: src/components/HostOptionsForm.tsx:36
 #: src/components/HostOptionsForm.tsx:66
@@ -157,7 +157,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: src/components/items/DocTooltip.tsx:54
+#: src/components/items/DocTooltip.tsx:56
 msgid "Read More"
 msgstr ""
 
@@ -233,52 +233,51 @@ msgstr ""
 msgid "Close modal"
 msgstr ""
 
-#: src/components/nav/Header.tsx:88
+#: src/components/nav/Header.tsx:79
 msgid "Notifications"
 msgstr ""
 
-#: src/components/nav/Header.tsx:96
-#: src/pages/Index/Profile/Profile.tsx:16
+#: src/components/nav/Header.tsx:87
+#: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
 msgstr ""
 
-#: src/components/nav/Header.tsx:100
-#: src/pages/Index/Profile/SettingsPanel.tsx:97
+#: src/components/nav/Header.tsx:91
 msgid "Settings"
 msgstr ""
 
-#: src/components/nav/Header.tsx:103
+#: src/components/nav/Header.tsx:94
 msgid "Current language {locale}"
 msgstr ""
 
-#: src/components/nav/Header.tsx:106
+#: src/components/nav/Header.tsx:97
 msgid "Switch to pseudo language"
 msgstr ""
 
-#: src/components/nav/Header.tsx:109
+#: src/components/nav/Header.tsx:100
 msgid "Account settings"
 msgstr ""
 
-#: src/components/nav/Header.tsx:118
+#: src/components/nav/Header.tsx:109
 msgid "Logout"
 msgstr ""
 
-#: src/components/nav/Header.tsx:1096
-#: src/defaults.tsx:22
+#: src/components/nav/MegaHoverMenu.tsx:49
+#: src/defaults.tsx:23
 #: src/pages/Index/Home.tsx:12
 msgid "Home"
 msgstr ""
 
-#: src/components/nav/Header.tsx:1101
+#: src/components/nav/MegaHoverMenu.tsx:54
 msgid "View all"
 msgstr ""
 
-#: src/components/nav/Header.tsx:1115
-#: src/components/nav/Header.tsx:1125
+#: src/components/nav/MegaHoverMenu.tsx:68
+#: src/components/nav/MegaHoverMenu.tsx:78
 msgid "Get started"
 msgstr ""
 
-#: src/components/nav/Header.tsx:1118
+#: src/components/nav/MegaHoverMenu.tsx:71
 msgid "Overview over high-level objects, functions and possible usecases."
 msgstr ""
 
@@ -291,20 +290,28 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+#: src/defaults.tsx:10
+msgid "InvenTree Demo"
+msgstr ""
+
+#: src/defaults.tsx:18
+msgid "Local Server"
+msgstr ""
+
 #: src/defaults.tsx:23
 #: src/pages/Index/Part.tsx:12
-msgid "Part"
-msgstr "Alkatrész"
+#~ msgid "Part"
+#~ msgstr "Alkatrész"
 
-#: src/defaults.tsx:29
+#: src/defaults.tsx:28
 msgid "Website"
 msgstr ""
 
-#: src/defaults.tsx:34
+#: src/defaults.tsx:33
 msgid "GitHub"
 msgstr ""
 
-#: src/defaults.tsx:39
+#: src/defaults.tsx:38
 msgid "Demo"
 msgstr ""
 
@@ -330,182 +337,182 @@ msgid "Sorry, an unexpected error has occurred."
 msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:17
-msgid "Subscribed Parts"
-msgstr ""
+#~ msgid "Subscribed Parts"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:24
-msgid "Subscribed Categories"
-msgstr ""
+#~ msgid "Subscribed Categories"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:31
-msgid "Latest Parts"
-msgstr ""
+#~ msgid "Latest Parts"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:38
-msgid "BOM Waiting Validation"
-msgstr ""
+#~ msgid "BOM Waiting Validation"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:45
-msgid "Recently Updated"
-msgstr ""
+#~ msgid "Recently Updated"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:52
-msgid "Low Stock"
-msgstr ""
+#~ msgid "Low Stock"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:59
-msgid "Depleted Stock"
-msgstr ""
+#~ msgid "Depleted Stock"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:66
-msgid "Required for Build Orders"
-msgstr ""
+#~ msgid "Required for Build Orders"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:73
-msgid "Expired Stock"
-msgstr ""
+#~ msgid "Expired Stock"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:80
-msgid "Stale Stock"
-msgstr ""
+#~ msgid "Stale Stock"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:87
-msgid "Build Orders In Progress"
-msgstr ""
+#~ msgid "Build Orders In Progress"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:94
-msgid "Overdue Build Orders"
-msgstr ""
+#~ msgid "Overdue Build Orders"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:101
-msgid "Outstanding Purchase Orders"
-msgstr ""
+#~ msgid "Outstanding Purchase Orders"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:108
-msgid "Overdue Purchase Orders"
-msgstr ""
+#~ msgid "Overdue Purchase Orders"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:115
-msgid "Outstanding Sales Orders"
-msgstr ""
+#~ msgid "Outstanding Sales Orders"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:122
-msgid "Overdue Sales Orders"
-msgstr ""
+#~ msgid "Overdue Sales Orders"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:129
-msgid "Current News"
-msgstr ""
+#~ msgid "Current News"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:140
-msgid "Dashboard"
-msgstr ""
+#~ msgid "Dashboard"
+#~ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:143
-msgid "Autoupdate"
-msgstr ""
+#~ msgid "Autoupdate"
+#~ msgstr ""
 
-#: src/pages/Index/Profile/Profile.tsx:24
+#: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
 msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:27
 #: src/pages/Index/Profile/Profile.tsx:46
-msgid "User Settings"
-msgstr ""
+#~ msgid "User Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
-msgid "Notification Settings"
-msgstr ""
+#~ msgid "Notification Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:33
-msgid "Global Settings"
-msgstr ""
+#~ msgid "Global Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:36
 #: src/pages/Index/Profile/Profile.tsx:312
 #: src/pages/Index/Profile/Profile.tsx:329
-msgid "Plugin Settings"
-msgstr ""
+#~ msgid "Plugin Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:47
-msgid "Settings for the current user"
-msgstr ""
+#~ msgid "Settings for the current user"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:51
-msgid "Home Page Settings"
-msgstr ""
+#~ msgid "Home Page Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:76
-msgid "Search Settings"
-msgstr ""
+#~ msgid "Search Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:115
 #: src/pages/Index/Profile/Profile.tsx:211
-msgid "Label Settings"
-msgstr ""
+#~ msgid "Label Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:120
 #: src/pages/Index/Profile/Profile.tsx:219
-msgid "Report Settings"
-msgstr ""
+#~ msgid "Report Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:125
-msgid "Display Settings"
-msgstr ""
+#~ msgid "Display Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:142
-msgid "Settings for the notifications"
-msgstr ""
+#~ msgid "Settings for the notifications"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:148
-msgid "Global Server Settings"
-msgstr ""
+#~ msgid "Global Server Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:149
-msgid "Global Settings for this instance"
-msgstr ""
+#~ msgid "Global Settings for this instance"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:153
-msgid "Server Settings"
-msgstr ""
+#~ msgid "Server Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:187
-msgid "Login Settings"
-msgstr ""
+#~ msgid "Login Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:202
-msgid "Barcode Settings"
-msgstr ""
+#~ msgid "Barcode Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:230
-msgid "Part Settings"
-msgstr ""
+#~ msgid "Part Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:255
-msgid "Pricing Settings"
-msgstr ""
+#~ msgid "Pricing Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:270
-msgid "Stock Settings"
-msgstr ""
+#~ msgid "Stock Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:284
-msgid "Build Order Settings"
-msgstr ""
+#~ msgid "Build Order Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:289
-msgid "Purchase Order Settings"
-msgstr ""
+#~ msgid "Purchase Order Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:300
-msgid "Sales Order Settings"
-msgstr ""
+#~ msgid "Sales Order Settings"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:330
-msgid "Plugin Settings for this instance"
-msgstr ""
+#~ msgid "Plugin Settings for this instance"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:27
 #~ msgid "Data is current beeing loaded"
@@ -513,40 +520,40 @@ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:69
 #: src/pages/Index/Profile/SettingsPanel.tsx:76
-msgid "Failed to load"
-msgstr ""
+#~ msgid "Failed to load"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:100
-msgid "Show internal names"
-msgstr ""
+#~ msgid "Show internal names"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:148
-msgid "Input {0} is not known"
-msgstr ""
+#~ msgid "Input {0} is not known"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:161
-msgid "Saved changes {0}"
-msgstr ""
+#~ msgid "Saved changes {0}"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:162
-msgid "Changed to {0}"
-msgstr ""
+#~ msgid "Changed to {0}"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:176
-msgid "Error while saving {0}"
-msgstr ""
+#~ msgid "Error while saving {0}"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:177
-msgid "Error was {err}"
-msgstr ""
+#~ msgid "Error was {err}"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:257
-msgid "Plugin: {0}"
-msgstr ""
+#~ msgid "Plugin: {0}"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/SettingsPanel.tsx:262
-msgid "Method: {0}"
-msgstr ""
+#~ msgid "Method: {0}"
+#~ msgstr ""
 
 #: src/pages/Index/Profile/UserPanel.tsx:91
 msgid "Userinfo"
@@ -564,15 +571,23 @@ msgstr ""
 msgid "Username: {0}"
 msgstr ""
 
-#: src/pages/Logged-In.tsx:32
+#: src/pages/Logged-In.tsx:23
+msgid "Already logged in"
+msgstr ""
+
+#: src/pages/Logged-In.tsx:24
+msgid "Found an exsisting login - using it to log you in."
+msgstr ""
+
+#: src/pages/Logged-In.tsx:42
 msgid "Checking if you are already logged in"
 msgstr ""
 
-#: src/pages/Login.tsx:19
+#: src/pages/Login.tsx:21
 msgid "No selection"
 msgstr ""
 
-#: src/pages/Login.tsx:61
+#: src/pages/Login.tsx:69
 msgid "Edit host options"
 msgstr ""
 
