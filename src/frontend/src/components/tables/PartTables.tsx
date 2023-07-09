@@ -10,6 +10,7 @@ export function PartTable() {
         params
         paginated={true}
         pageSize={25}
+        allowSelection={true}
         tableKey='part-table'
         columns={[
           {
