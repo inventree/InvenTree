@@ -15,7 +15,6 @@ const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
 export const Layout = Loadable(lazy(() => import('./pages/layout')));
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
-export const Part = Loadable(lazy(() => import('./pages/Index/Part')));
 export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
 );
