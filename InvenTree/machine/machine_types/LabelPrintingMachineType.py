@@ -25,9 +25,9 @@ class LabelPrintingMachineType(BaseMachineType):
     base_driver = BaseLabelPrintingDriver
 
     class MACHINE_STATUS(MachineStatus):
-        CONNECTED = 10, _("Connected"), "success"
-        PAPER_MISSING = 20, _("Paper missing"), "warning"
-        PRINTING = 30, _("Printing"), "primary"
-        DISCONNECTED = 50, _("Disconnected"), "danger"
+        CONNECTED = 100, _("Connected"), "success"
+        PRINTING = 101, _("Printing"), "primary"
+        PAPER_MISSING = 301, _("Paper missing"), "warning"
+        DISCONNECTED = 400, _("Disconnected"), "danger"
 
     default_machine_status = MACHINE_STATUS.DISCONNECTED

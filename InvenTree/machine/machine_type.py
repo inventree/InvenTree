@@ -16,7 +16,24 @@ else:  # pragma: no cover
 
 
 class MachineStatus(StatusCode):
-    """Base class for representing a set of machine status codes"""
+    """Base class for representing a set of machine status codes.
+
+    Use enum syntax to define the status codes, e.g.
+    ```python
+    CONNECTED = 200, _("Connected"), 'success'
+    ```
+
+    The values of the status can be accessed with `MachineStatus.CONNECTED.value`.
+
+    Additionally there are helpers to access all additional attributes `text`, `label`, `color`.
+
+    Status code ranges:
+        1XX - Everything fine
+        2XX - Warnings (e.g. ink is about to become empty)
+        3XX - Something wrong with the machine (e.g. no labels are remaining on the spool)
+        4XX - Something wrong with the driver (e.g. cannot connect to the machine)
+        5XX - Unknown issues
+    """
     pass
 
 
