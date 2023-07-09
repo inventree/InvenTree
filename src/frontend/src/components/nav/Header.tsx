@@ -54,35 +54,13 @@ export function Header() {
     useLocalState.setState({ language: 'pseudo-LOCALE' });
   }
 
-  const navTabs = (
-    <Tabs
-      defaultValue="home"
-      classNames={{
-        root: classes.tabs,
-        tabsList: classes.tabsList,
-        tab: classes.tab
-      }}
-      value={tabValue}
-      onTabChange={(value) =>
-        value == '/' ? navigate('/') : navigate(`/${value}`)
-      }
-    >
-      <Tabs.List>
-        {tabs.map((tab) => (
-          <Tabs.Tab value={tab.name} key={tab.name}>
-            {tab.text}
-          </Tabs.Tab>
-        ))}
-      </Tabs.List>
-    </Tabs>
-  );
   return (
     <div className={classes.layoutHeader}>
       <Container className={classes.layoutHeaderSection} size={'xl'}>
         <Group position="apart">
           <Group>
             <MegaHoverMenu />
-            {navTabs}
+            <NavigationTabs tabValue={tabValue} />
           </Group>
           <Group>
             <ScanButton />
@@ -143,6 +121,34 @@ export function Header() {
         </Group>
       </Container>
     </div>
+  );
+}
+
+function NavigationTabs({ tabValue }: { tabValue: string | undefined }) {
+  const { classes } = InvenTreeStyle();
+  const navigate = useNavigate();
+
+  return (
+    <Tabs
+      defaultValue="home"
+      classNames={{
+        root: classes.tabs,
+        tabsList: classes.tabsList,
+        tab: classes.tab
+      }}
+      value={tabValue}
+      onTabChange={(value) =>
+        value == '/' ? navigate('/') : navigate(`/${value}`)
+      }
+    >
+      <Tabs.List>
+        {tabs.map((tab) => (
+          <Tabs.Tab value={tab.name} key={tab.name}>
+            {tab.text}
+          </Tabs.Tab>
+        ))}
+      </Tabs.List>
+    </Tabs>
   );
 }
 
