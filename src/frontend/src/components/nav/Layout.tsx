@@ -16,7 +16,7 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   return children;
 };
 
-export default function Layout() {
+export default function LayoutComponent() {
   const { classes } = InvenTreeStyle();
 
   return (
