@@ -8,40 +8,14 @@ import {
   Title
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { LanguageContext } from '../../contexts/LanguageContext';
-import { ApiPaths, url } from '../../states/ApiState';
+import { handleReset } from '../../functions/auth';
 
 export default function Reset() {
   const simpleForm = useForm({ initialValues: { email: '' } });
   const navigate = useNavigate();
-
-  function handleReset() {
-    api
-      .post(url(ApiPaths.user_reset), simpleForm.values, {
-        headers: { Authorization: '' }
-      })
-      .then((val) => {
-        if (val.status === 200) {
-          notifications.show({
-            title: t`Mail delivery successfull`,
-            message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
-            color: 'green',
-            autoClose: false
-          });
-          navigate('/login');
-        } else {
-          notifications.show({
-            title: t`Reset failed`,
-            message: t`Check your your input and try again.`,
-            color: 'red'
-          });
-        }
-      });
-  }
 
   return (
     <LanguageContext>
@@ -60,7 +34,10 @@ export default function Reset() {
                 {...simpleForm.getInputProps('email')}
               />
             </Stack>
-            <Button type="submit" onClick={handleReset}>
+            <Button
+              type="submit"
+              onClick={() => handleReset(navigate, simpleForm.values)}
+            >
               <Trans>Send mail</Trans>
             </Button>
           </Stack>
