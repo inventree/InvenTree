@@ -1,5 +1,6 @@
 import { Text } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
+import { Trans } from '@lingui/macro';
 
 import { InvenTreeTable } from './InvenTreeTable';
 
@@ -17,6 +18,7 @@ export function PartTable() {
           },
           {
             accessor: 'IPN',
+            title: 'IPN',
             sortable: true,
           },
           {
@@ -25,8 +27,14 @@ export function PartTable() {
           },
           {
             accessor: 'description',
+            title: <Trans>Description</Trans>,
             sortable: true,
           },
+          {
+            accessor: 'total_in_stock',
+            title: <Trans>Stock</Trans>,
+            sortable: true,
+          }
         ]}
     />;
 

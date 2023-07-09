@@ -1,11 +1,7 @@
-import axios from 'axios';
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
-import { Component } from "react";
 import { useState } from 'react';
-import { Text } from '@mantine/core';
-
 import { useQuery } from '@tanstack/react-query';
-import { api, queryClient } from '../../App';
+import { api } from '../../App';
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
@@ -42,8 +38,8 @@ export function InvenTreeTable({
 
         // Handle pagination
         if (paginated) {
-            queryParams.limit = PAGE_SIZE;
-            queryParams.offset = (page - 1) * PAGE_SIZE;
+            queryParams.limit = pageSize;
+            queryParams.offset = (page - 1) * pageSize;
         }
 
         // Handle sorting
@@ -66,15 +62,11 @@ export function InvenTreeTable({
         { refetchOnWindowFocus: false }
     );
 
-    const PAGE_SIZE = 25;
-
-    // TODO: Enable pagination
-    // TODO: Handle data sorting
-
     return <DataTable
         withBorder
+        minHeight={100}
         totalRecords={data?.count ?? data?.length ?? 0}
-        recordsPerPage={PAGE_SIZE}
+        recordsPerPage={pageSize}
         page={page}
         onPageChange={setPage}
         sortStatus={sortStatus}
