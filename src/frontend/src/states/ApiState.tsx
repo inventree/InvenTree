@@ -51,7 +51,7 @@ export function url(path: ApiPaths, pk?: any): string {
     case ApiPaths.user_token:
       return 'user/token/';
     case ApiPaths.user_simple_login:
-      return '/api/email_login/';
+      return 'email/generate/';
     case ApiPaths.user_reset:
       return '/auth/password/reset/';
     case ApiPaths.user_reset_validate:
