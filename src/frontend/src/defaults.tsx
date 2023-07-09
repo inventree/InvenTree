@@ -20,6 +20,10 @@ export const defaultHostList: HostList = {
 };
 export const defaultHostKey = 'mantine-cqj63coxn';
 
+export const docLinks = {
+  app: 'https://docs.inventree.org/en/latest/app/app/'
+};
+
 export const tabs = [{ text: <Trans>Home</Trans>, name: 'home' }];
 
 export const links = [
