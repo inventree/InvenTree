@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, Literal, Type
+from typing import TYPE_CHECKING, Any, Dict, Literal, Type
 
 from generic.states import StatusCode
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
@@ -57,10 +57,22 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
     required_attributes = ["SLUG", "NAME", "DESCRIPTION"]
 
     def init_machine(self, machine: "BaseMachineType"):
-        """This method get called for each active machine using that driver while initialization
+        """This method gets called for each active machine using that driver while initialization
 
         Arguments:
             machine: Machine instance
+        """
+        pass
+
+    def update_machine(self, old_machine_state: Dict[str, Any], machine: "BaseMachineType"):
+        """This method gets called for each update of a machine
+
+        TODO: this function gets called even the settings are not stored yet when edited through the admin dashboard
+        TODO: test also if API is done, that this function gets called for settings changes
+
+        Arguments:
+            old_machine_state: Dict holding the old machine state before update
+            machine: Machine instance with the new state
         """
         pass
 
@@ -110,11 +122,11 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         self.status = self.default_machine_status
         self.status_text = ""
 
-        self.machine_config = machine_config
-        self.driver = registry.get_driver_instance(self.machine_config.driver_key)
+        self.pk = machine_config.pk
+        self.driver = registry.get_driver_instance(machine_config.driver_key)
 
         if not self.driver:
-            self.errors.append(f"Driver '{self.machine_config.driver_key}' not found")
+            self.errors.append(f"Driver '{machine_config.driver_key}' not found")
         if self.driver and not isinstance(self.driver, self.base_driver):
             self.errors.append(f"'{self.driver.NAME}' is incompatible with machine type '{self.NAME}'")
 
@@ -128,8 +140,10 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
     # --- properties
     @property
-    def pk(self):
-        return self.machine_config.pk
+    def machine_config(self):
+        # always fetch the machine_config if needed to ensure we get the newest reference
+        from .models import MachineConfig
+        return MachineConfig.objects.get(pk=self.pk)
 
     @property
     def name(self):

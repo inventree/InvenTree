@@ -48,11 +48,20 @@ class MachineConfig(models.Model):
     def save(self, *args, **kwargs) -> None:
         created = self._state.adding
 
+        old_machine = None
+        if self.pk and (old_machine := MachineConfig.objects.get(pk=self.pk)):
+            old_machine = old_machine.to_dict()
+
         super().save(*args, **kwargs)
 
-        # machine was created, add it to the machine registry
         if created:
+            # machine was created, add it to the machine registry
             registry.add_machine(self, initialize=True)
+        elif old_machine:
+            # machine was updated, invoke update hook
+            # elif acts just as a type gate, old_machine should be defined always
+            # if machine is not created now which is already handled above
+            registry.update_machine(old_machine, self)
 
     def delete(self, *args, **kwargs):
         # remove machine from registry first
@@ -60,6 +69,11 @@ class MachineConfig(models.Model):
             registry.remove_machine(self.machine)
 
         return super().delete(*args, **kwargs)
+
+    def to_dict(self):
+        machine = {f.name: f.value_to_string(self) for f in self._meta.fields}
+        machine['settings'] = {setting.key: (setting.value, setting.config_type) for setting in MachineSetting.objects.filter(machine_config=self)}
+        return machine
 
     @property
     def machine(self):

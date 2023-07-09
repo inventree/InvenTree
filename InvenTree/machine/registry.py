@@ -119,6 +119,10 @@ class MachinesRegistry:
         if initialize and machine.active:
             machine.initialize()
 
+    def update_machine(self, old_machine_state, machine_config):
+        if (machine := machine_config.machine) and machine.driver:
+            machine.driver.update_machine(old_machine_state, machine)
+
     def remove_machine(self, machine: BaseMachineType):
         self.machines.pop(str(machine.pk), None)
 
