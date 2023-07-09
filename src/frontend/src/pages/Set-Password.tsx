@@ -36,7 +36,7 @@ export default function Set_Password() {
   function passwordError(values: any) {
     notifications.show({
       title: t`Reset failed`,
-      message: values.password,
+      message: values?.new_password2 || values?.new_password1 || values?.token,
       color: 'red'
     });
   }
