@@ -26,11 +26,11 @@ export default function Login() {
   const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
 
   // Data manipulation functions
-  function ChangeHost(newHost: string) {
+  function ChangeHost(newHost: string): void {
     setHost(hostList[newHost].host, newHost);
     setHostEdit(false);
   }
-  function SaveOptions(newHostList: HostList) {
+  function SaveOptions(newHostList: HostList): void {
     useLocalState.setState({ hostList: newHostList });
     if (newHostList[hostKey] === undefined) {
       setHost('', '');
@@ -44,45 +44,30 @@ export default function Login() {
     }
   }, []);
 
-  // Subcomponents
-  function SelectHost() {
-    if (!hostEdit) return null;
-    return (
-      <Group>
-        <Select
-          value={hostKey}
-          onChange={ChangeHost}
-          data={hostListData}
-          disabled={HostListEdit}
-        />
-        {EditButton(setHostListEdit, HostListEdit, HostListEdit)}
-      </Group>
-    );
-  }
-
-  function EditHostList() {
-    if (!HostListEdit) return null;
-    return (
-      <>
-        <Text>
-          <Trans>Edit host options</Trans>
-        </Text>
-        <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
-      </>
-    );
-  }
-
   return (
     <Center mih="100vh">
       <Container w="md" miw={400}>
         <Stack>
-          <EditHostList />
+          <EditHostList
+            hostList={hostList}
+            SaveOptions={SaveOptions}
+            HostListEdit={HostListEdit}
+          />
           {!HostListEdit && (
             <AuthenticationForm
               hostname={hostname}
               editing={hostEdit}
               setEditing={setHostEdit}
-              selectElement={<SelectHost />}
+              selectElement={
+                <SelectHost
+                  hostKey={hostKey}
+                  ChangeHost={ChangeHost}
+                  hostListData={hostListData}
+                  HostListEdit={HostListEdit}
+                  hostEdit={hostEdit}
+                  setHostListEdit={setHostListEdit}
+                />
+              }
             />
           )}
         </Stack>
@@ -90,3 +75,52 @@ export default function Login() {
     </Center>
   );
 }
+
+const SelectHost = ({
+  hostKey,
+  ChangeHost,
+  hostListData,
+  HostListEdit,
+  hostEdit,
+  setHostListEdit
+}: {
+  hostKey: string;
+  ChangeHost: (newHost: string) => void;
+  hostListData: any;
+  HostListEdit: boolean;
+  hostEdit: boolean;
+  setHostListEdit: (value?: React.SetStateAction<boolean> | undefined) => void;
+}) => {
+  if (!hostEdit) return <></>;
+  return (
+    <Group>
+      <Select
+        value={hostKey}
+        onChange={ChangeHost}
+        data={hostListData}
+        disabled={HostListEdit}
+      />
+      {EditButton(setHostListEdit, HostListEdit, HostListEdit)}
+    </Group>
+  );
+};
+
+const EditHostList = ({
+  hostList,
+  SaveOptions,
+  HostListEdit
+}: {
+  hostList: HostList;
+  SaveOptions: (newHostList: HostList) => void;
+  HostListEdit: boolean;
+}) => {
+  if (!HostListEdit) return null;
+  return (
+    <>
+      <Text>
+        <Trans>Edit host options</Trans>
+      </Text>
+      <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
+    </>
+  );
+};

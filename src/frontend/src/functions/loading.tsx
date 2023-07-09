@@ -1,5 +1,5 @@
 import { Center, Loader, Stack } from '@mantine/core';
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 
 function LoadingFallback() {
   return (

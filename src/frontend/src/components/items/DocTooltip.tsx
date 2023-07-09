@@ -19,48 +19,6 @@ export function DocTooltip({
 }) {
   const { classes } = InvenTreeStyle();
 
-  function ConstBody({ text, detail }: { text: string; detail?: string }) {
-    const [height, setHeight] = useState(0);
-    const ref = useRef(null);
-
-    // dynamically set height of scroll area based on content to remove unnecessary scroll bar
-    useEffect(() => {
-      if (ref.current == null) return;
-
-      let height = ref.current['clientHeight'];
-      if (height > 250) {
-        setHeight(250);
-      } else {
-        setHeight(height + 1);
-      }
-    });
-
-    return (
-      <Container maw={400} p={0}>
-        <Text>{text}</Text>
-        {(detail || docchildren) && (
-          <ScrollArea h={height} mah={250}>
-            <div ref={ref}>
-              {detail && (
-                <Text size="xs" color="dimmed">
-                  {detail}
-                </Text>
-              )}
-              {docchildren}
-            </div>
-          </ScrollArea>
-        )}
-        {link && (
-          <Anchor href={link} target="_blank">
-            <Text size={'sm'}>
-              <Trans>Read More</Trans>
-            </Text>
-          </Anchor>
-        )}
-      </Container>
-    );
-  }
-
   return (
     <HoverCard
       shadow="md"
@@ -73,8 +31,65 @@ export function DocTooltip({
         <div>{children}</div>
       </HoverCard.Target>
       <HoverCard.Dropdown>
-        <ConstBody text={text} detail={detail} />
+        <ConstBody
+          text={text}
+          detail={detail}
+          docchildren={docchildren}
+          link={link}
+        />
       </HoverCard.Dropdown>
     </HoverCard>
+  );
+}
+
+function ConstBody({
+  text,
+  detail,
+  docchildren,
+  link
+}: {
+  text: string;
+  detail?: string;
+  docchildren?: React.ReactNode;
+  link?: string;
+}) {
+  const [height, setHeight] = useState(0);
+  const ref = useRef(null);
+
+  // dynamically set height of scroll area based on content to remove unnecessary scroll bar
+  useEffect(() => {
+    if (ref.current == null) return;
+
+    let height = ref.current['clientHeight'];
+    if (height > 250) {
+      setHeight(250);
+    } else {
+      setHeight(height + 1);
+    }
+  });
+
+  return (
+    <Container maw={400} p={0}>
+      <Text>{text}</Text>
+      {(detail || docchildren) && (
+        <ScrollArea h={height} mah={250}>
+          <div ref={ref}>
+            {detail && (
+              <Text size="xs" color="dimmed">
+                {detail}
+              </Text>
+            )}
+            {docchildren}
+          </div>
+        </ScrollArea>
+      )}
+      {link && (
+        <Anchor href={link} target="_blank">
+          <Text size={'sm'}>
+            <Trans>Read More</Trans>
+          </Text>
+        </Anchor>
+      )}
+    </Container>
   );
 }
