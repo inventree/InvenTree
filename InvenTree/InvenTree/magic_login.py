@@ -18,13 +18,11 @@ def send_simple_login_email(user, link):
     site = Site.objects.get_current()
 
     context = {
-        "username": user.profile.display_name
-        if user.profile.display_name
-        else user.username,
+        "username": user.username,
         "site_name": site.name,
         "link": link,
     }
-    email_plaintext_message = render_to_string("email/user_simple_login.txt", context)
+    email_plaintext_message = render_to_string("InvenTree/user_simple_login.txt", context)
 
     send_mail(
         _(f"[{site.name}] Log in to the app"),
