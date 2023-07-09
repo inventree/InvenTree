@@ -17,7 +17,7 @@ export function DocTooltip({
   link?: string;
   docchildren: React.ReactNode;
 }) {
-  const { classes, theme } = InvenTreeStyle();
+  const { classes } = InvenTreeStyle();
 
   function ConstBody({ text, detail }: { text: string; detail?: string }) {
     const [height, setHeight] = useState(0);

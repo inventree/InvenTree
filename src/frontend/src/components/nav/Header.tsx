@@ -31,8 +31,6 @@ import { MegaHoverMenu } from './MegaHoverMenu';
 
 export function Header() {
   const { classes } = InvenTreeStyle();
-  const [userMenuOpened, setUserMenuOpened] = useState(false);
-  const navigate = useNavigate();
   const { tabValue } = useParams();
   const [locale] = useLocalState((state) => [state.language]);
   const [username] = useApiState((state) => [state.user?.name]);
@@ -58,12 +56,7 @@ export function Header() {
           <Group>
             <ScanButton />
             <ColorToggle />
-            <Menu
-              width={260}
-              position="bottom-end"
-              onClose={() => setUserMenuOpened(false)}
-              onOpen={() => setUserMenuOpened(true)}
-            >
+            <Menu width={260} position="bottom-end">
               <Menu.Target>
                 <UnstyledButton className={classes.layoutHeaderUser}>
                   <Group spacing={7}>

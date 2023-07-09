@@ -18,7 +18,7 @@ import { LanguageContext } from '../context/LanguageContext';
 
 export default function Set_Password() {
   const simpleForm = useForm({ initialValues: { password: '' } });
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const token = searchParams.get('token');

@@ -11,11 +11,10 @@ import { HostList } from '../context/states';
 import { defaultHostKey } from '../defaults';
 
 export default function Login() {
-  const [hostKey, setHost, hostList, lastUsername] = useLocalState((state) => [
+  const [hostKey, setHost, hostList] = useLocalState((state) => [
     state.hostKey,
     state.setHost,
-    state.hostList,
-    state.lastUsername
+    state.hostList
   ]);
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey].name;

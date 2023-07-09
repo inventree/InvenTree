@@ -109,6 +109,7 @@ function MenuLinks({ links }: { links: MenuLinkItem[] }) {
 
   let linksItems = links.map((item) => (
     <DocTooltip
+      key={item.title}
       text={item.description}
       detail={item?.detail}
       link={item?.link}

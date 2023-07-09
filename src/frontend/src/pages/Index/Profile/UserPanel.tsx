@@ -31,7 +31,6 @@ import { InvenTreeStyle } from '../../../globalStyle';
 
 export function UserPanel() {
   // view
-  const { theme } = InvenTreeStyle();
   const PRIMARY_COL_HEIGHT = 300;
   const SECONDARY_COL_HEIGHT = PRIMARY_COL_HEIGHT / 2 - 8;
 

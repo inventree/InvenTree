@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import { Tabs } from '@mantine/core';
 import { useNavigate, useParams } from 'react-router-dom';
 

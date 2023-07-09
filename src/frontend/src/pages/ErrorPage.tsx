@@ -13,7 +13,7 @@ export default function ErrorPage() {
   useDocumentTitle(title);
 
   useEffect(() => {
-    if (error && error.statusText) {
+    if (error?.statusText) {
       setTitle(t`Error: ${error.statusText}`);
     }
   }, [error]);

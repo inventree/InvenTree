@@ -13,7 +13,6 @@ interface LocalStateProps {
   setHost: (newHost: string, newHostKey: string) => void;
   hostKey: string;
   hostList: HostList;
-  lastUsername: string;
   language: Locales;
   // theme
   primaryColor: string;
@@ -32,7 +31,6 @@ export const useLocalState = create<LocalStateProps>()(
       host: '',
       setHost: (newHost, newHostKey) =>
         set({ host: newHost, hostKey: newHostKey }),
-      lastUsername: '',
       hostKey: '',
       hostList: {},
       language: 'en',
