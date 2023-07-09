@@ -1,3 +1,14 @@
+# The InvenTree dockerfile provides two build targets:
+#
+# production:
+# - Required files are copied into the image
+# - Runs InvenTree web server under gunicorn
+#
+# dev:
+# - Expects source directories to be loaded as a run-time volume
+# - Runs InvenTree web server under django development server
+# - Monitors source files for any changes, and live-reloads server
+
 FROM python:3.10-alpine3.18 as inventree_base
 
 # Build arguments for this image
@@ -80,7 +91,10 @@ RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/sh", "./init.sh"]
 
-
+# InvenTree production image:
+# - Copies required files from local directory
+# - Installs required python packages from requirements.txt
+# - Starts a gunicorn webserver
 FROM inventree_base as production
 
 ENV INVENTREE_DEBUG=False
@@ -89,6 +103,7 @@ ENV INVENTREE_DEBUG=False
 ENV INVENTREE_COMMIT_HASH="${commit_hash}"
 ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
+# Copy source code
 COPY InvenTree ./InvenTree
 
 # Launch the production server
