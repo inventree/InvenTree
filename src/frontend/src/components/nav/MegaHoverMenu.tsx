@@ -61,13 +61,13 @@ export function MegaHoverMenu() {
             {instanceName ? (
               instanceName
             ) : (
-              <Skeleton height={20} width={40} radius={0} />
+              <Skeleton height={20} width={40} radius={theme.defaultRadius} />
             )}{' '}
             |{' '}
             {servername ? (
               servername
             ) : (
-              <Skeleton height={20} width={40} radius={0} />
+              <Skeleton height={20} width={40} radius={theme.defaultRadius} />
             )}
           </Group>
           <Anchor href="#" fz="xs">
