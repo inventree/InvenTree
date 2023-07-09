@@ -1,13 +1,8 @@
 import { Trans } from '@lingui/macro';
 import {
-  Anchor,
-  Button,
   Container,
-  Divider,
   Group,
-  HoverCard,
   Menu,
-  SimpleGrid,
   Tabs,
   Text,
   UnstyledButton
@@ -27,14 +22,12 @@ import { useApiState } from '../../context/ApiState';
 import { languages } from '../../context/LanguageContext';
 import { useLocalState } from '../../context/LocalState';
 import { tabs } from '../../defaults';
-import { menuItems } from '../../defaults';
 import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
 import { ColorToggle } from '../items/ColorToggle';
-import { DocTooltip } from '../items/DocTooltip';
-import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { PlaceholderPill } from '../items/Placeholder';
 import { ScanButton } from '../items/ScanButton';
+import { MegaHoverMenu } from './MegaHoverMenu';
 
 export function Header() {
   const { classes } = InvenTreeStyle();
@@ -149,95 +142,5 @@ function NavigationTabs({ tabValue }: { tabValue: string | undefined }) {
         ))}
       </Tabs.List>
     </Tabs>
-  );
-}
-
-function MegaHoverMenu() {
-  const { classes, theme } = InvenTreeStyle();
-  const [hostKey, hostList] = useLocalState((state) => [
-    state.hostKey,
-    state.hostList
-  ]);
-  const [servername] = useApiState((state) => [state.server.instance]);
-
-  interface MenuLinkItem {
-    title: string;
-    description: string;
-    detail?: string;
-    link?: string;
-    children?: React.ReactNode;
-  }
-
-  const MenuLinks = function name({ links }: { links: MenuLinkItem[] }) {
-    let linksItems = links.map((item) => (
-      <DocTooltip
-        text={item.description}
-        detail={item?.detail}
-        link={item?.link}
-        docchildren={item?.children}
-      >
-        <UnstyledButton className={classes.subLink} key={item.title}>
-          <Text size="sm" fw={500}>
-            {item.title}
-          </Text>
-        </UnstyledButton>
-      </DocTooltip>
-    ));
-    return (
-      <SimpleGrid cols={2} spacing={0}>
-        {linksItems}
-      </SimpleGrid>
-    );
-  };
-
-  const data: MenuLinkItem[] = menuItems;
-
-  return (
-    <HoverCard width={600} position="bottom" shadow="md" withinPortal>
-      <HoverCard.Target>
-        <a href="#">
-          <InvenTreeLogo />
-        </a>
-      </HoverCard.Target>
-
-      <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
-        <Group position="apart" px="md">
-          <Anchor href="">
-            <Text fw={500}>
-              <Trans>Home</Trans>
-            </Text>
-          </Anchor>
-          {hostList[hostKey].name}|{servername}
-          <Anchor href="#" fz="xs">
-            <Trans>View all</Trans>
-          </Anchor>
-        </Group>
-
-        <Divider
-          my="sm"
-          mx="-md"
-          color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
-        />
-        <MenuLinks links={data} />
-        <div className={classes.headerDropdownFooter}>
-          <Group position="apart">
-            <div>
-              <Text fw={500} fz="sm">
-                <Trans>Get started</Trans>
-              </Text>
-              <Text size="xs" color="dimmed">
-                <Trans>
-                  Overview over high-level objects, functions and possible
-                  usecases.
-                </Trans>
-              </Text>
-            </div>
-            <Button variant="default">
-              <Trans>Get started</Trans>
-            </Button>
-          </Group>
-        </div>
-      </HoverCard.Dropdown>
-    </HoverCard>
   );
 }

@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Image, MantineSize, Text } from '@mantine/core';
 
+import { MenuLinkItem } from './components/nav/MegaHoverMenu';
 import { HostList } from './context/states';
 
 export const defaultHostList: HostList = {
@@ -38,7 +39,7 @@ export const links = [
   }
 ];
 
-export const menuItems = [
+export const menuItems: MenuLinkItem[] = [
   {
     title: 'Open source',
     description: 'This Pokémon’s cry is very loud and distracting',
