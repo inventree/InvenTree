@@ -7,6 +7,7 @@ ARG commit_tag=""
 
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+ENV INVOKE_RUN_SHELL="/bin/ash"
 
 ENV INVENTREE_DEBUG=False
 ENV INVENTREE_COMMIT_HASH="${commit_hash}"
@@ -46,7 +47,7 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vcs-ref=${commit_tag}
 
 RUN apk add --no-cache \
-    git gettext py-cryptography bash \
+    git gettext py-cryptography \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
@@ -82,7 +83,7 @@ COPY InvenTree ./InvenTree
 
 RUN chmod +x init.sh
 
-ENTRYPOINT ["/bin/bash", "./init.sh"]
+ENTRYPOINT ["/bin/sh", "./init.sh"]
 
 # Launch the production server
 # TODO: Work out why environment variables cannot be interpolated in this command
