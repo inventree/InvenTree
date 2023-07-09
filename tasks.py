@@ -760,4 +760,4 @@ def frontend_build(c):
         c: Context variable
     """
     print("Building frontend")
-    yarn(c, "yarn run build --emptyOutDir ")
+    yarn(c, "yarn run build --emptyOutDir")
