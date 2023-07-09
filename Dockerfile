@@ -84,6 +84,17 @@ RUN \
 COPY ./docker/requirements.txt base_requirements.txt
 RUN pip install --disable-pip-version-check -U -r base_requirements.txt
 
+# Frontend builder
+
+FROM inventree_base as frontend
+
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs npm && apt-get autoclean && apt-get autoremove && \
+    npm install -g yarn
+COPY InvenTree ${INVENTREE_HOME}/InvenTree
+COPY src ${INVENTREE_HOME}/src
+COPY tasks.py ${INVENTREE_HOME}/tasks.py
+RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
+
 # InvenTree production image:
 # - Copies required files from local directory
 # - Installs required python packages from requirements.txt
@@ -99,6 +110,7 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
 # Copy source code
 COPY InvenTree ${INVENTREE_HOME}/InvenTree
+COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ${INVENTREE_HOME}/InvenTree/web/static/web
 
 # Copy other key files
 COPY requirements.txt ${INVENTREE_HOME}/requirements.txt
