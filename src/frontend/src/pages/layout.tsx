@@ -10,7 +10,7 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const [token] = useSessionState((state) => [state.token]);
 
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/logged-in" replace />;
   }
 
   return children;

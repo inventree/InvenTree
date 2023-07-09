@@ -50,8 +50,6 @@ export function url(path: ApiPaths, pk?: any): string {
       return 'user/me/';
     case ApiPaths.user_token:
       return 'user/token/';
-    case ApiPaths.user_check:
-      return '/api/check/';
     case ApiPaths.user_simple_login:
       return '/api/email_login/';
     case ApiPaths.user_reset:
