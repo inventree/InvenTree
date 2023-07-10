@@ -93,7 +93,6 @@ ENTRYPOINT ["/bin/sh", "./init.sh"]
 
 # InvenTree production image:
 # - Copies required files from local directory
-# - Installs required python packages from requirements.txt
 # - Starts a gunicorn webserver
 FROM inventree_base as production
 
