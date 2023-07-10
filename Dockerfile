@@ -58,7 +58,7 @@ RUN apk add --no-cache \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils pango-dev cairo-dev \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils \
     # SQLite support
     sqlite \
     # PostgreSQL support
