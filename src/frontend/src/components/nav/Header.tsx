@@ -1,51 +1,19 @@
-import { Trans } from '@lingui/macro';
-import {
-  Container,
-  Group,
-  Menu,
-  Tabs,
-  Text,
-  UnstyledButton
-} from '@mantine/core';
+import { Container, Group, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import {
-  IconChevronDown,
-  IconHeart,
-  IconLanguage,
-  IconLogout,
-  IconSettings,
-  IconUserCircle
-} from '@tabler/icons-react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { languages } from '../../contexts/LanguageContext';
 import { navTabs } from '../../defaults/links';
-import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
-import { useApiState } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { ColorToggle } from '../items/ColorToggle';
-import { PlaceholderPill } from '../items/Placeholder';
 import { ScanButton } from '../items/ScanButton';
+import { MainMenu } from './MainMenu';
 import { MegaHoverMenu } from './MegaHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
 
 export function Header() {
   const { classes } = InvenTreeStyle();
   const { tabValue } = useParams();
-  const [locale] = useLocalState((state) => [state.language]);
-  const [username] = useApiState((state) => [state.user?.name]);
   const [opened, { open, close }] = useDisclosure(false);
-
-  // Language
-  function switchLanguage() {
-    useLocalState.setState({
-      language: languages[(languages.indexOf(locale) + 1) % languages.length]
-    });
-  }
-  function enablePsuedo() {
-    useLocalState.setState({ language: 'pseudo-LOCALE' });
-  }
 
   return (
     <div className={classes.layoutHeader}>
@@ -59,53 +27,7 @@ export function Header() {
           <Group>
             <ScanButton />
             <ColorToggle />
-            <Menu width={260} position="bottom-end">
-              <Menu.Target>
-                <UnstyledButton className={classes.layoutHeaderUser}>
-                  <Group spacing={7}>
-                    <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                      {username}
-                    </Text>
-                    <IconChevronDown />
-                  </Group>
-                </UnstyledButton>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item icon={<IconHeart />}>
-                  <Trans>Notifications</Trans>
-                  <PlaceholderPill />
-                </Menu.Item>
-                <Menu.Item
-                  icon={<IconUserCircle />}
-                  component={Link}
-                  to="/profile/user"
-                >
-                  <Trans>Profile</Trans>
-                </Menu.Item>
-
-                <Menu.Label>
-                  <Trans>Settings</Trans>
-                </Menu.Label>
-                <Menu.Item icon={<IconLanguage />} onClick={switchLanguage}>
-                  <Trans>Current language {locale}</Trans>
-                </Menu.Item>
-                <Menu.Item icon={<IconLanguage />} onClick={enablePsuedo}>
-                  <Trans>Switch to pseudo language</Trans>
-                </Menu.Item>
-                <Menu.Item icon={<IconSettings />}>
-                  <Trans>Account settings</Trans>
-                  <PlaceholderPill />
-                </Menu.Item>
-                <Menu.Item
-                  icon={<IconLogout />}
-                  onClick={() => {
-                    doClassicLogout();
-                  }}
-                >
-                  <Trans>Logout</Trans>
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
+            <MainMenu />
           </Group>
         </Group>
       </Container>
