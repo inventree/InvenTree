@@ -15,7 +15,7 @@ export function DocTooltip({
   text: string;
   detail?: string;
   link?: string;
-  docchildren: React.ReactNode;
+  docchildren?: React.ReactNode;
 }) {
   const { classes } = InvenTreeStyle();
 

@@ -7,6 +7,7 @@ import {
   Text,
   UnstyledButton
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import {
   IconChevronDown,
   IconHeart,
@@ -27,12 +28,14 @@ import { ColorToggle } from '../items/ColorToggle';
 import { PlaceholderPill } from '../items/Placeholder';
 import { ScanButton } from '../items/ScanButton';
 import { MegaHoverMenu } from './MegaHoverMenu';
+import { NavigationDrawer } from './NavigationDrawer';
 
 export function Header() {
   const { classes } = InvenTreeStyle();
   const { tabValue } = useParams();
   const [locale] = useLocalState((state) => [state.language]);
   const [username] = useApiState((state) => [state.user?.name]);
+  const [opened, { open, close }] = useDisclosure(false);
 
   // Language
   function switchLanguage() {
@@ -46,10 +49,11 @@ export function Header() {
 
   return (
     <div className={classes.layoutHeader}>
+      <NavigationDrawer opened={opened} close={close} />
       <Container className={classes.layoutHeaderSection} size={'xl'}>
         <Group position="apart">
           <Group>
-            <MegaHoverMenu />
+            <MegaHoverMenu open={open} />
             <NavigationTabs tabValue={tabValue} />
           </Group>
           <Group>

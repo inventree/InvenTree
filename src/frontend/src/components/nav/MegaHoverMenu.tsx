@@ -1,33 +1,26 @@
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import {
+  ActionIcon,
   Anchor,
   Button,
   Divider,
   Group,
   HoverCard,
-  SimpleGrid,
   Skeleton,
   Text,
   UnstyledButton
 } from '@mantine/core';
+import { IconLayoutSidebar } from '@tabler/icons-react';
 import React, { useEffect, useState } from 'react';
 
 import { menuItems } from '../../defaults/menuItems';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { DocTooltip } from '../items/DocTooltip';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
+import { MenuLinks } from '../items/MenuLinks';
 
-export interface MenuLinkItem {
-  title: string;
-  description: string;
-  detail?: string;
-  link?: string;
-  children?: React.ReactNode;
-}
-
-export function MegaHoverMenu() {
+export function MegaHoverMenu({ open }: { open: () => void }) {
   const { classes, theme } = InvenTreeStyle();
   const [hostKey, hostList] = useLocalState((state) => [
     state.hostKey,
@@ -52,11 +45,9 @@ export function MegaHoverMenu() {
 
       <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
         <Group position="apart" px="md">
-          <Anchor href="">
-            <Text fw={500}>
-              <Trans>Home</Trans>
-            </Text>
-          </Anchor>
+          <ActionIcon onClick={open} title={t`Open Navigation`}>
+            <IconLayoutSidebar />
+          </ActionIcon>
           <Group spacing={'xs'}>
             {instanceName ? (
               instanceName
@@ -70,7 +61,7 @@ export function MegaHoverMenu() {
               <Skeleton height={20} width={40} radius={theme.defaultRadius} />
             )}
           </Group>
-          <Anchor href="#" fz="xs">
+          <Anchor href="#" fz="xs" onClick={open}>
             <Trans>View all</Trans>
           </Anchor>
         </Group>
@@ -101,30 +92,5 @@ export function MegaHoverMenu() {
         </div>
       </HoverCard.Dropdown>
     </HoverCard>
-  );
-}
-
-function MenuLinks({ links }: { links: MenuLinkItem[] }) {
-  const { classes } = InvenTreeStyle();
-
-  let linksItems = links.map((item) => (
-    <DocTooltip
-      key={item.title}
-      text={item.description}
-      detail={item?.detail}
-      link={item?.link}
-      docchildren={item?.children}
-    >
-      <UnstyledButton className={classes.subLink} key={item.title}>
-        <Text size="sm" fw={500}>
-          {item.title}
-        </Text>
-      </UnstyledButton>
-    </DocTooltip>
-  ));
-  return (
-    <SimpleGrid cols={2} spacing={0}>
-      {linksItems}
-    </SimpleGrid>
   );
 }
