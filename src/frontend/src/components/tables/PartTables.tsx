@@ -1,5 +1,3 @@
-import { Text } from '@mantine/core';
-import { DataTable } from 'mantine-datatable';
 import { Trans } from '@lingui/macro';
 
 import { InvenTreeTable } from './InvenTreeTable';

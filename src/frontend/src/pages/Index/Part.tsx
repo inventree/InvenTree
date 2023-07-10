@@ -1,9 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { Group } from '@mantine/core';
 
-import { Text } from '@mantine/core';
-import { DataTable } from 'mantine-datatable';
-
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 
