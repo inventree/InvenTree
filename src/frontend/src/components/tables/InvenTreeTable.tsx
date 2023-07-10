@@ -15,13 +15,15 @@ export function InvenTreeTable({
     paginated=true,
     pageSize=25,
     tableKey='',
-    defaultSortColumn=''
+    defaultSortColumn='',
+    noRecordsText='No records found', // TODO: Translate
 } : {
     url: string;
     params: any;
     columns: any;
     tableKey: string;
     defaultSortColumn?: string;
+    noRecordsText?: string;
     allowSelection?: boolean;
     paginated?: boolean;
     pageSize?: number;
@@ -32,6 +34,9 @@ export function InvenTreeTable({
 
     // Data Sorting
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: defaultSortColumn, direction: 'asc' });
+
+    // Missing records text (based on server response)
+    const [missingRecordsText, setMissingRecordsText] = useState<string>(noRecordsText);
 
     // Data selection
     const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
@@ -62,8 +67,36 @@ export function InvenTreeTable({
         }
             
         return api
-            .get(`http://localhost:8000/api/${url}`, {params: queryParams})
-            .then((response) => response.data);
+            .get(`http://localhost:8000/api/${url}`, {
+                params: queryParams,
+                timeout: 30 * 1000,
+            }).then(function(response) {
+                switch (response.status) {
+                    case 200:
+                        setMissingRecordsText(noRecordsText);
+                        return response.data;
+                    case 400:
+                        setMissingRecordsText("Bad request"); // TODO: Translate
+                        break;
+                    case 401:
+                        setMissingRecordsText("Unauthorized"); // TODO: Translate
+                        break;
+                    case 403:
+                        setMissingRecordsText("Forbidden"); // TODO: Translate
+                        break;
+                    case 404:
+                        setMissingRecordsText("Not found"); // TODO: Translate
+                        break;
+                    default:
+                        setMissingRecordsText("Unknown error" + ": " + response.statusText); // TODO: Translate
+                        break;
+                }
+
+                return [];
+            }).catch(function(error) {
+                setMissingRecordsText("Error: " + error.message); // TODO: Translate
+                return [];
+            });
     }
 
     const { data, isFetching } = useQuery(
@@ -85,6 +118,7 @@ export function InvenTreeTable({
         selectedRecords={allowSelection ? selectedRecords : undefined}
         onSelectedRecordsChange={allowSelection ? setSelectedRecords : undefined}
         fetching={isFetching}
+        noRecordsText={missingRecordsText}
         records={data?.results ?? data ?? []}
         columns={columns}
     />;
