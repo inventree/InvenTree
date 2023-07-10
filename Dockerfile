@@ -58,7 +58,7 @@ RUN apk add --no-cache \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils pango-dev cairo-dev \
     # SQLite support
     sqlite \
     # PostgreSQL support
@@ -67,8 +67,6 @@ RUN apk add --no-cache \
     mariadb-connector-c-dev mariadb-client && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f \
-    # report generation
-    poppler-units pango-dev cairo-dev
 
 EXPOSE 8000
 
