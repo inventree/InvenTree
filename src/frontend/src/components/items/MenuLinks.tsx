@@ -5,9 +5,10 @@ import { InvenTreeStyle } from '../../globalStyle';
 import { DocTooltip } from './DocTooltip';
 
 export interface MenuLinkItem {
-  title: string;
-  description: string;
-  detail?: string;
+  id: string;
+  title: string | JSX.Element;
+  description: string | JSX.Element;
+  detail?: string | JSX.Element;
   link?: string;
   children?: React.ReactNode;
 }
@@ -17,13 +18,13 @@ export function MenuLinks({ links }: { links: MenuLinkItem[] }) {
 
   let linksItems = links.map((item) => (
     <DocTooltip
-      key={item.title}
+      key={item.id}
       text={item.description}
       detail={item?.detail}
       link={item?.link}
       docchildren={item?.children}
     >
-      <UnstyledButton className={classes.subLink} key={item.title}>
+      <UnstyledButton className={classes.subLink} key={item.id}>
         <Text size="sm" fw={500}>
           {item.title}
         </Text>

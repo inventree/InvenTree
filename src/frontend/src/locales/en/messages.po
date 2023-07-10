@@ -13,111 +13,111 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/components/AuthenticationForm.tsx:47
-msgid "Login failed"
-msgstr "Login failed"
-
-#: src/components/AuthenticationForm.tsx:48
-#: src/components/AuthenticationForm.tsx:74
-#: src/pages/Reset.tsx:35
-msgid "Check your your input and try again."
-msgstr "Check your your input and try again."
-
-#: src/components/AuthenticationForm.tsx:53
-msgid "Login successfull"
-msgstr "Login successfull"
-
-#: src/components/AuthenticationForm.tsx:54
-msgid "Welcome back!"
-msgstr "Welcome back!"
-
-#: src/components/AuthenticationForm.tsx:65
-#: src/pages/Reset.tsx:26
-msgid "Mail delivery successfull"
-msgstr "Mail delivery successfull"
-
-#: src/components/AuthenticationForm.tsx:66
-msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-
-#: src/components/AuthenticationForm.tsx:73
-msgid "Input error"
-msgstr "Input error"
-
-#: src/components/AuthenticationForm.tsx:95
-msgid "Username"
-msgstr "Username"
-
-#: src/components/AuthenticationForm.tsx:101
-#: src/pages/Set-Password.tsx:103
-msgid "Password"
-msgstr "Password"
-
-#: src/components/AuthenticationForm.tsx:102
-msgid "Your password"
-msgstr "Your password"
-
-#: src/components/AuthenticationForm.tsx:113
-#: src/pages/Reset.tsx:48
-msgid "Reset password"
-msgstr "Reset password"
-
-#: src/components/AuthenticationForm.tsx:121
-#: src/pages/Reset.tsx:53
-msgid "Email"
-msgstr "Email"
-
-#: src/components/AuthenticationForm.tsx:122
-#: src/pages/Reset.tsx:54
-#: src/pages/Set-Password.tsx:104
-msgid "We will send you a link to login - if you are registered"
-msgstr "We will send you a link to login - if you are registered"
-
-#: src/components/AuthenticationForm.tsx:138
-msgid "Send me an email"
-msgstr "Send me an email"
-
-#: src/components/AuthenticationForm.tsx:140
-msgid "I will use username and password"
-msgstr "I will use username and password"
-
-#: src/components/AuthenticationForm.tsx:145
-msgid "Log in"
-msgstr "Log in"
-
-#: src/components/AuthenticationForm.tsx:147
-#: src/pages/Reset.tsx:60
-#: src/pages/Set-Password.tsx:109
-msgid "Send mail"
-msgstr "Send mail"
-
 #: src/components/DashboardItemProxy.tsx:32
 #~ msgid "Title"
 #~ msgstr "Title"
 
-#: src/components/HostOptionsForm.tsx:36
-#: src/components/HostOptionsForm.tsx:66
+#: src/components/forms/AuthenticationForm.tsx:47
+msgid "Login failed"
+msgstr "Login failed"
+
+#: src/components/forms/AuthenticationForm.tsx:48
+#: src/components/forms/AuthenticationForm.tsx:74
+#: src/functions/auth.tsx:83
+msgid "Check your your input and try again."
+msgstr "Check your your input and try again."
+
+#: src/components/forms/AuthenticationForm.tsx:53
+msgid "Login successfull"
+msgstr "Login successfull"
+
+#: src/components/forms/AuthenticationForm.tsx:54
+msgid "Welcome back!"
+msgstr "Welcome back!"
+
+#: src/components/forms/AuthenticationForm.tsx:65
+#: src/functions/auth.tsx:74
+msgid "Mail delivery successfull"
+msgstr "Mail delivery successfull"
+
+#: src/components/forms/AuthenticationForm.tsx:66
+msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
+msgstr "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
+
+#: src/components/forms/AuthenticationForm.tsx:73
+msgid "Input error"
+msgstr "Input error"
+
+#: src/components/forms/AuthenticationForm.tsx:95
+msgid "Username"
+msgstr "Username"
+
+#: src/components/forms/AuthenticationForm.tsx:101
+#: src/pages/Auth/Set-Password.tsx:105
+msgid "Password"
+msgstr "Password"
+
+#: src/components/forms/AuthenticationForm.tsx:102
+msgid "Your password"
+msgstr "Your password"
+
+#: src/components/forms/AuthenticationForm.tsx:113
+#: src/pages/Auth/Reset.tsx:26
+msgid "Reset password"
+msgstr "Reset password"
+
+#: src/components/forms/AuthenticationForm.tsx:121
+#: src/pages/Auth/Reset.tsx:31
+msgid "Email"
+msgstr "Email"
+
+#: src/components/forms/AuthenticationForm.tsx:122
+#: src/pages/Auth/Reset.tsx:32
+#: src/pages/Auth/Set-Password.tsx:106
+msgid "We will send you a link to login - if you are registered"
+msgstr "We will send you a link to login - if you are registered"
+
+#: src/components/forms/AuthenticationForm.tsx:138
+msgid "Send me an email"
+msgstr "Send me an email"
+
+#: src/components/forms/AuthenticationForm.tsx:140
+msgid "I will use username and password"
+msgstr "I will use username and password"
+
+#: src/components/forms/AuthenticationForm.tsx:145
+msgid "Log in"
+msgstr "Log in"
+
+#: src/components/forms/AuthenticationForm.tsx:147
+#: src/pages/Auth/Reset.tsx:41
+#: src/pages/Auth/Set-Password.tsx:111
+msgid "Send mail"
+msgstr "Send mail"
+
+#: src/components/forms/HostOptionsForm.tsx:36
+#: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
 msgstr "Host"
 
-#: src/components/HostOptionsForm.tsx:42
-#: src/components/HostOptionsForm.tsx:69
+#: src/components/forms/HostOptionsForm.tsx:42
+#: src/components/forms/HostOptionsForm.tsx:69
 msgid "Name"
 msgstr "Name"
 
-#: src/components/HostOptionsForm.tsx:74
+#: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
 msgstr "No one here..."
 
-#: src/components/HostOptionsForm.tsx:85
+#: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
 msgstr "Add Host"
 
-#: src/components/HostOptionsForm.tsx:89
+#: src/components/forms/HostOptionsForm.tsx:89
 msgid "Save"
 msgstr "Save"
 
-#: src/components/items/DocTooltip.tsx:56
+#: src/components/items/DocTooltip.tsx:89
 msgid "Read More"
 msgstr "Read More"
 
@@ -129,7 +129,7 @@ msgstr "Unknown error"
 msgid "An error occurred:"
 msgstr "An error occurred:"
 
-#: src/components/items/InvenTreeLogo.tsx:11
+#: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
 msgstr "InvenTree Logo"
 
@@ -189,95 +189,297 @@ msgstr "No scans yet!"
 msgid "Close modal"
 msgstr "Close modal"
 
-#: src/components/nav/Header.tsx:79
+#: src/components/nav/MainMenu.tsx:53
+#: src/defaults/menuItems.tsx:103
 msgid "Notifications"
 msgstr "Notifications"
 
-#: src/components/nav/Header.tsx:87
+#: src/components/nav/MainMenu.tsx:61
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
 msgstr "Profile"
 
-#: src/components/nav/Header.tsx:91
+#: src/components/nav/MainMenu.tsx:65
 msgid "Settings"
 msgstr "Settings"
 
-#: src/components/nav/Header.tsx:94
+#: src/components/nav/MainMenu.tsx:68
 msgid "Current language {locale}"
 msgstr "Current language {locale}"
 
-#: src/components/nav/Header.tsx:97
+#: src/components/nav/MainMenu.tsx:71
 msgid "Switch to pseudo language"
 msgstr "Switch to pseudo language"
 
-#: src/components/nav/Header.tsx:100
+#: src/components/nav/MainMenu.tsx:74
 msgid "Account settings"
 msgstr "Account settings"
 
-#: src/components/nav/Header.tsx:109
+#: src/components/nav/MainMenu.tsx:83
 msgid "Logout"
 msgstr "Logout"
 
-#: src/components/nav/MegaHoverMenu.tsx:49
-#: src/defaults.tsx:23
-#: src/pages/Index/Home.tsx:12
-msgid "Home"
-msgstr "Home"
+#: src/components/nav/MegaHoverMenu.tsx:45
+msgid "Open Navigation"
+msgstr "Open Navigation"
 
-#: src/components/nav/MegaHoverMenu.tsx:54
+#: src/components/nav/MegaHoverMenu.tsx:62
 msgid "View all"
 msgstr "View all"
 
-#: src/components/nav/MegaHoverMenu.tsx:68
-#: src/components/nav/MegaHoverMenu.tsx:78
+#: src/components/nav/MegaHoverMenu.tsx:76
+#: src/components/nav/MegaHoverMenu.tsx:86
 msgid "Get started"
 msgstr "Get started"
 
-#: src/components/nav/MegaHoverMenu.tsx:71
+#: src/components/nav/MegaHoverMenu.tsx:79
 msgid "Overview over high-level objects, functions and possible usecases."
 msgstr "Overview over high-level objects, functions and possible usecases."
 
-#: src/context/ThemeContext.tsx:62
-#: src/pages/Index/Profile/UserPanel.tsx:133
+#: src/components/nav/NavigationDrawer.tsx:68
+msgid "Navigation"
+msgstr "Navigation"
+
+#: src/components/nav/NavigationDrawer.tsx:71
+msgid "Pages"
+msgstr "Pages"
+
+#: src/components/nav/NavigationDrawer.tsx:74
+msgid "Plugins"
+msgstr "Plugins"
+
+#: src/components/nav/NavigationDrawer.tsx:80
+#: src/defaults/menuItems.tsx:88
+msgid "Documentation"
+msgstr "Documentation"
+
+#: src/components/nav/NavigationDrawer.tsx:83
+msgid "About"
+msgstr "About"
+
+#: src/contexts/ThemeContext.tsx:62
+#: src/pages/Index/Profile/UserPanel.tsx:132
 msgid "Submit"
 msgstr "Submit"
 
-#: src/context/ThemeContext.tsx:62
+#: src/contexts/ThemeContext.tsx:62
 msgid "Cancel"
 msgstr "Cancel"
-
-#: src/defaults.tsx:10
-msgid "InvenTree Demo"
-msgstr "InvenTree Demo"
-
-#: src/defaults.tsx:18
-msgid "Local Server"
-msgstr "Local Server"
 
 #: src/defaults.tsx:23
 #: src/pages/Index/Part.tsx:12
 #~ msgid "Part"
 #~ msgstr "Part"
 
-#: src/defaults.tsx:28
+#: src/defaults/defaultHostList.tsx:8
+msgid "InvenTree Demo"
+msgstr "InvenTree Demo"
+
+#: src/defaults/defaultHostList.tsx:16
+msgid "Local Server"
+msgstr "Local Server"
+
+#: src/defaults/links.tsx:8
 msgid "Website"
 msgstr "Website"
 
-#: src/defaults.tsx:33
+#: src/defaults/links.tsx:13
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/defaults.tsx:38
+#: src/defaults/links.tsx:18
 msgid "Demo"
 msgstr "Demo"
 
-#: src/functions/auth.tsx:35
+#: src/defaults/links.tsx:22
+#: src/pages/Index/Home.tsx:12
+msgid "Home"
+msgstr "Home"
+
+#: src/defaults/links.tsx:35
+msgid "Getting Started"
+msgstr "Getting Started"
+
+#: src/defaults/links.tsx:36
+msgid "Getting started with InvenTree"
+msgstr "Getting started with InvenTree"
+
+#: src/defaults/links.tsx:41
+msgid "API"
+msgstr "API"
+
+#: src/defaults/links.tsx:42
+msgid "InvenTree API documentation"
+msgstr "InvenTree API documentation"
+
+#: src/defaults/links.tsx:47
+msgid "Developer Manual"
+msgstr "Developer Manual"
+
+#: src/defaults/links.tsx:48
+msgid "InvenTree developer manual"
+msgstr "InvenTree developer manual"
+
+#: src/defaults/links.tsx:53
+msgid "FAQ"
+msgstr "FAQ"
+
+#: src/defaults/links.tsx:54
+msgid "Frequently asked questions"
+msgstr "Frequently asked questions"
+
+#: src/defaults/links.tsx:62
+msgid "Instance"
+msgstr "Instance"
+
+#: src/defaults/links.tsx:63
+msgid "About this Inventree instance"
+msgstr "About this Inventree instance"
+
+#: src/defaults/links.tsx:68
+msgid "InvenTree"
+msgstr "InvenTree"
+
+#: src/defaults/links.tsx:69
+msgid "About the InvenTree org"
+msgstr "About the InvenTree org"
+
+#: src/defaults/links.tsx:74
+msgid "Licenses"
+msgstr "Licenses"
+
+#: src/defaults/links.tsx:75
+msgid "Licenses for packages used by InvenTree"
+msgstr "Licenses for packages used by InvenTree"
+
+#: src/defaults/menuItems.tsx:7
+#~ msgid "Open sourcea"
+#~ msgstr "Open sourcea"
+
+#: src/defaults/menuItems.tsx:8
+msgid "Open source"
+msgstr "Open source"
+
+#: src/defaults/menuItems.tsx:9
+msgid "This Pokémon’s cry is very loud and distracting"
+msgstr "This Pokémon’s cry is very loud and distracting"
+
+#: src/defaults/menuItems.tsx:10
+msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
+msgstr "This Pokémon’s cry is very loud and distracting and more and more and more"
+
+#: src/defaults/menuItems.tsx:15
+msgid "Free for everyone"
+msgstr "Free for everyone"
+
+#: src/defaults/menuItems.tsx:16
+msgid "The fluid of Smeargle’s tail secretions changes"
+msgstr "The fluid of Smeargle’s tail secretions changes"
+
+#: src/defaults/menuItems.tsx:17
+msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
+msgstr "The fluid of Smeargle’s tail secretions changes in the intensity"
+
+#: src/defaults/menuItems.tsx:21
+msgid "abc"
+msgstr "abc"
+
+#: src/defaults/menuItems.tsx:25
+msgid "Random image"
+msgstr "Random image"
+
+#: src/defaults/menuItems.tsx:27
+msgid "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Name liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assume. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor"
+msgstr "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Name liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assume. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor"
+
+#: src/defaults/menuItems.tsx:89
+msgid "Yanma is capable of seeing 360 degrees without"
+msgstr "Yanma is capable of seeing 360 degrees without"
+
+#: src/defaults/menuItems.tsx:93
+msgid "Security"
+msgstr "Security"
+
+#: src/defaults/menuItems.tsx:94
+msgid "The shell’s rounded shape and the grooves on its."
+msgstr "The shell’s rounded shape and the grooves on its."
+
+#: src/defaults/menuItems.tsx:98
+msgid "Analytics"
+msgstr "Analytics"
+
+#: src/defaults/menuItems.tsx:99
+msgid "This Pokémon uses its flying ability to quickly chase"
+msgstr "This Pokémon uses its flying ability to quickly chase"
+
+#: src/defaults/menuItems.tsx:104
+msgid "Combusken battles with the intensely hot flames it spews"
+msgstr "Combusken battles with the intensely hot flames it spews"
+
+#: src/functions/auth.tsx:36
 msgid "Logout successfull"
 msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:36
+#: src/functions/auth.tsx:37
 msgid "See you soon."
 msgstr "See you soon."
+
+#: src/functions/auth.tsx:75
+msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
+msgstr "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
+
+#: src/functions/auth.tsx:82
+#: src/pages/Auth/Set-Password.tsx:38
+msgid "Reset failed"
+msgstr "Reset failed"
+
+#: src/functions/auth.tsx:98
+msgid "Already logged in"
+msgstr "Already logged in"
+
+#: src/functions/auth.tsx:99
+msgid "Found an existing login - using it to log you in."
+msgstr "Found an existing login - using it to log you in."
+
+#: src/pages/Auth/Logged-In.tsx:18
+msgid "Checking if you are already logged in"
+msgstr "Checking if you are already logged in"
+
+#: src/pages/Auth/Login.tsx:20
+msgid "No selection"
+msgstr "No selection"
+
+#: src/pages/Auth/Login.tsx:121
+msgid "Edit host options"
+msgstr "Edit host options"
+
+#: src/pages/Auth/Set-Password.tsx:29
+msgid "Token invalid"
+msgstr "Token invalid"
+
+#: src/pages/Auth/Set-Password.tsx:30
+msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
+msgstr "You need to provide a valid token to set a new password. Check your inbox for a reset link."
+
+#: src/pages/Auth/Set-Password.tsx:48
+msgid "No token provided"
+msgstr "No token provided"
+
+#: src/pages/Auth/Set-Password.tsx:49
+msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
+msgstr "You need to provide a token to set a new password. Check your inbox for a reset link."
+
+#: src/pages/Auth/Set-Password.tsx:72
+msgid "Password set"
+msgstr "Password set"
+
+#: src/pages/Auth/Set-Password.tsx:73
+msgid "The password was set successfully. You can now login with your new password"
+msgstr "The password was set successfully. You can now login with your new password"
+
+#: src/pages/Auth/Set-Password.tsx:100
+msgid "Set new password"
+msgstr "Set new password"
 
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
@@ -511,41 +713,25 @@ msgstr "User"
 #~ msgid "Method: {0}"
 #~ msgstr "Method: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:91
+#: src/pages/Index/Profile/UserPanel.tsx:90
 msgid "Userinfo"
 msgstr "Userinfo"
 
-#: src/pages/Index/Profile/UserPanel.tsx:104
+#: src/pages/Index/Profile/UserPanel.tsx:103
 msgid "First name: {0}"
 msgstr "First name: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:115
+#: src/pages/Index/Profile/UserPanel.tsx:114
 msgid "Last name: {0}"
 msgstr "Last name: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:126
+#: src/pages/Index/Profile/UserPanel.tsx:125
 msgid "Username: {0}"
 msgstr "Username: {0}"
 
-#: src/pages/Logged-In.tsx:23
-msgid "Already logged in"
-msgstr "Already logged in"
-
 #: src/pages/Logged-In.tsx:24
-msgid "Found an exsisting login - using it to log you in."
-msgstr "Found an exsisting login - using it to log you in."
-
-#: src/pages/Logged-In.tsx:42
-msgid "Checking if you are already logged in"
-msgstr "Checking if you are already logged in"
-
-#: src/pages/Login.tsx:21
-msgid "No selection"
-msgstr "No selection"
-
-#: src/pages/Login.tsx:69
-msgid "Edit host options"
-msgstr "Edit host options"
+#~ msgid "Found an exsisting login - using it to log you in."
+#~ msgstr "Found an exsisting login - using it to log you in."
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
@@ -559,39 +745,14 @@ msgstr "Sorry, this page is not known or was moved."
 msgid "Go to the start page"
 msgstr "Go to the start page"
 
-#: src/pages/Reset.tsx:27
-msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
-msgstr "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
+#: src/views/MobileAppView.tsx:14
+msgid "Mobile viewport detected"
+msgstr "Mobile viewport detected"
 
-#: src/pages/Reset.tsx:34
-#: src/pages/Set-Password.tsx:37
-msgid "Reset failed"
-msgstr "Reset failed"
+#: src/views/MobileAppView.tsx:17
+msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
+msgstr "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
 
-#: src/pages/Set-Password.tsx:28
-msgid "Token invalid"
-msgstr "Token invalid"
-
-#: src/pages/Set-Password.tsx:29
-msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
-msgstr "You need to provide a valid token to set a new password. Check your inbox for a reset link."
-
-#: src/pages/Set-Password.tsx:47
-msgid "No token provided"
-msgstr "No token provided"
-
-#: src/pages/Set-Password.tsx:48
-msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
-msgstr "You need to provide a token to set a new password. Check your inbox for a reset link."
-
-#: src/pages/Set-Password.tsx:77
-msgid "Password set"
-msgstr "Password set"
-
-#: src/pages/Set-Password.tsx:78
-msgid "The password was set successfully. You can now login with your new password"
-msgstr "The password was set successfully. You can now login with your new password"
-
-#: src/pages/Set-Password.tsx:98
-msgid "Set new password"
-msgstr "Set new password"
+#: src/views/MobileAppView.tsx:23
+msgid "Read the docs"
+msgstr "Read the docs"

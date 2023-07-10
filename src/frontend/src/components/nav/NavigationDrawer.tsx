@@ -10,6 +10,7 @@ import {
 import { useViewportSize } from '@mantine/hooks';
 import { useEffect, useRef, useState } from 'react';
 
+import { aboutLinks, navDocLinks } from '../../defaults/links';
 import { menuItems } from '../../defaults/menuItems';
 import { InvenTreeStyle } from '../../globalStyle';
 import { DocumentationLinks } from '../items/DocumentationLinks';
@@ -20,56 +21,11 @@ const plugins = [
   ...Array(100)
     .fill(0)
     .map((_, index) => ({
+      id: 'plugin' + index,
       title: `Plugin ${index}`,
       description: 'Plugin description',
       link: '/plugin'
     }))
-];
-
-const docLinks = [
-  {
-    title: t`Getting Started`,
-    description: t`Getting started with InvenTree`,
-    link: '/docs/getting-started'
-  },
-  {
-    title: t`API`,
-    description: t`InvenTree API documentation`,
-    link: '/api'
-  },
-  {
-    title: t`User Manual`,
-    description: t`InvenTree user manual`,
-    link: '/docs/user'
-  },
-  {
-    title: t`Developer Manual`,
-    description: t`InvenTree developer manual`,
-    link: '/docs/developer'
-  },
-  {
-    title: t`FAQ`,
-    description: t`Frequently asked questions`,
-    link: '/docs/faq'
-  }
-];
-
-const aboutLinks = [
-  {
-    title: t`Instance`,
-    description: t`About this Inventree instance`,
-    link: '/instance'
-  },
-  {
-    title: t`InvenTree`,
-    description: t`About the InvenTree org`,
-    link: '/about'
-  },
-  {
-    title: t`Licenses`,
-    description: t`Licenses for packages used by InvenTree`,
-    link: '/licenses'
-  }
 ];
 
 export function NavigationDrawer({
@@ -122,7 +78,7 @@ function DrawerContent() {
       <div ref={ref}>
         <Space h="md" />
         <Title order={5}>{t`Documentation`}</Title>
-        <DocumentationLinks links={docLinks} />
+        <DocumentationLinks links={navDocLinks} />
         <Space h="md" />
         <Title order={5}>{t`About`}</Title>
         <DocumentationLinks links={aboutLinks} />

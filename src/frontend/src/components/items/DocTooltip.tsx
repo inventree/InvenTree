@@ -12,8 +12,8 @@ export function DocTooltip({
   docchildren
 }: {
   children: React.ReactNode;
-  text: string;
-  detail?: string;
+  text: string | JSX.Element;
+  detail?: string | JSX.Element;
   link?: string;
   docchildren?: React.ReactNode;
 }) {
@@ -48,8 +48,8 @@ function ConstBody({
   docchildren,
   link
 }: {
-  text: string;
-  detail?: string;
+  text: string | JSX.Element;
+  detail?: string | JSX.Element;
   docchildren?: React.ReactNode;
   link?: string;
 }) {
