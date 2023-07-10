@@ -2,8 +2,11 @@ import { TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 
 
-export function TableSearchInput(
-) {
+export function TableSearchInput({
+    searchCallback
+} : {
+    searchCallback: (searchTerm: string) => void;
+}) {
 
     // Debounce timer
     let timer: any = null;
@@ -14,7 +17,7 @@ export function TableSearchInput(
         clearTimeout(timer);
 
         timer = setTimeout(() => {
-            // TODO: Do something with the search term
+            searchCallback(value);
         }, 250);
     }
 

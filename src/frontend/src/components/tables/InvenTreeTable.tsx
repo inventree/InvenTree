@@ -50,6 +50,14 @@ export function InvenTreeTable({
     // Search term
     const [searchTerm, setSearchTerm] = useState<string>('');
 
+    function updateSearchTerm(term: string) {
+        term = term.trim();
+        // Ignore identical search terms
+        if (term == searchTerm) return;
+        setSearchTerm(term);
+        refetch();
+    }
+
     // Data Sorting
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: defaultSortColumn, direction: 'asc' });
 
@@ -122,7 +130,7 @@ export function InvenTreeTable({
             });
     }
 
-    const { data, isFetching } = useQuery(
+    const { data, isError, isFetching, isLoading, refetch } = useQuery(
         [`table-${tableKey}`, sortStatus.columnAccessor, sortStatus.direction, page],
         async() => fetchTableData(),
         { refetchOnWindowFocus: false }
@@ -139,7 +147,9 @@ export function InvenTreeTable({
             </Group>
             <Space />
             <Group position="right">
-                {allowSearch && <TableSearchInput />}
+                {allowSearch && <TableSearchInput 
+                    searchCallback={(term: string) => updateSearchTerm(term) }
+                />}
                 {hasSwitchableColumns && <TableColumnSelect columns={columns}/>}
             </Group>
         </Group>
