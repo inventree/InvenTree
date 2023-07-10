@@ -19,10 +19,10 @@ export function InvenTreeTable({
     url: string;
     params: any;
     columns: any;
-    allowSelection: boolean;
-    paginated: boolean;
-    pageSize: number;
     tableKey: string;
+    allowSelection?: boolean;
+    paginated?: boolean;
+    pageSize?: number;
 }) {
 
     // Pagination

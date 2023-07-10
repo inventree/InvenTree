@@ -8,9 +8,6 @@ export function PartTable() {
     return <InvenTreeTable
         url='part/'
         params
-        paginated={true}
-        pageSize={25}
-        allowSelection={true}
         tableKey='part-table'
         columns={[
           {
