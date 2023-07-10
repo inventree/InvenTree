@@ -135,6 +135,7 @@ export function InvenTreeTable({
             withBorder
             striped
             highlightOnHover
+            loaderVariant="dots"
             idAccessor={'pk'}
             minHeight={100}
             totalRecords={data?.count ?? data?.length ?? 0}
