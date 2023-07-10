@@ -14,12 +14,14 @@ export function InvenTreeTable({
     allowSelection=false,
     paginated=true,
     pageSize=25,
-    tableKey=''
+    tableKey='',
+    defaultSortColumn=''
 } : {
     url: string;
     params: any;
     columns: any;
     tableKey: string;
+    defaultSortColumn?: string;
     allowSelection?: boolean;
     paginated?: boolean;
     pageSize?: number;
@@ -29,7 +31,7 @@ export function InvenTreeTable({
     const [page, setPage] = useState(1);
 
     // Data Sorting
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: '', direction: 'asc' });
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: defaultSortColumn, direction: 'asc' });
 
     // Data selection
     const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
