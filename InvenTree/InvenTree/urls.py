@@ -21,6 +21,7 @@ from company.api import company_api_urls
 from company.urls import (company_urls, manufacturer_part_urls,
                           supplier_part_urls)
 from label.api import label_api_urls
+from machine.api import machine_api_urls
 from order.api import order_api_urls
 from order.urls import order_urls
 from part.api import bom_api_urls, part_api_urls
@@ -59,6 +60,7 @@ apipatterns = [
     re_path(r'^order/', include(order_api_urls)),
     re_path(r'^label/', include(label_api_urls)),
     re_path(r'^report/', include(report_api_urls)),
+    re_path(r'^machine/', include(machine_api_urls)),
     re_path(r'^user/', include(user_urls)),
     re_path(r'^admin/', include(admin_api_urls)),
 

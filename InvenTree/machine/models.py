@@ -49,7 +49,7 @@ class MachineConfig(models.Model):
         created = self._state.adding
 
         old_machine = None
-        if self.pk and (old_machine := MachineConfig.objects.get(pk=self.pk)):
+        if not created and self.pk and (old_machine := MachineConfig.objects.get(pk=self.pk)):
             old_machine = old_machine.to_dict()
 
         super().save(*args, **kwargs)
@@ -163,8 +163,8 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
             if machine_config and machine_config.machine:
                 config_type = kwargs.get("config_type", None)
                 if config_type == cls.ConfigType.DRIVER:
-                    kwargs['settings'] = getattr(machine_config.machine.driver, "MACHINE_SETTINGS", {})
+                    kwargs['settings'] = machine_config.machine.driver_settings
                 elif config_type == cls.ConfigType.MACHINE:
-                    kwargs['settings'] = getattr(machine_config.machine, "MACHINE_SETTINGS", {})
+                    kwargs['settings'] = machine_config.machine.machine_settings
 
         return super().get_setting_definition(key, **kwargs)

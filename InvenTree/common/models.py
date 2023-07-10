@@ -304,6 +304,52 @@ class BaseInvenTreeSetting(models.Model):
         return settings
 
     @classmethod
+    def all_items(cls, settings_definition: Dict[str, SettingsKeyType] | None, **kwargs):
+        """Return a list of "all" defined settings.
+
+        This performs a single database lookup,
+        and then any settings which are not *in* the database
+        are assigned their default values
+        """
+        filters = cls.get_filters(**kwargs)
+
+        # Optionally filter by other keys
+        results = cls.objects.filter(**filters)
+
+        # Query the database
+        settings: Dict[str, BaseInvenTreeSetting] = {}
+
+        for setting in results:
+            if setting.key:
+                settings[setting.key.upper()] = setting
+
+        # Specify any "default" values which are not in the database
+        settings_definition = settings_definition or cls.SETTINGS
+        for key, setting in settings_definition.items():
+            if key.upper() not in settings:
+                setting_obj = cls(
+                    key=key,
+                    value=cls.get_setting_default(key, **filters),
+                    **filters
+                )
+                settings[key.upper()] = setting_obj
+
+        for key, setting in settings.items():
+            validator = cls.get_setting_validator(key)
+
+            if cls.is_protected(key):
+                setting.value = '***'
+            elif cls.validator_is_bool(validator):
+                setting.value = InvenTree.helpers.str2bool(setting.value)
+            elif cls.validator_is_int(validator):
+                try:
+                    setting.value = int(setting.value)
+                except ValueError:
+                    setting.value = cls.get_setting_default(key, **filters)
+
+        return list(settings.values())
+
+    @classmethod
     def get_setting_definition(cls, key, **kwargs):
         """Return the 'definition' of a particular settings value, as a dict object.
 

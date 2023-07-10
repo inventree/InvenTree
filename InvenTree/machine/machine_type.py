@@ -54,7 +54,9 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
 
     MACHINE_SETTINGS: Dict[str, SettingsKeyType]
 
-    required_attributes = ["SLUG", "NAME", "DESCRIPTION"]
+    machine_type: str
+
+    required_attributes = ["SLUG", "NAME", "DESCRIPTION", "machine_type"]
 
     def init_machine(self, machine: "BaseMachineType"):
         """This method gets called for each active machine using that driver while initialization
@@ -129,6 +131,9 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
             self.errors.append(f"Driver '{machine_config.driver}' not found")
         if self.driver and not isinstance(self.driver, self.base_driver):
             self.errors.append(f"'{self.driver.NAME}' is incompatible with machine type '{self.NAME}'")
+
+        self.machine_settings: Dict[str, SettingsKeyType] = getattr(self, "MACHINE_SETTINGS", {})
+        self.driver_settings: Dict[str, SettingsKeyType] = getattr(self.driver, "MACHINE_SETTINGS", {})
 
         if len(self.errors) > 0:
             return

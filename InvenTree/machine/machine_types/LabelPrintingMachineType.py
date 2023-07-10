@@ -6,6 +6,8 @@ from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
 class BaseLabelPrintingDriver(BaseDriver):
     """Base label printing driver."""
 
+    machine_type = "label_printer"
+
     def print_label(self):
         """This function must be overridden."""
         raise NotImplementedError("The `print_label` function must be overridden!")
