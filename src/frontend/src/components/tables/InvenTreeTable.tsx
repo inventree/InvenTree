@@ -7,6 +7,7 @@ import { api } from '../../App';
 import { Space, Stack, Table, Text } from '@mantine/core';
 import { Group } from '@mantine/core';
 
+import { TableColumnSelect } from './ColumnSelect';
 import { TableSearchInput } from './Search';
 
 /**
@@ -36,6 +37,12 @@ export function InvenTreeTable({
     paginated?: boolean;
     pageSize?: number;
 }) {
+
+    // Check if any columns are switchable (can be hidden)
+    const hasSwitchableColumns = columns.some((col: any) => col.switchable);
+
+    // Check if any columns are sortable
+    const hasSortableColumns = columns.some((col: any) => col.sortable);
 
     // Pagination
     const [page, setPage] = useState(1);
@@ -127,9 +134,14 @@ export function InvenTreeTable({
 
     return <Stack>
         <Group position="apart">
+            <Group position="left">
             <Text>actions</Text>
+            </Group>
             <Space />
-            {allowSearch && <TableSearchInput />}
+            <Group position="right">
+                {allowSearch && <TableSearchInput />}
+                {hasSwitchableColumns && <TableColumnSelect columns={columns}/>}
+            </Group>
         </Group>
         <DataTable
             withBorder

@@ -50,6 +50,7 @@ export function StockTable({
           {
             accessor: 'part_detail.description',
             sortable: false,
+            switchable: true,
             title: t`Description`,
           },
           {
