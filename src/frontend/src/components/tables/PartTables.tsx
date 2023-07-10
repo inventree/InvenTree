@@ -5,7 +5,7 @@ import { Group, Text } from '@mantine/core';
 
 import { shortenString } from '../../functions/tables';
 
-import { Thumbnail } from '../items/Thumbnail';
+import { ThumbnailHoverCard } from '../items/Thumbnail';
 
 import { InvenTreeTable } from './InvenTreeTable';
 
@@ -32,14 +32,11 @@ export function PartTable({
             render: function(record: any) {
 
               // TODO - Link to the part detail page
-
-              return <Group position="left">
-                <Thumbnail
-                  src={record.thumbnail || record.image}
-                  alt={record.name}
-                />
-                <Text>{record.name}</Text>
-              </Group>;
+              return <ThumbnailHoverCard
+                src={record.thumbnail || record.image}
+                text={record.name}
+                link=""
+              />;
             }
           },
           {

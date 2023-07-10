@@ -1,6 +1,8 @@
 
 import { Image } from "@mantine/core";
 import { HoverCard } from "@mantine/core";
+import { Group } from "@mantine/core";
+import { Text } from "@mantine/core";
 
 import { t } from "@lingui/macro";
 
@@ -35,4 +37,26 @@ export function Thumbnail({
             }
         }}
         />;
+}
+
+export function ThumbnailHoverCard({
+    src,
+    text,
+    link = '',
+    alt = t`Thumbnail`,
+    size=24,
+} : {
+    src: string;
+    text: string;
+    link?: string;
+    alt?: string;
+    size?: number;
+
+}) {
+
+    // TODO: Handle link
+    return <Group position="left">
+        <Thumbnail src={src} alt={alt}/>
+        <Text>{text}</Text>
+    </Group>;
 }

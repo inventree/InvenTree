@@ -106,6 +106,10 @@ export function InvenTreeTable({
         { refetchOnWindowFocus: false }
     );
 
+    // TODO: Handle column hiding
+    columns.forEach(function(col: any, idx: number) {
+    });
+
     return <DataTable
         withBorder
         idAccessor={'pk'}
