@@ -1,6 +1,8 @@
 import { t } from '@lingui/macro';
 import { Trans } from '@lingui/macro';
 
+import { shortenString } from '../../functions/tables';
+
 import { InvenTreeTable } from './InvenTreeTable';
 
 export function PartTable({
@@ -44,7 +46,9 @@ export function PartTable({
             title: t`Category`,
             sortable: true,
             render: function(record) {
-              return record.category_detail.pathstring;
+              return shortenString({
+                str: record.category_detail.pathstring,
+              });
             }
           },
           {
