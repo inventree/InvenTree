@@ -7,11 +7,10 @@ import {
   Group,
   HoverCard,
   Skeleton,
-  Text,
-  UnstyledButton
+  Text
 } from '@mantine/core';
 import { IconLayoutSidebar } from '@tabler/icons-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { menuItems } from '../../defaults/menuItems';
 import { InvenTreeStyle } from '../../globalStyle';
@@ -38,9 +37,7 @@ export function MegaHoverMenu({ open }: { open: () => void }) {
   return (
     <HoverCard width={600} position="bottom" shadow="md" withinPortal>
       <HoverCard.Target>
-        <a href="#">
-          <InvenTreeLogo />
-        </a>
+        <InvenTreeLogo />
       </HoverCard.Target>
 
       <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
