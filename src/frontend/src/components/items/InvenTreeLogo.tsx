@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 import InvenTreeIcon from './inventree.svg';
 
-export const InvenTreeLogo = forwardRef((props, ref) => {
+export const InvenTreeLogo = forwardRef<HTMLDivElement>((props, ref) => {
   return (
     <div ref={ref} {...props}>
       <NavLink to={'/'}>

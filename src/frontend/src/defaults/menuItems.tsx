@@ -1,6 +1,6 @@
 import { Image, Text } from '@mantine/core';
 
-import { MenuLinkItem } from '../components/nav/MegaHoverMenu';
+import { MenuLinkItem } from '../components/items/MenuLinks';
 
 export const menuItems: MenuLinkItem[] = [
   {

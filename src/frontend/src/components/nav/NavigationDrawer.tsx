@@ -104,7 +104,7 @@ function DrawerContent() {
   // update scroll height when viewport size changes
   useEffect(() => {
     if (ref.current == null) return;
-    setScrollHeight(height - ref.current.clientHeight - 62);
+    setScrollHeight(height - ref.current['clientHeight'] - 62);
   });
 
   return (
