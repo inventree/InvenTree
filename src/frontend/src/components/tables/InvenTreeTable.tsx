@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro';
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -16,7 +17,7 @@ export function InvenTreeTable({
     pageSize=25,
     tableKey='',
     defaultSortColumn='',
-    noRecordsText='No records found', // TODO: Translate
+    noRecordsText=t`No records found`,
 } : {
     url: string;
     params: any;
@@ -67,7 +68,7 @@ export function InvenTreeTable({
         }
             
         return api
-            .get(`http://localhost:8000/api/${url}`, {
+            .get(`http://localhost:8000/api/${url}`, {  // TODO: Don't hardcode the base URL here!
                 params: queryParams,
                 timeout: 30 * 1000,
             }).then(function(response) {
@@ -76,25 +77,25 @@ export function InvenTreeTable({
                         setMissingRecordsText(noRecordsText);
                         return response.data;
                     case 400:
-                        setMissingRecordsText("Bad request"); // TODO: Translate
+                        setMissingRecordsText(t`Bad request`);
                         break;
                     case 401:
-                        setMissingRecordsText("Unauthorized"); // TODO: Translate
+                        setMissingRecordsText(t`Unauthorized`);
                         break;
                     case 403:
-                        setMissingRecordsText("Forbidden"); // TODO: Translate
+                        setMissingRecordsText(t`Forbidden`);
                         break;
                     case 404:
-                        setMissingRecordsText("Not found"); // TODO: Translate
+                        setMissingRecordsText(t`Not found`);
                         break;
                     default:
-                        setMissingRecordsText("Unknown error" + ": " + response.statusText); // TODO: Translate
+                        setMissingRecordsText(t`Unknown error` + ": " + response.statusText); // TODO: Translate
                         break;
                 }
 
                 return [];
             }).catch(function(error) {
-                setMissingRecordsText("Error: " + error.message); // TODO: Translate
+                setMissingRecordsText(t`Error` + ": " + error.message);
                 return [];
             });
     }

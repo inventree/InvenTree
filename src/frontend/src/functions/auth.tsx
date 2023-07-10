@@ -32,7 +32,7 @@ export const doClassicLogout = async () => {
   setToken(undefined);
 
   notifications.show({
-    title: t`Logout successfull`,
+    title: t`Logout successful`,
     message: t`See you soon.`,
     color: 'green',
     icon: <IconCheck size="1rem" />

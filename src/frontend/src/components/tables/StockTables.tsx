@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/macro';
+import { t } from '@lingui/macro';
 
 import { InvenTreeTable } from './InvenTreeTable';
 
@@ -24,6 +25,7 @@ export function StockTable({
           {
             accessor: 'quantity',
             sortable: true,
+            title: t`Quantity`,
           },
         ]}
     />;
