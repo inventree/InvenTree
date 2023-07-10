@@ -76,6 +76,13 @@ WORKDIR ${INVENTREE_HOME}
 COPY ./docker/requirements.txt base_requirements.txt
 COPY ./requirements.txt ./
 
+# For ARMv7 architecture, add the piwheels repo (for cryptography library)
+# Otherwise, we have to build from source, which is difficult
+# Ref: https://github.com/inventree/InvenTree/pull/4598
+RUN if [ `apk --print-arch` = "armv7" ]; then \
+    printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
+    fi
+
 RUN apk add --no-cache --virtual .build-deps \
     gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev \
     # Image format dev libs
