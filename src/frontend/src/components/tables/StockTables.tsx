@@ -62,6 +62,7 @@ export function StockTable({
             accessor: 'status',
             sortable: true,
             switchable: true,
+            filter: true,
             title: t`Status`,
             // TODO: Custom renderer for stock status label
           },

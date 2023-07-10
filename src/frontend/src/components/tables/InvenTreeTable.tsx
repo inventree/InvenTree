@@ -133,6 +133,8 @@ export function InvenTreeTable({
         </Group>
         <DataTable
             withBorder
+            striped
+            highlightOnHover
             idAccessor={'pk'}
             minHeight={100}
             totalRecords={data?.count ?? data?.length ?? 0}
