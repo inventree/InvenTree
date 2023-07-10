@@ -68,7 +68,7 @@ RUN apk add --no-cache \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f \
     # report generation
-    poppler-units libpango-1.0-0 libpangoft2-1.0-0
+    poppler-units pango-dev cairo-dev
 
 EXPOSE 8000
 
