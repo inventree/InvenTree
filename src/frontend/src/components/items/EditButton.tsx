@@ -7,7 +7,7 @@ export function EditButton(
   disabled?: boolean
 ) {
   return (
-    <ActionIcon onClick={() => setEditing()} disabled={disabled}>
+    <ActionIcon onClick={() => setEditing()} radius="xs" color="green" variant="outline" disabled={disabled} size={18}>
       {editing ? <IconDeviceFloppy /> : <IconEdit />}
     </ActionIcon>
   );

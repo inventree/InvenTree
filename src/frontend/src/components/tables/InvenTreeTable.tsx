@@ -4,6 +4,11 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
 
+import { Space, Stack, Table, Text } from '@mantine/core';
+import { Group } from '@mantine/core';
+
+import { TableSearchInput } from './Search';
+
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
@@ -13,6 +18,7 @@ export function InvenTreeTable({
     params,
     columns,
     allowSelection=false,
+    allowSearch=true,
     paginated=true,
     pageSize=25,
     tableKey='',
@@ -26,12 +32,16 @@ export function InvenTreeTable({
     defaultSortColumn?: string;
     noRecordsText?: string;
     allowSelection?: boolean;
+    allowSearch?: boolean;
     paginated?: boolean;
     pageSize?: number;
 }) {
 
     // Pagination
     const [page, setPage] = useState(1);
+
+    // Search term
+    const [searchTerm, setSearchTerm] = useState<string>('');
 
     // Data Sorting
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: defaultSortColumn, direction: 'asc' });
@@ -56,6 +66,11 @@ export function InvenTreeTable({
         if (paginated) {
             queryParams.limit = pageSize;
             queryParams.offset = (page - 1) * pageSize;
+        }
+
+        // Handle custom search term
+        if (searchTerm) {
+            queryParams.search = searchTerm;
         }
 
         // Handle sorting
@@ -110,21 +125,28 @@ export function InvenTreeTable({
     columns.forEach(function(col: any, idx: number) {
     });
 
-    return <DataTable
-        withBorder
-        idAccessor={'pk'}
-        minHeight={100}
-        totalRecords={data?.count ?? data?.length ?? 0}
-        recordsPerPage={pageSize}
-        page={page}
-        onPageChange={setPage}
-        sortStatus={sortStatus}
-        onSortStatusChange={handleSortStatusChange}
-        selectedRecords={allowSelection ? selectedRecords : undefined}
-        onSelectedRecordsChange={allowSelection ? setSelectedRecords : undefined}
-        fetching={isFetching}
-        noRecordsText={missingRecordsText}
-        records={data?.results ?? data ?? []}
-        columns={columns}
-    />;
+    return <Stack>
+        <Group position="apart">
+            <Text>actions</Text>
+            <Space />
+            {allowSearch && <TableSearchInput />}
+        </Group>
+        <DataTable
+            withBorder
+            idAccessor={'pk'}
+            minHeight={100}
+            totalRecords={data?.count ?? data?.length ?? 0}
+            recordsPerPage={pageSize}
+            page={page}
+            onPageChange={setPage}
+            sortStatus={sortStatus}
+            onSortStatusChange={handleSortStatusChange}
+            selectedRecords={allowSelection ? selectedRecords : undefined}
+            onSelectedRecordsChange={allowSelection ? setSelectedRecords : undefined}
+            fetching={isFetching}
+            noRecordsText={missingRecordsText}
+            records={data?.results ?? data ?? []}
+            columns={columns}
+        />
+    </Stack>;
 }

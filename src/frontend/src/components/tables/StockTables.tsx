@@ -1,9 +1,15 @@
 import { Trans } from '@lingui/macro';
 import { t } from '@lingui/macro';
 
+import { useToggle } from '@mantine/hooks';
+
 import { InvenTreeTable } from './InvenTreeTable';
 import { ThumbnailHoverCard } from '../items/Thumbnail';
 import { shortenString } from '../../functions/tables';
+import { Group } from '@mantine/core';
+
+import { DeleteButton } from '../items/DeleteButton';
+import { EditButton } from '../items/EditButton';
 
 /*
  * Load a table of stock items
@@ -13,6 +19,8 @@ export function StockTable({
 }: {
     params?: any;
 }) {
+
+  const [editing, setEditing] = useToggle([false, true] as const);
 
     let tableParams = Object.assign({}, params);
 
@@ -72,7 +80,7 @@ export function StockTable({
               // TODO: Custom renderer for location
               return record.location; 
             }
-          }
+          },
           // TODO: stocktake column
           // TODO: expiry date
           // TODO: last updated
@@ -83,6 +91,17 @@ export function StockTable({
           // TODO: packaging
           // TODO: notes
           // TODO: actions
+          {
+            accessor: 'actions',
+            title: t`Actions`,
+            sortable: false,
+            render: function(record: any) {
+              return <Group position="right" spacing={5} noWrap={true}>
+                {EditButton(setEditing, editing)}
+                {DeleteButton()}
+              </Group>;
+            },
+          }
         ]}
     />;
 }
