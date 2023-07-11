@@ -2,27 +2,26 @@ import { Container, Group, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { navTabs } from '../../defaults/links';
+import { navTabs as mainNavTabs } from '../../defaults/links';
 import { InvenTreeStyle } from '../../globalStyle';
 import { ColorToggle } from '../items/ColorToggle';
 import { ScanButton } from '../items/ScanButton';
 import { MainMenu } from './MainMenu';
-import { MegaHoverMenu } from './MegaHoverMenu';
+import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
 
 export function Header() {
   const { classes } = InvenTreeStyle();
-  const { tabValue } = useParams();
-  const [opened, { open, close }] = useDisclosure(false);
+  const [drawerOpened, { open: openDrawer, close }] = useDisclosure(false);
 
   return (
     <div className={classes.layoutHeader}>
-      <NavigationDrawer opened={opened} close={close} />
+      <NavigationDrawer opened={drawerOpened} close={close} />
       <Container className={classes.layoutHeaderSection} size={'xl'}>
         <Group position="apart">
           <Group>
-            <MegaHoverMenu open={open} />
-            <NavigationTabs tabValue={tabValue} />
+            <NavHoverMenu openDrawer={openDrawer} />
+            <NavTabs />
           </Group>
           <Group>
             <ScanButton />
@@ -35,8 +34,9 @@ export function Header() {
   );
 }
 
-function NavigationTabs({ tabValue }: { tabValue: string | undefined }) {
+function NavTabs() {
   const { classes } = InvenTreeStyle();
+  const { tabValue } = useParams();
   const navigate = useNavigate();
 
   return (
@@ -53,7 +53,7 @@ function NavigationTabs({ tabValue }: { tabValue: string | undefined }) {
       }
     >
       <Tabs.List>
-        {navTabs.map((tab) => (
+        {mainNavTabs.map((tab) => (
           <Tabs.Tab value={tab.name} key={tab.name}>
             {tab.text}
           </Tabs.Tab>

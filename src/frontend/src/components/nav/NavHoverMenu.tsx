@@ -19,7 +19,11 @@ import { useLocalState } from '../../states/LocalState';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { MenuLinks } from '../items/MenuLinks';
 
-export function MegaHoverMenu({ open }: { open: () => void }) {
+export function NavHoverMenu({
+  openDrawer: openDrawer
+}: {
+  openDrawer: () => void;
+}) {
   const { classes, theme } = InvenTreeStyle();
   const [hostKey, hostList] = useLocalState((state) => [
     state.hostKey,
@@ -43,8 +47,8 @@ export function MegaHoverMenu({ open }: { open: () => void }) {
       <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
         <Group position="apart" px="md">
           <ActionIcon
-            onClick={open}
-            onMouseOver={open}
+            onClick={openDrawer}
+            onMouseOver={openDrawer}
             title={t`Open Navigation`}
           >
             <IconLayoutSidebar />
@@ -62,7 +66,7 @@ export function MegaHoverMenu({ open }: { open: () => void }) {
               <Skeleton height={20} width={40} radius={theme.defaultRadius} />
             )}
           </Group>
-          <Anchor href="#" fz="xs" onClick={open}>
+          <Anchor href="#" fz="xs" onClick={openDrawer}>
             <Trans>View all</Trans>
           </Anchor>
         </Group>
