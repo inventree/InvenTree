@@ -293,9 +293,9 @@ class BaseInvenTreeSetting(models.Model):
 
         # format settings values and remove protected
         for key, setting in settings.items():
-            validator = cls.get_setting_validator(key)
+            validator = cls.get_setting_validator(key, **filters)
 
-            if cls.is_protected(key):
+            if cls.is_protected(key, **filters) and setting.value != "":
                 setting.value = '***'
             elif cls.validator_is_bool(validator):
                 setting.value = InvenTree.helpers.str2bool(setting.value)
@@ -338,7 +338,7 @@ class BaseInvenTreeSetting(models.Model):
 
         for setting in all_settings.values():
             if setting.required:
-                value = setting.value or cls.get_setting_default(setting.key)
+                value = setting.value or cls.get_setting_default(setting.key, **kwargs)
 
                 if value == "":
                     missing_settings.append(setting.key.upper())
