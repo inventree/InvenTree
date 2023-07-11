@@ -16,6 +16,7 @@ class SettingsAdmin(ImportExportModelAdmin):
         """Prevent the 'key' field being edited once the setting is created."""
         if obj:
             return ['key']
+
         else:
             return []
 
