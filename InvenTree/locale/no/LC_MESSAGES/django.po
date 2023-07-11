@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 00:32+0000\n"
-"PO-Revision-Date: 2023-07-05 21:44\n"
+"PO-Revision-Date: 2023-07-11 03:37\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -2864,16 +2864,12 @@ msgid "Enable stocktake functionality for recording stock levels and calculating
 msgstr "Aktiver varetellingsfunksjonalitet for å registrere lagernivåer og regne ut lagerverdi"
 
 #: common/models.py:1689
-#, fuzzy
-#| msgid "Exclude Location"
 msgid "Exclude External Locations"
-msgstr "Eksluderer plassering"
+msgstr ""
 
 #: common/models.py:1690
-#, fuzzy
-#| msgid "Exclude stock items older than this number of days from pricing calculations"
 msgid "Exclude stock items in external locations from stocktake calculations"
-msgstr "Unnta lagervarer som er eldre enn dette antall dager fra prisberegninger"
+msgstr ""
 
 #: common/models.py:1696
 msgid "Automatic Stocktake Period"
@@ -6369,10 +6365,8 @@ msgid "Exclude External Stock"
 msgstr ""
 
 #: part/serializers.py:939
-#, fuzzy
-#| msgid "Exclude stock items from this selected location"
 msgid "Exclude stock items in external locations"
-msgstr "Ekskluder lagervarer fra denne valgte plasseringen"
+msgstr ""
 
 #: part/serializers.py:944
 msgid "Generate Report"
@@ -12748,8 +12742,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12884,3 +12877,4 @@ msgstr ""
 #: users/models.py:254
 msgid "Permission to delete items"
 msgstr ""
+
