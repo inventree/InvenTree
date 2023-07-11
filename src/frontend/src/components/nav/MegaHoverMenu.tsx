@@ -42,7 +42,11 @@ export function MegaHoverMenu({ open }: { open: () => void }) {
 
       <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
         <Group position="apart" px="md">
-          <ActionIcon onClick={open} title={t`Open Navigation`}>
+          <ActionIcon
+            onClick={open}
+            onMouseOver={open}
+            title={t`Open Navigation`}
+          >
             <IconLayoutSidebar />
           </ActionIcon>
           <Group spacing={'xs'}>
