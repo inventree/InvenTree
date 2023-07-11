@@ -38,22 +38,16 @@ class MachineConfigSerializer(serializers.ModelSerializer):
     is_driver_available = serializers.SerializerMethodField("get_is_driver_available")
 
     def get_initialized(self, obj: MachineConfig) -> bool:
-        if obj.machine:
-            return obj.machine.initialized
-        return False
+        return getattr(obj.machine, "initialized", False)
 
     def get_status(self, obj: MachineConfig) -> int:
-        if obj.machine:
-            return obj.machine.status
-        return -1
+        return getattr(obj.machine, "status", -1)
 
     def get_status_text(self, obj: MachineConfig) -> str:
-        if obj.machine:
-            return obj.machine.status_text
-        return ""
+        return getattr(obj.machine, "status_text", "")
 
     def get_errors(self, obj: MachineConfig) -> List[str]:
-        return obj.errors
+        return [str(err) for err in obj.errors]
 
     def get_is_driver_available(self, obj: MachineConfig) -> bool:
         return obj.is_driver_available()

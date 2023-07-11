@@ -53,8 +53,8 @@ class MachineConfigAdmin(admin.ModelAdmin):
 
     form = MachineConfigAdminForm
     list_filter = ["active"]
-    list_display = ["name", "machine_type", "driver", "active", "is_driver_available", "no_errors", "get_machine_status"]
-    readonly_fields = ["is_driver_available", "get_admin_errors", "get_machine_status"]
+    list_display = ["name", "machine_type", "driver", "initialized", "active", "no_errors", "get_machine_status"]
+    readonly_fields = ["initialized", "is_driver_available", "get_admin_errors", "get_machine_status"]
     inlines = [MachineSettingInline]
 
     def get_readonly_fields(self, request, obj):

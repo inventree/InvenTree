@@ -170,6 +170,16 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         if self.driver is None:
             return
 
+        # check if all required settings are defined before continue with init process
+        settings_valid, missing_settings = self.check_settings()
+        if not settings_valid:
+            error_parts = []
+            for config_type, missing in missing_settings.items():
+                if len(missing) > 0:
+                    error_parts.append(f"{config_type.name} settings: " + ", ".join(missing))
+            self.errors.append(f"Missing {' and '.join(error_parts)}")
+            return
+
         try:
             self.driver.init_machine(self)
             self.initialized = True
@@ -208,16 +218,16 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
         Returns:
             is_valid: Are all required settings defined
-            missing_settings: List of all settings that are missing (empty if is_valid is 'True')
+            missing_settings: Dict[ConfigType, List[str]] of all settings that are missing (empty if is_valid is 'True')
         """
         from machine.models import MachineSetting
 
-        missing_settings: List[str] = []
+        missing_settings: Dict[MachineSetting.ConfigType, List[str]] = {}
         for settings, config_type in self.setting_types:
             is_valid, missing = MachineSetting.check_all_settings(settings_definition=settings, machine_config=self.machine_config, config_type=config_type)
-            missing_settings.extend(missing)
+            missing_settings[config_type] = missing
 
-        return len(missing_settings) == 0, missing_settings
+        return all(len(missing) == 0 for missing in missing_settings), missing_settings
 
     def set_status(self, status: MachineStatus):
         """Set the machine status code. There are predefined ones for each MachineType.

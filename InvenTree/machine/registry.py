@@ -127,18 +127,19 @@ class MachinesRegistry:
         self.machines.pop(str(machine.pk), None)
 
     def get_machines(self, **kwargs):
-        """Get loaded machines from registry. (By default only active machines)
+        """Get loaded machines from registry. (By default only initialized machines)
 
         Kwargs:
             name: Machine name
             machine_type: Machine type definition (class)
             driver: Machine driver (class)
-            active: (bool, default: True)
+            initialized: (bool, default: True)
+            active: (bool)
             base_driver: base driver (class | List[class])
         """
-        allowed_fields = ["name", "machine_type", "driver", "active", "base_driver"]
+        allowed_fields = ["name", "machine_type", "driver", "initialized", "active", "base_driver"]
 
-        kwargs = {**{'active': True}, **kwargs}
+        kwargs = {'initialized': True, **kwargs}
 
         def filter_machine(machine: BaseMachineType):
             for key, value in kwargs.items():

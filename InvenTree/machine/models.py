@@ -81,7 +81,7 @@ class MachineConfig(models.Model):
 
     @property
     def errors(self):
-        return self.machine.errors if self.machine else []
+        return getattr(self.machine, "errors", [])
 
     @admin.display(boolean=True, description=_("Driver available"))
     def is_driver_available(self) -> bool:
@@ -92,6 +92,11 @@ class MachineConfig(models.Model):
     def no_errors(self) -> bool:
         """Status if machine has errors"""
         return len(self.errors) == 0
+
+    @admin.display(boolean=True, description=_("Initialized"))
+    def initialized(self) -> bool:
+        """Status if machine is initialized"""
+        return getattr(self.machine, "initialized", False)
 
     @admin.display(description=_("Errors"))
     def get_admin_errors(self):
