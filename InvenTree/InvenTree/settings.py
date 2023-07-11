@@ -279,6 +279,30 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     "sesame.backends.ModelBackend",                             # Magic link login django-sesame
 ])
 
+# LDAP support
+LDAP_AUTH = get_setting("INVENTREE_LDAP_ENABLED", "ldap.enabled", False)
+if LDAP_AUTH:
+    import ldap
+    from django_auth_ldap.config import LDAPSearch
+
+    AUTHENTICATION_BACKENDS.append("django_auth_ldap.backend.LDAPBackend")
+
+    AUTH_LDAP_SERVER_URI = get_setting("INVENTREE_LDAP_SERVER_URI", "ldap.server_uri")
+    AUTH_LDAP_BIND_DN = get_setting("INVENTREE_LDAP_BIND_DN", "ldap.bind_dn")
+    AUTH_LDAP_BIND_PASSWORD = get_setting("INVENTREE_LDAP_BIND_PASSWORD", "ldap.bind_password")
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        get_setting("INVENTREE_LDAP_SEARCH_BASE_DN", "ldap.search_base_dn"),
+        ldap.SCOPE_SUBTREE,
+        str(get_setting("INVENTREE_LDAP_SEARCH_FILTER_STR", "ldap.search_filter_str", "(uid= %(user)s)"))
+    )
+    AUTH_LDAP_USER_ATTR_MAP = get_setting("INVENTREE_LDAP_USER_ATTR_MAP", "ldap.user_attr_map", {
+        'first_name': 'givenName',
+        'last_name': 'sn',
+        'email': 'mail',
+    }, dict)
+    AUTH_LDAP_ALWAYS_UPDATE_USER = get_setting("INVENTREE_LDAP_ALWAYS_UPDATE_USER", "ldap.always_update_user", True)
+    AUTH_LDAP_CACHE_TIMEOUT = get_setting("INVENTREE_LDAP_CACHE_TIMEOUT", "ldap.cache_timeout", 3600, int)
+
 DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
 
 # If the debug toolbar is enabled, add the modules

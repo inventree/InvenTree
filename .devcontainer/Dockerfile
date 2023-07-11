@@ -28,7 +28,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
     # PostgreSQL support
     libpq-dev \
     # MySQL / MariaDB support
-    default-libmysqlclient-dev mariadb-client && \
+    default-libmysqlclient-dev mariadb-client \
+    # LDAP support
+    libldap2-dev libsasl2-dev && \
     apt-get autoclean && apt-get autoremove
 
 # [Optional] Uncomment this line to install global node packages.

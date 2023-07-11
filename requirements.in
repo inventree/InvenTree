@@ -4,6 +4,7 @@ coreapi                                 # API documentation for djangorestframew
 cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
 django-allauth                          # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
+django-auth-ldap                        # Django integration for ldap auth
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
 django-crispy-forms<2.0                 # Form helpers # FIXED 2023-02-18 due to required updates in the new version
@@ -41,6 +42,7 @@ pillow==9.5.0                           # Image manipulation # FIXED 2023-07-04 
 pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
+python-ldap                             # LDAP auth support
 qrcode[pil]                             # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
 regex                                   # Advanced regular expressions

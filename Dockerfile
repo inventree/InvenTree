@@ -84,7 +84,7 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
     fi
 
 RUN apk add --no-cache --virtual .build-deps \
-    gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev \
+    gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev openldap-dev \
     # Image format dev libs
     jpeg-dev openjpeg-dev libwebp-dev zlib-dev \
     # DB specific dev libs
