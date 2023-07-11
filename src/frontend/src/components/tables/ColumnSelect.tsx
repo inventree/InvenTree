@@ -1,4 +1,4 @@
-import { Button, Checkbox, Menu } from "@mantine/core";
+import { Checkbox, Menu } from "@mantine/core";
 import { Trans, t } from '@lingui/macro';
 import { ActionIcon } from "@mantine/core";
 import { IconAdjustments } from "@tabler/icons-react";

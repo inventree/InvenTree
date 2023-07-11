@@ -1,14 +1,16 @@
 import { t } from '@lingui/macro';
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
 
-import { Space, Stack, Table, Text } from '@mantine/core';
+import { ActionIcon, Space, Stack, Table, Text } from '@mantine/core';
 import { Group } from '@mantine/core';
 
 import { TableColumnSelect } from './ColumnSelect';
 import { TableSearchInput } from './Search';
+
+import { IconRefresh } from '@tabler/icons-react';
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
@@ -18,9 +20,10 @@ export function InvenTreeTable({
     url,
     params,
     columns,
-    allowSelection=false,
-    allowSearch=true,
-    paginated=true,
+    enableSelection=false,
+    enableSearch=true,
+    enablePagination=true,
+    enableRefresh=true,
     pageSize=25,
     tableKey='',
     defaultSortColumn='',
@@ -32,9 +35,10 @@ export function InvenTreeTable({
     tableKey: string;
     defaultSortColumn?: string;
     noRecordsText?: string;
-    allowSelection?: boolean;
-    allowSearch?: boolean;
-    paginated?: boolean;
+    enableSelection?: boolean;
+    enableSearch?: boolean;
+    enablePagination?: boolean;
+    enableRefresh?: boolean;
     pageSize?: number;
 }) {
 
@@ -50,11 +54,20 @@ export function InvenTreeTable({
     // Search term
     const [searchTerm, setSearchTerm] = useState<string>('');
 
+    let latestSearchTerm = '';
+
+    useEffect(() => {
+        // Keep a shadow copy of the state variable, so that we can update it asynchronously
+        latestSearchTerm = searchTerm;
+    }, [searchTerm]);
+
     function updateSearchTerm(term: string) {
         term = term.trim();
         // Ignore identical search terms
         if (term == searchTerm) return;
+
         setSearchTerm(term);
+        latestSearchTerm = term;
         refetch();
     }
 
@@ -78,14 +91,14 @@ export function InvenTreeTable({
         let queryParams = Object.assign({}, params);
 
         // Handle pagination
-        if (paginated) {
+        if (enablePagination) {
             queryParams.limit = pageSize;
             queryParams.offset = (page - 1) * pageSize;
         }
 
         // Handle custom search term
-        if (searchTerm) {
-            queryParams.search = searchTerm;
+        if (latestSearchTerm) {
+            queryParams.search = latestSearchTerm;
         }
 
         // Handle sorting
@@ -133,7 +146,10 @@ export function InvenTreeTable({
     const { data, isError, isFetching, isLoading, refetch } = useQuery(
         [`table-${tableKey}`, sortStatus.columnAccessor, sortStatus.direction, page],
         async() => fetchTableData(),
-        { refetchOnWindowFocus: false }
+        {
+            refetchOnWindowFocus: false,
+            refetchOnMount: 'always',
+        }
     );
 
     // TODO: Handle column hiding
@@ -142,14 +158,19 @@ export function InvenTreeTable({
 
     return <Stack>
         <Group position="apart">
-            <Group position="left">
+            <Group position="left" spacing={5}>
             <Text>actions</Text>
             </Group>
             <Space />
-            <Group position="right">
-                {allowSearch && <TableSearchInput 
+            <Group position="right" spacing={5}>
+                {enableSearch && <TableSearchInput 
                     searchCallback={(term: string) => updateSearchTerm(term) }
                 />}
+                {enableRefresh && 
+                    <ActionIcon>
+                        <IconRefresh onClick={() => refetch()} />
+                    </ActionIcon>
+                }
                 {hasSwitchableColumns && <TableColumnSelect columns={columns}/>}
             </Group>
         </Group>
@@ -166,8 +187,8 @@ export function InvenTreeTable({
             onPageChange={setPage}
             sortStatus={sortStatus}
             onSortStatusChange={handleSortStatusChange}
-            selectedRecords={allowSelection ? selectedRecords : undefined}
-            onSelectedRecordsChange={allowSelection ? setSelectedRecords : undefined}
+            selectedRecords={enableSelection ? selectedRecords : undefined}
+            onSelectedRecordsChange={enableSelection ? setSelectedRecords : undefined}
             fetching={isFetching}
             noRecordsText={missingRecordsText}
             records={data?.results ?? data ?? []}
