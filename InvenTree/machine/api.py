@@ -101,14 +101,9 @@ class MachineSettingList(APIView):
     def get(self, request, pk):
         machine = get_machine(pk)
 
-        setting_types = [
-            (machine.machine_settings, MachineSetting.ConfigType.MACHINE),
-            (machine.driver_settings, MachineSetting.ConfigType.DRIVER),
-        ]
-
         all_settings = []
 
-        for settings, config_type in setting_types:
+        for settings, config_type in machine.setting_types:
             settings_dict = MachineSetting.all_settings(settings_definition=settings, machine_config=machine.machine_config, config_type=config_type)
             all_settings.extend(list(settings_dict.values()))
 
@@ -137,8 +132,7 @@ class MachineSettingDetail(RetrieveUpdateAPI):
 
         machine = get_machine(pk)
 
-        setting_map = {MachineSetting.ConfigType.MACHINE: machine.machine_settings,
-                       MachineSetting.ConfigType.DRIVER: machine.driver_settings}
+        setting_map = dict((d, s) for s, d in machine.setting_types)
         if key.upper() not in setting_map[config_type]:
             raise NotFound(detail=f"Machine '{machine.name}' has no {config_type.name} setting matching '{key.upper()}'")
 

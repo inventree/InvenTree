@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Dict, Literal, Type
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Tuple, Type
 
 from generic.states import StatusCode
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
@@ -117,6 +117,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
     def __init__(self, machine_config: MachineConfig) -> None:
         from machine import registry
+        from machine.models import MachineSetting
 
         self.errors = []
         self.initialized = False
@@ -134,6 +135,11 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
         self.machine_settings: Dict[str, SettingsKeyType] = getattr(self, "MACHINE_SETTINGS", {})
         self.driver_settings: Dict[str, SettingsKeyType] = getattr(self.driver, "MACHINE_SETTINGS", {})
+
+        self.setting_types: List[Tuple[Dict[str, SettingsKeyType], MachineSetting.ConfigType]] = [
+            (self.machine_settings, MachineSetting.ConfigType.MACHINE),
+            (self.driver_settings, MachineSetting.ConfigType.DRIVER),
+        ]
 
         if len(self.errors) > 0:
             return
@@ -196,6 +202,22 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
         config_type = MachineSetting.get_config_type(config_type_str)
         MachineSetting.set_setting(key, value, None, machine_config=self.machine_config, config_type=config_type)
+
+    def check_settings(self):
+        """Check if all required settings for this machine are defined.
+
+        Returns:
+            is_valid: Are all required settings defined
+            missing_settings: List of all settings that are missing (empty if is_valid is 'True')
+        """
+        from machine.models import MachineSetting
+
+        missing_settings: List[str] = []
+        for settings, config_type in self.setting_types:
+            is_valid, missing = MachineSetting.check_all_settings(settings_definition=settings, machine_config=self.machine_config, config_type=config_type)
+            missing_settings.extend(missing)
+
+        return len(missing_settings) == 0, missing_settings
 
     def set_status(self, status: MachineStatus):
         """Set the machine status code. There are predefined ones for each MachineType.

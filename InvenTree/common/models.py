@@ -127,6 +127,7 @@ class SettingsKeyType(TypedDict, total=False):
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
         protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
+        required: Is this setting required to work, can be used in combination with .check_all_settings(...) (optional, default: False)
         model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
     """
 
@@ -140,6 +141,7 @@ class SettingsKeyType(TypedDict, total=False):
     before_save: Callable[..., None]
     after_save: Callable[..., None]
     protected: bool
+    required: bool
     model: str
 
 
@@ -321,6 +323,22 @@ class BaseInvenTreeSetting(models.Model):
             settings[key] = setting.value
 
         return settings
+
+    @classmethod
+    def check_all_settings(cls, *, exclude_hidden=False, settings_definition: Dict[str, SettingsKeyType] | None = None, **kwargs):
+        """Check if all required settings are set by definition."""
+        all_settings = cls.all_settings(exclude_hidden=exclude_hidden, settings_definition=settings_definition, **kwargs)
+
+        missing_settings: List[str] = []
+
+        for setting in all_settings.values():
+            if setting.required:
+                value = setting.value or cls.get_setting_default(setting.key)
+
+                if value == "":
+                    missing_settings.append(setting.key.upper())
+
+        return len(missing_settings) == 0, missing_settings
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -848,7 +866,7 @@ class BaseInvenTreeSetting(models.Model):
     @classmethod
     def is_protected(cls, key, **kwargs):
         """Check if the setting value is protected."""
-        setting = cls.get_setting_definition(key, **kwargs)
+        setting = cls.get_setting_definition(key, **cls.get_filters(**kwargs))
 
         return setting.get('protected', False)
 
@@ -856,6 +874,18 @@ class BaseInvenTreeSetting(models.Model):
     def protected(self):
         """Returns if setting is protected from rendering."""
         return self.__class__.is_protected(self.key, **self.get_filters_for_instance())
+
+    @classmethod
+    def is_required(cls, key, **kwargs):
+        """Check if this setting value is required."""
+        setting = cls.get_setting_definition(key, **cls.get_filters(**kwargs))
+
+        return setting.get("required", False)
+
+    @property
+    def required(self):
+        """Returns if setting is required."""
+        return self.__class__.is_required(self.key, **self.get_filters_for_instance())
 
 
 def settings_group_options():
