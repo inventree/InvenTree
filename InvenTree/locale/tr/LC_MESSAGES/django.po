@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 00:32+0000\n"
-"PO-Revision-Date: 2023-07-05 21:44\n"
+"PO-Revision-Date: 2023-07-11 03:37\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -403,7 +403,7 @@ msgstr "üst"
 #: InvenTree/models.py:671 InvenTree/models.py:672
 #: templates/js/translated/part.js:2764 templates/js/translated/stock.js:2673
 msgid "Path"
-msgstr ""
+msgstr "Yol"
 
 #: InvenTree/models.py:767
 msgid "Markdown notes (optional)"
@@ -411,15 +411,15 @@ msgstr ""
 
 #: InvenTree/models.py:794
 msgid "Barcode Data"
-msgstr ""
+msgstr "Barkod Verisi"
 
 #: InvenTree/models.py:795
 msgid "Third party barcode data"
-msgstr ""
+msgstr "Üçüncü parti barkod verisi"
 
 #: InvenTree/models.py:800
 msgid "Barcode Hash"
-msgstr ""
+msgstr "Barkod Hash"
 
 #: InvenTree/models.py:801
 msgid "Unique hash of barcode data"
@@ -431,7 +431,7 @@ msgstr ""
 
 #: InvenTree/models.py:900
 msgid "Server Error"
-msgstr ""
+msgstr "Sunucu Hatası"
 
 #: InvenTree/models.py:901
 msgid "An error has been logged by the server."
@@ -505,7 +505,7 @@ msgstr "Tekrarlanan kolon ismi:'{col}'"
 #: InvenTree/serializers.py:713
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: InvenTree/serializers.py:714
 msgid "URL of remote image file"
@@ -517,11 +517,11 @@ msgstr ""
 
 #: InvenTree/settings.py:746
 msgid "Czech"
-msgstr ""
+msgstr "Çekçe"
 
 #: InvenTree/settings.py:747
 msgid "Danish"
-msgstr ""
+msgstr "Danca"
 
 #: InvenTree/settings.py:748
 msgid "German"
@@ -545,11 +545,11 @@ msgstr "İspanyolca(Meksika)"
 
 #: InvenTree/settings.py:753
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsça"
 
 #: InvenTree/settings.py:754
 msgid "Finnish"
-msgstr ""
+msgstr "Fince"
 
 #: InvenTree/settings.py:755
 msgid "French"
@@ -589,11 +589,11 @@ msgstr "Polonyaca"
 
 #: InvenTree/settings.py:764
 msgid "Portuguese"
-msgstr ""
+msgstr "Portekizce"
 
 #: InvenTree/settings.py:765
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portekizce (Brezilya)"
 
 #: InvenTree/settings.py:766
 msgid "Russian"
@@ -601,7 +601,7 @@ msgstr "Rusça"
 
 #: InvenTree/settings.py:767
 msgid "Slovenian"
-msgstr ""
+msgstr "Slovakça"
 
 #: InvenTree/settings.py:768
 msgid "Swedish"
@@ -670,7 +670,7 @@ msgstr "İade"
 
 #: InvenTree/status_codes.py:41 InvenTree/status_codes.py:170
 msgid "In Progress"
-msgstr ""
+msgstr "Devam Ediyor"
 
 #: InvenTree/status_codes.py:42 order/models.py:1345
 #: templates/js/translated/sales_order.js:1518
@@ -701,7 +701,7 @@ msgstr "Reddedildi"
 
 #: InvenTree/status_codes.py:72
 msgid "Quarantined"
-msgstr ""
+msgstr "Karantinaya alındı"
 
 #: InvenTree/status_codes.py:91
 msgid "Legacy stock tracking entry"
@@ -737,7 +737,7 @@ msgstr "Konum değişti"
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr ""
+msgstr "Stok Güncellendi"
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
@@ -813,7 +813,7 @@ msgstr "Üretim"
 
 #: InvenTree/status_codes.py:191
 msgid "Return"
-msgstr ""
+msgstr "Geri Dön"
 
 #: InvenTree/status_codes.py:194
 msgid "Repair"
@@ -2864,10 +2864,8 @@ msgid "Enable stocktake functionality for recording stock levels and calculating
 msgstr ""
 
 #: common/models.py:1689
-#, fuzzy
-#| msgid "Include locations"
 msgid "Exclude External Locations"
-msgstr "Konumları dahil et"
+msgstr ""
 
 #: common/models.py:1690
 msgid "Exclude stock items in external locations from stocktake calculations"
@@ -6367,10 +6365,8 @@ msgid "Exclude External Stock"
 msgstr ""
 
 #: part/serializers.py:939
-#, fuzzy
-#| msgid "Include stock in sublocations"
 msgid "Exclude stock items in external locations"
-msgstr "Alt konumlardaki stoku dahil et"
+msgstr ""
 
 #: part/serializers.py:944
 msgid "Generate Report"
@@ -12746,8 +12742,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12882,3 +12877,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:254
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
