@@ -8,6 +8,7 @@ import { shortenString } from '../../functions/tables';
 import { ThumbnailHoverCard } from '../items/Thumbnail';
 
 import { InvenTreeTable } from './InvenTreeTable';
+import { notYetImplemented } from '../../functions/notifications';
 
 export function PartTable({
     params={}
@@ -25,6 +26,10 @@ export function PartTable({
         params={tableParams}
         enableDownload
         tableKey='part-table'
+        printingActions={[
+          <Text onClick={notYetImplemented}>Hello</Text>,
+          <Text onClick={notYetImplemented}>World</Text>
+        ]}
         columns={[
           {
             accessor: 'name',

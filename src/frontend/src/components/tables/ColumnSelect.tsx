@@ -1,5 +1,5 @@
 import { Checkbox, Menu } from "@mantine/core";
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { ActionIcon } from "@mantine/core";
 import { IconAdjustments } from "@tabler/icons-react";
 import { notYetImplemented } from "../../functions/notifications";
@@ -24,7 +24,7 @@ export function TableColumnSelect({
         </Menu.Target>
 
         <Menu.Dropdown>
-            <Menu.Label><Trans>Select Columns</Trans></Menu.Label>
+            <Menu.Label>{t`Select Columns`}</Menu.Label>
             {columns.filter((col) => col.switchable).map((col) => 
                 <Menu.Item>
                     <Checkbox checked={!col.hidden} label={col.title} onChange={(event) => toggleColumn(col.accessor)}/>

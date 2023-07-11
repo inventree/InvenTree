@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
+
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
@@ -12,6 +13,10 @@ import { TableSearchInput } from './Search';
 import { DownloadAction } from './DownloadAction';
 
 import { IconRefresh } from '@tabler/icons-react';
+
+import { IconBarcode, IconPrinter } from '@tabler/icons-react';
+
+import { ButtonMenu } from '../items/ButtonMenu';
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
@@ -30,6 +35,9 @@ export function InvenTreeTable({
     tableKey='',
     defaultSortColumn='',
     noRecordsText=t`No records found`,
+    printingActions=[],
+    barcodeActions=[],
+    customActionGroups=[],
 } : {
     url: string;
     params: any;
@@ -43,6 +51,9 @@ export function InvenTreeTable({
     enablePagination?: boolean;
     enableRefresh?: boolean;
     pageSize?: number;
+    printingActions?: any[];
+    barcodeActions?: any[];
+    customActionGroups?: any[];
 }) {
 
     // Check if any columns are switchable (can be hidden)
@@ -167,6 +178,23 @@ export function InvenTreeTable({
     return <Stack>
         <Group position="apart">
             <Group position="left" spacing={5}>
+                {customActionGroups.map((group: any, idx: number) => group)}
+                {barcodeActions.length > 0 && 
+                    <ButtonMenu
+                        icon={<IconBarcode />}
+                        label={t`Barcode actions`}
+                        tooltip={t`Barcode actions`}
+                        actions={barcodeActions}
+                    />
+                }
+                {printingActions.length > 0 &&
+                    <ButtonMenu
+                        icon={<IconPrinter />}
+                        label={t`Print actions`}
+                        tooltip={t`Print actions`}
+                        actions={printingActions}
+                    />
+                }
                 {enableDownload && <DownloadAction downloadCallback={downloadData}/>}
             </Group>
             <Space />
@@ -190,7 +218,7 @@ export function InvenTreeTable({
             highlightOnHover
             loaderVariant="dots"
             idAccessor={'pk'}
-            minHeight={100}
+            minHeight={200}
             totalRecords={data?.count ?? data?.length ?? 0}
             recordsPerPage={pageSize}
             page={page}

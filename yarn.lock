@@ -521,6 +521,11 @@ loose-envify@^1.4.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
+mantine-datatable@^2.8.2:
+  version "2.8.2"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-2.8.2.tgz#a30367599ba8e267c2e65608ddfcaa3b96e7c57c"
+  integrity sha512-pw9gO07e7x6h1WxMygU5AYTLWyKtTQqld7yZGaRuR6JKJTXLmuJUsPGN2BbNwY93i1wCed7GkKwXtFcv3an1Nw==
+
 minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.2.tgz#19cd194bfd3e428f049a70817c038d89ab4be35b"
