@@ -109,7 +109,8 @@ class MachineSettingList(APIView):
         all_settings = []
 
         for settings, config_type in setting_types:
-            all_settings.extend(MachineSetting.all_items(settings, machine_config=machine.machine_config, config_type=config_type))
+            settings_dict = MachineSetting.all_settings(settings_definition=settings, machine_config=machine.machine_config, config_type=config_type)
+            all_settings.extend(list(settings_dict.values()))
 
         results = MachineSerializers.MachineSettingSerializer(all_settings, many=True).data
         return Response(results)

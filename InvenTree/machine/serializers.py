@@ -72,7 +72,6 @@ class MachineSettingSerializer(GenericReferencedSettingSerializer):
 
     MODEL = MachineSetting
     EXTRA_FIELDS = [
-        "machine",
         "config_type",
     ]
 
@@ -86,8 +85,6 @@ class MachineSettingSerializer(GenericReferencedSettingSerializer):
                 self.Meta.fields.remove(f)
 
         setattr(self.Meta, "read_only_fields", ["config_type"])
-
-    machine = serializers.SlugField(source="machine_config.pk", read_only=True)
 
 
 class BaseMachineClassSerializer(serializers.Serializer):

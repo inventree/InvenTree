@@ -250,61 +250,7 @@ class BaseInvenTreeSetting(models.Model):
         return {key: getattr(self, key, None) for key in self.extra_unique_fields if hasattr(self, key)}
 
     @classmethod
-    def allValues(cls, exclude_hidden=False, **kwargs):
-        """Return a dict of "all" defined global settings.
-
-        This performs a single database lookup,
-        and then any settings which are not *in* the database
-        are assigned their default values
-        """
-        results = cls.objects.all()
-
-        if exclude_hidden:
-            # Keys which start with an underscore are used for internal functionality
-            results = results.exclude(key__startswith='_')
-
-        # Optionally filter by other keys
-        results = results.filter(**cls.get_filters(**kwargs))
-
-        # Query the database
-        settings = {}
-
-        for setting in results:
-            if setting.key:
-                settings[setting.key.upper()] = setting.value
-
-        # Specify any "default" values which are not in the database
-        for key in cls.SETTINGS.keys():
-
-            if key.upper() not in settings:
-                settings[key.upper()] = cls.get_setting_default(key)
-
-            if exclude_hidden:
-                hidden = cls.SETTINGS[key].get('hidden', False)
-
-                if hidden:
-                    # Remove hidden items
-                    del settings[key.upper()]
-
-        for key, value in settings.items():
-            validator = cls.get_setting_validator(key)
-
-            if cls.is_protected(key):
-                value = '***'
-            elif cls.validator_is_bool(validator):
-                value = InvenTree.helpers.str2bool(value)
-            elif cls.validator_is_int(validator):
-                try:
-                    value = int(value)
-                except ValueError:
-                    value = cls.get_setting_default(key)
-
-            settings[key] = value
-
-        return settings
-
-    @classmethod
-    def all_items(cls, settings_definition: Dict[str, SettingsKeyType] | None, **kwargs):
+    def all_settings(cls, *, exclude_hidden=False, settings_definition: Dict[str, SettingsKeyType] | None = None, **kwargs):
         """Return a list of "all" defined settings.
 
         This performs a single database lookup,
@@ -313,12 +259,18 @@ class BaseInvenTreeSetting(models.Model):
         """
         filters = cls.get_filters(**kwargs)
 
-        # Optionally filter by other keys
-        results = cls.objects.filter(**filters)
+        results = cls.objects.all()
 
-        # Query the database
+        if exclude_hidden:
+            # Keys which start with an underscore are used for internal functionality
+            results = results.exclude(key__startswith='_')
+
+        # Optionally filter by other keys
+        results = results.filter(**filters)
+
         settings: Dict[str, BaseInvenTreeSetting] = {}
 
+        # Query the database
         for setting in results:
             if setting.key:
                 settings[setting.key.upper()] = setting
@@ -327,13 +279,17 @@ class BaseInvenTreeSetting(models.Model):
         settings_definition = settings_definition or cls.SETTINGS
         for key, setting in settings_definition.items():
             if key.upper() not in settings:
-                setting_obj = cls(
-                    key=key,
+                settings[key.upper()] = cls(
+                    key=key.upper(),
                     value=cls.get_setting_default(key, **filters),
                     **filters
                 )
-                settings[key.upper()] = setting_obj
 
+            # remove any hidden settings
+            if exclude_hidden and setting.get("hidden", False):
+                del settings[key.upper()]
+
+        # format settings values and remove protected
         for key, setting in settings.items():
             validator = cls.get_setting_validator(key)
 
@@ -347,7 +303,24 @@ class BaseInvenTreeSetting(models.Model):
                 except ValueError:
                     setting.value = cls.get_setting_default(key, **filters)
 
-        return list(settings.values())
+        return settings
+
+    @classmethod
+    def allValues(cls, *, exclude_hidden=False, settings_definition: Dict[str, SettingsKeyType] | None = None, **kwargs):
+        """Return a dict of "all" defined global settings.
+
+        This performs a single database lookup,
+        and then any settings which are not *in* the database
+        are assigned their default values
+        """
+        all_settings = cls.all_settings(exclude_hidden=exclude_hidden, settings_definition=settings_definition, **kwargs)
+
+        settings: Dict[str, Any] = {}
+
+        for key, setting in all_settings.items():
+            settings[key] = setting.value
+
+        return settings
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
