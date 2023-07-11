@@ -223,6 +223,29 @@ remote_login_header: HTTP_REMOTE_USER
 #     KEYCLOAK_URL: 'https://keycloak.custom/auth'
 #     KEYCLOAK_REALM: 'master'
 
+# Add LDAP support
+# ldap:
+#   enabled: false
+#   server_uri: ldap://example.org
+#   bind_dn: cn=admin,dc=example,dc=org
+#   bind_password: admin_password
+#   search_base_dn: cn=Users,dc=example,dc=org
+
+#   # uncomment for advanced filter search, default: uid=%(user)s
+#   # search_filter_str:
+
+#   # uncomment for advanced user attribute mapping
+#   # user_attr_map:
+#   #   first_name: givenName
+#   #   last_name: sn
+#   #   email: mail
+
+#   # always update the user on each login, default: true
+#   # always_update_user: true
+
+#   # cache timeout to reduce traffic with LDAP server, default: 3600 (1h)
+#   # cache_timeout: 3600
+
 # Customization options
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
