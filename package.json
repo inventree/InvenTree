@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@mantine/modals": "^6.0.16",
+    "@mantine/notifications": "^6.0.16",
     "eslint": "^8.41.0",
     "eslint-config-google": "^0.14.0"
   }
