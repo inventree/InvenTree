@@ -44,6 +44,7 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
         'API_KEY': {
             'name': _('API Key'),
             'description': _('Key required for accessing external API'),
+            'required': True,
         },
         'NUMERICAL_SETTING': {
             'name': _('Numerical'),
