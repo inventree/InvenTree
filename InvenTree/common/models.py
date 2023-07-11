@@ -252,7 +252,7 @@ class BaseInvenTreeSetting(models.Model):
         return {key: getattr(self, key, None) for key in self.extra_unique_fields if hasattr(self, key)}
 
     @classmethod
-    def all_settings(cls, *, exclude_hidden=False, settings_definition: Dict[str, SettingsKeyType] | None = None, **kwargs):
+    def all_settings(cls, *, exclude_hidden=False, settings_definition: Union[Dict[str, SettingsKeyType], None] = None, **kwargs):
         """Return a list of "all" defined settings.
 
         This performs a single database lookup,
@@ -308,7 +308,7 @@ class BaseInvenTreeSetting(models.Model):
         return settings
 
     @classmethod
-    def allValues(cls, *, exclude_hidden=False, settings_definition: Dict[str, SettingsKeyType] | None = None, **kwargs):
+    def allValues(cls, *, exclude_hidden=False, settings_definition: Union[Dict[str, SettingsKeyType], None] = None, **kwargs):
         """Return a dict of "all" defined global settings.
 
         This performs a single database lookup,
@@ -325,7 +325,7 @@ class BaseInvenTreeSetting(models.Model):
         return settings
 
     @classmethod
-    def check_all_settings(cls, *, exclude_hidden=False, settings_definition: Dict[str, SettingsKeyType] | None = None, **kwargs):
+    def check_all_settings(cls, *, exclude_hidden=False, settings_definition: Union[Dict[str, SettingsKeyType], None] = None, **kwargs):
         """Check if all required settings are set by definition.
 
         Returns:
