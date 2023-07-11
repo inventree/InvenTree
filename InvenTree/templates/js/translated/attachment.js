@@ -281,10 +281,20 @@ function loadAttachmentTable(url, options) {
         sidePagination: 'server',
         onPostBody: function() {
 
+            // Add callback for 'delete' button
+            if (permissions.delete) {
+                $(table).find('.button-attachment-delete').click(function() {
+                    let pk = $(this).attr('pk');
+                    let attachments = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                    deleteAttachments([attachments], url, options);
+                });
+            }
+
             // Add callback for 'edit' button
             if (permissions.change) {
                 $(table).find('.button-attachment-edit').click(function() {
-                    var pk = $(this).attr('pk');
+                    let pk = $(this).attr('pk');
 
                     constructForm(`${url}${pk}/`, {
                         fields: {
