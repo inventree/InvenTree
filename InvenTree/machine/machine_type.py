@@ -79,7 +79,7 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         pass
 
     def get_machines(self, **kwargs):
-        """Return all machines using this driver. (By default only active machines)"""
+        """Return all machines using this driver. (By default only initialized machines)"""
         from machine import registry
 
         return registry.get_machines(driver=self, **kwargs)
