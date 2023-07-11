@@ -20,6 +20,7 @@ export const Dashboard = Loadable(
 );
 export const Part = Loadable(lazy(() => import('./pages/Index/Part')));
 export const Stock = Loadable(lazy(() => import('./pages/Index/Stock')));
+export const Build = Loadable(lazy(() => import('./pages/Index/Build')));
 export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
 );
@@ -56,6 +57,10 @@ export const router = createBrowserRouter(
         {
           path: 'stock/',
           element: <Stock />
+        },
+        {
+          path: 'build/',
+          element: <Build />
         },
         {
           path: '/profile/:tabValue',

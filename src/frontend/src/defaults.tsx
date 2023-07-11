@@ -21,7 +21,8 @@ export const defaultHostList: HostList = {
 export const tabs = [
   { text: <Trans>Home</Trans>, name: 'home' },
   { text: <Trans>Part</Trans>, name: 'part' },
-  { text: <Trans>Stock</Trans>, name: 'stock', }
+  { text: <Trans>Stock</Trans>, name: 'stock', },
+  { text: <Trans>Build Orders</Trans>, name: 'build', },
 ];
 
 export const links = [
