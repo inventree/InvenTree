@@ -1,9 +1,6 @@
-import { Loader } from '@mantine/core';
-import { CloseButton } from '@mantine/core';
-import { TextInput } from '@mantine/core';
-import { IconBackspace, IconSearch } from '@tabler/icons-react';
-
 import { useState } from 'react';
+import { CloseButton, TextInput } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
 
 
 export function TableSearchInput({

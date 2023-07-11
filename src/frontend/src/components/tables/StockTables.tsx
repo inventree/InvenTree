@@ -32,7 +32,8 @@ export function StockTable({
         url='stock/'
         params={tableParams}
         tableKey='stock-table'
-        allowSelection
+        enableDownload
+        enableSelection
         columns={[
           {
             accessor: 'part',

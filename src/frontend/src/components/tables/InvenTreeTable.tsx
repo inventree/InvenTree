@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
 
-import { ActionIcon, Space, Stack, Table, Text } from '@mantine/core';
+import { ActionIcon, Space, Stack, Table, Text, Tooltip } from '@mantine/core';
 import { Group } from '@mantine/core';
 
 import { TableColumnSelect } from './ColumnSelect';
 import { TableSearchInput } from './Search';
+import { DownloadAction } from './DownloadAction';
 
 import { IconRefresh } from '@tabler/icons-react';
 
@@ -20,10 +21,11 @@ export function InvenTreeTable({
     url,
     params,
     columns,
-    enableSelection=false,
-    enableSearch=true,
+    enableDownload=false,
     enablePagination=true,
     enableRefresh=true,
+    enableSearch=true,
+    enableSelection=false,
     pageSize=25,
     tableKey='',
     defaultSortColumn='',
@@ -35,6 +37,7 @@ export function InvenTreeTable({
     tableKey: string;
     defaultSortColumn?: string;
     noRecordsText?: string;
+    enableDownload?: boolean;
     enableSelection?: boolean;
     enableSearch?: boolean;
     enablePagination?: boolean;
@@ -69,6 +72,11 @@ export function InvenTreeTable({
         setSearchTerm(term);
         latestSearchTerm = term;
         refetch();
+    }
+
+    // Data download callback
+    function downloadData(fileFormat: string) {
+        console.log("download data: " + fileFormat);
     }
 
     // Data Sorting
@@ -159,7 +167,7 @@ export function InvenTreeTable({
     return <Stack>
         <Group position="apart">
             <Group position="left" spacing={5}>
-            <Text>actions</Text>
+                {enableDownload && <DownloadAction downloadCallback={downloadData}/>}
             </Group>
             <Space />
             <Group position="right" spacing={5}>
@@ -168,7 +176,9 @@ export function InvenTreeTable({
                 />}
                 {enableRefresh && 
                     <ActionIcon>
+                        <Tooltip label={t`Refresh data`}>
                         <IconRefresh onClick={() => refetch()} />
+                        </Tooltip>
                     </ActionIcon>
                 }
                 {hasSwitchableColumns && <TableColumnSelect columns={columns}/>}

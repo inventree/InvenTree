@@ -23,6 +23,7 @@ export function PartTable({
     return <InvenTreeTable
         url='part/'
         params={tableParams}
+        enableDownload
         tableKey='part-table'
         columns={[
           {
@@ -43,16 +44,19 @@ export function PartTable({
             accessor: 'IPN',
             title: t`IPN`,
             sortable: true,
+            switchable: true,
           },
           {
             accessor: 'units',
             sortable: true,
-            title: t`Units`
+            title: t`Units`,
+            switchable: true,
           },
           {
             accessor: 'description',
             title: t`Description`,
             sortable: true,
+            switchable: true,
           },
           {
             accessor: 'category',
@@ -69,11 +73,13 @@ export function PartTable({
             accessor: 'total_in_stock',
             title: t`Stock`,
             sortable: true,
+            switchable: true,
           },
           {
             accessor: 'price_range',
             title: t`Price Range`,
             sortable: false,
+            switchable: true,
             render: function(record: any) {
               // TODO: Render price range
               return "-- price --";
@@ -82,6 +88,7 @@ export function PartTable({
           {
             accessor: 'link',
             title: t`Link`,
+            switchbable: true,
           }
         ]}
     />;

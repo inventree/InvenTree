@@ -2,6 +2,7 @@ import { Checkbox, Menu } from "@mantine/core";
 import { Trans, t } from '@lingui/macro';
 import { ActionIcon } from "@mantine/core";
 import { IconAdjustments } from "@tabler/icons-react";
+import { notYetImplemented } from "../../functions/notifications";
 
 export function TableColumnSelect({
     columns
@@ -10,6 +11,10 @@ export function TableColumnSelect({
 }) {
 
     // TODO: When a column is hidden, it should be removed from the table
+    function toggleColumn(columnName: string) {
+        console.log("toggle column:", columnName);
+        notYetImplemented();
+    }
 
     return <Menu shadow="xs">
         <Menu.Target>
@@ -22,7 +27,7 @@ export function TableColumnSelect({
             <Menu.Label><Trans>Select Columns</Trans></Menu.Label>
             {columns.filter((col) => col.switchable).map((col) => 
                 <Menu.Item>
-                    <Checkbox checked={!col.hidden} label={col.title} onChange={(event) => col.hidden = !col.hidden}/>
+                    <Checkbox checked={!col.hidden} label={col.title} onChange={(event) => toggleColumn(col.accessor)}/>
                 </Menu.Item>
             )}
         </Menu.Dropdown>
