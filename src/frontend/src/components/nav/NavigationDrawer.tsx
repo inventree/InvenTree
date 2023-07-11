@@ -14,19 +14,9 @@ import { aboutLinks, navDocLinks } from '../../defaults/links';
 import { menuItems } from '../../defaults/menuItems';
 import { InvenTreeStyle } from '../../globalStyle';
 import { DocumentationLinks } from '../items/DocumentationLinks';
-import { MenuLinks } from '../items/MenuLinks';
+import { MenuLinkItem, MenuLinks } from '../items/MenuLinks';
 
-// generate 100 random plugins
-const plugins = [
-  ...Array(100)
-    .fill(0)
-    .map((_, index) => ({
-      id: 'plugin' + index,
-      title: `Plugin ${index}`,
-      description: 'Plugin description',
-      link: '/plugin'
-    }))
-];
+const plugins: MenuLinkItem[] = [];
 
 export function NavigationDrawer({
   opened,
