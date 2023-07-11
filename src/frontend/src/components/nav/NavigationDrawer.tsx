@@ -71,8 +71,14 @@ function DrawerContent() {
           <Title order={5}>{t`Pages`}</Title>
           <MenuLinks links={menuItems} />
           <Space h="md" />
-          <Title order={5}>{t`Plugins`}</Title>
-          <MenuLinks links={plugins} />
+          {plugins ? (
+            <>
+              <Title order={5}>{t`Plugins`}</Title>
+              <MenuLinks links={plugins} />
+            </>
+          ) : (
+            <></>
+          )}
         </ScrollArea>
       </Container>
       <div ref={ref}>
