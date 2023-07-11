@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 00:32+0000\n"
-"PO-Revision-Date: 2023-07-05 21:44\n"
+"PO-Revision-Date: 2023-07-11 03:37\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -2649,7 +2649,7 @@ msgstr ""
 
 #: common/models.py:1492
 msgid "Enable Return Orders"
-msgstr ""
+msgstr "Включить возврат заказов"
 
 #: common/models.py:1493
 msgid "Enable return order functionality in the user interface"
@@ -2797,11 +2797,11 @@ msgstr ""
 
 #: common/models.py:1620
 msgid "Users must use multifactor security."
-msgstr ""
+msgstr "Пользователи должны использовать многофакторную безопасность."
 
 #: common/models.py:1626
 msgid "Check plugins on startup"
-msgstr ""
+msgstr "Проверять плагины при запуске"
 
 #: common/models.py:1627
 msgid "Check that all plugins are installed on startup - enable in container environments"
@@ -2864,10 +2864,8 @@ msgid "Enable stocktake functionality for recording stock levels and calculating
 msgstr ""
 
 #: common/models.py:1689
-#, fuzzy
-#| msgid "Exclude Location"
 msgid "Exclude External Locations"
-msgstr "Исключить местоположение"
+msgstr ""
 
 #: common/models.py:1690
 msgid "Exclude stock items in external locations from stocktake calculations"
@@ -6367,10 +6365,8 @@ msgid "Exclude External Stock"
 msgstr ""
 
 #: part/serializers.py:939
-#, fuzzy
-#| msgid "Some stock items have been overallocated"
 msgid "Exclude stock items in external locations"
-msgstr "Некоторые товары на складе перераспределены"
+msgstr ""
 
 #: part/serializers.py:944
 msgid "Generate Report"
@@ -12746,8 +12742,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12882,3 +12877,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:254
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
