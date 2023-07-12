@@ -156,13 +156,14 @@ jobs:
         run: |
           invoke delete-data -f
           invoke import-fixtures
-          invoke server -a 127.0.0.1:12345 &
+          invoke server -a 127.0.0.1:12345 > /tmp/inventree-test.log 2>&1 &
           invoke wait
       - name: Run Tests For `${{ env.wrapper_name }}`
         run: |
           cd ${{ env.wrapper_name }}
           invoke check-server
           coverage run -m unittest discover -s test/
+          cat /tmp/inventree-test.log
 
   docstyle:
     name: Style [Python Docstrings]
