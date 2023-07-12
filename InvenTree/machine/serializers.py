@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from rest_framework import serializers
 
@@ -107,7 +107,7 @@ class BaseMachineClassSerializer(serializers.Serializer):
     def get_provider_file(self, obj: ClassProviderMixin) -> str:
         return obj.get_provider_file()
 
-    def get_provider_plugin(self, obj: ClassProviderMixin) -> str | None:
+    def get_provider_plugin(self, obj: ClassProviderMixin) -> Union[str, None]:
         plugin = obj.get_provider_plugin()
         if plugin:
             return plugin.slug

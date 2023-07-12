@@ -59,7 +59,10 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
     required_attributes = ["SLUG", "NAME", "DESCRIPTION", "machine_type"]
 
     def init_machine(self, machine: "BaseMachineType"):
-        """This method gets called for each active machine using that driver while initialization
+        """This method gets called for each active machine using that driver while initialization.
+
+        If this function raises an Exception, it gets added to the machine.errors
+        list and the machine does not initialize successfully.
 
         Arguments:
             machine: Machine instance
@@ -227,7 +230,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
             is_valid, missing = MachineSetting.check_all_settings(settings_definition=settings, machine_config=self.machine_config, config_type=config_type)
             missing_settings[config_type] = missing
 
-        return all(len(missing) == 0 for missing in missing_settings), missing_settings
+        return all(len(missing) == 0 for missing in missing_settings.values()), missing_settings
 
     def set_status(self, status: MachineStatus):
         """Set the machine status code. There are predefined ones for each MachineType.

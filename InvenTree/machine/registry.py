@@ -135,7 +135,7 @@ class MachinesRegistry:
             driver: Machine driver (class)
             initialized: (bool, default: True)
             active: (bool)
-            base_driver: base driver (class | List[class])
+            base_driver: base driver (class)
         """
         allowed_fields = ["name", "machine_type", "driver", "initialized", "active", "base_driver"]
 
