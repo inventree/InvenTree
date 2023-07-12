@@ -1,7 +1,7 @@
 """Build database model definitions."""
 
 import decimal
-
+import logging
 import os
 from datetime import datetime
 
@@ -21,7 +21,7 @@ from mptt.exceptions import InvalidMove
 
 from rest_framework import serializers
 
-from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
+from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode, BuildStatusGroups
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
@@ -32,12 +32,16 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 
+import common.models
+from common.notifications import trigger_notification
 from plugin.events import trigger_event
 
-import common.notifications
 import part.models
 import stock.models
 import users.models
+
+
+logger = logging.getLogger('inventree')
 
 
 class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
@@ -69,7 +73,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
 
-    OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+    OVERDUE_FILTER = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     # Global setting for specifying reference pattern
     REFERENCE_PATTERN_SETTING = 'BUILDORDER_REFERENCE_PATTERN'
@@ -129,10 +133,10 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             return queryset
 
         # Order was completed within the specified range
-        completed = Q(status=BuildStatus.COMPLETE) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
+        completed = Q(status=BuildStatus.COMPLETE.value) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
 
         # Order target date falls within specified range
-        pending = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders
 
@@ -231,7 +235,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
     status = models.PositiveIntegerField(
         verbose_name=_('Build Status'),
-        default=BuildStatus.PENDING,
+        default=BuildStatus.PENDING.value,
         choices=BuildStatus.items(),
         validators=[MinValueValidator(0)],
         help_text=_('Build status code')
@@ -298,6 +302,14 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         help_text=_('Priority of this build order')
     )
 
+    project_code = models.ForeignKey(
+        common.models.ProjectCode,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Project code for this build order'),
+    )
+
     def sub_builds(self, cascade=True):
         """Return all Build Order objects under this one."""
         if cascade:
@@ -331,36 +343,32 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
     @property
     def active(self):
         """Return True if this build is active."""
-        return self.status in BuildStatus.ACTIVE_CODES
+        return self.status in BuildStatusGroups.ACTIVE_CODES
 
     @property
-    def bom_items(self):
-        """Returns the BOM items for the part referenced by this BuildOrder."""
-        return self.part.get_bom_items()
+    def tracked_line_items(self):
+        """Returns the "trackable" BOM lines for this BuildOrder."""
 
-    @property
-    def tracked_bom_items(self):
-        """Returns the "trackable" BOM items for this BuildOrder."""
-        items = self.bom_items
-        items = items.filter(sub_part__trackable=True)
+        return self.build_lines.filter(bom_item__sub_part__trackable=True)
 
-        return items
-
-    def has_tracked_bom_items(self):
+    def has_tracked_line_items(self):
         """Returns True if this BuildOrder has trackable BomItems."""
-        return self.tracked_bom_items.count() > 0
+        return self.tracked_line_items.count() > 0
 
     @property
-    def untracked_bom_items(self):
+    def untracked_line_items(self):
         """Returns the "non trackable" BOM items for this BuildOrder."""
-        items = self.bom_items
-        items = items.filter(sub_part__trackable=False)
 
-        return items
+        return self.build_lines.filter(bom_item__sub_part__trackable=False)
 
-    def has_untracked_bom_items(self):
+    @property
+    def are_untracked_parts_allocated(self):
+        """Returns True if all untracked parts are allocated for this BuildOrder."""
+        return self.is_fully_allocated(tracked=False)
+
+    def has_untracked_line_items(self):
         """Returns True if this BuildOrder has non trackable BomItems."""
-        return self.untracked_bom_items.count() > 0
+        return self.has_untracked_line_items.count() > 0
 
     @property
     def remaining(self):
@@ -422,6 +430,11 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         return quantity
 
+    def is_partially_allocated(self):
+        """Test is this build order has any stock allocated against it"""
+
+        return self.allocated_stock.count() > 0
+
     @property
     def incomplete_outputs(self):
         """Return all the "incomplete" build outputs."""
@@ -478,21 +491,22 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
     @property
     def can_complete(self):
-        """Returns True if this build can be "completed".
+        """Returns True if this BuildOrder is ready to be completed
 
         - Must not have any outstanding build outputs
-        - 'completed' value must meet (or exceed) the 'quantity' value
+        - Completed count must meet the required quantity
+        - Untracked parts must be allocated
         """
+
         if self.incomplete_count > 0:
             return False
 
         if self.remaining > 0:
             return False
 
-        if not self.are_untracked_parts_allocated():
+        if not self.is_fully_allocated(tracked=False):
             return False
 
-        # No issues!
         return True
 
     @transaction.atomic
@@ -503,7 +517,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         self.completion_date = datetime.now().date()
         self.completed_by = user
-        self.status = BuildStatus.COMPLETE
+        self.status = BuildStatus.COMPLETE.value
         self.save()
 
         # Remove untracked allocated stock
@@ -511,7 +525,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         # Ensure that there are no longer any BuildItem objects
         # which point to this Build Order
-        self.allocated_stock.all().delete()
+        self.allocated_stock.delete()
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
@@ -547,7 +561,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             }
         }
 
-        common.notifications.trigger_notification(
+        trigger_notification(
             build,
             'build.completed',
             targets=targets,
@@ -566,13 +580,14 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
-        # Handle stock allocations
-        for build_item in self.allocated_stock.all():
+        # Find all BuildItem objects associated with this Build
+        items = self.allocated_stock
 
-            if remove_allocated_stock:
-                build_item.complete_allocation(user)
+        if remove_allocated_stock:
+            for item in items:
+                item.complete_allocation(user)
 
-            build_item.delete()
+        items.delete()
 
         # Remove incomplete outputs (if required)
         if remove_incomplete_outputs:
@@ -585,26 +600,25 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         self.completion_date = datetime.now().date()
         self.completed_by = user
 
-        self.status = BuildStatus.CANCELLED
+        self.status = BuildStatus.CANCELLED.value
         self.save()
 
         trigger_event('build.cancelled', id=self.pk)
 
     @transaction.atomic
-    def unallocateStock(self, bom_item=None, output=None):
-        """Unallocate stock from this Build.
+    def deallocate_stock(self, build_line=None, output=None):
+        """Deallocate stock from this Build.
 
         Args:
-            bom_item: Specify a particular BomItem to unallocate stock against
-            output: Specify a particular StockItem (output) to unallocate stock against
+            build_line: Specify a particular BuildLine instance to un-allocate stock against
+            output: Specify a particular StockItem (output) to un-allocate stock against
         """
-        allocations = BuildItem.objects.filter(
-            build=self,
+        allocations = self.allocated_stock.filter(
             install_into=output
         )
 
-        if bom_item:
-            allocations = allocations.filter(bom_item=bom_item)
+        if build_line:
+            allocations = allocations.filter(build_line=build_line)
 
         allocations.delete()
 
@@ -729,7 +743,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             _add_tracking_entry(output, user)
 
         if self.status == BuildStatus.PENDING:
-            self.status = BuildStatus.PRODUCTION
+            self.status = BuildStatus.PRODUCTION.value
             self.save()
 
     @transaction.atomic
@@ -737,7 +751,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """Remove a build output from the database.
 
         Executes:
-        - Unallocate any build items against the output
+        - Deallocate any build items against the output
         - Delete the output StockItem
         """
         if not output:
@@ -749,8 +763,8 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         if output.build != self:
             raise ValidationError(_("Build output does not match Build Order"))
 
-        # Unallocate all build items against the output
-        self.unallocateStock(output=output)
+        # Deallocate all build items against the output
+        self.deallocate_stock(output=output)
 
         # Remove the build output from the database
         output.delete()
@@ -758,36 +772,47 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
     @transaction.atomic
     def trim_allocated_stock(self):
         """Called after save to reduce allocated stock if the build order is now overallocated."""
-        allocations = BuildItem.objects.filter(build=self)
 
         # Only need to worry about untracked stock here
-        for bom_item in self.untracked_bom_items:
-            reduce_by = self.allocated_quantity(bom_item) - self.required_quantity(bom_item)
-            if reduce_by <= 0:
-                continue  # all OK
+        for build_line in self.untracked_line_items:
 
-            # find builditem(s) to trim
-            for a in allocations.filter(bom_item=bom_item):
+            reduce_by = build_line.allocated_quantity() - build_line.quantity
+
+            if reduce_by <= 0:
+                continue
+
+            # Find BuildItem objects to trim
+            for item in BuildItem.objects.filter(build_line=build_line):
+
                 # Previous item completed the job
-                if reduce_by == 0:
+                if reduce_by <= 0:
                     break
 
                 # Easy case - this item can just be reduced.
-                if a.quantity > reduce_by:
-                    a.quantity -= reduce_by
-                    a.save()
+                if item.quantity > reduce_by:
+                    item.quantity -= reduce_by
+                    item.save()
                     break
 
                 # Harder case, this item needs to be deleted, and any remainder
                 # taken from the next items in the list.
-                reduce_by -= a.quantity
-                a.delete()
+                reduce_by -= item.quantity
+                item.delete()
+
+    @property
+    def allocated_stock(self):
+        """Returns a QuerySet object of all BuildItem objects which point back to this Build"""
+        return BuildItem.objects.filter(
+            build_line__build=self
+        )
 
     @transaction.atomic
     def subtract_allocated_stock(self, user):
         """Called when the Build is marked as "complete", this function removes the allocated untracked items from stock."""
+
+        # Find all BuildItem objects which point to this build
         items = self.allocated_stock.filter(
-            stock_item__part__trackable=False
+            build_line__bom_item__sub_part__trackable=False
         )
 
         # Remove stock
@@ -831,7 +856,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         # Update build output item
         output.is_building = False
-        output.status = StockStatus.REJECTED
+        output.status = StockStatus.REJECTED.value
         output.location = location
         output.save(add_note=False)
 
@@ -851,7 +876,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             notes=notes,
             deltas={
                 'location': location.pk,
-                'status': StockStatus.REJECTED,
+                'status': StockStatus.REJECTED.value,
                 'buildorder': self.pk,
             }
         )
@@ -865,7 +890,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
-        status = kwargs.get('status', StockStatus.OK)
+        status = kwargs.get('status', StockStatus.OK.value)
         notes = kwargs.get('notes', '')
 
         # List the allocated BuildItem objects for the given output
@@ -934,8 +959,13 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             else:
                 return 3
 
-        # Get a list of all 'untracked' BOM items
-        for bom_item in self.untracked_bom_items:
+        new_items = []
+
+        # Auto-allocation is only possible for "untracked" line items
+        for line_item in self.untracked_line_items.all():
+
+            # Find the referenced BomItem
+            bom_item = line_item.bom_item
 
             if bom_item.consumable:
                 # Do not auto-allocate stock to consumable BOM items
@@ -947,7 +977,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
             variant_parts = bom_item.sub_part.get_descendants(include_self=False)
 
-            unallocated_quantity = self.unallocated_quantity(bom_item)
+            unallocated_quantity = line_item.unallocated_quantity()
 
             if unallocated_quantity <= 0:
                 # This BomItem is fully allocated, we can continue
@@ -998,18 +1028,22 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                 # or all items are "interchangeable" and we don't care where we take stock from
 
                 for stock_item in available_stock:
+
+                    # Skip inactive parts
+                    if not stock_item.part.active:
+                        continue
+
                     # How much of the stock item is "available" for allocation?
                     quantity = min(unallocated_quantity, stock_item.unallocated_quantity())
 
                     if quantity > 0:
 
                         try:
-                            BuildItem.objects.create(
-                                build=self,
-                                bom_item=bom_item,
+                            new_items.append(BuildItem(
+                                build_line=line_item,
                                 stock_item=stock_item,
                                 quantity=quantity,
-                            )
+                            ))
 
                             # Subtract the required quantity
                             unallocated_quantity -= quantity
@@ -1022,162 +1056,82 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                         # We have now fully-allocated this BomItem - no need to continue!
                         break
 
-    def required_quantity(self, bom_item, output=None):
-        """Get the quantity of a part required to complete the particular build output.
+        # Bulk-create the new BuildItem objects
+        BuildItem.objects.bulk_create(new_items)
+
+    def unallocated_lines(self, tracked=None):
+        """Returns a list of BuildLine objects which have not been fully allocated."""
+
+        lines = self.build_lines.all()
+
+        if tracked is True:
+            lines = lines.filter(bom_item__sub_part__trackable=True)
+        elif tracked is False:
+            lines = lines.filter(bom_item__sub_part__trackable=False)
+
+        unallocated_lines = []
+
+        for line in lines:
+            if not line.is_fully_allocated():
+                unallocated_lines.append(line)
+
+        return unallocated_lines
+
+    def is_fully_allocated(self, tracked=None):
+        """Test if the BuildOrder has been fully allocated.
+
+        This is *true* if *all* associated BuildLine items have sufficient allocation
+
+        Arguments:
+            tracked: If True, only consider tracked BuildLine items. If False, only consider untracked BuildLine items.
+
+        Returns:
+            True if the BuildOrder has been fully allocated, otherwise False
+        """
+
+        lines = self.unallocated_lines(tracked=tracked)
+        return len(lines) == 0
+
+    def is_output_fully_allocated(self, output):
+        """Determine if the specified output (StockItem) has been fully allocated for this build
 
         Args:
-            bom_item: The Part object
-            output: The particular build output (StockItem)
+            output: StockItem object
+
+        To determine if the output has been fully allocated,
+        we need to test all "trackable" BuildLine objects
         """
-        quantity = bom_item.quantity
 
-        if output:
-            quantity *= output.quantity
-        else:
-            quantity *= self.quantity
-
-        return quantity
-
-    def allocated_bom_items(self, bom_item, output=None):
-        """Return all BuildItem objects which allocate stock of <bom_item> to <output>.
-
-        Note that the bom_item may allow variants, or direct substitutes,
-        making things difficult.
-
-        Args:
-            bom_item: The BomItem object
-            output: Build output (StockItem).
-        """
-        allocations = BuildItem.objects.filter(
-            build=self,
-            bom_item=bom_item,
-            install_into=output,
-        )
-
-        return allocations
-
-    def allocated_quantity(self, bom_item, output=None):
-        """Return the total quantity of given part allocated to a given build output."""
-        allocations = self.allocated_bom_items(bom_item, output)
-
-        allocated = allocations.aggregate(
-            q=Coalesce(
-                Sum('quantity'),
-                0,
-                output_field=models.DecimalField(),
+        for line in self.build_lines.filter(bom_item__sub_part__trackable=True):
+            # Grab all BuildItem objects which point to this output
+            allocations = BuildItem.objects.filter(
+                build_line=line,
+                install_into=output,
             )
-        )
 
-        return allocated['q']
+            allocated = allocations.aggregate(
+                q=Coalesce(Sum('quantity'), 0, output_field=models.DecimalField())
+            )
 
-    def unallocated_quantity(self, bom_item, output=None):
-        """Return the total unallocated (remaining) quantity of a part against a particular output."""
-        required = self.required_quantity(bom_item, output)
-        allocated = self.allocated_quantity(bom_item, output)
-
-        return max(required - allocated, 0)
-
-    def is_bom_item_allocated(self, bom_item, output=None):
-        """Test if the supplied BomItem has been fully allocated"""
-
-        if bom_item.consumable:
-            # Consumable BOM items do not need to be allocated
-            return True
-
-        return self.unallocated_quantity(bom_item, output) == 0
-
-    def is_fully_allocated(self, output):
-        """Returns True if the particular build output is fully allocated."""
-        # If output is not specified, we are talking about "untracked" items
-        if output is None:
-            bom_items = self.untracked_bom_items
-        else:
-            bom_items = self.tracked_bom_items
-
-        for bom_item in bom_items:
-
-            if not self.is_bom_item_allocated(bom_item, output):
+            # The amount allocated against an output must at least equal the BOM quantity
+            if allocated['q'] < line.bom_item.quantity:
                 return False
 
-        # All parts must be fully allocated!
+        # At this stage, we can assume that the output is fully allocated
         return True
 
-    def is_partially_allocated(self, output):
-        """Returns True if the particular build output is (at least) partially allocated."""
-        # If output is not specified, we are talking about "untracked" items
-        if output is None:
-            bom_items = self.untracked_bom_items
-        else:
-            bom_items = self.tracked_bom_items
+    def is_overallocated(self):
+        """Test if the BuildOrder has been over-allocated.
 
-        for bom_item in bom_items:
+        Returns:
+            True if any BuildLine has been over-allocated.
+        """
 
-            if self.allocated_quantity(bom_item, output) > 0:
+        for line in self.build_lines.all():
+            if line.is_overallocated():
                 return True
 
         return False
-
-    def are_untracked_parts_allocated(self):
-        """Returns True if the un-tracked parts are fully allocated for this BuildOrder."""
-        return self.is_fully_allocated(None)
-
-    def has_overallocated_parts(self, output=None):
-        """Check if parts have been 'over-allocated' against the specified output.
-
-        Note: If output=None, test un-tracked parts
-        """
-
-        bom_items = self.tracked_bom_items if output else self.untracked_bom_items
-
-        for bom_item in bom_items:
-            if self.allocated_quantity(bom_item, output) > self.required_quantity(bom_item, output):
-                return True
-
-        return False
-
-    def unallocated_bom_items(self, output):
-        """Return a list of bom items which have *not* been fully allocated against a particular output."""
-        unallocated = []
-
-        # If output is not specified, we are talking about "untracked" items
-        if output is None:
-            bom_items = self.untracked_bom_items
-        else:
-            bom_items = self.tracked_bom_items
-
-        for bom_item in bom_items:
-
-            if not self.is_bom_item_allocated(bom_item, output):
-                unallocated.append(bom_item)
-
-        return unallocated
-
-    @property
-    def required_parts(self):
-        """Returns a list of parts required to build this part (BOM)."""
-        parts = []
-
-        for item in self.bom_items:
-            parts.append(item.sub_part)
-
-        return parts
-
-    @property
-    def required_parts_to_complete_build(self):
-        """Returns a list of parts required to complete the full build.
-
-        TODO: 2022-01-06 : This method needs to be improved, it is very inefficient in terms of DB hits!
-        """
-        parts = []
-
-        for bom_item in self.bom_items:
-            # Get remaining quantity needed
-            required_quantity_to_complete_build = self.remaining * bom_item.quantity - self.allocated_quantity(bom_item)
-            # Compare to net stock
-            if bom_item.sub_part.net_stock < required_quantity_to_complete_build:
-                parts.append(bom_item.sub_part)
-
-        return parts
 
     @property
     def is_active(self):
@@ -1187,12 +1141,58 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         - PENDING
         - HOLDING
         """
-        return self.status in BuildStatus.ACTIVE_CODES
+        return self.status in BuildStatusGroups.ACTIVE_CODES
 
     @property
     def is_complete(self):
         """Returns True if the build status is COMPLETE."""
         return self.status == BuildStatus.COMPLETE
+
+    @transaction.atomic
+    def create_build_line_items(self, prevent_duplicates=True):
+        """Create BuildLine objects for each BOM line in this BuildOrder."""
+
+        lines = []
+
+        bom_items = self.part.get_bom_items()
+
+        logger.info(f"Creating BuildLine objects for BuildOrder {self.pk} ({len(bom_items)} items))")
+
+        # Iterate through each part required to build the parent part
+        for bom_item in bom_items:
+            if prevent_duplicates:
+                if BuildLine.objects.filter(build=self, bom_item=bom_item).exists():
+                    logger.info(f"BuildLine already exists for BuildOrder {self.pk} and BomItem {bom_item.pk}")
+                    continue
+
+            # Calculate required quantity
+            quantity = bom_item.get_required_quantity(self.quantity)
+
+            lines.append(
+                BuildLine(
+                    build=self,
+                    bom_item=bom_item,
+                    quantity=quantity
+                )
+            )
+
+        BuildLine.objects.bulk_create(lines)
+
+        logger.info(f"Created {len(lines)} BuildLine objects for BuildOrder")
+
+    @transaction.atomic
+    def update_build_line_items(self):
+        """Rebuild required quantity field for each BuildLine object"""
+
+        lines_to_update = []
+
+        for line in self.build_lines.all():
+            line.quantity = line.bom_item.get_required_quantity(self.quantity)
+            lines_to_update.append(line)
+
+        BuildLine.objects.bulk_update(lines_to_update, ['quantity'])
+
+        logger.info(f"Updated {len(lines_to_update)} BuildLine objects for BuildOrder")
 
 
 @receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
@@ -1204,14 +1204,23 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
 
     from . import tasks as build_tasks
 
-    if created:
-        # A new Build has just been created
+    if instance:
 
-        # Run checks on required parts
-        InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
+        if created:
+            # A new Build has just been created
 
-        # Notify the responsible users that the build order has been created
-        InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
+            # Generate initial BuildLine objects for the Build
+            instance.create_build_line_items()
+
+            # Run checks on required parts
+            InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
+
+            # Notify the responsible users that the build order has been created
+            InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
+
+        else:
+            # Update BuildLine objects if the Build quantity has changed
+            instance.update_build_line_items()
 
 
 class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
@@ -1224,6 +1233,87 @@ class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
+class BuildLine(models.Model):
+    """A BuildLine object links a BOMItem to a Build.
+
+    When a new Build is created, the BuildLine objects are created automatically.
+    - A BuildLine entry is created for each BOM item associated with the part
+    - The quantity is set to the quantity required to build the part (including overage)
+    - BuildItem objects are associated with a particular BuildLine
+
+    Once a build has been created, BuildLines can (optionally) be removed from the Build
+
+    Attributes:
+        build: Link to a Build object
+        bom_item: Link to a BomItem object
+        quantity: Number of units required for the Build
+    """
+
+    class Meta:
+        """Model meta options"""
+        unique_together = [
+            ('build', 'bom_item'),
+        ]
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL used to access this model"""
+        return reverse('api-build-line-list')
+
+    build = models.ForeignKey(
+        Build, on_delete=models.CASCADE,
+        related_name='build_lines', help_text=_('Build object')
+    )
+
+    bom_item = models.ForeignKey(
+        part.models.BomItem,
+        on_delete=models.CASCADE,
+        related_name='build_lines',
+    )
+
+    quantity = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        default=1,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Quantity'),
+        help_text=_('Required quantity for build order'),
+    )
+
+    @property
+    def part(self):
+        """Return the sub_part reference from the link bom_item"""
+        return self.bom_item.sub_part
+
+    def allocated_quantity(self):
+        """Calculate the total allocated quantity for this BuildLine"""
+
+        # Queryset containing all BuildItem objects allocated against this BuildLine
+        allocations = self.allocations.all()
+
+        allocated = allocations.aggregate(
+            q=Coalesce(Sum('quantity'), 0, output_field=models.DecimalField())
+        )
+
+        return allocated['q']
+
+    def unallocated_quantity(self):
+        """Return the unallocated quantity for this BuildLine"""
+        return max(self.quantity - self.allocated_quantity(), 0)
+
+    def is_fully_allocated(self):
+        """Return True if this BuildLine is fully allocated"""
+
+        if self.bom_item.consumable:
+            return True
+
+        return self.allocated_quantity() >= self.quantity
+
+    def is_overallocated(self):
+        """Return True if this BuildLine is over-allocated"""
+        return self.allocated_quantity() > self.quantity
+
+
 class BuildItem(InvenTree.models.MetadataMixin, models.Model):
     """A BuildItem links multiple StockItem objects to a Build.
 
@@ -1231,16 +1321,16 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
 
     Attributes:
         build: Link to a Build object
-        bom_item: Link to a BomItem object (may or may not point to the same part as the build)
+        build_line: Link to a BuildLine object (this is a "line item" within a build)
         stock_item: Link to a StockItem object
         quantity: Number of units allocated
         install_into: Destination stock item (or None)
     """
 
     class Meta:
-        """Serializer metaclass"""
+        """Model meta options"""
         unique_together = [
-            ('build', 'stock_item', 'install_into'),
+            ('build_line', 'stock_item', 'install_into'),
         ]
 
     @staticmethod
@@ -1303,8 +1393,10 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
                     'quantity': _('Quantity must be 1 for serialized stock')
                 })
 
-        except (stock.models.StockItem.DoesNotExist, part.models.Part.DoesNotExist):
-            pass
+        except stock.models.StockItem.DoesNotExist:
+            raise ValidationError("Stock item must be specified")
+        except part.models.Part.DoesNotExist:
+            raise ValidationError("Part must be specified")
 
         """
         Attempt to find the "BomItem" which links this BuildItem to the build.
@@ -1312,7 +1404,7 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
         - If a BomItem is already set, and it is valid, then we are ok!
         """
 
-        bom_item_valid = False
+        valid = False
 
         if self.bom_item and self.build:
             """
@@ -1327,38 +1419,50 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
             """
 
             if self.build.part == self.bom_item.part:
-                bom_item_valid = self.bom_item.is_stock_item_valid(self.stock_item)
+                valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
             elif self.bom_item.inherited:
                 if self.build.part in self.bom_item.part.get_descendants(include_self=False):
-                    bom_item_valid = self.bom_item.is_stock_item_valid(self.stock_item)
+                    valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
-        if not bom_item_valid:
+        if not valid:
 
             if self.build and self.stock_item:
                 ancestors = self.stock_item.part.get_ancestors(include_self=True, ascending=True)
 
                 for idx, ancestor in enumerate(ancestors):
 
-                    try:
-                        bom_item = part.models.BomItem.objects.get(part=self.build.part, sub_part=ancestor)
-                    except part.models.BomItem.DoesNotExist:
-                        continue
+                    build_line = BuildLine.objects.filter(
+                        build=self.build,
+                        bom_item__part=ancestor,
+                    )
 
-                    # A matching BOM item has been found!
-                    if idx == 0 or bom_item.allow_variants:
-                        bom_item_valid = True
-                        self.bom_item = bom_item
-                        break
+                    if build_line.exists():
+                        line = build_line.first()
+
+                        if idx == 0 or line.bom_item.allow_variants:
+                            valid = True
+                            self.build_line = line
+                            break
 
         # BomItem did not exist or could not be validated.
         # Search for a new one
-        if not bom_item_valid:
+        if not valid:
 
             raise ValidationError({
-                'stock_item': _("Selected stock item not found in BOM")
+                'stock_item': _("Selected stock item does not match BOM line")
             })
+
+    @property
+    def build(self):
+        """Return the BuildOrder associated with this BuildItem"""
+        return self.build_line.build if self.build_line else None
+
+    @property
+    def bom_item(self):
+        """Return the BomItem associated with this BuildItem"""
+        return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic
     def complete_allocation(self, user, notes=''):
@@ -1409,43 +1513,10 @@ class BuildItem(InvenTree.models.MetadataMixin, models.Model):
                 }
             )
 
-    def getStockItemThumbnail(self):
-        """Return qualified URL for part thumbnail image."""
-        thumb_url = None
-
-        if self.stock_item and self.stock_item.part:
-            try:
-                # Try to extract the thumbnail
-                thumb_url = self.stock_item.part.image.thumbnail.url
-            except Exception:
-                pass
-
-        if thumb_url is None and self.bom_item and self.bom_item.sub_part:
-            try:
-                thumb_url = self.bom_item.sub_part.image.thumbnail.url
-            except Exception:
-                pass
-
-        if thumb_url is not None:
-            return InvenTree.helpers.getMediaUrl(thumb_url)
-        else:
-            return InvenTree.helpers.getBlankThumbnail()
-
-    build = models.ForeignKey(
-        Build,
-        on_delete=models.CASCADE,
-        related_name='allocated_stock',
-        verbose_name=_('Build'),
-        help_text=_('Build to allocate parts')
-    )
-
-    # Internal model which links part <-> sub_part
-    # We need to track this separately, to allow for "variant' stock
-    bom_item = models.ForeignKey(
-        part.models.BomItem,
-        on_delete=models.CASCADE,
-        related_name='allocate_build_items',
-        blank=True, null=True,
+    build_line = models.ForeignKey(
+        BuildLine,
+        on_delete=models.SET_NULL, null=True,
+        related_name='allocations',
     )
 
     stock_item = models.ForeignKey(

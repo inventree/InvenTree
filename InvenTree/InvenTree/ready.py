@@ -14,6 +14,11 @@ def isImportingData():
     return 'loaddata' in sys.argv
 
 
+def isRunningMigrations():
+    """Return True if the database is currently running migrations."""
+    return 'migrate' in sys.argv or 'makemigrations' in sys.argv
+
+
 def isInMainThread():
     """Django starts two processes, one for the actual dev server and the other to reload the application.
 

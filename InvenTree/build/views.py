@@ -39,7 +39,5 @@ class BuildDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         part = build.part
 
         ctx['part'] = part
-        ctx['has_tracked_bom_items'] = build.has_tracked_bom_items()
-        ctx['has_untracked_bom_items'] = build.has_untracked_bom_items()
 
         return ctx

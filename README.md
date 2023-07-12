@@ -34,27 +34,14 @@
 <!-- About the Project -->
 ## :star2: About the Project
 
-InvenTree is an open-source Inventory Management System which provides powerful low-level stock control and part tracking. The core of the InvenTree system is a Python/Django database backend which provides an admin interface (web-based) and a REST API for interaction with external interfaces and applications.
+InvenTree is an open-source Inventory Management System which provides powerful low-level stock control and part tracking. The core of the InvenTree system is a Python/Django database backend which provides an admin interface (web-based) and a REST API for interaction with external interfaces and applications. A powerful plugin system provides support for custom applications and extensions.
 
-InvenTree is designed to be lightweight and easy to use for SME or hobbyist applications, where many existing stock management solutions are bloated and cumbersome to use. Updating stock is a single-action process and does not require a complex system of work orders or stock transactions.
-
-Powerful business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
-
-<!-- Features -->
-
-### :dart: Features
-
-- Organize Parts and BOMs
-- Manage Suppliers
-- Instant Stock Knowledge
-- Extend and Customize to fit your usage
+Check out [our website](https://inventree.org) for more details.
 
 <!-- Roadmap -->
 ### :compass: Roadmap
 
-* [x] Plugins
-* [ ] Improved Importers
-* [ ] Custom Workflow Processes
+Want to see what we are working on? Check out the [roadmap tag](https://github.com/inventree/InvenTree/issues?q=is%3Aopen+is%3Aissue+label%3Aroadmap) and [horizon milestone](https://github.com/inventree/InvenTree/milestone/42).
 
 <!-- Integration -->
 ### :hammer_and_wrench: Integration
@@ -110,23 +97,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 </details>
 
 <!-- Getting Started -->
-## 	:toolbox: Getting Started
-
-Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/install/) for installation and setup instructions.
-
-<!-- Mobile App -->
-## 	:iphone: Mobile App
-
-InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en/latest/app/app/) which allows users access to stock control information and functionality.
-
-<div align="center"><h4>
-    <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>
-     <span> · </span>
-    <a href="https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone">Apple App Store</a>
-</h4></div>
-
-<!-- Deploy -->
-## 	:train: Deploy
+## 	:toolbox: Deployment / Getting Started
 
 There are several options to deploy InvenTree.
 
@@ -143,25 +114,33 @@ Single line install - read [the docs](https://docs.inventree.org/en/latest/start
 wget -qO install.sh https://get.inventree.org && bash install.sh
 ```
 
+Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/install/) for a full set of installation and setup instructions.
+
+<!-- Mobile App -->
+## 	:iphone: Mobile App
+
+InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en/latest/app/app/) which allows users access to stock control information and functionality.
+
+<div align="center"><h4>
+    <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>
+     <span> · </span>
+    <a href="https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone">Apple App Store</a>
+</h4></div>
+
 <!-- Contributing -->
 ## :wave: Contributing
 
-Contributions are welcomed and encouraged. Please help to make this project even better!
-Refer to the [contribution page](CONTRIBUTING.md).
+Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](CONTRIBUTING.md).
 
 <!-- Translation -->
 ## :scroll: Translation
 
 Native language translation of the InvenTree web application is [community contributed via crowdin](https://crowdin.com/project/inventree). **Contributions are welcomed and encouraged**.
 
-To contribute to the translation effort, navigate to the [InvenTree crowdin project](https://crowdin.com/project/inventree), create a free account, and start making translations suggestions for your language of choice!
-
 <!-- Sponsor -->
 ## :money_with_wings: Sponsor
 
-If you use InvenTree and find it to be useful, please consider making a donation toward its continued development.
-
-[Donate via PayPal](https://paypal.me/inventree?locale.x=en_AU)
+If you use InvenTree and find it to be useful, please consider [sponsoring the project](https://github.com/sponsors/inventree).
 
 <!-- Acknowledgments -->
 ## :gem: Acknowledgements

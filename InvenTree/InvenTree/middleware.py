@@ -14,7 +14,6 @@ from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
 from error_report.middleware import ExceptionProcessor
 from rest_framework.authtoken.models import Token
 
-from common.models import InvenTreeSetting
 from InvenTree.urls import frontendpatterns
 
 logger = logging.getLogger("inventree")
@@ -63,6 +62,9 @@ class AuthRequiredMiddleware(object):
 
             # Unauthorized users can access the login page
             elif request.path_info.startswith('/accounts/'):
+                authorized = True
+
+            elif request.path_info.startswith('/platform/') or request.path_info == '/platform':
                 authorized = True
 
             elif 'Authorization' in request.headers.keys() or 'authorization' in request.headers.keys():
@@ -123,6 +125,9 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
     """Check if user is required to have MFA enabled."""
     def require_2fa(self, request):
         """Use setting to check if MFA should be enforced for frontend page."""
+
+        from common.models import InvenTreeSetting
+
         try:
             if url_matcher.resolve(request.path[1:]):
                 return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')
@@ -165,4 +170,31 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         if kind in settings.IGNORED_ERRORS:
             return
 
-        return super().process_exception(request, exception)
+        import traceback
+
+        from django.views.debug import ExceptionReporter
+
+        from error_report.models import Error
+        from error_report.settings import ERROR_DETAIL_SETTINGS
+
+        # Error reporting is disabled
+        if not ERROR_DETAIL_SETTINGS.get('ERROR_DETAIL_ENABLE', True):
+            return
+
+        path = request.build_absolute_uri()
+
+        # Truncate the path to a reasonable length
+        # Otherwise we get a database error,
+        # because the path field is limited to 200 characters
+        if len(path) > 200:
+            path = path[:195] + '...'
+
+        error = Error.objects.create(
+            kind=kind.__name__,
+            html=ExceptionReporter(request, kind, info, data).get_traceback_html(),
+            path=path,
+            info=info,
+            data='\n'.join(traceback.format_exception(kind, info, data)),
+        )
+
+        error.save()

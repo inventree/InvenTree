@@ -20,16 +20,26 @@ def trigger_event(event, *args, **kwargs):
     This event will be stored in the database,
     and the worker will respond to it later on.
     """
+    from common.models import InvenTreeSetting
+
     if not settings.PLUGINS_ENABLED:
         # Do nothing if plugins are not enabled
         return  # pragma: no cover
 
+    if not InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS', False):
+        # Do nothing if plugin events are not enabled
+        return
+
     # Make sure the database can be accessed and is not being tested rn
-    if not canAppAccessDatabase() and not settings.PLUGIN_TESTING_EVENTS:
+    if not canAppAccessDatabase(allow_shell=True) and not settings.PLUGIN_TESTING_EVENTS:
         logger.debug(f"Ignoring triggered event '{event}' - database not ready")
         return
 
     logger.debug(f"Event triggered: '{event}'")
+
+    # By default, force the event to be processed asynchronously
+    if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
+        kwargs['force_async'] = True
 
     offload_task(
         register_event,
@@ -63,6 +73,11 @@ def register_event(event, *args, **kwargs):
 
                         logger.debug(f"Registering callback for plugin '{slug}'")
 
+                        # This task *must* be processed by the background worker,
+                        # unless we are running CI tests
+                        if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
+                            kwargs['force_async'] = True
+
                         # Offload a separate task for each plugin
                         offload_task(
                             process_event,
@@ -95,9 +110,13 @@ def allow_table_event(table_name):
 
     We *do not* want events to be fired for some tables!
     """
+    # Prevent table events during the data import process
     if isImportingData():
-        # Prevent table events during the data import process
         return False  # pragma: no cover
+
+    # Prevent table events when in testing mode (saves a lot of time)
+    if settings.TESTING:
+        return False
 
     table_name = table_name.lower().strip()
 

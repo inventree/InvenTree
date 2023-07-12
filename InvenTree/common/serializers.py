@@ -1,16 +1,35 @@
 """JSON serializers for common components."""
 
+
 from django.urls import reverse
 
+from flags.state import flag_state
 from rest_framework import serializers
 
-from common.models import (InvenTreeSetting, InvenTreeUserSetting,
-                           NewsFeedEntry, NotesImage, NotificationMessage,
-                           ProjectCode)
+import common.models as common_models
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.serializers import (InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
+
+
+class SettingsValueField(serializers.Field):
+    """Custom serializer field for a settings value."""
+
+    def get_attribute(self, instance):
+        """Return the object instance, not the attribute value."""
+        return instance
+
+    def to_representation(self, instance):
+        """Return the value of the setting:
+
+        - Protected settings are returned as '***'
+        """
+        return '***' if instance.protected else str(instance.value)
+
+    def to_internal_value(self, data):
+        """Return the internal value of the setting"""
+        return str(data)
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
@@ -30,6 +49,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     api_url = serializers.CharField(read_only=True)
 
+    value = SettingsValueField()
+
     def get_choices(self, obj):
         """Returns the choices available for a given item."""
         results = []
@@ -45,16 +66,6 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
         return results
 
-    def get_value(self, obj):
-        """Make sure protected values are not returned."""
-        # never return protected values
-        if obj.protected:
-            result = '***'
-        else:
-            result = obj.value
-
-        return result
-
 
 class GlobalSettingsSerializer(SettingsSerializer):
     """Serializer for the InvenTreeSetting model."""
@@ -62,7 +73,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
     class Meta:
         """Meta options for GlobalSettingsSerializer."""
 
-        model = InvenTreeSetting
+        model = common_models.InvenTreeSetting
         fields = [
             'pk',
             'key',
@@ -83,7 +94,7 @@ class UserSettingsSerializer(SettingsSerializer):
     class Meta:
         """Meta options for UserSettingsSerializer."""
 
-        model = InvenTreeUserSetting
+        model = common_models.InvenTreeUserSetting
         fields = [
             'pk',
             'key',
@@ -146,7 +157,7 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
     class Meta:
         """Meta options for NotificationMessageSerializer."""
 
-        model = NotificationMessage
+        model = common_models.NotificationMessage
         fields = [
             'pk',
             'target',
@@ -207,7 +218,7 @@ class NewsFeedEntrySerializer(InvenTreeModelSerializer):
     class Meta:
         """Meta options for NewsFeedEntrySerializer."""
 
-        model = NewsFeedEntry
+        model = common_models.NewsFeedEntry
         fields = [
             'pk',
             'feed_id',
@@ -241,7 +252,7 @@ class NotesImageSerializer(InvenTreeModelSerializer):
     class Meta:
         """Meta options for NotesImageSerializer."""
 
-        model = NotesImage
+        model = common_models.NotesImage
         fields = [
             'pk',
             'image',
@@ -263,9 +274,25 @@ class ProjectCodeSerializer(InvenTreeModelSerializer):
     class Meta:
         """Meta options for ProjectCodeSerializer."""
 
-        model = ProjectCode
+        model = common_models.ProjectCode
         fields = [
             'pk',
             'code',
             'description'
         ]
+
+
+class FlagSerializer(serializers.Serializer):
+    """Serializer for feature flags."""
+
+    def to_representation(self, instance):
+        """Return the configuration data as a dictionary."""
+        request = self.context.get('request')
+        if not isinstance(instance, str):
+            instance = list(instance.keys())[0]
+        data = {'key': instance, 'state': flag_state(instance, request=request)}
+
+        if request and request.user.is_superuser:
+            data['conditions'] = self.instance[instance]
+
+        return data

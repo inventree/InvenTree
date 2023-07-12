@@ -13,12 +13,13 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount
 
-import common.serializers
 import order.models
 import part.filters
 import stock.models
 import stock.serializers
-from company.serializers import (CompanyBriefSerializer, ContactSerializer,
+from common.serializers import ProjectCodeSerializer
+from company.serializers import (AddressBriefSerializer,
+                                 CompanyBriefSerializer, ContactSerializer,
                                  SupplierPartSerializer)
 from InvenTree.helpers import (extract_serial_numbers, hash_barcode, normalize,
                                str2bool)
@@ -27,8 +28,9 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeDecimalField,
                                    InvenTreeModelSerializer,
                                    InvenTreeMoneySerializer)
-from InvenTree.status_codes import (PurchaseOrderStatus, ReturnOrderStatus,
-                                    SalesOrderStatus, StockStatus)
+from InvenTree.status_codes import (PurchaseOrderStatusGroups,
+                                    ReturnOrderStatus, SalesOrderStatusGroups,
+                                    StockStatus)
 from part.serializers import PartBriefSerializer
 from users.serializers import OwnerSerializer
 
@@ -72,7 +74,10 @@ class AbstractOrderSerializer(serializers.Serializer):
     responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
 
     # Detail for project code field
-    project_code_detail = common.serializers.ProjectCodeSerializer(source='project_code', read_only=True, many=False)
+    project_code_detail = ProjectCodeSerializer(source='project_code', read_only=True, many=False)
+
+    # Detail for address field
+    address_detail = AddressBriefSerializer(source='address', many=False, read_only=True)
 
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(required=False, read_only=True)
@@ -113,6 +118,8 @@ class AbstractOrderSerializer(serializers.Serializer):
             'responsible_detail',
             'contact',
             'contact_detail',
+            'address',
+            'address_detail',
             'status',
             'status_text',
             'notes',
@@ -381,7 +388,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     def validate_purchase_order(self, purchase_order):
         """Validation for the 'purchase_order' field"""
-        if purchase_order.status not in PurchaseOrderStatus.OPEN:
+        if purchase_order.status not in PurchaseOrderStatusGroups.OPEN:
             raise ValidationError(_('Order is not open'))
 
         return purchase_order
@@ -518,8 +525,8 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=list(StockStatus.items()),
-        default=StockStatus.OK,
+        choices=StockStatus.items(),
+        default=StockStatus.OK.value,
         label=_('Status'),
     )
 
@@ -906,7 +913,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    Q(order__status__in=SalesOrderStatus.OPEN) & order.models.SalesOrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                    Q(order__status__in=SalesOrderStatusGroups.OPEN) & order.models.SalesOrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),
             )
