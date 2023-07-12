@@ -779,6 +779,7 @@ class TestSettings(InvenTreeTestCase):
 
         with self.in_env_context(envs):
             settings.USER_ADDED = False
+            registry.apps_loading = True  # set to True so that the apps intentionally reload and dont skip due to the ready checks
             registry.reload_plugins()
 
     @override_settings(TESTING_ENV=True)
