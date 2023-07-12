@@ -8,7 +8,7 @@ import { t } from "@lingui/macro";
 export function Thumbnail({
     src,
     alt = t`Thumbnail`,
-    size=24,
+    size=20,
 } : {
     src: string;
     alt?: string;
@@ -40,7 +40,7 @@ export function ThumbnailHoverCard({
     text,
     link = '',
     alt = t`Thumbnail`,
-    size=24,
+    size=20,
 } : {
     src: string;
     text: string;
@@ -51,8 +51,8 @@ export function ThumbnailHoverCard({
 }) {
 
     // TODO: Handle link
-    return <Group position="left">
-        <Thumbnail src={src} alt={alt}/>
+    return <Group position="left" spacing={10}>
+        <Thumbnail src={src} alt={alt} size={size}/>
         <Text>{text}</Text>
     </Group>;
 }

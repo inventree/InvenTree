@@ -3,6 +3,8 @@ import { t } from "@lingui/macro";
 import { InvenTreeTable } from "../InvenTreeTable";
 
 import { TableColumn } from "../Column";
+import { Progress } from "@mantine/core";
+import { ThumbnailHoverCard } from "../../items/Thumbnail";
 
 /**
  * Construct a list of columns for the build order table
@@ -19,6 +21,14 @@ function buildOrderTableColumns(): TableColumn[] {
             accessor: 'part',
             sortable: true,
             title: t`Part`,
+            render: (record: any) => {
+                let part = record.part_detail;
+                return part && <ThumbnailHoverCard
+                    src={part.thumbnail || part.image}
+                    text={part.full_name}
+                    link=""
+                />;
+            }
         },
         {
             accessor: 'title',
@@ -48,13 +58,19 @@ function buildOrderTableColumns(): TableColumn[] {
             switchable: true,
         },
         {
-            accessor: 'progress',
+            accessor: 'completed',
             sortable: true,
-            title: t`Progress`,
+            title: t`Completed`,
             render: (record: any) => {
-                return `${record.completed} / ${record.quantity}`;
+                let progress = record.quantity <= 0 ? 0 : 100 * record.completed / record.quantity;
+                return <Progress
+                    value={progress}
+                    label={record.completed}
+                    color={progress < 100 ? 'blue' : 'green'}
+                    size="xl"
+                    radius="xl"
+                />;
             },
-            ordering: 'quantity',
         },
         {
             accessor: 'status',
