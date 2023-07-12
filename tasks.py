@@ -478,7 +478,7 @@ def server(c, address="127.0.0.1:8000"):
 
     Note: This is *not* sufficient for a production installation.
     """
-    manage(c, "runserver {address}".format(address=address), pty=True)
+    manage(c, "runserver {address} --noreload".format(address=address), pty=True)
 
 
 @task(pre=[wait])
