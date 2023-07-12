@@ -254,7 +254,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=200
         )
 
-        self.assertEqual(response.data['value'], 456)
+        self.assertEqual(response.data['value'], '456')
 
         # Retrieve the value again
         response = self.get(
@@ -265,4 +265,4 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=200
         )
 
-        self.assertEqual(response.data['value'], 456)
+        self.assertEqual(response.data['value'], '456')
