@@ -25,11 +25,11 @@ class SettingsValueField(serializers.Field):
 
         - Protected settings are returned as '***'
         """
-        return '***' if instance.protected else instance.value
+        return '***' if instance.protected else str(instance.value)
 
     def to_internal_value(self, data):
         """Return the internal value of the setting"""
-        return data
+        return str(data)
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
