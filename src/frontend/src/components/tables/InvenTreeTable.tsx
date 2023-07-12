@@ -19,6 +19,8 @@ import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { ButtonMenu } from '../items/ButtonMenu';
 import { notYetImplemented } from '../../functions/notifications';
 import { FilterGroup } from './FilterGroup';
+
+import { TableColumn } from './Column';
 import { TableFilter } from './Filter';
 
 /**
@@ -46,7 +48,7 @@ export function InvenTreeTable({
 } : {
     url: string;
     params: any;
-    columns: any;
+    columns: TableColumn[];
     tableKey: string;
     defaultSortColumn?: string;
     noRecordsText?: string;

@@ -1,5 +1,3 @@
-
-
 /**
  * Interface for the table filter, 
  */

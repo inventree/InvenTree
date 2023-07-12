@@ -7,13 +7,14 @@ import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { notYetImplemented } from '../../../functions/notifications';
 
+import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 
 
 /**
  * Construct a list of columns for the part table
  */
-function partTableColumns() {
+function partTableColumns() : TableColumn[] {
   return [
     {
       accessor: 'name',
@@ -77,7 +78,7 @@ function partTableColumns() {
     {
       accessor: 'link',
       title: t`Link`,
-      switchbable: true,
+      switchable: true,
     }
   ];
 }
@@ -85,7 +86,7 @@ function partTableColumns() {
 /**
  * Construct a set of filters for the part table
  */
-function partTableFilters() : TableFilter[]{
+function partTableFilters() : TableFilter[] {
   return [
     {
       name: 'active',
