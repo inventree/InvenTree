@@ -73,6 +73,9 @@ export function InvenTreeTable({
     // Data columns
     const [dataColumns, setDataColumns] = useState<any[]>(columns);
 
+    // List of hidden columns
+    let hiddenColumns = [];
+
     // Search term
     const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -81,6 +84,19 @@ export function InvenTreeTable({
     useEffect(() => {
         // Keep a shadow copy of the state variable, so that we can update it asynchronously
         latestSearchTerm = searchTerm;
+
+        // Load list of hidden columns from local storage
+        hiddenColumns = JSON.parse(localStorage.getItem(`hidden-table-columns-${tableKey}`) || '[]');
+
+        // Update column visibility
+        let newColumns = [...dataColumns];
+
+        for (let idx = 0; idx < newColumns.length; idx++) {
+            newColumns[idx].hidden = hiddenColumns.includes(newColumns[idx].accessor);
+        }
+
+        setDataColumns(newColumns);
+
     }, [searchTerm]);
 
     function updateSearchTerm(term: string) {
@@ -116,14 +132,25 @@ export function InvenTreeTable({
     function toggleColumn(columnName: string) {
         let newColumns = [...dataColumns];
 
+        let hiddenColumns = [];
+
         // Toggle selected column
         for (let idx = 0; idx < newColumns.length; idx++) {
+
             if (newColumns[idx].accessor == columnName) {
                 newColumns[idx].hidden = !newColumns[idx].hidden;
-                setDataColumns(newColumns);
-                break;
+            }
+
+            if (newColumns[idx].hidden) {
+                hiddenColumns.push(newColumns[idx].accessor);
             }
         }
+
+        // Save list of hidden columns to local storage
+        localStorage.setItem(`hidden-table-columns-${tableKey}`, JSON.stringify(hiddenColumns));
+
+        // Refresh state
+        setDataColumns(newColumns);
     }
 
     // Function to perform API query to fetch required data

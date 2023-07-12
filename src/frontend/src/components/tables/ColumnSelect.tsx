@@ -2,7 +2,6 @@ import { Checkbox, Menu, Tooltip } from "@mantine/core";
 import { t } from '@lingui/macro';
 import { ActionIcon } from "@mantine/core";
 import { IconAdjustments } from "@tabler/icons-react";
-import { notYetImplemented } from "../../functions/notifications";
 
 export function TableColumnSelect({
     columns,
