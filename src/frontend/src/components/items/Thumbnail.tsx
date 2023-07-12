@@ -1,13 +1,9 @@
 
 import { Image } from "@mantine/core";
-import { HoverCard } from "@mantine/core";
 import { Group } from "@mantine/core";
 import { Text } from "@mantine/core";
 
 import { t } from "@lingui/macro";
-
-import { api } from "../../App";
-import { max } from "lodash";
 
 export function Thumbnail({
     src,

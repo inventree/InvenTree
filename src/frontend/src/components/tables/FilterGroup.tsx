@@ -1,4 +1,4 @@
-import { ActionIcon, Chip, CloseButton, Group, Space, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Chip, CloseButton, Group, Indicator, Space, Text, Tooltip } from "@mantine/core";
 import { IconMinus, IconPlus, IconTrash } from "@tabler/icons-react";
 import { t } from "@lingui/macro";
 
@@ -22,11 +22,16 @@ export function FilterGroup({
 
     return <Group position="right" spacing="xs">
         {filterList.map((filter) => 
+            <Indicator
+                color="red"
+                label={<CloseButton title={t`Remove filter`} size="xs" onClick={() => onFilterRemove(filter.name)}/>}
+                withBorder={false}
+                size="xs"
+            >
             <Chip checked={false}>
                 <Text>{filter.label}</Text>
-                <Space />
-                <CloseButton title={t`Remove filter`} size="xs" onClick={() => onFilterRemove(filter.name)}/>
             </Chip>
+            </Indicator>
         )}
         {true && 
             <ActionIcon variant="outline" onClick={() => onFilterClearAll()}>

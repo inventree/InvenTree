@@ -1,7 +1,5 @@
 import { t } from '@lingui/macro';
 
-import { Group, Text } from '@mantine/core';
-
 import { shortenString } from '../../../functions/tables';
 
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
