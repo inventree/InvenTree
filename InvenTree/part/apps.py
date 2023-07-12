@@ -18,14 +18,10 @@ class PartConfig(AppConfig):
     def ready(self):
         """This function is called whenever the Part app is loaded."""
         # skip loading if plugins are not loaded or we run in a background thread
-        print("LOAD_BEFORE")
         if not isPluginRegistryLoaded() or not isInMainThread():
             return
 
-        print("LOAD_AFTER")
-
         if canAppAccessDatabase():
-            print("LOAD_DB_ACCESS")
             self.update_trackable_status()
             self.reset_part_pricing_flags()
 
