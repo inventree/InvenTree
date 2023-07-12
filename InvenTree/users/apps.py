@@ -5,8 +5,7 @@ import logging
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 
-from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
-                             isPluginRegistryLoaded)
+from InvenTree.ready import canAppAccessDatabase
 
 logger = logging.getLogger('inventree')
 
@@ -20,8 +19,8 @@ class UsersConfig(AppConfig):
         """Called when the 'users' app is loaded at runtime"""
 
         # skip loading if plugins are not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
-            return
+        # if not isPluginRegistryLoaded() or not isInMainThread():
+        #     return
 
         if canAppAccessDatabase(allow_test=True):
 

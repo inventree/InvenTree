@@ -5,8 +5,7 @@ import logging
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 
-from InvenTree.ready import (canAppAccessDatabase, isImportingData,
-                             isInMainThread, isPluginRegistryLoaded)
+from InvenTree.ready import canAppAccessDatabase, isImportingData
 
 logger = logging.getLogger("inventree")
 
@@ -18,8 +17,8 @@ class PartConfig(AppConfig):
     def ready(self):
         """This function is called whenever the Part app is loaded."""
         # skip loading if plugins are not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
-            return
+        # if not isPluginRegistryLoaded() or not isInMainThread():
+        #     return
 
         if canAppAccessDatabase():
             self.update_trackable_status()
