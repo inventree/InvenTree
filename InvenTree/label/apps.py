@@ -4,7 +4,6 @@ import hashlib
 import logging
 import os
 import shutil
-import sys
 import warnings
 from pathlib import Path
 
@@ -38,10 +37,7 @@ class LabelConfig(AppConfig):
         """This function is called whenever the label app is loaded."""
         # skip loading if its not the first load or we run in a background thread
         if not isInitialLoad() or not isInMainThread():
-            print("SKIPPING DUE TO", isInitialLoad(), isInMainThread(), os.environ.get('RUN_MAIN', None) == "true", sys.argv)
             return
-
-        print("INIT_LABEL_CONFIG")
 
         if canAppAccessDatabase(allow_test=False):
 

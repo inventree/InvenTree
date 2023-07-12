@@ -202,9 +202,9 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
-    'plugin.apps.PluginAppConfig',
+    'InvenTree.apps.InvenTreeConfig',
     'generic',
-    'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
+    'plugin.apps.PluginAppConfig',  # plugin app runs last, so that all other apps initialize before the plugin registry reloads all apps
 
     # Core django modules
     'django.contrib.auth',
