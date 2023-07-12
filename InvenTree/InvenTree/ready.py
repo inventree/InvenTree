@@ -1,6 +1,6 @@
 """Functions to check if certain parts of InvenTree are ready."""
 
-# import os
+import os
 import sys
 
 
@@ -25,11 +25,10 @@ def isInMainThread():
     - The RUN_MAIN env is set in that case. However if --noreload is applied, this variable
     is not set because there are no different threads.
     """
-    return True
-    # if "runserver" in sys.argv and "--noreload" not in sys.argv:
-    #     return os.environ.get('RUN_MAIN', None) == "true"
+    if "runserver" in sys.argv and "--noreload" not in sys.argv:
+        return os.environ.get('RUN_MAIN', None) == "true"
 
-    # return True
+    return True
 
 
 def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False):
@@ -88,7 +87,6 @@ def isPluginRegistryLoaded():
 
     Returns: 'False' if the apps have not been reloaded already to prevent running the ready function twice
     """
-    return True
-    # from plugin import registry
+    from plugin import registry
 
-    # return registry.is_loading
+    return registry.is_loading
