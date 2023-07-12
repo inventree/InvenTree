@@ -20,20 +20,15 @@ def isRunningMigrations():
 
 
 def isInMainThread():
-    """Django starts two processes, one for the actual dev server and the other to reload the application.
+    """Django runserver starts two processes, one for the actual dev server and the other to reload the application.
 
     - The RUN_MAIN env is set in that case. However if --noreload is applied, this variable
     is not set because there are no different threads.
-    - If this app is run in gunicorn there are several threads having "equal rights" so there is no real
-    main thread so we skip this check
     """
-    if '--noreload' in sys.argv or "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
-        return True
+    if "runserver" in sys.argv and "--noreload" not in sys.argv:
+        return os.environ.get('RUN_MAIN', None) == "true"
 
-    print("IS_IN_MAIN_THREAD", os.environ.get('RUN_MAIN', None) == 'true')
     return True
-
-    return os.environ.get('RUN_MAIN', None) == 'true'
 
 
 def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False):
@@ -92,14 +87,6 @@ def isPluginRegistryLoaded():
 
     Returns: 'False' if the apps have not been reloaded already to prevent running the ready function twice
     """
-    from django.conf import settings
-
-    # If plugins are not enabled, there won't be a second load
-    if not settings.PLUGINS_ENABLED:
-        return True
-
     from plugin import registry
-    print("IS_PLUGIN_REGISTRY_LOADED", not registry.is_loading)
-    return True
 
-    return not registry.is_loading
+    return registry.is_loading
