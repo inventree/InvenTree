@@ -64,6 +64,9 @@ class AuthRequiredMiddleware(object):
             elif request.path_info.startswith('/accounts/'):
                 authorized = True
 
+            elif request.path_info.startswith('/platform/') or request.path_info == '/platform':
+                authorized = True
+
             elif 'Authorization' in request.headers.keys() or 'authorization' in request.headers.keys():
                 auth = request.headers.get('Authorization', request.headers.get('authorization')).strip()
 

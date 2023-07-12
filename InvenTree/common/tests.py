@@ -5,6 +5,7 @@ import json
 import time
 from datetime import timedelta
 from http import HTTPStatus
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
@@ -105,6 +106,40 @@ class SettingsTest(InvenTreeTestCase):
         self.assertIn('PART_COPY_TESTS', result)
         self.assertIn('STOCK_OWNERSHIP_CONTROL', result)
         self.assertIn('SIGNUP_GROUP', result)
+        self.assertIn('SERVER_RESTART_REQUIRED', result)
+
+        result = InvenTreeSetting.allValues(exclude_hidden=True)
+        self.assertNotIn('SERVER_RESTART_REQUIRED', result)
+
+    def test_all_settings(self):
+        """Make sure that the all_settings function returns correctly"""
+        result = InvenTreeSetting.all_settings()
+        self.assertIn("INVENTREE_INSTANCE", result)
+        self.assertIsInstance(result['INVENTREE_INSTANCE'], InvenTreeSetting)
+
+    @mock.patch("common.models.InvenTreeSetting.get_setting_definition")
+    def test_check_all_settings(self, get_setting_definition):
+        """Make sure that the check_all_settings function returns correctly"""
+        # define partial schema
+        settings_definition = {
+            "AB": {  # key that's has not already been accessed
+                "required": True,
+            },
+            "CD": {
+                "required": True,
+                "protected": True,
+            },
+            "EF": {}
+        }
+
+        def mocked(key, **kwargs):
+            return settings_definition.get(key, {})
+        get_setting_definition.side_effect = mocked
+
+        self.assertEqual(InvenTreeSetting.check_all_settings(settings_definition=settings_definition), (False, ["AB", "CD"]))
+        InvenTreeSetting.set_setting('AB', "hello", self.user)
+        InvenTreeSetting.set_setting('CD', "world", self.user)
+        self.assertEqual(InvenTreeSetting.check_all_settings(), (True, []))
 
     def run_settings_check(self, key, setting):
         """Test that all settings are valid.

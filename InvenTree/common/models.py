@@ -252,7 +252,7 @@ class BaseInvenTreeSetting(models.Model):
         return {key: getattr(self, key, None) for key in self.extra_unique_fields if hasattr(self, key)}
 
     @classmethod
-    def all_settings(cls, *, exclude_hidden=False, settings_definition: Dict[str, SettingsKeyType] | None = None, **kwargs):
+    def all_settings(cls, *, exclude_hidden=False, settings_definition: Union[Dict[str, SettingsKeyType], None] = None, **kwargs):
         """Return a list of "all" defined settings.
 
         This performs a single database lookup,
@@ -293,9 +293,9 @@ class BaseInvenTreeSetting(models.Model):
 
         # format settings values and remove protected
         for key, setting in settings.items():
-            validator = cls.get_setting_validator(key)
+            validator = cls.get_setting_validator(key, **filters)
 
-            if cls.is_protected(key):
+            if cls.is_protected(key, **filters) and setting.value != "":
                 setting.value = '***'
             elif cls.validator_is_bool(validator):
                 setting.value = InvenTree.helpers.str2bool(setting.value)
@@ -308,7 +308,7 @@ class BaseInvenTreeSetting(models.Model):
         return settings
 
     @classmethod
-    def allValues(cls, *, exclude_hidden=False, settings_definition: Dict[str, SettingsKeyType] | None = None, **kwargs):
+    def allValues(cls, *, exclude_hidden=False, settings_definition: Union[Dict[str, SettingsKeyType], None] = None, **kwargs):
         """Return a dict of "all" defined global settings.
 
         This performs a single database lookup,
@@ -325,15 +325,20 @@ class BaseInvenTreeSetting(models.Model):
         return settings
 
     @classmethod
-    def check_all_settings(cls, *, exclude_hidden=False, settings_definition: Dict[str, SettingsKeyType] | None = None, **kwargs):
-        """Check if all required settings are set by definition."""
+    def check_all_settings(cls, *, exclude_hidden=False, settings_definition: Union[Dict[str, SettingsKeyType], None] = None, **kwargs):
+        """Check if all required settings are set by definition.
+
+        Returns:
+            is_valid: Are all required settings defined
+            missing_settings: List of all settings that are missing (empty if is_valid is 'True')
+        """
         all_settings = cls.all_settings(exclude_hidden=exclude_hidden, settings_definition=settings_definition, **kwargs)
 
         missing_settings: List[str] = []
 
         for setting in all_settings.values():
             if setting.required:
-                value = setting.value or cls.get_setting_default(setting.key)
+                value = setting.value or cls.get_setting_default(setting.key, **kwargs)
 
                 if value == "":
                     missing_settings.append(setting.key.upper())
