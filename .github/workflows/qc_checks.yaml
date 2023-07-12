@@ -143,6 +143,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          detached: true
+          limit-access-to-actor: true
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -158,8 +163,6 @@ jobs:
           invoke import-fixtures
           invoke server -a 127.0.0.1:12345 > /tmp/inventree-test.log 2>&1 &
           invoke wait
-      - name: Run Tests For `${{ env.wrapper_name }}`
-        run: |
           cd ${{ env.wrapper_name }}
           invoke check-server
           coverage run -m unittest discover -s test/
