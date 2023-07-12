@@ -18,11 +18,11 @@ class ReportConfig(AppConfig):
     def ready(self):
         """This function is called whenever the report app is loaded."""
 
-        from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
-                                     isPluginRegistryLoaded)
+        from InvenTree.ready import (canAppAccessDatabase, isInitialLoad,
+                                     isInMainThread)
 
-        # skip loading if plugins are not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
+        # skip loading if its not the first load or we run in a background thread
+        if not isInitialLoad() or not isInMainThread():
             return
 
         # Configure logging for PDF generation (disable "info" messages)

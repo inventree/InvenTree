@@ -13,8 +13,7 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError
 
-from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
-                             isPluginRegistryLoaded)
+from InvenTree.ready import canAppAccessDatabase, isInitialLoad, isInMainThread
 
 logger = logging.getLogger("inventree")
 
@@ -37,9 +36,9 @@ class LabelConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the label app is loaded."""
-        # skip loading if plugins are not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
-            print("SKIPPING DUE TO", isPluginRegistryLoaded(), isInMainThread(), os.environ.get('RUN_MAIN', None) == "true", sys.argv)
+        # skip loading if its not the first load or we run in a background thread
+        if not isInitialLoad() or not isInMainThread():
+            print("SKIPPING DUE TO", isInitialLoad(), isInMainThread(), os.environ.get('RUN_MAIN', None) == "true", sys.argv)
             return
 
         print("INIT_LABEL_CONFIG")
