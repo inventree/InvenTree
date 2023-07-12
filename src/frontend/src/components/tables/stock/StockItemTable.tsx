@@ -3,18 +3,17 @@ import { t } from '@lingui/macro';
 
 import { useToggle } from '@mantine/hooks';
 
-import { InvenTreeTable } from './InvenTreeTable';
-import { ThumbnailHoverCard } from '../items/Thumbnail';
-import { shortenString } from '../../functions/tables';
+import { InvenTreeTable } from './../InvenTreeTable';
+import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { Group } from '@mantine/core';
 
-import { DeleteButton } from '../items/DeleteButton';
-import { EditButton } from '../items/EditButton';
+import { DeleteButton } from '../../items/DeleteButton';
+import { EditButton } from '../../items/EditButton';
 
 /*
  * Load a table of stock items
  */
-export function StockTable({
+export function StockItemTable({
     params={}
 }: {
     params?: any;

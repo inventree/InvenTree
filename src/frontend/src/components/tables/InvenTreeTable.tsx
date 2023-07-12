@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
 
-import { ActionIcon, Chip, CloseButton, Space, Stack, Table, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Chip, CloseButton, Indicator, Space, Stack, Table, Text, Tooltip, filterProps } from '@mantine/core';
 import { Group } from '@mantine/core';
 
 import { TableColumnSelect } from './ColumnSelect';
@@ -18,6 +18,8 @@ import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 
 import { ButtonMenu } from '../items/ButtonMenu';
 import { notYetImplemented } from '../../functions/notifications';
+import { FilterGroup } from './FilterGroup';
+import { TableFilter } from './Filter';
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
@@ -58,7 +60,7 @@ export function InvenTreeTable({
     printingActions?: any[];
     barcodeActions?: any[];
     customActionGroups?: any[];
-    customFilters?: any[];
+    customFilters?: TableFilter[];
 }) {
 
     // Check if any columns are switchable (can be hidden)
@@ -69,6 +71,12 @@ export function InvenTreeTable({
 
     // Pagination
     const [page, setPage] = useState(1);
+
+    // Filter list visibility
+    const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
+
+    // Map of currently active filters, {name: value}
+    const [activeFilters, setActiveFilters] = useState<any>({});
 
     // Data columns
     const [dataColumns, setDataColumns] = useState<any[]>(columns);
@@ -85,7 +93,13 @@ export function InvenTreeTable({
         // Keep a shadow copy of the state variable, so that we can update it asynchronously
         latestSearchTerm = searchTerm;
 
-        // Load list of hidden columns from local storage
+        loadHiddenColumns();
+        loadActiveFilters();
+
+    }, [searchTerm]);
+
+    // Load list of hidden columns from local storage
+    function loadHiddenColumns() {
         hiddenColumns = JSON.parse(localStorage.getItem(`hidden-table-columns-${tableKey}`) || '[]');
 
         // Update column visibility
@@ -96,9 +110,14 @@ export function InvenTreeTable({
         }
 
         setDataColumns(newColumns);
+    }
 
-    }, [searchTerm]);
+    // Load list of active filters from local storage
+    function loadActiveFilters() {
+        // TODO
+    }
 
+    // Callback when search term is updated
     function updateSearchTerm(term: string) {
         term = term.trim();
         // Ignore identical search terms
@@ -256,21 +275,23 @@ export function InvenTreeTable({
                 }
                 {hasSwitchableColumns && <TableColumnSelect columns={dataColumns} onToggleColumn={toggleColumn}/>}
                 {hasCustomFilters && 
-                    <ActionIcon>
-                        <Tooltip label={t`Filter data`}>
-                            <IconFilter onClick={notYetImplemented}/>
-                        </Tooltip>
-                    </ActionIcon>
+                    <Indicator size="xs" label={activeFilters.length} disabled={activeFilters.length == 0}>
+                        <ActionIcon>
+                            <Tooltip label={t`Filter data`}>
+                                <IconFilter onClick={(() => setFiltersVisible(!filtersVisible))}/>
+                            </Tooltip>
+                        </ActionIcon>
+                    </Indicator>
                 }
 
             </Group>
         </Group>
-        <Group position="right">
-            <Chip checked={false}>
-                <Text>hello world</Text>
-                <CloseButton />
-            </Chip>
-        </Group>
+        {filtersVisible && <FilterGroup
+            filterList={[]}
+            onFilterAdd={notYetImplemented}
+            onFilterRemove={notYetImplemented}
+            onFilterClearAll={notYetImplemented}
+        />}
         <DataTable
             withBorder
             striped

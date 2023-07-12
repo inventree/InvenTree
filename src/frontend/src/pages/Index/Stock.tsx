@@ -4,7 +4,7 @@ import { Group } from '@mantine/core';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 
-import { StockTable } from '../../components/tables/StockTables';
+import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 
 export default function Part() {
     return (
@@ -15,7 +15,7 @@ export default function Part() {
         </StylishText>
         <PlaceholderPill />
       </Group>
-      <StockTable />
+      <StockItemTable />
       </>
     );
   }
