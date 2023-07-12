@@ -76,7 +76,6 @@ function stockItemTableColumns() : TableColumn[] {
     // TODO: stock value
     // TODO: packaging
     // TODO: notes
-    // TODO: actions
     {
       accessor: 'actions',
       title: t`Actions`,

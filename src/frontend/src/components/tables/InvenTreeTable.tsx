@@ -138,6 +138,26 @@ export function InvenTreeTable({
     // Data Sorting
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: defaultSortColumn, direction: 'asc' });
 
+    // Return the ordering parameter
+    function getOrderingTerm() {
+        let key = sortStatus.columnAccessor;
+
+        // Sorting column not specified
+        if (key == '') {
+            return '';
+        }
+
+        // Find matching column:
+        // If column provides custom ordering term, use that
+        let column = dataColumns.find((col) => col.accessor == key);
+
+        if (column && column.ordering) {
+            return column.ordering;
+        } else {
+            return key;
+        }
+    }
+
     // Missing records text (based on server response)
     const [missingRecordsText, setMissingRecordsText] = useState<string>(noRecordsText);
 
@@ -191,12 +211,11 @@ export function InvenTreeTable({
         }
 
         // Handle sorting
-        if (sortStatus.columnAccessor) {
-            if (sortStatus.direction == 'asc') {
-                queryParams.ordering = sortStatus.columnAccessor;
-            } else {
-                queryParams.ordering = `-${sortStatus.columnAccessor}`;
-            }
+        let ordering = getOrderingTerm();
+        if (sortStatus.direction == 'asc') {
+            queryParams.ordering = ordering;
+        } else {
+            queryParams.ordering = `-${ordering}`;
         }
             
         return api
@@ -240,6 +259,12 @@ export function InvenTreeTable({
             refetchOnMount: 'always',
         }
     );
+
+    // Launch a modal dialog to add a new filter
+    function onFilterAdd() {
+        // TODO
+        notYetImplemented();
+    }
 
     return <Stack>
         <Group position="apart">
@@ -288,9 +313,10 @@ export function InvenTreeTable({
 
             </Group>
         </Group>
-        {filtersVisible && <FilterGroup
+        {filtersVisible &&
+        <FilterGroup
             filterList={[]}
-            onFilterAdd={notYetImplemented}
+            onFilterAdd={onFilterAdd}
             onFilterRemove={notYetImplemented}
             onFilterClearAll={notYetImplemented}
         />}
