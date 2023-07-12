@@ -73,6 +73,12 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             'description': 'Select a part object from the database',
             'model': 'part.part',
         },
+        'PROTECTED_SETTING': {
+            'name': 'Protected Setting',
+            'description': 'A protected setting, hidden from the UI',
+            'default': 'ABC-123',
+            'protected': True,
+        }
     }
 
     NAVIGATION = [
