@@ -41,6 +41,7 @@ export function BuildOrderTable({
             },
             {
                 accessor: 'project_code',
+                title: t`Project Code`,
                 sortable: true,
                 switchable: true,
                 // TODO: Hide this if project code is not enabled
@@ -48,6 +49,7 @@ export function BuildOrderTable({
             },
             {
                 accessor: 'priority',
+                title: t`Priority`,
                 sortable: true,
                 switchable: true,
             },

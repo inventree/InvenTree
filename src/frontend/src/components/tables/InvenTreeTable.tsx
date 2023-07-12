@@ -67,11 +67,11 @@ export function InvenTreeTable({
     // Check if custom filtering is enabled for this table
     const hasCustomFilters = enableFilters && customFilters.length > 0;
 
-    // Check if any columns are sortable
-    const hasSortableColumns = columns.some((col: any) => col.sortable);
-
     // Pagination
     const [page, setPage] = useState(1);
+
+    // Data columns
+    const [dataColumns, setDataColumns] = useState<any[]>(columns);
 
     // Search term
     const [searchTerm, setSearchTerm] = useState<string>('');
@@ -111,6 +111,20 @@ export function InvenTreeTable({
         setPage(1);
         setSortStatus(status);
     };
+
+    // Callback when column visibility is toggled
+    function toggleColumn(columnName: string) {
+        let newColumns = [...dataColumns];
+
+        // Toggle selected column
+        for (let idx = 0; idx < newColumns.length; idx++) {
+            if (newColumns[idx].accessor == columnName) {
+                newColumns[idx].hidden = !newColumns[idx].hidden;
+                setDataColumns(newColumns);
+                break;
+            }
+        }
+    }
 
     // Function to perform API query to fetch required data
     const fetchTableData = async() => {
@@ -179,10 +193,6 @@ export function InvenTreeTable({
         }
     );
 
-    // TODO: Handle column hiding
-    columns.forEach(function(col: any, idx: number) {
-    });
-
     return <Stack>
         <Group position="apart">
             <Group position="left" spacing={5}>
@@ -217,7 +227,7 @@ export function InvenTreeTable({
                         </Tooltip>
                     </ActionIcon>
                 }
-                {hasSwitchableColumns && <TableColumnSelect columns={columns}/>}
+                {hasSwitchableColumns && <TableColumnSelect columns={dataColumns} onToggleColumn={toggleColumn}/>}
                 {hasCustomFilters && 
                     <ActionIcon>
                         <Tooltip label={t`Filter data`}>
@@ -252,7 +262,7 @@ export function InvenTreeTable({
             fetching={isFetching}
             noRecordsText={missingRecordsText}
             records={data?.results ?? data ?? []}
-            columns={columns}
+            columns={dataColumns}
         />
     </Stack>;
 }

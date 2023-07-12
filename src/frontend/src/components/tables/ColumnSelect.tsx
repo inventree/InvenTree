@@ -5,16 +5,12 @@ import { IconAdjustments } from "@tabler/icons-react";
 import { notYetImplemented } from "../../functions/notifications";
 
 export function TableColumnSelect({
-    columns
+    columns,
+    onToggleColumn,
 } : { 
     columns: any[];
+    onToggleColumn: (columnName: string) => void;
 }) {
-
-    // TODO: When a column is hidden, it should be removed from the table
-    function toggleColumn(columnName: string) {
-        console.log("toggle column:", columnName);
-        notYetImplemented();
-    }
 
     return <Menu shadow="xs">
         <Menu.Target>
@@ -29,7 +25,7 @@ export function TableColumnSelect({
             <Menu.Label>{t`Select Columns`}</Menu.Label>
             {columns.filter((col) => col.switchable).map((col) => 
                 <Menu.Item>
-                    <Checkbox checked={!col.hidden} label={col.title} onChange={(event) => toggleColumn(col.accessor)}/>
+                    <Checkbox checked={!col.hidden} label={col.title || col.accessor} onChange={(event) => onToggleColumn(col.accessor)}/>
                 </Menu.Item>
             )}
         </Menu.Dropdown>
