@@ -779,8 +779,7 @@ class TestSettings(InvenTreeTestCase):
 
         with self.in_env_context(envs):
             settings.USER_ADDED = False
-            registry.apps_loading = True  # set to True so that the apps intentionally reload and dont skip due to the ready checks
-            registry.reload_plugins()
+            registry.reload_plugins(all_apps=True)
 
     @override_settings(TESTING_ENV=True)
     def test_set_user_to_few(self):
@@ -838,7 +837,7 @@ class TestSettings(InvenTreeTestCase):
 
             # Set dynamic setting to True and rerun to launch install
             InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-            registry.reload_plugins(full_reload=True)
+            registry.reload_plugins(full_reload=True, all_apps=True)
 
         # Check that there was anotehr run
         response = registry.install_plugin_file()

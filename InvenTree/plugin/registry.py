@@ -192,18 +192,22 @@ class PluginsRegistry:
 
         logger.info('Finished unloading plugins')
 
-    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False):
+    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False, all_apps: bool = False):
         """Safely reload.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
             force_reload (bool, optional): Also reload base apps. Defaults to False.
+            all_apps (bool, optional): sets registry.apps_loading=True so that the AppConfig.ready assumes this is a fresh start
         """
         # Do not reload when currently loading
         if self.is_loading:
             return  # pragma: no cover
 
         logger.info('Start reloading plugins')
+
+        if all_apps:
+            self.apps_loading = True
 
         with maintenance_mode_on():
             self.unload_plugins(force_reload=force_reload)
