@@ -5,18 +5,19 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
 
-import { ActionIcon, Space, Stack, Table, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Chip, CloseButton, Space, Stack, Table, Text, Tooltip } from '@mantine/core';
 import { Group } from '@mantine/core';
 
 import { TableColumnSelect } from './ColumnSelect';
 import { TableSearchInput } from './Search';
 import { DownloadAction } from './DownloadAction';
 
-import { IconRefresh } from '@tabler/icons-react';
+import { IconFilter, IconRefresh } from '@tabler/icons-react';
 
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 
 import { ButtonMenu } from '../items/ButtonMenu';
+import { notYetImplemented } from '../../functions/notifications';
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
@@ -27,6 +28,7 @@ export function InvenTreeTable({
     params,
     columns,
     enableDownload=false,
+    enableFilters=true,
     enablePagination=true,
     enableRefresh=true,
     enableSearch=true,
@@ -38,6 +40,7 @@ export function InvenTreeTable({
     printingActions=[],
     barcodeActions=[],
     customActionGroups=[],
+    customFilters=[],
 } : {
     url: string;
     params: any;
@@ -46,6 +49,7 @@ export function InvenTreeTable({
     defaultSortColumn?: string;
     noRecordsText?: string;
     enableDownload?: boolean;
+    enableFilters?: boolean;
     enableSelection?: boolean;
     enableSearch?: boolean;
     enablePagination?: boolean;
@@ -54,10 +58,14 @@ export function InvenTreeTable({
     printingActions?: any[];
     barcodeActions?: any[];
     customActionGroups?: any[];
+    customFilters?: any[];
 }) {
 
     // Check if any columns are switchable (can be hidden)
     const hasSwitchableColumns = columns.some((col: any) => col.switchable);
+
+    // Check if custom filtering is enabled for this table
+    const hasCustomFilters = enableFilters && customFilters.length > 0;
 
     // Check if any columns are sortable
     const hasSortableColumns = columns.some((col: any) => col.sortable);
@@ -210,7 +218,21 @@ export function InvenTreeTable({
                     </ActionIcon>
                 }
                 {hasSwitchableColumns && <TableColumnSelect columns={columns}/>}
+                {hasCustomFilters && 
+                    <ActionIcon>
+                        <Tooltip label={t`Filter data`}>
+                            <IconFilter onClick={notYetImplemented}/>
+                        </Tooltip>
+                    </ActionIcon>
+                }
+
             </Group>
+        </Group>
+        <Group position="right">
+            <Chip checked={false}>
+                <Text>hello world</Text>
+                <CloseButton />
+            </Chip>
         </Group>
         <DataTable
             withBorder
