@@ -40,6 +40,8 @@ class LabelConfig(AppConfig):
         if not isPluginRegistryLoaded() or not isInMainThread():
             return
 
+        print("INIT_LABEL_CONFIG")
+
         if canAppAccessDatabase(allow_test=False):
 
             try:
