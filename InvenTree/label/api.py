@@ -5,6 +5,7 @@ from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -167,9 +168,9 @@ class LabelPrintMixin(LabelFilterMixin):
 
         plugin_key = request.query_params.get('plugin', None)
 
-        # No plugin provided, and that's OK
+        # No plugin provided!
         if plugin_key is None:
-            return None
+            raise ValidationError(_('No label printing plugin provided'))
 
         plugin = registry.get_plugin(plugin_key)
 
