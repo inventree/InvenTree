@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-11 22:20+0000\n"
-"PO-Revision-Date: 2023-07-12 03:37\n"
+"POT-Creation-Date: 2023-07-13 00:31+0000\n"
+"PO-Revision-Date: 2023-07-13 03:34\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -8881,11 +8881,11 @@ msgstr "Riport beállítások"
 msgid "Return Order Settings"
 msgstr "Visszavételi utasítás bellításai"
 
-#: templates/InvenTree/settings/setting.html:31
+#: templates/InvenTree/settings/setting.html:33
 msgid "No value set"
 msgstr "Nincsenek értékek"
 
-#: templates/InvenTree/settings/setting.html:44
+#: templates/InvenTree/settings/setting.html:46
 msgid "Edit setting"
 msgstr "Beállítások módosítása"
 
@@ -12196,8 +12196,8 @@ msgid "stock locations"
 msgstr "készlethelyek"
 
 #: templates/js/translated/stock.js:2644
-msgid "Load Subloactions"
-msgstr "Alhelyek betöltése"
+msgid "Load Sublocations"
+msgstr ""
 
 #: templates/js/translated/stock.js:2751
 msgid "Details"
