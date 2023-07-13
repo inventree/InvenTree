@@ -761,3 +761,10 @@ def frontend_build(c):
     """
     print("Building frontend")
     yarn(c, "yarn run build --emptyOutDir")
+
+
+@task
+def frontend_serve(c):
+    """Serve frontend files via yarn, for development."""
+    print("Serving frontend")
+    yarn(c, "yarn run dev")
