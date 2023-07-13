@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-11 22:20+0000\n"
-"PO-Revision-Date: 2023-07-12 03:38\n"
+"POT-Creation-Date: 2023-07-13 00:31+0000\n"
+"PO-Revision-Date: 2023-07-13 03:35\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -8880,11 +8880,11 @@ msgstr ""
 msgid "Return Order Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:31
+#: templates/InvenTree/settings/setting.html:33
 msgid "No value set"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:44
+#: templates/InvenTree/settings/setting.html:46
 msgid "Edit setting"
 msgstr ""
 
@@ -12195,7 +12195,7 @@ msgid "stock locations"
 msgstr ""
 
 #: templates/js/translated/stock.js:2644
-msgid "Load Subloactions"
+msgid "Load Sublocations"
 msgstr ""
 
 #: templates/js/translated/stock.js:2751
