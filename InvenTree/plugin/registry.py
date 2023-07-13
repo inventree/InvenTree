@@ -210,7 +210,9 @@ class PluginsRegistry:
         logger.info('Start reloading plugins')
 
         with maintenance_mode_on():
+            self.plugins_loaded = False
             self.unload_plugins(force_reload=force_reload)
+            self.plugins_loaded = True
             self.load_plugins(full_reload=full_reload)
 
         logger.info('Finished reloading plugins')
