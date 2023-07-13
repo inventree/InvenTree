@@ -97,7 +97,6 @@ export function InvenTreeTable({
 
         loadHiddenColumns();
         loadActiveFilters();
-
     }, [searchTerm]);
 
     // Load list of hidden columns from local storage
@@ -163,6 +162,10 @@ export function InvenTreeTable({
 
     // Data selection
     const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
+
+    function onSelectedRecordsChange(records: any[]) {
+        setSelectedRecords(records);
+    }
 
     const handleSortStatusChange = (status: DataTableSortStatus) => {
         setPage(1);
@@ -334,7 +337,7 @@ export function InvenTreeTable({
             sortStatus={sortStatus}
             onSortStatusChange={handleSortStatusChange}
             selectedRecords={enableSelection ? selectedRecords : undefined}
-            onSelectedRecordsChange={enableSelection ? setSelectedRecords : undefined}
+            onSelectedRecordsChange={enableSelection ? onSelectedRecordsChange : undefined}
             fetching={isFetching}
             noRecordsText={missingRecordsText}
             records={data?.results ?? data ?? []}
