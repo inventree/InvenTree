@@ -37,3 +37,30 @@ The installer code is used to identify the way InvenTree was installed. If you v
 | PKG | Installed using a package manager | Yes |
 | GIT | Installed using git | Yes |
 | DOC | Installed using docker | Yes |
+
+
+## Authentication
+
+### LDAP
+
+You can link your InvenTree server to an LDAP server. If you run the docker image, everything required is already installed. For bare metal installs, first install the requrired system packages that are needed for the `python-ldap` pip package, then install the python packages manually:
+
+```bash
+apt install build-essential python3-dev libldap2-dev libsasl2-dev
+source ./env/bin/activate  # dont forget to source the venv before installing via pip
+pip install python-ldap django-auth-ldap
+```
+
+Next you can start configuring the connection. Either use the config file or set the environment variables.
+
+| config key | ENV Variable | Description |
+| --- | --- | --- |
+| `ldap.enabled` | `INVENTREE_LDAP_ENABLED` | Set this to `True` to enable LDAP. |
+| `ldap.server_uri` | `INVENTREE_LDAP_SERVER_URI` | LDAP Server URI, e.g. `ldap://example.org` |
+| `ldap.bind_dn` | `INVENTREE_LDAP_BIND_DN` | LDAP bind dn, e.g. `cn=admin,dc=example,dc=org` |
+| `ldap.bind_password` | `INVENTREE_LDAP_BIND_PASSWORD` | LDAP bind password |
+| `ldap.search_base_dn` | `INVENTREE_LDAP_SEARCH_BASE_DN` | LDAP search base dn, e.g. `cn=Users,dc=example,dc=org` |
+| `ldap.search_filter_str`| `INVENTREE_LDAP_SEARCH_FILTER_STR` | LDAP search filter str, default: `uid=%(user)s` |
+| `ldap.user_attr_map` | `INVENTREE_LDAP_USER_ATTR_MAP` | LDAP <-> Inventree user attribute map, can be json if used as env, in yml directly specify the object. default: `{"first_name": "givenName", "last_name": "sn", "email": "mail"}` |
+| `ldap.always_update_user` | `INVENTREE_LDAP_ALWAYS_UPDATE_USER` | Always update the user on each login, default: `true` |
+| `ldap.cache_timeout` | `INVENTREE_LDAP_CACHE_TIMEOUT` | cache timeout to reduce traffic with LDAP server, default: `3600` (1h) |

@@ -49,7 +49,6 @@ django==3.2.20
     #   dj-rest-auth
     #   django-allauth
     #   django-allauth-2fa
-    #   django-auth-ldap
     #   django-cors-headers
     #   django-dbbackup
     #   django-error-report
@@ -83,8 +82,6 @@ django-allauth==0.54.0
     #   -r requirements.in
     #   django-allauth-2fa
 django-allauth-2fa==0.11.0
-    # via -r requirements.in
-django-auth-ldap==4.3.0
     # via -r requirements.in
 django-cleanup==8.0.0
     # via -r requirements.in
@@ -208,12 +205,6 @@ py-moneyed==1.2
     # via
     #   -r requirements.in
     #   django-money
-pyasn1==0.5.0
-    # via
-    #   pyasn1-modules
-    #   python-ldap
-pyasn1-modules==0.3.0
-    # via python-ldap
 pycparser==2.21
     # via cffi
 pydyf==0.7.0
@@ -238,10 +229,6 @@ python-dotenv==1.0.0
     # via -r requirements.in
 python-fsutil==0.10.0
     # via django-maintenance-mode
-python-ldap==3.4.3
-    # via
-    #   -r requirements.in
-    #   django-auth-ldap
 python3-openid==3.2.0
     # via django-allauth
 pytz==2023.3
