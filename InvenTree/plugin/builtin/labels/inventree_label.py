@@ -2,6 +2,7 @@
 
 from django.utils.translation import gettext_lazy as _
 
+from label.models import LabelTemplate
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
 
@@ -24,6 +25,10 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         },
     }
 
-    def print_label(self, **kwargs):
-        """Handle printing of a single label."""
-        ...
+    def print_labels(self, labels: list[LabelTemplate], request, **kwargs):
+        """Handle printing of multiple labels"""
+        return super().print_labels(labels, request, **kwargs)
+
+    def print_label(self, label: LabelTemplate, request, **kwargs):
+        """Handle printing of a single label"""
+        return super().print_label(label, request, **kwargs)
