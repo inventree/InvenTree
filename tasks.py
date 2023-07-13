@@ -760,9 +760,4 @@ def frontend_build(c):
         c: Context variable
     """
     print("Building frontend")
-    yarn(c, "yarn run build --emptyOutDir ")
-
-
-@task
-def frontend_serve(c):
-    yarn(c, "yarn run dev")
+    yarn(c, "yarn run build --emptyOutDir")
