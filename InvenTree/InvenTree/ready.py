@@ -80,13 +80,17 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, 
     return True
 
 
-def isInitialLoad():
-    """The plugin registry reloads all apps onetime after starting so that the discovered AppConfigs are added to Django.
+def isPluginRegistryLoaded():
+    """Ensures that the plugin registry is already loaded.
 
-    This triggers the ready function of AppConfig to execute twice. Add this check to prevent from running two times.
+    The plugin registry reloads all apps onetime after starting if there are AppMixin plugins,
+    so that the discovered AppConfigs are added to Django. This triggers the ready function of
+    AppConfig to execute twice. Add this check to prevent from running two times.
 
-    Returns: 'False' if the apps are reloaded again to prevent running the ready function twice
+    Note: All apps using this check need to be registered after the plugins app in settings.py
+
+    Returns: 'False' if the registry has not fully loaded the plugins yet.
     """
     from plugin import registry
 
-    return registry.apps_loading
+    return registry.plugins_loaded

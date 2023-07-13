@@ -881,7 +881,7 @@ class CommonTest(InvenTreeAPITestCase):
         common.models.InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
 
         # reload the app
-        registry.reload_plugins(all_apps=True)
+        registry.reload_plugins()
 
         # now it should be false again
         self.assertFalse(common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))

@@ -11,7 +11,7 @@ import os
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, List, OrderedDict
+from typing import Any, Dict, List, OrderedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -53,13 +53,14 @@ class PluginsRegistry:
         self.plugins_inactive: Dict[str, InvenTreePlugin] = {}  # List of inactive instances
         self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
-        self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
-        self.mixin_modules: Dict[str, any] = {}                 # Holds all discovered mixins
+        self.plugin_modules: List[InvenTreePlugin] = []         # Holds all discovered plugins
+        self.mixin_modules: Dict[str, Any] = {}                 # Holds all discovered mixins
 
         self.errors = {}                                        # Holds discovering errors
 
         # flags
         self.is_loading = False                                 # Are plugins being loaded right now
+        self.plugins_loaded = False                             # Marks if the registry fully loaded and all django apps are reloaded
         self.apps_loading = True                                # Marks if apps were reloaded yet
 
         self.installed_apps = []                                # Holds all added plugin_paths
@@ -160,6 +161,9 @@ class PluginsRegistry:
             if full_reload:
                 full_reload = False
 
+        # ensure plugins_loaded is True
+        self.plugins_loaded = True
+
         # Remove maintenance mode
         if not _maintenance:
             set_maintenance_mode(False)
@@ -192,22 +196,18 @@ class PluginsRegistry:
 
         logger.info('Finished unloading plugins')
 
-    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False, all_apps: bool = False):
+    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False):
         """Safely reload.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
             force_reload (bool, optional): Also reload base apps. Defaults to False.
-            all_apps (bool, optional): sets registry.apps_loading=True so that the AppConfig.ready assumes this is a fresh start
         """
         # Do not reload when currently loading
         if self.is_loading:
             return  # pragma: no cover
 
         logger.info('Start reloading plugins')
-
-        if all_apps:
-            self.apps_loading = True
 
         with maintenance_mode_on():
             self.unload_plugins(force_reload=force_reload)
