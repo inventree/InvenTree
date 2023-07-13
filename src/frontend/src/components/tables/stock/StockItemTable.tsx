@@ -1,17 +1,15 @@
-import { Trans } from '@lingui/macro';
 import { t } from '@lingui/macro';
-
-import { useToggle } from '@mantine/hooks';
 
 import { InvenTreeTable } from './../InvenTreeTable';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { Group } from '@mantine/core';
 
-import { DeleteButton } from '../../items/DeleteButton';
-import { EditButton } from '../../items/EditButton';
-
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
+import { ActionButton } from '../../items/ActionButton';
+
+import { IconTrash, IconEdit } from '@tabler/icons-react';
+import { notYetImplemented } from '../../../functions/notifications';
 
 /**
  * Construct a list of columns for the stock item table
@@ -83,7 +81,19 @@ function stockItemTableColumns() : TableColumn[] {
       render: function(record: any) {
         return <Group position="right" spacing={5} noWrap={true}>
           {/* {EditButton(setEditing, editing)} */}
-          {DeleteButton()}
+          {/* {DeleteButton()} */}
+          <ActionButton
+            color="green"
+            icon={<IconEdit />}
+            tooltip="Edit stock item"
+            onClick={() => notYetImplemented()}
+          />
+          <ActionButton
+            color="red"
+            tooltip='Delete stock item'
+            icon={<IconTrash />}
+            onClick={() => notYetImplemented()}
+          />
         </Group>;
       },
     }
