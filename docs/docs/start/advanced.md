@@ -43,7 +43,7 @@ The installer code is used to identify the way InvenTree was installed. If you v
 
 ### LDAP
 
-You can link your InvenTree server to an LDAP server. If you run the docker image, everything required is already installed. For bare metal installs, first install the requrired system packages that are needed for the `python-ldap` pip package, then install the python packages manually:
+You can link your InvenTree server to an LDAP server. If you run the docker image, everything required is already installed. For bare metal installs, first install the required system packages that are needed for the `python-ldap` pip package, then install the python packages manually:
 
 ```bash
 apt install build-essential python3-dev libldap2-dev libsasl2-dev
