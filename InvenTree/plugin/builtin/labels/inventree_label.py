@@ -1,7 +1,10 @@
 """Default label printing plugin (supports PDF generation)"""
 
+from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 
+import InvenTree.helpers
+from common.models import InvenTreeUserSetting
 from label.models import LabelTemplate
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
@@ -26,9 +29,47 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     }
 
     def print_labels(self, labels: list[LabelTemplate], request, **kwargs):
-        """Handle printing of multiple labels"""
-        return super().print_labels(labels, request, **kwargs)
+        """Handle printing of multiple labels
+
+        - Label outputs are concatenated together, and we return a single PDF file.
+        - If DEBUG mode is enabled, we return a single HTML file.
+        """
+
+        debug = self.get_setting('DEBUG')
+
+        outputs = []
+
+        for label in labels:
+            outputs.append(self.print_label(label, request, debug=debug, **kwargs))
+
+        if self.get_setting('DEBUG'):
+            html = '\n'.join(outputs)
+            return HttpResponse(html)
+        else:
+            pages = []
+
+            # Following process is required to stitch labels together into a single PDF
+            for output in outputs:
+                doc = output.get_document()
+                for page in doc.pages:
+                    pages.append(page)
+
+            pdf = outputs[0].get_document().copy(pages).write_pdf()
+            inline = InvenTreeUserSetting.get_setting('LABEL_INLINE', user=request.user, cache=False)
+
+            return InvenTree.helpers.DownloadFile(
+                pdf,
+                'labels.pdf',
+                content_type='application/pdf',
+                inline=inline
+            )
 
     def print_label(self, label: LabelTemplate, request, **kwargs):
         """Handle printing of a single label"""
-        return super().print_label(label, request, **kwargs)
+
+        debug = kwargs.get('debug', self.get_setting('DEBUG'))
+
+        if debug:
+            return self.render_to_html(label, request, **kwargs)
+        else:
+            return self.render_to_pdf(label, request, **kwargs)
