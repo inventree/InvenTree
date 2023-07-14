@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-13 22:59+0000\n"
+"POT-Creation-Date: 2023-07-14 22:41+0000\n"
 "PO-Revision-Date: 2023-07-14 04:11\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -851,27 +851,27 @@ msgstr "L'eccesso non deve superare il 100%"
 msgid "Invalid value for overage"
 msgstr "Valore non valido per eccedenza"
 
-#: InvenTree/views.py:408 templates/InvenTree/settings/user.html:23
+#: InvenTree/views.py:405 templates/InvenTree/settings/user.html:23
 msgid "Edit User Information"
 msgstr "Modifica informazioni utente"
 
-#: InvenTree/views.py:420 templates/InvenTree/settings/user.html:20
+#: InvenTree/views.py:417 templates/InvenTree/settings/user.html:20
 msgid "Set Password"
 msgstr "Imposta Password"
 
-#: InvenTree/views.py:442
+#: InvenTree/views.py:439
 msgid "Password fields must match"
 msgstr "Le password devono coincidere"
 
-#: InvenTree/views.py:451
+#: InvenTree/views.py:448
 msgid "Wrong password provided"
 msgstr "Password inserita non corretta"
 
-#: InvenTree/views.py:656 templates/navbar.html:157
+#: InvenTree/views.py:645 templates/navbar.html:157
 msgid "System Information"
 msgstr "Informazioni sistema"
 
-#: InvenTree/views.py:663 templates/navbar.html:168
+#: InvenTree/views.py:652 templates/navbar.html:168
 msgid "About InvenTree"
 msgstr "Informazioni Su InvenTree"
 
@@ -12742,9 +12742,11 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr ""
+"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12878,4 +12880,3 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:254
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
-
