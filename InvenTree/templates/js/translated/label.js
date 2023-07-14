@@ -210,11 +210,14 @@ function printLabels(options) {
 
                     inventreeGet(href, {}, {
                         success: function(response) {
-                            console.log(response);
-
-                            showMessage('{% trans "Labels sent to printer" %}', {
-                                style: 'success',
-                            });
+                            if (response.file) {
+                                // Download the generated file
+                                window.open(response.file);
+                            } else {
+                                showMessage('{% trans "Labels sent to printer" %}', {
+                                    style: 'success',
+                                });
+                            }
                         }
                     });
                 },
