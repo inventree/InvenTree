@@ -1,6 +1,7 @@
 """Translation helper functions"""
 
 import json
+
 from django.conf import settings
 
 # translation completion stats
@@ -22,12 +23,12 @@ def reload_translation_stats():
 
     keys = _translation_stats.keys()
 
-    # Note that the names used in the stats file may not allign 100%
-    for (code, lang) in settings.LANGUAGES:
+    # Note that the names used in the stats file may not align 100%
+    for (code, _lang) in settings.LANGUAGES:
         if code in keys:
             # Direct match, move on
             continue
-            
+
         code_lower = code.lower().replace('-', '_')
 
         for k in keys:
@@ -35,10 +36,6 @@ def reload_translation_stats():
                 # Make a copy of the code which matches
                 _translation_stats[code] = _translation_stats[k]
                 break
-    
-    print("Translation stats:")
-    for k, v in _translation_stats.items():
-        print(f"{k}: {v}%")
 
 
 def get_translation_percent(lang_code):
