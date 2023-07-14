@@ -4,9 +4,6 @@ In particular these views provide base functionality for rendering Django forms
 as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 
-import json
-
-from django.conf import settings
 from django.contrib.auth import password_validation
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
@@ -530,14 +527,6 @@ class SettingsView(TemplateView):
                 ctx["rates_updated"] = backend.last_update
         except Exception:
             ctx["rates_updated"] = None
-
-        # load locale stats
-        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
-
-        try:
-            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
-        except Exception:
-            ctx["locale_stats"] = {}
 
         # Forms and context for allauth
         ctx['add_email_form'] = AddEmailForm
