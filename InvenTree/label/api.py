@@ -2,8 +2,7 @@
 
 from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
-from django.http import HttpResponse, JsonResponse
-from django.http.response import StreamingHttpResponse
+from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
@@ -195,21 +194,15 @@ class LabelPrintMixin(LabelFilterMixin):
         label = self.get_object()
 
         # At this point, we offload the label(s) to the selected plugin.
-        # The plugin may either return a PDF file (blocking),
-        # or return a JSON response (non-blocking).
+        # The plugin is responsible for handling the request and returning a response.
 
-        # Send labels to plugin
-        # Result should either be a StreamingHttpResponse or a JSONResponse
         result = plugin.print_labels(label, items_to_print, request)
 
-        if not any((isinstance(result, x) for x in [
-            StreamingHttpResponse,
-            JsonResponse,
-            HttpResponse,
-        ])):
+        if isinstance(result, JsonResponse):
+            result['plugin'] = plugin.plugin_slug()
+            return result
+        else:
             raise ValidationError(f"Plugin '{plugin.plugin_slug()}' returned invalid response type '{type(result)}'")
-
-        return result
 
 
 class StockItemLabelMixin:

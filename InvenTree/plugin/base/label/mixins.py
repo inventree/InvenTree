@@ -16,7 +16,9 @@ class LabelPrintingMixin:
 
     Each plugin must provide a NAME attribute, which is used to uniquely identify the printer.
 
-    The plugin must also implement the print_label() function
+    The plugin *must* also implement the print_label() function for rendering an individual label
+
+    Note that the print_labels() function can also be overridden to provide custom behaviour.
     """
 
     # If True, the print_label() method will block until the label is printed
@@ -69,7 +71,7 @@ class LabelPrintingMixin:
         return png
 
     def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
-        """Print one or more labels.
+        """Print one or more labels with the provided template and items.
 
         Arguments:
             label: The LabelTemplate object to use for printing
@@ -112,6 +114,7 @@ class LabelPrintingMixin:
                 # Non-blocking print job
                 self.offload_label(**print_args)
 
+        # Return a JSON response to the user
         return JsonResponse({
             'success': True,
             'message': f'{len(items)} labels printed',

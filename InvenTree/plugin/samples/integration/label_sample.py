@@ -22,13 +22,14 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
 
         Normally here the connection to the printer and transfer of the label would take place.
         """
+
         # Test that the expected kwargs are present
         print(f"Printing Label: {kwargs['filename']} (User: {kwargs['user']})")
 
         pdf_data = kwargs['pdf_data']
         png_file = self.render_to_png(label=None, pdf_data=pdf_data)
 
-        filename = 'sample.pdf'
+        filename = 'label.pdf'
 
         # Dump the PDF to a local file
         with open(filename, 'wb') as pdf_out:

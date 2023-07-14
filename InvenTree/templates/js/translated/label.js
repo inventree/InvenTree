@@ -206,32 +206,17 @@ function printLabels(options) {
                         href += `${options.key}=${item}&`;
                     });
 
-                    if (data.plugin) {
-                        href += `plugin=${data.plugin}`;
+                    href += `plugin=${data.plugin}`;
 
-                        inventreeGet(href, {}, {
-                            contentType: 'blob',
-                            dataType: 'text',
-                            success: function(response, status, xhr) {
-                                console.log("Label response:", typeof response);
-                                console.log(response);
-                                console.log(status);
-                                console.log(xhr);
+                    inventreeGet(href, {}, {
+                        success: function(response) {
+                            console.log(response);
 
-                                let header = xhr.getAllResponseHeaders();
-
-                                console.log("headers:", header);
-
-                                showMessage('{% trans "Labels sent to printer" %}', {
-                                    style: 'success',
-                                });
-                            }
-                        });
-                    } else {
-                        // No plugin selected
-                        console.error('No plugin selected for label printing');
-                        // window.open(href);
-                    }
+                            showMessage('{% trans "Labels sent to printer" %}', {
+                                style: 'success',
+                            });
+                        }
+                    });
                 },
                 plural_name: options.plural_name,
                 singular_name: options.singular_name,
