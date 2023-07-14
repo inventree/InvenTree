@@ -62,11 +62,6 @@ function inventreeGet(url, filters={}, options={}) {
         url: url,
         type: 'GET',
         data: filters,
-        accepts: {
-            json: 'application/json',
-            text: 'text/plain',
-            pdf: 'application/pdf',
-        },
         dataType: options.dataType || 'json',
         contentType: options.contentType || 'application/json',
         async: (options.async == false) ? false : true,
@@ -77,10 +72,6 @@ function inventreeGet(url, filters={}, options={}) {
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on GET at ' + url);
-
-            console.log("xhr:", xhr);
-            console.log("ajaxOptions:", ajaxOptions);
-            console.log("thrownError:", thrownError);
 
             if (thrownError) {
                 console.error('Error: ' + thrownError);
