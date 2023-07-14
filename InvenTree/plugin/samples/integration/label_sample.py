@@ -14,7 +14,8 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
     SLUG = "samplelabel"
     TITLE = "Sample Label Printer"
     DESCRIPTION = "A sample plugin which provides a (fake) label printer interface"
-    VERSION = "0.2"
+    AUTHOR = "InvenTree contributors"
+    VERSION = "0.3.0"
 
     def print_label(self, **kwargs):
         """Sample printing step.
@@ -26,7 +27,7 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
         print(f"Width: {kwargs['width']} x Height: {kwargs['height']}")
 
         pdf_data = kwargs['pdf_data']
-        png_file = kwargs['png_file']
+        png_file = self.render_to_png(label=None, pdf_data=pdf_data)
 
         filename = kwargs['filename']
 

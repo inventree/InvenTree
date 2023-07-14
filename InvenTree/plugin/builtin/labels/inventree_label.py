@@ -30,7 +30,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         },
     }
 
-    def print_labels(self, labels: list[LabelTemplate], request, **kwargs):
+    def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
         """Handle printing of multiple labels
 
         - Label outputs are concatenated together, and we return a single PDF file.
@@ -41,7 +41,10 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
 
         outputs = []
 
-        for label in labels:
+        for item in items:
+
+            label.object_to_print = item
+
             outputs.append(self.print_label(label, request, debug=debug, **kwargs))
 
         if self.get_setting('DEBUG'):

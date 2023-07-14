@@ -200,7 +200,7 @@ class LabelPrintMixin(LabelFilterMixin):
 
         # Send labels to plugin
         # Result should either be a StreamingHttpResponse or a JSONResponse
-        result = plugin.print_labels(label, items_to_print, request=request)
+        result = plugin.print_labels(label, items_to_print, request)
 
         if not any((isinstance(result, x) for x in [
             StreamingHttpResponse,
