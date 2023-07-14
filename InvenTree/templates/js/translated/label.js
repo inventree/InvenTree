@@ -59,7 +59,6 @@ function selectLabel(labels, items, options={}) {
             </label>
             <div class='controls'>
                 <select id='id_plugin' class='select form-control' name='plugin'>
-                    <option value='' title='{% trans "Export to PDF" %}'>{% trans "Export to PDF" %}</option>
         `;
 
         plugins.forEach(function(plugin) {
