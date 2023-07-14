@@ -76,8 +76,8 @@ class LabelPrintingMixin:
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
 
-        kwargs:
-            Reserved for future use, not currently implemented (2023-07-14)
+        Returns:
+            A JSONResponse object which indicates outcome to the user
 
         The default implementation simply calls print_label() for each label, producing multiple single label output "jobs"
         but this can be overridden by the particular plugin.
@@ -113,7 +113,6 @@ class LabelPrintingMixin:
                 self.offload_label(**print_args)
 
         return JsonResponse({
-            'plugin': self.plugin_slug(),
             'success': True,
             'message': f'{len(items)} labels printed',
         })
