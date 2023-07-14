@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-13 00:31+0000\n"
-"PO-Revision-Date: 2023-07-13 03:35\n"
+"POT-Creation-Date: 2023-07-13 22:59+0000\n"
+"PO-Revision-Date: 2023-07-14 04:12\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -867,11 +867,11 @@ msgstr "Passordfeltene må samsvare"
 msgid "Wrong password provided"
 msgstr "Feil passord angitt"
 
-#: InvenTree/views.py:652 templates/navbar.html:157
+#: InvenTree/views.py:656 templates/navbar.html:157
 msgid "System Information"
 msgstr "Systeminformasjon"
 
-#: InvenTree/views.py:659 templates/navbar.html:168
+#: InvenTree/views.py:663 templates/navbar.html:168
 msgid "About InvenTree"
 msgstr "Om InvenTree"
 
@@ -8880,7 +8880,7 @@ msgstr "Rapportinstillinger"
 msgid "Return Order Settings"
 msgstr "Innstillinger for Returordre"
 
-#: templates/InvenTree/settings/setting.html:33
+#: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
 msgstr "Ingen verdi satt"
 
