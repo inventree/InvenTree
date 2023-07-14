@@ -68,16 +68,16 @@ class LabelPrintingMixin:
         png = pdf2image.convert_from_bytes(pdf, dpi)[0]
         return png
 
-    def print_labels(self, labels: list[LabelTemplate], request, **kwargs):
+    def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
         """Print one or more labels.
 
         Arguments:
-            labels: A list of LabelTemplate objects to print
+            label: The LabelTemplate object to use for printing
+            items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
 
         kwargs:
-            user: The user who triggered this print job
-            copies: The number of copies to print
+            Reserved for future use, not currently implemented (2023-07-14)
 
         The default implementation simply calls print_label() for each label, producing multiple single label output "jobs"
         but this can be overridden by the particular plugin.
@@ -88,14 +88,17 @@ class LabelPrintingMixin:
         except AttributeError:
             user = None
 
-        for label in labels:
-
+        # Generate a label output for each provided item
+        for item in items:
+            label.object_to_print = item
+            filename = label.generate_filename(request)
             pdf_file = self.render_to_pdf(label, request, **kwargs)
 
             print_args = {
                 'pdf_data': pdf_file,
-                'filename': label.filename,
+                'filename': filename,
                 'label_instance': label,
+                'item_instance': item,
                 'user': user,
                 'width': label.width,
                 'height': label.height,
@@ -116,7 +119,7 @@ class LabelPrintingMixin:
         return JsonResponse({
             'plugin': self.plugin_slug(),
             'success': True,
-            'message': f'{len(labels)} labels printed',
+            'message': f'{len(items)} labels printed',
         })
 
     def print_label(self, **kwargs):
@@ -126,6 +129,7 @@ class LabelPrintingMixin:
             pdf_data: Raw PDF data of the rendered label
             filename: The filename of this PDF label
             label_instance: The instance of the label model which triggered the print_label() method
+            item_instance: The instance of the database model against which the label is printed
             user: The user who triggered this print job
             width: The expected width of the label (in mm)
             height: The expected height of the label (in mm)

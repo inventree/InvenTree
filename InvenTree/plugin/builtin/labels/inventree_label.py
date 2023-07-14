@@ -19,6 +19,8 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     VERSION = "1.0.0"
     AUTHOR = _("InvenTree contributors")
 
+    BLOCKING_PRINT = True
+
     SETTINGS = {
         'DEBUG': {
             'name': _('Debug mode'),
@@ -65,7 +67,10 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             )
 
     def print_label(self, label: LabelTemplate, request, **kwargs):
-        """Handle printing of a single label"""
+        """Handle printing of a single label.
+
+        Returns either a PDF or HTML output, depending on the DEBUG setting.
+        """
 
         debug = kwargs.get('debug', self.get_setting('DEBUG'))
 
