@@ -13,4 +13,4 @@ def cleanup_old_label_outputs():
     """Remove old label outputs from the database"""
 
     # Remove any label outputs which are older than 30 days
-    LabelOutput.objects.filter(created__lte=timezone.now() - timedelta(days=30)).delete()
+    LabelOutput.objects.filter(created__lte=timezone.now() - timedelta(days=5)).delete()
