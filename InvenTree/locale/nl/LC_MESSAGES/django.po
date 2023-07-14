@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-13 00:31+0000\n"
-"PO-Revision-Date: 2023-07-13 03:35\n"
+"POT-Creation-Date: 2023-07-13 22:59+0000\n"
+"PO-Revision-Date: 2023-07-14 04:11\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -867,11 +867,11 @@ msgstr "Wachtwoordvelden komen niet overeen"
 msgid "Wrong password provided"
 msgstr "Onjuist wachtwoord opgegeven"
 
-#: InvenTree/views.py:652 templates/navbar.html:157
+#: InvenTree/views.py:656 templates/navbar.html:157
 msgid "System Information"
 msgstr "Systeeminformatie"
 
-#: InvenTree/views.py:659 templates/navbar.html:168
+#: InvenTree/views.py:663 templates/navbar.html:168
 msgid "About InvenTree"
 msgstr "Over InvenTree"
 
@@ -8880,7 +8880,7 @@ msgstr ""
 msgid "Return Order Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:33
+#: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
 msgstr ""
 
