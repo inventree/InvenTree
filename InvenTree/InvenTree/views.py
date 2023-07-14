@@ -531,14 +531,6 @@ class SettingsView(TemplateView):
         except Exception:
             ctx["rates_updated"] = None
 
-        # load locale stats
-        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
-
-        try:
-            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
-        except Exception:
-            ctx["locale_stats"] = {}
-
         # Forms and context for allauth
         ctx['add_email_form'] = AddEmailForm
         ctx["can_add_email"] = EmailAddress.objects.can_add_email(self.request.user)
