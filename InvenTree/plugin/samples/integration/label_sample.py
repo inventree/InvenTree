@@ -26,10 +26,12 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
         print(f"Printing Label: {kwargs['filename']} (User: {kwargs['user']})")
         print(f"Width: {kwargs['width']} x Height: {kwargs['height']}")
 
+        print("kwargs:", kwargs)
+
         pdf_data = kwargs['pdf_data']
         png_file = self.render_to_png(label=None, pdf_data=pdf_data)
 
-        filename = kwargs['filename']
+        filename = 'label.pdf'
 
         # Dump the PDF to a local file
         with open(filename, 'wb') as pdf_out:

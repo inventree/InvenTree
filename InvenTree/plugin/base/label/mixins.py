@@ -54,10 +54,10 @@ class LabelPrintingMixin:
         """Render this label to PNG format"""
 
         # Check if pdf data is provided
-        pdf = kwargs.get('pdf_data', None)
+        pdf_data = kwargs.get('pdf_data', None)
 
-        if not pdf:
-            pdf = self.render_to_pdf(label, request, **kwargs)
+        if not pdf_data:
+            pdf_data = self.render_to_pdf(label, request, **kwargs).get_document().write_pdf()
 
         dpi = kwargs.get(
             'dpi',
@@ -65,7 +65,7 @@ class LabelPrintingMixin:
         )
 
         # Convert to png data
-        png = pdf2image.convert_from_bytes(pdf, dpi)[0]
+        png = pdf2image.convert_from_bytes(pdf_data, dpi=dpi)[0]
         return png
 
     def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
@@ -95,7 +95,8 @@ class LabelPrintingMixin:
             pdf_file = self.render_to_pdf(label, request, **kwargs)
 
             print_args = {
-                'pdf_data': pdf_file,
+                'pdf_file': pdf_file,
+                'pdf_data': pdf_file.get_document().write_pdf(),
                 'filename': filename,
                 'label_instance': label,
                 'item_instance': item,
@@ -111,11 +112,6 @@ class LabelPrintingMixin:
                 # Non-blocking print job
                 self.offload_label(**print_args)
 
-            # Call the print_label() method for each label
-            # Note that this is a blocking process, and will not return until the label is printed
-            # An alternative is to call the offload_label() method, which will offload the print job to a background worker
-            self.print_label(label, request, **kwargs)
-
         return JsonResponse({
             'plugin': self.plugin_slug(),
             'success': True,
@@ -126,6 +122,7 @@ class LabelPrintingMixin:
         """Print a single label (blocking)
 
         kwargs:
+            pdf_file: The PDF file object of the rendered label (WeasyTemplateResponse object)
             pdf_data: Raw PDF data of the rendered label
             filename: The filename of this PDF label
             label_instance: The instance of the label model which triggered the print_label() method
@@ -133,6 +130,8 @@ class LabelPrintingMixin:
             user: The user who triggered this print job
             width: The expected width of the label (in mm)
             height: The expected height of the label (in mm)
+
+        Note that the supplied kwargs may be different if the plugin overrides the print_labels() method.
         """
         # Unimplemented (to be implemented by the particular plugin class)
         raise MixinNotImplementedError('This Plugin must implement a `print_label` method')
