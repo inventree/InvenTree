@@ -96,10 +96,13 @@ class LabelPrintingMixin:
             label.object_to_print = item
             filename = label.generate_filename(request)
             pdf_file = self.render_to_pdf(label, request, **kwargs)
+            pdf_data = pdf_file.get_document().write_pdf()
+            png_file = self.render_to_png(label, request, pdf_data=pdf_data, **kwargs)
 
             print_args = {
                 'pdf_file': pdf_file,
-                'pdf_data': pdf_file.get_document().write_pdf(),
+                'pdf_data': pdf_data,
+                'png_file': png_file,
                 'filename': filename,
                 'label_instance': label,
                 'item_instance': item,
