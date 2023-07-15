@@ -761,3 +761,130 @@ def frontend_build(c):
     """
     print("Building frontend")
     yarn(c, "yarn run build --emptyOutDir")
+
+
+@task(help={
+    'ref': "git ref, default: current git ref",
+    'tag': "git tag to look for release",
+    'file': "destination to frontend-build.zip file",
+    'repo': "GitHub repository, default: InvenTree/inventree",
+    'extract': "Also extract and place at the correct destination, default: True",
+    'clean': "Delete old files from InvenTree/web/static/web first, default: True",
+})
+def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventree", extract=True, clean=True):
+    """Download a pre-build frontend from GitHub if you dont want to install nodejs on your machine.
+
+    There are 3 possibilities to install the frontend:
+    1. invoke frontend-download --ref 01f2aa5f746a36706e9a5e588c4242b7bf1996d5
+       if ref is omitted, it tries to auto detect the current git ref via `git rev-parse HEAD`.
+       Note: GitHub doesn't allow workflow artifacts to be downloaded from anonymous users, so
+             this will output a link where you can download the frontend with a signed in browser
+             and then continue with option 3
+    2. invoke frontend-download --tag 0.13.0
+       Downloads the frontend build from the releases.
+    3. invoke frontend-download --file /home/vscode/Downloads/frontend-build.zip
+       This will extract your zip file and place the contents at the correct destination
+    """
+
+    import functools
+    import subprocess
+    from tempfile import NamedTemporaryFile
+    from zipfile import ZipFile
+
+    import requests
+
+    # globals
+    default_headers = {"Accept": "application/vnd.github.v3+json"}
+
+    # helper functions
+    def find_resource(resource, key, value):
+        for obj in resource:
+            if obj[key] == value:
+                return obj
+        return None
+
+    def handle_extract(file):
+        # if no extract is requested, exit here
+        if not extract:
+            return
+
+        dest_path = Path(__file__).parent / "InvenTree/web/static/web"
+
+        # if clean, delete static/web directory
+        if clean:
+            shutil.rmtree(dest_path, ignore_errors=True)
+            os.makedirs(dest_path)
+            print(f"Cleaned directory: {dest_path}")
+
+        # unzip build to static folder
+        with ZipFile(file, "r") as zip_ref:
+            zip_ref.extractall(dest_path)
+
+        print(f"Unzipped downloaded frontend build to: {dest_path}")
+
+    def handle_download(url):
+        # download frontend-build.zip to temporary file
+        with requests.get(url, headers=default_headers, stream=True, allow_redirects=True) as response, NamedTemporaryFile(suffix=".zip") as dst:
+            response.raise_for_status()
+
+            # auto decode the gzipped raw data
+            response.raw.read = functools.partial(response.raw.read, decode_content=True)
+            with open(dst.name, "wb") as f:
+                shutil.copyfileobj(response.raw, f)
+            print(f"Downloaded frontend build to temporary file: {dst.name}")
+
+            handle_extract(dst.name)
+
+    # if zip file is specified, try to extract it directly
+    if file:
+        handle_extract(file)
+        return
+
+    # check arguments
+    if ref is not None and tag is not None:
+        print("[ERROR] Do not set ref and tag.")
+        return
+
+    if ref is None and tag is None:
+        try:
+            ref = subprocess.check_output(["git", "rev-parse", "HEAD"], encoding="utf-8").strip()
+        except Exception:
+            print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
+            return
+
+    if ref is None and tag is None:
+        print("[ERROR] Either ref or tag needs to be set.")
+
+    if tag:
+        tag = tag.lstrip("v")
+        try:
+            handle_download(f"https://github.com/{repo}/releases/download/{tag}/frontend-build.zip")
+        except Exception as e:
+            if not isinstance(e, requests.HTTPError):
+                raise e
+            print(f"[ERROR] An Error occurred. Unable to download frontend build, release or build does not exist,\n"
+                  f"try downloading the frontend-build.zip yourself via: https://github.com/{repo}/releases\n"
+                  f"Then try continuing by running: invoke frontend-download --file <path-to-downloaded-zip-file>")
+
+        return
+
+    if ref:
+        # get workflow run from all workflow runs on that particular ref
+        workflow_runs = requests.get(f"https://api.github.com/repos/{repo}/actions/runs?head_sha={ref}", headers=default_headers).json()
+
+        if not (qc_run := find_resource(workflow_runs["workflow_runs"], "name", "QC")):
+            print("[ERROR] Cannot find any workflow runs for current sha")
+            return
+        print(f"Found workflow {qc_run['name']} (run {qc_run['run_number']}-{qc_run['run_attempt']})")
+
+        # get frontend-build artifact from all artifacts available for this workflow run
+        artifacts = requests.get(qc_run["artifacts_url"], headers=default_headers).json()
+        if not (frontend_artifact := find_resource(artifacts["artifacts"], "name", "frontend-build")):
+            print("[ERROR] Cannot find frontend-build.zip attachment for current sha")
+            return
+        print(f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes']/1e6:.2f}MB).")
+
+        print(f"\nGitHub doesn't allow artifact downloads from anonymous users. Either download the following file\n"
+              f"via your signed in browser, or consider using a point release download via invoke frontend-download --tag <git-tag>\n"
+              f"\n    Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and\n"
+              f"    continue by running: invoke frontend-download --extract <path-to-downloaded-zip-file>")
