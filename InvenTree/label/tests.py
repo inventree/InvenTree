@@ -1,11 +1,13 @@
 """Tests for labels"""
 
 import io
+import json
 
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.http import JsonResponse
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
@@ -77,7 +79,16 @@ class LabelTest(InvenTreeAPITestCase):
 
         for label in labels:
             url = reverse('api-part-label-print', kwargs={'pk': label.pk})
-            self.get(f'{url}?parts={part.pk}', expected_code=200)
+
+            # Check that label printing returns the correct response type
+            response = self.get(f'{url}?parts={part.pk}', expected_code=200)
+            self.assertIsInstance(response, JsonResponse)
+            data = json.loads(response.content)
+
+            self.assertIn('message', data)
+            self.assertIn('file', data)
+            label_file = data['file']
+            self.assertIn('/media/label/output/', label_file)
 
     def test_print_part_label(self):
         """Actually 'print' a label, and ensure that the correct information is contained."""
