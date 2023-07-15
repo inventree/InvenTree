@@ -23,7 +23,8 @@ class LabelPrintingMixin:
 
     # If True, the print_label() method will block until the label is printed
     # If False, the offload_label() method will be called instead
-    BLOCKING_PRINT = True
+    # By default, this is False, which means that labels will be printed in the background
+    BLOCKING_PRINT = False
 
     class MixinMeta:
         """Meta options for this mixin."""
