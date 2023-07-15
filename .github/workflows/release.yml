@@ -41,7 +41,7 @@ jobs:
       - name: Zip frontend
         run: |
           cd InvenTree/web/static/web
-          zip -r frontend-build.zip *
+          zip -r ../frontend-build.zip *
       - uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
