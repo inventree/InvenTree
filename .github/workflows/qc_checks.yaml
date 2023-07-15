@@ -391,7 +391,7 @@ jobs:
         chmod +rw /home/runner/work/InvenTree/db.sqlite3
         invoke migrate
 
-  plattform_ui:
+  platform_ui:
     name: Tests - UI Platform
     runs-on: ubuntu-20.04
     timeout-minutes: 60
@@ -425,3 +425,30 @@ jobs:
           name: playwright-report
           path: src/frontend/playwright-report/
           retention-days: 30
+
+  platform_ui_build:
+    name: Build - UI Platform
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+      - name: Install dependencies
+        run: cd src/frontend && yarn install
+      - name: Build frontend
+        run: cd src/frontend && npm run build
+      - name: Zip frontend
+        id: zip-frontend
+        run: |
+          filename="frontend-build-$(date +%s).zip"
+          echo "filename=$filename"
+          cd InvenTree/web/static
+          zip -r $filename web/
+      - uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: InvenTree/web/static/${{ steps.zip-frontend.outputs.filename }}
