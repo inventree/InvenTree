@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-14 22:41+0000\n"
-"PO-Revision-Date: 2023-07-14 04:12\n"
+"PO-Revision-Date: 2023-07-15 04:33\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -12742,8 +12742,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12878,3 +12877,4 @@ msgstr ""
 #: users/models.py:254
 msgid "Permission to delete items"
 msgstr ""
+
