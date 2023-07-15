@@ -5,7 +5,6 @@ from django.core.exceptions import FieldError, ValidationError
 from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -20,6 +19,7 @@ from InvenTree.api import MetadataView
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from part.models import Part
+from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
@@ -168,7 +168,8 @@ class LabelPrintMixin(LabelFilterMixin):
 
         # No plugin provided!
         if plugin_key is None:
-            raise ValidationError(_('No label printing plugin provided'))
+            # Default to the builtin label printing plugin
+            plugin_key = InvenTreeLabelPlugin.NAME.lower()
 
         plugin = registry.get_plugin(plugin_key)
 
