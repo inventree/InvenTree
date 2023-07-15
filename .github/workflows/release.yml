@@ -40,9 +40,8 @@ jobs:
         run: cd src/frontend && npm run build
       - name: Zip frontend
         run: |
-          cd InvenTree/web/static
-          mv web frontend-build
-          zip -r frontend-build.zip frontend-build/*
+          cd InvenTree/web/static/web
+          zip -r frontend-build.zip *
       - uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
