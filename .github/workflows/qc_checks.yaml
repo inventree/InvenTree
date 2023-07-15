@@ -447,4 +447,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: frontend-build
-          path: InvenTree/web/static/frontend-build.zip
+          path: InvenTree/web/static/web
