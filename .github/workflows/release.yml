@@ -46,6 +46,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: InvenTree/web/static/frontend-build.zip
-          asset_name: frontend-build
+          asset_name: frontend-build.zip
           tag: ${{ github.ref }}
           overwrite: true
