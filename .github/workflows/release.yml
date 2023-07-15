@@ -41,7 +41,7 @@ jobs:
         id: zip-frontend
         run: |
           filename="frontend-build-$(date +%s).zip"
-          echo "filename=$filename"
+          echo "filename=$filename" >> $GITHUB_OUTPUT
           cd InvenTree/web/static
           zip -r $filename web/
       - uses: svenstaro/upload-release-action@v2
