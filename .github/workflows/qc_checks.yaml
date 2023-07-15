@@ -442,13 +442,10 @@ jobs:
       - name: Build frontend
         run: cd src/frontend && npm run build
       - name: Zip frontend
-        id: zip-frontend
         run: |
-          filename="frontend-build-$(date +%s).zip"
-          echo "filename=$filename" >> $GITHUB_OUTPUT
           cd InvenTree/web/static
-          zip -r $filename web/
+          zip -r frontend-build.zip web/
       - uses: actions/upload-artifact@v3
         with:
           name: frontend-build
-          path: InvenTree/web/static/${{ steps.zip-frontend.outputs.filename }}
+          path: InvenTree/web/static/frontend-build.zip

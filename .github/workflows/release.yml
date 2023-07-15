@@ -38,16 +38,13 @@ jobs:
       - name: Build frontend
         run: cd src/frontend && npm run build
       - name: Zip frontend
-        id: zip-frontend
         run: |
-          filename="frontend-build-$(date +%s).zip"
-          echo "filename=$filename" >> $GITHUB_OUTPUT
           cd InvenTree/web/static
-          zip -r $filename web/
+          zip -r frontend-build.zip web/
       - uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: InvenTree/web/static/${{ steps.zip-frontend.outputs.filename }}
+          file: InvenTree/web/static/frontend-build.zip
           asset_name: frontend-build
           tag: ${{ github.ref }}
           overwrite: true
