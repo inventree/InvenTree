@@ -757,14 +757,14 @@ LANGUAGES = [
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
     ('pt', _('Portuguese')),
-    ('pt-BR', _('Portuguese (Brazilian)')),
+    ('pt-br', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
     ('sl', _('Slovenian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh-hans', _('Chinese')),
+    ('zh-hans', _('Chinese (Simplified)')),
 ]
 
 # Testing interface translations
