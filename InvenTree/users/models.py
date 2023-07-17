@@ -196,6 +196,7 @@ class RuleSet(models.Model):
         'common_projectcode',
         'common_webhookendpoint',
         'common_webhookmessage',
+        'label_labeloutput',
         'users_owner',
 
         # Third-party tables
