@@ -59,7 +59,6 @@ function selectLabel(labels, items, options={}) {
             </label>
             <div class='controls'>
                 <select id='id_plugin' class='select form-control' name='plugin'>
-                    <option value='' title='{% trans "Export to PDF" %}'>{% trans "Export to PDF" %}</option>
         `;
 
         plugins.forEach(function(plugin) {
@@ -207,19 +206,20 @@ function printLabels(options) {
                         href += `${options.key}=${item}&`;
                     });
 
-                    if (data.plugin) {
-                        href += `plugin=${data.plugin}`;
+                    href += `plugin=${data.plugin}`;
 
-                        inventreeGet(href, {}, {
-                            success: function(response) {
+                    inventreeGet(href, {}, {
+                        success: function(response) {
+                            if (response.file) {
+                                // Download the generated file
+                                window.open(response.file);
+                            } else {
                                 showMessage('{% trans "Labels sent to printer" %}', {
                                     style: 'success',
                                 });
                             }
-                        });
-                    } else {
-                        window.open(href);
-                    }
+                        }
+                    });
                 },
                 plural_name: options.plural_name,
                 singular_name: options.singular_name,
