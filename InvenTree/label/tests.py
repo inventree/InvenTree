@@ -153,8 +153,8 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIn("part: 1 - M2x4 LPHS", content)
         self.assertIn(f'data: {{"part": {part_pk}}}', content)
         self.assertIn("http://testserver/part/1/", content)
-        self.assertIn("/static/img/blank_image.png", content)
-        self.assertIn("/static/img/inventree.png", content)
+        self.assertIn("img/blank_image.png", content)
+        self.assertIn("img/inventree.png", content)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
