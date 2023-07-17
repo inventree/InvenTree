@@ -192,7 +192,7 @@ class BaseInvenTreeSetting(models.Model):
             kwargs: Keyword arguments to pass to the function
         """
         # Get action
-        setting = self.get_setting_definition(self.key, *args, **self.get_filters_for_instance(), **kwargs)
+        setting = self.get_setting_definition(self.key, *args, **{**self.get_filters_for_instance(), **kwargs})
         settings_fnc = setting.get(reference, None)
 
         # Execute if callable
