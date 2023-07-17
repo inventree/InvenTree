@@ -770,6 +770,7 @@ LANGUAGES = [
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
     ('zh-hans', _('Chinese (Simplified)')),
+    ('zh-hant', _('Chinese (Traditional)')),
 ]
 
 # Testing interface translations
