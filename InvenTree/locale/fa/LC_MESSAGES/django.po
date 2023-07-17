@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-14 22:41+0000\n"
-"PO-Revision-Date: 2023-07-15 04:33\n"
+"POT-Creation-Date: 2023-07-16 09:36+0000\n"
+"PO-Revision-Date: 2023-07-17 05:12\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -620,7 +620,7 @@ msgid "Vietnamese"
 msgstr ""
 
 #: InvenTree/settings.py:772
-msgid "Chinese"
+msgid "Chinese (Simplified)"
 msgstr ""
 
 #: InvenTree/status.py:68 part/serializers.py:963
