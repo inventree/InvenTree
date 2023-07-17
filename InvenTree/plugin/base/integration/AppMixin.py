@@ -36,6 +36,7 @@ class AppMixin:
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP'):
             logger.info('Registering IntegrationPlugin apps')
+            apps_changed = False
 
             # add them to the INSTALLED_APPS
             for _key, plugin in plugins:
@@ -44,19 +45,24 @@ class AppMixin:
                     if plugin_path not in settings.INSTALLED_APPS:
                         settings.INSTALLED_APPS += [plugin_path]
                         registry.installed_apps += [plugin_path]
+                        apps_changed = True
 
-            # first startup or force loading of base apps -> registry is prob false
-            if registry.apps_loading or force_reload:
-                registry.apps_loading = False
-                registry._reload_apps(force_reload=True, full_reload=full_reload)
-            else:
-                registry._reload_apps(full_reload=full_reload)
+            # Ignore reloading if we are in testing mode and apps are unchanged
+            # registry.reload_plugins(...) first unloads and then loads the plugins
+            # always reload if we are not in testing mode so we can expect the second reload
+            if not settings.TESTING or apps_changed or force_reload:
+                # first startup or force loading of base apps -> registry is prob false
+                if registry.apps_loading or force_reload:
+                    registry.apps_loading = False
+                    registry._reload_apps(force_reload=True, full_reload=full_reload)
+                else:
+                    registry._reload_apps(full_reload=full_reload)
 
-            # rediscover models/ admin sites
-            cls._reregister_contrib_apps(cls, registry)
+                # rediscover models/ admin sites
+                cls._reregister_contrib_apps(cls, registry)
 
-            # update urls - must be last as models must be registered for creating admin routes
-            registry._update_urls()
+                # update urls - must be last as models must be registered for creating admin routes
+                registry._update_urls()
 
     @classmethod
     def _deactivate_mixin(cls, registry, force_reload: bool = False):
