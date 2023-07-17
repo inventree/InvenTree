@@ -1794,7 +1794,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
 def label_printer_options():
     """Build a list of available label printer options."""
-    printers = [('', _('No Printer (Export to PDF)'))]
+    printers = []
     label_printer_plugins = registry.with_mixin('labels')
     if label_printer_plugins:
         printers.extend([(p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins])
