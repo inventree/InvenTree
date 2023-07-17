@@ -226,15 +226,29 @@ remote_login_header: HTTP_REMOTE_USER
 # Add LDAP support
 # ldap:
 #   enabled: false
-#   server_uri: ldap://example.org
+#   debug: false  # enable debug mode to troubleshoot ldap configuration
+#   server_uri: ldaps://example.org
 #   bind_dn: cn=admin,dc=example,dc=org
 #   bind_password: admin_password
 #   search_base_dn: cn=Users,dc=example,dc=org
 
+#   # enable TLS encryption over the standard LDAP port,
+#   # see: https://django-auth-ldap.readthedocs.io/en/latest/reference.html#auth-ldap-start-tls
+#   # start_tls: false
+
+#   # uncomment if you want to use direct bind, bind_dn and bin_password is not necessary then
+#   # user_dn_template: "uid=%(user)s,dc=example,dc=org"
+
+#   # uncomment to set advanced global options, see https://www.python-ldap.org/en/latest/reference/ldap.html#ldap-options
+#   # for all available options (keys and values starting with OPT_ get automatically converted to python-ldap keys)
+#   # global_options:
+#   #   OPT_X_TLS_REQUIRE_CERT: OPT_X_TLS_NEVER
+#   #   OPT_X_TLS_CACERTFILE: /opt/inventree/ldapca.pem
+
 #   # uncomment for advanced filter search, default: uid=%(user)s
 #   # search_filter_str:
 
-#   # uncomment for advanced user attribute mapping
+#   # uncomment for advanced user attribute mapping (in the format <InvenTree attribute>: <LDAP attribute>)
 #   # user_attr_map:
 #   #   first_name: givenName
 #   #   last_name: sn

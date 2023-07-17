@@ -280,14 +280,46 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
 ])
 
 # LDAP support
-LDAP_AUTH = get_setting("INVENTREE_LDAP_ENABLED", "ldap.enabled", False)
+LDAP_AUTH = get_boolean_setting("INVENTREE_LDAP_ENABLED", "ldap.enabled", False)
 if LDAP_AUTH:
     import ldap
     from django_auth_ldap.config import LDAPSearch
 
     AUTHENTICATION_BACKENDS.append("django_auth_ldap.backend.LDAPBackend")
 
+    # debug mode to troubleshoot configuration
+    LDAP_DEBUG = get_boolean_setting("INVENTREE_LDAP_DEBUG", "ldap.debug", False)
+    if LDAP_DEBUG:
+        if "loggers" not in LOGGING:
+            LOGGING["loggers"] = {}
+        LOGGING["loggers"]["django_auth_ldap"] = {"level": "DEBUG", "handlers": ["console"]}
+
+    # get global options from dict and use ldap.OPT_* as keys and values
+    global_options_dict = get_setting("INVENTREE_LDAP_GLOBAL_OPTIONS", "ldap.global_options", {}, dict)
+    global_options = {}
+    for k, v in global_options_dict.items():
+        # keys are always ldap.OPT_* constants
+        k_attr = getattr(ldap, k, None)
+        if not k.startswith("OPT_") or k_attr is None:
+            print(f"[LDAP] ldap.global_options, key '{k}' not found, skipping...")
+            continue
+
+        # values can also be other strings, e.g. paths
+        v_attr = v
+        if v.startswith("OPT_"):
+            v_attr = getattr(ldap, v, None)
+
+        if v_attr is None:
+            print(f"[LDAP] ldap.global_options, value key '{v}' not found, skipping...")
+            continue
+
+        global_options[k_attr] = v_attr
+    AUTH_LDAP_GLOBAL_OPTIONS = global_options
+    if LDAP_DEBUG:
+        print("[LDAP] ldap.global_options =", global_options)
+
     AUTH_LDAP_SERVER_URI = get_setting("INVENTREE_LDAP_SERVER_URI", "ldap.server_uri")
+    AUTH_LDAP_START_TLS = get_boolean_setting("INVENTREE_LDAP_START_TLS", "ldap.start_tls", False)
     AUTH_LDAP_BIND_DN = get_setting("INVENTREE_LDAP_BIND_DN", "ldap.bind_dn")
     AUTH_LDAP_BIND_PASSWORD = get_setting("INVENTREE_LDAP_BIND_PASSWORD", "ldap.bind_password")
     AUTH_LDAP_USER_SEARCH = LDAPSearch(
@@ -295,12 +327,13 @@ if LDAP_AUTH:
         ldap.SCOPE_SUBTREE,
         str(get_setting("INVENTREE_LDAP_SEARCH_FILTER_STR", "ldap.search_filter_str", "(uid= %(user)s)"))
     )
+    AUTH_LDAP_USER_DN_TEMPLATE = get_setting("INVENTREE_LDAP_USER_DN_TEMPLATE", "ldap.user_dn_template")
     AUTH_LDAP_USER_ATTR_MAP = get_setting("INVENTREE_LDAP_USER_ATTR_MAP", "ldap.user_attr_map", {
         'first_name': 'givenName',
         'last_name': 'sn',
         'email': 'mail',
     }, dict)
-    AUTH_LDAP_ALWAYS_UPDATE_USER = get_setting("INVENTREE_LDAP_ALWAYS_UPDATE_USER", "ldap.always_update_user", True)
+    AUTH_LDAP_ALWAYS_UPDATE_USER = get_boolean_setting("INVENTREE_LDAP_ALWAYS_UPDATE_USER", "ldap.always_update_user", True)
     AUTH_LDAP_CACHE_TIMEOUT = get_setting("INVENTREE_LDAP_CACHE_TIMEOUT", "ldap.cache_timeout", 3600, int)
 
 DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
