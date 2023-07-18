@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-16 09:36+0000\n"
-"PO-Revision-Date: 2023-07-17 05:12\n"
+"POT-Creation-Date: 2023-07-17 11:41+0000\n"
+"PO-Revision-Date: 2023-07-18 05:16\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -342,7 +342,7 @@ msgid "Invalid choice"
 msgstr "Ogiltigt val"
 
 #: InvenTree/models.py:648 InvenTree/models.py:649 common/models.py:2408
-#: company/models.py:539 label/models.py:111 part/models.py:851
+#: company/models.py:539 label/models.py:119 part/models.py:851
 #: part/models.py:3441 plugin/models.py:42 report/models.py:164
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -363,7 +363,7 @@ msgstr "Namn"
 #: company/models.py:461 company/models.py:739
 #: company/templates/company/company_base.html:72
 #: company/templates/company/manufacturer_part.html:75
-#: company/templates/company/supplier_part.html:108 label/models.py:118
+#: company/templates/company/supplier_part.html:108 label/models.py:126
 #: order/models.py:232 order/models.py:1130 part/admin.py:194 part/admin.py:276
 #: part/models.py:873 part/models.py:3457 part/templates/part/category.html:81
 #: part/templates/part/part_base.html:172
@@ -621,6 +621,10 @@ msgstr "Vietnamesiska"
 
 #: InvenTree/settings.py:772
 msgid "Chinese (Simplified)"
+msgstr ""
+
+#: InvenTree/settings.py:773
+msgid "Chinese (Traditional)"
 msgstr ""
 
 #: InvenTree/status.py:68 part/serializers.py:963
@@ -2891,10 +2895,6 @@ msgstr ""
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
-#: common/models.py:1797
-msgid "No Printer (Export to PDF)"
-msgstr ""
-
 #: common/models.py:1819
 msgid "Hide inactive parts"
 msgstr ""
@@ -4343,61 +4343,61 @@ msgstr ""
 msgid "New Company"
 msgstr ""
 
-#: label/models.py:112
+#: label/models.py:120
 msgid "Label name"
 msgstr ""
 
-#: label/models.py:119
+#: label/models.py:127
 msgid "Label description"
 msgstr ""
 
-#: label/models.py:126
+#: label/models.py:134
 msgid "Label"
 msgstr ""
 
-#: label/models.py:127
+#: label/models.py:135
 msgid "Label template file"
 msgstr ""
 
-#: label/models.py:133 report/models.py:277
+#: label/models.py:141 report/models.py:277
 msgid "Enabled"
 msgstr ""
 
-#: label/models.py:134
+#: label/models.py:142
 msgid "Label template is enabled"
 msgstr ""
 
-#: label/models.py:139
+#: label/models.py:147
 msgid "Width [mm]"
 msgstr ""
 
-#: label/models.py:140
+#: label/models.py:148
 msgid "Label width, specified in mm"
 msgstr ""
 
-#: label/models.py:146
+#: label/models.py:154
 msgid "Height [mm]"
 msgstr ""
 
-#: label/models.py:147
+#: label/models.py:155
 msgid "Label height, specified in mm"
 msgstr ""
 
-#: label/models.py:153 report/models.py:270
+#: label/models.py:161 report/models.py:270
 msgid "Filename Pattern"
 msgstr ""
 
-#: label/models.py:154
+#: label/models.py:162
 msgid "Pattern for generating label filenames"
 msgstr ""
 
-#: label/models.py:250 label/models.py:291 label/models.py:319
-#: label/models.py:355
+#: label/models.py:288 label/models.py:329 label/models.py:357
+#: label/models.py:393
 msgid "Query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
-#: label/models.py:251 label/models.py:292 label/models.py:320
-#: label/models.py:356 report/models.py:298 report/models.py:445
+#: label/models.py:289 label/models.py:330 label/models.py:358
+#: label/models.py:394 report/models.py:298 report/models.py:445
 #: report/models.py:483 report/models.py:521 report/models.py:645
 msgid "Filters"
 msgstr ""
@@ -7207,7 +7207,7 @@ msgstr ""
 msgid "No match found for provided value"
 msgstr ""
 
-#: plugin/base/label/label.py:60
+#: plugin/base/label/label.py:40
 msgid "Label printing failed"
 msgstr ""
 
@@ -7221,6 +7221,7 @@ msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:28
 #: plugin/builtin/integration/core_notifications.py:34
+#: plugin/builtin/labels/inventree_label.py:23
 msgid "InvenTree contributors"
 msgstr ""
 
@@ -7260,6 +7261,22 @@ msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:163
 msgid "Open link"
+msgstr ""
+
+#: plugin/builtin/labels/inventree_label.py:20
+msgid "InvenTree PDF label printer"
+msgstr ""
+
+#: plugin/builtin/labels/inventree_label.py:21
+msgid "Provides native support for printing PDF labels"
+msgstr ""
+
+#: plugin/builtin/labels/inventree_label.py:29
+msgid "Debug mode"
+msgstr ""
+
+#: plugin/builtin/labels/inventree_label.py:30
+msgid "Enable debug mode - returns raw HTML instead of PDF"
 msgstr ""
 
 #: plugin/models.py:28
@@ -10659,7 +10676,7 @@ msgstr ""
 
 #: templates/js/translated/forms.js:506 templates/js/translated/helpers.js:105
 #: templates/js/translated/part.js:369 templates/js/translated/pricing.js:629
-#: templates/js/translated/stock.js:215 users/models.py:254
+#: templates/js/translated/stock.js:215 users/models.py:255
 msgid "Delete"
 msgstr ""
 
@@ -10728,35 +10745,31 @@ msgstr ""
 msgid "Select Printer"
 msgstr ""
 
-#: templates/js/translated/label.js:62
-msgid "Export to PDF"
-msgstr ""
-
-#: templates/js/translated/label.js:114
+#: templates/js/translated/label.js:113
 msgid "selected"
 msgstr ""
 
-#: templates/js/translated/label.js:122 templates/js/translated/label.js:139
+#: templates/js/translated/label.js:121 templates/js/translated/label.js:138
 msgid "Select Label Template"
 msgstr ""
 
-#: templates/js/translated/label.js:178 templates/js/translated/report.js:123
+#: templates/js/translated/label.js:177 templates/js/translated/report.js:123
 msgid "Select Items"
 msgstr ""
 
-#: templates/js/translated/label.js:179
+#: templates/js/translated/label.js:178
 msgid "No items selected for printing"
 msgstr ""
 
-#: templates/js/translated/label.js:195
+#: templates/js/translated/label.js:194
 msgid "No Labels Found"
 msgstr ""
 
-#: templates/js/translated/label.js:196
+#: templates/js/translated/label.js:195
 msgid "No label templates found which match the selected items"
 msgstr ""
 
-#: templates/js/translated/label.js:215
+#: templates/js/translated/label.js:217
 msgid "Labels sent to printer"
 msgstr ""
 
@@ -12013,7 +12026,7 @@ msgstr ""
 msgid "Add Stock"
 msgstr ""
 
-#: templates/js/translated/stock.js:1004 users/models.py:250
+#: templates/js/translated/stock.js:1004 users/models.py:251
 msgid "Add"
 msgstr ""
 
@@ -12846,35 +12859,35 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/models.py:237
+#: users/models.py:238
 msgid "Permission set"
 msgstr ""
 
-#: users/models.py:245
+#: users/models.py:246
 msgid "Group"
 msgstr ""
 
-#: users/models.py:248
+#: users/models.py:249
 msgid "View"
 msgstr ""
 
-#: users/models.py:248
+#: users/models.py:249
 msgid "Permission to view items"
 msgstr ""
 
-#: users/models.py:250
+#: users/models.py:251
 msgid "Permission to add items"
 msgstr ""
 
-#: users/models.py:252
+#: users/models.py:253
 msgid "Change"
 msgstr ""
 
-#: users/models.py:252
+#: users/models.py:253
 msgid "Permissions to edit items"
 msgstr ""
 
-#: users/models.py:254
+#: users/models.py:255
 msgid "Permission to delete items"
 msgstr ""
 
