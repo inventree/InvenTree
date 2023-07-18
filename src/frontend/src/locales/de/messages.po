@@ -290,6 +290,7 @@ msgid "Demo"
 msgstr "Demo"
 
 #: src/defaults/links.tsx:22
+#: src/defaults/menuItems.tsx:9
 #: src/pages/Index/Home.tsx:12
 msgid "Home"
 msgstr "Startseite"
@@ -355,15 +356,27 @@ msgstr ""
 #~ msgstr ""
 
 #: src/defaults/menuItems.tsx:9
-msgid "Open source"
+#~ msgid "Open source"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:10
+msgid "Start page of your instance."
 msgstr ""
 
 #: src/defaults/menuItems.tsx:10
-msgid "This Pokémon’s cry is very loud and distracting"
-msgstr ""
+#~ msgid "This Pokémon’s cry is very loud and distracting"
+#~ msgstr ""
 
 #: src/defaults/menuItems.tsx:12
-msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
+#~ msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:15
+msgid "Profile page"
+msgstr ""
+
+#: src/defaults/menuItems.tsx:16
+msgid "User attributes and design settings."
 msgstr ""
 
 #: src/defaults/menuItems.tsx:21

@@ -5,15 +5,14 @@ import { MenuLinkItem } from '../components/items/MenuLinks';
 
 export const menuItems: MenuLinkItem[] = [
   {
-    id: 'open-source',
-    title: <Trans>Open source</Trans>,
-    description: <Trans>This Pokémon’s cry is very loud and distracting</Trans>,
-    detail: (
-      <Trans>
-        This Pokémon’s cry is very loud and distracting and more and more and
-        more
-      </Trans>
-    ),
-    link: 'https://www.google.com'
+    id: 'home',
+    title: <Trans>Home</Trans>,
+    description: <Trans>Start page of your instance.</Trans>,
+    highlight: true
+  },
+  {
+    id: 'profile',
+    title: <Trans>Profile page</Trans>,
+    description: <Trans>User attributes and design settings.</Trans>
   }
 ];

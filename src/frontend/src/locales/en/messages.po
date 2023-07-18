@@ -290,6 +290,7 @@ msgid "Demo"
 msgstr "Demo"
 
 #: src/defaults/links.tsx:22
+#: src/defaults/menuItems.tsx:9
 #: src/pages/Index/Home.tsx:12
 msgid "Home"
 msgstr "Home"
@@ -355,16 +356,28 @@ msgstr "Licenses for packages used by InvenTree"
 #~ msgstr "Open sourcea"
 
 #: src/defaults/menuItems.tsx:9
-msgid "Open source"
-msgstr "Open source"
+#~ msgid "Open source"
+#~ msgstr "Open source"
 
 #: src/defaults/menuItems.tsx:10
-msgid "This Pokémon’s cry is very loud and distracting"
-msgstr "This Pokémon’s cry is very loud and distracting"
+msgid "Start page of your instance."
+msgstr "Start page of your instance."
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "This Pokémon’s cry is very loud and distracting"
+#~ msgstr "This Pokémon’s cry is very loud and distracting"
 
 #: src/defaults/menuItems.tsx:12
-msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
-msgstr "This Pokémon’s cry is very loud and distracting and more and more and more"
+#~ msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
+#~ msgstr "This Pokémon’s cry is very loud and distracting and more and more and more"
+
+#: src/defaults/menuItems.tsx:15
+msgid "Profile page"
+msgstr "Profile page"
+
+#: src/defaults/menuItems.tsx:16
+msgid "User attributes and design settings."
+msgstr "User attributes and design settings."
 
 #: src/defaults/menuItems.tsx:21
 #~ msgid "Free for everyone"
