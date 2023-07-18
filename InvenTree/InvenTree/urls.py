@@ -33,6 +33,7 @@ from report.api import report_api_urls
 from stock.api import stock_api_urls
 from stock.urls import stock_urls
 from users.api import user_urls
+from web.urls import urlpatterns as platform_urls
 
 from .api import APISearchView, InfoView, NotFoundView
 from .magic_login import GetSimpleLoginView
@@ -162,7 +163,7 @@ backendpatterns = [
     re_path(r'^api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
 
-frontendpatterns = [
+classic_frontendpatterns = [
 
     # Apps
     re_path(r'^build/', include(build_urls)),
@@ -204,6 +205,21 @@ frontendpatterns = [
     re_path(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
     re_path(r'^accounts/', include('allauth.urls')),        # included urlpatterns
 ]
+
+
+new_frontendpatterns = [
+    # Platform urls
+    re_path(r'^platform/', include(platform_urls)),
+
+]
+
+# Load patterns for frontend according to settings
+frontendpatterns = []
+if settings.ENABLE_CLASSIC_FRONTEND:
+    frontendpatterns.append(re_path('', include(classic_frontendpatterns)))
+if settings.ENABLE_PLATFORM_FRONTEND:
+    frontendpatterns.append(re_path('', include(new_frontendpatterns)))
+
 
 # Append custom plugin URLs (if plugin support is enabled)
 if settings.PLUGINS_ENABLED:

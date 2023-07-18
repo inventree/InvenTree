@@ -81,7 +81,7 @@ django-allauth==0.54.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
-django-allauth-2fa==0.11.0
+django-allauth-2fa==0.11.1
     # via -r requirements.in
 django-cleanup==8.0.0
     # via -r requirements.in
@@ -237,8 +237,9 @@ pytz==2023.3
     #   django-dbbackup
     #   djangorestframework
     #   icalendar
-pyyaml==6.0
+pyyaml==6.0.1
     # via
+    #   -r requirements.in
     #   drf-spectacular
     #   tablib
 qrcode[pil]==7.4.2

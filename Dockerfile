@@ -98,6 +98,15 @@ RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/sh", "./init.sh"]
 
+# Frontend builder image:
+FROM inventree_base as frontend
+
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+COPY InvenTree ${INVENTREE_HOME}/InvenTree
+COPY src ${INVENTREE_HOME}/src
+COPY tasks.py ${INVENTREE_HOME}/tasks.py
+RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
+
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
@@ -111,6 +120,7 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
 # Copy source code
 COPY InvenTree ./InvenTree
+COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ./InvenTree/web/static/web
 
 # Launch the production server
 # TODO: Work out why environment variables cannot be interpolated in this command
@@ -119,6 +129,9 @@ CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./Inve
 
 
 FROM inventree_base as dev
+
+# Install nodejs / npm / yarn
+RUN apk add --no-cache --update nodejs npm && npm cache clean -f && npm install -g n && n stable && npm install -g yarn
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management

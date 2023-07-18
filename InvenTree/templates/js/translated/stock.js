@@ -2641,7 +2641,7 @@ function loadStockLocationTable(table, options) {
                         } else {
                             html += `
                                 <a href='#' pk='${row.pk}' class='load-sub-location'>
-                                    <span class='fas fa-sync-alt' title='{% trans "Load Subloactions" %}'></span>
+                                    <span class='fas fa-sync-alt' title='{% trans "Load Sublocations" %}'></span>
                                 </a> `;
                         }
                     }
