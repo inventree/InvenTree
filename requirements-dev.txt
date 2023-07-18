@@ -16,7 +16,7 @@ certifi==2023.5.7
     #   requests
 cfgv==3.3.1
     # via pre-commit
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   -c requirements.txt
     #   requests
@@ -65,7 +65,9 @@ mccabe==0.7.0
 nodeenv==1.8.0
     # via pre-commit
 packaging==23.1
-    # via build
+    # via
+    #   -c requirements.txt
+    #   build
 pep8-naming==0.13.3
     # via -r requirements-dev.in
 pip-tools==6.14.0
