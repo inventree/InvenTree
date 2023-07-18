@@ -30,7 +30,9 @@ from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     URLValidator)
 from django.db import models, transaction
+from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError
+from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -2860,3 +2862,13 @@ class CustomUnit(models.Model):
         help_text=_('Unit definition'),
         blank=False,
     )
+
+
+@receiver(post_save, sender=CustomUnit, dispatch_uid='custom_unit_saved')
+@receiver(post_delete, sender=CustomUnit, dispatch_uid='custom_unit_deleted')
+def after_custom_unit_updated(sender, instance, **kwargs):
+    """Callback when a custom unit is updated or deleted"""
+
+    # Force reload of the unit registry
+    from InvenTree.conversion import reload_unit_registry
+    reload_unit_registry()
