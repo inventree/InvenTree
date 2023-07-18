@@ -717,7 +717,7 @@ def version(c):
                                             get_static_dir)
 
     # Gather frontend version information
-    frontend, node, yarn = node_available(versions=True)
+    _, node, yarn = node_available(versions=True)
 
     print(f"""
 InvenTree - inventree.org
@@ -734,8 +734,8 @@ Python      {python_version()}
 Django      {InvenTreeVersion.inventreeDjangoVersion()}
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
-Node        {node if frontend else 'N/A'}
-Yarn        {yarn if frontend else 'N/A'}
+Node        {node if node else 'N/A'}
+Yarn        {yarn if yarn else 'N/A'}
 
 Commit hash:{InvenTreeVersion.inventreeCommitHash()}
 Commit date:{InvenTreeVersion.inventreeCommitDate()}""")
