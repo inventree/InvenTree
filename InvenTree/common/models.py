@@ -2828,6 +2828,17 @@ class CustomUnit(models.Model):
 
         registry = get_unit_registry()
 
+        # Check that the 'name' field is valid
+        self.name = self.name.strip()
+
+        # Cannot be zero length
+        if not self.name.isidentifier():
+            raise ValidationError({
+                'name': _('Unit name must be a valid identifier')
+            })
+
+        self.definition = self.definition.strip()
+
         # Check that the 'definition' is valid, by itself
         try:
             registry.Quantity(self.definition)
