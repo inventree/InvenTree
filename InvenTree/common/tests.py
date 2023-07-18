@@ -1062,7 +1062,7 @@ class NotesImageTest(InvenTreeAPITestCase):
             image.save(output, format='PNG')
             contents = output.getvalue()
 
-        response = self.post(
+        self.post(
             reverse('api-notes-image-list'),
             data={
                 'image': SimpleUploadedFile('test.png', contents, content_type='image/png'),
@@ -1070,8 +1070,6 @@ class NotesImageTest(InvenTreeAPITestCase):
             format='multipart',
             expected_code=201
         )
-
-        print(response.data)
 
         # Check that a new file has been created
         self.assertEqual(NotesImage.objects.count(), n + 1)
@@ -1234,15 +1232,13 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         self.user.is_staff = True
         self.user.save()
 
-        response = self.patch(
+        self.patch(
             reverse('api-custom-unit-detail', kwargs={'pk': unit.pk}),
             {
                 'name': 'new_unit_name',
             },
             # expected_code=200
         )
-
-        print(response.status_code, response.data)
 
         unit.refresh_from_db()
         self.assertEqual(unit.name, 'new_unit_name')
