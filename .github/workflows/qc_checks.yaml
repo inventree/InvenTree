@@ -43,6 +43,7 @@ jobs:
             - 'requirements-dev.txt'
           migrations:
             - '**/migrations/**'
+            - '.github/workflows**'
           frontend:
             - 'src/frontend/**'
 
@@ -390,7 +391,7 @@ jobs:
         chmod +rw /home/runner/work/InvenTree/db.sqlite3
         invoke migrate
 
-  platform_ui:
+  plattform_ui:
     name: Tests - UI Platform
     runs-on: ubuntu-20.04
     timeout-minutes: 60
