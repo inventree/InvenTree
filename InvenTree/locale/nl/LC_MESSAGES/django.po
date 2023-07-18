@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-16 09:36+0000\n"
-"PO-Revision-Date: 2023-07-17 05:12\n"
+"POT-Creation-Date: 2023-07-17 11:41+0000\n"
+"PO-Revision-Date: 2023-07-18 05:16\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -200,7 +200,7 @@ msgstr "Opgegeven URL is geen geldig afbeeldingsbestand"
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site.name}] Log in to the app"
-msgstr ""
+msgstr "[{site.name}] Log in bij de app"
 
 #: InvenTree/magic_login.py:38 company/models.py:122
 #: company/templates/company/company_base.html:133
@@ -342,7 +342,7 @@ msgid "Invalid choice"
 msgstr "Ongeldige keuze"
 
 #: InvenTree/models.py:648 InvenTree/models.py:649 common/models.py:2408
-#: company/models.py:539 label/models.py:111 part/models.py:851
+#: company/models.py:539 label/models.py:119 part/models.py:851
 #: part/models.py:3441 plugin/models.py:42 report/models.py:164
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -363,7 +363,7 @@ msgstr "Naam"
 #: company/models.py:461 company/models.py:739
 #: company/templates/company/company_base.html:72
 #: company/templates/company/manufacturer_part.html:75
-#: company/templates/company/supplier_part.html:108 label/models.py:118
+#: company/templates/company/supplier_part.html:108 label/models.py:126
 #: order/models.py:232 order/models.py:1130 part/admin.py:194 part/admin.py:276
 #: part/models.py:873 part/models.py:3457 part/templates/part/category.html:81
 #: part/templates/part/part_base.html:172
@@ -549,7 +549,7 @@ msgstr "Farsi / Perzisch"
 
 #: InvenTree/settings.py:754
 msgid "Finnish"
-msgstr ""
+msgstr "Fins"
 
 #: InvenTree/settings.py:755
 msgid "French"
@@ -621,7 +621,11 @@ msgstr "Vietnamees"
 
 #: InvenTree/settings.py:772
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Chinees (vereenvoudigd)"
+
+#: InvenTree/settings.py:773
+msgid "Chinese (Traditional)"
+msgstr "Chinees (traditioneel)"
 
 #: InvenTree/status.py:68 part/serializers.py:963
 msgid "Background worker check failed"
@@ -1207,11 +1211,11 @@ msgstr "Hoeveelheid moet groter zijn dan nul"
 
 #: build/models.py:845 build/serializers.py:225
 msgid "Quantity cannot be greater than the output quantity"
-msgstr ""
+msgstr "Hoeveelheid kan niet groter zijn dan aantal"
 
 #: build/models.py:1265
 msgid "Build object"
-msgstr ""
+msgstr "Bouw object"
 
 #: build/models.py:1279 build/models.py:1539 build/serializers.py:206
 #: build/serializers.py:244 build/templates/build/build_base.html:103
@@ -1262,7 +1266,7 @@ msgstr "Hoeveelheid"
 
 #: build/models.py:1280
 msgid "Required quantity for build order"
-msgstr ""
+msgstr "Vereiste hoeveelheid voor bouwopdracht"
 
 #: build/models.py:1362
 msgid "Build item must specify a build output, as master part is marked as trackable"
@@ -1287,7 +1291,7 @@ msgstr "Hoeveelheid moet 1 zijn voor geserialiseerde voorraad"
 
 #: build/models.py:1454
 msgid "Selected stock item does not match BOM line"
-msgstr ""
+msgstr "Geselecteerde voorraadartikelen komen niet overeen met de BOM-regel"
 
 #: build/models.py:1526 build/serializers.py:799 order/serializers.py:1065
 #: order/serializers.py:1086 stock/serializers.py:479 stock/serializers.py:887
@@ -1403,19 +1407,19 @@ msgstr "Locatie"
 
 #: build/serializers.py:424
 msgid "Stock location for scrapped outputs"
-msgstr ""
+msgstr "Voorraadlocatie voor geannuleerde outputs"
 
 #: build/serializers.py:430
 msgid "Discard Allocations"
-msgstr ""
+msgstr "Toewijzingen weggooien"
 
 #: build/serializers.py:431
 msgid "Discard any stock allocations for scrapped outputs"
-msgstr ""
+msgstr "Verwijder alle voorraadtoewijzingen voor geannuleerde outputs"
 
 #: build/serializers.py:436
 msgid "Reason for scrapping build output(s)"
-msgstr ""
+msgstr "Reden voor annulering van bouworder(s)"
 
 #: build/serializers.py:497
 msgid "Location for completed build outputs"
@@ -1513,7 +1517,7 @@ msgstr "Productieorder heeft onvolledige uitvoeren"
 
 #: build/serializers.py:722
 msgid "Build Line"
-msgstr ""
+msgstr "Productielijn"
 
 #: build/serializers.py:732
 msgid "Build output"
@@ -1525,7 +1529,7 @@ msgstr "Productieuitvoer moet naar dezelfde productie wijzen"
 
 #: build/serializers.py:776
 msgid "Build Line Item"
-msgstr ""
+msgstr "Bouw lijn-item"
 
 #: build/serializers.py:790
 msgid "bom_item.part must point to the same part as the build order"
@@ -1862,11 +1866,11 @@ msgstr "Voorraad toewijzen aan Product"
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
-msgstr ""
+msgstr "Voorraad niet meer toewijzen"
 
 #: build/templates/build/detail.html:182
 msgid "Deallocate Stock"
-msgstr ""
+msgstr "Voorraad niet meer toewijzen"
 
 #: build/templates/build/detail.html:184
 msgid "Automatically allocate stock to build"
@@ -1939,7 +1943,7 @@ msgstr "Toewijzing Voltooid"
 
 #: build/templates/build/detail.html:423
 msgid "All lines have been fully allocated"
-msgstr ""
+msgstr "Alle regels zijn volledig toegewezen"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
@@ -1956,7 +1960,7 @@ msgstr "Onvolledige Productieuitvoeren"
 #: common/files.py:63
 #, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr ""
+msgstr "Niet-ondersteunde bestandsindeling: {fmt}"
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
@@ -1997,15 +2001,15 @@ msgstr "Bijgewerkt"
 
 #: common/models.py:69
 msgid "Timestamp of last update"
-msgstr ""
+msgstr "Tijdstempel van laatste update"
 
 #: common/models.py:105
 msgid "Unique project code"
-msgstr ""
+msgstr "Unieke projectcode"
 
 #: common/models.py:112
 msgid "Project description"
-msgstr ""
+msgstr "Projectbeschrijving"
 
 #: common/models.py:581
 msgid "Settings key (must be unique - case insensitive)"
@@ -2074,7 +2078,7 @@ msgstr "Tonen `over` beperken"
 
 #: common/models.py:1005
 msgid "Show the `about` modal only to superusers"
-msgstr ""
+msgstr "Toon de `over` modal alleen aan superusers"
 
 #: common/models.py:1011 company/models.py:101 company/models.py:102
 msgid "Company name"
@@ -2098,7 +2102,7 @@ msgstr "Standaard Valuta"
 
 #: common/models.py:1026
 msgid "Select base currency for pricing calculations"
-msgstr ""
+msgstr "Selecteer basisvaluta voor de berekening van prijzen"
 
 #: common/models.py:1033
 msgid "Download from URL"
@@ -2118,11 +2122,11 @@ msgstr "Maximale downloadgrootte voor externe afbeelding"
 
 #: common/models.py:1052
 msgid "User-agent used to download from URL"
-msgstr ""
+msgstr "User-agent gebruikt om te downloaden van URL"
 
 #: common/models.py:1053
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
-msgstr ""
+msgstr "Sta toe om de user-agent te overschrijven die gebruikt wordt om afbeeldingen en bestanden van externe URL te downloaden (laat leeg voor de standaard)"
 
 #: common/models.py:1058
 msgid "Require confirm"
@@ -2130,7 +2134,7 @@ msgstr "Bevestiging vereist"
 
 #: common/models.py:1059
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "Vereis expliciete bevestiging van de gebruiker voor bepaalde actie."
 
 #: common/models.py:1065
 msgid "Tree Depth"
@@ -2138,15 +2142,15 @@ msgstr "Boomstructuur Diepte"
 
 #: common/models.py:1066
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
-msgstr ""
+msgstr "Standaard diepte voor treeview. Diepere niveaus kunnen geladen worden wanneer ze nodig zijn."
 
 #: common/models.py:1075
 msgid "Update Check Interval"
-msgstr ""
+msgstr "Interval voor update"
 
 #: common/models.py:1076
 msgid "How often to check for updates (set to zero to disable)"
-msgstr ""
+msgstr "Hoe vaak te controleren op updates (nul om uit te schakelen)"
 
 #: common/models.py:1082 common/models.py:1100 common/models.py:1107
 #: common/models.py:1118 common/models.py:1129 common/models.py:1360
@@ -2156,23 +2160,23 @@ msgstr "dagen"
 
 #: common/models.py:1086
 msgid "Automatic Backup"
-msgstr ""
+msgstr "Automatische backup"
 
 #: common/models.py:1087
 msgid "Enable automatic backup of database and media files"
-msgstr ""
+msgstr "Automatische back-up van database- en mediabestanden inschakelen"
 
 #: common/models.py:1093
 msgid "Auto Backup Interval"
-msgstr ""
+msgstr "Automatische backup interval"
 
 #: common/models.py:1094
 msgid "Specify number of days between automated backup events"
-msgstr ""
+msgstr "Geef het aantal dagen op tussen geautomatiseerde backup"
 
 #: common/models.py:1104
 msgid "Task Deletion Interval"
-msgstr ""
+msgstr "Interval Taak Verwijderen"
 
 #: common/models.py:1105
 msgid "Background task results will be deleted after specified number of days"
@@ -2180,7 +2184,7 @@ msgstr "Resultaten van achtergrondtaken worden verwijderd na het opgegeven aanta
 
 #: common/models.py:1115
 msgid "Error Log Deletion Interval"
-msgstr ""
+msgstr "Error Log Verwijderings Interval"
 
 #: common/models.py:1116
 msgid "Error logs will be deleted after specified number of days"
@@ -2188,11 +2192,11 @@ msgstr "Resultaten van achtergrondtaken worden verwijderd na het opgegeven aanta
 
 #: common/models.py:1126
 msgid "Notification Deletion Interval"
-msgstr ""
+msgstr "Interval Verwijderen Notificatie"
 
 #: common/models.py:1127
 msgid "User notifications will be deleted after specified number of days"
-msgstr ""
+msgstr "Meldingen van gebruikers worden verwijderd na het opgegeven aantal dagen"
 
 #: common/models.py:1137 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
@@ -2204,11 +2208,11 @@ msgstr "Streepjescodescanner ondersteuning inschakelen"
 
 #: common/models.py:1144
 msgid "Barcode Input Delay"
-msgstr ""
+msgstr "Barcode Invoer Vertraging"
 
 #: common/models.py:1145
 msgid "Barcode input processing delay time"
-msgstr ""
+msgstr "Barcode invoerverwerking vertraging"
 
 #: common/models.py:1155
 msgid "Barcode Webcam Support"
@@ -2220,11 +2224,11 @@ msgstr "Barcode via webcam scannen in browser toestaan"
 
 #: common/models.py:1162
 msgid "Part Revisions"
-msgstr ""
+msgstr "Herzieningen onderdeel"
 
 #: common/models.py:1163
 msgid "Enable revision field for Part"
-msgstr ""
+msgstr "Revisieveld voor onderdeel inschakelen"
 
 #: common/models.py:1169
 msgid "IPN Regex"
@@ -2369,19 +2373,19 @@ msgstr "Verwante onderdelen voor een onderdeel tonen"
 
 #: common/models.py:1279
 msgid "Initial Stock Data"
-msgstr ""
+msgstr "Initiële voorraadgegevens"
 
 #: common/models.py:1280
 msgid "Allow creation of initial stock when adding a new part"
-msgstr ""
+msgstr "Aanmaken van eerste voorraad toestaan bij het toevoegen van een nieuw onderdeel"
 
 #: common/models.py:1286 templates/js/translated/part.js:107
 msgid "Initial Supplier Data"
-msgstr ""
+msgstr "Initiële leveranciergegevens"
 
 #: common/models.py:1287
 msgid "Allow creation of initial supplier data when adding a new part"
-msgstr ""
+msgstr "Aanmaken van eerste leveranciersgegevens toestaan bij het toevoegen van een nieuw onderdeel"
 
 #: common/models.py:1293
 msgid "Part Name Display Format"
@@ -2393,39 +2397,39 @@ msgstr "Opmaak om de onderdeelnaam weer te geven"
 
 #: common/models.py:1301
 msgid "Part Category Default Icon"
-msgstr ""
+msgstr "Standaardicoon voor onderdeel catagorie"
 
 #: common/models.py:1302
 msgid "Part category default icon (empty means no icon)"
-msgstr ""
+msgstr "Standaardicoon voor onderdeel catagorie (leeg betekent geen pictogram)"
 
 #: common/models.py:1307
 msgid "Enforce Parameter Units"
-msgstr ""
+msgstr "Forceer Parameter Eenheden"
 
 #: common/models.py:1308
 msgid "If units are provided, parameter values must match the specified units"
-msgstr ""
+msgstr "Als er eenheden worden opgegeven, moeten parameterwaarden overeenkomen met de opgegeven eenheden"
 
 #: common/models.py:1314
 msgid "Minimum Pricing Decimal Places"
-msgstr ""
+msgstr "Minimaal aantal prijs decimalen"
 
 #: common/models.py:1315
 msgid "Minimum number of decimal places to display when rendering pricing data"
-msgstr ""
+msgstr "Minimaal aantal decimalen om weer te geven bij het weergeven van prijsgegevens"
 
 #: common/models.py:1325
 msgid "Maximum Pricing Decimal Places"
-msgstr ""
+msgstr "Maximum prijs decimalen"
 
 #: common/models.py:1326
 msgid "Maximum number of decimal places to display when rendering pricing data"
-msgstr ""
+msgstr "Maximum aantal decimalen om weer te geven bij het weergeven van prijsgegevens"
 
 #: common/models.py:1336
 msgid "Use Supplier Pricing"
-msgstr ""
+msgstr "Gebruik leveranciersprijzen"
 
 #: common/models.py:1337
 msgid "Include supplier price breaks in overall pricing calculations"
@@ -2433,39 +2437,39 @@ msgstr ""
 
 #: common/models.py:1343
 msgid "Purchase History Override"
-msgstr ""
+msgstr "Aankoopgeschiedenis overschrijven"
 
 #: common/models.py:1344
 msgid "Historical purchase order pricing overrides supplier price breaks"
-msgstr ""
+msgstr "Historische order prijzen overschrijven de prijzen van de leverancier"
 
 #: common/models.py:1350
 msgid "Use Stock Item Pricing"
-msgstr ""
+msgstr "Gebruik voorraaditem prijzen"
 
 #: common/models.py:1351
 msgid "Use pricing from manually entered stock data for pricing calculations"
-msgstr ""
+msgstr "Gebruik prijzen van handmatig ingevoerde voorraadgegevens voor prijsberekeningen"
 
 #: common/models.py:1357
 msgid "Stock Item Pricing Age"
-msgstr ""
+msgstr "Voorraad artikelprijs leeftijd"
 
 #: common/models.py:1358
 msgid "Exclude stock items older than this number of days from pricing calculations"
-msgstr ""
+msgstr "Voorraaditems ouder dan dit aantal dagen uitsluiten van prijsberekeningen"
 
 #: common/models.py:1368
 msgid "Use Variant Pricing"
-msgstr ""
+msgstr "Gebruik variantprijzen"
 
 #: common/models.py:1369
 msgid "Include variant pricing in overall pricing calculations"
-msgstr ""
+msgstr "Variantenprijzen opnemen in de totale prijsberekening"
 
 #: common/models.py:1375
 msgid "Active Variants Only"
-msgstr ""
+msgstr "Alleen actieve varianten"
 
 #: common/models.py:1376
 msgid "Only use active variant parts for calculating variant pricing"
@@ -2473,11 +2477,11 @@ msgstr "Gebruik alleen actieve variantonderdelen voor het berekenen van variantp
 
 #: common/models.py:1382
 msgid "Pricing Rebuild Interval"
-msgstr ""
+msgstr "Prijzen Herbouw interval"
 
 #: common/models.py:1383
 msgid "Number of days before part pricing is automatically updated"
-msgstr ""
+msgstr "Aantal dagen voordat de prijzen voor onderdelen automatisch worden bijgewerkt"
 
 #: common/models.py:1393
 msgid "Internal Prices"
@@ -2489,11 +2493,11 @@ msgstr "Inschakelen van interne prijzen voor onderdelen"
 
 #: common/models.py:1400
 msgid "Internal Price Override"
-msgstr ""
+msgstr "Interne prijs overschrijven"
 
 #: common/models.py:1401
 msgid "If available, internal prices override price range calculations"
-msgstr ""
+msgstr "Indien beschikbaar, interne prijzen overschrijven berekeningen van prijsbereik"
 
 #: common/models.py:1407
 msgid "Enable label printing"
@@ -2553,27 +2557,27 @@ msgstr "Bij het afdrukken van een Testrapport, voeg een kopie van het Testrappor
 
 #: common/models.py:1463
 msgid "Globally Unique Serials"
-msgstr ""
+msgstr "Globaal unieke serienummers"
 
 #: common/models.py:1464
 msgid "Serial numbers for stock items must be globally unique"
-msgstr ""
+msgstr "Serienummers voor voorraaditems moeten globaal uniek zijn"
 
 #: common/models.py:1470
 msgid "Autofill Serial Numbers"
-msgstr ""
+msgstr "Serienummers automatisch invullen"
 
 #: common/models.py:1471
 msgid "Autofill serial numbers in forms"
-msgstr ""
+msgstr "Automatisch invullen van serienummer in formulieren"
 
 #: common/models.py:1477
 msgid "Delete Depleted Stock"
-msgstr ""
+msgstr "Verwijder uitgeputte voorraad"
 
 #: common/models.py:1478
 msgid "Determines default behaviour when a stock item is depleted"
-msgstr ""
+msgstr "Bepaalt standaard gedrag wanneer een voorraaditem is uitgeput"
 
 #: common/models.py:1484
 msgid "Batch Code Template"
@@ -2625,19 +2629,19 @@ msgstr "Eigenaarstoezicht over voorraadlocaties en items inschakelen"
 
 #: common/models.py:1526
 msgid "Stock Location Default Icon"
-msgstr ""
+msgstr "Voorraadlocatie standaard icoon"
 
 #: common/models.py:1527
 msgid "Stock location default icon (empty means no icon)"
-msgstr ""
+msgstr "Standaard locatie pictogram (leeg betekent geen icoon)"
 
 #: common/models.py:1532
 msgid "Show Installed Stock Items"
-msgstr ""
+msgstr "Geïnstalleerde voorraad items weergeven"
 
 #: common/models.py:1533
 msgid "Display installed stock items in stock tables"
-msgstr ""
+msgstr "Geïnstalleerde voorraadartikelen in voorraadtabellen tonen"
 
 #: common/models.py:1539
 msgid "Build Order Reference Pattern"
@@ -2649,27 +2653,27 @@ msgstr "Vereist patroon voor het genereren van het Bouworderreferentieveld"
 
 #: common/models.py:1546
 msgid "Enable Return Orders"
-msgstr ""
+msgstr "Retourorders inschakelen"
 
 #: common/models.py:1547
 msgid "Enable return order functionality in the user interface"
-msgstr ""
+msgstr "Retourorder functionaliteit inschakelen in de gebruikersinterface"
 
 #: common/models.py:1553
 msgid "Return Order Reference Pattern"
-msgstr ""
+msgstr "Retourorder referentie patroon"
 
 #: common/models.py:1554
 msgid "Required pattern for generating Return Order reference field"
-msgstr ""
+msgstr "Verplicht patroon voor het genereren van Retour Order referentie veld"
 
 #: common/models.py:1560
 msgid "Edit Completed Return Orders"
-msgstr ""
+msgstr "Bewerk voltooide retourorders"
 
 #: common/models.py:1561
 msgid "Allow editing of return orders after they have been completed"
-msgstr ""
+msgstr "Bewerken van retourorders toestaan nadat deze zijn voltooid"
 
 #: common/models.py:1567
 msgid "Sales Order Reference Pattern"
@@ -2825,75 +2829,71 @@ msgstr ""
 
 #: common/models.py:1705
 msgid "Enable app integration"
-msgstr ""
+msgstr "Activeer app integratie"
 
 #: common/models.py:1706
 msgid "Enable plugins to add apps"
-msgstr ""
+msgstr "Activeer plug-ins om apps toe te voegen"
 
 #: common/models.py:1713
 msgid "Enable schedule integration"
-msgstr ""
+msgstr "Activeer planning integratie"
 
 #: common/models.py:1714
 msgid "Enable plugins to run scheduled tasks"
-msgstr ""
+msgstr "Activeer plugin om periodiek taken uit te voeren"
 
 #: common/models.py:1721
 msgid "Enable event integration"
-msgstr ""
+msgstr "Activeer evenement integratie"
 
 #: common/models.py:1722
 msgid "Enable plugins to respond to internal events"
-msgstr ""
+msgstr "Activeer plugin om op interne evenementen te reageren"
 
 #: common/models.py:1729
 msgid "Enable project codes"
-msgstr ""
+msgstr "Activeer project codes"
 
 #: common/models.py:1730
 msgid "Enable project codes for tracking projects"
-msgstr ""
+msgstr "Activeer project codes voor het bijhouden van projecten"
 
 #: common/models.py:1736
 msgid "Stocktake Functionality"
-msgstr ""
+msgstr "Voorraadcontrole functionaliteit"
 
 #: common/models.py:1737
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
-msgstr ""
+msgstr "Schakel voorraadfunctionaliteit in voor het opnemen van voorraadniveaus en het berekenen van voorraadwaarde"
 
 #: common/models.py:1743
 msgid "Exclude External Locations"
-msgstr ""
+msgstr "Externe locaties uitsluiten"
 
 #: common/models.py:1744
 msgid "Exclude stock items in external locations from stocktake calculations"
-msgstr ""
+msgstr "Voorraadartikelen op externe locaties uitsluiten van voorraadberekeningen"
 
 #: common/models.py:1750
 msgid "Automatic Stocktake Period"
-msgstr ""
+msgstr "Automatische Voorraadcontrole Periode"
 
 #: common/models.py:1751
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
-msgstr ""
+msgstr "Aantal dagen tussen automatische voorraadopname (ingesteld op nul om uit te schakelen)"
 
 #: common/models.py:1760
 msgid "Report Deletion Interval"
-msgstr ""
+msgstr "Rapport Verwijdering Interval"
 
 #: common/models.py:1761
 msgid "Stocktake reports will be deleted after specified number of days"
-msgstr ""
+msgstr "Voorraadrapportage zal worden verwijderd na het opgegeven aantal dagen"
 
 #: common/models.py:1778 common/models.py:2201
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Instellingssleutel (moet uniek zijn - hoofdletter ongevoelig"
-
-#: common/models.py:1797
-msgid "No Printer (Export to PDF)"
-msgstr ""
 
 #: common/models.py:1819
 msgid "Hide inactive parts"
@@ -2913,11 +2913,11 @@ msgstr "Toon geabonneerde onderdelen op de homepage"
 
 #: common/models.py:1833
 msgid "Show subscribed categories"
-msgstr ""
+msgstr "Toon geabonneerde categorieën"
 
 #: common/models.py:1834
 msgid "Show subscribed part categories on the homepage"
-msgstr ""
+msgstr "Toon geabonneerde onderdeel categorieën op de startpagina"
 
 #: common/models.py:1840
 msgid "Show latest parts"
@@ -2929,11 +2929,11 @@ msgstr "Toon laatste onderdelen op de startpagina"
 
 #: common/models.py:1847
 msgid "Show unvalidated BOMs"
-msgstr ""
+msgstr "Toon niet-gevalideerde BOM's"
 
 #: common/models.py:1848
 msgid "Show BOMs that await validation on the homepage"
-msgstr ""
+msgstr "Laat BOMs zien die wachten op validatie op de startpagina"
 
 #: common/models.py:1854
 msgid "Show recent stock changes"
@@ -3033,43 +3033,43 @@ msgstr "Toon achterstallige SO's op de startpagina"
 
 #: common/models.py:1938
 msgid "Show pending SO shipments"
-msgstr ""
+msgstr "Toon in behandeling SO verzendingen"
 
 #: common/models.py:1939
 msgid "Show pending SO shipments on the homepage"
-msgstr ""
+msgstr "Toon in behandeling zijnde SO verzendingen op de startpagina"
 
 #: common/models.py:1945
 msgid "Show News"
-msgstr ""
+msgstr "Nieuws tonen"
 
 #: common/models.py:1946
 msgid "Show news on the homepage"
-msgstr ""
+msgstr "Nieuws op de startpagina weergeven"
 
 #: common/models.py:1952
 msgid "Inline label display"
-msgstr ""
+msgstr "Inline labelweergave"
 
 #: common/models.py:1953
 msgid "Display PDF labels in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "PDF-labels in browser weergeven, in plaats van als bestand te downloaden"
 
 #: common/models.py:1959
 msgid "Default label printer"
-msgstr ""
+msgstr "Standaard label printer"
 
 #: common/models.py:1960
 msgid "Configure which label printer should be selected by default"
-msgstr ""
+msgstr "Instellen welke label printer standaard moet worden geselecteerd"
 
 #: common/models.py:1966
 msgid "Inline report display"
-msgstr ""
+msgstr "Inline rapport weergeven"
 
 #: common/models.py:1967
 msgid "Display PDF reports in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "PDF-rapporten in de browser weergeven, in plaats van als bestand te downloaden"
 
 #: common/models.py:1973
 msgid "Search Parts"
@@ -3105,11 +3105,11 @@ msgstr "Inactieve verkooporders weglaten in het zoekvenster"
 
 #: common/models.py:2001
 msgid "Search Categories"
-msgstr ""
+msgstr "Zoek categorieën"
 
 #: common/models.py:2002
 msgid "Display part categories in search preview window"
-msgstr ""
+msgstr "Toon onderdeelcategorieën in zoekvenster"
 
 #: common/models.py:2008
 msgid "Search Stock"
@@ -3117,39 +3117,39 @@ msgstr "Zoek in Voorraad"
 
 #: common/models.py:2009
 msgid "Display stock items in search preview window"
-msgstr ""
+msgstr "Toon voorraad items in zoekvenster"
 
 #: common/models.py:2015
 msgid "Hide Unavailable Stock Items"
-msgstr ""
+msgstr "Verberg niet beschikbare voorraad items"
 
 #: common/models.py:2016
 msgid "Exclude stock items which are not available from the search preview window"
-msgstr ""
+msgstr "Voorraadartikelen die niet beschikbaar zijn niet in het zoekvenster weergeven"
 
 #: common/models.py:2022
 msgid "Search Locations"
-msgstr ""
+msgstr "Locaties doorzoeken"
 
 #: common/models.py:2023
 msgid "Display stock locations in search preview window"
-msgstr ""
+msgstr "Toon voorraadlocaties in zoekvenster"
 
 #: common/models.py:2029
 msgid "Search Companies"
-msgstr ""
+msgstr "Zoek bedrijven"
 
 #: common/models.py:2030
 msgid "Display companies in search preview window"
-msgstr ""
+msgstr "Toon bedrijven in zoekvenster"
 
 #: common/models.py:2036
 msgid "Search Build Orders"
-msgstr ""
+msgstr "Zoek Bouworders"
 
 #: common/models.py:2037
 msgid "Display build orders in search preview window"
-msgstr ""
+msgstr "Toon bouworders in zoekvenster"
 
 #: common/models.py:2043
 msgid "Search Purchase Orders"
@@ -3185,35 +3185,35 @@ msgstr "Inactieve verkooporders weglaten in het zoekvenster"
 
 #: common/models.py:2071
 msgid "Search Return Orders"
-msgstr ""
+msgstr "Zoek retourorders"
 
 #: common/models.py:2072
 msgid "Display return orders in search preview window"
-msgstr ""
+msgstr "Toon bouworders in zoekvenster"
 
 #: common/models.py:2078
 msgid "Exclude Inactive Return Orders"
-msgstr ""
+msgstr "Inactieve retourbestellingen weglaten"
 
 #: common/models.py:2079
 msgid "Exclude inactive return orders from search preview window"
-msgstr ""
+msgstr "Inactieve retourorders uitsluiten in zoekvenster"
 
 #: common/models.py:2085
 msgid "Search Preview Results"
-msgstr ""
+msgstr "Zoekvoorbeeld resultaten"
 
 #: common/models.py:2086
 msgid "Number of results to show in each section of the search preview window"
-msgstr ""
+msgstr "Aantal resultaten om weer te geven in elk gedeelte van het zoekvenster"
 
 #: common/models.py:2092
 msgid "Regex Search"
-msgstr ""
+msgstr "Regex zoeken"
 
 #: common/models.py:2093
 msgid "Enable regular expressions in search queries"
-msgstr ""
+msgstr "Schakel reguliere expressies in zoekopdrachten in"
 
 #: common/models.py:2099
 msgid "Whole Word Search"
@@ -4343,61 +4343,61 @@ msgstr "Bedrijven"
 msgid "New Company"
 msgstr "Nieuw Bedrijf"
 
-#: label/models.py:112
+#: label/models.py:120
 msgid "Label name"
 msgstr "Labelnaam"
 
-#: label/models.py:119
+#: label/models.py:127
 msgid "Label description"
 msgstr "Label beschrijving"
 
-#: label/models.py:126
+#: label/models.py:134
 msgid "Label"
 msgstr "Label"
 
-#: label/models.py:127
+#: label/models.py:135
 msgid "Label template file"
 msgstr "Label template bestand"
 
-#: label/models.py:133 report/models.py:277
+#: label/models.py:141 report/models.py:277
 msgid "Enabled"
 msgstr "Ingeschakeld"
 
-#: label/models.py:134
+#: label/models.py:142
 msgid "Label template is enabled"
 msgstr "Label template is ingeschakeld"
 
-#: label/models.py:139
+#: label/models.py:147
 msgid "Width [mm]"
 msgstr "Breedte [mm]"
 
-#: label/models.py:140
+#: label/models.py:148
 msgid "Label width, specified in mm"
 msgstr "Label breedte, gespecificeerd in mm"
 
-#: label/models.py:146
+#: label/models.py:154
 msgid "Height [mm]"
 msgstr "Hoogte [mm]"
 
-#: label/models.py:147
+#: label/models.py:155
 msgid "Label height, specified in mm"
 msgstr "Label hoogte, gespecificeerd in mm"
 
-#: label/models.py:153 report/models.py:270
+#: label/models.py:161 report/models.py:270
 msgid "Filename Pattern"
 msgstr "Bestandsnaam Patroon"
 
-#: label/models.py:154
+#: label/models.py:162
 msgid "Pattern for generating label filenames"
 msgstr ""
 
-#: label/models.py:250 label/models.py:291 label/models.py:319
-#: label/models.py:355
+#: label/models.py:288 label/models.py:329 label/models.py:357
+#: label/models.py:393
 msgid "Query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
-#: label/models.py:251 label/models.py:292 label/models.py:320
-#: label/models.py:356 report/models.py:298 report/models.py:445
+#: label/models.py:289 label/models.py:330 label/models.py:358
+#: label/models.py:394 report/models.py:298 report/models.py:445
 #: report/models.py:483 report/models.py:521 report/models.py:645
 msgid "Filters"
 msgstr "Filters"
@@ -7207,7 +7207,7 @@ msgstr ""
 msgid "No match found for provided value"
 msgstr ""
 
-#: plugin/base/label/label.py:60
+#: plugin/base/label/label.py:40
 msgid "Label printing failed"
 msgstr ""
 
@@ -7221,6 +7221,7 @@ msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:28
 #: plugin/builtin/integration/core_notifications.py:34
+#: plugin/builtin/labels/inventree_label.py:23
 msgid "InvenTree contributors"
 msgstr ""
 
@@ -7260,6 +7261,22 @@ msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:163
 msgid "Open link"
+msgstr ""
+
+#: plugin/builtin/labels/inventree_label.py:20
+msgid "InvenTree PDF label printer"
+msgstr ""
+
+#: plugin/builtin/labels/inventree_label.py:21
+msgid "Provides native support for printing PDF labels"
+msgstr ""
+
+#: plugin/builtin/labels/inventree_label.py:29
+msgid "Debug mode"
+msgstr ""
+
+#: plugin/builtin/labels/inventree_label.py:30
+msgid "Enable debug mode - returns raw HTML instead of PDF"
 msgstr ""
 
 #: plugin/models.py:28
@@ -10659,7 +10676,7 @@ msgstr ""
 
 #: templates/js/translated/forms.js:506 templates/js/translated/helpers.js:105
 #: templates/js/translated/part.js:369 templates/js/translated/pricing.js:629
-#: templates/js/translated/stock.js:215 users/models.py:254
+#: templates/js/translated/stock.js:215 users/models.py:255
 msgid "Delete"
 msgstr "Verwijderen"
 
@@ -10728,35 +10745,31 @@ msgstr ""
 msgid "Select Printer"
 msgstr ""
 
-#: templates/js/translated/label.js:62
-msgid "Export to PDF"
-msgstr ""
-
-#: templates/js/translated/label.js:114
+#: templates/js/translated/label.js:113
 msgid "selected"
 msgstr ""
 
-#: templates/js/translated/label.js:122 templates/js/translated/label.js:139
+#: templates/js/translated/label.js:121 templates/js/translated/label.js:138
 msgid "Select Label Template"
 msgstr ""
 
-#: templates/js/translated/label.js:178 templates/js/translated/report.js:123
+#: templates/js/translated/label.js:177 templates/js/translated/report.js:123
 msgid "Select Items"
 msgstr ""
 
-#: templates/js/translated/label.js:179
+#: templates/js/translated/label.js:178
 msgid "No items selected for printing"
 msgstr ""
 
-#: templates/js/translated/label.js:195
+#: templates/js/translated/label.js:194
 msgid "No Labels Found"
 msgstr ""
 
-#: templates/js/translated/label.js:196
+#: templates/js/translated/label.js:195
 msgid "No label templates found which match the selected items"
 msgstr ""
 
-#: templates/js/translated/label.js:215
+#: templates/js/translated/label.js:217
 msgid "Labels sent to printer"
 msgstr ""
 
@@ -12013,7 +12026,7 @@ msgstr ""
 msgid "Add Stock"
 msgstr ""
 
-#: templates/js/translated/stock.js:1004 users/models.py:250
+#: templates/js/translated/stock.js:1004 users/models.py:251
 msgid "Add"
 msgstr ""
 
@@ -12846,35 +12859,35 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/models.py:237
+#: users/models.py:238
 msgid "Permission set"
 msgstr ""
 
-#: users/models.py:245
+#: users/models.py:246
 msgid "Group"
 msgstr ""
 
-#: users/models.py:248
+#: users/models.py:249
 msgid "View"
 msgstr ""
 
-#: users/models.py:248
+#: users/models.py:249
 msgid "Permission to view items"
 msgstr ""
 
-#: users/models.py:250
+#: users/models.py:251
 msgid "Permission to add items"
 msgstr ""
 
-#: users/models.py:252
+#: users/models.py:253
 msgid "Change"
 msgstr ""
 
-#: users/models.py:252
+#: users/models.py:253
 msgid "Permissions to edit items"
 msgstr ""
 
-#: users/models.py:254
+#: users/models.py:255
 msgid "Permission to delete items"
 msgstr ""
 
