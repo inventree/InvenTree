@@ -102,7 +102,7 @@ def yarn(c, cmd, pty: bool = False):
     c.run(f'cd "{path}" && {cmd}', pty=pty)
 
 
-def frontend_env_available():
+def node_available(versions: bool = False):
     """Checks if the frontend environment (ie node and yarn in bash) is available."""
     try:
         yarn_version = os.popen('yarn --version').read().strip()
@@ -113,6 +113,8 @@ def frontend_env_available():
     if not yarn_version or not node_version:
         return False
 
+    if versions:
+        return True, node_version, yarn_version
     return True
 
 
@@ -287,12 +289,6 @@ def migrate(c):
     print("InvenTree database migrations completed!")
 
 
-@task()
-def check_frontend(c):
-    """Check if frontend is available."""
-    print(frontend_env_available())
-
-
 @task(
     post=[static, clean_settings, translate_stats],
     help={
@@ -326,7 +322,7 @@ def update(c, skip_backup=False):
     migrate(c)
 
     # Decide if we should compile the frontend or try to download it
-    if frontend_env_available():
+    if node_available():
         frontend_compile(c)
     else:
         frontend_download(c)
@@ -714,6 +710,9 @@ def version(c):
     from InvenTree.InvenTree.config import (get_config_file, get_media_dir,
                                             get_static_dir)
 
+    # Gather frontend version information
+    frontend, node, yarn = node_available(versions=True)
+
     print(f"""
 InvenTree - inventree.org
 The Open-Source Inventory Management System\n
@@ -729,6 +728,8 @@ Python      {python_version()}
 Django      {InvenTreeVersion.inventreeDjangoVersion()}
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
+Node        {node if frontend else 'N/A'}
+Yarn        {yarn if frontend else 'N/A'}
 
 Commit hash:{InvenTreeVersion.inventreeCommitHash()}
 Commit date:{InvenTreeVersion.inventreeCommitDate()}""")
@@ -738,6 +739,12 @@ You are probably running the package installer / single-line installer. Please m
 
 Use '--list' for a list of available commands
 Use '--help' for help on a specific command""")
+
+
+@task()
+def frontend_check(c):
+    """Check if frontend is available."""
+    print(node_available())
 
 
 @task
