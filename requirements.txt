@@ -237,8 +237,9 @@ pytz==2023.3
     #   django-dbbackup
     #   djangorestframework
     #   icalendar
-pyyaml==6.0
+pyyaml==6.0.1
     # via
+    #   -r requirements.in
     #   drf-spectacular
     #   tablib
 qrcode[pil]==7.4.2
