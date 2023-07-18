@@ -102,6 +102,20 @@ def yarn(c, cmd, pty: bool = False):
     c.run(f'cd "{path}" && {cmd}', pty=pty)
 
 
+def frontend_env_available():
+    """Checks if the frontend environment (ie node and yarn in bash) is available."""
+    try:
+        yarn_version = os.popen('yarn --version').read().strip()
+        node_version = os.popen('node --version').read().strip()
+    except FileNotFoundError:
+        return False
+
+    if not yarn_version or not node_version:
+        return False
+
+    return True
+
+
 def check_file_existance(filename: str, overwrite: bool = False):
     """Checks if a file exists and asks the user if it should be overwritten.
 
@@ -273,6 +287,12 @@ def migrate(c):
     print("InvenTree database migrations completed!")
 
 
+@task()
+def check_frontend(c):
+    """Check if frontend is available."""
+    print(frontend_env_available())
+
+
 @task(
     post=[static, clean_settings, translate_stats],
     help={
@@ -290,6 +310,7 @@ def update(c, skip_backup=False):
     - install
     - backup (optional)
     - migrate
+    - frontend_compile or frontend_download
     - static
     - clean_settings
     - translate_stats
@@ -304,8 +325,11 @@ def update(c, skip_backup=False):
     # Perform database migrations
     migrate(c)
 
-    # Compile frontend
-    frontend_compile(c)
+    # Decide if we should compile the frontend or try to download it
+    if frontend_env_available():
+        frontend_compile(c)
+    else:
+        frontend_download(c)
 
 
 # Data tasks
