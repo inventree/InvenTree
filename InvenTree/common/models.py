@@ -2812,6 +2812,14 @@ class CustomUnit(models.Model):
 
         registry = get_unit_registry()
 
+        # Check that the 'definition' is valid, by itself
+        try:
+            registry.Quantity(self.definition)
+        except Exception as exc:
+            raise ValidationError({
+                'definition': str(exc)
+            })
+
         try:
             registry.define(self.fmt_string())
         except Exception as exc:
