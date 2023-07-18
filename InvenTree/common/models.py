@@ -2797,11 +2797,25 @@ class NotesImage(models.Model):
 
 
 class CustomUnit(models.Model):
-    """Model for storing custom physical unit definitions"""
+    """Model for storing custom physical unit definitions
+
+    Model Attributes:
+        name: Name of the unit
+        definition: Definition of the unit
+        symbol: Symbol for the unit (e.g. 'm' for 'metre') (optional)
+
+    Refer to the pint documentation for further information on unit definitions.
+    https://pint.readthedocs.io/en/stable/advanced/defining.html
+    """
 
     def fmt_string(self):
         """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'"""
-        return f'{self.name} = {self.definition} = {self.symbol}'
+        fmt = f'{self.name} = {self.definition}'
+
+        if self.symbol:
+            fmt += f' = {self.symbol}'
+
+        return fmt
 
     def clean(self):
         """Validate that the provided custom unit is indeed valid"""
@@ -2820,6 +2834,7 @@ class CustomUnit(models.Model):
                 'definition': str(exc)
             })
 
+        # Finally, test that the entire custom unit definition is valid
         try:
             registry.define(self.fmt_string())
         except Exception as exc:
@@ -2836,7 +2851,7 @@ class CustomUnit(models.Model):
         max_length=10,
         verbose_name=_('Symbol'),
         help_text=_('Unit symbol'),
-        unique=True, blank=False,
+        unique=True, blank=True,
     )
 
     definition = models.CharField(
