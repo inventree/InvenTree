@@ -11,12 +11,23 @@ export interface MenuLinkItem {
   detail?: string | JSX.Element;
   link?: string;
   children?: React.ReactNode;
+  highlight?: boolean;
 }
 
-export function MenuLinks({ links }: { links: MenuLinkItem[] }) {
+export function MenuLinks({
+  links,
+  highlighted
+}: {
+  links: MenuLinkItem[];
+  highlighted?: boolean;
+}) {
   const { classes } = InvenTreeStyle();
+  highlighted = highlighted || false;
 
-  let linksItems = links.map((item) => (
+  const filteredLinks = links.filter(
+    (item) => !highlighted || item.highlight === true
+  );
+  let linksItems = filteredLinks.map((item) => (
     <DocTooltip
       key={item.id}
       text={item.description}

@@ -76,7 +76,7 @@ export function NavHoverMenu({
           mx="-md"
           color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
         />
-        <MenuLinks links={menuItems} />
+        <MenuLinks links={menuItems} highlighted={true} />
         <div className={classes.headerDropdownFooter}>
           <Group position="apart">
             <div>
