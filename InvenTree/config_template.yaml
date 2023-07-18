@@ -58,6 +58,12 @@ database:
 # Use the environment variable INVENTREE_DEBUG
 debug: True
 
+# Set enabled frontends
+# Use the environment variable INVENTREE_CLASSIC_FRONTEND
+# classic_frontend: True
+# Use the environment variable INVENTREE_PLATFORM_FRONTEND
+# platform_frontend: True
+
 # Configure the system logging level
 # Use environment variable INVENTREE_LOG_LEVEL
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL

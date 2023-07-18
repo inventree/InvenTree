@@ -127,6 +127,7 @@ class SettingsKeyType(TypedDict, total=False):
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
         protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
+        required: Is this setting required to work, can be used in combination with .check_all_settings(...) (optional, default: False)
         model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
     """
 
@@ -140,6 +141,7 @@ class SettingsKeyType(TypedDict, total=False):
     before_save: Callable[..., None]
     after_save: Callable[..., None]
     protected: bool
+    required: bool
     model: str
 
 
@@ -190,7 +192,7 @@ class BaseInvenTreeSetting(models.Model):
             kwargs: Keyword arguments to pass to the function
         """
         # Get action
-        setting = self.get_setting_definition(self.key, *args, **kwargs)
+        setting = self.get_setting_definition(self.key, *args, **{**self.get_filters_for_instance(), **kwargs})
         settings_fnc = setting.get(reference, None)
 
         # Execute if callable
@@ -250,13 +252,15 @@ class BaseInvenTreeSetting(models.Model):
         return {key: getattr(self, key, None) for key in self.extra_unique_fields if hasattr(self, key)}
 
     @classmethod
-    def allValues(cls, exclude_hidden=False, **kwargs):
-        """Return a dict of "all" defined global settings.
+    def all_settings(cls, *, exclude_hidden=False, settings_definition: Union[Dict[str, SettingsKeyType], None] = None, **kwargs):
+        """Return a list of "all" defined settings.
 
         This performs a single database lookup,
         and then any settings which are not *in* the database
         are assigned their default values
         """
+        filters = cls.get_filters(**kwargs)
+
         results = cls.objects.all()
 
         if exclude_hidden:
@@ -264,44 +268,82 @@ class BaseInvenTreeSetting(models.Model):
             results = results.exclude(key__startswith='_')
 
         # Optionally filter by other keys
-        results = results.filter(**cls.get_filters(**kwargs))
+        results = results.filter(**filters)
+
+        settings: Dict[str, BaseInvenTreeSetting] = {}
 
         # Query the database
-        settings = {}
-
         for setting in results:
             if setting.key:
-                settings[setting.key.upper()] = setting.value
+                settings[setting.key.upper()] = setting
 
         # Specify any "default" values which are not in the database
-        for key in cls.SETTINGS.keys():
-
+        settings_definition = settings_definition or cls.SETTINGS
+        for key, setting in settings_definition.items():
             if key.upper() not in settings:
-                settings[key.upper()] = cls.get_setting_default(key)
+                settings[key.upper()] = cls(
+                    key=key.upper(),
+                    value=cls.get_setting_default(key, **filters),
+                    **filters
+                )
 
-            if exclude_hidden:
-                hidden = cls.SETTINGS[key].get('hidden', False)
+            # remove any hidden settings
+            if exclude_hidden and setting.get("hidden", False):
+                del settings[key.upper()]
 
-                if hidden:
-                    # Remove hidden items
-                    del settings[key.upper()]
+        # format settings values and remove protected
+        for key, setting in settings.items():
+            validator = cls.get_setting_validator(key, **filters)
 
-        for key, value in settings.items():
-            validator = cls.get_setting_validator(key)
-
-            if cls.is_protected(key):
-                value = '***'
+            if cls.is_protected(key, **filters) and setting.value != "":
+                setting.value = '***'
             elif cls.validator_is_bool(validator):
-                value = InvenTree.helpers.str2bool(value)
+                setting.value = InvenTree.helpers.str2bool(setting.value)
             elif cls.validator_is_int(validator):
                 try:
-                    value = int(value)
+                    setting.value = int(setting.value)
                 except ValueError:
-                    value = cls.get_setting_default(key)
-
-            settings[key] = value
+                    setting.value = cls.get_setting_default(key, **filters)
 
         return settings
+
+    @classmethod
+    def allValues(cls, *, exclude_hidden=False, settings_definition: Union[Dict[str, SettingsKeyType], None] = None, **kwargs):
+        """Return a dict of "all" defined global settings.
+
+        This performs a single database lookup,
+        and then any settings which are not *in* the database
+        are assigned their default values
+        """
+        all_settings = cls.all_settings(exclude_hidden=exclude_hidden, settings_definition=settings_definition, **kwargs)
+
+        settings: Dict[str, Any] = {}
+
+        for key, setting in all_settings.items():
+            settings[key] = setting.value
+
+        return settings
+
+    @classmethod
+    def check_all_settings(cls, *, exclude_hidden=False, settings_definition: Union[Dict[str, SettingsKeyType], None] = None, **kwargs):
+        """Check if all required settings are set by definition.
+
+        Returns:
+            is_valid: Are all required settings defined
+            missing_settings: List of all settings that are missing (empty if is_valid is 'True')
+        """
+        all_settings = cls.all_settings(exclude_hidden=exclude_hidden, settings_definition=settings_definition, **kwargs)
+
+        missing_settings: List[str] = []
+
+        for setting in all_settings.values():
+            if setting.required:
+                value = setting.value or cls.get_setting_default(setting.key, **kwargs)
+
+                if value == "":
+                    missing_settings.append(setting.key.upper())
+
+        return len(missing_settings) == 0, missing_settings
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -829,7 +871,7 @@ class BaseInvenTreeSetting(models.Model):
     @classmethod
     def is_protected(cls, key, **kwargs):
         """Check if the setting value is protected."""
-        setting = cls.get_setting_definition(key, **kwargs)
+        setting = cls.get_setting_definition(key, **cls.get_filters(**kwargs))
 
         return setting.get('protected', False)
 
@@ -837,6 +879,18 @@ class BaseInvenTreeSetting(models.Model):
     def protected(self):
         """Returns if setting is protected from rendering."""
         return self.__class__.is_protected(self.key, **self.get_filters_for_instance())
+
+    @classmethod
+    def is_required(cls, key, **kwargs):
+        """Check if this setting value is required."""
+        setting = cls.get_setting_definition(key, **cls.get_filters(**kwargs))
+
+        return setting.get("required", False)
+
+    @property
+    def required(self):
+        """Returns if setting is required."""
+        return self.__class__.is_required(self.key, **self.get_filters_for_instance())
 
 
 def settings_group_options():
@@ -1247,6 +1301,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Part Category Default Icon'),
             'description': _('Part category default icon (empty means no icon)'),
             'default': '',
+        },
+
+        'PART_PARAMETER_ENFORCE_UNITS': {
+            'name': _('Enforce Parameter Units'),
+            'description': _('If units are provided, parameter values must match the specified units'),
+            'default': True,
+            'validator': bool,
         },
 
         'PRICING_DECIMAL_PLACES_MIN': {
@@ -1678,6 +1739,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
         },
 
+        'STOCKTAKE_EXCLUDE_EXTERNAL': {
+            'name': _('Exclude External Locations'),
+            'description': _('Exclude stock items in external locations from stocktake calculations'),
+            'validator': bool,
+            'default': False,
+        },
+
         'STOCKTAKE_AUTO_DAYS': {
             'name': _('Automatic Stocktake Period'),
             'description': _('Number of days between automatic stocktake recording (set to zero to disable)'),
@@ -1726,7 +1794,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
 def label_printer_options():
     """Build a list of available label printer options."""
-    printers = [('', _('No Printer (Export to PDF)'))]
+    printers = []
     label_printer_plugins = registry.with_mixin('labels')
     if label_printer_plugins:
         printers.extend([(p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins])

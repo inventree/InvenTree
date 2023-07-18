@@ -7,11 +7,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
 from dj_rest_auth.registration.views import (SocialAccountDisconnectView,
                                              SocialAccountListView)
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
+from sesame.views import LoginView
 
 from build.api import build_api_urls
 from build.urls import build_urls
@@ -31,16 +33,18 @@ from report.api import report_api_urls
 from stock.api import stock_api_urls
 from stock.urls import stock_urls
 from users.api import user_urls
+from web.urls import urlpatterns as platform_urls
 
 from .api import APISearchView, InfoView, NotFoundView
+from .magic_login import GetSimpleLoginView
 from .social_auth_urls import SocialProvierListView, social_auth_urlpatterns
 from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
                     CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
-                    CustomTwoFactorRemove, DatabaseStatsView, DynamicJsView,
-                    EditUserView, IndexView, NotificationsView, SearchView,
-                    SetPasswordView, SettingsView, auth_request)
+                    DatabaseStatsView, DynamicJsView, EditUserView, IndexView,
+                    NotificationsView, SearchView, SetPasswordView,
+                    SettingsView, auth_request)
 
 admin.site.site_header = "InvenTree Admin"
 
@@ -81,6 +85,10 @@ apipatterns = [
     path('auth/social/', include(social_auth_urlpatterns)),
     path('auth/social/', SocialAccountListView.as_view(), name='social_account_list'),
     path('auth/social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),
+
+    # Magic login URLs
+    path("email/generate/", csrf_exempt(GetSimpleLoginView().as_view()), name="sesame-generate",),
+    path("email/login/", LoginView.as_view(), name="sesame-login"),
 
     # Unknown endpoint
     re_path(r'^.*$', NotFoundView.as_view(), name='api-404'),
@@ -155,7 +163,7 @@ backendpatterns = [
     re_path(r'^api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
 
-frontendpatterns = [
+classic_frontendpatterns = [
 
     # Apps
     re_path(r'^build/', include(build_urls)),
@@ -191,16 +199,27 @@ frontendpatterns = [
     re_path(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
     re_path(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
 
-    # Temporary fix for django-allauth-2fa # TODO remove
-    # See https://github.com/inventree/InvenTree/security/advisories/GHSA-8j76-mm54-52xq
-    re_path(r'^accounts/two_factor/remove/?$', CustomTwoFactorRemove.as_view(), name='two-factor-remove'),
-
     # Override login page
     re_path("accounts/login/", CustomLoginView.as_view(), name="account_login"),
 
     re_path(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
     re_path(r'^accounts/', include('allauth.urls')),        # included urlpatterns
 ]
+
+
+new_frontendpatterns = [
+    # Platform urls
+    re_path(r'^platform/', include(platform_urls)),
+
+]
+
+# Load patterns for frontend according to settings
+frontendpatterns = []
+if settings.ENABLE_CLASSIC_FRONTEND:
+    frontendpatterns.append(re_path('', include(classic_frontendpatterns)))
+if settings.ENABLE_PLATFORM_FRONTEND:
+    frontendpatterns.append(re_path('', include(new_frontendpatterns)))
+
 
 # Append custom plugin URLs (if plugin support is enabled)
 if settings.PLUGINS_ENABLED:

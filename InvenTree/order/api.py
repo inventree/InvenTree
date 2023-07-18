@@ -16,7 +16,7 @@ from rest_framework.response import Response
 import common.models as common_models
 from common.settings import settings
 from company.models import SupplierPart
-from generic.states import StatusView
+from generic.states.api import StatusView
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS

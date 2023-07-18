@@ -82,7 +82,7 @@ pyflakes==3.0.1
     # via flake8
 pyproject-hooks==1.0.0
     # via build
-pyyaml==6.0
+pyyaml==6.0.1
     # via
     #   -c requirements.txt
     #   pre-commit
