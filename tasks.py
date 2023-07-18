@@ -924,4 +924,4 @@ def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventre
         print(f"\nGitHub doesn't allow artifact downloads from anonymous users. Either download the following file\n"
               f"via your signed in browser, or consider using a point release download via invoke frontend-download --tag <git-tag>\n"
               f"\n    Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and\n"
-              f"    continue by running: invoke frontend-download --extract <path-to-downloaded-zip-file>")
+              f"    continue by running: invoke frontend-download --extract --file <path-to-downloaded-zip-file>")
