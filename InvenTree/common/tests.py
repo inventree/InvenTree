@@ -22,9 +22,10 @@ from plugin import registry
 from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
-from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
-                     NotesImage, NotificationEntry, NotificationMessage,
-                     ProjectCode, WebhookEndpoint, WebhookMessage)
+from .models import (ColorTheme, CustomUnit, InvenTreeSetting,
+                     InvenTreeUserSetting, NotesImage, NotificationEntry,
+                     NotificationMessage, ProjectCode, WebhookEndpoint,
+                     WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -1184,3 +1185,92 @@ class ProjectCodesTest(InvenTreeAPITestCase):
             },
             expected_code=403
         )
+
+
+class CustomUnitAPITest(InvenTreeAPITestCase):
+    """Unit tests for the CustomUnit API"""
+
+    @property
+    def url(self):
+        """Return the API endpoint for the CustomUnit list"""
+        return reverse('api-custom-unit-list')
+
+    @classmethod
+    def setUpTestData(cls):
+        """Construct some initial test fixture data"""
+        super().setUpTestData()
+
+        units = [
+            CustomUnit(name='metres_per_amp', definition='meter / ampere', symbol='m/A'),
+            CustomUnit(name='hectares_per_second', definition='hectares per second', symbol='ha/s'),
+        ]
+
+        CustomUnit.objects.bulk_create(units)
+
+    def test_list(self):
+        """Test API list functionality"""
+
+        response = self.get(self.url, expected_code=200)
+        self.assertEqual(len(response.data), CustomUnit.objects.count())
+
+    def test_edit(self):
+        """Test edit permissions for CustomUnit model"""
+
+        unit = CustomUnit.objects.first()
+
+        # Try to edit without permission
+        self.user.is_staff = False
+        self.user.save()
+
+        self.patch(
+            reverse('api-custom-unit-detail', kwargs={'pk': unit.pk}),
+            {
+                'name': 'new_unit_name',
+            },
+            expected_code=403
+        )
+
+        # Ok, what if we have permission?
+        self.user.is_staff = True
+        self.user.save()
+
+        response = self.patch(
+            reverse('api-custom-unit-detail', kwargs={'pk': unit.pk}),
+            {
+                'name': 'new_unit_name',
+            },
+            # expected_code=200
+        )
+
+        print(response.status_code, response.data)
+
+        unit.refresh_from_db()
+        self.assertEqual(unit.name, 'new_unit_name')
+
+    def test_validation(self):
+        """Test that validation works as expected"""
+
+        unit = CustomUnit.objects.first()
+
+        self.user.is_staff = True
+        self.user.save()
+
+        # Test invalid 'name' values (must be valid identifier)
+        invalid_name_values = [
+            '1',
+            '1abc',
+            'abc def',
+            'abc-def',
+            'abc.def',
+        ]
+
+        url = reverse('api-custom-unit-detail', kwargs={'pk': unit.pk})
+
+        for name in invalid_name_values:
+            self.patch(
+                url,
+                {
+                    'name': name,
+                },
+                expected_code=400
+            )
