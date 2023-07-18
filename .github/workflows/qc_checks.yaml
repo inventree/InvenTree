@@ -64,10 +64,10 @@ jobs:
         run: flake8 InvenTree --extend-ignore=D
 
   javascript:
-    name: Style [JS]
+    name: Style - Classic UI [JS]
     runs-on: ubuntu-20.04
 
-    needs: pep_style
+    needs: ['pep_style', 'pre-commit']
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
