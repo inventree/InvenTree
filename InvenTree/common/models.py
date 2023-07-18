@@ -2799,6 +2799,24 @@ class NotesImage(models.Model):
 class CustomUnit(models.Model):
     """Model for storing custom physical unit definitions"""
 
+    def fmt_string(self):
+        """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'"""
+        return f'{self.name} = {self.definition} = {self.symbol}'
+
+    def clean(self):
+        """Validate that the provided custom unit is indeed valid"""
+
+        super().clean()
+
+        from InvenTree.conversion import get_unit_registry
+
+        registry = get_unit_registry()
+
+        try:
+            registry.define(self.fmt_string())
+        except Exception as exc:
+            raise ValidationError(str(exc))
+
     name = models.CharField(
         max_length=50,
         verbose_name=_('Name'),
