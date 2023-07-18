@@ -89,6 +89,19 @@ def manage(c, cmd, pty: bool = False):
     ), pty=pty)
 
 
+def yarn(c, cmd, pty: bool = False):
+    """Runs a given command against the yarn package manager.
+
+    Args:
+        c: Command line context.
+        cmd: Yarn command to run.
+        pty (bool, optional): Run an interactive session. Defaults to False.
+    """
+
+    path = managePyDir().parent.joinpath('src').joinpath('frontend')
+    c.run(f'cd "{path}" && {cmd}', pty=pty)
+
+
 def check_file_existance(filename: str, overwrite: bool = False):
     """Checks if a file exists and asks the user if it should be overwritten.
 
@@ -188,6 +201,7 @@ def remove_mfa(c, mail=''):
 def static(c):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, "prerender")
+    frontend_build(c)
     manage(c, "collectstatic --no-input")
 
 
@@ -289,6 +303,9 @@ def update(c, skip_backup=False):
 
     # Perform database migrations
     migrate(c)
+
+    # Compile frontend
+    frontend_compile(c)
 
 
 # Data tasks
@@ -697,3 +714,50 @@ You are probably running the package installer / single-line installer. Please m
 
 Use '--list' for a list of available commands
 Use '--help' for help on a specific command""")
+
+
+@task
+def frontend_compile(c):
+    """Generate react frontend.
+
+    Args:
+        c: Context variable
+    """
+
+    frontend_install(c)
+    frontend_trans(c)
+    frontend_build(c)
+
+
+@task
+def frontend_install(c):
+    """Install frontend requirements.
+
+    Args:
+        c: Context variable
+    """
+    print("Installing frontend dependencies")
+    yarn(c, "yarn install")
+
+
+@task
+def frontend_trans(c):
+    """Compile frontend translations.
+
+    Args:
+        c: Context variable
+    """
+    print("Compiling frontend translations")
+    yarn(c, "yarn run extract")
+    yarn(c, "yarn run compile")
+
+
+@task
+def frontend_build(c):
+    """Build frontend.
+
+    Args:
+        c: Context variable
+    """
+    print("Building frontend")
+    yarn(c, "yarn run build --emptyOutDir")
