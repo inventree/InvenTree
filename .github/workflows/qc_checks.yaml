@@ -306,7 +306,7 @@ jobs:
         uses: ./.github/actions/migration
 
   migration-tests:
-    name: Tests - Migration Unit [PostgreSQL]
+    name: Tests - Migrations [PostgreSQL]
     runs-on: ubuntu-latest
     needs: paths-filter
     if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
@@ -343,7 +343,7 @@ jobs:
         run: invoke test --migrations --report
 
   migrations-checks:
-    name: Tests - Migrations [SQLite]
+    name: Tests - Full Migration [SQLite]
     runs-on: ubuntu-latest
     needs: paths-filter
     if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
