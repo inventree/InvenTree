@@ -2852,7 +2852,7 @@ class CustomUnit(models.Model):
     symbol = models.CharField(
         max_length=10,
         verbose_name=_('Symbol'),
-        help_text=_('Unit symbol'),
+        help_text=_('Optional unit symbol'),
         unique=True, blank=True,
     )
 
