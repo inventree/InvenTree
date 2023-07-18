@@ -395,7 +395,7 @@ jobs:
     name: Tests - UI Platform
     runs-on: ubuntu-20.04
     timeout-minutes: 60
-    needs: paths-filter
+    needs: ['pre-commit', 'paths-filter']
     if: needs.paths-filter.outputs.frontend == 'true'
     env:
       INVENTREE_DB_ENGINE: sqlite3
