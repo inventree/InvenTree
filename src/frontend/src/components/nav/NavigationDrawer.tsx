@@ -16,6 +16,7 @@ import { InvenTreeStyle } from '../../globalStyle';
 import { DocumentationLinks } from '../items/DocumentationLinks';
 import { MenuLinkItem, MenuLinks } from '../items/MenuLinks';
 
+// TODO @matmair #1: implement plugin loading and menu item generation see #5269
 const plugins: MenuLinkItem[] = [];
 
 export function NavigationDrawer({
