@@ -300,7 +300,7 @@ msgid "About"
 msgstr ""
 
 #: src/contexts/ThemeContext.tsx:62
-#: src/pages/Index/Profile/UserPanel.tsx:132
+#: src/pages/Index/Profile/UserPanel.tsx:121
 msgid "Submit"
 msgstr ""
 
@@ -768,20 +768,56 @@ msgstr ""
 #~ msgid "Method: {0}"
 #~ msgstr ""
 
-#: src/pages/Index/Profile/UserPanel.tsx:90
+#: src/pages/Index/Profile/UserPanel.tsx:79
 msgid "Userinfo"
 msgstr ""
 
-#: src/pages/Index/Profile/UserPanel.tsx:103
+#: src/pages/Index/Profile/UserPanel.tsx:92
 msgid "First name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile/UserPanel.tsx:114
+#: src/pages/Index/Profile/UserPanel.tsx:103
 msgid "Last name: {0}"
 msgstr ""
 
-#: src/pages/Index/Profile/UserPanel.tsx:125
+#: src/pages/Index/Profile/UserPanel.tsx:114
 msgid "Username: {0}"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:71
+msgid "bars"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:72
+msgid "oval"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:73
+msgid "dots"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:84
+msgid "Design <0/>"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:92
+msgid "Primary color"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:105
+msgid "White color"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:113
+msgid "Black color"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:121
+msgid "Border Radius"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:137
+msgid "Loader"
 msgstr ""
 
 #: src/pages/Logged-In.tsx:24
