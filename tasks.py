@@ -5,6 +5,7 @@ import os
 import pathlib
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 from platform import python_version
@@ -104,18 +105,22 @@ def yarn(c, cmd, pty: bool = False):
 
 def node_available(versions: bool = False):
     """Checks if the frontend environment (ie node and yarn in bash) is available."""
-    try:
-        yarn_version = os.popen('yarn --version').read().strip()
-        node_version = os.popen('node --version').read().strip()
-    except FileNotFoundError:
-        return False
+    def ret(val, val0=None, val1=None):
+        if versions:
+            return val, val0, val1
+        return val
 
-    if not yarn_version or not node_version:
-        return False
+    def check(cmd):
+        try:
+            return str(subprocess.check_output([cmd], stderr=subprocess.STDOUT, shell=True), encoding='utf-8').strip()
+        except subprocess.CalledProcessError:
+            return None
+        except FileNotFoundError:
+            return None
 
-    if versions:
-        return True, node_version, yarn_version
-    return True
+    yarn_version = check('yarn --version')
+    node_version = check('node --version')
+    return ret((not yarn_version or not node_version), node_version, yarn_version)
 
 
 def check_file_existance(filename: str, overwrite: bool = False):
@@ -217,7 +222,8 @@ def remove_mfa(c, mail=''):
 def static(c):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, "prerender")
-    frontend_build(c)
+    if node_available():
+        frontend_build(c)
     manage(c, "collectstatic --no-input")
 
 
