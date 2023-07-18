@@ -2794,3 +2794,28 @@ class NotesImage(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     date = models.DateTimeField(auto_now_add=True)
+
+
+class CustomUnit(models.Model):
+    """Model for storing custom physical unit definitions"""
+
+    name = models.CharField(
+        max_length=50,
+        verbose_name=_('Name'),
+        help_text=_('Unit name'),
+        unique=True, blank=False,
+    )
+
+    symbol = models.CharField(
+        max_length=10,
+        verbose_name=_('Symbol'),
+        help_text=_('Unit symbol'),
+        unique=True, blank=False,
+    )
+
+    definition = models.CharField(
+        max_length=50,
+        verbose_name=_('Definition'),
+        help_text=_('Unit definition'),
+        blank=False,
+    )
