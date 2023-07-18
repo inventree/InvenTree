@@ -101,7 +101,7 @@ ENTRYPOINT ["/bin/sh", "./init.sh"]
 # Frontend builder image:
 FROM inventree_base as frontend
 
-RUN apk add nodejs npm && npm install -g yarn
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn
 COPY InvenTree ${INVENTREE_HOME}/InvenTree
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
@@ -131,7 +131,7 @@ CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./Inve
 FROM inventree_base as dev
 
 # Install nodejs / npm / yarn
-RUN apk add nodejs npm && npm cache clean -f && npm install -g n && n stable && npm install -g yarn
+RUN apk add --no-cache --update nodejs npm && npm cache clean -f && npm install -g n && n stable && npm install -g yarn
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management

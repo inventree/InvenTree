@@ -212,7 +212,6 @@ new_frontendpatterns = [
     # Platform urls
     re_path(r'^platform/', include(platform_urls)),
     re_path(r'^platform', spa_view, name='platform'),
-
 ]
 
 # Load patterns for frontend according to settings

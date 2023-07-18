@@ -1,6 +1,7 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-11-27 01:44+0100\n"
+"POT-Creation-Date: 2023-06-09 22:10+0200\n"
+"POT-Creation-Date: 2023-06-09 22:10+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -234,7 +235,7 @@ msgid "Close modal"
 msgstr ""
 
 #: src/components/nav/MainMenu.tsx:53
-#: src/defaults/menuItems.tsx:103
+#: src/defaults/menuItems.tsx:123
 msgid "Notifications"
 msgstr ""
 
@@ -263,41 +264,41 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: src/components/nav/MegaHoverMenu.tsx:45
+#: src/components/nav/NavHoverMenu.tsx:52
 msgid "Open Navigation"
 msgstr ""
 
-#: src/components/nav/MegaHoverMenu.tsx:62
+#: src/components/nav/NavHoverMenu.tsx:70
 msgid "View all"
 msgstr ""
 
-#: src/components/nav/MegaHoverMenu.tsx:76
-#: src/components/nav/MegaHoverMenu.tsx:86
+#: src/components/nav/NavHoverMenu.tsx:84
+#: src/components/nav/NavHoverMenu.tsx:94
 msgid "Get started"
 msgstr ""
 
-#: src/components/nav/MegaHoverMenu.tsx:79
+#: src/components/nav/NavHoverMenu.tsx:87
 msgid "Overview over high-level objects, functions and possible usecases."
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:68
+#: src/components/nav/NavigationDrawer.tsx:58
 msgid "Navigation"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:71
+#: src/components/nav/NavigationDrawer.tsx:61
 msgid "Pages"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:74
+#: src/components/nav/NavigationDrawer.tsx:66
 msgid "Plugins"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:80
-#: src/defaults/menuItems.tsx:88
+#: src/components/nav/NavigationDrawer.tsx:76
+#: src/defaults/menuItems.tsx:104
 msgid "Documentation"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:83
+#: src/components/nav/NavigationDrawer.tsx:79
 msgid "About"
 msgstr ""
 
@@ -400,63 +401,63 @@ msgstr ""
 #~ msgid "Open sourcea"
 #~ msgstr ""
 
-#: src/defaults/menuItems.tsx:8
+#: src/defaults/menuItems.tsx:9
 msgid "Open source"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:9
+#: src/defaults/menuItems.tsx:10
 msgid "This Pokémon’s cry is very loud and distracting"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:10
+#: src/defaults/menuItems.tsx:12
 msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:15
+#: src/defaults/menuItems.tsx:21
 msgid "Free for everyone"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:16
+#: src/defaults/menuItems.tsx:22
 msgid "The fluid of Smeargle’s tail secretions changes"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:17
+#: src/defaults/menuItems.tsx:24
 msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:21
+#: src/defaults/menuItems.tsx:32
 msgid "abc"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:25
+#: src/defaults/menuItems.tsx:37
 msgid "Random image"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:27
+#: src/defaults/menuItems.tsx:40
 msgid "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Name liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assume. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:89
+#: src/defaults/menuItems.tsx:105
 msgid "Yanma is capable of seeing 360 degrees without"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:93
+#: src/defaults/menuItems.tsx:109
 msgid "Security"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:94
+#: src/defaults/menuItems.tsx:111
 msgid "The shell’s rounded shape and the grooves on its."
 msgstr ""
 
-#: src/defaults/menuItems.tsx:98
+#: src/defaults/menuItems.tsx:116
 msgid "Analytics"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:99
+#: src/defaults/menuItems.tsx:118
 msgid "This Pokémon uses its flying ability to quickly chase"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:104
+#: src/defaults/menuItems.tsx:125
 msgid "Combusken battles with the intensely hot flames it spews"
 msgstr ""
 

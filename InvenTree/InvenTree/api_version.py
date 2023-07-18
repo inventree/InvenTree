@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 129
+INVENTREE_API_VERSION = 130
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v130 -> 2023-07-14 : https://github.com/inventree/InvenTree/pull/5251
+    - Refactor label printing interface
 
 v129 -> 2023-07-06 : https://github.com/inventree/InvenTree/pull/5189
     - Changes 'serial_lte' and 'serial_gte' stock filters to point to 'serial_int' field

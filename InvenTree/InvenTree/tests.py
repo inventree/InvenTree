@@ -11,12 +11,15 @@ import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
+from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
+from django.urls import reverse
 
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
+from sesame.utils import get_user
 
 import InvenTree.conversion
 import InvenTree.format
@@ -1061,3 +1064,38 @@ class SanitizerTest(TestCase):
 
         # Test that invalid string is cleanded
         self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))
+
+
+class MagicLoginTest(InvenTreeTestCase):
+    """Test magic login token generation."""
+
+    def test_generation(self):
+        """Test that magic login tokens are generated correctly"""
+
+        # User does not exists
+        resp = self.client.post(reverse('sesame-generate'), {'email': 1})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data, {'status': 'ok'})
+        self.assertEqual(len(mail.outbox), 0)
+
+        # User exists
+        resp = self.client.post(reverse('sesame-generate'), {'email': self.user.email})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data, {'status': 'ok'})
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, '[example.com] Log in to the app')
+
+        # Check that the token is in the email
+        self.assertTrue('http://testserver/api/email/login/' in mail.outbox[0].body)
+        token = mail.outbox[0].body.split('/')[-1].split('\n')[0][8:]
+        self.assertEqual(get_user(token), self.user)
+
+        # Log user off
+        self.client.logout()
+
+        # Check that the login works
+        resp = self.client.get(reverse('sesame-login') + '?sesame=' + token)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, '/platform/logged-in/')
+        # And we should be logged in again
+        self.assertEqual(resp.wsgi_request.user, self.user)
