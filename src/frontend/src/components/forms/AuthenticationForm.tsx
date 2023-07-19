@@ -84,7 +84,7 @@ export function AuthenticationForm({
       <Text size="lg" weight={500}>
         <Group>
           {!editing ? hostname : selectElement}
-          {EditButton(setEditing, editing)}
+          <EditButton setEditing={setEditing} editing={editing} />
         </Group>
       </Text>
       <form onSubmit={classicForm.onSubmit(() => {})}>

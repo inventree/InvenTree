@@ -100,7 +100,11 @@ const SelectHost = ({
         data={hostListData}
         disabled={HostListEdit}
       />
-      {EditButton(setHostListEdit, HostListEdit, HostListEdit)}
+      <EditButton
+        setEditing={setHostListEdit}
+        editing={HostListEdit}
+        disabled={HostListEdit}
+      />
     </Group>
   );
 };
