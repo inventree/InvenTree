@@ -244,6 +244,7 @@ class LabelTemplate(MetadataMixin, models.Model):
         for plugin in plugins:
             # Let each plugin add its own context data
             plugin.add_label_context(self, self.object_to_print, request, context)
+
         return context
 
     def context_multipage(self, request, content):
@@ -290,17 +291,8 @@ class LabelTemplate(MetadataMixin, models.Model):
             **kwargs
         )
 
-    def render_multipage_as_string(self, request, multipage_table, **kwargs):
-        """Render the multipage tables to a HTML string with the multipage template.
-
-        Useful for debug mode (viewing generated code)
-        """
-        return render_to_string(
-            "label/multipage_label_base.html",
-            self.context_multipage(request, multipage_table), request)
-
-    def render_multipage(self, request, multipage_table, **kwargs):
-        """Render the multipage tables to a HTML string with the multipage template.
+    def render_paginated(self, request, multipage_table, **kwargs):
+        """Render the multipage tables to an HTML string with the multipage template.
 
         Uses django-weasyprint plugin to render HTML template
         """
@@ -318,24 +310,14 @@ class LabelTemplate(MetadataMixin, models.Model):
         )
         return ret
 
-    def render_from_html(self, request, **kwargs):
-        """Render a pre-rendered HTML data to a PDF file.
+    def render_paginated_to_string(self, request, multipage_table, **kwargs):
+        """Render the multipage tables to a HTML string with the multipage template.
 
-        Uses django-weasyprint plugin to render HTML template
+        Useful for debug mode (viewing generated code)
         """
-        wp = WeasyprintLabelMixin(
-            request,
-            self.template_name,
-            base_url=request.build_absolute_uri("/"),
-            presentational_hints=True,
-            filename=self.generate_filename(request),
-            **kwargs
-        )
-
-        return wp.render_to_response(
-            self.context(request),
-            **kwargs
-        )
+        return render_to_string(
+            "label/multipage_label_base.html",
+            self.context_multipage(request, multipage_table), request)
 
 
 class LabelOutput(models.Model):

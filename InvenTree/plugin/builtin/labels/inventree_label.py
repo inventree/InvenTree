@@ -1,5 +1,7 @@
 """Default label printing plugin (supports PDF generation)"""
 
+import math
+
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
@@ -45,11 +47,14 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         outputs = []
         output_file = None
 
-        for item in items:
+        if label.multipage:
+            outputs = self.print_paginated(label, request, items, debug)
+        else:
+            for item in items:
 
-            label.object_to_print = item
+                label.object_to_print = item
 
-            outputs.append(self.print_label(label, request, debug=debug, **kwargs))
+                outputs.append(self.print_label(label, request, debug=debug, **kwargs))
 
         if self.get_setting('DEBUG'):
             html = '\n'.join(outputs)
@@ -94,3 +99,45 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             return self.render_to_html(label, request, **kwargs)
         else:
             return self.render_to_pdf(label, request, **kwargs)
+
+    def print_paginated(self, label: LabelTemplate, request, items, debug):
+        """Paginate the labels to pages depending on th label/page geometry ratio"""
+
+        col_count = math.floor(label.page_width / label.width)
+        row_count = math.floor(label.page_height / label.height)
+
+        main_tables = '<table class="main-table"><tr class="main-table-row">'
+
+        col_counter = 0
+        row_counter = 0
+        item_counter = 0
+
+        outputs = []
+
+        for item in items:
+            label.object_to_print = item
+
+            main_tables += '<td class="main-table-cell">' + self.print_label(label, request, debug=True) + '</td>'
+
+            col_counter = col_counter + 1
+            if col_counter >= col_count:
+                col_counter = 0
+                main_tables += "</tr>"
+
+                row_counter = row_counter + 1
+                if row_counter >= row_count:
+                    row_counter = 0
+                    main_tables += "</table>"
+                    if item_counter < len(items) - 1:
+                        main_tables += '<table class="main-table"><tr class="main-table-row">'
+                else:
+                    if item_counter < len(items) - 1:
+                        main_tables += '<tr class="main-table-row">'
+            item_counter = item_counter + 1
+
+        if debug:
+            outputs.append(label.render_paginated_to_string(request, main_tables))
+        else:
+            outputs.append(label.render_paginated(request, main_tables))
+
+        return outputs
