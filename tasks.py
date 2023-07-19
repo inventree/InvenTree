@@ -298,10 +298,11 @@ def migrate(c):
 @task(
     post=[static, clean_settings, translate_stats],
     help={
-        'skip_backup': 'Skip database backup step (advanced users)'
+        'skip_backup': 'Skip database backup step (advanced users)',
+        'no_frontend': 'Skip frontend compilation/download step (is already included with docker image)',
     }
 )
-def update(c, skip_backup=False):
+def update(c, skip_backup=False, no_frontend=False):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -326,6 +327,10 @@ def update(c, skip_backup=False):
 
     # Perform database migrations
     migrate(c)
+
+    # Stop here if we are not building/downloading the frontend
+    if no_frontend:
+        return
 
     # Decide if we should compile the frontend or try to download it
     if node_available():
