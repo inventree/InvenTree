@@ -939,4 +939,4 @@ GitHub doesn't allow artifact downloads from anonymous users. Either download th
 via your signed in browser, or consider using a point release download via invoke frontend-download --tag <git-tag>
 
     Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and
-    continue by running: invoke frontend-download --extract --file <path-to-downloaded-zip-file>""")
+    continue by running: invoke frontend-download --file <path-to-downloaded-zip-file>""")
