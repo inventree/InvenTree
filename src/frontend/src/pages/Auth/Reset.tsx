@@ -30,7 +30,7 @@ export default function Reset() {
                 required
                 label={t`Email`}
                 description={t`We will send you a link to login - if you are registered`}
-                placeholder="code@mjmair.com"
+                placeholder="reader@example.org"
                 {...simpleForm.getInputProps('email')}
               />
             </Stack>
