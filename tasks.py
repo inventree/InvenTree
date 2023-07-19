@@ -223,8 +223,8 @@ def translate_stats(c):
     c.run(f'python3 {path}')
 
 
-@task(post=[translate_stats, static])
-def translate(c):
+@task(post=[translate_stats])
+def translate(c, skip_static=False):
     """Rebuild translation source files. Advanced use only!
 
     Note: This command should not be used on a local install,
@@ -233,6 +233,10 @@ def translate(c):
     # Translate applicable .py / .html / .js files
     manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
+
+    if not skip_static:
+        # Update static files
+        static(c)
 
 
 @task
