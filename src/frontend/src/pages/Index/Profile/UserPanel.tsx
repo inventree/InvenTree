@@ -6,6 +6,7 @@ import {
   Group,
   SimpleGrid,
   Skeleton,
+  Stack,
   Text,
   TextInput,
   Title
@@ -82,46 +83,42 @@ export function UserInfo({ data }: { data: any }) {
       </Group>
       <Group>
         {editing ? (
-          <TextInput
-            label="First name"
-            placeholder="First name"
-            {...form.getInputProps('first_name')}
-          />
+          <Stack spacing="xs">
+            <TextInput
+              label="First name"
+              placeholder="First name"
+              {...form.getInputProps('first_name')}
+            />
+            <TextInput
+              label="Last name"
+              placeholder="Last name"
+              {...form.getInputProps('last_name')}
+            />
+            <TextInput
+              label="Username"
+              placeholder="Username"
+              {...form.getInputProps('username')}
+            />
+            <Group position="right" mt="md">
+              <Button type="submit">
+                <Trans>Submit</Trans>
+              </Button>
+            </Group>
+          </Stack>
         ) : (
-          <Text>
-            <Trans>First name: {form.values.first_name}</Trans>
-          </Text>
-        )}
-        {editing ? (
-          <TextInput
-            label="Last name"
-            placeholder="Last name"
-            {...form.getInputProps('last_name')}
-          />
-        ) : (
-          <Text>
-            <Trans>Last name: {form.values.last_name}</Trans>
-          </Text>
-        )}
-        {editing ? (
-          <TextInput
-            label="Username"
-            placeholder="Username"
-            {...form.getInputProps('username')}
-          />
-        ) : (
-          <Text>
-            <Trans>Username: {form.values.username}</Trans>
-          </Text>
+          <Stack spacing="xs">
+            <Text>
+              <Trans>First name: {form.values.first_name}</Trans>
+            </Text>
+            <Text>
+              <Trans>Last name: {form.values.last_name}</Trans>
+            </Text>
+            <Text>
+              <Trans>Username: {form.values.username}</Trans>
+            </Text>
+          </Stack>
         )}
       </Group>
-      {editing ? (
-        <Group position="right" mt="md">
-          <Button type="submit">
-            <Trans>Submit</Trans>
-          </Button>
-        </Group>
-      ) : null}
     </form>
   );
 }
