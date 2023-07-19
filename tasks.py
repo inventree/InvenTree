@@ -256,9 +256,13 @@ def translate(c):
     Note: This command should not be used on a local install,
     it is performed as part of the InvenTree translation toolchain.
     """
-    # Translate applicable .py / .html / .js files
+    # Translate applicable .py / .html / .js / .tsx files
     manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
+
+    if node_available():
+        frontend_trans(c)
+        frontend_build(c)
 
 
 @task
