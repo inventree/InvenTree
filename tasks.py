@@ -103,7 +103,7 @@ def yarn(c, cmd, pty: bool = False):
     c.run(f'cd "{path}" && {cmd}', pty=pty)
 
 
-def node_available(versions: bool = False):
+def node_available(versions: bool = False, bypass_yarn: bool = False):
     """Checks if the frontend environment (ie node and yarn in bash) is available."""
     def ret(val, val0=None, val1=None):
         if versions:
@@ -120,9 +120,11 @@ def node_available(versions: bool = False):
 
     yarn_version = check('yarn --version')
     node_version = check('node --version')
-    if node_version and not yarn_version:
+
+    yarn_passes = bypass_yarn or yarn_version
+    if node_version and not yarn_passes:
         print('Node is available but yarn is not. Install yarn if you wish to build the frontend.')
-    return ret((not yarn_version or not node_version), node_version, yarn_version)
+    return ret((not yarn_passes or not node_version), node_version, yarn_version)
 
 
 def check_file_existance(filename: str, overwrite: bool = False):
@@ -347,7 +349,7 @@ def update(c, skip_backup=False, no_frontend=False):
         return
 
     # Decide if we should compile the frontend or try to download it
-    if node_available():
+    if node_available(bypass_yarn=True):
         frontend_compile(c)
     else:
         frontend_download(c)
