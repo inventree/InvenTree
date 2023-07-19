@@ -1,5 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
 
 import { queryClient, setApiDefaults } from '../App';
@@ -25,10 +25,12 @@ export default function DesktopAppView() {
   const [fetchedServerSession, setFetchedServerSession] = useState(false);
   const sessionState = useSessionState.getState();
   const [token] = sessionState.token ? [sessionState.token] : [null];
-  if (token && !fetchedServerSession) {
-    setFetchedServerSession(true);
-    fetchApiState();
-  }
+  useEffect(() => {
+    if (token && !fetchedServerSession) {
+      setFetchedServerSession(true);
+      fetchApiState();
+    }
+  }, [token, fetchedServerSession]);
 
   return (
     <BaseContext>
