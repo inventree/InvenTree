@@ -14,7 +14,7 @@ python3 -m venv dev/venv
 
 # setup InvenTree server
 pip install invoke
-invoke update
+invoke update --no-frontend
 invoke setup-dev
 invoke frontend-install
 
