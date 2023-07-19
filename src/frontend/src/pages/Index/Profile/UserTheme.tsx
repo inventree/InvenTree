@@ -20,20 +20,20 @@ import { SizeMarks } from '../../../defaults/defaults';
 import { InvenTreeStyle } from '../../../globalStyle';
 import { useLocalState } from '../../../states/LocalState';
 
+function getLkp(color: string) {
+  return { [DEFAULT_THEME.colors[color][6]]: color };
+}
+const LOOKUP = Object.assign(
+  {},
+  ...Object.keys(DEFAULT_THEME.colors).map((clr) => getLkp(clr))
+);
+
 export function UserTheme({ height }: { height: number }) {
   const { theme } = InvenTreeStyle();
 
-  function getLkp(color: string) {
-    return { [DEFAULT_THEME.colors[color][6]]: color };
-  }
-  const lookup = Object.assign(
-    {},
-    ...Object.keys(DEFAULT_THEME.colors).map((clr) => getLkp(clr))
-  );
-
   // primary color
   function changePrimary(color: string) {
-    useLocalState.setState({ primaryColor: lookup[color] });
+    useLocalState.setState({ primaryColor: LOOKUP[color] });
   }
   // white color
   const [whiteColor, setWhiteColor] = useState(theme.white);
@@ -95,7 +95,7 @@ export function UserTheme({ height }: { height: number }) {
                 format="hex"
                 onChange={changePrimary}
                 withPicker={false}
-                swatches={Object.keys(lookup)}
+                swatches={Object.keys(LOOKUP)}
               />
             </td>
           </tr>
