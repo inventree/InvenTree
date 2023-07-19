@@ -121,9 +121,14 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
     yarn_version = check('yarn --version')
     node_version = check('node --version')
 
+    # Either yarn is available or we don't care about yarn
     yarn_passes = bypass_yarn or yarn_version
+
+    # Print a warning if node is available but yarn is not
     if node_version and not yarn_passes:
         print('Node is available but yarn is not. Install yarn if you wish to build the frontend.')
+
+    # Return the result
     return ret((not yarn_passes or not node_version), node_version, yarn_version)
 
 
