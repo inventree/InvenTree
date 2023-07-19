@@ -120,6 +120,8 @@ def node_available(versions: bool = False):
 
     yarn_version = check('yarn --version')
     node_version = check('node --version')
+    if node_version and not yarn_version:
+        print('Node is available but yarn is not. Install yarn if you wish to build the frontend.')
     return ret((not yarn_version or not node_version), node_version, yarn_version)
 
 
