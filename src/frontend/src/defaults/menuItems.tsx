@@ -7,7 +7,6 @@ export const menuItems: MenuLinkItem[] = [
   {
     id: 'home',
     title: <Trans>Home</Trans>,
-    description: <Trans>Start page of your instance.</Trans>,
     highlight: true
   },
   {

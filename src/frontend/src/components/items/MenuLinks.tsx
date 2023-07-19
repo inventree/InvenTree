@@ -7,11 +7,34 @@ import { DocTooltip } from './DocTooltip';
 export interface MenuLinkItem {
   id: string;
   title: string | JSX.Element;
-  description: string | JSX.Element;
+  description?: string | JSX.Element;
   detail?: string | JSX.Element;
   link?: string;
   children?: React.ReactNode;
   highlight?: boolean;
+}
+
+function ConditionalDocTooltip({
+  item,
+  children
+}: {
+  item: MenuLinkItem;
+  children: React.ReactNode;
+}) {
+  if (item.description !== undefined) {
+    return (
+      <DocTooltip
+        key={item.id}
+        text={item.description}
+        detail={item?.detail}
+        link={item.link}
+        docchildren={item?.children}
+      >
+        {children}
+      </DocTooltip>
+    );
+  }
+  return <>{children}</>;
 }
 
 export function MenuLinks({
@@ -27,24 +50,17 @@ export function MenuLinks({
   const filteredLinks = links.filter(
     (item) => !highlighted || item.highlight === true
   );
-  let linksItems = filteredLinks.map((item) => (
-    <DocTooltip
-      key={item.id}
-      text={item.description}
-      detail={item?.detail}
-      link={item?.link}
-      docchildren={item?.children}
-    >
-      <UnstyledButton className={classes.subLink} key={item.id}>
-        <Text size="sm" fw={500}>
-          {item.title}
-        </Text>
-      </UnstyledButton>
-    </DocTooltip>
-  ));
   return (
     <SimpleGrid cols={2} spacing={0}>
-      {linksItems}
+      {filteredLinks.map((item) => (
+        <ConditionalDocTooltip item={item}>
+          <UnstyledButton className={classes.subLink} key={item.id}>
+            <Text size="sm" fw={500}>
+              {item.title}
+            </Text>
+          </UnstyledButton>
+        </ConditionalDocTooltip>
+      ))}
     </SimpleGrid>
   );
 }
