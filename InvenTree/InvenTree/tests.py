@@ -16,6 +16,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+import pint.errors
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -26,7 +27,7 @@ import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
-from common.models import InvenTreeSetting
+from common.models import CustomUnit, InvenTreeSetting
 from common.settings import currency_codes
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
@@ -75,6 +76,36 @@ class ConversionTest(TestCase):
         for val in inputs:
             with self.assertRaises(ValidationError):
                 InvenTree.conversion.convert_physical_value(val)
+
+    def test_custom_units(self):
+        """Tests for custom unit conversion"""
+
+        # Start with an empty set of units
+        CustomUnit.objects.all().delete()
+        InvenTree.conversion.reload_unit_registry()
+
+        # Ensure that the custom unit does *not* exist to start with
+        reg = InvenTree.conversion.get_unit_registry()
+
+        with self.assertRaises(pint.errors.UndefinedUnitError):
+            reg['hpmm']
+
+        # Create a new custom unit
+        CustomUnit.objects.create(
+            name='fanciful_unit',
+            definition='henry / mm',
+            symbol='hpmm',
+        )
+
+        # Reload registry
+        reg = InvenTree.conversion.get_unit_registry()
+
+        # Ensure that the custom unit is now available
+        reg['hpmm']
+
+        # Convert some values
+        q = InvenTree.conversion.convert_physical_value('1 hpmm', 'henry / km')
+        self.assertEqual(q.magnitude, 1000000)
 
 
 class ValidatorTest(TestCase):

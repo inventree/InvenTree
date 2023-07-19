@@ -296,3 +296,18 @@ class FlagSerializer(serializers.Serializer):
             data['conditions'] = self.instance[instance]
 
         return data
+
+
+class CustomUnitSerializer(InvenTreeModelSerializer):
+    """DRF serializer for CustomUnit model."""
+
+    class Meta:
+        """Meta options for CustomUnitSerializer."""
+
+        model = common_models.CustomUnit
+        fields = [
+            'pk',
+            'name',
+            'symbol',
+            'definition',
+        ]
