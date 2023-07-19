@@ -78,7 +78,7 @@ export function UserInfo({ data }: { data: any }) {
         <Title order={3}>
           <Trans>Userinfo</Trans>
         </Title>
-        {EditButton(setEditing, editing)}
+        <EditButton setEditing={setEditing} editing={editing} />
       </Group>
       <Group>
         {editing ? (
