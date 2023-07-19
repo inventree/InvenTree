@@ -13,7 +13,7 @@ export const menuItems: MenuLinkItem[] = [
   {
     id: 'profile',
     text: <Trans>Profile page</Trans>,
-    link: '/profile/',
+    link: '/profile/user',
     doctext: <Trans>User attributes and design settings.</Trans>
   }
 ];

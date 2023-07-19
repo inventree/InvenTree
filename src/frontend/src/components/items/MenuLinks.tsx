@@ -1,5 +1,6 @@
-import { SimpleGrid, Text, UnstyledButton } from '@mantine/core';
+import { Anchor, SimpleGrid, Text, UnstyledButton } from '@mantine/core';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { InvenTreeStyle } from '../../globalStyle';
 import { DocTooltip } from './DocTooltip';
@@ -54,8 +55,13 @@ export function MenuLinks({
   return (
     <SimpleGrid cols={2} spacing={0}>
       {filteredLinks.map((item) => (
-        <ConditionalDocTooltip item={item}>
-          <UnstyledButton className={classes.subLink} key={item.id}>
+        <ConditionalDocTooltip item={item} key={item.id}>
+          <UnstyledButton
+            className={classes.subLink}
+            component={Link}
+            to={item.link}
+            p={0}
+          >
             <Text size="sm" fw={500}>
               {item.text}
             </Text>
