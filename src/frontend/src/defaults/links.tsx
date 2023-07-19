@@ -34,7 +34,8 @@ export const navDocLinks: DocumentationLinkItem[] = [
     id: 'getting_started',
     title: <Trans>Getting Started</Trans>,
     description: <Trans>Getting started with InvenTree</Trans>,
-    link: docLinks.getting_started
+    link: docLinks.getting_started,
+    placeholder: true
   },
   {
     id: 'api',
@@ -56,23 +57,27 @@ export const navDocLinks: DocumentationLinkItem[] = [
   }
 ];
 
+// TODO @matmair: Add the following pages and adjust the links
 export const aboutLinks: DocumentationLinkItem[] = [
   {
     id: 'instance',
     title: <Trans>Instance</Trans>,
     description: <Trans>About this Inventree instance</Trans>,
-    link: '/instance'
+    link: '/instance',
+    placeholder: true
   },
   {
     id: 'about',
     title: <Trans>InvenTree</Trans>,
     description: <Trans>About the InvenTree org</Trans>,
-    link: '/about'
+    link: '/about',
+    placeholder: true
   },
   {
     id: 'licenses',
     title: <Trans>Licenses</Trans>,
     description: <Trans>Licenses for packages used by InvenTree</Trans>,
-    link: '/licenses'
+    link: '/licenses',
+    placeholder: true
   }
 ];
