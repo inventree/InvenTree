@@ -41,6 +41,7 @@ pillow==9.5.0                           # Image manipulation # FIXED 2023-07-04 
 pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
+pyyaml>=6.0.1                           # YAML parsing
 qrcode[pil]                             # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
 regex                                   # Advanced regular expressions

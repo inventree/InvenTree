@@ -1,6 +1,5 @@
 """API functionality for the 'label' app"""
 
-from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
 from django.http import JsonResponse
 from django.urls import include, path, re_path
@@ -161,9 +160,6 @@ class LabelPrintMixin(LabelFilterMixin):
         - matching plugin implements the 'labels' mixin
         - matching plugin is enabled
         """
-        if not settings.PLUGINS_ENABLED:
-            return None  # pragma: no cover
-
         plugin_key = request.query_params.get('plugin', None)
 
         # No plugin provided!
