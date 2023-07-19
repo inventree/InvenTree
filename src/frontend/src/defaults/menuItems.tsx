@@ -6,12 +6,14 @@ import { MenuLinkItem } from '../components/items/MenuLinks';
 export const menuItems: MenuLinkItem[] = [
   {
     id: 'home',
-    title: <Trans>Home</Trans>,
+    text: <Trans>Home</Trans>,
+    link: '/',
     highlight: true
   },
   {
     id: 'profile',
-    title: <Trans>Profile page</Trans>,
-    description: <Trans>User attributes and design settings.</Trans>
+    text: <Trans>Profile page</Trans>,
+    link: '/profile/',
+    doctext: <Trans>User attributes and design settings.</Trans>
   }
 ];

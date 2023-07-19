@@ -6,12 +6,13 @@ import { DocTooltip } from './DocTooltip';
 
 export interface MenuLinkItem {
   id: string;
-  title: string | JSX.Element;
-  description?: string | JSX.Element;
-  detail?: string | JSX.Element;
-  link?: string;
-  children?: React.ReactNode;
+  text: string | JSX.Element;
+  link: string;
   highlight?: boolean;
+  doctext?: string | JSX.Element;
+  docdetail?: string | JSX.Element;
+  doclink?: string;
+  docchildren?: React.ReactNode;
 }
 
 function ConditionalDocTooltip({
@@ -21,14 +22,14 @@ function ConditionalDocTooltip({
   item: MenuLinkItem;
   children: React.ReactNode;
 }) {
-  if (item.description !== undefined) {
+  if (item.doctext !== undefined) {
     return (
       <DocTooltip
         key={item.id}
-        text={item.description}
-        detail={item?.detail}
-        link={item.link}
-        docchildren={item?.children}
+        text={item.doctext}
+        detail={item?.docdetail}
+        link={item?.doclink}
+        docchildren={item?.docchildren}
       >
         {children}
       </DocTooltip>
@@ -56,7 +57,7 @@ export function MenuLinks({
         <ConditionalDocTooltip item={item}>
           <UnstyledButton className={classes.subLink} key={item.id}>
             <Text size="sm" fw={500}>
-              {item.title}
+              {item.text}
             </Text>
           </UnstyledButton>
         </ConditionalDocTooltip>
