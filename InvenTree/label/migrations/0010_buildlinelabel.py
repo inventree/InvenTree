@@ -8,7 +8,7 @@ import label.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('label', '0010_auto_20230502_1646'),
+        ('label', '0009_auto_20230317_0816'),
     ]
 
     operations = [
