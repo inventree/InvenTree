@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('label', '0009_auto_20230317_0816'),
+        ('label', '0012_labeloutput'),
     ]
 
     operations = [
@@ -70,5 +70,45 @@ class Migration(migrations.Migration):
             model_name='stocklocationlabel',
             name='page_width',
             field=models.FloatField(default=210, help_text="The number of label columns per page will be automatically calculated from the label's width", validators=[django.core.validators.MinValueValidator(2)], verbose_name='Width of one page [mm]'),
+        ),
+                migrations.AddField(
+            model_name='buildlinelabel',
+            name='multipage',
+            field=models.BooleanField(default=False, verbose_name='Print multiple labels to a single page'),
+        ),
+        migrations.AddField(
+            model_name='buildlinelabel',
+            name='multipage_border',
+            field=models.CharField(blank=True, choices=[('0.5mm solid #000', 'Solid'), ('0.5mm dotted #000', 'Dotted'), ('', 'No border')], default='0.5mm solid #000', max_length=250, verbose_name='Border style'),
+        ),
+        migrations.AddField(
+            model_name='buildlinelabel',
+            name='page_height',
+            field=models.FloatField(default=297, help_text="The number of label rows per page will be automatically calculated from the label's height", validators=[django.core.validators.MinValueValidator(2)], verbose_name='Height of one page [mm]'),
+        ),
+        migrations.AddField(
+            model_name='buildlinelabel',
+            name='page_width',
+            field=models.FloatField(default=210, help_text="The number of label columns per page will be automatically calculated from the label's width", validators=[django.core.validators.MinValueValidator(2)], verbose_name='Width of one page [mm]'),
+        ),
+        migrations.AddField(
+            model_name='buildlinelabel',
+            name='multipage_common_style',
+            field=models.TextField(blank=True, help_text='This CSS snippet will be generated once into the generated label onceinto the head section of the main (builtin) template which providing the grid table for the individual labels.', verbose_name='Common style for multiple labels per page'),
+        ),
+        migrations.AddField(
+            model_name='partlabel',
+            name='multipage_common_style',
+            field=models.TextField(blank=True, help_text='This CSS snippet will be generated once into the generated label onceinto the head section of the main (builtin) template which providing the grid table for the individual labels.', verbose_name='Common style for multiple labels per page'),
+        ),
+        migrations.AddField(
+            model_name='stockitemlabel',
+            name='multipage_common_style',
+            field=models.TextField(blank=True, help_text='This CSS snippet will be generated once into the generated label onceinto the head section of the main (builtin) template which providing the grid table for the individual labels.', verbose_name='Common style for multiple labels per page'),
+        ),
+        migrations.AddField(
+            model_name='stocklocationlabel',
+            name='multipage_common_style',
+            field=models.TextField(blank=True, help_text='This CSS snippet will be generated once into the generated label onceinto the head section of the main (builtin) template which providing the grid table for the individual labels.', verbose_name='Common style for multiple labels per page'),
         ),
     ]
