@@ -33,6 +33,7 @@ from report.api import report_api_urls
 from stock.api import stock_api_urls
 from stock.urls import stock_urls
 from users.api import user_urls
+from web.urls import spa_view
 from web.urls import urlpatterns as platform_urls
 
 from .api import APISearchView, InfoView, NotFoundView
@@ -210,7 +211,7 @@ classic_frontendpatterns = [
 new_frontendpatterns = [
     # Platform urls
     re_path(r'^platform/', include(platform_urls)),
-
+    re_path(r'^platform', spa_view, name='platform'),
 ]
 
 # Load patterns for frontend according to settings

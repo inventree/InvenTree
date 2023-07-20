@@ -52,7 +52,8 @@ repos:
       (?x)^(
           docs/docs/stylesheets/.*|
           docs/docs/javascripts/.*|
-          docs/docs/webfonts/.*
+          docs/docs/webfonts/.* |
+          src/frontend/src/locales/.* |
       )$
 - repo: https://github.com/pre-commit/mirrors-prettier
   rev: "v3.0.0-alpha.9-for-vscode"
