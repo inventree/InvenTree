@@ -81,6 +81,7 @@ export default function Login() {
               <EditButton
                 setEditing={setHostEdit}
                 editing={hostEdit}
+                disabled={HostListEdit}
                 saveIcon={<IconCheck />}
               />
             </Group>
