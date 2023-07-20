@@ -829,6 +829,17 @@ def frontend_build(c):
     yarn(c, "yarn run build --emptyOutDir")
 
 
+@task
+def frontend_dev(c):
+    """Start frontend development server.
+
+    Args:
+        c: Context variable
+    """
+    print("Starting frontend development server")
+    yarn(c, "yarn run dev")
+
+
 @task(help={
     'ref': "git ref, default: current git ref",
     'tag': "git tag to look for release",
