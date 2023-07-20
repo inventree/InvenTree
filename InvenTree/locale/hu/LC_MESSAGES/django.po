@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-19 22:14+0000\n"
+"POT-Creation-Date: 2023-07-20 23:48+0000\n"
 "PO-Revision-Date: 2023-07-20 06:56\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -1446,7 +1446,8 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:510
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr ""
+"Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:579
@@ -7345,17 +7346,17 @@ msgstr "Módszer"
 msgid "No author found"
 msgstr "Nincs szerző"
 
-#: plugin/registry.py:466
+#: plugin/registry.py:472
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "A '{p}' plugin nem kompatibilis az aktuális applikáció verzióval {v}"
 
-#: plugin/registry.py:468
+#: plugin/registry.py:474
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "A pluginhoz minimum {v} verzió kell"
 
-#: plugin/registry.py:470
+#: plugin/registry.py:476
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "A pluginhoz maximum {v} verzió kell"
@@ -12800,7 +12801,8 @@ msgstr "A kiválasztott SSO kiszolgáló érvénytelen, vagy nincs megfelelően 
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "A %(provider_name)s felhasználói fiókodat fogod használni a %(site_name)s belépéshez.<br>Kérlek töltsd ki az alábbi adatokat:"
 
@@ -12935,4 +12937,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:256
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
-
