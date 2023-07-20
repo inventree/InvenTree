@@ -55,28 +55,29 @@ export default function Login() {
             SaveOptions={SaveOptions}
             HostListEdit={HostListEdit}
           />
-          {!HostListEdit && (
-            <AuthenticationForm
-              hostname={hostname}
-              editing={hostEdit}
-              setEditing={setHostEdit}
-              selectElement={
-                <SelectHost
-                  hostKey={hostKey}
-                  ChangeHost={ChangeHost}
-                  hostListData={hostListData}
-                  HostListEdit={HostListEdit}
-                  hostEdit={hostEdit}
-                  setHostListEdit={setHostListEdit}
-                />
-              }
-            />
-          )}
+          {!HostListEdit && <AuthenticationForm />}
         </Stack>
         <Center mx={'md'}>
           <Group>
             <ColorToggle />
             <LanguageToggle />
+            <Text c="dimmed">
+              <Group>
+                {!hostEdit ? (
+                  hostname
+                ) : (
+                  <SelectHost
+                    hostKey={hostKey}
+                    ChangeHost={ChangeHost}
+                    hostListData={hostListData}
+                    HostListEdit={HostListEdit}
+                    hostEdit={hostEdit}
+                    setHostListEdit={setHostListEdit}
+                  />
+                )}
+                <EditButton setEditing={setHostEdit} editing={hostEdit} />
+              </Group>
+            </Text>
           </Group>
         </Center>
       </Container>
