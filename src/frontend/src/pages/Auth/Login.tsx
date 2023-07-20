@@ -1,5 +1,13 @@
 import { Trans, t } from '@lingui/macro';
-import { Center, Container, Group, Select, Stack, Text } from '@mantine/core';
+import {
+  Center,
+  Container,
+  Divider,
+  Group,
+  Select,
+  Stack,
+  Text
+} from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
 
@@ -49,37 +57,50 @@ export default function Login() {
   return (
     <Center mih="100vh">
       <Container w="md" miw={400}>
-        <Stack>
-          <EditHostList
-            hostList={hostList}
-            SaveOptions={SaveOptions}
-            HostListEdit={HostListEdit}
-          />
-          {!HostListEdit && <AuthenticationForm />}
-        </Stack>
-        <Center mx={'md'}>
-          <Group>
-            <ColorToggle />
-            <LanguageToggle />
-            <Text c="dimmed">
-              <Group>
-                {!hostEdit ? (
-                  hostname
-                ) : (
-                  <SelectHost
-                    hostKey={hostKey}
-                    ChangeHost={ChangeHost}
-                    hostListData={hostListData}
-                    HostListEdit={HostListEdit}
-                    hostEdit={hostEdit}
-                    setHostListEdit={setHostListEdit}
-                  />
-                )}
-                <EditButton setEditing={setHostEdit} editing={hostEdit} />
-              </Group>
+        {hostEdit ? (
+          <>
+            <Text>
+              <Trans>Select destination instance</Trans>
             </Text>
-          </Group>
-        </Center>
+            <Group>
+              <SelectHost
+                hostKey={hostKey}
+                ChangeHost={ChangeHost}
+                hostListData={hostListData}
+                HostListEdit={HostListEdit}
+                hostEdit={hostEdit}
+                setHostListEdit={setHostListEdit}
+              />
+              <EditButton setEditing={setHostEdit} editing={hostEdit} />
+            </Group>
+            {HostListEdit && (
+              <>
+                <Divider my={'sm'} />
+                <EditHostList hostList={hostList} SaveOptions={SaveOptions} />
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            <AuthenticationForm />
+            <Center mx={'md'}>
+              <Group>
+                {!HostListEdit && (
+                  <>
+                    <ColorToggle />
+                    <LanguageToggle />
+                  </>
+                )}
+                <Text c="dimmed">
+                  <Group>
+                    {hostname}
+                    <EditButton setEditing={setHostEdit} editing={hostEdit} />
+                  </Group>
+                </Text>
+              </Group>
+            </Center>
+          </>
+        )}
       </Container>
     </Center>
   );
@@ -120,18 +141,15 @@ const SelectHost = ({
 
 const EditHostList = ({
   hostList,
-  SaveOptions,
-  HostListEdit
+  SaveOptions
 }: {
   hostList: HostList;
   SaveOptions: (newHostList: HostList) => void;
-  HostListEdit: boolean;
 }) => {
-  if (!HostListEdit) return null;
   return (
     <>
       <Text>
-        <Trans>Edit host options</Trans>
+        <Trans>Edit possible host options</Trans>
       </Text>
       <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
     </>
