@@ -65,14 +65,19 @@ export default function Login() {
               <Trans>Select destination instance</Trans>
             </Text>
             <Group>
-              <SelectHost
-                hostKey={hostKey}
-                ChangeHost={ChangeHost}
-                hostListData={hostListData}
-                HostListEdit={HostListEdit}
-                hostEdit={hostEdit}
-                setHostListEdit={setHostListEdit}
-              />
+              <Group>
+                <Select
+                  value={hostKey}
+                  onChange={ChangeHost}
+                  data={hostListData}
+                  disabled={HostListEdit}
+                />
+                <EditButton
+                  setEditing={setHostListEdit}
+                  editing={HostListEdit}
+                  disabled={HostListEdit}
+                />
+              </Group>
               <EditButton
                 setEditing={setHostEdit}
                 editing={hostEdit}
@@ -82,7 +87,10 @@ export default function Login() {
             {HostListEdit && (
               <>
                 <Divider my={'sm'} />
-                <EditHostList hostList={hostList} SaveOptions={SaveOptions} />
+                <Text>
+                  <Trans>Edit possible host options</Trans>
+                </Text>
+                <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
               </>
             )}
           </>
@@ -108,53 +116,3 @@ export default function Login() {
     </Center>
   );
 }
-
-const SelectHost = ({
-  hostKey,
-  ChangeHost,
-  hostListData,
-  HostListEdit,
-  hostEdit,
-  setHostListEdit
-}: {
-  hostKey: string;
-  ChangeHost: (newHost: string) => void;
-  hostListData: any;
-  HostListEdit: boolean;
-  hostEdit: boolean;
-  setHostListEdit: (value?: React.SetStateAction<boolean> | undefined) => void;
-}) => {
-  if (!hostEdit) return <></>;
-  return (
-    <Group>
-      <Select
-        value={hostKey}
-        onChange={ChangeHost}
-        data={hostListData}
-        disabled={HostListEdit}
-      />
-      <EditButton
-        setEditing={setHostListEdit}
-        editing={HostListEdit}
-        disabled={HostListEdit}
-      />
-    </Group>
-  );
-};
-
-const EditHostList = ({
-  hostList,
-  SaveOptions
-}: {
-  hostList: HostList;
-  SaveOptions: (newHostList: HostList) => void;
-}) => {
-  return (
-    <>
-      <Text>
-        <Trans>Edit possible host options</Trans>
-      </Text>
-      <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
-    </>
-  );
-};
