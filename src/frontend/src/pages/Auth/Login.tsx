@@ -5,11 +5,12 @@ import {
   Divider,
   Group,
   Select,
+  Stack,
   Text,
   Tooltip
 } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
-import { IconServer } from '@tabler/icons-react';
+import { IconCheck, IconServer } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
@@ -72,7 +73,11 @@ export default function Login() {
                 hostEdit={hostEdit}
                 setHostListEdit={setHostListEdit}
               />
-              <EditButton setEditing={setHostEdit} editing={hostEdit} />
+              <EditButton
+                setEditing={setHostEdit}
+                editing={hostEdit}
+                saveIcon={<IconCheck />}
+              />
             </Group>
             {HostListEdit && (
               <>
