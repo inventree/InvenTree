@@ -25,6 +25,7 @@ from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
 from InvenTree.config import get_setting
+from InvenTree.ready import canAppAccessDatabase
 
 from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
                       handle_error, log_error)
@@ -112,7 +113,6 @@ class PluginsRegistry:
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
-        from plugin.events import trigger_event
 
         logger.info('Loading plugins')
 
@@ -166,7 +166,11 @@ class PluginsRegistry:
             set_maintenance_mode(False)
 
         logger.debug('Finished loading plugins')
-        trigger_event('plugins_loaded')
+
+        # Trigger plugins_loaded event
+        if canAppAccessDatabase():
+            from plugin.events import trigger_event
+            trigger_event('plugins_loaded')
 
     def unload_plugins(self, force_reload: bool = False):
         """Unload and deactivate all IntegrationPlugins.
