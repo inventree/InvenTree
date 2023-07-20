@@ -103,3 +103,6 @@ InvenTree/plugins/
 
 # Compiled translation files
 *.mo
+
+# web frontend (static files)
+InvenTree/web/static
