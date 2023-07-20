@@ -11,10 +11,29 @@
         "compile": "lingui compile --typescript"
     },
     "dependencies": {
+        "@emotion/react": "^11.10.5",
+        "@fortawesome/fontawesome-svg-core": "^6.2.1",
+        "@fortawesome/free-regular-svg-icons": "^6.2.1",
+        "@fortawesome/free-solid-svg-icons": "^6.2.1",
+        "@fortawesome/react-fontawesome": "^0.2.0",
         "@lingui/core": "^4.2.1",
         "@lingui/react": "^4.2.1",
+        "@mantine/core": "^6.0.15",
+        "@mantine/dates": "^6.0.15",
+        "@mantine/dropzone": "^6.0.15",
+        "@mantine/form": "^6.0.15",
+        "@mantine/hooks": "^6.0.15",
+        "@mantine/modals": "^6.0.15",
+        "@mantine/notifications": "^6.0.15",
+        "@tabler/icons-react": "^2.23.0",
+        "@tanstack/react-query": "^4.16.1",
+        "axios": "^1.1.3",
+        "dayjs": "^1.11.6",
+        "html5-qrcode": "^2.3.3",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^6.4.3",
+        "zustand": "^4.2.0"
     },
     "devDependencies": {
         "@babel/core": "^7.20.5",
