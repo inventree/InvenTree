@@ -5,8 +5,10 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
 import label.models
-from .models import (LabelTemplate, PartLabel, StockItemLabel,
-                     StockLocationLabel, BuildLineLabel)
+
+from .models import (BuildLineLabel, LabelTemplate, PartLabel, StockItemLabel,
+                     StockLocationLabel)
+
 
 class LabelAdminForm(forms.ModelForm):
     """Custom form for the label's admin form to inject non-model fields"""
@@ -15,7 +17,7 @@ class LabelAdminForm(forms.ModelForm):
         model = LabelTemplate
         fields = ['metadata', 'name', 'description', 'label', 'enabled', 'width', 'height',
                   'filename_pattern', 'multipage', 'pagesize_preset', 'page_orientation',
-                  'page_width', 'page_height', 'multipage_border']
+                  'page_width', 'page_height', 'multipage_border', 'multipage_common_style']
 
     pagesize_preset = forms.ChoiceField(
         choices=[
@@ -57,11 +59,12 @@ class PartLabelAdminForm(LabelAdminForm):
         model = PartLabel
         fields = LabelAdminForm.Meta.fields + ["filters"]
 
+
 class BuildLineLabelAdminForm(LabelAdminForm):
     """Custom form for the Build line label's admin form"""
     class Meta:
         """Meta is just for adding the fields field to the right position (last field)"""
-        model = PartLabel
+        model = BuildLineLabel
         fields = LabelAdminForm.Meta.fields + ["filters"]
 
 
@@ -74,6 +77,7 @@ class LabelAdmin(admin.ModelAdmin):
         js = (
             'script/inventree/label_admin.js',
         )
+
 
 class StockLabelAdmin(LabelAdmin):
     """Admin class for the Stock label models"""
@@ -89,12 +93,13 @@ class PartLabelAdmin(LabelAdmin):
     """Admin class for the Stock location label models"""
     form = PartLabelAdminForm
 
-class BuildLineLabel(LabelAdmin):
+
+class BuildLineLabelAdmin(LabelAdmin):
     """Admin class for the Build line label models"""
     form = BuildLineLabelAdminForm
+
 
 admin.site.register(label.models.StockItemLabel, LabelAdmin)
 admin.site.register(label.models.StockLocationLabel, LabelAdmin)
 admin.site.register(label.models.PartLabel, LabelAdmin)
 admin.site.register(label.models.BuildLineLabel, LabelAdmin)
-

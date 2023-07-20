@@ -142,6 +142,18 @@ As an example, consider a label template for a StockItem. A user may wish to def
 
 To restrict the label accordingly, we could set the *filters* value to `part__IPN=IPN123`.
 
+### Printing  multiple pages per page
+
+If the 'Print multiple labels to a single page' option is enabled for a specific label then the label rendering is going to be performed in a different way:
+- A builtin template (InvenTree/label/templates/label/multipage_label_base.html) will provide an HTML table which serves as a grid
+- The labels' contents will be rendered to the cells of this table through the uploaded template
+
+This implies the following:
+- The uploaded template file should not include the head/body sections
+- The CSS included in the label's uploaded template will be generated to each cell.
+  This should not cause rendering issues, however it is advisable to move the common styles into the 'Common style for multiple labels per page' field.
+  The contents of this field will be rendered into the style tag in the head section of the grid template, so this was redundant CSS could be eliminated from the output.
+
 ## Built-In Templates
 
 The InvenTree installation provides a number of simple *default* templates which can be used as a starting point for creating custom labels. These built-in templates can be disabled if they are not required.

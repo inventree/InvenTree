@@ -194,6 +194,13 @@ class LabelTemplate(MetadataMixin, models.Model):
         blank=True,
     )
 
+    multipage_common_style = models.TextField(
+        verbose_name=_('Common style for multiple labels per page'),
+        help_text=_("This CSS snippet will be generated once into the generated label once"
+                    "into the head section of the main (builtin) template which providing the grid table for the individual labels."),
+        blank=True,
+    )
+
     @property
     def template_name(self):
         """Returns the file system path to the template file.
@@ -255,7 +262,9 @@ class LabelTemplate(MetadataMixin, models.Model):
             'page_height': self.page_height,
             'label_width': self.width,
             'label_height': self.height,
-            'content': content}
+            'multipage_common_style': self.multipage_common_style,
+            'content': content,
+        }
         # Pass the context through to any registered plugins
         plugins = registry.with_mixin('report')
 

@@ -2,7 +2,7 @@ function updateDropDownItemsVisibility()
 {
     var multipageWidgetNames = ['page_width', 'page_height',
                                 'pagesize_preset', 'page_orientation',
-                                'multipage_border'];
+                                'multipage_border', 'multipage_common_style'];
     multipageWidgetNames.forEach(function(widget) {
         if (django.jQuery('#id_multipage').prop("checked"))
             django.jQuery('.field-' + widget).show();
