@@ -132,7 +132,7 @@ The first step is to edit the environment variables, located in the `.env` file.
 Perform the initial database setup by running the following command:
 
 ```bash
-docker compose run inventree-server invoke update
+docker compose run inventree-server invoke update --no-frontend
 ```
 
 This command performs the following steps:
@@ -210,7 +210,7 @@ This ensures that the InvenTree containers will be running the latest version of
 Run the following command to ensure that the InvenTree database is updated:
 
 ```
-docker compose run inventree-server invoke update
+docker compose run inventree-server invoke update --no-frontend
 ```
 
 !!! info "Skip Backup"
