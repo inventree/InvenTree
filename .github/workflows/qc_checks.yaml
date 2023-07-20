@@ -29,6 +29,7 @@ jobs:
     outputs:
       server: ${{ steps.filter.outputs.server }}
       migrations: ${{ steps.filter.outputs.migrations }}
+      frontend: ${{ steps.filter.outputs.frontend }}
 
     steps:
     - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
@@ -43,6 +44,8 @@ jobs:
           migrations:
             - '**/migrations/**'
             - '.github/workflows**'
+          frontend:
+            - 'src/frontend/**'
 
   pep_style:
     name: Style [Python]
@@ -61,10 +64,10 @@ jobs:
         run: flake8 InvenTree --extend-ignore=D
 
   javascript:
-    name: Style [JS]
+    name: Style - Classic UI [JS]
     runs-on: ubuntu-20.04
 
-    needs: pep_style
+    needs: ['pep_style', 'pre-commit']
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
@@ -85,8 +88,8 @@ jobs:
   pre-commit:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
-
-    needs: pep_style
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
@@ -184,7 +187,7 @@ jobs:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'javascript', 'pre-commit' ]
+    needs: [ 'pep_style', 'pre-commit' ]
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
@@ -217,7 +220,7 @@ jobs:
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'javascript', 'pre-commit' ]
+    needs: [ 'pep_style', 'pre-commit' ]
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -261,7 +264,7 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'javascript', 'pre-commit' ]
+    needs: [ 'pep_style', 'pre-commit' ]
     if: github.event_name == 'push'
 
     env:
@@ -303,7 +306,7 @@ jobs:
         uses: ./.github/actions/migration
 
   migration-tests:
-    name: Run Migration Unit Tests
+    name: Tests - Migrations [PostgreSQL]
     runs-on: ubuntu-latest
     needs: paths-filter
     if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
@@ -340,7 +343,7 @@ jobs:
         run: invoke test --migrations --report
 
   migrations-checks:
-    name: Run Database Migrations
+    name: Tests - Full Migration [SQLite]
     runs-on: ubuntu-latest
     needs: paths-filter
     if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
@@ -387,3 +390,62 @@ jobs:
         cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
         chmod +rw /home/runner/work/InvenTree/db.sqlite3
         invoke migrate
+
+  platform_ui:
+    name: Tests - Platform UI
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+    needs: ['pre-commit', 'paths-filter']
+    if: needs.paths-filter.outputs.frontend == 'true'
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
+      INVENTREE_DEBUG: True
+      INVENTREE_PLUGINS_ENABLED: false
+
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+          install: true
+          update: true
+      - name: Set up test data
+        run: invoke setup-test -i
+      - name: Install dependencies
+        run: cd src/frontend && yarn install
+      - name: Install Playwright Browsers
+        run: cd src/frontend && npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: cd src/frontend &&  npx playwright test
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: src/frontend/playwright-report/
+          retention-days: 30
+
+  platform_ui_build:
+    name: Build - UI Platform
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+      - name: Install dependencies
+        run: cd src/frontend && yarn install
+      - name: Build frontend
+        run: cd src/frontend && npm run build
+      - name: Zip frontend
+        run: |
+          cd InvenTree/web/static
+          zip -r frontend-build.zip web/
+      - uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: InvenTree/web/static/web
