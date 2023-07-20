@@ -71,7 +71,7 @@ export function AuthenticationForm() {
   return (
     <Paper radius="md" p="xl" withBorder>
       <Text size="lg" weight={500}>
-        <Trans>Welcome</Trans>
+        <Trans>Welcome, log in below</Trans>
       </Text>
       <form onSubmit={classicForm.onSubmit(() => {})}>
         {classicLoginMode ? (
