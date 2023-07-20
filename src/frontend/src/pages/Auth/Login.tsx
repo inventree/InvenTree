@@ -5,7 +5,9 @@ import { useEffect } from 'react';
 
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { HostOptionsForm } from '../../components/forms/HostOptionsForm';
+import { ColorToggle } from '../../components/items/ColorToggle';
 import { EditButton } from '../../components/items/EditButton';
+import { LanguageToggle } from '../../components/items/LanguageToggle';
 import { defaultHostKey } from '../../defaults/defaultHostList';
 import { useLocalState } from '../../states/LocalState';
 import { HostList } from '../../states/states';
@@ -71,6 +73,12 @@ export default function Login() {
             />
           )}
         </Stack>
+        <Center mx={'md'}>
+          <Group>
+            <ColorToggle />
+            <LanguageToggle />
+          </Group>
+        </Center>
       </Container>
     </Center>
   );
