@@ -5,10 +5,11 @@ import {
   Divider,
   Group,
   Select,
-  Stack,
-  Text
+  Text,
+  Tooltip
 } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
+import { IconServer } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
@@ -91,12 +92,9 @@ export default function Login() {
                     <LanguageToggle />
                   </>
                 )}
-                <Text c="dimmed">
-                  <Group>
-                    {hostname}
-                    <EditButton setEditing={setHostEdit} editing={hostEdit} />
-                  </Group>
-                </Text>
+                <Tooltip label={hostname}>
+                  <IconServer onClick={() => setHostEdit(!hostEdit)} />
+                </Tooltip>
               </Group>
             </Center>
           </>
