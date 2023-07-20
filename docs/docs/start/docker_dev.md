@@ -68,7 +68,7 @@ If desired, the user may edit the environment variables, located in the `.env` f
 Perform the initial database setup by running the following command:
 
 ```bash
-docker compose run inventree-dev-server invoke update
+docker compose run inventree-dev-server invoke update --no-frontend
 ```
 
 If this is the first time you are configuring the development server, this command will build a development version of the inventree docker image.
@@ -229,7 +229,7 @@ Any updates which require a database schema change must be reflected in the data
 To run database migrations inside the docker container, run the following command:
 
 ```
-docker compose run inventree-dev-server invoke update
+docker compose run inventree-dev-server invoke update --no-frontend
 ```
 
 ### Docker Image Updates

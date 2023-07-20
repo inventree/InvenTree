@@ -5,6 +5,7 @@ import os
 import pathlib
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 from platform import python_version
@@ -102,6 +103,35 @@ def yarn(c, cmd, pty: bool = False):
     c.run(f'cd "{path}" && {cmd}', pty=pty)
 
 
+def node_available(versions: bool = False, bypass_yarn: bool = False):
+    """Checks if the frontend environment (ie node and yarn in bash) is available."""
+    def ret(val, val0=None, val1=None):
+        if versions:
+            return val, val0, val1
+        return val
+
+    def check(cmd):
+        try:
+            return str(subprocess.check_output([cmd], stderr=subprocess.STDOUT, shell=True), encoding='utf-8').strip()
+        except subprocess.CalledProcessError:
+            return None
+        except FileNotFoundError:
+            return None
+
+    yarn_version = check('yarn --version')
+    node_version = check('node --version')
+
+    # Either yarn is available or we don't care about yarn
+    yarn_passes = bypass_yarn or yarn_version
+
+    # Print a warning if node is available but yarn is not
+    if node_version and not yarn_passes:
+        print('Node is available but yarn is not. Install yarn if you wish to build the frontend.')
+
+    # Return the result
+    return ret((not yarn_passes or not node_version), node_version, yarn_version)
+
+
 def check_file_existance(filename: str, overwrite: bool = False):
     """Checks if a file exists and asks the user if it should be overwritten.
 
@@ -197,11 +227,16 @@ def remove_mfa(c, mail=''):
     manage(c, f"remove_mfa {mail}")
 
 
-@task
-def static(c):
+@task(
+    help={
+        'frontend': 'Build the frontend',
+    }
+)
+def static(c, frontend=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, "prerender")
-    frontend_build(c)
+    if frontend and node_available():
+        frontend_build(c)
     manage(c, "collectstatic --no-input")
 
 
@@ -230,11 +265,15 @@ def translate(c, skip_static=False):
     Note: This command should not be used on a local install,
     it is performed as part of the InvenTree translation toolchain.
     """
-    # Translate applicable .py / .html / .js files
+    # Translate applicable .py / .html / .js / .tsx files
     manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
 
     if not skip_static:
+        if node_available():
+            frontend_trans(c)
+            frontend_build(c)
+
         # Update static files
         static(c)
 
@@ -280,10 +319,12 @@ def migrate(c):
 @task(
     post=[static, clean_settings, translate_stats],
     help={
-        'skip_backup': 'Skip database backup step (advanced users)'
+        'skip_backup': 'Skip database backup step (advanced users)',
+        'no_frontend': 'Skip frontend compilation/download step (is already included with docker image)',
+        'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
     }
 )
-def update(c, skip_backup=False):
+def update(c, skip_backup=False, no_frontend: bool = False, frontend: bool = False):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -294,6 +335,7 @@ def update(c, skip_backup=False):
     - install
     - backup (optional)
     - migrate
+    - frontend_compile or frontend_download
     - static
     - clean_settings
     - translate_stats
@@ -308,8 +350,18 @@ def update(c, skip_backup=False):
     # Perform database migrations
     migrate(c)
 
-    # Compile frontend
-    frontend_compile(c)
+    # Stop here if we are not building/downloading the frontend
+    # If:
+    # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
+    # - `--no-frontend` flag is set
+    if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
+        return
+
+    # Decide if we should compile the frontend or try to download it
+    if node_available(bypass_yarn=True):
+        frontend_compile(c)
+    else:
+        frontend_download(c)
 
 
 # Data tasks
@@ -694,6 +746,9 @@ def version(c):
     from InvenTree.InvenTree.config import (get_config_file, get_media_dir,
                                             get_static_dir)
 
+    # Gather frontend version information
+    _, node, yarn = node_available(versions=True)
+
     print(f"""
 InvenTree - inventree.org
 The Open-Source Inventory Management System\n
@@ -709,6 +764,8 @@ Python      {python_version()}
 Django      {InvenTreeVersion.inventreeDjangoVersion()}
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
+Node        {node if node else 'N/A'}
+Yarn        {yarn if yarn else 'N/A'}
 
 Commit hash:{InvenTreeVersion.inventreeCommitHash()}
 Commit date:{InvenTreeVersion.inventreeCommitDate()}""")
@@ -718,6 +775,12 @@ You are probably running the package installer / single-line installer. Please m
 
 Use '--list' for a list of available commands
 Use '--help' for help on a specific command""")
+
+
+@task()
+def frontend_check(c):
+    """Check if frontend is available."""
+    print(node_available())
 
 
 @task
@@ -765,3 +828,132 @@ def frontend_build(c):
     """
     print("Building frontend")
     yarn(c, "yarn run build --emptyOutDir")
+
+
+@task(help={
+    'ref': "git ref, default: current git ref",
+    'tag': "git tag to look for release",
+    'file': "destination to frontend-build.zip file",
+    'repo': "GitHub repository, default: InvenTree/inventree",
+    'extract': "Also extract and place at the correct destination, default: True",
+    'clean': "Delete old files from InvenTree/web/static/web first, default: True",
+})
+def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventree", extract=True, clean=True):
+    """Download a pre-build frontend from GitHub if you dont want to install nodejs on your machine.
+
+    There are 3 possibilities to install the frontend:
+    1. invoke frontend-download --ref 01f2aa5f746a36706e9a5e588c4242b7bf1996d5
+       if ref is omitted, it tries to auto detect the current git ref via `git rev-parse HEAD`.
+       Note: GitHub doesn't allow workflow artifacts to be downloaded from anonymous users, so
+             this will output a link where you can download the frontend with a signed in browser
+             and then continue with option 3
+    2. invoke frontend-download --tag 0.13.0
+       Downloads the frontend build from the releases.
+    3. invoke frontend-download --file /home/vscode/Downloads/frontend-build.zip
+       This will extract your zip file and place the contents at the correct destination
+    """
+
+    import functools
+    import subprocess
+    from tempfile import NamedTemporaryFile
+    from zipfile import ZipFile
+
+    import requests
+
+    # globals
+    default_headers = {"Accept": "application/vnd.github.v3+json"}
+
+    # helper functions
+    def find_resource(resource, key, value):
+        for obj in resource:
+            if obj[key] == value:
+                return obj
+        return None
+
+    def handle_extract(file):
+        # if no extract is requested, exit here
+        if not extract:
+            return
+
+        dest_path = Path(__file__).parent / "InvenTree/web/static/web"
+
+        # if clean, delete static/web directory
+        if clean:
+            shutil.rmtree(dest_path, ignore_errors=True)
+            os.makedirs(dest_path)
+            print(f"Cleaned directory: {dest_path}")
+
+        # unzip build to static folder
+        with ZipFile(file, "r") as zip_ref:
+            zip_ref.extractall(dest_path)
+
+        print(f"Unzipped downloaded frontend build to: {dest_path}")
+
+    def handle_download(url):
+        # download frontend-build.zip to temporary file
+        with requests.get(url, headers=default_headers, stream=True, allow_redirects=True) as response, NamedTemporaryFile(suffix=".zip") as dst:
+            response.raise_for_status()
+
+            # auto decode the gzipped raw data
+            response.raw.read = functools.partial(response.raw.read, decode_content=True)
+            with open(dst.name, "wb") as f:
+                shutil.copyfileobj(response.raw, f)
+            print(f"Downloaded frontend build to temporary file: {dst.name}")
+
+            handle_extract(dst.name)
+
+    # if zip file is specified, try to extract it directly
+    if file:
+        handle_extract(file)
+        return
+
+    # check arguments
+    if ref is not None and tag is not None:
+        print("[ERROR] Do not set ref and tag.")
+        return
+
+    if ref is None and tag is None:
+        try:
+            ref = subprocess.check_output(["git", "rev-parse", "HEAD"], encoding="utf-8").strip()
+        except Exception:
+            print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
+            return
+
+    if ref is None and tag is None:
+        print("[ERROR] Either ref or tag needs to be set.")
+
+    if tag:
+        tag = tag.lstrip("v")
+        try:
+            handle_download(f"https://github.com/{repo}/releases/download/{tag}/frontend-build.zip")
+        except Exception as e:
+            if not isinstance(e, requests.HTTPError):
+                raise e
+            print(f"""[ERROR] An Error occurred. Unable to download frontend build, release or build does not exist,
+try downloading the frontend-build.zip yourself via: https://github.com/{repo}/releases
+Then try continuing by running: invoke frontend-download --file <path-to-downloaded-zip-file>""")
+
+        return
+
+    if ref:
+        # get workflow run from all workflow runs on that particular ref
+        workflow_runs = requests.get(f"https://api.github.com/repos/{repo}/actions/runs?head_sha={ref}", headers=default_headers).json()
+
+        if not (qc_run := find_resource(workflow_runs["workflow_runs"], "name", "QC")):
+            print("[ERROR] Cannot find any workflow runs for current sha")
+            return
+        print(f"Found workflow {qc_run['name']} (run {qc_run['run_number']}-{qc_run['run_attempt']})")
+
+        # get frontend-build artifact from all artifacts available for this workflow run
+        artifacts = requests.get(qc_run["artifacts_url"], headers=default_headers).json()
+        if not (frontend_artifact := find_resource(artifacts["artifacts"], "name", "frontend-build")):
+            print("[ERROR] Cannot find frontend-build.zip attachment for current sha")
+            return
+        print(f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes']/1e6:.2f}MB).")
+
+        print(f"""
+GitHub doesn't allow artifact downloads from anonymous users. Either download the following file
+via your signed in browser, or consider using a point release download via invoke frontend-download --tag <git-tag>
+
+    Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and
+    continue by running: invoke frontend-download --file <path-to-downloaded-zip-file>""")
