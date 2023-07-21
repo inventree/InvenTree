@@ -2405,13 +2405,12 @@ function loadStockTable(table, options) {
         showFooter: true,
         columns: columns,
         treeEnable: show_installed_items,
-        rootParentId: parent_id,
-        parentIdField: 'belongs_to',
+        rootParentId: show_installed_items ? parent_id : null,
+        parentIdField: show_installed_items ? 'belongs_to' : null,
         uniqueId: 'pk',
         idField: 'pk',
-        treeShowField: 'part',
+        treeShowField: show_installed_items ? 'part' : null,
         onPostBody: function() {
-
             if (show_installed_items) {
                 table.treegrid({
                     treeColumn: 1,
