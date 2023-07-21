@@ -3,35 +3,20 @@ import { Group, Menu, Skeleton, Text, UnstyledButton } from '@mantine/core';
 import {
   IconChevronDown,
   IconHeart,
-  IconLanguage,
   IconLogout,
   IconSettings,
   IconUserCircle
 } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 
-import { languages } from '../../contexts/LanguageContext';
 import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useApiState } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { PlaceholderPill } from '../items/Placeholder';
 
 export function MainMenu() {
   const { classes, theme } = InvenTreeStyle();
   const [username] = useApiState((state) => [state.user?.name]);
-  const [locale] = useLocalState((state) => [state.language]);
-
-  // Language
-  function switchLanguage() {
-    useLocalState.setState({
-      language: languages[(languages.indexOf(locale) + 1) % languages.length]
-    });
-  }
-  function enablePsuedo() {
-    useLocalState.setState({ language: 'pseudo-LOCALE' });
-  }
-
   return (
     <Menu width={260} position="bottom-end">
       <Menu.Target>
@@ -64,12 +49,6 @@ export function MainMenu() {
         <Menu.Label>
           <Trans>Settings</Trans>
         </Menu.Label>
-        <Menu.Item icon={<IconLanguage />} onClick={switchLanguage}>
-          <Trans>Current language {locale}</Trans>
-        </Menu.Item>
-        <Menu.Item icon={<IconLanguage />} onClick={enablePsuedo}>
-          <Trans>Switch to pseudo language</Trans>
-        </Menu.Item>
         <Menu.Item icon={<IconSettings />}>
           <Trans>Account settings</Trans>
           <PlaceholderPill />

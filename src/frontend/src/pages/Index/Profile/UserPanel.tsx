@@ -18,6 +18,8 @@ import { useQuery } from '@tanstack/react-query';
 import { api, queryClient } from '../../../App';
 import { ColorToggle } from '../../../components/items/ColorToggle';
 import { EditButton } from '../../../components/items/EditButton';
+import { LanguageSelect } from '../../../components/items/LanguageSelect';
+import { useLocalState } from '../../../states/LocalState';
 import { UserTheme } from './UserTheme';
 
 export function UserPanel() {
@@ -125,6 +127,10 @@ export function UserInfo({ data }: { data: any }) {
 }
 
 function DisplaySettings({ height }: { height: number }) {
+  function enablePseudoLang(): void {
+    useLocalState.setState({ language: 'pseudo-LOCALE' });
+  }
+
   return (
     <Container w="100%" mih={height} p={0}>
       <Title order={3}>
@@ -135,6 +141,17 @@ function DisplaySettings({ height }: { height: number }) {
           <Trans>Color Mode</Trans>
         </Text>
         <ColorToggle />
+      </Group>
+      <Group align="top">
+        <Text>
+          <Trans>Language</Trans>
+        </Text>
+        <Stack>
+          <LanguageSelect />
+          <Button onClick={enablePseudoLang} variant="light">
+            <Trans>Use pseudo language</Trans>
+          </Button>
+        </Stack>
       </Group>
     </Container>
   );
