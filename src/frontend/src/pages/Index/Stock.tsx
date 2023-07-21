@@ -3,12 +3,11 @@ import { Group } from '@mantine/core';
 
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
-
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 
 export default function Part() {
-    return (
-      <>
+  return (
+    <>
       <Group>
         <StylishText>
           <Trans>Stock Items</Trans>
@@ -16,7 +15,6 @@ export default function Part() {
         <PlaceholderPill />
       </Group>
       <StockItemTable />
-      </>
-    );
-  }
-  
+    </>
+  );
+}

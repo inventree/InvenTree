@@ -3,12 +3,11 @@ import { Group } from '@mantine/core';
 
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
-
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 
 export default function Part() {
-    return (
-      <>
+  return (
+    <>
       <Group>
         <StylishText>
           <Trans>Build Orders</Trans>
@@ -16,7 +15,6 @@ export default function Part() {
         <PlaceholderPill />
       </Group>
       <BuildOrderTable />
-      </>
-    );
-  }
-  
+    </>
+  );
+}
