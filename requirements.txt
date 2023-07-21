@@ -28,7 +28,7 @@ coreapi==2.3.3
     # via -r requirements.in
 coreschema==0.0.4
     # via coreapi
-cryptography==41.0.1
+cryptography==41.0.2
     # via
     #   -r requirements.in
     #   djangorestframework-simplejwt
@@ -167,8 +167,6 @@ icalendar==5.0.7
     # via django-ical
 idna==3.4
     # via requests
-importlib-metadata==6.8.0
-    # via markdown
 inflection==0.5.1
     # via drf-spectacular
 itypes==1.2.0
@@ -310,8 +308,6 @@ xlrd==2.0.1
     # via tablib
 xlwt==1.3.0
     # via tablib
-zipp==3.16.0
-    # via importlib-metadata
 zopfli==0.2.2
     # via fonttools
 
