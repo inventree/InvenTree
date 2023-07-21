@@ -16,6 +16,7 @@ import { useToggle } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 
 import { api, queryClient } from '../../../App';
+import { ColorToggle } from '../../../components/items/ColorToggle';
 import { EditButton } from '../../../components/items/EditButton';
 import { UserTheme } from './UserTheme';
 
@@ -48,7 +49,7 @@ export function UserPanel() {
             <UserTheme height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
           <Grid.Col span={6}>
-            <Skeleton height={SECONDARY_COL_HEIGHT} />
+            <DisplaySettings height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
           <Grid.Col span={6}>
             <Skeleton height={SECONDARY_COL_HEIGHT} />
@@ -120,5 +121,21 @@ export function UserInfo({ data }: { data: any }) {
         )}
       </Group>
     </form>
+  );
+}
+
+function DisplaySettings({ height }: { height: number }) {
+  return (
+    <Container w="100%" mih={height} p={0}>
+      <Title order={3}>
+        <Trans>Display Settings</Trans>
+      </Title>
+      <Group>
+        <Text>
+          <Trans>Color Mode</Trans>
+        </Text>
+        <ColorToggle />
+      </Group>
+    </Container>
   );
 }
