@@ -4,7 +4,12 @@ import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
 import { api } from '../App';
-import { ApiPaths, url, useServerApiState } from '../states/ApiState';
+import {
+  ApiPaths,
+  url,
+  useApiState,
+  useServerApiState
+} from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
 
@@ -57,9 +62,11 @@ export const doSimpleLogin = async (email: string) => {
 
 export const doTokenLogin = (token: string) => {
   const { setToken } = useSessionState.getState();
+  const { fetchApiState } = useApiState.getState();
   const { fetchServerApiState } = useServerApiState.getState();
 
   setToken(token);
+  fetchApiState();
   fetchServerApiState();
 };
 

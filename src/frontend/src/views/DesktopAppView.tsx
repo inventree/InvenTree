@@ -6,15 +6,13 @@ import { queryClient, setApiDefaults } from '../App';
 import { BaseContext } from '../contexts/BaseContext';
 import { defaultHostList } from '../defaults/defaultHostList';
 import { router } from '../router';
-import { useServerApiState } from '../states/ApiState';
+import { useApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
 
 export default function DesktopAppView() {
   const [hostList] = useLocalState((state) => [state.hostList]);
-  const [fetchApiState] = useServerApiState((state) => [
-    state.fetchServerApiState
-  ]);
+  const [fetchApiState] = useApiState((state) => [state.fetchApiState]);
 
   // Local state initialization
   if (Object.keys(hostList).length === 0) {
