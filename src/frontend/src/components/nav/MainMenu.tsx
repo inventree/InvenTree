@@ -13,13 +13,13 @@ import { Link } from 'react-router-dom';
 import { languages } from '../../contexts/LanguageContext';
 import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
-import { useApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { PlaceholderPill } from '../items/Placeholder';
 
 export function MainMenu() {
   const { classes, theme } = InvenTreeStyle();
-  const [username] = useApiState((state) => [state.user?.name]);
+  const [username] = useServerApiState((state) => [state.user?.name]);
   const [locale] = useLocalState((state) => [state.language]);
 
   // Language

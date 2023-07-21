@@ -3,6 +3,7 @@ import { Divider, Group, Select, Text, Title } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { IconCheck } from '@tabler/icons-react';
 
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { HostList } from '../../states/states';
 import { EditButton } from '../items/EditButton';
@@ -23,7 +24,6 @@ export function InstanceOptions({
     state.setHostList,
     state.hostList
   ]);
-
   const hostListData = Object.keys(hostList).map((key) => ({
     value: key,
     label: hostList[key].name
@@ -63,7 +63,8 @@ export function InstanceOptions({
           saveIcon={<IconCheck />}
         />
       </Group>
-      {HostListEdit && (
+
+      {HostListEdit ? (
         <>
           <Divider my={'sm'} />
           <Text>
@@ -71,7 +72,46 @@ export function InstanceOptions({
           </Text>
           <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
         </>
+      ) : (
+        <>
+          <Divider my={'sm'} />
+          <ServerInfo hostList={hostList} hostKey={hostKey} />
+        </>
       )}
     </>
+  );
+}
+
+function ServerInfo({
+  hostList,
+  hostKey
+}: {
+  hostList: HostList;
+  hostKey: string;
+}) {
+  const [server] = useServerApiState((state) => [state.server]);
+
+  return (
+    <Text>
+      {hostList[hostKey].host}
+      <br />
+      <Trans>Version: {server.version}</Trans>
+      <br />
+      <Trans>API:{server.apiVersion}</Trans>
+      <br />
+      <Trans>Name: {server.instance}</Trans>
+      <br />
+      <Trans>
+        State:{' '}
+        <Text span c={server.worker_running ? 'green' : 'red'}>
+          worker
+        </Text>{' '}
+        ({server.worker_pending_tasks}),{' '}
+        <Text span c={server.plugins_enabled ? 'green' : 'red'}>
+          plugins
+        </Text>
+        {server.plugins_enabled ? ` (${server.active_plugins.length})` : null}
+      </Trans>
+    </Text>
   );
 }
