@@ -1,26 +1,13 @@
-import { Trans, t } from '@lingui/macro';
-import {
-  Center,
-  Container,
-  Divider,
-  Group,
-  Select,
-  Stack,
-  Text,
-  Tooltip
-} from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Center, Container } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
-import { IconCheck, IconServer } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
+import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
-import { HostOptionsForm } from '../../components/forms/HostOptionsForm';
-import { ColorToggle } from '../../components/items/ColorToggle';
-import { EditButton } from '../../components/items/EditButton';
-import { LanguageToggle } from '../../components/items/LanguageToggle';
+import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import { defaultHostKey } from '../../defaults/defaultHostList';
 import { useLocalState } from '../../states/LocalState';
-import { HostList } from '../../states/states';
 
 export default function Login() {
   const [hostKey, setHost, hostList] = useLocalState((state) => [
@@ -31,24 +18,12 @@ export default function Login() {
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey].name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
-  const hostListData = Object.keys(hostList).map((key) => ({
-    value: key,
-    label: hostList[key].name
-  }));
-  const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
 
   // Data manipulation functions
   function ChangeHost(newHost: string): void {
     setHost(hostList[newHost].host, newHost);
-    setHostEdit(false);
   }
-  function SaveOptions(newHostList: HostList): void {
-    useLocalState.setState({ hostList: newHostList });
-    if (newHostList[hostKey] === undefined) {
-      setHost('', '');
-    }
-    setHostListEdit();
-  }
+
   // Set default host to localhost if no host is selected
   useEffect(() => {
     if (hostKey === '') {
@@ -56,61 +31,20 @@ export default function Login() {
     }
   }, []);
 
+  // Main rendering block
   return (
     <Center mih="100vh">
       <Container w="md" miw={400}>
         {hostEdit ? (
-          <>
-            <Text>
-              <Trans>Select destination instance</Trans>
-            </Text>
-            <Group>
-              <Group>
-                <Select
-                  value={hostKey}
-                  onChange={ChangeHost}
-                  data={hostListData}
-                  disabled={HostListEdit}
-                />
-                <EditButton
-                  setEditing={setHostListEdit}
-                  editing={HostListEdit}
-                  disabled={HostListEdit}
-                />
-              </Group>
-              <EditButton
-                setEditing={setHostEdit}
-                editing={hostEdit}
-                disabled={HostListEdit}
-                saveIcon={<IconCheck />}
-              />
-            </Group>
-            {HostListEdit && (
-              <>
-                <Divider my={'sm'} />
-                <Text>
-                  <Trans>Edit possible host options</Trans>
-                </Text>
-                <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
-              </>
-            )}
-          </>
+          <InstanceOptions
+            hostKey={hostKey}
+            ChangeHost={ChangeHost}
+            setHostEdit={setHostEdit}
+          />
         ) : (
           <>
             <AuthenticationForm />
-            <Center mx={'md'}>
-              <Group>
-                {!HostListEdit && (
-                  <>
-                    <ColorToggle />
-                    <LanguageToggle />
-                  </>
-                )}
-                <Tooltip label={hostname}>
-                  <IconServer onClick={() => setHostEdit(!hostEdit)} />
-                </Tooltip>
-              </Group>
-            </Center>
+            <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
           </>
         )}
       </Container>
