@@ -38,20 +38,15 @@ export function MainMenu() {
           <Trans>Notifications</Trans>
           <PlaceholderPill />
         </Menu.Item>
-        <Menu.Item
-          icon={<IconUserCircle />}
-          component={Link}
-          to="/profile/user"
-        >
-          <Trans>Profile</Trans>
+        <Menu.Item icon={<IconUserCircle />}>
+          <Trans>Profile</Trans> <PlaceholderPill />
         </Menu.Item>
 
         <Menu.Label>
           <Trans>Settings</Trans>
         </Menu.Label>
-        <Menu.Item icon={<IconSettings />}>
+        <Menu.Item icon={<IconSettings />} component={Link} to="/profile/user">
           <Trans>Account settings</Trans>
-          <PlaceholderPill />
         </Menu.Item>
         <Menu.Item
           icon={<IconLogout />}
