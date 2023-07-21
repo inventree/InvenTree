@@ -1,39 +1,34 @@
-import { Component } from "react";
-import { ActionIcon, Menu, Tooltip } from "@mantine/core";
-
+import { ActionIcon, Menu, Tooltip } from '@mantine/core';
+import { Component } from 'react';
 
 /**
  * A ButtonMenu is a button that opens a menu when clicked.
  * It features a number of actions, which can be selected by the user.
  */
 export function ButtonMenu({
-    icon,
-    actions,
-    tooltip='',
-    label=''
-} : {
-    icon: any;
-    actions: any[];
-    label?: string;
-    tooltip?: string;
+  icon,
+  actions,
+  tooltip = '',
+  label = ''
+}: {
+  icon: any;
+  actions: any[];
+  label?: string;
+  tooltip?: string;
 }) {
-
-    return <Menu shadow="xs">
-        <Menu.Target>
-            <ActionIcon>
-                <Tooltip label={tooltip}>
-                    {icon}
-                </Tooltip>
-            </ActionIcon>
-        </Menu.Target>
-        <Menu.Dropdown>
-            {label && <Menu.Label>{label}</Menu.Label>}
-            {actions.map((action) =>
-                <Menu.Item>
-                    {action}
-                </Menu.Item>
-            )}
-        </Menu.Dropdown>
-    </Menu>;
-
+  return (
+    <Menu shadow="xs">
+      <Menu.Target>
+        <ActionIcon>
+          <Tooltip label={tooltip}>{icon}</Tooltip>
+        </ActionIcon>
+      </Menu.Target>
+      <Menu.Dropdown>
+        {label && <Menu.Label>{label}</Menu.Label>}
+        {actions.map((action) => (
+          <Menu.Item>{action}</Menu.Item>
+        ))}
+      </Menu.Dropdown>
+    </Menu>
+  );
 }
