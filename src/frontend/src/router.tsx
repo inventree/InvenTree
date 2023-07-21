@@ -1,35 +1,23 @@
-import { Suspense, lazy } from 'react';
+import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
-import Loading from './Loading';
-import Layout from './pages/layout';
-
-// Lazy loading helper
-const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
-  (
-    <Suspense fallback={<Loading />}>
-      <Component {...props} />
-    </Suspense>
-  );
+import { Loadable } from './functions/loading';
 
 // Lazy loaded pages
+export const LayoutComponent = Loadable(
+  lazy(() => import('./components/nav/Layout'))
+);
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
-export const Dashboard = Loadable(
-  lazy(() => import('./pages/Index/Dashboard'))
-);
-export const Part = Loadable(lazy(() => import('./pages/Index/Part')));
-export const Stock = Loadable(lazy(() => import('./pages/Index/Stock')));
-export const Build = Loadable(lazy(() => import('./pages/Index/Build')));
 export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
 );
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
-export const Login = Loadable(lazy(() => import('./pages/Login')));
-export const Logged_In = Loadable(lazy(() => import('./pages/Logged-In')));
-export const Reset = Loadable(lazy(() => import('./pages/Reset')));
+export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
+export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
+export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
 export const Set_Password = Loadable(
-  lazy(() => import('./pages/Set-Password'))
+  lazy(() => import('./pages/Auth/Set-Password'))
 );
 
 // Routes
@@ -42,25 +30,16 @@ export const router = createBrowserRouter(
     },
     {
       path: '/',
-      element: <Layout />,
+      element: <LayoutComponent />,
       errorElement: <ErrorPage />,
       children: [
-        { index: true, element: <Dashboard /> },
         {
-          path: 'home/',
+          index: true,
           element: <Home />
         },
         {
-          path: 'part/',
-          element: <Part />
-        },
-        {
-          path: 'stock/',
-          element: <Stock />
-        },
-        {
-          path: 'build/',
-          element: <Build />
+          path: 'home/',
+          element: <Home />
         },
         {
           path: '/profile/:tabValue',

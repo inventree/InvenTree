@@ -1,12 +1,12 @@
 {
   "dependencies": {
     "@emotion/react": "^11.11.1",
-    "@mantine/core": "^6.0.16",
-    "@mantine/hooks": "^6.0.16",
-    "@mantine/modals": "^6.0.16",
-    "@mantine/notifications": "^6.0.16",
+    "@mantine/core": "^6.0.17",
+    "@mantine/dropzone": "^6.0.17",
+    "@mantine/hooks": "^6.0.17",
+    "@mantine/notifications": "^6.0.17",
     "eslint": "^8.41.0",
     "eslint-config-google": "^0.14.0",
-    "mantine-datatable": "^2.8.3"
+    "mantine-datatable": "^2.8.5"
   }
 }

@@ -52,6 +52,82 @@ onPanelLoad('pricing', function() {
     });
 });
 
+// Javascript for units panel
+onPanelLoad('units', function() {
+
+    console.log("units panel");
+
+    // Construct the "units" table
+    $('#physical-units-table').bootstrapTable({
+        url: '{% url "api-custom-unit-list" %}',
+        search: true,
+        columns: [
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+            },
+            {
+                field: 'definition',
+                title: '{% trans "Definition" %}',
+            },
+            {
+                field: 'symbol',
+                title: '{% trans "Symbol" %}',
+                formatter: function(value, row) {
+                    let html = value;
+                    let buttons = '';
+
+                    buttons += makeEditButton('button-units-edit', row.pk, '{% trans "Edit" %}');
+                    buttons += makeDeleteButton('button-units-delete', row.pk, '{% trans "Delete" %}');
+
+                    html += wrapButtons(buttons);
+                    return html;
+                }
+            },
+        ]
+    });
+
+    // Callback to edit a custom unit
+    $('#physical-units-table').on('click', '.button-units-edit', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-custom-unit-list" %}${pk}/`, {
+            title: '{% trans "Edit Custom Unit" %}',
+            fields: {
+                name: {},
+                definition: {},
+                symbol: {},
+            },
+            refreshTable: '#physical-units-table',
+        });
+    });
+
+    // Callback to delete a custom unit
+    $('#physical-units-table').on('click', '.button-units-delete', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-custom-unit-list" %}${pk}/`, {
+            title: '{% trans "Delete Custom Unit" %}',
+            method: 'DELETE',
+            refreshTable: '#physical-units-table',
+        });
+    });
+
+    // Callback to create a new custom unit
+    $('#custom-unit-create').click(function() {
+        constructForm('{% url "api-custom-unit-list" %}', {
+            fields: {
+                name: {},
+                definition: {},
+                symbol: {},
+            },
+            title: '{% trans "New Custom Unit" %}',
+            method: 'POST',
+            refreshTable: '#physical-units-table',
+        });
+    });
+});
+
 // Javascript for project codes panel
 onPanelLoad('project-codes', function() {
 

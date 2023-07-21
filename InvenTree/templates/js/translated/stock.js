@@ -2375,6 +2375,10 @@ function loadStockTable(table, options) {
                     let row  = table.bootstrapTable('getRowByUniqueId', stock_item);
                     row.installed_items_received = true;
 
+                    for (let ii = 0; ii < response.length; ii++) {
+                        response[ii].belongs_to_item = stock_item;
+                    }
+
                     table.bootstrapTable('updateByUniqueId', stock_item, row, true);
                     table.bootstrapTable('append', response);
 
@@ -2390,6 +2394,7 @@ function loadStockTable(table, options) {
     }
 
     let parent_id = 'top-level';
+    let loaded = false;
 
     table.inventreeTable({
         method: 'get',
@@ -2405,13 +2410,25 @@ function loadStockTable(table, options) {
         showFooter: true,
         columns: columns,
         treeEnable: show_installed_items,
-        rootParentId: parent_id,
-        parentIdField: 'belongs_to',
+        rootParentId: show_installed_items ? parent_id : null,
+        parentIdField: show_installed_items ? 'belongs_to_item' : null,
         uniqueId: 'pk',
         idField: 'pk',
-        treeShowField: 'part',
-        onPostBody: function() {
+        treeShowField: show_installed_items ? 'part' : null,
+        onLoadSuccess: function(data) {
+            let records = data.results || data;
 
+            // Set the 'parent' ID for each root item
+            if (!loaded && show_installed_items) {
+                for (let i = 0; i < records.length; i++) {
+                    records[i].belongs_to_item = parent_id;
+                }
+
+                loaded = true;
+                $(table).bootstrapTable('load', records);
+            }
+        },
+        onPostBody: function() {
             if (show_installed_items) {
                 table.treegrid({
                     treeColumn: 1,
@@ -2641,7 +2658,7 @@ function loadStockLocationTable(table, options) {
                         } else {
                             html += `
                                 <a href='#' pk='${row.pk}' class='load-sub-location'>
-                                    <span class='fas fa-sync-alt' title='{% trans "Load Subloactions" %}'></span>
+                                    <span class='fas fa-sync-alt' title='{% trans "Load Sublocations" %}'></span>
                                 </a> `;
                         }
                     }

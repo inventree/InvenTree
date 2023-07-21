@@ -89,7 +89,7 @@ export function QrCodeModal({
   function selectCamera() {
     Html5Qrcode.getCameras()
       .then((devices) => {
-        if (devices && devices.length) {
+        if (devices?.length) {
           setCamId(devices[0]);
         }
       })
@@ -160,7 +160,7 @@ export function QrCodeModal({
             <Button
               sx={{ flex: 1 }}
               onClick={() => startScanning()}
-              disabled={camId != undefined && ScanningEnabled == true}
+              disabled={camId != undefined && ScanningEnabled}
             >
               <Trans>Start scanning</Trans>
             </Button>

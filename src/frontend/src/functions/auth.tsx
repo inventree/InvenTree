@@ -3,9 +3,10 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
-import { ApiPaths, url, useApiState } from '../context/ApiState';
-import { useLocalState } from '../context/LocalState';
-import { useSessionState } from '../context/SessionState';
+import { api } from '../App';
+import { ApiPaths, url, useApiState } from '../states/ApiState';
+import { useLocalState } from '../states/LocalState';
+import { useSessionState } from '../states/SessionState';
 
 export const doClassicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
@@ -32,7 +33,7 @@ export const doClassicLogout = async () => {
   setToken(undefined);
 
   notifications.show({
-    title: t`Logout successful`,
+    title: t`Logout successfull`,
     message: t`See you soon.`,
     color: 'green',
     icon: <IconCheck size="1rem" />
@@ -61,3 +62,51 @@ export const doTokenLogin = (token: string) => {
   setToken(token);
   fetchApiState();
 };
+
+export function handleReset(navigate: any, values: { email: string }) {
+  api
+    .post(url(ApiPaths.user_reset), values, {
+      headers: { Authorization: '' }
+    })
+    .then((val) => {
+      if (val.status === 200) {
+        notifications.show({
+          title: t`Mail delivery successfull`,
+          message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
+          color: 'green',
+          autoClose: false
+        });
+        navigate('/login');
+      } else {
+        notifications.show({
+          title: t`Reset failed`,
+          message: t`Check your your input and try again.`,
+          color: 'red'
+        });
+      }
+    });
+}
+
+export function checkLoginState(navigate: any) {
+  api
+    .get(url(ApiPaths.user_token))
+    .then((val) => {
+      if (val.status === 200 && val.data.token) {
+        doTokenLogin(val.data.token);
+
+        notifications.show({
+          title: t`Already logged in`,
+          message: t`Found an existing login - using it to log you in.`,
+          color: 'green',
+          icon: <IconCheck size="1rem" />
+        });
+
+        navigate('/home');
+      } else {
+        navigate('/login');
+      }
+    })
+    .catch(() => {
+      navigate('/login');
+    });
+}

@@ -1,15 +1,18 @@
 import { t } from '@lingui/macro';
 import { ActionIcon } from '@mantine/core';
+import { forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import InvenTreeIcon from './inventree.svg';
 
-export function InvenTreeLogo() {
+export const InvenTreeLogo = forwardRef<HTMLDivElement>((props, ref) => {
   return (
-    <NavLink to={'/'}>
-      <ActionIcon size={28}>
-        <img src={InvenTreeIcon} alt={t`InvenTree Logo`} height={28} />
-      </ActionIcon>
-    </NavLink>
+    <div ref={ref} {...props}>
+      <NavLink to={'/'}>
+        <ActionIcon size={28}>
+          <img src={InvenTreeIcon} alt={t`InvenTree Logo`} height={28} />
+        </ActionIcon>
+      </NavLink>
+    </div>
   );
-}
+});

@@ -1,11 +1,11 @@
 import { Trans, t } from '@lingui/macro';
-import { Container } from '@mantine/core';
+import { Container, Text, Title } from '@mantine/core';
 import { useDocumentTitle } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useRouteError } from 'react-router-dom';
 
-import { LanguageContext } from '../context/LanguageContext';
-import { ErrorResponse } from '../context/states';
+import { LanguageContext } from '../contexts/LanguageContext';
+import { ErrorResponse } from '../states/states';
 
 export default function ErrorPage() {
   const error = useRouteError() as ErrorResponse;
@@ -13,7 +13,7 @@ export default function ErrorPage() {
   useDocumentTitle(title);
 
   useEffect(() => {
-    if (error && error.statusText) {
+    if (error?.statusText) {
       setTitle(t`Error: ${error.statusText}`);
     }
   }, [error]);
@@ -21,15 +21,15 @@ export default function ErrorPage() {
   return (
     <LanguageContext>
       <Container>
-        <h1>
+        <Title>
           <Trans>Error</Trans>
-        </h1>
-        <p>
+        </Title>
+        <Text>
           <Trans>Sorry, an unexpected error has occurred.</Trans>
-        </p>
-        <p>
+        </Text>
+        <Text>
           <i>{error.statusText || error.message}</i>
-        </p>
+        </Text>
       </Container>
     </LanguageContext>
   );

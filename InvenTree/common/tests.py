@@ -5,6 +5,7 @@ import json
 import time
 from datetime import timedelta
 from http import HTTPStatus
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
@@ -21,9 +22,10 @@ from plugin import registry
 from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
-from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
-                     NotesImage, NotificationEntry, NotificationMessage,
-                     ProjectCode, WebhookEndpoint, WebhookMessage)
+from .models import (ColorTheme, CustomUnit, InvenTreeSetting,
+                     InvenTreeUserSetting, NotesImage, NotificationEntry,
+                     NotificationMessage, ProjectCode, WebhookEndpoint,
+                     WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -105,6 +107,40 @@ class SettingsTest(InvenTreeTestCase):
         self.assertIn('PART_COPY_TESTS', result)
         self.assertIn('STOCK_OWNERSHIP_CONTROL', result)
         self.assertIn('SIGNUP_GROUP', result)
+        self.assertIn('SERVER_RESTART_REQUIRED', result)
+
+        result = InvenTreeSetting.allValues(exclude_hidden=True)
+        self.assertNotIn('SERVER_RESTART_REQUIRED', result)
+
+    def test_all_settings(self):
+        """Make sure that the all_settings function returns correctly"""
+        result = InvenTreeSetting.all_settings()
+        self.assertIn("INVENTREE_INSTANCE", result)
+        self.assertIsInstance(result['INVENTREE_INSTANCE'], InvenTreeSetting)
+
+    @mock.patch("common.models.InvenTreeSetting.get_setting_definition")
+    def test_check_all_settings(self, get_setting_definition):
+        """Make sure that the check_all_settings function returns correctly"""
+        # define partial schema
+        settings_definition = {
+            "AB": {  # key that's has not already been accessed
+                "required": True,
+            },
+            "CD": {
+                "required": True,
+                "protected": True,
+            },
+            "EF": {}
+        }
+
+        def mocked(key, **kwargs):
+            return settings_definition.get(key, {})
+        get_setting_definition.side_effect = mocked
+
+        self.assertEqual(InvenTreeSetting.check_all_settings(settings_definition=settings_definition), (False, ["AB", "CD"]))
+        InvenTreeSetting.set_setting('AB', "hello", self.user)
+        InvenTreeSetting.set_setting('CD', "world", self.user)
+        self.assertEqual(InvenTreeSetting.check_all_settings(), (True, []))
 
     def run_settings_check(self, key, setting):
         """Test that all settings are valid.
@@ -1026,7 +1062,7 @@ class NotesImageTest(InvenTreeAPITestCase):
             image.save(output, format='PNG')
             contents = output.getvalue()
 
-        response = self.post(
+        self.post(
             reverse('api-notes-image-list'),
             data={
                 'image': SimpleUploadedFile('test.png', contents, content_type='image/png'),
@@ -1034,8 +1070,6 @@ class NotesImageTest(InvenTreeAPITestCase):
             format='multipart',
             expected_code=201
         )
-
-        print(response.data)
 
         # Check that a new file has been created
         self.assertEqual(NotesImage.objects.count(), n + 1)
@@ -1149,3 +1183,90 @@ class ProjectCodesTest(InvenTreeAPITestCase):
             },
             expected_code=403
         )
+
+
+class CustomUnitAPITest(InvenTreeAPITestCase):
+    """Unit tests for the CustomUnit API"""
+
+    @property
+    def url(self):
+        """Return the API endpoint for the CustomUnit list"""
+        return reverse('api-custom-unit-list')
+
+    @classmethod
+    def setUpTestData(cls):
+        """Construct some initial test fixture data"""
+        super().setUpTestData()
+
+        units = [
+            CustomUnit(name='metres_per_amp', definition='meter / ampere', symbol='m/A'),
+            CustomUnit(name='hectares_per_second', definition='hectares per second', symbol='ha/s'),
+        ]
+
+        CustomUnit.objects.bulk_create(units)
+
+    def test_list(self):
+        """Test API list functionality"""
+
+        response = self.get(self.url, expected_code=200)
+        self.assertEqual(len(response.data), CustomUnit.objects.count())
+
+    def test_edit(self):
+        """Test edit permissions for CustomUnit model"""
+
+        unit = CustomUnit.objects.first()
+
+        # Try to edit without permission
+        self.user.is_staff = False
+        self.user.save()
+
+        self.patch(
+            reverse('api-custom-unit-detail', kwargs={'pk': unit.pk}),
+            {
+                'name': 'new_unit_name',
+            },
+            expected_code=403
+        )
+
+        # Ok, what if we have permission?
+        self.user.is_staff = True
+        self.user.save()
+
+        self.patch(
+            reverse('api-custom-unit-detail', kwargs={'pk': unit.pk}),
+            {
+                'name': 'new_unit_name',
+            },
+            # expected_code=200
+        )
+
+        unit.refresh_from_db()
+        self.assertEqual(unit.name, 'new_unit_name')
+
+    def test_validation(self):
+        """Test that validation works as expected"""
+
+        unit = CustomUnit.objects.first()
+
+        self.user.is_staff = True
+        self.user.save()
+
+        # Test invalid 'name' values (must be valid identifier)
+        invalid_name_values = [
+            '1',
+            '1abc',
+            'abc def',
+            'abc-def',
+            'abc.def',
+        ]
+
+        url = reverse('api-custom-unit-detail', kwargs={'pk': unit.pk})
+
+        for name in invalid_name_values:
+            self.patch(
+                url,
+                {
+                    'name': name,
+                },
+                expected_code=400
+            )
