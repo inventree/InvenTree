@@ -4,7 +4,7 @@ import { IconDeviceFloppy, IconEdit } from '@tabler/icons-react';
 export function EditButton({
   setEditing,
   editing,
-  disabled
+  disabled=false,
 }: {
   setEditing: (value?: React.SetStateAction<boolean> | undefined) => void;
   editing: boolean;

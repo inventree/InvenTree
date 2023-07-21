@@ -2,8 +2,8 @@ import { Trans, t } from '@lingui/macro';
 import { Center, Container, Group, Select, Stack, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 
-import { AuthenticationForm } from '../components/AuthenticationForm';
-import { HostOptionsForm } from '../components/HostOptionsForm';
+import { AuthenticationForm } from '../components/forms/AuthenticationForm';
+import { HostOptionsForm } from '../components/forms/HostOptionsForm';
 import { EditButton } from '../components/items/EditButton';
 import { useLocalState } from '../context/LocalState';
 import { HostList } from '../context/states';
@@ -48,7 +48,11 @@ export default function Login() {
           data={hostListData}
           disabled={HostListEdit}
         />
-        {EditButton(setHostListEdit, HostListEdit, HostListEdit)}
+        {<EditButton
+          setEditing={setHostEdit}
+          editing={hostEdit}
+          disabled={HostListEdit}
+        />}
       </Group>
     );
   }

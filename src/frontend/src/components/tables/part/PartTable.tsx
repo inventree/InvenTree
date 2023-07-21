@@ -7,6 +7,7 @@ import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { notYetImplemented } from '../../../functions/notifications';
 
+import { Text } from '@mantine/core';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 
@@ -98,6 +99,11 @@ function partTableFilters() : TableFilter[] {
 }
 
 
+/**
+ * PartListTable - Displays a list of parts, based on the provided parameters
+ * @param {Object} params - The query parameters to pass to the API
+ * @returns 
+ */
 export function PartListTable({
     params={}
   }: {
@@ -121,5 +127,4 @@ export function PartListTable({
         columns={partTableColumns()}
         customFilters={partTableFilters()}
     />;
-
 }
