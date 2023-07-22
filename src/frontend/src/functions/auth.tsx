@@ -33,7 +33,7 @@ export const doClassicLogout = async () => {
   setToken(undefined);
 
   notifications.show({
-    title: t`Logout successfull`,
+    title: t`Logout successful`,
     message: t`See you soon.`,
     color: 'green',
     icon: <IconCheck size="1rem" />
@@ -71,7 +71,7 @@ export function handleReset(navigate: any, values: { email: string }) {
     .then((val) => {
       if (val.status === 200) {
         notifications.show({
-          title: t`Mail delivery successfull`,
+          title: t`Mail delivery successful`,
           message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
           color: 'green',
           autoClose: false
