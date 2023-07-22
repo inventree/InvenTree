@@ -214,8 +214,7 @@ export function InvenTreeTable({
     }
 
     return api
-      .get(`http://localhost:8000/api/${url}`, {
-        // TODO: Don't hardcode the base URL here!
+      .get(`${url}`, {
         params: queryParams,
         timeout: 30 * 1000
       })
