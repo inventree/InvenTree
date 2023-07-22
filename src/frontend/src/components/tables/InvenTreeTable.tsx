@@ -158,12 +158,7 @@ export function InvenTreeTable({
     // Find matching column:
     // If column provides custom ordering term, use that
     let column = dataColumns.find((col) => col.accessor == key);
-
-    if (column && column.ordering) {
-      return column.ordering;
-    } else {
-      return key;
-    }
+    return column?.ordering || key;
   }
 
   // Missing records text (based on server response)
