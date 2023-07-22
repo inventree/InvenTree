@@ -1,6 +1,6 @@
 """JSON API for the Build app."""
 
-from django.db.models import F
+from django.db.models import F, Q
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
 from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
-from generic.states import StatusView
+from generic.states.api import StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.status_codes import BuildStatus, BuildStatusGroups
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
@@ -296,6 +296,25 @@ class BuildLineFilter(rest_filters.FilterSet):
             return queryset.filter(allocated__gte=F('quantity'))
         else:
             return queryset.filter(allocated__lt=F('quantity'))
+
+    available = rest_filters.BooleanFilter(label=_('Available'), method='filter_available')
+
+    def filter_available(self, queryset, name, value):
+        """Filter by whether there is sufficient stock available for each BuildLine:
+
+        To determine this, we need to know:
+
+        - The quantity required for each BuildLine
+        - The quantity available for each BuildLine
+        - The quantity allocated for each BuildLine
+        """
+
+        flt = Q(quantity__lte=F('total_available_stock') + F('allocated'))
+
+        if str2bool(value):
+            return queryset.filter(flt)
+        else:
+            return queryset.exclude(flt)
 
 
 class BuildLineEndpoint:

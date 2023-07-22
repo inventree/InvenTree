@@ -13,6 +13,25 @@ from InvenTree.serializers import (InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
 
 
+class SettingsValueField(serializers.Field):
+    """Custom serializer field for a settings value."""
+
+    def get_attribute(self, instance):
+        """Return the object instance, not the attribute value."""
+        return instance
+
+    def to_representation(self, instance):
+        """Return the value of the setting:
+
+        - Protected settings are returned as '***'
+        """
+        return '***' if instance.protected else str(instance.value)
+
+    def to_internal_value(self, data):
+        """Return the internal value of the setting"""
+        return str(data)
+
+
 class SettingsSerializer(InvenTreeModelSerializer):
     """Base serializer for a settings object."""
 
@@ -30,6 +49,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     api_url = serializers.CharField(read_only=True)
 
+    value = SettingsValueField()
+
     def get_choices(self, obj):
         """Returns the choices available for a given item."""
         results = []
@@ -44,16 +65,6 @@ class SettingsSerializer(InvenTreeModelSerializer):
                 })
 
         return results
-
-    def get_value(self, obj):
-        """Make sure protected values are not returned."""
-        # never return protected values
-        if obj.protected:
-            result = '***'
-        else:
-            result = obj.value
-
-        return result
 
 
 class GlobalSettingsSerializer(SettingsSerializer):
@@ -285,3 +296,18 @@ class FlagSerializer(serializers.Serializer):
             data['conditions'] = self.instance[instance]
 
         return data
+
+
+class CustomUnitSerializer(InvenTreeModelSerializer):
+    """DRF serializer for CustomUnit model."""
+
+    class Meta:
+        """Meta options for CustomUnitSerializer."""
+
+        model = common_models.CustomUnit
+        fields = [
+            'pk',
+            'name',
+            'symbol',
+            'definition',
+        ]

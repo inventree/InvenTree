@@ -74,6 +74,11 @@ def validate_return_order_filters(filters):
     return validateFilterString(filters, model=order.models.ReturnOrder)
 
 
+def validate_stock_location_report_filters(filters):
+    """Validate filter string against StockLocation model."""
+    return validateFilterString(filters, model=stock.models.StockLocation)
+
+
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
     """Class for rendering a HTML template to a PDF."""
 
@@ -619,3 +624,39 @@ class ReportAsset(models.Model):
         verbose_name=_('Description'),
         help_text=_("Asset file description")
     )
+
+
+class StockLocationReport(ReportTemplateBase):
+    """Render a StockLocationReport against a StockLocation object."""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the StockLocationReport model"""
+        return reverse('api-stocklocation-report-list')
+
+    @classmethod
+    def getSubdir(cls):
+        """Return the subdirectory where StockLocationReport templates are located"""
+        return 'slr'
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_("stock location query filters (comma-separated list of key=value pairs)"),
+        validators=[
+            validate_stock_location_report_filters
+        ]
+    )
+
+    def get_context_data(self, request):
+        """Return custom context data for the StockLocationReport template"""
+        stock_location = self.object_to_print
+
+        if type(stock_location) != stock.models.StockLocation:
+            raise TypeError('Provided model is not a StockLocation object -> ' + str(type(stock_location)))
+
+        return {
+            'stock_location': stock_location,
+            'stock_items': stock_location.get_stock_items(),
+        }
