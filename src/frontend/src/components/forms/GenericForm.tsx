@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Input, NumberInput, Text, TextInput } from '@mantine/core';
+import { Input, NumberInput, Stack, Text, TextInput } from '@mantine/core';
 import { Group } from '@mantine/core';
 
 /**
@@ -10,7 +10,7 @@ export type GenericFormField = {
   label: string;
   value?: any;
   type: string;
-  required: boolean;
+  required?: boolean;
   placeholder?: string;
   help_text?: string;
   icon?: string;
@@ -47,10 +47,10 @@ export function GenericFormInput({ field }: { field: GenericFormField }) {
  */
 export function GenericFormInputGroup({ field }: { field: GenericFormField }) {
   return (
-    <Group>
+    <Stack>
       <Text>{field.label}</Text>
       <GenericFormInput field={field} />
-    </Group>
+    </Stack>
   );
 }
 
