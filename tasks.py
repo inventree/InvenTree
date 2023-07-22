@@ -259,7 +259,7 @@ def translate_stats(c):
 
 
 @task(post=[translate_stats])
-def translate(c, skip_static=False):
+def translate(c):
     """Rebuild translation source files. Advanced use only!
 
     Note: This command should not be used on a local install,
@@ -269,13 +269,12 @@ def translate(c, skip_static=False):
     manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
 
-    if not skip_static:
-        if node_available():
-            frontend_trans(c)
-            frontend_build(c)
+    if node_available():
+        frontend_trans(c)
+        frontend_build(c)
 
-        # Update static files
-        static(c)
+    # Update static files
+    static(c)
 
 
 @task
@@ -828,6 +827,17 @@ def frontend_build(c):
     """
     print("Building frontend")
     yarn(c, "yarn run build --emptyOutDir")
+
+
+@task
+def frontend_dev(c):
+    """Start frontend development server.
+
+    Args:
+        c: Context variable
+    """
+    print("Starting frontend development server")
+    yarn(c, "yarn run dev")
 
 
 @task(help={

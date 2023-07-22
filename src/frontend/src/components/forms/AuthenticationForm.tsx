@@ -39,7 +39,7 @@ export function AuthenticationForm() {
           });
         } else {
           notifications.show({
-            title: t`Login successfull`,
+            title: t`Login successful`,
             message: t`Welcome back!`,
             color: 'green',
             icon: <IconCheck size="1rem" />
@@ -51,7 +51,7 @@ export function AuthenticationForm() {
       doSimpleLogin(simpleForm.values.email).then((ret) => {
         if (ret?.status === 'ok') {
           notifications.show({
-            title: t`Mail delivery successfull`,
+            title: t`Mail delivery successful`,
             message: t`Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too.`,
             color: 'green',
             icon: <IconCheck size="1rem" />,
