@@ -1,16 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Chip,
-  CloseButton,
-  Indicator,
-  Space,
-  Stack,
-  Table,
-  Text,
-  Tooltip,
-  filterProps
-} from '@mantine/core';
+import { ActionIcon, Indicator, Space, Stack, Tooltip } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
@@ -181,23 +170,20 @@ export function InvenTreeTable({
   function toggleColumn(columnName: string) {
     let newColumns = [...dataColumns];
 
-    let hiddenColumns = [];
+    let colIdx = newColumns.findIndex((col) => col.accessor == columnName);
 
-    // Toggle selected column
-    for (let idx = 0; idx < newColumns.length; idx++) {
-      if (newColumns[idx].accessor == columnName) {
-        newColumns[idx].hidden = !newColumns[idx].hidden;
-      }
-
-      if (newColumns[idx].hidden) {
-        hiddenColumns.push(newColumns[idx].accessor);
-      }
+    if (colIdx >= 0 && colIdx < newColumns.length) {
+      newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
     }
+
+    let hiddenColumnNames = newColumns
+      .filter((col) => col.hidden)
+      .map((col) => col.accessor);
 
     // Save list of hidden columns to local storage
     localStorage.setItem(
       `hidden-table-columns-${tableKey}`,
-      JSON.stringify(hiddenColumns)
+      JSON.stringify(hiddenColumnNames)
     );
 
     // Refresh state
@@ -272,7 +258,7 @@ export function InvenTreeTable({
       sortStatus.direction,
       page
     ],
-    async () => fetchTableData(),
+    fetchTableData,
     {
       refetchOnWindowFocus: false,
       refetchOnMount: 'always'
