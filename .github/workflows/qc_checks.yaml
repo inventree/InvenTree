@@ -414,7 +414,7 @@ jobs:
       - name: Set up test data
         run: invoke setup-test -i
       - name: Install dependencies
-        run: cd src/frontend && yarn install
+        run: inv frontend-compile
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
