@@ -536,6 +536,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'part',
         'location',
         'bom',
+        'build',
         'company',
         'test_templates',
         'manufacturer_part',
@@ -1997,10 +1998,14 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         bom_item = BomItem.objects.get(pk=6)
 
+        line = build.models.BuildLine.objects.get(
+            bom_item=bom_item,
+            build=bo,
+        )
+
         # Allocate multiple stock items against this build order
         build.models.BuildItem.objects.create(
-            build=bo,
-            bom_item=bom_item,
+            build_line=line,
             stock_item=StockItem.objects.get(pk=1000),
             quantity=10,
         )
@@ -2021,8 +2026,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         # Allocate further stock against the build
         build.models.BuildItem.objects.create(
-            build=bo,
-            bom_item=bom_item,
+            build_line=line,
             stock_item=StockItem.objects.get(pk=1001),
             quantity=10,
         )
@@ -2937,7 +2941,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
     def test_report_list(self):
         """Test for PartStocktakeReport list endpoint"""
 
-        from part.tasks import generate_stocktake_report
+        from part.stocktake import generate_stocktake_report
 
         # Initially, no stocktake records are available
         self.assertEqual(PartStocktake.objects.count(), 0)
@@ -3053,3 +3057,22 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
             'api-bom-item-metadata': BomItem,
         }.items():
             self.metatester(apikey, model)
+
+
+class PartSchedulingTest(PartAPITestBase):
+    """Unit tests for the 'part scheduling' API endpoint"""
+
+    def test_get_schedule(self):
+        """Test that the scheduling endpoint returns OK"""
+
+        part_ids = [
+            1, 3, 100, 101,
+        ]
+
+        for pk in part_ids:
+            url = reverse('api-part-scheduling', kwargs={'pk': pk})
+            data = self.get(url, expected_code=200).data
+
+            for entry in data:
+                for k in ['date', 'quantity', 'label']:
+                    self.assertIn(k, entry)

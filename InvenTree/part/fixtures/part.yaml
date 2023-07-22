@@ -100,7 +100,7 @@
     salable: true
     purchaseable: false
     category: 7
-    active: False
+    active: True
     IPN: BOB
     revision: A2
     tree_id: 0

@@ -1,0 +1,805 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2023-06-09 22:10+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/components/DashboardItemProxy.tsx:32
+#~ msgid "Title"
+#~ msgstr "Title"
+
+#: src/components/forms/AuthenticationForm.tsx:47
+msgid "Login failed"
+msgstr "Login failed"
+
+#: src/components/forms/AuthenticationForm.tsx:48
+#: src/components/forms/AuthenticationForm.tsx:74
+#: src/functions/auth.tsx:83
+msgid "Check your your input and try again."
+msgstr "Check your your input and try again."
+
+#: src/components/forms/AuthenticationForm.tsx:53
+msgid "Login successfull"
+msgstr "Login successfull"
+
+#: src/components/forms/AuthenticationForm.tsx:54
+msgid "Welcome back!"
+msgstr "Welcome back!"
+
+#: src/components/forms/AuthenticationForm.tsx:65
+#: src/functions/auth.tsx:74
+msgid "Mail delivery successfull"
+msgstr "Mail delivery successfull"
+
+#: src/components/forms/AuthenticationForm.tsx:66
+msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
+msgstr "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
+
+#: src/components/forms/AuthenticationForm.tsx:73
+msgid "Input error"
+msgstr "Input error"
+
+#: src/components/forms/AuthenticationForm.tsx:95
+msgid "Username"
+msgstr "Username"
+
+#: src/components/forms/AuthenticationForm.tsx:101
+#: src/pages/Auth/Set-Password.tsx:105
+msgid "Password"
+msgstr "Password"
+
+#: src/components/forms/AuthenticationForm.tsx:102
+msgid "Your password"
+msgstr "Your password"
+
+#: src/components/forms/AuthenticationForm.tsx:113
+#: src/pages/Auth/Reset.tsx:26
+msgid "Reset password"
+msgstr "Reset password"
+
+#: src/components/forms/AuthenticationForm.tsx:121
+#: src/pages/Auth/Reset.tsx:31
+msgid "Email"
+msgstr "Email"
+
+#: src/components/forms/AuthenticationForm.tsx:122
+#: src/pages/Auth/Reset.tsx:32
+#: src/pages/Auth/Set-Password.tsx:106
+msgid "We will send you a link to login - if you are registered"
+msgstr "We will send you a link to login - if you are registered"
+
+#: src/components/forms/AuthenticationForm.tsx:138
+msgid "Send me an email"
+msgstr "Send me an email"
+
+#: src/components/forms/AuthenticationForm.tsx:140
+msgid "I will use username and password"
+msgstr "I will use username and password"
+
+#: src/components/forms/AuthenticationForm.tsx:145
+msgid "Log in"
+msgstr "Log in"
+
+#: src/components/forms/AuthenticationForm.tsx:147
+#: src/pages/Auth/Reset.tsx:41
+#: src/pages/Auth/Set-Password.tsx:111
+msgid "Send mail"
+msgstr "Send mail"
+
+#: src/components/forms/HostOptionsForm.tsx:36
+#: src/components/forms/HostOptionsForm.tsx:66
+msgid "Host"
+msgstr "Host"
+
+#: src/components/forms/HostOptionsForm.tsx:42
+#: src/components/forms/HostOptionsForm.tsx:69
+msgid "Name"
+msgstr "Name"
+
+#: src/components/forms/HostOptionsForm.tsx:74
+msgid "No one here..."
+msgstr "No one here..."
+
+#: src/components/forms/HostOptionsForm.tsx:85
+msgid "Add Host"
+msgstr "Add Host"
+
+#: src/components/forms/HostOptionsForm.tsx:89
+msgid "Save"
+msgstr "Save"
+
+#: src/components/items/DocTooltip.tsx:89
+msgid "Read More"
+msgstr "Read More"
+
+#: src/components/items/ErrorItem.tsx:5
+msgid "Unknown error"
+msgstr "Unknown error"
+
+#: src/components/items/ErrorItem.tsx:10
+msgid "An error occurred:"
+msgstr "An error occurred:"
+
+#: src/components/items/InvenTreeLogo.tsx:13
+msgid "InvenTree Logo"
+msgstr "InvenTree Logo"
+
+#: src/components/items/Placeholder.tsx:10
+msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
+msgstr "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
+
+#: src/components/items/Placeholder.tsx:13
+msgid "PLH"
+msgstr "PLH"
+
+#: src/components/items/ScanButton.tsx:12
+msgid "Scan QR code"
+msgstr "Scan QR code"
+
+#: src/components/modals/QrCodeModal.tsx:68
+msgid "Unknown response"
+msgstr "Unknown response"
+
+#: src/components/modals/QrCodeModal.tsx:98
+msgid "Error while getting camera"
+msgstr "Error while getting camera"
+
+#: src/components/modals/QrCodeModal.tsx:121
+msgid "Error while scanning"
+msgstr "Error while scanning"
+
+#: src/components/modals/QrCodeModal.tsx:135
+msgid "Error while stopping"
+msgstr "Error while stopping"
+
+#: src/components/modals/QrCodeModal.tsx:150
+msgid "Scanning"
+msgstr "Scanning"
+
+#: src/components/modals/QrCodeModal.tsx:150
+msgid "Not scanning"
+msgstr "Not scanning"
+
+#: src/components/modals/QrCodeModal.tsx:155
+msgid "Select Camera"
+msgstr "Select Camera"
+
+#: src/components/modals/QrCodeModal.tsx:165
+msgid "Start scanning"
+msgstr "Start scanning"
+
+#: src/components/modals/QrCodeModal.tsx:172
+msgid "Stop scanning"
+msgstr "Stop scanning"
+
+#: src/components/modals/QrCodeModal.tsx:177
+msgid "No scans yet!"
+msgstr "No scans yet!"
+
+#: src/components/modals/QrCodeModal.tsx:197
+msgid "Close modal"
+msgstr "Close modal"
+
+#: src/components/nav/MainMenu.tsx:53
+msgid "Notifications"
+msgstr "Notifications"
+
+#: src/components/nav/MainMenu.tsx:61
+#: src/pages/Index/Profile/Profile.tsx:15
+msgid "Profile"
+msgstr "Profile"
+
+#: src/components/nav/MainMenu.tsx:65
+msgid "Settings"
+msgstr "Settings"
+
+#: src/components/nav/MainMenu.tsx:68
+msgid "Current language {locale}"
+msgstr "Current language {locale}"
+
+#: src/components/nav/MainMenu.tsx:71
+msgid "Switch to pseudo language"
+msgstr "Switch to pseudo language"
+
+#: src/components/nav/MainMenu.tsx:74
+msgid "Account settings"
+msgstr "Account settings"
+
+#: src/components/nav/MainMenu.tsx:83
+msgid "Logout"
+msgstr "Logout"
+
+#: src/components/nav/NavHoverMenu.tsx:52
+msgid "Open Navigation"
+msgstr "Open Navigation"
+
+#: src/components/nav/NavHoverMenu.tsx:70
+msgid "View all"
+msgstr "View all"
+
+#: src/components/nav/NavHoverMenu.tsx:84
+#: src/components/nav/NavHoverMenu.tsx:94
+msgid "Get started"
+msgstr "Get started"
+
+#: src/components/nav/NavHoverMenu.tsx:87
+msgid "Overview over high-level objects, functions and possible usecases."
+msgstr "Overview over high-level objects, functions and possible usecases."
+
+#: src/components/nav/NavigationDrawer.tsx:59
+msgid "Navigation"
+msgstr "Navigation"
+
+#: src/components/nav/NavigationDrawer.tsx:62
+msgid "Pages"
+msgstr "Pages"
+
+#: src/components/nav/NavigationDrawer.tsx:67
+msgid "Plugins"
+msgstr "Plugins"
+
+#: src/components/nav/NavigationDrawer.tsx:77
+msgid "Documentation"
+msgstr "Documentation"
+
+#: src/components/nav/NavigationDrawer.tsx:80
+msgid "About"
+msgstr "About"
+
+#: src/contexts/ThemeContext.tsx:62
+#: src/pages/Index/Profile/UserPanel.tsx:121
+msgid "Submit"
+msgstr "Submit"
+
+#: src/contexts/ThemeContext.tsx:62
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/defaults.tsx:23
+#: src/pages/Index/Part.tsx:12
+#~ msgid "Part"
+#~ msgstr "Part"
+
+#: src/defaults/defaultHostList.tsx:8
+msgid "InvenTree Demo"
+msgstr "InvenTree Demo"
+
+#: src/defaults/defaultHostList.tsx:16
+msgid "Local Server"
+msgstr "Local Server"
+
+#: src/defaults/links.tsx:8
+msgid "Website"
+msgstr "Website"
+
+#: src/defaults/links.tsx:13
+msgid "GitHub"
+msgstr "GitHub"
+
+#: src/defaults/links.tsx:18
+msgid "Demo"
+msgstr "Demo"
+
+#: src/defaults/links.tsx:22
+#: src/defaults/menuItems.tsx:9
+#: src/pages/Index/Home.tsx:12
+msgid "Home"
+msgstr "Home"
+
+#: src/defaults/links.tsx:35
+msgid "Getting Started"
+msgstr "Getting Started"
+
+#: src/defaults/links.tsx:36
+msgid "Getting started with InvenTree"
+msgstr "Getting started with InvenTree"
+
+#: src/defaults/links.tsx:41
+msgid "API"
+msgstr "API"
+
+#: src/defaults/links.tsx:42
+msgid "InvenTree API documentation"
+msgstr "InvenTree API documentation"
+
+#: src/defaults/links.tsx:47
+msgid "Developer Manual"
+msgstr "Developer Manual"
+
+#: src/defaults/links.tsx:48
+msgid "InvenTree developer manual"
+msgstr "InvenTree developer manual"
+
+#: src/defaults/links.tsx:53
+msgid "FAQ"
+msgstr "FAQ"
+
+#: src/defaults/links.tsx:54
+msgid "Frequently asked questions"
+msgstr "Frequently asked questions"
+
+#: src/defaults/links.tsx:62
+msgid "Instance"
+msgstr "Instance"
+
+#: src/defaults/links.tsx:63
+msgid "About this Inventree instance"
+msgstr "About this Inventree instance"
+
+#: src/defaults/links.tsx:68
+msgid "InvenTree"
+msgstr "InvenTree"
+
+#: src/defaults/links.tsx:69
+msgid "About the InvenTree org"
+msgstr "About the InvenTree org"
+
+#: src/defaults/links.tsx:74
+msgid "Licenses"
+msgstr "Licenses"
+
+#: src/defaults/links.tsx:75
+msgid "Licenses for packages used by InvenTree"
+msgstr "Licenses for packages used by InvenTree"
+
+#: src/defaults/menuItems.tsx:7
+#~ msgid "Open sourcea"
+#~ msgstr "Open sourcea"
+
+#: src/defaults/menuItems.tsx:9
+#~ msgid "Open source"
+#~ msgstr "Open source"
+
+#: src/defaults/menuItems.tsx:10
+msgid "Start page of your instance."
+msgstr "Start page of your instance."
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "This Pokémon’s cry is very loud and distracting"
+#~ msgstr "This Pokémon’s cry is very loud and distracting"
+
+#: src/defaults/menuItems.tsx:12
+#~ msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
+#~ msgstr "This Pokémon’s cry is very loud and distracting and more and more and more"
+
+#: src/defaults/menuItems.tsx:15
+msgid "Profile page"
+msgstr "Profile page"
+
+#: src/defaults/menuItems.tsx:16
+msgid "User attributes and design settings."
+msgstr "User attributes and design settings."
+
+#: src/defaults/menuItems.tsx:21
+#~ msgid "Free for everyone"
+#~ msgstr "Free for everyone"
+
+#: src/defaults/menuItems.tsx:22
+#~ msgid "The fluid of Smeargle’s tail secretions changes"
+#~ msgstr "The fluid of Smeargle’s tail secretions changes"
+
+#: src/defaults/menuItems.tsx:24
+#~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
+#~ msgstr "The fluid of Smeargle’s tail secretions changes in the intensity"
+
+#: src/defaults/menuItems.tsx:32
+#~ msgid "abc"
+#~ msgstr "abc"
+
+#: src/defaults/menuItems.tsx:37
+#~ msgid "Random image"
+#~ msgstr "Random image"
+
+#: src/defaults/menuItems.tsx:40
+#~ msgid "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Name liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assume. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor"
+#~ msgstr "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Name liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assume. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor"
+
+#: src/defaults/menuItems.tsx:105
+#~ msgid "Yanma is capable of seeing 360 degrees without"
+#~ msgstr "Yanma is capable of seeing 360 degrees without"
+
+#: src/defaults/menuItems.tsx:109
+#~ msgid "Security"
+#~ msgstr "Security"
+
+#: src/defaults/menuItems.tsx:111
+#~ msgid "The shell’s rounded shape and the grooves on its."
+#~ msgstr "The shell’s rounded shape and the grooves on its."
+
+#: src/defaults/menuItems.tsx:116
+#~ msgid "Analytics"
+#~ msgstr "Analytics"
+
+#: src/defaults/menuItems.tsx:118
+#~ msgid "This Pokémon uses its flying ability to quickly chase"
+#~ msgstr "This Pokémon uses its flying ability to quickly chase"
+
+#: src/defaults/menuItems.tsx:125
+#~ msgid "Combusken battles with the intensely hot flames it spews"
+#~ msgstr "Combusken battles with the intensely hot flames it spews"
+
+#: src/functions/auth.tsx:36
+msgid "Logout successfull"
+msgstr "Logout successfull"
+
+#: src/functions/auth.tsx:37
+msgid "See you soon."
+msgstr "See you soon."
+
+#: src/functions/auth.tsx:75
+msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
+msgstr "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
+
+#: src/functions/auth.tsx:82
+#: src/pages/Auth/Set-Password.tsx:38
+msgid "Reset failed"
+msgstr "Reset failed"
+
+#: src/functions/auth.tsx:98
+msgid "Already logged in"
+msgstr "Already logged in"
+
+#: src/functions/auth.tsx:99
+msgid "Found an existing login - using it to log you in."
+msgstr "Found an existing login - using it to log you in."
+
+#: src/pages/Auth/Logged-In.tsx:18
+msgid "Checking if you are already logged in"
+msgstr "Checking if you are already logged in"
+
+#: src/pages/Auth/Login.tsx:20
+msgid "No selection"
+msgstr "No selection"
+
+#: src/pages/Auth/Login.tsx:121
+msgid "Edit host options"
+msgstr "Edit host options"
+
+#: src/pages/Auth/Set-Password.tsx:29
+msgid "Token invalid"
+msgstr "Token invalid"
+
+#: src/pages/Auth/Set-Password.tsx:30
+msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
+msgstr "You need to provide a valid token to set a new password. Check your inbox for a reset link."
+
+#: src/pages/Auth/Set-Password.tsx:48
+msgid "No token provided"
+msgstr "No token provided"
+
+#: src/pages/Auth/Set-Password.tsx:49
+msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
+msgstr "You need to provide a token to set a new password. Check your inbox for a reset link."
+
+#: src/pages/Auth/Set-Password.tsx:72
+msgid "Password set"
+msgstr "Password set"
+
+#: src/pages/Auth/Set-Password.tsx:73
+msgid "The password was set successfully. You can now login with your new password"
+msgstr "The password was set successfully. You can now login with your new password"
+
+#: src/pages/Auth/Set-Password.tsx:100
+msgid "Set new password"
+msgstr "Set new password"
+
+#: src/pages/ErrorPage.tsx:12
+#: src/pages/ErrorPage.tsx:25
+msgid "Error"
+msgstr "Error"
+
+#: src/pages/ErrorPage.tsx:17
+msgid "Error: {0}"
+msgstr "Error: {0}"
+
+#: src/pages/ErrorPage.tsx:28
+msgid "Sorry, an unexpected error has occurred."
+msgstr "Sorry, an unexpected error has occurred."
+
+#: src/pages/Index/Dashboard.tsx:17
+#~ msgid "Subscribed Parts"
+#~ msgstr "Subscribed Parts"
+
+#: src/pages/Index/Dashboard.tsx:24
+#~ msgid "Subscribed Categories"
+#~ msgstr "Subscribed Categories"
+
+#: src/pages/Index/Dashboard.tsx:31
+#~ msgid "Latest Parts"
+#~ msgstr "Latest Parts"
+
+#: src/pages/Index/Dashboard.tsx:38
+#~ msgid "BOM Waiting Validation"
+#~ msgstr "BOM Waiting Validation"
+
+#: src/pages/Index/Dashboard.tsx:45
+#~ msgid "Recently Updated"
+#~ msgstr "Recently Updated"
+
+#: src/pages/Index/Dashboard.tsx:52
+#~ msgid "Low Stock"
+#~ msgstr "Low Stock"
+
+#: src/pages/Index/Dashboard.tsx:59
+#~ msgid "Depleted Stock"
+#~ msgstr "Depleted Stock"
+
+#: src/pages/Index/Dashboard.tsx:66
+#~ msgid "Required for Build Orders"
+#~ msgstr "Required for Build Orders"
+
+#: src/pages/Index/Dashboard.tsx:73
+#~ msgid "Expired Stock"
+#~ msgstr "Expired Stock"
+
+#: src/pages/Index/Dashboard.tsx:80
+#~ msgid "Stale Stock"
+#~ msgstr "Stale Stock"
+
+#: src/pages/Index/Dashboard.tsx:87
+#~ msgid "Build Orders In Progress"
+#~ msgstr "Build Orders In Progress"
+
+#: src/pages/Index/Dashboard.tsx:94
+#~ msgid "Overdue Build Orders"
+#~ msgstr "Overdue Build Orders"
+
+#: src/pages/Index/Dashboard.tsx:101
+#~ msgid "Outstanding Purchase Orders"
+#~ msgstr "Outstanding Purchase Orders"
+
+#: src/pages/Index/Dashboard.tsx:108
+#~ msgid "Overdue Purchase Orders"
+#~ msgstr "Overdue Purchase Orders"
+
+#: src/pages/Index/Dashboard.tsx:115
+#~ msgid "Outstanding Sales Orders"
+#~ msgstr "Outstanding Sales Orders"
+
+#: src/pages/Index/Dashboard.tsx:122
+#~ msgid "Overdue Sales Orders"
+#~ msgstr "Overdue Sales Orders"
+
+#: src/pages/Index/Dashboard.tsx:129
+#~ msgid "Current News"
+#~ msgstr "Current News"
+
+#: src/pages/Index/Dashboard.tsx:140
+#~ msgid "Dashboard"
+#~ msgstr "Dashboard"
+
+#: src/pages/Index/Dashboard.tsx:143
+#~ msgid "Autoupdate"
+#~ msgstr "Autoupdate"
+
+#: src/pages/Index/Profile/Profile.tsx:23
+msgid "User"
+msgstr "User"
+
+#: src/pages/Index/Profile/Profile.tsx:27
+#: src/pages/Index/Profile/Profile.tsx:46
+#~ msgid "User Settings"
+#~ msgstr "User Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:30
+#: src/pages/Index/Profile/Profile.tsx:141
+#~ msgid "Notification Settings"
+#~ msgstr "Notification Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:33
+#~ msgid "Global Settings"
+#~ msgstr "Global Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:36
+#: src/pages/Index/Profile/Profile.tsx:312
+#: src/pages/Index/Profile/Profile.tsx:329
+#~ msgid "Plugin Settings"
+#~ msgstr "Plugin Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:47
+#~ msgid "Settings for the current user"
+#~ msgstr "Settings for the current user"
+
+#: src/pages/Index/Profile/Profile.tsx:51
+#~ msgid "Home Page Settings"
+#~ msgstr "Home Page Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:76
+#~ msgid "Search Settings"
+#~ msgstr "Search Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:115
+#: src/pages/Index/Profile/Profile.tsx:211
+#~ msgid "Label Settings"
+#~ msgstr "Label Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:120
+#: src/pages/Index/Profile/Profile.tsx:219
+#~ msgid "Report Settings"
+#~ msgstr "Report Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:125
+#~ msgid "Display Settings"
+#~ msgstr "Display Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:142
+#~ msgid "Settings for the notifications"
+#~ msgstr "Settings for the notifications"
+
+#: src/pages/Index/Profile/Profile.tsx:148
+#~ msgid "Global Server Settings"
+#~ msgstr "Global Server Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:149
+#~ msgid "Global Settings for this instance"
+#~ msgstr "Global Settings for this instance"
+
+#: src/pages/Index/Profile/Profile.tsx:153
+#~ msgid "Server Settings"
+#~ msgstr "Server Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:187
+#~ msgid "Login Settings"
+#~ msgstr "Login Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:202
+#~ msgid "Barcode Settings"
+#~ msgstr "Barcode Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:230
+#~ msgid "Part Settings"
+#~ msgstr "Part Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:255
+#~ msgid "Pricing Settings"
+#~ msgstr "Pricing Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:270
+#~ msgid "Stock Settings"
+#~ msgstr "Stock Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:284
+#~ msgid "Build Order Settings"
+#~ msgstr "Build Order Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:289
+#~ msgid "Purchase Order Settings"
+#~ msgstr "Purchase Order Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:300
+#~ msgid "Sales Order Settings"
+#~ msgstr "Sales Order Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:330
+#~ msgid "Plugin Settings for this instance"
+#~ msgstr "Plugin Settings for this instance"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:27
+#~ msgid "Data is current beeing loaded"
+#~ msgstr "Data is current beeing loaded"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:69
+#: src/pages/Index/Profile/SettingsPanel.tsx:76
+#~ msgid "Failed to load"
+#~ msgstr "Failed to load"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:100
+#~ msgid "Show internal names"
+#~ msgstr "Show internal names"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:148
+#~ msgid "Input {0} is not known"
+#~ msgstr "Input {0} is not known"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:161
+#~ msgid "Saved changes {0}"
+#~ msgstr "Saved changes {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:162
+#~ msgid "Changed to {0}"
+#~ msgstr "Changed to {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:176
+#~ msgid "Error while saving {0}"
+#~ msgstr "Error while saving {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:177
+#~ msgid "Error was {err}"
+#~ msgstr "Error was {err}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:257
+#~ msgid "Plugin: {0}"
+#~ msgstr "Plugin: {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:262
+#~ msgid "Method: {0}"
+#~ msgstr "Method: {0}"
+
+#: src/pages/Index/Profile/UserPanel.tsx:79
+msgid "Userinfo"
+msgstr "Userinfo"
+
+#: src/pages/Index/Profile/UserPanel.tsx:92
+msgid "First name: {0}"
+msgstr "First name: {0}"
+
+#: src/pages/Index/Profile/UserPanel.tsx:103
+msgid "Last name: {0}"
+msgstr "Last name: {0}"
+
+#: src/pages/Index/Profile/UserPanel.tsx:114
+msgid "Username: {0}"
+msgstr "Username: {0}"
+
+#: src/pages/Index/Profile/UserTheme.tsx:71
+msgid "bars"
+msgstr "bars"
+
+#: src/pages/Index/Profile/UserTheme.tsx:72
+msgid "oval"
+msgstr "oval"
+
+#: src/pages/Index/Profile/UserTheme.tsx:73
+msgid "dots"
+msgstr "dots"
+
+#: src/pages/Index/Profile/UserTheme.tsx:84
+msgid "Design <0/>"
+msgstr "Design <0/>"
+
+#: src/pages/Index/Profile/UserTheme.tsx:92
+msgid "Primary color"
+msgstr "Primary color"
+
+#: src/pages/Index/Profile/UserTheme.tsx:105
+msgid "White color"
+msgstr "White color"
+
+#: src/pages/Index/Profile/UserTheme.tsx:113
+msgid "Black color"
+msgstr "Black color"
+
+#: src/pages/Index/Profile/UserTheme.tsx:121
+msgid "Border Radius"
+msgstr "Border Radius"
+
+#: src/pages/Index/Profile/UserTheme.tsx:137
+msgid "Loader"
+msgstr "Loader"
+
+#: src/pages/Logged-In.tsx:24
+#~ msgid "Found an exsisting login - using it to log you in."
+#~ msgstr "Found an exsisting login - using it to log you in."
+
+#: src/pages/NotFound.tsx:17
+msgid "Not Found"
+msgstr "Not Found"
+
+#: src/pages/NotFound.tsx:20
+msgid "Sorry, this page is not known or was moved."
+msgstr "Sorry, this page is not known or was moved."
+
+#: src/pages/NotFound.tsx:27
+msgid "Go to the start page"
+msgstr "Go to the start page"
+
+#: src/views/MobileAppView.tsx:14
+msgid "Mobile viewport detected"
+msgstr "Mobile viewport detected"
+
+#: src/views/MobileAppView.tsx:17
+msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
+msgstr "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
+
+#: src/views/MobileAppView.tsx:23
+msgid "Read the docs"
+msgstr "Read the docs"

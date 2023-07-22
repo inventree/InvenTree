@@ -33,7 +33,7 @@ from . import config
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv
+TESTING = 'test' in sys.argv or 'TESTING' in os.environ
 
 if TESTING:
 
@@ -75,6 +75,9 @@ if version_file.exists():
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
+
+ENABLE_CLASSIC_FRONTEND = get_boolean_setting('INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True)
+ENABLE_PLATFORM_FRONTEND = get_boolean_setting('INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True)
 
 # Configure logging settings
 log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
@@ -203,6 +206,7 @@ INSTALLED_APPS = [
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'plugin.apps.PluginAppConfig',
+    'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
@@ -234,6 +238,7 @@ INSTALLED_APPS = [
     'formtools',                            # Form wizard tools
     'dbbackup',                             # Backups - django-dbbackup
     'taggit',                               # Tagging
+    'flags',                                # Flagging - django-flags
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
@@ -244,6 +249,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+    'dj_rest_auth',                         # Authentication APIs - dj-rest-auth
+    'dj_rest_auth.registration',            # Registration APIs - dj-rest-auth'
     'drf_spectacular',                      # API documentation
 
     'django_ical',                          # For exporting calendars
@@ -273,6 +280,7 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
+    "sesame.backends.ModelBackend",                             # Magic link login django-sesame
 ])
 
 DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
@@ -379,6 +387,23 @@ if DEBUG:
     # Enable browsable API if in DEBUG mode
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
+# dj-rest-auth
+# JWT switch
+USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
+REST_USE_JWT = USE_JWT
+OLD_PASSWORD_FIELD_ENABLED = True
+REST_AUTH_REGISTER_SERIALIZERS = {'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'}
+
+# JWT settings - rest_framework_simplejwt
+if USE_JWT:
+    JWT_AUTH_COOKIE = 'inventree-auth'
+    JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] + (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    )
+    INSTALLED_APPS.append('rest_framework_simplejwt')
+
+# WSGI default setting
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
@@ -581,6 +606,10 @@ DATABASES = {
 REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
 
+# Magic login django-sesame
+SESAME_MAX_AGE = 300
+LOGIN_REDIRECT_URL = "/platform/logged-in/"
+
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
 
@@ -737,14 +766,15 @@ LANGUAGES = [
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
     ('pt', _('Portuguese')),
-    ('pt-BR', _('Portuguese (Brazilian)')),
+    ('pt-br', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
     ('sl', _('Slovenian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh-hans', _('Chinese')),
+    ('zh-hans', _('Chinese (Simplified)')),
+    ('zh-hant', _('Chinese (Traditional)')),
 ]
 
 # Testing interface translations
@@ -848,6 +878,8 @@ ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_at
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting('INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http')
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
+# 2FA
+REMOVE_SUCCESS_URL = 'settings'
 
 # override forms / adapters
 ACCOUNT_FORMS = {
@@ -944,3 +976,23 @@ if DEBUG:
 
 logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+
+# Flags
+FLAGS = {
+    'EXPERIMENTAL': [
+        {'condition': 'boolean', 'value': DEBUG},
+        {'condition': 'parameter', 'value': 'experimental='},
+    ],  # Should experimental features be turned on?
+    'NEXT_GEN': [
+        {'condition': 'parameter', 'value': 'ngen='},
+    ],  # Should next-gen features be turned on?
+}
+
+# Get custom flags from environment/yaml
+CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
+if CUSTOM_FLAGS:
+    if not isinstance(CUSTOM_FLAGS, dict):
+        logger.error(f"Invalid custom flags, must be valid dict: {CUSTOM_FLAGS}")
+    else:
+        logger.info(f"Custom flags: {CUSTOM_FLAGS}")
+        FLAGS.update(CUSTOM_FLAGS)

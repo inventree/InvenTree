@@ -22,6 +22,7 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from mptt.models import TreeForeignKey
 
+import common.models as common_models
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.tasks
@@ -29,10 +30,9 @@ import InvenTree.validators
 import order.validators
 import stock.models
 import users.models as UserModels
-from common.models import ProjectCode
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
-from company.models import Company, Contact, SupplierPart
+from company.models import Address, Company, Contact, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
                               RoundingDecimalField)
@@ -231,7 +231,11 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
 
     description = models.CharField(max_length=250, blank=True, verbose_name=_('Description'), help_text=_('Order description (optional)'))
 
-    project_code = models.ForeignKey(ProjectCode, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Project Code'), help_text=_('Select project code for this order'))
+    project_code = models.ForeignKey(
+        common_models.ProjectCode, on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Project Code'), help_text=_('Select project code for this order')
+    )
 
     link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
@@ -265,6 +269,15 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
         blank=True, null=True,
         verbose_name=_('Contact'),
         help_text=_('Point of contact for this order'),
+        related_name='+',
+    )
+
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Address'),
+        help_text=_('Company address for this order'),
         related_name='+',
     )
 
@@ -833,10 +846,10 @@ class SalesOrder(TotalPriceMixin, Order):
 
         return True
 
-    def is_over_allocated(self):
+    def is_overallocated(self):
         """Return true if any lines in the order are over-allocated."""
         for line in self.lines.all():
-            if line.is_over_allocated():
+            if line.is_overallocated():
                 return True
 
         return False
@@ -1358,7 +1371,7 @@ class SalesOrderLineItem(OrderLineItem):
 
         return self.allocated_quantity() >= self.quantity
 
-    def is_over_allocated(self):
+    def is_overallocated(self):
         """Return True if this line item is over allocated."""
         return self.allocated_quantity() > self.quantity
 

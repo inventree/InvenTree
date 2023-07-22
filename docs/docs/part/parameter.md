@@ -77,18 +77,24 @@ The parametric parts table allows the returned parts to be sorted by particular 
 
 ## Parameter Units
 
-The *units* field (which is defined against a [parameter template](#parameter-templates)) defines the base unit of that template. Any parameters which are created against that unit *must* be specified in compatible units. Unit conversion is implemented using the [pint](https://pint.readthedocs.io/en/stable/) Python library. This conversion library is used to perform two main functions:
-
-- Enforce use of compatible units when creating part parameters
-- Perform conversion to the base template unit
+The *units* field (which is defined against a [parameter template](#parameter-templates)) defines the base unit of that template. Any parameters which are created against that unit *must* be specified in compatible units.
 
 The in-built conversion functionality means that parameter values can be input in different dimensions - *as long as the dimension is compatible with the base template units*.
+
+!!! info "Read Mode"
+    Read more about how InvenTree supports [physical units of measure](../concepts/units.md)
 
 ### Incompatible Units
 
 If a part parameter is created with a value which is incompatible with the units specified for the template, it will be rejected:
 
 {% with id="invalid_units", url="part/part_invalid_units.png", description="Invalid Parameter Units" %}
+{% include 'img.html' %}
+{% endwith %}
+
+This behaviour can be disabled if required, so that any parameter value is accepted:
+
+{% with id="enforce_units", url="part/part_parameters_enforce.png", description="Enforce part parameters" %}
 {% include 'img.html' %}
 {% endwith %}
 
