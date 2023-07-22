@@ -1,44 +1,44 @@
 import { t } from '@lingui/macro';
-
-import { InvenTreeTable } from './../InvenTreeTable';
-import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { Group } from '@mantine/core';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 
+import { notYetImplemented } from '../../../functions/notifications';
+import { ActionButton } from '../../items/ActionButton';
+import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
-import { ActionButton } from '../../items/ActionButton';
-
-import { IconTrash, IconEdit } from '@tabler/icons-react';
-import { notYetImplemented } from '../../../functions/notifications';
+import { InvenTreeTable } from './../InvenTreeTable';
 
 /**
  * Construct a list of columns for the stock item table
  */
-function stockItemTableColumns() : TableColumn[] {
+function stockItemTableColumns(): TableColumn[] {
   return [
     {
       accessor: 'part',
       sortable: true,
       title: t`Part`,
-      render: function(record: any) {
+      render: function (record: any) {
         let part = record.part_detail;
-        return <ThumbnailHoverCard
-          src={part.thumbnail || part.image}
-          text={part.name}
-          link=""
-        />;
+        return (
+          <ThumbnailHoverCard
+            src={part.thumbnail || part.image}
+            text={part.name}
+            link=""
+          />
+        );
       }
     },
     {
       accessor: 'part_detail.description',
       sortable: false,
       switchable: true,
-      title: t`Description`,
+      title: t`Description`
     },
     {
       accessor: 'quantity',
       sortable: true,
-      title: t`Stock`,
+      title: t`Stock`
       // TODO: Custom renderer for stock quantity
     },
     {
@@ -46,23 +46,23 @@ function stockItemTableColumns() : TableColumn[] {
       sortable: true,
       switchable: true,
       filter: true,
-      title: t`Status`,
+      title: t`Status`
       // TODO: Custom renderer for stock status label
     },
     {
       accessor: 'batch',
       sortable: true,
       switchable: true,
-      title: t`Batch`,
+      title: t`Batch`
     },
     {
       accessor: 'location',
       sortable: true,
       switchable: true,
       title: t`Location`,
-      render: function(record: any) {
+      render: function (record: any) {
         // TODO: Custom renderer for location
-        return record.location; 
+        return record.location;
       }
     },
     // TODO: stocktake column
@@ -78,24 +78,26 @@ function stockItemTableColumns() : TableColumn[] {
       accessor: 'actions',
       title: t`Actions`,
       sortable: false,
-      render: function(record: any) {
-        return <Group position="right" spacing={5} noWrap={true}>
-          {/* {EditButton(setEditing, editing)} */}
-          {/* {DeleteButton()} */}
-          <ActionButton
-            color="green"
-            icon={<IconEdit />}
-            tooltip="Edit stock item"
-            onClick={() => notYetImplemented()}
-          />
-          <ActionButton
-            color="red"
-            tooltip='Delete stock item'
-            icon={<IconTrash />}
-            onClick={() => notYetImplemented()}
-          />
-        </Group>;
-      },
+      render: function (record: any) {
+        return (
+          <Group position="right" spacing={5} noWrap={true}>
+            {/* {EditButton(setEditing, editing)} */}
+            {/* {DeleteButton()} */}
+            <ActionButton
+              color="green"
+              icon={<IconEdit />}
+              tooltip="Edit stock item"
+              onClick={() => notYetImplemented()}
+            />
+            <ActionButton
+              color="red"
+              tooltip="Delete stock item"
+              icon={<IconTrash />}
+              onClick={() => notYetImplemented()}
+            />
+          </Group>
+        );
+      }
     }
   ];
 }
@@ -103,35 +105,31 @@ function stockItemTableColumns() : TableColumn[] {
 /**
  * Construct a list of filters for the stock item table
  */
-function stockItemTableFilters() : TableFilter[] {
-  return [
-  ];
+function stockItemTableFilters(): TableFilter[] {
+  return [];
 }
 
 /*
  * Load a table of stock items
  */
-export function StockItemTable({
-    params={}
-}: {
-    params?: any;
-}) {
-
+export function StockItemTable({ params = {} }: { params?: any }) {
   // const [editing, setEditing] = useToggle([false, true] as const);
 
-  let tableParams = Object.assign({}, params);
+  let tableParams = { ...params };
 
   // Add required query parameters
   tableParams.part_detail = true;
   tableParams.location_detail = true;
 
-  return <InvenTreeTable
-      url='stock/'
+  return (
+    <InvenTreeTable
+      url="stock/"
       params={tableParams}
-      tableKey='stock-table'
+      tableKey="stock-table"
       enableDownload
       enableSelection
       columns={stockItemTableColumns()}
       customFilters={stockItemTableFilters()}
-  />;
+    />
+  );
 }

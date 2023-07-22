@@ -101,7 +101,7 @@ function partTableFilters(): TableFilter[] {
  * @returns
  */
 export function PartListTable({ params = {} }: { params?: any }) {
-  let tableParams = Object.assign({}, params);
+  let tableParams = { ...params };
 
   // Add required query parameters
   tableParams.category_detail = true;

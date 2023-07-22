@@ -206,7 +206,7 @@ export function InvenTreeTable({
 
   // Function to perform API query to fetch required data
   const fetchTableData = async () => {
-    let queryParams = Object.assign({}, params);
+    let queryParams = { ...params };
 
     // Handle pagination
     if (enablePagination) {
