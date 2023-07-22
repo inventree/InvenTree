@@ -13,7 +13,9 @@ interface LocalStateProps {
   setHost: (newHost: string, newHostKey: string) => void;
   hostKey: string;
   hostList: HostList;
+  setHostList: (newHostList: HostList) => void;
   language: Locales;
+  setLanguage: (newLanguage: Locales) => void;
   // theme
   primaryColor: string;
   whiteColor: string;
@@ -33,7 +35,9 @@ export const useLocalState = create<LocalStateProps>()(
         set({ host: newHost, hostKey: newHostKey }),
       hostKey: '',
       hostList: {},
+      setHostList: (newHostList) => set({ hostList: newHostList }),
       language: 'en',
+      setLanguage: (newLanguage) => set({ language: newLanguage }),
       //theme
       primaryColor: 'indigo',
       whiteColor: '#fff',
