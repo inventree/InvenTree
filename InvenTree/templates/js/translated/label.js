@@ -94,11 +94,11 @@ function selectLabel(labels, items, options={}) {
         null,
         function(item) {
             if (options.key == 'part')
-                return item.key == user_settings.DEFAULT_PART_LABEL_TEMPLATE;
+                return item.pk == user_settings.DEFAULT_PART_LABEL_TEMPLATE;
             else if (options.key == 'location')
-                return item.key == user_settings.DEFAULT_LOCATION_LABEL_TEMPLATE;
+                return item.pk == user_settings.DEFAULT_LOCATION_LABEL_TEMPLATE;
             else if (options.key == 'stock')
-                return item.key == user_settings.DEFAULT_STOCK_LABEL_TEMPLATE;
+                return item.pk == user_settings.DEFAULT_STOCK_LABEL_TEMPLATE;
             return '';
         }
     );
