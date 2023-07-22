@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Group } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { notYetImplemented } from '../../../functions/notifications';
 import { ActionButton } from '../../items/ActionButton';
@@ -103,7 +104,18 @@ function stockItemTableColumns(): TableColumn[] {
 }
 
 /**
- * Construct a list of filters for the stock item table
+ * Return a set of parameters for the stock item table
+ */
+function stockItemTableParams(params: any): any {
+  return {
+    ...params,
+    part_detail: true,
+    location_detail: true
+  };
+}
+
+/**
+ * Construct a list of available filters for the stock item table
  */
 function stockItemTableFilters(): TableFilter[] {
   return [];
@@ -113,23 +125,19 @@ function stockItemTableFilters(): TableFilter[] {
  * Load a table of stock items
  */
 export function StockItemTable({ params = {} }: { params?: any }) {
-  // const [editing, setEditing] = useToggle([false, true] as const);
-
-  let tableParams = { ...params };
-
-  // Add required query parameters
-  tableParams.part_detail = true;
-  tableParams.location_detail = true;
+  let tableParams = useMemo(() => stockItemTableParams(params), [params]);
+  let tableColumns = useMemo(() => stockItemTableColumns(), [params]);
+  let tableFilters = useMemo(() => stockItemTableFilters(), [params]);
 
   return (
     <InvenTreeTable
       url="stock/"
-      params={tableParams}
       tableKey="stock-table"
       enableDownload
       enableSelection
-      columns={stockItemTableColumns()}
-      customFilters={stockItemTableFilters()}
+      params={tableParams}
+      columns={tableColumns}
+      customFilters={tableFilters}
     />
   );
 }
