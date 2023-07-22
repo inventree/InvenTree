@@ -39,7 +39,7 @@ export function ThumbnailHoverCard({
   text,
   link = '',
   alt = t`Thumbnail`,
-  size = 20
+  size = 16
 }: {
   src: string;
   text: string;
