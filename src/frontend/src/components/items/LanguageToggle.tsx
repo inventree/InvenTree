@@ -1,29 +1,11 @@
-import { ActionIcon, Group, Select } from '@mantine/core';
+import { ActionIcon, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconLanguage } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
 
-import { Locales, languages } from '../../contexts/LanguageContext';
-import { useLocalState } from '../../states/LocalState';
+import { LanguageSelect } from './LanguageSelect';
 
 export function LanguageToggle() {
   const [open, toggle] = useDisclosure();
-  const [value, setValue] = useState<string | null>(null);
-  const [locale, setLanguage] = useLocalState((state) => [
-    state.language,
-    state.setLanguage
-  ]);
-
-  // change global language on change
-  useEffect(() => {
-    if (value === null) return;
-    setLanguage(value as Locales);
-  }, [value]);
-
-  // set language on component load
-  useEffect(() => {
-    setValue(locale);
-  }, [locale]);
 
   return (
     <Group
@@ -39,7 +21,7 @@ export function LanguageToggle() {
       </ActionIcon>
       {open && (
         <Group>
-          <Select w={80} data={languages} value={value} onChange={setValue} />
+          <LanguageSelect />
         </Group>
       )}
     </Group>
