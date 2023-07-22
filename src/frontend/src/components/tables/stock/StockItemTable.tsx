@@ -125,9 +125,9 @@ function stockItemTableFilters(): TableFilter[] {
  * Load a table of stock items
  */
 export function StockItemTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => stockItemTableParams(params), [params]);
-  let tableColumns = useMemo(() => stockItemTableColumns(), [params]);
-  let tableFilters = useMemo(() => stockItemTableFilters(), [params]);
+  let tableParams = useMemo(() => stockItemTableParams(params), []);
+  let tableColumns = useMemo(() => stockItemTableColumns(), []);
+  let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
   return (
     <InvenTreeTable

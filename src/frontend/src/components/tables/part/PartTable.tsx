@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import { useMemo } from 'react';
 
 import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
@@ -95,13 +96,22 @@ function partTableFilters(): TableFilter[] {
   ];
 }
 
+function partTableParams(params: any): any {
+  return {
+    ...params,
+    category_detail: true
+  };
+}
+
 /**
  * PartListTable - Displays a list of parts, based on the provided parameters
  * @param {Object} params - The query parameters to pass to the API
  * @returns
  */
 export function PartListTable({ params = {} }: { params?: any }) {
-  let tableParams = { ...params };
+  let tableParams = useMemo(() => partTableParams(params), []);
+  let tableColumns = useMemo(() => partTableColumns(), []);
+  let tableFilters = useMemo(() => partTableFilters(), []);
 
   // Add required query parameters
   tableParams.category_detail = true;
@@ -109,15 +119,15 @@ export function PartListTable({ params = {} }: { params?: any }) {
   return (
     <InvenTreeTable
       url="part/"
-      params={tableParams}
       enableDownload
       tableKey="part-table"
       printingActions={[
         <Text onClick={notYetImplemented}>Hello</Text>,
         <Text onClick={notYetImplemented}>World</Text>
       ]}
-      columns={partTableColumns()}
-      customFilters={partTableFilters()}
+      params={tableParams}
+      columns={tableColumns}
+      customFilters={tableFilters}
     />
   );
 }
