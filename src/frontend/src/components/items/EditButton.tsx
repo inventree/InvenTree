@@ -4,15 +4,18 @@ import { IconDeviceFloppy, IconEdit } from '@tabler/icons-react';
 export function EditButton({
   setEditing,
   editing,
-  disabled=false,
+  disabled,
+  saveIcon
 }: {
   setEditing: (value?: React.SetStateAction<boolean> | undefined) => void;
   editing: boolean;
   disabled?: boolean;
+  saveIcon?: JSX.Element;
 }) {
+  saveIcon = saveIcon || <IconDeviceFloppy />;
   return (
     <ActionIcon onClick={() => setEditing()} disabled={disabled}>
-      {editing ? <IconDeviceFloppy /> : <IconEdit />}
+      {editing ? saveIcon : <IconEdit />}
     </ActionIcon>
   );
 }

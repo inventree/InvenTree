@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { InvenTreeStyle } from '../../globalStyle';
-import { ColorToggle } from '../items/ColorToggle';
 import { ScanButton } from '../items/ScanButton';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
@@ -25,7 +24,6 @@ export function Header() {
           </Group>
           <Group>
             <ScanButton />
-            <ColorToggle />
             <MainMenu />
           </Group>
         </Group>
