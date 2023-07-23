@@ -4,7 +4,12 @@ import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
 import { api } from '../App';
-import { ApiPaths, url, useApiState } from '../states/ApiState';
+import {
+  ApiPaths,
+  url,
+  useApiState,
+  useServerApiState
+} from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
 
@@ -33,7 +38,7 @@ export const doClassicLogout = async () => {
   setToken(undefined);
 
   notifications.show({
-    title: t`Logout successfull`,
+    title: t`Logout successful`,
     message: t`See you soon.`,
     color: 'green',
     icon: <IconCheck size="1rem" />
@@ -58,9 +63,11 @@ export const doSimpleLogin = async (email: string) => {
 export const doTokenLogin = (token: string) => {
   const { setToken } = useSessionState.getState();
   const { fetchApiState } = useApiState.getState();
+  const { fetchServerApiState } = useServerApiState.getState();
 
   setToken(token);
   fetchApiState();
+  fetchServerApiState();
 };
 
 export function handleReset(navigate: any, values: { email: string }) {
@@ -71,7 +78,7 @@ export function handleReset(navigate: any, values: { email: string }) {
     .then((val) => {
       if (val.status === 200) {
         notifications.show({
-          title: t`Mail delivery successfull`,
+          title: t`Mail delivery successful`,
           message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
           color: 'green',
           autoClose: false

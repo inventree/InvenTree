@@ -16,19 +16,8 @@ import { IconCheck } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
 import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
-import { EditButton } from '../items/EditButton';
 
-export function AuthenticationForm({
-  hostname,
-  editing,
-  setEditing,
-  selectElement
-}: {
-  hostname: string;
-  editing: boolean;
-  setEditing: (value?: React.SetStateAction<boolean> | undefined) => void;
-  selectElement: JSX.Element;
-}) {
+export function AuthenticationForm() {
   const classicForm = useForm({
     initialValues: { username: '', password: '' }
   });
@@ -50,7 +39,7 @@ export function AuthenticationForm({
           });
         } else {
           notifications.show({
-            title: t`Login successfull`,
+            title: t`Login successful`,
             message: t`Welcome back!`,
             color: 'green',
             icon: <IconCheck size="1rem" />
@@ -62,7 +51,7 @@ export function AuthenticationForm({
       doSimpleLogin(simpleForm.values.email).then((ret) => {
         if (ret?.status === 'ok') {
           notifications.show({
-            title: t`Mail delivery successfull`,
+            title: t`Mail delivery successful`,
             message: t`Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too.`,
             color: 'green',
             icon: <IconCheck size="1rem" />,
@@ -82,10 +71,7 @@ export function AuthenticationForm({
   return (
     <Paper radius="md" p="xl" withBorder>
       <Text size="lg" weight={500}>
-        <Group>
-          {!editing ? hostname : selectElement}
-          <EditButton setEditing={setEditing} editing={editing} />
-        </Group>
+        <Trans>Welcome, log in below</Trans>
       </Text>
       <form onSubmit={classicForm.onSubmit(() => {})}>
         {classicLoginMode ? (

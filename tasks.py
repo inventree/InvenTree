@@ -129,7 +129,7 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
         print('Node is available but yarn is not. Install yarn if you wish to build the frontend.')
 
     # Return the result
-    return ret((not yarn_passes or not node_version), node_version, yarn_version)
+    return ret(yarn_passes and node_version, node_version, yarn_version)
 
 
 def check_file_existance(filename: str, overwrite: bool = False):
@@ -827,6 +827,17 @@ def frontend_build(c):
     """
     print("Building frontend")
     yarn(c, "yarn run build --emptyOutDir")
+
+
+@task
+def frontend_dev(c):
+    """Start frontend development server.
+
+    Args:
+        c: Context variable
+    """
+    print("Starting frontend development server")
+    yarn(c, "yarn run dev")
 
 
 @task(help={
