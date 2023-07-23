@@ -94,8 +94,8 @@ function selectLabel(labels, items, options={}) {
                 return item.pk == user_settings.DEFAULT_PART_LABEL_TEMPLATE;
             else if (options.key == 'location')
                 return item.pk == user_settings.DEFAULT_LOCATION_LABEL_TEMPLATE;
-            else if (options.key == 'stock')
-                return item.pk == user_settings.DEFAULT_STOCK_LABEL_TEMPLATE;
+            else if (options.key == 'item')
+                return item.pk == user_settings.DEFAULT_ITEM_LABEL_TEMPLATE;
             return '';
         }
     );
