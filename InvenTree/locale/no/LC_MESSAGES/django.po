@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-21 13:56+0000\n"
-"PO-Revision-Date: 2023-07-22 07:48\n"
+"POT-Creation-Date: 2023-07-23 22:34+0000\n"
+"PO-Revision-Date: 2023-07-23 22:57\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -25,19 +25,19 @@ msgstr "API-endepunkt ikke funnet"
 msgid "User does not have permission to view this model"
 msgstr "Brukeren har ikke rettigheter til å se denne modellen"
 
-#: InvenTree/conversion.py:91
+#: InvenTree/conversion.py:92
 msgid "No value provided"
 msgstr "Ingen verdi angitt"
 
-#: InvenTree/conversion.py:113
+#: InvenTree/conversion.py:114
 msgid "Provided value is not a valid number"
 msgstr "Angitt verdi er ikke et gyldig tall"
 
-#: InvenTree/conversion.py:115
+#: InvenTree/conversion.py:116
 msgid "Provided value has an invalid unit"
 msgstr "Angitt verdi har en ugyldig enhet"
 
-#: InvenTree/conversion.py:117
+#: InvenTree/conversion.py:118
 msgid "Provided value could not be converted to the specified unit"
 msgstr "Oppgitt verdi kunne ikke konverteres til den angitte enheten"
 
