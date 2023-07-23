@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-21 13:56+0000\n"
-"PO-Revision-Date: 2023-07-22 07:49\n"
+"POT-Creation-Date: 2023-07-23 22:34+0000\n"
+"PO-Revision-Date: 2023-07-23 22:57\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -25,19 +25,19 @@ msgstr "API-rajapintaa ei löydy"
 msgid "User does not have permission to view this model"
 msgstr "Käyttäjän oikeudet eivät riitä kohteen tarkastelemiseen"
 
-#: InvenTree/conversion.py:91
+#: InvenTree/conversion.py:92
 msgid "No value provided"
 msgstr "Arvoa ei annettu"
 
-#: InvenTree/conversion.py:113
+#: InvenTree/conversion.py:114
 msgid "Provided value is not a valid number"
 msgstr "Annettu arvo ei ole kelvollinen numero"
 
-#: InvenTree/conversion.py:115
+#: InvenTree/conversion.py:116
 msgid "Provided value has an invalid unit"
 msgstr "Annetulla arvolla on virheellinen yksikkö"
 
-#: InvenTree/conversion.py:117
+#: InvenTree/conversion.py:118
 msgid "Provided value could not be converted to the specified unit"
 msgstr "Annettua arvoa ei voitu muuntaa määritetyksi yksiköksi"
 
