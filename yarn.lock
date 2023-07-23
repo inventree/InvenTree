@@ -960,10 +960,10 @@ loose-envify@^1.0.0, loose-envify@^1.4.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-mantine-datatable@^2.8.5:
-  version "2.8.5"
-  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-2.8.5.tgz#60999838a32c8ab2f192bd27ee9ddc69a20cb292"
-  integrity sha512-GT1Jp+en4KAcm1GNrAm+O612jL1Ne6eHm22IxNW8Vjnf0GrWMS0EzP7/hNDqYGIPcgCyDQ5Zzr83GT0zoS/s4Q==
+mantine-datatable@^2.9.0:
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-2.9.0.tgz#3f98a650cc01b6d64621b2f7760511acb744fa44"
+  integrity sha512-DJnTRLr5JPMs5b/xkOvwJDCzAYAqdAxxiiCz3XGvQdhd+IrvuxlK2e2RHfgKtdxsO+A0n4NL/nkC4Qx0GbhAJg==
 
 minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
