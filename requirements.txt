@@ -18,7 +18,7 @@ bleach[css]==6.0.0
     # via django-markdownify
 brotli==1.0.9
     # via fonttools
-certifi==2023.5.7
+certifi==2023.7.22
     # via
     #   requests
     #   sentry-sdk
@@ -161,7 +161,7 @@ et-xmlfile==1.1.0
     # via openpyxl
 feedparser==6.0.10
     # via -r requirements.in
-fonttools[woff]==4.41.0
+fonttools[woff]==4.41.1
     # via weasyprint
 gunicorn==21.2.0
     # via -r requirements.in

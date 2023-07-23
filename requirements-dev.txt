@@ -10,7 +10,7 @@ asgiref==3.7.2
     #   django
 build==0.10.0
     # via pip-tools
-certifi==2023.5.7
+certifi==2023.7.22
     # via
     #   -c requirements.txt
     #   requests
@@ -52,7 +52,7 @@ flake8==6.0.0
     #   pep8-naming
 flake8-docstrings==1.7.0
     # via -r requirements-dev.in
-identify==2.5.25
+identify==2.5.26
     # via pre-commit
 idna==3.4
     # via
@@ -119,7 +119,7 @@ urllib3==2.0.4
     #   requests
 virtualenv==20.24.1
     # via pre-commit
-wheel==0.40.0
+wheel==0.41.0
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:

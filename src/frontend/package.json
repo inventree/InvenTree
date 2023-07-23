@@ -25,8 +25,8 @@
         "@mantine/hooks": "^6.0.17",
         "@mantine/modals": "^6.0.17",
         "@mantine/notifications": "^6.0.17",
-        "@tabler/icons-react": "^2.27.0",
-        "@tanstack/react-query": "^4.29.25",
+        "@tabler/icons-react": "^2.28.0",
+        "@tanstack/react-query": "^4.32.0",
         "axios": "^1.4.0",
         "dayjs": "^1.11.9",
         "html5-qrcode": "^2.3.8",
@@ -42,14 +42,14 @@
         "@lingui/cli": "^4.3.0",
         "@lingui/macro": "^4.3.0",
         "@playwright/test": "^1.36.1",
-        "@types/node": "^20.4.2",
+        "@types/node": "^20.4.4",
         "@types/react": "^18.2.15",
         "@types/react-dom": "^18.2.7",
         "@types/react-router-dom": "^5.3.3",
         "@vitejs/plugin-react": "^4.0.3",
         "babel-plugin-macros": "^3.1.0",
         "typescript": "^5.1.6",
-        "vite": "^4.4.5",
+        "vite": "^4.4.6",
         "vite-plugin-babel-macros": "^1.0.6"
     }
 }
