@@ -30,6 +30,40 @@ export interface PluginProps {
   version: null | string;
 }
 
+// settings
+export interface Setting {
+  pk: number;
+  key: string;
+  value: string;
+  name: string;
+  description: string;
+  type: SettingType;
+  choices: SettingChoice[];
+  model_name: null;
+  api_url: null;
+  typ: SettingTyp;
+  plugin?: string;
+  method?: string;
+}
+
+export interface SettingChoice {
+  value: string;
+  display_name: string;
+}
+
+export enum SettingTyp {
+  Inventree = 'inventree',
+  Plugin = 'plugin',
+  User = 'user',
+  Notification = 'notification'
+}
+
+export enum SettingType {
+  Boolean = 'boolean',
+  Integer = 'integer',
+  String = 'string'
+}
+
 // Errors
 export type ErrorResponse = {
   data: any;
