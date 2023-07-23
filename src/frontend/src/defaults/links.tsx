@@ -19,7 +19,10 @@ export const footerLinks = [
     key: 'demo'
   }
 ];
-export const navTabs = [{ text: <Trans>Home</Trans>, name: 'home' }];
+export const navTabs = [
+  { text: <Trans>Home</Trans>, name: 'home' },
+  { text: <Trans>Dashboard</Trans>, name: 'dashboard' }
+];
 
 export const docLinks = {
   app: 'https://docs.inventree.org/en/latest/app/app/',

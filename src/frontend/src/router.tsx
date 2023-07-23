@@ -8,6 +8,9 @@ export const LayoutComponent = Loadable(
   lazy(() => import('./components/nav/Layout'))
 );
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
+export const Dashboard = Loadable(
+  lazy(() => import('./pages/Index/Dashboard'))
+);
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
 export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
@@ -40,6 +43,10 @@ export const router = createBrowserRouter(
         {
           path: 'home/',
           element: <Home />
+        },
+        {
+          path: 'dashboard/',
+          element: <Dashboard />
         },
         {
           path: '/profile/:tabValue',
