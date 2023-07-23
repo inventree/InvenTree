@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-21 13:56+0000\n"
-"PO-Revision-Date: 2023-07-22 07:49\n"
+"POT-Creation-Date: 2023-07-23 22:34+0000\n"
+"PO-Revision-Date: 2023-07-23 22:57\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -25,19 +25,19 @@ msgstr "API endpoint tidak ditemukan"
 msgid "User does not have permission to view this model"
 msgstr "Pengguna tidak memiliki izin untuk melihat model ini"
 
-#: InvenTree/conversion.py:91
+#: InvenTree/conversion.py:92
 msgid "No value provided"
 msgstr "Nilai tidak tersedia"
 
-#: InvenTree/conversion.py:113
+#: InvenTree/conversion.py:114
 msgid "Provided value is not a valid number"
 msgstr "Nilai yang diberikan bukan angka yang valid"
 
-#: InvenTree/conversion.py:115
+#: InvenTree/conversion.py:116
 msgid "Provided value has an invalid unit"
 msgstr "Nilai yang diberikan mengandung satuan yang tidak valid"
 
-#: InvenTree/conversion.py:117
+#: InvenTree/conversion.py:118
 msgid "Provided value could not be converted to the specified unit"
 msgstr "Nilai yang diberikan tidak dapat dikonversi ke satuan yang dipilih"
 
