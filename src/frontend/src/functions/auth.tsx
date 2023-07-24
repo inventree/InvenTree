@@ -87,7 +87,7 @@ export function handleReset(navigate: any, values: { email: string }) {
       } else {
         notifications.show({
           title: t`Reset failed`,
-          message: t`Check your your input and try again.`,
+          message: t`Check your input and try again.`,
           color: 'red'
         });
       }
