@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-07-23 22:58\n"
+"PO-Revision-Date: 2023-07-24 23:20\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -29,7 +29,7 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:37
 #: src/components/forms/AuthenticationForm.tsx:63
 #: src/functions/auth.tsx:90
-msgid "Check your your input and try again."
+msgid "Check your input and try again."
 msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:42
@@ -39,6 +39,12 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:43
 msgid "Welcome back!"
 msgstr ""
+
+#: src/components/forms/AuthenticationForm.tsx:48
+#: src/components/forms/AuthenticationForm.tsx:74
+#: src/functions/auth.tsx:83
+#~ msgid "Check your your input and try again."
+#~ msgstr "Check your your input and try again."
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
