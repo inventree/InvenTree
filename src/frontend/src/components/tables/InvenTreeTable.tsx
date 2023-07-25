@@ -195,13 +195,11 @@ export function InvenTreeTable({
     }
 
     // Test: Activate the first available filter
+    // TODO: All this code will be removed
     let active = [];
 
     for (let idx = 0; idx < customFilters.length; idx++) {
       let flt = customFilters[idx];
-
-      console.log('checking filter:', flt);
-
       flt.value = flt.defaultValue || 'true';
 
       active.push(flt);
