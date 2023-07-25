@@ -22,11 +22,44 @@ import { TableSearchInput } from './Search';
  * Returns a list of column names which are "hidden" for the current table
  */
 function loadHiddenColumns(tableKey: string) {
-  let hiddenColumns = JSON.parse(
-    localStorage.getItem(`hidden-table-columns-${tableKey}`) || '[]'
+  return JSON.parse(
+    localStorage.getItem(`inventree-hidden-table-columns-${tableKey}`) || '[]'
   );
+}
 
-  return hiddenColumns;
+/**
+ * Write list of hidden columns to local storage
+ * @param tableKey : string - unique key for the table
+ * @param columns : string[] - list of column names
+ */
+function saveHiddenColumns(tableKey: string, columns: any[]) {
+  localStorage.setItem(
+    `inventree-hidden-table-columns-${tableKey}`,
+    JSON.stringify(columns)
+  );
+}
+
+/**
+ * Loads the list of active filters from local storage
+ * @param tableKey : string
+ * @returns a map of active filters for the current table, {name: value}
+ */
+function loadActiveFilters(tableKey: string) {
+  return JSON.parse(
+    localStorage.getItem(`inventree-active-table-filters-${tableKey}`) || '{}'
+  );
+}
+
+/**
+ * Write the list of active filters to local storage
+ * @param tableKey : string - unique key for the table
+ * @param filters : any - map of active filters, {name: value}
+ */
+function saveActiveFilters(tableKey: string, filters: any) {
+  localStorage.setItem(
+    `inventree-active-table-filters-${tableKey}`,
+    JSON.stringify(filters)
+  );
 }
 
 /**
@@ -107,10 +140,7 @@ export function InvenTreeTable({
       .map((col) => col.accessor);
 
     // Save list of hidden columns to local storage
-    localStorage.setItem(
-      `hidden-table-columns-${tableKey}`,
-      JSON.stringify(hiddenColumnNames)
-    );
+    saveHiddenColumns(tableKey, hiddenColumnNames);
 
     // Refresh state
     setHiddenColumns(loadHiddenColumns(tableKey));
@@ -126,7 +156,43 @@ export function InvenTreeTable({
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
   // Map of currently active filters, {name: value}
-  const [activeFilters, setActiveFilters] = useState<any>({});
+  const [activeFilters, setActiveFilters] = useState(() =>
+    loadActiveFilters(tableKey)
+  );
+
+  /*
+   * Callback for the "add filter" button.
+   * Launches a modal dialog to add a new filter
+   */
+  function onFilterAdd() {
+    // TODO
+    notYetImplemented();
+  }
+
+  /*
+   * Callback function when a specified filter is removed from the table
+   */
+  function onFilterRemove(filterName: string) {
+    let filters = activeFilters.filter((flt) => flt.name != filterName);
+
+    // Write to local storage and update local state
+    saveActiveFilters(tableKey, filters);
+    setActiveFilters(filters);
+  }
+
+  /*
+   * Callback function when all custom filters are removed from the table
+   */
+  function onFilterClearAll() {
+    // If there are no active filters, do nothing
+    if (activeFilters.length == 0) {
+      return;
+    }
+
+    // Write to local storage and update local state
+    saveActiveFilters(tableKey, {});
+    setActiveFilters({});
+  }
 
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -136,13 +202,7 @@ export function InvenTreeTable({
   useEffect(() => {
     // Keep a shadow copy of the state variable, so that we can update it asynchronously
     latestSearchTerm = searchTerm;
-    loadActiveFilters();
   }, [searchTerm]);
-
-  // Load list of active filters from local storage
-  function loadActiveFilters() {
-    // TODO
-  }
 
   // Callback when search term is updated
   function updateSearchTerm(term: string) {
@@ -286,31 +346,6 @@ export function InvenTreeTable({
       refetchOnMount: 'always'
     }
   );
-
-  /*
-   * Callback for the "add filter" button.
-   * Launch a modal dialog to add a new filter
-   */
-  function onFilterAdd() {
-    // TODO
-    notYetImplemented();
-  }
-
-  /*
-   * Callback function when a specified filter is removed from the table
-   */
-  function onFilterRemove(filterName: string) {
-    // TODO
-    console.log('removing filter: ' + filterName);
-  }
-
-  /*
-   * Callback function when all custom filters are removed from the table
-   */
-  function onFilterClearAll() {
-    // TODO
-    notYetImplemented();
-  }
 
   return (
     <Stack>
