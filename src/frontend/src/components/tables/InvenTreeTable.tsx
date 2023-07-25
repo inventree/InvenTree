@@ -229,14 +229,44 @@ export function InvenTreeTable({
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  // Data download callback
-  function downloadData(fileFormat: string) {
-    // Download entire dataset (no pagination)
+  /*
+   * Construct query filters for the current table
+   */
+  function getTableFilters(paginate: boolean = false) {
     let queryParams = { ...params };
 
+    // Add custom filters
+    activeFilters.forEach((flt) => (queryParams[flt.name] = flt.value));
+
+    // Add custom search term
     if (searchTerm) {
       queryParams.search = searchTerm;
     }
+
+    // Pagination
+    if (enablePagination && paginate) {
+      queryParams.limit = pageSize;
+      queryParams.offset = (page - 1) * pageSize;
+    }
+
+    // Ordering
+    let ordering = getOrderingTerm();
+
+    if (ordering) {
+      if (sortStatus.direction == 'asc') {
+        queryParams.ordering = ordering;
+      } else {
+        queryParams.ordering = `-${ordering}`;
+      }
+    }
+
+    return queryParams;
+  }
+
+  // Data download callback
+  function downloadData(fileFormat: string) {
+    // Download entire dataset (no pagination)
+    let queryParams = getTableFilters(false);
 
     // Specify file format
     queryParams.export = fileFormat;
@@ -289,29 +319,7 @@ export function InvenTreeTable({
 
   // Function to perform API query to fetch required data
   const fetchTableData = async () => {
-    let queryParams = { ...params };
-
-    // Handle pagination
-    if (enablePagination) {
-      queryParams.limit = pageSize;
-      queryParams.offset = (page - 1) * pageSize;
-    }
-
-    // Handle custom filters
-    activeFilters.forEach((flt) => (queryParams[flt.name] = flt.value));
-
-    // Handle custom search term
-    if (searchTerm) {
-      queryParams.search = searchTerm;
-    }
-
-    // Handle sorting
-    let ordering = getOrderingTerm();
-    if (sortStatus.direction == 'asc') {
-      queryParams.ordering = ordering;
-    } else {
-      queryParams.ordering = `-${ordering}`;
-    }
+    let queryParams = getTableFilters(true);
 
     return api
       .get(`${url}`, {
