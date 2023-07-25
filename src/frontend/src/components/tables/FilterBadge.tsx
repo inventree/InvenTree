@@ -1,5 +1,6 @@
+import { t } from '@lingui/macro';
 import { Badge, CloseButton } from '@mantine/core';
-import { Chip, Text } from '@mantine/core';
+import { Text, Tooltip } from '@mantine/core';
 import { Group } from '@mantine/core';
 
 import { TableFilter } from './Filter';
@@ -37,7 +38,9 @@ export function FilterBadge({
     >
       <Group spacing={1}>
         <Text>{filterDescription()}</Text>
-        <CloseButton onClick={() => onFilterRemove()} />
+        <Tooltip label={t`Remove filter`}>
+          <CloseButton color="red" onClick={() => onFilterRemove()} />
+        </Tooltip>
       </Group>
     </Badge>
   );

@@ -1,15 +1,6 @@
 import { t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Chip,
-  CloseButton,
-  Group,
-  Indicator,
-  Space,
-  Text,
-  Tooltip
-} from '@mantine/core';
-import { IconMinus, IconPlus, IconTrash } from '@tabler/icons-react';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
 
 import { TableFilter } from './Filter';
 import { FilterBadge } from './FilterBadge';
