@@ -20,7 +20,6 @@ services:
     # Use PostgreSQL as the database backend
     # Note: This can be changed to a different backend if required
     inventree-dev-db:
-        container_name: inventree-dev-db
         image: postgres:13
         expose:
             - 5432/tcp
@@ -37,7 +36,6 @@ services:
     # InvenTree web server service
     # Runs the django built-in webserver application
     inventree-dev-server:
-        container_name: inventree-dev-server
         depends_on:
           - inventree-dev-db
         build: &build_config
@@ -57,7 +55,6 @@ services:
 
     # Background worker process handles long-running or periodic tasks
     inventree-dev-worker:
-        container_name: inventree-dev-worker
         image: inventree-dev-image
         build: *build_config
         command: invoke worker
