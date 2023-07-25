@@ -5,6 +5,7 @@ import { defineConfig, splitVendorChunkPlugin } from 'vite';
 export default defineConfig({
   plugins: [
     react({
+      include: '**/*.tsx',
       babel: {
         plugins: ['macros']
       }
@@ -14,5 +15,10 @@ export default defineConfig({
   build: {
     manifest: true,
     outDir: '../../InvenTree/web/static/web'
+  },
+  server: {
+    watch: {
+      usePolling: true
+    }
   }
 });
