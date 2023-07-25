@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-23 22:34+0000\n"
-"PO-Revision-Date: 2023-07-23 22:57\n"
+"POT-Creation-Date: 2023-07-25 22:34+0000\n"
+"PO-Revision-Date: 2023-07-25 23:18\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -7344,17 +7344,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:472
+#: plugin/registry.py:478
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:474
+#: plugin/registry.py:480
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:476
+#: plugin/registry.py:482
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
