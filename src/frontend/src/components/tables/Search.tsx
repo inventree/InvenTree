@@ -1,4 +1,5 @@
 import { CloseButton, TextInput } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
@@ -8,17 +9,11 @@ export function TableSearchInput({
   searchCallback: (searchTerm: string) => void;
 }) {
   const [value, setValue] = useState<string>('');
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchText] = useDebouncedValue(value, 500);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (value != searchValue) {
-        setSearchValue(value);
-        searchCallback(value);
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-  });
+    searchCallback(searchText);
+  }, [searchText]);
 
   return (
     <TextInput
