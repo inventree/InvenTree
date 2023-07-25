@@ -5,7 +5,6 @@ import { defineConfig, splitVendorChunkPlugin } from 'vite';
 export default defineConfig({
   plugins: [
     react({
-      include: '**/*.tsx',
       babel: {
         plugins: ['macros']
       }
