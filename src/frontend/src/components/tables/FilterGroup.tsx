@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconFilterMinus } from '@tabler/icons-react';
+import { IconFilterPlus } from '@tabler/icons-react';
 
 import { TableFilter } from './Filter';
 import { FilterBadge } from './FilterBadge';
@@ -25,7 +26,7 @@ export function FilterGroup({
   onFilterClearAll: () => void;
 }) {
   return (
-    <Group position="right" spacing="xs">
+    <Group position="right" spacing={5}>
       {activeFilters.length == 0 && (
         <Text italic={true} size="sm">{t`Add table filter`}</Text>
       )}
@@ -37,16 +38,20 @@ export function FilterGroup({
         />
       ))}
       {activeFilters.length && (
-        <ActionIcon variant="outline" onClick={() => onFilterClearAll()}>
+        <ActionIcon
+          radius="sm"
+          variant="outline"
+          onClick={() => onFilterClearAll()}
+        >
           <Tooltip label={t`Clear all filters`}>
-            <IconTrash color="red" />
+            <IconFilterMinus color="red" />
           </Tooltip>
         </ActionIcon>
       )}
       {
-        <ActionIcon variant="outline" onClick={() => onFilterAdd()}>
+        <ActionIcon radius="sm" variant="outline" onClick={() => onFilterAdd()}>
           <Tooltip label={t`Add filter`}>
-            <IconPlus color="green" />
+            <IconFilterPlus color="green" />
           </Tooltip>
         </ActionIcon>
       }
