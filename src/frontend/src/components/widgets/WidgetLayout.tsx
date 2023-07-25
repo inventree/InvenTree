@@ -4,8 +4,6 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconCheck, IconEdit } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
-import 'react-grid-layout/css/styles.css';
-import 'react-resizable/css/styles.css';
 
 const ReactGridLayout = WidthProvider(Responsive);
 
