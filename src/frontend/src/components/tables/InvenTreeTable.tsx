@@ -68,7 +68,7 @@ function loadActiveFilters(tableKey: string, filterList: TableFilter[]) {
  * @param filters : any - map of active filters, {name: value}
  */
 function saveActiveFilters(tableKey: string, filters: TableFilter[]) {
-  let active = {};
+  let active: any = {};
 
   filters.forEach((f) => (active[f.name] = f.value));
 
