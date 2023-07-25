@@ -5,7 +5,7 @@ import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { notYetImplemented } from '../../functions/notifications';
@@ -17,10 +17,21 @@ import { TableFilter } from './Filter';
 import { FilterGroup } from './FilterGroup';
 import { TableSearchInput } from './Search';
 
+/*
+ * Load list of hidden columns from local storage.
+ * Returns a list of column names which are "hidden" for the current table
+ */
+function loadHiddenColumns(tableKey: string) {
+  let hiddenColumns = JSON.parse(
+    localStorage.getItem(`hidden-table-columns-${tableKey}`) || '[]'
+  );
+
+  return hiddenColumns;
+}
+
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
-
 export function InvenTreeTable({
   url,
   params,
@@ -58,8 +69,52 @@ export function InvenTreeTable({
   customActionGroups?: any[];
   customFilters?: TableFilter[];
 }) {
+  // Data columns
+  const [dataColumns, setDataColumns] = useState<any[]>(columns);
+
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns = columns.some((col: any) => col.switchable);
+
+  // Manage state for switchable columns (initially load from local storage)
+  let [hiddenColumns, setHiddenColumns] = useState(() =>
+    loadHiddenColumns(tableKey)
+  );
+
+  // Update column visibility when hiddenColumns change
+  useEffect(() => {
+    setDataColumns(
+      dataColumns.map((col) => {
+        return {
+          ...col,
+          hidden: hiddenColumns.includes(col.accessor)
+        };
+      })
+    );
+  }, [hiddenColumns]);
+
+  // Callback when column visibility is toggled
+  function toggleColumn(columnName: string) {
+    let newColumns = [...dataColumns];
+
+    let colIdx = newColumns.findIndex((col) => col.accessor == columnName);
+
+    if (colIdx >= 0 && colIdx < newColumns.length) {
+      newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
+    }
+
+    let hiddenColumnNames = newColumns
+      .filter((col) => col.hidden)
+      .map((col) => col.accessor);
+
+    // Save list of hidden columns to local storage
+    localStorage.setItem(
+      `hidden-table-columns-${tableKey}`,
+      JSON.stringify(hiddenColumnNames)
+    );
+
+    // Refresh state
+    setHiddenColumns(loadHiddenColumns(tableKey));
+  }
 
   // Check if custom filtering is enabled for this table
   const hasCustomFilters = enableFilters && customFilters.length > 0;
@@ -73,12 +128,6 @@ export function InvenTreeTable({
   // Map of currently active filters, {name: value}
   const [activeFilters, setActiveFilters] = useState<any>({});
 
-  // Data columns
-  const [dataColumns, setDataColumns] = useState<any[]>(columns);
-
-  // List of hidden columns
-  let hiddenColumns = [];
-
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -87,26 +136,8 @@ export function InvenTreeTable({
   useEffect(() => {
     // Keep a shadow copy of the state variable, so that we can update it asynchronously
     latestSearchTerm = searchTerm;
-
-    loadHiddenColumns();
     loadActiveFilters();
   }, [searchTerm]);
-
-  // Load list of hidden columns from local storage
-  function loadHiddenColumns() {
-    hiddenColumns = JSON.parse(
-      localStorage.getItem(`hidden-table-columns-${tableKey}`) || '[]'
-    );
-
-    // Update column visibility
-    let newColumns = [...dataColumns];
-
-    for (let idx = 0; idx < newColumns.length; idx++) {
-      newColumns[idx].hidden = hiddenColumns.includes(newColumns[idx].accessor);
-    }
-
-    setDataColumns(newColumns);
-  }
 
   // Load list of active filters from local storage
   function loadActiveFilters() {
@@ -182,30 +213,6 @@ export function InvenTreeTable({
     setSortStatus(status);
   };
 
-  // Callback when column visibility is toggled
-  function toggleColumn(columnName: string) {
-    let newColumns = [...dataColumns];
-
-    let colIdx = newColumns.findIndex((col) => col.accessor == columnName);
-
-    if (colIdx >= 0 && colIdx < newColumns.length) {
-      newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
-    }
-
-    let hiddenColumnNames = newColumns
-      .filter((col) => col.hidden)
-      .map((col) => col.accessor);
-
-    // Save list of hidden columns to local storage
-    localStorage.setItem(
-      `hidden-table-columns-${tableKey}`,
-      JSON.stringify(hiddenColumnNames)
-    );
-
-    // Refresh state
-    setDataColumns(newColumns);
-  }
-
   // Function to perform API query to fetch required data
   const fetchTableData = async () => {
     let queryParams = { ...params };
@@ -280,8 +287,27 @@ export function InvenTreeTable({
     }
   );
 
-  // Launch a modal dialog to add a new filter
+  /*
+   * Callback for the "add filter" button.
+   * Launch a modal dialog to add a new filter
+   */
   function onFilterAdd() {
+    // TODO
+    notYetImplemented();
+  }
+
+  /*
+   * Callback function when a specified filter is removed from the table
+   */
+  function onFilterRemove(filterName: string) {
+    // TODO
+    console.log('removing filter: ' + filterName);
+  }
+
+  /*
+   * Callback function when all custom filters are removed from the table
+   */
+  function onFilterClearAll() {
     // TODO
     notYetImplemented();
   }
@@ -332,8 +358,8 @@ export function InvenTreeTable({
           {hasCustomFilters && (
             <Indicator
               size="xs"
-              label={activeFilters.length}
-              disabled={activeFilters.length == 0}
+              label={activeFilters?.length ?? 0}
+              disabled={activeFilters?.length ?? 0 == 0}
             >
               <ActionIcon>
                 <Tooltip label={t`Filter data`}>
@@ -350,8 +376,8 @@ export function InvenTreeTable({
         <FilterGroup
           filterList={[]}
           onFilterAdd={onFilterAdd}
-          onFilterRemove={notYetImplemented}
-          onFilterClearAll={notYetImplemented}
+          onFilterRemove={onFilterRemove}
+          onFilterClearAll={onFilterClearAll}
         />
       )}
       <DataTable

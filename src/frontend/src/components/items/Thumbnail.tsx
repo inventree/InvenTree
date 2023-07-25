@@ -6,7 +6,7 @@ import { Text } from '@mantine/core';
 export function Thumbnail({
   src,
   alt = t`Thumbnail`,
-  size = 20
+  size = 24
 }: {
   src: string;
   alt?: string;
@@ -39,7 +39,7 @@ export function ThumbnailHoverCard({
   text,
   link = '',
   alt = t`Thumbnail`,
-  size = 16
+  size = 24
 }: {
   src: string;
   text: string;
