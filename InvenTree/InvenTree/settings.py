@@ -975,6 +975,10 @@ CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom
 CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
 
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
+
+# Frontend settings
+PUI_SETTINGS = get_setting("INVENTREE_PUI_SETTINGS", "pui_settings", {})
+
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 

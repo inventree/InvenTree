@@ -14,5 +14,14 @@ export default defineConfig({
   build: {
     manifest: true,
     outDir: '../../InvenTree/web/static/web'
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: true
+      }
+    }
   }
 });
