@@ -41,6 +41,10 @@ def sso_check_provider(provider):
     apps = SocialApp.objects.filter(provider__iexact=provider.name)
 
     if not apps.exists():
+        logging.error(
+            "SSO SocialApp %s does not exist (known providers: %s)",
+            provider.name, [obj.provider for obj in SocialApp.objects.all()]
+        )
         return False
 
     # Next, check that the provider is correctly configured
