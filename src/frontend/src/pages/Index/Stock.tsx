@@ -5,7 +5,7 @@ import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 
-export default function Part() {
+export default function Stock() {
   return (
     <>
       <Group>

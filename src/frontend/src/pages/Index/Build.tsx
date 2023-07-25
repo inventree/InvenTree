@@ -5,7 +5,7 @@ import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 
-export default function Part() {
+export default function Build() {
   return (
     <>
       <Group>
