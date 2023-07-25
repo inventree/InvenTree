@@ -2019,6 +2019,11 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
+mantine-datatable@^2.9.0:
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-2.9.0.tgz#3f98a650cc01b6d64621b2f7760511acb744fa44"
+  integrity sha512-DJnTRLr5JPMs5b/xkOvwJDCzAYAqdAxxiiCz3XGvQdhd+IrvuxlK2e2RHfgKtdxsO+A0n4NL/nkC4Qx0GbhAJg==
+
 micromatch@4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-4.0.2.tgz#4fcb0999bf9fbc2fcbdd212f6d629b9a56c39259"
