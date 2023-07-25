@@ -3,12 +3,9 @@ import { Button, Container, Group, createStyles } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCheck, IconEdit } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { lazy } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-
-import { LoadingItem } from '../../functions/loading';
 
 const ReactGridLayout = WidthProvider(Responsive);
 
@@ -16,59 +13,6 @@ interface LayoutStorage {
   [key: string]: {};
 }
 
-const vals = [
-  {
-    i: 1,
-    val: (
-      <LoadingItem
-        item={lazy(() => import('../../components/widgets/GetStartedWidget'))}
-      />
-    ),
-    w: 12,
-    h: 7,
-    x: 0,
-    y: 0,
-    minH: 7
-  },
-  {
-    i: 2,
-    val: (
-      <LoadingItem
-        item={lazy(() => import('../../components/widgets/DisplayWidget'))}
-      />
-    ),
-    w: 3,
-    h: 3,
-    x: 0,
-    y: 7,
-    minH: 3
-  },
-  {
-    i: 3,
-    val: (
-      <LoadingItem
-        item={lazy(() => import('../../components/widgets/SizeDemoWidget'))}
-      />
-    ),
-    w: 3,
-    h: 4,
-    x: 3,
-    y: 7
-  },
-  {
-    i: 4,
-    val: (
-      <LoadingItem
-        item={lazy(() => import('../../components/widgets/FeedbackWidget'))}
-      />
-    ),
-    w: 4,
-    h: 6,
-    x: 0,
-    y: 9
-  },
-  { i: 5, val: 'E', w: 2, h: 3, x: 6, y: 7 }
-];
 const compactType = 'vertical';
 
 const useItemStyle = createStyles((theme) => ({
@@ -94,11 +38,23 @@ const useItemStyle = createStyles((theme) => ({
   }
 }));
 
-export function LocalStorageLayout({
+export interface LayoutItemType {
+  i: number;
+  val: string | JSX.Element | JSX.Element[] | (() => JSX.Element);
+  w?: number;
+  h?: number;
+  x?: number;
+  y?: number;
+  minH?: number;
+}
+
+export function WidgetLayout({
+  items = [],
   className = 'layout',
   localstorageName = 'argl',
   rowHeight = 30
 }: {
+  items: LayoutItemType[];
   className?: string;
   localstorageName?: string;
   rowHeight?: number;
@@ -189,7 +145,7 @@ export function LocalStorageLayout({
             isDraggable={editable}
             isResizable={editable}
           >
-            {vals.map(getItems(backgroundColor, classes))}
+            {items.map(getItems(backgroundColor, classes))}
           </ReactGridLayout>
         ) : (
           <div>

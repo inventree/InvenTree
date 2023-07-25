@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Title } from '@mantine/core';
 
-import { CardsCarousel } from '../items/CardsCarousel';
+import { GettingStartedCarousel } from '../items/GettingStartedCarousel';
 
 export default function GetStartedWidget() {
   return (
@@ -9,7 +9,7 @@ export default function GetStartedWidget() {
       <Title order={5}>
         <Trans>Getting started</Trans>
       </Title>
-      <CardsCarousel />
+      <GettingStartedCarousel />
     </span>
   );
 }

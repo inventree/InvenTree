@@ -10,6 +10,8 @@ import {
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 
+import { gettingStartedList } from '../../defaults/gettingStartedList';
+
 const useStyles = createStyles((theme) => ({
   card: {
     height: rem(200),
@@ -60,37 +62,10 @@ function Card({ title, category }: CardProps) {
     </Paper>
   );
 }
-const data = [
-  {
-    title: 'Best forests to visit in North America',
-    category: 'nature'
-  },
-  {
-    title: 'Hawaii beaches review: better than you think',
-    category: 'beach'
-  },
-  {
-    title: 'Mountains at night: 12 best locations to enjoy the view',
-    category: 'nature'
-  },
-  {
-    title: 'Aurora in Norway: when to visit for best experience',
-    category: 'nature'
-  },
-  {
-    title: 'Best places to visit this winter',
-    category: 'tourism'
-  },
-  {
-    title: 'Active volcanos reviews: travel at your own risk',
-    category: 'nature'
-  }
-];
-
-export function CardsCarousel() {
+export function GettingStartedCarousel() {
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const slides = data.map((item) => (
+  const slides = gettingStartedList.map((item) => (
     <Carousel.Slide key={item.title}>
       <Card {...item} />
     </Carousel.Slide>
