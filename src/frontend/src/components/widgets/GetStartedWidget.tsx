@@ -3,7 +3,7 @@ import { Title } from '@mantine/core';
 
 import { CardsCarousel } from '../items/CardsCarousel';
 
-export function GetStartedWidget() {
+export default function GetStartedWidget() {
   return (
     <span>
       <Title order={5}>

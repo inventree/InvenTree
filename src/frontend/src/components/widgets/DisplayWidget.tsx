@@ -4,7 +4,7 @@ import { SimpleGrid, Title } from '@mantine/core';
 import { ColorToggle } from '../items/ColorToggle';
 import { LanguageSelect } from '../items/LanguageSelect';
 
-export function DisplayWidget() {
+export default function DisplayWidget() {
   return (
     <span>
       <Title order={5}>

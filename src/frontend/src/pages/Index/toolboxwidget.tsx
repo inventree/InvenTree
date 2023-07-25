@@ -3,22 +3,66 @@ import { Button, Container, Group, createStyles } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCheck, IconEdit, IconPlus } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
+import { lazy } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import { DisplayWidget } from '../../components/widgets/DisplayWidget';
-import { FeedbackWidget } from '../../components/widgets/FeedbackWidget';
-import { GetStartedWidget } from '../../components/widgets/GetStartedWidget';
-import { SizeDemoWidget } from '../../components/widgets/SizeDemoWidget';
+import { LoadingItem } from '../../functions/loading';
 
 const ReactGridLayout = WidthProvider(Responsive);
 
 const vals = [
-  { i: 1, val: <GetStartedWidget />, w: 12, h: 7, x: 0, y: 0, minH: 7 },
-  { i: 2, val: <DisplayWidget />, w: 3, h: 3, x: 0, y: 7, minH: 3 },
-  { i: 3, val: <SizeDemoWidget />, w: 3, h: 4, x: 3, y: 7 },
-  { i: 4, val: <FeedbackWidget />, w: 4, h: 6, x: 0, y: 9 },
+  {
+    i: 1,
+    val: (
+      <LoadingItem
+        item={lazy(() => import('../../components/widgets/GetStartedWidget'))}
+      />
+    ),
+    w: 12,
+    h: 7,
+    x: 0,
+    y: 0,
+    minH: 7
+  },
+  {
+    i: 2,
+    val: (
+      <LoadingItem
+        item={lazy(() => import('../../components/widgets/DisplayWidget'))}
+      />
+    ),
+    w: 3,
+    h: 3,
+    x: 0,
+    y: 7,
+    minH: 3
+  },
+  {
+    i: 3,
+    val: (
+      <LoadingItem
+        item={lazy(() => import('../../components/widgets/SizeDemoWidget'))}
+      />
+    ),
+    w: 3,
+    h: 4,
+    x: 3,
+    y: 7
+  },
+  {
+    i: 4,
+    val: (
+      <LoadingItem
+        item={lazy(() => import('../../components/widgets/FeedbackWidget'))}
+      />
+    ),
+    w: 4,
+    h: 6,
+    x: 0,
+    y: 9
+  },
   { i: 5, val: 'E', w: 2, h: 3, x: 6, y: 7 }
 ];
 const compactType = 'vertical';

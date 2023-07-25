@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Title } from '@mantine/core';
 import { useElementSize } from '@mantine/hooks';
 
-export function SizeDemoWidget() {
+export default function SizeDemoWidget() {
   const { ref, width, height } = useElementSize();
 
   return (

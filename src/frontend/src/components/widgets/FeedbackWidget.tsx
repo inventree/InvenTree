@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Button, Stack, Title, useMantineTheme } from '@mantine/core';
 import { IconExternalLink } from '@tabler/icons-react';
 
-export function FeedbackWidget() {
+export default function FeedbackWidget() {
   const theme = useMantineTheme();
   return (
     <Stack
