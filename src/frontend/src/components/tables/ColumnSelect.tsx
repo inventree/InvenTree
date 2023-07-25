@@ -25,7 +25,7 @@ export function TableColumnSelect({
         {columns
           .filter((col) => col.switchable)
           .map((col) => (
-            <Menu.Item>
+            <Menu.Item key={col.accessor}>
               <Checkbox
                 checked={!col.hidden}
                 label={col.title || col.accessor}

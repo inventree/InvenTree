@@ -16,6 +16,8 @@ export function ButtonMenu({
   label?: string;
   tooltip?: string;
 }) {
+  let idx = 0;
+
   return (
     <Menu shadow="xs">
       <Menu.Target>
@@ -26,7 +28,7 @@ export function ButtonMenu({
       <Menu.Dropdown>
         {label && <Menu.Label>{label}</Menu.Label>}
         {actions.map((action) => (
-          <Menu.Item>{action}</Menu.Item>
+          <Menu.Item key={idx++}>{action}</Menu.Item>
         ))}
       </Menu.Dropdown>
     </Menu>

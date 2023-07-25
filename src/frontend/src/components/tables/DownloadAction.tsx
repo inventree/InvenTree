@@ -30,6 +30,7 @@ export function DownloadAction({
         <Menu.Dropdown>
           {formatOptions.map((format) => (
             <Menu.Item
+              key={format.value}
               onClick={() => {
                 downloadCallback(format.value);
               }}
