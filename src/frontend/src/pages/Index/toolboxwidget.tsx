@@ -1,167 +1,186 @@
-import { Container, Flex, Text } from '@mantine/core';
-import _ from 'lodash';
-import React from 'react';
+import { Trans } from '@lingui/macro';
+import { Button, Container, Group, createStyles } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconCheck, IconEdit, IconPlus } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
+import { DisplayWidget } from '../../components/widgets/DisplayWidget';
+import { FeedbackWidget } from '../../components/widgets/FeedbackWidget';
+import { GetStartedWidget } from '../../components/widgets/GetStartedWidget';
+import { SizeDemoWidget } from '../../components/widgets/SizeDemoWidget';
 
+const ReactGridLayout = WidthProvider(Responsive);
+
+const vals = [
+  { i: 1, val: <GetStartedWidget />, w: 12, h: 7, x: 0, y: 0, minH: 7 },
+  { i: 2, val: <DisplayWidget />, w: 3, h: 3, x: 0, y: 7, minH: 3 },
+  { i: 3, val: <SizeDemoWidget />, w: 3, h: 4, x: 3, y: 7 },
+  { i: 4, val: <FeedbackWidget />, w: 4, h: 6, x: 0, y: 9 },
+  { i: 5, val: 'E', w: 2, h: 3, x: 6, y: 7 }
+];
 const compactType = 'vertical';
-const currentBreakpoint = 'lg';
 
-function ToolBoxItem({ item, onTakeItem }: { item: any; onTakeItem: any }) {
-  return (
-    <Container
-      style={{ border: '1px solid' }}
-      bg={'green'}
-      className="toolbox__items__item"
-      onClick={onTakeItem.bind(undefined, item)}
-      m={0}
-    >
-      {item.i}
-    </Container>
-  );
-}
+const useItemStyle = createStyles((theme) => ({
+  backgroundItem: {
+    backgroundColor:
+      theme.colorScheme === 'dark'
+        ? theme.colors.gray[9]
+        : theme.colors.gray[1],
+    maxWidth: '100%',
+    padding: '8px'
+  },
 
-function ToolBox({ items, onTakeItem }: { items: any[]; onTakeItem: any }) {
-  return (
-    <Container className="toolbox" p={0} m={0}>
-      <Text>Toolbox</Text>
-      <Flex justify="flex-start" align="flex-start" direction="row" wrap="wrap">
-        {items.map((item) => (
-          <ToolBoxItem key={item.i} item={item} onTakeItem={onTakeItem} />
-        ))}
-      </Flex>
-    </Container>
-  );
-}
+  baseItem: {
+    maxWidth: '100%',
+    padding: '8px'
+  },
 
-function Item({
-  item,
-  onPutItem,
-  children
+  layoutEditGroup: {
+    border: `1px red dashed`,
+    borderRadius: '8px',
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.gray[9] : theme.colors.gray[1]
+  }
+}));
+
+export function LocalStorageLayout({
+  className = 'layout',
+  localstorageName = 'argl',
+  rowHeight = 30
 }: {
-  item: any;
-  onPutItem: any;
-  children: any;
+  className?: string;
+  localstorageName?: string;
+  rowHeight?: number;
 }) {
+  const [layouts, setLayouts] = useState({});
+  const [editable, setEditable] = useDisclosure(false);
+  const [backgroundColor, setBackgroundColor] = useDisclosure(true);
+  const { classes } = useItemStyle();
+
+  useEffect(() => {
+    let layout = getFromLS('layouts') || [];
+    const new_layout = JSON.parse(JSON.stringify(layout));
+    setLayouts(new_layout);
+  }, []);
+
+  function getFromLS(key: string) {
+    let ls = {};
+    if (localStorage) {
+      try {
+        ls = JSON.parse(localStorage.getItem(localstorageName) || '') || {};
+      } catch (e) {
+        /*Ignore*/
+      }
+    }
+    return ls[key];
+  }
+
+  function saveToLS(key: string, value: any) {
+    if (localStorage) {
+      localStorage.setItem(
+        localstorageName,
+        JSON.stringify({
+          [key]: value
+        })
+      );
+    }
+  }
+
+  function resetLayout() {
+    setLayouts({});
+  }
+
+  function onLayoutChange(layout: any, layouts: any) {
+    saveToLS('layouts', layouts);
+    setLayouts(layouts);
+  }
+
   return (
-    <div key={item.i}>
-      <div className="hide-button" onClick={onPutItem.bind(item)}>
-        &times;
+    <div>
+      <Group position="left">
+        <Group className={editable ? classes.layoutEditGroup : ''}>
+          <Button
+            leftIcon={editable ? <IconCheck /> : <IconEdit />}
+            compact={true}
+            onClick={setEditable.toggle}
+            variant="outline"
+            {...(editable ? { color: 'red' } : {})}
+          >
+            <Trans>Layout</Trans>
+          </Button>
+          {editable && (
+            <>
+              <Button onClick={resetLayout} compact={true} variant="light">
+                <Trans>Reset Layout</Trans>
+              </Button>
+              <Button
+                onClick={setBackgroundColor.toggle}
+                compact={true}
+                variant={backgroundColor ? 'light' : 'outline'}
+              >
+                <Trans>Background Color</Trans>
+              </Button>
+            </>
+          )}
+        </Group>
+      </Group>
+      <div>
+        {layouts ? (
+          <ReactGridLayout
+            className={className}
+            cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+            rowHeight={rowHeight}
+            layouts={layouts}
+            onLayoutChange={(layout, layouts) =>
+              onLayoutChange(layout, layouts)
+            }
+            compactType={compactType}
+            isDraggable={editable}
+            isResizable={editable}
+          >
+            {vals.map(getItems(backgroundColor, classes))}
+          </ReactGridLayout>
+        ) : (
+          <div>
+            <Trans>Loading</Trans>
+          </div>
+        )}
       </div>
-      <span className="text">{item.i}</span>
-      {children}
     </div>
   );
 }
 
-export default class ToolboxLayout extends React.Component {
-  static defaultProps = {
-    className: 'layout',
-    rowHeight: 30,
-    cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
-    initialLayout: generateLayout()
+function getItems(
+  backgroundColor: boolean,
+  classes: { backgroundItem: string; baseItem: string }
+) {
+  return function (item: any) {
+    return LayoutItem(item, backgroundColor, classes);
   };
-
-  state = {
-    mounted: false,
-    layouts: { lg: this.props.initialLayout },
-    toolbox: { lg: [] }
-  };
-
-  componentDidMount() {
-    this.setState({ mounted: true });
-  }
-
-  generateDOM() {
-    return _.map(this.state.layouts[currentBreakpoint], (l) => {
-      return (
-        <Container key={l.i} bg={'gray'}>
-          <div className="hide-button" onClick={this.onPutItem.bind(this, l)}>
-            &times;
-          </div>
-          <hr />
-          <span className="text">{l.i}</span>
-        </Container>
-      );
-    });
-  }
-
-  onTakeItem = (item: any) => {
-    this.setState((prevState) => ({
-      toolbox: {
-        ...prevState.toolbox,
-        [currentBreakpoint]: prevState.toolbox[currentBreakpoint].filter(
-          ({ i }) => i !== item.i
-        )
-      },
-      layouts: {
-        ...prevState.layouts,
-        [currentBreakpoint]: [...prevState.layouts[currentBreakpoint], item]
-      }
-    }));
-  };
-
-  onPutItem = (item: any) => {
-    this.setState((prevState) => {
-      return {
-        toolbox: {
-          ...prevState.toolbox,
-          [currentBreakpoint]: [
-            ...(prevState.toolbox[currentBreakpoint] || []),
-            item
-          ]
-        },
-        layouts: {
-          ...prevState.layouts,
-          [currentBreakpoint]: prevState.layouts[currentBreakpoint].filter(
-            ({ i }) => i !== item.i
-          )
-        }
-      };
-    });
-  };
-
-  onNewLayout = () => {
-    this.setState({
-      layouts: { lg: generateLayout() }
-    });
-  };
-
-  render() {
-    return (
-      <div>
-        <ToolBox
-          items={this.state.toolbox[currentBreakpoint] || []}
-          onTakeItem={this.onTakeItem}
-        />
-
-        <ResponsiveReactGridLayout
-          {...this.props}
-          layouts={this.state.layouts}
-          measureBeforeMount={false}
-          useCSSTransforms={this.state.mounted}
-          compactType={compactType}
-          preventCollision={!compactType}
-        >
-          {this.generateDOM()}
-        </ResponsiveReactGridLayout>
-      </div>
-    );
-  }
 }
 
-function generateLayout() {
-  return _.map(_.range(0, 25), function (item, i) {
-    var y = Math.ceil(Math.random() * 4) + 1;
-    return {
-      x: (_.random(0, 5) * 2) % 12,
-      y: Math.floor(i / 6) * y,
-      w: 2,
-      h: y,
-      i: i.toString()
-    };
-  });
+function LayoutItem(
+  item: any,
+  backgroundColor: boolean,
+  classes: { backgroundItem: string; baseItem: string }
+) {
+  return (
+    <Container
+      key={item.i}
+      data-grid={{
+        w: item.w || 3,
+        h: item.h || 3,
+        x: item.x || 0,
+        y: item.y || 0,
+        minH: item.minH || undefined,
+        minW: item.minW || undefined
+      }}
+      className={backgroundColor ? classes.backgroundItem : classes.baseItem}
+    >
+      {item.val}
+    </Container>
+  );
 }
