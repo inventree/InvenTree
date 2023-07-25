@@ -229,15 +229,6 @@ export function InvenTreeTable({
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  // Callback when search term is updated
-  function updateSearchTerm(term: string) {
-    term = term.trim();
-    // Ignore identical search terms
-    if (term == searchTerm) return;
-
-    setSearchTerm(term);
-  }
-
   // Data download callback
   function downloadData(fileFormat: string) {
     // Download entire dataset (no pagination)
@@ -402,7 +393,7 @@ export function InvenTreeTable({
         <Group position="right" spacing={5}>
           {enableSearch && (
             <TableSearchInput
-              searchCallback={(term: string) => updateSearchTerm(term)}
+              searchCallback={(term: string) => setSearchTerm(term)}
             />
           )}
           {enableRefresh && (
