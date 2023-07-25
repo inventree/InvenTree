@@ -11,6 +11,9 @@ import {
 } from '@mantine/core';
 import { IconMinus, IconPlus, IconTrash } from '@tabler/icons-react';
 
+import { TableFilter } from './Filter';
+import { FilterBadge } from './FilterBadge';
+
 /**
  * Return a table filter group component:
  * - Displays a list of active filters for the table
@@ -18,49 +21,44 @@ import { IconMinus, IconPlus, IconTrash } from '@tabler/icons-react';
  * - Allows the user to clear all filters
  */
 export function FilterGroup({
-  filterList,
+  activeFilters,
+  availableFilters,
   onFilterAdd,
-
   onFilterRemove,
   onFilterClearAll
 }: {
-  filterList: any[];
+  activeFilters: TableFilter[];
+  availableFilters: TableFilter[];
   onFilterAdd: () => void;
   onFilterRemove: (filterName: string) => void;
   onFilterClearAll: () => void;
 }) {
   return (
     <Group position="right" spacing="xs">
-      {filterList.map((filter) => (
-        <Indicator
-          color="red"
-          label={
-            <CloseButton
-              title={t`Remove filter`}
-              size="xs"
-              onClick={() => onFilterRemove(filter.name)}
-            />
-          }
-          withBorder={false}
-          size="xs"
-        >
-          <Chip checked={false}>
-            <Text>{filter.label}</Text>
-          </Chip>
-        </Indicator>
+      {activeFilters.length == 0 && (
+        <Text italic={true} size="sm">{t`Add table filter`}</Text>
+      )}
+      {activeFilters.map((f) => (
+        <FilterBadge
+          key={f.name}
+          filter={f}
+          onFilterRemove={() => onFilterRemove(f.name)}
+        />
       ))}
-      {true && (
+      {activeFilters.length && (
         <ActionIcon variant="outline" onClick={() => onFilterClearAll()}>
           <Tooltip label={t`Clear all filters`}>
             <IconTrash color="red" />
           </Tooltip>
         </ActionIcon>
       )}
-      <ActionIcon variant="outline" onClick={() => onFilterAdd()}>
-        <Tooltip label={t`Add filter`}>
-          <IconPlus color="green" />
-        </Tooltip>
-      </ActionIcon>
+      {
+        <ActionIcon variant="outline" onClick={() => onFilterAdd()}>
+          <Tooltip label={t`Add filter`}>
+            <IconPlus color="green" />
+          </Tooltip>
+        </ActionIcon>
+      }
     </Group>
   );
 }

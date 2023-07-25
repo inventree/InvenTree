@@ -92,7 +92,44 @@ function partTableFilters(): TableFilter[] {
       label: t`Active`,
       description: t`Filter by part active status`,
       type: 'boolean'
+    },
+    {
+      name: 'assembly',
+      label: t`Assembly`,
+      description: t`Filter by assembly attribute`,
+      type: 'boolean'
+    },
+    {
+      name: 'cascade',
+      label: t`Include Subcategories`,
+      description: t`Include parts in subcategories`,
+      type: 'boolean'
+    },
+    {
+      name: 'component',
+      label: t`Component`,
+      description: t`Filter by component attribute`,
+      type: 'boolean'
+    },
+    {
+      name: 'trackable',
+      label: t`Trackable`,
+      description: t`Filter by trackable attribute`,
+      type: 'boolean'
     }
+    // unallocated_stock
+    // has_units
+    // has_ipn
+    // has_stock
+    // low_stock
+    // purchaseable
+    // salable
+    // starred
+    // stocktake
+    // is_template
+    // virtual
+    // has_pricing
+    // TODO: Any others from table_filters.js?
   ];
 }
 

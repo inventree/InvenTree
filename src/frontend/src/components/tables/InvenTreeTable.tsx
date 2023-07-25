@@ -1,14 +1,14 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Indicator, Space, Stack, Tooltip } from '@mantine/core';
 import { Group } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
-import { notYetImplemented } from '../../functions/notifications';
 import { ButtonMenu } from '../items/ButtonMenu';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
@@ -41,13 +41,25 @@ function saveHiddenColumns(tableKey: string, columns: any[]) {
 
 /**
  * Loads the list of active filters from local storage
- * @param tableKey : string
+ * @param tableKey : string - unique key for the table
+ * @param filterList : TableFilter[] - list of available filters
  * @returns a map of active filters for the current table, {name: value}
  */
-function loadActiveFilters(tableKey: string) {
-  return JSON.parse(
+function loadActiveFilters(tableKey: string, filterList: TableFilter[]) {
+  let active = JSON.parse(
     localStorage.getItem(`inventree-active-table-filters-${tableKey}`) || '{}'
   );
+
+  // We expect that the active filter list is a map of {name: value}
+  // Return *only* those filters which are in the filter list
+  let x = filterList
+    .filter((f) => f.name in active)
+    .map((f) => ({
+      ...f,
+      value: active[f.name]
+    }));
+
+  return x;
 }
 
 /**
@@ -55,10 +67,16 @@ function loadActiveFilters(tableKey: string) {
  * @param tableKey : string - unique key for the table
  * @param filters : any - map of active filters, {name: value}
  */
-function saveActiveFilters(tableKey: string, filters: any) {
+function saveActiveFilters(tableKey: string, filters: TableFilter[]) {
+  let active = {};
+
+  filters.forEach((f) => (active[f.name] = f.value));
+
+  console.log('saveActiveFilters:', active);
+
   localStorage.setItem(
     `inventree-active-table-filters-${tableKey}`,
-    JSON.stringify(filters)
+    JSON.stringify(active)
   );
 }
 
@@ -157,7 +175,7 @@ export function InvenTreeTable({
 
   // Map of currently active filters, {name: value}
   const [activeFilters, setActiveFilters] = useState(() =>
-    loadActiveFilters(tableKey)
+    loadActiveFilters(tableKey, customFilters)
   );
 
   /*
@@ -165,8 +183,36 @@ export function InvenTreeTable({
    * Launches a modal dialog to add a new filter
    */
   function onFilterAdd() {
-    // TODO
-    notYetImplemented();
+    // Collect a list of active filters
+    let activeFilterNames = activeFilters.map((flt) => flt.name);
+
+    let availableFilters = customFilters.filter(
+      (flt) => !activeFilterNames.includes(flt.name)
+    );
+
+    if (availableFilters.length == 0) {
+      notifications.show({
+        title: `No more filters`,
+        message: `All available filters are already active`,
+        color: 'red'
+      });
+    }
+
+    // Test: Activate the first available filter
+    let active = [];
+
+    for (let idx = 0; idx < customFilters.length; idx++) {
+      let flt = customFilters[idx];
+
+      console.log('checking filter:', flt);
+
+      flt.value = flt.defaultValue || 'true';
+
+      active.push(flt);
+    }
+
+    saveActiveFilters(tableKey, active);
+    setActiveFilters(loadActiveFilters(tableKey, customFilters));
   }
 
   /*
@@ -174,8 +220,6 @@ export function InvenTreeTable({
    */
   function onFilterRemove(filterName: string) {
     let filters = activeFilters.filter((flt) => flt.name != filterName);
-
-    // Write to local storage and update local state
     saveActiveFilters(tableKey, filters);
     setActiveFilters(filters);
   }
@@ -184,25 +228,12 @@ export function InvenTreeTable({
    * Callback function when all custom filters are removed from the table
    */
   function onFilterClearAll() {
-    // If there are no active filters, do nothing
-    if (activeFilters.length == 0) {
-      return;
-    }
-
-    // Write to local storage and update local state
-    saveActiveFilters(tableKey, {});
-    setActiveFilters({});
+    saveActiveFilters(tableKey, []);
+    setActiveFilters([]);
   }
 
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
-
-  let latestSearchTerm = '';
-
-  useEffect(() => {
-    // Keep a shadow copy of the state variable, so that we can update it asynchronously
-    latestSearchTerm = searchTerm;
-  }, [searchTerm]);
 
   // Callback when search term is updated
   function updateSearchTerm(term: string) {
@@ -211,8 +242,6 @@ export function InvenTreeTable({
     if (term == searchTerm) return;
 
     setSearchTerm(term);
-    latestSearchTerm = term;
-    refetch();
   }
 
   // Data download callback
@@ -220,8 +249,8 @@ export function InvenTreeTable({
     // Download entire dataset (no pagination)
     let queryParams = { ...params };
 
-    if (latestSearchTerm || searchTerm) {
-      queryParams.search = latestSearchTerm || searchTerm;
+    if (searchTerm) {
+      queryParams.search = searchTerm;
     }
 
     // Specify file format
@@ -283,9 +312,12 @@ export function InvenTreeTable({
       queryParams.offset = (page - 1) * pageSize;
     }
 
+    // Handle custom filters
+    activeFilters.forEach((flt) => (queryParams[flt.name] = flt.value));
+
     // Handle custom search term
-    if (latestSearchTerm) {
-      queryParams.search = latestSearchTerm;
+    if (searchTerm) {
+      queryParams.search = searchTerm;
     }
 
     // Handle sorting
@@ -338,7 +370,9 @@ export function InvenTreeTable({
       `table-${tableKey}`,
       sortStatus.columnAccessor,
       sortStatus.direction,
-      page
+      page,
+      activeFilters,
+      searchTerm
     ],
     fetchTableData,
     {
@@ -393,11 +427,11 @@ export function InvenTreeTable({
           {hasCustomFilters && (
             <Indicator
               size="xs"
-              label={activeFilters?.length ?? 0}
-              disabled={activeFilters?.length ?? 0 == 0}
+              label={activeFilters.length}
+              disabled={activeFilters.length == 0}
             >
               <ActionIcon>
-                <Tooltip label={t`Filter data`}>
+                <Tooltip label={t`Table filters`}>
                   <IconFilter
                     onClick={() => setFiltersVisible(!filtersVisible)}
                   />
@@ -409,7 +443,8 @@ export function InvenTreeTable({
       </Group>
       {filtersVisible && (
         <FilterGroup
-          filterList={[]}
+          activeFilters={activeFilters}
+          availableFilters={customFilters}
           onFilterAdd={onFilterAdd}
           onFilterRemove={onFilterRemove}
           onFilterClearAll={onFilterClearAll}
