@@ -46,8 +46,12 @@ class AppMixin:
                         settings.INSTALLED_APPS += [plugin_path]
                         registry.installed_apps += [plugin_path]
                         apps_changed = True
+
             # if apps were changed or force loading base apps -> reload
-            if apps_changed or force_reload:
+            # Ignore reloading if we are in testing mode and apps are unchanged so that tests run faster
+            # registry.reload_plugins(...) first unloads and then loads the plugins
+            # always reload if we are not in testing mode so we can expect the second reload
+            if not settings.TESTING or apps_changed or force_reload:
                 # first startup or force loading of base apps -> registry is prob false
                 if registry.apps_loading or force_reload:
                     registry.apps_loading = False
