@@ -1,9 +1,8 @@
 import { Trans } from '@lingui/macro';
-import { Button, Stack, Title, useMantineTheme } from '@mantine/core';
+import { Button, Stack, Title } from '@mantine/core';
 import { IconExternalLink } from '@tabler/icons-react';
 
 export default function FeedbackWidget() {
-  const theme = useMantineTheme();
   return (
     <Stack
       sx={(theme) => ({
@@ -13,7 +12,7 @@ export default function FeedbackWidget() {
             : theme.colors.gray[1],
         borderRadius: theme.radius.md
       })}
-      px={5}
+      p={15}
     >
       <Title order={5}>
         <Trans>Something is new: Platform UI</Trans>

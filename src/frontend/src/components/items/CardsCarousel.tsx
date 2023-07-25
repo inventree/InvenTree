@@ -38,7 +38,6 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 interface CardProps {
-  image: string;
   title: string;
   category: string;
 }

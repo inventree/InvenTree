@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Button, Container, Group, createStyles } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCheck, IconEdit, IconPlus } from '@tabler/icons-react';
+import { IconCheck, IconEdit } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { lazy } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
@@ -11,6 +11,10 @@ import 'react-resizable/css/styles.css';
 import { LoadingItem } from '../../functions/loading';
 
 const ReactGridLayout = WidthProvider(Responsive);
+
+interface LayoutStorage {
+  [key: string]: {};
+}
 
 const vals = [
   {
@@ -111,7 +115,7 @@ export function LocalStorageLayout({
   }, []);
 
   function getFromLS(key: string) {
-    let ls = {};
+    let ls: LayoutStorage = {};
     if (localStorage) {
       try {
         ls = JSON.parse(localStorage.getItem(localstorageName) || '') || {};
