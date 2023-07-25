@@ -68,11 +68,7 @@ function loadActiveFilters(tableKey: string, filterList: TableFilter[]) {
  * @param filters : any - map of active filters, {name: value}
  */
 function saveActiveFilters(tableKey: string, filters: TableFilter[]) {
-  let active: any = {};
-
-  filters.forEach((f) => (active[f.name] = f.value));
-
-  console.log('saveActiveFilters:', active);
+  let active = Object.fromEntries(filters.map((flt) => [flt.name, flt.value]));
 
   localStorage.setItem(
     `inventree-active-table-filters-${tableKey}`,
