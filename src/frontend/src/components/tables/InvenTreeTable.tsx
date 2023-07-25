@@ -126,7 +126,23 @@ export function InvenTreeTable({
 
   // Data download callback
   function downloadData(fileFormat: string) {
-    console.log('download data: ' + fileFormat);
+    // Download entire dataset (no pagination)
+    let queryParams = { ...params };
+
+    if (latestSearchTerm || searchTerm) {
+      queryParams.search = latestSearchTerm || searchTerm;
+    }
+
+    // Specify file format
+    queryParams.export = fileFormat;
+
+    let downloadUrl = api.getUri({
+      url: url,
+      params: queryParams
+    });
+
+    // Download file in a new window (to force download)
+    window.open(downloadUrl, '_blank');
   }
 
   // Data Sorting
