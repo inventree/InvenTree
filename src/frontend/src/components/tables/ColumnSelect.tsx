@@ -30,6 +30,7 @@ export function TableColumnSelect({
                 checked={!col.hidden}
                 label={col.title || col.accessor}
                 onChange={(event) => onToggleColumn(col.accessor)}
+                radius="sm"
               />
             </Menu.Item>
           ))}
