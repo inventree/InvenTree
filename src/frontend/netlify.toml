@@ -6,9 +6,6 @@
   publish = "dist"
 
 # Send requests to subpath
-[[redirects]]
-  from = "/"
-  to = "/platform"
 
 [[redirects]]
   from = "/*"
