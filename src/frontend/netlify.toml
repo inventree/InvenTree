@@ -5,6 +5,13 @@
   command = "yarn run build --outDir dist"
   publish = "dist"
 
+# Send requests to subpath
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 [[plugins]]
   package = "@netlify/plugin-lighthouse"
 
