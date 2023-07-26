@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-07-24 23:20\n"
+"PO-Revision-Date: 2023-07-26 23:25\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -19,8 +19,8 @@ msgstr ""
 "X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:32
-#~ msgid "Title"
-#~ msgstr "Title"
+msgid "Title"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:36
 msgid "Login failed"
@@ -317,6 +317,74 @@ msgstr ""
 #~ msgid "Part"
 #~ msgstr "Part"
 
+#: src/defaults/dashboardItems.tsx:6
+msgid "Subscribed Parts"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:13
+msgid "Subscribed Categories"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:20
+msgid "Latest Parts"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:27
+msgid "BOM Waiting Validation"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:34
+msgid "Recently Updated"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:41
+msgid "Low Stock"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:48
+msgid "Depleted Stock"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:55
+msgid "Required for Build Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:62
+msgid "Expired Stock"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:69
+msgid "Stale Stock"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:76
+msgid "Build Orders In Progress"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:83
+msgid "Overdue Build Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:90
+msgid "Outstanding Purchase Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:97
+msgid "Overdue Purchase Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:104
+msgid "Outstanding Sales Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:111
+msgid "Overdue Sales Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:118
+msgid "Current News"
+msgstr ""
+
 #: src/defaults/defaultHostList.tsx:8
 msgid "InvenTree Demo"
 msgstr ""
@@ -337,65 +405,70 @@ msgstr ""
 msgid "Demo"
 msgstr ""
 
-#: src/defaults/links.tsx:22
+#: src/defaults/links.tsx:23
 #: src/defaults/menuItems.tsx:9
 #: src/pages/Index/Home.tsx:12
 msgid "Home"
 msgstr ""
 
-#: src/defaults/links.tsx:35
+#: src/defaults/links.tsx:24
+#: src/pages/Index/Dashboard.tsx:19
+msgid "Dashboard"
+msgstr ""
+
+#: src/defaults/links.tsx:38
 msgid "Getting Started"
 msgstr ""
 
-#: src/defaults/links.tsx:36
+#: src/defaults/links.tsx:39
 msgid "Getting started with InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:42
+#: src/defaults/links.tsx:45
 msgid "API"
 msgstr ""
 
-#: src/defaults/links.tsx:43
+#: src/defaults/links.tsx:46
 msgid "InvenTree API documentation"
 msgstr ""
 
-#: src/defaults/links.tsx:48
+#: src/defaults/links.tsx:51
 msgid "Developer Manual"
 msgstr ""
 
-#: src/defaults/links.tsx:49
+#: src/defaults/links.tsx:52
 msgid "InvenTree developer manual"
 msgstr ""
 
-#: src/defaults/links.tsx:54
+#: src/defaults/links.tsx:57
 msgid "FAQ"
 msgstr ""
 
-#: src/defaults/links.tsx:55
+#: src/defaults/links.tsx:58
 msgid "Frequently asked questions"
 msgstr ""
 
-#: src/defaults/links.tsx:64
+#: src/defaults/links.tsx:67
 msgid "Instance"
 msgstr ""
 
-#: src/defaults/links.tsx:65
+#: src/defaults/links.tsx:68
 msgid "About this Inventree instance"
 msgstr ""
 
-#: src/defaults/links.tsx:71
+#: src/defaults/links.tsx:74
 msgid "InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:72
+#: src/defaults/links.tsx:75
 msgid "About the InvenTree org"
 msgstr ""
 
-#: src/defaults/links.tsx:78
+#: src/defaults/links.tsx:81
 msgid "Licenses"
 msgstr ""
 
-#: src/defaults/links.tsx:79
+#: src/defaults/links.tsx:82
 msgid "Licenses for packages used by InvenTree"
 msgstr ""
 
@@ -557,81 +630,13 @@ msgstr ""
 msgid "Sorry, an unexpected error has occurred."
 msgstr ""
 
-#: src/pages/Index/Dashboard.tsx:17
-#~ msgid "Subscribed Parts"
-#~ msgstr "Subscribed Parts"
+#: src/pages/Index/Dashboard.tsx:22
+msgid "Autoupdate"
+msgstr ""
 
-#: src/pages/Index/Dashboard.tsx:24
-#~ msgid "Subscribed Categories"
-#~ msgstr "Subscribed Categories"
-
-#: src/pages/Index/Dashboard.tsx:31
-#~ msgid "Latest Parts"
-#~ msgstr "Latest Parts"
-
-#: src/pages/Index/Dashboard.tsx:38
-#~ msgid "BOM Waiting Validation"
-#~ msgstr "BOM Waiting Validation"
-
-#: src/pages/Index/Dashboard.tsx:45
-#~ msgid "Recently Updated"
-#~ msgstr "Recently Updated"
-
-#: src/pages/Index/Dashboard.tsx:52
-#~ msgid "Low Stock"
-#~ msgstr "Low Stock"
-
-#: src/pages/Index/Dashboard.tsx:59
-#~ msgid "Depleted Stock"
-#~ msgstr "Depleted Stock"
-
-#: src/pages/Index/Dashboard.tsx:66
-#~ msgid "Required for Build Orders"
-#~ msgstr "Required for Build Orders"
-
-#: src/pages/Index/Dashboard.tsx:73
-#~ msgid "Expired Stock"
-#~ msgstr "Expired Stock"
-
-#: src/pages/Index/Dashboard.tsx:80
-#~ msgid "Stale Stock"
-#~ msgstr "Stale Stock"
-
-#: src/pages/Index/Dashboard.tsx:87
-#~ msgid "Build Orders In Progress"
-#~ msgstr "Build Orders In Progress"
-
-#: src/pages/Index/Dashboard.tsx:94
-#~ msgid "Overdue Build Orders"
-#~ msgstr "Overdue Build Orders"
-
-#: src/pages/Index/Dashboard.tsx:101
-#~ msgid "Outstanding Purchase Orders"
-#~ msgstr "Outstanding Purchase Orders"
-
-#: src/pages/Index/Dashboard.tsx:108
-#~ msgid "Overdue Purchase Orders"
-#~ msgstr "Overdue Purchase Orders"
-
-#: src/pages/Index/Dashboard.tsx:115
-#~ msgid "Outstanding Sales Orders"
-#~ msgstr "Outstanding Sales Orders"
-
-#: src/pages/Index/Dashboard.tsx:122
-#~ msgid "Overdue Sales Orders"
-#~ msgstr "Overdue Sales Orders"
-
-#: src/pages/Index/Dashboard.tsx:129
-#~ msgid "Current News"
-#~ msgstr "Current News"
-
-#: src/pages/Index/Dashboard.tsx:140
-#~ msgid "Dashboard"
-#~ msgstr "Dashboard"
-
-#: src/pages/Index/Dashboard.tsx:143
-#~ msgid "Autoupdate"
-#~ msgstr "Autoupdate"
+#: src/pages/Index/Dashboard.tsx:26
+msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
+msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
