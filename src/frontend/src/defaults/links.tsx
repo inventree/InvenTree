@@ -21,6 +21,7 @@ export const footerLinks = [
 ];
 export const navTabs = [
   { text: <Trans>Home</Trans>, name: 'home' },
+  { text: <Trans>Dashboard</Trans>, name: 'dashboard' },
   { text: <Trans>Parts</Trans>, name: 'parts' },
   { text: <Trans>Stock</Trans>, name: 'stock' },
   { text: <Trans>Build</Trans>, name: 'build' }

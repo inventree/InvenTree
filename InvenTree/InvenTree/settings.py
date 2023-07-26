@@ -199,13 +199,13 @@ INSTALLED_APPS = [
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
+    'plugin.apps.PluginAppConfig',          # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
     'label.apps.LabelConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
-    'plugin.apps.PluginAppConfig',
     'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
@@ -831,6 +831,10 @@ EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
 EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
 
 DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
+
+# If "from" email not specified, default to the username
+if not DEFAULT_FROM_EMAIL:
+    DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
 
 EMAIL_USE_LOCALTIME = False
 EMAIL_TIMEOUT = 60
