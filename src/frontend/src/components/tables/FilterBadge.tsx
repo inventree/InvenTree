@@ -28,7 +28,8 @@ export function FilterBadge({
     <Badge
       size="lg"
       radius="lg"
-      variant="filled"
+      variant="outline"
+      color="gray"
       styles={(theme) => ({
         root: {
           paddingRight: '4px'
