@@ -26,7 +26,7 @@ type SearchQuery = {
   title: string;
   enabled: boolean;
   parameters: any;
-  results: any;
+  results?: any;
 };
 
 // Placeholder function for permissions checks (will be replaced with a proper implementation)
@@ -87,7 +87,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_CATEGORIES')
     },
     {
-      name: 'stock',
+      name: 'stockitem',
       title: t`Stock Items`,
       parameters: {
         part_detail: true,
@@ -96,13 +96,64 @@ function buildSearchQueries(): SearchQuery[] {
       enabled:
         permissionCheck('stock.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_STOCK')
+    },
+    {
+      name: 'stocklocation',
+      title: t`Stock Locations`,
+      parameters: {},
+      enabled:
+        permissionCheck('stock_location.view') &&
+        settingsCheck('SEARCH_PREVIEW_SHOW_LOCATIONS')
+    },
+    {
+      name: 'build',
+      title: t`Build Orders`,
+      parameters: {
+        part_detail: true
+      },
+      enabled:
+        permissionCheck('build.view') &&
+        settingsCheck('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
+    },
+    {
+      name: 'company',
+      title: t`Companies`,
+      parameters: {},
+      enabled:
+        (permissionCheck('sales_order.view') ||
+          permissionCheck('purchase_order.view')) &&
+        settingsCheck('SEARCH_PREVIEW_SHOW_COMPANIES')
+    },
+    {
+      name: 'purchaseorder',
+      title: t`Purchase Orders`,
+      parameters: {
+        supplier_detail: true
+      },
+      enabled:
+        permissionCheck('purchase_order.view') &&
+        settingsCheck(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
+    },
+    {
+      name: 'salesorder',
+      title: t`Sales Orders`,
+      parameters: {
+        customer_detail: true
+      },
+      enabled:
+        permissionCheck('sales_order.view') &&
+        settingsCheck(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
+    },
+    {
+      name: 'returnorder',
+      title: t`Return Orders`,
+      parameters: {
+        customer_detail: true
+      },
+      enabled:
+        permissionCheck('return_order.view') &&
+        settingsCheck(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
     }
-
-    // TODO: stock locations
-    // TODO: build orders
-    // TODO: Purchase orders
-    // TODO: sales orders
-    // TODO: return orders
   ];
 }
 
