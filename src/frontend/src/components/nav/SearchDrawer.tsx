@@ -5,17 +5,14 @@ import {
   Drawer,
   Group,
   Menu,
+  Space,
+  Stack,
   Text,
   TextInput
 } from '@mantine/core';
 import { Loader } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import {
-  IconBackspace,
-  IconSearch,
-  IconSettings,
-  IconSettingsCheck
-} from '@tabler/icons-react';
+import { IconBackspace, IconSearch, IconSettings } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
@@ -160,16 +157,25 @@ function buildSearchQueries(): SearchQuery[] {
 /*
  * Render the results for a single search query
  */
-function renderQueryResults(query: SearchQuery) {
+function renderQueryResult(query: SearchQuery) {
   if (query.results.count == 0) {
     return null;
   }
 
   return (
-    <Group>
-      <Text>{query.title}</Text>
-      <Text>{query.results.count}</Text>
-    </Group>
+    <Stack key={query.name}>
+      <Group position="apart" spacing={1} noWrap={true}>
+        <Text size="lg">{query.title}</Text>
+        <Space />
+        <Text size="sm">{query.results.count}</Text>
+      </Group>
+      <Stack>
+        <Text italic size="sm" color="red">
+          TODO: search results here
+        </Text>
+      </Stack>
+      <Space />
+    </Stack>
   );
 }
 
@@ -203,7 +209,6 @@ export function SearchDrawer({
 
   // Function for performing the actual search query
   const performSearch = async () => {
-    console.log('Performing search:', searchText);
     // Return empty result set if no search text
     if (!searchText) {
       return [];
@@ -259,7 +264,6 @@ export function SearchDrawer({
       queries = queries.filter((query) => query.results.count > 0);
 
       setQueryResults(queries);
-      console.log('queries:', queries);
     } else {
       setQueryResults([]);
     }
@@ -326,7 +330,7 @@ export function SearchDrawer({
       }
     >
       {isFetching && <Loader />}
-      {!isFetching && queryResults.map((query) => renderQueryResults(query))}
+      {!isFetching && queryResults.map((query) => renderQueryResult(query))}
     </Drawer>
   );
 }
