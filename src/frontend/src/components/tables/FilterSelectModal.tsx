@@ -3,7 +3,7 @@ import { Modal, Space } from '@mantine/core';
 import { Select } from '@mantine/core';
 import { Stack } from '@mantine/core';
 import { Button, Group, Text } from '@mantine/core';
-import { useMemo, useState } from 'react';
+import { forwardRef, useMemo, useState } from 'react';
 
 import { TableFilter } from './Filter';
 
@@ -19,13 +19,35 @@ function constructAvailableFilters(
 
   let options = availableFilters
     .filter((flt) => !activeFilterNames.includes(flt.name))
-    .map((flt) => ({ value: flt.name, label: flt.label }));
+    .map((flt) => ({
+      value: flt.name,
+      label: flt.label,
+      description: flt.description
+    }));
 
   return options;
 }
 
+interface FilterProps extends React.ComponentPropsWithoutRef<'div'> {
+  name: string;
+  label: string;
+  description?: string;
+}
+
+/*
+ * Custom component for the filter select
+ */
+const FilterSelectItem = forwardRef<HTMLDivElement, FilterProps>(
+  ({ name, label, description, ...others }, ref) => (
+    <div ref={ref} {...others}>
+      <Text size="sm">{label}</Text>
+      <Text size="xs">{description}</Text>
+    </div>
+  )
+);
+
 /**
- * Modal dialog to add a new filter for a particular table
+ * Modal dialog to add a} new filter for a particular table
  * @param opened : boolean - Whether the modal is opened or not
  * @param onClose : () => void - Function called when the modal is closed
  * @returns
@@ -52,6 +74,7 @@ export function FilterSelectModal({
         <Text>{t`Select from the available filters`}</Text>
         <Select
           data={filterOptions}
+          itemComponent={FilterSelectItem}
           label={t`Filter`}
           placeholder={t`Select filter`}
           searchable={true}
