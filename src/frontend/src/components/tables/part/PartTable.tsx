@@ -116,14 +116,50 @@ function partTableFilters(): TableFilter[] {
       label: t`Trackable`,
       description: t`Filter by trackable attribute`,
       type: 'boolean'
+    },
+    {
+      name: 'has_units',
+      label: t`Has Units`,
+      description: t`Filter by parts which have units`,
+      type: 'boolean'
+    },
+    {
+      name: 'has_ipn',
+      label: t`Has IPN`,
+      description: t`Filter by parts which have an internal part number`,
+      type: 'boolean'
+    },
+    {
+      name: 'has_stock',
+      label: t`Has Stock`,
+      description: t`Filter by parts which have stock`,
+      type: 'boolean'
+    },
+    {
+      name: 'low_stock',
+      label: t`Low Stock`,
+      description: t`Filter by parts which have low stock`,
+      type: 'boolean'
+    },
+    {
+      name: 'purchaseable',
+      label: t`Purchaseable`,
+      description: t`Filter by parts which are purchaseable`,
+      type: 'boolean'
+    },
+    {
+      name: 'salable',
+      label: t`Salable`,
+      description: t`Filter by parts which are salable`,
+      type: 'boolean'
+    },
+    {
+      name: 'virtual',
+      label: t`Virtual`,
+      description: t`Filter by parts which are virtual`,
+      type: 'boolean'
     }
     // unallocated_stock
-    // has_units
-    // has_ipn
-    // has_stock
-    // low_stock
-    // purchaseable
-    // salable
     // starred
     // stocktake
     // is_template
