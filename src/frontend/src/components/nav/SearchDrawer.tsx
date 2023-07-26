@@ -211,7 +211,7 @@ export function SearchDrawer({
 
     let params: any = {
       offset: 0,
-      limit: 10,
+      limit: 10, // TODO: Make this configurable (based on settings)
       search: searchText,
       searchRegex: searchRegex,
       searchWhole: searchWhole
