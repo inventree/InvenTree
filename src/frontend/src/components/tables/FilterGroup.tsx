@@ -14,13 +14,11 @@ import { FilterBadge } from './FilterBadge';
  */
 export function FilterGroup({
   activeFilters,
-  availableFilters,
   onFilterAdd,
   onFilterRemove,
   onFilterClearAll
 }: {
   activeFilters: TableFilter[];
-  availableFilters: TableFilter[];
   onFilterAdd: () => void;
   onFilterRemove: (filterName: string) => void;
   onFilterClearAll: () => void;

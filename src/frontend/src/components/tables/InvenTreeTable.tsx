@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Indicator, Space, Stack, Tooltip } from '@mantine/core';
 import { Group } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
 import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -15,6 +14,7 @@ import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
 import { TableFilter } from './Filter';
 import { FilterGroup } from './FilterGroup';
+import { FilterSelectModal } from './FilterSelectModal';
 import { TableSearchInput } from './Search';
 
 /*
@@ -163,6 +163,9 @@ export function InvenTreeTable({
   // Check if custom filtering is enabled for this table
   const hasCustomFilters = enableFilters && customFilters.length > 0;
 
+  // Filter selection open state
+  const [filterSelectOpen, setFilterSelectOpen] = useState<boolean>(false);
+
   // Pagination
   const [page, setPage] = useState(1);
 
@@ -179,34 +182,7 @@ export function InvenTreeTable({
    * Launches a modal dialog to add a new filter
    */
   function onFilterAdd() {
-    // Collect a list of active filters
-    let activeFilterNames = activeFilters.map((flt) => flt.name);
-
-    let availableFilters = customFilters.filter(
-      (flt) => !activeFilterNames.includes(flt.name)
-    );
-
-    if (availableFilters.length == 0) {
-      notifications.show({
-        title: `No more filters`,
-        message: `All available filters are already active`,
-        color: 'red'
-      });
-    }
-
-    // Test: Activate the first available filter
-    // TODO: All this code will be removed
-    let active = [];
-
-    for (let idx = 0; idx < customFilters.length; idx++) {
-      let flt = customFilters[idx];
-      flt.value = flt.defaultValue || 'true';
-
-      active.push(flt);
-    }
-
-    saveActiveFilters(tableKey, active);
-    setActiveFilters(loadActiveFilters(tableKey, customFilters));
+    setFilterSelectOpen(true);
   }
 
   /*
@@ -375,96 +351,105 @@ export function InvenTreeTable({
   );
 
   return (
-    <Stack>
-      <Group position="apart">
-        <Group position="left" spacing={5}>
-          {customActionGroups.map((group: any, idx: number) => group)}
-          {barcodeActions.length > 0 && (
-            <ButtonMenu
-              icon={<IconBarcode />}
-              label={t`Barcode actions`}
-              tooltip={t`Barcode actions`}
-              actions={barcodeActions}
-            />
-          )}
-          {printingActions.length > 0 && (
-            <ButtonMenu
-              icon={<IconPrinter />}
-              label={t`Print actions`}
-              tooltip={t`Print actions`}
-              actions={printingActions}
-            />
-          )}
-          {enableDownload && <DownloadAction downloadCallback={downloadData} />}
-        </Group>
-        <Space />
-        <Group position="right" spacing={5}>
-          {enableSearch && (
-            <TableSearchInput
-              searchCallback={(term: string) => setSearchTerm(term)}
-            />
-          )}
-          {enableRefresh && (
-            <ActionIcon>
-              <Tooltip label={t`Refresh data`}>
-                <IconRefresh onClick={() => refetch()} />
-              </Tooltip>
-            </ActionIcon>
-          )}
-          {hasSwitchableColumns && (
-            <TableColumnSelect
-              columns={dataColumns}
-              onToggleColumn={toggleColumn}
-            />
-          )}
-          {hasCustomFilters && (
-            <Indicator
-              size="xs"
-              label={activeFilters.length}
-              disabled={activeFilters.length == 0}
-            >
+    <>
+      <FilterSelectModal
+        availableFilters={customFilters}
+        activeFilters={activeFilters}
+        opened={filterSelectOpen}
+        onClose={() => setFilterSelectOpen(false)}
+      />
+      <Stack>
+        <Group position="apart">
+          <Group position="left" spacing={5}>
+            {customActionGroups.map((group: any, idx: number) => group)}
+            {barcodeActions.length > 0 && (
+              <ButtonMenu
+                icon={<IconBarcode />}
+                label={t`Barcode actions`}
+                tooltip={t`Barcode actions`}
+                actions={barcodeActions}
+              />
+            )}
+            {printingActions.length > 0 && (
+              <ButtonMenu
+                icon={<IconPrinter />}
+                label={t`Print actions`}
+                tooltip={t`Print actions`}
+                actions={printingActions}
+              />
+            )}
+            {enableDownload && (
+              <DownloadAction downloadCallback={downloadData} />
+            )}
+          </Group>
+          <Space />
+          <Group position="right" spacing={5}>
+            {enableSearch && (
+              <TableSearchInput
+                searchCallback={(term: string) => setSearchTerm(term)}
+              />
+            )}
+            {enableRefresh && (
               <ActionIcon>
-                <Tooltip label={t`Table filters`}>
-                  <IconFilter
-                    onClick={() => setFiltersVisible(!filtersVisible)}
-                  />
+                <Tooltip label={t`Refresh data`}>
+                  <IconRefresh onClick={() => refetch()} />
                 </Tooltip>
               </ActionIcon>
-            </Indicator>
-          )}
+            )}
+            {hasSwitchableColumns && (
+              <TableColumnSelect
+                columns={dataColumns}
+                onToggleColumn={toggleColumn}
+              />
+            )}
+            {hasCustomFilters && (
+              <Indicator
+                size="xs"
+                label={activeFilters.length}
+                disabled={activeFilters.length == 0}
+              >
+                <ActionIcon>
+                  <Tooltip label={t`Table filters`}>
+                    <IconFilter
+                      onClick={() => setFiltersVisible(!filtersVisible)}
+                    />
+                  </Tooltip>
+                </ActionIcon>
+              </Indicator>
+            )}
+          </Group>
         </Group>
-      </Group>
-      {filtersVisible && (
-        <FilterGroup
-          activeFilters={activeFilters}
-          availableFilters={customFilters}
-          onFilterAdd={onFilterAdd}
-          onFilterRemove={onFilterRemove}
-          onFilterClearAll={onFilterClearAll}
+        {filtersVisible && (
+          <FilterGroup
+            activeFilters={activeFilters}
+            onFilterAdd={onFilterAdd}
+            onFilterRemove={onFilterRemove}
+            onFilterClearAll={onFilterClearAll}
+          />
+        )}
+        <DataTable
+          withBorder
+          striped
+          highlightOnHover
+          loaderVariant="dots"
+          idAccessor={'pk'}
+          minHeight={200}
+          totalRecords={data?.count ?? data?.length ?? 0}
+          recordsPerPage={pageSize}
+          page={page}
+          onPageChange={setPage}
+          sortStatus={sortStatus}
+          onSortStatusChange={handleSortStatusChange}
+          selectedRecords={enableSelection ? selectedRecords : undefined}
+          onSelectedRecordsChange={
+            enableSelection ? onSelectedRecordsChange : undefined
+          }
+          fetching={isFetching}
+          noRecordsText={missingRecordsText}
+          records={data?.results ?? data ?? []}
+          columns={dataColumns}
         />
-      )}
-      <DataTable
-        withBorder
-        striped
-        highlightOnHover
-        loaderVariant="dots"
-        idAccessor={'pk'}
-        minHeight={200}
-        totalRecords={data?.count ?? data?.length ?? 0}
-        recordsPerPage={pageSize}
-        page={page}
-        onPageChange={setPage}
-        sortStatus={sortStatus}
-        onSortStatusChange={handleSortStatusChange}
-        selectedRecords={enableSelection ? selectedRecords : undefined}
-        onSelectedRecordsChange={
-          enableSelection ? onSelectedRecordsChange : undefined
-        }
-        fetching={isFetching}
-        noRecordsText={missingRecordsText}
-        records={data?.results ?? data ?? []}
-        columns={dataColumns}
-      />
-    </Stack>
+      </Stack>
+    </>
   );
 }
