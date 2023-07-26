@@ -3,6 +3,7 @@ import { Center, Container } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
 
+import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
@@ -27,6 +28,7 @@ export default function Login() {
   // Data manipulation functions
   function ChangeHost(newHost: string): void {
     setHost(hostList[newHost].host, newHost);
+    setApiDefaults();
     fetchServerApiState();
   }
 
