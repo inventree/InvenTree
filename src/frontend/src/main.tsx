@@ -9,11 +9,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   </React.StrictMode>
 );
 
-// Redirect to /platform if on / - while building for netlify
-console.log(process.env.NETLIFY_PREVIEW);
-console.log(process.env);
-if (process.env.NETLIFY_PREVIEW == 'TRUE') {
-  if (window.location.pathname === '/') {
-    window.location.replace('/platform');
-  }
+// Redirect to /platform if on /
+if (window.location.pathname === '/') {
+  window.location.replace('/platform');
 }
