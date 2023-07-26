@@ -167,7 +167,7 @@ function renderQueryResults(query: SearchQuery) {
 
   return (
     <Group>
-      <Text bold={true}>{query.title}</Text>
+      <Text>{query.title}</Text>
       <Text>{query.results.count}</Text>
     </Group>
   );
