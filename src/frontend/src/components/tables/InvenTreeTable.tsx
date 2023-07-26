@@ -181,8 +181,20 @@ export function InvenTreeTable({
    * Callback for the "add filter" button.
    * Launches a modal dialog to add a new filter
    */
-  function onFilterAdd() {
-    setFilterSelectOpen(true);
+  function onFilterAdd(name: string, value: string) {
+    let filters = [...activeFilters];
+
+    let newFilter = customFilters.find((flt) => flt.name == name);
+
+    if (newFilter) {
+      filters.push({
+        ...newFilter,
+        value: value
+      });
+
+      saveActiveFilters(tableKey, filters);
+      setActiveFilters(filters);
+    }
   }
 
   /*
@@ -356,6 +368,7 @@ export function InvenTreeTable({
         availableFilters={customFilters}
         activeFilters={activeFilters}
         opened={filterSelectOpen}
+        onCreateFilter={onFilterAdd}
         onClose={() => setFilterSelectOpen(false)}
       />
       <Stack>
@@ -422,7 +435,7 @@ export function InvenTreeTable({
         {filtersVisible && (
           <FilterGroup
             activeFilters={activeFilters}
-            onFilterAdd={onFilterAdd}
+            onFilterAdd={() => setFilterSelectOpen(true)}
             onFilterRemove={onFilterRemove}
             onFilterClearAll={onFilterClearAll}
           />

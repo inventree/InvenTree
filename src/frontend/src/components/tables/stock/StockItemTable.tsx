@@ -118,7 +118,19 @@ function stockItemTableParams(params: any): any {
  * Construct a list of available filters for the stock item table
  */
 function stockItemTableFilters(): TableFilter[] {
-  return [];
+  return [
+    {
+      name: 'test_filter',
+      label: t`Test Filter`,
+      description: t`This is a test filter`,
+      type: 'choice',
+      choiceFunction: () => [
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+        { value: '3', label: 'Three' }
+      ]
+    }
+  ];
 }
 
 /*

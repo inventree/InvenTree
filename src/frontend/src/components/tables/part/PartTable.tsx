@@ -157,7 +157,11 @@ function partTableFilters(): TableFilter[] {
       name: 'virtual',
       label: t`Virtual`,
       description: t`Filter by parts which are virtual`,
-      type: 'boolean'
+      type: 'choice',
+      choices: [
+        { value: 'true', label: t`Virtual` },
+        { value: 'false', label: t`Not Virtual` }
+      ]
     }
     // unallocated_stock
     // starred
