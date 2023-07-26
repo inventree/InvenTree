@@ -5,26 +5,26 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: es_MX\n"
+"Language: es\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-07-25 23:19\n"
+"PO-Revision-Date: 2023-07-26 23:25\n"
 "Last-Translator: \n"
-"Language-Team: Spanish, Mexico\n"
+"Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: es-MX\n"
+"X-Crowdin-Language: es-ES\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:32
-#~ msgid "Title"
-#~ msgstr "Title"
+msgid "Title"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:36
 msgid "Login failed"
-msgstr "Error al iniciar sesión"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:37
 #: src/components/forms/AuthenticationForm.tsx:63
@@ -34,11 +34,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:42
 msgid "Login successful"
-msgstr "Inicio de sesión exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:43
 msgid "Welcome back!"
-msgstr "¡Bienvenido de vuelta!"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -53,15 +53,15 @@ msgstr "¡Bienvenido de vuelta!"
 #: src/components/forms/AuthenticationForm.tsx:54
 #: src/functions/auth.tsx:81
 msgid "Mail delivery successful"
-msgstr "Envío de correo exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:55
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr "Revisa tu bandeja de entrada para el enlace de inicio de sesión. Si tienes una cuenta, recibirás un enlace de inicio de sesión. Revisa también el correo no deseado."
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:62
 msgid "Input error"
-msgstr "Error de entrada"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -70,48 +70,48 @@ msgstr "Error de entrada"
 
 #: src/components/forms/AuthenticationForm.tsx:74
 msgid "Welcome, log in below"
-msgstr "Bienvenido, inicia sesión a continuación"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:81
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:87
 #: src/pages/Auth/Set-Password.tsx:105
 msgid "Password"
-msgstr "Contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:88
 msgid "Your password"
-msgstr "Tu contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:99
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr "Restablecer contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:107
 #: src/pages/Auth/Reset.tsx:31
 msgid "Email"
-msgstr "Correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:108
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "We will send you a link to login - if you are registered"
-msgstr "Te enviaremos un enlace para iniciar sesión - si estás registrado"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:124
 msgid "Send me an email"
-msgstr "Envíame un correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:126
 msgid "I will use username and password"
-msgstr "Usaré nombre de usuario y contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:131
 msgid "Log in"
-msgstr "Iniciar sesión"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:133
 #: src/pages/Auth/Reset.tsx:41
@@ -127,11 +127,11 @@ msgstr ""
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
 msgid "Name"
-msgstr "Nombre"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr "Nadie aquí..."
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
@@ -139,11 +139,11 @@ msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:89
 msgid "Save"
-msgstr "Guardar"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr "Seleccionar instancia de destino"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
@@ -151,15 +151,15 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr "Versión: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr "API:{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr "Nombre: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
@@ -317,6 +317,74 @@ msgstr ""
 #~ msgid "Part"
 #~ msgstr "Part"
 
+#: src/defaults/dashboardItems.tsx:6
+msgid "Subscribed Parts"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:13
+msgid "Subscribed Categories"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:20
+msgid "Latest Parts"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:27
+msgid "BOM Waiting Validation"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:34
+msgid "Recently Updated"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:41
+msgid "Low Stock"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:48
+msgid "Depleted Stock"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:55
+msgid "Required for Build Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:62
+msgid "Expired Stock"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:69
+msgid "Stale Stock"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:76
+msgid "Build Orders In Progress"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:83
+msgid "Overdue Build Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:90
+msgid "Outstanding Purchase Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:97
+msgid "Overdue Purchase Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:104
+msgid "Outstanding Sales Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:111
+msgid "Overdue Sales Orders"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:118
+msgid "Current News"
+msgstr ""
+
 #: src/defaults/defaultHostList.tsx:8
 msgid "InvenTree Demo"
 msgstr ""
@@ -337,65 +405,70 @@ msgstr ""
 msgid "Demo"
 msgstr ""
 
-#: src/defaults/links.tsx:22
+#: src/defaults/links.tsx:23
 #: src/defaults/menuItems.tsx:9
 #: src/pages/Index/Home.tsx:12
 msgid "Home"
 msgstr ""
 
-#: src/defaults/links.tsx:35
+#: src/defaults/links.tsx:24
+#: src/pages/Index/Dashboard.tsx:19
+msgid "Dashboard"
+msgstr ""
+
+#: src/defaults/links.tsx:38
 msgid "Getting Started"
 msgstr ""
 
-#: src/defaults/links.tsx:36
+#: src/defaults/links.tsx:39
 msgid "Getting started with InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:42
+#: src/defaults/links.tsx:45
 msgid "API"
 msgstr ""
 
-#: src/defaults/links.tsx:43
+#: src/defaults/links.tsx:46
 msgid "InvenTree API documentation"
 msgstr ""
 
-#: src/defaults/links.tsx:48
+#: src/defaults/links.tsx:51
 msgid "Developer Manual"
 msgstr ""
 
-#: src/defaults/links.tsx:49
+#: src/defaults/links.tsx:52
 msgid "InvenTree developer manual"
 msgstr ""
 
-#: src/defaults/links.tsx:54
+#: src/defaults/links.tsx:57
 msgid "FAQ"
 msgstr ""
 
-#: src/defaults/links.tsx:55
+#: src/defaults/links.tsx:58
 msgid "Frequently asked questions"
 msgstr ""
 
-#: src/defaults/links.tsx:64
+#: src/defaults/links.tsx:67
 msgid "Instance"
 msgstr ""
 
-#: src/defaults/links.tsx:65
+#: src/defaults/links.tsx:68
 msgid "About this Inventree instance"
 msgstr ""
 
-#: src/defaults/links.tsx:71
+#: src/defaults/links.tsx:74
 msgid "InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:72
+#: src/defaults/links.tsx:75
 msgid "About the InvenTree org"
 msgstr ""
 
-#: src/defaults/links.tsx:78
+#: src/defaults/links.tsx:81
 msgid "Licenses"
 msgstr ""
 
-#: src/defaults/links.tsx:79
+#: src/defaults/links.tsx:82
 msgid "Licenses for packages used by InvenTree"
 msgstr ""
 
@@ -557,81 +630,13 @@ msgstr ""
 msgid "Sorry, an unexpected error has occurred."
 msgstr ""
 
-#: src/pages/Index/Dashboard.tsx:17
-#~ msgid "Subscribed Parts"
-#~ msgstr "Subscribed Parts"
+#: src/pages/Index/Dashboard.tsx:22
+msgid "Autoupdate"
+msgstr ""
 
-#: src/pages/Index/Dashboard.tsx:24
-#~ msgid "Subscribed Categories"
-#~ msgstr "Subscribed Categories"
-
-#: src/pages/Index/Dashboard.tsx:31
-#~ msgid "Latest Parts"
-#~ msgstr "Latest Parts"
-
-#: src/pages/Index/Dashboard.tsx:38
-#~ msgid "BOM Waiting Validation"
-#~ msgstr "BOM Waiting Validation"
-
-#: src/pages/Index/Dashboard.tsx:45
-#~ msgid "Recently Updated"
-#~ msgstr "Recently Updated"
-
-#: src/pages/Index/Dashboard.tsx:52
-#~ msgid "Low Stock"
-#~ msgstr "Low Stock"
-
-#: src/pages/Index/Dashboard.tsx:59
-#~ msgid "Depleted Stock"
-#~ msgstr "Depleted Stock"
-
-#: src/pages/Index/Dashboard.tsx:66
-#~ msgid "Required for Build Orders"
-#~ msgstr "Required for Build Orders"
-
-#: src/pages/Index/Dashboard.tsx:73
-#~ msgid "Expired Stock"
-#~ msgstr "Expired Stock"
-
-#: src/pages/Index/Dashboard.tsx:80
-#~ msgid "Stale Stock"
-#~ msgstr "Stale Stock"
-
-#: src/pages/Index/Dashboard.tsx:87
-#~ msgid "Build Orders In Progress"
-#~ msgstr "Build Orders In Progress"
-
-#: src/pages/Index/Dashboard.tsx:94
-#~ msgid "Overdue Build Orders"
-#~ msgstr "Overdue Build Orders"
-
-#: src/pages/Index/Dashboard.tsx:101
-#~ msgid "Outstanding Purchase Orders"
-#~ msgstr "Outstanding Purchase Orders"
-
-#: src/pages/Index/Dashboard.tsx:108
-#~ msgid "Overdue Purchase Orders"
-#~ msgstr "Overdue Purchase Orders"
-
-#: src/pages/Index/Dashboard.tsx:115
-#~ msgid "Outstanding Sales Orders"
-#~ msgstr "Outstanding Sales Orders"
-
-#: src/pages/Index/Dashboard.tsx:122
-#~ msgid "Overdue Sales Orders"
-#~ msgstr "Overdue Sales Orders"
-
-#: src/pages/Index/Dashboard.tsx:129
-#~ msgid "Current News"
-#~ msgstr "Current News"
-
-#: src/pages/Index/Dashboard.tsx:140
-#~ msgid "Dashboard"
-#~ msgstr "Dashboard"
-
-#: src/pages/Index/Dashboard.tsx:143
-#~ msgid "Autoupdate"
-#~ msgstr "Autoupdate"
+#: src/pages/Index/Dashboard.tsx:26
+msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
+msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
