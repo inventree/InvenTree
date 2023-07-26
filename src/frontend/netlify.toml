@@ -14,3 +14,9 @@
   from = "/*"
   to = "/index.html 200"
   status = 200
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
+  [plugins.inputs.settings]
+    preset = "desktop" # Optionally run Lighthouse using a desktop configuration
