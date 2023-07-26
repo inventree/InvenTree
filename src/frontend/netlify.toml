@@ -4,7 +4,6 @@
 [build]
   command = "yarn run build --outDir dist"
   publish = "dist"
-  base = "/platform"
 
 # Send requests to subpath
 [[redirects]]

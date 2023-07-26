@@ -8,3 +8,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <App />
   </React.StrictMode>
 );
+
+if (window.location.pathname === '/') {
+  window.location.replace('/platform');
+}
