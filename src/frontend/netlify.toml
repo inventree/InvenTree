@@ -10,7 +10,6 @@
 [[redirects]]
   from = "/*"
   to = "/index.html 200"
-  status = 200
 
 [[plugins]]
   package = "@netlify/plugin-lighthouse"
