@@ -1,7 +1,20 @@
 import { Trans } from '@lingui/macro';
-import { Button, Container, Group, createStyles } from '@mantine/core';
+import {
+  ActionIcon,
+  Container,
+  Group,
+  Indicator,
+  createStyles
+} from '@mantine/core';
+import { Menu, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCheck, IconEdit } from '@tabler/icons-react';
+import {
+  IconArrowBackUpDouble,
+  IconDotsVertical,
+  IconLayout2,
+  IconSquare,
+  IconSquareCheck
+} from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -16,23 +29,15 @@ const compactType = 'vertical';
 const useItemStyle = createStyles((theme) => ({
   backgroundItem: {
     backgroundColor:
-      theme.colorScheme === 'dark'
-        ? theme.colors.gray[9]
-        : theme.colors.gray[1],
+      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.white,
     maxWidth: '100%',
-    padding: '8px'
+    padding: '8px',
+    boxShadow: theme.shadows.md
   },
 
   baseItem: {
     maxWidth: '100%',
     padding: '8px'
-  },
-
-  layoutEditGroup: {
-    border: `1px red dashed`,
-    borderRadius: '8px',
-    backgroundColor:
-      theme.colorScheme === 'dark' ? theme.colors.gray[9] : theme.colors.gray[1]
   }
 }));
 
@@ -102,58 +107,127 @@ export function WidgetLayout({
 
   return (
     <div>
-      <Group position="left">
-        <Group className={editable ? classes.layoutEditGroup : ''}>
-          <Button
-            leftIcon={editable ? <IconCheck /> : <IconEdit />}
-            compact={true}
-            onClick={setEditable.toggle}
-            variant="outline"
-            {...(editable ? { color: 'red' } : {})}
-          >
-            <Trans>Layout</Trans>
-          </Button>
-          {editable && (
-            <>
-              <Button onClick={resetLayout} compact={true} variant="light">
-                <Trans>Reset Layout</Trans>
-              </Button>
-              <Button
-                onClick={setBackgroundColor.toggle}
-                compact={true}
-                variant={backgroundColor ? 'light' : 'outline'}
-              >
-                <Trans>Background Color</Trans>
-              </Button>
-            </>
-          )}
-        </Group>
-      </Group>
-      <div>
-        {layouts ? (
-          <ReactGridLayout
-            className={className}
-            cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-            rowHeight={rowHeight}
-            layouts={layouts}
-            onLayoutChange={(layout, layouts) =>
-              onLayoutChange(layout, layouts)
-            }
-            compactType={compactType}
-            isDraggable={editable}
-            isResizable={editable}
-          >
-            {items.map((item) => {
-              return LayoutItem(item, backgroundColor, classes);
-            })}
-          </ReactGridLayout>
-        ) : (
-          <div>
-            <Trans>Loading</Trans>
-          </div>
-        )}
-      </div>
+      <WidgetControlBar
+        editable={editable}
+        setEditable={setEditable}
+        resetLayout={resetLayout}
+        backgroundColor={backgroundColor}
+        setBackgroundColor={setBackgroundColor}
+      />
+      {layouts ? (
+        <ReactGridLayout
+          className={className}
+          cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+          rowHeight={rowHeight}
+          layouts={layouts}
+          onLayoutChange={(layout, layouts) => onLayoutChange(layout, layouts)}
+          compactType={compactType}
+          isDraggable={editable}
+          isResizable={editable}
+        >
+          {items.map((item) => {
+            return LayoutItem(item, backgroundColor, classes);
+          })}
+        </ReactGridLayout>
+      ) : (
+        <div>
+          <Trans>Loading</Trans>
+        </div>
+      )}
     </div>
+  );
+}
+
+function WidgetControlBar({
+  editable,
+  setEditable,
+  resetLayout,
+  backgroundColor,
+  setBackgroundColor
+}: {
+  editable: boolean;
+  setEditable: {
+    readonly open: () => void;
+    readonly close: () => void;
+    readonly toggle: () => void;
+  };
+  resetLayout: () => void;
+  backgroundColor: boolean;
+  setBackgroundColor: {
+    readonly open: () => void;
+    readonly close: () => void;
+    readonly toggle: () => void;
+  };
+}) {
+  const { classes } = useItemStyle();
+
+  return (
+    <Group position="right">
+      <Menu
+        shadow="md"
+        width={200}
+        trigger="hover"
+        openDelay={100}
+        closeDelay={400}
+        position="bottom-end"
+      >
+        <Menu.Target>
+          <Indicator
+            color="red"
+            position="bottom-start"
+            processing
+            disabled={!editable}
+          >
+            <ActionIcon variant="transparent">
+              <IconDotsVertical />
+            </ActionIcon>
+          </Indicator>
+        </Menu.Target>
+
+        <Menu.Dropdown>
+          <Menu.Label>
+            <Trans>Layout</Trans>
+          </Menu.Label>
+          <Menu.Item
+            icon={<IconArrowBackUpDouble size={14} />}
+            onClick={resetLayout}
+          >
+            <Trans>Reset Layout</Trans>
+          </Menu.Item>
+          <Menu.Item
+            icon={
+              <IconLayout2 size={14} color={editable ? 'red' : undefined} />
+            }
+            onClick={setEditable.toggle}
+            rightSection={
+              <Text size="xs" color="dimmed">
+                ⌘E
+              </Text>
+            }
+          >
+            {editable ? <Trans>Stop Edit</Trans> : <Trans>Edit Layout</Trans>}
+          </Menu.Item>
+
+          <Menu.Divider />
+
+          <Menu.Label>
+            <Trans>Appearance</Trans>
+          </Menu.Label>
+          <Menu.Item
+            icon={
+              backgroundColor ? (
+                <IconSquareCheck size={14} />
+              ) : (
+                <IconSquare size={14} />
+              )
+            }
+            onClick={setBackgroundColor.toggle}
+          >
+            <Trans>Show Boxes</Trans>
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+    </Group>
   );
 }
 

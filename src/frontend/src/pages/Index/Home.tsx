@@ -1,9 +1,7 @@
 import { Trans } from '@lingui/macro';
-import { Group, Title } from '@mantine/core';
+import { Container, Title } from '@mantine/core';
 import { lazy } from 'react';
 
-import { PlaceholderPill } from '../../components/items/Placeholder';
-import { StylishText } from '../../components/items/StylishText';
 import {
   LayoutItemType,
   WidgetLayout
@@ -39,18 +37,6 @@ const vals: LayoutItemType[] = [
     minH: 3
   },
   {
-    i: 3,
-    val: (
-      <LoadingItem
-        item={lazy(() => import('../../components/widgets/SizeDemoWidget'))}
-      />
-    ),
-    w: 3,
-    h: 4,
-    x: 3,
-    y: 7
-  },
-  {
     i: 4,
     val: (
       <LoadingItem
@@ -69,13 +55,7 @@ export default function Home() {
   const [username] = useApiState((state) => [state.user?.name]);
   return (
     <>
-      <Group>
-        <StylishText>
-          <Trans>Home</Trans>
-        </StylishText>
-        <PlaceholderPill />
-      </Group>
-      <Title order={3}>
+      <Title order={1}>
         <Trans>Welcome to your Dashboard{username && `, ${username}`}</Trans>
       </Title>
       <WidgetLayout items={vals} />
