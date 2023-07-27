@@ -1,5 +1,6 @@
-import { Modal } from '@mantine/core';
-import { Center, Loader, Stack, Text } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Divider, Modal } from '@mantine/core';
+import { Button, Center, Group, Loader, Stack, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
@@ -55,13 +56,17 @@ export function ApiForm({
   opened,
   onClose,
   onFormSuccess,
-  onFormError
+  onFormError,
+  cancelText = t`Cancel`,
+  submitText = t`Submit`
 }: {
   name: string;
   url: string;
   pk?: number;
   title: string;
   fields: ApiFormField[];
+  cancelText?: string;
+  submitText?: string;
   opened: boolean;
   onClose?: () => void;
   onFormSuccess?: () => void;
@@ -72,8 +77,6 @@ export function ApiForm({
 
   // Form field definitions (via API)
   const [fieldDefinitions, setFieldDefinitions] = useState<ApiFormField[]>([]);
-
-  const fetchFieldDefinitions = async () => {};
 
   const definitionQuery = useQuery({
     enabled: opened && !!url,
@@ -103,13 +106,22 @@ export function ApiForm({
   return (
     <Modal opened={opened} onClose={onClose} title={title}>
       <Stack>
-        <Center>
-          {definitionQuery.isFetching && <Loader />}
-          Hello world
-          {definitionQuery.isSuccess && <Text>Success!</Text>}
-          {definitionQuery.isError && <Text>Error!</Text>}
-          {definitionQuery.isLoading && <Text>Loading...</Text>}
-        </Center>
+        <Divider />
+        {definitionQuery.isFetching && (
+          <Center>
+            <Loader />
+          </Center>
+        )}
+        {!definitionQuery.isFetching && <Text>Form definition fetched!</Text>}
+        <Divider />
+        <Group position="right">
+          <Button onClick={onClose} variant="outline" color="red">
+            {cancelText}
+          </Button>
+          <Button onClick={() => null} variant="outline" color="green">
+            {submitText}
+          </Button>
+        </Group>
       </Stack>
     </Modal>
   );
