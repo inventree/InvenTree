@@ -1,5 +1,8 @@
 import react from '@vitejs/plugin-react';
+import { platform } from 'node:os';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
+
+const isInWsl = () => platform().includes('WSL');
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,7 +27,7 @@ export default defineConfig({
       }
     },
     watch: {
-      usePolling: true
+      usePolling: isInWsl()
     }
   }
 });
