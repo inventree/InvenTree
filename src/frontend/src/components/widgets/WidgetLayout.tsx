@@ -143,7 +143,9 @@ export function WidgetLayout({
             isDraggable={editable}
             isResizable={editable}
           >
-            {items.map(getItems(backgroundColor, classes))}
+            {items.map((item) => {
+              return LayoutItem(item, backgroundColor, classes);
+            })}
           </ReactGridLayout>
         ) : (
           <div>
@@ -153,15 +155,6 @@ export function WidgetLayout({
       </div>
     </div>
   );
-}
-
-function getItems(
-  backgroundColor: boolean,
-  classes: { backgroundItem: string; baseItem: string }
-) {
-  return function (item: any) {
-    return LayoutItem(item, backgroundColor, classes);
-  };
 }
 
 function LayoutItem(
