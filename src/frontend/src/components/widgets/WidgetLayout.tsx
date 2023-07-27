@@ -7,7 +7,7 @@ import {
   createStyles
 } from '@mantine/core';
 import { Menu, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import {
   IconArrowBackUpDouble,
   IconDotsVertical,
@@ -151,6 +151,8 @@ function WidgetControlBar({
   boxShown: boolean;
   boxFnc: () => void;
 }) {
+  useHotkeys([['mod+E', () => editFnc()]]);
+
   return (
     <Group position="right">
       <Menu
