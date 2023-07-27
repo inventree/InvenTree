@@ -1,6 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
+  Alert,
   Center,
   Checkbox,
   Divider,
@@ -16,6 +17,7 @@ import {
 import { Loader } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
+  IconAlertCircle,
   IconBackspace,
   IconRefresh,
   IconSearch,
@@ -399,7 +401,7 @@ export function SearchDrawer({
           <Loader />
         </Center>
       )}
-      {!isFetching && (
+      {!isFetching && !isError && (
         <Stack spacing="md">
           {queryResults.map((query) => (
             <QueryResultGroup
@@ -408,6 +410,17 @@ export function SearchDrawer({
             />
           ))}
         </Stack>
+      )}
+      {isError && (
+        <Alert
+          color="red"
+          radius="sm"
+          variant="light"
+          title={t`Error`}
+          icon={<IconAlertCircle size="1rem" />}
+        >
+          <Trans>An error occurred during search query</Trans>
+        </Alert>
       )}
     </Drawer>
   );
