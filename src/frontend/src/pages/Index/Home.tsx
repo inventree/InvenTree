@@ -11,6 +11,9 @@ import {
 import { useState } from 'react';
 
 import { ApiForm, ApiFormFieldType } from '../../components/forms/ApiForm';
+import { CreateApiForm } from '../../components/forms/CreateApiForm';
+import { DeleteApiForm } from '../../components/forms/DeleteApiForm';
+import { EditApiForm } from '../../components/forms/EditApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 
@@ -18,6 +21,8 @@ export default function Home() {
   const [partFormOpened, setPartFormOpened] = useState(false);
   const [poFormOpened, setPoFormOpened] = useState(false);
   const [companyFormOpened, setCompanyFormOpened] = useState(false);
+  const [stockFormOpened, setStockFormOpened] = useState(false);
+  const [salesOrderFormOpened, setSalesOrderFormOpened] = useState(false);
 
   const partFields: ApiFormFieldType[] = [
     {
@@ -59,6 +64,18 @@ export default function Home() {
     }
   ];
 
+  const salesOrderFields: ApiFormFieldType[] = [
+    {
+      name: 'reference'
+    },
+    {
+      name: 'customer'
+    },
+    {
+      name: 'description'
+    }
+  ];
+
   const companyFields: ApiFormFieldType[] = [
     {
       name: 'name'
@@ -91,39 +108,51 @@ export default function Home() {
         </StylishText>
         <PlaceholderPill />
       </Group>
-      <ApiForm
+      <EditApiForm
         name="part-edit"
         url="/part/"
         pk={1}
         fields={partFields}
-        method="PUT"
         title="Edit Part"
         opened={partFormOpened}
         onClose={() => setPartFormOpened(false)}
-        fetchInitialData={true}
       />
-      <ApiForm
+      <EditApiForm
         name="po-edit"
         url="/order/po/"
         pk={1}
         fields={poFields}
-        method="PUT"
         title="Edit Purchase Order"
         opened={poFormOpened}
         onClose={() => setPoFormOpened(false)}
-        fetchInitialData={true}
       />
-      <ApiForm
+      <EditApiForm
         name="company-edit"
         url="/company/"
         pk={1}
         fields={companyFields}
-        method="PUT"
         title="Edit Company"
         opened={companyFormOpened}
         onClose={() => setCompanyFormOpened(false)}
-        fetchInitialData={true}
       />
+      <DeleteApiForm
+        name="stock-delete"
+        url="/stock/"
+        title="Delete Stock Item"
+        pk={1}
+        fields={[]}
+        opened={stockFormOpened}
+        onClose={() => setStockFormOpened(false)}
+      />
+      <CreateApiForm
+        name="sales-order-create"
+        url="/order/so/"
+        title="Create Sales Order"
+        fields={salesOrderFields}
+        opened={salesOrderFormOpened}
+        onClose={() => setSalesOrderFormOpened(false)}
+      />
+
       <Stack align="flex-start" spacing="xs">
         <Button
           onClick={() => setPartFormOpened(true)}
@@ -145,6 +174,20 @@ export default function Home() {
           onClick={() => setCompanyFormOpened(true)}
         >
           Edit Company Form
+        </Button>
+        <Button
+          variant="outline"
+          color="green"
+          onClick={() => setSalesOrderFormOpened(true)}
+        >
+          Create Sales Order Form
+        </Button>
+        <Button
+          variant="outline"
+          color="red"
+          onClick={() => setStockFormOpened(true)}
+        >
+          Delete Stock Item Form
         </Button>
       </Stack>
     </>

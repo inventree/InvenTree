@@ -32,6 +32,7 @@ export type ApiFormFieldType = {
   name: string;
   label?: string;
   value?: any;
+  default?: any;
   icon?: ReactNode;
   fieldType?: string;
   api_url?: string;
@@ -249,8 +250,7 @@ function ApiFormField({
 }
 
 /**
- * An ApiForm component is a modal form which is rendered dynamically,
- * based on an API endpoint.
+ * Properties for the ApiForm component
  * @param url : The API endpoint to fetch the form from.
  * @param fields : The fields to render in the form.
  * @param opened : Whether the form is opened or not.
@@ -258,21 +258,7 @@ function ApiFormField({
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
  */
-export function ApiForm({
-  name,
-  url,
-  pk,
-  title,
-  fields,
-  opened,
-  onClose,
-  onFormSuccess,
-  onFormError,
-  cancelText = t`Cancel`,
-  submitText = t`Submit`,
-  method = 'PUT',
-  fetchInitialData = false
-}: {
+export interface ApiFormProps {
   name: string;
   url: string;
   pk?: number;
@@ -280,13 +266,22 @@ export function ApiForm({
   fields: ApiFormFieldType[];
   cancelText?: string;
   submitText?: string;
+  submitColor?: string;
+  cancelColor?: string;
   fetchInitialData?: boolean;
   method?: string;
   opened: boolean;
   onClose?: () => void;
   onFormSuccess?: () => void;
   onFormError?: () => void;
-}) {
+}
+
+/**
+ * An ApiForm component is a modal form which is rendered dynamically,
+ * based on an API endpoint.
+
+ */
+export function ApiForm(props: ApiFormProps) {
   // Form state
   const form = useForm({});
 
@@ -300,8 +295,8 @@ export function ApiForm({
 
   // Query manager for retrieving form definition from the server
   const definitionQuery = useQuery({
-    enabled: opened && !!url,
-    queryKey: ['form-definition', name, url, pk],
+    enabled: props.opened && !!props.url,
+    queryKey: ['form-definition', name, props.url, props.pk],
     queryFn: async () => {
       // Clear form construction error field
       setError('');
@@ -320,8 +315,12 @@ export function ApiForm({
 
   // Query manager for retrieiving initial data from the server
   const initialDataQuery = useQuery({
-    enabled: fetchInitialData && opened && !!url && fieldDefinitions.length > 0,
-    queryKey: ['form-initial-data', name, url, pk],
+    enabled:
+      props.fetchInitialData &&
+      props.opened &&
+      !!props.url &&
+      fieldDefinitions.length > 0,
+    queryKey: ['form-initial-data', name, props.url, props.pk],
     queryFn: async () => {
       return api
         .get(getUrl())
@@ -357,10 +356,14 @@ export function ApiForm({
 
   // Construct a fully-qualified URL based on the provided details
   function getUrl(): string {
-    let u = url;
+    if (!props.url) {
+      return '';
+    }
 
-    if (pk && pk > 0) {
-      u += `${pk}/`;
+    let u = props.url;
+
+    if (props.pk && props.pk > 0) {
+      u += `${props.pk}/`;
     }
 
     return u;
@@ -374,10 +377,14 @@ export function ApiForm({
   function extractFieldDefinitions(
     response: AxiosResponse
   ): ApiFormFieldType[] {
-    let actions = response.data?.actions[method.toUpperCase()] || [];
+    if (!props.method) {
+      return [];
+    }
+
+    let actions = response.data?.actions[props.method.toUpperCase()] || [];
 
     if (actions.length == 0) {
-      setError(`Permission denied for ${method} at ${url}`);
+      setError(`Permission denied for ${props.method} at ${props.url}`);
       return [];
     }
 
@@ -389,7 +396,7 @@ export function ApiForm({
         name: fieldName,
         label: field.label,
         description: field.help_text,
-        value: field.value,
+        value: field.value || field.default,
         fieldType: field.type,
         required: field.required,
         placeholder: field.placeholder,
@@ -405,11 +412,11 @@ export function ApiForm({
     <Modal
       size="xl"
       radius="sm"
-      opened={opened}
+      opened={props.opened}
       onClose={() => {
-        onClose ? onClose() : null;
+        props.onClose ? props.onClose() : null;
       }}
-      title={title}
+      title={props.title}
     >
       <Stack>
         <Divider />
@@ -430,7 +437,7 @@ export function ApiForm({
           {canRender && (
             <ScrollArea>
               <Stack spacing="md">
-                {fields.map((field) => (
+                {props.fields.map((field) => (
                   <ApiFormField
                     key={field.name}
                     field={field}
@@ -447,19 +454,24 @@ export function ApiForm({
         </Stack>
         <Divider />
         <Group position="right">
-          <Button onClick={onClose} variant="outline" radius="sm" color="red">
-            {cancelText}
+          <Button
+            onClick={props.onClose}
+            variant="outline"
+            radius="sm"
+            color={props.cancelColor ?? 'blue'}
+          >
+            {props.cancelText ?? `Cancel`}
           </Button>
           <Button
             onClick={() => null}
             variant="outline"
             radius="sm"
-            color="green"
+            color={props.submitColor ?? 'green'}
             disabled={!canSubmit}
           >
             <Group position="right" spacing={5} noWrap={true}>
               <Loader size="xs" />
-              {submitText}
+              {props.submitText ?? `Submit`}
             </Group>
           </Button>
         </Group>
