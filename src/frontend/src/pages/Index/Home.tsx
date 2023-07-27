@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro';
-import { Group, Stack } from '@mantine/core';
+import { Alert, Group, Stack } from '@mantine/core';
 import { Button } from '@mantine/core';
 import {
   IconBuilding,
@@ -143,6 +143,10 @@ export default function Home() {
         fields={[]}
         opened={stockFormOpened}
         onClose={() => setStockFormOpened(false)}
+        preFormContent={<Alert color="red">Are you sure?</Alert>}
+        postFormContentFunc={() => (
+          <Alert color="blue">Post form content!</Alert>
+        )}
       />
       <CreateApiForm
         name="sales-order-create"

@@ -38,6 +38,10 @@ export interface ApiFormProps {
   fetchInitialData?: boolean;
   method?: string;
   opened: boolean;
+  preFormContent?: JSX.Element;
+  preFormContentFunc?: () => JSX.Element;
+  postFormContent?: JSX.Element;
+  postFormContentFunc?: () => JSX.Element;
   onClose?: () => void;
   onFormSuccess?: () => void;
   onFormError?: () => void;
@@ -201,6 +205,8 @@ export function ApiForm(props: ApiFormProps) {
               {error}
             </Alert>
           )}
+          {props.preFormContent && props.preFormContent}
+          {props.preFormContentFunc ? props.preFormContentFunc() : null}
           {canRender && (
             <ScrollArea>
               <Stack spacing="md">
@@ -218,6 +224,8 @@ export function ApiForm(props: ApiFormProps) {
               </Stack>
             </ScrollArea>
           )}
+          {props.postFormContent && props.postFormContent}
+          {props.postFormContentFunc ? props.postFormContentFunc() : null}
         </Stack>
         <Divider />
         <Group position="right">
