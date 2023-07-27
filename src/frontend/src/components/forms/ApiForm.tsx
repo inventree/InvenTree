@@ -9,7 +9,7 @@ import {
   TextInput
 } from '@mantine/core';
 import { Button, Center, Group, Loader, Stack, Text } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { UseFormReturnType, useForm } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
@@ -42,10 +42,12 @@ export type ApiFormFieldType = {
  * Render an individual form field
  */
 function ApiFormField({
+  form,
   field,
   definitions,
   onValueChange
 }: {
+  form: UseFormReturnType<Record<string, unknown>>;
   field: ApiFormFieldType;
   definitions: ApiFormFieldType[];
   onValueChange: (fieldName: string, value: any) => void;
@@ -63,6 +65,17 @@ function ApiFormField({
     // Format the errors
     if (def.errors?.length == 1) {
       def.error = def.errors[0];
+    } else if (def.errors?.length ?? 0 > 1) {
+      // TODO: Build a custom error stack?
+    } else {
+      def.error = null;
+    }
+
+    // Retrieve the latest value from the form
+    let value = form.values[def.name];
+
+    if (value != undefined) {
+      def.value = value;
     }
 
     return def;
@@ -70,7 +83,8 @@ function ApiFormField({
 
   // Callback helper when form value changes
   function onChange(value: any) {
-    onValueChange(definition.name, value);
+    // onValueChange(definition.name, value);
+    form.setValues({ [definition.name]: value });
   }
 
   switch (definition.fieldType) {
@@ -133,7 +147,8 @@ export function ApiForm({
   onFormError,
   cancelText = t`Cancel`,
   submitText = t`Submit`,
-  method = 'PUT'
+  method = 'PUT',
+  fetchInitialData = false
 }: {
   name: string;
   url: string;
@@ -142,6 +157,7 @@ export function ApiForm({
   fields: ApiFormFieldType[];
   cancelText?: string;
   submitText?: string;
+  fetchInitialData?: boolean;
   method?: string;
   opened: boolean;
   onClose?: () => void;
@@ -159,6 +175,7 @@ export function ApiForm({
   // Error observed during form construction
   const [error, setError] = useState<string>('');
 
+  // Query manager for retrieving form definition from the server
   const definitionQuery = useQuery({
     enabled: opened && !!url,
     queryKey: ['form-definition', name, url, pk, fields],
@@ -172,9 +189,26 @@ export function ApiForm({
           return response;
         })
         .catch((error) => {
-          console.error('Error fetching field definitions:', error);
           setError(error.message);
           setFieldDefinitions([]);
+        });
+    }
+  });
+
+  // Query manager for retrieiving initial data from the server
+  const initialDataQuery = useQuery({
+    enabled: fetchInitialData && opened && !!url && fieldDefinitions.length > 0,
+    queryKey: ['form-initial-data', name, url, pk, fields, fieldDefinitions],
+    queryFn: async () => {
+      return api
+        .get(getUrl())
+        .then((response) => {
+          form.setValues(response.data);
+          return response;
+        })
+        .catch((error) => {
+          console.error('Error fetching initial data:', error);
+          setError(error.message);
         });
     }
   });
@@ -274,8 +308,11 @@ export function ApiForm({
                 <ApiFormField
                   key={field.name}
                   field={field}
+                  form={form}
                   definitions={fieldDefinitions}
-                  onValueChange={(fieldName, value) => {}}
+                  onValueChange={(fieldName, value) => {
+                    form.setValues({ [fieldName]: value });
+                  }}
                 />
               ))}
             </Stack>

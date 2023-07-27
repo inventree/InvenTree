@@ -53,6 +53,7 @@ export default function Home() {
         title="Edit Part"
         opened={formOpened}
         onClose={() => setFormOpened(false)}
+        fetchInitialData={true}
       />
       <Button
         onClick={() => setFormOpened(true)}
