@@ -389,7 +389,9 @@ export function ApiForm({
       size="xl"
       radius="sm"
       opened={opened}
-      onClose={onClose}
+      onClose={() => {
+        onClose ? onClose() : null;
+      }}
       title={title}
     >
       <Stack>
