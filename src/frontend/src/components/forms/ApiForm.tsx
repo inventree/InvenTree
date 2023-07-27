@@ -10,6 +10,7 @@ import {
   TextInput
 } from '@mantine/core';
 import { Button, Center, Group, Loader, Stack, Text } from '@mantine/core';
+import { DateInput } from '@mantine/dates';
 import { UseFormReturnType, useForm } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconAlertCircle } from '@tabler/icons-react';
@@ -75,6 +76,17 @@ function constructField({
 
   if (value != undefined) {
     def.value = value;
+  }
+
+  // Change value to a date object if required
+  switch (def.fieldType) {
+    case 'date':
+      if (def.value) {
+        def.value = new Date(def.value);
+      }
+      break;
+    default:
+      break;
   }
 
   return def;
@@ -187,6 +199,15 @@ function ApiFormField({
           radius="sm"
           {...definition}
           onChange={(event) => onChange(event.currentTarget.checked)}
+        />
+      );
+    case 'date':
+      return (
+        <DateInput
+          radius="sm"
+          {...definition}
+          date={undefined}
+          onChange={(value) => onChange(value)}
         />
       );
     case 'integer':

@@ -8,9 +8,10 @@ import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 
 export default function Home() {
-  const [formOpened, setFormOpened] = useState(false);
+  const [partFormOpened, setPartFormOpened] = useState(false);
+  const [poFormOpened, setPoFormOpened] = useState(false);
 
-  const fields: ApiFormFieldType[] = [
+  const partFields: ApiFormFieldType[] = [
     {
       name: 'name'
     },
@@ -37,6 +38,18 @@ export default function Home() {
     }
   ];
 
+  const poFields: ApiFormFieldType[] = [
+    {
+      name: 'reference'
+    },
+    {
+      name: 'supplier'
+    },
+    {
+      name: 'target_date'
+    }
+  ];
+
   return (
     <>
       <Group>
@@ -47,20 +60,39 @@ export default function Home() {
       </Group>
       <ApiForm
         name="part-edit"
-        url="/part/1/"
-        fields={fields}
+        url="/part/"
+        pk={1}
+        fields={partFields}
         method="PUT"
         title="Edit Part"
-        opened={formOpened}
-        onClose={() => setFormOpened(false)}
+        opened={partFormOpened}
+        onClose={() => setPartFormOpened(false)}
+        fetchInitialData={true}
+      />
+      <ApiForm
+        name="po-edit"
+        url="/order/po/"
+        pk={1}
+        fields={poFields}
+        method="PUT"
+        title="Edit Purchase Order"
+        opened={poFormOpened}
+        onClose={() => setPoFormOpened(false)}
         fetchInitialData={true}
       />
       <Button
-        onClick={() => setFormOpened(true)}
+        onClick={() => setPartFormOpened(true)}
         variant="outline"
         color="blue"
       >
         Edit Part Form
+      </Button>
+      <Button
+        variant="outline"
+        color="blue"
+        onClick={() => setPoFormOpened(true)}
+      >
+        Edit Purchase Order Form
       </Button>
     </>
   );
