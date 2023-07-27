@@ -1,6 +1,13 @@
 import { Trans } from '@lingui/macro';
 import { Group, Stack } from '@mantine/core';
 import { Button } from '@mantine/core';
+import {
+  IconBuilding,
+  IconGlobe,
+  IconKey,
+  IconMail,
+  IconUser
+} from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { ApiForm, ApiFormFieldType } from '../../components/forms/ApiForm';
@@ -20,7 +27,8 @@ export default function Home() {
       name: 'description'
     },
     {
-      name: 'keywords'
+      name: 'keywords',
+      icon: <IconKey />
     },
     {
       name: 'category'
@@ -59,13 +67,16 @@ export default function Home() {
       name: 'description'
     },
     {
-      name: 'website'
+      name: 'website',
+      icon: <IconGlobe />
     },
     {
-      name: 'email'
+      name: 'email',
+      icon: <IconMail />
     },
     {
-      name: 'contact'
+      name: 'contact',
+      icon: <IconUser />
     },
     {
       name: 'is_customer'

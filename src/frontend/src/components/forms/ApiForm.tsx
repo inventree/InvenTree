@@ -32,6 +32,7 @@ export type ApiFormFieldType = {
   name: string;
   label?: string;
   value?: any;
+  icon?: ReactNode;
   fieldType?: string;
   api_url?: string;
   model?: string;
@@ -122,7 +123,7 @@ function RelatedModelField({
 
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
-    queryKey: [`related-field-${definition.name}`, definition, searchText],
+    queryKey: [`related-field-${definition.name}`, searchText],
     queryFn: async () => {
       console.log('Searching for', searchText);
     }
@@ -300,7 +301,7 @@ export function ApiForm({
   // Query manager for retrieving form definition from the server
   const definitionQuery = useQuery({
     enabled: opened && !!url,
-    queryKey: ['form-definition', name, url, pk, fields],
+    queryKey: ['form-definition', name, url, pk],
     queryFn: async () => {
       // Clear form construction error field
       setError('');
@@ -320,7 +321,7 @@ export function ApiForm({
   // Query manager for retrieiving initial data from the server
   const initialDataQuery = useQuery({
     enabled: fetchInitialData && opened && !!url && fieldDefinitions.length > 0,
-    queryKey: ['form-initial-data', name, url, pk, fields, fieldDefinitions],
+    queryKey: ['form-initial-data', name, url, pk],
     queryFn: async () => {
       return api
         .get(getUrl())
