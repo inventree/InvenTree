@@ -16,6 +16,21 @@ export default function Home() {
     },
     {
       name: 'description'
+    },
+    {
+      name: 'keywords'
+    },
+    {
+      name: 'category'
+    },
+    {
+      name: 'assembly'
+    },
+    {
+      name: 'trackable'
+    },
+    {
+      name: 'virtual'
     }
   ];
 
