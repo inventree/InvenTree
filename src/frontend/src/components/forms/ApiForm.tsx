@@ -191,7 +191,7 @@ export function ApiForm(props: ApiFormProps) {
     >
       <Stack>
         <Divider />
-        <Stack>
+        <Stack spacing="sm">
           <LoadingOverlay
             visible={definitionQuery.isFetching || initialDataQuery.isFetching}
           />
@@ -209,7 +209,7 @@ export function ApiForm(props: ApiFormProps) {
           {props.preFormContentFunc ? props.preFormContentFunc() : null}
           {canRender && (
             <ScrollArea>
-              <Stack spacing="md">
+              <Stack spacing="xs">
                 {props.fields
                   .filter((field) => !field.hidden)
                   .map((field) => (
