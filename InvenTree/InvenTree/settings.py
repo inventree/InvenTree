@@ -33,7 +33,7 @@ from . import config
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv
+TESTING = 'test' in sys.argv or 'TESTING' in os.environ
 
 if TESTING:
 
@@ -75,6 +75,9 @@ if version_file.exists():
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
+
+ENABLE_CLASSIC_FRONTEND = get_boolean_setting('INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True)
+ENABLE_PLATFORM_FRONTEND = get_boolean_setting('INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True)
 
 # Configure logging settings
 log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
@@ -196,13 +199,14 @@ INSTALLED_APPS = [
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
+    'plugin.apps.PluginAppConfig',          # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
     'label.apps.LabelConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
-    'plugin.apps.PluginAppConfig',
+    'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
@@ -276,6 +280,7 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
+    "sesame.backends.ModelBackend",                             # Magic link login django-sesame
 ])
 
 DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
@@ -601,6 +606,10 @@ DATABASES = {
 REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
 
+# Magic login django-sesame
+SESAME_MAX_AGE = 300
+LOGIN_REDIRECT_URL = "/platform/logged-in/"
+
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
 
@@ -757,14 +766,15 @@ LANGUAGES = [
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
     ('pt', _('Portuguese')),
-    ('pt-BR', _('Portuguese (Brazilian)')),
+    ('pt-br', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
     ('sl', _('Slovenian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh-hans', _('Chinese')),
+    ('zh-hans', _('Chinese (Simplified)')),
+    ('zh-hant', _('Chinese (Traditional)')),
 ]
 
 # Testing interface translations
@@ -821,6 +831,10 @@ EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
 EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
 
 DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
+
+# If "from" email not specified, default to the username
+if not DEFAULT_FROM_EMAIL:
+    DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
 
 EMAIL_USE_LOCALTIME = False
 EMAIL_TIMEOUT = 60

@@ -21,6 +21,7 @@ django-mptt==0.11.0                     # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
 django-q2                               # Background task scheduling
 django-q-sentry                         # sentry.io integration for django-q
+django-sesame                           # Magic link authentication
 django-sql-utils                        # Advanced query annotation / aggregation
 django-sslserver                        # Secure HTTP development server
 django-stdimage<6.0.0                   # Advanced ImageField management  # FIXED 2022-06-29 6.0.0 breaks serialization for django-q
@@ -40,6 +41,7 @@ pillow==9.5.0                           # Image manipulation # FIXED 2023-07-04 
 pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
+pyyaml>=6.0.1                           # YAML parsing
 qrcode[pil]                             # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
 regex                                   # Advanced regular expressions
