@@ -11,6 +11,7 @@ import {
 } from '@mantine/core';
 import { Button, Center, Group, Loader, Stack, Text } from '@mantine/core';
 import { UseFormReturnType, useForm } from '@mantine/form';
+import { useDebouncedValue } from '@mantine/hooks';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
@@ -30,6 +31,8 @@ export type ApiFormFieldType = {
   label?: string;
   value?: any;
   fieldType?: string;
+  api_url?: string;
+  model?: string;
   required?: boolean;
   hidden?: boolean;
   disabled?: boolean;
@@ -101,7 +104,32 @@ function RelatedModelField({
     [form.values, field, definitions]
   );
 
-  return <Select withinPortal={true} {...definition} data={[]} />;
+  const [value, setValue] = useState<string>('');
+  const [searchText] = useDebouncedValue(value, 500);
+
+  const selectQuery = useQuery({
+    enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
+    queryKey: [`related-field-${definition.name}`, definition, searchText],
+    queryFn: async () => {
+      console.log('Searching for', searchText);
+    }
+  });
+
+  function onSearchChange(value: string) {
+    console.log('Search change:', value, definition.api_url, definition.model);
+    setValue(value);
+  }
+
+  return (
+    <Select
+      withinPortal={true}
+      searchable={true}
+      onSearchChange={onSearchChange}
+      data={[]}
+      clearable={!definition.required}
+      {...definition}
+    />
+  );
 }
 
 /**
@@ -326,7 +354,9 @@ export function ApiForm({
         value: field.value,
         fieldType: field.type,
         required: field.required,
-        placeholder: field.placeholder
+        placeholder: field.placeholder,
+        api_url: field.api_url,
+        model: field.model
       });
     }
 
