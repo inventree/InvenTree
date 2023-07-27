@@ -879,7 +879,7 @@ class CommonTest(InvenTreeAPITestCase):
         from plugin import registry
 
         # set flag true
-        common.models.InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', False, None)
+        common.models.InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
 
         # reload the app
         registry.reload_plugins()

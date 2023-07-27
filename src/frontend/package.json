@@ -30,6 +30,7 @@
         "axios": "^1.4.0",
         "dayjs": "^1.11.9",
         "html5-qrcode": "^2.3.8",
+        "mantine-datatable": "^2.9.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.14.2",

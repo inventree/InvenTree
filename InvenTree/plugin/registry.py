@@ -11,7 +11,7 @@ import os
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, List, OrderedDict
+from typing import Any, Dict, List, OrderedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -54,13 +54,14 @@ class PluginsRegistry:
         self.plugins_inactive: Dict[str, InvenTreePlugin] = {}  # List of inactive instances
         self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
-        self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
-        self.mixin_modules: Dict[str, any] = {}                 # Holds all discovered mixins
+        self.plugin_modules: List[InvenTreePlugin] = []         # Holds all discovered plugins
+        self.mixin_modules: Dict[str, Any] = {}                 # Holds all discovered mixins
 
         self.errors = {}                                        # Holds discovering errors
 
         # flags
         self.is_loading = False                                 # Are plugins being loaded right now
+        self.plugins_loaded = False                             # Marks if the registry fully loaded and all django apps are reloaded
         self.apps_loading = True                                # Marks if apps were reloaded yet
 
         self.installed_apps = []                                # Holds all added plugin_paths
@@ -161,6 +162,9 @@ class PluginsRegistry:
             if full_reload:
                 full_reload = False
 
+        # ensure plugins_loaded is True
+        self.plugins_loaded = True
+
         # Remove maintenance mode
         if not _maintenance:
             set_maintenance_mode(False)
@@ -212,7 +216,9 @@ class PluginsRegistry:
         logger.info('Start reloading plugins')
 
         with maintenance_mode_on():
+            self.plugins_loaded = False
             self.unload_plugins(force_reload=force_reload)
+            self.plugins_loaded = True
             self.load_plugins(full_reload=full_reload)
 
         logger.info('Finished reloading plugins')

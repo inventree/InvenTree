@@ -3,6 +3,9 @@ import { ActionIcon } from '@mantine/core';
 import { openContextModal } from '@mantine/modals';
 import { IconQrcode } from '@tabler/icons-react';
 
+/**
+ * A button which opens the QR code scanner modal
+ */
 export function ScanButton() {
   return (
     <ActionIcon
