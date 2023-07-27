@@ -47,8 +47,7 @@ const vals: LayoutItemType[] = [
     h: 6,
     x: 0,
     y: 9
-  },
-  { i: 5, val: 'E', w: 2, h: 3, x: 6, y: 7 }
+  }
 ];
 
 export default function Home() {
