@@ -224,8 +224,8 @@ function ApiFormField({
     default:
       return (
         <Alert color="red" title="Error">
-          Unknown field type for field '{definition.name}':{' '}
-          {definition.fieldType}
+          Unknown field type for field '{definition.name}': '
+          {definition.fieldType}'
         </Alert>
       );
   }
