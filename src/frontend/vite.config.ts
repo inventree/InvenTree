@@ -2,7 +2,7 @@ import react from '@vitejs/plugin-react';
 import { platform } from 'node:os';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 
-const isInWsl = () => platform().includes('WSL');
+const IS_IN_WSL = platform().includes('WSL');
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -27,7 +27,9 @@ export default defineConfig({
       }
     },
     watch: {
-      usePolling: isInWsl()
+      // use polling only for WSL as the file system doesn't trigger notifications for Linux apps
+      // ref: https://github.com/vitejs/vite/issues/1153#issuecomment-785467271
+      usePolling: IS_IN_WSL
     }
   }
 });
