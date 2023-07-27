@@ -64,7 +64,7 @@ export function WidgetLayout({
 }) {
   const [layouts, setLayouts] = useState({});
   const [editable, setEditable] = useDisclosure(false);
-  const [backgroundColor, setBackgroundColor] = useDisclosure(true);
+  const [boxShown, setBoxShown] = useDisclosure(true);
   const { classes } = useItemStyle();
 
   useEffect(() => {
@@ -109,10 +109,10 @@ export function WidgetLayout({
     <div>
       <WidgetControlBar
         editable={editable}
-        setEditable={setEditable}
+        editFnc={setEditable.toggle}
         resetLayout={resetLayout}
-        backgroundColor={backgroundColor}
-        setBackgroundColor={setBackgroundColor}
+        boxShown={boxShown}
+        boxFnc={setBoxShown.toggle}
       />
       {layouts ? (
         <ReactGridLayout
@@ -126,7 +126,7 @@ export function WidgetLayout({
           isResizable={editable}
         >
           {items.map((item) => {
-            return LayoutItem(item, backgroundColor, classes);
+            return LayoutItem(item, boxShown, classes);
           })}
         </ReactGridLayout>
       ) : (
@@ -140,27 +140,17 @@ export function WidgetLayout({
 
 function WidgetControlBar({
   editable,
-  setEditable,
+  editFnc,
   resetLayout,
-  backgroundColor,
-  setBackgroundColor
+  boxShown,
+  boxFnc
 }: {
   editable: boolean;
-  setEditable: {
-    readonly open: () => void;
-    readonly close: () => void;
-    readonly toggle: () => void;
-  };
+  editFnc: () => void;
   resetLayout: () => void;
-  backgroundColor: boolean;
-  setBackgroundColor: {
-    readonly open: () => void;
-    readonly close: () => void;
-    readonly toggle: () => void;
-  };
+  boxShown: boolean;
+  boxFnc: () => void;
 }) {
-  const { classes } = useItemStyle();
-
   return (
     <Group position="right">
       <Menu
@@ -198,7 +188,7 @@ function WidgetControlBar({
             icon={
               <IconLayout2 size={14} color={editable ? 'red' : undefined} />
             }
-            onClick={setEditable.toggle}
+            onClick={editFnc}
             rightSection={
               <Text size="xs" color="dimmed">
                 ⌘E
@@ -215,13 +205,13 @@ function WidgetControlBar({
           </Menu.Label>
           <Menu.Item
             icon={
-              backgroundColor ? (
+              boxShown ? (
                 <IconSquareCheck size={14} />
               ) : (
                 <IconSquare size={14} />
               )
             }
-            onClick={setBackgroundColor.toggle}
+            onClick={boxFnc}
           >
             <Trans>Show Boxes</Trans>
           </Menu.Item>
