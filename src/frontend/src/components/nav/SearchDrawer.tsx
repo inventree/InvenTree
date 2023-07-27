@@ -422,6 +422,17 @@ export function SearchDrawer({
           <Trans>An error occurred during search query</Trans>
         </Alert>
       )}
+      {searchText && !isFetching && !isError && queryResults.length == 0 && (
+        <Alert
+          color="blue"
+          radius="sm"
+          variant="light"
+          title={t`No results`}
+          icon={<IconSearch size="1rem" />}
+        >
+          <Trans>No results available for search query</Trans>
+        </Alert>
+      )}
     </Drawer>
   );
 }
