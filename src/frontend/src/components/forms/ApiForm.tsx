@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
-import { Alert, Divider, Modal } from '@mantine/core';
+import { Alert, Divider, Modal, ScrollArea, TextInput } from '@mantine/core';
 import { Button, Center, Group, Loader, Stack, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useState } from 'react';
 import { useMemo } from 'react';
 
@@ -23,10 +23,12 @@ export type ApiFormFieldType = {
   type?: string;
   required?: boolean;
   hidden?: boolean;
+  disabled?: boolean;
   placeholder?: string;
-  help_text?: string;
-  icon?: string;
+  description?: string;
+  icon?: ReactNode;
   errors?: string[];
+  error?: any;
 };
 
 /**
@@ -44,13 +46,23 @@ function ApiFormField({
   const definition: ApiFormFieldType = useMemo(() => {
     let def = definitions.find((def) => def.name == field.name) || field;
 
-    return {
+    def = {
       ...def,
       ...field
     };
+
+    // Format the errors
+    if (def.errors?.length == 1) {
+      def.error = def.errors[0];
+    }
+
+    return def;
   }, [field, definitions]);
 
   switch (definition.type) {
+    case 'url':
+    case 'string':
+      return <TextInput {...definition} />;
     default:
       return (
         <Alert color="red" title="Error">
@@ -138,6 +150,15 @@ export function ApiForm({
     );
   }, [definitionQuery, error]);
 
+  // State variable to determine if the form can be submitted
+  const [canSubmit, setCanSubmit] = useState<boolean>(false);
+
+  // Update the canSubmit state variable on status change
+  useEffect(() => {
+    setCanSubmit(canRender && true);
+    // TODO: This will be updated when we have a query manager for form submission
+  }, [canRender]);
+
   // Construct a fully-qualified URL based on the provided details
   function getUrl(): string {
     let u = url;
@@ -171,7 +192,7 @@ export function ApiForm({
       definitions.push({
         name: fieldName,
         label: field.label,
-        help_text: field.help_text,
+        description: field.help_text,
         value: field.value,
         type: field.type,
         required: field.required,
@@ -209,15 +230,17 @@ export function ApiForm({
           </Alert>
         )}
         {canRender && (
-          <Stack spacing="md">
-            {fields.map((field) => (
-              <ApiFormField
-                key={field.name}
-                field={field}
-                definitions={fieldDefinitions}
-              />
-            ))}
-          </Stack>
+          <ScrollArea>
+            <Stack spacing="md">
+              {fields.map((field) => (
+                <ApiFormField
+                  key={field.name}
+                  field={field}
+                  definitions={fieldDefinitions}
+                />
+              ))}
+            </Stack>
+          </ScrollArea>
         )}
         <Divider />
         <Group position="right">
@@ -229,8 +252,12 @@ export function ApiForm({
             variant="outline"
             radius="sm"
             color="green"
+            disabled={!canSubmit}
           >
-            {submitText}
+            <Group position="right" spacing={5} noWrap={true}>
+              <Loader size="xs" />
+              {submitText}
+            </Group>
           </Button>
         </Group>
       </Stack>
