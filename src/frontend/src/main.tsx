@@ -1,4 +1,3 @@
-import { t } from '@lingui/macro';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
@@ -24,13 +23,13 @@ window.INVENTREE_SETTINGS = {
   server_list: {
     'mantine-cqj63coxn': {
       host: `${window.location.origin}/api/`,
-      name: t`Current Server`
+      name: 'Current Server'
     },
     ...(IS_DEV_OR_DEMO
       ? {
           'mantine-u56l5jt85': {
             host: 'https://demo.inventree.org/api/',
-            name: t`InvenTree Demo`
+            name: 'InvenTree Demo'
           }
         }
       : {})
