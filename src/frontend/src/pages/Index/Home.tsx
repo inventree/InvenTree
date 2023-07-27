@@ -81,7 +81,8 @@ export default function Home() {
       name: 'name'
     },
     {
-      name: 'description'
+      name: 'description',
+      hidden: true
     },
     {
       name: 'website',

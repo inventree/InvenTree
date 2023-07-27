@@ -210,17 +210,19 @@ export function ApiForm(props: ApiFormProps) {
           {canRender && (
             <ScrollArea>
               <Stack spacing="md">
-                {props.fields.map((field) => (
-                  <ApiFormField
-                    key={field.name}
-                    field={field}
-                    form={form}
-                    definitions={fieldDefinitions}
-                    onValueChange={(fieldName, value) => {
-                      form.setValues({ [fieldName]: value });
-                    }}
-                  />
-                ))}
+                {props.fields
+                  .filter((field) => !field.hidden)
+                  .map((field) => (
+                    <ApiFormField
+                      key={field.name}
+                      field={field}
+                      form={form}
+                      definitions={fieldDefinitions}
+                      onValueChange={(fieldName, value) => {
+                        form.setValues({ [fieldName]: value });
+                      }}
+                    />
+                  ))}
               </Stack>
             </ScrollArea>
           )}
