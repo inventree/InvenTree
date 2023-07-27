@@ -43,10 +43,12 @@ export type ApiFormFieldType = {
  */
 function ApiFormField({
   field,
-  definitions
+  definitions,
+  onValueChange
 }: {
   field: ApiFormFieldType;
   definitions: ApiFormFieldType[];
+  onValueChange: (fieldName: string, value: any) => void;
 }) {
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
@@ -66,17 +68,39 @@ function ApiFormField({
     return def;
   }, [field, definitions]);
 
+  // Callback helper when form value changes
+  function onChange(value: any) {
+    onValueChange(definition.name, value);
+  }
+
   switch (definition.fieldType) {
     case 'url':
     case 'string':
-      return <TextInput {...definition} />;
+      return (
+        <TextInput
+          {...definition}
+          onChange={(event) => onChange(event.currentTarget.value)}
+        />
+      );
     case 'boolean':
-      return <Checkbox radius="sm" {...definition} />;
+      return (
+        <Checkbox
+          radius="sm"
+          {...definition}
+          onChange={(event) => onChange(event.currentTarget.checked)}
+        />
+      );
     case 'integer':
     case 'decimal':
     case 'float':
     case 'number':
-      return <NumberInput radius="sm" {...definition} />;
+      return (
+        <NumberInput
+          radius="sm"
+          {...definition}
+          onChange={(value: number) => onChange(value)}
+        />
+      );
     default:
       return (
         <Alert color="red" title="Error">
@@ -251,6 +275,7 @@ export function ApiForm({
                   key={field.name}
                   field={field}
                   definitions={fieldDefinitions}
+                  onValueChange={(fieldName, value) => {}}
                 />
               ))}
             </Stack>
