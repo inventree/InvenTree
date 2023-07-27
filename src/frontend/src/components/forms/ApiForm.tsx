@@ -39,12 +39,25 @@ function ApiFormField({
   field: ApiFormFieldType;
   definitions: ApiFormFieldType[];
 }) {
-  useEffect(() => {
-    console.log('field:', field);
-    console.log('definitions:', definitions);
-  }, []);
+  // Extract field definition from provided data
+  // Where user has provided specific data, override the API definition
+  const definition: ApiFormFieldType = useMemo(() => {
+    let def = definitions.find((def) => def.name == field.name) || field;
 
-  return <Text>{field.name}</Text>;
+    return {
+      ...def,
+      ...field
+    };
+  }, [field, definitions]);
+
+  switch (definition.type) {
+    default:
+      return (
+        <Alert color="red" title="Error">
+          Unknown field type for field '{definition.name}': {definition.type}
+        </Alert>
+      );
+  }
 }
 
 /**
