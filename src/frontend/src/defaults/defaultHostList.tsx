@@ -2,14 +2,5 @@ import { t } from '@lingui/macro';
 
 import { HostList } from '../states/states';
 
-export const defaultHostList: HostList =
-  Object.keys(window.INVENTREE_SETTINGS.server_list).length > 0
-    ? window.INVENTREE_SETTINGS.server_list
-    : {
-        'mantine-cqj63coxn': {
-          host: `${window.location.origin}/api/`,
-          name: t`Current Server`
-        }
-      };
-export const defaultHostKey =
-  window.INVENTREE_SETTINGS.default_server || 'mantine-cqj63coxn';
+export const defaultHostList: HostList = window.INVENTREE_SETTINGS.server_list;
+export const defaultHostKey = window.INVENTREE_SETTINGS.default_server;
