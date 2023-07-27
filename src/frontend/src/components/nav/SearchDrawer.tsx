@@ -17,6 +17,7 @@ import { Loader } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconBackspace,
+  IconRefresh,
   IconSearch,
   IconSettings,
   IconX
@@ -344,7 +345,7 @@ export function SearchDrawer({
             radius="xs"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
-            icon={<IconSearch size="0.8rem" onClick={() => refetch()} />}
+            icon={<IconSearch size="0.8rem" />}
             rightSection={
               value && (
                 <IconBackspace color="red" onClick={() => setValue('')} />
@@ -352,6 +353,14 @@ export function SearchDrawer({
             }
             styles={{ root: { width: '100%' } }}
           />
+          <ActionIcon
+            size="lg"
+            variant="outline"
+            radius="xs"
+            onClick={() => refetch()}
+          >
+            <IconRefresh />
+          </ActionIcon>
           <Menu>
             <Menu.Target>
               <ActionIcon size="lg" variant="outline" radius="xs">
