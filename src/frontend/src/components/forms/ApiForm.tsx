@@ -206,7 +206,7 @@ function ApiFormField({
         <DateInput
           radius="sm"
           {...definition}
-          date={undefined}
+          clearable={!definition.required}
           onChange={(value) => onChange(value)}
         />
       );
