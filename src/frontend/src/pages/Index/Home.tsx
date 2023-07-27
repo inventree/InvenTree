@@ -60,7 +60,7 @@ export default function Home() {
         variant="outline"
         color="blue"
       >
-        Open Form
+        Edit Part Form
       </Button>
     </>
   );

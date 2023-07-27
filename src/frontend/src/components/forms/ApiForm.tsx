@@ -6,6 +6,7 @@ import {
   Modal,
   NumberInput,
   ScrollArea,
+  Select,
   TextInput
 } from '@mantine/core';
 import { Button, Center, Group, Loader, Stack, Text } from '@mantine/core';
@@ -38,6 +39,71 @@ export type ApiFormFieldType = {
   error?: any;
 };
 
+/*
+ * Build a complete field definition based on the provided data
+ */
+function constructField({
+  form,
+  field,
+  definitions
+}: {
+  form: UseFormReturnType<Record<string, unknown>>;
+  field: ApiFormFieldType;
+  definitions: ApiFormFieldType[];
+}) {
+  let def = definitions.find((def) => def.name == field.name) || field;
+
+  def = {
+    ...def,
+    ...field
+  };
+
+  // Format the errors
+  if (def.errors?.length == 1) {
+    def.error = def.errors[0];
+  } else if (def.errors?.length ?? 0 > 1) {
+    // TODO: Build a custom error stack?
+  } else {
+    def.error = null;
+  }
+
+  // Retrieve the latest value from the form
+  let value = form.values[def.name];
+
+  if (value != undefined) {
+    def.value = value;
+  }
+
+  return def;
+}
+
+/**
+ * Render a 'select' field for searching the database against a particular model type
+ */
+function RelatedModelField({
+  form,
+  field,
+  definitions
+}: {
+  form: UseFormReturnType<Record<string, unknown>>;
+  field: ApiFormFieldType;
+  definitions: ApiFormFieldType[];
+}) {
+  // Extract field definition from provided data
+  // Where user has provided specific data, override the API definition
+  const definition: ApiFormFieldType = useMemo(
+    () =>
+      constructField({
+        form: form,
+        field: field,
+        definitions: definitions
+      }),
+    [form.values, field, definitions]
+  );
+
+  return <Select withinPortal={true} {...definition} data={[]} />;
+}
+
 /**
  * Render an individual form field
  */
@@ -54,32 +120,15 @@ function ApiFormField({
 }) {
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(() => {
-    let def = definitions.find((def) => def.name == field.name) || field;
-
-    def = {
-      ...def,
-      ...field
-    };
-
-    // Format the errors
-    if (def.errors?.length == 1) {
-      def.error = def.errors[0];
-    } else if (def.errors?.length ?? 0 > 1) {
-      // TODO: Build a custom error stack?
-    } else {
-      def.error = null;
-    }
-
-    // Retrieve the latest value from the form
-    let value = form.values[def.name];
-
-    if (value != undefined) {
-      def.value = value;
-    }
-
-    return def;
-  }, [field, definitions]);
+  const definition: ApiFormFieldType = useMemo(
+    () =>
+      constructField({
+        form: form,
+        field: field,
+        definitions: definitions
+      }),
+    [form.values, field, definitions]
+  );
 
   // Callback helper when form value changes
   function onChange(value: any) {
@@ -88,6 +137,14 @@ function ApiFormField({
   }
 
   switch (definition.fieldType) {
+    case 'related field':
+      return (
+        <RelatedModelField
+          form={form}
+          field={definition}
+          definitions={definitions}
+        />
+      );
     case 'url':
     case 'string':
       return (
