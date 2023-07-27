@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_SERVER_SELECTOR_DEV: string;
+  readonly VITE_NETLIFY: string;
 }
 
 interface ImportMeta {

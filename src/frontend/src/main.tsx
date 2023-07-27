@@ -16,8 +16,9 @@ declare global {
   }
 }
 
-const IS_SERVER_SELECTOR_DEV =
-  import.meta.env.DEV || import.meta.env.VITE_SERVER_SELECTOR_DEV === 'true';
+const IS_DEV = import.meta.env.DEV;
+const IS_NETLIFY = import.meta.env.VITE_NETLIFY === 'true';
+const IS_SERVER_SELECTOR_DEV = IS_DEV || IS_NETLIFY;
 
 window.INVENTREE_SETTINGS = {
   server_list: {
@@ -34,7 +35,7 @@ window.INVENTREE_SETTINGS = {
         }
       : {})
   },
-  default_server: 'mantine-cqj63coxn',
+  default_server: IS_NETLIFY ? 'mantine-u56l5jt85' : 'mantine-cqj63coxn', // use demo server for netlify previews
   show_server_selector: IS_SERVER_SELECTOR_DEV,
 
   // merge in settings that are already set via django's spa_view or for development
