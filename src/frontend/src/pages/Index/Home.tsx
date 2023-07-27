@@ -3,14 +3,14 @@ import { Group } from '@mantine/core';
 import { Button } from '@mantine/core';
 import { useState } from 'react';
 
-import { ApiForm, ApiFormField } from '../../components/forms/ApiForm';
+import { ApiForm, ApiFormFieldType } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 
 export default function Home() {
   const [formOpened, setFormOpened] = useState(false);
 
-  const fields: ApiFormField[] = [
+  const fields: ApiFormFieldType[] = [
     {
       name: 'name'
     },
@@ -31,6 +31,7 @@ export default function Home() {
         name="part-edit"
         url="/part/1/"
         fields={fields}
+        method="PUT"
         title="Edit Part"
         opened={formOpened}
         onClose={() => setFormOpened(false)}
