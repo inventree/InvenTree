@@ -1,6 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
+  Center,
   Checkbox,
   Divider,
   Drawer,
@@ -331,6 +332,7 @@ export function SearchDrawer({
   return (
     <Drawer
       opened={opened}
+      size="lg"
       onClose={closeDrawer}
       position="right"
       withCloseButton={false}
@@ -383,7 +385,11 @@ export function SearchDrawer({
         </Group>
       }
     >
-      {isFetching && <Loader />}
+      {isFetching && (
+        <Center>
+          <Loader />
+        </Center>
+      )}
       {!isFetching && (
         <Stack spacing="md">
           {queryResults.map((query) => (
