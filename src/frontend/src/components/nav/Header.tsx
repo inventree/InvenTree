@@ -1,5 +1,6 @@
-import { Container, Group, Tabs } from '@mantine/core';
+import { ActionIcon, Container, Group, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { IconSearch } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { navTabs as mainNavTabs } from '../../defaults/links';
@@ -8,22 +9,32 @@ import { ScanButton } from '../items/ScanButton';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
+import { SearchDrawer } from './SearchDrawer';
 
 export function Header() {
   const { classes } = InvenTreeStyle();
-  const [drawerOpened, { open: openDrawer, close }] = useDisclosure(false);
+  const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
+    useDisclosure(false);
+  const [
+    searchDrawerOpened,
+    { open: openSearchDrawer, close: closeSearchDrawer }
+  ] = useDisclosure(false);
 
   return (
     <div className={classes.layoutHeader}>
-      <NavigationDrawer opened={drawerOpened} close={close} />
+      <SearchDrawer opened={searchDrawerOpened} onClose={closeSearchDrawer} />
+      <NavigationDrawer opened={navDrawerOpened} close={closeNavDrawer} />
       <Container className={classes.layoutHeaderSection} size={'xl'}>
         <Group position="apart">
           <Group>
-            <NavHoverMenu openDrawer={openDrawer} />
+            <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
           <Group>
             <ScanButton />
+            <ActionIcon onClick={openSearchDrawer}>
+              <IconSearch />
+            </ActionIcon>
             <MainMenu />
           </Group>
         </Group>
