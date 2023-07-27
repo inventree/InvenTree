@@ -3,6 +3,7 @@ import {
   Alert,
   Checkbox,
   Divider,
+  LoadingOverlay,
   Modal,
   NumberInput,
   ScrollArea,
@@ -396,38 +397,38 @@ export function ApiForm({
     >
       <Stack>
         <Divider />
-        {definitionQuery.isFetching && (
-          <Center>
-            <Loader />
-          </Center>
-        )}
-        {error && (
-          <Alert
-            radius="sm"
-            color="red"
-            title={`Error`}
-            icon={<IconAlertCircle size="1rem" />}
-          >
-            {error}
-          </Alert>
-        )}
-        {canRender && (
-          <ScrollArea>
-            <Stack spacing="md">
-              {fields.map((field) => (
-                <ApiFormField
-                  key={field.name}
-                  field={field}
-                  form={form}
-                  definitions={fieldDefinitions}
-                  onValueChange={(fieldName, value) => {
-                    form.setValues({ [fieldName]: value });
-                  }}
-                />
-              ))}
-            </Stack>
-          </ScrollArea>
-        )}
+        <Stack>
+          <LoadingOverlay
+            visible={definitionQuery.isFetching || initialDataQuery.isFetching}
+          />
+          {error && (
+            <Alert
+              radius="sm"
+              color="red"
+              title={`Error`}
+              icon={<IconAlertCircle size="1rem" />}
+            >
+              {error}
+            </Alert>
+          )}
+          {canRender && (
+            <ScrollArea>
+              <Stack spacing="md">
+                {fields.map((field) => (
+                  <ApiFormField
+                    key={field.name}
+                    field={field}
+                    form={form}
+                    definitions={fieldDefinitions}
+                    onValueChange={(fieldName, value) => {
+                      form.setValues({ [fieldName]: value });
+                    }}
+                  />
+                ))}
+              </Stack>
+            </ScrollArea>
+          )}
+        </Stack>
         <Divider />
         <Group position="right">
           <Button onClick={onClose} variant="outline" radius="sm" color="red">
