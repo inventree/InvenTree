@@ -10,6 +10,8 @@ from django.utils.safestring import mark_safe
 logger = getLogger("InvenTree")
 register = template.Library()
 
+PUI_SETTINGS = json.dumps(settings.PUI_SETTINGS)
+
 
 @register.simple_tag
 def spa_bundle():
@@ -39,4 +41,4 @@ def spa_bundle():
 @register.simple_tag
 def spa_settings():
     """Render settings for spa."""
-    return mark_safe(f"""<script>window.INVENTREE_SETTINGS={json.dumps(settings.PUI_SETTINGS)}</script>""")
+    return mark_safe(f"""<script>window.INVENTREE_SETTINGS={PUI_SETTINGS}</script>""")
