@@ -9,10 +9,6 @@ export const defaultHostList: HostList =
         'mantine-cqj63coxn': {
           host: `${window.location.origin}/api/`,
           name: t`Current Server`
-        },
-        'mantine-u56l5jt85': {
-          host: 'https://demo.inventree.org/api/',
-          name: t`InvenTree Demo`
         }
       };
 export const defaultHostKey =
