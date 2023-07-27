@@ -20,6 +20,7 @@ export type ApiFormFieldType = {
   icon?: ReactNode;
   fieldType?: string;
   api_url?: string;
+  read_only?: boolean;
   model?: string;
   required?: boolean;
   hidden?: boolean;
@@ -57,6 +58,8 @@ function constructField({
   } else {
     def.error = null;
   }
+
+  def.disabled = def.disabled || def.read_only;
 
   // Retrieve the latest value from the form
   let value = form.values[def.name];

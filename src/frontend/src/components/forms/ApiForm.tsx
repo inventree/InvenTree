@@ -172,7 +172,8 @@ export function ApiForm(props: ApiFormProps) {
         required: field.required,
         placeholder: field.placeholder,
         api_url: field.api_url,
-        model: field.model
+        model: field.model,
+        read_only: field.read_only
       });
     }
 
@@ -184,6 +185,10 @@ export function ApiForm(props: ApiFormProps) {
       size="xl"
       radius="sm"
       opened={props.opened}
+      overlayProps={{
+        blur: 1,
+        opacity: 0.5
+      }}
       onClose={() => {
         props.onClose ? props.onClose() : null;
       }}

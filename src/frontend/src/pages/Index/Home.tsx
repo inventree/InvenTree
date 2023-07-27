@@ -84,6 +84,9 @@ export default function Home() {
     },
     {
       name: 'target_date'
+    },
+    {
+      name: 'status'
     }
   ];
 
@@ -96,6 +99,9 @@ export default function Home() {
     },
     {
       name: 'description'
+    },
+    {
+      name: 'status'
     }
   ];
 
