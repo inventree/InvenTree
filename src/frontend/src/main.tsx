@@ -16,7 +16,8 @@ declare global {
   }
 }
 
-const IS_DEV = import.meta.env.DEV;
+const IS_SERVER_SELECTOR_DEV =
+  import.meta.env.DEV || import.meta.env.VITE_SERVER_SELECTOR_DEV === 'true';
 
 window.INVENTREE_SETTINGS = {
   server_list: {
@@ -24,7 +25,7 @@ window.INVENTREE_SETTINGS = {
       host: `${window.location.origin}/api/`,
       name: t`Current Server`
     },
-    ...(IS_DEV
+    ...(IS_SERVER_SELECTOR_DEV
       ? {
           'mantine-u56l5jt85': {
             host: 'https://demo.inventree.org/api/',
@@ -34,7 +35,7 @@ window.INVENTREE_SETTINGS = {
       : {})
   },
   default_server: 'mantine-cqj63coxn',
-  show_server_selector: IS_DEV,
+  show_server_selector: IS_SERVER_SELECTOR_DEV,
 
   // merge in settings that are already set via django's spa_view or for development
   ...((window.INVENTREE_SETTINGS || {}) as any)

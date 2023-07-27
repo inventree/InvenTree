@@ -5,6 +5,9 @@
   command = "yarn run build --outDir dist"
   publish = "dist"
 
+[build.environment]
+  VITE_SERVER_SELECTOR_DEV = "true"
+
 # Send requests to subpath
 
 [[redirects]]
