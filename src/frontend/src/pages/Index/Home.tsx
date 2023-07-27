@@ -2,11 +2,15 @@ import { Trans } from '@lingui/macro';
 import { Alert, Group, Stack } from '@mantine/core';
 import { Button } from '@mantine/core';
 import {
+  IconAlertCircle,
   IconBuilding,
   IconGlobe,
   IconKey,
+  IconLink,
   IconMail,
-  IconUser
+  IconSitemap,
+  IconUser,
+  IconVersions
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
@@ -26,17 +30,35 @@ export default function Home() {
 
   const partFields: ApiFormFieldType[] = [
     {
+      name: 'category'
+    },
+    {
       name: 'name'
     },
     {
+      name: 'IPN'
+    },
+    {
+      name: 'revision',
+      icon: <IconVersions />
+    },
+    {
       name: 'description'
+    },
+    {
+      name: 'variant_of',
+      icon: <IconSitemap />
     },
     {
       name: 'keywords',
       icon: <IconKey />
     },
     {
-      name: 'category'
+      name: 'units'
+    },
+    {
+      name: 'link',
+      icon: <IconLink />
     },
     {
       name: 'assembly'
@@ -48,7 +70,8 @@ export default function Home() {
       name: 'virtual'
     },
     {
-      name: 'minimum_stock'
+      name: 'minimum_stock',
+      icon: <IconAlertCircle />
     }
   ];
 
