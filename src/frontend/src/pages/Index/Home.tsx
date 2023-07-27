@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro';
-import { Group } from '@mantine/core';
+import { Group, Stack } from '@mantine/core';
 import { Button } from '@mantine/core';
 import { useState } from 'react';
 
@@ -10,6 +10,7 @@ import { StylishText } from '../../components/items/StylishText';
 export default function Home() {
   const [partFormOpened, setPartFormOpened] = useState(false);
   const [poFormOpened, setPoFormOpened] = useState(false);
+  const [companyFormOpened, setCompanyFormOpened] = useState(false);
 
   const partFields: ApiFormFieldType[] = [
     {
@@ -50,6 +51,27 @@ export default function Home() {
     }
   ];
 
+  const companyFields: ApiFormFieldType[] = [
+    {
+      name: 'name'
+    },
+    {
+      name: 'description'
+    },
+    {
+      name: 'website'
+    },
+    {
+      name: 'email'
+    },
+    {
+      name: 'contact'
+    },
+    {
+      name: 'is_customer'
+    }
+  ];
+
   return (
     <>
       <Group>
@@ -80,20 +102,40 @@ export default function Home() {
         onClose={() => setPoFormOpened(false)}
         fetchInitialData={true}
       />
-      <Button
-        onClick={() => setPartFormOpened(true)}
-        variant="outline"
-        color="blue"
-      >
-        Edit Part Form
-      </Button>
-      <Button
-        variant="outline"
-        color="blue"
-        onClick={() => setPoFormOpened(true)}
-      >
-        Edit Purchase Order Form
-      </Button>
+      <ApiForm
+        name="company-edit"
+        url="/company/"
+        pk={1}
+        fields={companyFields}
+        method="PUT"
+        title="Edit Company"
+        opened={companyFormOpened}
+        onClose={() => setCompanyFormOpened(false)}
+        fetchInitialData={true}
+      />
+      <Stack align="flex-start" spacing="xs">
+        <Button
+          onClick={() => setPartFormOpened(true)}
+          variant="outline"
+          color="blue"
+        >
+          Edit Part Form
+        </Button>
+        <Button
+          variant="outline"
+          color="blue"
+          onClick={() => setPoFormOpened(true)}
+        >
+          Edit Purchase Order Form
+        </Button>
+        <Button
+          variant="outline"
+          color="blue"
+          onClick={() => setCompanyFormOpened(true)}
+        >
+          Edit Company Form
+        </Button>
+      </Stack>
     </>
   );
 }

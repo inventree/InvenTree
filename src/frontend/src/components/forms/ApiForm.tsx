@@ -187,6 +187,21 @@ function ApiFormField({
         />
       );
     case 'url':
+      return (
+        <TextInput
+          {...definition}
+          type="url"
+          onChange={(event) => onChange(event.currentTarget.value)}
+        />
+      );
+    case 'email':
+      return (
+        <TextInput
+          {...definition}
+          type="email"
+          onChange={(event) => onChange(event.currentTarget.value)}
+        />
+      );
     case 'string':
       return (
         <TextInput
