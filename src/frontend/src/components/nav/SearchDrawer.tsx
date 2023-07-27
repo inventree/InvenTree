@@ -269,8 +269,8 @@ export function SearchDrawer({
       offset: 0,
       limit: 10, // TODO: Make this configurable (based on settings)
       search: searchText,
-      searchRegex: searchRegex,
-      searchWhole: searchWhole
+      search_regex: searchRegex,
+      search_whole: searchWhole
     };
 
     // Add in custom query parameters
@@ -291,7 +291,7 @@ export function SearchDrawer({
 
   // Search query manager
   const { data, isError, isFetching, isLoading, refetch } = useQuery(
-    ['search', searchText],
+    ['search', searchText, searchRegex, searchWhole],
     performSearch,
     {
       refetchOnWindowFocus: false
