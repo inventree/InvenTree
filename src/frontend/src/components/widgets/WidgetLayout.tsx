@@ -158,7 +158,6 @@ function WidgetControlBar({
       <Menu
         shadow="md"
         width={200}
-        trigger="hover"
         openDelay={100}
         closeDelay={400}
         position="bottom-end"
