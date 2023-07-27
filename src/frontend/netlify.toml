@@ -6,7 +6,7 @@
   publish = "dist"
 
 [build.environment]
-  VITE_NETLIFY = "true"
+  VITE_DEMO = "true"
 
 # Send requests to subpath
 
