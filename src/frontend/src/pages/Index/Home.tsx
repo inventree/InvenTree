@@ -31,6 +31,9 @@ export default function Home() {
     },
     {
       name: 'virtual'
+    },
+    {
+      name: 'minimum_stock'
     }
   ];
 

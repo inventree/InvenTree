@@ -1,5 +1,13 @@
 import { t } from '@lingui/macro';
-import { Alert, Divider, Modal, ScrollArea, TextInput } from '@mantine/core';
+import {
+  Alert,
+  Checkbox,
+  Divider,
+  Modal,
+  NumberInput,
+  ScrollArea,
+  TextInput
+} from '@mantine/core';
 import { Button, Center, Group, Loader, Stack, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
@@ -20,13 +28,12 @@ export type ApiFormFieldType = {
   name: string;
   label?: string;
   value?: any;
-  type?: string;
+  fieldType?: string;
   required?: boolean;
   hidden?: boolean;
   disabled?: boolean;
   placeholder?: string;
   description?: string;
-  icon?: ReactNode;
   errors?: string[];
   error?: any;
 };
@@ -59,14 +66,22 @@ function ApiFormField({
     return def;
   }, [field, definitions]);
 
-  switch (definition.type) {
+  switch (definition.fieldType) {
     case 'url':
     case 'string':
       return <TextInput {...definition} />;
+    case 'boolean':
+      return <Checkbox radius="sm" {...definition} />;
+    case 'integer':
+    case 'decimal':
+    case 'float':
+    case 'number':
+      return <NumberInput radius="sm" {...definition} />;
     default:
       return (
         <Alert color="red" title="Error">
-          Unknown field type for field '{definition.name}': {definition.type}
+          Unknown field type for field '{definition.name}':{' '}
+          {definition.fieldType}
         </Alert>
       );
   }
@@ -194,10 +209,9 @@ export function ApiForm({
         label: field.label,
         description: field.help_text,
         value: field.value,
-        type: field.type,
+        fieldType: field.type,
         required: field.required,
-        placeholder: field.placeholder,
-        icon: field.icon
+        placeholder: field.placeholder
       });
     }
 
