@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-28 11:50+0000\n"
-"PO-Revision-Date: 2023-07-20 06:56\n"
+"PO-Revision-Date: 2023-07-28 23:28\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -200,7 +200,7 @@ msgstr "A megadott URL nem egy érvényes kép fájl"
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site.name}] Log in to the app"
-msgstr ""
+msgstr "[{site.name}] Belépés az alkalmazásba"
 
 #: InvenTree/magic_login.py:38 company/models.py:122
 #: company/templates/company/company_base.html:133
@@ -622,11 +622,11 @@ msgstr "Vietnámi"
 
 #: InvenTree/settings.py:776
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Kínai (egyszerűsített)"
 
 #: InvenTree/settings.py:777
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Kínai (Hagyományos)"
 
 #: InvenTree/status.py:68 part/serializers.py:963
 msgid "Background worker check failed"
@@ -1446,8 +1446,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:510
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:579
@@ -2408,11 +2407,11 @@ msgstr "Alkatrész kategória alapértelmezett ikon (üres ha nincs)"
 
 #: common/models.py:1309
 msgid "Enforce Parameter Units"
-msgstr ""
+msgstr "Csak választható mértékegységek"
 
 #: common/models.py:1310
 msgid "If units are provided, parameter values must match the specified units"
-msgstr ""
+msgstr "A megadott mértékegység csak a beállított lehetőségekből legyen elfogadva"
 
 #: common/models.py:1316
 msgid "Minimum Pricing Decimal Places"
@@ -2872,11 +2871,11 @@ msgstr "Leltár funkció engedélyezése a készlet mennyiség és érték szám
 
 #: common/models.py:1745
 msgid "Exclude External Locations"
-msgstr ""
+msgstr "Külső helyek nélkül"
 
 #: common/models.py:1746
 msgid "Exclude stock items in external locations from stocktake calculations"
-msgstr ""
+msgstr "Külső helyek figyelmen kívül hagyása a leltár számításoknál"
 
 #: common/models.py:1752
 msgid "Automatic Stocktake Period"
@@ -3453,27 +3452,27 @@ msgstr "Képfájl"
 
 #: common/models.py:2837
 msgid "Unit name must be a valid identifier"
-msgstr ""
+msgstr "A mértékegységnek valós azonosítónak kell lennie"
 
 #: common/models.py:2859
 msgid "Unit name"
-msgstr ""
+msgstr "Egység neve"
 
 #: common/models.py:2865 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
-msgstr ""
+msgstr "Szimbólum"
 
 #: common/models.py:2866
 msgid "Optional unit symbol"
-msgstr ""
+msgstr "Opcionális mértékegység szimbólum"
 
 #: common/models.py:2872 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
-msgstr ""
+msgstr "Definíció"
 
 #: common/models.py:2873
 msgid "Unit definition"
-msgstr ""
+msgstr "Mértékegység definíció"
 
 #: common/notifications.py:291
 #, python-brace-format
@@ -6385,11 +6384,11 @@ msgstr "Leltár riport korlátozása bizonyos készlethelyre és az alatta lév�
 
 #: part/serializers.py:938
 msgid "Exclude External Stock"
-msgstr ""
+msgstr "Külső készlet nélkül"
 
 #: part/serializers.py:939
 msgid "Exclude stock items in external locations"
-msgstr ""
+msgstr "Külső helyeken lévő készlet nélkül"
 
 #: part/serializers.py:944
 msgid "Generate Report"
@@ -7288,19 +7287,19 @@ msgstr "Link megnyitása"
 
 #: plugin/builtin/labels/inventree_label.py:20
 msgid "InvenTree PDF label printer"
-msgstr ""
+msgstr "InvenTree PDF címkenyomtató"
 
 #: plugin/builtin/labels/inventree_label.py:21
 msgid "Provides native support for printing PDF labels"
-msgstr ""
+msgstr "PDF címkék nyomtatásához beépített támogatás"
 
 #: plugin/builtin/labels/inventree_label.py:29
 msgid "Debug mode"
-msgstr ""
+msgstr "Debug mód"
 
 #: plugin/builtin/labels/inventree_label.py:30
 msgid "Enable debug mode - returns raw HTML instead of PDF"
-msgstr ""
+msgstr "Debug mód engedélyezése - nyers HTML-t ad vissza PDF helyett"
 
 #: plugin/models.py:28
 msgid "Plugin Configuration"
@@ -7536,7 +7535,7 @@ msgstr "Asset fájl leírása"
 
 #: report/models.py:646
 msgid "stock location query filters (comma-separated list of key=value pairs)"
-msgstr ""
+msgstr "készlethely lekérdezés szűrők (vesszővel elválasztott kulcs=érték párok)"
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
 msgid "Materials needed"
@@ -7590,7 +7589,7 @@ msgstr "Sorozatszám"
 
 #: report/templates/report/inventree_slr_report.html:97
 msgid "Stock location items"
-msgstr ""
+msgstr "Készlethely tételek"
 
 #: report/templates/report/inventree_test_report_base.html:21
 msgid "Stock Item Test Report"
@@ -8429,7 +8428,7 @@ msgstr "Tároló vonalkód beolvasása"
 
 #: stock/templates/stock/location.html:74
 msgid "Print Location Report"
-msgstr ""
+msgstr "Készlethely riport nyomtatása"
 
 #: stock/templates/stock/location.html:103
 msgid "Location actions"
@@ -8771,11 +8770,11 @@ msgstr "Leltár riportok"
 #: templates/InvenTree/settings/physical_units.html:8
 #: templates/InvenTree/settings/sidebar.html:35
 msgid "Physical Units"
-msgstr ""
+msgstr "Fizikai mértékegység"
 
 #: templates/InvenTree/settings/physical_units.html:12
 msgid "Add Unit"
-msgstr ""
+msgstr "Mértékegység hozzáadása"
 
 #: templates/InvenTree/settings/plugin.html:9
 #: templates/InvenTree/settings/sidebar.html:64
@@ -8974,15 +8973,15 @@ msgstr "Törlés"
 
 #: templates/InvenTree/settings/settings_staff_js.html:95
 msgid "Edit Custom Unit"
-msgstr ""
+msgstr "Egyedi mértékegység szerkesztése"
 
 #: templates/InvenTree/settings/settings_staff_js.html:110
 msgid "Delete Custom Unit"
-msgstr ""
+msgstr "Egyedi mértékegység törlése"
 
 #: templates/InvenTree/settings/settings_staff_js.html:124
 msgid "New Custom Unit"
-msgstr ""
+msgstr "Új egyedi mértékegység"
 
 #: templates/InvenTree/settings/settings_staff_js.html:140
 msgid "No project codes found"
@@ -12255,7 +12254,7 @@ msgstr "készlethelyek"
 
 #: templates/js/translated/stock.js:2661
 msgid "Load Sublocations"
-msgstr ""
+msgstr "Alhelyek betöltése"
 
 #: templates/js/translated/stock.js:2768
 msgid "Details"
@@ -12801,8 +12800,7 @@ msgstr "A kiválasztott SSO kiszolgáló érvénytelen, vagy nincs megfelelően 
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "A %(provider_name)s felhasználói fiókodat fogod használni a %(site_name)s belépéshez.<br>Kérlek töltsd ki az alábbi adatokat:"
 
@@ -12937,3 +12935,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:256
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
