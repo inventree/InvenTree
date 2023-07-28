@@ -18,6 +18,7 @@ import InvenTree.helpers
 import order.models
 import part.models
 from InvenTree.api import MetadataView
+from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment, StockLocation
@@ -183,78 +184,90 @@ class ReportPrintMixin:
         # Start with a default report name
         report_name = "report.pdf"
 
-        # Merge one or more PDF files into a single download
-        for item in items_to_print:
-            report = self.get_object()
-            report.object_to_print = item
+        try:
+            # Merge one or more PDF files into a single download
+            for item in items_to_print:
+                report = self.get_object()
+                report.object_to_print = item
 
-            report_name = report.generate_filename(request)
-            output = report.render(request)
+                report_name = report.generate_filename(request)
+                output = report.render(request)
 
-            # Run report callback for each generated report
-            self.report_callback(item, output, request)
+                # Run report callback for each generated report
+                self.report_callback(item, output, request)
 
-            try:
-                if debug_mode:
-                    outputs.append(report.render_as_string(request))
-                else:
-                    outputs.append(output)
-            except TemplateDoesNotExist as e:
-                template = str(e)
-                if not template:
-                    template = report.template
+                try:
+                    if debug_mode:
+                        outputs.append(report.render_as_string(request))
+                    else:
+                        outputs.append(output)
+                except TemplateDoesNotExist as e:
+                    template = str(e)
+                    if not template:
+                        template = report.template
 
-                return Response(
-                    {
-                        'error': _(f"Template file '{template}' is missing or does not exist"),
-                    },
-                    status=400,
+                    return Response(
+                        {
+                            'error': _(f"Template file '{template}' is missing or does not exist"),
+                        },
+                        status=400,
+                    )
+
+            if not report_name.endswith('.pdf'):
+                report_name += '.pdf'
+
+            if debug_mode:
+                """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
+
+                html = "\n".join(outputs)
+
+                return HttpResponse(html)
+            else:
+                """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
+
+                pages = []
+
+                try:
+                    for output in outputs:
+                        doc = output.get_document()
+                        for page in doc.pages:
+                            pages.append(page)
+
+                    pdf = outputs[0].get_document().copy(pages).write_pdf()
+
+                except TemplateDoesNotExist as e:
+
+                    template = str(e)
+
+                    if not template:
+                        template = report.template
+
+                    return Response(
+                        {
+                            'error': _(f"Template file '{template}' is missing or does not exist"),
+                        },
+                        status=400,
+                    )
+
+                inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user, cache=False)
+
+                return InvenTree.helpers.DownloadFile(
+                    pdf,
+                    report_name,
+                    content_type='application/pdf',
+                    inline=inline,
                 )
 
-        if not report_name.endswith('.pdf'):
-            report_name += '.pdf'
+        except Exception as exc:
+            # Log the exception to the database
+            log_error(request.path)
 
-        if debug_mode:
-            """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
-
-            html = "\n".join(outputs)
-
-            return HttpResponse(html)
-        else:
-            """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
-
-            pages = []
-
-            try:
-                for output in outputs:
-                    doc = output.get_document()
-                    for page in doc.pages:
-                        pages.append(page)
-
-                pdf = outputs[0].get_document().copy(pages).write_pdf()
-
-            except TemplateDoesNotExist as e:
-
-                template = str(e)
-
-                if not template:
-                    template = report.template
-
-                return Response(
-                    {
-                        'error': _(f"Template file '{template}' is missing or does not exist"),
-                    },
-                    status=400,
-                )
-
-            inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user, cache=False)
-
-            return InvenTree.helpers.DownloadFile(
-                pdf,
-                report_name,
-                content_type='application/pdf',
-                inline=inline,
-            )
+            # Re-throw the exception to the client as a DRF exception
+            raise ValidationError({
+                'error': 'Report printing failed',
+                'detail': str(exc),
+                'path': request.path,
+            })
 
     def get(self, request, *args, **kwargs):
         """Default implementation of GET for a print endpoint.
