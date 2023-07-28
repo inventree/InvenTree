@@ -91,7 +91,7 @@ export function ApiForm(props: ApiFormProps) {
       props.opened &&
       !!props.url &&
       fieldDefinitions.length > 0,
-    queryKey: ['form-initial-data', name, props.url, props.pk],
+    queryKey: ['form-initial-data', props.name, props.url, props.pk],
     queryFn: async () => {
       return api
         .get(getUrl())
@@ -104,6 +104,25 @@ export function ApiForm(props: ApiFormProps) {
           setError(error.message);
         });
     }
+  });
+
+  // Query manager for submitting data
+  const submitQuery = useQuery({
+    enabled: false, //props.opened && !initialDataQuery.isFetching && !!props.url && fieldDefinitions.length > 0,
+    queryKey: ['form-submit', props.name, props.url, props.pk],
+    queryFn: async () => {
+      return api
+        .get(getUrl())
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.error('Error submitting form:', error);
+          setError(error.message);
+        });
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false
   });
 
   // State variable to determine if the form can render the data
@@ -121,7 +140,7 @@ export function ApiForm(props: ApiFormProps) {
 
   // Update the canSubmit state variable on status change
   useEffect(() => {
-    setCanSubmit(canRender && true);
+    setCanSubmit(canRender && !submitQuery.isFetching);
     // TODO: This will be updated when we have a query manager for form submission
   }, [canRender]);
 
@@ -178,6 +197,11 @@ export function ApiForm(props: ApiFormProps) {
     }
 
     return definitions;
+  }
+
+  function submitForm() {
+    // console.log('Submitting form');
+    submitQuery.refetch();
   }
 
   return (
@@ -245,14 +269,14 @@ export function ApiForm(props: ApiFormProps) {
             {props.cancelText ?? `Cancel`}
           </Button>
           <Button
-            onClick={() => null}
+            onClick={submitForm}
             variant="outline"
             radius="sm"
             color={props.submitColor ?? 'green'}
             disabled={!canSubmit}
           >
             <Group position="right" spacing={5} noWrap={true}>
-              <Loader size="xs" />
+              {submitQuery.isFetching && <Loader size="xs" />}
               {props.submitText ?? `Submit`}
             </Group>
           </Button>
