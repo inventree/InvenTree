@@ -1,35 +1,8 @@
 import { Trans } from '@lingui/macro';
-import {
-  Alert,
-  Grid,
-  Group,
-  Header,
-  SimpleGrid,
-  Space,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Alert, Group, SimpleGrid, Space, Text } from '@mantine/core';
 import { Button } from '@mantine/core';
-import { modals, openModal } from '@mantine/modals';
-import {
-  IconAlertCircle,
-  IconBuilding,
-  IconGlobe,
-  IconKey,
-  IconLink,
-  IconMail,
-  IconSitemap,
-  IconUser,
-  IconVersions,
-  IconWorld
-} from '@tabler/icons-react';
-import { title } from 'process';
-import { useState } from 'react';
+import { IconKey } from '@tabler/icons-react';
 
-import { ApiForm } from '../../components/forms/ApiForm';
-import { CreateApiForm } from '../../components/forms/CreateApiForm';
-import { DeleteApiForm } from '../../components/forms/DeleteApiForm';
-import { EditApiForm } from '../../components/forms/EditApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { openEditApiForm, openModalApiForm } from '../../functions/forms';

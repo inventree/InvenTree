@@ -1,4 +1,11 @@
-import { Alert, Checkbox, NumberInput, Select, TextInput } from '@mantine/core';
+import {
+  Alert,
+  Checkbox,
+  NumberInput,
+  Select,
+  Stack,
+  TextInput
+} from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -6,6 +13,7 @@ import { IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
+import { PromptProps } from 'react-router-dom';
 
 /* Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
@@ -27,6 +35,8 @@ export type ApiFormFieldType = {
   disabled?: boolean;
   placeholder?: string;
   description?: string;
+  preFieldContent?: JSX.Element | (() => JSX.Element);
+  postFieldContent?: JSX.Element | (() => JSX.Element);
 };
 
 /*
@@ -149,6 +159,26 @@ export function ApiFormField({
     [form.values, field, definitions]
   );
 
+  const preFieldElement: JSX.Element | null = useMemo(() => {
+    if (field.preFieldContent === undefined) {
+      return null;
+    } else if (field.preFieldContent instanceof Function) {
+      return field.preFieldContent();
+    } else {
+      return field.preFieldContent;
+    }
+  }, [field]);
+
+  const postFieldElement: JSX.Element | null = useMemo(() => {
+    if (field.postFieldContent === undefined) {
+      return null;
+    } else if (field.postFieldContent instanceof Function) {
+      return field.postFieldContent();
+    } else {
+      return field.postFieldContent;
+    }
+  }, [field]);
+
   // Callback helper when form value changes
   function onChange(value: any) {
     // onValueChange(definition.name, value);
@@ -157,68 +187,79 @@ export function ApiFormField({
     // TODO: Implement custom callback for this field
   }
 
-  switch (definition.fieldType) {
-    case 'related field':
-      return (
-        <RelatedModelField
-          form={form}
-          field={definition}
-          definitions={definitions}
-        />
-      );
-    case 'email':
-    case 'url':
-    case 'string':
-      return (
-        <TextInput
-          {...definition}
-          type={definition.fieldType}
-          error={error}
-          onChange={(event) => onChange(event.currentTarget.value)}
-          rightSection={
-            definition.value && !definition.required ? (
-              <IconX size="1rem" color="red" onClick={() => onChange('')} />
-            ) : null
-          }
-        />
-      );
-    case 'boolean':
-      return (
-        <Checkbox
-          radius="sm"
-          {...definition}
-          error={error}
-          onChange={(event) => onChange(event.currentTarget.checked)}
-        />
-      );
-    case 'date':
-      return (
-        <DateInput
-          radius="sm"
-          {...definition}
-          error={error}
-          clearable={!definition.required}
-          onChange={(value) => onChange(value)}
-        />
-      );
-    case 'integer':
-    case 'decimal':
-    case 'float':
-    case 'number':
-      return (
-        <NumberInput
-          radius="sm"
-          {...definition}
-          error={error}
-          onChange={(value: number) => onChange(value)}
-        />
-      );
-    default:
-      return (
-        <Alert color="red" title="Error">
-          Unknown field type for field '{definition.name}': '
-          {definition.fieldType}'
-        </Alert>
-      );
+  // Construct the individual field
+  function buildField() {
+    switch (definition.fieldType) {
+      case 'related field':
+        return (
+          <RelatedModelField
+            form={form}
+            field={definition}
+            definitions={definitions}
+          />
+        );
+      case 'email':
+      case 'url':
+      case 'string':
+        return (
+          <TextInput
+            {...definition}
+            type={definition.fieldType}
+            error={error}
+            onChange={(event) => onChange(event.currentTarget.value)}
+            rightSection={
+              definition.value && !definition.required ? (
+                <IconX size="1rem" color="red" onClick={() => onChange('')} />
+              ) : null
+            }
+          />
+        );
+      case 'boolean':
+        return (
+          <Checkbox
+            radius="sm"
+            {...definition}
+            error={error}
+            onChange={(event) => onChange(event.currentTarget.checked)}
+          />
+        );
+      case 'date':
+        return (
+          <DateInput
+            radius="sm"
+            {...definition}
+            error={error}
+            clearable={!definition.required}
+            onChange={(value) => onChange(value)}
+          />
+        );
+      case 'integer':
+      case 'decimal':
+      case 'float':
+      case 'number':
+        return (
+          <NumberInput
+            radius="sm"
+            {...definition}
+            error={error}
+            onChange={(value: number) => onChange(value)}
+          />
+        );
+      default:
+        return (
+          <Alert color="red" title="Error">
+            Unknown field type for field '{definition.name}': '
+            {definition.fieldType}'
+          </Alert>
+        );
+    }
   }
+
+  return (
+    <Stack>
+      {preFieldElement}
+      {buildField()}
+      {postFieldElement}
+    </Stack>
+  );
 }
