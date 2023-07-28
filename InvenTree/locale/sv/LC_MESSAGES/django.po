@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-28 11:50+0000\n"
-"PO-Revision-Date: 2023-07-20 06:56\n"
+"PO-Revision-Date: 2023-07-28 23:29\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -207,7 +207,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:666
 msgid "Email"
-msgstr ""
+msgstr "E-post"
 
 #: InvenTree/models.py:82
 msgid "Metadata must be a python dict object"
@@ -412,7 +412,7 @@ msgstr ""
 
 #: InvenTree/models.py:794
 msgid "Barcode Data"
-msgstr ""
+msgstr "Streckkodsdata"
 
 #: InvenTree/models.py:795
 msgid "Third party barcode data"
@@ -428,7 +428,7 @@ msgstr ""
 
 #: InvenTree/models.py:846
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Befintlig streckkod hittades"
 
 #: InvenTree/models.py:900
 msgid "Server Error"
@@ -447,11 +447,11 @@ msgstr "Måste vara ett giltigt nummer"
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr ""
+msgstr "Valuta"
 
 #: InvenTree/serializers.py:93
 msgid "Select currency from available options"
-msgstr ""
+msgstr "Välj valuta från tillgängliga alternativ"
 
 #: InvenTree/serializers.py:364
 msgid "Filename"
@@ -522,7 +522,7 @@ msgstr "Tjeckiska"
 
 #: InvenTree/settings.py:751
 msgid "Danish"
-msgstr ""
+msgstr "Danska"
 
 #: InvenTree/settings.py:752
 msgid "German"
@@ -550,7 +550,7 @@ msgstr "Farsi / Persiska"
 
 #: InvenTree/settings.py:758
 msgid "Finnish"
-msgstr ""
+msgstr "Finska"
 
 #: InvenTree/settings.py:759
 msgid "French"
@@ -602,7 +602,7 @@ msgstr "Ryska"
 
 #: InvenTree/settings.py:771
 msgid "Slovenian"
-msgstr ""
+msgstr "Slovenska"
 
 #: InvenTree/settings.py:772
 msgid "Swedish"
@@ -622,11 +622,11 @@ msgstr "Vietnamesiska"
 
 #: InvenTree/settings.py:776
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Kinesiska (förenklsat)"
 
 #: InvenTree/settings.py:777
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Kinesiska (traditionell)"
 
 #: InvenTree/status.py:68 part/serializers.py:963
 msgid "Background worker check failed"
@@ -675,7 +675,7 @@ msgstr "Återlämnad"
 
 #: InvenTree/status_codes.py:41 InvenTree/status_codes.py:170
 msgid "In Progress"
-msgstr ""
+msgstr "Pågående"
 
 #: InvenTree/status_codes.py:42 order/models.py:1345
 #: templates/js/translated/sales_order.js:1518
@@ -822,19 +822,19 @@ msgstr ""
 
 #: InvenTree/status_codes.py:194
 msgid "Repair"
-msgstr ""
+msgstr "Reparera"
 
 #: InvenTree/status_codes.py:197
 msgid "Replace"
-msgstr ""
+msgstr "Ersätt"
 
 #: InvenTree/status_codes.py:200
 msgid "Refund"
-msgstr ""
+msgstr "Återbetala"
 
 #: InvenTree/status_codes.py:203
 msgid "Reject"
-msgstr ""
+msgstr "Avvisa"
 
 #: InvenTree/validators.py:32 InvenTree/validators.py:34
 msgid "Invalid physical unit"
@@ -1176,7 +1176,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:24
 #: templates/project_code_data.html:6
 msgid "Project Code"
-msgstr ""
+msgstr "Projektkod"
 
 #: build/models.py:310
 msgid "Project code for this build order"
@@ -12799,8 +12799,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12935,3 +12934,4 @@ msgstr ""
 #: users/models.py:256
 msgid "Permission to delete items"
 msgstr ""
+
