@@ -5,15 +5,14 @@ import { notifications } from '@mantine/notifications';
 import { AxiosResponse } from 'axios';
 
 import { api } from '../App';
-import { ApiFormProps } from '../components/forms/ApiForm';
+import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/ApiFormField';
-import { ModalFormContent } from '../components/forms/ModalForm';
 import { invalidResponse } from './notifications';
 
 /**
  * Construct an API url from the provided ApiFormProps object
  */
-export function contructFormUrl(props: ApiFormProps): string {
+export function constructFormUrl(props: ApiFormProps): string {
   let url = props.url;
 
   if (!url.endsWith('/')) {
@@ -73,8 +72,6 @@ export function extractAvailableFields(
     return null;
   }
 
-  console.log('actions:', actions[method]);
-
   let fields: ApiFormFieldType[] = [];
 
   for (const fieldName in actions[method]) {
@@ -117,7 +114,7 @@ export function openModalApiForm({
     return;
   }
 
-  let url = contructFormUrl(props);
+  let url = constructFormUrl(props);
 
   // Make OPTIONS request first
   api
@@ -133,12 +130,17 @@ export function openModalApiForm({
         return;
       }
 
+      let modalId: string = `modal-${title}-${url}`;
+
       modals.open({
         title: title,
+        modalId: modalId,
         onClose: () => {
           props.onClose ? props.onClose() : null;
         },
-        children: <ModalFormContent {...props} />
+        children: (
+          <ApiForm modalId={modalId} props={props} fieldDefinitions={fields} />
+        )
       });
     })
     .catch((error) => {
@@ -188,6 +190,7 @@ export function openEditApiForm({
 }) {
   let editProps: ApiFormProps = {
     ...props,
+    fetchInitialData: props.fetchInitialData ?? true,
     method: 'PUT'
   };
 

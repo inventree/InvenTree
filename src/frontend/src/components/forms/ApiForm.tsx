@@ -2,18 +2,19 @@ import {
   Alert,
   Divider,
   LoadingOverlay,
-  Modal,
-  ScrollArea
+  ScrollArea,
+  Text
 } from '@mantine/core';
 import { Button, Group, Loader, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { modals } from '@mantine/modals';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
 import { api } from '../../App';
+import { constructFormUrl } from '../../functions/forms';
 import { ApiFormField, ApiFormFieldType } from './ApiFormField';
 
 /**
@@ -37,7 +38,6 @@ export interface ApiFormProps {
   cancelColor?: string;
   fetchInitialData?: boolean;
   method?: string;
-  opened: boolean;
   preFormContent?: JSX.Element;
   preFormContentFunc?: () => JSX.Element;
   postFormContent?: JSX.Element;
@@ -50,53 +50,42 @@ export interface ApiFormProps {
 /**
  * An ApiForm component is a modal form which is rendered dynamically,
  * based on an API endpoint.
-
  */
-export function ApiForm(props: ApiFormProps) {
+export function ApiForm({
+  modalId,
+  props,
+  fieldDefinitions = []
+}: {
+  modalId: string;
+  props: ApiFormProps;
+  fieldDefinitions: ApiFormFieldType[];
+}) {
   // Form state
   const form = useForm({});
 
-  // Form field definitions (via API)
-  const [fieldDefinitions, setFieldDefinitions] = useState<ApiFormFieldType[]>(
-    []
-  );
+  // Cache URL
+  const url = useMemo(() => constructFormUrl(props), [props]);
 
   // Error observed during form construction
   const [error, setError] = useState<string>('');
 
-  // Query manager for retrieving form definition from the server
-  const definitionQuery = useQuery({
-    enabled: props.opened && !!props.url,
-    queryKey: ['form-definition', name, props.url, props.pk],
-    queryFn: async () => {
-      // Clear form construction error field
-      setError('');
-      return api
-        .options(getUrl())
-        .then((response) => {
-          setFieldDefinitions(extractFieldDefinitions(response));
-          return response;
-        })
-        .catch((error) => {
-          setError(error.message);
-          setFieldDefinitions([]);
-        });
-    }
-  });
-
   // Query manager for retrieiving initial data from the server
   const initialDataQuery = useQuery({
-    enabled:
-      props.fetchInitialData &&
-      props.opened &&
-      !!props.url &&
-      fieldDefinitions.length > 0,
+    enabled: false,
     queryKey: ['form-initial-data', props.name, props.url, props.pk],
     queryFn: async () => {
       return api
-        .get(getUrl())
+        .get(url)
         .then((response) => {
-          form.setValues(response.data);
+          // Update form values, but only for the fields specified for the form
+          props.fields.forEach((field) => {
+            if (field.name in response.data) {
+              form.setValues({
+                [field.name]: response.data[field.name]
+              });
+            }
+          });
+
           return response;
         })
         .catch((error) => {
@@ -106,20 +95,55 @@ export function ApiForm(props: ApiFormProps) {
     }
   });
 
+  // Fetch initial data on form load
+  useEffect(() => {
+    if (props.fetchInitialData) {
+      initialDataQuery.refetch();
+    }
+  }, []);
+
   // Query manager for submitting data
   const submitQuery = useQuery({
-    enabled: false, //props.opened && !initialDataQuery.isFetching && !!props.url && fieldDefinitions.length > 0,
+    enabled: false,
     queryKey: ['form-submit', props.name, props.url, props.pk],
     queryFn: async () => {
-      return api
-        .get(getUrl())
-        .then((response) => {
-          return response;
-        })
-        .catch((error) => {
-          console.error('Error submitting form:', error);
-          setError(error.message);
-        });
+      switch (props.method?.toUpperCase()) {
+        case 'PUT':
+          return api
+            .put(url, form.values)
+            .then((response) => {
+              console.log('response:', response.status, response.data);
+              return response;
+            })
+            .catch((error) => {
+              if (error.response) {
+                switch (error.response.status) {
+                  case 400:
+                    console.log('400 error:', error.response.data);
+                    form.setErrors(error.response.data);
+                    // form.setErrors({
+                    //   name: 'This field is required',
+                    // });
+                    break;
+                  default:
+                    // TODO:
+                    break;
+                }
+              } else {
+                console.error(
+                  'put error:',
+                  error.response.status,
+                  error.response.data
+                );
+                // TODO: ???
+              }
+
+              return error;
+            });
+        default:
+          console.log('unhandled form method:', props.method);
+          return null;
+      }
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false
@@ -130,10 +154,8 @@ export function ApiForm(props: ApiFormProps) {
 
   // Update the canRender state variable on status change
   useEffect(() => {
-    setCanRender(
-      !definitionQuery.isFetching && definitionQuery.isSuccess && !error
-    );
-  }, [definitionQuery, error]);
+    setCanRender(!error);
+  }, [error]);
 
   // State variable to determine if the form can be submitted
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
@@ -144,144 +166,82 @@ export function ApiForm(props: ApiFormProps) {
     // TODO: This will be updated when we have a query manager for form submission
   }, [canRender]);
 
-  // Construct a fully-qualified URL based on the provided details
-  function getUrl(): string {
-    if (!props.url) {
-      return '';
-    }
-
-    let u = props.url;
-
-    if (props.pk && props.pk > 0) {
-      u += `${props.pk}/`;
-    }
-
-    return u;
-  }
-
   /**
-   * Extract a list of field definitions from an API response.
-   * @param response : The API response to extract the field definitions from.
-   * @returns A list of field definitions.
+   * Callback to perform form submission
    */
-  function extractFieldDefinitions(
-    response: AxiosResponse
-  ): ApiFormFieldType[] {
-    if (!props.method) {
-      return [];
-    }
-
-    let actions = response.data?.actions[props.method.toUpperCase()] || [];
-
-    if (actions.length == 0) {
-      setError(`Permission denied for ${props.method} at ${props.url}`);
-      return [];
-    }
-
-    let definitions: ApiFormFieldType[] = [];
-
-    for (const fieldName in actions) {
-      const field = actions[fieldName];
-      definitions.push({
-        name: fieldName,
-        label: field.label,
-        description: field.help_text,
-        value: field.value || field.default,
-        fieldType: field.type,
-        required: field.required,
-        placeholder: field.placeholder,
-        api_url: field.api_url,
-        model: field.model,
-        read_only: field.read_only
-      });
-    }
-
-    return definitions;
-  }
-
   function submitForm() {
-    // console.log('Submitting form');
     submitQuery.refetch();
   }
 
+  /**
+   * Callback to close the form
+   * Note that the calling function might implement an onClose() callback,
+   * which will be automatically called
+   */
+  function closeForm() {
+    modals.close(modalId);
+  }
+
   return (
-    <Modal
-      size="xl"
-      radius="sm"
-      opened={props.opened}
-      overlayProps={{
-        blur: 1,
-        opacity: 0.5
-      }}
-      onClose={() => {
-        props.onClose ? props.onClose() : null;
-      }}
-      title={props.title}
-    >
-      <Stack>
-        <Divider />
-        <Stack spacing="sm">
-          <LoadingOverlay
-            visible={definitionQuery.isFetching || initialDataQuery.isFetching}
-          />
-          {error && (
-            <Alert
-              radius="sm"
-              color="red"
-              title={`Error`}
-              icon={<IconAlertCircle size="1rem" />}
-            >
-              {error}
-            </Alert>
-          )}
-          {props.preFormContent && props.preFormContent}
-          {props.preFormContentFunc ? props.preFormContentFunc() : null}
-          {canRender && (
-            <ScrollArea>
-              <Stack spacing="xs">
-                {props.fields
-                  .filter((field) => !field.hidden)
-                  .map((field) => (
-                    <ApiFormField
-                      key={field.name}
-                      field={field}
-                      form={form}
-                      definitions={fieldDefinitions}
-                      onValueChange={(fieldName, value) => {
-                        form.setValues({ [fieldName]: value });
-                      }}
-                    />
-                  ))}
-              </Stack>
-            </ScrollArea>
-          )}
-          {props.postFormContent && props.postFormContent}
-          {props.postFormContentFunc ? props.postFormContentFunc() : null}
-        </Stack>
-        <Divider />
-        <Group position="right">
-          <Button
-            onClick={props.onClose}
-            variant="outline"
+    <Stack>
+      <Divider />
+      <Stack spacing="sm">
+        <LoadingOverlay
+          visible={initialDataQuery.isFetching || submitQuery.isFetching}
+        />
+        {error && (
+          <Alert
             radius="sm"
-            color={props.cancelColor ?? 'blue'}
+            color="red"
+            title={`Error`}
+            icon={<IconAlertCircle size="1rem" />}
           >
-            {props.cancelText ?? `Cancel`}
-          </Button>
-          <Button
-            onClick={submitForm}
-            variant="outline"
-            radius="sm"
-            color={props.submitColor ?? 'green'}
-            disabled={!canSubmit}
-          >
-            <Group position="right" spacing={5} noWrap={true}>
-              {submitQuery.isFetching && <Loader size="xs" />}
-              {props.submitText ?? `Submit`}
-            </Group>
-          </Button>
-        </Group>
+            {error}
+          </Alert>
+        )}
+        {props.preFormContent && props.preFormContent}
+        {props.preFormContentFunc && props.preFormContentFunc()}
+        <Text> Hello world</Text>
+        {canRender && (
+          <ScrollArea>
+            <Stack spacing="xs">
+              {props.fields
+                .filter((field) => !field.hidden)
+                .map((field) => (
+                  <ApiFormField
+                    key={field.name}
+                    field={field}
+                    form={form}
+                    error={form.errors[field.name] ?? null}
+                    definitions={fieldDefinitions}
+                  />
+                ))}
+            </Stack>
+          </ScrollArea>
+        )}
+        {props.postFormContent && props.postFormContent}
+        {props.postFormContentFunc ? props.postFormContentFunc() : null}
       </Stack>
-    </Modal>
+      <Divider />
+      <Group position="right">
+        <Button
+          onClick={closeForm}
+          variant="outline"
+          radius="sm"
+          color={props.cancelColor ?? 'blue'}
+        >
+          {props.cancelText ?? `Cancel`}
+        </Button>
+        <Button
+          onClick={submitForm}
+          variant="outline"
+          radius="sm"
+          color={props.submitColor ?? 'green'}
+          disabled={!canSubmit}
+        >
+          {props.submitText ?? `Submit`}
+        </Button>
+      </Group>
+    </Stack>
   );
 }

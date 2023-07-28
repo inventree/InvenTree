@@ -27,8 +27,6 @@ export type ApiFormFieldType = {
   disabled?: boolean;
   placeholder?: string;
   description?: string;
-  errors?: string[];
-  error?: any;
 };
 
 /*
@@ -49,15 +47,6 @@ function constructField({
     ...def,
     ...field
   };
-
-  // Format the errors
-  if (def.errors?.length == 1) {
-    def.error = def.errors[0];
-  } else if (def.errors?.length ?? 0 > 1) {
-    // TODO: Build a custom error stack?
-  } else {
-    def.error = null;
-  }
 
   def.disabled = def.disabled || def.read_only;
 
@@ -140,13 +129,13 @@ function RelatedModelField({
 export function ApiFormField({
   form,
   field,
-  definitions,
-  onValueChange
+  error,
+  definitions
 }: {
   form: UseFormReturnType<Record<string, unknown>>;
   field: ApiFormFieldType;
+  error: ReactNode;
   definitions: ApiFormFieldType[];
-  onValueChange: (fieldName: string, value: any) => void;
 }) {
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
@@ -164,6 +153,8 @@ export function ApiFormField({
   function onChange(value: any) {
     // onValueChange(definition.name, value);
     form.setValues({ [definition.name]: value });
+
+    // TODO: Implement custom callback for this field
   }
 
   switch (definition.fieldType) {
@@ -175,36 +166,14 @@ export function ApiFormField({
           definitions={definitions}
         />
       );
-    case 'url':
-      return (
-        <TextInput
-          {...definition}
-          type="url"
-          onChange={(event) => onChange(event.currentTarget.value)}
-          rightSection={
-            definition.value && !definition.required ? (
-              <IconX size="1rem" color="red" onClick={() => onChange('')} />
-            ) : null
-          }
-        />
-      );
     case 'email':
-      return (
-        <TextInput
-          {...definition}
-          type="email"
-          onChange={(event) => onChange(event.currentTarget.value)}
-          rightSection={
-            definition.value && !definition.required ? (
-              <IconX size="1rem" color="red" onClick={() => onChange('')} />
-            ) : null
-          }
-        />
-      );
+    case 'url':
     case 'string':
       return (
         <TextInput
           {...definition}
+          type={definition.fieldType}
+          error={error}
           onChange={(event) => onChange(event.currentTarget.value)}
           rightSection={
             definition.value && !definition.required ? (
@@ -218,6 +187,7 @@ export function ApiFormField({
         <Checkbox
           radius="sm"
           {...definition}
+          error={error}
           onChange={(event) => onChange(event.currentTarget.checked)}
         />
       );
@@ -226,6 +196,7 @@ export function ApiFormField({
         <DateInput
           radius="sm"
           {...definition}
+          error={error}
           clearable={!definition.required}
           onChange={(value) => onChange(value)}
         />
@@ -238,6 +209,7 @@ export function ApiFormField({
         <NumberInput
           radius="sm"
           {...definition}
+          error={error}
           onChange={(value: number) => onChange(value)}
         />
       );
