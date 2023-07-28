@@ -7,6 +7,7 @@ import { AxiosResponse } from 'axios';
 import { api } from '../App';
 import { ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/ApiFormField';
+import { ModalFormContent } from '../components/forms/ModalForm';
 import { invalidResponse } from './notifications';
 
 /**
@@ -137,11 +138,7 @@ export function openModalApiForm({
         onClose: () => {
           props.onClose ? props.onClose() : null;
         },
-        children: (
-          <>
-            <Text>Hello world</Text>
-          </>
-        )
+        children: <ModalFormContent {...props} />
       });
     })
     .catch((error) => {

@@ -1,13 +1,16 @@
-import { LoadingOverlay, Stack, Text } from '@mantine/core';
+import { Divider, LoadingOverlay, Stack, Text } from '@mantine/core';
 
-export function ModalFormContent() {
+import { ApiFormProps } from './ApiForm';
+
+export function ModalFormContent(props: ApiFormProps) {
   return (
-    <>
+    <Stack>
+      <Divider />
       <Stack spacing="sm">
         <LoadingOverlay visible={false} />
-        <Text>hello</Text>
-        <Text>world</Text>
       </Stack>
-    </>
+      <Text>Hello</Text>
+      <Text>There</Text>
+    </Stack>
   );
 }
