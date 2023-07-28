@@ -13,7 +13,9 @@ import { IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
-import { PromptProps } from 'react-router-dom';
+
+import { ApiFormProps } from './ApiForm';
+import { RelatedModelField } from './RelatedModelField';
 
 /* Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
@@ -42,7 +44,7 @@ export type ApiFormFieldType = {
 /*
  * Build a complete field definition based on the provided data
  */
-function constructField({
+export function constructField({
   form,
   field,
   definitions
@@ -82,66 +84,16 @@ function constructField({
 }
 
 /**
- * Render a 'select' field for searching the database against a particular model type
- */
-function RelatedModelField({
-  form,
-  field,
-  definitions
-}: {
-  form: UseFormReturnType<Record<string, unknown>>;
-  field: ApiFormFieldType;
-  definitions: ApiFormFieldType[];
-}) {
-  // Extract field definition from provided data
-  // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(
-    () =>
-      constructField({
-        form: form,
-        field: field,
-        definitions: definitions
-      }),
-    [form.values, field, definitions]
-  );
-
-  const [value, setValue] = useState<string>('');
-  const [searchText] = useDebouncedValue(value, 500);
-
-  const selectQuery = useQuery({
-    enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
-    queryKey: [`related-field-${definition.name}`, searchText],
-    queryFn: async () => {
-      console.log('Searching for', searchText);
-    }
-  });
-
-  function onSearchChange(value: string) {
-    console.log('Search change:', value, definition.api_url, definition.model);
-    setValue(value);
-  }
-
-  return (
-    <Select
-      withinPortal={true}
-      searchable={true}
-      onSearchChange={onSearchChange}
-      data={[]}
-      clearable={!definition.required}
-      {...definition}
-    />
-  );
-}
-
-/**
  * Render an individual form field
  */
 export function ApiFormField({
+  formProps,
   form,
   field,
   error,
   definitions
 }: {
+  formProps: ApiFormProps;
   form: UseFormReturnType<Record<string, unknown>>;
   field: ApiFormFieldType;
   error: ReactNode;
@@ -181,7 +133,6 @@ export function ApiFormField({
 
   // Callback helper when form value changes
   function onChange(value: any) {
-    // onValueChange(definition.name, value);
     form.setValues({ [definition.name]: value });
 
     // TODO: Implement custom callback for this field
@@ -193,6 +144,7 @@ export function ApiFormField({
       case 'related field':
         return (
           <RelatedModelField
+            formProps={formProps}
             form={form}
             field={definition}
             definitions={definitions}

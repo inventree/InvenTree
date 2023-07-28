@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Alert, Group, SimpleGrid, Space, Text } from '@mantine/core';
 import { Button } from '@mantine/core';
-import { IconKey } from '@tabler/icons-react';
+import { IconKey, IconSitemap } from '@tabler/icons-react';
 
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
@@ -48,7 +48,7 @@ export default function Home() {
                   },
                   {
                     name: 'category',
-                    hidden: true
+                    icon: <IconSitemap />
                   },
                   {
                     name: 'description'
