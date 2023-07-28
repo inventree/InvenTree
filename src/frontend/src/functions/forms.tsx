@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { AxiosRequestConfig } from 'axios';
+import { notifications } from '@mantine/notifications';
 
 import { api } from '../App';
 import { ApiFormProps } from '../components/forms/ApiForm';
@@ -18,9 +18,30 @@ export function openModalApiForm({
   title: string;
   props: ApiFormProps;
 }) {
+  // method property *must* be supplied
+  if (!props.method) {
+    notifications.show({
+      title: t`Invalid Form`,
+      message: t`method parameter not supplied`,
+      color: 'red'
+    });
+    return;
+  }
+
+  // Construct the url
+  let url = props.url;
+
+  if (!url.endsWith('/')) {
+    url += '/';
+  }
+
+  if (props.pk && props.pk > 0) {
+    url += `${props.pk}/`;
+  }
+
   // Make OPTIONS request first
   api
-    .options(props.url)
+    .options(url)
     .then((response) => {
       console.log('response:', response, response.status);
 
@@ -29,6 +50,23 @@ export function openModalApiForm({
         invalidResponse(response.status);
         return;
       }
+
+      // Check that the correct METHOD is available ACTIONS
+      let actions = (response.data?.actions ?? []) || [];
+
+      let method = props.method?.toUpperCase() || '_';
+
+      if (!(method in actions)) {
+        notifications.show({
+          title: t`Invalid Form`,
+          message: t`Method ${method} not allowed`,
+          color: 'red'
+        });
+        return;
+      }
+
+      // Extract field definitions for this endpoint
+      let fields = actions[props.method?.toUpperCase() || '_'] ?? {};
 
       modals.open({
         title: title,

@@ -31,7 +31,7 @@ import { DeleteApiForm } from '../../components/forms/DeleteApiForm';
 import { EditApiForm } from '../../components/forms/EditApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
-import { openModalApiForm } from '../../functions/forms';
+import { openEditApiForm, openModalApiForm } from '../../functions/forms';
 
 export default function Home() {
   const [modalIdx, setModalIdx] = useState<number>(0);
@@ -249,15 +249,16 @@ export default function Home() {
           variant="outline"
           color="lime"
           onClick={() =>
-            openModalApiForm({
+            openEditApiForm({
               title: 'A test dynamic form',
               props: {
                 name: 'my form',
                 onClose: () => {
                   console.log('closed!');
                 },
-                url: '/paoprt/',
+                url: '/part/',
                 pk: 3,
+                method: 'PUT',
                 title: 'a title',
                 fields: [],
                 opened: false
