@@ -20,7 +20,8 @@ import {
   IconMail,
   IconSitemap,
   IconUser,
-  IconVersions
+  IconVersions,
+  IconWorld
 } from '@tabler/icons-react';
 import { title } from 'process';
 import { useState } from 'react';
@@ -62,6 +63,12 @@ export default function Home() {
                 pk: 3,
                 method: 'PUT',
                 title: 'a title',
+                preFormContent: <Text>dynamic content before the form</Text>,
+                postFormContent: () => (
+                  <Alert title="alert" color="blue">
+                    You can call a function too!
+                  </Alert>
+                ),
                 fields: [
                   {
                     name: 'name'

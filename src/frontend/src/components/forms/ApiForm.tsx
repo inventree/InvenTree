@@ -1,3 +1,4 @@
+import { jsx } from '@emotion/react';
 import {
   Alert,
   Divider,
@@ -10,7 +11,7 @@ import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
 import { api } from '../../App';
@@ -38,10 +39,8 @@ export interface ApiFormProps {
   cancelColor?: string;
   fetchInitialData?: boolean;
   method?: string;
-  preFormContent?: JSX.Element;
-  preFormContentFunc?: () => JSX.Element;
-  postFormContent?: JSX.Element;
-  postFormContentFunc?: () => JSX.Element;
+  preFormContent?: JSX.Element | (() => JSX.Element);
+  postFormContent?: JSX.Element | (() => JSX.Element);
   onClose?: () => void;
   onFormSuccess?: () => void;
   onFormError?: () => void;
@@ -65,6 +64,28 @@ export function ApiForm({
 
   // Cache URL
   const url = useMemo(() => constructFormUrl(props), [props]);
+
+  // Render pre-form content
+  // TODO: Future work will allow this content to be updated dynamically based on the form data
+  const preFormElement: JSX.Element | null = useMemo(() => {
+    if (props.preFormContent === undefined) {
+      return null;
+    } else if (props.preFormContent instanceof Function) {
+      return props.preFormContent();
+    } else {
+      return props.preFormContent;
+    }
+  }, [props]);
+
+  const postFormElement: JSX.Element | null = useMemo(() => {
+    if (props.postFormContent === undefined) {
+      return null;
+    } else if (props.postFormContent instanceof Function) {
+      return props.postFormContent();
+    } else {
+      return props.postFormContent;
+    }
+  }, [props]);
 
   // Error observed during form construction
   const [error, setError] = useState<string>('');
@@ -199,9 +220,7 @@ export function ApiForm({
             {error}
           </Alert>
         )}
-        {props.preFormContent && props.preFormContent}
-        {props.preFormContentFunc && props.preFormContentFunc()}
-        <Text> Hello world</Text>
+        {preFormElement}
         {canRender && (
           <ScrollArea>
             <Stack spacing="xs">
@@ -219,8 +238,7 @@ export function ApiForm({
             </Stack>
           </ScrollArea>
         )}
-        {props.postFormContent && props.postFormContent}
-        {props.postFormContentFunc ? props.postFormContentFunc() : null}
+        {postFormElement}
       </Stack>
       <Divider />
       <Group position="right">
