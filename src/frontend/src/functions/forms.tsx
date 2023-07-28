@@ -2,10 +2,98 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import { AxiosResponse } from 'axios';
 
 import { api } from '../App';
 import { ApiFormProps } from '../components/forms/ApiForm';
+import { ApiFormFieldType } from '../components/forms/ApiFormField';
 import { invalidResponse } from './notifications';
+
+/**
+ * Construct an API url from the provided ApiFormProps object
+ */
+export function contructFormUrl(props: ApiFormProps): string {
+  let url = props.url;
+
+  if (!url.endsWith('/')) {
+    url += '/';
+  }
+
+  if (props.pk && props.pk > 0) {
+    url += `${props.pk}/`;
+  }
+
+  return url;
+}
+
+/**
+ * Extract the available fields (for a given method) from the response object
+ *
+ * @returns - A list of field definitions, or null if there was an error
+ */
+export function extractAvailableFields(
+  response: AxiosResponse,
+  method?: string
+): ApiFormFieldType[] | null {
+  // OPTIONS request *must* return 200 status
+  if (response.status != 200) {
+    invalidResponse(response.status);
+    return null;
+  }
+
+  let actions: any = response.data?.actions ?? null;
+
+  if (!method) {
+    notifications.show({
+      title: 'INVALID FORM',
+      message: 'METHOD not provided',
+      color: 'red'
+    });
+    return null;
+  }
+
+  if (!actions) {
+    notifications.show({
+      title: 'INVALID FORM',
+      message: 'Response did not contain an ACTIONS object',
+      color: 'red'
+    });
+    return null;
+  }
+
+  method = method.toUpperCase();
+
+  if (!(method in actions)) {
+    notifications.show({
+      title: 'INVALID FORM',
+      message: `Method ${method} not found in available actions`,
+      color: 'red'
+    });
+    return null;
+  }
+
+  console.log('actions:', actions[method]);
+
+  let fields: ApiFormFieldType[] = [];
+
+  for (const fieldName in actions[method]) {
+    const field = actions[method][fieldName];
+    fields.push({
+      name: fieldName,
+      label: field.label,
+      description: field.help_text,
+      value: field.value || field.default,
+      fieldType: field.type,
+      required: field.required,
+      placeholder: field.placeholder,
+      api_url: field.api_url,
+      model: field.model,
+      read_only: field.read_only
+    });
+  }
+
+  return fields;
+}
 
 /*
  * Construct and open a modal form
@@ -28,45 +116,21 @@ export function openModalApiForm({
     return;
   }
 
-  // Construct the url
-  let url = props.url;
-
-  if (!url.endsWith('/')) {
-    url += '/';
-  }
-
-  if (props.pk && props.pk > 0) {
-    url += `${props.pk}/`;
-  }
+  let url = contructFormUrl(props);
 
   // Make OPTIONS request first
   api
     .options(url)
     .then((response) => {
-      console.log('response:', response, response.status);
+      // Extract available fields from the OPTIONS response (and handle any errors)
+      let fields: ApiFormFieldType[] | null = extractAvailableFields(
+        response,
+        props.method
+      );
 
-      // We always expect an OPTIONS request to return 200
-      if (response.status != 200) {
-        invalidResponse(response.status);
+      if (fields == null) {
         return;
       }
-
-      // Check that the correct METHOD is available ACTIONS
-      let actions = (response.data?.actions ?? []) || [];
-
-      let method = props.method?.toUpperCase() || '_';
-
-      if (!(method in actions)) {
-        notifications.show({
-          title: t`Invalid Form`,
-          message: t`Method ${method} not allowed`,
-          color: 'red'
-        });
-        return;
-      }
-
-      // Extract field definitions for this endpoint
-      let fields = actions[props.method?.toUpperCase() || '_'] ?? {};
 
       modals.open({
         title: title,
@@ -85,7 +149,11 @@ export function openModalApiForm({
       if (error.response) {
         invalidResponse(error.response.status);
       } else {
-        invalidResponse(-1);
+        notifications.show({
+          title: 'Form Error',
+          message: error.message,
+          color: 'red'
+        });
       }
     });
 }
