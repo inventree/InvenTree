@@ -1,6 +1,16 @@
 import { Trans } from '@lingui/macro';
-import { Alert, Group, Stack } from '@mantine/core';
+import {
+  Alert,
+  Grid,
+  Group,
+  Header,
+  SimpleGrid,
+  Space,
+  Stack,
+  Text
+} from '@mantine/core';
 import { Button } from '@mantine/core';
+import { modals, openModal } from '@mantine/modals';
 import {
   IconAlertCircle,
   IconBuilding,
@@ -12,6 +22,7 @@ import {
   IconUser,
   IconVersions
 } from '@tabler/icons-react';
+import { title } from 'process';
 import { useState } from 'react';
 
 import { ApiForm, ApiFormFieldType } from '../../components/forms/ApiForm';
@@ -20,13 +31,10 @@ import { DeleteApiForm } from '../../components/forms/DeleteApiForm';
 import { EditApiForm } from '../../components/forms/EditApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
+import { openModalApiForm } from '../../functions/forms';
 
 export default function Home() {
-  const [partFormOpened, setPartFormOpened] = useState(false);
-  const [poFormOpened, setPoFormOpened] = useState(false);
-  const [companyFormOpened, setCompanyFormOpened] = useState(false);
-  const [stockFormOpened, setStockFormOpened] = useState(false);
-  const [salesOrderFormOpened, setSalesOrderFormOpened] = useState(false);
+  const [modalIdx, setModalIdx] = useState<number>(0);
 
   const partFields: ApiFormFieldType[] = [
     {
@@ -144,8 +152,8 @@ export default function Home() {
         pk={1}
         fields={partFields}
         title="Edit Part"
-        opened={partFormOpened}
-        onClose={() => setPartFormOpened(false)}
+        opened={modalIdx == 1}
+        onClose={() => setModalIdx(0)}
       />
       <EditApiForm
         name="po-edit"
@@ -153,8 +161,8 @@ export default function Home() {
         pk={1}
         fields={poFields}
         title="Edit Purchase Order"
-        opened={poFormOpened}
-        onClose={() => setPoFormOpened(false)}
+        opened={modalIdx == 2}
+        onClose={() => setModalIdx(0)}
       />
       <EditApiForm
         name="company-edit"
@@ -162,8 +170,8 @@ export default function Home() {
         pk={1}
         fields={companyFields}
         title="Edit Company"
-        opened={companyFormOpened}
-        onClose={() => setCompanyFormOpened(false)}
+        opened={modalIdx == 3}
+        onClose={() => setModalIdx(0)}
       />
       <DeleteApiForm
         name="stock-delete"
@@ -171,8 +179,8 @@ export default function Home() {
         title="Delete Stock Item"
         pk={1}
         fields={[]}
-        opened={stockFormOpened}
-        onClose={() => setStockFormOpened(false)}
+        opened={modalIdx == 4}
+        onClose={() => setModalIdx(0)}
         preFormContent={<Alert color="red">Are you sure?</Alert>}
         postFormContentFunc={() => (
           <Alert color="blue">Post form content!</Alert>
@@ -183,47 +191,83 @@ export default function Home() {
         url="/order/so/"
         title="Create Sales Order"
         fields={salesOrderFields}
-        opened={salesOrderFormOpened}
-        onClose={() => setSalesOrderFormOpened(false)}
+        opened={modalIdx == 5}
+        onClose={() => setModalIdx(0)}
       />
 
-      <Stack align="flex-start" spacing="xs">
-        <Button
-          onClick={() => setPartFormOpened(true)}
-          variant="outline"
-          color="blue"
-        >
+      <CreateApiForm
+        name="invalid-url-form"
+        url="/orderr/so/"
+        title="Create Sales Order (wrong URL)"
+        preFormContent={<Alert color="red">This form has the wrong URL</Alert>}
+        opened={modalIdx == 6}
+        onClose={() => setModalIdx(0)}
+        fields={[]}
+      />
+
+      <CreateApiForm
+        name="invalid-url-form"
+        url="/order/so/"
+        pk={1}
+        title="Create Sales Order (wrong method)"
+        preFormContent={
+          <Alert color="red">This form has the wrong method</Alert>
+        }
+        opened={modalIdx == 7}
+        onClose={() => setModalIdx(0)}
+        fields={[]}
+      />
+
+      <Space />
+      <Text size="xl">Working Forms</Text>
+      <SimpleGrid cols={4}>
+        <Button onClick={() => setModalIdx(1)} variant="outline" color="blue">
           Edit Part Form
         </Button>
-        <Button
-          variant="outline"
-          color="blue"
-          onClick={() => setPoFormOpened(true)}
-        >
+        <Button variant="outline" color="blue" onClick={() => setModalIdx(2)}>
           Edit Purchase Order Form
         </Button>
-        <Button
-          variant="outline"
-          color="blue"
-          onClick={() => setCompanyFormOpened(true)}
-        >
+        <Button variant="outline" color="blue" onClick={() => setModalIdx(3)}>
           Edit Company Form
         </Button>
-        <Button
-          variant="outline"
-          color="green"
-          onClick={() => setSalesOrderFormOpened(true)}
-        >
+        <Button variant="outline" color="green" onClick={() => setModalIdx(4)}>
           Create Sales Order Form
         </Button>
-        <Button
-          variant="outline"
-          color="red"
-          onClick={() => setStockFormOpened(true)}
-        >
+        <Button variant="outline" color="red" onClick={() => setModalIdx(5)}>
           Delete Stock Item Form
         </Button>
-      </Stack>
+      </SimpleGrid>
+      <Text size="xl">Broken Forms</Text>
+      <SimpleGrid cols={4}>
+        <Button variant="outline" color="yellow" onClick={() => setModalIdx(6)}>
+          Invalid URL
+        </Button>
+        <Button variant="outline" color="yellow" onClick={() => setModalIdx(7)}>
+          Wrong Method
+        </Button>
+        <Button
+          variant="outline"
+          color="lime"
+          onClick={() =>
+            openModalApiForm({
+              title: 'A test dynamic form',
+              props: {
+                name: 'my form',
+                onClose: () => {
+                  console.log('closed!');
+                },
+                url: '/paoprt/',
+                pk: 3,
+                title: 'a title',
+                fields: [],
+                opened: false
+              }
+            })
+          }
+        >
+          Dynamic Form
+        </Button>
+      </SimpleGrid>
     </>
   );
 }
