@@ -37,3 +37,6 @@ The installer code is used to identify the way InvenTree was installed. If you v
 | PKG | Installed using a package manager | Yes |
 | GIT | Installed using git | Yes |
 | DOC | Installed using docker | Yes |
+| DIO | Installed using digital ocean marketplace[^1] | No |
+
+[^1]: Starting with fresh installs of 0.12.0 this code is set. Versions installed before 0.12.0 do not have this code set even after upgrading to 0.12.0.

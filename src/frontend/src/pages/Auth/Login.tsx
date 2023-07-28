@@ -1,14 +1,14 @@
-import { Trans, t } from '@lingui/macro';
-import { Center, Container, Group, Select, Stack, Text } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Center, Container } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
 
+import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
-import { HostOptionsForm } from '../../components/forms/HostOptionsForm';
-import { EditButton } from '../../components/items/EditButton';
+import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import { defaultHostKey } from '../../defaults/defaultHostList';
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { HostList } from '../../states/states';
 
 export default function Login() {
   const [hostKey, setHost, hostList] = useLocalState((state) => [
@@ -16,115 +16,50 @@ export default function Login() {
     state.setHost,
     state.hostList
   ]);
+  const [server, fetchServerApiState] = useServerApiState((state) => [
+    state.server,
+    state.fetchServerApiState
+  ]);
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey].name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
-  const hostListData = Object.keys(hostList).map((key) => ({
-    value: key,
-    label: hostList[key].name
-  }));
-  const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
 
   // Data manipulation functions
   function ChangeHost(newHost: string): void {
     setHost(hostList[newHost].host, newHost);
-    setHostEdit(false);
+    fetchServerApiState();
   }
-  function SaveOptions(newHostList: HostList): void {
-    useLocalState.setState({ hostList: newHostList });
-    if (newHostList[hostKey] === undefined) {
-      setHost('', '');
-    }
-    setHostListEdit();
-  }
+
   // Set default host to localhost if no host is selected
   useEffect(() => {
     if (hostKey === '') {
       ChangeHost(defaultHostKey);
     }
   }, []);
+  // Fetch server data on mount if no server data is present
+  useEffect(() => {
+    if (server.server === null) {
+      fetchServerApiState();
+    }
+  }, [server]);
 
+  // Main rendering block
   return (
     <Center mih="100vh">
       <Container w="md" miw={400}>
-        <Stack>
-          <EditHostList
-            hostList={hostList}
-            SaveOptions={SaveOptions}
-            HostListEdit={HostListEdit}
+        {hostEdit ? (
+          <InstanceOptions
+            hostKey={hostKey}
+            ChangeHost={ChangeHost}
+            setHostEdit={setHostEdit}
           />
-          {!HostListEdit && (
-            <AuthenticationForm
-              hostname={hostname}
-              editing={hostEdit}
-              setEditing={setHostEdit}
-              selectElement={
-                <SelectHost
-                  hostKey={hostKey}
-                  ChangeHost={ChangeHost}
-                  hostListData={hostListData}
-                  HostListEdit={HostListEdit}
-                  hostEdit={hostEdit}
-                  setHostListEdit={setHostListEdit}
-                />
-              }
-            />
-          )}
-        </Stack>
+        ) : (
+          <>
+            <AuthenticationForm />
+            <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
+          </>
+        )}
       </Container>
     </Center>
   );
 }
-
-const SelectHost = ({
-  hostKey,
-  ChangeHost,
-  hostListData,
-  HostListEdit,
-  hostEdit,
-  setHostListEdit
-}: {
-  hostKey: string;
-  ChangeHost: (newHost: string) => void;
-  hostListData: any;
-  HostListEdit: boolean;
-  hostEdit: boolean;
-  setHostListEdit: (value?: React.SetStateAction<boolean> | undefined) => void;
-}) => {
-  if (!hostEdit) return <></>;
-  return (
-    <Group>
-      <Select
-        value={hostKey}
-        onChange={ChangeHost}
-        data={hostListData}
-        disabled={HostListEdit}
-      />
-      <EditButton
-        setEditing={setHostListEdit}
-        editing={HostListEdit}
-        disabled={HostListEdit}
-      />
-    </Group>
-  );
-};
-
-const EditHostList = ({
-  hostList,
-  SaveOptions,
-  HostListEdit
-}: {
-  hostList: HostList;
-  SaveOptions: (newHostList: HostList) => void;
-  HostListEdit: boolean;
-}) => {
-  if (!HostListEdit) return null;
-  return (
-    <>
-      <Text>
-        <Trans>Edit host options</Trans>
-      </Text>
-      <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
-    </>
-  );
-};

@@ -2035,10 +2035,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             if bom_item.part in my_ancestors and bom_item.inherited:
                 continue
 
-            # Skip if already exists
-            if BomItem.objects.filter(part=self, sub_part=bom_item.sub_part).exists():
-                continue
-
             # Skip (or throw error) if BomItem is not valid
             if not bom_item.sub_part.check_add_to_bom(self, raise_error=raise_error):
                 continue

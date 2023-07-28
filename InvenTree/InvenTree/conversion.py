@@ -60,8 +60,9 @@ def reload_unit_registry():
         # Once custom units are loaded, save registry
         _unit_registry = reg
 
-    except Exception as e:
-        logger.error(f'Failed to load custom units: {e}')
+    except Exception:
+        # Database is not ready, or CustomUnit model is not available
+        pass
 
     dt = time.time() - t_start
     logger.debug(f'Loaded unit registry in {dt:.3f}s')
