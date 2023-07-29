@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-28 11:50+0000\n"
-"PO-Revision-Date: 2023-07-28 23:29\n"
+"PO-Revision-Date: 2023-07-29 23:41\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -4428,7 +4428,7 @@ msgstr "Filtros"
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
 msgid "QR Code"
-msgstr ""
+msgstr "Código QR"
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
@@ -6061,23 +6061,23 @@ msgstr ""
 #: part/models.py:3460 templates/js/translated/part.js:1604
 #: templates/js/translated/table_filters.js:756
 msgid "Checkbox"
-msgstr ""
+msgstr "Casilla de verificación"
 
 #: part/models.py:3461
 msgid "Is this parameter a checkbox?"
-msgstr ""
+msgstr "¿Es este parámetro una casilla de verificación?"
 
 #: part/models.py:3466 templates/js/translated/part.js:1613
 msgid "Choices"
-msgstr ""
+msgstr "Opciones"
 
 #: part/models.py:3467
 msgid "Valid choices for this parameter (comma-separated)"
-msgstr ""
+msgstr "Opciones válidas para este parámetro (separados por comas)"
 
 #: part/models.py:3549
 msgid "Invalid choice for parameter value"
-msgstr ""
+msgstr "Opción inválida para el valor del parámetro"
 
 #: part/models.py:3593
 msgid "Parent Part"
@@ -6110,11 +6110,11 @@ msgstr "ID de parte o nombre de parte"
 
 #: part/models.py:3721
 msgid "Unique part ID value"
-msgstr ""
+msgstr "Valor de ID de parte única"
 
 #: part/models.py:3729
 msgid "Part IPN value"
-msgstr ""
+msgstr "Valor IPN de parte"
 
 #: part/models.py:3732
 msgid "Level"
@@ -6150,7 +6150,7 @@ msgstr "Este artículo BOM es opcional"
 
 #: part/models.py:3838
 msgid "This BOM item is consumable (it is not tracked in build orders)"
-msgstr ""
+msgstr "Este artículo de BOM es consumible (no está rastreado en órdenes de construcción)"
 
 #: part/models.py:3842 part/templates/part/upload_bom.html:55
 msgid "Overage"
@@ -6182,7 +6182,7 @@ msgstr "Validado"
 
 #: part/models.py:3859
 msgid "This BOM item has been validated"
-msgstr ""
+msgstr "Este artículo de BOM ha sido validado"
 
 #: part/models.py:3864 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1042
@@ -7252,7 +7252,7 @@ msgstr "Notificaciones de InvenTree"
 
 #: plugin/builtin/integration/core_notifications.py:35
 msgid "Integrated outgoing notification methods"
-msgstr ""
+msgstr "Métodos de notificaciones salientes integrados"
 
 #: plugin/builtin/integration/core_notifications.py:40
 #: plugin/builtin/integration/core_notifications.py:81
@@ -7274,7 +7274,7 @@ msgstr "Permitir el envío de mensajes por canal de slack para notificaciones de
 
 #: plugin/builtin/integration/core_notifications.py:52
 msgid "Slack incoming webhook url"
-msgstr ""
+msgstr "URL de webhook entrante de Slack"
 
 #: plugin/builtin/integration/core_notifications.py:53
 msgid "URL that is used to send messages to a slack channel"
@@ -7286,19 +7286,19 @@ msgstr "Abrir enlace"
 
 #: plugin/builtin/labels/inventree_label.py:20
 msgid "InvenTree PDF label printer"
-msgstr ""
+msgstr "Impresora de etiquetas PDF de InvenTree"
 
 #: plugin/builtin/labels/inventree_label.py:21
 msgid "Provides native support for printing PDF labels"
-msgstr ""
+msgstr "Proporciona soporte nativo para imprimir etiquetas PDF"
 
 #: plugin/builtin/labels/inventree_label.py:29
 msgid "Debug mode"
-msgstr ""
+msgstr "Modo de depuración"
 
 #: plugin/builtin/labels/inventree_label.py:30
 msgid "Enable debug mode - returns raw HTML instead of PDF"
-msgstr ""
+msgstr "Activar modo de depuración - devuelve código HTML en lugar de PDF"
 
 #: plugin/models.py:28
 msgid "Plugin Configuration"
@@ -7347,17 +7347,17 @@ msgstr "No se encontró autor"
 #: plugin/registry.py:478
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
-msgstr ""
+msgstr "El complemento '{p}' no es compatible con la versión actual de InvenTree {v}"
 
 #: plugin/registry.py:480
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
-msgstr ""
+msgstr "El complemento requiere al menos la versión {v}"
 
 #: plugin/registry.py:482
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
-msgstr ""
+msgstr "El complemento requiere como máximo la versión {v}"
 
 #: plugin/samples/integration/sample.py:39
 msgid "Enable PO"
@@ -7425,11 +7425,11 @@ msgstr "Debe proporcionar cualquier nombre de paquete de la URL"
 
 #: plugin/serializers.py:193
 msgid "Activate Plugin"
-msgstr ""
+msgstr "Activar complemento"
 
 #: plugin/serializers.py:194
 msgid "Activate this plugin"
-msgstr ""
+msgstr "Activar este complemento"
 
 #: report/api.py:174
 msgid "No valid objects provided to template"
@@ -11301,19 +11301,19 @@ msgstr ""
 
 #: templates/js/translated/plugin.js:45
 msgid "No plugins found"
-msgstr ""
+msgstr "No se encontraron complementos"
 
 #: templates/js/translated/plugin.js:54
 msgid "This plugin is active"
-msgstr ""
+msgstr "Este complemento está activo"
 
 #: templates/js/translated/plugin.js:56
 msgid "This plugin is not active"
-msgstr ""
+msgstr "Este complemento no está activo"
 
 #: templates/js/translated/plugin.js:62
 msgid "Plugin Description"
-msgstr ""
+msgstr "Descripción del complemento"
 
 #: templates/js/translated/plugin.js:81
 msgid "Sample"
@@ -11321,11 +11321,11 @@ msgstr "Muestra"
 
 #: templates/js/translated/plugin.js:117 templates/js/translated/plugin.js:183
 msgid "Disable Plugin"
-msgstr ""
+msgstr "Desactivar Plugin"
 
 #: templates/js/translated/plugin.js:119 templates/js/translated/plugin.js:183
 msgid "Enable Plugin"
-msgstr ""
+msgstr "Activar Plugin"
 
 #: templates/js/translated/plugin.js:158
 msgid "The Plugin was installed"
@@ -11333,23 +11333,23 @@ msgstr "El Plugin fue Instalado"
 
 #: templates/js/translated/plugin.js:174
 msgid "Are you sure you want to enable this plugin?"
-msgstr ""
+msgstr "¿Estás seguro de que deseas activar este complemento?"
 
 #: templates/js/translated/plugin.js:178
 msgid "Are you sure you want to disable this plugin?"
-msgstr ""
+msgstr "¿Estás seguro de que deseas desactivar este complemento?"
 
 #: templates/js/translated/plugin.js:186
 msgid "Enable"
-msgstr ""
+msgstr "Activar"
 
 #: templates/js/translated/plugin.js:186
 msgid "Disable"
-msgstr ""
+msgstr "Desactivar"
 
 #: templates/js/translated/plugin.js:200
 msgid "Plugin updated"
-msgstr ""
+msgstr "Complemento actualizado"
 
 #: templates/js/translated/pricing.js:159
 msgid "Error fetching currency data"
