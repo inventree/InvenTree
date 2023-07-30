@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-07-28 23:29\n"
+"PO-Revision-Date: 2023-07-30 23:59\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: src/components/DashboardItemProxy.tsx:32
 msgid "Title"
-msgstr ""
+msgstr "Titre"
 
 #: src/components/forms/AuthenticationForm.tsx:36
 msgid "Login failed"
@@ -57,7 +57,7 @@ msgstr "Envoi du mail réussi"
 
 #: src/components/forms/AuthenticationForm.tsx:55
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr ""
+msgstr "Vérifiez votre boîte de réception pour le lien de connexion. Si vous avez un compte, vous recevrez un lien de connexion. Vérifiez également dans le courrier indésirable."
 
 #: src/components/forms/AuthenticationForm.tsx:62
 msgid "Input error"
@@ -151,7 +151,7 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "Version: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
@@ -184,7 +184,7 @@ msgstr "Logo InvenTree"
 
 #: src/components/items/Placeholder.tsx:10
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr ""
+msgstr "Cette fonctionnalité/bouton/site est un espace réservé pour une fonctionnalité qui n'est pas implémentée, implémentée partiellement ou destinée à des tests."
 
 #: src/components/items/Placeholder.tsx:13
 msgid "PLH"
@@ -197,15 +197,15 @@ msgstr "Scanner le QR code"
 #: src/components/items/Thumbnail.tsx:8
 #: src/components/items/Thumbnail.tsx:41
 msgid "Thumbnail"
-msgstr ""
+msgstr "Miniature"
 
 #: src/components/modals/QrCodeModal.tsx:68
 msgid "Unknown response"
-msgstr ""
+msgstr "Réponse inconnue"
 
 #: src/components/modals/QrCodeModal.tsx:98
 msgid "Error while getting camera"
-msgstr ""
+msgstr "Erreur lors de l’activation de la caméra"
 
 #: src/components/modals/QrCodeModal.tsx:121
 msgid "Error while scanning"
@@ -213,7 +213,7 @@ msgstr "Erreur lors du scan"
 
 #: src/components/modals/QrCodeModal.tsx:135
 msgid "Error while stopping"
-msgstr ""
+msgstr "Erreur lors de l'arrêt"
 
 #: src/components/modals/QrCodeModal.tsx:150
 msgid "Scanning"
@@ -241,7 +241,7 @@ msgstr "Aucun scan pour le moment !"
 
 #: src/components/modals/QrCodeModal.tsx:197
 msgid "Close modal"
-msgstr ""
+msgstr "Fermer"
 
 #: src/components/nav/MainMenu.tsx:38
 msgid "Notifications"
@@ -313,69 +313,69 @@ msgstr "À propos"
 #: src/defaults/links.tsx:25
 #: src/pages/Index/Part.tsx:13
 msgid "Parts"
-msgstr ""
+msgstr "Composants"
 
 #: src/components/nav/SearchDrawer.tsx:74
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Pièces du fournisseur"
 
 #: src/components/nav/SearchDrawer.tsx:88
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Pièces du fabricant"
 
 #: src/components/nav/SearchDrawer.tsx:102
 msgid "Part Categories"
-msgstr ""
+msgstr "Catégories de composants"
 
 #: src/components/nav/SearchDrawer.tsx:111
 #: src/pages/Index/Stock.tsx:13
 msgid "Stock Items"
-msgstr ""
+msgstr "Articles en stock"
 
 #: src/components/nav/SearchDrawer.tsx:123
 msgid "Stock Locations"
-msgstr ""
+msgstr "Emplacements de stock"
 
 #: src/components/nav/SearchDrawer.tsx:132
 #: src/pages/Index/Build.tsx:13
 msgid "Build Orders"
-msgstr ""
+msgstr "Ordres de fabrication"
 
 #: src/components/nav/SearchDrawer.tsx:143
 msgid "Companies"
-msgstr ""
+msgstr "Sociétés"
 
 #: src/components/nav/SearchDrawer.tsx:153
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Ordres d'achat"
 
 #: src/components/nav/SearchDrawer.tsx:164
 msgid "Sales Orders"
-msgstr ""
+msgstr "Ordres de vente"
 
 #: src/components/nav/SearchDrawer.tsx:175
 msgid "Return Orders"
-msgstr ""
+msgstr "Retours"
 
 #: src/components/nav/SearchDrawer.tsx:209
 msgid "results"
-msgstr ""
+msgstr "résultats"
 
 #: src/components/nav/SearchDrawer.tsx:346
 msgid "Enter search text"
-msgstr ""
+msgstr "Entrez un texte à rechercher"
 
 #: src/components/nav/SearchDrawer.tsx:373
 msgid "Search Options"
-msgstr ""
+msgstr "Options de recherche"
 
 #: src/components/nav/SearchDrawer.tsx:376
 msgid "Regex search"
-msgstr ""
+msgstr "Recherche par regex"
 
 #: src/components/nav/SearchDrawer.tsx:386
 msgid "Whole word search"
-msgstr ""
+msgstr "Recherche par mot entier"
 
 #: src/components/nav/SearchDrawer.tsx:419
 #: src/components/tables/InvenTreeTable.tsx:344
@@ -386,24 +386,24 @@ msgstr "Erreur"
 
 #: src/components/nav/SearchDrawer.tsx:422
 msgid "An error occurred during search query"
-msgstr ""
+msgstr "Une erreur s'est produite lors de la recherche"
 
 #: src/components/nav/SearchDrawer.tsx:430
 msgid "No results"
-msgstr ""
+msgstr "Aucun résultat"
 
 #: src/components/nav/SearchDrawer.tsx:433
 msgid "No results available for search query"
-msgstr ""
+msgstr "Aucun résultat disponible pour la requête"
 
 #: src/components/tables/ColumnSelect.tsx:17
 #: src/components/tables/ColumnSelect.tsx:24
 msgid "Select Columns"
-msgstr ""
+msgstr "Sélectionner les colonnes"
 
 #: src/components/tables/DownloadAction.tsx:15
 msgid "CSV"
-msgstr ""
+msgstr "CSV"
 
 #: src/components/tables/DownloadAction.tsx:16
 msgid "TSV"
@@ -411,15 +411,15 @@ msgstr ""
 
 #: src/components/tables/DownloadAction.tsx:17
 msgid "Excel"
-msgstr ""
+msgstr "Excel"
 
 #: src/components/tables/DownloadAction.tsx:25
 msgid "Download selected data"
-msgstr ""
+msgstr "Télécharger la sélection"
 
 #: src/components/tables/FilterBadge.tsx:44
 msgid "Remove filter"
-msgstr ""
+msgstr "Supprimer le filtre"
 
 #: src/components/tables/FilterGroup.tsx:29
 msgid "Add table filter"
