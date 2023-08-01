@@ -1301,9 +1301,9 @@ function loadBuildOutputTable(build_info, options={}) {
                     let serialB = parseInt(rowB.serial);
 
                     // Fallback to string representation
-                    if (serialA == NaN) {
+                    if (isNaN(serialA)) {
                         serialA = rowA.serial;
-                    } else if (serialB == NaN) {
+                    } else if (isNaN(serialB)) {
                         serialB = rowB.serial;
                     }
 
