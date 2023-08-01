@@ -1377,6 +1377,19 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Required Tests" %}',
                 visible: test_templates.length > 0,
                 switchable: true,
+                sortable: true,
+                sorter: function(valueA, valueB, rowA, rowB) {
+                    let nA = getPassedTestCount(rowA);
+                    let nB = getPassedTestCount(rowB);
+
+                    if (nA > nB) {
+                        return 1;
+                    } else if (nA < nB) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                },
                 formatter: function(value, row) {
                     if (row.tests) {
                         return makeProgressBar(
