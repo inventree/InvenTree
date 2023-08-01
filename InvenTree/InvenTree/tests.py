@@ -54,6 +54,10 @@ class ConversionTest(TestCase):
             '3 hundred': 300,
             '2 thousand': 2000,
             '12 pieces': 12,
+            '1 / 10': 0.1,
+            '1/2': 0.5,
+            '-1 / 16': -0.0625,
+            '3/2': 1.5,
         }
 
         for val, expected in tests.items():
@@ -71,6 +75,8 @@ class ConversionTest(TestCase):
             '--',
             '+',
             '++',
+            '1/0',
+            '1/a',
         ]
 
         for val in inputs:
