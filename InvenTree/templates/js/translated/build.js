@@ -1295,6 +1295,44 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Build Output" %}',
                 switchable: false,
                 sortable: true,
+                sorter: function(fieldA, fieldB, rowA, rowB) {
+
+                    let serialA = parseInt(rowA.serial);
+                    let serialB = parseInt(rowB.serial);
+
+                    // Fallback to string representation
+                    if (serialA == NaN) {
+                        serialA = rowA.serial;
+                    } else if (serialB == NaN) {
+                        serialB = rowB.serial;
+                    }
+
+                    if (serialA && !serialB) {
+                        // Only rowA has a serial number
+                        return 1;
+                    } else if (serialB && !serialA) {
+                        // Only rowB has a serial number
+                        return -1;
+                    } else if (serialA && serialB) {
+                        // Both rows have serial numbers
+                        if (serialA > serialB) {
+                            return 1;
+                        } else if (serialA < serialB) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        // Neither row has a serial number
+                        if (rowA.quantity > rowB.quantity) {
+                            return 1;
+                        } else if (rowA.quantity < rowB.quantity) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                },
                 formatter: function(value, row) {
                     let text = '';
 
