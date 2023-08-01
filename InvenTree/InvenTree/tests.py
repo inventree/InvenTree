@@ -61,8 +61,13 @@ class ConversionTest(TestCase):
         }
 
         for val, expected in tests.items():
-            q = InvenTree.conversion.convert_physical_value(val).to_base_units()
+            # Convert, and leave units
+            q = InvenTree.conversion.convert_physical_value(val, strip_units=False).to_base_units()
             self.assertEqual(q.magnitude, expected)
+
+            # Convert, and strip units
+            q = InvenTree.conversion.convert_physical_value(val)
+            self.assertEqual(q, expected)
 
     def test_invalid_values(self):
         """Test conversion of invalid inputs"""
