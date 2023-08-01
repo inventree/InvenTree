@@ -70,12 +70,13 @@ def reload_unit_registry():
     return reg
 
 
-def convert_physical_value(value: str, unit: str = None):
+def convert_physical_value(value: str, unit: str = None, strip_units=True):
     """Validate that the provided value is a valid physical quantity.
 
     Arguments:
         value: Value to validate (str)
         unit: Optional unit to convert to, and validate against
+        strip_units: If True, strip units from the returned value, and return only the dimension
 
     Raises:
         ValidationError: If the value is invalid or cannot be converted to the specified unit
@@ -109,7 +110,7 @@ def convert_physical_value(value: str, unit: str = None):
 
         # At this point we *should* have a valid pint value
         # To double check, look at the maginitude
-        float(ureg.Quantity(val.magnitude))
+        dimensionless = float(ureg.Quantity(val.magnitude))
     except (TypeError, ValueError, AttributeError):
         error = _('Provided value is not a valid number')
     except (pint.errors.UndefinedUnitError, pint.errors.DefinitionSyntaxError):
@@ -127,6 +128,9 @@ def convert_physical_value(value: str, unit: str = None):
 
     if error:
         raise ValidationError(error)
+
+    if strip_units:
+        val = dimensionless
 
     # Return the converted value
     return val
