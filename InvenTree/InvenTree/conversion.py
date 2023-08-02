@@ -131,8 +131,10 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
 
     if strip_units:
         # If we wish to return a "raw" value, some trickery is required
-        dimensionless = ureg.Quantity(val.to_base_units().magnitude)
-        return float(dimensionless)
+        if unit:
+            return float(ureg.Quantity(val.to(unit)).magnitude)
+        else:
+            return float(ureg.Quantity(val.to_base_units().magnitude))
 
     # Return the converted value
     return val
