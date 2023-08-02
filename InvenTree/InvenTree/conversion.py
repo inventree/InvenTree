@@ -101,7 +101,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
 
         if unit:
 
-            if val.units == ureg.dimensionless or val.to_base_units().units == ureg.dimensionless:
+            if is_dimensionless(val):
                 # If the provided value is dimensionless, assume that the unit is correct
                 val = ureg.Quantity(value, unit)
             else:
@@ -146,3 +146,29 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
         return ureg.Quantity(magnitude, unit or val.units)
     else:
         return ureg.Quantity(magnitude)
+
+
+def is_dimensionless(value):
+    """Determine if the provided value is 'dimensionless'
+
+    A dimensionless value might look like:
+
+    0.1
+    1/2 dozen
+    three thousand
+    1.2 dozen
+    (etc)
+    """
+    ureg = get_unit_registry()
+
+    # Ensure the provided value is in the right format
+    value = ureg.Quantity(value)
+
+    if value.units == ureg.dimensionless:
+        return True
+
+    if value.to_base_units().units == ureg.dimensionless:
+        return True
+
+    # At this point, the value is not dimensionless
+    return False
