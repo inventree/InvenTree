@@ -129,12 +129,20 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     if error:
         raise ValidationError(error)
 
-    if strip_units:
-        # If we wish to return a "raw" value, some trickery is required
-        if unit:
-            return float(ureg.Quantity(val.to(unit)).magnitude)
-        else:
-            return float(ureg.Quantity(val.to_base_units().magnitude))
+    # Calculate the "magnitude" of the value, as a float
+    # If the value is specified strangely (e.g. as a fraction or a dozen), this can cause isuses
+    # So, we ensure that it is converted to a floating point value
+    # If we wish to return a "raw" value, some trickery is required
+    if unit:
+        magnitude = ureg.Quantity(val.to(unit)).magnitude
+    else:
+        magnitude = ureg.Quantity(val.to_base_units()).magnitude
 
-    # Return the converted value
-    return val
+    magnitude = float(ureg.Quantity(magnitude).to_base_units().magnitude)
+
+    if strip_units:
+        return magnitude
+    elif unit or val.units:
+        return ureg.Quantity(magnitude, unit or val.units)
+    else:
+        return ureg.Quantity(magnitude)
