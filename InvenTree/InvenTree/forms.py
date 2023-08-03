@@ -292,6 +292,15 @@ class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, Default
 
         return False
 
+    def get_email_confirmation_url(self, request, emailconfirmation):
+        """Construct the email confirmation url"""
+
+        from InvenTree.helpers_model import construct_absolute_url
+
+        url = super().get_email_confirmation_url(request, emailconfirmation)
+        url = construct_absolute_url(url)
+        return url
+
 
 class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
