@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-02 13:20+0000\n"
-"PO-Revision-Date: 2023-08-03 01:43\n"
+"POT-Creation-Date: 2023-08-03 04:19+0000\n"
+"PO-Revision-Date: 2023-08-04 01:43\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -1386,7 +1386,7 @@ msgstr "Αυτόματη Κατανομή Σειριακών Αριθμών"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:334 stock/api.py:721
+#: build/serializers.py:334 stock/api.py:726
 msgid "The following serial numbers already exist or are invalid"
 msgstr ""
 
@@ -7731,7 +7731,7 @@ msgstr ""
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:693
+#: stock/api.py:698
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
