@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-02 13:20+0000\n"
-"PO-Revision-Date: 2023-08-03 01:43\n"
+"POT-Creation-Date: 2023-08-03 04:19+0000\n"
+"PO-Revision-Date: 2023-08-04 01:43\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1386,7 +1386,7 @@ msgstr "Seriennummern automatisch zuweisen"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Benötigte Lagerartikel automatisch mit passenden Seriennummern zuweisen"
 
-#: build/serializers.py:334 stock/api.py:721
+#: build/serializers.py:334 stock/api.py:726
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Die folgenden Seriennummern existieren bereits oder sind ungültig"
 
@@ -3467,7 +3467,7 @@ msgstr ""
 
 #: common/models.py:2865 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
-msgstr ""
+msgstr "Symbol"
 
 #: common/models.py:2866
 msgid "Optional unit symbol"
@@ -3475,7 +3475,7 @@ msgstr ""
 
 #: common/models.py:2872 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
-msgstr ""
+msgstr "Definition"
 
 #: common/models.py:2873
 msgid "Unit definition"
@@ -3626,7 +3626,7 @@ msgstr "Firma"
 
 #: company/models.py:324
 msgid "Company already has a primary address"
-msgstr ""
+msgstr "Firma hat bereits eine primäre Adresse"
 
 #: company/models.py:329
 msgid "Select company"
@@ -3634,7 +3634,7 @@ msgstr "Firma auswählen"
 
 #: company/models.py:332
 msgid "Address title"
-msgstr ""
+msgstr "Adresstitel"
 
 #: company/models.py:333
 msgid "Title describing the address entry"
@@ -3655,7 +3655,7 @@ msgstr ""
 
 #: company/models.py:342
 msgid "Address line 1"
-msgstr ""
+msgstr "Adresszeile 1"
 
 #: company/models.py:346 templates/js/translated/company.js:942
 #: templates/js/translated/company.js:1008
@@ -3664,7 +3664,7 @@ msgstr ""
 
 #: company/models.py:347
 msgid "Address line 2"
-msgstr ""
+msgstr "Adresszeile 2"
 
 #: company/models.py:351 company/models.py:352
 #: templates/js/translated/company.js:1014
@@ -3677,7 +3677,7 @@ msgstr "Stadt/Region"
 
 #: company/models.py:357
 msgid "Postal code city/region"
-msgstr ""
+msgstr "Postleitzahl Stadt/Region"
 
 #: company/models.py:361
 msgid "State/Province"
@@ -7731,7 +7731,7 @@ msgstr "Der angegebene Lieferantenartikel existiert nicht"
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:693
+#: stock/api.py:698
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Seriennummern können für nicht verfolgbare Teile nicht angegeben werden"
 
