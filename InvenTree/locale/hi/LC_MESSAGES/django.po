@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-02 13:20+0000\n"
-"PO-Revision-Date: 2023-08-03 01:44\n"
+"POT-Creation-Date: 2023-08-03 04:19+0000\n"
+"PO-Revision-Date: 2023-08-04 01:44\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -43,7 +43,7 @@ msgstr ""
 
 #: InvenTree/conversion.py:127
 msgid "Error"
-msgstr ""
+msgstr "त्रुटि"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -51,7 +51,7 @@ msgstr ""
 
 #: InvenTree/fields.py:131
 msgid "Enter date"
-msgstr ""
+msgstr "तारीख दर्ज करें"
 
 #: InvenTree/fields.py:206 InvenTree/models.py:766 build/serializers.py:435
 #: build/serializers.py:514 build/templates/build/sidebar.html:21
@@ -87,23 +87,23 @@ msgstr ""
 
 #: InvenTree/forms.py:147
 msgid "Enter password"
-msgstr ""
+msgstr "पास वर्ड दर्ज करें"
 
 #: InvenTree/forms.py:148
 msgid "Enter new password"
-msgstr ""
+msgstr "नया पासवर्ड दर्ज करें"
 
 #: InvenTree/forms.py:157
 msgid "Confirm password"
-msgstr ""
+msgstr "पासवर्ड की पुष्टि करें"
 
 #: InvenTree/forms.py:158
 msgid "Confirm new password"
-msgstr ""
+msgstr "नए पासवर्ड की पुष्टि करें"
 
 #: InvenTree/forms.py:162
 msgid "Old password"
-msgstr ""
+msgstr "पुराना पासवर्ड"
 
 #: InvenTree/forms.py:181
 msgid "Email (again)"
@@ -171,7 +171,7 @@ msgstr ""
 
 #: InvenTree/helpers_model.py:133
 msgid "Connection error"
-msgstr ""
+msgstr "कनेक्शन त्रुटि"
 
 #: InvenTree/helpers_model.py:137 InvenTree/helpers_model.py:142
 msgid "Server responded with invalid status code"
@@ -211,7 +211,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:666
 msgid "Email"
-msgstr ""
+msgstr "ई-मेल"
 
 #: InvenTree/models.py:82
 msgid "Metadata must be a python dict object"
@@ -1386,7 +1386,7 @@ msgstr ""
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:334 stock/api.py:721
+#: build/serializers.py:334 stock/api.py:726
 msgid "The following serial numbers already exist or are invalid"
 msgstr ""
 
@@ -7731,7 +7731,7 @@ msgstr ""
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:693
+#: stock/api.py:698
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
