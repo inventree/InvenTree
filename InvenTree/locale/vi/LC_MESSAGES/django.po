@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-03 04:19+0000\n"
-"PO-Revision-Date: 2023-08-04 01:43\n"
+"PO-Revision-Date: 2023-08-05 01:43\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -43,7 +43,7 @@ msgstr ""
 
 #: InvenTree/conversion.py:127
 msgid "Error"
-msgstr ""
+msgstr "Lỗi"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -451,7 +451,7 @@ msgstr ""
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr ""
+msgstr "Tiền tệ"
 
 #: InvenTree/serializers.py:93
 msgid "Select currency from available options"
@@ -463,15 +463,15 @@ msgstr "Tên tập tin"
 
 #: InvenTree/serializers.py:401
 msgid "Invalid value"
-msgstr ""
+msgstr "Giá trị không hợp lệ"
 
 #: InvenTree/serializers.py:423
 msgid "Data File"
-msgstr ""
+msgstr "Tập tin dữ liệu"
 
 #: InvenTree/serializers.py:424
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Chọn tệp tin để tải lên"
 
 #: InvenTree/serializers.py:445
 msgid "Unsupported file type"
