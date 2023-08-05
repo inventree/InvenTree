@@ -42,6 +42,26 @@ from .validators import validate_overage
 class ConversionTest(TestCase):
     """Tests for conversion of physical units"""
 
+    def test_base_units(self):
+        """Test conversion to specified base units"""
+        tests = {
+            "3": 3,
+            "3 dozen": 36,
+            "50 dozen kW": 600000,
+            "1 / 10": 0.1,
+            "1/2 kW": 500,
+            "1/2 dozen kW": 6000,
+            "0.005 MW": 5000,
+        }
+
+        for val, expected in tests.items():
+            q = InvenTree.conversion.convert_physical_value(val, 'W')
+
+            self.assertAlmostEqual(q, expected, 0.01)
+
+            q = InvenTree.conversion.convert_physical_value(val, 'W', strip_units=False)
+            self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
+
     def test_dimensionless_units(self):
         """Tests for 'dimensonless' unit quantities"""
 
@@ -54,11 +74,21 @@ class ConversionTest(TestCase):
             '3 hundred': 300,
             '2 thousand': 2000,
             '12 pieces': 12,
+            '1 / 10': 0.1,
+            '1/2': 0.5,
+            '-1 / 16': -0.0625,
+            '3/2': 1.5,
+            '1/2 dozen': 6,
         }
 
         for val, expected in tests.items():
-            q = InvenTree.conversion.convert_physical_value(val).to_base_units()
-            self.assertEqual(q.magnitude, expected)
+            # Convert, and leave units
+            q = InvenTree.conversion.convert_physical_value(val, strip_units=False)
+            self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
+
+            # Convert, and strip units
+            q = InvenTree.conversion.convert_physical_value(val)
+            self.assertAlmostEqual(q, expected, 0.01)
 
     def test_invalid_values(self):
         """Test conversion of invalid inputs"""
@@ -71,11 +101,19 @@ class ConversionTest(TestCase):
             '--',
             '+',
             '++',
+            '1/0',
+            '1/-',
         ]
 
         for val in inputs:
+            # Test with a provided unit
             with self.assertRaises(ValidationError):
-                InvenTree.conversion.convert_physical_value(val)
+                InvenTree.conversion.convert_physical_value(val, 'meter')
+
+            # Test dimensionless
+            with self.assertRaises(ValidationError):
+                result = InvenTree.conversion.convert_physical_value(val)
+                print("Testing invalid value:", val, result)
 
     def test_custom_units(self):
         """Tests for custom unit conversion"""
@@ -104,8 +142,23 @@ class ConversionTest(TestCase):
         reg['hpmm']
 
         # Convert some values
-        q = InvenTree.conversion.convert_physical_value('1 hpmm', 'henry / km')
-        self.assertEqual(q.magnitude, 1000000)
+        tests = {
+            '1': 1,
+            '1 hpmm': 1000000,
+            '1 / 10 hpmm': 100000,
+            '1 / 100 hpmm': 10000,
+            '0.3 hpmm': 300000,
+            '-7hpmm': -7000000,
+        }
+
+        for val, expected in tests.items():
+            # Convert, and leave units
+            q = InvenTree.conversion.convert_physical_value(val, 'henry / km', strip_units=False)
+            self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
+
+            # Convert and strip units
+            q = InvenTree.conversion.convert_physical_value(val, 'henry / km')
+            self.assertAlmostEqual(q, expected, 0.01)
 
 
 class ValidatorTest(TestCase):

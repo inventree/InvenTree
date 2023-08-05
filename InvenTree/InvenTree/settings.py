@@ -746,6 +746,8 @@ LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
 LANGUAGE_COOKIE_AGE = 2592000
 
 # If a new language translation is supported, it must be added here
+# After adding a new language, run the following command:
+# python manage.py makemessages -l <language_code> -e html,js,py --nowrap
 LANGUAGES = [
     ('cs', _('Czech')),
     ('da', _('Danish')),
@@ -758,6 +760,7 @@ LANGUAGES = [
     ('fi', _('Finnish')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
+    ('hi', _('Hindi')),
     ('hu', _('Hungarian')),
     ('it', _('Italian')),
     ('ja', _('Japanese')),
