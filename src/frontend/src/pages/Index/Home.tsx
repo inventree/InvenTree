@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro';
-import { Container, Title } from '@mantine/core';
+import { Title } from '@mantine/core';
 import { lazy } from 'react';
 
 import {
@@ -18,10 +18,10 @@ const vals: LayoutItemType[] = [
       />
     ),
     w: 12,
-    h: 7,
+    h: 6,
     x: 0,
     y: 0,
-    minH: 7
+    minH: 6
   },
   {
     i: 2,

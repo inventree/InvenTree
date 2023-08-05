@@ -1,20 +1,20 @@
+import { Trans } from '@lingui/macro';
 import { Carousel } from '@mantine/carousel';
 import {
+  Anchor,
   Button,
   Paper,
   Text,
   Title,
   createStyles,
-  rem,
-  useMantineTheme
+  rem
 } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 
-import { gettingStartedList } from '../../defaults/gettingStartedList';
+import { DocumentationLinkItem } from './DocumentationLinks';
 
 const useStyles = createStyles((theme) => ({
   card: {
-    height: rem(200),
+    height: rem(170),
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -24,23 +24,23 @@ const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     fontWeight: 900,
-    color: theme.white,
+    color:
+      theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
     lineHeight: 1.2,
     fontSize: rem(32),
-    marginTop: theme.spacing.xs
+    marginTop: 0
   },
 
   category: {
-    color: theme.white,
+    color:
+      theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
     opacity: 0.7,
-    fontWeight: 700,
-    textTransform: 'uppercase'
+    fontWeight: 700
   }
 }));
 
-function Card({ title, description, link }: DocumentationLinkItem) {
+function StartedCard({ title, description, link }: DocumentationLinkItem) {
   const { classes } = useStyles();
 
   return (
@@ -69,7 +69,7 @@ export function GettingStartedCarousel({
 }) {
   const slides = items.map((item) => (
     <Carousel.Slide key={item.id}>
-      <Card {...item} />
+      <StartedCard {...item} />
     </Carousel.Slide>
   ));
 
@@ -79,7 +79,6 @@ export function GettingStartedCarousel({
       breakpoints={[{ maxWidth: 'sm', slideSize: '100%', slideGap: rem(2) }]}
       slideGap="xl"
       align="start"
-      slidesToScroll={mobile ? 1 : 2}
     >
       {slides}
     </Carousel>
