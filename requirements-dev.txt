@@ -70,7 +70,7 @@ packaging==23.1
     #   build
 pep8-naming==0.13.3
     # via -r requirements-dev.in
-pip-tools==7.1.0
+pip-tools==7.2.0
     # via -r requirements-dev.in
 platformdirs==3.10.0
     # via virtualenv
@@ -119,7 +119,7 @@ urllib3==2.0.4
     #   requests
 virtualenv==20.24.2
     # via pre-commit
-wheel==0.41.0
+wheel==0.41.1
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:

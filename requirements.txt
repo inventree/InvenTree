@@ -161,7 +161,7 @@ et-xmlfile==1.1.0
     # via openpyxl
 feedparser==6.0.10
     # via -r requirements.in
-fonttools[woff]==4.41.1
+fonttools[woff]==4.42.0
     # via weasyprint
 gunicorn==21.2.0
     # via -r requirements.in
@@ -179,7 +179,7 @@ itypes==1.2.0
     # via coreapi
 jinja2==3.1.2
     # via coreschema
-jsonschema==4.18.4
+jsonschema==4.18.6
     # via drf-spectacular
 jsonschema-specifications==2023.7.1
     # via jsonschema
@@ -256,7 +256,7 @@ rapidfuzz==0.7.6
     # via -r requirements.in
 redis==4.6.0
     # via django-redis
-referencing==0.30.0
+referencing==0.30.2
     # via
     #   jsonschema
     #   jsonschema-specifications
