@@ -17,13 +17,13 @@ class BaseEnum(enum.IntEnum):
 
     def __eq__(self, obj):
         """Override equality operator to allow comparison with int."""
-        if isinstance(self, obj):
+        if isinstance(self, type(obj)):
             return super().__eq__(obj)
         return self.value == obj
 
     def __ne__(self, obj):
         """Override inequality operator to allow comparison with int."""
-        if isinstance(self, obj):
+        if isinstance(self, type(obj)):
             return super().__ne__(obj)
         return self.value != obj
 
