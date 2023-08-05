@@ -11,6 +11,7 @@ import {
 } from '@mantine/core';
 
 import { DocumentationLinkItem } from './DocumentationLinks';
+import { PlaceholderPill } from './Placeholder';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -40,14 +41,19 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-function StartedCard({ title, description, link }: DocumentationLinkItem) {
+function StartedCard({
+  title,
+  description,
+  link,
+  placeholder
+}: DocumentationLinkItem) {
   const { classes } = useStyles();
 
   return (
     <Paper shadow="md" p="xl" radius="md" className={classes.card}>
       <div>
         <Title order={3} className={classes.title}>
-          {title}
+          {title} {placeholder && <PlaceholderPill />}
         </Title>
         <Text size="sm" className={classes.category} lineClamp={2}>
           {description}
