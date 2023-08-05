@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-03 04:19+0000\n"
-"PO-Revision-Date: 2023-08-04 01:43\n"
+"PO-Revision-Date: 2023-08-05 01:43\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -43,7 +43,7 @@ msgstr "Angegebener Wert konnte nicht in die angegebene Einheit umgewandelt werd
 
 #: InvenTree/conversion.py:127
 msgid "Error"
-msgstr ""
+msgstr "Fehler"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -566,7 +566,7 @@ msgstr "Hebräisch"
 
 #: InvenTree/settings.py:763
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: InvenTree/settings.py:764
 msgid "Hungarian"
@@ -1224,7 +1224,7 @@ msgstr "Menge kann nicht größer als die Ausgangsmenge sein"
 
 #: build/models.py:1273
 msgid "Build object"
-msgstr ""
+msgstr "Objekt bauen"
 
 #: build/models.py:1287 build/models.py:1547 build/serializers.py:206
 #: build/serializers.py:244 build/templates/build/build_base.html:103
@@ -1300,7 +1300,7 @@ msgstr "Anzahl muss 1 für Objekte mit Seriennummer sein"
 
 #: build/models.py:1462
 msgid "Selected stock item does not match BOM line"
-msgstr ""
+msgstr "Ausgewählter Lagerbestand stimmt nicht mit BOM-Linie überein"
 
 #: build/models.py:1534 build/serializers.py:799 order/serializers.py:1065
 #: order/serializers.py:1086 stock/serializers.py:479 stock/serializers.py:887
@@ -3651,7 +3651,7 @@ msgstr ""
 #: company/models.py:341 templates/js/translated/company.js:941
 #: templates/js/translated/company.js:1002
 msgid "Line 1"
-msgstr ""
+msgstr "Linie 1"
 
 #: company/models.py:342
 msgid "Address line 1"
