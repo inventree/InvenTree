@@ -31,3 +31,15 @@ class InvenTreeResource(ModelResource):
                 row[idx] = val
 
         return row
+
+    def get_fields(self, **kwargs):
+        """Return fields, with some common exclusions"""
+
+        fields = super().get_fields(**kwargs)
+
+        fields_to_exclude = [
+            'metadata',
+            'lft', 'rght', 'tree_id', 'level',
+        ]
+
+        return [f for f in fields if f.column_name not in fields_to_exclude]

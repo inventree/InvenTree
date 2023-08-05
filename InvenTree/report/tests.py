@@ -475,3 +475,18 @@ class ReturnOrderReportTest(ReportTest):
         self.copyReportTemplate('inventree_return_order_report.html', 'return order report')
 
         return super().setUp()
+
+
+class StockLocationReportTest(ReportTest):
+    """Unit tests for the StockLocationReport model"""
+
+    model = report_models.StockLocationReport
+    list_url = 'api-stocklocation-report-list'
+    detail_url = 'api-stocklocation-report-detail'
+    print_url = 'api-stocklocation-report-print'
+
+    def setUp(self):
+        """Setup function for the StockLocationReport tests"""
+        self.copyReportTemplate('inventree_slr_report.html', 'stock location report')
+
+        return super().setUp()

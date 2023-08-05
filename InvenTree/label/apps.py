@@ -12,7 +12,8 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError
 
-from InvenTree.ready import canAppAccessDatabase
+from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
+                             isPluginRegistryLoaded)
 
 logger = logging.getLogger("inventree")
 
@@ -35,6 +36,10 @@ class LabelConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the label app is loaded."""
+        # skip loading if plugin registry is not loaded or we run in a background thread
+        if not isPluginRegistryLoaded() or not isInMainThread():
+            return
+
         if canAppAccessDatabase(allow_test=False):
 
             try:
@@ -182,13 +187,15 @@ class LabelConfig(AppConfig):
 
         logger.info(f"Creating entry for {model} '{label['name']}'")
 
-        model.objects.create(
-            name=label['name'],
-            description=label['description'],
-            label=filename,
-            filters='',
-            enabled=True,
-            width=label['width'],
-            height=label['height'],
-        )
-        return
+        try:
+            model.objects.create(
+                name=label['name'],
+                description=label['description'],
+                label=filename,
+                filters='',
+                enabled=True,
+                width=label['width'],
+                height=label['height'],
+            )
+        except Exception:
+            logger.warning(f"Failed to create label '{label['name']}'")

@@ -37,3 +37,6 @@ logger.info(f"Starting gunicorn server with {workers} workers")
 
 max_requests = 1000
 max_requests_jitter = 50
+
+# preload app so that the ready functions are only executed once
+preload_app = True

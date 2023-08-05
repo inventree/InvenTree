@@ -65,6 +65,7 @@
     </div>
     <div class='panel-content'>
         {% if item.child_count > 0 %}
+        {% include "filter_list.html" with id="stock-childs" %}
         {% include "stock_table.html" with prefix="childs-" %}
         {% else %}
         <div class='alert alert-block alert-info'>
@@ -300,14 +301,11 @@
     {% if item.child_count > 0 %}
     loadStockTable($("#childs-stock-table"), {
         params: {
-            location_detail: true,
-            part_detail: false,
             ancestor: {{ item.id }},
         },
         name: 'item-childs',
-        buttons: [
-            '#stock-options',
-        ],
+        filterTarget: '#filter-list-stock-childs',
+        filterKey: 'stock',
     });
     {% endif %}
 

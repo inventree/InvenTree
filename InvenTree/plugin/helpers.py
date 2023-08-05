@@ -2,6 +2,7 @@
 
 import inspect
 import logging
+import os
 import pathlib
 import pkgutil
 import sysconfig
@@ -116,25 +117,26 @@ def get_git_log(path):
     from InvenTree.ready import isInTestMode
 
     output = None
-    path = path.replace(str(settings.BASE_DIR.parent), '')[1:]
+    path = os.path.abspath(path)
+
+    if os.path.exists(path) and os.path.isfile(path):
+        path = os.path.dirname(path)
 
     # only do this if we are not in test mode
     if not isInTestMode():  # pragma: no cover
 
         try:
-            walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
-            try:
-                commit = next(iter(walker)).commit
-            except StopIteration:
-                pass
-            else:
-                output = [
-                    commit.sha().hexdigest(),
-                    commit.author.decode().split('<')[0][:-1],
-                    commit.author.decode().split('<')[1][:-1],
-                    datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
-                    commit.message.decode().split('\n')[0],
-                ]
+            repo = Repo(path)
+            head = repo.head()
+            commit = repo[head]
+
+            output = [
+                head.decode(),
+                commit.author.decode().split('<')[0][:-1],
+                commit.author.decode().split('<')[1][:-1],
+                datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
+                commit.message.decode().split('\n')[0],
+            ]
         except NotGitRepository:
             pass
 

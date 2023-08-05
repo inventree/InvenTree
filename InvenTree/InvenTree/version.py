@@ -18,13 +18,13 @@ from dulwich.repo import NotGitRepository, Repo
 from .api_version import INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.12.0 dev"
+INVENTREE_SW_VERSION = "0.13.0 dev"
 
 # Discover git
 try:
     main_repo = Repo(pathlib.Path(__file__).parent.parent.parent)
     main_commit = main_repo[main_repo.head()]
-except NotGitRepository:
+except (NotGitRepository, FileNotFoundError):
     main_commit = None
 
 
@@ -162,8 +162,11 @@ def inventreeBranch():
     if main_commit is None:
         return None
 
-    branch = main_repo.refs.follow(b'HEAD')[0][1].decode()
-    return branch.removeprefix('refs/heads/')
+    try:
+        branch = main_repo.refs.follow(b'HEAD')[0][1].decode()
+        return branch.removeprefix('refs/heads/')
+    except IndexError:
+        return None  # pragma: no cover
 
 
 def inventreeTarget():

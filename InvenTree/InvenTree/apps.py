@@ -14,7 +14,8 @@ from django.db.utils import IntegrityError
 import InvenTree.conversion
 import InvenTree.tasks
 from InvenTree.config import get_setting
-from InvenTree.ready import canAppAccessDatabase, isInTestMode
+from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
+                             isInTestMode, isPluginRegistryLoaded)
 
 logger = logging.getLogger("inventree")
 
@@ -34,6 +35,10 @@ class InvenTreeConfig(AppConfig):
         - Collecting notification methods
         - Adding users set in the current environment
         """
+        # skip loading if plugin registry is not loaded or we run in a background thread
+        if not isPluginRegistryLoaded() or not isInMainThread():
+            return
+
         if canAppAccessDatabase() or settings.TESTING_ENV:
             InvenTree.tasks.check_for_migrations(worker=False)
 
@@ -195,8 +200,8 @@ class InvenTreeConfig(AppConfig):
                 else:
                     new_user = user.objects.create_superuser(add_user, add_email, add_password)
                     logger.info(f'User {str(new_user)} was created!')
-        except IntegrityError as _e:
-            logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
+        except IntegrityError:
+            logger.warning(f'The user "{add_user}" could not be created')
 
         # do not try again
         settings.USER_ADDED = True

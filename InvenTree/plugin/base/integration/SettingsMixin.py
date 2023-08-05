@@ -84,3 +84,16 @@ class SettingsMixin:
             return
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)
+
+    def check_settings(self):
+        """Check if all required settings for this machine are defined.
+
+        Warning: This method cannot be used in the __init__ function of the plugin
+
+        Returns:
+            is_valid: Are all required settings defined
+            missing_settings: List of all settings that are missing (empty if is_valid is 'True')
+        """
+        from plugin.models import PluginSetting
+
+        return PluginSetting.check_all_settings(settings_definition=self.settings, plugin=self.plugin_config())

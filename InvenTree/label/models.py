@@ -6,6 +6,7 @@ import os
 import sys
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
@@ -37,6 +38,13 @@ def rename_label(instance, filename):
     filename = os.path.basename(filename)
 
     return os.path.join('label', 'template', instance.SUBDIR, filename)
+
+
+def rename_label_output(instance, filename):
+    """Place the label output file into the correct subdirectory."""
+    filename = os.path.basename(filename)
+
+    return os.path.join('label', 'output', filename)
 
 
 def validate_stock_item_filters(filters):
@@ -235,6 +243,36 @@ class LabelTemplate(MetadataMixin, models.Model):
         )
 
 
+class LabelOutput(models.Model):
+    """Class representing a label output file
+
+    'Printing' a label may generate a file object (such as PDF)
+    which is made available for download.
+
+    Future work will offload this task to the background worker,
+    and provide a 'progress' bar for the user.
+    """
+
+    # File will be stored in a subdirectory
+    label = models.FileField(
+        upload_to=rename_label_output,
+        unique=True, blank=False, null=False,
+    )
+
+    # Creation date of label output
+    created = models.DateField(
+        auto_now_add=True,
+        editable=False,
+    )
+
+    # User who generated the label
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+    )
+
+
 class StockItemLabel(LabelTemplate):
     """Template for printing StockItem labels."""
 
@@ -247,7 +285,7 @@ class StockItemLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs),'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_stock_item_filters
@@ -288,7 +326,7 @@ class StockLocationLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_stock_location_filters]
@@ -316,7 +354,7 @@ class PartLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Part query filters (comma-separated value of key=value pairs)'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_part_filters

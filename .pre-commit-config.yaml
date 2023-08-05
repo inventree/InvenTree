@@ -52,5 +52,26 @@ repos:
       (?x)^(
           docs/docs/stylesheets/.*|
           docs/docs/javascripts/.*|
-          docs/docs/webfonts/.*
+          docs/docs/webfonts/.* |
+          src/frontend/src/locales/.* |
       )$
+- repo: https://github.com/pre-commit/mirrors-prettier
+  rev: "v3.0.0-alpha.9-for-vscode"
+  hooks:
+    - id: prettier
+      files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
+      additional_dependencies:
+      - "prettier@^2.4.1"
+      - "@trivago/prettier-plugin-sort-imports"
+- repo: https://github.com/pre-commit/mirrors-eslint
+  rev: "v8.42.0"
+  hooks:
+  - id: eslint
+    additional_dependencies:
+      - eslint@^8.41.0
+      - eslint-config-google@^0.14.0
+      - eslint-plugin-react@6.10.3
+      - babel-eslint@6.1.2
+      - "@typescript-eslint/eslint-plugin@latest"
+      - "@typescript-eslint/parser"
+    files: ^src/frontend/.*\.(js|jsx|ts|tsx)$

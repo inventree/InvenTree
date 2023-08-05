@@ -262,9 +262,6 @@ function loadReturnOrderTable(table, options={}) {
         formatNoMatches: function() {
             return '{% trans "No return orders found" %}';
         },
-        onRefresh: function() {
-            loadReturnOrderTable(table, options);
-        },
         onLoadSuccess: function() {
             // TODO
         },

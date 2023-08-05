@@ -69,6 +69,7 @@ def fix_purchase_price(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('company', '0047_supplierpart_pack_size'),
         ('stock', '0093_auto_20230217_2140'),
     ]
 

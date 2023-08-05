@@ -22,7 +22,7 @@ from build.models import Build
 from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
-from generic.states import StatusView
+from generic.states.api import StatusView
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
@@ -464,8 +464,9 @@ class StockFilter(rest_filters.FilterSet):
     is_building = rest_filters.BooleanFilter(label="In production")
 
     # Serial number filtering
-    serial_gte = rest_filters.NumberFilter(label='Serial number GTE', field_name='serial', lookup_expr='gte')
-    serial_lte = rest_filters.NumberFilter(label='Serial number LTE', field_name='serial', lookup_expr='lte')
+    serial_gte = rest_filters.NumberFilter(label='Serial number GTE', field_name='serial_int', lookup_expr='gte')
+    serial_lte = rest_filters.NumberFilter(label='Serial number LTE', field_name='serial_int', lookup_expr='lte')
+
     serial = rest_filters.CharFilter(label='Serial number', field_name='serial', lookup_expr='exact')
 
     serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
@@ -551,6 +552,19 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.exclude(purchase_price=None)
         else:
             return queryset.filter(purchase_price=None)
+
+    ancestor = rest_filters.ModelChoiceFilter(
+        label='Ancestor',
+        queryset=StockItem.objects.all(),
+        method='filter_ancestor'
+    )
+
+    def filter_ancestor(self, queryset, name, ancestor):
+        """Filter based on ancestor stock item"""
+
+        return queryset.filter(
+            parent__in=ancestor.get_descendants(include_self=True)
+        )
 
     # Update date filters
     updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
@@ -663,8 +677,13 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                 else:
                     if bool(data.get('use_pack_size')):
                         quantity = data['quantity'] = supplier_part.base_quantity(quantity)
+
                         # Divide purchase price by pack size, to save correct price per stock item
-                        data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_quantity_native)
+                        if data['purchase_price'] and supplier_part.pack_quantity_native:
+                            try:
+                                data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_quantity_native)
+                            except ValueError:
+                                pass
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
@@ -928,19 +947,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 raise ValidationError({"part": "Invalid Part ID specified"})
-
-        # Does the client wish to filter by the 'ancestor'?
-        anc_id = params.get('ancestor', None)
-
-        if anc_id:
-            try:
-                ancestor = StockItem.objects.get(pk=anc_id)
-
-                # Only allow items which are descendants of the specified StockItem
-                queryset = queryset.filter(id__in=[item.pk for item in ancestor.children.all()])
-
-            except (ValueError, Part.DoesNotExist):
-                raise ValidationError({"ancestor": "Invalid ancestor ID specified"})
 
         # Does the client wish to filter by stock location?
         loc_id = params.get('location', None)

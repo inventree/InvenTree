@@ -20,7 +20,7 @@ Each Sales Order has a specific status code, which represents the state of the o
 | --- | --- |
 | Pending | The sales order has been created, but has not been finalized or submitted |
 | In Progress | The sales order has been issued, and is in progress |
-| Complete | The sales order has been completed, and is now closed |
+| Shipped | The sales order has been completed, and is now closed |
 | Cancelled | The sales order was cancelled, and is now closed |
 
 ### Sales Order Currency

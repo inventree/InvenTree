@@ -107,6 +107,7 @@ addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-
 loadStockTable($('#table-recently-updated-stock'), {
     disableFilters: true,
     params: {
+        in_stock: true,
         part_detail: true,
         ordering: "-updated",
         updated_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),

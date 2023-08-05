@@ -638,11 +638,12 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
             try:
                 # Attempt conversion to specified unit
                 native_value = InvenTree.conversion.convert_physical_value(
-                    self.pack_quantity, self.part.units
+                    self.pack_quantity, self.part.units,
+                    strip_units=False
                 )
 
                 # If part units are not provided, value must be dimensionless
-                if not self.part.units and native_value.units not in ['', 'dimensionless']:
+                if not self.part.units and not InvenTree.conversion.is_dimensionless(native_value):
                     raise ValidationError({
                         'pack_quantity': _("Pack units must be compatible with the base part units")
                     })

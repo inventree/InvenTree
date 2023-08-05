@@ -10,7 +10,19 @@ from django.templatetags.i18n import TranslateNode
 
 import bleach
 
+import InvenTree.translation
+
 register = template.Library()
+
+
+@register.simple_tag()
+def translation_stats(lang_code):
+    """Return the translation percentage for the given language code"""
+
+    if lang_code is None:
+        return None
+
+    return InvenTree.translation.get_translation_percent(lang_code)
 
 
 class CustomTranslateNode(TranslateNode):

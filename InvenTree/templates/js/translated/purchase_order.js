@@ -1759,9 +1759,6 @@ function loadPurchaseOrderTable(table, options) {
         customView: function(data) {
             return `<div id='purchase-order-calendar'></div>`;
         },
-        onRefresh: function() {
-            loadPurchaseOrderTable(table, options);
-        },
         onLoadSuccess: function() {
 
             if (display_mode == 'calendar') {
