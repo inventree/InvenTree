@@ -7,16 +7,12 @@ import { ServerAPIProps, UserProps } from './states';
 interface ApiStateProps {
   user: UserProps | undefined;
   setUser: (newUser: UserProps) => void;
-  server: ServerAPIProps;
-  setServer: (newServer: ServerAPIProps) => void;
   fetchApiState: () => void;
 }
 
 export const useApiState = create<ApiStateProps>((set, get) => ({
   user: undefined,
   setUser: (newUser: UserProps) => set({ user: newUser }),
-  server: emptyServerAPI,
-  setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
   fetchApiState: async () => {
     // Fetch user data
     await api.get(url(ApiPaths.user_me)).then((response) => {
@@ -27,6 +23,19 @@ export const useApiState = create<ApiStateProps>((set, get) => ({
       };
       set({ user: user });
     });
+  }
+}));
+
+interface ServerApiStateProps {
+  server: ServerAPIProps;
+  setServer: (newServer: ServerAPIProps) => void;
+  fetchServerApiState: () => void;
+}
+
+export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
+  server: emptyServerAPI,
+  setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
+  fetchServerApiState: async () => {
     // Fetch server data
     await api.get('/').then((response) => {
       set({ server: response.data });

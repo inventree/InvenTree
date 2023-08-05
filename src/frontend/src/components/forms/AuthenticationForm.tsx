@@ -34,7 +34,7 @@ export function AuthenticationForm() {
         if (ret === false) {
           notifications.show({
             title: t`Login failed`,
-            message: t`Check your your input and try again.`,
+            message: t`Check your input and try again.`,
             color: 'red'
           });
         } else {
@@ -60,7 +60,7 @@ export function AuthenticationForm() {
         } else {
           notifications.show({
             title: t`Input error`,
-            message: t`Check your your input and try again.`,
+            message: t`Check your input and try again.`,
             color: 'red'
           });
         }

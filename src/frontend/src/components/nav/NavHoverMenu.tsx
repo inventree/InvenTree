@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 
 import { menuItems } from '../../defaults/menuItems';
 import { InvenTreeStyle } from '../../globalStyle';
-import { useApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { MenuLinks } from '../items/MenuLinks';
@@ -29,7 +29,7 @@ export function NavHoverMenu({
     state.hostKey,
     state.hostList
   ]);
-  const [servername] = useApiState((state) => [state.server.instance]);
+  const [servername] = useServerApiState((state) => [state.server.instance]);
   const [instanceName, setInstanceName] = useState<string>();
 
   useEffect(() => {

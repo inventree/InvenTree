@@ -171,6 +171,14 @@ class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
 
     SKU = Field(attribute='part__SKU', readonly=True)
 
+    def dehydrate_purchase_price(self, line):
+        """Return a string value of the 'purchase_price' field, rather than the 'Money' object"""
+
+        if line.purchase_price:
+            return line.purchase_price.amount
+        else:
+            return ''
+
 
 class PurchaseOrderExtraLineResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of PurchaseOrderExtraLine data."""

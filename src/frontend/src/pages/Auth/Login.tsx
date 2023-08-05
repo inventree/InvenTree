@@ -7,6 +7,7 @@ import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import { defaultHostKey } from '../../defaults/defaultHostList';
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
 export default function Login() {
@@ -15,6 +16,10 @@ export default function Login() {
     state.setHost,
     state.hostList
   ]);
+  const [server, fetchServerApiState] = useServerApiState((state) => [
+    state.server,
+    state.fetchServerApiState
+  ]);
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey].name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
@@ -22,6 +27,7 @@ export default function Login() {
   // Data manipulation functions
   function ChangeHost(newHost: string): void {
     setHost(hostList[newHost].host, newHost);
+    fetchServerApiState();
   }
 
   // Set default host to localhost if no host is selected
@@ -30,6 +36,12 @@ export default function Login() {
       ChangeHost(defaultHostKey);
     }
   }, []);
+  // Fetch server data on mount if no server data is present
+  useEffect(() => {
+    if (server.server === null) {
+      fetchServerApiState();
+    }
+  }, [server]);
 
   // Main rendering block
   return (
