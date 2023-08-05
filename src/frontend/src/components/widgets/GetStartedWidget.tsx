@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Title } from '@mantine/core';
 
+import { navDocLinks } from '../../defaults/links';
 import { GettingStartedCarousel } from '../items/GettingStartedCarousel';
 
 export default function GetStartedWidget() {
@@ -9,7 +10,7 @@ export default function GetStartedWidget() {
       <Title order={5}>
         <Trans>Getting started</Trans>
       </Title>
-      <GettingStartedCarousel />
+      <GettingStartedCarousel items={navDocLinks} />
     </span>
   );
 }

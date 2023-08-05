@@ -39,34 +39,36 @@ const useStyles = createStyles((theme) => ({
     textTransform: 'uppercase'
   }
 }));
-interface CardProps {
-  title: string;
-  category: string;
-}
-function Card({ title, category }: CardProps) {
+
+function Card({ title, description, link }: DocumentationLinkItem) {
   const { classes } = useStyles();
 
   return (
     <Paper shadow="md" p="xl" radius="md" className={classes.card}>
       <div>
-        <Text className={classes.category} size="xs">
-          {category}
-        </Text>
         <Title order={3} className={classes.title}>
           {title}
         </Title>
+        <Text size="sm" className={classes.category} lineClamp={2}>
+          {description}
+        </Text>
       </div>
-      <Button variant="white" color="dark">
-        Read article
-      </Button>
+      <Anchor href={link} target="_blank">
+        <Button>
+          <Trans>Read more</Trans>
+        </Button>
+      </Anchor>
     </Paper>
   );
 }
-export function GettingStartedCarousel() {
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const slides = gettingStartedList.map((item) => (
-    <Carousel.Slide key={item.title}>
+
+export function GettingStartedCarousel({
+  items
+}: {
+  items: DocumentationLinkItem[];
+}) {
+  const slides = items.map((item) => (
+    <Carousel.Slide key={item.id}>
       <Card {...item} />
     </Carousel.Slide>
   ));
