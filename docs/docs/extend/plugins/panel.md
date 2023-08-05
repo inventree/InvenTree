@@ -116,9 +116,10 @@ Afterwards we define the custom panel. Here we use a html template to describe t
 add the path here because the template resides in the subdirectory templates/mouser.
 Then we setup the url. This is important. The url connects the http request with the function to be executed.
 May be it is worth to leave a few more words on this because the string looks a bit like white noise.
-transfercart is the url which can be chosen freely. The ? is well known for parameters. In this case we
-get just one parameter, the orders primary key. \d+ is a regular expression that limits the parameters
+*transfercart* is the url which can be chosen freely. The ? is well known for parameters. In this case we
+get just one parameter, the orders primary key.* \d+* is a regular expression that limits the parameters
 to a digital number with n digits. Let's have a look on the names and how they belong together:
+
 {% with id="plugin_dataflow", url="plugin/plugin_dataflow.png", description="Dataflow between Javescript and Python" %} {% include "img.html" %} {% endwith %}
 
 Finally we define the function. This is a simple increment of a class value.
