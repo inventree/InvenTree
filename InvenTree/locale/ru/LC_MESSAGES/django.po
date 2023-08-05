@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-03 04:19+0000\n"
-"PO-Revision-Date: 2023-08-04 01:43\n"
+"PO-Revision-Date: 2023-08-05 01:43\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -43,7 +43,7 @@ msgstr "Предоставленное значение не может быть
 
 #: InvenTree/conversion.py:127
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -566,7 +566,7 @@ msgstr "Иврит"
 
 #: InvenTree/settings.py:763
 msgid "Hindi"
-msgstr ""
+msgstr "Хинди"
 
 #: InvenTree/settings.py:764
 msgid "Hungarian"
@@ -630,11 +630,11 @@ msgstr "Вьетнамский"
 
 #: InvenTree/settings.py:779
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Китайский (Упрощенный)"
 
 #: InvenTree/settings.py:780
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Китайский (Традиционный)"
 
 #: InvenTree/status.py:68 part/serializers.py:963
 msgid "Background worker check failed"
@@ -862,7 +862,7 @@ msgstr "Перегрузка не может превысить 100%"
 
 #: InvenTree/validators.py:134
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Неверное значение для возврата средств"
 
 #: InvenTree/views.py:405 templates/InvenTree/settings/user.html:23
 msgid "Edit User Information"
@@ -1173,7 +1173,7 @@ msgstr "Приоритет сборки"
 
 #: build/models.py:302
 msgid "Priority of this build order"
-msgstr ""
+msgstr "Приоритет этого порядка сборки заказа"
 
 #: build/models.py:309 common/models.py:106 order/admin.py:17
 #: order/models.py:237 templates/InvenTree/settings/settings_staff_js.html:146
@@ -1188,16 +1188,16 @@ msgstr "Код проекта"
 
 #: build/models.py:310
 msgid "Project code for this build order"
-msgstr ""
+msgstr "Код проекта для этого заказа сборки"
 
 #: build/models.py:550
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "Заказ на сборку {build} был завершен"
 
 #: build/models.py:556
 msgid "A build order has been completed"
-msgstr ""
+msgstr "Заказ на сборку был завершен"
 
 #: build/models.py:766 build/models.py:844
 msgid "No build output specified"
@@ -1220,7 +1220,7 @@ msgstr "Количество должно быть больше нуля"
 
 #: build/models.py:853 build/serializers.py:225
 msgid "Quantity cannot be greater than the output quantity"
-msgstr ""
+msgstr "Количество не может быть больше выходного количества"
 
 #: build/models.py:1273
 msgid "Build object"
@@ -1275,7 +1275,7 @@ msgstr "Количество"
 
 #: build/models.py:1288
 msgid "Required quantity for build order"
-msgstr ""
+msgstr "Требуемое количество для заказа сборки"
 
 #: build/models.py:1370
 msgid "Build item must specify a build output, as master part is marked as trackable"
@@ -9748,11 +9748,11 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:138
 msgid "Enter optional notes for stock transfer"
-msgstr ""
+msgstr "Введите дополнительные заметки для перевода товара"
 
 #: templates/js/translated/barcode.js:139
 msgid "Enter notes"
-msgstr ""
+msgstr "Введите описание"
 
 #: templates/js/translated/barcode.js:188
 msgid "Server error"
