@@ -57,7 +57,7 @@ def sanitize_svg(file_data, strip: bool = True, elements: str = ALLOWED_ELEMENTS
     """
 
     # Handle byte-encoded data
-    if type(file_data) == bytes:
+    if isinstance(file_data, bytes):
         file_data = file_data.decode('utf-8')
 
     cleaned = clean(

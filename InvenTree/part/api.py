@@ -1878,7 +1878,7 @@ class BomItemValidate(UpdateAPI):
         serializer = self.get_serializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        if type(instance) == BomItem:
+        if isinstance(instance, BomItem):
             instance.validate_hash(valid)
 
         return Response(serializer.data)
