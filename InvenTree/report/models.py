@@ -653,7 +653,7 @@ class StockLocationReport(ReportTemplateBase):
         """Return custom context data for the StockLocationReport template"""
         stock_location = self.object_to_print
 
-        if not isinstance(stock_location, stock.models.StockItemTracking):
+        if not isinstance(stock_location, stock.models.StockLocation):
             raise TypeError('Provided model is not a StockLocation object -> ' + str(type(stock_location)))
 
         return {
