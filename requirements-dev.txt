@@ -30,7 +30,7 @@ coveralls==2.1.2
     # via -r requirements-dev.in
 distlib==0.3.7
     # via virtualenv
-django==3.2.20
+django==4.1.10
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
@@ -84,10 +84,6 @@ pyflakes==3.1.0
     # via flake8
 pyproject-hooks==1.0.0
     # via build
-pytz==2023.3
-    # via
-    #   -c requirements.txt
-    #   django
 pyyaml==6.0.1
     # via
     #   -c requirements.txt
