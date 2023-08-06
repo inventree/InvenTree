@@ -2941,7 +2941,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
     def test_report_list(self):
         """Test for PartStocktakeReport list endpoint"""
 
-        from part.tasks import generate_stocktake_report
+        from part.stocktake import generate_stocktake_report
 
         # Initially, no stocktake records are available
         self.assertEqual(PartStocktake.objects.count(), 0)

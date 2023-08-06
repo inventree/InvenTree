@@ -1447,13 +1447,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             ],
         )
 
-    def stock_entries(self, include_variants=True, in_stock=None):
+    def stock_entries(self, include_variants=True, in_stock=None, location=None):
         """Return all stock entries for this Part.
 
-        - If this is a template part, include variants underneath this.
-
-        Note: To return all stock-entries for all part variants under this one,
-        we need to be creative with the filtering.
+        Arguments:
+            include_variants: If True, include stock entries for all part variants
+            in_stock: If True, filter by stock entries which are 'in stock'
+            location: If set, filter by stock entries in the specified location
         """
         if include_variants:
             query = StockModels.StockItem.objects.filter(part__in=self.get_descendants(include_self=True))
@@ -1464,6 +1464,10 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             query = query.filter(StockModels.StockItem.IN_STOCK_FILTER)
         elif in_stock is False:
             query = query.exclude(StockModels.StockItem.IN_STOCK_FILTER)
+
+        if location:
+            locations = location.get_descendants(include_self=True)
+            query = query.filter(location__in=locations)
 
         return query
 
@@ -2029,10 +2033,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
             # Ignore ancestor parts which are inherited
             if bom_item.part in my_ancestors and bom_item.inherited:
-                continue
-
-            # Skip if already exists
-            if BomItem.objects.filter(part=self, sub_part=bom_item.sub_part).exists():
                 continue
 
             # Skip (or throw error) if BomItem is not valid
@@ -3532,6 +3532,16 @@ class PartParameter(MetadataMixin, models.Model):
 
         super().clean()
 
+        # Validate the parameter data against the template units
+        if InvenTreeSetting.get_setting('PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False):
+            if self.template.units:
+                try:
+                    InvenTree.conversion.convert_physical_value(self.data, self.template.units)
+                except ValidationError as e:
+                    raise ValidationError({
+                        'data': e.message
+                    })
+
         # Validate the parameter data against the template choices
         if choices := self.template.get_choices():
             if self.data not in choices:
@@ -3566,8 +3576,7 @@ class PartParameter(MetadataMixin, models.Model):
 
         if self.template.units:
             try:
-                converted = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
-                self.data_numeric = float(converted.magnitude)
+                self.data_numeric = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
             except (ValidationError, ValueError):
                 self.data_numeric = None
 

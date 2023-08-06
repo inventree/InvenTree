@@ -9,6 +9,7 @@
 [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7179/badge)](https://bestpractices.coreinfrastructure.org/projects/7179)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9bbb2101-0a4d-41e7-ad56-b63fb6053094/deploy-status)](https://app.netlify.com/sites/inventree/deploys)
 
 [![Coveralls](https://img.shields.io/coveralls/github/inventree/InvenTree)](https://coveralls.io/github/inventree/InvenTree)
 [![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
@@ -156,7 +157,9 @@ Find a full list of used third-party libraries in [our documentation](https://do
   <a href="https://inventree.org/digitalocean">
     <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px">
   </a>
+  <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-bg.svg" alt="Deploys by Netlify" /> </a>
 </p>
+
 
 <!-- License -->
 ## :warning: License

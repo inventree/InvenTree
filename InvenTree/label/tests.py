@@ -1,17 +1,21 @@
 """Tests for labels"""
 
 import io
+import json
 
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.http import JsonResponse
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
 from InvenTree.helpers import validateFilterString
 from InvenTree.unit_test import InvenTreeAPITestCase
+from label.models import LabelOutput
 from part.models import Part
+from plugin.registry import registry
 from stock.models import StockItem
 
 from .models import PartLabel, StockItemLabel, StockLocationLabel
@@ -77,7 +81,16 @@ class LabelTest(InvenTreeAPITestCase):
 
         for label in labels:
             url = reverse('api-part-label-print', kwargs={'pk': label.pk})
-            self.get(f'{url}?parts={part.pk}', expected_code=200)
+
+            # Check that label printing returns the correct response type
+            response = self.get(f'{url}?parts={part.pk}', expected_code=200)
+            self.assertIsInstance(response, JsonResponse)
+            data = json.loads(response.content)
+
+            self.assertIn('message', data)
+            self.assertIn('file', data)
+            label_file = data['file']
+            self.assertIn('/media/label/output/', label_file)
 
     def test_print_part_label(self):
         """Actually 'print' a label, and ensure that the correct information is contained."""
@@ -115,21 +128,33 @@ class LabelTest(InvenTreeAPITestCase):
 
         # Ensure we are in "debug" mode (so the report is generated as HTML)
         InvenTreeSetting.set_setting('REPORT_ENABLE', True, None)
-        InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', True, None)
 
-        # Print via the API
+        # Set the 'debug' setting for the plugin
+        plugin = registry.get_plugin('inventreelabel')
+        plugin.set_setting('DEBUG', True)
+
+        # Print via the API (Note: will default to the builtin plugin if no plugin supplied)
         url = reverse('api-part-label-print', kwargs={'pk': label.pk})
 
-        response = self.get(f'{url}?parts=1', expected_code=200)
+        part_pk = Part.objects.first().pk
 
-        content = str(response.content)
+        response = self.get(f'{url}?parts={part_pk}', expected_code=200)
+        data = json.loads(response.content)
+        self.assertIn('file', data)
+
+        # Find the generated file
+        output = LabelOutput.objects.last()
+
+        # Open the file and read data
+        with open(output.label.path, 'r') as f:
+            content = f.read()
 
         # Test that each element has been rendered correctly
         self.assertIn("part: 1 - M2x4 LPHS", content)
-        self.assertIn('data: {"part": 1}', content)
+        self.assertIn(f'data: {{"part": {part_pk}}}', content)
         self.assertIn("http://testserver/part/1/", content)
-        self.assertIn("image: /static/img/blank_image.png", content)
-        self.assertIn("logo: /static/img/inventree.png", content)
+        self.assertIn("img/blank_image.png", content)
+        self.assertIn("img/inventree.png", content)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""

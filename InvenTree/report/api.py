@@ -18,16 +18,19 @@ import InvenTree.helpers
 import order.models
 import part.models
 from InvenTree.api import MetadataView
+from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
-from stock.models import StockItem, StockItemAttachment
+from stock.models import StockItem, StockItemAttachment, StockLocation
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     ReturnOrderReport, SalesOrderReport, TestReport)
+                     ReturnOrderReport, SalesOrderReport, StockLocationReport,
+                     TestReport)
 from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           PurchaseOrderReportSerializer,
                           ReturnOrderReportSerializer,
-                          SalesOrderReportSerializer, TestReportSerializer)
+                          SalesOrderReportSerializer,
+                          StockLocationReportSerializer, TestReportSerializer)
 
 
 class ReportListView(ListAPI):
@@ -181,78 +184,90 @@ class ReportPrintMixin:
         # Start with a default report name
         report_name = "report.pdf"
 
-        # Merge one or more PDF files into a single download
-        for item in items_to_print:
-            report = self.get_object()
-            report.object_to_print = item
+        try:
+            # Merge one or more PDF files into a single download
+            for item in items_to_print:
+                report = self.get_object()
+                report.object_to_print = item
 
-            report_name = report.generate_filename(request)
-            output = report.render(request)
+                report_name = report.generate_filename(request)
+                output = report.render(request)
 
-            # Run report callback for each generated report
-            self.report_callback(item, output, request)
+                # Run report callback for each generated report
+                self.report_callback(item, output, request)
 
-            try:
-                if debug_mode:
-                    outputs.append(report.render_as_string(request))
-                else:
-                    outputs.append(output)
-            except TemplateDoesNotExist as e:
-                template = str(e)
-                if not template:
-                    template = report.template
+                try:
+                    if debug_mode:
+                        outputs.append(report.render_as_string(request))
+                    else:
+                        outputs.append(output)
+                except TemplateDoesNotExist as e:
+                    template = str(e)
+                    if not template:
+                        template = report.template
 
-                return Response(
-                    {
-                        'error': _(f"Template file '{template}' is missing or does not exist"),
-                    },
-                    status=400,
+                    return Response(
+                        {
+                            'error': _(f"Template file '{template}' is missing or does not exist"),
+                        },
+                        status=400,
+                    )
+
+            if not report_name.endswith('.pdf'):
+                report_name += '.pdf'
+
+            if debug_mode:
+                """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
+
+                html = "\n".join(outputs)
+
+                return HttpResponse(html)
+            else:
+                """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
+
+                pages = []
+
+                try:
+                    for output in outputs:
+                        doc = output.get_document()
+                        for page in doc.pages:
+                            pages.append(page)
+
+                    pdf = outputs[0].get_document().copy(pages).write_pdf()
+
+                except TemplateDoesNotExist as e:
+
+                    template = str(e)
+
+                    if not template:
+                        template = report.template
+
+                    return Response(
+                        {
+                            'error': _(f"Template file '{template}' is missing or does not exist"),
+                        },
+                        status=400,
+                    )
+
+                inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user, cache=False)
+
+                return InvenTree.helpers.DownloadFile(
+                    pdf,
+                    report_name,
+                    content_type='application/pdf',
+                    inline=inline,
                 )
 
-        if not report_name.endswith('.pdf'):
-            report_name += '.pdf'
+        except Exception as exc:
+            # Log the exception to the database
+            log_error(request.path)
 
-        if debug_mode:
-            """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
-
-            html = "\n".join(outputs)
-
-            return HttpResponse(html)
-        else:
-            """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
-
-            pages = []
-
-            try:
-                for output in outputs:
-                    doc = output.get_document()
-                    for page in doc.pages:
-                        pages.append(page)
-
-                pdf = outputs[0].get_document().copy(pages).write_pdf()
-
-            except TemplateDoesNotExist as e:
-
-                template = str(e)
-
-                if not template:
-                    template = report.template
-
-                return Response(
-                    {
-                        'error': _(f"Template file '{template}' is missing or does not exist"),
-                    },
-                    status=400,
-                )
-
-            inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user, cache=False)
-
-            return InvenTree.helpers.DownloadFile(
-                pdf,
-                report_name,
-                content_type='application/pdf',
-                inline=inline,
-            )
+            # Re-throw the exception to the client as a DRF exception
+            raise ValidationError({
+                'error': 'Report printing failed',
+                'detail': str(exc),
+                'path': request.path,
+            })
 
     def get(self, request, *args, **kwargs):
         """Default implementation of GET for a print endpoint.
@@ -448,6 +463,30 @@ class ReturnOrderReportPrint(ReturnOrderReportMixin, ReportPrintMixin, RetrieveA
     pass
 
 
+class StockLocationReportMixin(ReportFilterMixin):
+    """Mixin for StockLocation report template"""
+
+    ITEM_MODEL = StockLocation
+    ITEM_KEY = 'location'
+    queryset = StockLocationReport.objects.all()
+    serializer_class = StockLocationReportSerializer
+
+
+class StockLocationReportList(StockLocationReportMixin, ReportListView):
+    """API list endpoint for the StockLocationReportList model"""
+    pass
+
+
+class StockLocationReportDetail(StockLocationReportMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single StockLocationReportDetail object."""
+    pass
+
+
+class StockLocationReportPrint(StockLocationReportMixin, ReportPrintMixin, RetrieveAPI):
+    """API endpoint for printing a StockLocationReportPrint object"""
+    pass
+
+
 report_api_urls = [
 
     # Purchase order reports
@@ -524,4 +563,18 @@ report_api_urls = [
         # List view
         re_path(r'^.*$', StockItemTestReportList.as_view(), name='api-stockitem-testreport-list'),
     ])),
+
+    # Stock Location reports (Stock Location Reports -> sir)
+    re_path(r'slr/', include([
+        # Detail views
+        path(r'<int:pk>/', include([
+            re_path(r'print/?', StockLocationReportPrint.as_view(), name='api-stocklocation-report-print'),
+            re_path(r'metadata/', MetadataView.as_view(), {'report': StockLocationReport}, name='api-stocklocation-report-metadata'),
+            re_path(r'^.*$', StockLocationReportDetail.as_view(), name='api-stocklocation-report-detail'),
+        ])),
+
+        # List view
+        re_path(r'^.*$', StockLocationReportList.as_view(), name='api-stocklocation-report-list'),
+    ])),
+
 ]

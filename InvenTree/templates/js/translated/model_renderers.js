@@ -129,15 +129,19 @@ function renderModel(data, options={}) {
         }
     }
 
-    let text = `<span>${data.text}</span>`;
+    let text = data.text;
+
+    if (showLink && data.url) {
+        text = renderLink(text, data.url);
+    }
+
+    text = `<span>${text}</span>`;
 
     if (data.textSecondary) {
         text += ` - <small><em>${data.textSecondary}</em></small>`;
     }
 
-    if (showLink && data.url) {
-        text = renderLink(text, data.url);
-    }
+
 
     html += text;
 

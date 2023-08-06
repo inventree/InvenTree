@@ -719,14 +719,22 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                         if items.exists() and items.count() == 1:
                             stock_item = items[0]
 
-                            # Allocate the stock item
-                            BuildItem.objects.create(
-                                build=self,
-                                bom_item=bom_item,
-                                stock_item=stock_item,
-                                quantity=1,
-                                install_into=output,
-                            )
+                            # Find the 'BuildLine' object which points to this BomItem
+                            try:
+                                build_line = BuildLine.objects.get(
+                                    build=self,
+                                    bom_item=bom_item
+                                )
+
+                                # Allocate the stock items against the BuildLine
+                                BuildItem.objects.create(
+                                    build_line=build_line,
+                                    stock_item=stock_item,
+                                    quantity=1,
+                                    install_into=output,
+                                )
+                            except BuildLine.DoesNotExist:
+                                pass
 
         else:
             """Create a single build output of the given quantity."""

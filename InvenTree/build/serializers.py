@@ -630,7 +630,7 @@ class BuildCompleteSerializer(serializers.Serializer):
 
         return {
             'overallocated': build.is_overallocated(),
-            'allocated': build.is_fully_allocated(),
+            'allocated': build.are_untracked_parts_allocated,
             'remaining': build.remaining,
             'incomplete': build.incomplete_count,
         }
@@ -663,7 +663,7 @@ class BuildCompleteSerializer(serializers.Serializer):
         """Check if the 'accept_unallocated' field is required"""
         build = self.context['build']
 
-        if not build.is_fully_allocated() and not value:
+        if not build.are_untracked_parts_allocated and not value:
             raise ValidationError(_('Required stock has not been fully allocated'))
 
         return value
@@ -1063,6 +1063,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
             'available_stock',
             'available_substitute_stock',
             'available_variant_stock',
+            'total_available_stock',
         ]
 
         read_only_fields = [
@@ -1084,6 +1085,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
     available_stock = serializers.FloatField(read_only=True)
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
+    total_available_stock = serializers.FloatField(read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1181,6 +1183,14 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         queryset = queryset.annotate(
             available_variant_stock=ExpressionWrapper(
                 F('variant_stock_total') - F('variant_bo_allocations') - F('variant_so_allocations'),
+                output_field=FloatField(),
+            )
+        )
+
+        # Annotate with the 'total available stock'
+        queryset = queryset.annotate(
+            total_available_stock=ExpressionWrapper(
+                F('available_stock') + F('available_substitute_stock') + F('available_variant_stock'),
                 output_field=FloatField(),
             )
         )

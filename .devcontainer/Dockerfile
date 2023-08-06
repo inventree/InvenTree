@@ -7,7 +7,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
 ARG WORKSPACE="/workspaces/InvenTree"
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
-ARG NODE_VERSION="none"
+ARG NODE_VERSION="18"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
 # [Optional] If your pip requirements rarely change, uncomment this section to add them to the image.

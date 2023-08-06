@@ -387,13 +387,13 @@ def DownloadFile(data, filename, content_type='application/text', inline=False) 
     filename = WrapWithQuotes(filename)
     length = len(data)
 
-    if type(data) == str:
+    if isinstance(data, str):
         wrapper = FileWrapper(io.StringIO(data))
     else:
         wrapper = FileWrapper(io.BytesIO(data))
 
     response = StreamingHttpResponse(wrapper, content_type=content_type)
-    if type(data) == str:
+    if isinstance(data, str):
         length = len(bytes(data, response.charset))
     response['Content-Length'] = length
 

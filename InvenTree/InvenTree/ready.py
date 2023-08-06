@@ -1,5 +1,6 @@
 """Functions to check if certain parts of InvenTree are ready."""
 
+import os
 import sys
 
 
@@ -16,6 +17,18 @@ def isImportingData():
 def isRunningMigrations():
     """Return True if the database is currently running migrations."""
     return 'migrate' in sys.argv or 'makemigrations' in sys.argv
+
+
+def isInMainThread():
+    """Django runserver starts two processes, one for the actual dev server and the other to reload the application.
+
+    - The RUN_MAIN env is set in that case. However if --noreload is applied, this variable
+    is not set because there are no different threads.
+    """
+    if "runserver" in sys.argv and "--noreload" not in sys.argv:
+        return os.environ.get('RUN_MAIN', None) == "true"
+
+    return True
 
 
 def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False):
@@ -65,3 +78,19 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, 
             return False
 
     return True
+
+
+def isPluginRegistryLoaded():
+    """Ensures that the plugin registry is already loaded.
+
+    The plugin registry reloads all apps onetime after starting if there are AppMixin plugins,
+    so that the discovered AppConfigs are added to Django. This triggers the ready function of
+    AppConfig to execute twice. Add this check to prevent from running two times.
+
+    Note: All apps using this check need to be registered after the plugins app in settings.py
+
+    Returns: 'False' if the registry has not fully loaded the plugins yet.
+    """
+    from plugin import registry
+
+    return registry.plugins_loaded
