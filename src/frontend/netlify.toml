@@ -1,0 +1,19 @@
+# Netlify configuration file
+# https://www.netlify.com/docs/netlify-toml-reference/
+
+[build]
+  command = "yarn run build --outDir dist"
+  publish = "dist"
+
+# Send requests to subpath
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
+  [plugins.inputs.settings]
+    preset = "desktop" # Optionally run Lighthouse using a desktop configuration

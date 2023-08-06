@@ -8,6 +8,7 @@ import common.settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('common', '0004_inventreesetting'),
         ('order', '0037_auto_20201110_0911'),
     ]
 

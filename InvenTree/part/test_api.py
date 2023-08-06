@@ -18,7 +18,7 @@ import company.models
 import order.models
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatusGroups,
                                     StockStatus)
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import (BomItem, BomItemSubstitute, Part, PartCategory,
@@ -536,6 +536,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'part',
         'location',
         'bom',
+        'build',
         'company',
         'test_templates',
         'manufacturer_part',
@@ -1628,7 +1629,7 @@ class PartDetailTests(PartAPITestBase):
         # How many parts are 'on order' for this part?
         lines = order.models.PurchaseOrderLineItem.objects.filter(
             part__part__pk=1,
-            order__status__in=PurchaseOrderStatus.OPEN,
+            order__status__in=PurchaseOrderStatusGroups.OPEN,
         )
 
         on_order = 0
@@ -1857,7 +1858,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         StockItem.objects.create(part=cls.part, quantity=300)
 
         # Now create another 400 units which are LOST
-        StockItem.objects.create(part=cls.part, quantity=400, status=StockStatus.LOST)
+        StockItem.objects.create(part=cls.part, quantity=400, status=StockStatus.LOST.value)
 
     def get_part_data(self):
         """Helper function for retrieving part data"""
@@ -1992,15 +1993,19 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
             quantity=10,
             title='Making some assemblies',
             reference='BO-9999',
-            status=BuildStatus.PRODUCTION,
+            status=BuildStatus.PRODUCTION.value,
         )
 
         bom_item = BomItem.objects.get(pk=6)
 
+        line = build.models.BuildLine.objects.get(
+            bom_item=bom_item,
+            build=bo,
+        )
+
         # Allocate multiple stock items against this build order
         build.models.BuildItem.objects.create(
-            build=bo,
-            bom_item=bom_item,
+            build_line=line,
             stock_item=StockItem.objects.get(pk=1000),
             quantity=10,
         )
@@ -2021,8 +2026,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         # Allocate further stock against the build
         build.models.BuildItem.objects.create(
-            build=bo,
-            bom_item=bom_item,
+            build_line=line,
             stock_item=StockItem.objects.get(pk=1001),
             quantity=10,
         )
@@ -2133,7 +2137,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
                 for line_item in sp.purchase_order_line_items.all():
                     po = line_item.order
 
-                    if po.status in PurchaseOrderStatus.OPEN:
+                    if po.status in PurchaseOrderStatusGroups.OPEN:
                         remaining = line_item.quantity - line_item.received
 
                         if remaining > 0:
@@ -2937,7 +2941,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
     def test_report_list(self):
         """Test for PartStocktakeReport list endpoint"""
 
-        from part.tasks import generate_stocktake_report
+        from part.stocktake import generate_stocktake_report
 
         # Initially, no stocktake records are available
         self.assertEqual(PartStocktake.objects.count(), 0)
@@ -3053,3 +3057,22 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
             'api-bom-item-metadata': BomItem,
         }.items():
             self.metatester(apikey, model)
+
+
+class PartSchedulingTest(PartAPITestBase):
+    """Unit tests for the 'part scheduling' API endpoint"""
+
+    def test_get_schedule(self):
+        """Test that the scheduling endpoint returns OK"""
+
+        part_ids = [
+            1, 3, 100, 101,
+        ]
+
+        for pk in part_ids:
+            url = reverse('api-part-scheduling', kwargs={'pk': pk})
+            data = self.get(url, expected_code=200).data
+
+            for entry in data:
+                for k in ['date', 'quantity', 'label']:
+                    self.assertIn(k, entry)

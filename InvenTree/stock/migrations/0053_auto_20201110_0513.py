@@ -8,6 +8,7 @@ import common.settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('common', '0004_inventreesetting'),
         ('stock', '0052_stockitem_is_building'),
     ]
 

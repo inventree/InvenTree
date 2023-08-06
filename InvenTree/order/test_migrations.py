@@ -109,7 +109,7 @@ class TestShipmentMigration(MigratorTestCase):
                 reference=f'SO{ii}',
                 customer=customer,
                 description='A sales order for stuffs',
-                status=SalesOrderStatus.PENDING,
+                status=SalesOrderStatus.PENDING.value,
             )
 
         order.save()

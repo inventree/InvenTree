@@ -81,6 +81,7 @@ class RuleSet(models.Model):
             'common_newsfeedentry',
             'taggit_tag',
             'taggit_taggeditem',
+            'flags_flagstate',
         ],
         'part_category': [
             'part_partcategory',
@@ -114,6 +115,7 @@ class RuleSet(models.Model):
         'stock_location': [
             'stock_stocklocation',
             'label_stocklocationlabel',
+            'report_stocklocationreport'
         ],
         'stock': [
             'stock_stockitem',
@@ -130,15 +132,18 @@ class RuleSet(models.Model):
             'part_bomitemsubstitute',
             'build_build',
             'build_builditem',
+            'build_buildline',
             'build_buildorderattachment',
             'stock_stockitem',
             'stock_stocklocation',
             'report_buildreport',
+            'label_buildlinelabel',
         ],
         'purchase_order': [
             'company_company',
             'company_companyattachment',
             'company_contact',
+            'company_address',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
             'company_supplierpart',
@@ -153,6 +158,7 @@ class RuleSet(models.Model):
             'company_company',
             'company_companyattachment',
             'company_contact',
+            'company_address',
             'order_salesorder',
             'order_salesorderallocation',
             'order_salesorderattachment',
@@ -165,6 +171,7 @@ class RuleSet(models.Model):
             'company_company',
             'company_companyattachment',
             'company_contact',
+            'company_address',
             'order_returnorder',
             'order_returnorderlineitem',
             'order_returnorderextraline',
@@ -181,6 +188,7 @@ class RuleSet(models.Model):
 
         # Models which currently do not require permissions
         'common_colortheme',
+        'common_customunit',
         'common_inventreesetting',
         'common_inventreeusersetting',
         'common_notificationentry',
@@ -189,6 +197,7 @@ class RuleSet(models.Model):
         'common_projectcode',
         'common_webhookendpoint',
         'common_webhookmessage',
+        'label_labeloutput',
         'users_owner',
 
         # Third-party tables

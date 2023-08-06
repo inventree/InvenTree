@@ -4,6 +4,7 @@ import django.core.exceptions as django_exceptions
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
+from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 from .models import (Part, PartCategory, PartCategoryParameterTemplate,
@@ -62,6 +63,20 @@ class TestParams(TestCase):
                 p.set_metadata(k, k)
 
             self.assertEqual(len(p.metadata.keys()), 4)
+
+    def test_get_parameter(self):
+        """Test the Part.get_parameter method"""
+
+        prt = Part.objects.get(pk=3)
+
+        # Check that we can get a parameter by name
+        for name in ['Length', 'Width', 'Thickness']:
+            param = prt.get_parameter(name)
+            self.assertEqual(param.template.name, name)
+
+        # Check that an incorrect name returns None
+        param = prt.get_parameter('Not a parameter')
+        self.assertIsNone(param)
 
 
 class TestCategoryTemplates(TransactionTestCase):
@@ -154,8 +169,20 @@ class ParameterTests(TestCase):
             param = PartParameter(part=prt, template=template, data=value)
             param.full_clean()
 
-        # Test that invalid parameters fail
-        for value in ['3 Amps', '-3 zogs', '3.14F']:
+        bad_values = ['3 Amps', '-3 zogs', '3.14F']
+
+        # Disable enforcing of part parameter units
+        InvenTreeSetting.set_setting('PART_PARAMETER_ENFORCE_UNITS', False, change_user=None)
+
+        # Invalid units also pass, but will be converted to the template units
+        for value in bad_values:
+            param = PartParameter(part=prt, template=template, data=value)
+            param.full_clean()
+
+        # Enable enforcing of part parameter units
+        InvenTreeSetting.set_setting('PART_PARAMETER_ENFORCE_UNITS', True, change_user=None)
+
+        for value in bad_values:
             param = PartParameter(part=prt, template=template, data=value)
             with self.assertRaises(django_exceptions.ValidationError):
                 param.full_clean()

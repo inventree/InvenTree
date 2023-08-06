@@ -55,7 +55,7 @@ def render_date(context, date_object):
     if date_object is None:
         return None
 
-    if type(date_object) == str:
+    if isinstance(date_object, str):
 
         date_object = date_object.strip()
 
@@ -285,6 +285,30 @@ def inventree_commit_hash(*args, **kwargs):
 def inventree_commit_date(*args, **kwargs):
     """Return InvenTree git commit date string."""
     return version.inventreeCommitDate()
+
+
+@register.simple_tag()
+def inventree_installer(*args, **kwargs):
+    """Return InvenTree package installer string."""
+    return version.inventreeInstaller()
+
+
+@register.simple_tag()
+def inventree_branch(*args, **kwargs):
+    """Return InvenTree git branch string."""
+    return version.inventreeBranch()
+
+
+@register.simple_tag()
+def inventree_target(*args, **kwargs):
+    """Return InvenTree target string."""
+    return version.inventreeTarget()
+
+
+@register.simple_tag()
+def inventree_platform(*args, **kwargs):
+    """Return InvenTree platform string."""
+    return version.inventreePlatform()
 
 
 @register.simple_tag()

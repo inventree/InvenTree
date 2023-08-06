@@ -34,8 +34,8 @@ from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
                               InvenTreeNotesMixin, InvenTreeTree,
                               MetadataMixin, extract_int)
-from InvenTree.status_codes import (SalesOrderStatus, StockHistoryCode,
-                                    StockStatus)
+from InvenTree.status_codes import (SalesOrderStatusGroups, StockHistoryCode,
+                                    StockStatus, StockStatusGroups)
 from part import models as PartModels
 from plugin.events import trigger_event
 from users.models import Owner
@@ -334,7 +334,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         customer=None,
         consumed_by=None,
         is_building=False,
-        status__in=StockStatus.AVAILABLE_CODES
+        status__in=StockStatusGroups.AVAILABLE_CODES
     )
 
     # A query filter which can be used to filter StockItem objects which have expired
@@ -806,7 +806,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
     )
 
     status = models.PositiveIntegerField(
-        default=StockStatus.OK,
+        default=StockStatus.OK.value,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
@@ -1082,12 +1082,12 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         if active is True:
             query = query.filter(
-                line__order__status__in=SalesOrderStatus.OPEN,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
                 shipment__shipment_date=None
             )
         elif active is False:
             query = query.exclude(
-                line__order__status__in=SalesOrderStatus.OPEN
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
             ).exclude(
                 shipment__shipment_date=None
             )
@@ -1346,7 +1346,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         entry = StockItemTracking.objects.create(
             item=self,
-            tracking_type=entry_type,
+            tracking_type=entry_type.value,
             user=user,
             date=datetime.now(),
             notes=notes,

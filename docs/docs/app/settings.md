@@ -8,11 +8,15 @@ The *Settings* view provides access to user configurable settings, in addition t
 
 The main settings view is shown below, and provides the following options:
 
-- **Server** - Configure and select server profile
-- **App Settings** - Configure app settings
-- **Home Screen** - Configure home screen settings
-- **Part** - Configure part settings
-- **About** - Display  app version information
+| Option | Description |
+| --- | --- |
+| [Server](./connect.md) | Select server profile and configure settings |
+| [App Settings](#app-settings) | Configure app settings |
+| [Barcode Settings](#barcode-settings) | Configure barcode scanning settings |
+| [Home Screen](#home-screen) | Configure home screen options |
+| [Part](#part-settings) | Configure part management options |
+| About | Display app version information |
+
 
 {% with id="settings_view", url="app/settings.png", maxheight="240px", description="Settings view" %}
 {% include 'img.html' %}
@@ -26,32 +30,40 @@ The *App Settings* view provides configuration options for the InvenTree app:
 {% include 'img.html' %}
 {% endwith %}
 
-### Parts
+### App Settings
 
-Configure options for "parts" display:
+| Option | Description |
+| --- | --- |
+| Dark Mode | Enable "dark mode" display for the app. |
+| Screen Orientation | Select [screen orientation mode](#screen-orientation) |
+| Use Strict HTTPS | Enforce strict checking of HTTPs certificates. Enabling this option may prevent you from connecting to the server if there are certificate issues. |
+| Language | Select app language. By default, will use the system language of the device the app is installed on. |
+| Upload Error Reports | Enable uploading of anonymous error / crash reports. These reports are used to improve the quality of the app. |
 
-- **Include Subcategories** - When viewing a list of parts in a category, include parts from subcategories
+#### Screen Orientation
 
-### Stock
-
-Configure options for "stock" display:
-
-- **Include Sublocations** - When viewing a list of stock items in a location, include items from sublocations
-- **Stock History** - Display stock item history in the stock detail view
+By default, the screen orientation follows your system preference. However if desired, the screen orientation can be locked in either portrait or landscape mode.
 
 ### Sounds
 
 Configure audible app notifications:
 
-- **Server Error** - Play an audible tone when a server error occurs
-- **Barcode Tones** - Play audible tones when scanning barcodes
+| Option | Description |
+| --- | --- |
+| Server Error | Play an audible tone when a server error occurs |
+| Barcode Tones | Play audible tones when scanning barcodes |
 
-### App Settings
+## Barcode Settings
 
-- **Dark Mode** - Enable "dark mode" display for the app.
-- **Use Strict HTTPS** - Enforce strict checking of HTTPs certificates. Enabling this option may prevent you from connecting to the server if there are certificate issues.
-- **Language** - Select app language. By default, will use the system language of the device the app is installed on.
-- **Upload Error Reports** - Enable uploading of anonymous error / crash reports. These reports are used to improve the quality of the app.
+The *Barcode Settings* view allows you to configure options relating to barcode scanning:
+
+{% with id="barcode_settings", url="app/barcode_settings.png", maxheight="240px", description="Barcode Settings" %}
+{% include 'img.html' %}
+{% endwith %}
+
+| Option | Description |
+| --- | --- |
+| Barcode Scan Delay | Delay between successive scans |
 
 ## Home Screen
 
@@ -60,3 +72,20 @@ The *Home Screen* view allows you to configure display options for the app 'home
 {% with id="home_settings", url="app/home_settings.png", maxheight="240px", description="Home Screen Settings" %}
 {% include 'img.html' %}
 {% endwith %}
+
+| Option | Description |
+| --- | --- |
+| Subscribed Parts | Show a list of subscribed parts on the home page |
+| Show Purchase Orders | Display a link to purchase orders on the home page |
+| Show Suppliers | Display a link to suppliers on the home page |
+
+## Part Settings
+
+The *Part Settings* view allows you to configure various options governing what part features are available:
+
+| Option | Description |
+| --- | --- |
+| Parameters | Enable display of part parameters in the part detail view |
+| BOM | Enable bill of materials display in the part detail view |
+| Stock History | Enable display of stock history in the stock detail view |
+| Test Results | Enable display of test results in the stock detail view |

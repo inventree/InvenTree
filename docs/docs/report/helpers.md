@@ -224,3 +224,31 @@ You can add asset images to the reports and labels by using the `{% raw %}{% ass
 <img src="{% asset 'my_awesome_logo.png' %}"/>
 {% endraw %}
 ```
+
+## Part Parameters
+
+If you need to load a part parameter for a particular Part, within the context of your template, you can use the `part_parameter` template tag.
+
+The following example assumes that you have a report or label which contains a valid [Part](../part/part.md) instance:
+
+```
+{% raw %}
+{% load report %}
+
+{% part_parameter part "length" as length %}
+
+Part: {{ part.name }}<br>
+Length: {{ length.data }} [{{ length.units }}]
+
+{% endraw %}
+```
+
+A [Part Parameter](../part/parameter.md) has the following available attributes:
+
+| Attribute | Description |
+| --- | --- |
+| Name | The *name* of the parameter (e.g. "Length") |
+| Description | The *description* of the parameter |
+| Data | The *value* of the parameter (e.g. "123.4") |
+| Units | The *units* of the parameter (e.g. "km") |
+| Template | A reference to a [PartParameterTemplate](../part/parameter.md#parameter-templates) |

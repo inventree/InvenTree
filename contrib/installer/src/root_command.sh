@@ -64,7 +64,13 @@ case "$OS" in
         fi
         ;;
     "Debian GNU/Linux" | "debian gnu/linux" | Raspbian)
-        if [[ $VER != "11" ]]; then
+        if [[ $VER == "12" ]]; then
+            SUPPORTED=true
+        elif [[ $VER == "11" ]]; then
+            SUPPORTED=true
+        elif [[ $VER == "10" ]]; then
+            SUPPORTED=true
+        else
             SUPPORTED=false
         fi
         DIST_OS=debian

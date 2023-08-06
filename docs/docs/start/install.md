@@ -35,7 +35,7 @@ sudo apt-get install \
 ```
 
 !!! warning "Weasyprint"
-    On some systems, the dependencies for the `weasyprint` package might not be installed. Consider running through the [weasyprint installation steps](https://weasyprint.readthedocs.io/en/stable/install.html) before moving forward.
+    On some systems, the dependencies for the `weasyprint` package might not be installed. Consider running through the [weasyprint installation steps](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html) before moving forward.
 
 
 ### Create InvenTree User

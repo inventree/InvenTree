@@ -23,12 +23,6 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | Optional | A boolean field which indicates if this BOM Line Item is "optional" |
 | Note | Optional note field for additional information
 
-!!! missing "Overage"
-    While the overage field exists, it is currently non-functional and has no effect on BOM operation
-
-!!! missing "Optional"
-    The Optional field is currently for indication only - it does not serve a functional purpose (yet)
-
 ### Consumable BOM Line Items
 
 If a BOM line item is marked as *consumable*, this means that while the part and quantity information is tracked in the BOM, this line item does not get allocated to a [Build Order](./build.md). This may be useful for certain items that the user does not wish to track through the build process, as they may be low value, in abundant stock, or otherwise complicated to track.

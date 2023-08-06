@@ -43,7 +43,7 @@ def update_stock_history(apps, schema_editor):
         history.deltas['salesorder'] = item.sales_order.pk
 
         # Change the history type
-        history.tracking_type = StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+        history.tracking_type = StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value
 
         history.save()
         n += 1

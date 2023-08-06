@@ -1,8 +1,6 @@
 ---
-title: Developing InvenTree
+title: Getting started
 ---
-
-## Developing InvenTree
 
 InvenTree consists of a Django-based backend server, and a HTML / vanilla JS based frontend that uses Bootstrap. The main languages used are Python and Javascript.
 As part of the larger project other languages/techniques are used, such as docker (dev/deployment), bash (installer) and markdown (documentation).

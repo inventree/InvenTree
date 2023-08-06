@@ -2,7 +2,7 @@
 
 {% load static %}
 {% load i18n %}
-{% load status_codes %}
+{% load generic %}
 {% load inventree_extras %}
 
 {% block page_title %}
@@ -108,6 +108,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Build Description" %}</td>
         <td>{{ build.title }}</td>
     </tr>
+    {% include "project_code_data.html" with instance=build %}
     {% include "barcode_data.html" with instance=build %}
 </table>
 
@@ -150,7 +151,7 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
         <td>
-            {% build_status_label build.status %}
+            {% status_label 'build' build.status %}
         </td>
     </tr>
     {% if build.target_date %}
@@ -174,7 +175,7 @@ src="{% static 'img/blank_image.png' %}"
             {% else %}
             <span class='fa fa-times-circle icon-red'></span>
             {% endif %}
-        <td>{% trans "Completed" %}</td>
+        <td>{% trans "Completed Outputs" %}</td>
         <td>{% progress_bar build.completed build.quantity id='build-completed' max_width='150px' %}</td>
     </tr>
     {% if build.parent %}
@@ -217,7 +218,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block page_data %}
 <h3>
-    {% build_status_label build.status large=True %}
+    {% status_label 'build' build.status large=True %}
     {% if build.is_overdue %}
     <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
     {% endif %}

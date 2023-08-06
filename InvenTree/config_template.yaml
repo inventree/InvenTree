@@ -58,6 +58,12 @@ database:
 # Use the environment variable INVENTREE_DEBUG
 debug: True
 
+# Set enabled frontends
+# Use the environment variable INVENTREE_CLASSIC_FRONTEND
+# classic_frontend: True
+# Use the environment variable INVENTREE_PLATFORM_FRONTEND
+# platform_frontend: True
+
 # Configure the system logging level
 # Use environment variable INVENTREE_LOG_LEVEL
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
@@ -183,6 +189,11 @@ login_default_protocol: http
 remote_login_enabled: False
 remote_login_header: HTTP_REMOTE_USER
 
+# JWT tokens
+# JWT can be used optionally to authenticate users. Turned off by default.
+# Alternatively, use the environment variable INVENTREE_USE_JWT
+# use_jwt: True
+
 # Logout redirect configuration
 # This setting may be required if using remote / proxy login to redirect requests
 # during the logout process (default is 'index'). Please read the docs for more details
@@ -222,9 +233,17 @@ remote_login_header: HTTP_REMOTE_USER
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
 # customize:
-#   login_message: InvenTree demo instance - <a href='https://docs.inventree.org/en/latest/demo/'> Click here for login details</a>
-#   navbar_message: <h6>InvenTree demo mode <a href='https://docs.inventree.org/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
+#   login_message: InvenTree demo instance - <a href='https://inventree.org/demo.html'> Click here for login details</a>
+#   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
 #   logo: logo.png
 #   splash: splash_screen.jpg
 #   hide_admin_link: true
 #   hide_password_reset: true
+
+# Custom flags
+# InvenTree uses django-flags; read more in their docs at https://cfpb.github.io/django-flags/conditions/
+# Use environment variable INVENTREE_FLAGS or the settings below
+# flags:
+#  MY_FLAG:
+#     - condition: 'parameter'
+#       value: 'my_flag_param1'

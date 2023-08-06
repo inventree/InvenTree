@@ -8,6 +8,7 @@ import common.settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('common', '0004_inventreesetting'),
         ('company', '0024_unique_name_email_constraint'),
     ]
 

@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load status_codes %}
+{% load generic %}
 {% load inventree_extras %}
 
 /* globals
@@ -49,6 +49,12 @@ function constructHasProjectCodeFilter() {
         type: 'bool',
         title: '{% trans "Has project code" %}',
     };
+}
+
+
+// Reset a dictionary of filters for the attachment table
+function getAttachmentFilters() {
+    return {};
 }
 
 
@@ -440,7 +446,7 @@ function getPluginTableFilters() {
 // Return a dictionary of filters for the "build" table
 function getBuildTableFilters() {
 
-    return {
+    let filters = {
         status: {
             title: '{% trans "Build status" %}',
             options: buildCodes,
@@ -465,7 +471,7 @@ function getBuildTableFilters() {
                     async: false,
                     success: function(response) {
                         for (var key in response) {
-                            var owner = response[key];
+                            let owner = response[key];
                             ownersList[owner.pk] = {
                                 key: owner.pk,
                                 value: `${owner.name} (${owner.label})`,
@@ -477,11 +483,23 @@ function getBuildTableFilters() {
             },
         },
     };
+
+    if (global_settings.PROJECT_CODES_ENABLED) {
+        filters['has_project_code'] = constructHasProjectCodeFilter();
+        filters['project_code'] = constructProjectCodeFilter();
+    }
+
+    return filters;
 }
 
 
-// Return a dictionary of filters for the "build item" table
 function getBuildItemTableFilters() {
+    return {};
+}
+
+
+// Return a dictionary of filters for the "build lines" table
+function getBuildLineTableFilters() {
     return {
         allocated: {
             type: 'bool',
@@ -490,6 +508,10 @@ function getBuildItemTableFilters() {
         available: {
             type: 'bool',
             title: '{% trans "Available" %}',
+        },
+        tracked: {
+            type: 'bool',
+            title: '{% trans "Tracked" %}',
         },
         consumable: {
             type: 'bool',
@@ -759,6 +781,16 @@ function getAvailableTableFilters(tableKey) {
     tableKey = tableKey.toLowerCase();
 
     switch (tableKey) {
+    case 'attachments':
+        return getAttachmentFilters();
+    case 'build':
+        return getBuildTableFilters();
+    case 'builditems':
+        return getBuildItemTableFilters();
+    case 'buildlines':
+        return getBuildLineTableFilters();
+    case 'bom':
+        return getBOMTableFilters();
     case 'category':
         return getPartCategoryFilters();
     case 'company':
@@ -767,12 +799,6 @@ function getAvailableTableFilters(tableKey) {
         return getContactFilters();
     case 'customerstock':
         return getCustomerStockFilters();
-    case 'bom':
-        return getBOMTableFilters();
-    case 'build':
-        return getBuildTableFilters();
-    case 'builditems':
-        return getBuildItemTableFilters();
     case 'location':
         return getStockLocationFilters();
     case 'parameters':

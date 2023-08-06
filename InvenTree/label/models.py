@@ -6,6 +6,7 @@ import os
 import sys
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
@@ -13,6 +14,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import build.models
 import part.models
 import stock.models
 from InvenTree.helpers import normalize, validateFilterString
@@ -38,6 +40,13 @@ def rename_label(instance, filename):
     return os.path.join('label', 'template', instance.SUBDIR, filename)
 
 
+def rename_label_output(instance, filename):
+    """Place the label output file into the correct subdirectory."""
+    filename = os.path.basename(filename)
+
+    return os.path.join('label', 'output', filename)
+
+
 def validate_stock_item_filters(filters):
     """Validate query filters for the StockItemLabel model"""
     filters = validateFilterString(filters, model=stock.models.StockItem)
@@ -55,6 +64,13 @@ def validate_stock_location_filters(filters):
 def validate_part_filters(filters):
     """Validate query filters for the PartLabel model"""
     filters = validateFilterString(filters, model=part.models.Part)
+
+    return filters
+
+
+def validate_build_line_filters(filters):
+    """Validate query filters for the BuildLine model"""
+    filters = validateFilterString(filters, model=build.models.BuildLine)
 
     return filters
 
@@ -227,6 +243,36 @@ class LabelTemplate(MetadataMixin, models.Model):
         )
 
 
+class LabelOutput(models.Model):
+    """Class representing a label output file
+
+    'Printing' a label may generate a file object (such as PDF)
+    which is made available for download.
+
+    Future work will offload this task to the background worker,
+    and provide a 'progress' bar for the user.
+    """
+
+    # File will be stored in a subdirectory
+    label = models.FileField(
+        upload_to=rename_label_output,
+        unique=True, blank=False, null=False,
+    )
+
+    # Creation date of label output
+    created = models.DateField(
+        auto_now_add=True,
+        editable=False,
+    )
+
+    # User who generated the label
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+    )
+
+
 class StockItemLabel(LabelTemplate):
     """Template for printing StockItem labels."""
 
@@ -239,7 +285,7 @@ class StockItemLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs),'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_stock_item_filters
@@ -280,7 +326,7 @@ class StockLocationLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_stock_location_filters]
@@ -308,7 +354,7 @@ class PartLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Part query filters (comma-separated value of key=value pairs)'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_part_filters
@@ -329,4 +375,39 @@ class PartLabel(LabelTemplate):
             'qr_data': part.format_barcode(brief=True),
             'qr_url': request.build_absolute_uri(part.get_absolute_url()),
             'parameters': part.parameters_map(),
+        }
+
+
+class BuildLineLabel(LabelTemplate):
+    """Template for printing labels against BuildLine objects"""
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the BuildLineLabel model"""
+        return reverse('api-buildline-label-list')
+
+    SUBDIR = 'buildline'
+
+    filters = models.CharField(
+        blank=True, max_length=250,
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
+        verbose_name=_('Filters'),
+        validators=[
+            validate_build_line_filters
+        ]
+    )
+
+    def get_context_data(self, request):
+        """Generate context data for each provided BuildLine object."""
+
+        build_line = self.object_to_print
+
+        return {
+            'build_line': build_line,
+            'build': build_line.build,
+            'bom_item': build_line.bom_item,
+            'part': build_line.bom_item.sub_part,
+            'quantity': build_line.quantity,
+            'allocated_quantity': build_line.allocated_quantity,
+            'allocations': build_line.allocations,
         }

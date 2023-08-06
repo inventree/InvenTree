@@ -2225,7 +2225,16 @@ function constructField(name, parameters, options={}) {
         hover_title = ` title='${parameters.help_text}'`;
     }
 
-    html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title}>`;
+    var css = '';
+
+    if (parameters.css) {
+        let str = Object.keys(parameters.css).map(function(key) {
+            return `${key}: ${parameters.css[key]};`;
+        })
+        css = ` style="${str}"`;
+    }
+
+    html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title} ${css}>`;
 
     // Add a label
     if (!options.hideLabels) {

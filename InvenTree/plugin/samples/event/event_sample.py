@@ -1,11 +1,13 @@
 """Sample plugin which responds to events."""
 
-import warnings
+import logging
 
 from django.conf import settings
 
 from plugin import InvenTreePlugin
 from plugin.mixins import EventMixin
+
+logger = logging.getLogger('inventree')
 
 
 class EventPluginSample(EventMixin, InvenTreePlugin):
@@ -23,4 +25,4 @@ class EventPluginSample(EventMixin, InvenTreePlugin):
 
         # Issue warning that we can test for
         if settings.PLUGIN_TESTING:
-            warnings.warn(f'Event `{event}` triggered', stacklevel=2)
+            logger.debug(f'Event `{event}` triggered in sample plugin')

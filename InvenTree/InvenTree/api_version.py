@@ -2,14 +2,47 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 119
+INVENTREE_API_VERSION = 130
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
+v130 -> 2023-07-14 : https://github.com/inventree/InvenTree/pull/5251
+    - Refactor label printing interface
+
+v129 -> 2023-07-06 : https://github.com/inventree/InvenTree/pull/5189
+    - Changes 'serial_lte' and 'serial_gte' stock filters to point to 'serial_int' field
+
+v128 -> 2023-07-06 : https://github.com/inventree/InvenTree/pull/5186
+    - Adds 'available' filter for BuildLine API endpoint
+
+v127 -> 2023-06-24 : https://github.com/inventree/InvenTree/pull/5094
+    - Enhancements for the PartParameter API endpoints
+
+v126 -> 2023-06-19 : https://github.com/inventree/InvenTree/pull/5075
+    - Adds API endpoint for setting the "category" for multiple parts simultaneously
+
+v125 -> 2023-06-17 : https://github.com/inventree/InvenTree/pull/5064
+    - Adds API endpoint for setting the "status" field for multiple stock items simultaneously
+
+v124 -> 2023-06-17 : https://github.com/inventree/InvenTree/pull/5057
+    - Add "created_before" and "created_after" filters to the Part API
+
+v123 -> 2023-06-15 : https://github.com/inventree/InvenTree/pull/5019
+    - Add Metadata to: Plugin Config
+
+v122 -> 2023-06-14 : https://github.com/inventree/InvenTree/pull/5034
+    - Adds new BuildLineLabel label type
+
+v121 -> 2023-06-14 : https://github.com/inventree/InvenTree/pull/4808
+    - Adds "ProjectCode" link to Build model
+
+v120 -> 2023-06-07 : https://github.com/inventree/InvenTree/pull/4855
+    - Major overhaul of the build order API
+    - Adds new BuildLine model
 
 v119 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4898
-    - Add Metadata to:  Part test templates, Part parameters, Part category parameter templates, BOM item substitute, Part relateds, Stock item test result
+    - Add Metadata to:  Part test templates, Part parameters, Part category parameter templates, BOM item substitute, Related Parts, Stock item test result
 
 v118 -> 2023-06-01 : https://github.com/inventree/InvenTree/pull/4935
     - Adds extra fields for the PartParameterTemplate model
@@ -27,6 +60,7 @@ v115 - > 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
 
 v114 -> 2023-05-16 : https://github.com/inventree/InvenTree/pull/4825
     - Adds "delivery_date" to shipments
+>>>>>>> inventree/master
 
 v113 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
     - Adds API endpoints for scrapping a build output

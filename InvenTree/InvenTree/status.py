@@ -38,7 +38,14 @@ def is_worker_running(**kwargs):
     )
 
     # If any results are returned, then the background worker is running!
-    return results.exists()
+    try:
+        result = results.exists()
+    except Exception:
+        # We may throw an exception if the database is not ready,
+        # or if the django_q table is not yet created (i.e. in CI testing)
+        result = False
+
+    return result
 
 
 def check_system_health(**kwargs):

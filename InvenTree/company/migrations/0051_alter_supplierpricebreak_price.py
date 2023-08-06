@@ -8,6 +8,7 @@ import djmoney.models.validators
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('common', '0004_inventreesetting'),
         ('company', '0050_alter_company_website'),
     ]
 

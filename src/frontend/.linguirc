@@ -1,0 +1,16 @@
+{
+    "locales": ["en", "de", "hu", "pseudo-LOCALE"],
+    "catalogs": [{
+        "path": "src/locales/{locale}/messages",
+        "include": ["src"],
+        "exclude": ["**/node_modules/**"]
+    }],
+    "format": "po",
+    "orderBy": "origin",
+    "sourceLocale": "en",
+    "pseudoLocale": "pseudo-LOCALE",
+    "fallbackLocales": {
+        "default": "en",
+        "pseudo-LOCALE": "en"
+    }
+}

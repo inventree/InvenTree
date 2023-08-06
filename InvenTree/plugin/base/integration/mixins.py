@@ -467,7 +467,9 @@ class PanelMixin:
         # Construct an updated context object for template rendering
         ctx = self.get_panel_context(view, request, context)
 
-        for panel in self.get_custom_panels(view, request):
+        custom_panels = self.get_custom_panels(view, request) or []
+
+        for panel in custom_panels:
 
             content_template = panel.get('content_template', None)
             javascript_template = panel.get('javascript_template', None)

@@ -14,7 +14,8 @@ from django.db.utils import IntegrityError
 import InvenTree.conversion
 import InvenTree.tasks
 from InvenTree.config import get_setting
-from InvenTree.ready import canAppAccessDatabase, isInTestMode
+from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
+                             isInTestMode, isPluginRegistryLoaded)
 
 logger = logging.getLogger("inventree")
 
@@ -34,6 +35,10 @@ class InvenTreeConfig(AppConfig):
         - Collecting notification methods
         - Adding users set in the current environment
         """
+        # skip loading if plugin registry is not loaded or we run in a background thread
+        if not isPluginRegistryLoaded() or not isInMainThread():
+            return
+
         if canAppAccessDatabase() or settings.TESTING_ENV:
             InvenTree.tasks.check_for_migrations(worker=False)
 
@@ -48,7 +53,7 @@ class InvenTreeConfig(AppConfig):
         self.collect_notification_methods()
 
         # Ensure the unit registry is loaded
-        InvenTree.conversion.reload_unit_registry()
+        InvenTree.conversion.get_unit_registry()
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
@@ -126,19 +131,22 @@ class InvenTreeConfig(AppConfig):
         update = False
 
         try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
 
-            last_update = backend.last_update
+            if backend.exists():
+                backend = backend.first()
 
-            if last_update is None:
-                # Never been updated
-                logger.info("Exchange backend has never been updated")
-                update = True
+                last_update = backend.last_update
 
-            # Backend currency has changed?
-            if base_currency != backend.base_currency:
-                logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
-                update = True
+                if last_update is None:
+                    # Never been updated
+                    logger.info("Exchange backend has never been updated")
+                    update = True
+
+                # Backend currency has changed?
+                if base_currency != backend.base_currency:
+                    logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
+                    update = True
 
         except (ExchangeBackend.DoesNotExist):
             logger.info("Exchange backend not found - updating")
@@ -192,8 +200,8 @@ class InvenTreeConfig(AppConfig):
                 else:
                     new_user = user.objects.create_superuser(add_user, add_email, add_password)
                     logger.info(f'User {str(new_user)} was created!')
-        except IntegrityError as _e:
-            logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
+        except IntegrityError:
+            logger.warning(f'The user "{add_user}" could not be created')
 
         # do not try again
         settings.USER_ADDED = True

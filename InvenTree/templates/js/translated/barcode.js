@@ -763,7 +763,7 @@ function scanItemsIntoLocation(item_list, options={}) {
     // Extra form fields
     var extra = makeNotesField();
 
-    // Header contentfor
+    // Header content
     var header = `
     <div id='header-div'>
     </div>

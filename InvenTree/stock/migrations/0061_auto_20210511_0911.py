@@ -190,7 +190,7 @@ def update_history(apps, schema_editor):
                 tracking_type = StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
 
             if tracking_type is not None:
-                entry.tracking_type = tracking_type
+                entry.tracking_type = tracking_type.value
                 updated = True
 
             if updated:

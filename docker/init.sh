@@ -1,9 +1,11 @@
-#!/bin/bash
+#!/bin/sh
 # exit when any command fails
 set -e
 
 # Required to suppress some git errors further down the line
-git config --global --add safe.directory /home/***
+if command -v git &> /dev/null; then
+    git config --global --add safe.directory /home/***
+fi
 
 # Create required directory structure (if it does not already exist)
 if [[ ! -d "$INVENTREE_STATIC_ROOT" ]]; then

@@ -1,6 +1,7 @@
 {% load i18n %}
 
 /* globals
+    checkPermission,
     downloadTableData,
     getAvailableTableFilters,
     getTableData,
@@ -73,8 +74,7 @@ function loadTableFilters(tableKey, query={}) {
     });
 
     // Override configurable filters with hard-coded query
-    Object.assign(filters, query);
-
+    filters = Object.assign(filters, query);
     return filters;
 }
 
@@ -267,6 +267,102 @@ function generateFilterInput(tableKey, filterKey) {
 
 
 /*
+ * Construct a single action button based on the provided definition
+ */
+function makeFilterActionButton(button, options={}) {
+    let prefix = options.prefix || 'action';
+
+    // Check for required permission (if specified)
+    if (button.permission) {
+        if (!checkPermission(button.permission)) {
+            return '';
+        }
+    }
+
+    return `
+    <li><a class='dropdown-item' href='#' id='action-${prefix}-${button.label}'>
+        <span class='fas ${button.icon}'></span> ${button.title}
+    </a></li>`;
+}
+
+
+/*
+ * Construct a set of custom actions for a given table
+ */
+function makeCustomActionGroup(action_group, table) {
+
+    let buttons = [];
+    let label = action_group.label || 'actions';
+    let title = action_group.title || '{% trans "Actions" %}';
+    let icon = action_group.icon || 'fa-tools';
+
+    // Construct the HTML for each button
+    action_group.actions.forEach(function(action) {
+        buttons.push(makeFilterActionButton(action, {prefix: label}));
+    });
+
+    if (buttons.length == 0) {
+        // Don't display anything if there are no buttons to show
+        return '';
+    }
+
+    let html = `
+    <div class='btn-group' role='group'>
+    <button id='${label}-actions' title='${title}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas ${icon}'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+    `;
+
+    buttons.forEach(function(button) {
+        html += button;
+    });
+
+    html += `</ul></div>`;
+    return html;
+}
+
+
+/*
+ * Construct a set of custom barcode actions for a given table
+ *
+ * To define barcode actions for a data table, use options.barcode_actions
+ */
+function makeBarcodeActions(barcode_actions, table) {
+
+    let html = `
+    <div class='btn-group' role='group'>
+    <button id='barcode-actions' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-qrcode'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+    `;
+
+    barcode_actions.forEach(function(action) {
+        html += makeFilterActionButton(action, {prefix: 'barcode'});
+    });
+
+    html += `</ul></div>`;
+
+    return html;
+}
+
+
+/*
+ * Add callbacks for custom actions
+ */
+function addFilterActionCallbacks(element, label, table, actions) {
+    actions.forEach(function(action) {
+        let id = `action-${label}-${action.label}`;
+        element.find(`#${id}`).click(function() {
+            let data = getTableData(table);
+            action.callback(data);
+        });
+    });
+}
+
+
+/*
  * Helper function to make a 'filter' style button
  */
 function makeFilterButton(options={}) {
@@ -315,6 +411,19 @@ function setupFilterList(tableKey, table, target, options={}) {
 
     let report_button = options.report && global_settings.REPORT_ENABLE;
     let labels_button = options.labels && global_settings.LABEL_ENABLE;
+    let barcode_actions = options.barcode_actions && global_settings.BARCODE_ENABLE;
+
+    // Add in "custom" actions first (to the left of the table buttons)
+    if (options.custom_actions) {
+        options.custom_actions.forEach(function(action_group) {
+            buttons += makeCustomActionGroup(action_group, table);
+        });
+    }
+
+    // Add in button for custom barcode actions
+    if (barcode_actions) {
+        buttons += makeBarcodeActions(options.barcode_actions, table);
+    }
 
     if (report_button || labels_button) {
         let print_buttons = `
@@ -378,9 +487,9 @@ function setupFilterList(tableKey, table, target, options={}) {
     `);
 
     for (var key in filters) {
-        var value = getFilterOptionValue(tableKey, key, filters[key]);
-        var title = getFilterTitle(tableKey, key);
-        var description = getFilterDescription(tableKey, key);
+        let value = getFilterOptionValue(tableKey, key, filters[key]);
+        let title = getFilterTitle(tableKey, key);
+        let description = getFilterDescription(tableKey, key);
 
         var filter_tag = `
         <div title='${description}' class='filter-tag'>
@@ -392,6 +501,19 @@ function setupFilterList(tableKey, table, target, options={}) {
         `;
 
         element.append(filter_tag);
+    }
+
+    // Callback for custom actions
+    if (options.custom_actions) {
+        options.custom_actions.forEach(function(action_group) {
+            let label = action_group.label || 'actions';
+            addFilterActionCallbacks(element, label, table, action_group.actions);
+        });
+    }
+
+    // Callback for barcode actions
+    if (barcode_actions) {
+        addFilterActionCallbacks(element, 'barcode', table, options.barcode_actions);
     }
 
     // Callback for printing reports

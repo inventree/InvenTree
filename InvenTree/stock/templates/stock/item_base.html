@@ -2,7 +2,7 @@
 {% load static %}
 {% load plugin_extras %}
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 {% load i18n %}
 {% load l10n %}
 
@@ -421,7 +421,7 @@
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
-        <td>{% stock_status_label item.status %}</td>
+        <td>{% status_label 'stock' item.status %}</td>
     </tr>
     {% if item.expiry_date %}
     <tr>

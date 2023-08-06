@@ -8,6 +8,7 @@ import djmoney.models.fields
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('common', '0004_inventreesetting'),
         ('company', '0038_manufacturerpartparameter'),
     ]
 

@@ -16,7 +16,7 @@ from rest_framework import status
 import company.models
 import part.models
 from common.models import InvenTreeSetting
-from InvenTree.status_codes import StockStatus
+from InvenTree.status_codes import StockHistoryCode, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from stock.models import StockItem, StockItemTestResult, StockLocation
@@ -385,11 +385,11 @@ class StockItemListTest(StockAPITestCase):
     def test_filter_by_status(self):
         """Filter StockItem by 'status' field."""
         codes = {
-            StockStatus.OK: 27,
-            StockStatus.DESTROYED: 1,
-            StockStatus.LOST: 1,
-            StockStatus.DAMAGED: 0,
-            StockStatus.REJECTED: 0,
+            StockStatus.OK.value: 27,
+            StockStatus.DESTROYED.value: 1,
+            StockStatus.LOST.value: 1,
+            StockStatus.DAMAGED.value: 0,
+            StockStatus.REJECTED.value: 0,
         }
 
         for code in codes.keys():
@@ -556,6 +556,42 @@ class StockItemListTest(StockAPITestCase):
         dataset = self.export_data({'part': 25})
 
         self.assertEqual(len(dataset), 17)
+
+    def test_query_count(self):
+        """Test that the number of queries required to fetch stock items is reasonable."""
+
+        def get_stock(data):
+            """Helper function to fetch stock items."""
+            response = self.client.get(self.list_url, data=data)
+            self.assertEqual(response.status_code, 200)
+            return response.data
+
+        # Create a bunch of StockItem objects
+        prt = Part.objects.first()
+
+        StockItem.objects.bulk_create([
+            StockItem(
+                part=prt,
+                quantity=1,
+                level=0, tree_id=0, lft=0, rght=0,
+            ) for _ in range(100)
+        ])
+
+        # List *all* stock items
+        with self.assertNumQueriesLessThan(25):
+            get_stock({})
+
+        # List all stock items, with part detail
+        with self.assertNumQueriesLessThan(20):
+            get_stock({'part_detail': True})
+
+        # List all stock items, with supplier_part detail
+        with self.assertNumQueriesLessThan(20):
+            get_stock({'supplier_part_detail': True})
+
+        # List all stock items, with 'location' and 'tests' detail
+        with self.assertNumQueriesLessThan(20):
+            get_stock({'location_detail': True, 'tests': True})
 
 
 class StockItemTest(StockAPITestCase):
@@ -1117,6 +1153,51 @@ class StockItemTest(StockAPITestCase):
             stock_item.refresh_from_db()
             self.assertEqual(stock_item.part, variant)
 
+    def test_set_status(self):
+        """Test API endpoint for setting StockItem status"""
+
+        url = reverse('api-stock-change-status')
+
+        prt = Part.objects.first()
+
+        # Create a bunch of items
+        items = [
+            StockItem.objects.create(part=prt, quantity=10) for _ in range(10)
+        ]
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.OK.value)
+
+        data = {
+            'items': [item.pk for item in items],
+            'status': StockStatus.DAMAGED.value,
+        }
+
+        self.post(url, data, expected_code=201)
+
+        # Check that the item has been updated correctly
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.DAMAGED.value)
+            self.assertEqual(item.tracking_info.count(), 1)
+
+        # Same test, but with one item unchanged
+        items[0].status = StockStatus.ATTENTION.value
+        items[0].save()
+
+        data['status'] = StockStatus.ATTENTION.value
+
+        self.post(url, data, expected_code=201)
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.ATTENTION.value)
+            self.assertEqual(item.tracking_info.count(), 2)
+
+            tracking = item.tracking_info.last()
+            self.assertEqual(tracking.tracking_type, StockHistoryCode.EDITED.value)
+
 
 class StocktakeTest(StockAPITestCase):
     """Series of tests for the Stocktake API."""
@@ -1465,7 +1546,7 @@ class StockAssignTest(StockAPITestCase):
 
         stock_item = StockItem.objects.create(
             part=part.models.Part.objects.get(pk=1),
-            status=StockStatus.DESTROYED,
+            status=StockStatus.DESTROYED.value,
             quantity=5,
         )
 

@@ -35,6 +35,7 @@ class PluginWithSettings(SettingsMixin, InvenTreePlugin):
             'name': 'API Key',
             'description': 'Security key for accessing remote API',
             'default': '',
+            'required': True,
         },
         'API_URL': {
             'name': _('API URL'),
@@ -71,10 +72,11 @@ class PluginWithSettings(SettingsMixin, InvenTreePlugin):
 !!! tip "Hidden Settings"
     Plugin settings can be hidden from the settings page by marking them as 'hidden'
 
-This mixin defines the helper functions `plugin.get_setting` and `plugin.set_setting` to access all plugin specific settings:
+This mixin defines the helper functions `plugin.get_setting`, `plugin.set_setting` and `plugin.check_settings` to access all plugin specific settings. The `plugin.check_settings` function can be used to check if all settings marked with `'required': True` are defined and not equal to `''`. Note that these methods cannot be used in the `__init__` function of your plugin.
 
 ```python
 api_url = self.get_setting('API_URL', cache = False)
 self.set_setting('API_URL', 'some value')
+is_valid, missing_settings = self.check_settings()
 ```
 `get_setting` has an additional parameter which lets control if the value is taken directly from the database or from the cache. If it is left away `False` is the default that means the value is taken directly from the database.

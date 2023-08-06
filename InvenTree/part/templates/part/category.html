@@ -169,24 +169,7 @@
         </div>
     </div>
     <div id='part-button-toolbar'>
-        <div class='btn-group' role='group'>
-            <div class='btn-group' role='group'>
-                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
-                    <span class='fas fa-tools' title='{% trans "Options" %}'></span>
-                </button>
-                <ul class='dropdown-menu'>
-                    {% if roles.part.change %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-category' title='{% trans "Set category" %}'>
-                        <span class='fas fa-sitemap'></span> {% trans "Set Category" %}
-                    </a></li>
-                    {% endif %}
-                    <li><a class='dropdown-item' href='#' id='multi-part-order' title='{% trans "Order parts" %}'>
-                        <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
-                    </a></li>
-                </ul>
-            </div>
-            {% include "filter_list.html" with id="parts" %}
-        </div>
+        {% include "filter_list.html" with id="parts" %}
     </div>
     <div class='panel-content'>
         <table class='table table-striped table-condensed' data-toolbar='#part-button-toolbar' id='part-table'>
@@ -209,9 +192,7 @@
     </div>
     <div class='panel-content'>
         <div id='param-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="parameters" %}
-            </div>
+            {% include "filter_list.html" with id="parameters" %}
         </div>
 
         <table class='table table-striped table-condensed' data-toolbar='#param-button-toolbar' id='parametric-part-table'>
@@ -235,9 +216,7 @@
     </div>
     <div class='panel-content'>
         <div id='subcategory-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="category" %}
-            </div>
+            {% include "filter_list.html" with id="category" %}
         </div>
 
         <table class='table table-striped table-condensed' id='subcategory-table' data-toolbar='#subcategory-button-toolbar'></table>

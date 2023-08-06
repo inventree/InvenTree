@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Purchase Order" %}
@@ -80,10 +80,6 @@
     <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
 </button>
 {% elif order.is_open %}
-<button type='button' class='btn btn-primary' id='receive-order' title='{% trans "Receive items" %}'>
-    <span class='fas fa-sign-in-alt'></span>
-    {% trans "Receive Items" %}
-</button>
 <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
     <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
@@ -121,7 +117,7 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>
         <td>
-            {% purchase_order_status_label order.status %}
+            {% status_label 'purchase_order' order.status %}
             {% if order.is_overdue %}
             <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
@@ -208,6 +204,13 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.contact.name }}</td>
     </tr>
     {% endif %}
+    {% if order.address %}
+    <tr>
+        <td><span class='fas fa-map'></span></td>
+        <td>{% trans "Address" %}</td>
+        <td><b>{{ order.address.title }}</b>: {{ order.address }}</td>
+    </tr>
+    {% endif %}
     {% if order.responsible %}
     <tr>
         <td><span class='fas fa-users'></span></td>
@@ -268,22 +271,6 @@ $("#edit-order").click(function() {
         {% endif %}
         reload: true,
     });
-});
-
-$("#receive-order").click(function() {
-
-    // Auto select items which have not been fully allocated
-    var items = getTableData('#po-line-table');
-
-    receivePurchaseOrderItems(
-        {{ order.id }},
-        items,
-        {
-            success: function() {
-                $("#po-line-table").bootstrapTable('refresh');
-            }
-        }
-    );
 });
 
 $("#complete-order").click(function() {

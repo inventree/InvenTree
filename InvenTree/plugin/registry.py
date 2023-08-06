@@ -9,8 +9,9 @@ import importlib
 import logging
 import os
 import subprocess
+import time
 from pathlib import Path
-from typing import Dict, List, OrderedDict
+from typing import Any, Dict, List, OrderedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -24,6 +25,7 @@ from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
 from InvenTree.config import get_setting
+from InvenTree.ready import canAppAccessDatabase
 
 from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
                       handle_error, log_error)
@@ -52,13 +54,14 @@ class PluginsRegistry:
         self.plugins_inactive: Dict[str, InvenTreePlugin] = {}  # List of inactive instances
         self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
-        self.plugin_modules: List(InvenTreePlugin) = []         # Holds all discovered plugins
-        self.mixin_modules: Dict[str, any] = {}                 # Holds all discovered mixins
+        self.plugin_modules: List[InvenTreePlugin] = []         # Holds all discovered plugins
+        self.mixin_modules: Dict[str, Any] = {}                 # Holds all discovered mixins
 
         self.errors = {}                                        # Holds discovering errors
 
         # flags
         self.is_loading = False                                 # Are plugins being loaded right now
+        self.plugins_loaded = False                             # Marks if the registry fully loaded and all django apps are reloaded
         self.apps_loading = True                                # Marks if apps were reloaded yet
 
         self.installed_apps = []                                # Holds all added plugin_paths
@@ -159,11 +162,19 @@ class PluginsRegistry:
             if full_reload:
                 full_reload = False
 
+        # ensure plugins_loaded is True
+        self.plugins_loaded = True
+
         # Remove maintenance mode
         if not _maintenance:
             set_maintenance_mode(False)
 
         logger.debug('Finished loading plugins')
+
+        # Trigger plugins_loaded event
+        if canAppAccessDatabase():
+            from plugin.events import trigger_event
+            trigger_event('plugins_loaded')
 
     def unload_plugins(self, force_reload: bool = False):
         """Unload and deactivate all IntegrationPlugins.
@@ -205,7 +216,9 @@ class PluginsRegistry:
         logger.info('Start reloading plugins')
 
         with maintenance_mode_on():
+            self.plugins_loaded = False
             self.unload_plugins(force_reload=force_reload)
+            self.plugins_loaded = True
             self.load_plugins(full_reload=full_reload)
 
         logger.info('Finished reloading plugins')
@@ -439,13 +452,16 @@ class PluginsRegistry:
                     continue  # continue -> the plugin is not loaded
 
                 # Initialize package - we can be sure that an admin has activated the plugin
-                logger.info(f'Loading plugin `{plg_name}`')
+                logger.debug(f'Loading plugin `{plg_name}`')
 
                 try:
+                    t_start = time.time()
                     plg_i: InvenTreePlugin = plg()
-                    logger.debug(f'Loaded plugin `{plg_name}`')
+                    dt = time.time() - t_start
+                    logger.info(f'Loaded plugin `{plg_name}` in {dt:.3f}s')
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
+                    logger.warning(f"Plugin `{plg_name}` could not be loaded")
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)

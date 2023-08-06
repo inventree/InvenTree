@@ -8,8 +8,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
+import common.models
 import InvenTree.helpers
-from common.models import NotificationEntry, NotificationMessage
 from InvenTree.ready import isImportingData
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginConfig
@@ -247,7 +247,7 @@ class UIMessageNotification(SingleNotificationMethod):
 
     def send(self, target):
         """Send a UI notification to a user."""
-        NotificationMessage.objects.create(
+        common.models.NotificationMessage.objects.create(
             target_object=self.obj,
             source_object=target,
             user=target,
@@ -279,7 +279,7 @@ class NotificationBody:
     name: str
     slug: str
     message: str
-    template: str
+    template: str = None
 
 
 class InvenTreeNotificationBodies:
@@ -338,7 +338,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     # Check if we have notified recently...
     delta = timedelta(days=1)
 
-    if NotificationEntry.check_recent(category, obj_ref_value, delta):
+    if common.models.NotificationEntry.check_recent(category, obj_ref_value, delta):
         logger.info(f"Notification '{category}' has recently been sent for '{str(obj)}' - SKIPPING")
         return
 
@@ -398,7 +398,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
                 logger.error(error)
 
         # Set delivery flag
-        NotificationEntry.notify(category, obj_ref_value)
+        common.models.NotificationEntry.notify(category, obj_ref_value)
     else:
         logger.info(f"No possible users for notification '{category}'")
 

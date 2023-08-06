@@ -26,7 +26,7 @@ To navigate to the Build Order display, select *Build* from the main navigation 
 {% include "img.html" %}
 {% endwith %}
 
-#### Tree Vieww
+#### Tree View
 
 *Tree View* also provides a tabulated view of Build Orders. Orders are displayed in a hierarchical manner, showing any parent / child relationships between different build orders.
 

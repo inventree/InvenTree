@@ -7,7 +7,8 @@ from django.utils.translation import gettext_lazy as _
 import common.notifications
 import InvenTree.helpers_model
 import order.models
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from InvenTree.status_codes import (PurchaseOrderStatusGroups,
+                                    SalesOrderStatusGroups)
 from InvenTree.tasks import ScheduledTask, scheduled_task
 from plugin.events import trigger_event
 
@@ -68,7 +69,7 @@ def check_overdue_purchase_orders():
 
     overdue_orders = order.models.PurchaseOrder.objects.filter(
         target_date=yesterday,
-        status__in=PurchaseOrderStatus.OPEN
+        status__in=PurchaseOrderStatusGroups.OPEN,
     )
 
     for po in overdue_orders:
@@ -131,7 +132,7 @@ def check_overdue_sales_orders():
 
     overdue_orders = order.models.SalesOrder.objects.filter(
         target_date=yesterday,
-        status__in=SalesOrderStatus.OPEN
+        status__in=SalesOrderStatusGroups.OPEN,
     )
 
     for po in overdue_orders:
