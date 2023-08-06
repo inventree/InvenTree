@@ -168,12 +168,12 @@ class BarcodeTagTest(TestCase):
 
         barcode = barcode_tags.barcode("12345")
 
-        self.assertTrue(type(barcode) == str)
+        self.assertTrue(isinstance(barcode, str))
         self.assertTrue(barcode.startswith('data:image/png;'))
 
         # Try with a different format
         barcode = barcode_tags.barcode('99999', format='BMP')
-        self.assertTrue(type(barcode) == str)
+        self.assertTrue(isinstance(barcode, str))
         self.assertTrue(barcode.startswith('data:image/bmp;'))
 
     def test_qrcode(self):
@@ -181,7 +181,7 @@ class BarcodeTagTest(TestCase):
 
         # Test with default settings
         qrcode = barcode_tags.qrcode("hello world")
-        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(isinstance(qrcode, str))
         self.assertTrue(qrcode.startswith('data:image/png;'))
         self.assertEqual(len(qrcode), 700)
 
@@ -192,7 +192,7 @@ class BarcodeTagTest(TestCase):
             box_size=50,
             format='BMP',
         )
-        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(isinstance(qrcode, str))
         self.assertTrue(qrcode.startswith('data:image/bmp;'))
         self.assertEqual(len(qrcode), 309720)
 

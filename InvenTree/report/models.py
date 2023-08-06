@@ -377,7 +377,7 @@ class BuildReport(ReportTemplateBase):
         """Custom context data for the build report."""
         my_build = self.object_to_print
 
-        if type(my_build) != build.models.Build:
+        if not isinstance(my_build, build.models.Build):
             raise TypeError('Provided model is not a Build object')
 
         return {
@@ -653,7 +653,7 @@ class StockLocationReport(ReportTemplateBase):
         """Return custom context data for the StockLocationReport template"""
         stock_location = self.object_to_print
 
-        if type(stock_location) != stock.models.StockLocation:
+        if not isinstance(stock_location, stock.models.StockLocation):
             raise TypeError('Provided model is not a StockLocation object -> ' + str(type(stock_location)))
 
         return {
