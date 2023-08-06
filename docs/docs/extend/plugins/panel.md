@@ -120,7 +120,7 @@ May be it is worth to leave a few more words on this because the string looks a 
 get just one parameter, the orders primary key.* \d+* is a regular expression that limits the parameters
 to a digital number with n digits. Let's have a look on the names and how they belong together:
 
-{% with id="plugin_dataflow", url="plugin/plugin_dataflow.png", description="Dataflow between Javescript and Python" %} {% include "img.html" %} {% endwith %}
+{% with id="plugin_dataflow", url="plugin/plugin_dataflow.png", description="Dataflow between Javascript and Python" %} {% include "img.html" %} {% endwith %}
 
 Finally we define the function. This is a simple increment of a class value.
 
@@ -149,7 +149,7 @@ async function JGetCart(){
 
 We start with a bit of javascript. The function JGetCart just calls the url that has been defined in the python code above.
 The url consists of a full path `plugin:plugin-name:url-name`. The plugin-name is the SLUG that was defined in the plugin code.
-order.pk is the parameter that is passed to python. 
+order.pk is the parameter that is passed to python.
 
 The button is defined  with `class="btn btn-info` This is an InvenTree predefined button. There a are lots of others available.
 Here are some examples of available colors:
