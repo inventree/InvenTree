@@ -25,7 +25,8 @@ export const navTabs = [
   { text: <Trans>Playground</Trans>, name: 'playground' },
   { text: <Trans>Parts</Trans>, name: 'parts' },
   { text: <Trans>Stock</Trans>, name: 'stock' },
-  { text: <Trans>Build</Trans>, name: 'build' }
+  { text: <Trans>Build</Trans>, name: 'build' },
+  { text: <Trans>Order</Trans>, name: 'order' }
 ];
 
 export const docLinks = {

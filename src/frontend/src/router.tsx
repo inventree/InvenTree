@@ -14,6 +14,7 @@ export const Playground = Loadable(
 export const Parts = Loadable(lazy(() => import('./pages/Index/Part')));
 export const Stock = Loadable(lazy(() => import('./pages/Index/Stock')));
 export const Build = Loadable(lazy(() => import('./pages/Index/Build')));
+export const Order = Loadable(lazy(() => import('./pages/Index/Order')));
 
 export const Dashboard = Loadable(
   lazy(() => import('./pages/Index/Dashboard'))
@@ -70,6 +71,10 @@ export const router = createBrowserRouter(
         {
           path: 'build/',
           element: <Build />
+        },
+        {
+          path: 'order/',
+          element: <Order />
         },
         {
           path: '/profile/:tabValue',
