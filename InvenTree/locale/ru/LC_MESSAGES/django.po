@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-03 04:19+0000\n"
-"PO-Revision-Date: 2023-08-05 01:43\n"
+"PO-Revision-Date: 2023-08-07 11:49\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -204,7 +204,7 @@ msgstr "Предоставленный URL не является допусти�
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site.name}] Log in to the app"
-msgstr ""
+msgstr "[{site.name}] Войти в приложение"
 
 #: InvenTree/magic_login.py:38 company/models.py:122
 #: company/templates/company/company_base.html:133
@@ -1062,7 +1062,7 @@ msgstr "Расположение источника"
 
 #: build/models.py:211
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Выберите местоположение для этой сборки (оставьте пустым, чтобы взять с любого места на складе)"
 
 #: build/models.py:216
 msgid "Destination Location"
@@ -1300,7 +1300,7 @@ msgstr "Количество должно быть 1 для сериализов
 
 #: build/models.py:1462
 msgid "Selected stock item does not match BOM line"
-msgstr ""
+msgstr "Выбранный товар на складе не соответствует строке BOM"
 
 #: build/models.py:1534 build/serializers.py:799 order/serializers.py:1065
 #: order/serializers.py:1086 stock/serializers.py:479 stock/serializers.py:887
@@ -1325,7 +1325,7 @@ msgstr "Исходный складской предмет"
 
 #: build/models.py:1548
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Количество на складе для построения"
 
 #: build/models.py:1556
 msgid "Install into"
@@ -2458,7 +2458,7 @@ msgstr ""
 
 #: common/models.py:1353
 msgid "Use pricing from manually entered stock data for pricing calculations"
-msgstr ""
+msgstr "Использовать расценки из ручного ввода данных о запасах для расчета цен"
 
 #: common/models.py:1359
 msgid "Stock Item Pricing Age"
@@ -4814,7 +4814,7 @@ msgstr ""
 
 #: order/models.py:1658
 msgid "Enter stock allocation quantity"
-msgstr ""
+msgstr "Укажите количество на складе"
 
 #: order/models.py:1738
 msgid "Return Order reference"
@@ -4911,7 +4911,7 @@ msgstr "Введите код партии для поступающих еди�
 
 #: order/serializers.py:521 templates/js/translated/purchase_order.js:1139
 msgid "Enter serial numbers for incoming stock items"
-msgstr ""
+msgstr "Введите серийные номера для входящих товаров на складе"
 
 #: order/serializers.py:534 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -4959,7 +4959,7 @@ msgstr ""
 
 #: order/serializers.py:1244
 msgid "Enter serial numbers to allocate"
-msgstr ""
+msgstr "Введите серийные номера для выделения"
 
 #: order/serializers.py:1266 order/serializers.py:1390
 msgid "Shipment has already been shipped"
@@ -6003,7 +6003,7 @@ msgstr "Название теста"
 
 #: part/models.py:3313
 msgid "Enter a name for the test"
-msgstr ""
+msgstr "Введите имя для теста"
 
 #: part/models.py:3318
 msgid "Test Description"
@@ -6011,7 +6011,7 @@ msgstr ""
 
 #: part/models.py:3319
 msgid "Enter description for this test"
-msgstr ""
+msgstr "Введите описание для этого теста"
 
 #: part/models.py:3324 templates/js/translated/part.js:2847
 #: templates/js/translated/table_filters.js:429
@@ -7654,7 +7654,7 @@ msgstr ""
 #: stock/admin.py:44 stock/templates/stock/location.html:130
 #: stock/templates/stock/location.html:136
 msgid "Location Path"
-msgstr ""
+msgstr "Путь местоположения"
 
 #: stock/admin.py:100
 msgid "Stock Item ID"
@@ -8005,7 +8005,7 @@ msgstr ""
 
 #: stock/serializers.py:373
 msgid "Enter number of stock items to serialize"
-msgstr ""
+msgstr "Введите количество товаров на складе для сериализации"
 
 #: stock/serializers.py:385
 #, python-brace-format
@@ -8014,7 +8014,7 @@ msgstr ""
 
 #: stock/serializers.py:391
 msgid "Enter serial numbers for new items"
-msgstr ""
+msgstr "Введите серийные номера для новых элементов"
 
 #: stock/serializers.py:402 stock/serializers.py:1049 stock/serializers.py:1291
 msgid "Destination stock location"
@@ -9740,7 +9740,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:45
 msgid "Enter barcode data"
-msgstr ""
+msgstr "Введите штрихкод"
 
 #: templates/js/translated/barcode.js:59
 msgid "Scan barcode using connected webcam"
@@ -10119,7 +10119,7 @@ msgstr "Отслеживаемые детали могут иметь серий
 
 #: templates/js/translated/build.js:378
 msgid "Enter serial numbers to generate multiple single build outputs"
-msgstr ""
+msgstr "Введите серийные номера для генерации нескольких выходов одной сборки"
 
 #: templates/js/translated/build.js:385
 msgid "Create Build Output"
@@ -10738,7 +10738,7 @@ msgstr ""
 
 #: templates/js/translated/forms.js:853
 msgid "Enter a valid number"
-msgstr ""
+msgstr "Введите корректный номер"
 
 #: templates/js/translated/forms.js:1401 templates/modals.html:19
 #: templates/modals.html:43
@@ -11884,7 +11884,7 @@ msgstr ""
 
 #: templates/js/translated/search.js:292 templates/search.html:25
 msgid "Enter search query"
-msgstr ""
+msgstr "Введите запрос для поиска"
 
 #: templates/js/translated/search.js:342
 msgid "result"
@@ -11960,11 +11960,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:328
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "Введите начальное количество для этого товара в наличии"
 
 #: templates/js/translated/stock.js:334
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr ""
+msgstr "Введите серийные номера для нового склада (или оставьте пустым)"
 
 #: templates/js/translated/stock.js:405
 msgid "Stock item duplicated"
@@ -12004,11 +12004,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:563 templates/js/translated/stock.js:564
 msgid "Enter serial number"
-msgstr ""
+msgstr "Введите серийный номер"
 
 #: templates/js/translated/stock.js:580
 msgid "Enter a serial number"
-msgstr ""
+msgstr "Введите серийный номер"
 
 #: templates/js/translated/stock.js:600
 msgid "No matching serial number"
