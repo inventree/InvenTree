@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-03 04:19+0000\n"
-"PO-Revision-Date: 2023-08-07 11:49\n"
+"POT-Creation-Date: 2023-08-08 04:40+0000\n"
+"PO-Revision-Date: 2023-08-08 11:50\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -125,7 +125,7 @@ msgstr "Указанный основной адрес электронной п
 msgid "The provided email domain is not approved."
 msgstr "Указанный домен электронной почты не утверждён."
 
-#: InvenTree/forms.py:345
+#: InvenTree/forms.py:354
 msgid "Registration is disabled."
 msgstr "Регистрация отключена."
 
@@ -169,35 +169,35 @@ msgstr "Число уникальных серийных номеров ({s}) д
 msgid "Remove HTML tags from this value"
 msgstr "Удалить HTML теги из этого значения"
 
-#: InvenTree/helpers_model.py:133
+#: InvenTree/helpers_model.py:131
 msgid "Connection error"
 msgstr "Ошибка соединения"
 
-#: InvenTree/helpers_model.py:137 InvenTree/helpers_model.py:142
+#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:140
 msgid "Server responded with invalid status code"
 msgstr "Сервер ответил неверным кодом статуса"
 
-#: InvenTree/helpers_model.py:139
+#: InvenTree/helpers_model.py:137
 msgid "Exception occurred"
 msgstr "Произошло исключение"
 
-#: InvenTree/helpers_model.py:147
+#: InvenTree/helpers_model.py:145
 msgid "Server responded with invalid Content-Length value"
 msgstr "Сервер ответил неверным значением Контент-Длина"
 
-#: InvenTree/helpers_model.py:150
+#: InvenTree/helpers_model.py:148
 msgid "Image size is too large"
 msgstr "Изображение слишком большое"
 
-#: InvenTree/helpers_model.py:162
+#: InvenTree/helpers_model.py:160
 msgid "Image download exceeded maximum size"
 msgstr "Загрузка изображения превышен максимальный размер"
 
-#: InvenTree/helpers_model.py:167
+#: InvenTree/helpers_model.py:165
 msgid "Remote server returned empty response"
 msgstr "Удаленный сервер вернул пустой ответ"
 
-#: InvenTree/helpers_model.py:175
+#: InvenTree/helpers_model.py:173
 msgid "Supplied URL is not a valid image file"
 msgstr "Предоставленный URL не является допустимым файлом изображения"
 
@@ -520,119 +520,119 @@ msgstr "ССЫЛКА файла изображения на удаленном �
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Загрузка изображений с удаленного URL-адреса не включена"
 
-#: InvenTree/settings.py:752
+#: InvenTree/settings.py:753
 msgid "Czech"
 msgstr "Чешский"
 
-#: InvenTree/settings.py:753
+#: InvenTree/settings.py:754
 msgid "Danish"
 msgstr "Датский"
 
-#: InvenTree/settings.py:754
+#: InvenTree/settings.py:755
 msgid "German"
 msgstr "Немецкий"
 
-#: InvenTree/settings.py:755
+#: InvenTree/settings.py:756
 msgid "Greek"
 msgstr "Греческий"
 
-#: InvenTree/settings.py:756
+#: InvenTree/settings.py:757
 msgid "English"
 msgstr "Английский"
 
-#: InvenTree/settings.py:757
+#: InvenTree/settings.py:758
 msgid "Spanish"
 msgstr "Испанский"
 
-#: InvenTree/settings.py:758
+#: InvenTree/settings.py:759
 msgid "Spanish (Mexican)"
 msgstr "Испанский (Мексика)"
 
-#: InvenTree/settings.py:759
+#: InvenTree/settings.py:760
 msgid "Farsi / Persian"
 msgstr "Фарси / Персидский"
 
-#: InvenTree/settings.py:760
+#: InvenTree/settings.py:761
 msgid "Finnish"
 msgstr "Финский"
 
-#: InvenTree/settings.py:761
+#: InvenTree/settings.py:762
 msgid "French"
 msgstr "Французский"
 
-#: InvenTree/settings.py:762
+#: InvenTree/settings.py:763
 msgid "Hebrew"
 msgstr "Иврит"
 
-#: InvenTree/settings.py:763
+#: InvenTree/settings.py:764
 msgid "Hindi"
 msgstr "Хинди"
 
-#: InvenTree/settings.py:764
+#: InvenTree/settings.py:765
 msgid "Hungarian"
 msgstr "Венгерский"
 
-#: InvenTree/settings.py:765
+#: InvenTree/settings.py:766
 msgid "Italian"
 msgstr "Итальянский"
 
-#: InvenTree/settings.py:766
+#: InvenTree/settings.py:767
 msgid "Japanese"
 msgstr "Японский"
 
-#: InvenTree/settings.py:767
+#: InvenTree/settings.py:768
 msgid "Korean"
 msgstr "Корейский"
 
-#: InvenTree/settings.py:768
+#: InvenTree/settings.py:769
 msgid "Dutch"
 msgstr "Голландский"
 
-#: InvenTree/settings.py:769
+#: InvenTree/settings.py:770
 msgid "Norwegian"
 msgstr "Норвежский"
 
-#: InvenTree/settings.py:770
+#: InvenTree/settings.py:771
 msgid "Polish"
 msgstr "Польский"
 
-#: InvenTree/settings.py:771
+#: InvenTree/settings.py:772
 msgid "Portuguese"
 msgstr "Португальский"
 
-#: InvenTree/settings.py:772
+#: InvenTree/settings.py:773
 msgid "Portuguese (Brazilian)"
 msgstr "Португальский (Бразильский диалект)"
 
-#: InvenTree/settings.py:773
+#: InvenTree/settings.py:774
 msgid "Russian"
 msgstr "Русский"
 
-#: InvenTree/settings.py:774
+#: InvenTree/settings.py:775
 msgid "Slovenian"
 msgstr "Словенский"
 
-#: InvenTree/settings.py:775
+#: InvenTree/settings.py:776
 msgid "Swedish"
 msgstr "Шведский"
 
-#: InvenTree/settings.py:776
+#: InvenTree/settings.py:777
 msgid "Thai"
 msgstr "Тайский"
 
-#: InvenTree/settings.py:777
+#: InvenTree/settings.py:778
 msgid "Turkish"
 msgstr "Турецкий"
 
-#: InvenTree/settings.py:778
+#: InvenTree/settings.py:779
 msgid "Vietnamese"
 msgstr "Вьетнамский"
 
-#: InvenTree/settings.py:779
+#: InvenTree/settings.py:780
 msgid "Chinese (Simplified)"
 msgstr "Китайский (Упрощенный)"
 
-#: InvenTree/settings.py:780
+#: InvenTree/settings.py:781
 msgid "Chinese (Traditional)"
 msgstr "Китайский (Традиционный)"
 
@@ -1333,7 +1333,7 @@ msgstr "Установить в"
 
 #: build/models.py:1557
 msgid "Destination stock item"
-msgstr ""
+msgstr "Целевой товар на складе"
 
 #: build/serializers.py:156 build/serializers.py:828
 #: templates/js/translated/build.js:1295
@@ -1346,7 +1346,7 @@ msgstr "Результат сборки не совпадает с родите�
 
 #: build/serializers.py:172
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "Выходная часть не соответствует части BuildOrder"
 
 #: build/serializers.py:176
 msgid "This build output has already been completed"
@@ -1354,7 +1354,7 @@ msgstr "Результат этой сборки уже помечен как з
 
 #: build/serializers.py:187
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "Этот вывод сборки не полностью выделен"
 
 #: build/serializers.py:207 build/serializers.py:245
 msgid "Enter quantity for build output"
@@ -1362,11 +1362,11 @@ msgstr "Введите количество для вывода сборки"
 
 #: build/serializers.py:266
 msgid "Integer quantity required for trackable parts"
-msgstr ""
+msgstr "Для отслеживаемых деталей должно быть указано целочисленное количество"
 
 #: build/serializers.py:269
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "Требуется целое количество, так как материал содержит отслеживаемые детали"
 
 #: build/serializers.py:284 order/serializers.py:520 order/serializers.py:1243
 #: stock/serializers.py:390 templates/js/translated/purchase_order.js:1138
@@ -1380,19 +1380,19 @@ msgstr "Введите серийные номера для результато
 
 #: build/serializers.py:298
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Автоматически выделить серийные номера"
 
 #: build/serializers.py:299
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr ""
+msgstr "Автоматически выделять необходимые элементы с соответствующими серийными номерами"
 
 #: build/serializers.py:334 stock/api.py:726
 msgid "The following serial numbers already exist or are invalid"
-msgstr ""
+msgstr "Следующие серийные номера уже существуют или недействительны"
 
 #: build/serializers.py:385 build/serializers.py:447 build/serializers.py:526
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "Необходимо представить список результатов сборки"
 
 #: build/serializers.py:423 build/serializers.py:496 order/serializers.py:493
 #: order/serializers.py:612 order/serializers.py:1594 part/serializers.py:933
@@ -1416,7 +1416,7 @@ msgstr "Расположение"
 
 #: build/serializers.py:424
 msgid "Stock location for scrapped outputs"
-msgstr ""
+msgstr "Расположение на складе для обрытых результатов"
 
 #: build/serializers.py:430
 msgid "Discard Allocations"
@@ -1428,11 +1428,11 @@ msgstr "Отменить любые распределения запасов д
 
 #: build/serializers.py:436
 msgid "Reason for scrapping build output(s)"
-msgstr ""
+msgstr "Причина ломания вывода(ов) сборки"
 
 #: build/serializers.py:497
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "Расположение для завершенных выходов сборки"
 
 #: build/serializers.py:503 build/templates/build/build_base.html:152
 #: build/templates/build/detail.html:62 order/models.py:804
@@ -1450,27 +1450,27 @@ msgstr "Статус"
 
 #: build/serializers.py:509
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Принять неполное распределение"
 
 #: build/serializers.py:510
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
+msgstr "Выходы, если запасы не были полностью распределены"
 
 #: build/serializers.py:579
 msgid "Remove Allocated Stock"
-msgstr ""
+msgstr "Удалить выделенный запас"
 
 #: build/serializers.py:580
 msgid "Subtract any stock which has already been allocated to this build"
-msgstr ""
+msgstr "Вычесть запасы, которые уже были выделены для этой сборки"
 
 #: build/serializers.py:586
 msgid "Remove Incomplete Outputs"
-msgstr ""
+msgstr "Удалить неполные выходные данные"
 
 #: build/serializers.py:587
 msgid "Delete any build outputs which have not been completed"
-msgstr ""
+msgstr "Удалить все результаты сборки, которые не были завершены"
 
 #: build/serializers.py:614
 msgid "Not permitted"
@@ -1478,11 +1478,11 @@ msgstr "Нет разрешения"
 
 #: build/serializers.py:615
 msgid "Accept as consumed by this build order"
-msgstr ""
+msgstr "Принять как потребляемые этим порядком сборки"
 
 #: build/serializers.py:616
 msgid "Deallocate before completing this build order"
-msgstr ""
+msgstr "Распределить до завершения заказа на сборку"
 
 #: build/serializers.py:639
 msgid "Overallocated Stock"
@@ -1498,51 +1498,51 @@ msgstr "Некоторые товары на складе перераспред
 
 #: build/serializers.py:656
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Принять снято"
 
 #: build/serializers.py:657
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "Подтвердите, что товары на складе не были полностью выделены для этого заказа на сборку"
 
 #: build/serializers.py:667 templates/js/translated/build.js:304
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "Необходимые запасы не были выделены полностью"
 
 #: build/serializers.py:672 order/serializers.py:267 order/serializers.py:1133
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "Принять незавершенные"
 
 #: build/serializers.py:673
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr ""
+msgstr "Принять, что требуемое количество результатов сборки не было завершено"
 
 #: build/serializers.py:683 templates/js/translated/build.js:308
 msgid "Required build quantity has not been completed"
-msgstr ""
+msgstr "Обязательное количество сборки не было завершено"
 
 #: build/serializers.py:692 templates/js/translated/build.js:292
 msgid "Build order has incomplete outputs"
-msgstr ""
+msgstr "Порядок сборки имеет незавершенные результаты"
 
 #: build/serializers.py:722
 msgid "Build Line"
-msgstr ""
+msgstr "Строка сборки"
 
 #: build/serializers.py:732
 msgid "Build output"
-msgstr ""
+msgstr "Вывод сборки"
 
 #: build/serializers.py:740
 msgid "Build output must point to the same build"
-msgstr ""
+msgstr "Вывод сборки должен указывать на ту же сборку"
 
 #: build/serializers.py:776
 msgid "Build Line Item"
-msgstr ""
+msgstr "Сборка Линии Предмет"
 
 #: build/serializers.py:790
 msgid "bom_item.part must point to the same part as the build order"
-msgstr ""
+msgstr "bom_item.part должна указывать на ту же часть, что и порядок сборки"
 
 #: build/serializers.py:805 stock/serializers.py:900
 msgid "Item must be in stock"
@@ -1555,23 +1555,23 @@ msgstr "Превышено доступное количество ({q})"
 
 #: build/serializers.py:859
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr ""
+msgstr "Вывод сборки должен быть определен для распределения отслеживаемых частей"
 
 #: build/serializers.py:866
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr ""
+msgstr "Вывод сборки не может быть указан для распределения неотслеживаемых частей"
 
 #: build/serializers.py:871
 msgid "This stock item has already been allocated to this build output"
-msgstr ""
+msgstr "Этот запас уже был выделен для этого вывода сборки"
 
 #: build/serializers.py:894 order/serializers.py:1407
 msgid "Allocation items must be provided"
-msgstr ""
+msgstr "Необходимо указать пункты распределения"
 
 #: build/serializers.py:947
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr ""
+msgstr "Расположение склада, где будут переданы части (оставьте пустым, чтобы забрать их из любого места)"
 
 #: build/serializers.py:955
 msgid "Exclude Location"
@@ -1579,15 +1579,15 @@ msgstr "Исключить местоположение"
 
 #: build/serializers.py:956
 msgid "Exclude stock items from this selected location"
-msgstr ""
+msgstr "Исключить товары на складе из этого выбранного места"
 
 #: build/serializers.py:961
 msgid "Interchangeable Stock"
-msgstr ""
+msgstr "Обменный остаток"
 
 #: build/serializers.py:962
 msgid "Stock items in multiple locations can be used interchangeably"
-msgstr ""
+msgstr "Товары на складе в нескольких местах могут использоваться на взаимозаменяемой основе"
 
 #: build/serializers.py:967
 msgid "Substitute Stock"
@@ -1595,7 +1595,7 @@ msgstr "Заменить запасы"
 
 #: build/serializers.py:968
 msgid "Allow allocation of substitute parts"
-msgstr ""
+msgstr "Разрешить распределение замещающих частей"
 
 #: build/serializers.py:973
 msgid "Optional Items"
@@ -1603,7 +1603,7 @@ msgstr "Необязательные элементы"
 
 #: build/serializers.py:974
 msgid "Allocate optional BOM items to build order"
-msgstr ""
+msgstr "Выделить дополнительные BOM предметы для заказа"
 
 #: build/tasks.py:101
 msgid "Stock required for build order"
@@ -1616,7 +1616,7 @@ msgstr "Просроченный заказ сборки"
 #: build/tasks.py:124
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr ""
+msgstr "Заказ на сборку {bo} просрочен"
 
 #: build/templates/build/build_base.html:18
 msgid "Part thumbnail"
@@ -2119,7 +2119,7 @@ msgstr "Скачать по ссылке"
 
 #: common/models.py:1036
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Разрешить загрузку удаленных изображений и файлов по внешнему URL"
 
 #: common/models.py:1042
 msgid "Download Size Limit"
@@ -2127,23 +2127,23 @@ msgstr "Ограничение размера загрузки"
 
 #: common/models.py:1043
 msgid "Maximum allowable download size for remote image"
-msgstr ""
+msgstr "Максимально допустимый размер загрузки для удалённого изображения"
 
 #: common/models.py:1054
 msgid "User-agent used to download from URL"
-msgstr ""
+msgstr "User-Agent, используемый для загрузки из URL"
 
 #: common/models.py:1055
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
-msgstr ""
+msgstr "Позволяет переопределить user-Agent, используемый для загрузки изображений и файлов с внешнего URL (оставьте пустым по умолчанию)"
 
 #: common/models.py:1060
 msgid "Require confirm"
-msgstr ""
+msgstr "Требуется подтверждение"
 
 #: common/models.py:1061
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "Требовать явное подтверждение пользователя для определенного действия."
 
 #: common/models.py:1067
 msgid "Tree Depth"
@@ -2151,7 +2151,7 @@ msgstr "Глубина дерева"
 
 #: common/models.py:1068
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
-msgstr ""
+msgstr "Глубина дерева по умолчанию для просмотра дерева. Глубокие уровни загружены по мере необходимости."
 
 #: common/models.py:1077
 msgid "Update Check Interval"
@@ -2159,7 +2159,7 @@ msgstr "Интервал проверки обновлений"
 
 #: common/models.py:1078
 msgid "How often to check for updates (set to zero to disable)"
-msgstr ""
+msgstr "Как часто проверять наличие обновлений (установите ноль чтобы выключить)"
 
 #: common/models.py:1084 common/models.py:1102 common/models.py:1109
 #: common/models.py:1120 common/models.py:1131 common/models.py:1362
@@ -2173,7 +2173,7 @@ msgstr "Автоматическое резервное копирование"
 
 #: common/models.py:1089
 msgid "Enable automatic backup of database and media files"
-msgstr ""
+msgstr "Включить автоматическое резервное копирование базы данных и медиа-файлов"
 
 #: common/models.py:1095
 msgid "Auto Backup Interval"
@@ -2181,31 +2181,31 @@ msgstr "Интервал автосохранения"
 
 #: common/models.py:1096
 msgid "Specify number of days between automated backup events"
-msgstr ""
+msgstr "Укажите количество дней между событиями автоматического резервного копирования"
 
 #: common/models.py:1106
 msgid "Task Deletion Interval"
-msgstr ""
+msgstr "Интервал удаления задачи"
 
 #: common/models.py:1107
 msgid "Background task results will be deleted after specified number of days"
-msgstr ""
+msgstr "Результаты фоновых задач будут удалены после указанного количества дней"
 
 #: common/models.py:1117
 msgid "Error Log Deletion Interval"
-msgstr ""
+msgstr "Интервал удаления журнала ошибок"
 
 #: common/models.py:1118
 msgid "Error logs will be deleted after specified number of days"
-msgstr ""
+msgstr "Журналы ошибок будут удалены после указанного количества дней"
 
 #: common/models.py:1128
 msgid "Notification Deletion Interval"
-msgstr ""
+msgstr "Интервал удаления уведомления"
 
 #: common/models.py:1129
 msgid "User notifications will be deleted after specified number of days"
-msgstr ""
+msgstr "Уведомления пользователя будут удалены после указанного количества дней"
 
 #: common/models.py:1139 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
@@ -2221,7 +2221,7 @@ msgstr "Задержка сканирования штрих-кода"
 
 #: common/models.py:1147
 msgid "Barcode input processing delay time"
-msgstr ""
+msgstr "Время задержки обработки штрих-кода"
 
 #: common/models.py:1157
 msgid "Barcode Webcam Support"
@@ -2229,7 +2229,7 @@ msgstr "Поддержка веб-камер штрих-кодов"
 
 #: common/models.py:1158
 msgid "Allow barcode scanning via webcam in browser"
-msgstr ""
+msgstr "Разрешить сканирование штрих-кода через веб-камеру в браузере"
 
 #: common/models.py:1164
 msgid "Part Revisions"
