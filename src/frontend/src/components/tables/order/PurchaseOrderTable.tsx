@@ -20,22 +20,18 @@ function purchaseOrderTableColumns(): TableColumn[] {
       accessor: 'reference',
       sortable: true,
       title: t`Purchase Order`,
-      render: (record: any) => {
-        return (
-          record.pk && (
-            <Anchor href={`/order/purchase-order/${record.pk}`}>
-              {record.reference}
-            </Anchor>
-          )
-        );
-      }
+      render: (record) => (
+        <Anchor href={`/order/purchase-order/${record.pk}`}>
+          {record.reference}
+        </Anchor>
+      )
     },
     {
       accessor: 'supplier',
       sortable: true,
       title: t`Supplier`,
       switchable: true,
-      render: supplierRender()
+      render: (record) => supplierRender(record)
     },
     {
       accessor: 'supplier_reference',
@@ -52,25 +48,21 @@ function purchaseOrderTableColumns(): TableColumn[] {
       title: t`Project Code`,
       sortable: true,
       switchable: true,
-      render: projectCodeRender()
+      render: (record) => projectCodeRender(record)
     },
     {
       accessor: 'status',
       sortable: true,
       title: t`Status`,
       switchable: true,
-      render: (record: any) => {
-        return record.status && stockStatusDisplay(record.status);
-      }
+      render: (record) => stockStatusDisplay(record.status)
     },
     {
       accessor: 'creation_date',
       sortable: true,
       title: t`Date`,
       switchable: true,
-      render: (record: any) => {
-        return renderDate(record.creation_date);
-      }
+      render: (record) => renderDate(record.creation_date)
     },
     {
       accessor: 'target_date',
@@ -89,9 +81,7 @@ function purchaseOrderTableColumns(): TableColumn[] {
       sortable: true,
       title: t`Total Cost`,
       switchable: true,
-      render: (record: any) => {
-        return record.total_price && formatCurrency(record.total_price);
-      }
+      render: (record) => formatCurrency(record.total_price)
     },
     {
       accessor: 'responsible',
