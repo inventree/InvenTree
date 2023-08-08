@@ -601,6 +601,8 @@ DATABASES = {
 REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
 
+LOGIN_REDIRECT_URL = "/index/"
+
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
 
