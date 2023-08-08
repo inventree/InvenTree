@@ -1,7 +1,18 @@
 import { t } from '@lingui/macro';
 import { Badge } from '@mantine/core';
 
-const stockCodes = {
+interface CodeInterface {
+  key: number;
+  value: string;
+  label: string;
+  help_text: string;
+}
+
+interface CodeListInterface {
+  [key: string]: CodeInterface;
+}
+
+const stockCodes: CodeListInterface = {
   pending: {
     key: 10,
     value: t`Pending`,
@@ -55,7 +66,11 @@ const stockCodes = {
 /*
  * Generic function to render a status label
  */
-function renderStatusLabel(key, codes, options = {}) {
+function renderStatusLabel(
+  key: number,
+  codes: CodeListInterface,
+  options = {}
+) {
   let text = null;
   let label = null;
 
@@ -75,7 +90,7 @@ function renderStatusLabel(key, codes, options = {}) {
   }
 
   // Fallback for color
-  label = label || 'bg-dark';
+  label = label || 'dark';
 
   if (!text) {
     text = key;
@@ -91,6 +106,6 @@ function renderStatusLabel(key, codes, options = {}) {
  * Render the status for a stock object.
  * Uses the values specified in "status_codes.py"
  */
-export function stockStatusDisplay(key, options = {}) {
+export function stockStatusDisplay(key: number, options = {}) {
   return renderStatusLabel(key, stockCodes, options);
 }
