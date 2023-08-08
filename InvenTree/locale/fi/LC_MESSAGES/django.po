@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-03 04:19+0000\n"
-"PO-Revision-Date: 2023-08-04 01:43\n"
+"POT-Creation-Date: 2023-08-08 04:40+0000\n"
+"PO-Revision-Date: 2023-08-08 11:50\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -125,7 +125,7 @@ msgstr "Annettu ensisijainen sähköpostiosoite ei kelpaa."
 msgid "The provided email domain is not approved."
 msgstr "Annetun sähköpostiosoitteen verkkotunnusta ei hyväksytä."
 
-#: InvenTree/forms.py:345
+#: InvenTree/forms.py:354
 msgid "Registration is disabled."
 msgstr ""
 
@@ -169,35 +169,35 @@ msgstr "Yksilöllisten sarjanumeroiden määrän ({s}) on vastattava määrää 
 msgid "Remove HTML tags from this value"
 msgstr ""
 
-#: InvenTree/helpers_model.py:133
+#: InvenTree/helpers_model.py:131
 msgid "Connection error"
 msgstr "Yhteysvirhe"
 
-#: InvenTree/helpers_model.py:137 InvenTree/helpers_model.py:142
+#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:140
 msgid "Server responded with invalid status code"
 msgstr "Palvelin vastasi virheellisellä tilakoodilla"
 
-#: InvenTree/helpers_model.py:139
+#: InvenTree/helpers_model.py:137
 msgid "Exception occurred"
 msgstr ""
 
-#: InvenTree/helpers_model.py:147
+#: InvenTree/helpers_model.py:145
 msgid "Server responded with invalid Content-Length value"
 msgstr ""
 
-#: InvenTree/helpers_model.py:150
+#: InvenTree/helpers_model.py:148
 msgid "Image size is too large"
 msgstr "Kuva on liian iso"
 
-#: InvenTree/helpers_model.py:162
+#: InvenTree/helpers_model.py:160
 msgid "Image download exceeded maximum size"
 msgstr "Kuvan lataus ylitti enimmäiskoon"
 
-#: InvenTree/helpers_model.py:167
+#: InvenTree/helpers_model.py:165
 msgid "Remote server returned empty response"
 msgstr "Etäpalvelin palautti tyhjän vastauksen"
 
-#: InvenTree/helpers_model.py:175
+#: InvenTree/helpers_model.py:173
 msgid "Supplied URL is not a valid image file"
 msgstr "Annettu URL ei ole kelvollinen kuvatiedosto"
 
@@ -520,119 +520,119 @@ msgstr "Kuvatiedoston URL"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Kuvien lataaminen ei ole käytössä"
 
-#: InvenTree/settings.py:752
+#: InvenTree/settings.py:753
 msgid "Czech"
 msgstr "tšekki"
 
-#: InvenTree/settings.py:753
+#: InvenTree/settings.py:754
 msgid "Danish"
 msgstr "tanska"
 
-#: InvenTree/settings.py:754
+#: InvenTree/settings.py:755
 msgid "German"
 msgstr "saksa"
 
-#: InvenTree/settings.py:755
+#: InvenTree/settings.py:756
 msgid "Greek"
 msgstr "kreikka"
 
-#: InvenTree/settings.py:756
+#: InvenTree/settings.py:757
 msgid "English"
 msgstr "englanti"
 
-#: InvenTree/settings.py:757
+#: InvenTree/settings.py:758
 msgid "Spanish"
 msgstr "espanja"
 
-#: InvenTree/settings.py:758
+#: InvenTree/settings.py:759
 msgid "Spanish (Mexican)"
 msgstr "espanja (Meksiko)"
 
-#: InvenTree/settings.py:759
+#: InvenTree/settings.py:760
 msgid "Farsi / Persian"
 msgstr "farsi / persia"
 
-#: InvenTree/settings.py:760
+#: InvenTree/settings.py:761
 msgid "Finnish"
 msgstr "suomi"
 
-#: InvenTree/settings.py:761
+#: InvenTree/settings.py:762
 msgid "French"
 msgstr "ranska"
 
-#: InvenTree/settings.py:762
+#: InvenTree/settings.py:763
 msgid "Hebrew"
 msgstr "heprea"
 
-#: InvenTree/settings.py:763
+#: InvenTree/settings.py:764
 msgid "Hindi"
 msgstr ""
 
-#: InvenTree/settings.py:764
+#: InvenTree/settings.py:765
 msgid "Hungarian"
 msgstr "unkari"
 
-#: InvenTree/settings.py:765
+#: InvenTree/settings.py:766
 msgid "Italian"
 msgstr "italia"
 
-#: InvenTree/settings.py:766
+#: InvenTree/settings.py:767
 msgid "Japanese"
 msgstr "japani"
 
-#: InvenTree/settings.py:767
+#: InvenTree/settings.py:768
 msgid "Korean"
 msgstr "korea"
 
-#: InvenTree/settings.py:768
+#: InvenTree/settings.py:769
 msgid "Dutch"
 msgstr "hollanti"
 
-#: InvenTree/settings.py:769
+#: InvenTree/settings.py:770
 msgid "Norwegian"
 msgstr "norja"
 
-#: InvenTree/settings.py:770
+#: InvenTree/settings.py:771
 msgid "Polish"
 msgstr "puola"
 
-#: InvenTree/settings.py:771
+#: InvenTree/settings.py:772
 msgid "Portuguese"
 msgstr "portugali"
 
-#: InvenTree/settings.py:772
+#: InvenTree/settings.py:773
 msgid "Portuguese (Brazilian)"
 msgstr "portugali (Brasilia)"
 
-#: InvenTree/settings.py:773
+#: InvenTree/settings.py:774
 msgid "Russian"
 msgstr "venäjä"
 
-#: InvenTree/settings.py:774
+#: InvenTree/settings.py:775
 msgid "Slovenian"
 msgstr "slovenia"
 
-#: InvenTree/settings.py:775
+#: InvenTree/settings.py:776
 msgid "Swedish"
 msgstr "ruotsi"
 
-#: InvenTree/settings.py:776
+#: InvenTree/settings.py:777
 msgid "Thai"
 msgstr "thai"
 
-#: InvenTree/settings.py:777
+#: InvenTree/settings.py:778
 msgid "Turkish"
 msgstr "turkki"
 
-#: InvenTree/settings.py:778
+#: InvenTree/settings.py:779
 msgid "Vietnamese"
 msgstr "vietnam"
 
-#: InvenTree/settings.py:779
+#: InvenTree/settings.py:780
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: InvenTree/settings.py:780
+#: InvenTree/settings.py:781
 msgid "Chinese (Traditional)"
 msgstr ""
 
