@@ -1,4 +1,4 @@
-import { ThumbnailHoverCard } from '../../items/Thumbnail';
+import { ThumbnailHoverCard } from '../items/Thumbnail';
 
 export function supplierRender(): ((record: any) => any) | undefined {
   return (record: any) => {

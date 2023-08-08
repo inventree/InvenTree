@@ -1,11 +1,15 @@
 import { t } from '@lingui/macro';
+import { Anchor } from '@mantine/core';
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 
+import { formatCurrency } from '../../../functions/formatters';
+import { renderDate } from '../../../functions/formatters';
+import { projectCodeRender } from '../../renderer/projectCodeRender';
+import { stockStatusDisplay } from '../../renderer/stockStatusDisplay';
+import { supplierRender } from '../../renderer/supplierRender';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { supplierRender } from './supplierRender';
 
 /**
  * Construct a list of columns for the purchase order table
@@ -19,9 +23,9 @@ function purchaseOrderTableColumns(): TableColumn[] {
       render: (record: any) => {
         return (
           record.pk && (
-            <Link to={`/order/purchase-order/${record.pk}`}>
+            <Anchor href={`/order/purchase-order/${record.pk}`}>
               {record.reference}
-            </Link>
+            </Anchor>
           )
         );
       }
@@ -35,13 +39,11 @@ function purchaseOrderTableColumns(): TableColumn[] {
     },
     {
       accessor: 'supplier_reference',
-      sortable: true,
       title: t`Supplier Reference`,
       switchable: true
     },
     {
       accessor: 'description',
-      sortable: true,
       title: t`Description`,
       switchable: true
     },
@@ -49,22 +51,26 @@ function purchaseOrderTableColumns(): TableColumn[] {
       accessor: 'project_code',
       title: t`Project Code`,
       sortable: true,
-      switchable: true
-      // TODO: Hide this if project code is not enabled
-      // TODO: Custom render function here
+      switchable: true,
+      render: projectCodeRender()
     },
     {
       accessor: 'status',
       sortable: true,
       title: t`Status`,
-      switchable: true
-      // TODO: Custom render function here (status label)
+      switchable: true,
+      render: (record: any) => {
+        return record.status && stockStatusDisplay(record.status);
+      }
     },
     {
       accessor: 'creation_date',
       sortable: true,
       title: t`Date`,
-      switchable: true
+      switchable: true,
+      render: (record: any) => {
+        return renderDate(record.creation_date);
+      }
     },
     {
       accessor: 'target_date',
@@ -82,8 +88,10 @@ function purchaseOrderTableColumns(): TableColumn[] {
       accessor: 'total_price',
       sortable: true,
       title: t`Total Cost`,
-      switchable: true
-      // TODO: Custom render function here (currency)
+      switchable: true,
+      render: (record: any) => {
+        return record.total_price && formatCurrency(record.total_price);
+      }
     },
     {
       accessor: 'responsible',
