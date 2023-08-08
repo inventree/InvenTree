@@ -50,9 +50,7 @@ def construct_absolute_url(*arg, **kwargs):
         # Otherwise, try to use the InvenTree setting
         try:
             site_url = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
-        except ProgrammingError:
-            pass
-        except OperationalError:
+        except (ProgrammingError, OperationalError):
             pass
 
     if not site_url:
