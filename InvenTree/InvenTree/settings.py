@@ -608,7 +608,8 @@ REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login
 
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
-LOGIN_REDIRECT_URL = "/platform/logged-in/"
+# LOGIN_REDIRECT_URL = "/platform/logged-in/"
+LOGIN_REDIRECT_URL = "/index/"
 
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)

@@ -10,7 +10,8 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
-from dj_rest_auth.registration.views import (SocialAccountDisconnectView,
+from dj_rest_auth.registration.views import (ConfirmEmailView,
+                                             SocialAccountDisconnectView,
                                              SocialAccountListView)
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from sesame.views import LoginView
@@ -79,13 +80,16 @@ apipatterns = [
     # InvenTree information endpoint
     path('', InfoView.as_view(), name='api-inventree-info'),
 
-    # Third party API endpoints
-    path('auth/', include('dj_rest_auth.urls')),
-    path('auth/registration/', include('dj_rest_auth.registration.urls')),
-    path('auth/providers/', SocialProvierListView.as_view(), name='social_providers'),
-    path('auth/social/', include(social_auth_urlpatterns)),
-    path('auth/social/', SocialAccountListView.as_view(), name='social_account_list'),
-    path('auth/social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),
+    # Auth API endpoints
+    path('auth/', include([
+        re_path(r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$', ConfirmEmailView.as_view(), name='account_confirm_email'),
+        path('registration/', include('dj_rest_auth.registration.urls')),
+        path('providers/', SocialProvierListView.as_view(), name='social_providers'),
+        path('social/', include(social_auth_urlpatterns)),
+        path('social/', SocialAccountListView.as_view(), name='social_account_list'),
+        path('social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),
+        path('', include('dj_rest_auth.urls')),
+    ])),
 
     # Magic login URLs
     path("email/generate/", csrf_exempt(GetSimpleLoginView().as_view()), name="sesame-generate",),
