@@ -387,6 +387,7 @@ class StockFilter(rest_filters.FilterSet):
     # Part attribute filters
     assembly = rest_filters.BooleanFilter(label="Assembly", field_name='part__assembly')
     active = rest_filters.BooleanFilter(label="Active", field_name='part__active')
+    salable = rest_filters.BooleanFilter(label="Salable", field_name='part__salable')
 
     min_stock = rest_filters.NumberFilter(label='Minimum stock', field_name='quantity', lookup_expr='gte')
     max_stock = rest_filters.NumberFilter(label='Maximum stock', field_name='quantity', lookup_expr='lte')
