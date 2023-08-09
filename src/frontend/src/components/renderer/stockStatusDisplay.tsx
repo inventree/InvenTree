@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Badge } from '@mantine/core';
+import { Badge, MantineSize } from '@mantine/core';
 
 interface CodeInterface {
   key: number;
@@ -63,13 +63,17 @@ const stockCodes: CodeListInterface = {
   }
 };
 
+interface renderStatusLabelOptionsInterface {
+  size?: MantineSize;
+}
+
 /*
  * Generic function to render a status label
  */
 function renderStatusLabel(
   key: number,
   codes: CodeListInterface,
-  options = {}
+  options: renderStatusLabelOptionsInterface = {}
 ) {
   let text = null;
   let label = null;
@@ -89,15 +93,16 @@ function renderStatusLabel(
     console.error(`renderStatusLabel could not find match for code ${key}`);
   }
 
-  // Fallback for color
+  // Fallbacks
   label = label || 'dark';
+  const size = options.size || 'xs';
 
   if (!text) {
     text = key;
   }
 
   return (
-    <Badge color={label} variant="filled">
+    <Badge color={label} variant="filled" size={size}>
       {text}
     </Badge>
   );
@@ -106,6 +111,9 @@ function renderStatusLabel(
  * Render the status for a stock object.
  * Uses the values specified in "status_codes.py"
  */
-export function stockStatusDisplay(key: number, options = {}) {
+export function stockStatusDisplay(
+  key: number,
+  options: renderStatusLabelOptionsInterface = {}
+) {
   return renderStatusLabel(key, stockCodes, options);
 }
