@@ -103,6 +103,12 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         # Save plugin
         self.plugin: InvenTreePlugin = plugin
 
+    def __getstate__(self):
+        """Customize pickeling behaviour."""
+        state = super().__getstate__()
+        state.pop("plugin", None)  # plugin cannot be pickelt in some circumstances when used with drf views, remove it (#5408)
+        return state
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
         reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
