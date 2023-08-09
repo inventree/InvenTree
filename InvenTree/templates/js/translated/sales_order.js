@@ -1308,6 +1308,8 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                             part_detail: true,
                             location_detail: true,
                             available: true,
+                            salable: true,
+                            active: true,
                         },
                         model: 'stockitem',
                         required: true,
