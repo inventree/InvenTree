@@ -935,7 +935,11 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             )
         )
 
-        variant_stock_query = part.filters.variant_stock_query(reference='part__')
+        # Filter for "variant" stock: Variant stock items must be salable and active
+        variant_stock_query = part.filters.variant_stock_query(reference='part__').filter(
+            part__salable=True,
+            part__active=True
+        )
 
         # Also add in available "variant" stock
         queryset = queryset.alias(
