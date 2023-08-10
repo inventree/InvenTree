@@ -1,73 +1,63 @@
 import { Trans } from '@lingui/macro';
-import { Alert, Group, SimpleGrid, Space, Text } from '@mantine/core';
-import { Button } from '@mantine/core';
-import { IconKey, IconSitemap } from '@tabler/icons-react';
+import { Title } from '@mantine/core';
+import { lazy } from 'react';
 
-import { PlaceholderPill } from '../../components/items/Placeholder';
-import { StylishText } from '../../components/items/StylishText';
-import { openEditApiForm, openModalApiForm } from '../../functions/forms';
+import {
+  LayoutItemType,
+  WidgetLayout
+} from '../../components/widgets/WidgetLayout';
+import { LoadingItem } from '../../functions/loading';
+import { useApiState } from '../../states/ApiState';
+
+const vals: LayoutItemType[] = [
+  {
+    i: 1,
+    val: (
+      <LoadingItem
+        item={lazy(() => import('../../components/widgets/GetStartedWidget'))}
+      />
+    ),
+    w: 12,
+    h: 6,
+    x: 0,
+    y: 0,
+    minH: 6
+  },
+  {
+    i: 2,
+    val: (
+      <LoadingItem
+        item={lazy(() => import('../../components/widgets/DisplayWidget'))}
+      />
+    ),
+    w: 3,
+    h: 3,
+    x: 0,
+    y: 7,
+    minH: 3
+  },
+  {
+    i: 4,
+    val: (
+      <LoadingItem
+        item={lazy(() => import('../../components/widgets/FeedbackWidget'))}
+      />
+    ),
+    w: 4,
+    h: 6,
+    x: 0,
+    y: 9
+  }
+];
 
 export default function Home() {
+  const [username] = useApiState((state) => [state.user?.name]);
   return (
     <>
-      <Group>
-        <StylishText>
-          <Trans>Home</Trans>
-        </StylishText>
-        <PlaceholderPill />
-      </Group>
-
-      <Space />
-      <Text size="xl">Test Forms</Text>
-      <SimpleGrid cols={4}>
-        <Button
-          variant="outline"
-          color="lime"
-          onClick={() =>
-            openEditApiForm({
-              title: 'A test dynamic form',
-              props: {
-                name: 'my form',
-                onClose: () => {
-                  // TODO: Some custom action?
-                  console.log('closing modal form');
-                },
-                url: '/part/',
-                pk: 3,
-                method: 'PUT',
-                title: 'a title',
-                preFormContent: <Text>dynamic content before the form</Text>,
-                postFormContent: () => (
-                  <Alert title="alert" color="blue">
-                    You can call a function too!
-                  </Alert>
-                ),
-                fields: [
-                  {
-                    name: 'name'
-                  },
-                  {
-                    name: 'category',
-                    icon: <IconSitemap />
-                  },
-                  {
-                    name: 'description'
-                  },
-                  {
-                    name: 'keywords',
-                    icon: <IconKey />
-                  },
-                  {
-                    name: 'IPN'
-                  }
-                ]
-              }
-            })
-          }
-        >
-          Dynamic Form
-        </Button>
-      </SimpleGrid>
+      <Title order={1}>
+        <Trans>Welcome to your Dashboard{username && `, ${username}`}</Trans>
+      </Title>
+      <WidgetLayout items={vals} />
     </>
   );
 }

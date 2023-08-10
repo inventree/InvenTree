@@ -45,7 +45,7 @@ docopt==0.6.2
     # via coveralls
 filelock==3.12.2
     # via virtualenv
-flake8==6.0.0
+flake8==6.1.0
     # via
     #   -r requirements-dev.in
     #   flake8-docstrings
@@ -70,17 +70,17 @@ packaging==23.1
     #   build
 pep8-naming==0.13.3
     # via -r requirements-dev.in
-pip-tools==7.1.0
+pip-tools==7.2.0
     # via -r requirements-dev.in
-platformdirs==3.9.1
+platformdirs==3.10.0
     # via virtualenv
 pre-commit==3.3.3
     # via -r requirements-dev.in
-pycodestyle==2.10.0
+pycodestyle==2.11.0
     # via flake8
 pydocstyle==6.3.0
     # via flake8-docstrings
-pyflakes==3.0.1
+pyflakes==3.1.0
     # via flake8
 pyproject-hooks==1.0.0
     # via build
@@ -117,9 +117,9 @@ urllib3==2.0.4
     # via
     #   -c requirements.txt
     #   requests
-virtualenv==20.24.1
+virtualenv==20.24.2
     # via pre-commit
-wheel==0.41.0
+wheel==0.41.1
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:

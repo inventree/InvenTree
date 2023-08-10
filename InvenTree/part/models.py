@@ -3576,8 +3576,7 @@ class PartParameter(MetadataMixin, models.Model):
 
         if self.template.units:
             try:
-                converted = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
-                self.data_numeric = float(converted.magnitude)
+                self.data_numeric = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
             except (ValidationError, ValueError):
                 self.data_numeric = None
 

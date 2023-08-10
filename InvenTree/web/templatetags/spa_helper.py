@@ -22,6 +22,7 @@ def spa_bundle():
 
     manifest_data = json.load(manifest.open())
     index = manifest_data.get("index.html")
+    css_index = manifest_data.get("index.css")
 
     dynmanic_files = index.get("dynamicImports", [])
     imports_files = "".join(
@@ -32,5 +33,6 @@ def spa_bundle():
     )
 
     return mark_safe(
-        f"""<script type="module" src="{settings.STATIC_URL}web/{index['file']}"></script>{imports_files}"""
+        f"""<link rel="stylesheet" href="{settings.STATIC_URL}web/{css_index['file']}" />
+        <script type="module" src="{settings.STATIC_URL}web/{index['file']}"></script>{imports_files}"""
     )

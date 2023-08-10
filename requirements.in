@@ -8,7 +8,7 @@ django-cleanup                          # Automated deletion of old / unused upl
 django-cors-headers                     # CORS headers extension for DRF
 django-crispy-forms<2.0                 # Form helpers # FIXED 2023-02-18 due to required updates in the new version
 django-dbbackup                         # Backup / restore of database and media files
-django-error-report                     # Error report viewer for the admin interface
+django-error-report-2                   # Error report viewer for the admin interface
 django-filter                           # Extended filtering options
 django-flags                            # Feature flags
 django-formtools                        # Form wizard tools
