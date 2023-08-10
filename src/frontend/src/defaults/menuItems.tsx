@@ -15,5 +15,11 @@ export const menuItems: MenuLinkItem[] = [
     text: <Trans>Profile page</Trans>,
     link: '/profile/user',
     doctext: <Trans>User attributes and design settings.</Trans>
+  },
+  {
+    id: 'playground',
+    text: <Trans>Playground</Trans>,
+    link: '/playground',
+    highlight: true
   }
 ];

@@ -387,6 +387,7 @@ class StockFilter(rest_filters.FilterSet):
     # Part attribute filters
     assembly = rest_filters.BooleanFilter(label="Assembly", field_name='part__assembly')
     active = rest_filters.BooleanFilter(label="Active", field_name='part__active')
+    salable = rest_filters.BooleanFilter(label="Salable", field_name='part__salable')
 
     min_stock = rest_filters.NumberFilter(label='Minimum stock', field_name='quantity', lookup_expr='gte')
     max_stock = rest_filters.NumberFilter(label='Maximum stock', field_name='quantity', lookup_expr='lte')
@@ -677,8 +678,13 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                 else:
                     if bool(data.get('use_pack_size')):
                         quantity = data['quantity'] = supplier_part.base_quantity(quantity)
+
                         # Divide purchase price by pack size, to save correct price per stock item
-                        data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_quantity_native)
+                        if data['purchase_price'] and supplier_part.pack_quantity_native:
+                            try:
+                                data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_quantity_native)
+                            except ValueError:
+                                pass
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above

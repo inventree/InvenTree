@@ -1308,6 +1308,8 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                             part_detail: true,
                             location_detail: true,
                             available: true,
+                            salable: true,
+                            active: true,
                         },
                         model: 'stockitem',
                         required: true,
@@ -1802,6 +1804,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
             },
         },
         {
+            sortable: false,
+            field: 'part_detail.description',
+            title: '{% trans "Description" %}',
+            switchable: true,
+        },
+        {
             sortable: true,
             field: 'reference',
             title: '{% trans "Reference" %}',
@@ -1881,17 +1889,20 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 field: 'stock',
                 title: '{% trans "Available Stock" %}',
                 formatter: function(value, row) {
-                    var available = row.available_stock;
-                    var required = Math.max(row.quantity - row.allocated - row.shipped, 0);
 
-                    var html = '';
+                    let available = row.available_stock + row.available_variant_stock;
+                    let required = Math.max(row.quantity - row.allocated - row.shipped, 0);
+
+                    let html = '';
 
                     if (available > 0) {
-                        var url = `/part/${row.part}/?display=part-stock`;
+                        let url = `/part/${row.part}/?display=part-stock`;
 
-                        var text = available;
+                        html = renderLink(available, url);
 
-                        html = renderLink(text, url);
+                        if (row.available_variant_stock && row.available_variant_stock > 0) {
+                            html += makeIconBadge('fa-info-circle icon-blue', '{% trans "Includes variant stock" %}');
+                        }
                     } else {
                         html += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                     }
