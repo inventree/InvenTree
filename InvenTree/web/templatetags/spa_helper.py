@@ -7,8 +7,10 @@ from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
-logger = getLogger("gwaesser_backend")
+logger = getLogger("InvenTree")
 register = template.Library()
+
+PUI_SETTINGS = json.dumps(settings.PUI_SETTINGS)
 
 
 @register.simple_tag
@@ -36,3 +38,9 @@ def spa_bundle():
         f"""<link rel="stylesheet" href="{settings.STATIC_URL}web/{css_index['file']}" />
         <script type="module" src="{settings.STATIC_URL}web/{index['file']}"></script>{imports_files}"""
     )
+
+
+@register.simple_tag
+def spa_settings():
+    """Render settings for spa."""
+    return mark_safe(f"""<script>window.INVENTREE_SETTINGS={PUI_SETTINGS}</script>""")
