@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-07 11:49\n"
+"PO-Revision-Date: 2023-08-10 12:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -177,6 +177,10 @@ msgstr "Erreur inconnue"
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
 msgstr "Une erreur s'est produite :"
+
+#: src/components/items/GettingStartedCarousel.tsx:64
+msgid "Read more"
+msgstr ""
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
@@ -701,6 +705,65 @@ msgstr ""
 msgid "This is a test filter"
 msgstr ""
 
+#: src/components/widgets/DisplayWidget.tsx:11
+#: src/pages/Index/Profile/UserPanel.tsx:137
+msgid "Display Settings"
+msgstr "Paramètres d'Affichage"
+
+#: src/components/widgets/DisplayWidget.tsx:15
+#: src/pages/Index/Profile/UserPanel.tsx:141
+msgid "Color Mode"
+msgstr "Mode de couleur"
+
+#: src/components/widgets/DisplayWidget.tsx:21
+#: src/pages/Index/Profile/UserPanel.tsx:147
+msgid "Language"
+msgstr "Langue"
+
+#: src/components/widgets/FeedbackWidget.tsx:18
+msgid "Something is new: Platform UI"
+msgstr ""
+
+#: src/components/widgets/FeedbackWidget.tsx:20
+msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
+msgstr ""
+
+#: src/components/widgets/FeedbackWidget.tsx:31
+msgid "Provide Feedback"
+msgstr ""
+
+#: src/components/widgets/GetStartedWidget.tsx:11
+msgid "Getting started"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:134
+msgid "Loading"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:180
+msgid "Layout"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:186
+msgid "Reset Layout"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:199
+msgid "Stop Edit"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:199
+msgid "Edit Layout"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:205
+msgid "Appearance"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:217
+msgid "Show Boxes"
+msgstr ""
+
 #: src/contexts/ThemeContext.tsx:62
 #: src/pages/Index/Profile/UserPanel.tsx:107
 msgid "Submit"
@@ -771,12 +834,12 @@ msgid "Current News"
 msgstr ""
 
 #: src/defaults/defaultHostList.tsx:8
-msgid "InvenTree Demo"
-msgstr ""
+#~ msgid "InvenTree Demo"
+#~ msgstr "InvenTree Demo"
 
 #: src/defaults/defaultHostList.tsx:16
-msgid "Local Server"
-msgstr "Serveur local"
+#~ msgid "Local Server"
+#~ msgstr "Local Server"
 
 #: src/defaults/links.tsx:8
 msgid "Website"
@@ -792,7 +855,6 @@ msgstr "Démo"
 
 #: src/defaults/links.tsx:23
 #: src/defaults/menuItems.tsx:9
-#: src/pages/Index/Home.tsx:12
 msgid "Home"
 msgstr ""
 
@@ -984,7 +1046,7 @@ msgstr ""
 msgid "Checking if you are already logged in"
 msgstr "Vérifier si vous êtes déjà connecté"
 
-#: src/pages/Auth/Login.tsx:24
+#: src/pages/Auth/Login.tsx:25
 msgid "No selection"
 msgstr "Aucune sélection"
 
@@ -1034,6 +1096,10 @@ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
+msgstr ""
+
+#: src/pages/Index/Home.tsx:58
+msgid "Welcome to your Dashboard{0}"
 msgstr ""
 
 #: src/pages/Index/Playground.tsx:17
@@ -1194,18 +1260,6 @@ msgstr "Nom : {0}"
 #: src/pages/Index/Profile/UserPanel.tsx:120
 msgid "Username: {0}"
 msgstr "Nom d'utilisateur : {0}"
-
-#: src/pages/Index/Profile/UserPanel.tsx:137
-msgid "Display Settings"
-msgstr "Paramètres d'Affichage"
-
-#: src/pages/Index/Profile/UserPanel.tsx:141
-msgid "Color Mode"
-msgstr "Mode de couleur"
-
-#: src/pages/Index/Profile/UserPanel.tsx:147
-msgid "Language"
-msgstr "Langue"
 
 #: src/pages/Index/Profile/UserPanel.tsx:152
 msgid "Use pseudo language"
