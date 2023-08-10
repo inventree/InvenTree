@@ -1,11 +1,11 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { BrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import { queryClient, setApiDefaults } from '../App';
 import { BaseContext } from '../contexts/BaseContext';
 import { defaultHostList } from '../defaults/defaultHostList';
-import { routes } from '../router';
+import { routes } from '../routes';
 import { useApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
