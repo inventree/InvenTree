@@ -764,7 +764,21 @@ function loadPurchasePriceHistoryTable(options={}) {
             data = data.sort((a, b) => (a.order_detail.complete_date - b.order_detail.complete_date));
 
             var graphLabels = Array.from(data, (x) => (`${x.order_detail.reference} - ${x.order_detail.complete_date}`));
-            var graphValues = Array.from(data, (x) => (x.purchase_price / x.supplier_part_detail.pack_size));
+            var graphValues = Array.from(data, (x) => {
+                let pp = x.purchase_price;
+
+                let div = 1.0;
+
+                if (x.supplier_part_detail) {
+                    div = parseFloat(x.supplier_part_detail.pack_quantity_native);
+
+                    if (isNaN(div) || !isFinite(div)) {
+                        div = 1.0;
+                    }
+                }
+
+                return pp / div;
+            });
 
             if (chart) {
                 chart.destroy();
