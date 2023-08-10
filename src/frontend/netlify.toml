@@ -2,8 +2,11 @@
 # https://www.netlify.com/docs/netlify-toml-reference/
 
 [build]
-  command = "yarn run build --outDir dist"
+  command = "yarn run extract && yarn run compile && yarn run build --outDir dist"
   publish = "dist"
+
+[build.environment]
+  VITE_DEMO = "true"
 
 # Send requests to subpath
 

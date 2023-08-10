@@ -19,9 +19,11 @@ export function AuthFormOptions({
       <Group>
         <ColorToggle />
         <LanguageToggle />
-        <Tooltip label={hostname}>
-          <IconServer onClick={toggleHostEdit} />
-        </Tooltip>
+        {window.INVENTREE_SETTINGS.show_server_selector && (
+          <Tooltip label={hostname}>
+            <IconServer onClick={toggleHostEdit} />
+          </Tooltip>
+        )}
         <Text c={'dimmed'}>
           {server.version} | {server.apiVersion}
         </Text>

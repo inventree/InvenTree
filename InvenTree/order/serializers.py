@@ -862,6 +862,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             'allocated',
             'allocations',
             'available_stock',
+            'available_variant_stock',
             'customer_detail',
             'quantity',
             'reference',
@@ -934,6 +935,26 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             )
         )
 
+        # Filter for "variant" stock: Variant stock items must be salable and active
+        variant_stock_query = part.filters.variant_stock_query(reference='part__').filter(
+            part__salable=True,
+            part__active=True
+        )
+
+        # Also add in available "variant" stock
+        queryset = queryset.alias(
+            variant_stock_total=part.filters.annotate_variant_quantity(variant_stock_query, reference='quantity'),
+            variant_bo_allocations=part.filters.annotate_variant_quantity(variant_stock_query, reference='sales_order_allocations__quantity'),
+            variant_so_allocations=part.filters.annotate_variant_quantity(variant_stock_query, reference='allocations__quantity'),
+        )
+
+        queryset = queryset.annotate(
+            available_variant_stock=ExpressionWrapper(
+                F('variant_stock_total') - F('variant_bo_allocations') - F('variant_so_allocations'),
+                output_field=models.DecimalField(),
+            )
+        )
+
         return queryset
 
     customer_detail = CompanyBriefSerializer(source='order.customer', many=False, read_only=True)
@@ -944,6 +965,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     # Annotated fields
     overdue = serializers.BooleanField(required=False, read_only=True)
     available_stock = serializers.FloatField(read_only=True)
+    available_variant_stock = serializers.FloatField(read_only=True)
 
     quantity = InvenTreeDecimalField()
 
