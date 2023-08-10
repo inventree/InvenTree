@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { formatCurrency } from '../../../functions/formatters';
 import { renderDate } from '../../../functions/formatters';
+import { ownerRenderer } from '../../renderer/ownerRenderer';
 import { projectCodeRender } from '../../renderer/projectCodeRender';
 import { stockStatusDisplay } from '../../renderer/stockStatusDisplay';
 import { supplierRender } from '../../renderer/supplierRender';
@@ -87,8 +88,8 @@ function purchaseOrderTableColumns(): TableColumn[] {
       accessor: 'responsible',
       sortable: true,
       title: t`Responsible`,
-      switchable: true
-      // TODO: Custom render function here (responsible label)
+      switchable: true,
+      render: (record) => ownerRenderer(record.responsible_detail)
     }
   ];
 }
