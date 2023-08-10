@@ -1804,6 +1804,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
             },
         },
         {
+            sortable: false,
+            field: 'part_detail.description',
+            title: '{% trans "Description" %}',
+            switchable: true,
+        },
+        {
             sortable: true,
             field: 'reference',
             title: '{% trans "Reference" %}',
