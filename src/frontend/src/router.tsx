@@ -14,8 +14,11 @@ export const Playground = Loadable(
 export const Parts = Loadable(lazy(() => import('./pages/Index/Part')));
 export const Stock = Loadable(lazy(() => import('./pages/Index/Stock')));
 export const Build = Loadable(lazy(() => import('./pages/Index/Build')));
-export const PurchaseOrder = Loadable(
-  lazy(() => import('./pages/Index/PurchaseOrder'))
+export const PurchaseOrderIndex = Loadable(
+  lazy(() => import('./pages/order/PurchaseOrderIndex'))
+);
+export const PurchaseOrderDetail = Loadable(
+  lazy(() => import('./pages/order/PurchaseOrderDetail'))
 );
 
 export const Dashboard = Loadable(
@@ -79,7 +82,13 @@ export const router = createBrowserRouter(
           children: [
             {
               path: 'purchase-order/',
-              element: <PurchaseOrder />
+              children: [
+                { index: true, element: <PurchaseOrderIndex /> },
+                {
+                  path: ':pk/',
+                  element: <PurchaseOrderDetail />
+                }
+              ]
             }
           ]
         },

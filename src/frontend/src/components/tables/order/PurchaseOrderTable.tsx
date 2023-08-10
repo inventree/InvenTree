@@ -22,7 +22,7 @@ function purchaseOrderTableColumns(): TableColumn[] {
       sortable: true,
       title: t`Purchase Order`,
       render: (record) => (
-        <Anchor href={`order/purchase-order/${record.pk}`}>
+        <Anchor href={`/platform/order/purchase-order/${record.pk}`}>
           {record.reference}
         </Anchor>
       )
