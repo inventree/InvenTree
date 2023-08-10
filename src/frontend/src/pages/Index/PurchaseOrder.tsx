@@ -5,12 +5,12 @@ import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { PurchaseOrderTable } from '../../components/tables/order/PurchaseOrderTable';
 
-export default function Order() {
+export default function PurchaseOrder() {
   return (
     <>
       <Group>
         <StylishText>
-          <Trans>Orders</Trans>
+          <Trans>Purchase Orders</Trans>
         </StylishText>
         <PlaceholderPill />
       </Group>
