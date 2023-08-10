@@ -292,7 +292,7 @@ function loadBomPricingChart(options={}) {
     var part = options.part;
 
     if (!part) {
-        console.error('No part provided to loadPurchasePriceHistoryTable');
+        console.error('No part provided to loadBomPricingChart');
         return;
     }
 
@@ -434,7 +434,7 @@ function loadPartSupplierPricingTable(options={}) {
     var part = options.part;
 
     if (!part) {
-        console.error('No part provided to loadPurchasePriceHistoryTable');
+        console.error('No part provided to loadPartSupplierPricingTable');
         return;
     }
 
