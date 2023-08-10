@@ -1,7 +1,8 @@
 import { Trans } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { Container, Grid, Group, Text, Title } from '@mantine/core';
 import { useParams } from 'react-router-dom';
 
+import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 
 export default function PurchaseOrderDetail() {
@@ -13,8 +14,22 @@ export default function PurchaseOrderDetail() {
         <StylishText>
           <Trans>Purchase Order</Trans>
         </StylishText>
+        <PlaceholderPill />
       </Group>
-      <Text>{pk}</Text>
+      <Grid grow>
+        <Grid.Col span={8}>
+          {' '}
+          <Title>
+            <Trans>Details for {pk} here</Trans>
+          </Title>
+          <PlaceholderPill />
+        </Grid.Col>
+        <Grid.Col span={2}>
+          <Text>
+            <Trans>Sidebar</Trans>
+          </Text>
+        </Grid.Col>
+      </Grid>
     </>
   );
 }
