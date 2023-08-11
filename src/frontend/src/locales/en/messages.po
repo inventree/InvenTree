@@ -696,65 +696,6 @@ msgstr "Test Filter"
 msgid "This is a test filter"
 msgstr "This is a test filter"
 
-#: src/components/widgets/DisplayWidget.tsx:11
-#: src/pages/Index/Profile/UserPanel.tsx:137
-msgid "Display Settings"
-msgstr "Display Settings"
-
-#: src/components/widgets/DisplayWidget.tsx:15
-#: src/pages/Index/Profile/UserPanel.tsx:141
-msgid "Color Mode"
-msgstr "Color Mode"
-
-#: src/components/widgets/DisplayWidget.tsx:21
-#: src/pages/Index/Profile/UserPanel.tsx:147
-msgid "Language"
-msgstr "Language"
-
-#: src/components/widgets/FeedbackWidget.tsx:18
-msgid "Something is new: Platform UI"
-msgstr "Something is new: Platform UI"
-
-#: src/components/widgets/FeedbackWidget.tsx:20
-msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-
-#: src/components/widgets/FeedbackWidget.tsx:31
-msgid "Provide Feedback"
-msgstr "Provide Feedback"
-
-#: src/components/widgets/GetStartedWidget.tsx:10
-msgid "Getting started"
-msgstr "Getting started"
-
-#: src/components/widgets/WidgetLayout.tsx:134
-msgid "Loading"
-msgstr "Loading"
-
-#: src/components/widgets/WidgetLayout.tsx:180
-msgid "Layout"
-msgstr "Layout"
-
-#: src/components/widgets/WidgetLayout.tsx:186
-msgid "Reset Layout"
-msgstr "Reset Layout"
-
-#: src/components/widgets/WidgetLayout.tsx:199
-msgid "Stop Edit"
-msgstr "Stop Edit"
-
-#: src/components/widgets/WidgetLayout.tsx:199
-msgid "Edit Layout"
-msgstr "Edit Layout"
-
-#: src/components/widgets/WidgetLayout.tsx:205
-msgid "Appearance"
-msgstr "Appearance"
-
-#: src/components/widgets/WidgetLayout.tsx:217
-msgid "Show Boxes"
-msgstr "Show Boxes"
-
 #: src/contexts/ThemeContext.tsx:62
 #: src/pages/Index/Profile/UserPanel.tsx:107
 msgid "Submit"
@@ -846,6 +787,7 @@ msgstr "Demo"
 
 #: src/defaults/links.tsx:23
 #: src/defaults/menuItems.tsx:9
+#: src/pages/Index/Home.tsx:12
 msgid "Home"
 msgstr "Home"
 
@@ -1083,10 +1025,6 @@ msgstr "Autoupdate"
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
 msgstr "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
 
-#: src/pages/Index/Home.tsx:58
-msgid "Welcome to your Dashboard{0}"
-msgstr "Welcome to your Dashboard{0}"
-
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
 msgstr "User"
@@ -1241,6 +1179,18 @@ msgstr "Last name: {0}"
 #: src/pages/Index/Profile/UserPanel.tsx:120
 msgid "Username: {0}"
 msgstr "Username: {0}"
+
+#: src/pages/Index/Profile/UserPanel.tsx:137
+msgid "Display Settings"
+msgstr "Display Settings"
+
+#: src/pages/Index/Profile/UserPanel.tsx:141
+msgid "Color Mode"
+msgstr "Color Mode"
+
+#: src/pages/Index/Profile/UserPanel.tsx:147
+msgid "Language"
+msgstr "Language"
 
 #: src/pages/Index/Profile/UserPanel.tsx:152
 msgid "Use pseudo language"
