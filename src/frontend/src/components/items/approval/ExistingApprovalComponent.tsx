@@ -85,8 +85,8 @@ export function ExistingApprovalComponent({
       </Badge>{' '}
       <FinalState />
       {obj.decisions.length == 0 ? (
-        <Text>
-          <Trans>No Decisions yes</Trans>
+        <Text c="dimmed" ta="right">
+          <Trans>No Decisions yet</Trans>
         </Text>
       ) : (
         <List>
