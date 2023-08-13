@@ -183,11 +183,21 @@ class Approval(
         """Custom save method to enforce business logic.
 
         Rules:
+        - Only one approval per object
         - If the approval is finalised, it can not be modified anymore
         - The reference field is automatically generated if it is empty
         - The reference_int field is automatically updated any time
 
         """
+        # Check if there is already an approval for this object
+        if self.pk is None:
+            if Approval.objects.filter(
+                content_type=self.content_type, object_id=self.object_id
+            ).exists():
+                raise ValidationError(
+                    _("There is already an approval for this object.")
+                )
+
         if self.finalised:
             # Check if the approval is alyread finalised - then we fail hard
             if Approval.objects.get(pk=self.pk).finalised is True:
