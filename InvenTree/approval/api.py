@@ -1,4 +1,5 @@
 """API views for the Approval app."""
+from django.contrib.contenttypes.models import ContentType
 from django.urls import include, path, re_path
 
 from rest_framework import serializers
@@ -45,6 +46,7 @@ class ApprovalSerializer(InvenTreeModelSerializer):
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
     content_object = TaggedObjectRelatedField(read_only=True)
+    model = serializers.CharField(required=False, write_only=True)
     decisions = ApprovalDecisionSerializer(many=True, read_only=True)
     creation_date = serializers.DateTimeField(format='iso-8601', required=False)
     modified_date = serializers.DateTimeField(format='iso-8601', required=False)
@@ -66,6 +68,15 @@ class ApprovalSerializer(InvenTreeModelSerializer):
             'finalised_date',
             'modified_date',
         ]
+
+    def is_valid(self, *, raise_exception=False):
+        """User optional field 'model' to determine content_type."""
+        if 'model' in self.initial_data:
+            model = self.initial_data.pop('model')
+            mdl_splt = model.split('.')
+            content_type = ContentType.objects.get(app_label=mdl_splt[0], model=mdl_splt[1])
+            self.initial_data['content_type'] = content_type.pk
+        return super().is_valid(raise_exception=raise_exception)
 
 
 class ApprovalList(ListCreateAPI):
@@ -163,15 +174,19 @@ class ApproveView(CreateAPI):
     serializer_class = ApprovalApproveSerializer
 
 
-approval_api_urls = [
-    path(r'<int:pk>/', include([
-        re_path(r"^decision/", include([
-            re_path(r"^$", ApprovalDecisionList.as_view(), name="api-approval-decision-list",),
-            re_path(r"^(?P<pk>\d+)/", ApprovalDecisionDetail.as_view(), name="api-approval-decision-detail",),
-        ])),
-        re_path('approve/', ApproveView.as_view(), name='api-approval-approve'),
-        re_path(r'^metadata/', MetadataView.as_view(), {'model': Approval}, name='api-approval-metadata'),
-        re_path(r'^.*$', ApprovalDetail.as_view(), name='api-approval-detail'),
+detail_api = [
+    re_path(r"^decision/", include([
+        re_path(r"^$", ApprovalDecisionList.as_view(), name="api-approval-decision-list",),
+        re_path(r"^(?P<pk>\d+)/", ApprovalDecisionDetail.as_view(), name="api-approval-decision-detail",),
     ])),
+    re_path('approve/', ApproveView.as_view(), name='api-approval-approve'),
+    re_path(r'^metadata/', MetadataView.as_view(), {'model': Approval}, name='api-approval-metadata'),
+    re_path(r'^.*$', ApprovalDetail.as_view(), name='api-approval-detail'),
+]
+
+
+approval_api_urls = [
+    path(r'<str:type>:<int:pk>/', include(detail_api)),
+    path(r'<int:pk>/', include(detail_api)),
     re_path(r'^.*$', ApprovalList.as_view(), name='api-approval-list'),
 ]
