@@ -8,6 +8,7 @@ export interface HostList {
 }
 
 export interface UserProps {
+  id: number;
   name: string;
   email: string;
   username: string;

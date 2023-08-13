@@ -17,6 +17,7 @@ export const useApiState = create<ApiStateProps>((set, get) => ({
     // Fetch user data
     await api.get(url(ApiPaths.user_me)).then((response) => {
       const user: UserProps = {
+        id: response.data.pk,
         name: `${response.data.first_name} ${response.data.last_name}`,
         email: response.data.email,
         username: response.data.username
