@@ -47,9 +47,6 @@ export function NewApprovalComponent({
 }) {
   return (
     <>
-      <Text>
-        <Trans>There is currently no approval for this order.</Trans>
-      </Text>
       <Button
         w={'100%'}
         variant="outline"
@@ -58,6 +55,9 @@ export function NewApprovalComponent({
       >
         <Trans>Start approval</Trans>
       </Button>
+      <Text>
+        <Trans>There is currently no approval for this order.</Trans>
+      </Text>
     </>
   );
 }
