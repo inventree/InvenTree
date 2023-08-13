@@ -48,10 +48,16 @@ export enum ApiPaths {
   user_token = 'api-user-token',
   user_simple_login = 'api-user-simple-login',
   user_reset = 'api-user-reset',
-  user_reset_set = 'api-user-reset-set'
+  user_reset_set = 'api-user-reset-set',
+
+  part_detal = 'api-part-detail',
+  approval_detail = 'api-approval-detail',
+  approval_detail_type = 'api-approval-detail-type',
+  approval_start = 'api-approval-start',
+  approval_decision = 'api-approval-decision'
 }
 
-export function url(path: ApiPaths, pk?: any): string {
+export function url(path: ApiPaths, pk?: any, kwargs?: any): string {
   switch (path) {
     case ApiPaths.user_me:
       return 'user/me/';
@@ -63,6 +69,18 @@ export function url(path: ApiPaths, pk?: any): string {
       return '/auth/password/reset/';
     case ApiPaths.user_reset_set:
       return '/auth/password/reset/confirm/';
+
+    case ApiPaths.part_detal:
+      return `/part/${pk}/`;
+    case ApiPaths.approval_detail:
+      return `/approval/${pk}`;
+    case ApiPaths.approval_detail_type:
+      const type = kwargs['type'];
+      return `/approval/${type}:${pk}`;
+    case ApiPaths.approval_start:
+      return `/approval/`;
+    case ApiPaths.approval_decision:
+      return `/approval/${pk}/decision/`;
 
     default:
       return '';
