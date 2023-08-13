@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-10 12:21\n"
+"PO-Revision-Date: 2023-08-13 13:26\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -122,7 +122,7 @@ msgstr "E-posta gönder"
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr ""
+msgstr "Sunucu"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
@@ -135,7 +135,7 @@ msgstr "Burada kimse yok..."
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "Sunucu Ekle"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 msgid "Save"
@@ -147,7 +147,7 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr ""
+msgstr "Sunucu seçeneklerini düzenle"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
@@ -159,36 +159,36 @@ msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr ""
+msgstr "İsim: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr ""
+msgstr "Durum: <0>worker</0> ({0}), <1>eklenti</1>{1}"
 
 #: src/components/items/DocTooltip.tsx:89
 msgid "Read More"
-msgstr ""
+msgstr "Devamını Oku"
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/components/tables/InvenTreeTable.tsx:336
 msgid "Unknown error"
-msgstr ""
+msgstr "Bilinmeyen hata"
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr ""
+msgstr "Bir hata oluştu:"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "Devamını oku"
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "InvenTree Logo"
 
 #: src/components/items/Placeholder.tsx:10
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr ""
+msgstr "Bu özellik/buton/alan henüz tamamlanmamış ya da test aşamasında olan bir özellik için buraya konulmuş."
 
 #: src/components/items/Placeholder.tsx:13
 msgid "PLH"
@@ -196,77 +196,77 @@ msgstr ""
 
 #: src/components/items/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr ""
+msgstr "QR kodunu tara"
 
 #: src/components/items/Thumbnail.tsx:8
 #: src/components/items/Thumbnail.tsx:41
 msgid "Thumbnail"
-msgstr ""
+msgstr "Küçük resim"
 
 #: src/components/modals/QrCodeModal.tsx:68
 msgid "Unknown response"
-msgstr ""
+msgstr "Bilinmeyen yanıt"
 
 #: src/components/modals/QrCodeModal.tsx:98
 msgid "Error while getting camera"
-msgstr ""
+msgstr "Kamera açılırken hata oluştu"
 
 #: src/components/modals/QrCodeModal.tsx:121
 msgid "Error while scanning"
-msgstr ""
+msgstr "Tarama sırasında hata"
 
 #: src/components/modals/QrCodeModal.tsx:135
 msgid "Error while stopping"
-msgstr ""
+msgstr "Durdurma sırasında hata"
 
 #: src/components/modals/QrCodeModal.tsx:150
 msgid "Scanning"
-msgstr ""
+msgstr "Taranıyor"
 
 #: src/components/modals/QrCodeModal.tsx:150
 msgid "Not scanning"
-msgstr ""
+msgstr "Taranmıyor"
 
 #: src/components/modals/QrCodeModal.tsx:155
 msgid "Select Camera"
-msgstr ""
+msgstr "Kamera Seç"
 
 #: src/components/modals/QrCodeModal.tsx:165
 msgid "Start scanning"
-msgstr ""
+msgstr "Taramayı başlat"
 
 #: src/components/modals/QrCodeModal.tsx:172
 msgid "Stop scanning"
-msgstr ""
+msgstr "Taramayı durdur"
 
 #: src/components/modals/QrCodeModal.tsx:177
 msgid "No scans yet!"
-msgstr ""
+msgstr "Henüz bir tarama yok!"
 
 #: src/components/modals/QrCodeModal.tsx:197
 msgid "Close modal"
-msgstr ""
+msgstr "Pencereyi kapat"
 
 #: src/components/nav/MainMenu.tsx:38
 msgid "Notifications"
-msgstr ""
+msgstr "Bildirimler"
 
 #: src/components/nav/MainMenu.tsx:42
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
 #: src/components/nav/MainMenu.tsx:46
 msgid "Settings"
-msgstr ""
+msgstr "Ayarlar"
 
 #: src/components/nav/MainMenu.tsx:49
 msgid "Account settings"
-msgstr ""
+msgstr "Hesap ayarları"
 
 #: src/components/nav/MainMenu.tsx:57
 msgid "Logout"
-msgstr ""
+msgstr "Çıkış"
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
@@ -278,16 +278,16 @@ msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:52
 msgid "Open Navigation"
-msgstr ""
+msgstr "Gezinmeyi Aç"
 
 #: src/components/nav/NavHoverMenu.tsx:70
 msgid "View all"
-msgstr ""
+msgstr "Tümünü gör"
 
 #: src/components/nav/NavHoverMenu.tsx:84
 #: src/components/nav/NavHoverMenu.tsx:94
 msgid "Get started"
-msgstr ""
+msgstr "Başlayın"
 
 #: src/components/nav/NavHoverMenu.tsx:87
 msgid "Overview over high-level objects, functions and possible usecases."
@@ -295,115 +295,115 @@ msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:59
 msgid "Navigation"
-msgstr ""
+msgstr "Gezinme"
 
 #: src/components/nav/NavigationDrawer.tsx:62
 msgid "Pages"
-msgstr ""
+msgstr "Sayfalar"
 
 #: src/components/nav/NavigationDrawer.tsx:67
 msgid "Plugins"
-msgstr ""
+msgstr "Eklentiler"
 
 #: src/components/nav/NavigationDrawer.tsx:77
 msgid "Documentation"
-msgstr ""
+msgstr "Dokümantasyon"
 
 #: src/components/nav/NavigationDrawer.tsx:80
 msgid "About"
-msgstr ""
+msgstr "Hakkında"
 
 #: src/components/nav/SearchDrawer.tsx:65
 #: src/defaults/links.tsx:26
 #: src/pages/Index/Part.tsx:13
 msgid "Parts"
-msgstr ""
+msgstr "Parçalar"
 
 #: src/components/nav/SearchDrawer.tsx:74
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Tedarikçi Parçaları"
 
 #: src/components/nav/SearchDrawer.tsx:88
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Üretici Parçaları"
 
 #: src/components/nav/SearchDrawer.tsx:102
 msgid "Part Categories"
-msgstr ""
+msgstr "Parça Kategorileri"
 
 #: src/components/nav/SearchDrawer.tsx:111
 #: src/pages/Index/Stock.tsx:13
 msgid "Stock Items"
-msgstr ""
+msgstr "Stok Kalemleri"
 
 #: src/components/nav/SearchDrawer.tsx:123
 msgid "Stock Locations"
-msgstr ""
+msgstr "Stok Konumları"
 
 #: src/components/nav/SearchDrawer.tsx:132
 #: src/pages/Index/Build.tsx:13
 msgid "Build Orders"
-msgstr ""
+msgstr "Yapım İşi Emirleri"
 
 #: src/components/nav/SearchDrawer.tsx:143
 msgid "Companies"
-msgstr ""
+msgstr "Şirketler"
 
 #: src/components/nav/SearchDrawer.tsx:153
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Satın Alma Emirleri"
 
 #: src/components/nav/SearchDrawer.tsx:164
 msgid "Sales Orders"
-msgstr ""
+msgstr "Satış Emirleri"
 
 #: src/components/nav/SearchDrawer.tsx:175
 msgid "Return Orders"
-msgstr ""
+msgstr "İade Emirleri"
 
 #: src/components/nav/SearchDrawer.tsx:209
 msgid "results"
-msgstr ""
+msgstr "sonuçlar"
 
 #: src/components/nav/SearchDrawer.tsx:346
 msgid "Enter search text"
-msgstr ""
+msgstr "Arama metnini gir"
 
 #: src/components/nav/SearchDrawer.tsx:373
 msgid "Search Options"
-msgstr ""
+msgstr "Arama Seçenekleri"
 
 #: src/components/nav/SearchDrawer.tsx:376
 msgid "Regex search"
-msgstr ""
+msgstr "Regex arama"
 
 #: src/components/nav/SearchDrawer.tsx:386
 msgid "Whole word search"
-msgstr ""
+msgstr "Tam kelime arama"
 
 #: src/components/nav/SearchDrawer.tsx:419
 #: src/components/tables/InvenTreeTable.tsx:344
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 msgid "Error"
-msgstr ""
+msgstr "Hata"
 
 #: src/components/nav/SearchDrawer.tsx:422
 msgid "An error occurred during search query"
-msgstr ""
+msgstr "Arama sorgusu sırasında bir hata oluştu"
 
 #: src/components/nav/SearchDrawer.tsx:430
 msgid "No results"
-msgstr ""
+msgstr "Sonuç yok"
 
 #: src/components/nav/SearchDrawer.tsx:433
 msgid "No results available for search query"
-msgstr ""
+msgstr "Arama sorgusu için sonuç yok"
 
 #: src/components/tables/ColumnSelect.tsx:17
 #: src/components/tables/ColumnSelect.tsx:24
 msgid "Select Columns"
-msgstr ""
+msgstr "Sütunları Seç"
 
 #: src/components/tables/DownloadAction.tsx:15
 msgid "CSV"
@@ -415,287 +415,287 @@ msgstr ""
 
 #: src/components/tables/DownloadAction.tsx:17
 msgid "Excel"
-msgstr ""
+msgstr "Excel"
 
 #: src/components/tables/DownloadAction.tsx:25
 msgid "Download selected data"
-msgstr ""
+msgstr "Seçili veriyi indir"
 
 #: src/components/tables/FilterBadge.tsx:44
 msgid "Remove filter"
-msgstr ""
+msgstr "Filtreyi kaldır"
 
 #: src/components/tables/FilterGroup.tsx:29
 msgid "Add table filter"
-msgstr ""
+msgstr "Tablo filtresi ekle"
 
 #: src/components/tables/FilterGroup.tsx:44
 msgid "Clear all filters"
-msgstr ""
+msgstr "Tüm filtreleri temizle"
 
 #: src/components/tables/FilterGroup.tsx:51
 msgid "Add filter"
-msgstr ""
+msgstr "Filtre ekle"
 
 #: src/components/tables/FilterSelectModal.tsx:56
 msgid "True"
-msgstr ""
+msgstr "Evet"
 
 #: src/components/tables/FilterSelectModal.tsx:57
 msgid "False"
-msgstr ""
+msgstr "Hayır"
 
 #: src/components/tables/FilterSelectModal.tsx:143
 msgid "Add Table Filter"
-msgstr ""
+msgstr "Tablo Filtresi Ekle"
 
 #: src/components/tables/FilterSelectModal.tsx:145
 msgid "Select from the available filters"
-msgstr ""
+msgstr "Mevcut filtrelerden seç"
 
 #: src/components/tables/FilterSelectModal.tsx:149
 msgid "Filter"
-msgstr ""
+msgstr "Filtre"
 
 #: src/components/tables/FilterSelectModal.tsx:150
 msgid "Select filter"
-msgstr ""
+msgstr "Filtre seç"
 
 #: src/components/tables/FilterSelectModal.tsx:159
 msgid "Value"
-msgstr ""
+msgstr "Değer"
 
 #: src/components/tables/FilterSelectModal.tsx:160
 msgid "Select filter value"
-msgstr ""
+msgstr "Filtre değeri seç"
 
 #: src/components/tables/FilterSelectModal.tsx:166
 #: src/contexts/ThemeContext.tsx:62
 msgid "Cancel"
-msgstr ""
+msgstr "Vazgeç"
 
 #: src/components/tables/FilterSelectModal.tsx:172
 msgid "Add Filter"
-msgstr ""
+msgstr "Filtre Ekle"
 
 #: src/components/tables/InvenTreeTable.tsx:95
 msgid "No records found"
-msgstr ""
+msgstr "Hiç kayıt bulunamadı"
 
 #: src/components/tables/InvenTreeTable.tsx:323
 msgid "Bad request"
-msgstr ""
+msgstr "Hatalı istek"
 
 #: src/components/tables/InvenTreeTable.tsx:326
 msgid "Unauthorized"
-msgstr ""
+msgstr "Yetkisiz"
 
 #: src/components/tables/InvenTreeTable.tsx:329
 msgid "Forbidden"
-msgstr ""
+msgstr "Yasaklı"
 
 #: src/components/tables/InvenTreeTable.tsx:332
 msgid "Not found"
-msgstr ""
+msgstr "Bulunamadı"
 
 #: src/components/tables/InvenTreeTable.tsx:381
 #: src/components/tables/InvenTreeTable.tsx:382
 msgid "Barcode actions"
-msgstr ""
+msgstr "Barkod işlemleri"
 
 #: src/components/tables/InvenTreeTable.tsx:389
 #: src/components/tables/InvenTreeTable.tsx:390
 msgid "Print actions"
-msgstr ""
+msgstr "Yazdırma işlemleri"
 
 #: src/components/tables/InvenTreeTable.tsx:407
 msgid "Refresh data"
-msgstr ""
+msgstr "Veriyi yenile"
 
 #: src/components/tables/InvenTreeTable.tsx:425
 msgid "Table filters"
-msgstr ""
+msgstr "Tablo filtreleri"
 
 #: src/components/tables/build/BuildOrderTable.tsx:18
 msgid "Reference"
-msgstr ""
+msgstr "Referans"
 
 #: src/components/tables/build/BuildOrderTable.tsx:24
 #: src/components/tables/part/PartTable.tsx:20
 #: src/components/tables/stock/StockItemTable.tsx:21
 msgid "Part"
-msgstr ""
+msgstr "Parça"
 
 #: src/components/tables/build/BuildOrderTable.tsx:41
 #: src/components/tables/part/PartTable.tsx:46
 #: src/components/tables/stock/StockItemTable.tsx:37
 msgid "Description"
-msgstr ""
+msgstr "Açıklama"
 
 #: src/components/tables/build/BuildOrderTable.tsx:46
 msgid "Project Code"
-msgstr ""
+msgstr "Proje Kodu"
 
 #: src/components/tables/build/BuildOrderTable.tsx:55
 msgid "Priority"
-msgstr ""
+msgstr "Öncelik"
 
 #: src/components/tables/build/BuildOrderTable.tsx:62
 msgid "Quantity"
-msgstr ""
+msgstr "Miktar"
 
 #: src/components/tables/build/BuildOrderTable.tsx:68
 msgid "Completed"
-msgstr ""
+msgstr "Tamamlandı"
 
 #: src/components/tables/build/BuildOrderTable.tsx:86
 #: src/components/tables/stock/StockItemTable.tsx:50
 msgid "Status"
-msgstr ""
+msgstr "Durum"
 
 #: src/components/tables/build/BuildOrderTable.tsx:93
 msgid "Created"
-msgstr ""
+msgstr "Oluşturuldu"
 
 #: src/components/tables/part/PartTable.tsx:34
 msgid "IPN"
-msgstr ""
+msgstr "DPN"
 
 #: src/components/tables/part/PartTable.tsx:41
 msgid "Units"
-msgstr ""
+msgstr "Birim"
 
 #: src/components/tables/part/PartTable.tsx:52
 msgid "Category"
-msgstr ""
+msgstr "Kategori"
 
 #: src/components/tables/part/PartTable.tsx:63
 #: src/components/tables/stock/StockItemTable.tsx:42
 #: src/defaults/links.tsx:27
 msgid "Stock"
-msgstr ""
+msgstr "Stok"
 
 #: src/components/tables/part/PartTable.tsx:69
 msgid "Price Range"
-msgstr ""
+msgstr "Fiyat Aralığı"
 
 #: src/components/tables/part/PartTable.tsx:79
 msgid "Link"
-msgstr ""
+msgstr "Bağlantı"
 
 #: src/components/tables/part/PartTable.tsx:92
 msgid "Active"
-msgstr ""
+msgstr "Aktif"
 
 #: src/components/tables/part/PartTable.tsx:93
 msgid "Filter by part active status"
-msgstr ""
+msgstr "Parçanın aktiflik durumuna göre filtrele"
 
 #: src/components/tables/part/PartTable.tsx:98
 msgid "Assembly"
-msgstr ""
+msgstr "Montaj"
 
 #: src/components/tables/part/PartTable.tsx:99
 msgid "Filter by assembly attribute"
-msgstr ""
+msgstr "Montaj niteliğine göre filtrele"
 
 #: src/components/tables/part/PartTable.tsx:104
 msgid "Include Subcategories"
-msgstr ""
+msgstr "Alt Kategorileri Dahil Et"
 
 #: src/components/tables/part/PartTable.tsx:105
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Alt kategorilerdeki parçaları dahil et"
 
 #: src/components/tables/part/PartTable.tsx:110
 msgid "Component"
-msgstr ""
+msgstr "Bileşen"
 
 #: src/components/tables/part/PartTable.tsx:111
 msgid "Filter by component attribute"
-msgstr ""
+msgstr "Bileşen niteliğine göre filtrele"
 
 #: src/components/tables/part/PartTable.tsx:116
 msgid "Trackable"
-msgstr ""
+msgstr "Takip Edilebilir"
 
 #: src/components/tables/part/PartTable.tsx:117
 msgid "Filter by trackable attribute"
-msgstr ""
+msgstr "Takip edilebilirliğine göre filtrele"
 
 #: src/components/tables/part/PartTable.tsx:122
 msgid "Has Units"
-msgstr ""
+msgstr "Birimi Var"
 
 #: src/components/tables/part/PartTable.tsx:123
 msgid "Filter by parts which have units"
-msgstr ""
+msgstr "Birimi olan parçaları filtrele"
 
 #: src/components/tables/part/PartTable.tsx:128
 msgid "Has IPN"
-msgstr ""
+msgstr "DPN Var"
 
 #: src/components/tables/part/PartTable.tsx:129
 msgid "Filter by parts which have an internal part number"
-msgstr ""
+msgstr "Dahili parça numarası bulunan parçaları filtrele"
 
 #: src/components/tables/part/PartTable.tsx:134
 msgid "Has Stock"
-msgstr ""
+msgstr "Stoğu Var"
 
 #: src/components/tables/part/PartTable.tsx:135
 msgid "Filter by parts which have stock"
-msgstr ""
+msgstr "Stoğu olan parçaları filtrele"
 
 #: src/components/tables/part/PartTable.tsx:140
 #: src/defaults/dashboardItems.tsx:41
 msgid "Low Stock"
-msgstr ""
+msgstr "Düşük Stok"
 
 #: src/components/tables/part/PartTable.tsx:141
 msgid "Filter by parts which have low stock"
-msgstr ""
+msgstr "Düşük stoğu olan parçaları filtrele"
 
 #: src/components/tables/part/PartTable.tsx:146
 msgid "Purchaseable"
-msgstr ""
+msgstr "Satın Alınabilir"
 
 #: src/components/tables/part/PartTable.tsx:147
 msgid "Filter by parts which are purchaseable"
-msgstr ""
+msgstr "Satın alınabilir parçaları filtrele"
 
 #: src/components/tables/part/PartTable.tsx:152
 msgid "Salable"
-msgstr ""
+msgstr "Satılabilir"
 
 #: src/components/tables/part/PartTable.tsx:153
 msgid "Filter by parts which are salable"
-msgstr ""
+msgstr "Satılabilir parçaları filtrele"
 
 #: src/components/tables/part/PartTable.tsx:158
 #: src/components/tables/part/PartTable.tsx:162
 msgid "Virtual"
-msgstr ""
+msgstr "Sanal"
 
 #: src/components/tables/part/PartTable.tsx:159
 msgid "Filter by parts which are virtual"
-msgstr ""
+msgstr "Sanal parçaları filtrele"
 
 #: src/components/tables/part/PartTable.tsx:163
 msgid "Not Virtual"
-msgstr ""
+msgstr "Sanal Değil"
 
 #: src/components/tables/stock/StockItemTable.tsx:57
 msgid "Batch"
-msgstr ""
+msgstr "Toplu"
 
 #: src/components/tables/stock/StockItemTable.tsx:63
 msgid "Location"
-msgstr ""
+msgstr "Konum"
 
 #: src/components/tables/stock/StockItemTable.tsx:80
 msgid "Actions"
-msgstr ""
+msgstr "Eylemler"
 
 #: src/components/tables/stock/StockItemTable.tsx:124
 msgid "Test Filter"
@@ -708,17 +708,17 @@ msgstr ""
 #: src/components/widgets/DisplayWidget.tsx:11
 #: src/pages/Index/Profile/UserPanel.tsx:137
 msgid "Display Settings"
-msgstr ""
+msgstr "Görüntü Ayarları"
 
 #: src/components/widgets/DisplayWidget.tsx:15
 #: src/pages/Index/Profile/UserPanel.tsx:141
 msgid "Color Mode"
-msgstr ""
+msgstr "Renk Modu"
 
 #: src/components/widgets/DisplayWidget.tsx:21
 #: src/pages/Index/Profile/UserPanel.tsx:147
 msgid "Language"
-msgstr ""
+msgstr "Dil"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
@@ -730,35 +730,35 @@ msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
-msgstr ""
+msgstr "Geri Bildirim Gönder"
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
-msgstr ""
+msgstr "Başlarken"
 
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
-msgstr ""
+msgstr "Yükleniyor"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
-msgstr ""
+msgstr "Yerleşim"
 
 #: src/components/widgets/WidgetLayout.tsx:186
 msgid "Reset Layout"
-msgstr ""
+msgstr "Yerleşimi Sıfırla"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
-msgstr ""
+msgstr "Düzenlemeyi Durdur"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
-msgstr ""
+msgstr "Yerleşimi Düzenle"
 
 #: src/components/widgets/WidgetLayout.tsx:205
 msgid "Appearance"
-msgstr ""
+msgstr "Görünüm"
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
@@ -767,7 +767,7 @@ msgstr ""
 #: src/contexts/ThemeContext.tsx:62
 #: src/pages/Index/Profile/UserPanel.tsx:107
 msgid "Submit"
-msgstr ""
+msgstr "Gönder"
 
 #: src/defaults/dashboardItems.tsx:6
 msgid "Subscribed Parts"
@@ -779,7 +779,7 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:20
 msgid "Latest Parts"
-msgstr ""
+msgstr "Son Parçalar"
 
 #: src/defaults/dashboardItems.tsx:27
 msgid "BOM Waiting Validation"
@@ -787,11 +787,11 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:34
 msgid "Recently Updated"
-msgstr ""
+msgstr "Son Güncellenenler"
 
 #: src/defaults/dashboardItems.tsx:48
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Tükenmiş Stok"
 
 #: src/defaults/dashboardItems.tsx:55
 msgid "Required for Build Orders"
@@ -831,7 +831,7 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:118
 msgid "Current News"
-msgstr ""
+msgstr "Güncel Haberler"
 
 #: src/defaults/defaultHostList.tsx:8
 #~ msgid "InvenTree Demo"
@@ -843,25 +843,25 @@ msgstr ""
 
 #: src/defaults/links.tsx:8
 msgid "Website"
-msgstr ""
+msgstr "Web Sitesi"
 
 #: src/defaults/links.tsx:13
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: src/defaults/links.tsx:18
 msgid "Demo"
-msgstr ""
+msgstr "Demo"
 
 #: src/defaults/links.tsx:23
 #: src/defaults/menuItems.tsx:9
 msgid "Home"
-msgstr ""
+msgstr "Ana Sayfa"
 
 #: src/defaults/links.tsx:24
 #: src/pages/Index/Dashboard.tsx:19
 msgid "Dashboard"
-msgstr ""
+msgstr "Panel"
 
 #: src/defaults/links.tsx:25
 #: src/defaults/menuItems.tsx:21
@@ -875,35 +875,35 @@ msgstr ""
 
 #: src/defaults/links.tsx:42
 msgid "Getting Started"
-msgstr ""
+msgstr "Başlarken"
 
 #: src/defaults/links.tsx:43
 msgid "Getting started with InvenTree"
-msgstr ""
+msgstr "InvenTree ile başlarken"
 
 #: src/defaults/links.tsx:49
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/defaults/links.tsx:50
 msgid "InvenTree API documentation"
-msgstr ""
+msgstr "InvenTree API dokümantasyonu"
 
 #: src/defaults/links.tsx:55
 msgid "Developer Manual"
-msgstr ""
+msgstr "Geliştirici Kılavuzu"
 
 #: src/defaults/links.tsx:56
 msgid "InvenTree developer manual"
-msgstr ""
+msgstr "InvenTree geliştirici kılavuzu"
 
 #: src/defaults/links.tsx:61
 msgid "FAQ"
-msgstr ""
+msgstr "SSS"
 
 #: src/defaults/links.tsx:62
 msgid "Frequently asked questions"
-msgstr ""
+msgstr "Sıkça sorulan sorular"
 
 #: src/defaults/links.tsx:71
 msgid "Instance"
@@ -915,15 +915,15 @@ msgstr ""
 
 #: src/defaults/links.tsx:78
 msgid "InvenTree"
-msgstr ""
+msgstr "InvenTree"
 
 #: src/defaults/links.tsx:79
 msgid "About the InvenTree org"
-msgstr ""
+msgstr "InvenTree org hakkında"
 
 #: src/defaults/links.tsx:85
 msgid "Licenses"
-msgstr ""
+msgstr "Lisanslar"
 
 #: src/defaults/links.tsx:86
 msgid "Licenses for packages used by InvenTree"
@@ -951,7 +951,7 @@ msgstr ""
 
 #: src/defaults/menuItems.tsx:15
 msgid "Profile page"
-msgstr ""
+msgstr "Profil sayfası"
 
 #: src/defaults/menuItems.tsx:17
 msgid "User attributes and design settings."
@@ -1011,11 +1011,11 @@ msgstr ""
 
 #: src/functions/auth.tsx:41
 msgid "Logout successful"
-msgstr ""
+msgstr "Çıkış başarılı"
 
 #: src/functions/auth.tsx:42
 msgid "See you soon."
-msgstr ""
+msgstr "Yakında görüşmek üzere."
 
 #: src/functions/auth.tsx:82
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
@@ -1028,7 +1028,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:105
 msgid "Already logged in"
-msgstr ""
+msgstr "Zaten giriş yapılmış"
 
 #: src/functions/auth.tsx:106
 msgid "Found an existing login - using it to log you in."
@@ -1044,11 +1044,11 @@ msgstr ""
 
 #: src/pages/Auth/Logged-In.tsx:18
 msgid "Checking if you are already logged in"
-msgstr ""
+msgstr "Zaten giriş yapıp yapmadığınız kontrol ediliyor"
 
 #: src/pages/Auth/Login.tsx:25
 msgid "No selection"
-msgstr ""
+msgstr "Seçim yok"
 
 #: src/pages/Auth/Login.tsx:121
 #~ msgid "Edit host options"
@@ -1056,7 +1056,7 @@ msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:29
 msgid "Token invalid"
-msgstr ""
+msgstr "Geçersiz token"
 
 #: src/pages/Auth/Set-Password.tsx:30
 msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
@@ -1072,27 +1072,27 @@ msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:72
 msgid "Password set"
-msgstr ""
+msgstr "Şifre belirlendi"
 
 #: src/pages/Auth/Set-Password.tsx:73
 msgid "The password was set successfully. You can now login with your new password"
-msgstr ""
+msgstr "Şifreniz başarıyla değiştirildi. Artık yeni şifrenizle giriş yapabilirsiniz"
 
 #: src/pages/Auth/Set-Password.tsx:100
 msgid "Set new password"
-msgstr ""
+msgstr "Yeni şifre belirle"
 
 #: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
-msgstr ""
+msgstr "Hata: {0}"
 
 #: src/pages/ErrorPage.tsx:28
 msgid "Sorry, an unexpected error has occurred."
-msgstr ""
+msgstr "Üzgünüz, beklenmedik bir hata oluştu."
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
-msgstr ""
+msgstr "Otomatik güncelleme"
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
@@ -1108,7 +1108,7 @@ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
-msgstr ""
+msgstr "Kullanıcı"
 
 #: src/pages/Index/Profile/Profile.tsx:27
 #: src/pages/Index/Profile/Profile.tsx:46
@@ -1247,19 +1247,19 @@ msgstr ""
 
 #: src/pages/Index/Profile/UserPanel.tsx:83
 msgid "Userinfo"
-msgstr ""
+msgstr "Kullanıcı bilgisi"
 
 #: src/pages/Index/Profile/UserPanel.tsx:114
 msgid "First name: {0}"
-msgstr ""
+msgstr "Ad: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:117
 msgid "Last name: {0}"
-msgstr ""
+msgstr "Soyad: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:120
 msgid "Username: {0}"
-msgstr ""
+msgstr "Kullanıcı adı: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:152
 msgid "Use pseudo language"
@@ -1279,27 +1279,27 @@ msgstr ""
 
 #: src/pages/Index/Profile/UserTheme.tsx:83
 msgid "Design <0/>"
-msgstr ""
+msgstr "Tasarım <0/>"
 
 #: src/pages/Index/Profile/UserTheme.tsx:91
 msgid "Primary color"
-msgstr ""
+msgstr "Birincil renk"
 
 #: src/pages/Index/Profile/UserTheme.tsx:104
 msgid "White color"
-msgstr ""
+msgstr "Beyaz"
 
 #: src/pages/Index/Profile/UserTheme.tsx:112
 msgid "Black color"
-msgstr ""
+msgstr "Siyah"
 
 #: src/pages/Index/Profile/UserTheme.tsx:120
 msgid "Border Radius"
-msgstr ""
+msgstr "Kenarlık Yarıçapı"
 
 #: src/pages/Index/Profile/UserTheme.tsx:136
 msgid "Loader"
-msgstr ""
+msgstr "Yükleyici"
 
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
@@ -1307,15 +1307,15 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr ""
+msgstr "Bulunamadı"
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
-msgstr ""
+msgstr "Üzgünüz, böyle bir sayfa yok veya taşınmış."
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
-msgstr ""
+msgstr "Başlangıç ​​sayfasına git"
 
 #: src/views/MobileAppView.tsx:14
 msgid "Mobile viewport detected"
@@ -1327,4 +1327,5 @@ msgstr ""
 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
-msgstr ""
+msgstr "Belgeleri okuyun"
+
