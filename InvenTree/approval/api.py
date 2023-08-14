@@ -80,7 +80,7 @@ class ApprovalSerializer(UserDetailSerializerMixin, InvenTreeModelSerializer):
     status_text = serializers.CharField(source='get_status_display', read_only=True)
     content_object = TaggedObjectRelatedField(read_only=True)
     model = serializers.CharField(required=False, write_only=True)
-    decisions = ApprovalDecisionSerializer(many=True, read_only=True)
+    decisions = ApprovalDecisionSerializer(many=True, read_only=True, user_detail=True)
     creation_date = serializers.DateTimeField(format='iso-8601', required=False)
     created_by_detail = UserSerializer(source='created_by', read_only=True, many=False)
     modified_date = serializers.DateTimeField(format='iso-8601', required=False)
