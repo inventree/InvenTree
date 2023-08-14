@@ -5,8 +5,10 @@ from django.urls import include, path, re_path
 from rest_framework import serializers
 
 from InvenTree.api import MetadataView
+from InvenTree.helpers import str2bool
 from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
-from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer
+from users.serializers import OwnerSerializer
 
 from .models import Approval, ApprovalDecision
 
@@ -27,12 +29,23 @@ class TaggedObjectRelatedField(serializers.RelatedField):
 class ApprovalDecisionSerializer(InvenTreeModelSerializer):
     """Serializes an ApprovalDecision object"""
 
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
     class Meta:
         """Meta data for ApprovalDecisionSerializer"""
         model = ApprovalDecision
         exclude = [
             'metadata',
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Determine if extra serializer fields are required"""
+        user_detail = kwargs.pop('user_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if user_detail is not True:
+            self.fields.pop('user_detail')
 
     def is_valid(self, *, raise_exception=False):
         """Insert user to save request."""
@@ -49,8 +62,13 @@ class ApprovalSerializer(InvenTreeModelSerializer):
     model = serializers.CharField(required=False, write_only=True)
     decisions = ApprovalDecisionSerializer(many=True, read_only=True)
     creation_date = serializers.DateTimeField(format='iso-8601', required=False)
+    created_by_detail = UserSerializer(source='created_by', read_only=True, many=False)
     modified_date = serializers.DateTimeField(format='iso-8601', required=False)
+    modified_by_detail = UserSerializer(source='modified_by', read_only=True, many=False)
     finalised_date = serializers.DateTimeField(format='iso-8601', required=False)
+    finalised_by_detail = UserSerializer(source='finalised_by', read_only=True, many=False)
+    responsible_detail = OwnerSerializer(source='responsible', read_only=True)
+    owner_detail = OwnerSerializer(source='owner', read_only=True)
 
     class Meta:
         """Meta data for ApprovalSerializer"""
@@ -77,6 +95,19 @@ class ApprovalSerializer(InvenTreeModelSerializer):
             content_type = ContentType.objects.get(app_label=mdl_splt[0], model=mdl_splt[1])
             self.initial_data['content_type'] = content_type.pk
         return super().is_valid(raise_exception=raise_exception)
+
+    def __init__(self, *args, **kwargs):
+        """Determine if extra serializer fields are required"""
+        user_detail = kwargs.pop('user_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if user_detail is not True:
+            self.fields.pop('created_by_detail')
+            self.fields.pop('modified_by_detail')
+            self.fields.pop('finalised_by_detail')
+            self.fields.pop('responsible_detail')
+            self.fields.pop('owner_detail')
 
 
 class ApprovalList(ListCreateAPI):
@@ -114,12 +145,32 @@ class ApprovalList(ListCreateAPI):
         data['created_by'] = self.request.user.pk
         return data
 
+    def get_serializer(self, *args, **kwargs):
+        """Add extra context information to the endpoint serializer."""
+        try:
+            user_detail = str2bool(self.request.GET.get('user_detail', None))
+        except AttributeError:
+            user_detail = None
+
+        kwargs['user_detail'] = user_detail
+        return self.serializer_class(*args, **kwargs)
+
 
 class ApprovalDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of an Approval object"""
 
     queryset = Approval.objects.all()
     serializer_class = ApprovalSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        """Add extra context information to the endpoint serializer."""
+        try:
+            user_detail = str2bool(self.request.GET.get('user_detail', None))
+        except AttributeError:
+            user_detail = None
+
+        kwargs['user_detail'] = user_detail
+        return self.serializer_class(*args, **kwargs)
 
 
 class ApprovalDecisionList(ListCreateAPI):
@@ -142,12 +193,32 @@ class ApprovalDecisionList(ListCreateAPI):
         "date",
     ]
 
+    def get_serializer(self, *args, **kwargs):
+        """Add extra context information to the endpoint serializer."""
+        try:
+            user_detail = str2bool(self.request.GET.get('user_detail', None))
+        except AttributeError:
+            user_detail = None
+
+        kwargs['user_detail'] = user_detail
+        return self.serializer_class(*args, **kwargs)
+
 
 class ApprovalDecisionDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of an ApprovalDecision object"""
 
     queryset = ApprovalDecision.objects.all()
     serializer_class = ApprovalDecisionSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        """Add extra context information to the endpoint serializer."""
+        try:
+            user_detail = str2bool(self.request.GET.get('user_detail', None))
+        except AttributeError:
+            user_detail = None
+
+        kwargs['user_detail'] = user_detail
+        return self.serializer_class(*args, **kwargs)
 
 
 class ApprovalApproveSerializer(InvenTreeModelSerializer):
