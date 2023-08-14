@@ -24,7 +24,7 @@ class UserDetailApiMixin:
             user_detail = None
 
         kwargs['user_detail'] = user_detail
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class UserDetailSerializerMixin:
