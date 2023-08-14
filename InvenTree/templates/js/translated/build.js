@@ -2708,6 +2708,7 @@ function loadBuildLineTable(table, build_id, options={}) {
 
         deallocateStock(build_id, {
             build_line: pk,
+            output: output,
             onSuccess: function() {
                 $(table).bootstrapTable('refresh');
             }
