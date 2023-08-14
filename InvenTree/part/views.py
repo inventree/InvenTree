@@ -171,7 +171,7 @@ class PartImport(FileManagementFormView):
 
                 try:
                     data = row['data'][col_ids[idx]]['cell']
-                except IndexError:
+                except (IndexError, TypeError):
                     continue
 
                 if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
