@@ -10,7 +10,10 @@ import { NewApprovalComponent } from './NewApprovalComponent';
 export function ApprovalBoxComponent({ poPK }: { poPK: string }) {
   function fetchData() {
     return api
-      .get(url(ApiPaths.approval_detail_type, poPK, { type: 'purchase-order' }))
+      .get(
+        url(ApiPaths.approval_detail_type, poPK, { type: 'purchase-order' }),
+        { params: { user_detail: true } }
+      )
       .then((res) => res.data);
   }
   const { isLoading, data, isError, refetch } = useQuery({

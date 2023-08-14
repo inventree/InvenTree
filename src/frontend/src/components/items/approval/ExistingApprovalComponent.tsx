@@ -33,7 +33,7 @@ function DecisionComponent({ decision }: { decision: any }) {
     >
       <Tooltip label={decision.date}>
         <Group>
-          <UserRenderer user={decision.user} /> {decision.comment}
+          <UserRenderer detail={decision.user_detail} /> {decision.comment}
         </Group>
       </Tooltip>
     </List.Item>
@@ -138,7 +138,7 @@ export function ExistingApprovalComponent({
           <Trans>Created by</Trans>
         </div>
         <div>
-          <UserRenderer user={obj.created_by} />
+          <UserRenderer detail={obj.created_by_detail} />
         </div>
 
         <div>
@@ -150,7 +150,7 @@ export function ExistingApprovalComponent({
           <Trans>Modified by</Trans>
         </div>
         <div>
-          <UserRenderer user={obj.modified_by} />
+          <UserRenderer detail={obj.modified_by_detail} />
         </div>
 
         {obj.finalised == true && (
@@ -164,7 +164,7 @@ export function ExistingApprovalComponent({
               <Trans>Finalised by</Trans>
             </div>
             <div>
-              <UserRenderer user={obj.finalised_by} />
+              <UserRenderer detail={obj.finalised_by_detail} />
             </div>
           </>
         )}
