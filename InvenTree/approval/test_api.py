@@ -28,14 +28,18 @@ class MixinApproval:
 
         self.user1 = get_user_model().objects.create_user(username='testuser1', password='password', email='testuser1', is_superuser=True)
 
-    def create_approval(self):
-        """Create a test approval."""
-
+    def create_po(self):
+        """Create a test purchase order."""
         self.purchase_order = PurchaseOrder.objects.create(
             description='A test order',
             creation_date=datetime.now().date(),
             target_date=datetime.now().date() + timedelta(days=7),
         )
+        return self.purchase_order
+
+    def create_approval(self):
+        """Create a test approval."""
+        self.create_po()
 
         approval = Approval.objects.create(
             name='Test Approval',
@@ -128,7 +132,7 @@ class TestApprovalApi(MixinApproval, InvenTreeAPITestCase):
 
         This replicates everything in TestApprovalFunctions.test_functions but via the api.
         """
-        self.create_approval()
+        self.create_po()
 
         # Create a new approval
         data = {
