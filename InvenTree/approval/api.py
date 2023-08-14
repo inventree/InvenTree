@@ -13,6 +13,34 @@ from users.serializers import OwnerSerializer
 from .models import Approval, ApprovalDecision
 
 
+class UserDetailApiMixin:
+    """Mixin to add extra context information regarding user/owner details to endpoint serializers."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Add extra context information to the endpoint serializer."""
+        try:
+            user_detail = str2bool(self.request.GET.get('user_detail', None))
+        except AttributeError:
+            user_detail = None
+
+        kwargs['user_detail'] = user_detail
+        return self.serializer_class(*args, **kwargs)
+
+
+class UserDetailSerializerMixin:
+    """Mixin to determine if extra serializer fields are required."""
+
+    def __init__(self, *args, **kwargs):
+        """Determine if extra serializer fields are required"""
+        user_detail = kwargs.pop('user_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if user_detail is not True:
+            for field in self.Meta.user_detail_fields:
+                self.fields.pop(field)
+
+
 class TaggedObjectRelatedField(serializers.RelatedField):
     """A custom field to use for the `tagged_object` generic relationship."""
 
@@ -26,7 +54,7 @@ class TaggedObjectRelatedField(serializers.RelatedField):
             return value.id
 
 
-class ApprovalDecisionSerializer(InvenTreeModelSerializer):
+class ApprovalDecisionSerializer(UserDetailSerializerMixin, InvenTreeModelSerializer):
     """Serializes an ApprovalDecision object"""
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
@@ -37,15 +65,7 @@ class ApprovalDecisionSerializer(InvenTreeModelSerializer):
         exclude = [
             'metadata',
         ]
-
-    def __init__(self, *args, **kwargs):
-        """Determine if extra serializer fields are required"""
-        user_detail = kwargs.pop('user_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if user_detail is not True:
-            self.fields.pop('user_detail')
+        user_detail_fields = ['user_detail',]
 
     def is_valid(self, *, raise_exception=False):
         """Insert user to save request."""
@@ -54,7 +74,7 @@ class ApprovalDecisionSerializer(InvenTreeModelSerializer):
         return super().is_valid(raise_exception=raise_exception)
 
 
-class ApprovalSerializer(InvenTreeModelSerializer):
+class ApprovalSerializer(UserDetailSerializerMixin, InvenTreeModelSerializer):
     """Serializes an Approval object"""
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -87,6 +107,14 @@ class ApprovalSerializer(InvenTreeModelSerializer):
             'modified_date',
         ]
 
+        user_detail_fields = [
+            'created_by_detail',
+            'modified_by_detail',
+            'finalised_by_detail',
+            'responsible_detail',
+            'owner_detail',
+        ]
+
     def is_valid(self, *, raise_exception=False):
         """User optional field 'model' to determine content_type."""
         if 'model' in self.initial_data:
@@ -96,21 +124,8 @@ class ApprovalSerializer(InvenTreeModelSerializer):
             self.initial_data['content_type'] = content_type.pk
         return super().is_valid(raise_exception=raise_exception)
 
-    def __init__(self, *args, **kwargs):
-        """Determine if extra serializer fields are required"""
-        user_detail = kwargs.pop('user_detail', False)
 
-        super().__init__(*args, **kwargs)
-
-        if user_detail is not True:
-            self.fields.pop('created_by_detail')
-            self.fields.pop('modified_by_detail')
-            self.fields.pop('finalised_by_detail')
-            self.fields.pop('responsible_detail')
-            self.fields.pop('owner_detail')
-
-
-class ApprovalList(ListCreateAPI):
+class ApprovalList(UserDetailApiMixin, ListCreateAPI):
     """API endpoint for listing all Approval objects"""
 
     queryset = Approval.objects.all()
@@ -145,35 +160,15 @@ class ApprovalList(ListCreateAPI):
         data['created_by'] = self.request.user.pk
         return data
 
-    def get_serializer(self, *args, **kwargs):
-        """Add extra context information to the endpoint serializer."""
-        try:
-            user_detail = str2bool(self.request.GET.get('user_detail', None))
-        except AttributeError:
-            user_detail = None
 
-        kwargs['user_detail'] = user_detail
-        return self.serializer_class(*args, **kwargs)
-
-
-class ApprovalDetail(RetrieveUpdateDestroyAPI):
+class ApprovalDetail(UserDetailApiMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of an Approval object"""
 
     queryset = Approval.objects.all()
     serializer_class = ApprovalSerializer
 
-    def get_serializer(self, *args, **kwargs):
-        """Add extra context information to the endpoint serializer."""
-        try:
-            user_detail = str2bool(self.request.GET.get('user_detail', None))
-        except AttributeError:
-            user_detail = None
 
-        kwargs['user_detail'] = user_detail
-        return self.serializer_class(*args, **kwargs)
-
-
-class ApprovalDecisionList(ListCreateAPI):
+class ApprovalDecisionList(UserDetailApiMixin, ListCreateAPI):
     """API endpoint for listing all ApprovalDecision objects"""
 
     queryset = ApprovalDecision.objects.all()
@@ -193,32 +188,12 @@ class ApprovalDecisionList(ListCreateAPI):
         "date",
     ]
 
-    def get_serializer(self, *args, **kwargs):
-        """Add extra context information to the endpoint serializer."""
-        try:
-            user_detail = str2bool(self.request.GET.get('user_detail', None))
-        except AttributeError:
-            user_detail = None
 
-        kwargs['user_detail'] = user_detail
-        return self.serializer_class(*args, **kwargs)
-
-
-class ApprovalDecisionDetail(RetrieveUpdateDestroyAPI):
+class ApprovalDecisionDetail(UserDetailApiMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of an ApprovalDecision object"""
 
     queryset = ApprovalDecision.objects.all()
     serializer_class = ApprovalDecisionSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Add extra context information to the endpoint serializer."""
-        try:
-            user_detail = str2bool(self.request.GET.get('user_detail', None))
-        except AttributeError:
-            user_detail = None
-
-        kwargs['user_detail'] = user_detail
-        return self.serializer_class(*args, **kwargs)
 
 
 class ApprovalApproveSerializer(InvenTreeModelSerializer):
