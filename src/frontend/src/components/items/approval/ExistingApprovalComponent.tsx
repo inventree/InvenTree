@@ -78,7 +78,7 @@ export function ExistingApprovalComponent({
     (decision: any) => decision.user == user_id
   );
 
-  const MainApprovalComponent = forwardRef((props, ref) => (
+  const MainApprovalComponent = forwardRef<HTMLDivElement>((props, ref) => (
     <div ref={ref} {...props}>
       <Badge color={status_color} variant="light">
         {obj.status_text}
