@@ -168,7 +168,11 @@ class PartImport(FileManagementFormView):
         for row in self.rows:
             # check each submitted column
             for idx in col_ids:
-                data = row['data'][col_ids[idx]]['cell']
+
+                try:
+                    data = row['data'][col_ids[idx]]['cell']
+                except (IndexError, TypeError):
+                    continue
 
                 if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
                     try:
