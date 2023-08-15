@@ -48,10 +48,9 @@ export function ExistingApprovalComponent({
   data: any;
 }) {
   const user_id = useApiState((state) => state.user?.id);
-  const obj = data;
 
   const FinalState = () => {
-    if (obj.finalised == true)
+    if (data.finalised == true)
       return (
         <Badge color="green" variant="outline">
           <Trans>Finalised</Trans>
@@ -64,7 +63,7 @@ export function ExistingApprovalComponent({
     );
   };
   let status_color = 'yellow';
-  switch (obj.status) {
+  switch (data.status) {
     case 20:
       status_color = 'green';
       break;
@@ -74,7 +73,7 @@ export function ExistingApprovalComponent({
     default:
       break;
   }
-  const my_decision = obj.decisions.find(
+  const my_decision = data.decisions.find(
     (decision: any) => decision.user == user_id
   );
 
@@ -82,23 +81,23 @@ export function ExistingApprovalComponent({
     <div ref={ref} {...props}>
       <Group spacing={'xs'} mb={8}>
         <Badge color={status_color} variant="light">
-          {obj.status_text}
+          {data.status_text}
         </Badge>
         <FinalState />
       </Group>
-      {obj.decisions.length == 0 ? (
+      {data.decisions.length == 0 ? (
         <Text c="dimmed" ta="right">
           <Trans>No Decisions yet</Trans>
         </Text>
       ) : (
         <List>
-          {obj.decisions.map((decision: any) => (
+          {data.decisions.map((decision: any) => (
             <DecisionComponent key={decision.id} decision={decision} />
           ))}
         </List>
       )}
-      {obj.finalised == false && my_decision === undefined && (
-        <ApprovalAddComponent approvalPK={obj.id} refetch={refetch} />
+      {data.finalised == false && my_decision === undefined && (
+        <ApprovalAddComponent approvalPK={data.id} refetch={refetch} />
       )}
     </div>
   ));
@@ -110,63 +109,63 @@ export function ExistingApprovalComponent({
           <Trans>Name</Trans>
         </div>
         <div>
-          <Text>{obj.name}</Text>
+          <Text>{data.name}</Text>
         </div>
 
-        {obj.description && (
+        {data.description && (
           <>
             <div>
               <Trans>Description</Trans>
             </div>
-            <div>{obj.description}</div>
+            <div>{data.description}</div>
           </>
         )}
 
-        {obj.reference && (
+        {data.reference && (
           <>
             <div>
               <Trans>Reference</Trans>
             </div>
-            <div>{obj.reference}</div>
+            <div>{data.reference}</div>
           </>
         )}
 
         <div>
           <Trans>Creation date</Trans>
         </div>
-        <div>{obj.creation_date}</div>
+        <div>{data.creation_date}</div>
 
         <div>
           <Trans>Created by</Trans>
         </div>
         <div>
-          <UserRenderer detail={obj.created_by_detail} />
+          <UserRenderer detail={data.created_by_detail} />
         </div>
 
         <div>
           <Trans>Modification date</Trans>
         </div>
-        <div>{obj.modified_date}</div>
+        <div>{data.modified_date}</div>
 
         <div>
           <Trans>Modified by</Trans>
         </div>
         <div>
-          <UserRenderer detail={obj.modified_by_detail} />
+          <UserRenderer detail={data.modified_by_detail} />
         </div>
 
-        {obj.finalised == true && (
+        {data.finalised == true && (
           <>
             <div>
               <Trans>Finalisation date</Trans>
             </div>
-            <div>{obj.finalised_date}</div>
+            <div>{data.finalised_date}</div>
 
             <div>
               <Trans>Finalised by</Trans>
             </div>
             <div>
-              <UserRenderer detail={obj.finalised_by_detail} />
+              <UserRenderer detail={data.finalised_by_detail} />
             </div>
           </>
         )}
