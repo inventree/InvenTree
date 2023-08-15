@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-10 12:20\n"
+"PO-Revision-Date: 2023-08-14 14:04\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -180,7 +180,7 @@ msgstr "Hiba történt:"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "Tovább"
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
@@ -722,47 +722,47 @@ msgstr "Nyelv"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
-msgstr ""
+msgstr "Újdonság: Felhasználói felület"
 
 #: src/components/widgets/FeedbackWidget.tsx:20
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr ""
+msgstr "Új felhasználói felületet készítünk modern alapokon. Ugyan a jelenlegi állapot nem végleges és még át is lesz alakítva, de szemlélteti a felhasználói felület és élmény jövőbeli lehetőségeit."
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
-msgstr ""
+msgstr "Visszajelzés küldése"
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
-msgstr ""
+msgstr "Első lépések"
 
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
-msgstr ""
+msgstr "Betöltés"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
-msgstr ""
+msgstr "Elrendezés"
 
 #: src/components/widgets/WidgetLayout.tsx:186
 msgid "Reset Layout"
-msgstr ""
+msgstr "Elrendezés visszaállítása"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
-msgstr ""
+msgstr "Szerkesztés befejezése"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
-msgstr ""
+msgstr "Elrendezés szerkesztése"
 
 #: src/components/widgets/WidgetLayout.tsx:205
 msgid "Appearance"
-msgstr ""
+msgstr "Megjelenítés"
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
-msgstr ""
+msgstr "Dobozok megjelenítése"
 
 #: src/contexts/ThemeContext.tsx:62
 #: src/pages/Index/Profile/UserPanel.tsx:107
@@ -1100,7 +1100,7 @@ msgstr "Ez az oldal helyettesíti a régi kezdőoldalt, ugyanazokkal az informá
 
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
-msgstr ""
+msgstr "Irányítópult: {0}"
 
 #: src/pages/Index/Playground.tsx:17
 msgid "This page is a showcase for the possibilities of Platform UI."
@@ -1328,3 +1328,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+

@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-10 12:21\n"
+"PO-Revision-Date: 2023-08-14 14:05\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1328,3 +1328,4 @@ msgstr "A interface de usuário da plataforma é otimizada para Tablets e Deskto
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Leia a documentação"
+

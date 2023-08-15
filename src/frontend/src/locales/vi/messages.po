@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-10 12:21\n"
+"PO-Revision-Date: 2023-08-13 13:26\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -708,17 +708,17 @@ msgstr ""
 #: src/components/widgets/DisplayWidget.tsx:11
 #: src/pages/Index/Profile/UserPanel.tsx:137
 msgid "Display Settings"
-msgstr ""
+msgstr "Cài đặt hiển thị"
 
 #: src/components/widgets/DisplayWidget.tsx:15
 #: src/pages/Index/Profile/UserPanel.tsx:141
 msgid "Color Mode"
-msgstr ""
+msgstr "Chế độ màu sắc"
 
 #: src/components/widgets/DisplayWidget.tsx:21
 #: src/pages/Index/Profile/UserPanel.tsx:147
 msgid "Language"
-msgstr ""
+msgstr "Ngôn ngữ"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
@@ -734,19 +734,19 @@ msgstr ""
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
-msgstr ""
+msgstr "Bắt đầu"
 
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
-msgstr ""
+msgstr "Đang tải"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
-msgstr ""
+msgstr "Bố cục"
 
 #: src/components/widgets/WidgetLayout.tsx:186
 msgid "Reset Layout"
-msgstr ""
+msgstr "Đặt lại bố cục"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
@@ -754,7 +754,7 @@ msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
-msgstr ""
+msgstr "Sửa bố cục"
 
 #: src/components/widgets/WidgetLayout.tsx:205
 msgid "Appearance"
@@ -951,7 +951,7 @@ msgstr ""
 
 #: src/defaults/menuItems.tsx:15
 msgid "Profile page"
-msgstr ""
+msgstr "Trang profile"
 
 #: src/defaults/menuItems.tsx:17
 msgid "User attributes and design settings."
@@ -1011,7 +1011,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:41
 msgid "Logout successful"
-msgstr ""
+msgstr "Đăng xuất thành công"
 
 #: src/functions/auth.tsx:42
 msgid "See you soon."
@@ -1024,11 +1024,11 @@ msgstr ""
 #: src/functions/auth.tsx:89
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
-msgstr ""
+msgstr "Thiết lập lại thất bại"
 
 #: src/functions/auth.tsx:105
 msgid "Already logged in"
-msgstr ""
+msgstr "Đã đăng nhập"
 
 #: src/functions/auth.tsx:106
 msgid "Found an existing login - using it to log you in."
@@ -1048,7 +1048,7 @@ msgstr ""
 
 #: src/pages/Auth/Login.tsx:25
 msgid "No selection"
-msgstr ""
+msgstr "Không có lựa chọn"
 
 #: src/pages/Auth/Login.tsx:121
 #~ msgid "Edit host options"
@@ -1056,7 +1056,7 @@ msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:29
 msgid "Token invalid"
-msgstr ""
+msgstr "Token không hợp lệ"
 
 #: src/pages/Auth/Set-Password.tsx:30
 msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
@@ -1076,15 +1076,15 @@ msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:73
 msgid "The password was set successfully. You can now login with your new password"
-msgstr ""
+msgstr "Mật khẩu đã được đặt mới thành công. Bạn có thể đăng nhập bằng mật khẩu mới"
 
 #: src/pages/Auth/Set-Password.tsx:100
 msgid "Set new password"
-msgstr ""
+msgstr "Đặt mật khẩu mới"
 
 #: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
-msgstr ""
+msgstr "Lỗi: {0}"
 
 #: src/pages/ErrorPage.tsx:28
 msgid "Sorry, an unexpected error has occurred."
@@ -1092,7 +1092,7 @@ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
-msgstr ""
+msgstr "Tự động cập nhật"
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
@@ -1100,7 +1100,7 @@ msgstr ""
 
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
-msgstr ""
+msgstr "Chào mừng bạn đến với bảng điều khiển của bạn"
 
 #: src/pages/Index/Playground.tsx:17
 msgid "This page is a showcase for the possibilities of Platform UI."
@@ -1108,7 +1108,7 @@ msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
-msgstr ""
+msgstr "Người dùng"
 
 #: src/pages/Index/Profile/Profile.tsx:27
 #: src/pages/Index/Profile/Profile.tsx:46
@@ -1247,7 +1247,7 @@ msgstr ""
 
 #: src/pages/Index/Profile/UserPanel.tsx:83
 msgid "Userinfo"
-msgstr ""
+msgstr "Thông tin người dung"
 
 #: src/pages/Index/Profile/UserPanel.tsx:114
 msgid "First name: {0}"
@@ -1283,15 +1283,15 @@ msgstr ""
 
 #: src/pages/Index/Profile/UserTheme.tsx:91
 msgid "Primary color"
-msgstr ""
+msgstr "Màu chủ đạo"
 
 #: src/pages/Index/Profile/UserTheme.tsx:104
 msgid "White color"
-msgstr ""
+msgstr "Màu trắng"
 
 #: src/pages/Index/Profile/UserTheme.tsx:112
 msgid "Black color"
-msgstr ""
+msgstr "Màu đen"
 
 #: src/pages/Index/Profile/UserTheme.tsx:120
 msgid "Border Radius"
@@ -1307,7 +1307,7 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr ""
+msgstr "Không tìm thấy"
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
@@ -1315,7 +1315,7 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
-msgstr ""
+msgstr "Chuyển đến trang đầu"
 
 #: src/views/MobileAppView.tsx:14
 msgid "Mobile viewport detected"
@@ -1327,4 +1327,5 @@ msgstr ""
 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
-msgstr ""
+msgstr "Đọc tài liệu"
+
