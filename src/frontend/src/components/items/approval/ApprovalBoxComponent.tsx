@@ -14,7 +14,11 @@ export function ApprovalBoxComponent({ poPK }: { poPK: string }) {
         url(ApiPaths.approval_detail_type, poPK, { type: 'purchase-order' }),
         { params: { user_detail: true } }
       )
-      .then((res) => res.data);
+      .then((res) => res.data)
+      .catch((err) => {
+        if (err.response?.status === 404) return [];
+        throw err;
+      });
   }
   const { isLoading, data, isError, refetch } = useQuery({
     queryKey: [`approval-detail-${poPK}`],
