@@ -13,7 +13,7 @@ import ErrorPage from '../ErrorPage';
 export default function PurchaseOrderDetail() {
   const { pk: poPK } = useParams();
   function fetchData() {
-    return api.get(url(ApiPaths.part_detal, poPK)).then((res) => res.data);
+    return api.get(url(ApiPaths.po_detail, poPK)).then((res) => res.data);
   }
   const { isLoading, data, isError } = useQuery({
     queryKey: [`part-detail-${poPK}`],

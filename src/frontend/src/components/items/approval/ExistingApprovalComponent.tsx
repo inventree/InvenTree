@@ -80,10 +80,12 @@ export function ExistingApprovalComponent({
 
   const MainApprovalComponent = forwardRef<HTMLDivElement>((props, ref) => (
     <div ref={ref} {...props}>
-      <Badge color={status_color} variant="light">
-        {obj.status_text}
-      </Badge>{' '}
-      <FinalState />
+      <Group spacing={'xs'} mb={8}>
+        <Badge color={status_color} variant="light">
+          {obj.status_text}
+        </Badge>
+        <FinalState />
+      </Group>
       {obj.decisions.length == 0 ? (
         <Text c="dimmed" ta="right">
           <Trans>No Decisions yet</Trans>

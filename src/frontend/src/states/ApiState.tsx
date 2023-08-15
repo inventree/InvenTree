@@ -51,7 +51,7 @@ export enum ApiPaths {
   user_reset = 'api-user-reset',
   user_reset_set = 'api-user-reset-set',
 
-  part_detal = 'api-part-detail',
+  po_detail = 'api-po-detail',
   approval_detail = 'api-approval-detail',
   approval_detail_type = 'api-approval-detail-type',
   approval_start = 'api-approval-start',
@@ -71,8 +71,8 @@ export function url(path: ApiPaths, pk?: any, kwargs?: any): string {
     case ApiPaths.user_reset_set:
       return '/auth/password/reset/confirm/';
 
-    case ApiPaths.part_detal:
-      return `/part/${pk}/`;
+    case ApiPaths.po_detail:
+      return `/order/po/${pk}/`;
     case ApiPaths.approval_detail:
       return `/approval/${pk}`;
     case ApiPaths.approval_detail_type:
