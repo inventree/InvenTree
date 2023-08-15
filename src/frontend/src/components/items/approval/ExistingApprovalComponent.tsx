@@ -48,7 +48,7 @@ export function ExistingApprovalComponent({
   data: any;
 }) {
   const user_id = useApiState((state) => state.user?.id);
-  const obj = data[0];
+  const obj = data;
 
   const FinalState = () => {
     if (obj.finalised == true)

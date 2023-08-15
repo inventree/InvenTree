@@ -77,7 +77,7 @@ export function url(path: ApiPaths, pk?: any, kwargs?: any): string {
       return `/approval/${pk}`;
     case ApiPaths.approval_detail_type:
       const type = kwargs['type'];
-      return `/approval/${type}:${pk}`;
+      return `/approval/${type}:${pk}/`;
     case ApiPaths.approval_start:
       return `/approval/`;
     case ApiPaths.approval_decision:

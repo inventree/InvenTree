@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.urls import include, path, re_path
 
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 
 from InvenTree.api import MetadataView
 from InvenTree.helpers import str2bool
@@ -25,6 +26,18 @@ class UserDetailApiMixin:
 
         kwargs['user_detail'] = user_detail
         return super().get_serializer(*args, **kwargs)
+
+    def get_object(self):
+        """Get the object to be viewed."""
+        # Use default behaviour if no type is specified
+        if self.kwargs.get('type', None) is None:
+            return super().get_object()
+
+        # Alternatively, use the generic relationship to get the object
+        queryset = self.filter_queryset(self.get_queryset())
+        obj = get_object_or_404(queryset, **{'content_type__model': self.kwargs['type'], 'object_id': self.kwargs['pk']})
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 
 class UserDetailSerializerMixin:
