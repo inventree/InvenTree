@@ -11,7 +11,7 @@ export function ApprovalBoxComponent({ poPK }: { poPK: string }) {
   function fetchData() {
     return api
       .get(
-        url(ApiPaths.approval_detail_type, poPK, { type: 'purchase-order' }),
+        url(ApiPaths.approval_detail_type, poPK, { type: 'purchaseorder' }),
         { params: { user_detail: true } }
       )
       .then((res) => res.data)
