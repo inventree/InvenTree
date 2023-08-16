@@ -1,6 +1,7 @@
 """Models for approval."""
 from datetime import datetime
 
+import django.dispatch
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -44,6 +45,16 @@ class ApprovalStateGroups:
         ApprovalState.CANCELLED.value,
         ApprovalState.EXPIRED.value,
     ]
+
+
+# Signals
+approval_created = django.dispatch.Signal()
+approval_modified = django.dispatch.Signal()
+approval_finalised = django.dispatch.Signal()
+approval_rejected = django.dispatch.Signal()
+approval_approved = django.dispatch.Signal()
+approval_decision_created = django.dispatch.Signal()
+approval_decision_modified = django.dispatch.Signal()
 
 
 # TODO @matmair add tracking
@@ -218,7 +229,13 @@ class Approval(
         if not self._STATE_CHECKING:
             self.check_approval_state(no_save=True)
 
+        # Save and dispatch signal
+        was_created = self.pk is None
         super().save(*args, **kwargs)
+        if was_created:
+            approval_created.send(sender=self.__class__, approval=self, instance=self.content_object)
+        else:
+            approval_modified.send(sender=self.__class__, approval=self, instance=self.content_object)
 
     @classmethod
     def api_defaults(cls, request):
@@ -272,6 +289,11 @@ class Approval(
         self.finalised = True
         if not no_save:
             self.save()
+
+        # Dispatch approval / finalisation signal
+        approval_approved.send(sender=self.__class__, approval=self, instance=self.content_object)
+        approval_finalised.send(sender=self.__class__, approval=self, instance=self.content_object, approved=True)
+
         return self.status
 
     def handle_rejection(self, no_save: bool = False):
@@ -280,6 +302,11 @@ class Approval(
         self.finalised = True
         if not no_save:
             self.save()
+
+        # Dispatch rejection signal
+        approval_rejected.send(sender=self.__class__, approval=self, instance=self.content_object)
+        approval_finalised.send(sender=self.__class__, approval=self, instance=self.content_object, approved=False)
+
         return self.status
 
 
@@ -344,7 +371,13 @@ class ApprovalDecision(InvenTree.models.MetadataMixin, models.Model):
             self.approval.modified_by = self.user
             self.approval.save()
 
+            # Save and dispatch signal
+            was_created = self.pk is None
             super().save(*args, **kwargs)
+            if was_created:
+                approval_decision_created.send(sender=self.__class__, approval=self.approval, instance=self.approval.content_object)
+            else:
+                approval_decision_modified.send(sender=self.__class__, approval=self.approval, instance=self.approval.content_object)
 
             # Check state of approval
             self.approval.status = self.approval.check_approval_state()
