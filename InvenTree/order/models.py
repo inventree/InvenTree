@@ -504,7 +504,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
-        if self.status in (PurchaseOrderStatus.PENDING.value, PurchaseOrderStatus.PENDING_PLACING.value):
+        if self.status in (PurchaseOrderStatus.PENDING, PurchaseOrderStatus.PENDING_PLACING, PurchaseOrderStatus.PENDING_APPROVAL):
             approval_needed = getSetting('PURCHASEORDER_REQUIRE_APPROVAL') and self.approval is None
             if approval_needed:
                 if self.responsible is None:
@@ -581,7 +581,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """
         return self.status in [
             PurchaseOrderStatus.PLACED,
-            PurchaseOrderStatus.PENDING
+            PurchaseOrderStatus.PENDING,
+            PurchaseOrderStatus.PENDING_PLACING,
+            PurchaseOrderStatus.PENDING_APPROVAL
         ]
 
     @transaction.atomic
