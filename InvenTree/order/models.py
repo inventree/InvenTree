@@ -50,6 +50,7 @@ from InvenTree.status_codes import (PurchaseOrderStatus,
                                     StockStatus)
 from part import models as PartModels
 from plugin.events import trigger_event
+from users.models import Owner
 
 logger = logging.getLogger('inventree')
 
@@ -496,13 +497,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Order must be currently PENDING.
         """
         if self.status in (PurchaseOrderStatus.PENDING.value, PurchaseOrderStatus.PENDING_PLACING.value):
-            approval_needed = getSetting('PURCHASEORDER_REQUIRE_APPROVAL') and not self.approved
+            approval_needed = getSetting('PURCHASEORDER_REQUIRE_APPROVAL')
             if approval_needed:
+                if self.responsible is None:
+                    self.responsible = Owner.create(obj=self.created_by)
+
                 Approval.objects.create(
                     name=f'PO: {self.reference}',
                     content_object=self,
                     created_by=self.created_by,
                     modified_by=self.created_by,
+                    responsible=self.responsible,
                 )
 
                 self.status = PurchaseOrderStatus.PENDING_APPROVAL.value
