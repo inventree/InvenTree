@@ -217,6 +217,10 @@ msgstr ""
 msgid "An error occurred:"
 msgstr ""
 
+#: src/components/items/GettingStartedCarousel.tsx:64
+msgid "Read more"
+msgstr ""
+
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
 msgstr ""
@@ -349,7 +353,7 @@ msgid "About"
 msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:65
-#: src/defaults/links.tsx:25
+#: src/defaults/links.tsx:26
 #: src/pages/Index/Part.tsx:13
 msgid "Parts"
 msgstr ""
@@ -606,7 +610,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:63
 #: src/components/tables/stock/StockItemTable.tsx:42
-#: src/defaults/links.tsx:26
+#: src/defaults/links.tsx:27
 msgid "Stock"
 msgstr ""
 
@@ -740,6 +744,65 @@ msgstr ""
 msgid "This is a test filter"
 msgstr ""
 
+#: src/components/widgets/DisplayWidget.tsx:11
+#: src/pages/Index/Profile/UserPanel.tsx:137
+msgid "Display Settings"
+msgstr ""
+
+#: src/components/widgets/DisplayWidget.tsx:15
+#: src/pages/Index/Profile/UserPanel.tsx:141
+msgid "Color Mode"
+msgstr ""
+
+#: src/components/widgets/DisplayWidget.tsx:21
+#: src/pages/Index/Profile/UserPanel.tsx:147
+msgid "Language"
+msgstr ""
+
+#: src/components/widgets/FeedbackWidget.tsx:18
+msgid "Something is new: Platform UI"
+msgstr ""
+
+#: src/components/widgets/FeedbackWidget.tsx:20
+msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
+msgstr ""
+
+#: src/components/widgets/FeedbackWidget.tsx:31
+msgid "Provide Feedback"
+msgstr ""
+
+#: src/components/widgets/GetStartedWidget.tsx:11
+msgid "Getting started"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:134
+msgid "Loading"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:180
+msgid "Layout"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:186
+msgid "Reset Layout"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:199
+msgid "Stop Edit"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:199
+msgid "Edit Layout"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:205
+msgid "Appearance"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:217
+msgid "Show Boxes"
+msgstr ""
+
 #: src/contexts/ThemeContext.tsx:62
 #: src/pages/Index/Profile/UserPanel.tsx:107
 msgid "Submit"
@@ -810,12 +873,12 @@ msgid "Current News"
 msgstr ""
 
 #: src/defaults/defaultHostList.tsx:8
-msgid "InvenTree Demo"
-msgstr ""
+#~ msgid "InvenTree Demo"
+#~ msgstr ""
 
 #: src/defaults/defaultHostList.tsx:16
-msgid "Local Server"
-msgstr ""
+#~ msgid "Local Server"
+#~ msgstr ""
 
 #: src/defaults/links.tsx:8
 msgid "Website"
@@ -831,7 +894,6 @@ msgstr ""
 
 #: src/defaults/links.tsx:23
 #: src/defaults/menuItems.tsx:9
-#: src/pages/Index/Home.tsx:12
 msgid "Home"
 msgstr ""
 
@@ -840,63 +902,69 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: src/defaults/links.tsx:27
+#: src/defaults/links.tsx:25
+#: src/defaults/menuItems.tsx:21
+#: src/pages/Index/Playground.tsx:12
+msgid "Playground"
+msgstr ""
+
+#: src/defaults/links.tsx:28
 msgid "Build"
 msgstr ""
 
-#: src/defaults/links.tsx:41
+#: src/defaults/links.tsx:42
 msgid "Getting Started"
 msgstr ""
 
-#: src/defaults/links.tsx:42
+#: src/defaults/links.tsx:43
 msgid "Getting started with InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:48
+#: src/defaults/links.tsx:49
 msgid "API"
 msgstr ""
 
-#: src/defaults/links.tsx:49
+#: src/defaults/links.tsx:50
 msgid "InvenTree API documentation"
 msgstr ""
 
-#: src/defaults/links.tsx:54
+#: src/defaults/links.tsx:55
 msgid "Developer Manual"
 msgstr ""
 
-#: src/defaults/links.tsx:55
+#: src/defaults/links.tsx:56
 msgid "InvenTree developer manual"
 msgstr ""
 
-#: src/defaults/links.tsx:60
+#: src/defaults/links.tsx:61
 msgid "FAQ"
 msgstr ""
 
-#: src/defaults/links.tsx:61
+#: src/defaults/links.tsx:62
 msgid "Frequently asked questions"
 msgstr ""
 
-#: src/defaults/links.tsx:70
+#: src/defaults/links.tsx:71
 msgid "Instance"
 msgstr ""
 
-#: src/defaults/links.tsx:71
+#: src/defaults/links.tsx:72
 msgid "About this Inventree instance"
 msgstr ""
 
-#: src/defaults/links.tsx:77
+#: src/defaults/links.tsx:78
 msgid "InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:78
+#: src/defaults/links.tsx:79
 msgid "About the InvenTree org"
 msgstr ""
 
-#: src/defaults/links.tsx:84
+#: src/defaults/links.tsx:85
 msgid "Licenses"
 msgstr ""
 
-#: src/defaults/links.tsx:85
+#: src/defaults/links.tsx:86
 msgid "Licenses for packages used by InvenTree"
 msgstr ""
 
@@ -1017,7 +1085,7 @@ msgstr ""
 msgid "Checking if you are already logged in"
 msgstr ""
 
-#: src/pages/Auth/Login.tsx:24
+#: src/pages/Auth/Login.tsx:25
 msgid "No selection"
 msgstr ""
 
@@ -1067,6 +1135,14 @@ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
+msgstr ""
+
+#: src/pages/Index/Home.tsx:58
+msgid "Welcome to your Dashboard{0}"
+msgstr ""
+
+#: src/pages/Index/Playground.tsx:17
+msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:23
@@ -1222,18 +1298,6 @@ msgstr ""
 
 #: src/pages/Index/Profile/UserPanel.tsx:120
 msgid "Username: {0}"
-msgstr ""
-
-#: src/pages/Index/Profile/UserPanel.tsx:137
-msgid "Display Settings"
-msgstr ""
-
-#: src/pages/Index/Profile/UserPanel.tsx:141
-msgid "Color Mode"
-msgstr ""
-
-#: src/pages/Index/Profile/UserPanel.tsx:147
-msgid "Language"
 msgstr ""
 
 #: src/pages/Index/Profile/UserPanel.tsx:152
