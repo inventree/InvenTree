@@ -499,7 +499,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             approval_needed = getSetting('PURCHASEORDER_REQUIRE_APPROVAL') and not self.approved
             if approval_needed:
                 Approval.objects.create(
-                    name=self.name,
+                    name=f'PO: {self.reference}',
                     content_object=self,
                     created_by=self.created_by,
                     modified_by=self.created_by,
