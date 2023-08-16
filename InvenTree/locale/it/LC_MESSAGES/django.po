@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-15 02:49+0000\n"
-"PO-Revision-Date: 2023-08-14 14:05\n"
+"POT-Creation-Date: 2023-08-16 06:22+0000\n"
+"PO-Revision-Date: 2023-08-16 14:07\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -4331,7 +4331,7 @@ msgstr "Collega Codice a Barre con l'Articolo Fornitore"
 msgid "Update Part Availability"
 msgstr "Aggiorna Disponibilità Articolo"
 
-#: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:225
+#: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:224
 #: part/templates/part/category.html:182
 #: part/templates/part/category_sidebar.html:17 stock/admin.py:47
 #: stock/serializers.py:662 stock/templates/stock/location.html:169
@@ -5398,17 +5398,17 @@ msgstr "Aggiornato {part} prezzo unitario a {price}"
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr "Aggiornato {part} unità prezzo a {price} e quantità a {qty}"
 
-#: part/admin.py:33 part/admin.py:273 part/models.py:3719 part/stocktake.py:220
+#: part/admin.py:33 part/admin.py:273 part/models.py:3719 part/stocktake.py:219
 #: stock/admin.py:101
 msgid "Part ID"
 msgstr "Codice Articolo"
 
-#: part/admin.py:34 part/admin.py:275 part/models.py:3723 part/stocktake.py:221
+#: part/admin.py:34 part/admin.py:275 part/models.py:3723 part/stocktake.py:220
 #: stock/admin.py:102
 msgid "Part Name"
 msgstr "Nome Articolo"
 
-#: part/admin.py:35 part/stocktake.py:222
+#: part/admin.py:35 part/stocktake.py:221
 msgid "Part Description"
 msgstr "Descrizione Articolo"
 
@@ -5430,11 +5430,11 @@ msgstr "Revisione"
 msgid "Keywords"
 msgstr "Parole Chiave"
 
-#: part/admin.py:42 part/admin.py:192 part/stocktake.py:223
+#: part/admin.py:42 part/admin.py:192 part/stocktake.py:222
 msgid "Category ID"
 msgstr "Id Categoria"
 
-#: part/admin.py:43 part/admin.py:193 part/stocktake.py:224
+#: part/admin.py:43 part/admin.py:193 part/stocktake.py:223
 msgid "Category Name"
 msgstr "Nome Categoria"
 
@@ -6498,33 +6498,33 @@ msgstr "Quantità non valida"
 msgid "At least one BOM item is required"
 msgstr "Almeno un elemento della distinta base è richiesto"
 
-#: part/stocktake.py:226 templates/js/translated/part.js:1043
+#: part/stocktake.py:225 templates/js/translated/part.js:1043
 #: templates/js/translated/part.js:1797 templates/js/translated/part.js:1852
 #: templates/js/translated/purchase_order.js:2059
 msgid "Total Quantity"
 msgstr "Quantità Totale"
 
-#: part/stocktake.py:227
+#: part/stocktake.py:226
 msgid "Total Cost Min"
 msgstr "Costo Minimo Totale"
 
-#: part/stocktake.py:228
+#: part/stocktake.py:227
 msgid "Total Cost Max"
 msgstr "Costo Massimo Totale"
 
-#: part/stocktake.py:296
+#: part/stocktake.py:295
 msgid "Stocktake Report Available"
 msgstr "Report Inventario Disponibile"
 
-#: part/stocktake.py:297
+#: part/stocktake.py:296
 msgid "A new stocktake report is available for download"
 msgstr "Un nuovo report di inventario è disponibile per il download"
 
-#: part/tasks.py:32
+#: part/tasks.py:33
 msgid "Low stock notification"
 msgstr "Notifica di magazzino bassa"
 
-#: part/tasks.py:33
+#: part/tasks.py:34
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr "Lo stock disponibile per {part.name} è sceso sotto il livello minimo configurato"
@@ -12809,11 +12809,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12947,3 +12945,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:256
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
