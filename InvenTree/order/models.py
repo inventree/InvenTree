@@ -7,6 +7,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
@@ -425,6 +426,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         help_text=_('Date order was completed')
     )
 
+    approvals = GenericRelation(Approval)
+
+    @property
+    def approval(self):
+        """Approval object associated with this purchase order (if any)."""
+        return self.approvals.first()
+
     @transaction.atomic
     def add_line_item(self, supplier_part, quantity, group: bool = True, reference: str = '', purchase_price=None):
         """Add a new line item to this purchase order.
@@ -497,7 +505,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Order must be currently PENDING.
         """
         if self.status in (PurchaseOrderStatus.PENDING.value, PurchaseOrderStatus.PENDING_PLACING.value):
-            approval_needed = getSetting('PURCHASEORDER_REQUIRE_APPROVAL')
+            approval_needed = getSetting('PURCHASEORDER_REQUIRE_APPROVAL') and self.approval is None
             if approval_needed:
                 if self.responsible is None:
                     self.responsible = Owner.create(obj=self.created_by)
