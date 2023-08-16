@@ -295,6 +295,14 @@ class InvenTreeNotificationBodies:
     )
     """Send when a new order (build, sale or purchase) was created."""
 
+    OrderCanceled = NotificationBody(
+        name=_("{verbose_name} canceled"),
+        slug='{app_label}.canceled_{model_name}',
+        message=_("A order that is assigned to you was canceled"),
+        template='email/canceled_order_assigned.html',
+    )
+    """Send when a order (build, sale, return or purchase) was canceled."""
+
     ApprovalStarted = NotificationBody(
         name=_("New approval for {verbose_name}"),
         slug='{app_label}.new_{model_name}_approval',
@@ -303,13 +311,13 @@ class InvenTreeNotificationBodies:
     )
     """Send when an approval for a order was started."""
 
-    OrderCanceled = NotificationBody(
-        name=_("{verbose_name} canceled"),
-        slug='{app_label}.canceled_{model_name}',
-        message=_("A order that is assigned to you was canceled"),
-        template='email/canceled_order_assigned.html',
+    ApprovalDecisionAdded = NotificationBody(
+        name=_("New approval decision"),
+        slug='{app_label}.new_{model_name}_approval_decision',
+        message=_("An approval decision was added for a order that is assigned to you"),
+        template='email/order_approval_decision_added.html',
     )
-    """Send when a order (build, sale, return or purchase) was canceled."""
+    """Send when an approval decision for a order was added."""
 
     ItemsReceived = NotificationBody(
         name=_("Items Received"),

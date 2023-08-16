@@ -13,7 +13,9 @@ from django.utils.translation import gettext_lazy as _
 
 import InvenTree.models
 import users.models
+from common.notifications import InvenTreeNotificationBodies
 from generic.states import StatusCode
+from InvenTree.helpers_model import notify_responsible
 
 from .defaults import DefaultApprovalRules
 
@@ -376,6 +378,13 @@ class ApprovalDecision(InvenTree.models.MetadataMixin, models.Model):
             super().save(*args, **kwargs)
             if was_created:
                 approval_decision_created.send(sender=self.__class__, approval=self.approval, instance=self.approval.content_object)
+
+                # Notify users that an approval was started
+                notify_responsible(
+                    self.approval,
+                    Approval,
+                    content=InvenTreeNotificationBodies.ApprovalDecisionAdded
+                )
             else:
                 approval_decision_modified.send(sender=self.__class__, approval=self.approval, instance=self.approval.content_object)
 
