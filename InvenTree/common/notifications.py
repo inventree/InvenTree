@@ -294,6 +294,7 @@ class InvenTreeNotificationBodies:
         template='email/new_order_assigned.html',
     )
     """Send when a new order (build, sale or purchase) was created."""
+
     ApprovalStarted = NotificationBody(
         name=_("New approval for {verbose_name}"),
         slug='{app_label}.new_{model_name}_approval',
@@ -301,6 +302,14 @@ class InvenTreeNotificationBodies:
         template='email/new_order_assigned.html',
     )
     """Send when an approval for a order was started."""
+
+    OrderCanceled = NotificationBody(
+        name=_("{verbose_name} canceled"),
+        slug='{app_label}.canceled_{model_name}',
+        message=_("A order that is assigned to you was canceled"),
+        template='email/canceled_order_assigned.html',
+    )
+    """Send when a order (build, sale, return or purchase) was canceled."""
 
     ItemsReceived = NotificationBody(
         name=_("Items Received"),

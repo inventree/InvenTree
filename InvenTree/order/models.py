@@ -595,6 +595,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             trigger_event('purchaseorder.cancelled', id=self.pk)
 
+            # Notify users that the order has been canceled
+            notify_responsible(
+                self,
+                PurchaseOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.OrderCanceled
+            )
+
     def pending_line_items(self):
         """Return a list of pending line items for this order.
 
@@ -1002,6 +1010,14 @@ class SalesOrder(TotalPriceMixin, Order):
                 allocation.delete()
 
         trigger_event('salesorder.cancelled', id=self.pk)
+
+        # Notify users that the order has been canceled
+        notify_responsible(
+            self,
+            SalesOrder,
+            exclude=self.created_by,
+            content=InvenTreeNotificationBodies.OrderCanceled
+        )
 
         return True
 
@@ -1861,6 +1877,14 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.save()
 
             trigger_event('returnorder.cancelled', id=self.pk)
+
+            # Notify users that the order has been canceled
+            notify_responsible(
+                self,
+                ReturnOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.OrderCanceled
+            )
 
     @transaction.atomic
     def complete_order(self):
