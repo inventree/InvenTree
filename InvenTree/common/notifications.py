@@ -294,6 +294,13 @@ class InvenTreeNotificationBodies:
         template='email/new_order_assigned.html',
     )
     """Send when a new order (build, sale or purchase) was created."""
+    ApprovalStarted = NotificationBody(
+        name=_("New approval for {verbose_name}"),
+        slug='{app_label}.new_{model_name}_approval',
+        message=_("An approval was started for a order that is assigned to you"),
+        template='email/new_order_assigned.html',
+    )
+    """Send when an approval for a order was started."""
 
     ItemsReceived = NotificationBody(
         name=_("Items Received"),

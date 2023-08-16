@@ -496,8 +496,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Order must be currently PENDING.
         """
         if self.status in (PurchaseOrderStatus.PENDING.value, PurchaseOrderStatus.PENDING_PLACING.value):
-            not_approved = getSetting('PURCHASEORDER_REQUIRE_APPROVAL') and not self.approved
-            if not_approved:
+            approval_needed = getSetting('PURCHASEORDER_REQUIRE_APPROVAL') and not self.approved
+            if approval_needed:
                 Approval.objects.create(
                     name=self.name,
                     content_object=self,
@@ -509,6 +509,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 self.save()
 
                 trigger_event('purchaseorder.approval_start', id=self.pk)
+
+                # Notify users that an approval was started
+                notify_responsible(
+                    self,
+                    PurchaseOrder,
+                    content=InvenTreeNotificationBodies.ApprovalStarted
+                )
             else:
                 self.status = PurchaseOrderStatus.PLACED.value
                 self.issue_date = datetime.now().date()
@@ -516,13 +523,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
                 trigger_event('purchaseorder.placed', id=self.pk)
 
-            # Notify users that the order has been placed
-            notify_responsible(
-                self,
-                PurchaseOrder,
-                exclude=self.created_by,
-                content=InvenTreeNotificationBodies.NewOrder
-            )
+                # Notify users that the order has been placed
+                notify_responsible(
+                    self,
+                    PurchaseOrder,
+                    exclude=self.created_by,
+                    content=InvenTreeNotificationBodies.NewOrder
+                )
 
     @transaction.atomic
     def complete_order(self):
