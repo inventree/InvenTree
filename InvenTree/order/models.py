@@ -30,7 +30,7 @@ import InvenTree.validators
 import order.validators
 import stock.models
 import users.models as UserModels
-from approval.models import Approval
+from approval.models import Approval, approval_finalised
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Address, Company, Contact, SupplierPart
@@ -727,6 +727,26 @@ class PurchaseOrder(TotalPriceMixin, Order):
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
         )
+
+
+@receiver(approval_finalised, sender=Approval)
+def handle_purchase_order_approval_finalization(sender, **kwargs):
+    """Signal handler for PurchaseOrder approval finalization.
+
+    - If the approval is approved, place the order
+    - If the approval is rejected, cancel the order
+    """
+    approval = kwargs['approval']
+    approved = kwargs['approved']
+    order = kwargs['instance']
+
+    if approval.content_type.model != 'purchaseorder':
+        return
+
+    if approved:
+        order.place_order()
+    else:
+        order.cancel_order()
 
 
 class SalesOrder(TotalPriceMixin, Order):
