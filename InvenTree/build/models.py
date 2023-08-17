@@ -15,8 +15,6 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from InvenTree.helpers_model import notify_responsible
-from common.notifications import InvenTreeNotificationBodies
 
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
@@ -606,14 +604,6 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         self.save()
 
         trigger_event('build.cancelled', id=self.pk)
-
-        # Notify users that the order has been canceled
-        notify_responsible(
-            self,
-            Build,
-            exclude=self.created_by,
-            content=InvenTreeNotificationBodies.OrderCanceled
-        )
 
     @transaction.atomic
     def deallocate_stock(self, build_line=None, output=None):

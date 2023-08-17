@@ -301,7 +301,7 @@ class InvenTreeNotificationBodies:
         message=_("A order that is assigned to you was canceled"),
         template='email/canceled_order_assigned.html',
     )
-    """Send when a order (build, sale, return or purchase) was canceled."""
+    """Send when a order (sale, return or purchase) was canceled."""
 
     ApprovalStarted = NotificationBody(
         name=_("New approval for {verbose_name}"),
