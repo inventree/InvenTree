@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-16 06:22+0000\n"
-"PO-Revision-Date: 2023-08-16 14:07\n"
+"PO-Revision-Date: 2023-08-17 14:27\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -39,11 +39,11 @@ msgstr "La valeur saisie a une unité invalide"
 
 #: InvenTree/conversion.py:122
 msgid "Provided value could not be converted to the specified unit"
-msgstr ""
+msgstr "La valeur fournie n'a pas pu être convertie en l'unité spécifiée"
 
 #: InvenTree/conversion.py:127
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -567,7 +567,7 @@ msgstr "Hébreu"
 
 #: InvenTree/settings.py:764
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: InvenTree/settings.py:765
 msgid "Hungarian"
@@ -631,11 +631,11 @@ msgstr "Vietnamien"
 
 #: InvenTree/settings.py:780
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Chinois (Simplifié)"
 
 #: InvenTree/settings.py:781
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Chinois (Traditionnel)"
 
 #: InvenTree/status.py:68 part/serializers.py:963
 msgid "Background worker check failed"
@@ -843,7 +843,7 @@ msgstr "Remboursement"
 
 #: InvenTree/status_codes.py:203
 msgid "Reject"
-msgstr ""
+msgstr "Refuser"
 
 #: InvenTree/validators.py:32 InvenTree/validators.py:34
 msgid "Invalid physical unit"
@@ -919,7 +919,7 @@ msgstr "Suivi"
 #: templates/js/translated/sales_order.js:1926
 #: templates/js/translated/table_filters.js:506
 msgid "Allocated"
-msgstr ""
+msgstr "Allouée"
 
 #: build/api.py:300 company/models.py:782
 #: company/templates/company/supplier_part.html:115
@@ -981,7 +981,7 @@ msgstr "Référence"
 
 #: build/models.py:171
 msgid "Brief description of the build (optional)"
-msgstr ""
+msgstr "Brève description de la fabrication (optionnel)"
 
 #: build/models.py:179 build/templates/build/build_base.html:184
 #: build/templates/build/detail.html:87
@@ -1221,7 +1221,7 @@ msgstr "La quantité doit être supérieure à zéro"
 
 #: build/models.py:853 build/serializers.py:225
 msgid "Quantity cannot be greater than the output quantity"
-msgstr ""
+msgstr "La quantité ne peut pas être supérieure à la quantité de sortie"
 
 #: build/models.py:1273
 msgid "Build object"
@@ -1805,7 +1805,7 @@ msgstr "Génération du QR Code de commande"
 
 #: build/templates/build/build_base.html:296
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Lier le code-barres à l'ordre de fabrication"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1876,11 +1876,11 @@ msgstr "Allouer le stock à la construction"
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
-msgstr ""
+msgstr "Désallouer le stock"
 
 #: build/templates/build/detail.html:182
 msgid "Deallocate Stock"
-msgstr ""
+msgstr "Désallouer le Stock"
 
 #: build/templates/build/detail.html:184
 msgid "Automatically allocate stock to build"
@@ -1921,7 +1921,7 @@ msgstr "Nouvelle sortie de construction"
 
 #: build/templates/build/detail.html:232 build/templates/build/sidebar.html:15
 msgid "Consumed Stock"
-msgstr ""
+msgstr "Stock Consommé"
 
 #: build/templates/build/detail.html:244
 msgid "Completed Build Outputs"
@@ -1953,7 +1953,7 @@ msgstr "Allocation terminée"
 
 #: build/templates/build/detail.html:423
 msgid "All lines have been fully allocated"
-msgstr ""
+msgstr "Toutes les lignes ont été entièrement attribuées"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
@@ -2156,11 +2156,11 @@ msgstr "Profondeur de l'arborescence par défaut. Les niveaux plus profonds peuv
 
 #: common/models.py:1077
 msgid "Update Check Interval"
-msgstr ""
+msgstr "Intervalle de vérification des mises à jour"
 
 #: common/models.py:1078
 msgid "How often to check for updates (set to zero to disable)"
-msgstr ""
+msgstr "À quelle fréquence vérifier les mises à jour (définir à zéro pour désactiver)"
 
 #: common/models.py:1084 common/models.py:1102 common/models.py:1109
 #: common/models.py:1120 common/models.py:1131 common/models.py:1362
@@ -2178,7 +2178,7 @@ msgstr "Activer le backup automatique de la base de données et des fichiers mé
 
 #: common/models.py:1095
 msgid "Auto Backup Interval"
-msgstr ""
+msgstr "Intervalle de sauvegarde automatique"
 
 #: common/models.py:1096
 msgid "Specify number of days between automated backup events"
@@ -2186,7 +2186,7 @@ msgstr "Spécifiez le nombre de jours entre les sauvegardes automatique"
 
 #: common/models.py:1106
 msgid "Task Deletion Interval"
-msgstr ""
+msgstr "Intervalle de suppression des tâches"
 
 #: common/models.py:1107
 msgid "Background task results will be deleted after specified number of days"
@@ -2663,23 +2663,23 @@ msgstr "Modèle requis pour générer le champ de référence de l'ordre de cons
 
 #: common/models.py:1548
 msgid "Enable Return Orders"
-msgstr ""
+msgstr "Activer les retours de commandes"
 
 #: common/models.py:1549
 msgid "Enable return order functionality in the user interface"
-msgstr ""
+msgstr "Activer la fonctionnalité de retour de commande dans l'interface utilisateur"
 
 #: common/models.py:1555
 msgid "Return Order Reference Pattern"
-msgstr ""
+msgstr "Modèle de référence de retour de commande"
 
 #: common/models.py:1556
 msgid "Required pattern for generating Return Order reference field"
-msgstr ""
+msgstr "Modèle requis pour générer le champ de référence du retour de commande"
 
 #: common/models.py:1562
 msgid "Edit Completed Return Orders"
-msgstr ""
+msgstr "Modifier les retours de commandes terminées"
 
 #: common/models.py:1563
 msgid "Allow editing of return orders after they have been completed"
