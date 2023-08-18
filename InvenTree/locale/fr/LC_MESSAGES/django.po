@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-16 06:22+0000\n"
-"PO-Revision-Date: 2023-08-17 14:27\n"
+"PO-Revision-Date: 2023-08-18 14:35\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -204,7 +204,7 @@ msgstr "L'URL fournie n'est pas un fichier image valide"
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site.name}] Log in to the app"
-msgstr ""
+msgstr "[{site.name}] Se connecter à l'application"
 
 #: InvenTree/magic_login.py:38 company/models.py:122
 #: company/templates/company/company_base.html:133
@@ -795,7 +795,7 @@ msgstr "Sortie de l'ordre de construction terminée"
 
 #: InvenTree/status_codes.py:128
 msgid "Build order output rejected"
-msgstr ""
+msgstr "La sortie de l'ordre de construction a été refusée"
 
 #: InvenTree/status_codes.py:129 templates/js/translated/stock.js:1694
 msgid "Consumed by build order"
@@ -1189,7 +1189,7 @@ msgstr "Code du projet"
 
 #: build/models.py:310
 msgid "Project code for this build order"
-msgstr ""
+msgstr "Code de projet pour cet ordre de construction"
 
 #: build/models.py:550
 #, python-brace-format
@@ -1276,7 +1276,7 @@ msgstr "Quantité"
 
 #: build/models.py:1288
 msgid "Required quantity for build order"
-msgstr ""
+msgstr "Quantité requise pour la commande de construction"
 
 #: build/models.py:1370
 msgid "Build item must specify a build output, as master part is marked as trackable"
@@ -1301,7 +1301,7 @@ msgstr "La quantité doit être de 1 pour stock sérialisé"
 
 #: build/models.py:1462
 msgid "Selected stock item does not match BOM line"
-msgstr ""
+msgstr "L'article de stock sélectionné ne correspond pas à la ligne BOM"
 
 #: build/models.py:1534 build/serializers.py:799 order/serializers.py:1087
 #: order/serializers.py:1108 stock/serializers.py:479 stock/serializers.py:887
@@ -1417,15 +1417,15 @@ msgstr "Emplacement"
 
 #: build/serializers.py:424
 msgid "Stock location for scrapped outputs"
-msgstr ""
+msgstr "Emplacement du stock pour les sorties épuisées"
 
 #: build/serializers.py:430
 msgid "Discard Allocations"
-msgstr ""
+msgstr "Ignorer les allocations"
 
 #: build/serializers.py:431
 msgid "Discard any stock allocations for scrapped outputs"
-msgstr ""
+msgstr "Abandonner les allocations de stock pour les sorties abandonnées"
 
 #: build/serializers.py:436
 msgid "Reason for scrapping build output(s)"
