@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-16 14:08\n"
+"PO-Revision-Date: 2023-08-20 06:07\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -180,7 +180,7 @@ msgstr "Um erro ocorreu:"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "Ler mais"
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
@@ -730,15 +730,15 @@ msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
-msgstr ""
+msgstr "Forneça Avaliação"
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
-msgstr ""
+msgstr "Iniciando"
 
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
-msgstr ""
+msgstr "Carregando"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
@@ -750,15 +750,15 @@ msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
-msgstr ""
+msgstr "Parar Edição"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
-msgstr ""
+msgstr "Editar Layout"
 
 #: src/components/widgets/WidgetLayout.tsx:205
 msgid "Appearance"
-msgstr ""
+msgstr "Aparência"
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
@@ -1100,7 +1100,7 @@ msgstr "Esta página é uma substituição para a página inicial antiga com as 
 
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
-msgstr ""
+msgstr "Bem-vindo ao seu painel{0}"
 
 #: src/pages/Index/Playground.tsx:17
 msgid "This page is a showcase for the possibilities of Platform UI."
