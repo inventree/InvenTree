@@ -54,7 +54,8 @@ def annotate_on_order_quantity(reference: str = ''):
     return Coalesce(
         SubquerySum(
             ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__quantity') * F(f'{reference}supplier_parts__pack_quantity_native'),
+                F(f'{reference}supplier_parts__purchase_order_line_items__quantity') * F(
+                    f'{reference}supplier_parts__pack_quantity_native'),
                 output_field=DecimalField(),
             ),
             filter=order_filter
@@ -64,7 +65,8 @@ def annotate_on_order_quantity(reference: str = ''):
     ) - Coalesce(
         SubquerySum(
             ExpressionWrapper(
-                F(f'{reference}supplier_parts__purchase_order_line_items__received') * F(f'{reference}supplier_parts__pack_quantity_native'),
+                F(f'{reference}supplier_parts__purchase_order_line_items__received') * F(
+                    f'{reference}supplier_parts__pack_quantity_native'),
                 output_field=DecimalField(),
             ),
             filter=order_filter
@@ -236,7 +238,7 @@ def annotate_category_parts():
     )
 
 
-def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
+def filter_by_parameter(queryset, value: str, func: str = ''):
     """Filter the given queryset by a given template parameter
 
     Parts which do not have a value for the given parameter are excluded.
@@ -252,8 +254,17 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     """
 
     # TODO
+    template_filter = part.models.PartParameter.objects.filter(
+        **{'data_numeric' + func: value},
+        part_id=OuterRef('id'),
+    )
 
-    return queryset
+    # Annotate the queryset with the parameter value, and whether it exists
+    queryset = queryset.annotate(
+        parameter_exists=Exists(template_filter)
+    )
+
+    return queryset.filter(parameter_exists=True)
 
 
 def order_by_parameter(queryset, template_id: int, ascending=True):

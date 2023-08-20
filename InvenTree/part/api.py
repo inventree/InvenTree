@@ -1092,8 +1092,31 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
     def filter_queryset(self, queryset):
         """Perform custom filtering of the queryset"""
         params = self.request.query_params
+        search = self.request.query_params.get('search', None)
+        if search and search.startswith("param"):
+            self.request.query_params._mutable = True
+            self.request.query_params['search'] = ''
+            queryset = super().filter_queryset(queryset)
 
-        queryset = super().filter_queryset(queryset)
+            if search.startswith("param="):
+                param_filter = search.replace("param=", "")
+                queryset = part.filters.filter_by_parameter(queryset, value=param_filter)
+            elif search.startswith("param>="):
+                param_filter = search.replace("param>=", "")
+                queryset = part.filters.filter_by_parameter(queryset, value=param_filter, func="__gte")
+            elif search.startswith("param<="):
+                param_filter = search.replace("param<=", "")
+                queryset = part.filters.filter_by_parameter(queryset, value=param_filter, func="__lte")
+            elif search.startswith("param>"):
+                param_filter = search.replace("param>", "")
+                queryset = part.filters.filter_by_parameter(queryset, value=param_filter, func='__gt')
+            elif search.startswith("param<"):
+                param_filter = search.replace("param<", "")
+                queryset = part.filters.filter_by_parameter(queryset, value=param_filter, func='__lt')
+
+            print(queryset.query)
+        else:
+            queryset = super().filter_queryset(queryset)
 
         # Exclude specific part ID values?
         exclude_id = []
@@ -1267,7 +1290,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         'manufacturer_parts__MPN',
         'supplier_parts__SKU',
         'tags__name',
-        'tags__slug',
+        'tags__slug'
     ]
 
 
