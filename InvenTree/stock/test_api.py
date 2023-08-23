@@ -1417,7 +1417,8 @@ class StockTestResultTest(StockAPITestCase):
                 "attachment": bitmap,
             }
 
-            response = self.post(self.get_url(), data, expected_code=201)
+            response = self.client.post(self.get_url(), data)
+            self.assertEqual(response.status_code, 201)
 
             # Check that an attachment has been uploaded
             self.assertIsNotNone(response.data['attachment'])
