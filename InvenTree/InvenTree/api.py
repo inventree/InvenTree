@@ -287,6 +287,11 @@ class APISearchView(APIView):
             'offset': 0,
         }
 
+        if 'search' not in data:
+            raise ValidationError({
+                'search': 'Search term must be provided',
+            })
+
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested
             if key in data:

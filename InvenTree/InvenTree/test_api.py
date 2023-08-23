@@ -316,6 +316,19 @@ class SearchTests(InvenTreeAPITestCase):
         'sales_order',
     ]
 
+    def test_empty(self):
+        """Test empty request"""
+
+        data = [
+            '',
+            None,
+            {},
+        ]
+
+        for d in data:
+            response = self.post(reverse('api-search'), d, expected_code=400)
+            self.assertIn('Search term must be provided', str(response.data))
+
     def test_results(self):
         """Test individual result types"""
 

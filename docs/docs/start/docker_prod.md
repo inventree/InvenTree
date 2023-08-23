@@ -11,6 +11,9 @@ The following guide provides a streamlined production InvenTree installation, wi
 
 ### Before You Start
 
+!!! warning "Check the version"
+    Please make sure you are reading the [STABLE](https://docs.inventree.org/en/stable/start/docker_prod/) documentation when using the stable docker image tags.
+
 !!! warning "Docker Skills Required"
     This guide assumes that you are reasonably comfortable with the basic concepts of docker and docker compose.
 

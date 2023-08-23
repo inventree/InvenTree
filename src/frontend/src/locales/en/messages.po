@@ -173,6 +173,10 @@ msgstr "Unknown error"
 msgid "An error occurred:"
 msgstr "An error occurred:"
 
+#: src/components/items/GettingStartedCarousel.tsx:64
+msgid "Read more"
+msgstr "Read more"
+
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
 msgstr "InvenTree Logo"
@@ -305,7 +309,7 @@ msgid "About"
 msgstr "About"
 
 #: src/components/nav/SearchDrawer.tsx:65
-#: src/defaults/links.tsx:25
+#: src/defaults/links.tsx:26
 #: src/pages/Index/Part.tsx:13
 msgid "Parts"
 msgstr "Parts"
@@ -562,7 +566,7 @@ msgstr "Category"
 
 #: src/components/tables/part/PartTable.tsx:63
 #: src/components/tables/stock/StockItemTable.tsx:42
-#: src/defaults/links.tsx:26
+#: src/defaults/links.tsx:27
 msgid "Stock"
 msgstr "Stock"
 
@@ -723,7 +727,7 @@ msgstr "We are building a new UI with a modern stack. What you currently see is 
 msgid "Provide Feedback"
 msgstr "Provide Feedback"
 
-#: src/components/widgets/GetStartedWidget.tsx:10
+#: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
 msgstr "Getting started"
 
@@ -825,12 +829,12 @@ msgid "Current News"
 msgstr "Current News"
 
 #: src/defaults/defaultHostList.tsx:8
-msgid "InvenTree Demo"
-msgstr "InvenTree Demo"
+#~ msgid "InvenTree Demo"
+#~ msgstr "InvenTree Demo"
 
 #: src/defaults/defaultHostList.tsx:16
-msgid "Local Server"
-msgstr "Local Server"
+#~ msgid "Local Server"
+#~ msgstr "Local Server"
 
 #: src/defaults/links.tsx:8
 msgid "Website"
@@ -854,63 +858,69 @@ msgstr "Home"
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: src/defaults/links.tsx:27
+#: src/defaults/links.tsx:25
+#: src/defaults/menuItems.tsx:21
+#: src/pages/Index/Playground.tsx:12
+msgid "Playground"
+msgstr "Playground"
+
+#: src/defaults/links.tsx:28
 msgid "Build"
 msgstr "Build"
 
-#: src/defaults/links.tsx:41
+#: src/defaults/links.tsx:42
 msgid "Getting Started"
 msgstr "Getting Started"
 
-#: src/defaults/links.tsx:42
+#: src/defaults/links.tsx:43
 msgid "Getting started with InvenTree"
 msgstr "Getting started with InvenTree"
 
-#: src/defaults/links.tsx:48
+#: src/defaults/links.tsx:49
 msgid "API"
 msgstr "API"
 
-#: src/defaults/links.tsx:49
+#: src/defaults/links.tsx:50
 msgid "InvenTree API documentation"
 msgstr "InvenTree API documentation"
 
-#: src/defaults/links.tsx:54
+#: src/defaults/links.tsx:55
 msgid "Developer Manual"
 msgstr "Developer Manual"
 
-#: src/defaults/links.tsx:55
+#: src/defaults/links.tsx:56
 msgid "InvenTree developer manual"
 msgstr "InvenTree developer manual"
 
-#: src/defaults/links.tsx:60
+#: src/defaults/links.tsx:61
 msgid "FAQ"
 msgstr "FAQ"
 
-#: src/defaults/links.tsx:61
+#: src/defaults/links.tsx:62
 msgid "Frequently asked questions"
 msgstr "Frequently asked questions"
 
-#: src/defaults/links.tsx:70
+#: src/defaults/links.tsx:71
 msgid "Instance"
 msgstr "Instance"
 
-#: src/defaults/links.tsx:71
+#: src/defaults/links.tsx:72
 msgid "About this Inventree instance"
 msgstr "About this Inventree instance"
 
-#: src/defaults/links.tsx:77
+#: src/defaults/links.tsx:78
 msgid "InvenTree"
 msgstr "InvenTree"
 
-#: src/defaults/links.tsx:78
+#: src/defaults/links.tsx:79
 msgid "About the InvenTree org"
 msgstr "About the InvenTree org"
 
-#: src/defaults/links.tsx:84
+#: src/defaults/links.tsx:85
 msgid "Licenses"
 msgstr "Licenses"
 
-#: src/defaults/links.tsx:85
+#: src/defaults/links.tsx:86
 msgid "Licenses for packages used by InvenTree"
 msgstr "Licenses for packages used by InvenTree"
 
@@ -1031,7 +1041,7 @@ msgstr "This feature is not yet implemented"
 msgid "Checking if you are already logged in"
 msgstr "Checking if you are already logged in"
 
-#: src/pages/Auth/Login.tsx:24
+#: src/pages/Auth/Login.tsx:25
 msgid "No selection"
 msgstr "No selection"
 
@@ -1086,6 +1096,10 @@ msgstr "This page is a replacement for the old start page with the same informat
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
 msgstr "Welcome to your Dashboard{0}"
+
+#: src/pages/Index/Playground.tsx:17
+msgid "This page is a showcase for the possibilities of Platform UI."
+msgstr "This page is a showcase for the possibilities of Platform UI."
 
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"

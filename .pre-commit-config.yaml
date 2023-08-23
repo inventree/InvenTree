@@ -3,7 +3,8 @@
 exclude: |
     (?x)^(
         InvenTree/InvenTree/static/.*|
-        InvenTree/locale/.*
+        InvenTree/locale/.*|
+        src/frontend/src/locales/.*
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks

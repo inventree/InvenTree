@@ -1,0 +1,1331 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2023-06-09 22:10+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: sv\n"
+"Project-Id-Version: inventree\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2023-08-16 14:08\n"
+"Last-Translator: \n"
+"Language-Team: Swedish\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: inventree\n"
+"X-Crowdin-Project-ID: 452300\n"
+"X-Crowdin-Language: sv-SE\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
+"X-Crowdin-File-ID: 205\n"
+
+#: src/components/DashboardItemProxy.tsx:32
+msgid "Title"
+msgstr "Titel"
+
+#: src/components/forms/AuthenticationForm.tsx:36
+msgid "Login failed"
+msgstr "Inloggningen misslyckades"
+
+#: src/components/forms/AuthenticationForm.tsx:37
+#: src/components/forms/AuthenticationForm.tsx:63
+#: src/functions/auth.tsx:90
+msgid "Check your input and try again."
+msgstr "Kontrollera din inmatning och försök igen."
+
+#: src/components/forms/AuthenticationForm.tsx:42
+msgid "Login successful"
+msgstr "Inlogningen lyckad"
+
+#: src/components/forms/AuthenticationForm.tsx:43
+msgid "Welcome back!"
+msgstr "Välkommen tillbaka!"
+
+#: src/components/forms/AuthenticationForm.tsx:48
+#: src/components/forms/AuthenticationForm.tsx:74
+#: src/functions/auth.tsx:83
+#~ msgid "Check your your input and try again."
+#~ msgstr "Check your your input and try again."
+
+#: src/components/forms/AuthenticationForm.tsx:53
+#~ msgid "Login successfull"
+#~ msgstr "Login successfull"
+
+#: src/components/forms/AuthenticationForm.tsx:54
+#: src/functions/auth.tsx:81
+msgid "Mail delivery successful"
+msgstr "E-postleverans lyckad"
+
+#: src/components/forms/AuthenticationForm.tsx:55
+msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
+msgstr "Kolla din inkorg för inloggningslänken. Om du har ett konto kommer du att få en inloggningslänk. Kolla in spam också."
+
+#: src/components/forms/AuthenticationForm.tsx:62
+msgid "Input error"
+msgstr "Inmatningsfel"
+
+#: src/components/forms/AuthenticationForm.tsx:65
+#: src/functions/auth.tsx:74
+#~ msgid "Mail delivery successfull"
+#~ msgstr "Mail delivery successfull"
+
+#: src/components/forms/AuthenticationForm.tsx:74
+msgid "Welcome, log in below"
+msgstr "Välkommen, logga in nedan"
+
+#: src/components/forms/AuthenticationForm.tsx:81
+msgid "Username"
+msgstr "Användarnamn"
+
+#: src/components/forms/AuthenticationForm.tsx:87
+#: src/pages/Auth/Set-Password.tsx:105
+msgid "Password"
+msgstr "Lösenord"
+
+#: src/components/forms/AuthenticationForm.tsx:88
+msgid "Your password"
+msgstr "Ditt lösenord"
+
+#: src/components/forms/AuthenticationForm.tsx:99
+#: src/pages/Auth/Reset.tsx:26
+msgid "Reset password"
+msgstr "Återställ lösenord"
+
+#: src/components/forms/AuthenticationForm.tsx:107
+#: src/pages/Auth/Reset.tsx:31
+msgid "Email"
+msgstr "E-post"
+
+#: src/components/forms/AuthenticationForm.tsx:108
+#: src/pages/Auth/Reset.tsx:32
+#: src/pages/Auth/Set-Password.tsx:106
+msgid "We will send you a link to login - if you are registered"
+msgstr "Vi skickar en länk till dig för att logga in - om du är registrerad"
+
+#: src/components/forms/AuthenticationForm.tsx:124
+msgid "Send me an email"
+msgstr "Skicka ett e-postmeddelande"
+
+#: src/components/forms/AuthenticationForm.tsx:126
+msgid "I will use username and password"
+msgstr "Jag kommer att använda användarnamn och lösenord"
+
+#: src/components/forms/AuthenticationForm.tsx:131
+msgid "Log in"
+msgstr "Logga in"
+
+#: src/components/forms/AuthenticationForm.tsx:133
+#: src/pages/Auth/Reset.tsx:41
+#: src/pages/Auth/Set-Password.tsx:111
+msgid "Send mail"
+msgstr "Skicka e-post"
+
+#: src/components/forms/HostOptionsForm.tsx:36
+#: src/components/forms/HostOptionsForm.tsx:66
+msgid "Host"
+msgstr "Värd"
+
+#: src/components/forms/HostOptionsForm.tsx:42
+#: src/components/forms/HostOptionsForm.tsx:69
+msgid "Name"
+msgstr "Namn"
+
+#: src/components/forms/HostOptionsForm.tsx:74
+msgid "No one here..."
+msgstr "Ingen här..."
+
+#: src/components/forms/HostOptionsForm.tsx:85
+msgid "Add Host"
+msgstr "Lägg till värd"
+
+#: src/components/forms/HostOptionsForm.tsx:89
+msgid "Save"
+msgstr "Spara"
+
+#: src/components/forms/InstanceOptions.tsx:43
+msgid "Select destination instance"
+msgstr "Välj destinationsinstans"
+
+#: src/components/forms/InstanceOptions.tsx:71
+msgid "Edit possible host options"
+msgstr "Redigera möjliga värdalternativ"
+
+#: src/components/forms/InstanceOptions.tsx:98
+msgid "Version: {0}"
+msgstr "Version {0}"
+
+#: src/components/forms/InstanceOptions.tsx:100
+msgid "API:{0}"
+msgstr "API:{0}"
+
+#: src/components/forms/InstanceOptions.tsx:102
+msgid "Name: {0}"
+msgstr "Namn: {0}"
+
+#: src/components/forms/InstanceOptions.tsx:104
+msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
+msgstr ""
+
+#: src/components/items/DocTooltip.tsx:89
+msgid "Read More"
+msgstr "Läs mer"
+
+#: src/components/items/ErrorItem.tsx:5
+#: src/components/tables/InvenTreeTable.tsx:336
+msgid "Unknown error"
+msgstr "Okänt fel"
+
+#: src/components/items/ErrorItem.tsx:10
+msgid "An error occurred:"
+msgstr "Ett fel inträffade:"
+
+#: src/components/items/GettingStartedCarousel.tsx:64
+msgid "Read more"
+msgstr ""
+
+#: src/components/items/InvenTreeLogo.tsx:13
+msgid "InvenTree Logo"
+msgstr "InvenTree Logotyp"
+
+#: src/components/items/Placeholder.tsx:10
+msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
+msgstr "Denna funktion/knapp/webbplats är en platshållare för en funktion som inte är implementerad, bara partiell eller avsedd för testning."
+
+#: src/components/items/Placeholder.tsx:13
+msgid "PLH"
+msgstr "PLH"
+
+#: src/components/items/ScanButton.tsx:15
+msgid "Scan QR code"
+msgstr "Skanna QR-kod"
+
+#: src/components/items/Thumbnail.tsx:8
+#: src/components/items/Thumbnail.tsx:41
+msgid "Thumbnail"
+msgstr "Miniatyrbild"
+
+#: src/components/modals/QrCodeModal.tsx:68
+msgid "Unknown response"
+msgstr "Okänt svar"
+
+#: src/components/modals/QrCodeModal.tsx:98
+msgid "Error while getting camera"
+msgstr "Fel vid öppning av kamera"
+
+#: src/components/modals/QrCodeModal.tsx:121
+msgid "Error while scanning"
+msgstr "Fel vid skanning"
+
+#: src/components/modals/QrCodeModal.tsx:135
+msgid "Error while stopping"
+msgstr "Fel vid avbrott"
+
+#: src/components/modals/QrCodeModal.tsx:150
+msgid "Scanning"
+msgstr "Scannar"
+
+#: src/components/modals/QrCodeModal.tsx:150
+msgid "Not scanning"
+msgstr "Starta skanning"
+
+#: src/components/modals/QrCodeModal.tsx:155
+msgid "Select Camera"
+msgstr "Välj kamera"
+
+#: src/components/modals/QrCodeModal.tsx:165
+msgid "Start scanning"
+msgstr "Starta skanning"
+
+#: src/components/modals/QrCodeModal.tsx:172
+msgid "Stop scanning"
+msgstr "Stoppa skanning"
+
+#: src/components/modals/QrCodeModal.tsx:177
+msgid "No scans yet!"
+msgstr "Inga skanningar ännu!"
+
+#: src/components/modals/QrCodeModal.tsx:197
+msgid "Close modal"
+msgstr "Stäng fönstret"
+
+#: src/components/nav/MainMenu.tsx:38
+msgid "Notifications"
+msgstr "Notifikationer"
+
+#: src/components/nav/MainMenu.tsx:42
+#: src/pages/Index/Profile/Profile.tsx:15
+msgid "Profile"
+msgstr "Profil"
+
+#: src/components/nav/MainMenu.tsx:46
+msgid "Settings"
+msgstr "Inställningar"
+
+#: src/components/nav/MainMenu.tsx:49
+msgid "Account settings"
+msgstr "Kontoinställningar"
+
+#: src/components/nav/MainMenu.tsx:57
+msgid "Logout"
+msgstr "Logga ut"
+
+#: src/components/nav/MainMenu.tsx:68
+#~ msgid "Current language {locale}"
+#~ msgstr "Current language {locale}"
+
+#: src/components/nav/MainMenu.tsx:71
+#~ msgid "Switch to pseudo language"
+#~ msgstr "Switch to pseudo language"
+
+#: src/components/nav/NavHoverMenu.tsx:52
+msgid "Open Navigation"
+msgstr "Öppna navigering"
+
+#: src/components/nav/NavHoverMenu.tsx:70
+msgid "View all"
+msgstr "Visa alla"
+
+#: src/components/nav/NavHoverMenu.tsx:84
+#: src/components/nav/NavHoverMenu.tsx:94
+msgid "Get started"
+msgstr "Kom igång"
+
+#: src/components/nav/NavHoverMenu.tsx:87
+msgid "Overview over high-level objects, functions and possible usecases."
+msgstr "Översikt över objekt, funktioner och möjliga användningsområden."
+
+#: src/components/nav/NavigationDrawer.tsx:59
+msgid "Navigation"
+msgstr "Navigering"
+
+#: src/components/nav/NavigationDrawer.tsx:62
+msgid "Pages"
+msgstr "Sidor"
+
+#: src/components/nav/NavigationDrawer.tsx:67
+msgid "Plugins"
+msgstr "Plugins"
+
+#: src/components/nav/NavigationDrawer.tsx:77
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: src/components/nav/NavigationDrawer.tsx:80
+msgid "About"
+msgstr "Om"
+
+#: src/components/nav/SearchDrawer.tsx:65
+#: src/defaults/links.tsx:26
+#: src/pages/Index/Part.tsx:13
+msgid "Parts"
+msgstr "Artiklar"
+
+#: src/components/nav/SearchDrawer.tsx:74
+msgid "Supplier Parts"
+msgstr "Leverantörsartikel"
+
+#: src/components/nav/SearchDrawer.tsx:88
+msgid "Manufacturer Parts"
+msgstr "Tillverkarens artiklar"
+
+#: src/components/nav/SearchDrawer.tsx:102
+msgid "Part Categories"
+msgstr "Artikelkategorier"
+
+#: src/components/nav/SearchDrawer.tsx:111
+#: src/pages/Index/Stock.tsx:13
+msgid "Stock Items"
+msgstr "Artikel i lager"
+
+#: src/components/nav/SearchDrawer.tsx:123
+msgid "Stock Locations"
+msgstr "Lagerplats"
+
+#: src/components/nav/SearchDrawer.tsx:132
+#: src/pages/Index/Build.tsx:13
+msgid "Build Orders"
+msgstr "Byggordrar"
+
+#: src/components/nav/SearchDrawer.tsx:143
+msgid "Companies"
+msgstr "Företag"
+
+#: src/components/nav/SearchDrawer.tsx:153
+msgid "Purchase Orders"
+msgstr "Inköpsorder"
+
+#: src/components/nav/SearchDrawer.tsx:164
+msgid "Sales Orders"
+msgstr "Försäljningsorder"
+
+#: src/components/nav/SearchDrawer.tsx:175
+msgid "Return Orders"
+msgstr "Returorder"
+
+#: src/components/nav/SearchDrawer.tsx:209
+msgid "results"
+msgstr "resultat"
+
+#: src/components/nav/SearchDrawer.tsx:346
+msgid "Enter search text"
+msgstr "Ange sökord"
+
+#: src/components/nav/SearchDrawer.tsx:373
+msgid "Search Options"
+msgstr "Sökalternativ"
+
+#: src/components/nav/SearchDrawer.tsx:376
+msgid "Regex search"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:386
+msgid "Whole word search"
+msgstr "Hela ordsökningen"
+
+#: src/components/nav/SearchDrawer.tsx:419
+#: src/components/tables/InvenTreeTable.tsx:344
+#: src/pages/ErrorPage.tsx:12
+#: src/pages/ErrorPage.tsx:25
+msgid "Error"
+msgstr "Fel"
+
+#: src/components/nav/SearchDrawer.tsx:422
+msgid "An error occurred during search query"
+msgstr "Ett fel inträffade under sökfrågan"
+
+#: src/components/nav/SearchDrawer.tsx:430
+msgid "No results"
+msgstr "Inga resultat"
+
+#: src/components/nav/SearchDrawer.tsx:433
+msgid "No results available for search query"
+msgstr "Inga resultat tillgängliga för sökfrågan"
+
+#: src/components/tables/ColumnSelect.tsx:17
+#: src/components/tables/ColumnSelect.tsx:24
+msgid "Select Columns"
+msgstr "Välj Kolumner"
+
+#: src/components/tables/DownloadAction.tsx:15
+msgid "CSV"
+msgstr "CSV"
+
+#: src/components/tables/DownloadAction.tsx:16
+msgid "TSV"
+msgstr "TSV"
+
+#: src/components/tables/DownloadAction.tsx:17
+msgid "Excel"
+msgstr "Excel"
+
+#: src/components/tables/DownloadAction.tsx:25
+msgid "Download selected data"
+msgstr "Ladda ner vald data"
+
+#: src/components/tables/FilterBadge.tsx:44
+msgid "Remove filter"
+msgstr "Ta bort filter"
+
+#: src/components/tables/FilterGroup.tsx:29
+msgid "Add table filter"
+msgstr "Lägg till tabellfilter"
+
+#: src/components/tables/FilterGroup.tsx:44
+msgid "Clear all filters"
+msgstr "Rensa alla filter"
+
+#: src/components/tables/FilterGroup.tsx:51
+msgid "Add filter"
+msgstr "Lägg till filter"
+
+#: src/components/tables/FilterSelectModal.tsx:56
+msgid "True"
+msgstr "Sant"
+
+#: src/components/tables/FilterSelectModal.tsx:57
+msgid "False"
+msgstr "Falskt"
+
+#: src/components/tables/FilterSelectModal.tsx:143
+msgid "Add Table Filter"
+msgstr "Lägg till tabellfilter"
+
+#: src/components/tables/FilterSelectModal.tsx:145
+msgid "Select from the available filters"
+msgstr "Välj från tillgängliga filter"
+
+#: src/components/tables/FilterSelectModal.tsx:149
+msgid "Filter"
+msgstr "Filter"
+
+#: src/components/tables/FilterSelectModal.tsx:150
+msgid "Select filter"
+msgstr "Välj filter"
+
+#: src/components/tables/FilterSelectModal.tsx:159
+msgid "Value"
+msgstr "Värde"
+
+#: src/components/tables/FilterSelectModal.tsx:160
+msgid "Select filter value"
+msgstr "Välj filtervärde"
+
+#: src/components/tables/FilterSelectModal.tsx:166
+#: src/contexts/ThemeContext.tsx:62
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: src/components/tables/FilterSelectModal.tsx:172
+msgid "Add Filter"
+msgstr "Lägg till filter"
+
+#: src/components/tables/InvenTreeTable.tsx:95
+msgid "No records found"
+msgstr "Inga resultat hittades"
+
+#: src/components/tables/InvenTreeTable.tsx:323
+msgid "Bad request"
+msgstr "Felaktig begäran"
+
+#: src/components/tables/InvenTreeTable.tsx:326
+msgid "Unauthorized"
+msgstr "Ej behörig"
+
+#: src/components/tables/InvenTreeTable.tsx:329
+msgid "Forbidden"
+msgstr "Otillåten"
+
+#: src/components/tables/InvenTreeTable.tsx:332
+msgid "Not found"
+msgstr "Hittades inte"
+
+#: src/components/tables/InvenTreeTable.tsx:381
+#: src/components/tables/InvenTreeTable.tsx:382
+msgid "Barcode actions"
+msgstr "Streckkods åtgärder"
+
+#: src/components/tables/InvenTreeTable.tsx:389
+#: src/components/tables/InvenTreeTable.tsx:390
+msgid "Print actions"
+msgstr "Skriv ut åtgärder"
+
+#: src/components/tables/InvenTreeTable.tsx:407
+msgid "Refresh data"
+msgstr "Uppdatera data"
+
+#: src/components/tables/InvenTreeTable.tsx:425
+msgid "Table filters"
+msgstr "Tabellfilter"
+
+#: src/components/tables/build/BuildOrderTable.tsx:18
+msgid "Reference"
+msgstr "Referens"
+
+#: src/components/tables/build/BuildOrderTable.tsx:24
+#: src/components/tables/part/PartTable.tsx:20
+#: src/components/tables/stock/StockItemTable.tsx:21
+msgid "Part"
+msgstr "Artkel"
+
+#: src/components/tables/build/BuildOrderTable.tsx:41
+#: src/components/tables/part/PartTable.tsx:46
+#: src/components/tables/stock/StockItemTable.tsx:37
+msgid "Description"
+msgstr "Beskrivning"
+
+#: src/components/tables/build/BuildOrderTable.tsx:46
+msgid "Project Code"
+msgstr "Projektkod"
+
+#: src/components/tables/build/BuildOrderTable.tsx:55
+msgid "Priority"
+msgstr "Prioritet"
+
+#: src/components/tables/build/BuildOrderTable.tsx:62
+msgid "Quantity"
+msgstr "Antal"
+
+#: src/components/tables/build/BuildOrderTable.tsx:68
+msgid "Completed"
+msgstr "Slutförd"
+
+#: src/components/tables/build/BuildOrderTable.tsx:86
+#: src/components/tables/stock/StockItemTable.tsx:50
+msgid "Status"
+msgstr "Status"
+
+#: src/components/tables/build/BuildOrderTable.tsx:93
+msgid "Created"
+msgstr "Skapad"
+
+#: src/components/tables/part/PartTable.tsx:34
+msgid "IPN"
+msgstr "IAN"
+
+#: src/components/tables/part/PartTable.tsx:41
+msgid "Units"
+msgstr "Enheter"
+
+#: src/components/tables/part/PartTable.tsx:52
+msgid "Category"
+msgstr "Kategori"
+
+#: src/components/tables/part/PartTable.tsx:63
+#: src/components/tables/stock/StockItemTable.tsx:42
+#: src/defaults/links.tsx:27
+msgid "Stock"
+msgstr "Lagersaldo"
+
+#: src/components/tables/part/PartTable.tsx:69
+msgid "Price Range"
+msgstr "Prisintervall"
+
+#: src/components/tables/part/PartTable.tsx:79
+msgid "Link"
+msgstr "Länk"
+
+#: src/components/tables/part/PartTable.tsx:92
+msgid "Active"
+msgstr "Aktiv"
+
+#: src/components/tables/part/PartTable.tsx:93
+msgid "Filter by part active status"
+msgstr "Filtrera på aktiv artiklestatus"
+
+#: src/components/tables/part/PartTable.tsx:98
+msgid "Assembly"
+msgstr "Montering"
+
+#: src/components/tables/part/PartTable.tsx:99
+msgid "Filter by assembly attribute"
+msgstr "Filtrera efter monteringsattribut"
+
+#: src/components/tables/part/PartTable.tsx:104
+msgid "Include Subcategories"
+msgstr "Inkludera underkategorier"
+
+#: src/components/tables/part/PartTable.tsx:105
+msgid "Include parts in subcategories"
+msgstr "Inkludera artiklar från underkategorier"
+
+#: src/components/tables/part/PartTable.tsx:110
+msgid "Component"
+msgstr "Komponent"
+
+#: src/components/tables/part/PartTable.tsx:111
+msgid "Filter by component attribute"
+msgstr "Filtrera efter komponentattribut"
+
+#: src/components/tables/part/PartTable.tsx:116
+msgid "Trackable"
+msgstr "Spårbart objekt"
+
+#: src/components/tables/part/PartTable.tsx:117
+msgid "Filter by trackable attribute"
+msgstr "Filtrera på spårbart attribut"
+
+#: src/components/tables/part/PartTable.tsx:122
+msgid "Has Units"
+msgstr "Har enheter"
+
+#: src/components/tables/part/PartTable.tsx:123
+msgid "Filter by parts which have units"
+msgstr "Filtrera efter artiklar som har enheter"
+
+#: src/components/tables/part/PartTable.tsx:128
+msgid "Has IPN"
+msgstr "Har IAN"
+
+#: src/components/tables/part/PartTable.tsx:129
+msgid "Filter by parts which have an internal part number"
+msgstr "Filtrera efter artiklar som har ett internt artikelnummer"
+
+#: src/components/tables/part/PartTable.tsx:134
+msgid "Has Stock"
+msgstr "I lager"
+
+#: src/components/tables/part/PartTable.tsx:135
+msgid "Filter by parts which have stock"
+msgstr "Filtrera efter artiklar som har enheter"
+
+#: src/components/tables/part/PartTable.tsx:140
+#: src/defaults/dashboardItems.tsx:41
+msgid "Low Stock"
+msgstr "Få i lager"
+
+#: src/components/tables/part/PartTable.tsx:141
+msgid "Filter by parts which have low stock"
+msgstr "Filtrera på ariklar som har lågt saldo"
+
+#: src/components/tables/part/PartTable.tsx:146
+msgid "Purchaseable"
+msgstr "Kan köpas"
+
+#: src/components/tables/part/PartTable.tsx:147
+msgid "Filter by parts which are purchaseable"
+msgstr "Filtrera på artiklar som kan köpas"
+
+#: src/components/tables/part/PartTable.tsx:152
+msgid "Salable"
+msgstr "Försäljningsbar"
+
+#: src/components/tables/part/PartTable.tsx:153
+msgid "Filter by parts which are salable"
+msgstr "Filtrera på artiklar som kan säljas"
+
+#: src/components/tables/part/PartTable.tsx:158
+#: src/components/tables/part/PartTable.tsx:162
+msgid "Virtual"
+msgstr "Virtuell"
+
+#: src/components/tables/part/PartTable.tsx:159
+msgid "Filter by parts which are virtual"
+msgstr "Filtrera efter artiklar som är virtuella"
+
+#: src/components/tables/part/PartTable.tsx:163
+msgid "Not Virtual"
+msgstr "Inte virtuell"
+
+#: src/components/tables/stock/StockItemTable.tsx:57
+msgid "Batch"
+msgstr "Batch"
+
+#: src/components/tables/stock/StockItemTable.tsx:63
+msgid "Location"
+msgstr "Plats"
+
+#: src/components/tables/stock/StockItemTable.tsx:80
+msgid "Actions"
+msgstr "Åtgärder"
+
+#: src/components/tables/stock/StockItemTable.tsx:124
+msgid "Test Filter"
+msgstr "Testa filter"
+
+#: src/components/tables/stock/StockItemTable.tsx:125
+msgid "This is a test filter"
+msgstr "Detta är ett testfilter"
+
+#: src/components/widgets/DisplayWidget.tsx:11
+#: src/pages/Index/Profile/UserPanel.tsx:137
+msgid "Display Settings"
+msgstr "Visningsinställningar"
+
+#: src/components/widgets/DisplayWidget.tsx:15
+#: src/pages/Index/Profile/UserPanel.tsx:141
+msgid "Color Mode"
+msgstr "Färgläge"
+
+#: src/components/widgets/DisplayWidget.tsx:21
+#: src/pages/Index/Profile/UserPanel.tsx:147
+msgid "Language"
+msgstr "Språk"
+
+#: src/components/widgets/FeedbackWidget.tsx:18
+msgid "Something is new: Platform UI"
+msgstr ""
+
+#: src/components/widgets/FeedbackWidget.tsx:20
+msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
+msgstr ""
+
+#: src/components/widgets/FeedbackWidget.tsx:31
+msgid "Provide Feedback"
+msgstr ""
+
+#: src/components/widgets/GetStartedWidget.tsx:11
+msgid "Getting started"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:134
+msgid "Loading"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:180
+msgid "Layout"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:186
+msgid "Reset Layout"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:199
+msgid "Stop Edit"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:199
+msgid "Edit Layout"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:205
+msgid "Appearance"
+msgstr ""
+
+#: src/components/widgets/WidgetLayout.tsx:217
+msgid "Show Boxes"
+msgstr ""
+
+#: src/contexts/ThemeContext.tsx:62
+#: src/pages/Index/Profile/UserPanel.tsx:107
+msgid "Submit"
+msgstr "Skicka"
+
+#: src/defaults/dashboardItems.tsx:6
+msgid "Subscribed Parts"
+msgstr "Prenumererade artiklar"
+
+#: src/defaults/dashboardItems.tsx:13
+msgid "Subscribed Categories"
+msgstr ""
+
+#: src/defaults/dashboardItems.tsx:20
+msgid "Latest Parts"
+msgstr "Senaste artiklarna"
+
+#: src/defaults/dashboardItems.tsx:27
+msgid "BOM Waiting Validation"
+msgstr "BOM Väntar på validering"
+
+#: src/defaults/dashboardItems.tsx:34
+msgid "Recently Updated"
+msgstr "Senast uppdaterade"
+
+#: src/defaults/dashboardItems.tsx:48
+msgid "Depleted Stock"
+msgstr "Slut i lager"
+
+#: src/defaults/dashboardItems.tsx:55
+msgid "Required for Build Orders"
+msgstr "Krävs för byggorder"
+
+#: src/defaults/dashboardItems.tsx:62
+msgid "Expired Stock"
+msgstr "Förfallet lager"
+
+#: src/defaults/dashboardItems.tsx:69
+msgid "Stale Stock"
+msgstr "Trögatlager ariklar"
+
+#: src/defaults/dashboardItems.tsx:76
+msgid "Build Orders In Progress"
+msgstr "Pågående byggorder"
+
+#: src/defaults/dashboardItems.tsx:83
+msgid "Overdue Build Orders"
+msgstr "Försenade byggorder"
+
+#: src/defaults/dashboardItems.tsx:90
+msgid "Outstanding Purchase Orders"
+msgstr "Utestående inköpsorder"
+
+#: src/defaults/dashboardItems.tsx:97
+msgid "Overdue Purchase Orders"
+msgstr "Förfallna inköpsorder"
+
+#: src/defaults/dashboardItems.tsx:104
+msgid "Outstanding Sales Orders"
+msgstr "Utestående försäljningsorder"
+
+#: src/defaults/dashboardItems.tsx:111
+msgid "Overdue Sales Orders"
+msgstr "Försenade försäljningsorder"
+
+#: src/defaults/dashboardItems.tsx:118
+msgid "Current News"
+msgstr "Aktuella nyheter"
+
+#: src/defaults/defaultHostList.tsx:8
+#~ msgid "InvenTree Demo"
+#~ msgstr "InvenTree Demo"
+
+#: src/defaults/defaultHostList.tsx:16
+#~ msgid "Local Server"
+#~ msgstr "Local Server"
+
+#: src/defaults/links.tsx:9
+msgid "Website"
+msgstr "Hemsida"
+
+#: src/defaults/links.tsx:14
+msgid "GitHub"
+msgstr "GitHub"
+
+#: src/defaults/links.tsx:19
+msgid "Demo"
+msgstr "Demo"
+
+#: src/defaults/links.tsx:24
+#: src/defaults/menuItems.tsx:10
+msgid "Home"
+msgstr "Hem"
+
+#: src/defaults/links.tsx:25
+#: src/pages/Index/Dashboard.tsx:19
+msgid "Dashboard"
+msgstr "Kontrollpanel"
+
+#: src/defaults/links.tsx:28
+msgid "Build"
+msgstr "Bygg"
+
+#: src/defaults/links.tsx:31
+#: src/defaults/menuItems.tsx:25
+#: src/pages/Index/Playground.tsx:12
+msgid "Playground"
+msgstr ""
+
+#: src/defaults/links.tsx:45
+msgid "Getting Started"
+msgstr "Kom igång"
+
+#: src/defaults/links.tsx:46
+msgid "Getting started with InvenTree"
+msgstr "Komma igång med InvenTree"
+
+#: src/defaults/links.tsx:52
+msgid "API"
+msgstr "API"
+
+#: src/defaults/links.tsx:53
+msgid "InvenTree API documentation"
+msgstr "InvenTree API dokumentation"
+
+#: src/defaults/links.tsx:58
+msgid "Developer Manual"
+msgstr "Utvecklarmanual"
+
+#: src/defaults/links.tsx:59
+msgid "InvenTree developer manual"
+msgstr "InvenTree utvecklarmanual"
+
+#: src/defaults/links.tsx:64
+msgid "FAQ"
+msgstr "Frågor och svar"
+
+#: src/defaults/links.tsx:65
+msgid "Frequently asked questions"
+msgstr "Vanliga frågor (FAQ)"
+
+#: src/defaults/links.tsx:74
+msgid "Instance"
+msgstr "Instans"
+
+#: src/defaults/links.tsx:75
+msgid "About this Inventree instance"
+msgstr "Om denna Inventree instans"
+
+#: src/defaults/links.tsx:81
+msgid "InvenTree"
+msgstr "InvenTree"
+
+#: src/defaults/links.tsx:82
+msgid "About the InvenTree org"
+msgstr "Om InvenTree org"
+
+#: src/defaults/links.tsx:88
+msgid "Licenses"
+msgstr "Licenser"
+
+#: src/defaults/links.tsx:89
+msgid "Licenses for packages used by InvenTree"
+msgstr "Licenser för paket som används av InvenTree"
+
+#: src/defaults/menuItems.tsx:7
+#~ msgid "Open sourcea"
+#~ msgstr "Open sourcea"
+
+#: src/defaults/menuItems.tsx:9
+#~ msgid "Open source"
+#~ msgstr "Open source"
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "Start page of your instance."
+#~ msgstr "Start page of your instance."
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "This Pokémon’s cry is very loud and distracting"
+#~ msgstr "This Pokémon’s cry is very loud and distracting"
+
+#: src/defaults/menuItems.tsx:12
+#~ msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
+#~ msgstr "This Pokémon’s cry is very loud and distracting and more and more and more"
+
+#: src/defaults/menuItems.tsx:16
+msgid "Profile page"
+msgstr "Profilsida"
+
+#: src/defaults/menuItems.tsx:18
+msgid "User attributes and design settings."
+msgstr "Användarattribut och designinställningar."
+
+#: src/defaults/menuItems.tsx:21
+#~ msgid "Free for everyone"
+#~ msgstr "Free for everyone"
+
+#: src/defaults/menuItems.tsx:22
+#~ msgid "The fluid of Smeargle’s tail secretions changes"
+#~ msgstr "The fluid of Smeargle’s tail secretions changes"
+
+#: src/defaults/menuItems.tsx:24
+#~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
+#~ msgstr "The fluid of Smeargle’s tail secretions changes in the intensity"
+
+#: src/defaults/menuItems.tsx:32
+#~ msgid "abc"
+#~ msgstr "abc"
+
+#: src/defaults/menuItems.tsx:37
+#~ msgid "Random image"
+#~ msgstr "Random image"
+
+#: src/defaults/menuItems.tsx:40
+#~ msgid "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Name liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assume. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor"
+#~ msgstr "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Name liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assume. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor"
+
+#: src/defaults/menuItems.tsx:105
+#~ msgid "Yanma is capable of seeing 360 degrees without"
+#~ msgstr "Yanma is capable of seeing 360 degrees without"
+
+#: src/defaults/menuItems.tsx:109
+#~ msgid "Security"
+#~ msgstr "Security"
+
+#: src/defaults/menuItems.tsx:111
+#~ msgid "The shell’s rounded shape and the grooves on its."
+#~ msgstr "The shell’s rounded shape and the grooves on its."
+
+#: src/defaults/menuItems.tsx:116
+#~ msgid "Analytics"
+#~ msgstr "Analytics"
+
+#: src/defaults/menuItems.tsx:118
+#~ msgid "This Pokémon uses its flying ability to quickly chase"
+#~ msgstr "This Pokémon uses its flying ability to quickly chase"
+
+#: src/defaults/menuItems.tsx:125
+#~ msgid "Combusken battles with the intensely hot flames it spews"
+#~ msgstr "Combusken battles with the intensely hot flames it spews"
+
+#: src/functions/auth.tsx:36
+#~ msgid "Logout successfull"
+#~ msgstr "Logout successfull"
+
+#: src/functions/auth.tsx:41
+msgid "Logout successful"
+msgstr "Utloggningen lyckad"
+
+#: src/functions/auth.tsx:42
+msgid "See you soon."
+msgstr "Vi ses snart!"
+
+#: src/functions/auth.tsx:82
+msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
+msgstr "Kolla din inkorg för en återställningslänk. Detta fungerar bara om du har ett konto. Kontrollera även i skräppost."
+
+#: src/functions/auth.tsx:89
+#: src/pages/Auth/Set-Password.tsx:38
+msgid "Reset failed"
+msgstr "Återställningen misslyckades"
+
+#: src/functions/auth.tsx:105
+msgid "Already logged in"
+msgstr "Redan inloggad"
+
+#: src/functions/auth.tsx:106
+msgid "Found an existing login - using it to log you in."
+msgstr "Hittade en befintlig inloggning - använder den för att logga in dig."
+
+#: src/functions/notifications.tsx:9
+msgid "Not implemented"
+msgstr "Inte implementerad"
+
+#: src/functions/notifications.tsx:10
+msgid "This feature is not yet implemented"
+msgstr "Denna funktionen har inte implementerats"
+
+#: src/pages/Auth/Logged-In.tsx:18
+msgid "Checking if you are already logged in"
+msgstr "Kontrollerar om du redan är inloggad"
+
+#: src/pages/Auth/Login.tsx:25
+msgid "No selection"
+msgstr "Inget val"
+
+#: src/pages/Auth/Login.tsx:121
+#~ msgid "Edit host options"
+#~ msgstr "Edit host options"
+
+#: src/pages/Auth/Set-Password.tsx:29
+msgid "Token invalid"
+msgstr "Ogiltig token"
+
+#: src/pages/Auth/Set-Password.tsx:30
+msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
+msgstr "Du måste ange en giltig token för att ange ett nytt lösenord. Kontrollera din inkorg för en återställningslänk."
+
+#: src/pages/Auth/Set-Password.tsx:48
+msgid "No token provided"
+msgstr "Ingen token angiven"
+
+#: src/pages/Auth/Set-Password.tsx:49
+msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
+msgstr "Du måste ange en giltig token för att ange ett nytt lösenord. Kontrollera din inkorg för en återställningslänk."
+
+#: src/pages/Auth/Set-Password.tsx:72
+msgid "Password set"
+msgstr "Lösenord sparat!"
+
+#: src/pages/Auth/Set-Password.tsx:73
+msgid "The password was set successfully. You can now login with your new password"
+msgstr "Ditt lösenord har sparats. Du kan nu logga in med ditt nya lösenord."
+
+#: src/pages/Auth/Set-Password.tsx:100
+msgid "Set new password"
+msgstr "Ange nytt lösenord"
+
+#: src/pages/ErrorPage.tsx:17
+msgid "Error: {0}"
+msgstr "Fel: {0}"
+
+#: src/pages/ErrorPage.tsx:28
+msgid "Sorry, an unexpected error has occurred."
+msgstr "Tyvärr, ett oväntat fel har inträffat."
+
+#: src/pages/Index/Dashboard.tsx:22
+msgid "Autoupdate"
+msgstr "Autouppdatera"
+
+#: src/pages/Index/Dashboard.tsx:26
+msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
+msgstr "Denna sida är en ersättning för den gamla startsidan med samma information. Denna sida kommer att försvinna och ersättas av startsidan."
+
+#: src/pages/Index/Home.tsx:58
+msgid "Welcome to your Dashboard{0}"
+msgstr ""
+
+#: src/pages/Index/Playground.tsx:17
+msgid "This page is a showcase for the possibilities of Platform UI."
+msgstr ""
+
+#: src/pages/Index/Profile/Profile.tsx:23
+msgid "User"
+msgstr "Användare"
+
+#: src/pages/Index/Profile/Profile.tsx:27
+#: src/pages/Index/Profile/Profile.tsx:46
+#~ msgid "User Settings"
+#~ msgstr "User Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:30
+#: src/pages/Index/Profile/Profile.tsx:141
+#~ msgid "Notification Settings"
+#~ msgstr "Notification Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:33
+#~ msgid "Global Settings"
+#~ msgstr "Global Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:36
+#: src/pages/Index/Profile/Profile.tsx:312
+#: src/pages/Index/Profile/Profile.tsx:329
+#~ msgid "Plugin Settings"
+#~ msgstr "Plugin Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:47
+#~ msgid "Settings for the current user"
+#~ msgstr "Settings for the current user"
+
+#: src/pages/Index/Profile/Profile.tsx:51
+#~ msgid "Home Page Settings"
+#~ msgstr "Home Page Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:76
+#~ msgid "Search Settings"
+#~ msgstr "Search Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:115
+#: src/pages/Index/Profile/Profile.tsx:211
+#~ msgid "Label Settings"
+#~ msgstr "Label Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:120
+#: src/pages/Index/Profile/Profile.tsx:219
+#~ msgid "Report Settings"
+#~ msgstr "Report Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:142
+#~ msgid "Settings for the notifications"
+#~ msgstr "Settings for the notifications"
+
+#: src/pages/Index/Profile/Profile.tsx:148
+#~ msgid "Global Server Settings"
+#~ msgstr "Global Server Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:149
+#~ msgid "Global Settings for this instance"
+#~ msgstr "Global Settings for this instance"
+
+#: src/pages/Index/Profile/Profile.tsx:153
+#~ msgid "Server Settings"
+#~ msgstr "Server Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:187
+#~ msgid "Login Settings"
+#~ msgstr "Login Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:202
+#~ msgid "Barcode Settings"
+#~ msgstr "Barcode Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:230
+#~ msgid "Part Settings"
+#~ msgstr "Part Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:255
+#~ msgid "Pricing Settings"
+#~ msgstr "Pricing Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:270
+#~ msgid "Stock Settings"
+#~ msgstr "Stock Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:284
+#~ msgid "Build Order Settings"
+#~ msgstr "Build Order Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:289
+#~ msgid "Purchase Order Settings"
+#~ msgstr "Purchase Order Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:300
+#~ msgid "Sales Order Settings"
+#~ msgstr "Sales Order Settings"
+
+#: src/pages/Index/Profile/Profile.tsx:330
+#~ msgid "Plugin Settings for this instance"
+#~ msgstr "Plugin Settings for this instance"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:27
+#~ msgid "Data is current beeing loaded"
+#~ msgstr "Data is current beeing loaded"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:69
+#: src/pages/Index/Profile/SettingsPanel.tsx:76
+#~ msgid "Failed to load"
+#~ msgstr "Failed to load"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:100
+#~ msgid "Show internal names"
+#~ msgstr "Show internal names"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:148
+#~ msgid "Input {0} is not known"
+#~ msgstr "Input {0} is not known"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:161
+#~ msgid "Saved changes {0}"
+#~ msgstr "Saved changes {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:162
+#~ msgid "Changed to {0}"
+#~ msgstr "Changed to {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:176
+#~ msgid "Error while saving {0}"
+#~ msgstr "Error while saving {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:177
+#~ msgid "Error was {err}"
+#~ msgstr "Error was {err}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:257
+#~ msgid "Plugin: {0}"
+#~ msgstr "Plugin: {0}"
+
+#: src/pages/Index/Profile/SettingsPanel.tsx:262
+#~ msgid "Method: {0}"
+#~ msgstr "Method: {0}"
+
+#: src/pages/Index/Profile/UserPanel.tsx:83
+msgid "Userinfo"
+msgstr "Användarinfo"
+
+#: src/pages/Index/Profile/UserPanel.tsx:114
+msgid "First name: {0}"
+msgstr "Förnamn: {0}"
+
+#: src/pages/Index/Profile/UserPanel.tsx:117
+msgid "Last name: {0}"
+msgstr "Efternamn: {0}"
+
+#: src/pages/Index/Profile/UserPanel.tsx:120
+msgid "Username: {0}"
+msgstr "Användarnamn: {0}"
+
+#: src/pages/Index/Profile/UserPanel.tsx:152
+msgid "Use pseudo language"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:70
+msgid "bars"
+msgstr ""
+
+#: src/pages/Index/Profile/UserTheme.tsx:71
+msgid "oval"
+msgstr "oval"
+
+#: src/pages/Index/Profile/UserTheme.tsx:72
+msgid "dots"
+msgstr "punkt"
+
+#: src/pages/Index/Profile/UserTheme.tsx:83
+msgid "Design <0/>"
+msgstr "Design <0/>"
+
+#: src/pages/Index/Profile/UserTheme.tsx:91
+msgid "Primary color"
+msgstr "Primärfärg"
+
+#: src/pages/Index/Profile/UserTheme.tsx:104
+msgid "White color"
+msgstr "Vitfärg"
+
+#: src/pages/Index/Profile/UserTheme.tsx:112
+msgid "Black color"
+msgstr "Svart färg"
+
+#: src/pages/Index/Profile/UserTheme.tsx:120
+msgid "Border Radius"
+msgstr "Gränsradie"
+
+#: src/pages/Index/Profile/UserTheme.tsx:136
+msgid "Loader"
+msgstr "Lastare"
+
+#: src/pages/Logged-In.tsx:24
+#~ msgid "Found an exsisting login - using it to log you in."
+#~ msgstr "Found an exsisting login - using it to log you in."
+
+#: src/pages/NotFound.tsx:17
+msgid "Not Found"
+msgstr "Hittades inte"
+
+#: src/pages/NotFound.tsx:20
+msgid "Sorry, this page is not known or was moved."
+msgstr "Tyvärr, denna sida hittades inte eller flyttad."
+
+#: src/pages/NotFound.tsx:27
+msgid "Go to the start page"
+msgstr "Gå till startsidan"
+
+#: src/views/MobileAppView.tsx:14
+msgid "Mobile viewport detected"
+msgstr "Mobil vy upptäckt"
+
+#: src/views/MobileAppView.tsx:17
+msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
+msgstr "Plattform UI är optimerad för surfplattor och stationära datorer, kan du använda den officiella appen för en mobil upplevelse."
+
+#: src/views/MobileAppView.tsx:23
+msgid "Read the docs"
+msgstr "Läs dokumenten"
+
