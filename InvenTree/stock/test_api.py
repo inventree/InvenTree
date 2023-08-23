@@ -110,8 +110,8 @@ class StockLocationTest(StockAPITestCase):
             'name': 'Location',
             'description': 'Another location for stock'
         }
-        response = self.client.post(self.list_url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.post(self.list_url, data, expected_code=201)
 
     def test_stock_location_delete(self):
         """Test stock location deletion with different parameters"""
@@ -612,43 +612,42 @@ class StockItemTest(StockAPITestCase):
         """Test the default location functionality, if a 'location' is not specified in the creation request."""
         # The part 'R_4K7_0603' (pk=4) has a default location specified
 
-        response = self.client.post(
+        response = self.post(
             self.list_url,
             data={
                 'part': 4,
                 'quantity': 10
-            }
+            },
+            expected_code=201
         )
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['location'], 2)
 
         # What if we explicitly set the location to a different value?
 
-        response = self.client.post(
+        response = self.post(
             self.list_url,
             data={
                 'part': 4,
                 'quantity': 20,
                 'location': 1,
-            }
+            },
+            expected_code=201
         )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['location'], 1)
 
         # And finally, what if we set the location explicitly to None?
 
-        response = self.client.post(
+        response = self.post(
             self.list_url,
             data={
                 'part': 4,
                 'quantity': 20,
                 'location': '',
-            }
+            },
+            expected_code=201
         )
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['location'], None)
 
     def test_stock_item_create(self):
@@ -884,18 +883,14 @@ class StockItemTest(StockAPITestCase):
             'quantity': 10,
         }
 
-        response = self.client.post(self.list_url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(self.list_url, data, expected_code=201)
 
         self.assertIsNone(response.data['expiry_date'])
 
         # Second test - create a new StockItem with an explicit expiry date
         data['expiry_date'] = '2022-12-12'
 
-        response = self.client.post(self.list_url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(self.list_url, data, expected_code=201)
 
         self.assertIsNotNone(response.data['expiry_date'])
         self.assertEqual(response.data['expiry_date'], '2022-12-12')
@@ -906,12 +901,17 @@ class StockItemTest(StockAPITestCase):
             'quantity': 10
         }
 
-        response = self.client.post(self.list_url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(self.list_url, data, expected_code=201)
 
         # Expected expiry date is 10 days in the future
         expiry = datetime.now().date() + timedelta(10)
 
+        self.assertEqual(response.data['expiry_date'], expiry.isoformat())
+
+        # Test result when sending a blank value
+        data['expiry_date'] = None
+
+        response = self.post(self.list_url, data, expected_code=201)
         self.assertEqual(response.data['expiry_date'], expiry.isoformat())
 
     def test_purchase_price(self):
@@ -1343,29 +1343,25 @@ class StockTestResultTest(StockAPITestCase):
 
         url = self.get_url()
 
-        response = self.client.post(
+        self.post(
             url,
             data={
                 'test': 'A test',
                 'result': True,
             },
-            format='json'
+            expected_code=400
         )
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
         # This one should pass!
-        response = self.client.post(
+        self.post(
             url,
             data={
                 'test': 'A test',
                 'stock_item': 105,
                 'result': True,
             },
-            format='json'
+            expected_code=201
         )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_post(self):
         """Test creation of a new test result."""
@@ -1382,9 +1378,7 @@ class StockTestResultTest(StockAPITestCase):
             'notes': 'I guess there was just too much pressure?',
         }
 
-        response = self.client.post(url, data, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(url, data, expected_code=201)
 
         response = self.client.get(url)
         self.assertEqual(len(response.data), n + 1)
@@ -1423,9 +1417,7 @@ class StockTestResultTest(StockAPITestCase):
                 "attachment": bitmap,
             }
 
-            response = self.client.post(self.get_url(), data)
-
-            self.assertEqual(response.status_code, 201)
+            response = self.post(self.get_url(), data, expected_code=201)
 
             # Check that an attachment has been uploaded
             self.assertIsNotNone(response.data['attachment'])
