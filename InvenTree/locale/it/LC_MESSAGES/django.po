@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-16 06:22+0000\n"
+"POT-Creation-Date: 2023-08-23 10:47+0000\n"
 "PO-Revision-Date: 2023-08-16 14:07\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -1387,7 +1387,7 @@ msgstr "Numeri di Serie Assegnazione automatica"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Assegna automaticamente gli articoli richiesti con i numeri di serie corrispondenti"
 
-#: build/serializers.py:334 stock/api.py:727
+#: build/serializers.py:334 stock/api.py:729
 msgid "The following serial numbers already exist or are invalid"
 msgstr "I seguenti numeri di serie sono già esistenti o non sono validi"
 
@@ -7724,15 +7724,15 @@ msgstr "La quantità è richiesta"
 msgid "Valid part must be supplied"
 msgstr "Deve essere fornita un articolo valido"
 
-#: stock/api.py:667
+#: stock/api.py:669
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:676
+#: stock/api.py:678
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:699
+#: stock/api.py:701
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "I numeri di serie non possono essere forniti per un articolo non tracciabile"
 
@@ -12809,9 +12809,11 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr ""
+"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12945,4 +12947,3 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:256
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
-

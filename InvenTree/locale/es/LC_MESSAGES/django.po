@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-16 06:22+0000\n"
+"POT-Creation-Date: 2023-08-23 10:47+0000\n"
 "PO-Revision-Date: 2023-08-16 14:08\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
@@ -1387,7 +1387,7 @@ msgstr "Autoasignar Números de Serie"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Asignar automáticamente los artículos requeridos con números de serie coincidentes"
 
-#: build/serializers.py:334 stock/api.py:727
+#: build/serializers.py:334 stock/api.py:729
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Los siguientes números seriales ya existen o son inválidos"
 
@@ -7724,15 +7724,15 @@ msgstr "Cantidad requerida"
 msgid "Valid part must be supplied"
 msgstr "Debe suministrarse una parte válida"
 
-#: stock/api.py:667
+#: stock/api.py:669
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:676
+#: stock/api.py:678
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:699
+#: stock/api.py:701
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -12809,9 +12809,11 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr "Estás a punto de usar tu cuenta de %(provider_name)s para iniciar sesión en\n"
+msgstr ""
+"Estás a punto de usar tu cuenta de %(provider_name)s para iniciar sesión en\n"
 "%(site_name)s.<br>Como paso final, por favor completa el siguiente formulario:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -12945,4 +12947,3 @@ msgstr "Permisos para editar artículos"
 #: users/models.py:256
 msgid "Permission to delete items"
 msgstr "Permiso para eliminar artículos"
-
