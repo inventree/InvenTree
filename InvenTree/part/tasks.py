@@ -18,7 +18,8 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models
 import part.stocktake
-from InvenTree.tasks import ScheduledTask, check_daily_holdoff, scheduled_task
+from InvenTree.tasks import (ScheduledTask, check_daily_holdoff,
+                             record_task_success, scheduled_task)
 
 logger = logging.getLogger("inventree")
 
@@ -167,7 +168,7 @@ def scheduled_stocktake_reports():
         logger.info("Stocktake auto reports are disabled, exiting")
         return
 
-    if not check_daily_holdoff('_STOCKTAKE_RECENT_REPORT', report_n_days):
+    if not check_daily_holdoff('STOCKTAKE_RECENT_REPORT', report_n_days):
         logger.info("Stocktake report was recently generated - exiting")
         return
 
@@ -175,7 +176,7 @@ def scheduled_stocktake_reports():
     part.stocktake.generate_stocktake_report(update_parts=True)
 
     # Record the date of this report
-    common.models.InvenTreeSetting.set_setting('_STOCKTAKE_RECENT_REPORT', datetime.now().isoformat(), None)
+    record_task_success('STOCKTAKE_RECENT_REPORT')
 
 
 def rebuild_parameters(template_id):
