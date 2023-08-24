@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { formatCurrency } from '../../../functions/formatters';
 import { renderDate } from '../../../functions/formatters';
+import { ApiPaths, url } from '../../../states/ApiState';
 import { ownerRenderer } from '../../renderer/ownerRenderer';
 import { projectCodeRender } from '../../renderer/projectCodeRender';
 import { stockStatusDisplay } from '../../renderer/stockStatusDisplay';
@@ -22,7 +23,7 @@ function purchaseOrderTableColumns(): TableColumn[] {
       sortable: true,
       title: t`Purchase Order`,
       render: (record) => (
-        <Anchor href={`/platform/order/purchase-order/${record.pk}`}>
+        <Anchor href={url(ApiPaths.frontend_po, record.pk)}>
           {record.reference}
         </Anchor>
       )

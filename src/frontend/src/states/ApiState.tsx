@@ -44,6 +44,8 @@ export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
   }
 }));
 
+const url_base = 'platform';
+
 export enum ApiPaths {
   user_me = 'api-user-me',
   user_token = 'api-user-token',
@@ -55,7 +57,12 @@ export enum ApiPaths {
   approval_detail = 'api-approval-detail',
   approval_detail_type = 'api-approval-detail-type',
   approval_start = 'api-approval-start',
-  approval_decision = 'api-approval-decision'
+  approval_decision = 'api-approval-decision',
+
+  // Frontend
+  frontend_user = 'frontend-user',
+  frontend_project = 'frontend-project',
+  frontend_po = 'frontend-po'
 }
 
 export function url(path: ApiPaths, pk?: any, kwargs?: any): string {
@@ -82,6 +89,14 @@ export function url(path: ApiPaths, pk?: any, kwargs?: any): string {
       return `/approval/`;
     case ApiPaths.approval_decision:
       return `/approval/${pk}/decision/`;
+
+    // Frontend
+    case ApiPaths.frontend_user:
+      return `/${url_base}/user/${pk}`;
+    case ApiPaths.frontend_project:
+      return `/${url_base}/project/${pk}`;
+    case ApiPaths.frontend_po:
+      return `/${url_base}/order/purchase-order/${pk}`;
 
     default:
       return '';
