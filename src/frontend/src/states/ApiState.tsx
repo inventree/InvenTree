@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
+import { url_base } from '../main';
 import { ServerAPIProps, UserProps } from './states';
 
 interface ApiStateProps {
@@ -43,8 +44,6 @@ export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
     });
   }
 }));
-
-const url_base = 'platform';
 
 export enum ApiPaths {
   user_me = 'api-user-me',

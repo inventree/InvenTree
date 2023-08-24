@@ -10,7 +10,12 @@ from django.utils.safestring import mark_safe
 logger = getLogger("InvenTree")
 register = template.Library()
 
-PUI_SETTINGS = json.dumps(settings.PUI_SETTINGS)
+
+PUI_DEFAULTS = {
+    'url_base': settings.PUI_URL_BASE,
+}
+PUI_DEFAULTS.update(getattr(settings, 'PUI_SETTINGS', {}))
+PUI_SETTINGS = json.dumps(PUI_DEFAULTS)
 
 
 @register.simple_tag

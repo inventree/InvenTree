@@ -607,11 +607,6 @@ DATABASES = {
 REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
 
-# Magic login django-sesame
-SESAME_MAX_AGE = 300
-# LOGIN_REDIRECT_URL = "/platform/logged-in/"
-LOGIN_REDIRECT_URL = "/index/"
-
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
 
@@ -982,6 +977,7 @@ CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', '
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
 
 # Frontend settings
+PUI_URL_BASE = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', None)
 PUI_SETTINGS = get_setting("INVENTREE_PUI_SETTINGS", "pui_settings", {})
 
 if DEBUG:
@@ -1009,3 +1005,8 @@ if CUSTOM_FLAGS:
     else:
         logger.info(f"Custom flags: {CUSTOM_FLAGS}")
         FLAGS.update(CUSTOM_FLAGS)
+
+# Magic login django-sesame
+SESAME_MAX_AGE = 300
+# LOGIN_REDIRECT_URL = f"/{PUI_URL_BASE}/logged-in/"
+LOGIN_REDIRECT_URL = "/index/"

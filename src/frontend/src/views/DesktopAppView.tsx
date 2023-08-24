@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { queryClient, setApiDefaults } from '../App';
 import { BaseContext } from '../contexts/BaseContext';
 import { defaultHostList } from '../defaults/defaultHostList';
+import { url_base } from '../main';
 import { routes } from '../routes';
 import { useApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
@@ -35,7 +36,7 @@ export default function DesktopAppView() {
   return (
     <BaseContext>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter basename="platform">{routes}</BrowserRouter>
+        <BrowserRouter basename={url_base}>{routes}</BrowserRouter>
       </QueryClientProvider>
     </BaseContext>
   );
