@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-23 10:47+0000\n"
-"PO-Revision-Date: 2023-08-18 14:35\n"
+"POT-Creation-Date: 2023-08-24 06:03+0000\n"
+"PO-Revision-Date: 2023-08-25 03:12\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -169,35 +169,35 @@ msgstr "Le nombre de numéros de série uniques ({s}) doit correspondre à la qu
 msgid "Remove HTML tags from this value"
 msgstr "Retirer les balises HTML de cette valeur"
 
-#: InvenTree/helpers_model.py:131
+#: InvenTree/helpers_model.py:125
 msgid "Connection error"
 msgstr "Erreur de connexion"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:140
+#: InvenTree/helpers_model.py:129 InvenTree/helpers_model.py:134
 msgid "Server responded with invalid status code"
 msgstr "Le serveur a répondu avec un code de statut invalide"
 
-#: InvenTree/helpers_model.py:137
+#: InvenTree/helpers_model.py:131
 msgid "Exception occurred"
 msgstr "Une erreur est survenue"
 
-#: InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139
 msgid "Server responded with invalid Content-Length value"
 msgstr "Le serveur a répondu avec une valeur de longueur de contenu invalide"
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:142
 msgid "Image size is too large"
 msgstr "Image trop volumineuse"
 
-#: InvenTree/helpers_model.py:160
+#: InvenTree/helpers_model.py:154
 msgid "Image download exceeded maximum size"
 msgstr "La taille de l'image dépasse la taille maximale autorisée"
 
-#: InvenTree/helpers_model.py:165
+#: InvenTree/helpers_model.py:159
 msgid "Remote server returned empty response"
 msgstr "Le serveur distant a renvoyé une réponse vide"
 
-#: InvenTree/helpers_model.py:173
+#: InvenTree/helpers_model.py:167
 msgid "Supplied URL is not a valid image file"
 msgstr "L'URL fournie n'est pas un fichier image valide"
 
@@ -1970,7 +1970,7 @@ msgstr "Sorties incomplètes"
 #: common/files.py:63
 #, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr ""
+msgstr "Type de fichier non pris en charge {fmt}"
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
@@ -2015,7 +2015,7 @@ msgstr "Date de la dernière mise à jour"
 
 #: common/models.py:107
 msgid "Unique project code"
-msgstr ""
+msgstr "Code projet unique"
 
 #: common/models.py:114
 msgid "Project description"
@@ -2112,7 +2112,7 @@ msgstr "Devise par défaut"
 
 #: common/models.py:1028
 msgid "Select base currency for pricing calculations"
-msgstr ""
+msgstr "Sélectionnez la devise de base pour les calculs de prix"
 
 #: common/models.py:1035
 msgid "Download from URL"
@@ -2194,7 +2194,7 @@ msgstr "Les résultats de la tâche en arrière-plan seront supprimés après le
 
 #: common/models.py:1117
 msgid "Error Log Deletion Interval"
-msgstr ""
+msgstr "Intervalle de suppression du journal d'erreur"
 
 #: common/models.py:1118
 msgid "Error logs will be deleted after specified number of days"
@@ -2202,7 +2202,7 @@ msgstr "Les logs d'erreur seront supprimés après le nombre de jours spécifié
 
 #: common/models.py:1128
 msgid "Notification Deletion Interval"
-msgstr ""
+msgstr "Intervalle de suppression du journal de notification"
 
 #: common/models.py:1129
 msgid "User notifications will be deleted after specified number of days"
@@ -2234,11 +2234,11 @@ msgstr "Autoriser la numérisation de codes-barres via la webcam dans le navigat
 
 #: common/models.py:1164
 msgid "Part Revisions"
-msgstr ""
+msgstr "Modifications de la pièce"
 
 #: common/models.py:1165
 msgid "Enable revision field for Part"
-msgstr ""
+msgstr "Activer le champ de modification de la pièce"
 
 #: common/models.py:1171
 msgid "IPN Regex"
@@ -2487,7 +2487,7 @@ msgstr "N'utiliser que des pièces de variante actives pour calculer le prix de 
 
 #: common/models.py:1384
 msgid "Pricing Rebuild Interval"
-msgstr ""
+msgstr "Intervalle de regénération des prix"
 
 #: common/models.py:1385
 msgid "Number of days before part pricing is automatically updated"
@@ -2647,7 +2647,7 @@ msgstr "Icône par défaut de l'emplacement du stock (vide signifie aucune icôn
 
 #: common/models.py:1534
 msgid "Show Installed Stock Items"
-msgstr ""
+msgstr "Afficher les pièces en stock installées"
 
 #: common/models.py:1535
 msgid "Display installed stock items in stock tables"
@@ -2683,7 +2683,7 @@ msgstr "Modifier les retours de commandes terminées"
 
 #: common/models.py:1563
 msgid "Allow editing of return orders after they have been completed"
-msgstr ""
+msgstr "Autoriser la modification des retours après leur enregistrement"
 
 #: common/models.py:1569
 msgid "Sales Order Reference Pattern"
@@ -2863,7 +2863,7 @@ msgstr "Autoriser les plugins à répondre aux évènements internes"
 
 #: common/models.py:1731
 msgid "Enable project codes"
-msgstr ""
+msgstr "Activer les codes projet"
 
 #: common/models.py:1732
 msgid "Enable project codes for tracking projects"
@@ -12809,8 +12809,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12945,3 +12944,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:256
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
