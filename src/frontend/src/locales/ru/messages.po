@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-16 14:08\n"
+"PO-Revision-Date: 2023-08-25 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -20,25 +20,25 @@ msgstr ""
 
 #: src/components/DashboardItemProxy.tsx:32
 msgid "Title"
-msgstr ""
+msgstr "Заголовок"
 
 #: src/components/forms/AuthenticationForm.tsx:36
 msgid "Login failed"
-msgstr ""
+msgstr "Ошибка входа"
 
 #: src/components/forms/AuthenticationForm.tsx:37
 #: src/components/forms/AuthenticationForm.tsx:63
 #: src/functions/auth.tsx:90
 msgid "Check your input and try again."
-msgstr ""
+msgstr "Проверьте введенные данные и повторите попытку."
 
 #: src/components/forms/AuthenticationForm.tsx:42
 msgid "Login successful"
-msgstr ""
+msgstr "Вы вошли"
 
 #: src/components/forms/AuthenticationForm.tsx:43
 msgid "Welcome back!"
-msgstr ""
+msgstr "С возвращением!"
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -53,7 +53,7 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:54
 #: src/functions/auth.tsx:81
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "Отправка почты прошла успешно"
 
 #: src/components/forms/AuthenticationForm.tsx:55
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
@@ -61,7 +61,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:62
 msgid "Input error"
-msgstr ""
+msgstr "Ошибка ввода"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -74,7 +74,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:81
 msgid "Username"
-msgstr ""
+msgstr "Имя пользователя"
 
 #: src/components/forms/AuthenticationForm.tsx:87
 #: src/pages/Auth/Set-Password.tsx:105
