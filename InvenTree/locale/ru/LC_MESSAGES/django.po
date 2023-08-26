@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-24 06:03+0000\n"
-"PO-Revision-Date: 2023-08-25 03:12\n"
+"PO-Revision-Date: 2023-08-26 03:11\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1868,7 +1868,7 @@ msgstr "Сборка не завершена"
 
 #: build/templates/build/detail.html:164 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
-msgstr ""
+msgstr "Порожденные заказы на сборку"
 
 #: build/templates/build/detail.html:177
 msgid "Allocate Stock to Build"
@@ -3155,11 +3155,11 @@ msgstr ""
 
 #: common/models.py:2038
 msgid "Search Build Orders"
-msgstr ""
+msgstr "Искать заказы на сборку"
 
 #: common/models.py:2039
 msgid "Display build orders in search preview window"
-msgstr ""
+msgstr "Отображать заказы на сборку в окне предварительного просмотра поиска"
 
 #: common/models.py:2045
 msgid "Search Purchase Orders"
@@ -6159,7 +6159,7 @@ msgstr ""
 
 #: part/models.py:3837
 msgid "This BOM item is consumable (it is not tracked in build orders)"
-msgstr ""
+msgstr "Эта позиция - расходник. (она не отслеживается в заказах на сборку)"
 
 #: part/models.py:3841 part/templates/part/upload_bom.html:55
 msgid "Overage"
@@ -6909,7 +6909,7 @@ msgstr ""
 #: part/templates/part/part_base.html:220
 #: stock/templates/stock/item_base.html:389
 msgid "Allocated to Build Orders"
-msgstr ""
+msgstr "Зарезервировано для сборки"
 
 #: part/templates/part/part_base.html:229
 #: stock/templates/stock/item_base.html:382
@@ -8589,7 +8589,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:148
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Требуется для сборки"
 
 #: templates/InvenTree/index.html:156
 msgid "Expired Stock"
@@ -8601,11 +8601,11 @@ msgstr ""
 
 #: templates/InvenTree/index.html:199
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Активные заказы на сборку"
 
 #: templates/InvenTree/index.html:210
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Просроченные заказы на сборку"
 
 #: templates/InvenTree/index.html:230
 msgid "Outstanding Purchase Orders"
