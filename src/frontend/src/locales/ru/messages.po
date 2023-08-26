@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-25 03:12\n"
+"PO-Revision-Date: 2023-08-26 03:11\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -343,7 +343,7 @@ msgstr ""
 #: src/components/nav/SearchDrawer.tsx:132
 #: src/pages/Index/Build.tsx:13
 msgid "Build Orders"
-msgstr ""
+msgstr "Заказы на сборку"
 
 #: src/components/nav/SearchDrawer.tsx:143
 msgid "Companies"
@@ -795,7 +795,7 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:55
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Требуется для заказов на сборку"
 
 #: src/defaults/dashboardItems.tsx:62
 msgid "Expired Stock"
@@ -807,11 +807,11 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:76
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Активные заказы на сборку"
 
 #: src/defaults/dashboardItems.tsx:83
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Просроченные заказы на сборку"
 
 #: src/defaults/dashboardItems.tsx:90
 msgid "Outstanding Purchase Orders"
