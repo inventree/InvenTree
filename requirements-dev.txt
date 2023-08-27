@@ -14,13 +14,13 @@ certifi==2023.7.22
     # via
     #   -c requirements.txt
     #   requests
-cfgv==3.3.1
+cfgv==3.4.0
     # via pre-commit
 charset-normalizer==3.2.0
     # via
     #   -c requirements.txt
     #   requests
-click==8.1.6
+click==8.1.7
     # via pip-tools
 coverage==5.5
     # via
@@ -35,7 +35,7 @@ django==3.2.20
     #   -c requirements.txt
     #   django-debug-toolbar
     #   django-slowtests
-django-debug-toolbar==4.1.0
+django-debug-toolbar==4.2.0
     # via -r requirements-dev.in
 django-slowtests==1.1.1
     # via -r requirements-dev.in
@@ -52,7 +52,7 @@ flake8==6.1.0
     #   pep8-naming
 flake8-docstrings==1.7.0
     # via -r requirements-dev.in
-identify==2.5.26
+identify==2.5.27
     # via pre-commit
 idna==3.4
     # via
@@ -70,7 +70,7 @@ packaging==23.1
     #   build
 pep8-naming==0.13.3
     # via -r requirements-dev.in
-pip-tools==7.2.0
+pip-tools==7.3.0
     # via -r requirements-dev.in
 platformdirs==3.10.0
     # via virtualenv
@@ -117,9 +117,9 @@ urllib3==2.0.4
     # via
     #   -c requirements.txt
     #   requests
-virtualenv==20.24.2
+virtualenv==20.24.3
     # via pre-commit
-wheel==0.41.1
+wheel==0.41.2
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
