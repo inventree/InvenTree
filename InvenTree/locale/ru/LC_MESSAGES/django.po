@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-24 06:03+0000\n"
-"PO-Revision-Date: 2023-08-26 03:11\n"
+"PO-Revision-Date: 2023-08-29 00:53\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -953,7 +953,7 @@ msgstr "Порядок сборки"
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:186 users/models.py:42
 msgid "Build Orders"
-msgstr "Порядок сборки"
+msgstr "Заказы на сборку"
 
 #: build/models.py:115
 msgid "Invalid choice for parent build"
@@ -5469,7 +5469,7 @@ msgstr "В заказе"
 
 #: part/admin.py:63 part/templates/part/part_sidebar.html:27
 msgid "Used In"
-msgstr "Сборки"
+msgstr "Используется в"
 
 #: part/admin.py:65 part/templates/part/part_base.html:243 stock/admin.py:124
 #: templates/js/translated/part.js:691 templates/js/translated/part.js:2127
