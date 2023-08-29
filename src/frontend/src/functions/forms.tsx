@@ -97,13 +97,7 @@ export function extractAvailableFields(
  * Construct and open a modal form
  * @param title :
  */
-export function openModalApiForm({
-  title,
-  props
-}: {
-  title: string;
-  props: ApiFormProps;
-}) {
+export function openModalApiForm(props: ApiFormProps) {
   // method property *must* be supplied
   if (!props.method) {
     notifications.show({
@@ -130,10 +124,10 @@ export function openModalApiForm({
         return;
       }
 
-      let modalId: string = `modal-${title}-${url}`;
+      let modalId: string = `modal-${props.title}-${url}`;
 
       modals.open({
-        title: title,
+        title: props.title,
         modalId: modalId,
         onClose: () => {
           props.onClose ? props.onClose() : null;
@@ -160,56 +154,32 @@ export function openModalApiForm({
 /**
  * Opens a modal form to create a new model instance
  */
-export function openCreateApiForm({
-  title,
-  props
-}: {
-  title: string;
-  props: ApiFormProps;
-}) {
+export function openCreateApiForm(props: ApiFormProps) {
   let createProps: ApiFormProps = {
     ...props,
     method: 'POST'
   };
 
-  openModalApiForm({
-    title: title,
-    props: createProps
-  });
+  openModalApiForm(createProps);
 }
 
 /**
  * Open a modal form to edit a model instance
  */
-export function openEditApiForm({
-  title,
-  props
-}: {
-  title: string;
-  props: ApiFormProps;
-}) {
+export function openEditApiForm(props: ApiFormProps) {
   let editProps: ApiFormProps = {
     ...props,
     fetchInitialData: props.fetchInitialData ?? true,
     method: 'PUT'
   };
 
-  openModalApiForm({
-    title: title,
-    props: editProps
-  });
+  openModalApiForm(editProps);
 }
 
 /**
  * Open a modal form to delete a model instancel
  */
-export function openDeleteApiForm({
-  title,
-  props
-}: {
-  title: string;
-  props: ApiFormProps;
-}) {
+export function openDeleteApiForm(props: ApiFormProps) {
   let deleteProps: ApiFormProps = {
     ...props,
     method: 'DELETE',
@@ -217,8 +187,5 @@ export function openDeleteApiForm({
     submitColor: 'red'
   };
 
-  openModalApiForm({
-    title: title,
-    props: deleteProps
-  });
+  openModalApiForm(deleteProps);
 }
