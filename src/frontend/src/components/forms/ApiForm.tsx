@@ -90,7 +90,7 @@ export function ApiForm({
   }, [props]);
 
   // Error observed during form construction
-  const [error, setError] = useState<string>('');
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   // Query manager for retrieiving initial data from the server
   const initialDataQuery = useQuery({
@@ -113,13 +113,22 @@ export function ApiForm({
         })
         .catch((error) => {
           console.error('Error fetching initial data:', error);
-          setError(error.message);
         });
     }
   });
 
   // Fetch initial data on form load
   useEffect(() => {
+    // Provide initial form data
+    props.fields.forEach((field) => {
+      if (field.value !== undefined) {
+        form.setValues({
+          [field.name]: field.value
+        });
+      }
+    });
+
+    // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
       initialDataQuery.refetch();
     }
@@ -131,6 +140,9 @@ export function ApiForm({
     queryKey: ['form-submit', props.name, props.url, props.pk],
     queryFn: async () => {
       let method = props.method?.toLowerCase() ?? 'get';
+
+      console.log('Submitting form:', url, method);
+      console.log('Data:', form.values);
 
       api({
         method: method,
@@ -192,22 +204,13 @@ export function ApiForm({
     refetchOnWindowFocus: false
   });
 
-  // State variable to determine if the form can render the data
-  const [canRender, setCanRender] = useState<boolean>(false);
-
-  // Update the canRender state variable on status change
-  useEffect(() => {
-    setCanRender(!error);
-  }, [error]);
-
   // State variable to determine if the form can be submitted
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
 
   // Update the canSubmit state variable on status change
   useEffect(() => {
-    setCanSubmit(canRender && !submitQuery.isFetching);
-    // TODO: This will be updated when we have a query manager for form submission
-  }, [canRender, submitQuery.isFetching]);
+    setCanSubmit(!submitQuery.isFetching);
+  }, [submitQuery.isFetching]);
 
   /**
    * Callback to perform form submission
@@ -232,35 +235,42 @@ export function ApiForm({
         <LoadingOverlay
           visible={initialDataQuery.isFetching || submitQuery.isFetching}
         />
-        {error && (
+        {false && form.errors && (
+          <Alert radius="sm" color="red" title={`Error`}>
+            <Text>Form Errors Exist</Text>
+          </Alert>
+        )}
+        {false && errorMessages && (
           <Alert
             radius="sm"
             color="red"
             title={`Error`}
             icon={<IconAlertCircle size="1rem" />}
           >
-            {error}
+            <Stack spacing="xs">
+              {errorMessages.map((message) => (
+                <Text key={message}>{message}</Text>
+              ))}
+            </Stack>
           </Alert>
         )}
         {preFormElement}
-        {canRender && (
-          <ScrollArea>
-            <Stack spacing="xs">
-              {props.fields
-                .filter((field) => !field.hidden)
-                .map((field) => (
-                  <ApiFormField
-                    key={field.name}
-                    field={field}
-                    formProps={props}
-                    form={form}
-                    error={form.errors[field.name] ?? null}
-                    definitions={fieldDefinitions}
-                  />
-                ))}
-            </Stack>
-          </ScrollArea>
-        )}
+        <ScrollArea>
+          <Stack spacing="xs">
+            {props.fields
+              .filter((field) => !field.hidden)
+              .map((field) => (
+                <ApiFormField
+                  key={field.name}
+                  field={field}
+                  formProps={props}
+                  form={form}
+                  error={form.errors[field.name] ?? null}
+                  definitions={fieldDefinitions}
+                />
+              ))}
+          </Stack>
+        </ScrollArea>
         {postFormElement}
       </Stack>
       <Divider />

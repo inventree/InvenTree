@@ -19,6 +19,7 @@ function ApiFormsPlayground() {
     name: 'part',
     url: '/part/',
     title: 'Create Part',
+    successMessage: 'Part created successfully',
     fields: [
       {
         name: 'name'
@@ -28,7 +29,8 @@ function ApiFormsPlayground() {
       },
       {
         name: 'category',
-        hidden: true
+        hidden: true,
+        value: 1
       }
     ]
   };
