@@ -25,6 +25,10 @@ function ApiFormsPlayground() {
       },
       {
         name: 'description'
+      },
+      {
+        name: 'category',
+        hidden: true
       }
     ]
   };
@@ -35,6 +39,7 @@ function ApiFormsPlayground() {
     title: 'Edit Part',
     submitText: 'Save',
     cancelText: 'Custom Cancel',
+    successMessage: 'Part saved successfully',
     fields: [
       {
         name: 'name'
@@ -44,6 +49,10 @@ function ApiFormsPlayground() {
       },
       {
         name: 'IPN'
+      },
+      {
+        name: 'category',
+        hidden: true
       }
     ]
   };

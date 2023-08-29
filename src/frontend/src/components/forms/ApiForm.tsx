@@ -1,4 +1,3 @@
-import { jsx } from '@emotion/react';
 import {
   Alert,
   Divider,
@@ -6,16 +5,18 @@ import {
   ScrollArea,
   Text
 } from '@mantine/core';
-import { Button, Group, Loader, Stack } from '@mantine/core';
+import { Button, Group, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
 import { api } from '../../App';
 import { constructFormUrl } from '../../functions/forms';
+import { invalidResponse } from '../../functions/notifications';
 import { ApiFormField, ApiFormFieldType } from './ApiFormField';
 
 /**
@@ -41,6 +42,7 @@ export interface ApiFormProps {
   method?: string;
   preFormContent?: JSX.Element | (() => JSX.Element);
   postFormContent?: JSX.Element | (() => JSX.Element);
+  successMessage?: string;
   onClose?: () => void;
   onFormSuccess?: () => void;
   onFormError?: () => void;
@@ -128,43 +130,63 @@ export function ApiForm({
     enabled: false,
     queryKey: ['form-submit', props.name, props.url, props.pk],
     queryFn: async () => {
-      switch (props.method?.toUpperCase()) {
-        case 'PUT':
-          return api
-            .put(url, form.values)
-            .then((response) => {
-              console.log('response:', response.status, response.data);
-              return response;
-            })
-            .catch((error) => {
-              if (error.response) {
-                switch (error.response.status) {
-                  case 400:
-                    console.log('400 error:', error.response.data);
-                    form.setErrors(error.response.data);
-                    // form.setErrors({
-                    //   name: 'This field is required',
-                    // });
-                    break;
-                  default:
-                    // TODO:
-                    break;
-                }
-              } else {
-                console.error(
-                  'put error:',
-                  error.response.status,
-                  error.response.data
-                );
-                // TODO: ???
+      let method = props.method?.toLowerCase() ?? 'get';
+
+      api({
+        method: method,
+        url: url,
+        data: form.values
+      })
+        .then((response) => {
+          switch (response.status) {
+            case 200:
+            case 201:
+            case 204:
+              // Form was submitted successfully
+
+              // Optionally call the onFormSuccess callback
+              if (props.onFormSuccess) {
+                props.onFormSuccess();
               }
 
-              return error;
-            });
-        default:
-          console.log('unhandled form method:', props.method);
-          return null;
-      }
+              // Optionally show a success message
+              if (props.successMessage) {
+                notifications.show({
+                  title: 'Success',
+                  message: props.successMessage,
+                  color: 'green'
+                });
+              }
+
+              closeForm();
+              break;
+            default:
+              // Unexpected state on form success
+              invalidResponse(response.status);
+              closeForm();
+              break;
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+            switch (error.response.status) {
+              case 400:
+                // Data validation error
+                form.setErrors(error.response.data);
+                break;
+              default:
+                // Unexpected state on form error
+                invalidResponse(error.response.status);
+                closeForm();
+                break;
+            }
+          } else {
+            invalidResponse(0);
+            closeForm();
+          }
+
+          return error;
+        });
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false
@@ -185,7 +207,7 @@ export function ApiForm({
   useEffect(() => {
     setCanSubmit(canRender && !submitQuery.isFetching);
     // TODO: This will be updated when we have a query manager for form submission
-  }, [canRender]);
+  }, [canRender, submitQuery.isFetching]);
 
   /**
    * Callback to perform form submission
