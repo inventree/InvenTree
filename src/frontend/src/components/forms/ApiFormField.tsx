@@ -169,6 +169,7 @@ export function ApiFormField({
           <Checkbox
             radius="sm"
             {...definition}
+            icon={undefined}
             error={error}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
