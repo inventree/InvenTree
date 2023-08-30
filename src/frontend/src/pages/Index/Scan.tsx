@@ -40,6 +40,7 @@ interface ScanItem {
   name: string;
   data: any;
   timestamp: Date;
+  source: string;
 }
 
 export default function Scan() {
@@ -83,15 +84,15 @@ export default function Scan() {
 
   // input stuff
   const inputOptions = [
-    { value: 'manually', label: t`Manual input` },
-    { value: 'imageBarcode', label: t`Image Barcode` }
+    { value: InputMethod.Manual, label: t`Manual input` },
+    { value: InputMethod.ImageBarcode, label: t`Image Barcode` }
   ];
 
   const inp = (function () {
     switch (value) {
-      case 'manually':
+      case InputMethod.Manual:
         return <InputManual action={addItems} />;
-      case 'imageBarcode':
+      case InputMethod.ImageBarcode:
         return <InputImageBarcode action={addItems} />;
       default:
         return <Text>No input selected</Text>;
@@ -258,11 +259,16 @@ function HistoryTable({
   );
 }
 
+// region input stuff
+enum InputMethod {
+  Manual = 'manually',
+  ImageBarcode = 'imageBarcode'
+}
+
 interface inputProps {
   action: (items: ScanItem[]) => void;
 }
 
-// region input methods
 function InputManual({ action }: inputProps) {
   const [value, setValue] = useState<string>('');
 
@@ -271,7 +277,8 @@ function InputManual({ action }: inputProps) {
       id: randomId(),
       name: value,
       data: { item: value },
-      timestamp: new Date()
+      timestamp: new Date(),
+      source: InputMethod.Manual
     };
     action([new_item]);
   }
@@ -281,7 +288,8 @@ function InputManual({ action }: inputProps) {
       id: randomId(),
       name: 'Test item',
       data: {},
-      timestamp: new Date()
+      timestamp: new Date(),
+      source: InputMethod.Manual
     };
     action([new_item]);
   }
