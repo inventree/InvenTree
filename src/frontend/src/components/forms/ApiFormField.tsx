@@ -19,6 +19,24 @@ import { RelatedModelField } from './RelatedModelField';
  * - The 'name' attribute *must* be provided
  * - All other attributes are optional, and may be provided by the API
  * - However, they can be overridden by the user
+ *
+ * @param name : The name of the field
+ * @param label : The label to display for the field
+ * @param value : The value of the field
+ * @param default : The default value of the field
+ * @param icon : An icon to display next to the field
+ * @param fieldType : The type of field to render
+ * @param api_url : The API endpoint to fetch data from (for related fields)
+ * @param read_only : Whether the field is read-only
+ * @param model : The model to use for related fields
+ * @param required : Whether the field is required
+ * @param hidden : Whether the field is hidden
+ * @param disabled : Whether the field is disabled
+ * @param placeholder : The placeholder text to display
+ * @param description : The description to display for the field
+ * @param preFieldContent : Content to render before the field
+ * @param postFieldContent : Content to render after the field
+ * @param onValueChange : Callback function to call when the field value changes
  */
 export type ApiFormFieldType = {
   name: string;
@@ -37,6 +55,7 @@ export type ApiFormFieldType = {
   description?: string;
   preFieldContent?: JSX.Element | (() => JSX.Element);
   postFieldContent?: JSX.Element | (() => JSX.Element);
+  onValueChange?: (value: any) => void;
 };
 
 /*
@@ -133,7 +152,10 @@ export function ApiFormField({
   function onChange(value: any) {
     form.setValues({ [definition.name]: value });
 
-    // TODO: Implement custom callback for this field
+    // Run custom callback for this field
+    if (definition.onValueChange) {
+      definition.onValueChange(value);
+    }
   }
 
   // Construct the individual field
