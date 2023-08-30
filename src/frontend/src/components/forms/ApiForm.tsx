@@ -21,9 +21,20 @@ import { ApiFormField, ApiFormFieldType } from './ApiFormField';
 
 /**
  * Properties for the ApiForm component
- * @param url : The API endpoint to fetch the form from.
- * @param fields : The fields to render in the form.
- * @param opened : Whether the form is opened or not.
+ * @param name : The name (identifier) for this form
+ * @param url : The API endpoint to fetch the form data from
+ * @param pk : Optional primary-key value when editing an existing object
+ * @param title : The title to display in the form header
+ * @param fields : The fields to render in the form
+ * @param submitText : Optional custom text to display on the submit button (default: Submit)4
+ * @param submitColor : Optional custom color for the submit button (default: green)
+ * @param cancelText : Optional custom text to display on the cancel button (default: Cancel)
+ * @param cancelColor : Optional custom color for the cancel button (default: blue)
+ * @param fetchInitialData : Optional flag to fetch initial data from the server (default: true)
+ * @param method : Optional HTTP method to use when submitting the form (default: GET)
+ * @param preFormContent : Optional content to render before the form fields
+ * @param postFormContent : Optional content to render after the form fields
+ * @param successMessage : Optional message to display on successful form submission
  * @param onClose : A callback function to call when the form is closed.
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
