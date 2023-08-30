@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro';
 import {
   Alert,
   Divider,
@@ -152,9 +153,6 @@ export function ApiForm({
     queryFn: async () => {
       let method = props.method?.toLowerCase() ?? 'get';
 
-      console.log('Submitting form:', url, method);
-      console.log('Data:', form.values);
-
       api({
         method: method,
         url: url,
@@ -175,7 +173,7 @@ export function ApiForm({
               // Optionally show a success message
               if (props.successMessage) {
                 notifications.show({
-                  title: 'Success',
+                  title: t`Success`,
                   message: props.successMessage,
                   color: 'green'
                 });
@@ -292,7 +290,7 @@ export function ApiForm({
           radius="sm"
           color={props.cancelColor ?? 'blue'}
         >
-          {props.cancelText ?? `Cancel`}
+          {props.cancelText ?? t`Cancel`}
         </Button>
         <Button
           onClick={submitForm}
@@ -301,7 +299,7 @@ export function ApiForm({
           color={props.submitColor ?? 'green'}
           disabled={!canSubmit}
         >
-          {props.submitText ?? `Submit`}
+          {props.submitText ?? t`Submit`}
         </Button>
       </Group>
     </Stack>

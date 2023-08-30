@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { AxiosResponse } from 'axios';
@@ -143,7 +142,7 @@ export function openModalApiForm(props: ApiFormProps) {
         invalidResponse(error.response.status);
       } else {
         notifications.show({
-          title: 'Form Error',
+          title: t`Form Error`,
           message: error.message,
           color: 'red'
         });
