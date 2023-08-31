@@ -2,8 +2,8 @@ import {
   Alert,
   Checkbox,
   NumberInput,
-  Select,
   Stack,
+  Switch,
   TextInput
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
@@ -188,10 +188,10 @@ export function ApiFormField({
         );
       case 'boolean':
         return (
-          <Checkbox
-            radius="sm"
+          <Switch
+            radius="lg"
+            size="sm"
             {...definition}
-            icon={undefined}
             error={error}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
