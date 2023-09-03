@@ -70,7 +70,10 @@ export default function Scan() {
     defaultValue: []
   });
   const [selection, setSelection] = useState<string[]>([]);
-  const [value, setValue] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useLocalStorage<string | null>({
+    key: 'input-selection',
+    defaultValue: null
+  });
 
   // button handlers
   function btnRunSelectedBarcode() {
@@ -156,7 +159,7 @@ export default function Scan() {
   ];
 
   const inp = (function () {
-    switch (value) {
+    switch (inputValue) {
       case InputMethod.Manual:
         return <InputManual action={addItems} />;
       case InputMethod.ImageBarcode:
@@ -236,8 +239,8 @@ export default function Scan() {
                   <Trans>Input</Trans>
                 </TitleWithDoc>
                 <Select
-                  value={value}
-                  onChange={setValue}
+                  value={inputValue}
+                  onChange={setInputValue}
                   data={inputOptions}
                   searchable
                   placeholder={t`Select input method`}
