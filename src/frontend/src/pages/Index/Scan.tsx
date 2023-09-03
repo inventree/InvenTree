@@ -13,7 +13,6 @@ import {
   Table,
   Text,
   TextInput,
-  Title,
   rem
 } from '@mantine/core';
 import { Badge, Container } from '@mantine/core';
@@ -45,6 +44,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
+import { TitleWithDoc } from '../../components/items/TitleWithDoc';
 import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
 
@@ -165,14 +165,15 @@ export default function Scan() {
   })();
 
   const SelectedActions = () => {
-    const selectedObjectTypes = selection
-      .map((id) => {
-        const item = history.find((item) => item.id === id);
-        return item?.objectType;
-      })
-      .filter((item) => item != undefined);
-    const uniqueObjectTypes = [...new Set(selectedObjectTypes)];
-    console.log(uniqueObjectTypes);
+    const uniqueObjectTypes = [
+      ...new Set(
+        selection
+          .map((id) => {
+            return history.find((item) => item.id === id)?.objectType;
+          })
+          .filter((item) => item != undefined)
+      )
+    ];
 
     if (uniqueObjectTypes.length === 0) {
       return (
@@ -224,14 +225,12 @@ export default function Scan() {
           <Stack>
             <Stack>
               <Group position="apart">
-                <Group>
-                  <Title order={3}>
-                    <Trans>Input</Trans>
-                  </Title>
-                  <DocInfo
-                    text={t`Select the input method you want to use to scan items.`}
-                  />
-                </Group>
+                <TitleWithDoc
+                  order={3}
+                  text={t`Select the input method you want to use to scan items.`}
+                >
+                  <Trans>Input</Trans>
+                </TitleWithDoc>
                 <Select
                   value={value}
                   onChange={setValue}
@@ -245,14 +244,12 @@ export default function Scan() {
               {inp}
             </Stack>
             <Stack spacing={0}>
-              <Group>
-                <Title order={3}>
-                  <Trans>Action</Trans>
-                </Title>
-                <DocInfo
-                  text={t`Depending on the selected parts actions will be shown here. Not all barcode types are supported currently..`}
-                />
-              </Group>
+              <TitleWithDoc
+                order={3}
+                text={t`Depending on the selected parts actions will be shown here. Not all barcode types are supported currently.`}
+              >
+                <Trans>Action</Trans>
+              </TitleWithDoc>
               {selection.length === 0 ? (
                 <Text>
                   <Trans>No selection</Trans>
@@ -296,16 +293,13 @@ export default function Scan() {
         </Col>
         <Col span={8}>
           <Group position="apart">
-            <Group>
-              <Title order={3}>
-                <Trans>History</Trans>
-              </Title>
-              <DocInfo
-                text={t`History is locally kept in this browser.`}
-                detail={t`The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area.`}
-              />
-            </Group>
-
+            <TitleWithDoc
+              order={3}
+              text={t`History is locally kept in this browser.`}
+              detail={t`The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area.`}
+            >
+              <Trans>History</Trans>
+            </TitleWithDoc>
             <ActionIcon color="red" onClick={deleteFullHistory}>
               <IconTrash />
             </ActionIcon>
