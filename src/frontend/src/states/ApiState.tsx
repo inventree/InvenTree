@@ -48,7 +48,9 @@ export enum ApiPaths {
   user_token = 'api-user-token',
   user_simple_login = 'api-user-simple-login',
   user_reset = 'api-user-reset',
-  user_reset_set = 'api-user-reset-set'
+  user_reset_set = 'api-user-reset-set',
+
+  barcode = 'api-barcode'
 }
 
 export function url(path: ApiPaths, pk?: any): string {
@@ -63,6 +65,9 @@ export function url(path: ApiPaths, pk?: any): string {
       return '/auth/password/reset/';
     case ApiPaths.user_reset_set:
       return '/auth/password/reset/confirm/';
+
+    case ApiPaths.barcode:
+      return 'barcode/';
 
     default:
       return '';

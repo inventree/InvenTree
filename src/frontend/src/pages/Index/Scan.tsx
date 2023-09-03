@@ -47,6 +47,7 @@ import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
 import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
+import { ApiPaths, url } from '../../states/ApiState';
 
 interface ScanItem {
   id: string;
@@ -69,20 +70,51 @@ export default function Scan() {
   const [selection, setSelection] = useState<string[]>([]);
   const [value, setValue] = useState<string | null>(null);
 
-  function runBarcode(value: string, id?: string) {
-    api.post('/barcode/', { barcode: value }).then((response) => {
-      showNotification({
-        title: response.data?.success || t`Unknown response`,
-        message: JSON.stringify(response.data),
-        color: response.data?.success ? 'teal' : 'red'
-      });
+  // button handlers
+  function btnRunSelectedBarcode() {
+    const item = getSelectedItem(selection[0]);
+    if (!item) return;
+    runBarcode(item?.ref, item?.id);
+  }
 
+  function btnOpenSelectedLink() {
+    const item = getSelectedItem(selection[0]);
+    if (!item) return;
+    window.open(item.link, '_blank');
+  }
+
+  function btnDeleteFullHistory() {
+    historyHandlers.setState([]);
+    setHistoryStorage([]);
+    setSelection([]);
+  }
+
+  function btnDeleteHistory() {
+    historyHandlers.setState(
+      history.filter((item) => !selection.includes(item.id))
+    );
+    setSelection([]);
+  }
+
+  // general functions
+  function getSelectedItem(ref: string): ScanItem | undefined {
+    if (selection.length === 0) return;
+    const item = history.find((item) => item.id === ref);
+    if (item?.ref === undefined) return;
+    return item;
+  }
+
+  function runBarcode(value: string, id?: string) {
+    api.post(url(ApiPaths.barcode), { barcode: value }).then((response) => {
       // update item in history
       if (!id) return;
-      const item = history.find((item) => item.id === id);
+      const item = getSelectedItem(selection[0]);
       if (!item) return;
+
+      // set link data
       item.link = response.data?.url;
 
+      // try to set object data
       if (response.data?.part) {
         item.objectType = 'part';
         item.objectPk = response.data?.part.pk;
@@ -90,29 +122,10 @@ export default function Scan() {
         item.objectType = 'stockitem';
         item.objectPk = response.data?.stockitem.pk;
       }
+      // TODO @matmair:  add more object types
 
-      console.log('saving item', item);
       historyHandlers.setState(history);
     });
-  }
-
-  function runSelectedBarcode() {
-    if (selection.length === 0) return;
-    // get item from history by selection id
-    const item = history.find((item) => item.id === selection[0]);
-    if (item?.ref === undefined) return;
-    runBarcode(item?.ref, item?.id);
-  }
-
-  function openSelectedLink() {
-    if (selection.length === 0) return;
-    const item = history.find((item) => item.id === selection[0]);
-    if (item?.ref === undefined) return;
-    window.open(item.link, '_blank');
-  }
-
-  function notImplemented() {
-    notYetImplemented();
   }
 
   function addItems(items: ScanItem[]) {
@@ -123,20 +136,7 @@ export default function Scan() {
     setSelection(items.map((item) => item.id));
   }
 
-  function deleteFullHistory() {
-    historyHandlers.setState([]);
-    setHistoryStorage([]);
-    setSelection([]);
-  }
-
-  function deleteHistory() {
-    historyHandlers.setState(
-      history.filter((item) => !selection.includes(item.id))
-    );
-    setSelection([]);
-  }
-
-  // save data to session storage
+  // save history data to session storage
   useEffect(() => {
     if (history.length === 0) return;
     setHistoryStorage(history);
@@ -164,6 +164,7 @@ export default function Scan() {
     }
   })();
 
+  // selected actions component
   const SelectedActions = () => {
     const uniqueObjectTypes = [
       ...new Set(
@@ -196,7 +197,7 @@ export default function Scan() {
           <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
         </Text>
         <Group>
-          <ActionIcon onClick={notImplemented} title={t`Cound`}>
+          <ActionIcon onClick={notYetImplemented} title={t`Count`}>
             <IconNumber />
           </ActionIcon>
         </Group>
@@ -204,6 +205,7 @@ export default function Scan() {
     );
   };
 
+  // rendering
   return (
     <>
       <Group position="apart">
@@ -265,20 +267,20 @@ export default function Scan() {
                   <Group>
                     <ActionIcon
                       color="red"
-                      onClick={deleteHistory}
+                      onClick={btnDeleteHistory}
                       title={t`Delete`}
                     >
                       <IconTrash />
                     </ActionIcon>
                     <ActionIcon
-                      onClick={runSelectedBarcode}
+                      onClick={btnRunSelectedBarcode}
                       disabled={selection.length > 1}
                       title={t`Lookup`}
                     >
                       <IconSearch />
                     </ActionIcon>
                     <ActionIcon
-                      onClick={openSelectedLink}
+                      onClick={btnOpenSelectedLink}
                       disabled={selection.length > 1}
                       title={t`Open Link`}
                     >
@@ -300,7 +302,7 @@ export default function Scan() {
             >
               <Trans>History</Trans>
             </TitleWithDoc>
-            <ActionIcon color="red" onClick={deleteFullHistory}>
+            <ActionIcon color="red" onClick={btnDeleteFullHistory}>
               <IconTrash />
             </ActionIcon>
           </Group>
@@ -410,7 +412,7 @@ interface inputProps {
 function InputManual({ action }: inputProps) {
   const [value, setValue] = useState<string>('');
 
-  function addItem() {
+  function btnAddItem() {
     if (value === '') return;
 
     const new_item: ScanItem = {
@@ -424,7 +426,7 @@ function InputManual({ action }: inputProps) {
     setValue('');
   }
 
-  function addDummyItem() {
+  function btnAddDummyItem() {
     const new_item: ScanItem = {
       id: randomId(),
       ref: 'Test item',
@@ -442,15 +444,15 @@ function InputManual({ action }: inputProps) {
           placeholder={t`Enter item serial or data`}
           value={value}
           onChange={(event) => setValue(event.currentTarget.value)}
-          onKeyDown={getHotkeyHandler([['Enter', addItem]])}
+          onKeyDown={getHotkeyHandler([['Enter', btnAddItem]])}
         />
-        <ActionIcon onClick={addItem} w={16}>
+        <ActionIcon onClick={btnAddItem} w={16}>
           <IconPlus />
         </ActionIcon>
       </Group>
 
       {IS_DEV_OR_DEMO && (
-        <Button onClick={addDummyItem} variant="outline">
+        <Button onClick={btnAddDummyItem} variant="outline">
           <Trans>Add dummy item</Trans>
         </Button>
       )}
@@ -488,10 +490,10 @@ function InputImageBarcode({ action }: inputProps) {
   // Stop/start when leaving or reentering page
   useEffect(() => {
     if (ScanningEnabled && documentState === 'hidden') {
-      stopScanning();
+      btnStopScanning();
       setWasAutoPaused(true);
     } else if (wasAutoPaused && documentState === 'visible') {
-      startScanning();
+      btnStartScanning();
       setWasAutoPaused(false);
     }
   }, [documentState]);
@@ -530,7 +532,7 @@ function InputImageBarcode({ action }: inputProps) {
     }
   }
 
-  function selectCamera() {
+  function btnSelectCamera() {
     Html5Qrcode.getCameras()
       .then((devices) => {
         if (devices?.length) {
@@ -547,7 +549,7 @@ function InputImageBarcode({ action }: inputProps) {
       });
   }
 
-  function startScanning() {
+  function btnStartScanning() {
     if (camId && qrCodeScanner && !ScanningEnabled) {
       qrCodeScanner
         .start(
@@ -572,7 +574,7 @@ function InputImageBarcode({ action }: inputProps) {
     }
   }
 
-  function stopScanning() {
+  function btnStopScanning() {
     if (qrCodeScanner && ScanningEnabled) {
       qrCodeScanner.stop().catch((err: string) => {
         showNotification({
@@ -631,7 +633,7 @@ function InputImageBarcode({ action }: inputProps) {
       </Group>
       <Container px={0} id="reader" w={'100%'} mih="300px" />
       {!camId ? (
-        <Button onClick={() => selectCamera()}>
+        <Button onClick={btnSelectCamera}>
           <Trans>Select Camera</Trans>
         </Button>
       ) : (
@@ -639,14 +641,14 @@ function InputImageBarcode({ action }: inputProps) {
           <Group>
             <Button
               sx={{ flex: 1 }}
-              onClick={() => startScanning()}
+              onClick={btnStartScanning}
               disabled={camId != undefined && ScanningEnabled}
             >
               <Trans>Start scanning</Trans>
             </Button>
             <Button
               sx={{ flex: 1 }}
-              onClick={() => stopScanning()}
+              onClick={btnStopScanning}
               disabled={!ScanningEnabled}
             >
               <Trans>Stop scanning</Trans>
