@@ -27,28 +27,36 @@ import {
 import { useDocumentVisibility } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import {
+  IconAlertCircle,
   IconArrowsMaximize,
   IconArrowsMinimize,
+  IconLink,
+  IconNumber,
   IconPlus,
+  IconQuestionMark,
+  IconSearch,
   IconTrash
 } from '@tabler/icons-react';
 import { IconX } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
-import { Html5QrcodeResult } from 'html5-qrcode/core';
 import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
+import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
 
 interface ScanItem {
   id: string;
-  name: string;
+  ref: string;
   data: any;
   timestamp: Date;
   source: string;
+  link?: string;
+  objectType?: string;
+  objectPk?: string;
 }
 
 export default function Scan() {
@@ -61,21 +69,30 @@ export default function Scan() {
   const [selection, setSelection] = useState<string[]>([]);
   const [value, setValue] = useState<string | null>(null);
 
-  function runBarcode(value: string) {
+  function runBarcode(value: string, id?: string) {
     api.post('/barcode/', { barcode: value }).then((response) => {
       showNotification({
         title: response.data?.success || t`Unknown response`,
         message: JSON.stringify(response.data),
         color: response.data?.success ? 'teal' : 'red'
       });
-      if (response.data?.url) {
-        showNotification({
-          title: t`Opening URL`,
-          message: response.data.url,
-          color: 'teal'
-        });
-        // window.location.href = response.data.url;
+
+      // update item in history
+      if (!id) return;
+      const item = history.find((item) => item.id === id);
+      if (!item) return;
+      item.link = response.data?.url;
+
+      if (response.data?.part) {
+        item.objectType = 'part';
+        item.objectPk = response.data?.part.pk;
+      } else if (response.data?.stockitem) {
+        item.objectType = 'stockitem';
+        item.objectPk = response.data?.stockitem.pk;
       }
+
+      console.log('saving item', item);
+      historyHandlers.setState(history);
     });
   }
 
@@ -83,14 +100,25 @@ export default function Scan() {
     if (selection.length === 0) return;
     // get item from history by selection id
     const item = history.find((item) => item.id === selection[0]);
-    console.log(item);
-    runBarcode(item?.name);
+    if (item?.ref === undefined) return;
+    runBarcode(item?.ref, item?.id);
+  }
+
+  function openSelectedLink() {
+    if (selection.length === 0) return;
+    const item = history.find((item) => item.id === selection[0]);
+    if (item?.ref === undefined) return;
+    window.open(item.link, '_blank');
+  }
+
+  function notImplemented() {
+    notYetImplemented();
   }
 
   function addItems(items: ScanItem[]) {
     for (const item of items) {
       historyHandlers.append(item);
-      runBarcode(item.name);
+      runBarcode(item.ref, item.id);
     }
     setSelection(items.map((item) => item.id));
   }
@@ -136,6 +164,45 @@ export default function Scan() {
     }
   })();
 
+  const SelectedActions = () => {
+    const selectedObjectTypes = selection
+      .map((id) => {
+        const item = history.find((item) => item.id === id);
+        return item?.objectType;
+      })
+      .filter((item) => item != undefined);
+    const uniqueObjectTypes = [...new Set(selectedObjectTypes)];
+    console.log(uniqueObjectTypes);
+
+    if (uniqueObjectTypes.length === 0) {
+      return (
+        <Group spacing={0}>
+          <IconQuestionMark color="orange" />
+          <Trans>Selected elements are not known</Trans>
+        </Group>
+      );
+    } else if (uniqueObjectTypes.length > 1) {
+      return (
+        <Group spacing={0}>
+          <IconAlertCircle color="orange" />
+          <Trans>Multiple object types selected</Trans>
+        </Group>
+      );
+    }
+    return (
+      <>
+        <Text fz="sm" c="dimmed">
+          <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
+        </Text>
+        <Group>
+          <ActionIcon onClick={notImplemented} title={t`Cound`}>
+            <IconNumber />
+          </ActionIcon>
+        </Group>
+      </>
+    );
+  };
+
   return (
     <>
       <Group position="apart">
@@ -156,28 +223,36 @@ export default function Scan() {
         <Col span={4}>
           <Stack>
             <Stack>
-              <Group>
-                <Title order={3}>
-                  <Trans>Input</Trans>
-                </Title>
-                <DocInfo
-                  text={t`Select the input method you want to use to scan items.`}
+              <Group position="apart">
+                <Group>
+                  <Title order={3}>
+                    <Trans>Input</Trans>
+                  </Title>
+                  <DocInfo
+                    text={t`Select the input method you want to use to scan items.`}
+                  />
+                </Group>
+                <Select
+                  value={value}
+                  onChange={setValue}
+                  data={inputOptions}
+                  searchable
+                  placeholder={t`Select input method`}
+                  nothingFound={t`Nothing found`}
                 />
               </Group>
-              <Select
-                value={value}
-                onChange={setValue}
-                data={inputOptions}
-                searchable
-                placeholder={t`Select input method`}
-                nothingFound={t`Nothing found`}
-              />
+
               {inp}
             </Stack>
-            <Stack>
-              <Title order={3}>
-                <Trans>Action</Trans>
-              </Title>
+            <Stack spacing={0}>
+              <Group>
+                <Title order={3}>
+                  <Trans>Action</Trans>
+                </Title>
+                <DocInfo
+                  text={t`Depending on the selected parts actions will be shown here. Not all barcode types are supported currently..`}
+                />
+              </Group>
               {selection.length === 0 ? (
                 <Text>
                   <Trans>No selection</Trans>
@@ -187,14 +262,33 @@ export default function Scan() {
                   <Text>
                     <Trans>{selection.length} items selected</Trans>
                   </Text>
+                  <Text fz="sm" c="dimmed">
+                    <Trans>General Actions</Trans>
+                  </Text>
                   <Group>
-                    <ActionIcon color="red" onClick={deleteHistory}>
+                    <ActionIcon
+                      color="red"
+                      onClick={deleteHistory}
+                      title={t`Delete`}
+                    >
                       <IconTrash />
                     </ActionIcon>
-                    <Button onClick={runSelectedBarcode}>
-                      <Trans>Run Barcode</Trans>
-                    </Button>
+                    <ActionIcon
+                      onClick={runSelectedBarcode}
+                      disabled={selection.length > 1}
+                      title={t`Lookup`}
+                    >
+                      <IconSearch />
+                    </ActionIcon>
+                    <ActionIcon
+                      onClick={openSelectedLink}
+                      disabled={selection.length > 1}
+                      title={t`Open Link`}
+                    >
+                      <IconLink />
+                    </ActionIcon>
                   </Group>
+                  <SelectedActions />
                 </>
               )}
             </Stack>
@@ -258,8 +352,9 @@ function HistoryTable({
             transitionDuration={0}
           />
         </td>
-        <td>{item.id}</td>
-        <td>{item.name}</td>
+        <td>{item.ref}</td>
+        <td>{item.link}</td>
+        <td>{item.source}</td>
         <td>{item.timestamp?.toString()}</td>
       </tr>
     );
@@ -287,11 +382,15 @@ function HistoryTable({
                 transitionDuration={0}
               />
             </th>
-            <th>
-              <Trans>Id</Trans>
-            </th>
+
             <th>
               <Trans>Name</Trans>
+            </th>
+            <th>
+              <Trans>Link</Trans>
+            </th>
+            <th>
+              <Trans>Source</Trans>
             </th>
             <th>
               <Trans>Scanned at</Trans>
@@ -322,7 +421,7 @@ function InputManual({ action }: inputProps) {
 
     const new_item: ScanItem = {
       id: randomId(),
-      name: value,
+      ref: value,
       data: { item: value },
       timestamp: new Date(),
       source: InputMethod.Manual
@@ -334,7 +433,7 @@ function InputManual({ action }: inputProps) {
   function addDummyItem() {
     const new_item: ScanItem = {
       id: randomId(),
-      name: 'Test item',
+      ref: 'Test item',
       data: {},
       timestamp: new Date(),
       source: InputMethod.Manual
@@ -367,22 +466,29 @@ function InputManual({ action }: inputProps) {
 
 /* Input that uses QR code detection from images */
 function InputImageBarcode({ action }: inputProps) {
-  // TODO: implement this @matmair
-
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
     key: 'camId',
     defaultValue: null
   });
+  const [cameras, setCameras] = useState<any[]>([]);
   const [ScanningEnabled, setIsScanning] = useState<boolean>(false);
   const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
   const documentState = useDocumentVisibility();
+  const [value, setValue] = useState<string | null>(null);
 
   let lastValue: string = '';
 
   // Mount QR code once we are loaded
   useEffect(() => {
     setQrCodeScanner(new Html5Qrcode('reader'));
+
+    // load cameras
+    Html5Qrcode.getCameras().then((devices) => {
+      if (devices?.length) {
+        setCameras(devices);
+      }
+    });
   }, []);
 
   // Stop/start when leaving or reentering page
@@ -397,10 +503,7 @@ function InputImageBarcode({ action }: inputProps) {
   }, [documentState]);
 
   // Scanner functions
-  function onScanSuccess(
-    decodedText: string,
-    decodedResult: Html5QrcodeResult
-  ) {
+  function onScanSuccess(decodedText: string) {
     qrCodeScanner?.pause();
 
     // dedouplication
@@ -414,12 +517,13 @@ function InputImageBarcode({ action }: inputProps) {
     action([
       {
         id: randomId(),
-        name: decodedText,
-        data: decodedResult,
+        ref: decodedText,
+        data: decodedText,
         timestamp: new Date(),
         source: InputMethod.ImageBarcode
       }
     ]);
+
     qrCodeScanner?.resume();
   }
 
@@ -450,13 +554,13 @@ function InputImageBarcode({ action }: inputProps) {
   }
 
   function startScanning() {
-    if (camId && qrCodeScanner) {
+    if (camId && qrCodeScanner && !ScanningEnabled) {
       qrCodeScanner
         .start(
           camId.id,
           { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText, decodedResult) => {
-            onScanSuccess(decodedText, decodedResult);
+          (decodedText) => {
+            onScanSuccess(decodedText);
           },
           (errorMessage) => {
             onScanFailure(errorMessage);
@@ -488,10 +592,46 @@ function InputImageBarcode({ action }: inputProps) {
     }
   }
 
+  // on value change
+  useEffect(() => {
+    if (value === null) return;
+
+    const cam = cameras.find((cam) => cam.id === value);
+
+    // stop scanning if cam changed while scanning
+    if (qrCodeScanner && ScanningEnabled) {
+      // stop scanning
+      qrCodeScanner.stop().then(() => {
+        // change ID
+        setCamId(cam);
+        // start scanning
+        qrCodeScanner.start(
+          cam.id,
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          (decodedText) => {
+            onScanSuccess(decodedText);
+          },
+          (errorMessage) => {
+            onScanFailure(errorMessage);
+          }
+        );
+      });
+    } else {
+      setCamId(cam);
+    }
+  }, [value]);
+
   return (
     <Stack>
       <Group>
-        <Text size="sm">{camId?.label}</Text>
+        <Select
+          value={value}
+          onChange={setValue}
+          data={cameras.map((device) => {
+            return { value: device.id, label: device.label };
+          })}
+        />
+        <Text>{camId?.label}</Text>
         <Space sx={{ flex: 1 }} />
         <Badge>{ScanningEnabled ? t`Scanning` : t`Not scanning`}</Badge>
       </Group>
