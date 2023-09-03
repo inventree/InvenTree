@@ -16,6 +16,7 @@ import {
   Title,
   rem
 } from '@mantine/core';
+import { Badge, Container } from '@mantine/core';
 import {
   getHotkeyHandler,
   randomId,
@@ -23,14 +24,21 @@ import {
   useListState,
   useLocalStorage
 } from '@mantine/hooks';
+import { useDocumentVisibility } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
 import {
   IconArrowsMaximize,
   IconArrowsMinimize,
   IconPlus,
   IconTrash
 } from '@tabler/icons-react';
+import { IconX } from '@tabler/icons-react';
+import { Html5Qrcode } from 'html5-qrcode';
+import { CameraDevice } from 'html5-qrcode/camera/core';
+import { Html5QrcodeResult } from 'html5-qrcode/core';
 import { useEffect, useState } from 'react';
 
+import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
 import { IS_DEV_OR_DEMO } from '../../main';
@@ -53,10 +61,38 @@ export default function Scan() {
   const [selection, setSelection] = useState<string[]>([]);
   const [value, setValue] = useState<string | null>(null);
 
+  function runBarcode(value: string) {
+    api.post('/barcode/', { barcode: value }).then((response) => {
+      showNotification({
+        title: response.data?.success || t`Unknown response`,
+        message: JSON.stringify(response.data),
+        color: response.data?.success ? 'teal' : 'red'
+      });
+      if (response.data?.url) {
+        showNotification({
+          title: t`Opening URL`,
+          message: response.data.url,
+          color: 'teal'
+        });
+        // window.location.href = response.data.url;
+      }
+    });
+  }
+
+  function runSelectedBarcode() {
+    if (selection.length === 0) return;
+    // get item from history by selection id
+    const item = history.find((item) => item.id === selection[0]);
+    console.log(item);
+    runBarcode(item?.name);
+  }
+
   function addItems(items: ScanItem[]) {
     for (const item of items) {
       historyHandlers.append(item);
+      runBarcode(item.name);
     }
+    setSelection(items.map((item) => item.id));
   }
 
   function deleteFullHistory() {
@@ -69,6 +105,7 @@ export default function Scan() {
     historyHandlers.setState(
       history.filter((item) => !selection.includes(item.id))
     );
+    setSelection([]);
   }
 
   // save data to session storage
@@ -119,9 +156,14 @@ export default function Scan() {
         <Col span={4}>
           <Stack>
             <Stack>
-              <Title order={3}>
-                <Trans>Input</Trans>
-              </Title>
+              <Group>
+                <Title order={3}>
+                  <Trans>Input</Trans>
+                </Title>
+                <DocInfo
+                  text={t`Select the input method you want to use to scan items.`}
+                />
+              </Group>
               <Select
                 value={value}
                 onChange={setValue}
@@ -149,6 +191,9 @@ export default function Scan() {
                     <ActionIcon color="red" onClick={deleteHistory}>
                       <IconTrash />
                     </ActionIcon>
+                    <Button onClick={runSelectedBarcode}>
+                      <Trans>Run Barcode</Trans>
+                    </Button>
                   </Group>
                 </>
               )}
@@ -162,7 +207,7 @@ export default function Scan() {
                 <Trans>History</Trans>
               </Title>
               <DocInfo
-                text={t`Histroy is locally kept in this browser.`}
+                text={t`History is locally kept in this browser.`}
                 detail={t`The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area.`}
               />
             </Group>
@@ -273,6 +318,8 @@ function InputManual({ action }: inputProps) {
   const [value, setValue] = useState<string>('');
 
   function addItem() {
+    if (value === '') return;
+
     const new_item: ScanItem = {
       id: randomId(),
       name: value,
@@ -281,6 +328,7 @@ function InputManual({ action }: inputProps) {
       source: InputMethod.Manual
     };
     action([new_item]);
+    setValue('');
   }
 
   function addDummyItem() {
@@ -310,7 +358,7 @@ function InputManual({ action }: inputProps) {
 
       {IS_DEV_OR_DEMO && (
         <Button onClick={addDummyItem} variant="outline">
-          Add dummy item
+          <Trans>Add dummy item</Trans>
         </Button>
       )}
     </>
@@ -320,7 +368,160 @@ function InputManual({ action }: inputProps) {
 /* Input that uses QR code detection from images */
 function InputImageBarcode({ action }: inputProps) {
   // TODO: implement this @matmair
-  return <Text>Image barcode</Text>;
+
+  const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
+  const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
+    key: 'camId',
+    defaultValue: null
+  });
+  const [ScanningEnabled, setIsScanning] = useState<boolean>(false);
+  const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
+  const documentState = useDocumentVisibility();
+
+  let lastValue: string = '';
+
+  // Mount QR code once we are loaded
+  useEffect(() => {
+    setQrCodeScanner(new Html5Qrcode('reader'));
+  }, []);
+
+  // Stop/start when leaving or reentering page
+  useEffect(() => {
+    if (ScanningEnabled && documentState === 'hidden') {
+      stopScanning();
+      setWasAutoPaused(true);
+    } else if (wasAutoPaused && documentState === 'visible') {
+      startScanning();
+      setWasAutoPaused(false);
+    }
+  }, [documentState]);
+
+  // Scanner functions
+  function onScanSuccess(
+    decodedText: string,
+    decodedResult: Html5QrcodeResult
+  ) {
+    qrCodeScanner?.pause();
+
+    // dedouplication
+    if (decodedText === lastValue) {
+      qrCodeScanner?.resume();
+      return;
+    }
+    lastValue = decodedText;
+
+    // submit value upstream
+    action([
+      {
+        id: randomId(),
+        name: decodedText,
+        data: decodedResult,
+        timestamp: new Date(),
+        source: InputMethod.ImageBarcode
+      }
+    ]);
+    qrCodeScanner?.resume();
+  }
+
+  function onScanFailure(error: string) {
+    if (
+      error !=
+      'QR code parse error, error = NotFoundException: No MultiFormat Readers were able to detect the code.'
+    ) {
+      console.warn(`Code scan error = ${error}`);
+    }
+  }
+
+  function selectCamera() {
+    Html5Qrcode.getCameras()
+      .then((devices) => {
+        if (devices?.length) {
+          setCamId(devices[0]);
+        }
+      })
+      .catch((err) => {
+        showNotification({
+          title: t`Error while getting camera`,
+          message: err,
+          color: 'red',
+          icon: <IconX />
+        });
+      });
+  }
+
+  function startScanning() {
+    if (camId && qrCodeScanner) {
+      qrCodeScanner
+        .start(
+          camId.id,
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          (decodedText, decodedResult) => {
+            onScanSuccess(decodedText, decodedResult);
+          },
+          (errorMessage) => {
+            onScanFailure(errorMessage);
+          }
+        )
+        .catch((err: string) => {
+          showNotification({
+            title: t`Error while scanning`,
+            message: err,
+            color: 'red',
+            icon: <IconX />
+          });
+        });
+      setIsScanning(true);
+    }
+  }
+
+  function stopScanning() {
+    if (qrCodeScanner && ScanningEnabled) {
+      qrCodeScanner.stop().catch((err: string) => {
+        showNotification({
+          title: t`Error while stopping`,
+          message: err,
+          color: 'red',
+          icon: <IconX />
+        });
+      });
+      setIsScanning(false);
+    }
+  }
+
+  return (
+    <Stack>
+      <Group>
+        <Text size="sm">{camId?.label}</Text>
+        <Space sx={{ flex: 1 }} />
+        <Badge>{ScanningEnabled ? t`Scanning` : t`Not scanning`}</Badge>
+      </Group>
+      <Container px={0} id="reader" w={'100%'} mih="300px" />
+      {!camId ? (
+        <Button onClick={() => selectCamera()}>
+          <Trans>Select Camera</Trans>
+        </Button>
+      ) : (
+        <>
+          <Group>
+            <Button
+              sx={{ flex: 1 }}
+              onClick={() => startScanning()}
+              disabled={camId != undefined && ScanningEnabled}
+            >
+              <Trans>Start scanning</Trans>
+            </Button>
+            <Button
+              sx={{ flex: 1 }}
+              onClick={() => stopScanning()}
+              disabled={!ScanningEnabled}
+            >
+              <Trans>Stop scanning</Trans>
+            </Button>
+          </Group>
+        </>
+      )}
+    </Stack>
+  );
 }
 
 // endregion
