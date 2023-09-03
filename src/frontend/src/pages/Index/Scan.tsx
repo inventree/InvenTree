@@ -31,6 +31,8 @@ import {
   IconArrowsMinimize,
   IconLink,
   IconNumber,
+  IconPlayerPlayFilled,
+  IconPlayerStopFilled,
   IconPlus,
   IconQuestionMark,
   IconSearch,
@@ -467,10 +469,10 @@ function InputImageBarcode({ action }: inputProps) {
     defaultValue: null
   });
   const [cameras, setCameras] = useState<any[]>([]);
+  const [cameraValue, setCameraValue] = useState<string | null>(null);
   const [ScanningEnabled, setIsScanning] = useState<boolean>(false);
   const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
   const documentState = useDocumentVisibility();
-  const [value, setValue] = useState<string | null>(null);
 
   let lastValue: string = '';
 
@@ -485,6 +487,13 @@ function InputImageBarcode({ action }: inputProps) {
       }
     });
   }, []);
+
+  // set camera value from id
+  useEffect(() => {
+    if (camId) {
+      setCameraValue(camId.id);
+    }
+  }, [camId]);
 
   // Stop/start when leaving or reentering page
   useEffect(() => {
@@ -531,6 +540,7 @@ function InputImageBarcode({ action }: inputProps) {
     }
   }
 
+  // button handlers
   function btnSelectCamera() {
     Html5Qrcode.getCameras()
       .then((devices) => {
@@ -589,9 +599,13 @@ function InputImageBarcode({ action }: inputProps) {
 
   // on value change
   useEffect(() => {
-    if (value === null) return;
+    if (cameraValue === null) return;
+    if (cameraValue === camId?.id) {
+      console.log('matching value and id');
+      return;
+    }
 
-    const cam = cameras.find((cam) => cam.id === value);
+    const cam = cameras.find((cam) => cam.id === cameraValue);
 
     // stop scanning if cam changed while scanning
     if (qrCodeScanner && ScanningEnabled) {
@@ -614,46 +628,42 @@ function InputImageBarcode({ action }: inputProps) {
     } else {
       setCamId(cam);
     }
-  }, [value]);
+  }, [cameraValue]);
 
   return (
     <Stack spacing="xs">
       <Group spacing="xs">
         <Select
-          value={value}
-          onChange={setValue}
+          value={cameraValue}
+          onChange={setCameraValue}
           data={cameras.map((device) => {
             return { value: device.id, label: device.label };
           })}
+          size="sm"
         />
-        <Text>{camId?.label}</Text>
+        {ScanningEnabled ? (
+          <ActionIcon onClick={btnStopScanning} title={t`Stop scanning`}>
+            <IconPlayerStopFilled />
+          </ActionIcon>
+        ) : (
+          <ActionIcon
+            onClick={btnStartScanning}
+            title={t`Start scanning`}
+            disabled={!camId}
+          >
+            <IconPlayerPlayFilled />
+          </ActionIcon>
+        )}
         <Space sx={{ flex: 1 }} />
-        <Badge>{ScanningEnabled ? t`Scanning` : t`Not scanning`}</Badge>
+        <Badge color={ScanningEnabled ? 'green' : 'orange'}>
+          {ScanningEnabled ? t`Scanning` : t`Not scanning`}
+        </Badge>
       </Group>
       <Container px={0} id="reader" w={'100%'} mih="300px" />
-      {!camId ? (
+      {!camId && (
         <Button onClick={btnSelectCamera}>
           <Trans>Select Camera</Trans>
         </Button>
-      ) : (
-        <>
-          <Group>
-            <Button
-              sx={{ flex: 1 }}
-              onClick={btnStartScanning}
-              disabled={camId != undefined && ScanningEnabled}
-            >
-              <Trans>Start scanning</Trans>
-            </Button>
-            <Button
-              sx={{ flex: 1 }}
-              onClick={btnStopScanning}
-              disabled={!ScanningEnabled}
-            >
-              <Trans>Stop scanning</Trans>
-            </Button>
-          </Group>
-        </>
       )}
     </Stack>
   );
