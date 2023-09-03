@@ -225,7 +225,7 @@ export default function Scan() {
       <Grid maw={'100%'}>
         <Col span={4}>
           <Stack>
-            <Stack>
+            <Stack spacing={0}>
               <Group position="apart">
                 <TitleWithDoc
                   order={3}
@@ -242,7 +242,6 @@ export default function Scan() {
                   nothingFound={t`Nothing found`}
                 />
               </Group>
-
               {inp}
             </Stack>
             <Stack spacing={0}>
@@ -618,8 +617,8 @@ function InputImageBarcode({ action }: inputProps) {
   }, [value]);
 
   return (
-    <Stack>
-      <Group>
+    <Stack spacing="xs">
+      <Group spacing="xs">
         <Select
           value={value}
           onChange={setValue}
