@@ -230,7 +230,7 @@ export default function Scan() {
       <Grid maw={'100%'}>
         <Col span={4}>
           <Stack>
-            <Stack spacing={0}>
+            <Stack spacing="xs">
               <Group position="apart">
                 <TitleWithDoc
                   order={3}
