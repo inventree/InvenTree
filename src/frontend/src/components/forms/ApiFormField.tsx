@@ -192,6 +192,7 @@ export function ApiFormField({
             radius="lg"
             size="sm"
             {...definition}
+            checked={definition.value}
             error={error}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />

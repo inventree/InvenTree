@@ -37,7 +37,8 @@ function ApiFormsPlayground() {
 
   const editPartForm: ApiFormProps = {
     name: 'part',
-    url: '/part/1/',
+    url: '/part/',
+    pk: 1,
     title: 'Edit Part',
     submitText: 'Save',
     cancelText: 'Custom Cancel',
@@ -53,8 +54,10 @@ function ApiFormsPlayground() {
         name: 'IPN'
       },
       {
-        name: 'category',
-        hidden: true
+        name: 'active'
+      },
+      {
+        name: 'category'
       }
     ]
   };

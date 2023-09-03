@@ -1,8 +1,12 @@
-import { Loader, Select } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Input } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
-import { QueryErrorResetBoundary, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import Select, { Options } from 'react-select';
+import AsyncSelect, { useAsync } from 'react-select/async';
+import internal from 'stream';
 
 import { api } from '../../App';
 import { ApiFormProps } from './ApiForm';
@@ -16,12 +20,14 @@ export function RelatedModelField({
   formProps,
   form,
   field,
-  definitions
+  definitions,
+  limit = 10
 }: {
   formProps: ApiFormProps;
   form: UseFormReturnType<Record<string, unknown>>;
   field: ApiFormFieldType;
   definitions: ApiFormFieldType[];
+  limit: number;
 }) {
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
@@ -35,10 +41,13 @@ export function RelatedModelField({
     [form.values, field, definitions]
   );
 
+  const [offset, setOffset] = useState<number>(0);
+
   const [data, setData] = useState<any[]>([]);
 
+  // Search input query
   const [value, setValue] = useState<string>('');
-  const [searchText] = useDebouncedValue(value, 500);
+  const [searchText] = useDebouncedValue(value, 250);
 
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
@@ -59,8 +68,8 @@ export function RelatedModelField({
         .get(url, {
           params: {
             search: searchText,
-            offset: 0,
-            limit: 25
+            offset: offset,
+            limit: limit
           }
         })
         .then((response) => {
@@ -73,14 +82,11 @@ export function RelatedModelField({
           results.forEach((item: any) => {
             values.push({
               value: item.pk ?? -1,
-              label: `Item ${item.pk}`
+              label: item.name ?? item.description ?? item.pk ?? 'Unknown'
             });
           });
 
           setData(values);
-
-          console.log('data:', values);
-
           return response;
         })
         .catch((error) => {
@@ -91,15 +97,38 @@ export function RelatedModelField({
     }
   });
 
+  // Update form values when the selected value changes
+  function onChange(value: any) {
+    let pk = value?.value ?? null;
+    form.setValues({ [definition.name]: pk });
+
+    // Run custom callback for this field (if provided)
+    if (definition.onValueChange) {
+      definition.onValueChange(pk);
+    }
+  }
+
   return (
-    <Select
-      withinPortal={true}
-      searchable={true}
-      onSearchChange={(value) => setValue(value)}
-      data={data}
-      clearable={!definition.required}
-      {...definition}
-      rightSection={selectQuery.isFetching && <Loader size="sm" />}
-    />
+    <Input.Wrapper {...definition}>
+      <Select
+        options={data}
+        filterOption={null}
+        onInputChange={(value) => setValue(value)}
+        onChange={onChange}
+        isLoading={
+          selectQuery.isFetching ||
+          selectQuery.isLoading ||
+          selectQuery.isRefetching
+        }
+        isClearable={!definition.required}
+        isDisabled={definition.disabled}
+        isSearchable={true}
+        loadingMessage={() => t`Loading...`}
+        menuPortalTarget={document.body}
+        noOptionsMessage={() => t`No results found`}
+        menuPosition="fixed"
+        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+      />
+    </Input.Wrapper>
   );
 }
