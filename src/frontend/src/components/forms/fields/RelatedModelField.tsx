@@ -3,7 +3,7 @@ import { Input } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Select, { Options } from 'react-select';
 import AsyncSelect, { useAsync } from 'react-select/async';
 import internal from 'stream';
@@ -40,6 +40,46 @@ export function RelatedModelField({
       }),
     [form.values, field, definitions]
   );
+
+  // Keep track of the primary key value for this field
+  const [pk, setPk] = useState<number | null>(null);
+
+  // If an initial value is provided, load from the API
+  useEffect(() => {
+    // If a value is provided, load the related object
+    if (form.values) {
+      let formPk = form.values[field.name];
+
+      if (formPk && formPk != pk) {
+        console.log(`Loading related object for ${field.name}... (${formPk})`);
+
+        let url = (definition.api_url || '') + formPk + '/';
+
+        // TODO: Fix this!!
+        if (url.startsWith('/api')) {
+          url = url.substring(4);
+        }
+
+        api.get(url).then((response) => {
+          let data = response.data;
+
+          if (data) {
+            let value = {
+              value: data.pk,
+              label: data.name ?? data.description ?? data.pk ?? 'Unknown'
+            };
+
+            setData([value]);
+
+            console.log('data:', response.data);
+
+            // form.setValues({ [definition.name]: value });
+            setPk(data.pk);
+          }
+        });
+      }
+    }
+  }, [form]);
 
   const [offset, setOffset] = useState<number>(0);
 
@@ -100,8 +140,10 @@ export function RelatedModelField({
 
   // Update form values when the selected value changes
   function onChange(value: any) {
-    let pk = value?.value ?? null;
-    form.setValues({ [definition.name]: pk });
+    let _pk = value?.value ?? null;
+    form.setValues({ [definition.name]: _pk });
+
+    setPk(_pk);
 
     // Run custom callback for this field (if provided)
     if (definition.onValueChange) {
@@ -112,6 +154,7 @@ export function RelatedModelField({
   return (
     <Input.Wrapper {...definition}>
       <Select
+        value={data.find((item) => item.value == pk)}
         options={data}
         filterOption={null}
         onInputChange={(value) => {
