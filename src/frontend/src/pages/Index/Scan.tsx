@@ -47,6 +47,7 @@ import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
+import { Render, RenderTypes } from '../../components/renderers';
 import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
 import { ApiPaths, url } from '../../states/ApiState';
@@ -58,7 +59,7 @@ interface ScanItem {
   timestamp: Date;
   source: string;
   link?: string;
-  objectType?: string;
+  objectType?: RenderTypes;
   objectPk?: string;
 }
 
@@ -121,10 +122,10 @@ export default function Scan() {
 
       // try to set object data
       if (response.data?.part) {
-        item.objectType = 'part';
+        item.objectType = RenderTypes.part;
         item.objectPk = response.data?.part.pk;
       } else if (response.data?.stockitem) {
-        item.objectType = 'stockitem';
+        item.objectType = RenderTypes.stockitem;
         item.objectPk = response.data?.stockitem.pk;
       }
       // TODO @matmair:  add more object types
@@ -352,6 +353,13 @@ function HistoryTable({
             transitionDuration={0}
           />
         </td>
+        <td>
+          {item.objectPk && item.objectType ? (
+            <Render type={item.objectType} pk={item.objectPk} />
+          ) : (
+            item.ref
+          )}
+        </td>
         <td>{item.ref}</td>
         <td>{item.link}</td>
         <td>{item.source}</td>
@@ -382,9 +390,9 @@ function HistoryTable({
                 transitionDuration={0}
               />
             </th>
-
+            <th></th>
             <th>
-              <Trans>Name</Trans>
+              <Trans>Reference</Trans>
             </th>
             <th>
               <Trans>Link</Trans>

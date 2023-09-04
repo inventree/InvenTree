@@ -50,7 +50,9 @@ export enum ApiPaths {
   user_reset = 'api-user-reset',
   user_reset_set = 'api-user-reset-set',
 
-  barcode = 'api-barcode'
+  barcode = 'api-barcode',
+  part_detail = 'api-part-detail',
+  stock_item_detail = 'api-stock-item-detail'
 }
 
 export function url(path: ApiPaths, pk?: any): string {
@@ -68,6 +70,10 @@ export function url(path: ApiPaths, pk?: any): string {
 
     case ApiPaths.barcode:
       return 'barcode/';
+    case ApiPaths.part_detail:
+      return `part/${pk}/`;
+    case ApiPaths.stock_item_detail:
+      return `stock/${pk}/`;
 
     default:
       return '';
