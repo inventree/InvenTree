@@ -62,6 +62,24 @@ function ApiFormsPlayground() {
     ]
   };
 
+  const newStockForm: ApiFormProps = {
+    name: 'stock',
+    url: '/stock/',
+    title: 'Create Stock Item',
+    successMessage: 'Stock item created successfully',
+    fields: [
+      {
+        name: 'part'
+      },
+      {
+        name: 'location'
+      },
+      {
+        name: 'quantity'
+      }
+    ]
+  };
+
   return (
     <>
       <Group>
@@ -70,6 +88,9 @@ function ApiFormsPlayground() {
         </Button>
         <Button onClick={() => openEditApiForm(editPartForm)}>
           Edit Existing Part
+        </Button>
+        <Button onClick={() => openCreateApiForm(newStockForm)}>
+          Create New Stock Item
         </Button>
       </Group>
     </>

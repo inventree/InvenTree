@@ -27,7 +27,7 @@ export function RelatedModelField({
   form: UseFormReturnType<Record<string, unknown>>;
   field: ApiFormFieldType;
   definitions: ApiFormFieldType[];
-  limit: number;
+  limit?: number;
 }) {
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
@@ -51,7 +51,7 @@ export function RelatedModelField({
 
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
-    queryKey: [`related-field-${definition.name}`, searchText],
+    queryKey: [`related-field-${definition.name}`, offset, searchText],
     queryFn: async () => {
       if (!definition.api_url) {
         return null;
@@ -64,7 +64,7 @@ export function RelatedModelField({
         url = url.substring(4);
       }
 
-      api
+      return api
         .get(url, {
           params: {
             search: searchText,
@@ -73,9 +73,7 @@ export function RelatedModelField({
           }
         })
         .then((response) => {
-          console.log(response);
-
-          let values: any[] = [];
+          let values: any[] = [...data];
 
           let results = response.data?.results ?? [];
 
@@ -90,7 +88,6 @@ export function RelatedModelField({
           return response;
         })
         .catch((error) => {
-          console.error(error);
           setData([]);
           return error;
         });
@@ -113,8 +110,13 @@ export function RelatedModelField({
       <Select
         options={data}
         filterOption={null}
-        onInputChange={(value) => setValue(value)}
+        onInputChange={(value) => {
+          setValue(value);
+          setOffset(0);
+          setData([]);
+        }}
         onChange={onChange}
+        onMenuScrollToBottom={() => setOffset(offset + limit)}
         isLoading={
           selectQuery.isFetching ||
           selectQuery.isLoading ||
@@ -123,7 +125,8 @@ export function RelatedModelField({
         isClearable={!definition.required}
         isDisabled={definition.disabled}
         isSearchable={true}
-        loadingMessage={() => t`Loading...`}
+        placeholder={definition.placeholder || t`Search` + `...`}
+        loadingMessage={() => t`Loading` + `...`}
         menuPortalTarget={document.body}
         noOptionsMessage={() => t`No results found`}
         menuPosition="fixed"
