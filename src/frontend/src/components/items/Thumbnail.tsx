@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Image } from '@mantine/core';
+import { Anchor, Image } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { Text } from '@mantine/core';
 
@@ -47,11 +47,20 @@ export function ThumbnailHoverCard({
   alt?: string;
   size?: number;
 }) {
-  // TODO: Handle link
-  return (
-    <Group position="left" spacing={10}>
-      <Thumbnail src={src} alt={alt} size={size} />
-      <Text>{text}</Text>
-    </Group>
-  );
+  function MainGroup() {
+    return (
+      <Group position="left" spacing={10}>
+        <Thumbnail src={src} alt={alt} size={size} />
+        <Text>{text}</Text>
+      </Group>
+    );
+  }
+
+  if (link)
+    return (
+      <Anchor href={link} style={{ textDecoration: 'none' }}>
+        <MainGroup />
+      </Anchor>
+    );
+  return <MainGroup />;
 }
