@@ -29,6 +29,7 @@ import { RelatedModelField } from './RelatedModelField';
  * @param api_url : The API endpoint to fetch data from (for related fields)
  * @param read_only : Whether the field is read-only
  * @param model : The model to use for related fields
+ * @param filters : Optional API filters to apply to related fields
  * @param required : Whether the field is required
  * @param hidden : Whether the field is hidden
  * @param disabled : Whether the field is disabled
@@ -48,6 +49,7 @@ export type ApiFormFieldType = {
   api_url?: string;
   read_only?: boolean;
   model?: string;
+  filters?: any;
   required?: boolean;
   hidden?: boolean;
   disabled?: boolean;

@@ -73,6 +73,9 @@ export function extractAvailableFields(
 
   let fields: ApiFormFieldType[] = [];
 
+  // TODO: Instead of copying these individually,
+  // is there a better way?
+
   for (const fieldName in actions[method]) {
     const field = actions[method][fieldName];
     fields.push({
@@ -85,6 +88,7 @@ export function extractAvailableFields(
       placeholder: field.placeholder,
       api_url: field.api_url,
       model: field.model,
+      filters: field.filters,
       read_only: field.read_only
     });
   }

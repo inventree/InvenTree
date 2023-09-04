@@ -47,7 +47,9 @@ export function RelatedModelField({
 
   // Search input query
   const [value, setValue] = useState<string>('');
-  const [searchText] = useDebouncedValue(value, 250);
+  const [searchText, cancelSearchText] = useDebouncedValue(value, 250);
+
+  const queryController = new AbortController();
 
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
@@ -66,7 +68,9 @@ export function RelatedModelField({
 
       return api
         .get(url, {
+          signal: queryController.signal,
           params: {
+            ...definition.filters,
             search: searchText,
             offset: offset,
             limit: limit
@@ -111,6 +115,8 @@ export function RelatedModelField({
         options={data}
         filterOption={null}
         onInputChange={(value) => {
+          cancelSearchText();
+          queryController.abort();
           setValue(value);
           setOffset(0);
           setData([]);
