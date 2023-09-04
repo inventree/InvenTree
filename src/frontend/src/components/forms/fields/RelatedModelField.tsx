@@ -8,8 +8,8 @@ import Select, { Options } from 'react-select';
 import AsyncSelect, { useAsync } from 'react-select/async';
 import internal from 'stream';
 
-import { api } from '../../App';
-import { ApiFormProps } from './ApiForm';
+import { api } from '../../../App';
+import { ApiFormProps } from '../ApiForm';
 import { ApiFormFieldType } from './ApiFormField';
 import { constructField } from './ApiFormField';
 
@@ -115,7 +115,7 @@ export function RelatedModelField({
         options={data}
         filterOption={null}
         onInputChange={(value) => {
-          cancelSearchText();
+          // cancelSearchText();
           queryController.abort();
           setValue(value);
           setOffset(0);

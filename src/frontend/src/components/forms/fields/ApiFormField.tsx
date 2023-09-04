@@ -12,7 +12,7 @@ import { IconX } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { useMemo } from 'react';
 
-import { ApiFormProps } from './ApiForm';
+import { ApiFormProps } from '../ApiForm';
 import { RelatedModelField } from './RelatedModelField';
 
 /* Definition of the ApiForm field component.

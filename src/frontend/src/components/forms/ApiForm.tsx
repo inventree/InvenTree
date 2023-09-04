@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { api } from '../../App';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
-import { ApiFormField, ApiFormFieldType } from './ApiFormField';
+import { ApiFormField, ApiFormFieldType } from './fields/ApiFormField';
 
 /**
  * Properties for the ApiForm component
