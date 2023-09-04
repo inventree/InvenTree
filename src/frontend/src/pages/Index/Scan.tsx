@@ -360,7 +360,6 @@ function HistoryTable({
             item.ref
           )}
         </td>
-        <td>{item.ref}</td>
         <td>{item.link}</td>
         <td>{item.source}</td>
         <td>{item.timestamp?.toString()}</td>
@@ -391,9 +390,6 @@ function HistoryTable({
               />
             </th>
             <th></th>
-            <th>
-              <Trans>Reference</Trans>
-            </th>
             <th>
               <Trans>Link</Trans>
             </th>
