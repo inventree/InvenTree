@@ -12,6 +12,7 @@ import {
   partCategoryFields,
   partFields
 } from '../../functions/forms/PartFields';
+import { stockFields } from '../../functions/forms/StockFields';
 
 // Generate some example forms using the modal API forms interface
 function ApiFormsPlayground() {
@@ -39,11 +40,7 @@ function ApiFormsPlayground() {
     url: '/stock/',
     title: 'Create Stock Item',
     successMessage: 'Stock item created successfully',
-    fields: {
-      part: {},
-      location: {},
-      quantity: {}
-    }
+    fields: stockFields({})
   };
 
   const editCategoryForm: ApiFormProps = {
