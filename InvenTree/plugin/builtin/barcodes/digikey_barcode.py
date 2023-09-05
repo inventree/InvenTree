@@ -1,10 +1,14 @@
 """The DigiKeyBarcodePlugin matches DigiKey barcodes to supplier parts."""
 
+import logging
+
 from django.utils.translation import gettext_lazy as _
 
 from company.models import SupplierPart
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
+
+logger = logging.getLogger('inventree')
 
 
 class DigiKeyBarcodePlugin(BarcodeMixin, InvenTreePlugin):
@@ -17,6 +21,7 @@ class DigiKeyBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     AUTHOR = _("InvenTree contributors")
 
     def scan(self, barcode_data):
+        """Process a barcode to determine if it is a DigiKey barcode."""
         DIGIKEY_MAGIC = "[)>\x1e06"
 
         if not barcode_data.startswith(DIGIKEY_MAGIC):
@@ -46,6 +51,7 @@ class DigiKeyBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
         supplier_parts = SupplierPart.objects.filter(SKU__iexact=barcode_fields.get("sku"))
         if not supplier_parts or len(supplier_parts) > 1:
+            logger.warning(f"Found {len(supplier_parts)} supplier parts for SKU {barcode_fields.get('sku')} with DigiKeyBarcodePlugin plugin")
             return
         supplier_part = supplier_parts[0]
 

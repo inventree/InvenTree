@@ -1,10 +1,14 @@
 """The MouserBarcodePlugin matches Mouser barcodes to supplier parts."""
 
+import logging
+
 from django.utils.translation import gettext_lazy as _
 
 from company.models import ManufacturerPart, SupplierPart
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
+
+logger = logging.getLogger('inventree')
 
 
 class MouserBarcodePlugin(BarcodeMixin, InvenTreePlugin):
@@ -17,6 +21,7 @@ class MouserBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     AUTHOR = _("InvenTree contributors")
 
     def scan(self, barcode_data):
+        """Process a barcode to determine if it is a Mouser barcode."""
         MOUSER_MAGIC = ">[)>06"
 
         if not barcode_data.startswith(MOUSER_MAGIC):
@@ -43,10 +48,11 @@ class MouserBarcodePlugin(BarcodeMixin, InvenTreePlugin):
         manufacturer_parts = ManufacturerPart.objects.filter(
             MPN__iexact=barcode_fields.get("mpn"))
         if not manufacturer_parts or len(manufacturer_parts) > 1:
+            logger.warning(f"Found {len(manufacturer_parts)} manufacturer parts for MPN {barcode_fields.get('mpn')} with MouserBarcodePlugin plugin")
             return
         manufacturer_part = manufacturer_parts[0]
 
-        supplier_parts = SupplierPart.objects.filter( #.select_related("supplier")
+        supplier_parts = SupplierPart.objects.filter(
             manufacturer_part=manufacturer_part.pk)
         for supplier_part in supplier_parts:
             if "mouser" in supplier_part.supplier.name.lower():
