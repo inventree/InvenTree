@@ -7,11 +7,11 @@ import { ReactNode } from 'react';
 import { ApiFormProps } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
+import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 import {
-  openCreateApiForm,
-  openEditApiForm,
-  openModalApiForm
-} from '../../functions/forms';
+  partCategoryFields,
+  partFields
+} from '../../functions/forms/PartFields';
 
 // Generate some example forms using the modal API forms interface
 function ApiFormsPlayground() {
@@ -20,19 +20,7 @@ function ApiFormsPlayground() {
     url: '/part/',
     title: 'Create Part',
     successMessage: 'Part created successfully',
-    fields: [
-      {
-        name: 'name'
-      },
-      {
-        name: 'description'
-      },
-      {
-        name: 'category',
-        hidden: true,
-        value: 1
-      }
-    ]
+    fields: partFields({})
   };
 
   const editPartForm: ApiFormProps = {
@@ -43,23 +31,7 @@ function ApiFormsPlayground() {
     submitText: 'Save',
     cancelText: 'Custom Cancel',
     successMessage: 'Part saved successfully',
-    fields: [
-      {
-        name: 'name'
-      },
-      {
-        name: 'description'
-      },
-      {
-        name: 'IPN'
-      },
-      {
-        name: 'active'
-      },
-      {
-        name: 'category'
-      }
-    ]
+    fields: partFields({ editing: true })
   };
 
   const newStockForm: ApiFormProps = {
@@ -80,6 +52,14 @@ function ApiFormsPlayground() {
     ]
   };
 
+  const editCategoryForm: ApiFormProps = {
+    name: 'partcategory',
+    url: '/part/category/',
+    pk: 2,
+    title: 'Edit Category',
+    fields: partCategoryFields({})
+  };
+
   return (
     <>
       <Group>
@@ -91,6 +71,9 @@ function ApiFormsPlayground() {
         </Button>
         <Button onClick={() => openCreateApiForm(newStockForm)}>
           Create New Stock Item
+        </Button>
+        <Button onClick={() => openEditApiForm(editCategoryForm)}>
+          Edit Category
         </Button>
       </Group>
     </>

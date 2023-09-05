@@ -181,6 +181,7 @@ export function ApiFormField({
             {...definition}
             type={definition.fieldType}
             error={error}
+            radius="sm"
             onChange={(event) => onChange(event.currentTarget.value)}
             rightSection={
               definition.value && !definition.required ? (
