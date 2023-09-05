@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-15 02:49+0000\n"
+"POT-Creation-Date: 2023-08-23 10:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1388,7 +1388,7 @@ msgstr ""
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:334 stock/api.py:727
+#: build/serializers.py:334 stock/api.py:729
 msgid "The following serial numbers already exist or are invalid"
 msgstr ""
 
@@ -4332,7 +4332,7 @@ msgstr ""
 msgid "Update Part Availability"
 msgstr ""
 
-#: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:225
+#: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:224
 #: part/templates/part/category.html:182
 #: part/templates/part/category_sidebar.html:17 stock/admin.py:47
 #: stock/serializers.py:662 stock/templates/stock/location.html:169
@@ -5399,17 +5399,17 @@ msgstr ""
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
-#: part/admin.py:33 part/admin.py:273 part/models.py:3719 part/stocktake.py:220
+#: part/admin.py:33 part/admin.py:273 part/models.py:3719 part/stocktake.py:219
 #: stock/admin.py:101
 msgid "Part ID"
 msgstr ""
 
-#: part/admin.py:34 part/admin.py:275 part/models.py:3723 part/stocktake.py:221
+#: part/admin.py:34 part/admin.py:275 part/models.py:3723 part/stocktake.py:220
 #: stock/admin.py:102
 msgid "Part Name"
 msgstr ""
 
-#: part/admin.py:35 part/stocktake.py:222
+#: part/admin.py:35 part/stocktake.py:221
 msgid "Part Description"
 msgstr ""
 
@@ -5431,11 +5431,11 @@ msgstr ""
 msgid "Keywords"
 msgstr ""
 
-#: part/admin.py:42 part/admin.py:192 part/stocktake.py:223
+#: part/admin.py:42 part/admin.py:192 part/stocktake.py:222
 msgid "Category ID"
 msgstr ""
 
-#: part/admin.py:43 part/admin.py:193 part/stocktake.py:224
+#: part/admin.py:43 part/admin.py:193 part/stocktake.py:223
 msgid "Category Name"
 msgstr ""
 
@@ -6499,33 +6499,33 @@ msgstr ""
 msgid "At least one BOM item is required"
 msgstr ""
 
-#: part/stocktake.py:226 templates/js/translated/part.js:1043
+#: part/stocktake.py:225 templates/js/translated/part.js:1043
 #: templates/js/translated/part.js:1797 templates/js/translated/part.js:1852
 #: templates/js/translated/purchase_order.js:2059
 msgid "Total Quantity"
 msgstr ""
 
-#: part/stocktake.py:227
+#: part/stocktake.py:226
 msgid "Total Cost Min"
 msgstr ""
 
-#: part/stocktake.py:228
+#: part/stocktake.py:227
 msgid "Total Cost Max"
 msgstr ""
 
-#: part/stocktake.py:296
+#: part/stocktake.py:295
 msgid "Stocktake Report Available"
 msgstr ""
 
-#: part/stocktake.py:297
+#: part/stocktake.py:296
 msgid "A new stocktake report is available for download"
 msgstr ""
 
-#: part/tasks.py:32
+#: part/tasks.py:33
 msgid "Low stock notification"
 msgstr ""
 
-#: part/tasks.py:33
+#: part/tasks.py:34
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr ""
@@ -7725,15 +7725,15 @@ msgstr ""
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:667
+#: stock/api.py:669
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:676
+#: stock/api.py:678
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:699
+#: stock/api.py:701
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 

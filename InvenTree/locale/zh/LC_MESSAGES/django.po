@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-16 06:22+0000\n"
-"PO-Revision-Date: 2023-08-18 14:35\n"
+"POT-Creation-Date: 2023-08-24 06:03+0000\n"
+"PO-Revision-Date: 2023-08-26 03:11\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -31,19 +31,19 @@ msgstr "没有提供日期"
 
 #: InvenTree/conversion.py:115
 msgid "Provided value is not a valid number"
-msgstr ""
+msgstr "提供的值无效"
 
 #: InvenTree/conversion.py:117
 msgid "Provided value has an invalid unit"
-msgstr ""
+msgstr "提供的值有一个无效的单位"
 
 #: InvenTree/conversion.py:122
 msgid "Provided value could not be converted to the specified unit"
-msgstr ""
+msgstr "提供的值不能转换为指定的单位"
 
 #: InvenTree/conversion.py:127
 msgid "Error"
-msgstr ""
+msgstr "错误"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -127,7 +127,7 @@ msgstr "提供的电子邮件域未被核准。"
 
 #: InvenTree/forms.py:354
 msgid "Registration is disabled."
-msgstr ""
+msgstr "注册已禁用。"
 
 #: InvenTree/helpers.py:462 order/models.py:455 order/models.py:624
 msgid "Invalid quantity provided"
@@ -169,35 +169,35 @@ msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
 msgid "Remove HTML tags from this value"
 msgstr "从这个值中删除 HTML 标签"
 
-#: InvenTree/helpers_model.py:131
+#: InvenTree/helpers_model.py:125
 msgid "Connection error"
 msgstr "连接错误"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:140
+#: InvenTree/helpers_model.py:129 InvenTree/helpers_model.py:134
 msgid "Server responded with invalid status code"
 msgstr "服务器响应状态码无效"
 
-#: InvenTree/helpers_model.py:137
+#: InvenTree/helpers_model.py:131
 msgid "Exception occurred"
 msgstr "发生异常"
 
-#: InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139
 msgid "Server responded with invalid Content-Length value"
 msgstr "服务器响应的内容长度值无效"
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:142
 msgid "Image size is too large"
 msgstr "图片尺寸过大"
 
-#: InvenTree/helpers_model.py:160
+#: InvenTree/helpers_model.py:154
 msgid "Image download exceeded maximum size"
 msgstr "图像下载超过最大尺寸"
 
-#: InvenTree/helpers_model.py:165
+#: InvenTree/helpers_model.py:159
 msgid "Remote server returned empty response"
 msgstr "远程服务器返回了空响应"
 
-#: InvenTree/helpers_model.py:173
+#: InvenTree/helpers_model.py:167
 msgid "Supplied URL is not a valid image file"
 msgstr "提供的 URL 不是一个有效的图片文件"
 
@@ -631,11 +631,11 @@ msgstr "越南语"
 
 #: InvenTree/settings.py:780
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "中文 (简体)"
 
 #: InvenTree/settings.py:781
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "中文 (繁体)"
 
 #: InvenTree/status.py:68 part/serializers.py:963
 msgid "Background worker check failed"
@@ -835,7 +835,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:197
 msgid "Replace"
-msgstr ""
+msgstr "替换"
 
 #: InvenTree/status_codes.py:200
 msgid "Refund"
@@ -1387,7 +1387,7 @@ msgstr "自动分配序列号"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "自动为所需项分配对应的序列号"
 
-#: build/serializers.py:334 stock/api.py:727
+#: build/serializers.py:334 stock/api.py:729
 msgid "The following serial numbers already exist or are invalid"
 msgstr "以下序列号已存在或无效"
 
@@ -1801,7 +1801,7 @@ msgstr "删除生产订单"
 
 #: build/templates/build/build_base.html:284
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "创建订单二维码"
 
 #: build/templates/build/build_base.html:296
 msgid "Link Barcode to Build Order"
@@ -2019,7 +2019,7 @@ msgstr ""
 
 #: common/models.py:114
 msgid "Project description"
-msgstr ""
+msgstr "项目描述:"
 
 #: common/models.py:583
 msgid "Settings key (must be unique - case insensitive)"
@@ -2791,7 +2791,7 @@ msgstr "当注册时请用户两次输入密码"
 
 #: common/models.py:1661
 msgid "Allowed domains"
-msgstr ""
+msgstr "域名白名单"
 
 #: common/models.py:1662
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
@@ -7724,15 +7724,15 @@ msgstr ""
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:667
+#: stock/api.py:669
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:676
+#: stock/api.py:678
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:699
+#: stock/api.py:701
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 

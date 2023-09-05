@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-16 06:22+0000\n"
-"PO-Revision-Date: 2023-08-16 14:07\n"
+"POT-Creation-Date: 2023-08-24 06:03+0000\n"
+"PO-Revision-Date: 2023-08-25 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
@@ -169,35 +169,35 @@ msgstr "Antal unikke serienumre ({s}) skal matche antal ({q})"
 msgid "Remove HTML tags from this value"
 msgstr "Fjern HTML-tags fra denne værdi"
 
-#: InvenTree/helpers_model.py:131
+#: InvenTree/helpers_model.py:125
 msgid "Connection error"
 msgstr "Forbindelsesfejl"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:140
+#: InvenTree/helpers_model.py:129 InvenTree/helpers_model.py:134
 msgid "Server responded with invalid status code"
 msgstr "Serveren svarede med ugyldig statuskode"
 
-#: InvenTree/helpers_model.py:137
+#: InvenTree/helpers_model.py:131
 msgid "Exception occurred"
 msgstr "Der opstod en fejl"
 
-#: InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139
 msgid "Server responded with invalid Content-Length value"
 msgstr "Serveren svarede med ugyldig Content-Length værdi"
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:142
 msgid "Image size is too large"
 msgstr "Billedstørrelsen er for stor"
 
-#: InvenTree/helpers_model.py:160
+#: InvenTree/helpers_model.py:154
 msgid "Image download exceeded maximum size"
 msgstr "Billeddownload overskred maksimumstørrelsen"
 
-#: InvenTree/helpers_model.py:165
+#: InvenTree/helpers_model.py:159
 msgid "Remote server returned empty response"
 msgstr "Fjernserver returnerede tomt svar"
 
-#: InvenTree/helpers_model.py:173
+#: InvenTree/helpers_model.py:167
 msgid "Supplied URL is not a valid image file"
 msgstr "Angivet URL er ikke en gyldig billedfil"
 
@@ -1387,7 +1387,7 @@ msgstr ""
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:334 stock/api.py:727
+#: build/serializers.py:334 stock/api.py:729
 msgid "The following serial numbers already exist or are invalid"
 msgstr ""
 
@@ -7724,15 +7724,15 @@ msgstr ""
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:667
+#: stock/api.py:669
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:676
+#: stock/api.py:678
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:699
+#: stock/api.py:701
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
