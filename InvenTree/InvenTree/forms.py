@@ -181,7 +181,7 @@ class CustomLoginForm(LoginForm):
             return HttpResponseRedirect(reverse('account_login'))
 
         # Now perform default login action
-        super().login(request, redirect_url)
+        return super().login(request, redirect_url)
 
 
 class CustomSignupForm(SignupForm):
