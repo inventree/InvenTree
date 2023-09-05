@@ -142,6 +142,10 @@ export function ApiForm({
         form.setValues({
           [fieldName]: field.value
         });
+      } else if (field.default !== undefined) {
+        form.setValues({
+          [fieldName]: field.default
+        });
       }
     });
 

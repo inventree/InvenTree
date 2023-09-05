@@ -123,16 +123,18 @@ export function ApiFormField({
 }) {
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(
-    () =>
-      constructField({
-        form: form,
-        fieldName: fieldName,
-        field: field,
-        definitions: definitions
-      }),
-    [form.values, field, definitions]
-  );
+  const definition: ApiFormFieldType = useMemo(() => {
+    let def = constructField({
+      form: form,
+      fieldName: fieldName,
+      field: field,
+      definitions: definitions
+    });
+
+    form.setValues({ [fieldName]: def.value ?? def.default });
+
+    return def;
+  }, [fieldName, field, definitions]);
 
   const preFieldElement: JSX.Element | null = useMemo(() => {
     if (field.preFieldContent === undefined) {

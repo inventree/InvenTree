@@ -53,11 +53,9 @@ export function RelatedModelField({
   useEffect(() => {
     // If a value is provided, load the related object
     if (form.values) {
-      let formPk = form.values[field.name];
+      let formPk = form.values[fieldName];
 
       if (formPk && formPk != pk) {
-        console.log(`Loading related object for ${field.name}... (${formPk})`);
-
         let url = (definition.api_url || '') + formPk + '/';
 
         // TODO: Fix this!!
@@ -68,17 +66,13 @@ export function RelatedModelField({
         api.get(url).then((response) => {
           let data = response.data;
 
-          if (data) {
+          if (data && data.pk) {
             let value = {
               value: data.pk,
               label: data.name ?? data.description ?? data.pk ?? 'Unknown'
             };
 
             setData([value]);
-
-            console.log('data:', response.data);
-
-            // form.setValues({ [definition.name]: value });
             setPk(data.pk);
           }
         });
@@ -98,7 +92,7 @@ export function RelatedModelField({
 
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
-    queryKey: [`related-field-${definition.name}`, offset, searchText],
+    queryKey: [`related-field-${fieldName}`, offset, searchText],
     queryFn: async () => {
       if (!definition.api_url) {
         return null;
@@ -146,7 +140,7 @@ export function RelatedModelField({
   // Update form values when the selected value changes
   function onChange(value: any) {
     let _pk = value?.value ?? null;
-    form.setValues({ [definition.name]: _pk });
+    form.setValues({ [fieldName]: _pk });
 
     setPk(_pk);
 
