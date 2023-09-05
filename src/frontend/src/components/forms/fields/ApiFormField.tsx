@@ -13,6 +13,7 @@ import { ReactNode } from 'react';
 import { useMemo } from 'react';
 
 import { ApiFormProps } from '../ApiForm';
+import { ChoiceField } from './ChoiceField';
 import { RelatedModelField } from './RelatedModelField';
 
 /* Definition of the ApiForm field component.
@@ -50,6 +51,7 @@ export type ApiFormFieldType = {
   model?: string;
   filters?: any;
   required?: boolean;
+  choices?: any[];
   hidden?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -230,6 +232,16 @@ export function ApiFormField({
             {...definition}
             error={error}
             onChange={(value: number) => onChange(value)}
+          />
+        );
+      case 'choice':
+        return (
+          <ChoiceField
+            error={error}
+            form={form}
+            fieldName={fieldName}
+            field={definition}
+            definitions={definitions}
           />
         );
       default:
