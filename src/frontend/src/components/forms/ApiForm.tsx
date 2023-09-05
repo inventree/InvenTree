@@ -73,6 +73,9 @@ export function ApiForm({
   props: ApiFormProps;
   fieldDefinitions: ApiFormFieldType[];
 }) {
+  // Form errors which are not associated with a specific field
+  const [nonFieldErrors, setNonFieldErrors] = useState<string[]>([]);
+
   // Form state
   const form = useForm({});
 
@@ -102,9 +105,6 @@ export function ApiForm({
       return props.postFormContent;
     }
   }, [props]);
-
-  // Error observed during form construction
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   // Query manager for retrieiving initial data from the server
   const initialDataQuery = useQuery({
@@ -196,6 +196,7 @@ export function ApiForm({
               case 400:
                 // Data validation error
                 form.setErrors(error.response.data);
+                setNonFieldErrors(error.response.data.non_field_errors ?? []);
                 break;
               default:
                 // Unexpected state on form error
@@ -246,23 +247,15 @@ export function ApiForm({
         <LoadingOverlay
           visible={initialDataQuery.isFetching || submitQuery.isFetching}
         />
-        {false && form.errors && (
-          <Alert radius="sm" color="red" title={`Error`}>
-            <Text>Form Errors Exist</Text>
-          </Alert>
-        )}
-        {false && errorMessages && (
-          <Alert
-            radius="sm"
-            color="red"
-            title={`Error`}
-            icon={<IconAlertCircle size="1rem" />}
-          >
-            <Stack spacing="xs">
-              {errorMessages.map((message) => (
-                <Text key={message}>{message}</Text>
-              ))}
-            </Stack>
+        {(form.errors || nonFieldErrors) && (
+          <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
+            {nonFieldErrors && (
+              <Stack spacing="xs">
+                {nonFieldErrors.map((message) => (
+                  <Text key={message}>{message}</Text>
+                ))}
+              </Stack>
+            )}
           </Alert>
         )}
         {preFormElement}
