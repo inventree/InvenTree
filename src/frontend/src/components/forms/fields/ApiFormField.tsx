@@ -213,9 +213,11 @@ export function ApiFormField({
           <DateInput
             radius="sm"
             {...definition}
+            type={undefined}
             error={error}
             clearable={!definition.required}
             onChange={(value) => onChange(value)}
+            valueFormat="YYYY-MM-DD"
           />
         );
       case 'integer':
