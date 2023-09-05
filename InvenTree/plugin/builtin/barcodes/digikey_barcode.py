@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from company.models import SupplierPart
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
+from .barcode2d import parse_ecia_barcode2d
 
 logger = logging.getLogger('inventree')
 
@@ -17,50 +18,43 @@ class DigiKeyBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     NAME = "DigiKeyBarcode"
     TITLE = _("DigiKey Barcodes")
     DESCRIPTION = _("Provides support for scanning DigiKey barcodes")
-    VERSION = "0.1.0"
+    VERSION = "1.0.0"
     AUTHOR = _("InvenTree contributors")
 
     def scan(self, barcode_data):
         """Process a barcode to determine if it is a DigiKey barcode."""
-        DIGIKEY_MAGIC = "[)>\x1e06"
 
-        if not barcode_data.startswith(DIGIKEY_MAGIC):
+        if not (barcode_fields := parse_ecia_barcode2d(barcode_data)):
             return
 
-        barcode_data_entries = barcode_data.strip("0").split("\x1d")[1:]
-        barcode_fields = {}
-        for entry in barcode_data_entries:
-            if entry.startswith("P"):
-                barcode_fields["sku"] = entry[1:]
-            elif entry.startswith("1P"):
-                barcode_fields["mpn"] = entry[2:]
-            elif entry.startswith("1K"):
-                barcode_fields["order_number"] = entry[2:]
-            elif entry.startswith("10K"):
-                barcode_fields["invoice_number"] = entry[3:]
-            elif entry.startswith("11K"):
-                pass
-            elif entry.startswith("Q"):
-                barcode_fields["quantity"] = entry[1:]
-            elif entry.startswith("11Z"):
-                pass
-            elif entry.startswith("12Z"):
-                barcode_fields["part_id"] = entry[3:]
-            elif entry.startswith("13Z"):
-                barcode_fields["load_id"] = entry[3:]
+        if not (sku := barcode_fields.get("supplier_part_number")):
+            return
 
-        supplier_parts = SupplierPart.objects.filter(SKU__iexact=barcode_fields.get("sku"))
+        supplier_parts = SupplierPart.objects.filter(SKU__iexact=sku)
         if not supplier_parts or len(supplier_parts) > 1:
-            logger.warning(f"Found {len(supplier_parts)} supplier parts for SKU {barcode_fields.get('sku')} with DigiKeyBarcodePlugin plugin")
+            logger.warning(
+                f"Found {len(supplier_parts)} supplier parts for SKU "
+                f"{sku} with DigiKeyBarcodePlugin plugin"
+            )
             return
         supplier_part = supplier_parts[0]
 
-        response = {
-            SupplierPart.barcode_model_type(): {
-                "pk": supplier_part.pk,
-                "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
-                "web_url": supplier_part.get_absolute_url(),
-            }
+        data = {
+            "pk": supplier_part.pk,
+            "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
+            "web_url": supplier_part.get_absolute_url(),
         }
 
-        return response
+        if quantity := barcode_fields.get("quantity"):
+            try:
+                data["quantity"] = int(quantity)
+            except ValueError:
+                logger.warning(
+                    f"Failed to parse quantity '{quantity}' with "
+                    f"DigiKeyBarcodePlugin plugin"
+                )
+
+        if order_number := barcode_fields.get("purchase_order_number"):
+            data["order_number"] = order_number
+
+        return {SupplierPart.barcode_model_type(): data}
