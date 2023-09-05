@@ -3,7 +3,7 @@ import { Input } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import Select, { Options } from 'react-select';
 import AsyncSelect, { useAsync } from 'react-select/async';
 import internal from 'stream';
@@ -17,12 +17,14 @@ import { constructField } from './ApiFormField';
  * Render a 'select' field for searching the database against a particular model type
  */
 export function RelatedModelField({
+  error,
   formProps,
   form,
   field,
   definitions,
   limit = 10
 }: {
+  error: ReactNode;
   formProps: ApiFormProps;
   form: UseFormReturnType<Record<string, unknown>>;
   field: ApiFormFieldType;
@@ -152,7 +154,7 @@ export function RelatedModelField({
   }
 
   return (
-    <Input.Wrapper {...definition}>
+    <Input.Wrapper {...definition} error={error}>
       <Select
         value={data.find((item) => item.value == pk)}
         options={data}

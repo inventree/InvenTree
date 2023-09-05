@@ -166,6 +166,7 @@ export function ApiFormField({
       case 'related field':
         return (
           <RelatedModelField
+            error={error}
             formProps={formProps}
             form={form}
             field={definition}
