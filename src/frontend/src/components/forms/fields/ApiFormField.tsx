@@ -40,7 +40,6 @@ import { RelatedModelField } from './RelatedModelField';
  * @param onValueChange : Callback function to call when the field value changes
  */
 export type ApiFormFieldType = {
-  name: string;
   label?: string;
   value?: any;
   default?: any;
@@ -65,14 +64,16 @@ export type ApiFormFieldType = {
  */
 export function constructField({
   form,
+  fieldName,
   field,
   definitions
 }: {
   form: UseFormReturnType<Record<string, unknown>>;
+  fieldName: string;
   field: ApiFormFieldType;
-  definitions: ApiFormFieldType[];
+  definitions: Record<string, ApiFormFieldType>;
 }) {
-  let def = definitions.find((def) => def.name == field.name) || field;
+  let def = definitions[fieldName] || field;
 
   def = {
     ...def,
@@ -82,7 +83,7 @@ export function constructField({
   def.disabled = def.disabled || def.read_only;
 
   // Retrieve the latest value from the form
-  let value = form.values[def.name];
+  let value = form.values[fieldName];
 
   if (value != undefined) {
     def.value = value;
@@ -108,15 +109,17 @@ export function constructField({
 export function ApiFormField({
   formProps,
   form,
+  fieldName,
   field,
   error,
   definitions
 }: {
   formProps: ApiFormProps;
   form: UseFormReturnType<Record<string, unknown>>;
+  fieldName: string;
   field: ApiFormFieldType;
   error: ReactNode;
-  definitions: ApiFormFieldType[];
+  definitions: Record<string, ApiFormFieldType>;
 }) {
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
@@ -124,6 +127,7 @@ export function ApiFormField({
     () =>
       constructField({
         form: form,
+        fieldName: fieldName,
         field: field,
         definitions: definitions
       }),
@@ -152,7 +156,7 @@ export function ApiFormField({
 
   // Callback helper when form value changes
   function onChange(value: any) {
-    form.setValues({ [definition.name]: value });
+    form.setValues({ [fieldName]: value });
 
     // Run custom callback for this field
     if (definition.onValueChange) {
@@ -170,6 +174,7 @@ export function ApiFormField({
             formProps={formProps}
             form={form}
             field={definition}
+            fieldName={fieldName}
             definitions={definitions}
           />
         );
@@ -226,7 +231,7 @@ export function ApiFormField({
       default:
         return (
           <Alert color="red" title="Error">
-            Unknown field type for field '{definition.name}': '
+            Unknown field type ({field.fieldType}) for field '{fieldName}': '
             {definition.fieldType}'
           </Alert>
         );
@@ -241,3 +246,5 @@ export function ApiFormField({
     </Stack>
   );
 }
+
+export type ApiFormFieldSet = Record<string, ApiFormFieldType>;

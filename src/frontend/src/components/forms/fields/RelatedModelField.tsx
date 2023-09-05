@@ -10,7 +10,7 @@ import internal from 'stream';
 
 import { api } from '../../../App';
 import { ApiFormProps } from '../ApiForm';
-import { ApiFormFieldType } from './ApiFormField';
+import { ApiFormFieldSet, ApiFormFieldType } from './ApiFormField';
 import { constructField } from './ApiFormField';
 
 /**
@@ -20,6 +20,7 @@ export function RelatedModelField({
   error,
   formProps,
   form,
+  fieldName,
   field,
   definitions,
   limit = 10
@@ -28,7 +29,8 @@ export function RelatedModelField({
   formProps: ApiFormProps;
   form: UseFormReturnType<Record<string, unknown>>;
   field: ApiFormFieldType;
-  definitions: ApiFormFieldType[];
+  fieldName: string;
+  definitions: ApiFormFieldSet;
   limit?: number;
 }) {
   // Extract field definition from provided data
@@ -38,6 +40,7 @@ export function RelatedModelField({
       constructField({
         form: form,
         field: field,
+        fieldName: fieldName,
         definitions: definitions
       }),
     [form.values, field, definitions]

@@ -39,17 +39,11 @@ function ApiFormsPlayground() {
     url: '/stock/',
     title: 'Create Stock Item',
     successMessage: 'Stock item created successfully',
-    fields: [
-      {
-        name: 'part'
-      },
-      {
-        name: 'location'
-      },
-      {
-        name: 'quantity'
-      }
-    ]
+    fields: {
+      part: {},
+      location: {},
+      quantity: {}
+    }
   };
 
   const editCategoryForm: ApiFormProps = {

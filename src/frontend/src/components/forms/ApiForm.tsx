@@ -10,7 +10,6 @@ import { Button, Group, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
@@ -18,7 +17,11 @@ import { useState } from 'react';
 import { api } from '../../App';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
-import { ApiFormField, ApiFormFieldType } from './fields/ApiFormField';
+import {
+  ApiFormField,
+  ApiFormFieldSet,
+  ApiFormFieldType
+} from './fields/ApiFormField';
 
 /**
  * Properties for the ApiForm component
@@ -45,7 +48,7 @@ export interface ApiFormProps {
   url: string;
   pk?: number;
   title: string;
-  fields: ApiFormFieldType[];
+  fields: ApiFormFieldSet;
   cancelText?: string;
   submitText?: string;
   submitColor?: string;
@@ -67,11 +70,11 @@ export interface ApiFormProps {
 export function ApiForm({
   modalId,
   props,
-  fieldDefinitions = []
+  fieldDefinitions
 }: {
   modalId: string;
   props: ApiFormProps;
-  fieldDefinitions: ApiFormFieldType[];
+  fieldDefinitions: ApiFormFieldSet;
 }) {
   // Form errors which are not associated with a specific field
   const [nonFieldErrors, setNonFieldErrors] = useState<string[]>([]);
@@ -115,10 +118,10 @@ export function ApiForm({
         .get(url)
         .then((response) => {
           // Update form values, but only for the fields specified for the form
-          props.fields.forEach((field) => {
-            if (field.name in response.data) {
+          Object.keys(props.fields).forEach((fieldName) => {
+            if (fieldName in response.data) {
               form.setValues({
-                [field.name]: response.data[field.name]
+                [fieldName]: response.data[fieldName]
               });
             }
           });
@@ -134,10 +137,10 @@ export function ApiForm({
   // Fetch initial data on form load
   useEffect(() => {
     // Provide initial form data
-    props.fields.forEach((field) => {
+    Object.entries(props.fields).forEach(([fieldName, field]) => {
       if (field.value !== undefined) {
         form.setValues({
-          [field.name]: field.value
+          [fieldName]: field.value
         });
       }
     });
@@ -261,18 +264,20 @@ export function ApiForm({
         {preFormElement}
         <ScrollArea>
           <Stack spacing="xs">
-            {props.fields
-              .filter((field) => !field.hidden)
-              .map((field) => (
-                <ApiFormField
-                  key={field.name}
-                  field={field}
-                  formProps={props}
-                  form={form}
-                  error={form.errors[field.name] ?? null}
-                  definitions={fieldDefinitions}
-                />
-              ))}
+            {Object.entries(props.fields).map(
+              ([fieldName, field]) =>
+                !field.hidden && (
+                  <ApiFormField
+                    key={fieldName}
+                    field={field}
+                    fieldName={fieldName}
+                    formProps={props}
+                    form={form}
+                    error={form.errors[fieldName] ?? null}
+                    definitions={fieldDefinitions}
+                  />
+                )
+            )}
           </Stack>
         </ScrollArea>
         {postFormElement}

@@ -5,7 +5,7 @@ import { AxiosResponse } from 'axios';
 
 import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
-import { ApiFormFieldType } from '../components/forms/ApiFormField';
+import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 import { invalidResponse } from './notifications';
 
 /**
@@ -33,11 +33,11 @@ export function constructFormUrl(props: ApiFormProps): string {
 export function extractAvailableFields(
   response: AxiosResponse,
   method?: string
-): ApiFormFieldType[] | null {
+): Record<string, ApiFormFieldType> {
   // OPTIONS request *must* return 200 status
   if (response.status != 200) {
     invalidResponse(response.status);
-    return null;
+    return {};
   }
 
   let actions: any = response.data?.actions ?? null;
@@ -48,7 +48,7 @@ export function extractAvailableFields(
       message: 'METHOD not provided',
       color: 'red'
     });
-    return null;
+    return {};
   }
 
   if (!actions) {
@@ -57,7 +57,7 @@ export function extractAvailableFields(
       message: 'Response did not contain an ACTIONS object',
       color: 'red'
     });
-    return null;
+    return {};
   }
 
   method = method.toUpperCase();
@@ -68,29 +68,20 @@ export function extractAvailableFields(
       message: `Method ${method} not found in available actions`,
       color: 'red'
     });
-    return null;
+    return {};
   }
 
-  let fields: ApiFormFieldType[] = [];
-
-  // TODO: Instead of copying these individually,
-  // is there a better way?
+  let fields: Record<string, ApiFormFieldType> = {};
 
   for (const fieldName in actions[method]) {
     const field = actions[method][fieldName];
-    fields.push({
+    fields[fieldName] = {
+      ...field,
       name: fieldName,
-      label: field.label,
-      description: field.help_text,
-      value: field.value || field.default,
       fieldType: field.type,
-      required: field.required,
-      placeholder: field.placeholder,
-      api_url: field.api_url,
-      model: field.model,
-      filters: field.filters,
-      read_only: field.read_only
-    });
+      description: field.help_text,
+      value: field.value ?? field.default
+    };
   }
 
   return fields;
@@ -118,7 +109,7 @@ export function openModalApiForm(props: ApiFormProps) {
     .options(url)
     .then((response) => {
       // Extract available fields from the OPTIONS response (and handle any errors)
-      let fields: ApiFormFieldType[] | null = extractAvailableFields(
+      let fields: Record<string, ApiFormFieldType> = extractAvailableFields(
         response,
         props.method
       );
