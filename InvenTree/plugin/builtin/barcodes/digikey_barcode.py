@@ -44,7 +44,7 @@ class DigiKeyBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             elif entry.startswith("13Z"):
                 barcode_fields["load_id"] = entry[3:]
 
-        supplier_parts = SupplierPart.objects.filter(SKU__iexact=barcode_fields["sku"])
+        supplier_parts = SupplierPart.objects.filter(SKU__iexact=barcode_fields.get("sku"))
         if not supplier_parts or len(supplier_parts) > 1:
             return
         supplier_part = supplier_parts[0]

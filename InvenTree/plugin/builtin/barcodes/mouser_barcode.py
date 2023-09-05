@@ -2,7 +2,7 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from company.models import SupplierPart, ManufacturerPart
+from company.models import ManufacturerPart, SupplierPart
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
 
@@ -41,7 +41,7 @@ class MouserBarcodePlugin(BarcodeMixin, InvenTreePlugin):
                 barcode_fields["manufacturer"] = entry[2:]
 
         manufacturer_parts = ManufacturerPart.objects.filter(
-            MPN__iexact=barcode_fields["mpn"])
+            MPN__iexact=barcode_fields.get("mpn"))
         if not manufacturer_parts or len(manufacturer_parts) > 1:
             return
         manufacturer_part = manufacturer_parts[0]
