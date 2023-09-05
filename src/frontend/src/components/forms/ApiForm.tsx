@@ -247,9 +247,9 @@ export function ApiForm({
         <LoadingOverlay
           visible={initialDataQuery.isFetching || submitQuery.isFetching}
         />
-        {(form.errors || nonFieldErrors) && (
+        {(Object.keys(form.errors).length > 0 || nonFieldErrors.length > 0) && (
           <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
-            {nonFieldErrors && (
+            {nonFieldErrors.length > 0 && (
               <Stack spacing="xs">
                 {nonFieldErrors.map((message) => (
                   <Text key={message}>{message}</Text>
