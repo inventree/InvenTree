@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.forms import SignupForm, set_form_field_order
+from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
@@ -166,6 +166,24 @@ class SetPasswordForm(HelperForm):
 
 
 # override allauth
+class CustomLoginForm(LoginForm):
+    """Custom login form to override default allauth behaviour"""
+
+    def login(self, request, redirect_url=None):
+        """Perform login action.
+
+        First check that:
+        - A valid user has been supplied
+        """
+
+        if not self.user:
+            # No user supplied - redirect to the login page
+            return HttpResponseRedirect(reverse('account_login'))
+
+        # Now perform default login action
+        super().login(request, redirect_url)
+
+
 class CustomSignupForm(SignupForm):
     """Override to use dynamic settings."""
 
