@@ -2191,6 +2191,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'NOTIFICATION_ERROR_REPORT': {
+            'name': _('Receive error reports'),
+            'description': _('Receive notifications for system errors'),
+            'default': False,
+            'validator': bool,
+        }
+
     }
 
     typ = 'user'
