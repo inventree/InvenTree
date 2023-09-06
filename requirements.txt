@@ -81,7 +81,7 @@ django==3.2.21
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth==0.55.2
+django-allauth==0.54.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
