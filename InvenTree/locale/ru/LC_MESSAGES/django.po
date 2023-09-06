@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-16 06:22+0000\n"
-"PO-Revision-Date: 2023-08-16 14:08\n"
+"POT-Creation-Date: 2023-08-24 06:03+0000\n"
+"PO-Revision-Date: 2023-08-29 00:53\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -169,35 +169,35 @@ msgstr "Число уникальных серийных номеров ({s}) д
 msgid "Remove HTML tags from this value"
 msgstr "Удалить HTML теги из этого значения"
 
-#: InvenTree/helpers_model.py:131
+#: InvenTree/helpers_model.py:125
 msgid "Connection error"
 msgstr "Ошибка соединения"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:140
+#: InvenTree/helpers_model.py:129 InvenTree/helpers_model.py:134
 msgid "Server responded with invalid status code"
 msgstr "Сервер ответил неверным кодом статуса"
 
-#: InvenTree/helpers_model.py:137
+#: InvenTree/helpers_model.py:131
 msgid "Exception occurred"
 msgstr "Произошло исключение"
 
-#: InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139
 msgid "Server responded with invalid Content-Length value"
 msgstr "Сервер ответил неверным значением Контент-Длина"
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:142
 msgid "Image size is too large"
 msgstr "Изображение слишком большое"
 
-#: InvenTree/helpers_model.py:160
+#: InvenTree/helpers_model.py:154
 msgid "Image download exceeded maximum size"
 msgstr "Загрузка изображения превышен максимальный размер"
 
-#: InvenTree/helpers_model.py:165
+#: InvenTree/helpers_model.py:159
 msgid "Remote server returned empty response"
 msgstr "Удаленный сервер вернул пустой ответ"
 
-#: InvenTree/helpers_model.py:173
+#: InvenTree/helpers_model.py:167
 msgid "Supplied URL is not a valid image file"
 msgstr "Предоставленный URL не является допустимым файлом изображения"
 
@@ -953,7 +953,7 @@ msgstr "Порядок сборки"
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:186 users/models.py:42
 msgid "Build Orders"
-msgstr "Порядок сборки"
+msgstr "Заказы на сборку"
 
 #: build/models.py:115
 msgid "Invalid choice for parent build"
@@ -1387,7 +1387,7 @@ msgstr "Автоматически выделить серийные номер�
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Автоматически выделять необходимые элементы с соответствующими серийными номерами"
 
-#: build/serializers.py:334 stock/api.py:727
+#: build/serializers.py:334 stock/api.py:729
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Следующие серийные номера уже существуют или недействительны"
 
@@ -1868,7 +1868,7 @@ msgstr "Сборка не завершена"
 
 #: build/templates/build/detail.html:164 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
-msgstr ""
+msgstr "Порожденные заказы на сборку"
 
 #: build/templates/build/detail.html:177
 msgid "Allocate Stock to Build"
@@ -3155,11 +3155,11 @@ msgstr ""
 
 #: common/models.py:2038
 msgid "Search Build Orders"
-msgstr ""
+msgstr "Искать заказы на сборку"
 
 #: common/models.py:2039
 msgid "Display build orders in search preview window"
-msgstr ""
+msgstr "Отображать заказы на сборку в окне предварительного просмотра поиска"
 
 #: common/models.py:2045
 msgid "Search Purchase Orders"
@@ -5469,7 +5469,7 @@ msgstr "В заказе"
 
 #: part/admin.py:63 part/templates/part/part_sidebar.html:27
 msgid "Used In"
-msgstr "Сборки"
+msgstr "Используется в"
 
 #: part/admin.py:65 part/templates/part/part_base.html:243 stock/admin.py:124
 #: templates/js/translated/part.js:691 templates/js/translated/part.js:2127
@@ -6159,7 +6159,7 @@ msgstr ""
 
 #: part/models.py:3837
 msgid "This BOM item is consumable (it is not tracked in build orders)"
-msgstr ""
+msgstr "Эта позиция - расходник. (она не отслеживается в заказах на сборку)"
 
 #: part/models.py:3841 part/templates/part/upload_bom.html:55
 msgid "Overage"
@@ -6909,7 +6909,7 @@ msgstr ""
 #: part/templates/part/part_base.html:220
 #: stock/templates/stock/item_base.html:389
 msgid "Allocated to Build Orders"
-msgstr ""
+msgstr "Зарезервировано для сборки"
 
 #: part/templates/part/part_base.html:229
 #: stock/templates/stock/item_base.html:382
@@ -7724,15 +7724,15 @@ msgstr "Необходимо указать количество"
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:667
+#: stock/api.py:669
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:676
+#: stock/api.py:678
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:699
+#: stock/api.py:701
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -8589,7 +8589,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:148
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Требуется для сборки"
 
 #: templates/InvenTree/index.html:156
 msgid "Expired Stock"
@@ -8601,11 +8601,11 @@ msgstr ""
 
 #: templates/InvenTree/index.html:199
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Активные заказы на сборку"
 
 #: templates/InvenTree/index.html:210
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Просроченные заказы на сборку"
 
 #: templates/InvenTree/index.html:230
 msgid "Outstanding Purchase Orders"
