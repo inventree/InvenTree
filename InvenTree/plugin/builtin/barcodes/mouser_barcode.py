@@ -4,7 +4,7 @@ import logging
 
 from django.utils.translation import gettext_lazy as _
 
-from company.models import ManufacturerPart, SupplierPart
+from company.models import Company, ManufacturerPart, SupplierPart
 from plugin import InvenTreePlugin, registry
 from plugin.mixins import BarcodeMixin, SettingsMixin
 from .barcode2d import parse_ecia_barcode2d
@@ -22,16 +22,30 @@ class MouserBarcodePlugin(BarcodeMixin, SettingsMixin, InvenTreePlugin):
     AUTHOR = _("InvenTree contributors")
 
     SETTINGS = {
-        "MOUSER_SUPPLIER_NAME": {
-            "name": _("Mouser Supplier Name"),
-            "description": _("Name of the Supplier which acts as 'Mouser'"),
-            "default": "Mouser",
-            "validator": lambda name: bool(name),
+        "MOUSER_SUPPLIER": {
+            "name": _("Mouser Supplier"),
+            "description": _("The Supplier which acts as 'Mouser'"),
+            "model": "company.company",
         }
     }
 
     def scan(self, barcode_data):
         """Process a barcode to determine if it is a Mouser barcode."""
+
+        if (mouser_pk := self.get_setting("MOUSER_SUPPLIER")):
+            if not (mouser := Company.objects.get(pk=mouser_pk)):
+                logger.warning(
+                    f"No company with pk {mouser_pk} "
+                    f"(set \"MOUSER_SUPPLIER\" pk to a valid value)"
+                )
+                return
+        else:
+            suppliers = Company.objects.filter(
+                name__icontains="mouser", is_supplier=True)
+            if len(suppliers) != 1:
+                return
+            mouser = suppliers[0]
+            self.set_setting("MOUSER_SUPPLIER", mouser.pk)
 
         if not (barcode_fields := parse_ecia_barcode2d(barcode_data)):
             return
@@ -56,14 +70,12 @@ class MouserBarcodePlugin(BarcodeMixin, SettingsMixin, InvenTreePlugin):
                 return
             manufacturer_part = manufacturer_parts[0]
 
-            supplier_name = self.get_setting("MOUSER_SUPPLIER_NAME")
             supplier_parts = SupplierPart.objects.filter(
-                manufacturer_part=manufacturer_part.pk,
-                supplier__name__iexact=supplier_name)
+                manufacturer_part=manufacturer_part.pk, supplier=mouser.pk)
             if not supplier_parts or len(supplier_parts) > 1:
                 logger.warning(
                     f"Found {len(supplier_parts)} supplier parts for SKU "
-                    f"{sku} and supplier '{supplier_name}' with "
+                    f"{sku} and supplier '{mouser.name}' with "
                     f"MouserBarcodePlugin plugin"
                 )
                 return
