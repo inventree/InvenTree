@@ -1,4 +1,5 @@
-"""The LCSCBarcodePlugin matches LCSC barcodes to supplier parts."""
+"""The LCSCPlugin is meant to integrate the LCSC API into Inventree.
+It can currently only match LCSC barcodes to supplier parts."""
 
 import logging, re
 
@@ -7,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from company.models import SupplierPart
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
+from .supplier_barcodes import get_order_data, get_supplier_part
 
 logger = logging.getLogger('inventree')
 
@@ -19,11 +21,11 @@ BARCODE_FIELD_NAME_MAP = {
 }
 
 
-class LCSCBarcodePlugin(BarcodeMixin, InvenTreePlugin):
-    """BarcodePlugin for matching LCSC barcodes."""
+class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
+    """Plugin to integrate the LCSC API into Inventree."""
 
-    NAME = "LCSCBarcode"
-    TITLE = _("LCSC Barcodes")
+    NAME = "LCSCPlugin"
+    TITLE = _("Supplier Integration - LCSC")
     DESCRIPTION = _("Provides support for scanning LCSC barcodes")
     VERSION = "1.0.0"
     AUTHOR = _("InvenTree contributors")
@@ -40,17 +42,9 @@ class LCSCBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             for field_name, value in barcode_pairs
         }
 
-        if not (sku := barcode_fields.get("supplier_part_number")):
-            return
-
-        supplier_parts = SupplierPart.objects.filter(SKU__iexact=sku)
-        if not supplier_parts or len(supplier_parts) > 1:
-            logger.warning(
-                f"Found {len(supplier_parts)} supplier parts for SKU "
-                f"{sku} with LCSCBarcodePlugin plugin"
-            )
-            return
-        supplier_part = supplier_parts[0]
+        sku = barcode_fields.get("supplier_part_number")
+        if not (supplier_part := get_supplier_part(sku)):
+            return None
 
         data = {
             "pk": supplier_part.pk,
@@ -58,16 +52,6 @@ class LCSCBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             "web_url": supplier_part.get_absolute_url(),
         }
 
-        if quantity := barcode_fields.get("quantity"):
-            try:
-                data["quantity"] = int(quantity)
-            except ValueError:
-                logger.warning(
-                    f"Failed to parse quantity '{quantity}' with "
-                    f"LCSCBarcodePlugin plugin"
-                )
-
-        if order_number := barcode_fields.get("purchase_order_number"):
-            data["order_number"] = order_number
+        data.update(get_order_data(barcode_fields))
 
         return {SupplierPart.barcode_model_type(): data}

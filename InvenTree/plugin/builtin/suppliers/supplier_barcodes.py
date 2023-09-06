@@ -1,3 +1,55 @@
+import logging
+
+from company.models import Company, ManufacturerPart, SupplierPart
+
+logger = logging.getLogger('inventree')
+
+
+def get_supplier_part(sku: str, supplier: Company=None, mpn: str =None):
+    if sku:
+        supplier_parts = SupplierPart.objects.filter(SKU__iexact=sku)
+        if not supplier_parts or len(supplier_parts) > 1:
+            logger.warning(
+                f"Found {len(supplier_parts)} supplier parts for SKU {sku}"
+            )
+            return None
+        return supplier_parts[0]
+    
+    if not supplier or not mpn:
+        return None
+
+    manufacturer_parts = ManufacturerPart.objects.filter(MPN__iexact=mpn)
+    if not manufacturer_parts or len(manufacturer_parts) > 1:
+        logger.warning(
+            f"Found {len(manufacturer_parts)} manufacturer parts for MPN {mpn}"
+        )
+        return None
+    manufacturer_part = manufacturer_parts[0]
+
+    supplier_parts = SupplierPart.objects.filter(
+        manufacturer_part=manufacturer_part.pk, supplier=supplier.pk)
+    if not supplier_parts or len(supplier_parts) > 1:
+        logger.warning(
+            f"Found {len(supplier_parts)} supplier parts for MPN {mpn} and "
+            f"supplier '{supplier.name}'"
+        )
+        return None
+    return supplier_parts[0]
+
+def get_order_data(barcode_fields: dict[str, str]) -> dict:
+    data = {}
+
+    if quantity := barcode_fields.get("quantity"):
+        try:
+            data["quantity"] = int(quantity)
+        except ValueError:
+            logger.warning(f"Failed to parse quantity '{quantity}'")
+
+    if order_number := barcode_fields.get("purchase_order_number"):
+        data["order_number"] = order_number
+
+    return data
+
 # Map ECIA Data Identifier to human readable identifier
 # The following identifiers haven't been implemented: 3S, 4S, 5S, S
 DATA_IDENTIFIER_MAP = {
