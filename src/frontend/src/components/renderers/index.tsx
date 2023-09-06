@@ -1,15 +1,30 @@
+import { BuildOrderRenderer } from './BuildOrderRenderer';
 import { PartRenderer } from './PartRenderer';
+import { PurchaseOrderRenderer } from './PurchaseOrderRenderer';
+import { SalesOrderRenderer } from './SalesOrderRenderer';
 import { StockItemRenderer } from './StockItemRenderer';
+import { StockLocationRenderer } from './StockLocationRenderer';
+import { SupplierPartRenderer } from './SupplierPartRenderer';
 
 export enum RenderTypes {
   part = 'part',
-  stockitem = 'stockitem'
+  stock_item = 'stockitem',
+  stock_location = 'stocklocation',
+  supplier_part = 'supplierpart',
+  purchase_order = 'purchase_order',
+  sales_order = 'sales_order',
+  build_order = 'build_order'
 }
 
 // dict of renderers
 const renderers = {
-  [RenderTypes.stockitem]: StockItemRenderer,
-  [RenderTypes.part]: PartRenderer
+  [RenderTypes.part]: PartRenderer,
+  [RenderTypes.stock_item]: StockItemRenderer,
+  [RenderTypes.stock_location]: StockLocationRenderer,
+  [RenderTypes.supplier_part]: SupplierPartRenderer,
+  [RenderTypes.purchase_order]: PurchaseOrderRenderer,
+  [RenderTypes.sales_order]: SalesOrderRenderer,
+  [RenderTypes.build_order]: BuildOrderRenderer
 };
 
 export interface RenderProps {

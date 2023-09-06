@@ -10,38 +10,68 @@ export function GeneralRenderer({
   api_ref: ref,
   link,
   pk,
+  image = true,
+  data = undefined,
   renderer
 }: {
   api_key: ApiPaths;
   api_ref: string;
   link: string;
   pk: string;
+  image?: boolean;
+  data?: any;
   renderer?: (data: any) => JSX.Element;
 }) {
-  const { data, isError, isFetching, isLoading } = useQuery({
-    queryKey: [ref, pk],
-    queryFn: () => {
-      return api.get(url(api_key, pk)).then((res) => res.data);
-    }
-  });
+  // check if data was passed - or fetch it
+  if (!data) {
+    const {
+      data: fetched_data,
+      isError,
+      isFetching,
+      isLoading
+    } = useQuery({
+      queryKey: [ref, pk],
+      queryFn: () => {
+        return api
+          .get(url(api_key, pk))
+          .then((res) => res.data)
+          .catch(() => {
+            {
+            }
+          });
+      }
+    });
 
-  if (isError) {
-    return <div>Something went wrong...</div>;
+    // Loading section
+    if (isError) {
+      return <div>Something went wrong...</div>;
+    }
+    if (isFetching || isLoading) {
+      return <Loader />;
+    }
+    data = fetched_data;
   }
 
-  if (isFetching || isLoading) {
-    return <Loader />;
+  // Renderers
+  let content = undefined;
+  // Specific renderer was passed
+  if (renderer) content = renderer(data);
+
+  // No image and no content no default renderer
+  if (image === false && !content) content = data.name;
+
+  // Wrap in link if link was passed
+  if (content && link) {
+    content = (
+      <Anchor href={link} style={{ textDecoration: 'none' }}>
+        {content}
+      </Anchor>
+    );
   }
 
-  if (renderer) {
-    if (link) {
-      return (
-        <Anchor href={link} style={{ textDecoration: 'none' }}>
-          {renderer(data)}
-        </Anchor>
-      );
-    }
-    return renderer(data);
+  // Return content if it exists, else default
+  if (content !== undefined) {
+    return content;
   }
   return (
     <ThumbnailHoverCard

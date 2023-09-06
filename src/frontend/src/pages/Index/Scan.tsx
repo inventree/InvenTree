@@ -129,10 +129,27 @@ export default function Scan() {
         item.objectType = RenderTypes.part;
         item.objectPk = response.data?.part.pk;
       } else if (response.data?.stockitem) {
-        item.objectType = RenderTypes.stockitem;
+        item.objectType = RenderTypes.stock_item;
         item.objectPk = response.data?.stockitem.pk;
+      } else if (response.data?.stocklocation) {
+        item.objectType = RenderTypes.stock_location;
+        item.objectPk = response.data?.stocklocation.pk;
+      } else if (response.data?.supplierpart) {
+        item.objectType = RenderTypes.supplier_part;
+        item.objectPk = response.data?.supplierpart.pk;
+      } else if (response.data?.purchaseorder) {
+        item.objectType = RenderTypes.purchase_order;
+        item.objectPk = response.data?.purchaseorder.pk;
+      } else if (response.data?.salesorder) {
+        item.objectType = RenderTypes.sales_order;
+        item.objectPk = response.data?.salesorder.pk;
+      } else if (response.data?.build) {
+        item.objectType = RenderTypes.build_order;
+        item.objectPk = response.data?.build.pk;
+      } else {
+        item.objectType = undefined;
+        item.objectPk = undefined;
       }
-      // TODO @matmair:  add more object types
 
       historyHandlers.setState(history);
     });
@@ -284,7 +301,7 @@ export default function Scan() {
                     <ActionIcon
                       onClick={btnRunSelectedBarcode}
                       disabled={selection.length > 1}
-                      title={t`Lookup`}
+                      title={t`Lookup part`}
                     >
                       <IconSearch />
                     </ActionIcon>
