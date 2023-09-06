@@ -1,13 +1,17 @@
 """The LCSCPlugin is meant to integrate the LCSC API into Inventree.
-It can currently only match LCSC barcodes to supplier parts."""
 
-import logging, re
+This plugin can currently only match LCSC barcodes to supplier parts.
+"""
+
+import logging
+import re
 
 from django.utils.translation import gettext_lazy as _
 
 from company.models import SupplierPart
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
+
 from .supplier_barcodes import get_order_data, get_supplier_part
 
 logger = logging.getLogger('inventree')

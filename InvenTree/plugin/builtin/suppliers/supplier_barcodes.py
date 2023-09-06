@@ -5,7 +5,7 @@ from company.models import Company, ManufacturerPart, SupplierPart
 logger = logging.getLogger('inventree')
 
 
-def get_supplier_part(sku: str, supplier: Company=None, mpn: str =None):
+def get_supplier_part(sku: str, supplier: Company = None, mpn: str = None):
     if sku:
         supplier_parts = SupplierPart.objects.filter(SKU__iexact=sku)
         if not supplier_parts or len(supplier_parts) > 1:
@@ -14,7 +14,7 @@ def get_supplier_part(sku: str, supplier: Company=None, mpn: str =None):
             )
             return None
         return supplier_parts[0]
-    
+
     if not supplier or not mpn:
         return None
 
@@ -36,6 +36,7 @@ def get_supplier_part(sku: str, supplier: Company=None, mpn: str =None):
         return None
     return supplier_parts[0]
 
+
 def get_order_data(barcode_fields: dict[str, str]) -> dict:
     data = {}
 
@@ -50,17 +51,18 @@ def get_order_data(barcode_fields: dict[str, str]) -> dict:
 
     return data
 
+
 # Map ECIA Data Identifier to human readable identifier
 # The following identifiers haven't been implemented: 3S, 4S, 5S, S
 DATA_IDENTIFIER_MAP = {
     "K":   "purchase_order_number",
-    "1K":  "purchase_order_number",    # DigiKey uses 1K instead of K
+    "1K":  "purchase_order_number",     # DigiKey uses 1K instead of K
     "11K": "packing_list_number",
     "6D":  "ship_date",
-    "P":   "supplier_part_number",     # "Customer Part Number"
-    "1P":  "manufacturer_part_number", # "Supplier Part Number"
+    "P":   "supplier_part_number",      # "Customer Part Number"
+    "1P":  "manufacturer_part_number",  # "Supplier Part Number"
     "4K":  "purchase_order_line",
-    "14K": "purchase_order_line",      # Mouser uses 14K instead of 4K
+    "14K": "purchase_order_line",       # Mouser uses 14K instead of 4K
     "Q":   "quantity",
     "9D":  "date_yyww",
     "10D": "date_yyww",
@@ -68,6 +70,7 @@ DATA_IDENTIFIER_MAP = {
     "4L":  "country_of_origin",
     "1V":  "manufacturer"
 }
+
 
 def parse_ecia_barcode2d(barcode_data: str) -> dict[str, str]:
     """Parse a standard ECIA 2D barcode, according to
@@ -85,6 +88,7 @@ def parse_ecia_barcode2d(barcode_data: str) -> dict[str, str]:
                 break
 
     return barcode_fields
+
 
 def parse_isoiec_15434_barcode2d(barcode_data: str) -> list[str]:
     HEADER = "[)>\x1E06\x1D"

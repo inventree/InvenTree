@@ -1,5 +1,7 @@
 """The MouserPlugin is meant to integrate the Mouser API into Inventree.
-It can currently only match Mouser barcodes to supplier parts."""
+
+This plugin currently only match Mouser barcodes to supplier parts.
+"""
 
 import logging
 
@@ -8,7 +10,9 @@ from django.utils.translation import gettext_lazy as _
 from company.models import Company, SupplierPart
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin, SettingsMixin
-from .supplier_barcodes import get_order_data, get_supplier_part, parse_ecia_barcode2d
+
+from .supplier_barcodes import (get_order_data, get_supplier_part,
+                                parse_ecia_barcode2d)
 
 logger = logging.getLogger('inventree')
 
