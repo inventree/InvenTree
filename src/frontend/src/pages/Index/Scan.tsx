@@ -83,9 +83,13 @@ export default function Scan() {
     runBarcode(item?.ref, item?.id);
   }
 
+  const selectionLinked =
+    selection.length === 1 && getSelectedItem(selection[0])?.link != undefined;
+
   function btnOpenSelectedLink() {
     const item = getSelectedItem(selection[0]);
     if (!item) return;
+    if (!selectionLinked) return;
     window.open(item.link, '_blank');
   }
 
@@ -286,7 +290,7 @@ export default function Scan() {
                     </ActionIcon>
                     <ActionIcon
                       onClick={btnOpenSelectedLink}
-                      disabled={selection.length > 1}
+                      disabled={!selectionLinked}
                       title={t`Open Link`}
                     >
                       <IconLink />
@@ -360,7 +364,7 @@ function HistoryTable({
             item.ref
           )}
         </td>
-        <td>{item.link}</td>
+        <td>{item.objectType}</td>
         <td>{item.source}</td>
         <td>{item.timestamp?.toString()}</td>
       </tr>
@@ -389,9 +393,11 @@ function HistoryTable({
                 transitionDuration={0}
               />
             </th>
-            <th></th>
             <th>
-              <Trans>Link</Trans>
+              <Trans>Item</Trans>
+            </th>
+            <th>
+              <Trans>Type</Trans>
             </th>
             <th>
               <Trans>Source</Trans>
