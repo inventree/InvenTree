@@ -171,6 +171,10 @@ icalendar==5.0.7
     # via django-ical
 idna==3.4
     # via requests
+importlib-metadata==6.8.0
+    # via
+    #   django-q2
+    #   markdown
 inflection==0.5.1
     # via drf-spectacular
 itypes==1.2.0
