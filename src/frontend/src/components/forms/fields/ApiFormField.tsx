@@ -125,18 +125,16 @@ export function ApiFormField({
 }) {
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(() => {
-    let def = constructField({
-      form: form,
-      fieldName: fieldName,
-      field: field,
-      definitions: definitions
-    });
-
-    form.setValues({ [fieldName]: def.value ?? def.default });
-
-    return def;
-  }, [fieldName, field, definitions]);
+  const definition: ApiFormFieldType = useMemo(
+    () =>
+      constructField({
+        form: form,
+        fieldName: fieldName,
+        field: field,
+        definitions: definitions
+      }),
+    [fieldName, field, definitions]
+  );
 
   const preFieldElement: JSX.Element | null = useMemo(() => {
     if (field.preFieldContent === undefined) {
@@ -168,6 +166,8 @@ export function ApiFormField({
     }
   }
 
+  const value: any = useMemo(() => form.values[fieldName], [form.values]);
+
   // Construct the individual field
   function buildField() {
     switch (definition.fieldType) {
@@ -189,6 +189,7 @@ export function ApiFormField({
           <TextInput
             {...definition}
             type={definition.fieldType}
+            value={value}
             error={error}
             radius="sm"
             onChange={(event) => onChange(event.currentTarget.value)}
@@ -205,7 +206,7 @@ export function ApiFormField({
             radius="lg"
             size="sm"
             {...definition}
-            checked={definition.value}
+            checked={value ?? false}
             error={error}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
@@ -217,6 +218,7 @@ export function ApiFormField({
             {...definition}
             type={undefined}
             error={error}
+            value={value}
             clearable={!definition.required}
             onChange={(value) => onChange(value)}
             valueFormat="YYYY-MM-DD"
@@ -230,6 +232,7 @@ export function ApiFormField({
           <NumberInput
             radius="sm"
             {...definition}
+            value={value}
             error={error}
             onChange={(value: number) => onChange(value)}
           />

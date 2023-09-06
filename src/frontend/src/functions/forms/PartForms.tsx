@@ -4,6 +4,7 @@ import {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../../components/forms/fields/ApiFormField';
+import { openCreateApiForm, openEditApiForm } from '../forms';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
@@ -64,6 +65,34 @@ export function partFields({
   // TODO: handle part duplications
 
   return fields;
+}
+
+/**
+ * Launch a dialog to create a new Part instance
+ */
+export function createPart() {
+  openCreateApiForm({
+    name: 'part-create',
+    title: t`Create Part`,
+    url: '/part/',
+    successMessage: t`Part created`,
+    fields: partFields({})
+  });
+}
+
+/**
+ * Launch a dialog to edit an existing Part instance
+ * @param part The ID of the part to edit
+ */
+export function editPart(part: number) {
+  openEditApiForm({
+    name: 'part-edit',
+    title: t`Edit Part`,
+    url: '/part/',
+    pk: part,
+    successMessage: t`Part updated`,
+    fields: partFields({ editing: true })
+  });
 }
 
 /**

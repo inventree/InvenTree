@@ -4,6 +4,7 @@ import {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../../components/forms/fields/ApiFormField';
+import { openCreateApiForm, openEditApiForm } from '../forms';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
@@ -75,4 +76,30 @@ export function stockFields({}: {}): ApiFormFieldSet {
   // TODO: refer to stock.py in original codebase
 
   return fields;
+}
+
+/**
+ * Launch a form to create a new StockItem instance
+ */
+export function createStockItem() {
+  openCreateApiForm({
+    name: 'stockitem-create',
+    url: '/stock/',
+    fields: stockFields({}),
+    title: t`Create Stock Item`
+  });
+}
+
+/**
+ * Launch a form to edit an existing StockItem instance
+ * @param item : primary key of the StockItem to edit
+ */
+export function editStockItem(item: number) {
+  openEditApiForm({
+    name: 'stockitem-edit',
+    url: '/stock/',
+    pk: item,
+    fields: stockFields({}),
+    title: t`Edit Stock Item`
+  });
 }

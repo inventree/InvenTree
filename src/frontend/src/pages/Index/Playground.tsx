@@ -9,40 +9,14 @@ import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 import {
-  partCategoryFields,
-  partFields
-} from '../../functions/forms/PartFields';
-import { stockFields } from '../../functions/forms/StockFields';
+  createPart,
+  editPart,
+  partCategoryFields
+} from '../../functions/forms/PartForms';
+import { createStockItem } from '../../functions/forms/StockForms';
 
 // Generate some example forms using the modal API forms interface
 function ApiFormsPlayground() {
-  const createPartForm: ApiFormProps = {
-    name: 'part',
-    url: '/part/',
-    title: 'Create Part',
-    successMessage: 'Part created successfully',
-    fields: partFields({})
-  };
-
-  const editPartForm: ApiFormProps = {
-    name: 'part',
-    url: '/part/',
-    pk: 1,
-    title: 'Edit Part',
-    submitText: 'Save',
-    cancelText: 'Custom Cancel',
-    successMessage: 'Part saved successfully',
-    fields: partFields({ editing: true })
-  };
-
-  const newStockForm: ApiFormProps = {
-    name: 'stock',
-    url: '/stock/',
-    title: 'Create Stock Item',
-    successMessage: 'Stock item created successfully',
-    fields: stockFields({})
-  };
-
   const editCategoryForm: ApiFormProps = {
     name: 'partcategory',
     url: '/part/category/',
@@ -54,15 +28,9 @@ function ApiFormsPlayground() {
   return (
     <>
       <Group>
-        <Button onClick={() => openCreateApiForm(createPartForm)}>
-          Create New Part
-        </Button>
-        <Button onClick={() => openEditApiForm(editPartForm)}>
-          Edit Existing Part
-        </Button>
-        <Button onClick={() => openCreateApiForm(newStockForm)}>
-          Create New Stock Item
-        </Button>
+        <Button onClick={() => createPart()}>Create New Part</Button>
+        <Button onClick={() => editPart(1)}>Edit Part</Button>
+        <Button onClick={() => createStockItem()}>Create Stock Item</Button>
         <Button onClick={() => openEditApiForm(editCategoryForm)}>
           Edit Category
         </Button>
