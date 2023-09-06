@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-05 05:25+0000\n"
-"PO-Revision-Date: 2023-09-05 14:07\n"
+"PO-Revision-Date: 2023-09-06 14:10\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -3315,11 +3315,11 @@ msgstr "O modelo de rótulo do local de estoque a ser selecionado automaticament
 
 #: common/models.py:2195
 msgid "Receive error reports"
-msgstr ""
+msgstr "Receber relatório de erros"
 
 #: common/models.py:2196
 msgid "Receive notifications for system errors"
-msgstr ""
+msgstr "Receber notificações para erros do sistema"
 
 #: common/models.py:2240
 msgid "Price break quantity"
