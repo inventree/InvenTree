@@ -115,44 +115,56 @@ export default function Scan() {
   }
 
   function runBarcode(value: string, id?: string) {
-    api.post(url(ApiPaths.barcode), { barcode: value }).then((response) => {
-      // update item in history
-      if (!id) return;
-      const item = getSelectedItem(selection[0]);
-      if (!item) return;
+    api
+      .post(url(ApiPaths.barcode), { barcode: value })
+      .then((response) => {
+        // update item in history
+        if (!id) return;
+        const item = getSelectedItem(selection[0]);
+        if (!item) return;
 
-      // set link data
-      item.link = response.data?.url;
+        // set link data
+        item.link = response.data?.url;
 
-      // try to set object data
-      if (response.data?.part) {
-        item.objectType = RenderTypes.part;
-        item.objectPk = response.data?.part.pk;
-      } else if (response.data?.stockitem) {
-        item.objectType = RenderTypes.stock_item;
-        item.objectPk = response.data?.stockitem.pk;
-      } else if (response.data?.stocklocation) {
-        item.objectType = RenderTypes.stock_location;
-        item.objectPk = response.data?.stocklocation.pk;
-      } else if (response.data?.supplierpart) {
-        item.objectType = RenderTypes.supplier_part;
-        item.objectPk = response.data?.supplierpart.pk;
-      } else if (response.data?.purchaseorder) {
-        item.objectType = RenderTypes.purchase_order;
-        item.objectPk = response.data?.purchaseorder.pk;
-      } else if (response.data?.salesorder) {
-        item.objectType = RenderTypes.sales_order;
-        item.objectPk = response.data?.salesorder.pk;
-      } else if (response.data?.build) {
-        item.objectType = RenderTypes.build_order;
-        item.objectPk = response.data?.build.pk;
-      } else {
-        item.objectType = undefined;
-        item.objectPk = undefined;
-      }
+        // try to set object data
+        if (response.data?.part) {
+          item.objectType = RenderTypes.part;
+          item.objectPk = response.data?.part.pk;
+        } else if (response.data?.stockitem) {
+          item.objectType = RenderTypes.stock_item;
+          item.objectPk = response.data?.stockitem.pk;
+        } else if (response.data?.stocklocation) {
+          item.objectType = RenderTypes.stock_location;
+          item.objectPk = response.data?.stocklocation.pk;
+        } else if (response.data?.supplierpart) {
+          item.objectType = RenderTypes.supplier_part;
+          item.objectPk = response.data?.supplierpart.pk;
+        } else if (response.data?.purchaseorder) {
+          item.objectType = RenderTypes.purchase_order;
+          item.objectPk = response.data?.purchaseorder.pk;
+        } else if (response.data?.salesorder) {
+          item.objectType = RenderTypes.sales_order;
+          item.objectPk = response.data?.salesorder.pk;
+        } else if (response.data?.build) {
+          item.objectType = RenderTypes.build_order;
+          item.objectPk = response.data?.build.pk;
+        } else {
+          item.objectType = undefined;
+          item.objectPk = undefined;
+        }
 
-      historyHandlers.setState(history);
-    });
+        historyHandlers.setState(history);
+      })
+      .catch((err) => {
+        // 400 and no plugin means no match
+        if (
+          err.response?.status === 400 &&
+          err.response?.data?.plugin === 'None'
+        )
+          return;
+        // otherwise log error
+        console.log('error while running barcode', err);
+      });
   }
 
   function addItems(items: ScanItem[]) {
