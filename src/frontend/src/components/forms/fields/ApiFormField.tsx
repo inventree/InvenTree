@@ -16,6 +16,16 @@ import { ApiFormProps } from '../ApiForm';
 import { ChoiceField } from './ChoiceField';
 import { RelatedModelField } from './RelatedModelField';
 
+/**
+ * Callback function type when a form field value changes
+ */
+export type ApiFormChangeCallback = {
+  name: string;
+  value: any;
+  field: ApiFormFieldType;
+  form: UseFormReturnType<Record<string, unknown>>;
+};
+
 /* Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
  * - All other attributes are optional, and may be provided by the API
@@ -58,7 +68,7 @@ export type ApiFormFieldType = {
   description?: string;
   preFieldContent?: JSX.Element | (() => JSX.Element);
   postFieldContent?: JSX.Element | (() => JSX.Element);
-  onValueChange?: (value: any) => void;
+  onValueChange?: (change: ApiFormChangeCallback) => void;
 };
 
 /*
@@ -162,7 +172,12 @@ export function ApiFormField({
 
     // Run custom callback for this field
     if (definition.onValueChange) {
-      definition.onValueChange(value);
+      definition.onValueChange({
+        name: fieldName,
+        value: value,
+        field: definition,
+        form: form
+      });
     }
   }
 

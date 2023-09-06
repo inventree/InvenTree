@@ -146,7 +146,12 @@ export function RelatedModelField({
 
     // Run custom callback for this field (if provided)
     if (definition.onValueChange) {
-      definition.onValueChange(pk);
+      definition.onValueChange({
+        name: fieldName,
+        value: _pk,
+        field: definition,
+        form: form
+      });
     }
   }
 

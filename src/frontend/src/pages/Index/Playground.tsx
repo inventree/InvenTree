@@ -5,6 +5,7 @@ import { Accordion } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { ApiFormProps } from '../../components/forms/ApiForm';
+import { ApiFormChangeCallback } from '../../components/forms/fields/ApiFormField';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
@@ -17,12 +18,19 @@ import { createStockItem } from '../../functions/forms/StockForms';
 
 // Generate some example forms using the modal API forms interface
 function ApiFormsPlayground() {
+  let fields = partCategoryFields({});
+
+  fields.name.onValueChange = (change: ApiFormChangeCallback) => {
+    console.log(change);
+    change.form.setValues({ description: 'hello world' });
+  };
+
   const editCategoryForm: ApiFormProps = {
     name: 'partcategory',
     url: '/part/category/',
     pk: 2,
     title: 'Edit Category',
-    fields: partCategoryFields({})
+    fields: fields
   };
 
   return (

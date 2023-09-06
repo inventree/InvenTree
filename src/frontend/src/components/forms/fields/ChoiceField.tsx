@@ -60,7 +60,12 @@ export function ChoiceField({
     form.setFieldValue(fieldName, value);
 
     if (definition.onValueChange) {
-      definition.onValueChange(value);
+      definition.onValueChange({
+        name: fieldName,
+        value: value,
+        field: definition,
+        form: form
+      });
     }
   }
 
