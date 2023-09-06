@@ -6,7 +6,7 @@ import { AxiosResponse } from 'axios';
 import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
-import { invalidResponse } from './notifications';
+import { invalidResponse, permissionDenied } from './notifications';
 
 /**
  * Construct an API url from the provided ApiFormProps object
@@ -33,42 +33,39 @@ export function constructFormUrl(props: ApiFormProps): string {
 export function extractAvailableFields(
   response: AxiosResponse,
   method?: string
-): Record<string, ApiFormFieldType> {
+): Record<string, ApiFormFieldType> | null {
   // OPTIONS request *must* return 200 status
   if (response.status != 200) {
     invalidResponse(response.status);
-    return {};
+    return null;
   }
 
   let actions: any = response.data?.actions ?? null;
 
   if (!method) {
     notifications.show({
-      title: 'INVALID FORM',
-      message: 'METHOD not provided',
+      title: t`Form Error`,
+      message: t`Form method not provided`,
       color: 'red'
     });
-    return {};
+    return null;
   }
 
   if (!actions) {
     notifications.show({
-      title: 'INVALID FORM',
-      message: 'Response did not contain an ACTIONS object',
+      title: t`Form Error`,
+      message: t`Response did not contain action data`,
       color: 'red'
     });
-    return {};
+    return null;
   }
 
   method = method.toUpperCase();
 
   if (!(method in actions)) {
-    notifications.show({
-      title: 'INVALID FORM',
-      message: `Method ${method} not found in available actions`,
-      color: 'red'
-    });
-    return {};
+    // Missing method - this means user does not have appropriate permission
+    permissionDenied();
+    return null;
   }
 
   let fields: Record<string, ApiFormFieldType> = {};

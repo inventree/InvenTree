@@ -223,14 +223,6 @@ export function ApiForm({
     refetchOnWindowFocus: false
   });
 
-  // State variable to determine if the form can be submitted
-  const [canSubmit, setCanSubmit] = useState<boolean>(false);
-
-  // Update the canSubmit state variable on status change
-  useEffect(() => {
-    setCanSubmit(!submitQuery.isFetching);
-  }, [submitQuery.isFetching]);
-
   /**
    * Callback to perform form submission
    */
@@ -301,7 +293,7 @@ export function ApiForm({
           variant="outline"
           radius="sm"
           color={props.submitColor ?? 'green'}
-          disabled={!canSubmit}
+          disabled={initialDataQuery.isFetching || submitQuery.isFetching}
         >
           {props.submitText ?? t`Submit`}
         </Button>
