@@ -84,12 +84,18 @@ export function createPart() {
  * Launch a dialog to edit an existing Part instance
  * @param part The ID of the part to edit
  */
-export function editPart(part: number) {
+export function editPart({
+  part_id,
+  callback
+}: {
+  part_id: number;
+  callback?: () => void;
+}) {
   openEditApiForm({
     name: 'part-edit',
     title: t`Edit Part`,
     url: '/part/',
-    pk: part,
+    pk: part_id,
     successMessage: t`Part updated`,
     fields: partFields({ editing: true })
   });
