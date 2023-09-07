@@ -1,11 +1,5 @@
-import {
-  Alert,
-  Checkbox,
-  NumberInput,
-  Stack,
-  Switch,
-  TextInput
-} from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Alert, NumberInput, Stack, Switch, TextInput } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
 import { IconX } from '@tabler/icons-react';
@@ -264,7 +258,7 @@ export function ApiFormField({
         );
       default:
         return (
-          <Alert color="red" title="Error">
+          <Alert color="red" title={t`Error`}>
             Unknown field type ({field.fieldType}) for field '{fieldName}': '
             {definition.fieldType}'
           </Alert>

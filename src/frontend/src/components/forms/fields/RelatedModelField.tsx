@@ -4,11 +4,10 @@ import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
-import Select, { Options } from 'react-select';
-import AsyncSelect, { useAsync } from 'react-select/async';
-import internal from 'stream';
+import Select from 'react-select';
 
 import { api } from '../../../App';
+import { RenderInstance } from '../../render/Instance';
 import { ApiFormProps } from '../ApiForm';
 import { ApiFormFieldSet, ApiFormFieldType } from './ApiFormField';
 import { constructField } from './ApiFormField';
@@ -69,7 +68,7 @@ export function RelatedModelField({
           if (data && data.pk) {
             let value = {
               value: data.pk,
-              label: data.name ?? data.description ?? data.pk ?? 'Unknown'
+              data: data
             };
 
             setData([value]);
@@ -123,7 +122,7 @@ export function RelatedModelField({
           results.forEach((item: any) => {
             values.push({
               value: item.pk ?? -1,
-              label: item.name ?? item.description ?? item.pk ?? 'Unknown'
+              data: item
             });
           });
 
@@ -136,6 +135,19 @@ export function RelatedModelField({
         });
     }
   });
+
+  /**
+   * Format an option for display in the select field
+   */
+  function formatOption(option: any) {
+    let data = option.data ?? option;
+
+    // TODO: If a custom render function is provided, use that
+
+    return (
+      <RenderInstance instance={data} model={definition.model ?? 'undefined'} />
+    );
+  }
 
   // Update form values when the selected value changes
   function onChange(value: any) {
@@ -184,6 +196,7 @@ export function RelatedModelField({
         noOptionsMessage={() => t`No results found`}
         menuPosition="fixed"
         styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+        formatOptionLabel={(option) => formatOption(option)}
       />
     </Input.Wrapper>
   );
