@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import Success
-from django_q.monitor import Stat
+from django_q.status import Stat
 
 import InvenTree.email
 import InvenTree.ready
