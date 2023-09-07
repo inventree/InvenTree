@@ -7,7 +7,7 @@ export const PartRenderer = ({
   link = true
 }: {
   pk: string;
-  data: any;
+  data?: any;
   link?: boolean;
 }) => {
   return (
