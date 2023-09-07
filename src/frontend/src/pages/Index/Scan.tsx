@@ -63,6 +63,26 @@ interface ScanItem {
   objectPk?: string;
 }
 
+function matchObject(rd: any): [RenderTypes | undefined, string | undefined] {
+  if (rd?.part) {
+    return [RenderTypes.part, rd?.part.pk];
+  } else if (rd?.stockitem) {
+    return [RenderTypes.stock_item, rd?.stockitem.pk];
+  } else if (rd?.stocklocation) {
+    return [RenderTypes.stock_location, rd?.stocklocation.pk];
+  } else if (rd?.supplierpart) {
+    return [RenderTypes.supplier_part, rd?.supplierpart.pk];
+  } else if (rd?.purchaseorder) {
+    return [RenderTypes.purchase_order, rd?.purchaseorder.pk];
+  } else if (rd?.salesorder) {
+    return [RenderTypes.sales_order, rd?.salesorder.pk];
+  } else if (rd?.build) {
+    return [RenderTypes.build_order, rd?.build.pk];
+  } else {
+    return [undefined, undefined];
+  }
+}
+
 export default function Scan() {
   const { toggle: toggleFullscreen, fullscreen } = useFullscreen();
   const [history, historyHandlers] = useListState<ScanItem>([]);
@@ -126,32 +146,9 @@ export default function Scan() {
         // set link data
         item.link = response.data?.url;
 
-        // try to set object data
-        if (response.data?.part) {
-          item.objectType = RenderTypes.part;
-          item.objectPk = response.data?.part.pk;
-        } else if (response.data?.stockitem) {
-          item.objectType = RenderTypes.stock_item;
-          item.objectPk = response.data?.stockitem.pk;
-        } else if (response.data?.stocklocation) {
-          item.objectType = RenderTypes.stock_location;
-          item.objectPk = response.data?.stocklocation.pk;
-        } else if (response.data?.supplierpart) {
-          item.objectType = RenderTypes.supplier_part;
-          item.objectPk = response.data?.supplierpart.pk;
-        } else if (response.data?.purchaseorder) {
-          item.objectType = RenderTypes.purchase_order;
-          item.objectPk = response.data?.purchaseorder.pk;
-        } else if (response.data?.salesorder) {
-          item.objectType = RenderTypes.sales_order;
-          item.objectPk = response.data?.salesorder.pk;
-        } else if (response.data?.build) {
-          item.objectType = RenderTypes.build_order;
-          item.objectPk = response.data?.build.pk;
-        } else {
-          item.objectType = undefined;
-          item.objectPk = undefined;
-        }
+        const rsp = matchObject(response.data);
+        item.objectType = rsp[0];
+        item.objectPk = rsp[1];
 
         historyHandlers.setState(history);
       })
