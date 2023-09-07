@@ -106,10 +106,8 @@ export function openModalApiForm(props: ApiFormProps) {
     .options(url)
     .then((response) => {
       // Extract available fields from the OPTIONS response (and handle any errors)
-      let fields: Record<string, ApiFormFieldType> = extractAvailableFields(
-        response,
-        props.method
-      );
+      let fields: Record<string, ApiFormFieldType> | null =
+        extractAvailableFields(response, props.method);
 
       if (fields == null) {
         return;
