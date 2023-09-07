@@ -506,6 +506,7 @@ function getBuildTableFilters() {
                 return ownersList;
             },
         },
+        issued_by: constructIssuedByFilter(),
     };
 
     if (global_settings.PROJECT_CODES_ENABLED) {
