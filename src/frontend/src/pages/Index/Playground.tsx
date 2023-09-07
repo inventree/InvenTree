@@ -46,7 +46,7 @@ function ApiFormsPlayground() {
     <>
       <Group>
         <Button onClick={() => createPart()}>Create New Part</Button>
-        <Button onClick={() => editPart(1)}>Edit Part</Button>
+        <Button onClick={() => editPart({ part_id: 1 })}>Edit Part</Button>
         <Button onClick={() => createStockItem()}>Create Stock Item</Button>
         <Button onClick={() => openEditApiForm(editCategoryForm)}>
           Edit Category
