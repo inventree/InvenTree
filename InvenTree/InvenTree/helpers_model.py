@@ -3,6 +3,7 @@
 import io
 import logging
 from decimal import Decimal
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.core.validators import URLValidator
@@ -64,14 +65,7 @@ def construct_absolute_url(*arg, **kwargs):
         # No site URL available, return the relative URL
         return relative_url
 
-    # Strip trailing slash from base url
-    if site_url.endswith('/'):
-        site_url = site_url[:-1]
-
-    if relative_url.startswith('/'):
-        relative_url = relative_url[1:]
-
-    return f"{site_url}/{relative_url}"
+    return urljoin(site_url, relative_url)
 
 
 def get_base_url(**kwargs):

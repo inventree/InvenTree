@@ -217,6 +217,10 @@ msgstr ""
 msgid "An error occurred:"
 msgstr ""
 
+#: src/components/items/GettingStartedCarousel.tsx:64
+msgid "Read more"
+msgstr ""
+
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
 msgstr ""
@@ -349,7 +353,7 @@ msgid "About"
 msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:65
-#: src/defaults/links.tsx:25
+#: src/defaults/links.tsx:26
 #: src/pages/Index/Part.tsx:13
 msgid "Parts"
 msgstr ""
@@ -606,7 +610,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:63
 #: src/components/tables/stock/StockItemTable.tsx:42
-#: src/defaults/links.tsx:26
+#: src/defaults/links.tsx:27
 msgid "Stock"
 msgstr ""
 
@@ -767,7 +771,7 @@ msgstr ""
 msgid "Provide Feedback"
 msgstr ""
 
-#: src/components/widgets/GetStartedWidget.tsx:10
+#: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
 msgstr ""
 
@@ -869,92 +873,98 @@ msgid "Current News"
 msgstr ""
 
 #: src/defaults/defaultHostList.tsx:8
-msgid "InvenTree Demo"
-msgstr ""
+#~ msgid "InvenTree Demo"
+#~ msgstr ""
 
 #: src/defaults/defaultHostList.tsx:16
-msgid "Local Server"
-msgstr ""
+#~ msgid "Local Server"
+#~ msgstr ""
 
-#: src/defaults/links.tsx:8
+#: src/defaults/links.tsx:9
 msgid "Website"
 msgstr ""
 
-#: src/defaults/links.tsx:13
+#: src/defaults/links.tsx:14
 msgid "GitHub"
 msgstr ""
 
-#: src/defaults/links.tsx:18
+#: src/defaults/links.tsx:19
 msgid "Demo"
 msgstr ""
 
-#: src/defaults/links.tsx:23
-#: src/defaults/menuItems.tsx:9
+#: src/defaults/links.tsx:24
+#: src/defaults/menuItems.tsx:10
 msgid "Home"
 msgstr ""
 
-#: src/defaults/links.tsx:24
+#: src/defaults/links.tsx:25
 #: src/pages/Index/Dashboard.tsx:19
 msgid "Dashboard"
 msgstr ""
 
-#: src/defaults/links.tsx:27
+#: src/defaults/links.tsx:28
 msgid "Build"
 msgstr ""
 
-#: src/defaults/links.tsx:41
+#: src/defaults/links.tsx:31
+#: src/defaults/menuItems.tsx:25
+#: src/pages/Index/Playground.tsx:12
+msgid "Playground"
+msgstr ""
+
+#: src/defaults/links.tsx:45
 msgid "Getting Started"
 msgstr ""
 
-#: src/defaults/links.tsx:42
+#: src/defaults/links.tsx:46
 msgid "Getting started with InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:48
+#: src/defaults/links.tsx:52
 msgid "API"
 msgstr ""
 
-#: src/defaults/links.tsx:49
+#: src/defaults/links.tsx:53
 msgid "InvenTree API documentation"
 msgstr ""
 
-#: src/defaults/links.tsx:54
+#: src/defaults/links.tsx:58
 msgid "Developer Manual"
 msgstr ""
 
-#: src/defaults/links.tsx:55
+#: src/defaults/links.tsx:59
 msgid "InvenTree developer manual"
 msgstr ""
 
-#: src/defaults/links.tsx:60
+#: src/defaults/links.tsx:64
 msgid "FAQ"
 msgstr ""
 
-#: src/defaults/links.tsx:61
+#: src/defaults/links.tsx:65
 msgid "Frequently asked questions"
 msgstr ""
 
-#: src/defaults/links.tsx:70
+#: src/defaults/links.tsx:74
 msgid "Instance"
 msgstr ""
 
-#: src/defaults/links.tsx:71
+#: src/defaults/links.tsx:75
 msgid "About this Inventree instance"
 msgstr ""
 
-#: src/defaults/links.tsx:77
+#: src/defaults/links.tsx:81
 msgid "InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:78
+#: src/defaults/links.tsx:82
 msgid "About the InvenTree org"
 msgstr ""
 
-#: src/defaults/links.tsx:84
+#: src/defaults/links.tsx:88
 msgid "Licenses"
 msgstr ""
 
-#: src/defaults/links.tsx:85
+#: src/defaults/links.tsx:89
 msgid "Licenses for packages used by InvenTree"
 msgstr ""
 
@@ -978,11 +988,11 @@ msgstr ""
 #~ msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
 #~ msgstr ""
 
-#: src/defaults/menuItems.tsx:15
+#: src/defaults/menuItems.tsx:16
 msgid "Profile page"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:17
+#: src/defaults/menuItems.tsx:18
 msgid "User attributes and design settings."
 msgstr ""
 
@@ -1075,7 +1085,7 @@ msgstr ""
 msgid "Checking if you are already logged in"
 msgstr ""
 
-#: src/pages/Auth/Login.tsx:24
+#: src/pages/Auth/Login.tsx:25
 msgid "No selection"
 msgstr ""
 
@@ -1129,6 +1139,10 @@ msgstr ""
 
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
+msgstr ""
+
+#: src/pages/Index/Playground.tsx:17
+msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:23

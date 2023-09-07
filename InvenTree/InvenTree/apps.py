@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, OperationalError
 
 import InvenTree.conversion
 import InvenTree.tasks
@@ -159,6 +159,8 @@ class InvenTreeConfig(AppConfig):
         if update:
             try:
                 update_exchange_rates()
+            except OperationalError:
+                logger.warning("Could not update exchange rates - database not ready")
             except Exception as e:
                 logger.error(f"Error updating exchange rates: {e} ({type(e)})")
 

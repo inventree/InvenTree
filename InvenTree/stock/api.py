@@ -648,8 +648,10 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
             if location:
                 data['location'] = location.pk
 
+        expiry_date = data.get('expiry_date', None)
+
         # An expiry date was *not* specified - try to infer it!
-        if 'expiry_date' not in data and part.default_expiry > 0:
+        if expiry_date is None and part.default_expiry > 0:
             data['expiry_date'] = datetime.now().date() + timedelta(days=part.default_expiry)
 
         # Attempt to extract serial numbers from submitted data

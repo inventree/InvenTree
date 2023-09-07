@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'react-grid-layout/css/styles.css';
@@ -14,6 +15,8 @@ declare global {
       default_server: string;
       show_server_selector: boolean;
       url_base: string;
+      sentry_dsn?: string;
+      environment?: string;
     };
   }
 }
@@ -45,6 +48,15 @@ window.INVENTREE_SETTINGS = {
 };
 
 export const url_base = window.INVENTREE_SETTINGS.url_base || 'platform';
+
+if (window.INVENTREE_SETTINGS.sentry_dsn) {
+  console.log('Sentry enabled');
+  Sentry.init({
+    dsn: window.INVENTREE_SETTINGS.sentry_dsn,
+    tracesSampleRate: 1.0,
+    environment: window.INVENTREE_SETTINGS.environment || 'default'
+  });
+}
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
