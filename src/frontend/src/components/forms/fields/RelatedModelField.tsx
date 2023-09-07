@@ -3,8 +3,15 @@ import { Input } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
-import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import Select from 'react-select';
 
 import { api } from '../../../App';
@@ -90,7 +97,15 @@ export function RelatedModelField({
   const [value, setValue] = useState<string>('');
   const [searchText, cancelSearchText] = useDebouncedValue(value, 250);
 
-  const queryController = new AbortController();
+  // Query controller
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const getAbortController = useCallback(() => {
+    if (!abortControllerRef.current) {
+      abortControllerRef.current = new AbortController();
+    }
+
+    return abortControllerRef.current;
+  }, []);
 
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
@@ -109,7 +124,7 @@ export function RelatedModelField({
 
       return api
         .get(url, {
-          signal: queryController.signal,
+          signal: getAbortController().signal,
           params: {
             ...definition.filters,
             search: searchText,
@@ -177,9 +192,8 @@ export function RelatedModelField({
         value={data.find((item) => item.value == pk)}
         options={data}
         filterOption={null}
-        onInputChange={(value) => {
-          // cancelSearchText();
-          queryController.abort();
+        onInputChange={(value: any) => {
+          getAbortController().abort();
           setValue(value);
           setOffset(0);
           setData([]);
@@ -199,8 +213,8 @@ export function RelatedModelField({
         menuPortalTarget={document.body}
         noOptionsMessage={() => t`No results found`}
         menuPosition="fixed"
-        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-        formatOptionLabel={(option) => formatOption(option)}
+        styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
+        formatOptionLabel={(option: any) => formatOption(option)}
       />
     </Input.Wrapper>
   );
