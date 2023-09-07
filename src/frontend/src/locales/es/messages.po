@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_MX\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-16 14:08\n"
+"PO-Revision-Date: 2023-09-05 14:07\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -351,7 +351,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:153
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Órdenes de compra"
 
 #: src/components/nav/SearchDrawer.tsx:164
 msgid "Sales Orders"
@@ -359,7 +359,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:175
 msgid "Return Orders"
-msgstr ""
+msgstr "Ordenes de devolución"
 
 #: src/components/nav/SearchDrawer.tsx:209
 msgid "results"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-15 02:49+0000\n"
+"POT-Creation-Date: 2023-08-30 00:27+0000\n"
 "PO-Revision-Date: 2023-02-28 22:38\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -173,35 +173,35 @@ msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
 msgid "Remove HTML tags from this value"
 msgstr "从这个值中删除 HTML 标签"
 
-#: InvenTree/helpers_model.py:131
+#: InvenTree/helpers_model.py:125
 msgid "Connection error"
 msgstr "连接错误"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:140
+#: InvenTree/helpers_model.py:129 InvenTree/helpers_model.py:134
 msgid "Server responded with invalid status code"
 msgstr "服务器响应状态码无效"
 
-#: InvenTree/helpers_model.py:137
+#: InvenTree/helpers_model.py:131
 msgid "Exception occurred"
 msgstr "发生异常"
 
-#: InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139
 msgid "Server responded with invalid Content-Length value"
 msgstr "服务器响应的内容长度值无效"
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:142
 msgid "Image size is too large"
 msgstr "图片尺寸过大"
 
-#: InvenTree/helpers_model.py:160
+#: InvenTree/helpers_model.py:154
 msgid "Image download exceeded maximum size"
 msgstr "图像下载超过最大尺寸"
 
-#: InvenTree/helpers_model.py:165
+#: InvenTree/helpers_model.py:159
 msgid "Remote server returned empty response"
 msgstr "远程服务器返回了空响应"
 
-#: InvenTree/helpers_model.py:173
+#: InvenTree/helpers_model.py:167
 msgid "Supplied URL is not a valid image file"
 msgstr "提供的 URL 不是一个有效的图片文件"
 
@@ -1427,7 +1427,7 @@ msgstr "自动分配序列号"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "自动为所需项分配对应的序列号"
 
-#: build/serializers.py:334 stock/api.py:727
+#: build/serializers.py:334 stock/api.py:729
 msgid "The following serial numbers already exist or are invalid"
 msgstr "以下序列号已存在或无效"
 
@@ -4484,7 +4484,7 @@ msgstr ""
 msgid "Update Part Availability"
 msgstr ""
 
-#: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:225
+#: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:224
 #: part/templates/part/category.html:182
 #: part/templates/part/category_sidebar.html:17 stock/admin.py:47
 #: stock/serializers.py:662 stock/templates/stock/location.html:169
@@ -5611,17 +5611,17 @@ msgstr ""
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
-#: part/admin.py:33 part/admin.py:273 part/models.py:3719 part/stocktake.py:220
+#: part/admin.py:33 part/admin.py:273 part/models.py:3719 part/stocktake.py:219
 #: stock/admin.py:101
 msgid "Part ID"
 msgstr "商品ID"
 
-#: part/admin.py:34 part/admin.py:275 part/models.py:3723 part/stocktake.py:221
+#: part/admin.py:34 part/admin.py:275 part/models.py:3723 part/stocktake.py:220
 #: stock/admin.py:102
 msgid "Part Name"
 msgstr ""
 
-#: part/admin.py:35 part/stocktake.py:222
+#: part/admin.py:35 part/stocktake.py:221
 msgid "Part Description"
 msgstr ""
 
@@ -5643,11 +5643,11 @@ msgstr ""
 msgid "Keywords"
 msgstr "关键词"
 
-#: part/admin.py:42 part/admin.py:192 part/stocktake.py:223
+#: part/admin.py:42 part/admin.py:192 part/stocktake.py:222
 msgid "Category ID"
 msgstr "类别 ID"
 
-#: part/admin.py:43 part/admin.py:193 part/stocktake.py:224
+#: part/admin.py:43 part/admin.py:193 part/stocktake.py:223
 msgid "Category Name"
 msgstr ""
 
@@ -6725,33 +6725,33 @@ msgstr ""
 msgid "At least one BOM item is required"
 msgstr ""
 
-#: part/stocktake.py:226 templates/js/translated/part.js:1043
+#: part/stocktake.py:225 templates/js/translated/part.js:1043
 #: templates/js/translated/part.js:1797 templates/js/translated/part.js:1852
 #: templates/js/translated/purchase_order.js:2059
 msgid "Total Quantity"
 msgstr ""
 
-#: part/stocktake.py:227
+#: part/stocktake.py:226
 msgid "Total Cost Min"
 msgstr ""
 
-#: part/stocktake.py:228
+#: part/stocktake.py:227
 msgid "Total Cost Max"
 msgstr ""
 
-#: part/stocktake.py:296
+#: part/stocktake.py:295
 msgid "Stocktake Report Available"
 msgstr ""
 
-#: part/stocktake.py:297
+#: part/stocktake.py:296
 msgid "A new stocktake report is available for download"
 msgstr ""
 
-#: part/tasks.py:32
+#: part/tasks.py:33
 msgid "Low stock notification"
 msgstr ""
 
-#: part/tasks.py:33
+#: part/tasks.py:34
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr ""
@@ -7973,15 +7973,15 @@ msgstr ""
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:667
+#: stock/api.py:669
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:676
+#: stock/api.py:678
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:699
+#: stock/api.py:701
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
