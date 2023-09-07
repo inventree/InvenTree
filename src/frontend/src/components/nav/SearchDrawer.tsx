@@ -28,6 +28,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
+import { RenderInstance } from '../render/Instance';
 
 // Define type for handling individual search queries
 type SearchQuery = {
@@ -36,7 +37,6 @@ type SearchQuery = {
   enabled: boolean;
   parameters: any;
   results?: any;
-  render: (result: any) => JSX.Element;
 };
 
 // Placeholder function for permissions checks (will be replaced with a proper implementation)
@@ -49,12 +49,6 @@ function settingsCheck(setting: string) {
   return true;
 }
 
-// Placeholder function for rendering an individual search result
-// In the future, this will be defined individually for each result type
-function renderResult(result: any) {
-  return <Text size="sm">Result here - ID = {`${result.pk}`}</Text>;
-}
-
 /*
  * Build a list of search queries based on user permissions
  */
@@ -64,7 +58,6 @@ function buildSearchQueries(): SearchQuery[] {
       name: 'part',
       title: t`Parts`,
       parameters: {},
-      render: renderResult,
       enabled:
         permissionCheck('part.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_PARTS')
@@ -77,7 +70,6 @@ function buildSearchQueries(): SearchQuery[] {
         supplier_detail: true,
         manufacturer_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('part.view') &&
         permissionCheck('purchase_order.view') &&
@@ -91,7 +83,6 @@ function buildSearchQueries(): SearchQuery[] {
         supplier_detail: true,
         manufacturer_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('part.view') &&
         permissionCheck('purchase_order.view') &&
@@ -101,7 +92,6 @@ function buildSearchQueries(): SearchQuery[] {
       name: 'partcategory',
       title: t`Part Categories`,
       parameters: {},
-      render: renderResult,
       enabled:
         permissionCheck('part_category.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_CATEGORIES')
@@ -113,7 +103,6 @@ function buildSearchQueries(): SearchQuery[] {
         part_detail: true,
         location_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('stock.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_STOCK')
@@ -122,7 +111,6 @@ function buildSearchQueries(): SearchQuery[] {
       name: 'stocklocation',
       title: t`Stock Locations`,
       parameters: {},
-      render: renderResult,
       enabled:
         permissionCheck('stock_location.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_LOCATIONS')
@@ -133,7 +121,6 @@ function buildSearchQueries(): SearchQuery[] {
       parameters: {
         part_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('build.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
@@ -142,7 +129,6 @@ function buildSearchQueries(): SearchQuery[] {
       name: 'company',
       title: t`Companies`,
       parameters: {},
-      render: renderResult,
       enabled:
         (permissionCheck('sales_order.view') ||
           permissionCheck('purchase_order.view')) &&
@@ -154,7 +140,6 @@ function buildSearchQueries(): SearchQuery[] {
       parameters: {
         supplier_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('purchase_order.view') &&
         settingsCheck(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
@@ -165,7 +150,6 @@ function buildSearchQueries(): SearchQuery[] {
       parameters: {
         customer_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('sales_order.view') &&
         settingsCheck(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
@@ -176,7 +160,6 @@ function buildSearchQueries(): SearchQuery[] {
       parameters: {
         customer_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('return_order.view') &&
         settingsCheck(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
@@ -222,7 +205,9 @@ function QueryResultGroup({
         </Group>
         <Divider />
         <Stack>
-          {query.results.results.map((result: any) => query.render(result))}
+          {query.results.results.map((result: any) => (
+            <RenderInstance instance={result} model={query.name} />
+          ))}
         </Stack>
         <Space />
       </Stack>
