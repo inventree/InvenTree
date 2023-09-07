@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-25 03:12\n"
+"PO-Revision-Date: 2023-09-05 14:07\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -722,11 +722,11 @@ msgstr "Idioma"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
-msgstr ""
+msgstr "Algo novo: Interface da Plataforma"
 
 #: src/components/widgets/FeedbackWidget.tsx:20
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr ""
+msgstr "Estamos construindo uma nova interface moderna de usuário. O que você vê no momento não foi corrigido e será redesenhado, mas demonstra as possibilidades de UI/UX que teremos adiante."
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
@@ -742,11 +742,11 @@ msgstr "Carregando"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
-msgstr ""
+msgstr "Disposição"
 
 #: src/components/widgets/WidgetLayout.tsx:186
 msgid "Reset Layout"
-msgstr ""
+msgstr "Redefinir Disposição"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
@@ -754,7 +754,7 @@ msgstr "Parar Edição"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
-msgstr "Editar Layout"
+msgstr "Editar Disposição"
 
 #: src/components/widgets/WidgetLayout.tsx:205
 msgid "Appearance"
@@ -762,7 +762,7 @@ msgstr "Aparência"
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
-msgstr ""
+msgstr "Mostrar Caixas"
 
 #: src/contexts/ThemeContext.tsx:62
 #: src/pages/Index/Profile/UserPanel.tsx:107
