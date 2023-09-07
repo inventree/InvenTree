@@ -20,11 +20,6 @@ import { createStockItem } from '../../functions/forms/StockForms';
 function ApiFormsPlayground() {
   let fields = partCategoryFields({});
 
-  fields.name.onValueChange = (change: ApiFormChangeCallback) => {
-    console.log(change);
-    change.form.setValues({ description: 'hello world' });
-  };
-
   const editCategoryForm: ApiFormProps = {
     name: 'partcategory',
     url: '/part/category/',
@@ -37,6 +32,7 @@ function ApiFormsPlayground() {
     name: 'createattachment',
     url: '/part/attachment/',
     title: 'Create Attachment',
+    successMessage: 'Attachment uploaded',
     fields: {
       part: {
         value: 1

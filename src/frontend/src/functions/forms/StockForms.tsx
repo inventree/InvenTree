@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 
 import {
+  ApiFormChangeCallback,
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../../components/forms/fields/ApiFormField';
@@ -12,9 +13,9 @@ import { openCreateApiForm, openEditApiForm } from '../forms';
 export function stockFields({}: {}): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {
     part: {
-      onValueChange: (value: any) => {
+      onValueChange: (change: ApiFormChangeCallback) => {
         // TODO: implement this
-        console.log('part changed: ', value);
+        console.log('part changed: ', change.value);
       }
     },
     supplier_part: {

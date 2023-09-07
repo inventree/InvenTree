@@ -226,10 +226,18 @@ export function ApiForm({
     refetchOnWindowFocus: false
   });
 
+  // Data loading state
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setIsLoading(submitQuery.isFetching || initialDataQuery.isFetching);
+  }, [initialDataQuery.status, submitQuery.status]);
+
   /**
    * Callback to perform form submission
    */
   function submitForm() {
+    setIsLoading(true);
     submitQuery.refetch();
   }
 
@@ -246,9 +254,7 @@ export function ApiForm({
     <Stack>
       <Divider />
       <Stack spacing="sm">
-        <LoadingOverlay
-          visible={initialDataQuery.isFetching || submitQuery.isFetching}
-        />
+        <LoadingOverlay visible={isLoading} />
         {(Object.keys(form.errors).length > 0 || nonFieldErrors.length > 0) && (
           <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
             {nonFieldErrors.length > 0 && (
@@ -296,7 +302,7 @@ export function ApiForm({
           variant="outline"
           radius="sm"
           color={props.submitColor ?? 'green'}
-          disabled={initialDataQuery.isFetching || submitQuery.isFetching}
+          disabled={isLoading}
         >
           {props.submitText ?? t`Submit`}
         </Button>
