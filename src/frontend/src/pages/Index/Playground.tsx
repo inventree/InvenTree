@@ -33,6 +33,19 @@ function ApiFormsPlayground() {
     fields: fields
   };
 
+  const createAttachmentForm: ApiFormProps = {
+    name: 'createattachment',
+    url: '/part/attachment/',
+    title: 'Create Attachment',
+    fields: {
+      part: {
+        value: 1
+      },
+      attachment: {},
+      comment: {}
+    }
+  };
+
   return (
     <>
       <Group>
@@ -41,6 +54,9 @@ function ApiFormsPlayground() {
         <Button onClick={() => createStockItem()}>Create Stock Item</Button>
         <Button onClick={() => openEditApiForm(editCategoryForm)}>
           Edit Category
+        </Button>
+        <Button onClick={() => openCreateApiForm(createAttachmentForm)}>
+          Create Attachment
         </Button>
       </Group>
     </>

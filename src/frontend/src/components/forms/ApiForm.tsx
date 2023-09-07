@@ -165,7 +165,10 @@ export function ApiForm({
       api({
         method: method,
         url: url,
-        data: form.values
+        data: form.values,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       })
         .then((response) => {
           switch (response.status) {

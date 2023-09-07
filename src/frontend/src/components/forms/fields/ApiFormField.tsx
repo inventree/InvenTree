@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Alert, NumberInput, Stack, Switch, TextInput } from '@mantine/core';
+import {
+  Alert,
+  FileInput,
+  NumberInput,
+  Stack,
+  Switch,
+  TextInput
+} from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
 import { IconX } from '@tabler/icons-react';
@@ -256,11 +263,20 @@ export function ApiFormField({
             definitions={definitions}
           />
         );
+      case 'file upload':
+        return (
+          <FileInput
+            {...definition}
+            radius="sm"
+            value={value}
+            error={error}
+            onChange={(payload: File | null) => onChange(payload)}
+          />
+        );
       default:
         return (
           <Alert color="red" title={t`Error`}>
-            Unknown field type ({field.fieldType}) for field '{fieldName}': '
-            {definition.fieldType}'
+            Invalid field type for field '{fieldName}': '{definition.fieldType}'
           </Alert>
         );
     }
