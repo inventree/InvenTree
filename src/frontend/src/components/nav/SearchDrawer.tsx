@@ -240,7 +240,7 @@ export function SearchDrawer({
   // Re-fetch data whenever the search term is updated
   useEffect(() => {
     // TODO: Implement search functionality
-    refetch();
+    searchQuery.refetch();
   }, [searchText]);
 
   // Function for performing the actual search query
@@ -275,7 +275,7 @@ export function SearchDrawer({
   };
 
   // Search query manager
-  const { data, isError, isFetching, isLoading, refetch } = useQuery(
+  const searchQuery = useQuery(
     ['search', searchText, searchRegex, searchWhole],
     performSearch,
     {
@@ -288,13 +288,15 @@ export function SearchDrawer({
 
   // Update query results whenever the search results change
   useEffect(() => {
-    if (data) {
-      let queries = searchQueries.filter((query) => query.name in data);
+    if (searchQuery.data) {
+      let queries = searchQueries.filter(
+        (query) => query.name in searchQuery.data
+      );
 
-      for (let key in data) {
+      for (let key in searchQuery.data) {
         let query = queries.find((q) => q.name == key);
         if (query) {
-          query.results = data[key];
+          query.results = searchQuery.data[key];
         }
       }
 
@@ -305,7 +307,7 @@ export function SearchDrawer({
     } else {
       setQueryResults([]);
     }
-  }, [data]);
+  }, [searchQuery.data]);
 
   // Callback to remove a set of results from the list
   function removeResults(query: string) {
@@ -344,7 +346,7 @@ export function SearchDrawer({
             size="lg"
             variant="outline"
             radius="xs"
-            onClick={() => refetch()}
+            onClick={() => searchQuery.refetch()}
           >
             <IconRefresh />
           </ActionIcon>
@@ -381,12 +383,12 @@ export function SearchDrawer({
         </Group>
       }
     >
-      {isFetching && (
+      {searchQuery.isFetching && (
         <Center>
           <Loader />
         </Center>
       )}
-      {!isFetching && !isError && (
+      {!searchQuery.isFetching && !searchQuery.isError && (
         <Stack spacing="md">
           {queryResults.map((query) => (
             <QueryResultGroup
@@ -396,7 +398,7 @@ export function SearchDrawer({
           ))}
         </Stack>
       )}
-      {isError && (
+      {searchQuery.isError && (
         <Alert
           color="red"
           radius="sm"
@@ -407,17 +409,20 @@ export function SearchDrawer({
           <Trans>An error occurred during search query</Trans>
         </Alert>
       )}
-      {searchText && !isFetching && !isError && queryResults.length == 0 && (
-        <Alert
-          color="blue"
-          radius="sm"
-          variant="light"
-          title={t`No results`}
-          icon={<IconSearch size="1rem" />}
-        >
-          <Trans>No results available for search query</Trans>
-        </Alert>
-      )}
+      {searchText &&
+        !searchQuery.isFetching &&
+        !searchQuery.isError &&
+        queryResults.length == 0 && (
+          <Alert
+            color="blue"
+            radius="sm"
+            variant="light"
+            title={t`No results`}
+            icon={<IconSearch size="1rem" />}
+          >
+            <Trans>No results available for search query</Trans>
+          </Alert>
+        )}
     </Drawer>
   );
 }
