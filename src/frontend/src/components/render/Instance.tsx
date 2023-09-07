@@ -61,7 +61,11 @@ export function RenderInstance({
       return <RenderUser user={instance} />;
     default:
       // Unknown model
-      return <Alert color="red" title={t`Unknown model: ${model}`}></Alert>;
+      return (
+        <Alert color="red" title={t`Unknown model: ${model}`}>
+          <></>
+        </Alert>
+      );
   }
 }
 
