@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Input } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
+import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
@@ -32,6 +33,8 @@ export function RelatedModelField({
   definitions: ApiFormFieldSet;
   limit?: number;
 }) {
+  const fieldId = useId(fieldName);
+
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
   const definition: ApiFormFieldType = useMemo(
@@ -170,6 +173,7 @@ export function RelatedModelField({
   return (
     <Input.Wrapper {...definition} error={error}>
       <Select
+        id={fieldId}
         value={data.find((item) => item.value == pk)}
         options={data}
         filterOption={null}

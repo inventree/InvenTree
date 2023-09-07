@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Select } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
+import { useId } from '@mantine/hooks';
 import { ReactNode } from 'react';
 import { useMemo } from 'react';
 
@@ -38,6 +39,8 @@ export function ChoiceField({
     return def;
   }, [fieldName, field, definitions]);
 
+  const fieldId = useId(fieldName);
+
   const value: any = useMemo(() => form.values[fieldName], [form.values]);
 
   // Build a set of choices for the field
@@ -71,7 +74,7 @@ export function ChoiceField({
 
   return (
     <Select
-      id={`choice-{fieldName}`}
+      id={fieldId}
       radius="sm"
       {...definition}
       data={choices}

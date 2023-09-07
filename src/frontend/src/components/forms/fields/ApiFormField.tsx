@@ -9,6 +9,7 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
+import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { useMemo } from 'react';
@@ -134,6 +135,8 @@ export function ApiFormField({
   error: ReactNode;
   definitions: Record<string, ApiFormFieldType>;
 }) {
+  const fieldId = useId(fieldName);
+
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
   const definition: ApiFormFieldType = useMemo(
@@ -204,6 +207,7 @@ export function ApiFormField({
         return (
           <TextInput
             {...definition}
+            id={fieldId}
             type={definition.fieldType}
             value={value}
             error={error}
@@ -219,9 +223,10 @@ export function ApiFormField({
       case 'boolean':
         return (
           <Switch
+            {...definition}
+            id={fieldId}
             radius="lg"
             size="sm"
-            {...definition}
             checked={value ?? false}
             error={error}
             onChange={(event) => onChange(event.currentTarget.checked)}
@@ -230,8 +235,9 @@ export function ApiFormField({
       case 'date':
         return (
           <DateInput
-            radius="sm"
             {...definition}
+            id={fieldId}
+            radius="sm"
             type={undefined}
             error={error}
             value={value}
@@ -246,8 +252,9 @@ export function ApiFormField({
       case 'number':
         return (
           <NumberInput
-            radius="sm"
             {...definition}
+            radius="sm"
+            id={fieldId}
             value={value}
             error={error}
             onChange={(value: number) => onChange(value)}
@@ -267,6 +274,7 @@ export function ApiFormField({
         return (
           <FileInput
             {...definition}
+            id={fieldId}
             radius="sm"
             value={value}
             error={error}
