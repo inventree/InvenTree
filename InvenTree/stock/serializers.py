@@ -1146,6 +1146,8 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         - status: Change StockItem status code
         - packaging: Change StockItem packaging
         - batch: Change StockItem batch code
+
+    The optional fields can be used to adjust values for individual stock items
     """
 
     class Meta:
@@ -1174,7 +1176,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
 
     batch = serializers.CharField(
         max_length=100,
-        required=False,
+        required=False, allow_blank=True,
         label=_('Batch Code'),
         help_text=_('Batch code for this stock item'),
     )
@@ -1184,12 +1186,12 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         default=InvenTree.status_codes.StockStatus.OK.value,
         label=_('Status'),
         help_text=_('Stock item status code'),
-        required=False,
+        required=False, allow_blank=True,
     )
 
     packaging = serializers.CharField(
         max_length=50,
-        required=False,
+        required=False, allow_blank=True,
         label=_('Packaging'),
         help_text=_('Packaging this stock item is stored in'),
     )
