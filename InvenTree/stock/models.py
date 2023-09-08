@@ -1586,6 +1586,12 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             quantity: Number of stock items to remove from this entity, and pass to the next
             location: Where to move the new StockItem to
 
+        kwargs:
+            notes: Optional notes for tracking
+            batch: If provided, override the batch (default = existing batch)
+            status: If provided, override the status (default = existing status)
+            packaging: If provided, override the packaging (default = existing packaging)
+
         Returns:
             The new StockItem object
 
@@ -1624,6 +1630,16 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         else:
             new_stock.location = self.location
 
+        deltas = {
+            'stockitem': self.pk,
+        }
+
+        # Optional fields which can be supplied in a 'move' call
+        for field in StockItem.optional_transfer_fields():
+            if field in kwargs:
+                setattr(new_stock, field, kwargs[field])
+                deltas[field] = kwargs[field]
+
         new_stock.save(add_note=False)
 
         # Add a stock tracking entry for the newly created item
@@ -1633,9 +1649,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             quantity=quantity,
             notes=notes,
             location=location,
-            deltas={
-                'stockitem': self.pk,
-            }
+            deltas=deltas,
         )
 
         # Copy the test results of this part to the new one
@@ -1654,6 +1668,11 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         # Return a copy of the "new" stock item
         return new_stock
 
+    @classmethod
+    def optional_transfer_fields(cls):
+        """Returns a list of optional fields for a stock transfer"""
+        return ['batch', 'status', 'packaging']
+
     @transaction.atomic
     def move(self, location, notes, user, **kwargs):
         """Move part to a new location.
@@ -1667,11 +1686,15 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             location: Destination location (cannot be null)
             notes: User notes
             user: Who is performing the move
-            kwargs:
-                quantity: If provided, override the quantity (default = total stock quantity)
+
+        kwargs:
+            quantity: If provided, override the quantity (default = total stock quantity)
+            batch: If provided, override the batch (default = existing batch)
+            status: If provided, override the status (default = existing status)
+            packaging: If provided, override the packaging (default = existing packaging)
         """
         try:
-            quantity = Decimal(kwargs.get('quantity', self.quantity))
+            quantity = Decimal(kwargs.pop('quantity', self.quantity))
         except InvalidOperation:
             return False
 
@@ -1689,8 +1712,10 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         if quantity < self.quantity:
             # We need to split the stock!
 
+            kwargs['notes'] = notes
+
             # Split the existing StockItem in two
-            self.splitStock(quantity, location, user, **{'notes': notes})
+            self.splitStock(quantity, location, user, **kwargs)
 
             return True
 
@@ -1707,6 +1732,12 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             tracking_code = StockHistoryCode.STOCK_UPDATE
         else:
             tracking_info['location'] = location.pk
+
+        # Optional fields which can be supplied in a 'move' call
+        for field in StockItem.optional_transfer_fields():
+            if field in kwargs:
+                setattr(self, field, kwargs[field])
+                tracking_info[field] = kwargs[field]
 
         self.add_tracking_entry(
             tracking_code,
