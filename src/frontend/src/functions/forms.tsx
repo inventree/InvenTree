@@ -7,6 +7,7 @@ import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 import { invalidResponse, permissionDenied } from './notifications';
+import { generateUniqueId } from './uid';
 
 /**
  * Construct an API url from the provided ApiFormProps object
@@ -113,7 +114,8 @@ export function openModalApiForm(props: ApiFormProps) {
         return;
       }
 
-      let modalId: string = `modal-${props.title}-${url}`;
+      // Generate a random modal ID for controller
+      let modalId: string = `modal-${props.title}-` + generateUniqueId();
 
       modals.open({
         title: props.title,
