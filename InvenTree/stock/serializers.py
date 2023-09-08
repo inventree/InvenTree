@@ -1138,9 +1138,14 @@ class StockMergeSerializer(serializers.Serializer):
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjument request.
 
-    Fields:
+    Required Fields:
         - item: StockItem object
         - quantity: Numerical quantity
+
+    Optional Fields (may be used by external tools)
+        - status: Change StockItem status code
+        - packaging: Change StockItem packaging
+        - batch: Change StockItem batch code
     """
 
     class Meta:
@@ -1165,6 +1170,28 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         decimal_places=5,
         min_value=0,
         required=True
+    )
+
+    batch = serializers.CharField(
+        max_length=100,
+        required=False,
+        label=_('Batch Code'),
+        help_text=_('Batch code for this stock item'),
+    )
+
+    status = serializers.ChoiceField(
+        choices=InvenTree.status_codes.StockStatus.items(),
+        default=InvenTree.status_codes.StockStatus.OK.value,
+        label=_('Status'),
+        help_text=_('Stock item status code'),
+        required=False,
+    )
+
+    packaging = serializers.CharField(
+        max_length=50,
+        required=False,
+        label=_('Packaging'),
+        help_text=_('Packaging this stock item is stored in'),
     )
 
 
