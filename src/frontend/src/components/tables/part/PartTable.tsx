@@ -10,7 +10,7 @@ import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowActions } from '../RowActions';
+import { RowAction } from '../RowActions';
 
 /**
  * Construct a list of columns for the part table
@@ -82,38 +82,6 @@ function partTableColumns(): TableColumn[] {
       accessor: 'link',
       title: t`Link`,
       switchable: true
-    },
-    {
-      accessor: 'actions',
-      title: '',
-      switchable: false,
-      render: function (record: any) {
-        return (
-          <RowActions
-            title={`Part Actions`}
-            actions={[
-              {
-                title: t`Edit`,
-                icon: <IconEdit color="blue" />,
-                onClick: () =>
-                  editPart({
-                    part_id: record.pk,
-                    callback: () => {
-                      // TODO: Reload the table, somehow?
-                      // TODO: Insert / update a single row in the table?
-                      // TODO: We need to have a hook back into the table
-                    }
-                  })
-              },
-              {
-                title: t`Delete`,
-                onClick: notYetImplemented,
-                icon: <IconTrash color="red" />
-              }
-            ]}
-          />
-        );
-      }
     }
   ];
 }
@@ -229,6 +197,32 @@ export function PartListTable({ params = {} }: { params?: any }) {
   // Add required query parameters
   tableParams.category_detail = true;
 
+  function partTableRowActions(record: any): RowAction[] {
+    let actions: RowAction[] = [];
+
+    actions.push({
+      title: t`Edit`,
+      onClick: () => {
+        editPart({
+          part_id: record.pk,
+          callback: () => {
+            // TODO: Reload the table, somehow?
+            notYetImplemented();
+          }
+        });
+      }
+    });
+
+    if (record.IPN) {
+      actions.push({
+        title: t`View IPN`,
+        onClick: () => {}
+      });
+    }
+
+    return actions;
+  }
+
   return (
     <InvenTreeTable
       url="part/"
@@ -241,6 +235,7 @@ export function PartListTable({ params = {} }: { params?: any }) {
       params={tableParams}
       columns={tableColumns}
       customFilters={tableFilters}
+      rowActions={partTableRowActions}
     />
   );
 }

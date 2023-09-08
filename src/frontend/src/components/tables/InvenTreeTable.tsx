@@ -15,6 +15,7 @@ import { DownloadAction } from './DownloadAction';
 import { TableFilter } from './Filter';
 import { FilterGroup } from './FilterGroup';
 import { FilterSelectModal } from './FilterSelectModal';
+import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
 
 /*
@@ -96,7 +97,8 @@ export function InvenTreeTable({
   printingActions = [],
   barcodeActions = [],
   customActionGroups = [],
-  customFilters = []
+  customFilters = [],
+  rowActions
 }: {
   url: string;
   params: any;
@@ -115,12 +117,15 @@ export function InvenTreeTable({
   barcodeActions?: any[];
   customActionGroups?: any[];
   customFilters?: TableFilter[];
+  rowActions?: (record: any) => RowAction[];
 }) {
   // Data columns
   const [dataColumns, setDataColumns] = useState<any[]>(columns);
 
   // Check if any columns are switchable (can be hidden)
-  const hasSwitchableColumns = columns.some((col: any) => col.switchable);
+  const hasSwitchableColumns = columns.some(
+    (col: TableColumn) => col.switchable
+  );
 
   // Manage state for switchable columns (initially load from local storage)
   let [hiddenColumns, setHiddenColumns] = useState(() =>
@@ -129,15 +134,34 @@ export function InvenTreeTable({
 
   // Update column visibility when hiddenColumns change
   useEffect(() => {
-    setDataColumns(
-      dataColumns.map((col) => {
-        return {
-          ...col,
-          hidden: hiddenColumns.includes(col.accessor)
-        };
-      })
-    );
-  }, [hiddenColumns]);
+    let cols = dataColumns.map((col) => {
+      let hidden: boolean = col.hidden;
+
+      if (col.switchable) {
+        hidden = hiddenColumns.includes(col.accessor);
+      }
+
+      return {
+        ...col,
+        hidden: hidden
+      };
+    });
+
+    // If row actions are available, add a column for them
+    if (rowActions) {
+      cols.push({
+        accessor: 'actions',
+        title: '',
+        hidden: false,
+        switchable: false,
+        render: function (record: any) {
+          return <RowActions actions={rowActions(record)} />;
+        }
+      });
+    }
+
+    setDataColumns(cols);
+  }, [columns, hiddenColumns, rowActions]);
 
   // Callback when column visibility is toggled
   function toggleColumn(columnName: string) {

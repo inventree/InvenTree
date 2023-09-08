@@ -24,25 +24,27 @@ export function RowActions({
   actions: RowAction[];
 }): ReactNode {
   return (
-    <Menu>
-      <Menu.Target>
-        <ActionIcon variant="subtle" color="gray">
-          <IconDots />
-        </ActionIcon>
-      </Menu.Target>
-      <Menu.Dropdown>
-        <Menu.Label>{title || t`Actions`}</Menu.Label>
-        {actions.map((action, idx) => (
-          <Menu.Item
-            key={idx}
-            onClick={action.onClick}
-            icon={action.icon}
-            title={action.tooltip || action.title}
-          >
-            {action.title}
-          </Menu.Item>
-        ))}
-      </Menu.Dropdown>
-    </Menu>
+    actions.length > 0 && (
+      <Menu>
+        <Menu.Target>
+          <ActionIcon variant="subtle" color="gray">
+            <IconDots />
+          </ActionIcon>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Label>{title || t`Actions`}</Menu.Label>
+          {actions.map((action, idx) => (
+            <Menu.Item
+              key={idx}
+              onClick={action.onClick}
+              icon={action.icon}
+              title={action.tooltip || action.title}
+            >
+              {action.title}
+            </Menu.Item>
+          ))}
+        </Menu.Dropdown>
+      </Menu>
+    )
   );
 }
