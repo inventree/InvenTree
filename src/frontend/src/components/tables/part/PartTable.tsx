@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { editPart } from '../../../functions/forms/PartForms';
 import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowActions } from '../RowActions';
 
 /**
  * Construct a list of columns for the part table
@@ -17,6 +20,7 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'name',
       sortable: true,
+      noWrap: true,
       title: t`Part`,
       render: function (record: any) {
         // TODO - Link to the part detail page
@@ -78,6 +82,38 @@ function partTableColumns(): TableColumn[] {
       accessor: 'link',
       title: t`Link`,
       switchable: true
+    },
+    {
+      accessor: 'actions',
+      title: '',
+      switchable: false,
+      render: function (record: any) {
+        return (
+          <RowActions
+            title={`Part Actions`}
+            actions={[
+              {
+                title: t`Edit`,
+                icon: <IconEdit color="blue" />,
+                onClick: () =>
+                  editPart({
+                    part_id: record.pk,
+                    callback: () => {
+                      // TODO: Reload the table, somehow?
+                      // TODO: Insert / update a single row in the table?
+                      // TODO: We need to have a hook back into the table
+                    }
+                  })
+              },
+              {
+                title: t`Delete`,
+                onClick: notYetImplemented,
+                icon: <IconTrash color="red" />
+              }
+            ]}
+          />
+        );
+      }
     }
   ];
 }

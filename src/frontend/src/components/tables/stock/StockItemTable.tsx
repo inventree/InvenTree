@@ -8,6 +8,7 @@ import { ActionButton } from '../../items/ActionButton';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
+import { RowActions } from '../RowActions';
 import { InvenTreeTable } from './../InvenTreeTable';
 
 /**
@@ -77,26 +78,26 @@ function stockItemTableColumns(): TableColumn[] {
     // TODO: notes
     {
       accessor: 'actions',
-      title: t`Actions`,
+      title: '',
       sortable: false,
+      switchable: false,
       render: function (record: any) {
         return (
-          <Group position="right" spacing={5} noWrap={true}>
-            {/* {EditButton(setEditing, editing)} */}
-            {/* {DeleteButton()} */}
-            <ActionButton
-              color="green"
-              icon={<IconEdit />}
-              tooltip="Edit stock item"
-              onClick={() => notYetImplemented()}
-            />
-            <ActionButton
-              color="red"
-              tooltip="Delete stock item"
-              icon={<IconTrash />}
-              onClick={() => notYetImplemented()}
-            />
-          </Group>
+          <RowActions
+            title={t`Stock Actions`}
+            actions={[
+              {
+                title: t`Edit`,
+                icon: <IconEdit color="blue" />,
+                onClick: notYetImplemented
+              },
+              {
+                title: t`Delete`,
+                icon: <IconTrash color="red" />,
+                onClick: notYetImplemented
+              }
+            ]}
+          />
         );
       }
     }

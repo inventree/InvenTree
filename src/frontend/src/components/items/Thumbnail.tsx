@@ -3,6 +3,8 @@ import { Image } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { Text } from '@mantine/core';
 
+import { api } from '../../App';
+
 export function Thumbnail({
   src,
   alt = t`Thumbnail`,
@@ -12,10 +14,10 @@ export function Thumbnail({
   alt?: string;
   size?: number;
 }) {
-  // TODO: Use api to determine the correct URL
-  let url = 'http://localhost:8000' + src;
-
   // TODO: Use HoverCard to display a larger version of the image
+
+  // TODO: This is a hack until we work out the /api/ path issue
+  let url = api.getUri({ url: '..' + src });
 
   return (
     <Image
