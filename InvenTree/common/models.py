@@ -582,7 +582,7 @@ class BaseInvenTreeSetting(models.Model):
 
     key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive)'))
 
-    value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
+    value = models.CharField(max_length=2000, blank=True, unique=False, help_text=_('Settings value'))
 
     @property
     def name(self):
@@ -2190,6 +2190,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             ],
             'default': '',
         },
+
+        'NOTIFICATION_ERROR_REPORT': {
+            'name': _('Receive error reports'),
+            'description': _('Receive notifications for system errors'),
+            'default': True,
+            'validator': bool,
+        }
 
     }
 

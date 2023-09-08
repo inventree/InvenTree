@@ -45,7 +45,7 @@ def to_dict(value):
     if value is None:
         return {}
 
-    if type(value) == dict:
+    if isinstance(value, dict):
         return value
 
     try:

@@ -35,6 +35,7 @@ class BuildFilter(rest_filters.FilterSet):
             'parent',
             'sales_order',
             'part',
+            'issued_by',
         ]
 
     status = rest_filters.NumberFilter(label='Status')

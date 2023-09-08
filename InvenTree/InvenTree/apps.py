@@ -9,12 +9,13 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, OperationalError
 
 import InvenTree.conversion
 import InvenTree.tasks
 from InvenTree.config import get_setting
-from InvenTree.ready import canAppAccessDatabase, isInTestMode
+from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
+                             isInTestMode, isPluginRegistryLoaded)
 
 logger = logging.getLogger("inventree")
 
@@ -34,6 +35,10 @@ class InvenTreeConfig(AppConfig):
         - Collecting notification methods
         - Adding users set in the current environment
         """
+        # skip loading if plugin registry is not loaded or we run in a background thread
+        if not isPluginRegistryLoaded() or not isInMainThread():
+            return
+
         if canAppAccessDatabase() or settings.TESTING_ENV:
             InvenTree.tasks.check_for_migrations(worker=False)
 
@@ -154,6 +159,8 @@ class InvenTreeConfig(AppConfig):
         if update:
             try:
                 update_exchange_rates()
+            except OperationalError:
+                logger.warning("Could not update exchange rates - database not ready")
             except Exception as e:
                 logger.error(f"Error updating exchange rates: {e} ({type(e)})")
 

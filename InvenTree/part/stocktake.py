@@ -98,7 +98,6 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
             entry_cost_min = convert_money(entry_cost_min, base_currency) * entry.quantity
             entry_cost_max = convert_money(entry_cost_max, base_currency) * entry.quantity
         except Exception:
-            logger.warning(f"Could not convert {entry.purchase_price} to {base_currency}")
 
             entry_cost_min = Money(0, base_currency)
             entry_cost_max = Money(0, base_currency)

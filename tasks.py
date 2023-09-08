@@ -270,6 +270,7 @@ def translate(c):
     manage(c, "compilemessages")
 
     if node_available():
+        frontend_install(c)
         frontend_trans(c)
         frontend_build(c)
 
