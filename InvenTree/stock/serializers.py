@@ -1333,12 +1333,21 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         with transaction.atomic():
             for item in items:
 
+                # Required fields
                 stock_item = item['pk']
                 quantity = item['quantity']
+
+                # Optional fields
+                kwargs = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_name in item:
+                        kwargs[field_name] = item[field_name]
 
                 stock_item.move(
                     location,
                     notes,
                     request.user,
-                    quantity=quantity
+                    quantity=quantity,
+                    **kwargs
                 )
