@@ -25,3 +25,27 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: stable
           force: true
+
+  publish-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+      - name: Install dependencies
+        run: cd src/frontend && yarn install
+      - name: Build frontend
+        run: cd src/frontend && npm run build
+      - name: Zip frontend
+        run: |
+          cd InvenTree/web/static/web
+          zip -r ../frontend-build.zip *
+      - uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: InvenTree/web/static/frontend-build.zip
+          asset_name: frontend-build.zip
+          tag: ${{ github.ref }}
+          overwrite: true

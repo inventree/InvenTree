@@ -1,0 +1,8 @@
+Hello {{username}},
+
+You requested that we send you a link to log in to our app:
+
+    {{link}}
+
+Regards,
+{{site_name}}

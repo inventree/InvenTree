@@ -520,6 +520,8 @@ def update_exchange_rates():
 
         # Remove any exchange rates which are not in the provided currencies
         Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
+    except OperationalError:
+        logger.warning("Could not update exchange rates - database not ready")
     except Exception as e:  # pragma: no cover
         logger.error(f"Error updating exchange rates: {e} ({type(e)})")
 

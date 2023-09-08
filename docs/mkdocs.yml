@@ -70,15 +70,17 @@ nav:
   - InvenTree:
     - InvenTree: index.md
     - Features: features.md
-    - Release Notes: releases/release_notes.md
     - FAQ: faq.md
-    - Credits: credits.md
-    - Privacy: privacy.md
-    - Terminology: terminology.md
+    - Core Concepts:
+      - Terminology: concepts/terminology.md
+      - Physical Units: concepts/units.md
     - Development:
       - Getting started: develop/starting.md
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
+    - Credits: credits.md
+    - Privacy: privacy.md
+    - Release Notes: releases/release_notes.md
   - Install:
     - Introduction: start/intro.md
     - Configuration: start/config.md

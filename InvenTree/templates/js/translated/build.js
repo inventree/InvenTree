@@ -1295,6 +1295,44 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Build Output" %}',
                 switchable: false,
                 sortable: true,
+                sorter: function(fieldA, fieldB, rowA, rowB) {
+
+                    let serialA = parseInt(rowA.serial);
+                    let serialB = parseInt(rowB.serial);
+
+                    // Fallback to string representation
+                    if (isNaN(serialA)) {
+                        serialA = rowA.serial;
+                    } else if (isNaN(serialB)) {
+                        serialB = rowB.serial;
+                    }
+
+                    if (serialA && !serialB) {
+                        // Only rowA has a serial number
+                        return 1;
+                    } else if (serialB && !serialA) {
+                        // Only rowB has a serial number
+                        return -1;
+                    } else if (serialA && serialB) {
+                        // Both rows have serial numbers
+                        if (serialA > serialB) {
+                            return 1;
+                        } else if (serialA < serialB) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        // Neither row has a serial number
+                        if (rowA.quantity > rowB.quantity) {
+                            return 1;
+                        } else if (rowA.quantity < rowB.quantity) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                },
                 formatter: function(value, row) {
                     let text = '';
 
@@ -1339,6 +1377,19 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Required Tests" %}',
                 visible: test_templates.length > 0,
                 switchable: true,
+                sortable: true,
+                sorter: function(valueA, valueB, rowA, rowB) {
+                    let nA = getPassedTestCount(rowA);
+                    let nB = getPassedTestCount(rowB);
+
+                    if (nA > nB) {
+                        return 1;
+                    } else if (nA < nB) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                },
                 formatter: function(value, row) {
                     if (row.tests) {
                         return makeProgressBar(
@@ -2173,9 +2224,6 @@ function loadBuildTable(table, options) {
         customView: function(data) {
             return `<div id='build-order-calendar'></div>`;
         },
-        onRefresh: function() {
-            loadBuildTable(table, options);
-        },
         onLoadSuccess: function() {
 
             if (tree_enable) {
@@ -2255,16 +2303,16 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
             {
                 field: 'part',
                 title: '{% trans "Part" %}',
-                formatter: function(value, row) {
+                formatter: function(_value, row) {
                     let html = imageHoverIcon(row.part_detail.thumbnail);
-                    html += renderLink(row.part_detail.full_name, `/part/${value}/`);
+                    html += renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
                     return html;
                 }
             },
             {
                 field: 'quantity',
                 title: '{% trans "Allocated Quantity" %}',
-                formatter: function(value, row) {
+                formatter: function(_value, row) {
                     let text = '';
                     let url = '';
                     let serial = row.serial;
@@ -2294,8 +2342,8 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
                 title: '{% trans "Location" %}',
                 formatter: function(value, row) {
                     if (row.location_detail) {
-                        var text = shortenString(row.location_detail.pathstring);
-                        var url = `/stock/location/${row.location}/`;
+                        let text = shortenString(row.location_detail.pathstring);
+                        let url = `/stock/location/${row.location_detail.pk}/`;
 
                         return renderLink(text, url);
                     } else {
@@ -2660,6 +2708,7 @@ function loadBuildLineTable(table, build_id, options={}) {
 
         deallocateStock(build_id, {
             build_line: pk,
+            output: output,
             onSuccess: function() {
                 $(table).bootstrapTable('refresh');
             }

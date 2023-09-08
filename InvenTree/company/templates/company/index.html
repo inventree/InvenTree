@@ -5,7 +5,7 @@
 {% load inventree_extras %}
 
 {% block page_title %}
-{% inventree_title %} | {% trans "Supplier List" %}
+{% inventree_title %}{% if title %} | {{ title }}{% endif %}
 {% endblock page_title %}
 
 {% block heading %}

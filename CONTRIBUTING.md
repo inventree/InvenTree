@@ -82,10 +82,11 @@ The HEAD of the "stable" branch represents the latest stable release code.
 ## Environment
 ### Target version
 We are currently targeting:
-| Name | Minimum version |
-|---|---|
-| Python | 3.9 |
-| Django | 3.2 |
+| Name | Minimum version | Note |
+|---|---| --- |
+| Python | 3.9 | |
+| Django | 3.2 | |
+| Node | 18 | Only needed for frontend development |
 
 ### Auto creating updates
 The following tools can be used to auto-upgrade syntax that was depreciated in new versions:
@@ -135,10 +136,27 @@ To run only partial tests, for example for a module use:
 invoke test --runtest order
 ```
 
+To see all the available options:
+
+```
+invoke test --help
+```
+
 ## Code Style
 
-Submitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
-Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for python. Docstrings for general javascript code is encouraged! Docstyles are checked by `invoke style`.
+Code style is automatically checked as part of the project's CI pipeline on GitHub. This means that any pull requests which do not conform to the style guidelines will fail CI checks.
+
+### Backend Code
+
+Backend code (Python) is checked against the [PEP style guidelines](https://peps.python.org/pep-0008/). Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for python.
+
+### Frontend Code
+
+Frontend code (Javascript) is checked using [eslint](https://eslint.org/). While docstrings are not enforced for front-end code, good code documentation is encouraged!
+
+### Running Checks Locally
+
+If you have followed the setup devtools procedure, then code style checking is performend automatically whenever you commit changes to the code.
 
 ### Django templates
 

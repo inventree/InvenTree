@@ -168,12 +168,12 @@ class BarcodeTagTest(TestCase):
 
         barcode = barcode_tags.barcode("12345")
 
-        self.assertTrue(type(barcode) == str)
+        self.assertTrue(isinstance(barcode, str))
         self.assertTrue(barcode.startswith('data:image/png;'))
 
         # Try with a different format
         barcode = barcode_tags.barcode('99999', format='BMP')
-        self.assertTrue(type(barcode) == str)
+        self.assertTrue(isinstance(barcode, str))
         self.assertTrue(barcode.startswith('data:image/bmp;'))
 
     def test_qrcode(self):
@@ -181,7 +181,7 @@ class BarcodeTagTest(TestCase):
 
         # Test with default settings
         qrcode = barcode_tags.qrcode("hello world")
-        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(isinstance(qrcode, str))
         self.assertTrue(qrcode.startswith('data:image/png;'))
         self.assertEqual(len(qrcode), 700)
 
@@ -192,7 +192,7 @@ class BarcodeTagTest(TestCase):
             box_size=50,
             format='BMP',
         )
-        self.assertTrue(type(qrcode) == str)
+        self.assertTrue(isinstance(qrcode, str))
         self.assertTrue(qrcode.startswith('data:image/bmp;'))
         self.assertEqual(len(qrcode), 309720)
 
@@ -473,5 +473,20 @@ class ReturnOrderReportTest(ReportTest):
     def setUp(self):
         """Setup function for the ReturnOrderReport tests"""
         self.copyReportTemplate('inventree_return_order_report.html', 'return order report')
+
+        return super().setUp()
+
+
+class StockLocationReportTest(ReportTest):
+    """Unit tests for the StockLocationReport model"""
+
+    model = report_models.StockLocationReport
+    list_url = 'api-stocklocation-report-list'
+    detail_url = 'api-stocklocation-report-detail'
+    print_url = 'api-stocklocation-report-print'
+
+    def setUp(self):
+        """Setup function for the StockLocationReport tests"""
+        self.copyReportTemplate('inventree_slr_report.html', 'stock location report')
 
         return super().setUp()

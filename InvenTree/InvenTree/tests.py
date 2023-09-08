@@ -11,19 +11,23 @@ import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
+from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
+from django.urls import reverse
 
+import pint.errors
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
+from sesame.utils import get_user
 
 import InvenTree.conversion
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
-from common.models import InvenTreeSetting
+from common.models import CustomUnit, InvenTreeSetting
 from common.settings import currency_codes
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
@@ -38,6 +42,26 @@ from .validators import validate_overage
 class ConversionTest(TestCase):
     """Tests for conversion of physical units"""
 
+    def test_base_units(self):
+        """Test conversion to specified base units"""
+        tests = {
+            "3": 3,
+            "3 dozen": 36,
+            "50 dozen kW": 600000,
+            "1 / 10": 0.1,
+            "1/2 kW": 500,
+            "1/2 dozen kW": 6000,
+            "0.005 MW": 5000,
+        }
+
+        for val, expected in tests.items():
+            q = InvenTree.conversion.convert_physical_value(val, 'W')
+
+            self.assertAlmostEqual(q, expected, 0.01)
+
+            q = InvenTree.conversion.convert_physical_value(val, 'W', strip_units=False)
+            self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
+
     def test_dimensionless_units(self):
         """Tests for 'dimensonless' unit quantities"""
 
@@ -50,11 +74,91 @@ class ConversionTest(TestCase):
             '3 hundred': 300,
             '2 thousand': 2000,
             '12 pieces': 12,
+            '1 / 10': 0.1,
+            '1/2': 0.5,
+            '-1 / 16': -0.0625,
+            '3/2': 1.5,
+            '1/2 dozen': 6,
         }
 
         for val, expected in tests.items():
-            q = InvenTree.conversion.convert_physical_value(val).to_base_units()
-            self.assertEqual(q.magnitude, expected)
+            # Convert, and leave units
+            q = InvenTree.conversion.convert_physical_value(val, strip_units=False)
+            self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
+
+            # Convert, and strip units
+            q = InvenTree.conversion.convert_physical_value(val)
+            self.assertAlmostEqual(q, expected, 0.01)
+
+    def test_invalid_values(self):
+        """Test conversion of invalid inputs"""
+
+        inputs = [
+            '-',
+            ';;',
+            '-x',
+            '?',
+            '--',
+            '+',
+            '++',
+            '1/0',
+            '1/-',
+        ]
+
+        for val in inputs:
+            # Test with a provided unit
+            with self.assertRaises(ValidationError):
+                InvenTree.conversion.convert_physical_value(val, 'meter')
+
+            # Test dimensionless
+            with self.assertRaises(ValidationError):
+                result = InvenTree.conversion.convert_physical_value(val)
+                print("Testing invalid value:", val, result)
+
+    def test_custom_units(self):
+        """Tests for custom unit conversion"""
+
+        # Start with an empty set of units
+        CustomUnit.objects.all().delete()
+        InvenTree.conversion.reload_unit_registry()
+
+        # Ensure that the custom unit does *not* exist to start with
+        reg = InvenTree.conversion.get_unit_registry()
+
+        with self.assertRaises(pint.errors.UndefinedUnitError):
+            reg['hpmm']
+
+        # Create a new custom unit
+        CustomUnit.objects.create(
+            name='fanciful_unit',
+            definition='henry / mm',
+            symbol='hpmm',
+        )
+
+        # Reload registry
+        reg = InvenTree.conversion.get_unit_registry()
+
+        # Ensure that the custom unit is now available
+        reg['hpmm']
+
+        # Convert some values
+        tests = {
+            '1': 1,
+            '1 hpmm': 1000000,
+            '1 / 10 hpmm': 100000,
+            '1 / 100 hpmm': 10000,
+            '0.3 hpmm': 300000,
+            '-7hpmm': -7000000,
+        }
+
+        for val, expected in tests.items():
+            # Convert, and leave units
+            q = InvenTree.conversion.convert_physical_value(val, 'henry / km', strip_units=False)
+            self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
+
+            # Convert and strip units
+            q = InvenTree.conversion.convert_physical_value(val, 'henry / km')
+            self.assertAlmostEqual(q, expected, 0.01)
 
 
 class ValidatorTest(TestCase):
@@ -215,6 +319,34 @@ class FormatTest(TestCase):
 
 class TestHelpers(TestCase):
     """Tests for InvenTree helper functions."""
+
+    def test_absolute_url(self):
+        """Test helper function for generating an absolute URL"""
+
+        base = "https://demo.inventree.org:12345"
+
+        InvenTreeSetting.set_setting('INVENTREE_BASE_URL', base, change_user=None)
+
+        tests = {
+            "": base,
+            "api/": base + "/api/",
+            "/api/": base + "/api/",
+            "api": base + "/api",
+            "media/label/output/": base + "/media/label/output/",
+            "static/logo.png": base + "/static/logo.png",
+            "https://www.google.com": "https://www.google.com",
+            "https://demo.inventree.org:12345/out.html": "https://demo.inventree.org:12345/out.html",
+            "https://demo.inventree.org/test.html": "https://demo.inventree.org/test.html",
+            "http://www.cwi.nl:80/%7Eguido/Python.html": "http://www.cwi.nl:80/%7Eguido/Python.html",
+            "test.org": base + "/test.org",
+        }
+
+        for url, expected in tests.items():
+            # Test with supplied base URL
+            self.assertEqual(InvenTree.helpers_model.construct_absolute_url(url, site_url=base), expected)
+
+            # Test without supplied base URL
+            self.assertEqual(InvenTree.helpers_model.construct_absolute_url(url), expected)
 
     def test_image_url(self):
         """Test if a filename looks like an image."""
@@ -1044,3 +1176,41 @@ class SanitizerTest(TestCase):
 
         # Test that invalid string is cleanded
         self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))
+
+
+class MagicLoginTest(InvenTreeTestCase):
+    """Test magic login token generation."""
+
+    def test_generation(self):
+        """Test that magic login tokens are generated correctly"""
+
+        # User does not exists
+        resp = self.client.post(reverse('sesame-generate'), {'email': 1})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data, {'status': 'ok'})
+        self.assertEqual(len(mail.outbox), 0)
+
+        # User exists
+        resp = self.client.post(reverse('sesame-generate'), {'email': self.user.email})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data, {'status': 'ok'})
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, '[example.com] Log in to the app')
+
+        # Check that the token is in the email
+        self.assertTrue('http://testserver/api/email/login/' in mail.outbox[0].body)
+        token = mail.outbox[0].body.split('/')[-1].split('\n')[0][8:]
+        self.assertEqual(get_user(token), self.user)
+
+        # Log user off
+        self.client.logout()
+
+        # Check that the login works
+        resp = self.client.get(reverse('sesame-login') + '?sesame=' + token)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, '/index/')
+        # Note: 2023-08-08 - This test has been changed because "platform UI" is not generally available yet
+        # TODO: In the future, the URL comparison will need to be reverted
+        # self.assertEqual(resp.url, '/platform/logged-in/')
+        # And we should be logged in again
+        self.assertEqual(resp.wsgi_request.user, self.user)

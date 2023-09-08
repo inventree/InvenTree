@@ -4,21 +4,21 @@
 #
 #    pip-compile --output-file=requirements.txt requirements.in
 #
-arrow==1.2.3
-    # via django-q
 asgiref==3.7.2
     # via django
+async-timeout==4.0.3
+    # via redis
 attrs==23.1.0
-    # via jsonschema
+    # via
+    #   jsonschema
+    #   referencing
 babel==2.12.1
     # via py-moneyed
 bleach[css]==6.0.0
     # via django-markdownify
-blessed==1.20.0
-    # via django-q
 brotli==1.0.9
     # via fonttools
-certifi==2023.5.7
+certifi==2023.7.22
     # via
     #   requests
     #   sentry-sdk
@@ -26,13 +26,13 @@ cffi==1.15.1
     # via
     #   cryptography
     #   weasyprint
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via requests
 coreapi==2.3.3
     # via -r requirements.in
 coreschema==0.0.4
     # via coreapi
-cryptography==41.0.1
+cryptography==41.0.3
     # via
     #   -r requirements.in
     #   djangorestframework-simplejwt
@@ -47,7 +47,7 @@ diff-match-patch==20230430
     # via django-import-export
 dj-rest-auth==4.0.1
     # via -r requirements.in
-django==3.2.19
+django==3.2.21
     # via
     #   -r requirements.in
     #   dj-rest-auth
@@ -55,7 +55,7 @@ django==3.2.19
     #   django-allauth-2fa
     #   django-cors-headers
     #   django-dbbackup
-    #   django-error-report
+    #   django-error-report-2
     #   django-filter
     #   django-flags
     #   django-formtools
@@ -67,9 +67,10 @@ django==3.2.19
     #   django-mptt
     #   django-otp
     #   django-picklefield
-    #   django-q
+    #   django-q2
     #   django-recurrence
     #   django-redis
+    #   django-sesame
     #   django-sql-utils
     #   django-sslserver
     #   django-stdimage
@@ -84,29 +85,29 @@ django-allauth==0.54.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
-django-allauth-2fa==0.10.0
+django-allauth-2fa==0.11.1
     # via -r requirements.in
-django-cleanup==7.0.0
+django-cleanup==8.0.0
     # via -r requirements.in
-django-cors-headers==4.0.0
+django-cors-headers==4.2.0
     # via -r requirements.in
 django-crispy-forms==1.14.0
     # via -r requirements.in
 django-dbbackup==4.0.2
     # via -r requirements.in
-django-error-report==0.2.0
+django-error-report-2==0.4.2
     # via -r requirements.in
 django-filter==23.2
     # via -r requirements.in
-django-flags==5.0.12
+django-flags==5.0.13
     # via -r requirements.in
 django-formtools==2.4.1
     # via -r requirements.in
-django-ical==1.9.1
+django-ical==1.9.2
     # via -r requirements.in
 django-import-export==2.5.0
     # via -r requirements.in
-django-js-asset==2.0.0
+django-js-asset==2.1.0
     # via django-mptt
 django-maintenance-mode==0.18.0
     # via -r requirements.in
@@ -116,17 +117,19 @@ django-money==2.1.1
     # via -r requirements.in
 django-mptt==0.11.0
     # via -r requirements.in
-django-otp==1.2.1
+django-otp==1.2.2
     # via django-allauth-2fa
 django-picklefield==3.1
-    # via django-q
-django-q==1.3.9
-    # via -r requirements.in
+    # via django-q2
 django-q-sentry==0.1.6
+    # via -r requirements.in
+django-q2==1.5.5
     # via -r requirements.in
 django-recurrence==1.11.1
     # via django-ical
-django-redis==5.2.0
+django-redis==5.3.0
+    # via -r requirements.in
+django-sesame==3.2.1
     # via -r requirements.in
 django-sql-utils==0.6.1
     # via -r requirements.in
@@ -138,7 +141,7 @@ django-taggit==4.0.0
     # via -r requirements.in
 django-user-sessions==2.0.0
     # via -r requirements.in
-django-weasyprint==2.2.0
+django-weasyprint==2.2.1
     # via -r requirements.in
 django-xforwardedfor-middleware==2.0
     # via -r requirements.in
@@ -148,19 +151,19 @@ djangorestframework==3.14.0
     #   dj-rest-auth
     #   djangorestframework-simplejwt
     #   drf-spectacular
-djangorestframework-simplejwt[crypto]==5.2.2
+djangorestframework-simplejwt[crypto]==5.3.0
     # via -r requirements.in
-drf-spectacular==0.26.2
+drf-spectacular==0.26.4
     # via -r requirements.in
-dulwich==0.21.5
+dulwich==0.21.6
     # via -r requirements.in
 et-xmlfile==1.1.0
     # via openpyxl
 feedparser==6.0.10
     # via -r requirements.in
-fonttools[woff]==4.39.4
+fonttools[woff]==4.42.1
     # via weasyprint
-gunicorn==20.1.0
+gunicorn==21.2.0
     # via -r requirements.in
 html5lib==1.1
     # via weasyprint
@@ -168,17 +171,21 @@ icalendar==5.0.7
     # via django-ical
 idna==3.4
     # via requests
-importlib-metadata==6.6.0
-    # via markdown
+importlib-metadata==6.8.0
+    # via
+    #   django-q2
+    #   markdown
 inflection==0.5.1
     # via drf-spectacular
 itypes==1.2.0
     # via coreapi
 jinja2==3.1.2
     # via coreschema
-jsonschema==4.17.3
+jsonschema==4.19.0
     # via drf-spectacular
-markdown==3.4.3
+jsonschema-specifications==2023.7.1
+    # via jsonschema
+markdown==3.4.4
     # via django-markdownify
 markuppy==1.14
     # via tablib
@@ -190,6 +197,8 @@ odfpy==1.4.1
     # via tablib
 openpyxl==3.1.2
     # via tablib
+packaging==23.1
+    # via gunicorn
 pdf2image==1.16.3
     # via -r requirements.in
 pillow==9.5.0
@@ -208,9 +217,9 @@ py-moneyed==1.2
     #   django-money
 pycparser==2.21
     # via cffi
-pydyf==0.6.0
+pydyf==0.7.0
     # via weasyprint
-pyjwt[crypto]==2.7.0
+pyjwt[crypto]==2.8.0
     # via
     #   django-allauth
     #   djangorestframework-simplejwt
@@ -218,13 +227,10 @@ pyphen==0.14.0
     # via weasyprint
 pypng==0.20220715.0
     # via qrcode
-pyrsistent==0.19.3
-    # via jsonschema
-python-barcode[images]==0.14.0
+python-barcode[images]==0.15.1
     # via -r requirements.in
 python-dateutil==2.8.2
     # via
-    #   arrow
     #   django-recurrence
     #   icalendar
 python-dotenv==1.0.0
@@ -233,14 +239,15 @@ python-fsutil==0.10.0
     # via django-maintenance-mode
 python3-openid==3.2.0
     # via django-allauth
-pytz==2023.3
+pytz==2023.3.post1
     # via
     #   django
     #   django-dbbackup
     #   djangorestframework
     #   icalendar
-pyyaml==6.0
+pyyaml==6.0.1
     # via
+    #   -r requirements.in
     #   drf-spectacular
     #   tablib
 qrcode[pil]==7.4.2
@@ -249,11 +256,13 @@ qrcode[pil]==7.4.2
     #   django-allauth-2fa
 rapidfuzz==0.7.6
     # via -r requirements.in
-redis==3.5.3
+redis==5.0.0
+    # via django-redis
+referencing==0.30.2
     # via
-    #   django-q
-    #   django-redis
-regex==2023.5.5
+    #   jsonschema
+    #   jsonschema-specifications
+regex==2023.8.8
     # via -r requirements.in
 requests==2.31.0
     # via
@@ -262,7 +271,11 @@ requests==2.31.0
     #   requests-oauthlib
 requests-oauthlib==1.3.1
     # via django-allauth
-sentry-sdk==1.25.0
+rpds-py==0.10.2
+    # via
+    #   jsonschema
+    #   referencing
+sentry-sdk==1.30.0
     # via
     #   -r requirements.in
     #   django-q-sentry
@@ -271,14 +284,13 @@ sgmllib3k==1.0.0
 six==1.16.0
     # via
     #   bleach
-    #   blessed
     #   html5lib
     #   python-dateutil
 sqlparse==0.4.4
     # via
     #   django
     #   django-sql-utils
-tablib[html,ods,xls,xlsx,yaml]==3.4.0
+tablib[html,ods,xls,xlsx,yaml]==3.5.0
     # via
     #   -r requirements.in
     #   django-import-export
@@ -287,7 +299,7 @@ tinycss2==1.1.1
     #   bleach
     #   cssselect2
     #   weasyprint
-typing-extensions==4.6.3
+typing-extensions==4.7.1
     # via
     #   asgiref
     #   qrcode
@@ -295,13 +307,11 @@ uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-spectacular
-urllib3==2.0.2
+urllib3==2.0.4
     # via
     #   dulwich
     #   requests
     #   sentry-sdk
-wcwidth==0.2.6
-    # via blessed
 weasyprint==54.3
     # via
     #   -r requirements.in
@@ -316,7 +326,7 @@ xlrd==2.0.1
     # via tablib
 xlwt==1.3.0
     # via tablib
-zipp==3.15.0
+zipp==3.16.0
     # via importlib-metadata
 zopfli==0.2.2
     # via fonttools

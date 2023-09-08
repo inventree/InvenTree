@@ -53,7 +53,7 @@ The following basic options are available:
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | True |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
-| INVENTREE_TIMZONE | timezome | Server timezone | UTC |
+| INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
 | ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
 | INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
@@ -155,8 +155,15 @@ The following email settings are available:
 | INVENTREE_EMAIL_PASSWORD | email.password | Email account password | *Not specified* |
 | INVENTREE_EMAIL_TLS | email.tls | Enable TLS support | False |
 | INVENTREE_EMAIL_SSL | email.ssl | Enable SSL support | False |
-| INVENTREE_EMAIL_SENDER | email.sender | Name of sender | *Not specified* |
+| INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
 | INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
+
+### Sender Email
+
+The "sender" email address is the address from which InvenTree emails are sent (by default) and must be specified for outgoing emails to function:
+
+!!! info "Fallback"
+     If `INVENTREE_EMAIL_SENDER` is not provided, the system will fall back to `INVENTREE_EMAIL_USERNAME` (if the username is a valid email address)
 
 ## Supported Currencies
 
@@ -191,9 +198,8 @@ InvenTree requires some external directories for storing files:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| INVENTREE_STATIC_ROOT | static_root | List of allowed hosts | *Not specified* |
-| INVENTREE_MEDIA_ROOT | media_root | Allow all remote URLS for CORS checks | *Not specified* |
-| INVENTREE_BACKUP_DIR | backup_dir | List of whitelisted CORS URLs | *Not specified* |
+| INVENTREE_STATIC_ROOT | static_root | [Static files](./serving_files.md#static-files) directory | *Not specified* |
+| INVENTREE_MEDIA_ROOT | media_root | [Media files](./serving_files.md#media-files) directory | *Not specified* |
 
 !!! tip "Serving Files"
     Read the [Serving Files](./serving_files.md) section for more information on hosting *static* and *media* files
@@ -228,9 +234,9 @@ InvenTree provides allowance for additional sign-in options. The following optio
 
 ### Single Sign On
 
-SSO backends for all required authentication providers need to be added to the config file as a list under the key `social_backends`. The correct backend-name can be found in django-allauths [configuration documentation](https://django-allauth.readthedocs.io/en/latest/installation.html#django).
+SSO backends for all required authentication providers need to be added to the config file as a list under the key `social_backends`. The correct backend-name can be found in django-allauths [configuration documentation](https://django-allauth.readthedocs.io/en/latest/installation/quickstart.html).
 
-If the selected providers need additional settings they must be added as dicts under the key `social_providers`. The correct settings can be found in the django-allauths [provider documentation](https://django-allauth.readthedocs.io/en/latest/providers.html).
+If the selected providers need additional settings they must be added as dicts under the key `social_providers`. The correct settings can be found in the django-allauths [provider documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html).
 
 !!! warning "You are not done"
     SSO still needs credentials for all providers and has to be enabled in the [global settings](../settings/global.md)!

@@ -2,10 +2,25 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 127
+INVENTREE_API_VERSION = 132
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v132 -> 2023-09-07 : https://github.com/inventree/InvenTree/pull/5515
+    - Add 'issued_by' filter to BuildOrder API list endpoint
+
+v131 -> 2023-08-09 : https://github.com/inventree/InvenTree/pull/5415
+    - Annotate 'available_variant_stock' to the SalesOrderLine serializer
+
+v130 -> 2023-07-14 : https://github.com/inventree/InvenTree/pull/5251
+    - Refactor label printing interface
+
+v129 -> 2023-07-06 : https://github.com/inventree/InvenTree/pull/5189
+    - Changes 'serial_lte' and 'serial_gte' stock filters to point to 'serial_int' field
+
+v128 -> 2023-07-06 : https://github.com/inventree/InvenTree/pull/5186
+    - Adds 'available' filter for BuildLine API endpoint
 
 v127 -> 2023-06-24 : https://github.com/inventree/InvenTree/pull/5094
     - Enhancements for the PartParameter API endpoints

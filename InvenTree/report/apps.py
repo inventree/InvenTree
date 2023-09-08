@@ -18,7 +18,12 @@ class ReportConfig(AppConfig):
     def ready(self):
         """This function is called whenever the report app is loaded."""
 
-        from InvenTree.ready import canAppAccessDatabase
+        from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
+                                     isPluginRegistryLoaded)
+
+        # skip loading if plugin registry is not loaded or we run in a background thread
+        if not isPluginRegistryLoaded() or not isInMainThread():
+            return
 
         # Configure logging for PDF generation (disable "info" messages)
         logging.getLogger('fontTools').setLevel(logging.WARNING)
@@ -32,6 +37,7 @@ class ReportConfig(AppConfig):
             self.create_default_purchase_order_reports()
             self.create_default_sales_order_reports()
             self.create_default_return_order_reports()
+            self.create_default_stock_location_reports()
 
     def create_default_reports(self, model, reports):
         """Copy default report files across to the media directory."""
@@ -201,3 +207,23 @@ class ReportConfig(AppConfig):
         ]
 
         self.create_default_reports(ReturnOrderReport, reports)
+
+    def create_default_stock_location_reports(self):
+        """Create database entries for the default StockLocationReport templates"""
+
+        try:
+            from report.models import StockLocationReport
+        except Exception:  # pragma: no cover
+            # Database not yet ready
+            return
+
+        # List of templates to copy across
+        reports = [
+            {
+                'file': 'inventree_slr_report.html',
+                'name': 'InvenTree Stock Location',
+                'description': 'Stock Location example report',
+            }
+        ]
+
+        self.create_default_reports(StockLocationReport, reports)

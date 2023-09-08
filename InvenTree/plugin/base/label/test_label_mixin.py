@@ -1,5 +1,6 @@
 """Unit tests for the label printing mixin."""
 
+import json
 import os
 
 from django.apps import apps
@@ -7,7 +8,6 @@ from django.urls import reverse
 
 from PIL import Image
 
-from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from label.models import PartLabel, StockItemLabel, StockLocationLabel
 from part.models import Part
@@ -77,11 +77,11 @@ class LabelMixinTests(InvenTreeAPITestCase):
         """Test that the sample printing plugin is installed."""
         # Get all label plugins
         plugins = registry.with_mixin('labels')
-        self.assertEqual(len(plugins), 1)
+        self.assertEqual(len(plugins), 2)
 
         # But, it is not 'active'
         plugins = registry.with_mixin('labels', active=True)
-        self.assertEqual(len(plugins), 0)
+        self.assertEqual(len(plugins), 1)
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
@@ -123,8 +123,8 @@ class LabelMixinTests(InvenTreeAPITestCase):
             }
         )
 
-        self.assertEqual(len(response.data), 1)
-        data = response.data[0]
+        self.assertEqual(len(response.data), 2)
+        data = response.data[1]
         self.assertEqual(data['key'], 'samplelabel')
 
     def test_printing_process(self):
@@ -160,9 +160,10 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
 
         # Print multiple parts without a plugin in debug mode
-        InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', True, None)
         response = self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
-        self.assertIn('@page', str(response.content))
+
+        data = json.loads(response.content)
+        self.assertIn('file', data)
 
         # Print no part
         self.get(self.do_url(None, plugin_ref, label), expected_code=400)

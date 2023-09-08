@@ -55,7 +55,7 @@ def render_date(context, date_object):
     if date_object is None:
         return None
 
-    if type(date_object) == str:
+    if isinstance(date_object, str):
 
         date_object = date_object.strip()
 
