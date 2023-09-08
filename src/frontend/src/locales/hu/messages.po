@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-05 14:06\n"
+"PO-Revision-Date: 2023-09-08 23:32\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -21,6 +21,26 @@ msgstr ""
 #: src/components/DashboardItemProxy.tsx:32
 msgid "Title"
 msgstr "Cím"
+
+#: src/components/forms/ApiForm.tsx:188
+msgid "Success"
+msgstr ""
+
+#: src/components/forms/ApiForm.tsx:259
+msgid "Form Errors Exist"
+msgstr ""
+
+#: src/components/forms/ApiForm.tsx:298
+#: src/components/tables/FilterSelectModal.tsx:166
+#: src/contexts/ThemeContext.tsx:65
+msgid "Cancel"
+msgstr "Mégsem"
+
+#: src/components/forms/ApiForm.tsx:307
+#: src/contexts/ThemeContext.tsx:65
+#: src/pages/Index/Profile/UserPanel.tsx:107
+msgid "Submit"
+msgstr "Küldés"
 
 #: src/components/forms/AuthenticationForm.tsx:36
 msgid "Login failed"
@@ -165,12 +185,33 @@ msgstr "Név: {0}"
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr "Státusz: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
+#: src/components/forms/fields/ApiFormField.tsx:286
+#: src/components/nav/SearchDrawer.tsx:422
+#: src/components/tables/InvenTreeTable.tsx:368
+#: src/pages/ErrorPage.tsx:12
+#: src/pages/ErrorPage.tsx:25
+msgid "Error"
+msgstr "Hiba"
+
+#: src/components/forms/fields/RelatedModelField.tsx:211
+msgid "Search"
+msgstr ""
+
+#: src/components/forms/fields/RelatedModelField.tsx:212
+#: src/components/widgets/WidgetLayout.tsx:134
+msgid "Loading"
+msgstr "Betöltés"
+
+#: src/components/forms/fields/RelatedModelField.tsx:214
+msgid "No results found"
+msgstr ""
+
 #: src/components/items/DocTooltip.tsx:89
 msgid "Read More"
 msgstr "Tudj meg többet"
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:336
+#: src/components/tables/InvenTreeTable.tsx:360
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
@@ -198,8 +239,8 @@ msgstr "PLH"
 msgid "Scan QR code"
 msgstr "QR kód beolvasása"
 
-#: src/components/items/Thumbnail.tsx:8
-#: src/components/items/Thumbnail.tsx:41
+#: src/components/items/Thumbnail.tsx:10
+#: src/components/items/Thumbnail.tsx:43
 msgid "Thumbnail"
 msgstr "Bélyegkép"
 
@@ -313,92 +354,93 @@ msgstr "Dokumentáció"
 msgid "About"
 msgstr "Névjegy"
 
-#: src/components/nav/SearchDrawer.tsx:65
+#: src/components/nav/SearchDrawer.tsx:59
 #: src/defaults/links.tsx:26
 #: src/pages/Index/Part.tsx:13
 msgid "Parts"
 msgstr "Alkatrészek"
 
-#: src/components/nav/SearchDrawer.tsx:74
+#: src/components/nav/SearchDrawer.tsx:67
 msgid "Supplier Parts"
 msgstr "Beszállítói alkatrészek"
 
-#: src/components/nav/SearchDrawer.tsx:88
+#: src/components/nav/SearchDrawer.tsx:80
 msgid "Manufacturer Parts"
 msgstr "Gyártói alkatrészek"
 
-#: src/components/nav/SearchDrawer.tsx:102
+#: src/components/nav/SearchDrawer.tsx:93
 msgid "Part Categories"
 msgstr "Alkatrész kategóriák"
 
-#: src/components/nav/SearchDrawer.tsx:111
+#: src/components/nav/SearchDrawer.tsx:101
 #: src/pages/Index/Stock.tsx:13
 msgid "Stock Items"
 msgstr "Készlet tételek"
 
-#: src/components/nav/SearchDrawer.tsx:123
+#: src/components/nav/SearchDrawer.tsx:112
 msgid "Stock Locations"
 msgstr "Készlethelyek"
 
-#: src/components/nav/SearchDrawer.tsx:132
+#: src/components/nav/SearchDrawer.tsx:120
 #: src/pages/Index/Build.tsx:13
 msgid "Build Orders"
 msgstr "Gyártási utasítások"
 
-#: src/components/nav/SearchDrawer.tsx:143
+#: src/components/nav/SearchDrawer.tsx:130
 msgid "Companies"
 msgstr "Cégek"
 
-#: src/components/nav/SearchDrawer.tsx:153
+#: src/components/nav/SearchDrawer.tsx:139
 msgid "Purchase Orders"
 msgstr "Beszerzési rendelések"
 
-#: src/components/nav/SearchDrawer.tsx:164
+#: src/components/nav/SearchDrawer.tsx:149
 msgid "Sales Orders"
 msgstr "Vevői rendelések"
 
-#: src/components/nav/SearchDrawer.tsx:175
+#: src/components/nav/SearchDrawer.tsx:159
 msgid "Return Orders"
 msgstr "Visszavételek"
 
-#: src/components/nav/SearchDrawer.tsx:209
+#: src/components/nav/SearchDrawer.tsx:192
 msgid "results"
 msgstr "eredmények"
 
-#: src/components/nav/SearchDrawer.tsx:346
+#: src/components/nav/SearchDrawer.tsx:349
 msgid "Enter search text"
 msgstr "Írd be a keresett szöveget"
 
-#: src/components/nav/SearchDrawer.tsx:373
+#: src/components/nav/SearchDrawer.tsx:376
 msgid "Search Options"
 msgstr "Keresési opciók"
 
-#: src/components/nav/SearchDrawer.tsx:376
+#: src/components/nav/SearchDrawer.tsx:379
 msgid "Regex search"
 msgstr "Regex keresés"
 
-#: src/components/nav/SearchDrawer.tsx:386
+#: src/components/nav/SearchDrawer.tsx:389
 msgid "Whole word search"
 msgstr "Teljes szó keresés"
 
-#: src/components/nav/SearchDrawer.tsx:419
-#: src/components/tables/InvenTreeTable.tsx:344
-#: src/pages/ErrorPage.tsx:12
-#: src/pages/ErrorPage.tsx:25
-msgid "Error"
-msgstr "Hiba"
-
-#: src/components/nav/SearchDrawer.tsx:422
+#: src/components/nav/SearchDrawer.tsx:425
 msgid "An error occurred during search query"
 msgstr "Hiba történt a keresés közben"
 
-#: src/components/nav/SearchDrawer.tsx:430
+#: src/components/nav/SearchDrawer.tsx:436
 msgid "No results"
 msgstr "Nincs találat"
 
-#: src/components/nav/SearchDrawer.tsx:433
+#: src/components/nav/SearchDrawer.tsx:439
 msgid "No results available for search query"
 msgstr "Nincs találat a keresésre"
+
+#: src/components/render/Instance.tsx:65
+msgid "Unknown model: {model}"
+msgstr ""
+
+#: src/components/render/Order.tsx:67
+msgid "Shipment"
+msgstr ""
 
 #: src/components/tables/ColumnSelect.tsx:17
 #: src/components/tables/ColumnSelect.tsx:24
@@ -469,66 +511,65 @@ msgstr "Érték"
 msgid "Select filter value"
 msgstr "Szűrő érték kiválasztása"
 
-#: src/components/tables/FilterSelectModal.tsx:166
-#: src/contexts/ThemeContext.tsx:62
-msgid "Cancel"
-msgstr "Mégsem"
-
 #: src/components/tables/FilterSelectModal.tsx:172
 msgid "Add Filter"
 msgstr "Szűrő hozzáadása"
 
-#: src/components/tables/InvenTreeTable.tsx:95
+#: src/components/tables/InvenTreeTable.tsx:96
 msgid "No records found"
 msgstr "Nincs találat"
 
-#: src/components/tables/InvenTreeTable.tsx:323
+#: src/components/tables/InvenTreeTable.tsx:347
 msgid "Bad request"
 msgstr "Hibás kérés"
 
-#: src/components/tables/InvenTreeTable.tsx:326
+#: src/components/tables/InvenTreeTable.tsx:350
 msgid "Unauthorized"
 msgstr "Jogosulatlan"
 
-#: src/components/tables/InvenTreeTable.tsx:329
+#: src/components/tables/InvenTreeTable.tsx:353
 msgid "Forbidden"
 msgstr "Tiltott"
 
-#: src/components/tables/InvenTreeTable.tsx:332
+#: src/components/tables/InvenTreeTable.tsx:356
 msgid "Not found"
 msgstr "Nem található"
 
-#: src/components/tables/InvenTreeTable.tsx:381
-#: src/components/tables/InvenTreeTable.tsx:382
+#: src/components/tables/InvenTreeTable.tsx:405
+#: src/components/tables/InvenTreeTable.tsx:406
 msgid "Barcode actions"
 msgstr "Vonalkód műveletek"
 
-#: src/components/tables/InvenTreeTable.tsx:389
-#: src/components/tables/InvenTreeTable.tsx:390
+#: src/components/tables/InvenTreeTable.tsx:413
+#: src/components/tables/InvenTreeTable.tsx:414
 msgid "Print actions"
 msgstr "Nyomtatási műveletek"
 
-#: src/components/tables/InvenTreeTable.tsx:407
+#: src/components/tables/InvenTreeTable.tsx:431
 msgid "Refresh data"
 msgstr "Adatok frissítése"
 
-#: src/components/tables/InvenTreeTable.tsx:425
+#: src/components/tables/InvenTreeTable.tsx:449
 msgid "Table filters"
 msgstr "Táblaszűrők"
+
+#: src/components/tables/RowActions.tsx:35
+msgid "Actions"
+msgstr "Műveletek"
 
 #: src/components/tables/build/BuildOrderTable.tsx:18
 msgid "Reference"
 msgstr "Azonosító"
 
 #: src/components/tables/build/BuildOrderTable.tsx:24
-#: src/components/tables/part/PartTable.tsx:20
-#: src/components/tables/stock/StockItemTable.tsx:21
+#: src/components/tables/part/PartTable.tsx:24
+#: src/components/tables/stock/StockItemTable.tsx:22
 msgid "Part"
 msgstr "Alkatrész"
 
 #: src/components/tables/build/BuildOrderTable.tsx:41
-#: src/components/tables/part/PartTable.tsx:46
-#: src/components/tables/stock/StockItemTable.tsx:37
+#: src/components/tables/part/PartTable.tsx:50
+#: src/components/tables/stock/StockItemTable.tsx:38
 msgid "Description"
 msgstr "Leírás"
 
@@ -549,7 +590,7 @@ msgid "Completed"
 msgstr "Kész"
 
 #: src/components/tables/build/BuildOrderTable.tsx:86
-#: src/components/tables/stock/StockItemTable.tsx:50
+#: src/components/tables/stock/StockItemTable.tsx:51
 msgid "Status"
 msgstr "Állapot"
 
@@ -557,151 +598,156 @@ msgstr "Állapot"
 msgid "Created"
 msgstr "Létrehozva"
 
-#: src/components/tables/part/PartTable.tsx:34
+#: src/components/tables/part/PartTable.tsx:38
 msgid "IPN"
 msgstr "IPN"
 
-#: src/components/tables/part/PartTable.tsx:41
+#: src/components/tables/part/PartTable.tsx:45
 msgid "Units"
 msgstr "Mértékegységek"
 
-#: src/components/tables/part/PartTable.tsx:52
+#: src/components/tables/part/PartTable.tsx:56
 msgid "Category"
 msgstr "Kategória"
 
-#: src/components/tables/part/PartTable.tsx:63
-#: src/components/tables/stock/StockItemTable.tsx:42
+#: src/components/tables/part/PartTable.tsx:67
+#: src/components/tables/stock/StockItemTable.tsx:43
 #: src/defaults/links.tsx:27
 msgid "Stock"
 msgstr "Készlet"
 
-#: src/components/tables/part/PartTable.tsx:69
+#: src/components/tables/part/PartTable.tsx:73
 msgid "Price Range"
 msgstr "Ártartomány"
 
-#: src/components/tables/part/PartTable.tsx:79
+#: src/components/tables/part/PartTable.tsx:83
 msgid "Link"
 msgstr "Link"
 
-#: src/components/tables/part/PartTable.tsx:92
+#: src/components/tables/part/PartTable.tsx:96
 msgid "Active"
 msgstr "Aktív"
 
-#: src/components/tables/part/PartTable.tsx:93
+#: src/components/tables/part/PartTable.tsx:97
 msgid "Filter by part active status"
 msgstr "Szűrés aktív státusz szerint"
 
-#: src/components/tables/part/PartTable.tsx:98
+#: src/components/tables/part/PartTable.tsx:102
 msgid "Assembly"
 msgstr "Gyártmány"
 
-#: src/components/tables/part/PartTable.tsx:99
+#: src/components/tables/part/PartTable.tsx:103
 msgid "Filter by assembly attribute"
 msgstr "Szűrés szerelési tulajdonság szerint"
 
-#: src/components/tables/part/PartTable.tsx:104
+#: src/components/tables/part/PartTable.tsx:108
 msgid "Include Subcategories"
 msgstr "Alkategóriákkal együtt"
 
-#: src/components/tables/part/PartTable.tsx:105
+#: src/components/tables/part/PartTable.tsx:109
 msgid "Include parts in subcategories"
 msgstr "Alkategóriákkal együtt"
 
-#: src/components/tables/part/PartTable.tsx:110
+#: src/components/tables/part/PartTable.tsx:114
 msgid "Component"
 msgstr "Összetevő"
 
-#: src/components/tables/part/PartTable.tsx:111
+#: src/components/tables/part/PartTable.tsx:115
 msgid "Filter by component attribute"
 msgstr "Szűrés összetevő tulajdonság szerint"
 
-#: src/components/tables/part/PartTable.tsx:116
+#: src/components/tables/part/PartTable.tsx:120
 msgid "Trackable"
 msgstr "Követésre kötelezett"
 
-#: src/components/tables/part/PartTable.tsx:117
+#: src/components/tables/part/PartTable.tsx:121
 msgid "Filter by trackable attribute"
 msgstr "Szűrés követésre kötelezettség szerint"
 
-#: src/components/tables/part/PartTable.tsx:122
+#: src/components/tables/part/PartTable.tsx:126
 msgid "Has Units"
 msgstr "Van mértékegysége"
 
-#: src/components/tables/part/PartTable.tsx:123
+#: src/components/tables/part/PartTable.tsx:127
 msgid "Filter by parts which have units"
 msgstr "Szűrés meglévő mértékegység szerint"
 
-#: src/components/tables/part/PartTable.tsx:128
+#: src/components/tables/part/PartTable.tsx:132
 msgid "Has IPN"
 msgstr "Van IPN-je"
 
-#: src/components/tables/part/PartTable.tsx:129
+#: src/components/tables/part/PartTable.tsx:133
 msgid "Filter by parts which have an internal part number"
 msgstr "Szűrés meglévő IPN szerint"
 
-#: src/components/tables/part/PartTable.tsx:134
+#: src/components/tables/part/PartTable.tsx:138
 msgid "Has Stock"
 msgstr "Van készlet"
 
-#: src/components/tables/part/PartTable.tsx:135
+#: src/components/tables/part/PartTable.tsx:139
 msgid "Filter by parts which have stock"
 msgstr "Szűrés meglévő készlet szerint"
 
-#: src/components/tables/part/PartTable.tsx:140
+#: src/components/tables/part/PartTable.tsx:144
 #: src/defaults/dashboardItems.tsx:41
 msgid "Low Stock"
 msgstr "Alacsony készlet"
 
-#: src/components/tables/part/PartTable.tsx:141
+#: src/components/tables/part/PartTable.tsx:145
 msgid "Filter by parts which have low stock"
 msgstr "Szűrés alacsony készlet szerint"
 
-#: src/components/tables/part/PartTable.tsx:146
+#: src/components/tables/part/PartTable.tsx:150
 msgid "Purchaseable"
 msgstr "Beszerezhető"
 
-#: src/components/tables/part/PartTable.tsx:147
+#: src/components/tables/part/PartTable.tsx:151
 msgid "Filter by parts which are purchaseable"
 msgstr "Szűrés beszerezhetőség szerint"
 
-#: src/components/tables/part/PartTable.tsx:152
+#: src/components/tables/part/PartTable.tsx:156
 msgid "Salable"
 msgstr "Értékesíthető"
 
-#: src/components/tables/part/PartTable.tsx:153
+#: src/components/tables/part/PartTable.tsx:157
 msgid "Filter by parts which are salable"
 msgstr "Szűrés értékesíthetőség szerint"
 
-#: src/components/tables/part/PartTable.tsx:158
 #: src/components/tables/part/PartTable.tsx:162
+#: src/components/tables/part/PartTable.tsx:166
 msgid "Virtual"
 msgstr "Virtuális"
 
-#: src/components/tables/part/PartTable.tsx:159
+#: src/components/tables/part/PartTable.tsx:163
 msgid "Filter by parts which are virtual"
 msgstr "Szűrés virtuális alkatrészek szerint"
 
-#: src/components/tables/part/PartTable.tsx:163
+#: src/components/tables/part/PartTable.tsx:167
 msgid "Not Virtual"
 msgstr "Nem virtuális"
 
-#: src/components/tables/stock/StockItemTable.tsx:57
+#: src/components/tables/part/PartTable.tsx:204
+#: src/components/tables/stock/StockItemTable.tsx:124
+msgid "Edit"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:218
+msgid "View IPN"
+msgstr ""
+
+#: src/components/tables/stock/StockItemTable.tsx:58
 msgid "Batch"
 msgstr "Batch"
 
-#: src/components/tables/stock/StockItemTable.tsx:63
+#: src/components/tables/stock/StockItemTable.tsx:64
 msgid "Location"
 msgstr "Hely"
 
-#: src/components/tables/stock/StockItemTable.tsx:80
-msgid "Actions"
-msgstr "Műveletek"
-
-#: src/components/tables/stock/StockItemTable.tsx:124
+#: src/components/tables/stock/StockItemTable.tsx:100
 msgid "Test Filter"
 msgstr "Teszt szűrő"
 
-#: src/components/tables/stock/StockItemTable.tsx:125
+#: src/components/tables/stock/StockItemTable.tsx:101
 msgid "This is a test filter"
 msgstr "Ez egy teszt szűrő"
 
@@ -736,10 +782,6 @@ msgstr "Visszajelzés küldése"
 msgid "Getting started"
 msgstr "Első lépések"
 
-#: src/components/widgets/WidgetLayout.tsx:134
-msgid "Loading"
-msgstr "Betöltés"
-
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
 msgstr "Elrendezés"
@@ -763,11 +805,6 @@ msgstr "Megjelenítés"
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
 msgstr "Dobozok megjelenítése"
-
-#: src/contexts/ThemeContext.tsx:62
-#: src/pages/Index/Profile/UserPanel.tsx:107
-msgid "Submit"
-msgstr "Küldés"
 
 #: src/defaults/dashboardItems.tsx:6
 msgid "Subscribed Parts"
@@ -869,7 +906,7 @@ msgstr "Gyártás"
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:25
-#: src/pages/Index/Playground.tsx:12
+#: src/pages/Index/Playground.tsx:87
 msgid "Playground"
 msgstr "Játszótér"
 
@@ -1034,6 +1071,76 @@ msgstr "Már bejelentkeztél"
 msgid "Found an existing login - using it to log you in."
 msgstr "Van ilyen login - azt használom a belépéshez."
 
+#: src/functions/forms.tsx:48
+#: src/functions/forms.tsx:57
+#: src/functions/forms.tsx:137
+msgid "Form Error"
+msgstr ""
+
+#: src/functions/forms.tsx:49
+msgid "Form method not provided"
+msgstr ""
+
+#: src/functions/forms.tsx:58
+msgid "Response did not contain action data"
+msgstr ""
+
+#: src/functions/forms.tsx:96
+msgid "Invalid Form"
+msgstr ""
+
+#: src/functions/forms.tsx:97
+msgid "method parameter not supplied"
+msgstr ""
+
+#: src/functions/forms.tsx:177
+msgid "Delete"
+msgstr ""
+
+#: src/functions/forms/PartForms.tsx:76
+msgid "Create Part"
+msgstr ""
+
+#: src/functions/forms/PartForms.tsx:78
+msgid "Part created"
+msgstr ""
+
+#: src/functions/forms/PartForms.tsx:96
+msgid "Edit Part"
+msgstr ""
+
+#: src/functions/forms/PartForms.tsx:99
+msgid "Part updated"
+msgstr ""
+
+#: src/functions/forms/PartForms.tsx:110
+msgid "Parent part category"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:30
+msgid "Add given quantity as packs instead of individual items"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:39
+msgid "Enter initial quantity for this stock item"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:44
+msgid "Serial Numbers"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:45
+msgid "Enter serial numbers for new stock (or leave blank)"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:90
+msgid "Create Stock Item"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:104
+msgid "Edit Stock Item"
+msgstr ""
+
 #: src/functions/notifications.tsx:9
 msgid "Not implemented"
 msgstr "Nincs implementálva"
@@ -1041,6 +1148,22 @@ msgstr "Nincs implementálva"
 #: src/functions/notifications.tsx:10
 msgid "This feature is not yet implemented"
 msgstr "Ez a funkció még nem készült el"
+
+#: src/functions/notifications.tsx:20
+msgid "Permission denied"
+msgstr ""
+
+#: src/functions/notifications.tsx:21
+msgid "You do not have permission to perform this action"
+msgstr ""
+
+#: src/functions/notifications.tsx:32
+msgid "Invalid Return Code"
+msgstr ""
+
+#: src/functions/notifications.tsx:33
+msgid "Server returned status {returnCode}"
+msgstr ""
 
 #: src/pages/Auth/Logged-In.tsx:18
 msgid "Checking if you are already logged in"
@@ -1102,7 +1225,7 @@ msgstr "Ez az oldal helyettesíti a régi kezdőoldalt, ugyanazokkal az informá
 msgid "Welcome to your Dashboard{0}"
 msgstr "Irányítópult: {0}"
 
-#: src/pages/Index/Playground.tsx:17
+#: src/pages/Index/Playground.tsx:92
 msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr "Ez az oldal a Platform UI lehetőségeit mutatja be."
 
@@ -1328,3 +1451,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+
