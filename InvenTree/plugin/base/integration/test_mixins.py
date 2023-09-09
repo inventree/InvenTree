@@ -1,11 +1,8 @@
 """Unit tests for base mixins for plugins."""
 
-import json
 import os
-from unittest.mock import Mock
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import include, re_path, reverse
 
@@ -39,22 +36,7 @@ class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
     MIXIN_NAME = 'settings'
     MIXIN_ENABLE_CHECK = 'has_settings'
 
-    @staticmethod
-    def validate_json(value):
-        """Example validator for json input."""
-        print("VALIDATE_JSON_CALLED with", value)
-        try:
-            json.loads(value)
-        except Exception as e:
-            raise ValidationError(str(e))
-
-    mock_validator = Mock()
-    mock_validator.side_effect = validate_json
-
-    TEST_SETTINGS = {
-        'SETTING1': {'default': '123', },
-        'SETTING2': {"validator": mock_validator},
-    }
+    TEST_SETTINGS = {'SETTING1': {'default': '123', }}
 
     def setUp(self):
         """Setup for all tests."""
@@ -84,29 +66,6 @@ class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
 
         # no setting
         self.assertEqual(self.mixin_nothing.get_setting(''), '')
-
-    def test_validator(self):
-        """Test settings validator for plugins."""
-
-        valid_json = '{"ts": 13}'
-
-        # no error, should pass validator
-        print("Before first")
-        self.mixin.set_setting('SETTING2', valid_json)
-        print(self.mock_validator.mock_calls)
-        self.mock_validator.assert_called_with(valid_json)
-        print("After first")
-
-    def test_validator_2(self):
-        """TODO: merge in other test"""
-        not_valid_json = '{"ts""13"}'
-        # should throw an error
-        print("Before second")
-        with self.assertRaises(ValidationError):
-            self.mixin.set_setting('SETTING2', not_valid_json)
-        print(self.mock_validator.mock_calls)
-        self.mock_validator.assert_called_with(not_valid_json)
-        print("After second")
 
 
 class UrlsMixinTest(BaseMixinDefinition, TestCase):

@@ -1,5 +1,8 @@
 """Sample implementations for IntegrationPlugin."""
 
+import json
+
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.urls import include, re_path
 from django.utils.translation import gettext_lazy as _
@@ -33,6 +36,14 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             re_path(r'^hi/', self.view_test, name='hi'),
             re_path(r'^ho/', include(he_urls), name='ho'),
         ]
+
+    @staticmethod
+    def validate_json(value):
+        """Example validator for json input."""
+        try:
+            json.loads(value)
+        except Exception as e:
+            raise ValidationError(str(e))
 
     SETTINGS = {
         'PO_FUNCTION_ENABLE': {
@@ -78,6 +89,11 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             'description': 'A protected setting, hidden from the UI',
             'default': 'ABC-123',
             'protected': True,
+        },
+        'VALIDATOR_SETTING': {
+            'name': 'JSON validator Setting',
+            'description': 'A setting using a JSON validator',
+            'validator': validate_json,
         }
     }
 

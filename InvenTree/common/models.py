@@ -604,7 +604,7 @@ class BaseInvenTreeSetting(models.Model):
         """Return units for setting."""
         return self.__class__.get_setting_units(self.key, **self.get_filters_for_instance())
 
-    def clean(self, **kwargs):
+    def clean(self):
         """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
         super().clean()
 
@@ -615,9 +615,7 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
-        definition = self.__class__.get_setting_definition(self.key, **self.get_filters_for_instance())
-        validator = self.__class__.get_setting_validator(self.key, **{**self.get_filters_for_instance(), **kwargs})
-        print("DEBUG LINE #1", str(self), kwargs, self.get_filters_for_instance(), definition, validator)
+        validator = self.__class__.get_setting_validator(self.key, **self.get_filters_for_instance())
 
         if validator is not None:
             self.run_validator(validator)
