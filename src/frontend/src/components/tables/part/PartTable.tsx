@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { editPart } from '../../../functions/forms/PartForms';
 import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 
 /**
  * Construct a list of columns for the part table
@@ -17,6 +20,7 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'name',
       sortable: true,
+      noWrap: true,
       title: t`Part`,
       render: function (record: any) {
         // TODO - Link to the part detail page
@@ -193,6 +197,32 @@ export function PartListTable({ params = {} }: { params?: any }) {
   // Add required query parameters
   tableParams.category_detail = true;
 
+  function partTableRowActions(record: any): RowAction[] {
+    let actions: RowAction[] = [];
+
+    actions.push({
+      title: t`Edit`,
+      onClick: () => {
+        editPart({
+          part_id: record.pk,
+          callback: () => {
+            // TODO: Reload the table, somehow?
+            notYetImplemented();
+          }
+        });
+      }
+    });
+
+    if (record.IPN) {
+      actions.push({
+        title: t`View IPN`,
+        onClick: () => {}
+      });
+    }
+
+    return actions;
+  }
+
   return (
     <InvenTreeTable
       url="part/"
@@ -205,6 +235,7 @@ export function PartListTable({ params = {} }: { params?: any }) {
       params={tableParams}
       columns={tableColumns}
       customFilters={tableFilters}
+      rowActions={partTableRowActions}
     />
   );
 }

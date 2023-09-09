@@ -2,10 +2,16 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 131
+INVENTREE_API_VERSION = 133
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v133 -> 2023-09-08 : https://github.com/inventree/InvenTree/pull/5518
+    - Add extra optional fields which can be used for StockAdjustment endpoints
+
+v132 -> 2023-09-07 : https://github.com/inventree/InvenTree/pull/5515
+    - Add 'issued_by' filter to BuildOrder API list endpoint
 
 v131 -> 2023-08-09 : https://github.com/inventree/InvenTree/pull/5415
     - Annotate 'available_variant_stock' to the SalesOrderLine serializer

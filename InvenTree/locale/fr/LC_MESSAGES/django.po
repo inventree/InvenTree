@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-16 06:22+0000\n"
-"PO-Revision-Date: 2023-08-18 14:35\n"
+"POT-Creation-Date: 2023-09-05 05:25+0000\n"
+"PO-Revision-Date: 2023-09-05 14:06\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -105,27 +105,27 @@ msgstr "Confirmer le nouveau mot de passe"
 msgid "Old password"
 msgstr "Ancien mot de passe"
 
-#: InvenTree/forms.py:181
+#: InvenTree/forms.py:199
 msgid "Email (again)"
 msgstr "Email (encore)"
 
-#: InvenTree/forms.py:185
+#: InvenTree/forms.py:203
 msgid "Email address confirmation"
 msgstr "Confirmation de l'adresse email"
 
-#: InvenTree/forms.py:206
+#: InvenTree/forms.py:224
 msgid "You must type the same email each time."
 msgstr "Vous devez taper le même e-mail à chaque fois."
 
-#: InvenTree/forms.py:237 InvenTree/forms.py:243
+#: InvenTree/forms.py:255 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
 msgstr "L'adresse e-mail principale fournie n'est pas valide."
 
-#: InvenTree/forms.py:249
+#: InvenTree/forms.py:267
 msgid "The provided email domain is not approved."
 msgstr "Le domaine e-mail fourni n'est pas approuvé."
 
-#: InvenTree/forms.py:354
+#: InvenTree/forms.py:372
 msgid "Registration is disabled."
 msgstr "L'enregistrement est désactivé."
 
@@ -169,35 +169,35 @@ msgstr "Le nombre de numéros de série uniques ({s}) doit correspondre à la qu
 msgid "Remove HTML tags from this value"
 msgstr "Retirer les balises HTML de cette valeur"
 
-#: InvenTree/helpers_model.py:131
+#: InvenTree/helpers_model.py:125
 msgid "Connection error"
 msgstr "Erreur de connexion"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:140
+#: InvenTree/helpers_model.py:129 InvenTree/helpers_model.py:134
 msgid "Server responded with invalid status code"
 msgstr "Le serveur a répondu avec un code de statut invalide"
 
-#: InvenTree/helpers_model.py:137
+#: InvenTree/helpers_model.py:131
 msgid "Exception occurred"
 msgstr "Une erreur est survenue"
 
-#: InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139
 msgid "Server responded with invalid Content-Length value"
 msgstr "Le serveur a répondu avec une valeur de longueur de contenu invalide"
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:142
 msgid "Image size is too large"
 msgstr "Image trop volumineuse"
 
-#: InvenTree/helpers_model.py:160
+#: InvenTree/helpers_model.py:154
 msgid "Image download exceeded maximum size"
 msgstr "La taille de l'image dépasse la taille maximale autorisée"
 
-#: InvenTree/helpers_model.py:165
+#: InvenTree/helpers_model.py:159
 msgid "Remote server returned empty response"
 msgstr "Le serveur distant a renvoyé une réponse vide"
 
-#: InvenTree/helpers_model.py:173
+#: InvenTree/helpers_model.py:167
 msgid "Supplied URL is not a valid image file"
 msgstr "L'URL fournie n'est pas un fichier image valide"
 
@@ -267,7 +267,7 @@ msgstr "Pièce jointe"
 msgid "Select file to attach"
 msgstr "Sélectionnez un fichier à joindre"
 
-#: InvenTree/models.py:493 common/models.py:2751 company/models.py:128
+#: InvenTree/models.py:493 common/models.py:2758 company/models.py:128
 #: company/models.py:381 company/models.py:455 company/models.py:734
 #: order/models.py:240 order/models.py:1106 order/models.py:1466
 #: part/admin.py:39 part/models.py:905
@@ -298,9 +298,9 @@ msgstr "Commentaire"
 msgid "File comment"
 msgstr "Commentaire du fichier"
 
-#: InvenTree/models.py:503 InvenTree/models.py:504 common/models.py:2210
-#: common/models.py:2211 common/models.py:2424 common/models.py:2425
-#: common/models.py:2681 common/models.py:2682 part/models.py:3050
+#: InvenTree/models.py:503 InvenTree/models.py:504 common/models.py:2217
+#: common/models.py:2218 common/models.py:2431 common/models.py:2432
+#: common/models.py:2688 common/models.py:2689 part/models.py:3050
 #: part/models.py:3138 part/models.py:3217 part/models.py:3237
 #: plugin/models.py:224 plugin/models.py:225
 #: report/templates/report/inventree_test_report_base.html:105
@@ -345,8 +345,8 @@ msgstr "Les noms dupliqués ne peuvent pas exister sous le même parent"
 msgid "Invalid choice"
 msgstr "Choix invalide"
 
-#: InvenTree/models.py:648 InvenTree/models.py:649 common/models.py:2410
-#: common/models.py:2858 company/models.py:539 label/models.py:119
+#: InvenTree/models.py:648 InvenTree/models.py:649 common/models.py:2417
+#: common/models.py:2865 company/models.py:539 label/models.py:119
 #: part/models.py:851 part/models.py:3437 plugin/models.py:42
 #: report/models.py:164 templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -435,11 +435,11 @@ msgstr "Hachage unique des données du code-barres"
 msgid "Existing barcode found"
 msgstr "Code-barres existant trouvé"
 
-#: InvenTree/models.py:900
+#: InvenTree/models.py:901
 msgid "Server Error"
 msgstr "Erreur serveur"
 
-#: InvenTree/models.py:901
+#: InvenTree/models.py:902
 msgid "An error has been logged by the server."
 msgstr "Une erreur a été loguée par le serveur."
 
@@ -1229,7 +1229,7 @@ msgstr "Création de l'objet"
 
 #: build/models.py:1287 build/models.py:1547 build/serializers.py:206
 #: build/serializers.py:244 build/templates/build/build_base.html:103
-#: build/templates/build/detail.html:34 common/models.py:2232
+#: build/templates/build/detail.html:34 common/models.py:2239
 #: order/models.py:1086 order/models.py:1658 order/serializers.py:1261
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:277
 #: part/forms.py:47 part/models.py:3029 part/models.py:3826
@@ -1387,7 +1387,7 @@ msgstr "Allouer automatiquement les numéros de série"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Affecter automatiquement les éléments requis avec les numéros de série correspondants"
 
-#: build/serializers.py:334 stock/api.py:727
+#: build/serializers.py:334 stock/api.py:729
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Les numéros de série suivants existent déjà, ou sont invalides"
 
@@ -1970,7 +1970,7 @@ msgstr "Sorties incomplètes"
 #: common/files.py:63
 #, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr ""
+msgstr "Type de fichier non pris en charge {fmt}"
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
@@ -2015,7 +2015,7 @@ msgstr "Date de la dernière mise à jour"
 
 #: common/models.py:107
 msgid "Unique project code"
-msgstr ""
+msgstr "Code projet unique"
 
 #: common/models.py:114
 msgid "Project description"
@@ -2112,7 +2112,7 @@ msgstr "Devise par défaut"
 
 #: common/models.py:1028
 msgid "Select base currency for pricing calculations"
-msgstr ""
+msgstr "Sélectionnez la devise de base pour les calculs de prix"
 
 #: common/models.py:1035
 msgid "Download from URL"
@@ -2194,7 +2194,7 @@ msgstr "Les résultats de la tâche en arrière-plan seront supprimés après le
 
 #: common/models.py:1117
 msgid "Error Log Deletion Interval"
-msgstr ""
+msgstr "Intervalle de suppression du journal d'erreur"
 
 #: common/models.py:1118
 msgid "Error logs will be deleted after specified number of days"
@@ -2202,7 +2202,7 @@ msgstr "Les logs d'erreur seront supprimés après le nombre de jours spécifié
 
 #: common/models.py:1128
 msgid "Notification Deletion Interval"
-msgstr ""
+msgstr "Intervalle de suppression du journal de notification"
 
 #: common/models.py:1129
 msgid "User notifications will be deleted after specified number of days"
@@ -2234,11 +2234,11 @@ msgstr "Autoriser la numérisation de codes-barres via la webcam dans le navigat
 
 #: common/models.py:1164
 msgid "Part Revisions"
-msgstr ""
+msgstr "Modifications de la pièce"
 
 #: common/models.py:1165
 msgid "Enable revision field for Part"
-msgstr ""
+msgstr "Activer le champ de modification de la pièce"
 
 #: common/models.py:1171
 msgid "IPN Regex"
@@ -2487,7 +2487,7 @@ msgstr "N'utiliser que des pièces de variante actives pour calculer le prix de 
 
 #: common/models.py:1384
 msgid "Pricing Rebuild Interval"
-msgstr ""
+msgstr "Intervalle de regénération des prix"
 
 #: common/models.py:1385
 msgid "Number of days before part pricing is automatically updated"
@@ -2647,7 +2647,7 @@ msgstr "Icône par défaut de l'emplacement du stock (vide signifie aucune icôn
 
 #: common/models.py:1534
 msgid "Show Installed Stock Items"
-msgstr ""
+msgstr "Afficher les pièces en stock installées"
 
 #: common/models.py:1535
 msgid "Display installed stock items in stock tables"
@@ -2683,7 +2683,7 @@ msgstr "Modifier les retours de commandes terminées"
 
 #: common/models.py:1563
 msgid "Allow editing of return orders after they have been completed"
-msgstr ""
+msgstr "Autoriser la modification des retours après leur enregistrement"
 
 #: common/models.py:1569
 msgid "Sales Order Reference Pattern"
@@ -2863,7 +2863,7 @@ msgstr "Autoriser les plugins à répondre aux évènements internes"
 
 #: common/models.py:1731
 msgid "Enable project codes"
-msgstr ""
+msgstr "Activer les codes projet"
 
 #: common/models.py:1732
 msgid "Enable project codes for tracking projects"
@@ -2901,7 +2901,7 @@ msgstr ""
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr "Les rapports d'inventaire seront supprimés après le nombre de jours spécifié"
 
-#: common/models.py:1780 common/models.py:2203
+#: common/models.py:1780 common/models.py:2210
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Clé du paramètre (doit être unique - insensible à la casse)"
 
@@ -3313,11 +3313,19 @@ msgstr ""
 msgid "The stock location label template to be automatically selected"
 msgstr ""
 
-#: common/models.py:2233
+#: common/models.py:2195
+msgid "Receive error reports"
+msgstr ""
+
+#: common/models.py:2196
+msgid "Receive notifications for system errors"
+msgstr ""
+
+#: common/models.py:2240
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:2240 company/serializers.py:491 order/admin.py:43
+#: common/models.py:2247 company/serializers.py:491 order/admin.py:43
 #: order/models.py:1145 order/models.py:1952
 #: templates/js/translated/company.js:1854 templates/js/translated/part.js:1860
 #: templates/js/translated/pricing.js:621
@@ -3325,23 +3333,23 @@ msgstr ""
 msgid "Price"
 msgstr "Prix"
 
-#: common/models.py:2241
+#: common/models.py:2248
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:2401 common/models.py:2579
+#: common/models.py:2408 common/models.py:2586
 msgid "Endpoint"
 msgstr ""
 
-#: common/models.py:2402
+#: common/models.py:2409
 msgid "Endpoint at which this webhook is received"
 msgstr ""
 
-#: common/models.py:2411
+#: common/models.py:2418
 msgid "Name for this webhook"
 msgstr ""
 
-#: common/models.py:2416 part/admin.py:50 part/models.py:1027
+#: common/models.py:2423 part/admin.py:50 part/models.py:1027
 #: plugin/models.py:48 templates/js/translated/table_filters.js:111
 #: templates/js/translated/table_filters.js:195
 #: templates/js/translated/table_filters.js:440
@@ -3350,101 +3358,101 @@ msgstr ""
 msgid "Active"
 msgstr "Actif"
 
-#: common/models.py:2417
+#: common/models.py:2424
 msgid "Is this webhook active"
 msgstr "Ce webhook (lien de rappel HTTP) est-il actif"
 
-#: common/models.py:2431
+#: common/models.py:2438
 msgid "Token"
 msgstr "Jeton"
 
-#: common/models.py:2432
+#: common/models.py:2439
 msgid "Token for access"
 msgstr "Jeton d'accès"
 
-#: common/models.py:2439
+#: common/models.py:2446
 msgid "Secret"
 msgstr "Confidentiel"
 
-#: common/models.py:2440
+#: common/models.py:2447
 msgid "Shared secret for HMAC"
 msgstr ""
 
-#: common/models.py:2546
+#: common/models.py:2553
 msgid "Message ID"
 msgstr "ID message"
 
-#: common/models.py:2547
+#: common/models.py:2554
 msgid "Unique identifier for this message"
 msgstr "Identifiant unique pour ce message"
 
-#: common/models.py:2555
+#: common/models.py:2562
 msgid "Host"
 msgstr "Hôte"
 
-#: common/models.py:2556
+#: common/models.py:2563
 msgid "Host from which this message was received"
 msgstr "Hôte à partir duquel ce message a été reçu"
 
-#: common/models.py:2563
+#: common/models.py:2570
 msgid "Header"
 msgstr "Entête"
 
-#: common/models.py:2564
+#: common/models.py:2571
 msgid "Header of this message"
 msgstr "En-tête de ce message"
 
-#: common/models.py:2570
+#: common/models.py:2577
 msgid "Body"
 msgstr "Corps"
 
-#: common/models.py:2571
+#: common/models.py:2578
 msgid "Body of this message"
 msgstr "Corps de ce message"
 
-#: common/models.py:2580
+#: common/models.py:2587
 msgid "Endpoint on which this message was received"
 msgstr "Endpoint à partir duquel ce message a été reçu"
 
-#: common/models.py:2585
+#: common/models.py:2592
 msgid "Worked on"
 msgstr ""
 
-#: common/models.py:2586
+#: common/models.py:2593
 msgid "Was the work on this message finished?"
 msgstr "Le travail sur ce message est-il terminé ?"
 
-#: common/models.py:2740
+#: common/models.py:2747
 msgid "Id"
 msgstr "Id"
 
-#: common/models.py:2746 templates/js/translated/company.js:996
+#: common/models.py:2753 templates/js/translated/company.js:996
 #: templates/js/translated/news.js:44
 msgid "Title"
 msgstr "Titre"
 
-#: common/models.py:2756 templates/js/translated/news.js:60
+#: common/models.py:2763 templates/js/translated/news.js:60
 msgid "Published"
 msgstr "Publié"
 
-#: common/models.py:2761 templates/InvenTree/settings/plugin_settings.html:32
+#: common/models.py:2768 templates/InvenTree/settings/plugin_settings.html:32
 #: templates/js/translated/news.js:56 templates/js/translated/plugin.js:106
 msgid "Author"
 msgstr "Auteur"
 
-#: common/models.py:2766 templates/js/translated/news.js:52
+#: common/models.py:2773 templates/js/translated/news.js:52
 msgid "Summary"
 msgstr "Résumé"
 
-#: common/models.py:2771
+#: common/models.py:2778
 msgid "Read"
 msgstr "Lu"
 
-#: common/models.py:2772
+#: common/models.py:2779
 msgid "Was this news item read?"
 msgstr "Cette nouvelle a-t-elle été lue ?"
 
-#: common/models.py:2792 company/models.py:139 part/models.py:918
+#: common/models.py:2799 company/models.py:139 part/models.py:918
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report_base.html:35
@@ -3454,31 +3462,31 @@ msgstr "Cette nouvelle a-t-elle été lue ?"
 msgid "Image"
 msgstr "Image"
 
-#: common/models.py:2793
+#: common/models.py:2800
 msgid "Image file"
 msgstr ""
 
-#: common/models.py:2837
+#: common/models.py:2844
 msgid "Unit name must be a valid identifier"
 msgstr ""
 
-#: common/models.py:2859
+#: common/models.py:2866
 msgid "Unit name"
 msgstr ""
 
-#: common/models.py:2865 templates/InvenTree/settings/settings_staff_js.html:75
+#: common/models.py:2872 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
 msgstr ""
 
-#: common/models.py:2866
+#: common/models.py:2873
 msgid "Optional unit symbol"
 msgstr ""
 
-#: common/models.py:2872 templates/InvenTree/settings/settings_staff_js.html:71
+#: common/models.py:2879 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
 msgstr ""
 
-#: common/models.py:2873
+#: common/models.py:2880
 msgid "Unit definition"
 msgstr ""
 
@@ -5683,7 +5691,7 @@ msgstr ""
 #: part/serializers.py:332 part/serializers.py:927
 #: part/templates/part/part_base.html:262
 #: templates/InvenTree/settings/settings_staff_js.html:280
-#: templates/js/translated/notification.js:59
+#: templates/js/translated/notification.js:60
 #: templates/js/translated/part.js:2347
 msgid "Category"
 msgstr "Catégorie"
@@ -7724,15 +7732,15 @@ msgstr ""
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:667
+#: stock/api.py:669
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:676
+#: stock/api.py:678
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:699
+#: stock/api.py:701
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -8670,7 +8678,7 @@ msgid "Delete all read notifications"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:89
-#: templates/js/translated/notification.js:84
+#: templates/js/translated/notification.js:85
 msgid "Delete Notification"
 msgstr ""
 
@@ -8816,7 +8824,7 @@ msgid "Stage"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:75
-#: templates/js/translated/notification.js:75
+#: templates/js/translated/notification.js:76
 msgid "Message"
 msgstr ""
 
@@ -10891,32 +10899,32 @@ msgid "No news found"
 msgstr ""
 
 #: templates/js/translated/news.js:38
-#: templates/js/translated/notification.js:45
+#: templates/js/translated/notification.js:46
 #: templates/js/translated/part.js:1581
 msgid "ID"
 msgstr ""
 
-#: templates/js/translated/notification.js:51
+#: templates/js/translated/notification.js:52
 msgid "Age"
 msgstr ""
 
-#: templates/js/translated/notification.js:64
+#: templates/js/translated/notification.js:65
 msgid "Notification"
 msgstr ""
 
-#: templates/js/translated/notification.js:223
+#: templates/js/translated/notification.js:224
 msgid "Mark as unread"
 msgstr ""
 
-#: templates/js/translated/notification.js:227
+#: templates/js/translated/notification.js:228
 msgid "Mark as read"
 msgstr ""
 
-#: templates/js/translated/notification.js:253
+#: templates/js/translated/notification.js:254
 msgid "No unread notifications"
 msgstr ""
 
-#: templates/js/translated/notification.js:295 templates/notifications.html:12
+#: templates/js/translated/notification.js:296 templates/notifications.html:12
 msgid "Notifications will load here"
 msgstr ""
 

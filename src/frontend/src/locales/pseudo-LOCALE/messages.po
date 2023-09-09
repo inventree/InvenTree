@@ -880,91 +880,91 @@ msgstr ""
 #~ msgid "Local Server"
 #~ msgstr ""
 
-#: src/defaults/links.tsx:8
+#: src/defaults/links.tsx:9
 msgid "Website"
 msgstr ""
 
-#: src/defaults/links.tsx:13
+#: src/defaults/links.tsx:14
 msgid "GitHub"
 msgstr ""
 
-#: src/defaults/links.tsx:18
+#: src/defaults/links.tsx:19
 msgid "Demo"
 msgstr ""
 
-#: src/defaults/links.tsx:23
-#: src/defaults/menuItems.tsx:9
+#: src/defaults/links.tsx:24
+#: src/defaults/menuItems.tsx:10
 msgid "Home"
 msgstr ""
 
-#: src/defaults/links.tsx:24
+#: src/defaults/links.tsx:25
 #: src/pages/Index/Dashboard.tsx:19
 msgid "Dashboard"
-msgstr ""
-
-#: src/defaults/links.tsx:25
-#: src/defaults/menuItems.tsx:21
-#: src/pages/Index/Playground.tsx:12
-msgid "Playground"
 msgstr ""
 
 #: src/defaults/links.tsx:28
 msgid "Build"
 msgstr ""
 
-#: src/defaults/links.tsx:42
+#: src/defaults/links.tsx:31
+#: src/defaults/menuItems.tsx:25
+#: src/pages/Index/Playground.tsx:12
+msgid "Playground"
+msgstr ""
+
+#: src/defaults/links.tsx:45
 msgid "Getting Started"
 msgstr ""
 
-#: src/defaults/links.tsx:43
+#: src/defaults/links.tsx:46
 msgid "Getting started with InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:49
+#: src/defaults/links.tsx:52
 msgid "API"
 msgstr ""
 
-#: src/defaults/links.tsx:50
+#: src/defaults/links.tsx:53
 msgid "InvenTree API documentation"
 msgstr ""
 
-#: src/defaults/links.tsx:55
+#: src/defaults/links.tsx:58
 msgid "Developer Manual"
 msgstr ""
 
-#: src/defaults/links.tsx:56
+#: src/defaults/links.tsx:59
 msgid "InvenTree developer manual"
 msgstr ""
 
-#: src/defaults/links.tsx:61
+#: src/defaults/links.tsx:64
 msgid "FAQ"
 msgstr ""
 
-#: src/defaults/links.tsx:62
+#: src/defaults/links.tsx:65
 msgid "Frequently asked questions"
 msgstr ""
 
-#: src/defaults/links.tsx:71
+#: src/defaults/links.tsx:74
 msgid "Instance"
 msgstr ""
 
-#: src/defaults/links.tsx:72
+#: src/defaults/links.tsx:75
 msgid "About this Inventree instance"
 msgstr ""
 
-#: src/defaults/links.tsx:78
+#: src/defaults/links.tsx:81
 msgid "InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:79
+#: src/defaults/links.tsx:82
 msgid "About the InvenTree org"
 msgstr ""
 
-#: src/defaults/links.tsx:85
+#: src/defaults/links.tsx:88
 msgid "Licenses"
 msgstr ""
 
-#: src/defaults/links.tsx:86
+#: src/defaults/links.tsx:89
 msgid "Licenses for packages used by InvenTree"
 msgstr ""
 
@@ -988,11 +988,11 @@ msgstr ""
 #~ msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
 #~ msgstr ""
 
-#: src/defaults/menuItems.tsx:15
+#: src/defaults/menuItems.tsx:16
 msgid "Profile page"
 msgstr ""
 
-#: src/defaults/menuItems.tsx:17
+#: src/defaults/menuItems.tsx:18
 msgid "User attributes and design settings."
 msgstr ""
 

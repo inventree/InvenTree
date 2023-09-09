@@ -12,4 +12,7 @@ export type TableColumn = {
   filter?: any; // A custom filter function
   filtering?: boolean; // Whether the column is filterable
   width?: number; // The width of the column
+  noWrap?: boolean; // Whether the column should wrap
+  ellipsis?: boolean; // Whether the column should be ellipsized
+  textAlignment?: 'left' | 'center' | 'right'; // The text alignment of the column
 };
