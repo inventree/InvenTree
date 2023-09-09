@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-08 23:32\n"
+"PO-Revision-Date: 2023-09-09 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -204,7 +204,7 @@ msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:214
 msgid "No results found"
-msgstr ""
+msgstr "Inga resultat hittades"
 
 #: src/components/items/DocTooltip.tsx:89
 msgid "Read More"
@@ -1095,7 +1095,7 @@ msgstr ""
 
 #: src/functions/forms.tsx:177
 msgid "Delete"
-msgstr ""
+msgstr "Radera"
 
 #: src/functions/forms/PartForms.tsx:76
 msgid "Create Part"
@@ -1127,7 +1127,7 @@ msgstr ""
 
 #: src/functions/forms/StockForms.tsx:44
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Serienummer"
 
 #: src/functions/forms/StockForms.tsx:45
 msgid "Enter serial numbers for new stock (or leave blank)"
