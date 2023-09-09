@@ -615,7 +615,7 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
-        print(str(self), kwargs, self.get_filters_for_instance())
+        print("DEBUG LINE #1", str(self), kwargs, self.get_filters_for_instance())
         validator = self.__class__.get_setting_validator(self.key, **{**self.get_filters_for_instance(), **kwargs})
 
         if validator is not None:
