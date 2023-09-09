@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-08 14:36+0000\n"
-"PO-Revision-Date: 2023-09-08 23:32\n"
+"PO-Revision-Date: 2023-09-09 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -631,11 +631,11 @@ msgstr "Vietnamesiska"
 
 #: InvenTree/settings.py:780
 msgid "Chinese (Simplified)"
-msgstr "Kinesiska (förenklsat)"
+msgstr "Kinesiska (Förenklad)"
 
 #: InvenTree/settings.py:781
 msgid "Chinese (Traditional)"
-msgstr "Kinesiska (traditionell)"
+msgstr "Kinesiska (Traditionell)"
 
 #: InvenTree/status.py:68 part/serializers.py:963
 msgid "Background worker check failed"
