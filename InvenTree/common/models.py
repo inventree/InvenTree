@@ -170,7 +170,7 @@ class BaseInvenTreeSetting(models.Model):
 
         do_cache = kwargs.pop('cache', True)
 
-        self.clean(**kwargs)
+        self.clean()
         self.validate_unique()
 
         # Execute before_save action
