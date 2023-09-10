@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-08 14:36+0000\n"
-"PO-Revision-Date: 2023-09-08 23:32\n"
+"POT-Creation-Date: 2023-09-10 11:39+0000\n"
+"PO-Revision-Date: 2023-09-10 23:40\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -7380,35 +7380,35 @@ msgstr "A pluginhoz minimum {v} verzió kell"
 msgid "Plugin requires at most version {v}"
 msgstr "A pluginhoz maximum {v} verzió kell"
 
-#: plugin/samples/integration/sample.py:39
+#: plugin/samples/integration/sample.py:50
 msgid "Enable PO"
 msgstr "Beszerzési rendelések engedélyezése"
 
-#: plugin/samples/integration/sample.py:40
+#: plugin/samples/integration/sample.py:51
 msgid "Enable PO functionality in InvenTree interface"
 msgstr "Beszerzési rendelések funkcióinak engedélyezése az InvenTree felületén"
 
-#: plugin/samples/integration/sample.py:45
+#: plugin/samples/integration/sample.py:56
 msgid "API Key"
 msgstr "API kulcs"
 
-#: plugin/samples/integration/sample.py:46
+#: plugin/samples/integration/sample.py:57
 msgid "Key required for accessing external API"
 msgstr "Kulcs szükséges a külső API eléréséhez"
 
-#: plugin/samples/integration/sample.py:50
+#: plugin/samples/integration/sample.py:61
 msgid "Numerical"
 msgstr "Numerikus"
 
-#: plugin/samples/integration/sample.py:51
+#: plugin/samples/integration/sample.py:62
 msgid "A numerical setting"
 msgstr "Egy numerikus beállítás"
 
-#: plugin/samples/integration/sample.py:56
+#: plugin/samples/integration/sample.py:67
 msgid "Choice Setting"
 msgstr "Választás beállításai"
 
-#: plugin/samples/integration/sample.py:57
+#: plugin/samples/integration/sample.py:68
 msgid "A setting with multiple choices"
 msgstr "Egy beállítás több választási lehetőséggel"
 
