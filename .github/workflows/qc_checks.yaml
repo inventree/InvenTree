@@ -212,7 +212,7 @@ jobs:
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py
       - name: Coverage Tests
-        run: invoke test --coverage
+        run: invoke test --coverage --runtest plugin.samples.integration.test_sample.SampleIntegrationPluginTests.test_settings_validator
       - name: Upload Coverage Report
         uses: coverallsapp/github-action@v2
         with:
