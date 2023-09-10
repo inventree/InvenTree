@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { editPart } from '../../../functions/forms/PartForms';
 import { notYetImplemented } from '../../../functions/notifications';
@@ -213,15 +214,17 @@ export function PartListTable({ params = {} }: { params?: any }) {
       }
     });
 
-    if (record.IPN) {
-      actions.push({
-        title: t`View IPN`,
-        onClick: () => {}
-      });
-    }
+    actions.push({
+      title: t`Detail`,
+      onClick: () => {
+        navigate(`/part/${record.pk}/`);
+      }
+    });
 
     return actions;
   }
+
+  const navigate = useNavigate();
 
   return (
     <InvenTreeTable
