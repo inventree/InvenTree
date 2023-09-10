@@ -25,7 +25,7 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -272,13 +272,8 @@ export function SearchDrawer({
       params[query.name] = query.parameters;
     });
 
-    // Cancel any pending search queries
-    getAbortController().abort();
-
     return api
-      .post(`/search/`, params, {
-        signal: getAbortController().signal
-      })
+      .post(`/search/`, params)
       .then(function (response) {
         return response.data;
       })
@@ -322,16 +317,6 @@ export function SearchDrawer({
       setQueryResults([]);
     }
   }, [searchQuery.data]);
-
-  // Controller to cancel previous search queries
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const getAbortController = useCallback(() => {
-    if (!abortControllerRef.current) {
-      abortControllerRef.current = new AbortController();
-    }
-
-    return abortControllerRef.current;
-  }, []);
 
   // Callback to remove a set of results from the list
   function removeResults(query: string) {
