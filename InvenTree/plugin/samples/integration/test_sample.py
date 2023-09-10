@@ -1,5 +1,7 @@
 """Unit tests for action plugins."""
 
+from django.core.exceptions import ValidationError
+
 from InvenTree.unit_test import InvenTreeTestCase
 from plugin import registry
 
@@ -22,3 +24,18 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
         self.assertEqual(plugin.check_settings(), (False, ['API_KEY']))
         plugin.set_setting('API_KEY', "dsfiodsfjsfdjsf")
         self.assertEqual(plugin.check_settings(), (True, []))
+
+        # validator
+    def test_settings_validator(self):
+        """Test settings validator for plugins."""
+
+        plugin = registry.get_plugin('sample')
+        valid_json = '{"ts": 13}'
+        not_valid_json = '{"ts""13"}'
+
+        # no error, should pass validator
+        plugin.set_setting('VALIDATOR_SETTING', valid_json)
+
+        # should throw an error
+        with self.assertRaises(ValidationError):
+            plugin.set_setting('VALIDATOR_SETTING', not_valid_json)
