@@ -191,13 +191,11 @@ function partTableParams(params: any): any {
  * @returns
  */
 export function PartListTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => partTableParams(params), []);
+  let tableParams = useMemo(() => partTableParams(params), [params]);
   let tableColumns = useMemo(() => partTableColumns(), []);
   let tableFilters = useMemo(() => partTableFilters(), []);
 
-  // Add required query parameters
-  tableParams.category_detail = true;
-
+  // Callback function for generating set of row actions
   function partTableRowActions(record: any): RowAction[] {
     let actions: RowAction[] = [];
 
