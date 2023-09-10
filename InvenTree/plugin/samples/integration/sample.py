@@ -11,6 +11,14 @@ from plugin import InvenTreePlugin
 from plugin.mixins import AppMixin, NavigationMixin, SettingsMixin, UrlsMixin
 
 
+def validate_json(value):
+    """Example validator for json input."""
+    try:
+        json.loads(value)
+    except Exception as e:
+        raise ValidationError(str(e))
+
+
 class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin):
     """A full plugin example."""
 
@@ -36,19 +44,6 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             re_path(r'^hi/', self.view_test, name='hi'),
             re_path(r'^ho/', include(he_urls), name='ho'),
         ]
-
-    @staticmethod
-    def validate_json(value):
-        """Example validator for json input."""
-        print("#1 Before try", f"{value=}")
-        try:
-            print("#1 Before load", f"{value=}")
-            r = json.loads(value)
-            print("#1 After load", r)
-        except Exception as e:
-            print("#1 Except", str(e))
-            raise ValidationError(str(e))
-        print("#1 After try except")
 
     SETTINGS = {
         'PO_FUNCTION_ENABLE': {
