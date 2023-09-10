@@ -3,6 +3,7 @@
 from django.core.exceptions import ValidationError
 
 from InvenTree.unit_test import InvenTreeTestCase
+from plugin import registry
 
 
 class SampleIntegrationPluginTests(InvenTreeTestCase):
