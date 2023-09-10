@@ -25,7 +25,7 @@ export function RowActions({
 }): ReactNode {
   return (
     actions.length > 0 && (
-      <Menu>
+      <Menu withinPortal={true}>
         <Menu.Target>
           <ActionIcon variant="subtle" color="gray">
             <IconDots />

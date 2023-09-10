@@ -25,7 +25,8 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { RenderInstance } from '../render/Instance';
@@ -172,10 +173,12 @@ function buildSearchQueries(): SearchQuery[] {
  */
 function QueryResultGroup({
   query,
-  onRemove
+  onRemove,
+  onResultClick
 }: {
   query: SearchQuery;
   onRemove: (query: string) => void;
+  onResultClick: (query: string, pk: number) => void;
 }) {
   if (query.results.count == 0) {
     return null;
@@ -206,7 +209,13 @@ function QueryResultGroup({
         <Divider />
         <Stack>
           {query.results.results.map((result: any) => (
-            <RenderInstance instance={result} model={query.name} />
+            <div onClick={() => onResultClick(query.name, result.pk)}>
+              <RenderInstance
+                key={`${query.name}-${result.pk}`}
+                instance={result}
+                model={query.name}
+              />
+            </div>
           ))}
         </Stack>
         <Space />
@@ -263,14 +272,8 @@ export function SearchDrawer({
       params[query.name] = query.parameters;
     });
 
-    // Cancel any pending search queries
-    getAbortController().abort();
-
     return api
-      .post(`/search/`, {
-        params: params,
-        signal: getAbortController().signal
-      })
+      .post(`/search/`, params)
       .then(function (response) {
         return response.data;
       })
@@ -315,24 +318,23 @@ export function SearchDrawer({
     }
   }, [searchQuery.data]);
 
-  // Controller to cancel previous search queries
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const getAbortController = useCallback(() => {
-    if (!abortControllerRef.current) {
-      abortControllerRef.current = new AbortController();
-    }
-
-    return abortControllerRef.current;
-  }, []);
-
   // Callback to remove a set of results from the list
   function removeResults(query: string) {
     setQueryResults(queryResults.filter((q) => q.name != query));
   }
 
+  // Callback when the drawer is closed
   function closeDrawer() {
     setValue('');
     onClose();
+  }
+
+  const navigate = useNavigate();
+
+  // Callback when one of the search results is clicked
+  function onResultClick(query: string, pk: number) {
+    closeDrawer();
+    navigate(`/${query}/${pk}/`);
   }
 
   return (
@@ -410,6 +412,7 @@ export function SearchDrawer({
             <QueryResultGroup
               query={query}
               onRemove={(query) => removeResults(query)}
+              onResultClick={(query, pk) => onResultClick(query, pk)}
             />
           ))}
         </Stack>
