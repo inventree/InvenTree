@@ -168,10 +168,10 @@ export default function PartDetail() {
   return (
     <>
       <Stack spacing="xs">
+        <LoadingOverlay visible={partQuery.isFetching} />
         <Group position="apart">
           <Group position="left">
             <Text size="lg">Part Detail</Text>
-            <LoadingOverlay visible={part.isFetching} />
             <Text>{part.name}</Text>
             <Text size="sm">{part.description}</Text>
           </Group>
