@@ -97,7 +97,8 @@ export function editPart({
     url: '/part/',
     pk: part_id,
     successMessage: t`Part updated`,
-    fields: partFields({ editing: true })
+    fields: partFields({ editing: true }),
+    onFormSuccess: callback
   });
 }
 

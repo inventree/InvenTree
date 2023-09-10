@@ -162,7 +162,7 @@ export function ApiForm({
     queryFn: async () => {
       let method = props.method?.toLowerCase() ?? 'get';
 
-      api({
+      return api({
         method: method,
         url: url,
         data: form.values,
@@ -199,6 +199,8 @@ export function ApiForm({
               closeForm();
               break;
           }
+
+          return response;
         })
         .catch((error) => {
           if (error.response) {

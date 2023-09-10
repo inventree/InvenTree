@@ -140,10 +140,9 @@ export default function PartDetail() {
     ];
   }, [part]);
 
-  const fetchPart = async () => {
+  // Query hook for fetching part data
+  const partQuery = useQuery(['part', id], async () => {
     let url = `/part/${id}/`;
-
-    console.log('Fetching part:', id);
 
     return api
       .get(url)
@@ -155,9 +154,7 @@ export default function PartDetail() {
         setPart({});
         return null;
       });
-  };
-
-  const partQuery = useQuery(['part', id], fetchPart);
+  });
 
   function partStockTab(): React.ReactNode {
     return (
@@ -188,7 +185,6 @@ export default function PartDetail() {
               editPart({
                 part_id: part.pk,
                 callback: () => {
-                  console.log('part edited!');
                   partQuery.refetch();
                 }
               })
