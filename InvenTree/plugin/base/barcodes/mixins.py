@@ -155,8 +155,7 @@ class BarcodeMixin:
                 PurchaseOrder.objects.filter(
                     supplier_reference__iexact=order_number,
                     status=PurchaseOrderStatus.PLACED.value,
-                )
-                | PurchaseOrder.objects.filter(
+                ) | PurchaseOrder.objects.filter(
                     reference__iexact=order_number,
                     status=PurchaseOrderStatus.PLACED.value,
                 )
@@ -195,21 +194,23 @@ class BarcodeMixin:
                 else:
                     no_stock_locations = True
 
-        if quantity and type(quantity) != int:
-            try:
-                quantity = int(quantity)
-            except ValueError:
-                logger.warning(f"Failed to parse quantity '{quantity}'")
-                quantity = None
-
         response = {
             "lineitem": {
                 "pk": line_item.pk,
                 "purchase_order": purchase_order.pk,
-                "quantity": quantity,
-                "location": location,
             }
         }
+
+        if quantity and type(quantity) != int:
+            try:
+                quantity = int(quantity)
+                response["quantity"] = quantity
+            except ValueError:
+                logger.warning(f"Failed to parse quantity '{quantity}'")
+                quantity = None
+
+        if location:
+            response["location"] = location.pk
 
         # if either the quantity is missing or no location is defined/found
         # -> return the line_item found, so the client can gather the missing
