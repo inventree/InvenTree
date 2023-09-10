@@ -1,6 +1,10 @@
 import { Trans, t } from '@lingui/macro';
-import { Group, Stack } from '@mantine/core';
-import { IconListDetails, IconShape, IconSitemap } from '@tabler/icons-react';
+import { Stack } from '@mantine/core';
+import {
+  IconCategory,
+  IconListDetails,
+  IconSitemap
+} from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { PlaceholderPill } from '../../components/items/Placeholder';
@@ -17,7 +21,7 @@ export default function PartIndex() {
       {
         name: 'parts',
         label: t`Parts`,
-        icon: <IconShape size="18" />,
+        icon: <IconCategory size="18" />,
         content: <PartListTable />
       },
       {
