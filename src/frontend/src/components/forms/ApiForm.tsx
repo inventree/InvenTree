@@ -151,6 +151,7 @@ export function ApiForm({
 
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
+      initialDataQuery.remove();
       initialDataQuery.refetch();
     }
   }, []);
