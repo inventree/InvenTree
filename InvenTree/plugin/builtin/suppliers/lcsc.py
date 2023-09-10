@@ -12,17 +12,7 @@ from company.models import SupplierPart
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
 
-from .supplier_barcodes import get_order_data, get_supplier_part
-
 logger = logging.getLogger('inventree')
-
-LCSC_BARCODE_REGEX = re.compile(r"^{((?:[^:,]+:[^:,]*,)*(?:[^:,]+:[^:,]*))}$")
-BARCODE_FIELD_NAME_MAP = {
-    "pc": "supplier_part_number",
-    "on": "purchase_order_number",
-    "pm": "manufacturer_part_number",
-    "qty": "quantity",
-}
 
 
 class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
@@ -38,7 +28,7 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
         """Process a barcode to determine if it is a LCSC barcode."""
 
         if not (match := LCSC_BARCODE_REGEX.fullmatch(barcode_data)):
-            return
+            return None
 
         barcode_pairs = (pair.split(":") for pair in match.group(1).split(","))
         barcode_fields = {
@@ -47,7 +37,7 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
         }
 
         sku = barcode_fields.get("supplier_part_number")
-        if not (supplier_part := get_supplier_part(sku)):
+        if not (supplier_part := self.get_supplier_part(sku)):
             return None
 
         data = {
@@ -56,6 +46,13 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
             "web_url": supplier_part.get_absolute_url(),
         }
 
-        data.update(get_order_data(barcode_fields))
-
         return {SupplierPart.barcode_model_type(): data}
+
+
+LCSC_BARCODE_REGEX = re.compile(r"^{((?:[^:,]+:[^:,]*,)*(?:[^:,]+:[^:,]*))}$")
+BARCODE_FIELD_NAME_MAP = {
+    "pc": "supplier_part_number",
+    "on": "purchase_order_number",
+    "pm": "manufacturer_part_number",
+    "qty": "quantity",
+}

@@ -17,13 +17,13 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         part = Part.objects.create(name="Test Part", description="Test Part")
 
-        test_manufacturer = Company.objects.create(
+        manufacturer = Company.objects.create(
             name="Test Manufacturer", is_manufacturer=True)
 
         mpart1 = ManufacturerPart.objects.create(
-            part=part, manufacturer=test_manufacturer, MPN="MC34063ADR")
+            part=part, manufacturer=manufacturer, MPN="MC34063ADR")
         mpart2 = ManufacturerPart.objects.create(
-            part=part, manufacturer=test_manufacturer, MPN="LDK320ADU33R")
+            part=part, manufacturer=manufacturer, MPN="LDK320ADU33R")
 
         supplier = Company.objects.create(name="Supplier", is_supplier=True)
         mouser = Company.objects.create(name="Mouser Test", is_supplier=True)
@@ -47,15 +47,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         url = reverse("api-barcode-scan")
         result = self.post(url, data={"barcode": DIGIKEY_BARCODE})
 
-        EXPECTED_FIELDS = {
-            "quantity": 10,
-            "order_number": "72991337",
-        }
-
         supplier_part_data = result.data.get("supplierpart")
-        assert supplier_part_data is not None
-        assert supplier_part_data.items() >= EXPECTED_FIELDS.items()
-
         assert "pk" in supplier_part_data
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
         assert supplier_part.SKU == "296-LM358BIDDFRCT-ND"
@@ -66,15 +58,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         url = reverse("api-barcode-scan")
         result = self.post(url, data={"barcode": MOUSER_BARCODE})
 
-        EXPECTED_FIELDS = {
-            "quantity": 3,
-            "order_number": "P0-1337",
-        }
-
         supplier_part_data = result.data.get("supplierpart")
-        assert supplier_part_data is not None
-        assert supplier_part_data.items() >= EXPECTED_FIELDS.items()
-
         assert "pk" in supplier_part_data
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
         assert supplier_part.SKU == "1"
@@ -85,15 +69,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         url = reverse("api-barcode-scan")
         result = self.post(url, data={"barcode": MOUSER_BARCODE_OLD})
 
-        EXPECTED_FIELDS = {
-            "quantity": 32,
-            "order_number": "21421337",
-        }
-
         supplier_part_data = result.data.get("supplierpart")
-        assert supplier_part_data is not None
-        assert supplier_part_data.items() >= EXPECTED_FIELDS.items()
-
         assert "pk" in supplier_part_data
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
         assert supplier_part.SKU == "2"
@@ -104,14 +80,8 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         url = reverse("api-barcode-scan")
         result = self.post(url, data={"barcode": LCSC_BARCODE})
 
-        EXPECTED_FIELDS = {
-            "quantity": 2,
-            "order_number": "SO2009291337",
-        }
-
         supplier_part_data = result.data.get("supplierpart")
         assert supplier_part_data is not None
-        assert supplier_part_data.items() >= EXPECTED_FIELDS.items()
 
         assert "pk" in supplier_part_data
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])

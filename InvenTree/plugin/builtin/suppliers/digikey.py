@@ -11,9 +11,6 @@ from company.models import SupplierPart
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
 
-from .supplier_barcodes import (get_order_data, get_supplier_part,
-                                parse_ecia_barcode2d)
-
 logger = logging.getLogger('inventree')
 
 
@@ -29,11 +26,11 @@ class DigiKeyPlugin(BarcodeMixin, InvenTreePlugin):
     def scan(self, barcode_data):
         """Process a barcode to determine if it is a DigiKey barcode."""
 
-        if not (barcode_fields := parse_ecia_barcode2d(barcode_data)):
-            return
+        if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
+            return None
 
         sku = barcode_fields.get("supplier_part_number")
-        if not (supplier_part := get_supplier_part(sku)):
+        if not (supplier_part := self.get_supplier_part(sku)):
             return None
 
         data = {
@@ -41,7 +38,5 @@ class DigiKeyPlugin(BarcodeMixin, InvenTreePlugin):
             "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
             "web_url": supplier_part.get_absolute_url(),
         }
-
-        data.update(get_order_data(barcode_fields))
 
         return {SupplierPart.barcode_model_type(): data}
