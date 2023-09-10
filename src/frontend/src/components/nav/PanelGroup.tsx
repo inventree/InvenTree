@@ -1,6 +1,6 @@
 import { Tabs } from '@mantine/core';
 import { ReactNode } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * Type used to specify a single panel in a panel group
@@ -24,17 +24,24 @@ export type PanelType = {
  */
 export function PanelGroup({
   panels,
-  defaultPanel,
+  selectedPanel,
   onPanelChange
 }: {
   panels: PanelType[];
-  defaultPanel?: string;
+  selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
 }): ReactNode {
   // Default to the provided panel name, or the first panel
   const [activePanelName, setActivePanelName] = useState<string>(
-    defaultPanel || panels[0].name
+    selectedPanel || panels.length > 0 ? panels[0].name : ''
   );
+
+  // Update the active panel when the selected panel changes
+  useEffect(() => {
+    if (selectedPanel) {
+      setActivePanelName(selectedPanel);
+    }
+  }, [selectedPanel]);
 
   // Callback when the active panel changes
   function handlePanelChange(panel: string) {
