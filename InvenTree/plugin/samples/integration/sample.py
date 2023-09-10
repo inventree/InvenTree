@@ -40,10 +40,15 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
     @staticmethod
     def validate_json(value):
         """Example validator for json input."""
+        print("#1 Before try", f"{value=}")
         try:
-            json.loads(value)
+            print("#1 Before load", f"{value=}")
+            r = json.loads(value)
+            print("#1 After load", r)
         except Exception as e:
+            print("#1 Except", str(e))
             raise ValidationError(str(e))
+        print("#1 After try except")
 
     SETTINGS = {
         'PO_FUNCTION_ENABLE': {

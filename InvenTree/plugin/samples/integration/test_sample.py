@@ -38,4 +38,6 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
 
         # should throw an error
         with self.assertRaises(ValidationError):
+            print("#1 Before validator")
             plugin.set_setting('VALIDATOR_SETTING', not_valid_json)
+            print("#1 After validator")
