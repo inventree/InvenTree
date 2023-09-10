@@ -202,17 +202,21 @@ class BarcodeMixin:
                 logger.warning(f"Failed to parse quantity '{quantity}'")
                 quantity = None
 
+        response = {
+            "lineitem": {
+                "pk": line_item.pk,
+                "purchase_order": purchase_order.pk,
+                "quantity": quantity,
+                "location": location,
+            }
+        }
+
         # if either the quantity is missing or no location is defined/found
         # -> return the line_item found, so the client can gather the missing
         #    information and complete the action with an 'api-po-receive' call
         if not quantity or (not location and not no_stock_locations):
-            return {
-                "lineitem": {
-                    "pk": line_item.pk,
-                    "quantity": quantity,
-                    "location": location,
-                }
-            }
+            response["action_required"] = _("Further information required to receive line item")
+            return response
 
         purchase_order.receive_line_item(
             line_item,
@@ -222,7 +226,8 @@ class BarcodeMixin:
             barcode=barcode,
         )
 
-        return {"success": _("Successfully received purchase order line item")}
+        response["success"] = _("Received purchase order line item")
+        return response
 
 
 # Map ECIA Data Identifier to human readable identifier
