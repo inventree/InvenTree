@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-08 23:32\n"
+"PO-Revision-Date: 2023-09-10 23:40\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -22,21 +22,21 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:188
+#: src/components/forms/ApiForm.tsx:189
 msgid "Success"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:259
+#: src/components/forms/ApiForm.tsx:262
 msgid "Form Errors Exist"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:298
+#: src/components/forms/ApiForm.tsx:301
 #: src/components/tables/FilterSelectModal.tsx:166
 #: src/contexts/ThemeContext.tsx:65
 msgid "Cancel"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:307
+#: src/components/forms/ApiForm.tsx:310
 #: src/contexts/ThemeContext.tsx:65
 #: src/pages/Index/Profile/UserPanel.tsx:107
 msgid "Submit"
@@ -186,7 +186,7 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:286
-#: src/components/nav/SearchDrawer.tsx:422
+#: src/components/nav/SearchDrawer.tsx:425
 #: src/components/tables/InvenTreeTable.tsx:368
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
@@ -354,83 +354,87 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:59
+#: src/components/nav/SearchDrawer.tsx:60
 #: src/defaults/links.tsx:26
-#: src/pages/Index/Part.tsx:13
+#: src/pages/part/PartIndex.tsx:23
+#: src/pages/part/PartIndex.tsx:46
 msgid "Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:67
+#: src/components/nav/SearchDrawer.tsx:68
 msgid "Supplier Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:80
+#: src/components/nav/SearchDrawer.tsx:81
 msgid "Manufacturer Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:93
+#: src/components/nav/SearchDrawer.tsx:94
 msgid "Part Categories"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:101
+#: src/components/nav/SearchDrawer.tsx:102
 #: src/pages/Index/Stock.tsx:13
 msgid "Stock Items"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:112
+#: src/components/nav/SearchDrawer.tsx:113
 msgid "Stock Locations"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:120
+#: src/components/nav/SearchDrawer.tsx:121
 #: src/pages/Index/Build.tsx:13
+#: src/pages/part/PartDetail.tsx:76
 msgid "Build Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:130
+#: src/components/nav/SearchDrawer.tsx:131
 msgid "Companies"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:139
+#: src/components/nav/SearchDrawer.tsx:140
+#: src/pages/part/PartDetail.tsx:103
 msgid "Purchase Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:149
+#: src/components/nav/SearchDrawer.tsx:150
+#: src/pages/part/PartDetail.tsx:110
 msgid "Sales Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:159
+#: src/components/nav/SearchDrawer.tsx:160
 msgid "Return Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:192
+#: src/components/nav/SearchDrawer.tsx:195
 msgid "results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:349
+#: src/components/nav/SearchDrawer.tsx:351
 msgid "Enter search text"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:376
+#: src/components/nav/SearchDrawer.tsx:378
 msgid "Search Options"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:379
+#: src/components/nav/SearchDrawer.tsx:381
 msgid "Regex search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:389
+#: src/components/nav/SearchDrawer.tsx:391
 msgid "Whole word search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:425
+#: src/components/nav/SearchDrawer.tsx:428
 msgid "An error occurred during search query"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:436
+#: src/components/nav/SearchDrawer.tsx:439
 msgid "No results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:439
+#: src/components/nav/SearchDrawer.tsx:442
 msgid "No results available for search query"
 msgstr ""
 
@@ -562,13 +566,13 @@ msgid "Reference"
 msgstr ""
 
 #: src/components/tables/build/BuildOrderTable.tsx:24
-#: src/components/tables/part/PartTable.tsx:24
+#: src/components/tables/part/PartTable.tsx:25
 #: src/components/tables/stock/StockItemTable.tsx:22
 msgid "Part"
 msgstr ""
 
 #: src/components/tables/build/BuildOrderTable.tsx:41
-#: src/components/tables/part/PartTable.tsx:50
+#: src/components/tables/part/PartTable.tsx:51
 #: src/components/tables/stock/StockItemTable.tsx:38
 msgid "Description"
 msgstr ""
@@ -598,141 +602,142 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:38
+#: src/components/tables/part/PartTable.tsx:39
 msgid "IPN"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:45
+#: src/components/tables/part/PartTable.tsx:46
 msgid "Units"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:56
+#: src/components/tables/part/PartTable.tsx:57
 msgid "Category"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:67
+#: src/components/tables/part/PartTable.tsx:68
 #: src/components/tables/stock/StockItemTable.tsx:43
 #: src/defaults/links.tsx:27
+#: src/pages/part/PartDetail.tsx:56
 msgid "Stock"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:73
+#: src/components/tables/part/PartTable.tsx:74
 msgid "Price Range"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:83
+#: src/components/tables/part/PartTable.tsx:84
 msgid "Link"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:96
+#: src/components/tables/part/PartTable.tsx:97
 msgid "Active"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:97
+#: src/components/tables/part/PartTable.tsx:98
 msgid "Filter by part active status"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:102
+#: src/components/tables/part/PartTable.tsx:103
 msgid "Assembly"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:103
+#: src/components/tables/part/PartTable.tsx:104
 msgid "Filter by assembly attribute"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:108
+#: src/components/tables/part/PartTable.tsx:109
 msgid "Include Subcategories"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:109
+#: src/components/tables/part/PartTable.tsx:110
 msgid "Include parts in subcategories"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:114
+#: src/components/tables/part/PartTable.tsx:115
 msgid "Component"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:115
+#: src/components/tables/part/PartTable.tsx:116
 msgid "Filter by component attribute"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:120
+#: src/components/tables/part/PartTable.tsx:121
 msgid "Trackable"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:121
+#: src/components/tables/part/PartTable.tsx:122
 msgid "Filter by trackable attribute"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:126
+#: src/components/tables/part/PartTable.tsx:127
 msgid "Has Units"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:127
+#: src/components/tables/part/PartTable.tsx:128
 msgid "Filter by parts which have units"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:132
+#: src/components/tables/part/PartTable.tsx:133
 msgid "Has IPN"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:133
+#: src/components/tables/part/PartTable.tsx:134
 msgid "Filter by parts which have an internal part number"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:138
+#: src/components/tables/part/PartTable.tsx:139
 msgid "Has Stock"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:139
+#: src/components/tables/part/PartTable.tsx:140
 msgid "Filter by parts which have stock"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:144
+#: src/components/tables/part/PartTable.tsx:145
 #: src/defaults/dashboardItems.tsx:41
 msgid "Low Stock"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:145
+#: src/components/tables/part/PartTable.tsx:146
 msgid "Filter by parts which have low stock"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:150
+#: src/components/tables/part/PartTable.tsx:151
 msgid "Purchaseable"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:151
+#: src/components/tables/part/PartTable.tsx:152
 msgid "Filter by parts which are purchaseable"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:156
+#: src/components/tables/part/PartTable.tsx:157
 msgid "Salable"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:157
+#: src/components/tables/part/PartTable.tsx:158
 msgid "Filter by parts which are salable"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:162
-#: src/components/tables/part/PartTable.tsx:166
+#: src/components/tables/part/PartTable.tsx:163
+#: src/components/tables/part/PartTable.tsx:167
 msgid "Virtual"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:163
+#: src/components/tables/part/PartTable.tsx:164
 msgid "Filter by parts which are virtual"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:167
+#: src/components/tables/part/PartTable.tsx:168
 msgid "Not Virtual"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:204
+#: src/components/tables/part/PartTable.tsx:203
 #: src/components/tables/stock/StockItemTable.tsx:124
 msgid "Edit"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:218
-msgid "View IPN"
+#: src/components/tables/part/PartTable.tsx:216
+msgid "Detail"
 msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:58
@@ -1113,7 +1118,7 @@ msgstr ""
 msgid "Part updated"
 msgstr ""
 
-#: src/functions/forms/PartForms.tsx:110
+#: src/functions/forms/PartForms.tsx:111
 msgid "Parent part category"
 msgstr ""
 
@@ -1438,6 +1443,54 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:50
+msgid "Details"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:62
+msgid "Variants"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:69
+msgid "Bill of Materials"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:83
+msgid "Used In"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:90
+msgid "Pricing"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:96
+msgid "Suppliers"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:117
+msgid "Test Templates"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:124
+msgid "Related Parts"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:130
+msgid "Attachments"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:136
+msgid "Notes"
+msgstr ""
+
+#: src/pages/part/PartIndex.tsx:29
+msgid "Categories"
+msgstr ""
+
+#: src/pages/part/PartIndex.tsx:35
+msgid "Parameters"
 msgstr ""
 
 #: src/views/MobileAppView.tsx:14
