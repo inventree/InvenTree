@@ -11,7 +11,7 @@ export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 export const Playground = Loadable(
   lazy(() => import('./pages/Index/Playground'))
 );
-export const Parts = Loadable(lazy(() => import('./pages/Index/Part')));
+export const PartIndex = Loadable(lazy(() => import('./pages/part/PartIndex')));
 export const Stock = Loadable(lazy(() => import('./pages/Index/Stock')));
 export const Build = Loadable(lazy(() => import('./pages/Index/Build')));
 
@@ -66,7 +66,7 @@ export const router = createBrowserRouter(
         },
         {
           path: 'part/',
-          element: <Parts />
+          element: <PartIndex />
         },
         {
           path: 'part/:id',
