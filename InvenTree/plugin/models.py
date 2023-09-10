@@ -179,22 +179,16 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         If not provided, we'll look at the plugin registry to see what settings are available,
         (if the plugin is specified!)
         """
-        print("#1 #2 kwargs=", kwargs)
         if 'settings' not in kwargs:
 
             plugin = kwargs.pop('plugin', None)
 
             if plugin:
                 mixin_settings = getattr(registry, 'mixins_settings')
-                print("#1 #2 plugin_key=", plugin.key, "mixin_settings=", mixin_settings)
                 if mixin_settings:
                     kwargs['settings'] = mixin_settings.get(plugin.key, {})
-                    print("#1 #2 mixin_settings_for_plugin=", kwargs['settings'], "kwargs=", kwargs)
 
-        r = super().get_setting_definition(key, **kwargs)
-        print("#1 #2 return_value=", r)
-
-        return r
+        return super().get_setting_definition(key, **kwargs)
 
 
 class NotificationUserSetting(common.models.BaseInvenTreeSetting):
