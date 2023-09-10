@@ -48,6 +48,32 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
 
         return {SupplierPart.barcode_model_type(): data}
 
+    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
+        """Process a lcsc barcode to receive an item from a placed purchase order."""
+
+        if not (match := LCSC_BARCODE_REGEX.fullmatch(barcode_data)):
+            return None
+
+        barcode_pairs = (pair.split(":") for pair in match.group(1).split(","))
+        barcode_fields = {
+            BARCODE_FIELD_NAME_MAP.get(field_name, field_name): value
+            for field_name, value in barcode_pairs
+        }
+
+        sku = barcode_fields.get("supplier_part_number")
+        if not (supplier_part := self.get_supplier_part(sku)):
+            return None
+
+        return self.receive_purchase_order_item(
+            supplier_part,
+            user,
+            quantity=barcode_fields.get("quantity"),
+            order_number=barcode_fields.get("purchase_order_number"),
+            purchase_order=purchase_order,
+            location=location,
+            barcode=barcode_data,
+        )
+
 
 LCSC_BARCODE_REGEX = re.compile(r"^{((?:[^:,]+:[^:,]*,)*(?:[^:,]+:[^:,]*))}$")
 BARCODE_FIELD_NAME_MAP = {

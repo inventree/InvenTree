@@ -40,3 +40,23 @@ class DigiKeyPlugin(BarcodeMixin, InvenTreePlugin):
         }
 
         return {SupplierPart.barcode_model_type(): data}
+
+    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
+        """Process a digikey barcode to receive an item from a placed purchase order."""
+
+        if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
+            return None
+
+        sku = barcode_fields.get("supplier_part_number")
+        if not (supplier_part := self.get_supplier_part(sku)):
+            return None
+
+        return self.receive_purchase_order_item(
+            supplier_part,
+            user,
+            quantity=barcode_fields.get("quantity"),
+            order_number=barcode_fields.get("purchase_order_number"),
+            purchase_order=purchase_order,
+            location=location,
+            barcode=barcode_data,
+        )

@@ -2,7 +2,13 @@
 
 import logging
 
+from django.contrib.auth.models import User
+from django.db.models import F
+from django.utils.translation import gettext_lazy as _
+
 from company.models import Company, ManufacturerPart, SupplierPart
+from order.models import PurchaseOrder, PurchaseOrderStatus
+from stock.models import StockLocation
 
 logger = logging.getLogger('inventree')
 
@@ -120,6 +126,103 @@ class BarcodeMixin:
         actual_data = barcode_data.split(HEADER, 1)[1].rsplit(TRAILER, 1)[0]
 
         return actual_data.split("\x1D")
+
+    @staticmethod
+    def receive_purchase_order_item(
+            supplier_part: SupplierPart,
+            user: User,
+            quantity: int | str = None,
+            order_number: str = None,
+            purchase_order: PurchaseOrder = None,
+            location: StockLocation = None,
+            barcode: str = None,
+    ) -> dict:
+        """Try to receive a purchase order item.
+
+        Returns a dict object containing:
+            - on success: a "success" message
+            - on partial success: the "lineitem" with quantity and location (both can be None)
+            - on failure: an "error" message
+        """
+
+        if not purchase_order:
+            # try to find a purchase order with either reference or name matching
+            # the provided order_number
+            if not order_number:
+                return {"error": _("Supplier barcode doesn't contain order number")}
+
+            purchase_orders = (
+                PurchaseOrder.objects.filter(
+                    supplier_reference__iexact=order_number,
+                    status=PurchaseOrderStatus.PLACED.value,
+                )
+                | PurchaseOrder.objects.filter(
+                    reference__iexact=order_number,
+                    status=PurchaseOrderStatus.PLACED.value,
+                )
+            )
+
+            if len(purchase_orders) == 0:
+                return {"error": _(f"Failed to find placed purchase order for '{order_number}'")}
+            elif len(purchase_orders) > 1:
+                return {"error": _(f"Found multiple placed purchase orders for '{order_number}'")}
+
+            purchase_order = purchase_orders[0]
+
+        #  find the first incomplete line_item that matches the supplier_part
+        line_items = purchase_order.lines.filter(
+            part=supplier_part.pk, quantity__gt=F("received"))
+        if not line_items:
+            return {"error": _("Failed to find pending line item for supplier part")}
+
+        line_item = line_items[0]
+
+        no_stock_locations = False
+        if not location:
+            # try to guess the destination were the stock_part should go
+            # 1. check if it's defined on the line_item
+            # 2. check if it's defined on the part
+            # 3. check if there's 1 or 0 stock locations defined in InvenTree
+            #    -> assume all stock is going into that location (or no location)
+
+            if line_item.destination:
+                location = line_item.destination
+            elif supplier_part.part.default_location:
+                location = supplier_part.part.default_location
+            elif StockLocation.objects.count() <= 1:
+                if stock_locations := StockLocation.objects.all():
+                    location = stock_locations[0]
+                else:
+                    no_stock_locations = True
+
+        if quantity and type(quantity) != int:
+            try:
+                quantity = int(quantity)
+            except ValueError:
+                logger.warning(f"Failed to parse quantity '{quantity}'")
+                quantity = None
+
+        # if either the quantity is missing or no location is defined/found
+        # -> return the line_item found, so the client can gather the missing
+        #    information and complete the action with an 'api-po-receive' call
+        if not quantity or (not location and not no_stock_locations):
+            return {
+                "lineitem": {
+                    "pk": line_item.pk,
+                    "quantity": quantity,
+                    "location": location,
+                }
+            }
+
+        purchase_order.receive_line_item(
+            line_item,
+            location,
+            quantity,
+            user,
+            barcode=barcode,
+        )
+
+        return {"success": _("Successfully received purchase order line item")}
 
 
 # Map ECIA Data Identifier to human readable identifier
