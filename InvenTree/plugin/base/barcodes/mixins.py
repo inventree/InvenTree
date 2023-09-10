@@ -37,3 +37,11 @@ class BarcodeMixin:
         """
 
         return None
+
+    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
+        """Scan a barcode to receive a purchase order item.
+
+        Default return value is None
+        """
+
+        return None
