@@ -177,7 +177,7 @@ class ParameterTests(TestCase):
         for value in ["1", "1%", "1 percent"]:
             param = PartParameter(part=prt, template=template2, data=value)
             param.full_clean()
-  
+
         bad_values = ['3 Amps', '-3 zogs', '3.14F']
 
         # Disable enforcing of part parameter units
