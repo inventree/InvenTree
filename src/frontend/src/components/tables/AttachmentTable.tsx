@@ -1,5 +1,8 @@
 import { t } from '@lingui/macro';
+import { Group, Stack, Text } from '@mantine/core';
+import { Dropzone } from '@mantine/dropzone';
 import { useId } from '@mantine/hooks';
+import { IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
 import { editAttachment } from '../../functions/forms/AttachmentForms';
@@ -8,6 +11,9 @@ import { TableColumn } from './Column';
 import { InvenTreeTable } from './InvenTreeTable';
 import { RowAction } from './RowActions';
 
+/**
+ * Define set of columns to display for the attachment table
+ */
 function attachmentTableColumns(): TableColumn[] {
   return [
     {
@@ -95,14 +101,31 @@ export function AttachmentTable({
   }
 
   return (
-    <InvenTreeTable
-      url={url}
-      tableKey={tableId}
-      params={{
-        [model]: pk
-      }}
-      columns={tableColumns}
-      rowActions={rowActions}
-    />
+    <Stack spacing="xs">
+      <InvenTreeTable
+        url={url}
+        tableKey={tableId}
+        params={{
+          [model]: pk
+        }}
+        columns={tableColumns}
+        rowActions={rowActions}
+      />
+      <Dropzone
+        onDrop={(files) => {
+          console.log('files:');
+          console.log(files);
+        }}
+      >
+        <Dropzone.Accept>Accept?</Dropzone.Accept>
+        <Dropzone.Reject>Reject?</Dropzone.Reject>
+        <Dropzone.Idle>
+          <Group position="center">
+            <IconFileUpload size={24} />
+            <Text size="sm">{t`Upload file`}</Text>
+          </Group>
+        </Dropzone.Idle>
+      </Dropzone>
+    </Stack>
   );
 }
