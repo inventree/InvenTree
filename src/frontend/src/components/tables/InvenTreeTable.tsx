@@ -132,7 +132,7 @@ export function InvenTreeTable({
   );
 
   // Update column visibility when hiddenColumns change
-  const dataColumns = useMemo(() => {
+  const dataColumns: any = useMemo(() => {
     let cols = columns.map((col) => {
       let hidden: boolean = col.hidden ?? false;
 
