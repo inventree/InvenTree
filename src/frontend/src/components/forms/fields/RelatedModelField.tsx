@@ -4,14 +4,7 @@ import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
 
 import { api } from '../../../App';
@@ -97,16 +90,6 @@ export function RelatedModelField({
   const [value, setValue] = useState<string>('');
   const [searchText, cancelSearchText] = useDebouncedValue(value, 250);
 
-  // Query controller
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const getAbortController = useCallback(() => {
-    if (!abortControllerRef.current) {
-      abortControllerRef.current = new AbortController();
-    }
-
-    return abortControllerRef.current;
-  }, []);
-
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
     queryKey: [`related-field-${fieldName}`, offset, searchText],
@@ -122,20 +105,21 @@ export function RelatedModelField({
         url = url.substring(4);
       }
 
+      let params = {
+        ...definition.filters,
+        search: searchText,
+        offset: offset,
+        limit: limit
+      };
+
       return api
         .get(url, {
-          signal: getAbortController().signal,
-          params: {
-            ...definition.filters,
-            search: searchText,
-            offset: offset,
-            limit: limit
-          }
+          params: params
         })
         .then((response) => {
           let values: any[] = [...data];
 
-          let results = response.data?.results ?? [];
+          let results = response.data?.results ?? response.data ?? [];
 
           results.forEach((item: any) => {
             values.push({
@@ -193,7 +177,6 @@ export function RelatedModelField({
         options={data}
         filterOption={null}
         onInputChange={(value: any) => {
-          getAbortController().abort();
           setValue(value);
           setOffset(0);
           setData([]);
