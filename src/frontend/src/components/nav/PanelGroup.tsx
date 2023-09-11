@@ -1,4 +1,4 @@
-import { Tabs } from '@mantine/core';
+import { Divider, Paper, Stack, Tabs, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
@@ -78,7 +78,13 @@ export function PanelGroup({
         (panel, idx) =>
           !panel.hidden && (
             <Tabs.Panel key={idx} value={panel.name}>
-              {panel.content}
+              <Paper p="md" radius="xs">
+                <Stack spacing="md">
+                  <Text size="xl">{panel.label}</Text>
+                  <Divider />
+                  {panel.content}
+                </Stack>
+              </Paper>
             </Tabs.Panel>
           )
       )}
