@@ -9,6 +9,7 @@ import { ReactNode, useMemo } from 'react';
 import { api } from '../../App';
 import { editAttachment } from '../../functions/forms/AttachmentForms';
 import { notYetImplemented } from '../../functions/notifications';
+import { AttachmentLink } from '../items/AttachmentLink';
 import { TableColumn } from './Column';
 import { InvenTreeTable } from './InvenTreeTable';
 import { RowAction } from './RowActions';
@@ -21,12 +22,11 @@ function attachmentTableColumns(): TableColumn[] {
     {
       accessor: 'attachment',
       title: t`Attachment`,
-      sortable: true,
+      sortable: false,
       switchable: false,
       render: function (record: any) {
         if (record.attachment) {
-          // TODO: Custom renderer for attachments
-          return record.attachment;
+          return <AttachmentLink attachment={record.attachment} />;
         } else if (record.link) {
           // TODO: Custom renderer for links
           return record.link;
@@ -36,22 +36,22 @@ function attachmentTableColumns(): TableColumn[] {
       }
     },
     {
+      accessor: 'comment',
+      title: t`Comment`,
+      sortable: false,
+      switchable: true,
+      render: function (record: any) {
+        return record.comment;
+      }
+    },
+    {
       accessor: 'uploaded',
       title: t`Uploaded`,
-      sortable: true,
+      sortable: false,
       switchable: true,
       render: function (record: any) {
         // TODO: Custom date renderer
         return record.upload_date;
-      }
-    },
-    {
-      accessor: 'comment',
-      title: t`Comment`,
-      sortable: true,
-      switchable: true,
-      render: function (record: any) {
-        return record.comment;
       }
     }
   ];
@@ -121,6 +121,11 @@ export function AttachmentTable({
         })
         .catch((error) => {
           console.error('error uploading attachment:', file, '->', error);
+          notifications.show({
+            title: t`Upload Error`,
+            message: t`File could not be uploaded`,
+            color: 'red'
+          });
           return error;
         });
     });
