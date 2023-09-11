@@ -287,6 +287,13 @@ class BarcodePOReceive(APIView):
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
         response = {}
+
+        internal_barcode_plugin = next(filter(
+            lambda plugin: plugin.name == "InvenTreeBarcode", plugins))
+        if internal_barcode_plugin.scan(barcode_data):
+            response["error"] = _("Item has already been received")
+            raise ValidationError(response)
+
         for current_plugin in plugins:
             result = current_plugin.scan_receive_item(
                 barcode_data,
@@ -306,7 +313,7 @@ class BarcodePOReceive(APIView):
 
         # A plugin has not been found!
         if plugin is None:
-            response["error"] = _("No match found for barcode data")
+            response["error"] = _("Invalid supplier barcode")
             raise ValidationError(response)
         elif "error" in response:
             raise ValidationError(response)
