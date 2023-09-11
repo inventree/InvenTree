@@ -2,9 +2,11 @@ import { t } from '@lingui/macro';
 import { Group, Stack, Text } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { useId } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
+import { api } from '../../App';
 import { editAttachment } from '../../functions/forms/AttachmentForms';
 import { notYetImplemented } from '../../functions/notifications';
 import { TableColumn } from './Column';
@@ -100,6 +102,30 @@ export function AttachmentTable({
     return actions;
   }
 
+  // Callback to upload file attachment(s)
+  function uploadFiles(files: File[]) {
+    files.forEach((file) => {
+      let formData = new FormData();
+      formData.append('attachment', file);
+      formData.append(model, pk.toString());
+
+      api
+        .post(url, formData)
+        .then((response) => {
+          notifications.show({
+            title: t`File uploaded`,
+            message: t`File ${file.name} uploaded successfully`,
+            color: 'green'
+          });
+          return response;
+        })
+        .catch((error) => {
+          console.error('error uploading attachment:', file, '->', error);
+          return error;
+        });
+    });
+  }
+
   return (
     <Stack spacing="xs">
       <InvenTreeTable
@@ -111,12 +137,7 @@ export function AttachmentTable({
         columns={tableColumns}
         rowActions={rowActions}
       />
-      <Dropzone
-        onDrop={(files) => {
-          console.log('files:');
-          console.log(files);
-        }}
-      >
+      <Dropzone onDrop={uploadFiles}>
         <Dropzone.Accept>Accept?</Dropzone.Accept>
         <Dropzone.Reject>Reject?</Dropzone.Reject>
         <Dropzone.Idle>
