@@ -204,13 +204,13 @@ class BarcodeMixin:
         if quantity and type(quantity) != int:
             try:
                 quantity = int(quantity)
-                response["quantity"] = quantity
+                response["lineitem"]["quantity"] = quantity
             except ValueError:
                 logger.warning(f"Failed to parse quantity '{quantity}'")
                 quantity = None
 
         if location:
-            response["location"] = location.pk
+            response["lineitem"]["location"] = location.pk
 
         # if either the quantity is missing or no location is defined/found
         # -> return the line_item found, so the client can gather the missing
