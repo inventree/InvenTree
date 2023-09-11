@@ -1,7 +1,8 @@
 import { t } from '@lingui/macro';
+import { Text } from '@mantine/core';
 
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { openEditApiForm } from '../forms';
+import { openDeleteApiForm, openEditApiForm } from '../forms';
 
 export function attachmentFields(editing: boolean): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {
@@ -46,5 +47,28 @@ export function editAttachment({
     successMessage: t`Attachment updated`,
     fields: formFields,
     onFormSuccess: callback
+  });
+}
+
+export function deleteAttachment({
+  url,
+  pk,
+  callback
+}: {
+  url: string;
+  pk: number;
+  callback: () => void;
+}) {
+  openDeleteApiForm({
+    url: url,
+    pk: pk,
+    name: 'attachment-edit',
+    title: t`Delete Attachment`,
+    successMessage: t`Attachment deleted`,
+    onFormSuccess: callback,
+    fields: {},
+    preFormContent: (
+      <Text>{t`Are you sure you want to delete this attachment?`}</Text>
+    )
   });
 }

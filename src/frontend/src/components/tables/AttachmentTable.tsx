@@ -8,7 +8,10 @@ import { IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
-import { editAttachment } from '../../functions/forms/AttachmentForms';
+import {
+  deleteAttachment,
+  editAttachment
+} from '../../functions/forms/AttachmentForms';
 import { notYetImplemented } from '../../functions/notifications';
 import { AttachmentLink } from '../items/AttachmentLink';
 import { TableColumn } from './Column';
@@ -118,7 +121,13 @@ export function AttachmentTable({
       actions.push({
         title: t`Delete`,
         onClick: () => {
-          notYetImplemented();
+          deleteAttachment({
+            url: url,
+            pk: record.pk,
+            callback: () => {
+              setRefreshKey(randomId());
+            }
+          });
         }
       });
     }
