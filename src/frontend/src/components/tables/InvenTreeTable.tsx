@@ -5,7 +5,7 @@ import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ButtonMenu } from '../items/ButtonMenu';
@@ -119,9 +119,6 @@ export function InvenTreeTable({
   customFilters?: TableFilter[];
   rowActions?: (record: any) => RowAction[];
 }) {
-  // Data columns
-  const [dataColumns, setDataColumns] = useState<any[]>(columns);
-
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns = columns.some(
     (col: TableColumn) => col.switchable
@@ -133,9 +130,9 @@ export function InvenTreeTable({
   );
 
   // Update column visibility when hiddenColumns change
-  useEffect(() => {
-    let cols = dataColumns.map((col) => {
-      let hidden: boolean = col.hidden;
+  const dataColumns = useMemo(() => {
+    let cols = columns.map((col) => {
+      let hidden: boolean = col.hidden ?? false;
 
       if (col.switchable) {
         hidden = hiddenColumns.includes(col.accessor);
@@ -160,7 +157,7 @@ export function InvenTreeTable({
       });
     }
 
-    setDataColumns(cols);
+    return cols;
   }, [columns, hiddenColumns, rowActions]);
 
   // Callback when column visibility is toggled
