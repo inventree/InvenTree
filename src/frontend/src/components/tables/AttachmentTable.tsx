@@ -28,6 +28,7 @@ function attachmentTableColumns(): TableColumn[] {
       title: t`Attachment`,
       sortable: false,
       switchable: false,
+      noWrap: true,
       render: function (record: any) {
         if (record.attachment) {
           return <AttachmentLink attachment={record.attachment} />;

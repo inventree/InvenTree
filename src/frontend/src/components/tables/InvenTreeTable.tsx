@@ -153,6 +153,7 @@ export function InvenTreeTable({
         title: '',
         hidden: false,
         switchable: false,
+        width: 48,
         render: function (record: any) {
           return <RowActions actions={rowActions(record)} />;
         }
@@ -308,7 +309,7 @@ export function InvenTreeTable({
 
     // Find matching column:
     // If column provides custom ordering term, use that
-    let column = dataColumns.find((col) => col.accessor == key);
+    let column = dataColumns.find((col: any) => col.accessor == key);
     return column?.ordering || key;
   }
 
