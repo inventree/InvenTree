@@ -98,7 +98,8 @@ export function InvenTreeTable({
   barcodeActions = [],
   customActionGroups = [],
   customFilters = [],
-  rowActions
+  rowActions,
+  refreshKey
 }: {
   url: string;
   params: any;
@@ -118,6 +119,7 @@ export function InvenTreeTable({
   customActionGroups?: any[];
   customFilters?: TableFilter[];
   rowActions?: (record: any) => RowAction[];
+  refreshKey?: string;
 }) {
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns = columns.some(
@@ -382,6 +384,18 @@ export function InvenTreeTable({
       refetchOnMount: 'always'
     }
   );
+
+  /*
+   * Reload the table whenever the refetch changes
+   * this allows us to programmatically refresh the table
+   *
+   * TODO: Make this into a custom hook?
+   */
+  useEffect(() => {
+    if (refreshKey) {
+      refetch();
+    }
+  }, [refreshKey]);
 
   return (
     <>

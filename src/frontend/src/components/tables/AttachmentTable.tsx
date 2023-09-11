@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Group, Stack, Text } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { useId } from '@mantine/hooks';
+import { randomId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
@@ -71,6 +72,8 @@ export function AttachmentTable({
 }): ReactNode {
   const tableId = useId();
 
+  const [refreshKey, setRefreshKey] = useState<string>(randomId());
+
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 
   const [allowEdit, setAllowEdit] = useState<boolean>(false);
@@ -104,7 +107,7 @@ export function AttachmentTable({
             model: model,
             pk: record.pk,
             callback: () => {
-              // TODO: refresh the attachment table
+              setRefreshKey(randomId());
             }
           });
         }
@@ -138,6 +141,9 @@ export function AttachmentTable({
             message: t`File ${file.name} uploaded successfully`,
             color: 'green'
           });
+
+          setRefreshKey(randomId());
+
           return response;
         })
         .catch((error) => {
@@ -157,6 +163,7 @@ export function AttachmentTable({
       <InvenTreeTable
         url={url}
         tableKey={tableId}
+        refreshKey={refreshKey}
         params={{
           [model]: pk
         }}
