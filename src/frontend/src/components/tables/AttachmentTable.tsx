@@ -4,7 +4,7 @@ import { Dropzone } from '@mantine/dropzone';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconFileUpload } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { editAttachment } from '../../functions/forms/AttachmentForms';
@@ -73,31 +73,52 @@ export function AttachmentTable({
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 
+  const [allowEdit, setAllowEdit] = useState<boolean>(false);
+  const [allowDelete, setAllowDelete] = useState<boolean>(false);
+
+  // Determine which permissions are available for this URL
+  useEffect(() => {
+    api
+      .options(url)
+      .then((response) => {
+        let actions: any = response.data?.actions ?? {};
+
+        setAllowEdit('POST' in actions);
+        setAllowDelete('DELETE' in actions);
+        return response;
+      })
+      .catch((error) => {
+        return error;
+      });
+  }, []);
+
   function rowActions(record: any): RowAction[] {
     let actions: RowAction[] = [];
 
-    // TODO: Select actions based on user permissions
-    actions.push({
-      title: t`Edit`,
-      onClick: () => {
-        editAttachment({
-          url: url,
-          model: model,
-          pk: record.pk,
-          callback: () => {
-            // TODO: refresh the attachment table
-          }
-        });
-      }
-    });
+    if (allowEdit) {
+      actions.push({
+        title: t`Edit`,
+        onClick: () => {
+          editAttachment({
+            url: url,
+            model: model,
+            pk: record.pk,
+            callback: () => {
+              // TODO: refresh the attachment table
+            }
+          });
+        }
+      });
+    }
 
-    // TODO: Only if user has 'delete' permission for this URL
-    actions.push({
-      title: t`Delete`,
-      onClick: () => {
-        notYetImplemented();
-      }
-    });
+    if (allowDelete) {
+      actions.push({
+        title: t`Delete`,
+        onClick: () => {
+          notYetImplemented();
+        }
+      });
+    }
 
     return actions;
   }
@@ -140,18 +161,18 @@ export function AttachmentTable({
           [model]: pk
         }}
         columns={tableColumns}
-        rowActions={rowActions}
+        rowActions={allowEdit && allowDelete ? rowActions : undefined}
       />
-      <Dropzone onDrop={uploadFiles}>
-        <Dropzone.Accept>Accept?</Dropzone.Accept>
-        <Dropzone.Reject>Reject?</Dropzone.Reject>
-        <Dropzone.Idle>
-          <Group position="center">
-            <IconFileUpload size={24} />
-            <Text size="sm">{t`Upload file`}</Text>
-          </Group>
-        </Dropzone.Idle>
-      </Dropzone>
+      {allowEdit && (
+        <Dropzone onDrop={uploadFiles}>
+          <Dropzone.Idle>
+            <Group position="center">
+              <IconFileUpload size={24} />
+              <Text size="sm">{t`Upload attachment`}</Text>
+            </Group>
+          </Dropzone.Idle>
+        </Dropzone>
+      )}
     </Stack>
   );
 }
