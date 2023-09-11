@@ -166,7 +166,7 @@ class BaseInvenTreeSetting(models.Model):
 
         do_cache = kwargs.pop('cache', True)
 
-        self.clean(**kwargs)
+        self.clean()
         self.validate_unique()
 
         # Execute before_save action
@@ -560,7 +560,7 @@ class BaseInvenTreeSetting(models.Model):
         """Return units for setting."""
         return self.__class__.get_setting_units(self.key, **self.get_filters_for_instance())
 
-    def clean(self, **kwargs):
+    def clean(self):
         """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
         super().clean()
 
@@ -571,7 +571,7 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+        validator = self.__class__.get_setting_validator(self.key, **self.get_filters_for_instance())
 
         if validator is not None:
             self.run_validator(validator)

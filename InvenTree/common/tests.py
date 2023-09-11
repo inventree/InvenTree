@@ -5,9 +5,11 @@ import json
 import time
 from datetime import timedelta
 from http import HTTPStatus
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -105,6 +107,36 @@ class SettingsTest(InvenTreeTestCase):
         self.assertIn('PART_COPY_TESTS', result)
         self.assertIn('STOCK_OWNERSHIP_CONTROL', result)
         self.assertIn('SIGNUP_GROUP', result)
+
+    @mock.patch("common.models.InvenTreeSetting.get_setting_definition")
+    def test_settings_validator(self, get_setting_definition):
+        """Make sure that the validator function gets called on set setting."""
+
+        def validator(x):
+            if x == "hello":
+                return x
+
+            raise ValidationError(f"{x} is not valid")
+
+        mock_validator = mock.Mock(side_effect=validator)
+
+        # define partial schema
+        settings_definition = {
+            "AB": {  # key that's has not already been accessed
+                "validator": mock_validator,
+            },
+        }
+
+        def mocked(key, **kwargs):
+            return settings_definition.get(key, {})
+        get_setting_definition.side_effect = mocked
+
+        InvenTreeSetting.set_setting("AB", "hello", self.user)
+        mock_validator.assert_called_with("hello")
+
+        with self.assertRaises(ValidationError):
+            InvenTreeSetting.set_setting("AB", "world", self.user)
+        mock_validator.assert_called_with("world")
 
     def run_settings_check(self, key, setting):
         """Test that all settings are valid.
