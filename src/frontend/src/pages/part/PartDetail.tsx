@@ -201,7 +201,7 @@ export default function PartDetail() {
               })
             }
           >
-            Edit
+            Edit Part
           </Button>
         </Group>
         <PanelGroup panels={partPanels} />
