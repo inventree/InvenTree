@@ -161,9 +161,8 @@ export default function PartDetail() {
     return (
       <AttachmentTable
         url="/part/attachment/"
-        params={{
-          part: part.pk ?? -1
-        }}
+        model="part"
+        pk={part.pk ?? -1}
       />
     );
   }
