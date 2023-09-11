@@ -144,7 +144,7 @@ class ParameterTests(TestCase):
         """Test validation of 'units' field for PartParameterTemplate"""
 
         # Test that valid units pass
-        for unit in [None, '', 'mm', 'A', 'm^2', 'Pa', 'V', 'C', 'F', 'uF', 'mF', 'millifarad']:
+        for unit in [None, '', '%', 'mm', 'A', 'm^2', 'Pa', 'V', 'C', 'F', 'uF', 'mF', 'millifarad']:
             tmp = PartParameterTemplate(name='test', units=unit)
             tmp.full_clean()
 
@@ -169,6 +169,15 @@ class ParameterTests(TestCase):
             param = PartParameter(part=prt, template=template, data=value)
             param.full_clean()
 
+        # Test that percent unit is working
+        template2 = PartParameterTemplate.objects.create(
+            name='My Template 2',
+            units='%',
+        )
+        for value in ["1", "1%", "1 percent"]:
+            param = PartParameter(part=prt, template=template2, data=value)
+            param.full_clean()
+  
         bad_values = ['3 Amps', '-3 zogs', '3.14F']
 
         # Disable enforcing of part parameter units
