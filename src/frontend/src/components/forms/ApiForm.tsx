@@ -48,7 +48,7 @@ export interface ApiFormProps {
   url: string;
   pk?: number;
   title: string;
-  fields: ApiFormFieldSet;
+  fields?: ApiFormFieldSet;
   cancelText?: string;
   submitText?: string;
   submitColor?: string;
