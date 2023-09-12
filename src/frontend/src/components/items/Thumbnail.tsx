@@ -8,7 +8,7 @@ import { api } from '../../App';
 export function Thumbnail({
   src,
   alt = t`Thumbnail`,
-  size = 24
+  size = 20
 }: {
   src: string;
   alt?: string;

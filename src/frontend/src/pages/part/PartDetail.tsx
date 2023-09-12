@@ -3,14 +3,11 @@ import {
   Button,
   Group,
   LoadingOverlay,
-  Skeleton,
   Space,
   Stack,
-  Tabs,
   Text
 } from '@mantine/core';
 import {
-  IconBox,
   IconBuilding,
   IconCurrencyDollar,
   IconInfoCircle,
@@ -34,6 +31,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../App';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
+import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { editPart } from '../../functions/forms/PartForms';
 
@@ -124,7 +122,7 @@ export default function PartDetail() {
         name: 'related_parts',
         label: t`Related Parts`,
         icon: <IconLayersLinked size="18" />,
-        content: <Text>part related parts go here</Text>
+        content: partRelatedTab()
       },
       {
         name: 'attachments',
@@ -165,6 +163,10 @@ export default function PartDetail() {
         pk={part.pk ?? -1}
       />
     );
+  }
+
+  function partRelatedTab(): React.ReactNode {
+    return <RelatedPartTable partId={part.pk ?? -1} />;
   }
 
   function partStockTab(): React.ReactNode {
