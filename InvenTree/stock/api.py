@@ -1051,8 +1051,6 @@ class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
-    filter_backends = SEARCH_ORDER_FILTER
-
     filterset_fields = [
         'stock_item',
     ]

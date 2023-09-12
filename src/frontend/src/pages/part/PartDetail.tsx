@@ -27,12 +27,13 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { editPart } from '../../functions/forms/PartForms';
 
@@ -129,7 +130,7 @@ export default function PartDetail() {
         name: 'attachments',
         label: t`Attachments`,
         icon: <IconPaperclip size="18" />,
-        content: <Text>part attachments go here</Text>
+        content: partAttachmentsTab()
       },
       {
         name: 'notes',
@@ -155,6 +156,16 @@ export default function PartDetail() {
         return null;
       });
   });
+
+  function partAttachmentsTab(): React.ReactNode {
+    return (
+      <AttachmentTable
+        url="/part/attachment/"
+        model="part"
+        pk={part.pk ?? -1}
+      />
+    );
+  }
 
   function partStockTab(): React.ReactNode {
     return (
@@ -190,7 +201,7 @@ export default function PartDetail() {
               })
             }
           >
-            Edit
+            Edit Part
           </Button>
         </Group>
         <PanelGroup panels={partPanels} />

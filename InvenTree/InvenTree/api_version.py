@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 133
+INVENTREE_API_VERSION = 134
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v134 -> 2023-09-11 : https://github.com/inventree/InvenTree/pull/5525
+    - Allow "Attachment" list endpoints to be searched by attachment, link and comment fields
 
 v133 -> 2023-09-08 : https://github.com/inventree/InvenTree/pull/5518
     - Add extra optional fields which can be used for StockAdjustment endpoints

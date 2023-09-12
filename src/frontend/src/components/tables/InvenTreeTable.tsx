@@ -5,7 +5,7 @@ import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ButtonMenu } from '../items/ButtonMenu';
@@ -98,7 +98,8 @@ export function InvenTreeTable({
   barcodeActions = [],
   customActionGroups = [],
   customFilters = [],
-  rowActions
+  rowActions,
+  refreshId
 }: {
   url: string;
   params: any;
@@ -118,10 +119,8 @@ export function InvenTreeTable({
   customActionGroups?: any[];
   customFilters?: TableFilter[];
   rowActions?: (record: any) => RowAction[];
+  refreshId?: string;
 }) {
-  // Data columns
-  const [dataColumns, setDataColumns] = useState<any[]>(columns);
-
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns = columns.some(
     (col: TableColumn) => col.switchable
@@ -132,10 +131,17 @@ export function InvenTreeTable({
     loadHiddenColumns(tableKey)
   );
 
+  // Data selection
+  const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
+
+  function onSelectedRecordsChange(records: any[]) {
+    setSelectedRecords(records);
+  }
+
   // Update column visibility when hiddenColumns change
-  useEffect(() => {
-    let cols = dataColumns.map((col) => {
-      let hidden: boolean = col.hidden;
+  const dataColumns: any = useMemo(() => {
+    let cols = columns.map((col) => {
+      let hidden: boolean = col.hidden ?? false;
 
       if (col.switchable) {
         hidden = hiddenColumns.includes(col.accessor);
@@ -154,14 +160,20 @@ export function InvenTreeTable({
         title: '',
         hidden: false,
         switchable: false,
+        width: 48,
         render: function (record: any) {
-          return <RowActions actions={rowActions(record)} />;
+          return (
+            <RowActions
+              actions={rowActions(record)}
+              disabled={selectedRecords.length > 0}
+            />
+          );
         }
       });
     }
 
-    setDataColumns(cols);
-  }, [columns, hiddenColumns, rowActions]);
+    return cols;
+  }, [columns, hiddenColumns, rowActions, enableSelection, selectedRecords]);
 
   // Callback when column visibility is toggled
   function toggleColumn(columnName: string) {
@@ -309,20 +321,13 @@ export function InvenTreeTable({
 
     // Find matching column:
     // If column provides custom ordering term, use that
-    let column = dataColumns.find((col) => col.accessor == key);
+    let column = dataColumns.find((col: any) => col.accessor == key);
     return column?.ordering || key;
   }
 
   // Missing records text (based on server response)
   const [missingRecordsText, setMissingRecordsText] =
     useState<string>(noRecordsText);
-
-  // Data selection
-  const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
-
-  function onSelectedRecordsChange(records: any[]) {
-    setSelectedRecords(records);
-  }
 
   const handleSortStatusChange = (status: DataTableSortStatus) => {
     setPage(1);
@@ -385,6 +390,18 @@ export function InvenTreeTable({
       refetchOnMount: 'always'
     }
   );
+
+  /*
+   * Reload the table whenever the refetch changes
+   * this allows us to programmatically refresh the table
+   *
+   * Implement this using the custom useTableRefresh hook
+   */
+  useEffect(() => {
+    if (refreshId) {
+      refetch();
+    }
+  }, [refreshId]);
 
   return (
     <>
