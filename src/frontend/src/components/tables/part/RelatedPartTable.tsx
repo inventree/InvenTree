@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import { IconLayersLinked } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
@@ -11,6 +12,8 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   const { refreshId, refreshTable } = useTableRefresh();
+
+  const navigate = useNavigate();
 
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -30,7 +33,11 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
         render: (record: any) => {
           let part = getPart(record);
           return (
-            <Group>
+            <Group
+              onClick={() => {
+                navigate(`/part/${part.pk}/`);
+              }}
+            >
               <Thumbnail src={part.thumbnail || part.image} />
               <Text>{part.name}</Text>
             </Group>
