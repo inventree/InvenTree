@@ -8,7 +8,7 @@ msgstr ""
 "Language: id\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-10 23:40\n"
+"PO-Revision-Date: 2023-09-12 00:11\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -193,16 +193,16 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:211
+#: src/components/forms/fields/RelatedModelField.tsx:194
 msgid "Search"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:212
+#: src/components/forms/fields/RelatedModelField.tsx:195
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:214
+#: src/components/forms/fields/RelatedModelField.tsx:197
 msgid "No results found"
 msgstr ""
 
