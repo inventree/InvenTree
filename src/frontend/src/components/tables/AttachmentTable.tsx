@@ -83,7 +83,7 @@ export function AttachmentTable({
 }): ReactNode {
   const tableId = useId();
 
-  const [refreshId, refreshTable] = useTableRefresh();
+  const { refreshId, refreshTable } = useTableRefresh();
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 

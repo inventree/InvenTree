@@ -21,5 +21,5 @@ export function useTableRefresh() {
     setRefreshId(randomId());
   }, []);
 
-  return [refreshId, refreshTable];
+  return { refreshId, refreshTable };
 }
