@@ -1,9 +1,9 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { IconLayersLinked } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 
-import { openDeleteApiForm } from '../../../functions/forms';
-import { notYetImplemented } from '../../../functions/notifications';
+import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { Thumbnail } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
@@ -26,6 +26,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
       {
         accessor: 'part',
         title: t`Part`,
+        noWrap: true,
         render: (record: any) => {
           let part = getPart(record);
           return (
@@ -39,11 +40,46 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
       {
         accessor: 'description',
         title: t`Description`,
+        ellipsis: true,
         render: (record: any) => {
           return getPart(record).description;
         }
       }
     ];
+  }, []);
+
+  const addRelatedPart = useCallback(() => {
+    openCreateApiForm({
+      name: 'add-related-part',
+      title: t`Add Related Part`,
+      url: '/part/related/',
+      fields: {
+        part_1: {
+          hidden: true,
+          value: partId
+        },
+        part_2: {
+          label: t`Related Part`
+        }
+      },
+      successMessage: t`Related part added`,
+      onFormSuccess: refreshTable
+    });
+  }, []);
+
+  const customActions: ReactNode[] = useMemo(() => {
+    // TODO: Hide if user does not have permission to edit parts
+    let actions = [];
+
+    actions.push(
+      <Tooltip label={t`Add related part`}>
+        <ActionIcon radius="sm" onClick={addRelatedPart}>
+          <IconLayersLinked />
+        </ActionIcon>
+      </Tooltip>
+    );
+
+    return actions;
   }, []);
 
   // Generate row actions
@@ -80,6 +116,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
       }}
       rowActions={rowActions}
       columns={tableColumns}
+      customActionGroups={customActions}
     />
   );
 }

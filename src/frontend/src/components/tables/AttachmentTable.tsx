@@ -174,7 +174,7 @@ export function AttachmentTable({
     });
   }
 
-  function customActionGroups(): ReactNode[] {
+  const customActionGroups: ReactNode[] = useMemo(() => {
     let actions = [];
 
     if (allowEdit) {
@@ -218,7 +218,7 @@ export function AttachmentTable({
     }
 
     return actions;
-  }
+  }, [allowEdit]);
 
   return (
     <Stack spacing="xs">
@@ -229,7 +229,7 @@ export function AttachmentTable({
         params={{
           [model]: pk
         }}
-        customActionGroups={customActionGroups()}
+        customActionGroups={customActionGroups}
         columns={tableColumns}
         rowActions={allowEdit && allowDelete ? rowActions : undefined}
       />
