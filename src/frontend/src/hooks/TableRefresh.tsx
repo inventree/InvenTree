@@ -13,7 +13,7 @@ import { useCallback, useState } from 'react';
  * Then, pass the refreshId to the InvenTreeTable component:
  * <InvenTreeTable refreshId={refreshId} ... />
  */
-export default function useTableRefresh() {
+export function useTableRefresh() {
   const [refreshId, setRefreshId] = useState<string>(randomId());
 
   // Generate a new ID to refresh the table
