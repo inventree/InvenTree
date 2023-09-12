@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 import { Menu, Text } from '@mantine/core';
 import { IconDots } from '@tabler/icons-react';
 import { ReactNode } from 'react';
@@ -28,9 +28,11 @@ export function RowActions({
     actions.length > 0 && (
       <Menu withinPortal={true}>
         <Menu.Target>
-          <ActionIcon variant="subtle" color="gray">
-            <IconDots />
-          </ActionIcon>
+          <Tooltip label={title || t`Actions`}>
+            <ActionIcon variant="subtle" color="gray">
+              <IconDots />
+            </ActionIcon>
+          </Tooltip>
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Label>{title || t`Actions`}</Menu.Label>
