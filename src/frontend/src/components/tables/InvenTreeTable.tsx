@@ -99,7 +99,7 @@ export function InvenTreeTable({
   customActionGroups = [],
   customFilters = [],
   rowActions,
-  refreshKey
+  refreshId
 }: {
   url: string;
   params: any;
@@ -119,7 +119,7 @@ export function InvenTreeTable({
   customActionGroups?: any[];
   customFilters?: TableFilter[];
   rowActions?: (record: any) => RowAction[];
-  refreshKey?: string;
+  refreshId?: string;
 }) {
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns = columns.some(
@@ -390,13 +390,13 @@ export function InvenTreeTable({
    * Reload the table whenever the refetch changes
    * this allows us to programmatically refresh the table
    *
-   * TODO: Make this into a custom hook?
+   * Implement this using the custom useTableRefresh hook
    */
   useEffect(() => {
-    if (refreshKey) {
+    if (refreshId) {
       refetch();
     }
-  }, [refreshKey]);
+  }, [refreshId]);
 
   return (
     <>

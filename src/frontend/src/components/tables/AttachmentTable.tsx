@@ -1,15 +1,10 @@
 import { t } from '@lingui/macro';
-import { Badge, Button, Group, Stack, Text, Tooltip } from '@mantine/core';
-import { ActionIcon, Menu } from '@mantine/core';
+import { Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { ActionIcon } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { useId } from '@mantine/hooks';
-import { randomId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import {
-  IconExternalLink,
-  IconFileUpload,
-  IconPlus
-} from '@tabler/icons-react';
+import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
@@ -18,9 +13,8 @@ import {
   deleteAttachment,
   editAttachment
 } from '../../functions/forms/AttachmentForms';
-import { ActionButton } from '../items/ActionButton';
+import { useTableRefresh } from '../../hooks/TableRefresh';
 import { AttachmentLink } from '../items/AttachmentLink';
-import { ButtonMenu } from '../items/ButtonMenu';
 import { TableColumn } from './Column';
 import { InvenTreeTable } from './InvenTreeTable';
 import { RowAction } from './RowActions';
@@ -89,7 +83,7 @@ export function AttachmentTable({
 }): ReactNode {
   const tableId = useId();
 
-  const [refreshKey, setRefreshKey] = useState<string>(randomId());
+  const [refreshId, refreshTable] = useTableRefresh();
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 
@@ -125,9 +119,7 @@ export function AttachmentTable({
             model: model,
             pk: record.pk,
             attachmentType: record.attachment ? 'file' : 'link',
-            callback: () => {
-              setRefreshKey(randomId());
-            }
+            callback: refreshTable
           });
         }
       });
@@ -141,9 +133,7 @@ export function AttachmentTable({
           deleteAttachment({
             url: url,
             pk: record.pk,
-            callback: () => {
-              setRefreshKey(randomId());
-            }
+            callback: refreshTable
           });
         }
       });
@@ -168,7 +158,7 @@ export function AttachmentTable({
             color: 'green'
           });
 
-          setRefreshKey(randomId());
+          refreshTable();
 
           return response;
         })
@@ -198,9 +188,7 @@ export function AttachmentTable({
                 model: model,
                 pk: pk,
                 attachmentType: 'file',
-                callback: () => {
-                  setRefreshKey(randomId());
-                }
+                callback: refreshTable
               });
             }}
           >
@@ -219,9 +207,7 @@ export function AttachmentTable({
                 model: model,
                 pk: pk,
                 attachmentType: 'link',
-                callback: () => {
-                  setRefreshKey(randomId());
-                }
+                callback: refreshTable
               });
             }}
           >
@@ -239,7 +225,7 @@ export function AttachmentTable({
       <InvenTreeTable
         url={url}
         tableKey={tableId}
-        refreshKey={refreshKey}
+        refreshId={refreshId}
         params={{
           [model]: pk
         }}
