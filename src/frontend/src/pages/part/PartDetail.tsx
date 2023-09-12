@@ -35,6 +35,10 @@ import { api } from '../../App';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
+import {
+  MarkdownEditor,
+  NotesEditor
+} from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
 
 export default function PartDetail() {
@@ -136,7 +140,7 @@ export default function PartDetail() {
         name: 'notes',
         label: t`Notes`,
         icon: <IconNotes size="18" />,
-        content: <Text>part notes go here</Text>
+        content: partNotesTab()
       }
     ];
   }, [part]);
@@ -163,6 +167,17 @@ export default function PartDetail() {
         url="/part/attachment/"
         model="part"
         pk={part.pk ?? -1}
+      />
+    );
+  }
+
+  function partNotesTab(): React.ReactNode {
+    // TODO: Set edit permission based on user permissions
+    return (
+      <NotesEditor
+        url={`/part/${part.pk}/`}
+        data={part.notes ?? ''}
+        allowEdit={true}
       />
     );
   }
