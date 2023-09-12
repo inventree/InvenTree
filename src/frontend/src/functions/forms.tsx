@@ -175,7 +175,8 @@ export function openDeleteApiForm(props: ApiFormProps) {
     ...props,
     method: 'DELETE',
     submitText: t`Delete`,
-    submitColor: 'red'
+    submitColor: 'red',
+    fields: {}
   };
 
   openModalApiForm(deleteProps);

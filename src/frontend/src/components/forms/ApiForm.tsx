@@ -48,7 +48,7 @@ export interface ApiFormProps {
   url: string;
   pk?: number;
   title: string;
-  fields: ApiFormFieldSet;
+  fields?: ApiFormFieldSet;
   cancelText?: string;
   submitText?: string;
   submitColor?: string;
@@ -118,7 +118,7 @@ export function ApiForm({
         .get(url)
         .then((response) => {
           // Update form values, but only for the fields specified for the form
-          Object.keys(props.fields).forEach((fieldName) => {
+          Object.keys(props.fields ?? {}).forEach((fieldName) => {
             if (fieldName in response.data) {
               form.setValues({
                 [fieldName]: response.data[fieldName]
@@ -137,7 +137,7 @@ export function ApiForm({
   // Fetch initial data on form load
   useEffect(() => {
     // Provide initial form data
-    Object.entries(props.fields).forEach(([fieldName, field]) => {
+    Object.entries(props.fields ?? {}).forEach(([fieldName, field]) => {
       if (field.value !== undefined) {
         form.setValues({
           [fieldName]: field.value
@@ -272,7 +272,7 @@ export function ApiForm({
         {preFormElement}
         <ScrollArea>
           <Stack spacing="xs">
-            {Object.entries(props.fields).map(
+            {Object.entries(props.fields ?? {}).map(
               ([fieldName, field]) =>
                 !field.hidden && (
                   <ApiFormField

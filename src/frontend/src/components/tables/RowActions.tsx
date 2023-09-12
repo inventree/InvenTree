@@ -45,7 +45,7 @@ export function RowActions({
               icon={action.icon}
               title={action.tooltip || action.title}
             >
-              <Text size="sm" color={action.color}>
+              <Text size="xs" color={action.color}>
                 {action.title}
               </Text>
             </Menu.Item>
