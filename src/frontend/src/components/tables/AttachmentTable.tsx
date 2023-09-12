@@ -60,7 +60,7 @@ function attachmentTableColumns(): TableColumn[] {
           <Group position="apart">
             <Text>{record.upload_date}</Text>
             {record.user_detail && (
-              <Badge size="sm">{record.user_detail.username}</Badge>
+              <Badge size="xs">{record.user_detail.username}</Badge>
             )}
           </Group>
         );
