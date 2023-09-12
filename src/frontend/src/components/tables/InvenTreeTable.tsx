@@ -131,6 +131,13 @@ export function InvenTreeTable({
     loadHiddenColumns(tableKey)
   );
 
+  // Data selection
+  const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
+
+  function onSelectedRecordsChange(records: any[]) {
+    setSelectedRecords(records);
+  }
+
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
     let cols = columns.map((col) => {
@@ -155,13 +162,18 @@ export function InvenTreeTable({
         switchable: false,
         width: 48,
         render: function (record: any) {
-          return <RowActions actions={rowActions(record)} />;
+          return (
+            <RowActions
+              actions={rowActions(record)}
+              disabled={selectedRecords.length > 0}
+            />
+          );
         }
       });
     }
 
     return cols;
-  }, [columns, hiddenColumns, rowActions]);
+  }, [columns, hiddenColumns, rowActions, enableSelection, selectedRecords]);
 
   // Callback when column visibility is toggled
   function toggleColumn(columnName: string) {
@@ -316,13 +328,6 @@ export function InvenTreeTable({
   // Missing records text (based on server response)
   const [missingRecordsText, setMissingRecordsText] =
     useState<string>(noRecordsText);
-
-  // Data selection
-  const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
-
-  function onSelectedRecordsChange(records: any[]) {
-    setSelectedRecords(records);
-  }
 
   const handleSortStatusChange = (status: DataTableSortStatus) => {
     setPage(1);

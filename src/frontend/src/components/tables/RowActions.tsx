@@ -19,17 +19,19 @@ export type RowAction = {
  */
 export function RowActions({
   title,
-  actions
+  actions,
+  disabled = false
 }: {
   title?: string;
+  disabled?: boolean;
   actions: RowAction[];
 }): ReactNode {
   return (
     actions.length > 0 && (
-      <Menu withinPortal={true}>
+      <Menu withinPortal={true} disabled={disabled}>
         <Menu.Target>
           <Tooltip label={title || t`Actions`}>
-            <ActionIcon variant="subtle" color="gray">
+            <ActionIcon disabled={disabled} variant="subtle" color="gray">
               <IconDots />
             </ActionIcon>
           </Tooltip>
