@@ -25,7 +25,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
           let part = getPart(record);
           return (
             <Group>
-              <Thumbnail image={part.thumbnail || part.image} />
+              <Thumbnail src={part.thumbnail || part.image} />
               <Text>{part.name}</Text>
             </Group>
           );
