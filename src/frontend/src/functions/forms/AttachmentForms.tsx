@@ -2,7 +2,11 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { openDeleteApiForm, openEditApiForm } from '../forms';
+import {
+  openCreateApiForm,
+  openDeleteApiForm,
+  openEditApiForm
+} from '../forms';
 
 export function attachmentFields(editing: boolean): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {
@@ -17,34 +21,91 @@ export function attachmentFields(editing: boolean): ApiFormFieldSet {
   return fields;
 }
 
-// TODO: Function to create/upload a new attachment
-
-export function editAttachment({
+/**
+ * Add a new attachment (either a file or a link)
+ */
+export function addAttachment({
   url,
   model,
   pk,
+  attachmentType,
   callback
 }: {
   url: string;
   model: string;
   pk: number;
+  attachmentType: 'file' | 'link';
   callback?: () => void;
 }) {
-  let formFields = {
-    ...attachmentFields(true)
+  let formFields: ApiFormFieldSet = {
+    attachment: {},
+    link: {},
+    comment: {}
   };
+
+  if (attachmentType === 'link') {
+    delete formFields['attachment'];
+  } else {
+    delete formFields['link'];
+  }
 
   formFields[model] = {
     value: pk,
     hidden: true
   };
 
+  let title = attachmentType === 'file' ? t`Add File` : t`Add Link`;
+  let message = attachmentType === 'file' ? t`File added` : t`Link added`;
+
+  openCreateApiForm({
+    name: 'attachment-add',
+    title: title,
+    url: url,
+    successMessage: message,
+    fields: formFields,
+    onFormSuccess: callback
+  });
+}
+
+/**
+ * Edit an existing attachment (either a file or a link)
+ */
+export function editAttachment({
+  url,
+  model,
+  pk,
+  attachmentType,
+  callback
+}: {
+  url: string;
+  model: string;
+  pk: number;
+  attachmentType: 'file' | 'link';
+  callback?: () => void;
+}) {
+  let formFields: ApiFormFieldSet = {
+    link: {},
+    comment: {}
+  };
+
+  if (attachmentType === 'file') {
+    delete formFields['link'];
+  }
+
+  formFields[model] = {
+    value: pk,
+    hidden: true
+  };
+
+  let title = attachmentType === 'file' ? t`Edit File` : t`Edit Link`;
+  let message = attachmentType === 'file' ? t`File updated` : t`Link updated`;
+
   openEditApiForm({
     name: 'attachment-edit',
-    title: t`Edit Attachment`,
+    title: title,
     url: url,
     pk: pk,
-    successMessage: t`Attachment updated`,
+    successMessage: message,
     fields: formFields,
     onFormSuccess: callback
   });

@@ -1,19 +1,26 @@
 import { t } from '@lingui/macro';
-import { Group, Stack, Text } from '@mantine/core';
+import { Badge, Button, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Menu } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { useId } from '@mantine/hooks';
 import { randomId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconFileUpload } from '@tabler/icons-react';
+import {
+  IconExternalLink,
+  IconFileUpload,
+  IconPlus
+} from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import {
+  addAttachment,
   deleteAttachment,
   editAttachment
 } from '../../functions/forms/AttachmentForms';
-import { notYetImplemented } from '../../functions/notifications';
+import { ActionButton } from '../items/ActionButton';
 import { AttachmentLink } from '../items/AttachmentLink';
+import { ButtonMenu } from '../items/ButtonMenu';
 import { TableColumn } from './Column';
 import { InvenTreeTable } from './InvenTreeTable';
 import { RowAction } from './RowActions';
@@ -55,8 +62,14 @@ function attachmentTableColumns(): TableColumn[] {
       sortable: false,
       switchable: true,
       render: function (record: any) {
-        // TODO: Custom date renderer
-        return record.upload_date;
+        return (
+          <Group position="apart">
+            <Text>{record.upload_date}</Text>
+            {record.user_detail && (
+              <Badge size="sm">{record.user_detail.username}</Badge>
+            )}
+          </Group>
+        );
       }
     }
   ];
@@ -99,6 +112,7 @@ export function AttachmentTable({
       });
   }, []);
 
+  // Construct row actions for the attachment table
   function rowActions(record: any): RowAction[] {
     let actions: RowAction[] = [];
 
@@ -110,6 +124,7 @@ export function AttachmentTable({
             url: url,
             model: model,
             pk: record.pk,
+            attachmentType: record.attachment ? 'file' : 'link',
             callback: () => {
               setRefreshKey(randomId());
             }
@@ -121,6 +136,7 @@ export function AttachmentTable({
     if (allowDelete) {
       actions.push({
         title: t`Delete`,
+        color: 'red',
         onClick: () => {
           deleteAttachment({
             url: url,
@@ -168,6 +184,56 @@ export function AttachmentTable({
     });
   }
 
+  function customActionGroups(): ReactNode[] {
+    let actions = [];
+
+    if (allowEdit) {
+      actions.push(
+        <Tooltip label={t`Add attachment`}>
+          <ActionIcon
+            radius="sm"
+            onClick={() => {
+              addAttachment({
+                url: url,
+                model: model,
+                pk: pk,
+                attachmentType: 'file',
+                callback: () => {
+                  setRefreshKey(randomId());
+                }
+              });
+            }}
+          >
+            <IconFileUpload />
+          </ActionIcon>
+        </Tooltip>
+      );
+
+      actions.push(
+        <Tooltip label={t`Add external link`}>
+          <ActionIcon
+            radius="sm"
+            onClick={() => {
+              addAttachment({
+                url: url,
+                model: model,
+                pk: pk,
+                attachmentType: 'link',
+                callback: () => {
+                  setRefreshKey(randomId());
+                }
+              });
+            }}
+          >
+            <IconExternalLink />
+          </ActionIcon>
+        </Tooltip>
+      );
+    }
+
+    return actions;
+  }
+
   return (
     <Stack spacing="xs">
       <InvenTreeTable
@@ -177,6 +243,7 @@ export function AttachmentTable({
         params={{
           [model]: pk
         }}
+        customActionGroups={customActionGroups()}
         columns={tableColumns}
         rowActions={allowEdit && allowDelete ? rowActions : undefined}
       />

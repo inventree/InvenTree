@@ -1,12 +1,13 @@
 import { t } from '@lingui/macro';
 import { ActionIcon } from '@mantine/core';
-import { Menu } from '@mantine/core';
+import { Menu, Text } from '@mantine/core';
 import { IconDots } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
 // Type definition for a table row action
 export type RowAction = {
   title: string;
+  color?: string;
   onClick: () => void;
   tooltip?: string;
   icon?: ReactNode;
@@ -40,7 +41,9 @@ export function RowActions({
               icon={action.icon}
               title={action.tooltip || action.title}
             >
-              {action.title}
+              <Text size="sm" color={action.color}>
+                {action.title}
+              </Text>
             </Menu.Item>
           ))}
         </Menu.Dropdown>
