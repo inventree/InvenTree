@@ -78,7 +78,40 @@ export function MarkdownEditor({
     return {
       minHeight: '400px',
       toolbar: icons,
-      sideBySideFullscreen: false
+      sideBySideFullscreen: false,
+      uploadImage: allowEdit,
+      imagePathAbsolute: true,
+      imageUploadFunction: (
+        file: File,
+        onSuccess: (url: string) => void,
+        onError: (error: string) => void
+      ) => {
+        api
+          .post(
+            '/notes-image-upload/',
+            {
+              image: file
+            },
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+          )
+          .then((response) => {
+            if (response.data?.image) {
+              onSuccess(response.data.image);
+            }
+          })
+          .catch((error) => {
+            showNotification({
+              title: t`Error`,
+              message: t`Failed to upload image`,
+              color: 'red'
+            });
+            onError(error);
+          });
+      }
     };
   }, [allowEdit]);
 
