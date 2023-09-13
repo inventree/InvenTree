@@ -24,8 +24,8 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
     VERSION = "1.0.0"
     AUTHOR = _("InvenTree contributors")
 
-    def get_supplier_part(self, barcode_data):
-        """Get supplier_part from barcode data"""
+    def parse_barcode_data(self, barcode_data):
+        """Get supplier_part and barcode_fields from barcode data"""
 
         if not isinstance(barcode_data, str):
             return None, None
@@ -48,7 +48,7 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
     def scan(self, barcode_data):
         """Process a barcode to determine if it is a LCSC barcode."""
 
-        supplier_part, _ = self.get_supplier_part(barcode_data)
+        supplier_part, _ = self.parse_barcode_data(barcode_data)
         if supplier_part is None:
             return None
 
@@ -63,7 +63,7 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Process a lcsc barcode to receive an item from a placed purchase order."""
 
-        supplier_part, barcode_fields = self.get_supplier_part(barcode_data)
+        supplier_part, barcode_fields = self.parse_barcode_data(barcode_data)
         if supplier_part is None:
             return None
 
