@@ -45,6 +45,7 @@ export function Header() {
           return error;
         });
     },
+    refetchInterval: 30000,
     refetchOnMount: true,
     refetchOnWindowFocus: false
   });
