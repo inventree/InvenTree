@@ -201,7 +201,7 @@ class BarcodeMixin:
             }
         }
 
-        if quantity and type(quantity) != int:
+        if quantity and not isinstance(quantity, int):
             try:
                 quantity = int(quantity)
                 response["lineitem"]["quantity"] = quantity

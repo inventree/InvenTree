@@ -2,9 +2,8 @@
 
 from django.urls import reverse
 
-from InvenTree.unit_test import InvenTreeAPITestCase
-
 from company.models import Company, ManufacturerPart, SupplierPart
+from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import Part
 from stock.models import StockItem, StockLocation
