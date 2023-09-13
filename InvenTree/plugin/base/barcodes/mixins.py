@@ -1,5 +1,7 @@
 """Plugin mixin classes for barcode plugin."""
 
+from __future__ import annotations
+
 import logging
 
 from django.contrib.auth.models import User
