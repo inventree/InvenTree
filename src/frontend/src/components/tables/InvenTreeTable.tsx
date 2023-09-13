@@ -253,6 +253,11 @@ export function InvenTreeTable({
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  // Reset the pagination state when the search term changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
+
   /*
    * Construct query filters for the current table
    */
