@@ -1,8 +1,11 @@
-import { ActionIcon, Container, Group, Tabs } from '@mantine/core';
+import { ActionIcon, Container, Group, Indicator, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconSearch } from '@tabler/icons-react';
+import { IconBell, IconSearch } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { InvenTreeStyle } from '../../globalStyle';
 import { ScanButton } from '../items/ScanButton';
@@ -20,6 +23,32 @@ export function Header() {
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
 
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  // Fetch number of notifications for the current user
+  const notifications = useQuery({
+    queryKey: ['notifications'],
+    queryFn: async () => {
+      return api
+        .get('/notifications/', {
+          params: {
+            read: false,
+            limit: 1
+          }
+        })
+        .then((response) => {
+          setNotificationCount(response.data.count);
+          return response.data;
+        })
+        .catch((error) => {
+          console.error('Error fetching notifications:', error);
+          return error;
+        });
+    },
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
+  });
+
   return (
     <div className={classes.layoutHeader}>
       <SearchDrawer opened={searchDrawerOpened} onClose={closeSearchDrawer} />
@@ -34,6 +63,17 @@ export function Header() {
             <ScanButton />
             <ActionIcon onClick={openSearchDrawer}>
               <IconSearch />
+            </ActionIcon>
+            <ActionIcon>
+              <Indicator
+                radius="lg"
+                size="lg"
+                label={notificationCount}
+                color="red"
+                hidden={notificationCount == 0}
+              >
+                <IconBell />
+              </Indicator>
             </ActionIcon>
             <MainMenu />
           </Group>
