@@ -24,11 +24,14 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
     VERSION = "1.0.0"
     AUTHOR = _("InvenTree contributors")
 
-    def scan(self, barcode_data):
-        """Process a barcode to determine if it is a LCSC barcode."""
+    def get_supplier_part(self, barcode_data):
+        """Get supplier_part from barcode data"""
+
+        if not isinstance(barcode_data, str):
+            return None, None
 
         if not (match := LCSC_BARCODE_REGEX.fullmatch(barcode_data)):
-            return None
+            return None, None
 
         barcode_pairs = (pair.split(":") for pair in match.group(1).split(","))
         barcode_fields = {
@@ -38,6 +41,15 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
 
         sku = barcode_fields.get("supplier_part_number")
         if not (supplier_part := self.get_supplier_part(sku)):
+            return None, None
+
+        return supplier_part, barcode_fields
+
+    def scan(self, barcode_data):
+        """Process a barcode to determine if it is a LCSC barcode."""
+
+        supplier_part, _ = self.get_supplier_part(barcode_data)
+        if supplier_part is None:
             return None
 
         data = {
@@ -51,17 +63,8 @@ class LCSCPlugin(BarcodeMixin, InvenTreePlugin):
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Process a lcsc barcode to receive an item from a placed purchase order."""
 
-        if not (match := LCSC_BARCODE_REGEX.fullmatch(barcode_data)):
-            return None
-
-        barcode_pairs = (pair.split(":") for pair in match.group(1).split(","))
-        barcode_fields = {
-            BARCODE_FIELD_NAME_MAP.get(field_name, field_name): value
-            for field_name, value in barcode_pairs
-        }
-
-        sku = barcode_fields.get("supplier_part_number")
-        if not (supplier_part := self.get_supplier_part(sku)):
+        supplier_part, barcode_fields = self.get_supplier_part(barcode_data)
+        if supplier_part is None:
             return None
 
         return self.receive_purchase_order_item(

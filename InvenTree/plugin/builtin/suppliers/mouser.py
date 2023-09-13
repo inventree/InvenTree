@@ -53,18 +53,30 @@ class MouserPlugin(BarcodeMixin, SettingsMixin, InvenTreePlugin):
 
         return mouser
 
-    def scan(self, barcode_data):
-        """Process a barcode to determine if it is a Mouser barcode."""
+    def get_supplier_part(self, barcode_data):
+        """Get supplier_part from barcode data"""
+
+        if not isinstance(barcode_data, str):
+            return None, None
 
         if not (mouser := self.get_mouser_supplier()):
-            return None
+            return None, None
 
         if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
-            return None
+            return None, None
 
         sku = barcode_fields.get("supplier_part_number")
         mpn = barcode_fields.get("manufacturer_part_number")
         if not (supplier_part := self.get_supplier_part(sku, mouser, mpn)):
+            return None, None
+
+        return supplier_part, barcode_fields
+
+    def scan(self, barcode_data):
+        """Process a barcode to determine if it is a Mouser barcode."""
+
+        supplier_part, _ = self.get_supplier_part(barcode_data)
+        if supplier_part is None:
             return None
 
         data = {
@@ -78,15 +90,8 @@ class MouserPlugin(BarcodeMixin, SettingsMixin, InvenTreePlugin):
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Process a mouser barcode to receive an item from a placed purchase order."""
 
-        if not (mouser := self.get_mouser_supplier()):
-            return None
-
-        if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
-            return None
-
-        sku = barcode_fields.get("supplier_part_number")
-        mpn = barcode_fields.get("manufacturer_part_number")
-        if not (supplier_part := self.get_supplier_part(sku, mouser, mpn)):
+        supplier_part, barcode_fields = self.get_supplier_part(barcode_data)
+        if supplier_part is None:
             return None
 
         return self.receive_purchase_order_item(

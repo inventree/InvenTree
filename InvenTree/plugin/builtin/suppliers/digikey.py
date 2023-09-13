@@ -23,14 +23,26 @@ class DigiKeyPlugin(BarcodeMixin, InvenTreePlugin):
     VERSION = "1.0.0"
     AUTHOR = _("InvenTree contributors")
 
-    def scan(self, barcode_data):
-        """Process a barcode to determine if it is a DigiKey barcode."""
+    def get_supplier_part(self, barcode_data):
+        """Get supplier_part from barcode data"""
+
+        if not isinstance(barcode_data, str):
+            return None, None
 
         if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
-            return None
+            return None, None
 
         sku = barcode_fields.get("supplier_part_number")
         if not (supplier_part := self.get_supplier_part(sku)):
+            return None, None
+
+        return supplier_part, barcode_fields
+
+    def scan(self, barcode_data):
+        """Process a barcode to determine if it is a DigiKey barcode."""
+
+        supplier_part, _ = self.get_supplier_part(barcode_data)
+        if supplier_part is None:
             return None
 
         data = {
@@ -44,11 +56,8 @@ class DigiKeyPlugin(BarcodeMixin, InvenTreePlugin):
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Process a digikey barcode to receive an item from a placed purchase order."""
 
-        if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
-            return None
-
-        sku = barcode_fields.get("supplier_part_number")
-        if not (supplier_part := self.get_supplier_part(sku)):
+        supplier_part, barcode_fields = self.get_supplier_part(barcode_data)
+        if supplier_part is None:
             return None
 
         return self.receive_purchase_order_item(
