@@ -19,6 +19,11 @@ export const Dashboard = Loadable(
   lazy(() => import('./pages/Index/Dashboard'))
 );
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
+
+export const Notifications = Loadable(
+  lazy(() => import('./pages/Notifications'))
+);
+
 export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
 );
@@ -59,6 +64,10 @@ export const router = createBrowserRouter(
         {
           path: 'dashboard/',
           element: <Dashboard />
+        },
+        {
+          path: 'notifications/',
+          element: <Notifications />
         },
         {
           path: 'playground/',
