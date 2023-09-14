@@ -74,7 +74,7 @@ class BarcodeMixin:
         """Get a supplier part from SKU or by supplier and MPN."""
         if sku:
             supplier_parts = SupplierPart.objects.filter(SKU__iexact=sku)
-            if not supplier_parts or len(supplier_parts) > 1:
+            if len(supplier_parts) != 1:
                 logger.warning(
                     f"Found {len(supplier_parts)} supplier parts for SKU {sku}"
                 )
@@ -85,7 +85,7 @@ class BarcodeMixin:
             return None
 
         manufacturer_parts = ManufacturerPart.objects.filter(MPN__iexact=mpn)
-        if not manufacturer_parts or len(manufacturer_parts) > 1:
+        if len(manufacturer_parts) != 1:
             logger.warning(
                 f"Found {len(manufacturer_parts)} manufacturer parts for MPN {mpn}"
             )
@@ -94,7 +94,7 @@ class BarcodeMixin:
 
         supplier_parts = SupplierPart.objects.filter(
             manufacturer_part=manufacturer_part.pk, supplier=supplier.pk)
-        if not supplier_parts or len(supplier_parts) > 1:
+        if len(supplier_parts) != 1:
             logger.warning(
                 f"Found {len(supplier_parts)} supplier parts for MPN {mpn} and "
                 f"supplier '{supplier.name}'"
@@ -172,20 +172,16 @@ class BarcodeMixin:
                 )
             )
 
-            if len(purchase_orders) == 0:
-                return {"error": _(f"Failed to find placed purchase order for '{order_number}'")}
-            elif len(purchase_orders) > 1:
+            if len(purchase_orders) > 1:
                 return {"error": _(f"Found multiple placed purchase orders for '{order_number}'")}
-
-            purchase_order = purchase_orders[0]
+            elif not (purchase_order := purchase_orders.first()):
+                return {"error": _(f"Failed to find placed purchase order for '{order_number}'")}
 
         #  find the first incomplete line_item that matches the supplier_part
-        line_items = purchase_order.lines.filter(
-            part=supplier_part.pk, quantity__gt=F("received"))
-        if not line_items:
+        line_item = purchase_order.lines.filter(
+            part=supplier_part.pk, quantity__gt=F("received")).first()
+        if not line_item:
             return {"error": _("Failed to find pending line item for supplier part")}
-
-        line_item = line_items[0]
 
         no_stock_locations = False
         if not location:
