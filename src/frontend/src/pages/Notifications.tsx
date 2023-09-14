@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
 import { IconBellCheck, IconBellExclamation } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -6,56 +6,8 @@ import { useMemo } from 'react';
 import { api } from '../App';
 import { StylishText } from '../components/items/StylishText';
 import { PanelGroup } from '../components/nav/PanelGroup';
-import { TableColumn } from '../components/tables/Column';
-import { InvenTreeTable } from '../components/tables/InvenTreeTable';
-import { RowAction } from '../components/tables/RowActions';
+import { NotificationTable } from '../components/tables/notifications/NotificationsTable';
 import { useTableRefresh } from '../hooks/TableRefresh';
-
-function NotificationTable({
-  params,
-  refreshId,
-  tableKey,
-  actions
-}: {
-  params: any;
-  refreshId: string;
-  tableKey: string;
-  actions: (record: any) => RowAction[];
-}) {
-  const columns: TableColumn[] = useMemo(() => {
-    return [
-      {
-        accessor: 'age_human',
-        title: t`Age`,
-        sortable: true
-      },
-      {
-        accessor: 'category',
-        title: t`Category`,
-        sortable: true
-      },
-      {
-        accessor: `name`,
-        title: t`Notification`
-      },
-      {
-        accessor: 'message',
-        title: t`Message`
-      }
-    ];
-  }, []);
-
-  return (
-    <InvenTreeTable
-      url="/notifications/"
-      tableKey={tableKey}
-      refreshId={refreshId}
-      params={params}
-      rowActions={actions}
-      columns={columns}
-    />
-  );
-}
 
 export default function NotificationsPage() {
   const unreadRefresh = useTableRefresh();
