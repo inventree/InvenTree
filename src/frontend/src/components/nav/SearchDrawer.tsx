@@ -26,8 +26,10 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { RenderInstance } from '../render/Instance';
 
 // Define type for handling individual search queries
 type SearchQuery = {
@@ -36,7 +38,6 @@ type SearchQuery = {
   enabled: boolean;
   parameters: any;
   results?: any;
-  render: (result: any) => JSX.Element;
 };
 
 // Placeholder function for permissions checks (will be replaced with a proper implementation)
@@ -49,12 +50,6 @@ function settingsCheck(setting: string) {
   return true;
 }
 
-// Placeholder function for rendering an individual search result
-// In the future, this will be defined individually for each result type
-function renderResult(result: any) {
-  return <Text size="sm">Result here - ID = {`${result.pk}`}</Text>;
-}
-
 /*
  * Build a list of search queries based on user permissions
  */
@@ -64,7 +59,6 @@ function buildSearchQueries(): SearchQuery[] {
       name: 'part',
       title: t`Parts`,
       parameters: {},
-      render: renderResult,
       enabled:
         permissionCheck('part.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_PARTS')
@@ -77,7 +71,6 @@ function buildSearchQueries(): SearchQuery[] {
         supplier_detail: true,
         manufacturer_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('part.view') &&
         permissionCheck('purchase_order.view') &&
@@ -91,7 +84,6 @@ function buildSearchQueries(): SearchQuery[] {
         supplier_detail: true,
         manufacturer_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('part.view') &&
         permissionCheck('purchase_order.view') &&
@@ -101,7 +93,6 @@ function buildSearchQueries(): SearchQuery[] {
       name: 'partcategory',
       title: t`Part Categories`,
       parameters: {},
-      render: renderResult,
       enabled:
         permissionCheck('part_category.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_CATEGORIES')
@@ -113,7 +104,6 @@ function buildSearchQueries(): SearchQuery[] {
         part_detail: true,
         location_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('stock.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_STOCK')
@@ -122,7 +112,6 @@ function buildSearchQueries(): SearchQuery[] {
       name: 'stocklocation',
       title: t`Stock Locations`,
       parameters: {},
-      render: renderResult,
       enabled:
         permissionCheck('stock_location.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_LOCATIONS')
@@ -133,7 +122,6 @@ function buildSearchQueries(): SearchQuery[] {
       parameters: {
         part_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('build.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
@@ -142,7 +130,6 @@ function buildSearchQueries(): SearchQuery[] {
       name: 'company',
       title: t`Companies`,
       parameters: {},
-      render: renderResult,
       enabled:
         (permissionCheck('sales_order.view') ||
           permissionCheck('purchase_order.view')) &&
@@ -154,7 +141,6 @@ function buildSearchQueries(): SearchQuery[] {
       parameters: {
         supplier_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('purchase_order.view') &&
         settingsCheck(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
@@ -165,7 +151,6 @@ function buildSearchQueries(): SearchQuery[] {
       parameters: {
         customer_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('sales_order.view') &&
         settingsCheck(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
@@ -176,7 +161,6 @@ function buildSearchQueries(): SearchQuery[] {
       parameters: {
         customer_detail: true
       },
-      render: renderResult,
       enabled:
         permissionCheck('return_order.view') &&
         settingsCheck(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
@@ -189,10 +173,12 @@ function buildSearchQueries(): SearchQuery[] {
  */
 function QueryResultGroup({
   query,
-  onRemove
+  onRemove,
+  onResultClick
 }: {
   query: SearchQuery;
   onRemove: (query: string) => void;
+  onResultClick: (query: string, pk: number) => void;
 }) {
   if (query.results.count == 0) {
     return null;
@@ -222,7 +208,15 @@ function QueryResultGroup({
         </Group>
         <Divider />
         <Stack>
-          {query.results.results.map((result: any) => query.render(result))}
+          {query.results.results.map((result: any) => (
+            <div onClick={() => onResultClick(query.name, result.pk)}>
+              <RenderInstance
+                key={`${query.name}-${result.pk}`}
+                instance={result}
+                model={query.name}
+              />
+            </div>
+          ))}
         </Stack>
         <Space />
       </Stack>
@@ -255,7 +249,7 @@ export function SearchDrawer({
   // Re-fetch data whenever the search term is updated
   useEffect(() => {
     // TODO: Implement search functionality
-    refetch();
+    searchQuery.refetch();
   }, [searchText]);
 
   // Function for performing the actual search query
@@ -290,7 +284,7 @@ export function SearchDrawer({
   };
 
   // Search query manager
-  const { data, isError, isFetching, isLoading, refetch } = useQuery(
+  const searchQuery = useQuery(
     ['search', searchText, searchRegex, searchWhole],
     performSearch,
     {
@@ -303,13 +297,15 @@ export function SearchDrawer({
 
   // Update query results whenever the search results change
   useEffect(() => {
-    if (data) {
-      let queries = searchQueries.filter((query) => query.name in data);
+    if (searchQuery.data) {
+      let queries = searchQueries.filter(
+        (query) => query.name in searchQuery.data
+      );
 
-      for (let key in data) {
+      for (let key in searchQuery.data) {
         let query = queries.find((q) => q.name == key);
         if (query) {
-          query.results = data[key];
+          query.results = searchQuery.data[key];
         }
       }
 
@@ -320,16 +316,25 @@ export function SearchDrawer({
     } else {
       setQueryResults([]);
     }
-  }, [data]);
+  }, [searchQuery.data]);
 
   // Callback to remove a set of results from the list
   function removeResults(query: string) {
     setQueryResults(queryResults.filter((q) => q.name != query));
   }
 
+  // Callback when the drawer is closed
   function closeDrawer() {
     setValue('');
     onClose();
+  }
+
+  const navigate = useNavigate();
+
+  // Callback when one of the search results is clicked
+  function onResultClick(query: string, pk: number) {
+    closeDrawer();
+    navigate(`/${query}/${pk}/`);
   }
 
   return (
@@ -359,7 +364,7 @@ export function SearchDrawer({
             size="lg"
             variant="outline"
             radius="xs"
-            onClick={() => refetch()}
+            onClick={() => searchQuery.refetch()}
           >
             <IconRefresh />
           </ActionIcon>
@@ -396,22 +401,23 @@ export function SearchDrawer({
         </Group>
       }
     >
-      {isFetching && (
+      {searchQuery.isFetching && (
         <Center>
           <Loader />
         </Center>
       )}
-      {!isFetching && !isError && (
+      {!searchQuery.isFetching && !searchQuery.isError && (
         <Stack spacing="md">
           {queryResults.map((query) => (
             <QueryResultGroup
               query={query}
               onRemove={(query) => removeResults(query)}
+              onResultClick={(query, pk) => onResultClick(query, pk)}
             />
           ))}
         </Stack>
       )}
-      {isError && (
+      {searchQuery.isError && (
         <Alert
           color="red"
           radius="sm"
@@ -422,17 +428,20 @@ export function SearchDrawer({
           <Trans>An error occurred during search query</Trans>
         </Alert>
       )}
-      {searchText && !isFetching && !isError && queryResults.length == 0 && (
-        <Alert
-          color="blue"
-          radius="sm"
-          variant="light"
-          title={t`No results`}
-          icon={<IconSearch size="1rem" />}
-        >
-          <Trans>No results available for search query</Trans>
-        </Alert>
-      )}
+      {searchText &&
+        !searchQuery.isFetching &&
+        !searchQuery.isError &&
+        queryResults.length == 0 && (
+          <Alert
+            color="blue"
+            radius="sm"
+            variant="light"
+            title={t`No results`}
+            icon={<IconSearch size="1rem" />}
+          >
+            <Trans>No results available for search query</Trans>
+          </Alert>
+        )}
     </Drawer>
   );
 }

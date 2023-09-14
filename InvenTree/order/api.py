@@ -583,10 +583,6 @@ class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = models.SalesOrderAttachment.objects.all()
     serializer_class = serializers.SalesOrderAttachmentSerializer
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
-
     filterset_fields = [
         'order',
     ]
@@ -1079,10 +1075,6 @@ class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = models.PurchaseOrderAttachment.objects.all()
     serializer_class = serializers.PurchaseOrderAttachmentSerializer
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
-
     filterset_fields = [
         'order',
     ]
@@ -1358,10 +1350,6 @@ class ReturnOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
 
     queryset = models.ReturnOrderAttachment.objects.all()
     serializer_class = serializers.ReturnOrderAttachmentSerializer
-
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
 
     filterset_fields = [
         'order',

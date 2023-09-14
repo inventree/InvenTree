@@ -31,6 +31,7 @@
         "@tanstack/react-query": "^4.33.0",
         "axios": "^1.5.0",
         "dayjs": "^1.11.9",
+        "easymde": "^2.18.0",
         "embla-carousel-react": "^8.0.0-rc12",
         "html5-qrcode": "^2.3.8",
         "mantine-datatable": "^2.9.13",
@@ -38,6 +39,8 @@
         "react-dom": "^18.2.0",
         "react-grid-layout": "^1.3.4",
         "react-router-dom": "^6.15.0",
+        "react-select": "^5.7.4",
+        "react-simplemde-editor": "^5.2.0",
         "zustand": "^4.4.1"
     },
     "devDependencies": {

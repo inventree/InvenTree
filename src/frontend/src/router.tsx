@@ -11,7 +11,7 @@ export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 export const Playground = Loadable(
   lazy(() => import('./pages/Index/Playground'))
 );
-export const Parts = Loadable(lazy(() => import('./pages/Index/Part')));
+export const PartIndex = Loadable(lazy(() => import('./pages/part/PartIndex')));
 export const Stock = Loadable(lazy(() => import('./pages/Index/Stock')));
 export const Build = Loadable(lazy(() => import('./pages/Index/Build')));
 
@@ -22,6 +22,11 @@ export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
 export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
 );
+
+export const PartDetail = Loadable(
+  lazy(() => import('./pages/part/PartDetail'))
+);
+
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
@@ -60,8 +65,12 @@ export const router = createBrowserRouter(
           element: <Playground />
         },
         {
-          path: 'parts/',
-          element: <Parts />
+          path: 'part/',
+          element: <PartIndex />
+        },
+        {
+          path: 'part/:id',
+          element: <PartDetail />
         },
         {
           path: 'stock/',
