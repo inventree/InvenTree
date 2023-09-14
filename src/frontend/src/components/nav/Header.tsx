@@ -12,6 +12,7 @@ import { ScanButton } from '../items/ScanButton';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
+import { NotificationDrawer } from './NotificationDrawer';
 import { SearchDrawer } from './SearchDrawer';
 
 export function Header() {
@@ -23,11 +24,16 @@ export function Header() {
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
 
-  const [notificationCount, setNotificationCount] = useState(0);
+  const [
+    notificationDrawerOpened,
+    { open: openNotificationDrawer, close: closeNotificationDrawer }
+  ] = useDisclosure(false);
+
+  const [notificationCount, setNotificationCount] = useState<number>(0);
 
   // Fetch number of notifications for the current user
   const notifications = useQuery({
-    queryKey: ['notifications'],
+    queryKey: ['notification-count'],
     queryFn: async () => {
       return api
         .get('/notifications/', {
@@ -54,6 +60,10 @@ export function Header() {
     <div className={classes.layoutHeader}>
       <SearchDrawer opened={searchDrawerOpened} onClose={closeSearchDrawer} />
       <NavigationDrawer opened={navDrawerOpened} close={closeNavDrawer} />
+      <NotificationDrawer
+        opened={notificationDrawerOpened}
+        onClose={closeNotificationDrawer}
+      />
       <Container className={classes.layoutHeaderSection} size={'xl'}>
         <Group position="apart">
           <Group>
@@ -65,13 +75,13 @@ export function Header() {
             <ActionIcon onClick={openSearchDrawer}>
               <IconSearch />
             </ActionIcon>
-            <ActionIcon>
+            <ActionIcon onClick={openNotificationDrawer}>
               <Indicator
                 radius="lg"
-                size="lg"
+                size="18"
                 label={notificationCount}
                 color="red"
-                hidden={notificationCount == 0}
+                disabled={notificationCount <= 0}
               >
                 <IconBell />
               </Indicator>
