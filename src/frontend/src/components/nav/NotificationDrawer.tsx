@@ -1,14 +1,17 @@
 import { t } from '@lingui/macro';
 import {
   ActionIcon,
+  Divider,
   Drawer,
   LoadingOverlay,
   Space,
   Tooltip
 } from '@mantine/core';
 import { Badge, Group, Stack, Text } from '@mantine/core';
-import { IconBookmark } from '@tabler/icons-react';
+import { IconBellCheck, IconBellPlus, IconBookmark } from '@tabler/icons-react';
+import { IconMacro } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 
@@ -22,6 +25,8 @@ export function NotificationDrawer({
   opened: boolean;
   onClose: () => void;
 }) {
+  const navigate = useNavigate();
+
   const notificationQuery = useQuery({
     enabled: opened,
     queryKey: ['notifications', opened],
@@ -48,7 +53,7 @@ export function NotificationDrawer({
       size="md"
       position="right"
       onClose={onClose}
-      withCloseButton={true}
+      withCloseButton={false}
       styles={{
         header: {
           width: '100%'
@@ -60,14 +65,23 @@ export function NotificationDrawer({
       title={
         <Group position="apart" noWrap={true}>
           <Text size="lg">{t`Notifications`}</Text>
+          <ActionIcon
+            onClick={() => {
+              onClose();
+              navigate('/notifications/');
+            }}
+          >
+            <IconBellPlus />
+          </ActionIcon>
         </Group>
       }
     >
-      <Stack>
+      <Stack spacing="xs">
+        <Divider />
         <LoadingOverlay visible={notificationQuery.isFetching} />
         {notificationQuery.data?.results.map((notification: any) => (
           <Group position="apart">
-            <Stack spacing="xs">
+            <Stack spacing="3">
               <Text size="sm">{notification.target?.name ?? 'target'}</Text>
               <Text size="xs">{notification.age_human ?? 'name'}</Text>
             </Stack>
@@ -86,7 +100,7 @@ export function NotificationDrawer({
               }}
             >
               <Tooltip label={t`Mark as read`}>
-                <IconBookmark />
+                <IconBellCheck />
               </Tooltip>
             </ActionIcon>
           </Group>
