@@ -18,6 +18,7 @@ import { api } from '../../App';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
+import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 
 export default function BuildDetail() {
   const { id } = useParams();
@@ -82,26 +83,28 @@ export default function BuildDetail() {
         name: 'attachments',
         label: t`Attachments`,
         icon: <IconPaperclip size="18" />,
-        content: buildAttachmentsTab()
+        content: (
+          <AttachmentTable
+            url="/build/attachment/"
+            model="build"
+            pk={build.pk ?? -1}
+          />
+        )
       },
       {
         name: 'notes',
         label: t`Notes`,
         icon: <IconNotes size="18" />,
-        content: <PlaceholderPill />
+        content: (
+          <NotesEditor
+            url={`/build/${build.pk}/`}
+            data={build.notes ?? ''}
+            allowEdit={true}
+          />
+        )
       }
     ];
   }, [build]);
-
-  function buildAttachmentsTab() {
-    return (
-      <AttachmentTable
-        url="/build/attachment/"
-        model="build"
-        pk={build.pk ?? -1}
-      />
-    );
-  }
 
   return (
     <>
