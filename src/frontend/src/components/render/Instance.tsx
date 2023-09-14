@@ -17,7 +17,7 @@ import {
   RenderSalesOrderShipment
 } from './Order';
 import { RenderPart, RenderPartCategory } from './Part';
-import { RenderStockLocation } from './Stock';
+import { RenderStockItem, RenderStockLocation } from './Stock';
 import { RenderOwner, RenderUser } from './User';
 
 // import { ApiFormFieldType } from "../forms/fields/ApiFormField";
@@ -55,6 +55,8 @@ export function RenderInstance({
       return <RenderSalesOrderShipment shipment={instance} />;
     case 'stocklocation':
       return <RenderStockLocation location={instance} />;
+    case 'stockitem':
+      return <RenderStockItem item={instance} />;
     case 'supplierpart':
       return <RenderSupplierPart supplierpart={instance} />;
     case 'user':
