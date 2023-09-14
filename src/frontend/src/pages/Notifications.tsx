@@ -1,14 +1,9 @@
 import { Trans, t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
-import {
-  IconBellCheck,
-  IconBellExclamation,
-  IconMailExclamation,
-  IconMailOpened
-} from '@tabler/icons-react';
+import { IconBellCheck, IconBellExclamation } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PlaceholderPill } from '../components/items/Placeholder';
+import { api } from '../App';
 import { StylishText } from '../components/items/StylishText';
 import { PanelGroup } from '../components/nav/PanelGroup';
 import { TableColumn } from '../components/tables/Column';
@@ -77,7 +72,20 @@ export default function NotificationsPage() {
             params={{ read: false }}
             refreshId={unreadRefresh.refreshId}
             tableKey="notifications-unread"
-            actions={(record) => []}
+            actions={(record) => [
+              {
+                title: t`Mark as read`,
+                onClick: () => {
+                  api
+                    .patch(`/notifications/${record.pk}/`, {
+                      read: true
+                    })
+                    .then((response) => {
+                      unreadRefresh.refreshTable();
+                    });
+                }
+              }
+            ]}
           />
         )
       },
@@ -90,12 +98,36 @@ export default function NotificationsPage() {
             params={{ read: true }}
             refreshId={historyRefresh.refreshId}
             tableKey="notifications-history"
-            actions={(record) => []}
+            actions={(record) => [
+              {
+                title: t`Mark as unread`,
+                onClick: () => {
+                  api
+                    .patch(`/notifications/${record.pk}/`, {
+                      read: false
+                    })
+                    .then((response) => {
+                      historyRefresh.refreshTable();
+                    });
+                }
+              },
+              {
+                title: t`Delete`,
+                color: 'red',
+                onClick: () => {
+                  api
+                    .delete(`/notifications/${record.pk}/`)
+                    .then((response) => {
+                      historyRefresh.refreshTable();
+                    });
+                }
+              }
+            ]}
           />
         )
       }
     ];
-  }, []);
+  }, [historyRefresh, unreadRefresh]);
 
   return (
     <>
