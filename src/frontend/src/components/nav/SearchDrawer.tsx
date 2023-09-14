@@ -2,6 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
   Alert,
+  Anchor,
   Center,
   Checkbox,
   Divider,
@@ -209,13 +210,13 @@ function QueryResultGroup({
         <Divider />
         <Stack>
           {query.results.results.map((result: any) => (
-            <div onClick={() => onResultClick(query.name, result.pk)}>
+            <Anchor onClick={() => onResultClick(query.name, result.pk)}>
               <RenderInstance
                 key={`${query.name}-${result.pk}`}
                 instance={result}
                 model={query.name}
               />
-            </div>
+            </Anchor>
           ))}
         </Stack>
         <Space />
