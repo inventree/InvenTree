@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Progress } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
@@ -116,9 +117,11 @@ function buildOrderTableParams(params: any): any {
  */
 export function BuildOrderTable({ params = {} }: { params?: any }) {
   // Add required query parameters
-  let tableParams = useMemo(() => buildOrderTableParams(params), [params]);
-  let tableColumns = useMemo(() => buildOrderTableColumns(), []);
-  let tableFilters = useMemo(() => buildOrderTableFilters(), []);
+  const tableParams = useMemo(() => buildOrderTableParams(params), [params]);
+  const tableColumns = useMemo(() => buildOrderTableColumns(), []);
+  const tableFilters = useMemo(() => buildOrderTableFilters(), []);
+
+  const navigate = useNavigate();
 
   tableParams.part_detail = true;
 
@@ -130,6 +133,7 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
       params={tableParams}
       columns={tableColumns}
       customFilters={tableFilters}
+      onRowClick={(row) => navigate(`/build/${row.pk}`)}
     />
   );
 }
