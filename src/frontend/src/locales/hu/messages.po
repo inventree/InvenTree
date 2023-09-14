@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-12 00:10\n"
+"PO-Revision-Date: 2023-09-14 01:14\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -189,7 +189,7 @@ msgstr "Státusz: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:286
 #: src/components/nav/SearchDrawer.tsx:425
-#: src/components/tables/InvenTreeTable.tsx:373
+#: src/components/tables/InvenTreeTable.tsx:378
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
@@ -215,7 +215,7 @@ msgid "Read More"
 msgstr "Tudj meg többet"
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:365
+#: src/components/tables/InvenTreeTable.tsx:370
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
@@ -579,37 +579,37 @@ msgstr "Szűrő hozzáadása"
 msgid "No records found"
 msgstr "Nincs találat"
 
-#: src/components/tables/InvenTreeTable.tsx:352
+#: src/components/tables/InvenTreeTable.tsx:357
 msgid "Bad request"
 msgstr "Hibás kérés"
 
-#: src/components/tables/InvenTreeTable.tsx:355
+#: src/components/tables/InvenTreeTable.tsx:360
 msgid "Unauthorized"
 msgstr "Jogosulatlan"
 
-#: src/components/tables/InvenTreeTable.tsx:358
+#: src/components/tables/InvenTreeTable.tsx:363
 msgid "Forbidden"
 msgstr "Tiltott"
 
-#: src/components/tables/InvenTreeTable.tsx:361
+#: src/components/tables/InvenTreeTable.tsx:366
 msgid "Not found"
 msgstr "Nem található"
 
-#: src/components/tables/InvenTreeTable.tsx:422
-#: src/components/tables/InvenTreeTable.tsx:423
+#: src/components/tables/InvenTreeTable.tsx:427
+#: src/components/tables/InvenTreeTable.tsx:428
 msgid "Barcode actions"
 msgstr "Vonalkód műveletek"
 
-#: src/components/tables/InvenTreeTable.tsx:430
-#: src/components/tables/InvenTreeTable.tsx:431
+#: src/components/tables/InvenTreeTable.tsx:435
+#: src/components/tables/InvenTreeTable.tsx:436
 msgid "Print actions"
 msgstr "Nyomtatási műveletek"
 
-#: src/components/tables/InvenTreeTable.tsx:448
+#: src/components/tables/InvenTreeTable.tsx:453
 msgid "Refresh data"
 msgstr "Adatok frissítése"
 
-#: src/components/tables/InvenTreeTable.tsx:466
+#: src/components/tables/InvenTreeTable.tsx:471
 msgid "Table filters"
 msgstr "Táblaszűrők"
 
@@ -1638,3 +1638,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+
