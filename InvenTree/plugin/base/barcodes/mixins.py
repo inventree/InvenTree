@@ -55,6 +55,15 @@ class BarcodeMixin:
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Scan a barcode to receive a purchase order item.
 
+        It's recommended to use the receive_purchase_order_item method to return from this function.
+
+        If the barcode contains information about a supplier part and this plugin finds a valid
+        purchase order line item for it, it should return a dict, containing said "lineitem".
+        If location and quantity information is available as well, the dict should also contain
+        a "success" message.
+        If either or both aren't available it should contain an "action_required" message.
+        If any errors occur during this, it should contain an "error" message.
+
         Default return value is None
         """
 
