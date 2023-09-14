@@ -271,8 +271,8 @@ class BarcodePOReceive(APIView):
             raise ValidationError({"barcode": _("Missing barcode data")})
 
         purchase_order = None
-        if (purchase_order_pk := data.get("purchase_order")):
-            purchase_order = PurchaseOrder.objects.get(pk=purchase_order_pk)
+        if purchase_order_pk := data.get("purchase_order"):
+            purchase_order = PurchaseOrder.objects.filter(pk=purchase_order_pk).first()
             if not purchase_order:
                 raise ValidationError({"purchase_order": _("Invalid purchase order")})
 

@@ -200,9 +200,7 @@ class BarcodeMixin:
             elif location := supplier_part.part.get_default_location():
                 pass
             elif StockLocation.objects.count() <= 1:
-                if stock_locations := StockLocation.objects.all():
-                    location = stock_locations[0]
-                else:
+                if not (location := StockLocation.objects.first()):
                     no_stock_locations = True
 
         response = {
