@@ -1,13 +1,17 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { editPart } from '../../../functions/forms/PartForms';
 import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 
 /**
  * Construct a list of columns for the part table
@@ -17,6 +21,7 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'name',
       sortable: true,
+      noWrap: true,
       title: t`Part`,
       render: function (record: any) {
         // TODO - Link to the part detail page
@@ -186,12 +191,38 @@ function partTableParams(params: any): any {
  * @returns
  */
 export function PartListTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => partTableParams(params), []);
+  let tableParams = useMemo(() => partTableParams(params), [params]);
   let tableColumns = useMemo(() => partTableColumns(), []);
   let tableFilters = useMemo(() => partTableFilters(), []);
 
-  // Add required query parameters
-  tableParams.category_detail = true;
+  // Callback function for generating set of row actions
+  function partTableRowActions(record: any): RowAction[] {
+    let actions: RowAction[] = [];
+
+    actions.push({
+      title: t`Edit`,
+      onClick: () => {
+        editPart({
+          part_id: record.pk,
+          callback: () => {
+            // TODO: Reload the table, somehow?
+            notYetImplemented();
+          }
+        });
+      }
+    });
+
+    actions.push({
+      title: t`Detail`,
+      onClick: () => {
+        navigate(`/part/${record.pk}/`);
+      }
+    });
+
+    return actions;
+  }
+
+  const navigate = useNavigate();
 
   return (
     <InvenTreeTable
@@ -205,6 +236,7 @@ export function PartListTable({ params = {} }: { params?: any }) {
       params={tableParams}
       columns={tableColumns}
       customFilters={tableFilters}
+      rowActions={partTableRowActions}
     />
   );
 }

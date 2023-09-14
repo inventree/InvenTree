@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-08-25 03:12\n"
+"PO-Revision-Date: 2023-09-12 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -21,6 +21,26 @@ msgstr ""
 #: src/components/DashboardItemProxy.tsx:32
 msgid "Title"
 msgstr "Titel"
+
+#: src/components/forms/ApiForm.tsx:189
+msgid "Success"
+msgstr ""
+
+#: src/components/forms/ApiForm.tsx:262
+msgid "Form Errors Exist"
+msgstr ""
+
+#: src/components/forms/ApiForm.tsx:301
+#: src/components/tables/FilterSelectModal.tsx:166
+#: src/contexts/ThemeContext.tsx:65
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: src/components/forms/ApiForm.tsx:310
+#: src/contexts/ThemeContext.tsx:65
+#: src/pages/Index/Profile/UserPanel.tsx:107
+msgid "Submit"
+msgstr "Skicka"
 
 #: src/components/forms/AuthenticationForm.tsx:36
 msgid "Login failed"
@@ -165,12 +185,33 @@ msgstr "Namn: {0}"
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
+#: src/components/forms/fields/ApiFormField.tsx:286
+#: src/components/nav/SearchDrawer.tsx:425
+#: src/components/tables/InvenTreeTable.tsx:368
+#: src/pages/ErrorPage.tsx:12
+#: src/pages/ErrorPage.tsx:25
+msgid "Error"
+msgstr "Fel"
+
+#: src/components/forms/fields/RelatedModelField.tsx:194
+msgid "Search"
+msgstr ""
+
+#: src/components/forms/fields/RelatedModelField.tsx:195
+#: src/components/widgets/WidgetLayout.tsx:134
+msgid "Loading"
+msgstr ""
+
+#: src/components/forms/fields/RelatedModelField.tsx:197
+msgid "No results found"
+msgstr "Inga resultat hittades"
+
 #: src/components/items/DocTooltip.tsx:89
 msgid "Read More"
 msgstr "Läs mer"
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:336
+#: src/components/tables/InvenTreeTable.tsx:360
 msgid "Unknown error"
 msgstr "Okänt fel"
 
@@ -198,8 +239,8 @@ msgstr "PLH"
 msgid "Scan QR code"
 msgstr "Skanna QR-kod"
 
-#: src/components/items/Thumbnail.tsx:8
-#: src/components/items/Thumbnail.tsx:41
+#: src/components/items/Thumbnail.tsx:10
+#: src/components/items/Thumbnail.tsx:43
 msgid "Thumbnail"
 msgstr "Miniatyrbild"
 
@@ -313,92 +354,97 @@ msgstr "Dokumentation"
 msgid "About"
 msgstr "Om"
 
-#: src/components/nav/SearchDrawer.tsx:65
+#: src/components/nav/SearchDrawer.tsx:60
 #: src/defaults/links.tsx:26
-#: src/pages/Index/Part.tsx:13
+#: src/pages/part/PartIndex.tsx:23
+#: src/pages/part/PartIndex.tsx:46
 msgid "Parts"
 msgstr "Artiklar"
 
-#: src/components/nav/SearchDrawer.tsx:74
+#: src/components/nav/SearchDrawer.tsx:68
 msgid "Supplier Parts"
 msgstr "Leverantörsartikel"
 
-#: src/components/nav/SearchDrawer.tsx:88
+#: src/components/nav/SearchDrawer.tsx:81
 msgid "Manufacturer Parts"
 msgstr "Tillverkarens artiklar"
 
-#: src/components/nav/SearchDrawer.tsx:102
+#: src/components/nav/SearchDrawer.tsx:94
 msgid "Part Categories"
 msgstr "Artikelkategorier"
 
-#: src/components/nav/SearchDrawer.tsx:111
+#: src/components/nav/SearchDrawer.tsx:102
 #: src/pages/Index/Stock.tsx:13
 msgid "Stock Items"
 msgstr "Artikel i lager"
 
-#: src/components/nav/SearchDrawer.tsx:123
+#: src/components/nav/SearchDrawer.tsx:113
 msgid "Stock Locations"
 msgstr "Lagerplats"
 
-#: src/components/nav/SearchDrawer.tsx:132
+#: src/components/nav/SearchDrawer.tsx:121
 #: src/pages/Index/Build.tsx:13
+#: src/pages/part/PartDetail.tsx:76
 msgid "Build Orders"
 msgstr "Byggordrar"
 
-#: src/components/nav/SearchDrawer.tsx:143
+#: src/components/nav/SearchDrawer.tsx:131
 msgid "Companies"
 msgstr "Företag"
 
-#: src/components/nav/SearchDrawer.tsx:153
+#: src/components/nav/SearchDrawer.tsx:140
+#: src/pages/part/PartDetail.tsx:103
 msgid "Purchase Orders"
 msgstr "Inköpsorder"
 
-#: src/components/nav/SearchDrawer.tsx:164
+#: src/components/nav/SearchDrawer.tsx:150
+#: src/pages/part/PartDetail.tsx:110
 msgid "Sales Orders"
 msgstr "Försäljningsorder"
 
-#: src/components/nav/SearchDrawer.tsx:175
+#: src/components/nav/SearchDrawer.tsx:160
 msgid "Return Orders"
 msgstr "Returorder"
 
-#: src/components/nav/SearchDrawer.tsx:209
+#: src/components/nav/SearchDrawer.tsx:195
 msgid "results"
 msgstr "resultat"
 
-#: src/components/nav/SearchDrawer.tsx:346
+#: src/components/nav/SearchDrawer.tsx:351
 msgid "Enter search text"
 msgstr "Ange sökord"
 
-#: src/components/nav/SearchDrawer.tsx:373
+#: src/components/nav/SearchDrawer.tsx:378
 msgid "Search Options"
 msgstr "Sökalternativ"
 
-#: src/components/nav/SearchDrawer.tsx:376
+#: src/components/nav/SearchDrawer.tsx:381
 msgid "Regex search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:386
+#: src/components/nav/SearchDrawer.tsx:391
 msgid "Whole word search"
 msgstr "Hela ordsökningen"
 
-#: src/components/nav/SearchDrawer.tsx:419
-#: src/components/tables/InvenTreeTable.tsx:344
-#: src/pages/ErrorPage.tsx:12
-#: src/pages/ErrorPage.tsx:25
-msgid "Error"
-msgstr "Fel"
-
-#: src/components/nav/SearchDrawer.tsx:422
+#: src/components/nav/SearchDrawer.tsx:428
 msgid "An error occurred during search query"
 msgstr "Ett fel inträffade under sökfrågan"
 
-#: src/components/nav/SearchDrawer.tsx:430
+#: src/components/nav/SearchDrawer.tsx:439
 msgid "No results"
 msgstr "Inga resultat"
 
-#: src/components/nav/SearchDrawer.tsx:433
+#: src/components/nav/SearchDrawer.tsx:442
 msgid "No results available for search query"
 msgstr "Inga resultat tillgängliga för sökfrågan"
+
+#: src/components/render/Instance.tsx:65
+msgid "Unknown model: {model}"
+msgstr ""
+
+#: src/components/render/Order.tsx:67
+msgid "Shipment"
+msgstr ""
 
 #: src/components/tables/ColumnSelect.tsx:17
 #: src/components/tables/ColumnSelect.tsx:24
@@ -469,66 +515,65 @@ msgstr "Värde"
 msgid "Select filter value"
 msgstr "Välj filtervärde"
 
-#: src/components/tables/FilterSelectModal.tsx:166
-#: src/contexts/ThemeContext.tsx:62
-msgid "Cancel"
-msgstr "Avbryt"
-
 #: src/components/tables/FilterSelectModal.tsx:172
 msgid "Add Filter"
 msgstr "Lägg till filter"
 
-#: src/components/tables/InvenTreeTable.tsx:95
+#: src/components/tables/InvenTreeTable.tsx:96
 msgid "No records found"
 msgstr "Inga resultat hittades"
 
-#: src/components/tables/InvenTreeTable.tsx:323
+#: src/components/tables/InvenTreeTable.tsx:347
 msgid "Bad request"
 msgstr "Felaktig begäran"
 
-#: src/components/tables/InvenTreeTable.tsx:326
+#: src/components/tables/InvenTreeTable.tsx:350
 msgid "Unauthorized"
 msgstr "Ej behörig"
 
-#: src/components/tables/InvenTreeTable.tsx:329
+#: src/components/tables/InvenTreeTable.tsx:353
 msgid "Forbidden"
 msgstr "Otillåten"
 
-#: src/components/tables/InvenTreeTable.tsx:332
+#: src/components/tables/InvenTreeTable.tsx:356
 msgid "Not found"
 msgstr "Hittades inte"
 
-#: src/components/tables/InvenTreeTable.tsx:381
-#: src/components/tables/InvenTreeTable.tsx:382
+#: src/components/tables/InvenTreeTable.tsx:405
+#: src/components/tables/InvenTreeTable.tsx:406
 msgid "Barcode actions"
 msgstr "Streckkods åtgärder"
 
-#: src/components/tables/InvenTreeTable.tsx:389
-#: src/components/tables/InvenTreeTable.tsx:390
+#: src/components/tables/InvenTreeTable.tsx:413
+#: src/components/tables/InvenTreeTable.tsx:414
 msgid "Print actions"
 msgstr "Skriv ut åtgärder"
 
-#: src/components/tables/InvenTreeTable.tsx:407
+#: src/components/tables/InvenTreeTable.tsx:431
 msgid "Refresh data"
 msgstr "Uppdatera data"
 
-#: src/components/tables/InvenTreeTable.tsx:425
+#: src/components/tables/InvenTreeTable.tsx:449
 msgid "Table filters"
 msgstr "Tabellfilter"
+
+#: src/components/tables/RowActions.tsx:35
+msgid "Actions"
+msgstr "Åtgärder"
 
 #: src/components/tables/build/BuildOrderTable.tsx:18
 msgid "Reference"
 msgstr "Referens"
 
 #: src/components/tables/build/BuildOrderTable.tsx:24
-#: src/components/tables/part/PartTable.tsx:20
-#: src/components/tables/stock/StockItemTable.tsx:21
+#: src/components/tables/part/PartTable.tsx:25
+#: src/components/tables/stock/StockItemTable.tsx:22
 msgid "Part"
 msgstr "Artkel"
 
 #: src/components/tables/build/BuildOrderTable.tsx:41
-#: src/components/tables/part/PartTable.tsx:46
-#: src/components/tables/stock/StockItemTable.tsx:37
+#: src/components/tables/part/PartTable.tsx:51
+#: src/components/tables/stock/StockItemTable.tsx:38
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -549,7 +594,7 @@ msgid "Completed"
 msgstr "Slutförd"
 
 #: src/components/tables/build/BuildOrderTable.tsx:86
-#: src/components/tables/stock/StockItemTable.tsx:50
+#: src/components/tables/stock/StockItemTable.tsx:51
 msgid "Status"
 msgstr "Status"
 
@@ -557,151 +602,157 @@ msgstr "Status"
 msgid "Created"
 msgstr "Skapad"
 
-#: src/components/tables/part/PartTable.tsx:34
+#: src/components/tables/part/PartTable.tsx:39
 msgid "IPN"
 msgstr "IAN"
 
-#: src/components/tables/part/PartTable.tsx:41
+#: src/components/tables/part/PartTable.tsx:46
 msgid "Units"
 msgstr "Enheter"
 
-#: src/components/tables/part/PartTable.tsx:52
+#: src/components/tables/part/PartTable.tsx:57
 msgid "Category"
 msgstr "Kategori"
 
-#: src/components/tables/part/PartTable.tsx:63
-#: src/components/tables/stock/StockItemTable.tsx:42
+#: src/components/tables/part/PartTable.tsx:68
+#: src/components/tables/stock/StockItemTable.tsx:43
 #: src/defaults/links.tsx:27
+#: src/pages/part/PartDetail.tsx:56
 msgid "Stock"
 msgstr "Lagersaldo"
 
-#: src/components/tables/part/PartTable.tsx:69
+#: src/components/tables/part/PartTable.tsx:74
 msgid "Price Range"
 msgstr "Prisintervall"
 
-#: src/components/tables/part/PartTable.tsx:79
+#: src/components/tables/part/PartTable.tsx:84
 msgid "Link"
 msgstr "Länk"
 
-#: src/components/tables/part/PartTable.tsx:92
+#: src/components/tables/part/PartTable.tsx:97
 msgid "Active"
 msgstr "Aktiv"
 
-#: src/components/tables/part/PartTable.tsx:93
+#: src/components/tables/part/PartTable.tsx:98
 msgid "Filter by part active status"
 msgstr "Filtrera på aktiv artiklestatus"
 
-#: src/components/tables/part/PartTable.tsx:98
+#: src/components/tables/part/PartTable.tsx:103
 msgid "Assembly"
 msgstr "Montering"
 
-#: src/components/tables/part/PartTable.tsx:99
+#: src/components/tables/part/PartTable.tsx:104
 msgid "Filter by assembly attribute"
 msgstr "Filtrera efter monteringsattribut"
 
-#: src/components/tables/part/PartTable.tsx:104
+#: src/components/tables/part/PartTable.tsx:109
 msgid "Include Subcategories"
 msgstr "Inkludera underkategorier"
 
-#: src/components/tables/part/PartTable.tsx:105
+#: src/components/tables/part/PartTable.tsx:110
 msgid "Include parts in subcategories"
 msgstr "Inkludera artiklar från underkategorier"
 
-#: src/components/tables/part/PartTable.tsx:110
+#: src/components/tables/part/PartTable.tsx:115
 msgid "Component"
 msgstr "Komponent"
 
-#: src/components/tables/part/PartTable.tsx:111
+#: src/components/tables/part/PartTable.tsx:116
 msgid "Filter by component attribute"
 msgstr "Filtrera efter komponentattribut"
 
-#: src/components/tables/part/PartTable.tsx:116
+#: src/components/tables/part/PartTable.tsx:121
 msgid "Trackable"
 msgstr "Spårbart objekt"
 
-#: src/components/tables/part/PartTable.tsx:117
+#: src/components/tables/part/PartTable.tsx:122
 msgid "Filter by trackable attribute"
 msgstr "Filtrera på spårbart attribut"
 
-#: src/components/tables/part/PartTable.tsx:122
+#: src/components/tables/part/PartTable.tsx:127
 msgid "Has Units"
 msgstr "Har enheter"
 
-#: src/components/tables/part/PartTable.tsx:123
+#: src/components/tables/part/PartTable.tsx:128
 msgid "Filter by parts which have units"
 msgstr "Filtrera efter artiklar som har enheter"
 
-#: src/components/tables/part/PartTable.tsx:128
+#: src/components/tables/part/PartTable.tsx:133
 msgid "Has IPN"
 msgstr "Har IAN"
 
-#: src/components/tables/part/PartTable.tsx:129
+#: src/components/tables/part/PartTable.tsx:134
 msgid "Filter by parts which have an internal part number"
 msgstr "Filtrera efter artiklar som har ett internt artikelnummer"
 
-#: src/components/tables/part/PartTable.tsx:134
+#: src/components/tables/part/PartTable.tsx:139
 msgid "Has Stock"
 msgstr "I lager"
 
-#: src/components/tables/part/PartTable.tsx:135
+#: src/components/tables/part/PartTable.tsx:140
 msgid "Filter by parts which have stock"
 msgstr "Filtrera efter artiklar som har enheter"
 
-#: src/components/tables/part/PartTable.tsx:140
+#: src/components/tables/part/PartTable.tsx:145
 #: src/defaults/dashboardItems.tsx:41
 msgid "Low Stock"
 msgstr "Få i lager"
 
-#: src/components/tables/part/PartTable.tsx:141
+#: src/components/tables/part/PartTable.tsx:146
 msgid "Filter by parts which have low stock"
 msgstr "Filtrera på ariklar som har lågt saldo"
 
-#: src/components/tables/part/PartTable.tsx:146
+#: src/components/tables/part/PartTable.tsx:151
 msgid "Purchaseable"
 msgstr "Kan köpas"
 
-#: src/components/tables/part/PartTable.tsx:147
+#: src/components/tables/part/PartTable.tsx:152
 msgid "Filter by parts which are purchaseable"
 msgstr "Filtrera på artiklar som kan köpas"
 
-#: src/components/tables/part/PartTable.tsx:152
+#: src/components/tables/part/PartTable.tsx:157
 msgid "Salable"
 msgstr "Försäljningsbar"
 
-#: src/components/tables/part/PartTable.tsx:153
+#: src/components/tables/part/PartTable.tsx:158
 msgid "Filter by parts which are salable"
 msgstr "Filtrera på artiklar som kan säljas"
 
-#: src/components/tables/part/PartTable.tsx:158
-#: src/components/tables/part/PartTable.tsx:162
+#: src/components/tables/part/PartTable.tsx:163
+#: src/components/tables/part/PartTable.tsx:167
 msgid "Virtual"
 msgstr "Virtuell"
 
-#: src/components/tables/part/PartTable.tsx:159
+#: src/components/tables/part/PartTable.tsx:164
 msgid "Filter by parts which are virtual"
 msgstr "Filtrera efter artiklar som är virtuella"
 
-#: src/components/tables/part/PartTable.tsx:163
+#: src/components/tables/part/PartTable.tsx:168
 msgid "Not Virtual"
 msgstr "Inte virtuell"
 
-#: src/components/tables/stock/StockItemTable.tsx:57
+#: src/components/tables/part/PartTable.tsx:203
+#: src/components/tables/stock/StockItemTable.tsx:124
+msgid "Edit"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:216
+msgid "Detail"
+msgstr ""
+
+#: src/components/tables/stock/StockItemTable.tsx:58
 msgid "Batch"
 msgstr "Batch"
 
-#: src/components/tables/stock/StockItemTable.tsx:63
+#: src/components/tables/stock/StockItemTable.tsx:64
 msgid "Location"
 msgstr "Plats"
 
-#: src/components/tables/stock/StockItemTable.tsx:80
-msgid "Actions"
-msgstr "Åtgärder"
-
-#: src/components/tables/stock/StockItemTable.tsx:124
+#: src/components/tables/stock/StockItemTable.tsx:100
 msgid "Test Filter"
 msgstr "Testa filter"
 
-#: src/components/tables/stock/StockItemTable.tsx:125
+#: src/components/tables/stock/StockItemTable.tsx:101
 msgid "This is a test filter"
 msgstr "Detta är ett testfilter"
 
@@ -736,10 +787,6 @@ msgstr ""
 msgid "Getting started"
 msgstr ""
 
-#: src/components/widgets/WidgetLayout.tsx:134
-msgid "Loading"
-msgstr ""
-
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
 msgstr ""
@@ -763,11 +810,6 @@ msgstr ""
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
 msgstr ""
-
-#: src/contexts/ThemeContext.tsx:62
-#: src/pages/Index/Profile/UserPanel.tsx:107
-msgid "Submit"
-msgstr "Skicka"
 
 #: src/defaults/dashboardItems.tsx:6
 msgid "Subscribed Parts"
@@ -869,7 +911,7 @@ msgstr "Bygg"
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:25
-#: src/pages/Index/Playground.tsx:12
+#: src/pages/Index/Playground.tsx:87
 msgid "Playground"
 msgstr ""
 
@@ -1034,6 +1076,76 @@ msgstr "Redan inloggad"
 msgid "Found an existing login - using it to log you in."
 msgstr "Hittade en befintlig inloggning - använder den för att logga in dig."
 
+#: src/functions/forms.tsx:48
+#: src/functions/forms.tsx:57
+#: src/functions/forms.tsx:137
+msgid "Form Error"
+msgstr ""
+
+#: src/functions/forms.tsx:49
+msgid "Form method not provided"
+msgstr ""
+
+#: src/functions/forms.tsx:58
+msgid "Response did not contain action data"
+msgstr ""
+
+#: src/functions/forms.tsx:96
+msgid "Invalid Form"
+msgstr ""
+
+#: src/functions/forms.tsx:97
+msgid "method parameter not supplied"
+msgstr ""
+
+#: src/functions/forms.tsx:177
+msgid "Delete"
+msgstr "Radera"
+
+#: src/functions/forms/PartForms.tsx:76
+msgid "Create Part"
+msgstr ""
+
+#: src/functions/forms/PartForms.tsx:78
+msgid "Part created"
+msgstr ""
+
+#: src/functions/forms/PartForms.tsx:96
+msgid "Edit Part"
+msgstr ""
+
+#: src/functions/forms/PartForms.tsx:99
+msgid "Part updated"
+msgstr ""
+
+#: src/functions/forms/PartForms.tsx:111
+msgid "Parent part category"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:30
+msgid "Add given quantity as packs instead of individual items"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:39
+msgid "Enter initial quantity for this stock item"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:44
+msgid "Serial Numbers"
+msgstr "Serienummer"
+
+#: src/functions/forms/StockForms.tsx:45
+msgid "Enter serial numbers for new stock (or leave blank)"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:90
+msgid "Create Stock Item"
+msgstr ""
+
+#: src/functions/forms/StockForms.tsx:104
+msgid "Edit Stock Item"
+msgstr ""
+
 #: src/functions/notifications.tsx:9
 msgid "Not implemented"
 msgstr "Inte implementerad"
@@ -1041,6 +1153,22 @@ msgstr "Inte implementerad"
 #: src/functions/notifications.tsx:10
 msgid "This feature is not yet implemented"
 msgstr "Denna funktionen har inte implementerats"
+
+#: src/functions/notifications.tsx:20
+msgid "Permission denied"
+msgstr ""
+
+#: src/functions/notifications.tsx:21
+msgid "You do not have permission to perform this action"
+msgstr ""
+
+#: src/functions/notifications.tsx:32
+msgid "Invalid Return Code"
+msgstr ""
+
+#: src/functions/notifications.tsx:33
+msgid "Server returned status {returnCode}"
+msgstr ""
 
 #: src/pages/Auth/Logged-In.tsx:18
 msgid "Checking if you are already logged in"
@@ -1102,7 +1230,7 @@ msgstr "Denna sida är en ersättning för den gamla startsidan med samma inform
 msgid "Welcome to your Dashboard{0}"
 msgstr ""
 
-#: src/pages/Index/Playground.tsx:17
+#: src/pages/Index/Playground.tsx:92
 msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr ""
 
@@ -1316,6 +1444,54 @@ msgstr "Tyvärr, denna sida hittades inte eller flyttad."
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
 msgstr "Gå till startsidan"
+
+#: src/pages/part/PartDetail.tsx:50
+msgid "Details"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:62
+msgid "Variants"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:69
+msgid "Bill of Materials"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:83
+msgid "Used In"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:90
+msgid "Pricing"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:96
+msgid "Suppliers"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:117
+msgid "Test Templates"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:124
+msgid "Related Parts"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:130
+msgid "Attachments"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:136
+msgid "Notes"
+msgstr ""
+
+#: src/pages/part/PartIndex.tsx:29
+msgid "Categories"
+msgstr ""
+
+#: src/pages/part/PartIndex.tsx:35
+msgid "Parameters"
+msgstr ""
 
 #: src/views/MobileAppView.tsx:14
 msgid "Mobile viewport detected"

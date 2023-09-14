@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-30 00:27+0000\n"
+"POT-Creation-Date: 2023-09-07 23:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -106,27 +106,27 @@ msgstr ""
 msgid "Old password"
 msgstr ""
 
-#: InvenTree/forms.py:181
+#: InvenTree/forms.py:199
 msgid "Email (again)"
 msgstr ""
 
-#: InvenTree/forms.py:185
+#: InvenTree/forms.py:203
 msgid "Email address confirmation"
 msgstr ""
 
-#: InvenTree/forms.py:206
+#: InvenTree/forms.py:224
 msgid "You must type the same email each time."
 msgstr ""
 
-#: InvenTree/forms.py:237 InvenTree/forms.py:243
+#: InvenTree/forms.py:255 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
 msgstr ""
 
-#: InvenTree/forms.py:249
+#: InvenTree/forms.py:267
 msgid "The provided email domain is not approved."
 msgstr ""
 
-#: InvenTree/forms.py:354
+#: InvenTree/forms.py:372
 msgid "Registration is disabled."
 msgstr ""
 
@@ -268,7 +268,7 @@ msgstr ""
 msgid "Select file to attach"
 msgstr ""
 
-#: InvenTree/models.py:493 common/models.py:2751 company/models.py:128
+#: InvenTree/models.py:493 common/models.py:2758 company/models.py:128
 #: company/models.py:381 company/models.py:455 company/models.py:734
 #: order/models.py:240 order/models.py:1106 order/models.py:1466
 #: part/admin.py:39 part/models.py:905
@@ -299,9 +299,9 @@ msgstr ""
 msgid "File comment"
 msgstr ""
 
-#: InvenTree/models.py:503 InvenTree/models.py:504 common/models.py:2210
-#: common/models.py:2211 common/models.py:2424 common/models.py:2425
-#: common/models.py:2681 common/models.py:2682 part/models.py:3050
+#: InvenTree/models.py:503 InvenTree/models.py:504 common/models.py:2217
+#: common/models.py:2218 common/models.py:2431 common/models.py:2432
+#: common/models.py:2688 common/models.py:2689 part/models.py:3050
 #: part/models.py:3138 part/models.py:3217 part/models.py:3237
 #: plugin/models.py:224 plugin/models.py:225
 #: report/templates/report/inventree_test_report_base.html:105
@@ -346,8 +346,8 @@ msgstr ""
 msgid "Invalid choice"
 msgstr ""
 
-#: InvenTree/models.py:648 InvenTree/models.py:649 common/models.py:2410
-#: common/models.py:2858 company/models.py:539 label/models.py:119
+#: InvenTree/models.py:648 InvenTree/models.py:649 common/models.py:2417
+#: common/models.py:2865 company/models.py:539 label/models.py:119
 #: part/models.py:851 part/models.py:3437 plugin/models.py:42
 #: report/models.py:164 templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -436,11 +436,11 @@ msgstr ""
 msgid "Existing barcode found"
 msgstr ""
 
-#: InvenTree/models.py:900
+#: InvenTree/models.py:901
 msgid "Server Error"
 msgstr ""
 
-#: InvenTree/models.py:901
+#: InvenTree/models.py:902
 msgid "An error has been logged by the server."
 msgstr ""
 
@@ -653,7 +653,7 @@ msgstr ""
 #: InvenTree/status_codes.py:12 InvenTree/status_codes.py:40
 #: InvenTree/status_codes.py:148 InvenTree/status_codes.py:167
 #: InvenTree/status_codes.py:188 generic/states/tests.py:16
-#: templates/js/translated/table_filters.js:533
+#: templates/js/translated/table_filters.js:558
 msgid "Pending"
 msgstr ""
 
@@ -814,7 +814,7 @@ msgstr ""
 msgid "Returned against Return Order"
 msgstr ""
 
-#: InvenTree/status_codes.py:141 templates/js/translated/table_filters.js:327
+#: InvenTree/status_codes.py:141 templates/js/translated/table_filters.js:351
 msgid "Sent to customer"
 msgstr ""
 
@@ -890,39 +890,39 @@ msgstr ""
 msgid "About InvenTree"
 msgstr ""
 
-#: build/api.py:242
+#: build/api.py:243
 msgid "Build must be cancelled before it can be deleted"
 msgstr ""
 
-#: build/api.py:286 part/models.py:3836 templates/js/translated/bom.js:997
+#: build/api.py:287 part/models.py:3836 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2493
-#: templates/js/translated/table_filters.js:166
-#: templates/js/translated/table_filters.js:518
+#: templates/js/translated/table_filters.js:190
+#: templates/js/translated/table_filters.js:543
 msgid "Consumable"
 msgstr ""
 
-#: build/api.py:287 part/models.py:3830 part/templates/part/upload_bom.html:58
+#: build/api.py:288 part/models.py:3830 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:1001 templates/js/translated/bom.js:1028
 #: templates/js/translated/build.js:2502
-#: templates/js/translated/table_filters.js:162
-#: templates/js/translated/table_filters.js:191
-#: templates/js/translated/table_filters.js:522
+#: templates/js/translated/table_filters.js:186
+#: templates/js/translated/table_filters.js:215
+#: templates/js/translated/table_filters.js:547
 msgid "Optional"
 msgstr ""
 
-#: build/api.py:288 templates/js/translated/table_filters.js:360
-#: templates/js/translated/table_filters.js:514
+#: build/api.py:289 templates/js/translated/table_filters.js:384
+#: templates/js/translated/table_filters.js:539
 msgid "Tracked"
 msgstr ""
 
-#: build/api.py:290 part/admin.py:64 templates/js/translated/build.js:1717
+#: build/api.py:291 part/admin.py:64 templates/js/translated/build.js:1717
 #: templates/js/translated/build.js:2593
 #: templates/js/translated/sales_order.js:1926
-#: templates/js/translated/table_filters.js:506
+#: templates/js/translated/table_filters.js:531
 msgid "Allocated"
 msgstr ""
 
-#: build/api.py:300 company/models.py:782
+#: build/api.py:301 company/models.py:782
 #: company/templates/company/supplier_part.html:115
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
@@ -931,8 +931,8 @@ msgstr ""
 #: templates/js/translated/model_renderers.js:223
 #: templates/js/translated/part.js:669 templates/js/translated/part.js:671
 #: templates/js/translated/part.js:676
-#: templates/js/translated/table_filters.js:292
-#: templates/js/translated/table_filters.js:510
+#: templates/js/translated/table_filters.js:316
+#: templates/js/translated/table_filters.js:535
 msgid "Available"
 msgstr ""
 
@@ -1149,7 +1149,7 @@ msgstr ""
 #: templates/js/translated/build.js:2189
 #: templates/js/translated/purchase_order.js:1738
 #: templates/js/translated/return_order.js:356
-#: templates/js/translated/table_filters.js:467
+#: templates/js/translated/table_filters.js:491
 msgid "Responsible"
 msgstr ""
 
@@ -1183,7 +1183,7 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:1685
 #: templates/js/translated/return_order.js:315
 #: templates/js/translated/sales_order.js:803
-#: templates/js/translated/table_filters.js:24
+#: templates/js/translated/table_filters.js:48
 #: templates/project_code_data.html:6
 msgid "Project Code"
 msgstr ""
@@ -1230,7 +1230,7 @@ msgstr ""
 
 #: build/models.py:1287 build/models.py:1547 build/serializers.py:206
 #: build/serializers.py:244 build/templates/build/build_base.html:103
-#: build/templates/build/detail.html:34 common/models.py:2232
+#: build/templates/build/detail.html:34 common/models.py:2239
 #: order/models.py:1086 order/models.py:1658 order/serializers.py:1261
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:277
 #: part/forms.py:47 part/models.py:3029 part/models.py:3826
@@ -1757,10 +1757,10 @@ msgstr ""
 #: order/templates/order/order_base.html:122
 #: order/templates/order/return_order_base.html:118
 #: order/templates/order/sales_order_base.html:123
-#: templates/js/translated/table_filters.js:74
-#: templates/js/translated/table_filters.js:460
-#: templates/js/translated/table_filters.js:561
-#: templates/js/translated/table_filters.js:602
+#: templates/js/translated/table_filters.js:98
+#: templates/js/translated/table_filters.js:484
+#: templates/js/translated/table_filters.js:586
+#: templates/js/translated/table_filters.js:627
 msgid "Overdue"
 msgstr ""
 
@@ -1788,6 +1788,7 @@ msgstr ""
 #: build/templates/build/build_base.html:198
 #: build/templates/build/detail.html:115
 #: report/templates/report/inventree_build_order_base.html:152
+#: templates/js/translated/table_filters.js:24
 msgid "Issued By"
 msgstr ""
 
@@ -1840,8 +1841,8 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:1259
 #: templates/js/translated/stock.js:1092 templates/js/translated/stock.js:2122
 #: templates/js/translated/stock.js:3047
-#: templates/js/translated/table_filters.js:265
-#: templates/js/translated/table_filters.js:356
+#: templates/js/translated/table_filters.js:289
+#: templates/js/translated/table_filters.js:380
 msgid "Batch"
 msgstr ""
 
@@ -1859,7 +1860,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:149
 #: order/templates/order/sales_order_base.html:203
-#: templates/js/translated/table_filters.js:624
+#: templates/js/translated/table_filters.js:649
 msgid "Completed"
 msgstr ""
 
@@ -2298,8 +2299,8 @@ msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
 #: common/models.py:1218 part/admin.py:55 part/models.py:3597
-#: report/models.py:170 templates/js/translated/table_filters.js:115
-#: templates/js/translated/table_filters.js:702
+#: report/models.py:170 templates/js/translated/table_filters.js:139
+#: templates/js/translated/table_filters.js:727
 msgid "Template"
 msgstr ""
 
@@ -2309,8 +2310,8 @@ msgstr ""
 
 #: common/models.py:1225 part/admin.py:51 part/admin.py:283 part/models.py:1000
 #: templates/js/translated/bom.js:1628
-#: templates/js/translated/table_filters.js:282
-#: templates/js/translated/table_filters.js:656
+#: templates/js/translated/table_filters.js:306
+#: templates/js/translated/table_filters.js:681
 msgid "Assembly"
 msgstr ""
 
@@ -2319,7 +2320,7 @@ msgid "Parts can be assembled from other components by default"
 msgstr ""
 
 #: common/models.py:1232 part/admin.py:52 part/models.py:1006
-#: templates/js/translated/table_filters.js:664
+#: templates/js/translated/table_filters.js:689
 msgid "Component"
 msgstr ""
 
@@ -2336,7 +2337,7 @@ msgid "Parts are purchaseable by default"
 msgstr ""
 
 #: common/models.py:1246 part/admin.py:54 part/models.py:1022
-#: templates/js/translated/table_filters.js:690
+#: templates/js/translated/table_filters.js:715
 msgid "Salable"
 msgstr ""
 
@@ -2345,9 +2346,9 @@ msgid "Parts are salable by default"
 msgstr ""
 
 #: common/models.py:1253 part/admin.py:56 part/models.py:1012
-#: templates/js/translated/table_filters.js:123
-#: templates/js/translated/table_filters.js:199
-#: templates/js/translated/table_filters.js:706
+#: templates/js/translated/table_filters.js:147
+#: templates/js/translated/table_filters.js:223
+#: templates/js/translated/table_filters.js:731
 msgid "Trackable"
 msgstr ""
 
@@ -2357,8 +2358,8 @@ msgstr ""
 
 #: common/models.py:1260 part/admin.py:57 part/models.py:1032
 #: part/templates/part/part_base.html:156
-#: templates/js/translated/table_filters.js:119
-#: templates/js/translated/table_filters.js:710
+#: templates/js/translated/table_filters.js:143
+#: templates/js/translated/table_filters.js:735
 msgid "Virtual"
 msgstr ""
 
@@ -2902,7 +2903,7 @@ msgstr ""
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr ""
 
-#: common/models.py:1780 common/models.py:2203
+#: common/models.py:1780 common/models.py:2210
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
@@ -3314,11 +3315,19 @@ msgstr ""
 msgid "The stock location label template to be automatically selected"
 msgstr ""
 
-#: common/models.py:2233
+#: common/models.py:2195
+msgid "Receive error reports"
+msgstr ""
+
+#: common/models.py:2196
+msgid "Receive notifications for system errors"
+msgstr ""
+
+#: common/models.py:2240
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:2240 company/serializers.py:491 order/admin.py:43
+#: common/models.py:2247 company/serializers.py:491 order/admin.py:43
 #: order/models.py:1145 order/models.py:1952
 #: templates/js/translated/company.js:1854 templates/js/translated/part.js:1860
 #: templates/js/translated/pricing.js:621
@@ -3326,126 +3335,126 @@ msgstr ""
 msgid "Price"
 msgstr ""
 
-#: common/models.py:2241
+#: common/models.py:2248
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:2401 common/models.py:2579
+#: common/models.py:2408 common/models.py:2586
 msgid "Endpoint"
 msgstr ""
 
-#: common/models.py:2402
+#: common/models.py:2409
 msgid "Endpoint at which this webhook is received"
 msgstr ""
 
-#: common/models.py:2411
+#: common/models.py:2418
 msgid "Name for this webhook"
 msgstr ""
 
-#: common/models.py:2416 part/admin.py:50 part/models.py:1027
-#: plugin/models.py:48 templates/js/translated/table_filters.js:111
-#: templates/js/translated/table_filters.js:195
-#: templates/js/translated/table_filters.js:440
-#: templates/js/translated/table_filters.js:456
-#: templates/js/translated/table_filters.js:651
+#: common/models.py:2423 part/admin.py:50 part/models.py:1027
+#: plugin/models.py:48 templates/js/translated/table_filters.js:135
+#: templates/js/translated/table_filters.js:219
+#: templates/js/translated/table_filters.js:464
+#: templates/js/translated/table_filters.js:480
+#: templates/js/translated/table_filters.js:676
 msgid "Active"
 msgstr ""
 
-#: common/models.py:2417
+#: common/models.py:2424
 msgid "Is this webhook active"
 msgstr ""
 
-#: common/models.py:2431
+#: common/models.py:2438
 msgid "Token"
 msgstr ""
 
-#: common/models.py:2432
+#: common/models.py:2439
 msgid "Token for access"
 msgstr ""
 
-#: common/models.py:2439
+#: common/models.py:2446
 msgid "Secret"
 msgstr ""
 
-#: common/models.py:2440
+#: common/models.py:2447
 msgid "Shared secret for HMAC"
 msgstr ""
 
-#: common/models.py:2546
+#: common/models.py:2553
 msgid "Message ID"
 msgstr ""
 
-#: common/models.py:2547
+#: common/models.py:2554
 msgid "Unique identifier for this message"
 msgstr ""
 
-#: common/models.py:2555
+#: common/models.py:2562
 msgid "Host"
 msgstr ""
 
-#: common/models.py:2556
+#: common/models.py:2563
 msgid "Host from which this message was received"
 msgstr ""
 
-#: common/models.py:2563
+#: common/models.py:2570
 msgid "Header"
 msgstr ""
 
-#: common/models.py:2564
+#: common/models.py:2571
 msgid "Header of this message"
 msgstr ""
 
-#: common/models.py:2570
+#: common/models.py:2577
 msgid "Body"
 msgstr ""
 
-#: common/models.py:2571
+#: common/models.py:2578
 msgid "Body of this message"
 msgstr ""
 
-#: common/models.py:2580
+#: common/models.py:2587
 msgid "Endpoint on which this message was received"
 msgstr ""
 
-#: common/models.py:2585
+#: common/models.py:2592
 msgid "Worked on"
 msgstr ""
 
-#: common/models.py:2586
+#: common/models.py:2593
 msgid "Was the work on this message finished?"
 msgstr ""
 
-#: common/models.py:2740
+#: common/models.py:2747
 msgid "Id"
 msgstr ""
 
-#: common/models.py:2746 templates/js/translated/company.js:996
+#: common/models.py:2753 templates/js/translated/company.js:996
 #: templates/js/translated/news.js:44
 msgid "Title"
 msgstr ""
 
-#: common/models.py:2756 templates/js/translated/news.js:60
+#: common/models.py:2763 templates/js/translated/news.js:60
 msgid "Published"
 msgstr ""
 
-#: common/models.py:2761 templates/InvenTree/settings/plugin_settings.html:32
+#: common/models.py:2768 templates/InvenTree/settings/plugin_settings.html:32
 #: templates/js/translated/news.js:56 templates/js/translated/plugin.js:106
 msgid "Author"
 msgstr ""
 
-#: common/models.py:2766 templates/js/translated/news.js:52
+#: common/models.py:2773 templates/js/translated/news.js:52
 msgid "Summary"
 msgstr ""
 
-#: common/models.py:2771
+#: common/models.py:2778
 msgid "Read"
 msgstr ""
 
-#: common/models.py:2772
+#: common/models.py:2779
 msgid "Was this news item read?"
 msgstr ""
 
-#: common/models.py:2792 company/models.py:139 part/models.py:918
+#: common/models.py:2799 company/models.py:139 part/models.py:918
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report_base.html:35
@@ -3455,31 +3464,31 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
-#: common/models.py:2793
+#: common/models.py:2800
 msgid "Image file"
 msgstr ""
 
-#: common/models.py:2837
+#: common/models.py:2844
 msgid "Unit name must be a valid identifier"
 msgstr ""
 
-#: common/models.py:2859
+#: common/models.py:2866
 msgid "Unit name"
 msgstr ""
 
-#: common/models.py:2865 templates/InvenTree/settings/settings_staff_js.html:75
+#: common/models.py:2872 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
 msgstr ""
 
-#: common/models.py:2866
+#: common/models.py:2873
 msgid "Optional unit symbol"
 msgstr ""
 
-#: common/models.py:2872 templates/InvenTree/settings/settings_staff_js.html:71
+#: common/models.py:2879 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
 msgstr ""
 
-#: common/models.py:2873
+#: common/models.py:2880
 msgid "Unit definition"
 msgstr ""
 
@@ -3735,7 +3744,7 @@ msgstr ""
 #: templates/js/translated/company.js:1149
 #: templates/js/translated/company.js:1327
 #: templates/js/translated/company.js:1642
-#: templates/js/translated/table_filters.js:731
+#: templates/js/translated/table_filters.js:756
 msgid "Manufacturer"
 msgstr ""
 
@@ -3823,7 +3832,7 @@ msgstr ""
 #: templates/js/translated/company.js:1615 templates/js/translated/part.js:1745
 #: templates/js/translated/pricing.js:498
 #: templates/js/translated/purchase_order.js:1668
-#: templates/js/translated/table_filters.js:735
+#: templates/js/translated/table_filters.js:760
 msgid "Supplier"
 msgstr ""
 
@@ -3989,7 +3998,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:293
 #: templates/js/translated/sales_order.js:781
 #: templates/js/translated/stock.js:2881
-#: templates/js/translated/table_filters.js:739
+#: templates/js/translated/table_filters.js:764
 msgid "Customer"
 msgstr ""
 
@@ -4672,8 +4681,8 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:1291
 #: templates/js/translated/purchase_order.js:2144
 #: templates/js/translated/return_order.js:757
-#: templates/js/translated/table_filters.js:96
-#: templates/js/translated/table_filters.js:537
+#: templates/js/translated/table_filters.js:120
+#: templates/js/translated/table_filters.js:562
 msgid "Received"
 msgstr ""
 
@@ -4847,7 +4856,7 @@ msgid "The date this this return item was received"
 msgstr ""
 
 #: order/models.py:1947 templates/js/translated/return_order.js:726
-#: templates/js/translated/table_filters.js:99
+#: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr ""
 
@@ -5457,14 +5466,14 @@ msgstr ""
 
 #: part/admin.py:61 part/templates/part/part_base.html:199
 #: templates/js/translated/company.js:1720
-#: templates/js/translated/table_filters.js:307
+#: templates/js/translated/table_filters.js:331
 msgid "In Stock"
 msgstr ""
 
 #: part/admin.py:62 part/bom.py:178 part/templates/part/part_base.html:212
 #: templates/js/translated/bom.js:1197 templates/js/translated/build.js:2585
 #: templates/js/translated/part.js:686 templates/js/translated/part.js:2123
-#: templates/js/translated/table_filters.js:146
+#: templates/js/translated/table_filters.js:170
 msgid "On Order"
 msgstr ""
 
@@ -5597,8 +5606,8 @@ msgid "Default location for parts in this category"
 msgstr ""
 
 #: part/models.py:134 stock/models.py:124 templates/js/translated/stock.js:2705
-#: templates/js/translated/table_filters.js:215
-#: templates/js/translated/table_filters.js:235
+#: templates/js/translated/table_filters.js:239
+#: templates/js/translated/table_filters.js:259
 msgid "Structural"
 msgstr ""
 
@@ -5684,7 +5693,7 @@ msgstr ""
 #: part/serializers.py:332 part/serializers.py:927
 #: part/templates/part/part_base.html:262
 #: templates/InvenTree/settings/settings_staff_js.html:280
-#: templates/js/translated/notification.js:59
+#: templates/js/translated/notification.js:60
 #: templates/js/translated/part.js:2347
 msgid "Category"
 msgstr ""
@@ -6016,7 +6025,7 @@ msgid "Enter description for this test"
 msgstr ""
 
 #: part/models.py:3324 templates/js/translated/part.js:2847
-#: templates/js/translated/table_filters.js:429
+#: templates/js/translated/table_filters.js:453
 msgid "Required"
 msgstr ""
 
@@ -6069,7 +6078,7 @@ msgid "Parameter description"
 msgstr ""
 
 #: part/models.py:3460 templates/js/translated/part.js:1604
-#: templates/js/translated/table_filters.js:756
+#: templates/js/translated/table_filters.js:781
 msgid "Checkbox"
 msgstr ""
 
@@ -6186,7 +6195,7 @@ msgstr ""
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:3857 templates/js/translated/table_filters.js:150
+#: part/models.py:3857 templates/js/translated/table_filters.js:174
 msgid "Validated"
 msgstr ""
 
@@ -6196,8 +6205,8 @@ msgstr ""
 
 #: part/models.py:3863 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1054
-#: templates/js/translated/table_filters.js:154
-#: templates/js/translated/table_filters.js:187
+#: templates/js/translated/table_filters.js:178
+#: templates/js/translated/table_filters.js:211
 msgid "Gets inherited"
 msgstr ""
 
@@ -7713,7 +7722,7 @@ msgstr ""
 msgid "Expiry Date"
 msgstr ""
 
-#: stock/api.py:427 templates/js/translated/table_filters.js:379
+#: stock/api.py:427 templates/js/translated/table_filters.js:403
 msgid "External Location"
 msgstr ""
 
@@ -7763,7 +7772,7 @@ msgid "Stock items may not be directly located into a structural stock locations
 msgstr ""
 
 #: stock/models.py:132 templates/js/translated/stock.js:2714
-#: templates/js/translated/table_filters.js:219
+#: templates/js/translated/table_filters.js:243
 msgid "External"
 msgstr ""
 
@@ -8348,7 +8357,7 @@ msgid "This StockItem expired on %(item.expiry_date)s"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:438
-#: templates/js/translated/table_filters.js:387
+#: templates/js/translated/table_filters.js:411
 msgid "Expired"
 msgstr ""
 
@@ -8358,7 +8367,7 @@ msgid "This StockItem expires on %(item.expiry_date)s"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:440
-#: templates/js/translated/table_filters.js:393
+#: templates/js/translated/table_filters.js:417
 msgid "Stale"
 msgstr ""
 
@@ -8671,7 +8680,7 @@ msgid "Delete all read notifications"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:89
-#: templates/js/translated/notification.js:84
+#: templates/js/translated/notification.js:85
 msgid "Delete Notification"
 msgstr ""
 
@@ -8817,7 +8826,7 @@ msgid "Stage"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:75
-#: templates/js/translated/notification.js:75
+#: templates/js/translated/notification.js:76
 msgid "Message"
 msgstr ""
 
@@ -10892,32 +10901,32 @@ msgid "No news found"
 msgstr ""
 
 #: templates/js/translated/news.js:38
-#: templates/js/translated/notification.js:45
+#: templates/js/translated/notification.js:46
 #: templates/js/translated/part.js:1581
 msgid "ID"
 msgstr ""
 
-#: templates/js/translated/notification.js:51
+#: templates/js/translated/notification.js:52
 msgid "Age"
 msgstr ""
 
-#: templates/js/translated/notification.js:64
+#: templates/js/translated/notification.js:65
 msgid "Notification"
 msgstr ""
 
-#: templates/js/translated/notification.js:223
+#: templates/js/translated/notification.js:224
 msgid "Mark as unread"
 msgstr ""
 
-#: templates/js/translated/notification.js:227
+#: templates/js/translated/notification.js:228
 msgid "Mark as read"
 msgstr ""
 
-#: templates/js/translated/notification.js:253
+#: templates/js/translated/notification.js:254
 msgid "No unread notifications"
 msgstr ""
 
-#: templates/js/translated/notification.js:295 templates/notifications.html:12
+#: templates/js/translated/notification.js:296 templates/notifications.html:12
 msgid "Notifications will load here"
 msgstr ""
 
@@ -11103,7 +11112,7 @@ msgid "Copy Bill of Materials"
 msgstr ""
 
 #: templates/js/translated/part.js:662
-#: templates/js/translated/table_filters.js:682
+#: templates/js/translated/table_filters.js:707
 msgid "Low stock"
 msgstr ""
 
@@ -12242,7 +12251,7 @@ msgid "Stock item is destroyed"
 msgstr ""
 
 #: templates/js/translated/stock.js:2062
-#: templates/js/translated/table_filters.js:302
+#: templates/js/translated/table_filters.js:326
 msgid "Depleted"
 msgstr ""
 
@@ -12366,265 +12375,265 @@ msgstr ""
 msgid "Change Stock Status"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:50
+#: templates/js/translated/table_filters.js:74
 msgid "Has project code"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:65
-#: templates/js/translated/table_filters.js:540
-#: templates/js/translated/table_filters.js:552
-#: templates/js/translated/table_filters.js:593
+#: templates/js/translated/table_filters.js:89
+#: templates/js/translated/table_filters.js:565
+#: templates/js/translated/table_filters.js:577
+#: templates/js/translated/table_filters.js:618
 msgid "Order status"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:70
-#: templates/js/translated/table_filters.js:557
-#: templates/js/translated/table_filters.js:583
-#: templates/js/translated/table_filters.js:598
+#: templates/js/translated/table_filters.js:94
+#: templates/js/translated/table_filters.js:582
+#: templates/js/translated/table_filters.js:608
+#: templates/js/translated/table_filters.js:623
 msgid "Outstanding"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:78
-#: templates/js/translated/table_filters.js:464
-#: templates/js/translated/table_filters.js:565
-#: templates/js/translated/table_filters.js:606
+#: templates/js/translated/table_filters.js:102
+#: templates/js/translated/table_filters.js:488
+#: templates/js/translated/table_filters.js:590
+#: templates/js/translated/table_filters.js:631
 msgid "Assigned to me"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:134
+#: templates/js/translated/table_filters.js:158
 msgid "Trackable Part"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:138
+#: templates/js/translated/table_filters.js:162
 msgid "Assembled Part"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:142
+#: templates/js/translated/table_filters.js:166
 msgid "Has Available Stock"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:158
+#: templates/js/translated/table_filters.js:182
 msgid "Allow Variant Stock"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:170
-#: templates/js/translated/table_filters.js:714
+#: templates/js/translated/table_filters.js:194
+#: templates/js/translated/table_filters.js:739
 msgid "Has Pricing"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:210
-#: templates/js/translated/table_filters.js:297
+#: templates/js/translated/table_filters.js:234
+#: templates/js/translated/table_filters.js:321
 msgid "Include sublocations"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:211
+#: templates/js/translated/table_filters.js:235
 msgid "Include locations"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:230
-#: templates/js/translated/table_filters.js:231
-#: templates/js/translated/table_filters.js:646
+#: templates/js/translated/table_filters.js:254
+#: templates/js/translated/table_filters.js:255
+#: templates/js/translated/table_filters.js:671
 msgid "Include subcategories"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:239
-#: templates/js/translated/table_filters.js:694
+#: templates/js/translated/table_filters.js:263
+#: templates/js/translated/table_filters.js:719
 msgid "Subscribed"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:250
-#: templates/js/translated/table_filters.js:332
+#: templates/js/translated/table_filters.js:274
+#: templates/js/translated/table_filters.js:356
 msgid "Is Serialized"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:253
-#: templates/js/translated/table_filters.js:339
+#: templates/js/translated/table_filters.js:277
+#: templates/js/translated/table_filters.js:363
 msgid "Serial number GTE"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:254
-#: templates/js/translated/table_filters.js:340
+#: templates/js/translated/table_filters.js:278
+#: templates/js/translated/table_filters.js:364
 msgid "Serial number greater than or equal to"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:257
-#: templates/js/translated/table_filters.js:343
+#: templates/js/translated/table_filters.js:281
+#: templates/js/translated/table_filters.js:367
 msgid "Serial number LTE"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:258
-#: templates/js/translated/table_filters.js:344
+#: templates/js/translated/table_filters.js:282
+#: templates/js/translated/table_filters.js:368
 msgid "Serial number less than or equal to"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:261
-#: templates/js/translated/table_filters.js:262
-#: templates/js/translated/table_filters.js:335
-#: templates/js/translated/table_filters.js:336
+#: templates/js/translated/table_filters.js:285
+#: templates/js/translated/table_filters.js:286
+#: templates/js/translated/table_filters.js:359
+#: templates/js/translated/table_filters.js:360
 msgid "Serial number"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:266
-#: templates/js/translated/table_filters.js:357
+#: templates/js/translated/table_filters.js:290
+#: templates/js/translated/table_filters.js:381
 msgid "Batch code"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:277
-#: templates/js/translated/table_filters.js:635
+#: templates/js/translated/table_filters.js:301
+#: templates/js/translated/table_filters.js:660
 msgid "Active parts"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:278
+#: templates/js/translated/table_filters.js:302
 msgid "Show stock for active parts"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:283
+#: templates/js/translated/table_filters.js:307
 msgid "Part is an assembly"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:287
+#: templates/js/translated/table_filters.js:311
 msgid "Is allocated"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:288
+#: templates/js/translated/table_filters.js:312
 msgid "Item has been allocated"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:293
+#: templates/js/translated/table_filters.js:317
 msgid "Stock is available for use"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:298
+#: templates/js/translated/table_filters.js:322
 msgid "Include stock in sublocations"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:303
+#: templates/js/translated/table_filters.js:327
 msgid "Show stock items which are depleted"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:308
+#: templates/js/translated/table_filters.js:332
 msgid "Show items which are in stock"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:312
+#: templates/js/translated/table_filters.js:336
 msgid "In Production"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:313
+#: templates/js/translated/table_filters.js:337
 msgid "Show items which are in production"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:317
+#: templates/js/translated/table_filters.js:341
 msgid "Include Variants"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:318
+#: templates/js/translated/table_filters.js:342
 msgid "Include stock items for variant parts"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:322
+#: templates/js/translated/table_filters.js:346
 msgid "Installed"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:323
+#: templates/js/translated/table_filters.js:347
 msgid "Show stock items which are installed in another item"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:328
+#: templates/js/translated/table_filters.js:352
 msgid "Show items which have been assigned to a customer"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:348
-#: templates/js/translated/table_filters.js:349
+#: templates/js/translated/table_filters.js:372
+#: templates/js/translated/table_filters.js:373
 msgid "Stock status"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:352
+#: templates/js/translated/table_filters.js:376
 msgid "Has batch code"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:361
+#: templates/js/translated/table_filters.js:385
 msgid "Stock item is tracked by either batch code or serial number"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:366
+#: templates/js/translated/table_filters.js:390
 msgid "Has purchase price"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:367
+#: templates/js/translated/table_filters.js:391
 msgid "Show stock items which have a purchase price set"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:371
+#: templates/js/translated/table_filters.js:395
 msgid "Expiry Date before"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:375
+#: templates/js/translated/table_filters.js:399
 msgid "Expiry Date after"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:388
+#: templates/js/translated/table_filters.js:412
 msgid "Show stock items which have expired"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:394
+#: templates/js/translated/table_filters.js:418
 msgid "Show stock which is close to expiring"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:408
+#: templates/js/translated/table_filters.js:432
 msgid "Test Passed"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:412
+#: templates/js/translated/table_filters.js:436
 msgid "Include Installed Items"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:451
+#: templates/js/translated/table_filters.js:475
 msgid "Build status"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:647
+#: templates/js/translated/table_filters.js:672
 msgid "Include parts in subcategories"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:652
+#: templates/js/translated/table_filters.js:677
 msgid "Show active parts"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:660
+#: templates/js/translated/table_filters.js:685
 msgid "Available stock"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:668
-#: templates/js/translated/table_filters.js:764
+#: templates/js/translated/table_filters.js:693
+#: templates/js/translated/table_filters.js:789
 msgid "Has Units"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:669
+#: templates/js/translated/table_filters.js:694
 msgid "Part has defined units"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:673
+#: templates/js/translated/table_filters.js:698
 msgid "Has IPN"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:674
+#: templates/js/translated/table_filters.js:699
 msgid "Part has internal part number"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:678
+#: templates/js/translated/table_filters.js:703
 msgid "In stock"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:686
+#: templates/js/translated/table_filters.js:711
 msgid "Purchasable"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:698
+#: templates/js/translated/table_filters.js:723
 msgid "Has stocktake entries"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:760
+#: templates/js/translated/table_filters.js:785
 msgid "Has Choices"
 msgstr ""
 
