@@ -341,7 +341,7 @@ export function SearchDrawer({
   return (
     <Drawer
       opened={opened}
-      size="lg"
+      size="md"
       onClose={closeDrawer}
       position="right"
       withCloseButton={false}

@@ -4,6 +4,7 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { Thumbnail } from '../items/Thumbnail';
+import { RenderBuildOrder } from './Build';
 import {
   RenderAddress,
   RenderCompany,
@@ -35,6 +36,8 @@ export function RenderInstance({
   switch (model) {
     case 'address':
       return <RenderAddress address={instance} />;
+    case 'build':
+      return <RenderBuildOrder buildorder={instance} />;
     case 'company':
       return <RenderCompany company={instance} />;
     case 'contact':
