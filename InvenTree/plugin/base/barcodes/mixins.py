@@ -177,9 +177,33 @@ class BarcodeMixin:
             elif not (purchase_order := purchase_orders.first()):
                 return {"error": _(f"Failed to find placed purchase order for '{order_number}'")}
 
-        #  find the first incomplete line_item that matches the supplier_part
-        line_item = purchase_order.lines.filter(
-            part=supplier_part.pk, quantity__gt=F("received")).first()
+        if quantity and not isinstance(quantity, int):
+            try:
+                quantity = int(quantity)
+            except ValueError:
+                logger.warning(f"Failed to parse quantity '{quantity}'")
+                quantity = None
+
+        #  find incomplete line_items that match the supplier_part
+        line_items = purchase_order.lines.filter(
+            part=supplier_part.pk, quantity__gt=F("received"))
+        if len(line_items) == 1 or not quantity:
+            line_item = line_items[0]
+        else:
+            # if there are multiple line items and the barcode contains a quantity:
+            # 1. return the first line_item where line_item.quantity == quantity
+            # 2. return the first line_item where line_item.quantity > quantity
+            # 3. return the first line_item
+            for line_item in line_items:
+                if line_item.quantity == quantity:
+                    break
+            else:
+                for line_item in line_items:
+                    if line_item.quantity > quantity:
+                        break
+                else:
+                    line_item = line_items[0]
+
         if not line_item:
             return {"error": _("Failed to find pending line item for supplier part")}
 
@@ -206,14 +230,8 @@ class BarcodeMixin:
             }
         }
 
-        if quantity and not isinstance(quantity, int):
-            try:
-                quantity = int(quantity)
-                response["lineitem"]["quantity"] = quantity
-            except ValueError:
-                logger.warning(f"Failed to parse quantity '{quantity}'")
-                quantity = None
-
+        if quantity:
+            response["lineitem"]["quantity"] = quantity
         if location:
             response["lineitem"]["location"] = location.pk
 
