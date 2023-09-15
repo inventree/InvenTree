@@ -9,6 +9,7 @@ import { useSessionState } from './states/SessionState';
 
 // API
 export const api = axios.create({});
+
 export function setApiDefaults() {
   const host = useLocalState.getState().host;
   const token = useSessionState.getState().token;

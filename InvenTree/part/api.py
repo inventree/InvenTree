@@ -326,10 +326,6 @@ class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-
     filterset_fields = [
         'part',
     ]

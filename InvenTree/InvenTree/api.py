@@ -228,6 +228,12 @@ class AttachmentMixin:
 
     filter_backends = SEARCH_ORDER_FILTER
 
+    search_fields = [
+        'attachment',
+        'comment',
+        'link',
+    ]
+
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
         attachment = serializer.save()
