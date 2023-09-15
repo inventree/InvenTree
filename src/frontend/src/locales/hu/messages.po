@@ -188,7 +188,7 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr "Státusz: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:286
-#: src/components/nav/SearchDrawer.tsx:425
+#: src/components/nav/SearchDrawer.tsx:426
 #: src/components/tables/InvenTreeTable.tsx:378
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -293,23 +293,19 @@ msgid "Close modal"
 msgstr "Felugró ablak bezárása"
 
 #: src/components/nav/MainMenu.tsx:38
-msgid "Notifications"
-msgstr "Értesítések"
-
-#: src/components/nav/MainMenu.tsx:42
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/nav/MainMenu.tsx:46
+#: src/components/nav/MainMenu.tsx:42
 msgid "Settings"
 msgstr "Beállítások"
 
-#: src/components/nav/MainMenu.tsx:49
+#: src/components/nav/MainMenu.tsx:45
 msgid "Account settings"
 msgstr "Fiókbeállítások"
 
-#: src/components/nav/MainMenu.tsx:57
+#: src/components/nav/MainMenu.tsx:53
 msgid "Logout"
 msgstr "Kijelentkezés"
 
@@ -358,91 +354,102 @@ msgstr "Dokumentáció"
 msgid "About"
 msgstr "Névjegy"
 
-#: src/components/nav/SearchDrawer.tsx:60
+#: src/components/nav/NotificationDrawer.tsx:67
+#: src/pages/Notifications.tsx:20
+#: src/pages/Notifications.tsx:87
+msgid "Notifications"
+msgstr "Értesítések"
+
+#: src/components/nav/NotificationDrawer.tsx:102
+#: src/pages/Notifications.tsx:29
+msgid "Mark as read"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:61
 #: src/defaults/links.tsx:26
 #: src/pages/part/PartIndex.tsx:23
 #: src/pages/part/PartIndex.tsx:46
 msgid "Parts"
 msgstr "Alkatrészek"
 
-#: src/components/nav/SearchDrawer.tsx:68
+#: src/components/nav/SearchDrawer.tsx:69
 msgid "Supplier Parts"
 msgstr "Beszállítói alkatrészek"
 
-#: src/components/nav/SearchDrawer.tsx:81
+#: src/components/nav/SearchDrawer.tsx:82
 msgid "Manufacturer Parts"
 msgstr "Gyártói alkatrészek"
 
-#: src/components/nav/SearchDrawer.tsx:94
+#: src/components/nav/SearchDrawer.tsx:95
 msgid "Part Categories"
 msgstr "Alkatrész kategóriák"
 
-#: src/components/nav/SearchDrawer.tsx:102
+#: src/components/nav/SearchDrawer.tsx:103
 #: src/pages/Index/Stock.tsx:13
 msgid "Stock Items"
 msgstr "Készlet tételek"
 
-#: src/components/nav/SearchDrawer.tsx:113
+#: src/components/nav/SearchDrawer.tsx:114
 msgid "Stock Locations"
 msgstr "Készlethelyek"
 
-#: src/components/nav/SearchDrawer.tsx:121
+#: src/components/nav/SearchDrawer.tsx:122
 #: src/pages/Index/Build.tsx:13
 #: src/pages/part/PartDetail.tsx:79
 msgid "Build Orders"
 msgstr "Gyártási utasítások"
 
-#: src/components/nav/SearchDrawer.tsx:131
+#: src/components/nav/SearchDrawer.tsx:132
 msgid "Companies"
 msgstr "Cégek"
 
-#: src/components/nav/SearchDrawer.tsx:140
+#: src/components/nav/SearchDrawer.tsx:141
 #: src/pages/part/PartDetail.tsx:106
 msgid "Purchase Orders"
 msgstr "Beszerzési rendelések"
 
-#: src/components/nav/SearchDrawer.tsx:150
+#: src/components/nav/SearchDrawer.tsx:151
 #: src/pages/part/PartDetail.tsx:113
 msgid "Sales Orders"
 msgstr "Vevői rendelések"
 
-#: src/components/nav/SearchDrawer.tsx:160
+#: src/components/nav/SearchDrawer.tsx:161
 msgid "Return Orders"
 msgstr "Visszavételek"
 
-#: src/components/nav/SearchDrawer.tsx:195
+#: src/components/nav/SearchDrawer.tsx:196
 msgid "results"
 msgstr "eredmények"
 
-#: src/components/nav/SearchDrawer.tsx:351
+#: src/components/nav/SearchDrawer.tsx:352
 msgid "Enter search text"
 msgstr "Írd be a keresett szöveget"
 
-#: src/components/nav/SearchDrawer.tsx:378
+#: src/components/nav/SearchDrawer.tsx:379
 msgid "Search Options"
 msgstr "Keresési opciók"
 
-#: src/components/nav/SearchDrawer.tsx:381
+#: src/components/nav/SearchDrawer.tsx:382
 msgid "Regex search"
 msgstr "Regex keresés"
 
-#: src/components/nav/SearchDrawer.tsx:391
+#: src/components/nav/SearchDrawer.tsx:392
 msgid "Whole word search"
 msgstr "Teljes szó keresés"
 
-#: src/components/nav/SearchDrawer.tsx:428
+#: src/components/nav/SearchDrawer.tsx:429
 msgid "An error occurred during search query"
 msgstr "Hiba történt a keresés közben"
 
-#: src/components/nav/SearchDrawer.tsx:439
+#: src/components/nav/SearchDrawer.tsx:440
 msgid "No results"
 msgstr "Nincs találat"
 
-#: src/components/nav/SearchDrawer.tsx:442
+#: src/components/nav/SearchDrawer.tsx:443
 msgid "No results available for search query"
 msgstr "Nincs találat a keresésre"
 
-#: src/components/render/Instance.tsx:65
+#: src/components/render/Instance.tsx:70
 msgid "Unknown model: {model}"
 msgstr ""
 
@@ -471,6 +478,7 @@ msgstr ""
 #: src/components/tables/AttachmentTable.tsx:130
 #: src/components/tables/part/RelatedPartTable.tsx:97
 #: src/functions/forms.tsx:177
+#: src/pages/Notifications.tsx:67
 msgid "Delete"
 msgstr ""
 
@@ -661,6 +669,23 @@ msgstr "Állapot"
 msgid "Created"
 msgstr "Létrehozva"
 
+#: src/components/tables/notifications/NotificationsTable.tsx:23
+msgid "Age"
+msgstr ""
+
+#: src/components/tables/notifications/NotificationsTable.tsx:28
+#: src/components/tables/part/PartTable.tsx:57
+msgid "Category"
+msgstr "Kategória"
+
+#: src/components/tables/notifications/NotificationsTable.tsx:33
+msgid "Notification"
+msgstr ""
+
+#: src/components/tables/notifications/NotificationsTable.tsx:37
+msgid "Message"
+msgstr ""
+
 #: src/components/tables/part/PartTable.tsx:39
 msgid "IPN"
 msgstr "IPN"
@@ -668,10 +693,6 @@ msgstr "IPN"
 #: src/components/tables/part/PartTable.tsx:46
 msgid "Units"
 msgstr "Mértékegységek"
-
-#: src/components/tables/part/PartTable.tsx:57
-msgid "Category"
-msgstr "Kategória"
 
 #: src/components/tables/part/PartTable.tsx:68
 #: src/components/tables/stock/StockItemTable.tsx:43
@@ -1579,6 +1600,14 @@ msgstr "Elnézést, ez az oldal ismeretlen vagy el lett mozgatva."
 msgid "Go to the start page"
 msgstr "Ugrás a kezdőlapra"
 
+#: src/pages/Notifications.tsx:46
+msgid "History"
+msgstr ""
+
+#: src/pages/Notifications.tsx:55
+msgid "Mark as unread"
+msgstr ""
+
 #: src/pages/part/PartDetail.tsx:53
 msgid "Details"
 msgstr ""
@@ -1638,4 +1667,3 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
-
