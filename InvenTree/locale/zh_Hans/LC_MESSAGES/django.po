@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 23:12+0000\n"
+"POT-Creation-Date: 2023-09-12 06:37+0000\n"
 "PO-Revision-Date: 2023-02-28 22:38\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "API endpoint not found"
 msgstr "未找到 API 端点"
 
-#: InvenTree/api.py:329
+#: InvenTree/api.py:335
 msgid "User does not have permission to view this model"
 msgstr ""
 
@@ -65,10 +65,10 @@ msgstr "输入日期"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
 #: part/models.py:3042 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:121 stock/models.py:2160 stock/models.py:2268
+#: stock/admin.py:121 stock/models.py:2191 stock/models.py:2299
 #: stock/serializers.py:408 stock/serializers.py:542 stock/serializers.py:623
 #: stock/serializers.py:681 stock/serializers.py:956 stock/serializers.py:1055
-#: stock/serializers.py:1187 stock/templates/stock/stock_sidebar.html:25
+#: stock/serializers.py:1216 stock/templates/stock/stock_sidebar.html:25
 #: templates/js/translated/barcode.js:143 templates/js/translated/bom.js:1254
 #: templates/js/translated/company.js:1715 templates/js/translated/order.js:347
 #: templates/js/translated/part.js:1057
@@ -261,7 +261,7 @@ msgstr "缺少文件"
 msgid "Missing external link"
 msgstr "缺少外部链接"
 
-#: InvenTree/models.py:486 stock/models.py:2262
+#: InvenTree/models.py:486 stock/models.py:2293
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
@@ -1126,7 +1126,8 @@ msgid "Build status code"
 msgstr "生产状态代码"
 
 #: build/models.py:250 build/serializers.py:277 order/serializers.py:512
-#: stock/models.py:739 templates/js/translated/purchase_order.js:1114
+#: stock/models.py:739 stock/serializers.py:1180
+#: templates/js/translated/purchase_order.js:1114
 msgid "Batch Code"
 msgstr "批量代码"
 
@@ -1438,7 +1439,7 @@ msgstr "必须提供生产产出列表"
 #: build/serializers.py:423 build/serializers.py:496 order/serializers.py:493
 #: order/serializers.py:612 order/serializers.py:1616 part/serializers.py:933
 #: stock/serializers.py:401 stock/serializers.py:537 stock/serializers.py:618
-#: stock/serializers.py:1048 stock/serializers.py:1290
+#: stock/serializers.py:1048 stock/serializers.py:1319
 #: stock/templates/stock/item_base.html:395
 #: templates/js/translated/barcode.js:530
 #: templates/js/translated/barcode.js:778 templates/js/translated/build.js:980
@@ -1484,7 +1485,8 @@ msgstr "已完成生产产出的仓储地点"
 #: build/serializers.py:503 build/templates/build/build_base.html:152
 #: build/templates/build/detail.html:62 order/models.py:804
 #: order/models.py:1763 order/serializers.py:530 stock/admin.py:106
-#: stock/serializers.py:677 stock/templates/stock/item_base.html:428
+#: stock/serializers.py:677 stock/serializers.py:1187
+#: stock/templates/stock/item_base.html:428
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2161
 #: templates/js/translated/purchase_order.js:1293
 #: templates/js/translated/purchase_order.js:1697
@@ -1821,7 +1823,7 @@ msgid "Completed Outputs"
 msgstr "已完成输出"
 
 #: build/templates/build/build_base.html:191
-#: build/templates/build/detail.html:101 order/api.py:1454 order/models.py:1317
+#: build/templates/build/detail.html:101 order/api.py:1442 order/models.py:1317
 #: order/models.py:1416 order/models.py:1564
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
@@ -3918,7 +3920,7 @@ msgstr "参数名称"
 
 #: company/models.py:546
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2255 templates/js/translated/company.js:1197
+#: stock/models.py:2286 templates/js/translated/company.js:1197
 #: templates/js/translated/company.js:1450 templates/js/translated/part.js:1469
 #: templates/js/translated/stock.js:1464
 msgid "Value"
@@ -4017,7 +4019,7 @@ msgid "Minimum charge (e.g. stocking fee)"
 msgstr "最低收费(例如库存费)"
 
 #: company/models.py:752 company/templates/company/supplier_part.html:161
-#: stock/admin.py:119 stock/models.py:701
+#: stock/admin.py:119 stock/models.py:701 stock/serializers.py:1195
 #: stock/templates/stock/item_base.html:241
 #: templates/js/translated/company.js:1677
 #: templates/js/translated/stock.js:2356
@@ -4624,7 +4626,7 @@ msgstr ""
 msgid "No matching purchase order found"
 msgstr ""
 
-#: order/api.py:1452 order/models.py:1191 order/models.py:1275
+#: order/api.py:1440 order/models.py:1191 order/models.py:1275
 #: order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:18
 #: report/templates/report/inventree_po_report_base.html:14
@@ -4638,7 +4640,7 @@ msgstr ""
 msgid "Purchase Order"
 msgstr ""
 
-#: order/api.py:1456 order/models.py:1922 order/models.py:1968
+#: order/api.py:1444 order/models.py:1922 order/models.py:1968
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4649,7 +4651,7 @@ msgstr ""
 msgid "Return Order"
 msgstr "已退回"
 
-#: order/api.py:1458 templates/js/translated/sales_order.js:1039
+#: order/api.py:1446 templates/js/translated/sales_order.js:1039
 msgid "Unknown"
 msgstr ""
 
@@ -5756,31 +5758,31 @@ msgstr ""
 msgid "Maximum Price"
 msgstr ""
 
-#: part/api.py:501
+#: part/api.py:497
 msgid "Incoming Purchase Order"
 msgstr ""
 
-#: part/api.py:521
+#: part/api.py:517
 msgid "Outgoing Sales Order"
 msgstr ""
 
-#: part/api.py:539
+#: part/api.py:535
 msgid "Stock produced by Build Order"
 msgstr ""
 
-#: part/api.py:625
+#: part/api.py:621
 msgid "Stock required for Build Order"
 msgstr ""
 
-#: part/api.py:773
+#: part/api.py:769
 msgid "Valid"
 msgstr ""
 
-#: part/api.py:774
+#: part/api.py:770
 msgid "Validate entire Bill of Materials"
 msgstr ""
 
-#: part/api.py:780
+#: part/api.py:776
 msgid "This option must be selected"
 msgstr ""
 
@@ -7614,35 +7616,35 @@ msgstr ""
 msgid "Plugin requires at most version {v}"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:39
+#: plugin/samples/integration/sample.py:50
 msgid "Enable PO"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:40
+#: plugin/samples/integration/sample.py:51
 msgid "Enable PO functionality in InvenTree interface"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:45
+#: plugin/samples/integration/sample.py:56
 msgid "API Key"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:46
+#: plugin/samples/integration/sample.py:57
 msgid "Key required for accessing external API"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:50
+#: plugin/samples/integration/sample.py:61
 msgid "Numerical"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:51
+#: plugin/samples/integration/sample.py:62
 msgid "A numerical setting"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:56
+#: plugin/samples/integration/sample.py:67
 msgid "Choice Setting"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:57
+#: plugin/samples/integration/sample.py:68
 msgid "A setting with multiple choices"
 msgstr ""
 
@@ -7860,12 +7862,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2243 templates/js/translated/stock.js:1437
+#: stock/models.py:2274 templates/js/translated/stock.js:1437
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2249
+#: stock/models.py:2280
 msgid "Result"
 msgstr ""
 
@@ -8081,7 +8083,7 @@ msgstr ""
 msgid "Where is this stock item located?"
 msgstr ""
 
-#: stock/models.py:702
+#: stock/models.py:702 stock/serializers.py:1196
 msgid "Packaging this stock item is stored in"
 msgstr ""
 
@@ -8093,7 +8095,7 @@ msgstr ""
 msgid "Serial number for this item"
 msgstr ""
 
-#: stock/models.py:741
+#: stock/models.py:741 stock/serializers.py:1181
 msgid "Batch code for this stock item"
 msgstr ""
 
@@ -8218,39 +8220,39 @@ msgstr ""
 msgid "Stock status codes must match"
 msgstr ""
 
-#: stock/models.py:1679
+#: stock/models.py:1702
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:2161
+#: stock/models.py:2192
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:2219
+#: stock/models.py:2250
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:2225
+#: stock/models.py:2256
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:2244
+#: stock/models.py:2275
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:2250
+#: stock/models.py:2281
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:2256
+#: stock/models.py:2287
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:2263
+#: stock/models.py:2294
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:2269
+#: stock/models.py:2300
 msgid "Test notes"
 msgstr ""
 
@@ -8279,7 +8281,7 @@ msgstr ""
 msgid "Enter serial numbers for new items"
 msgstr "输入新项目的序列号"
 
-#: stock/serializers.py:402 stock/serializers.py:1049 stock/serializers.py:1291
+#: stock/serializers.py:402 stock/serializers.py:1049 stock/serializers.py:1320
 msgid "Destination stock location"
 msgstr "目标库存位置"
 
@@ -8360,7 +8362,7 @@ msgstr ""
 msgid "Stock assignment notes"
 msgstr ""
 
-#: stock/serializers.py:967 stock/serializers.py:1198
+#: stock/serializers.py:967 stock/serializers.py:1227
 msgid "A list of stock items must be provided"
 msgstr ""
 
@@ -8388,11 +8390,17 @@ msgstr ""
 msgid "At least two stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:1160
+#: stock/serializers.py:1167
 msgid "StockItem primary key value"
 msgstr ""
 
 #: stock/serializers.py:1188
+#, fuzzy
+#| msgid "Stock item created"
+msgid "Stock item status code"
+msgstr "库存项已创建"
+
+#: stock/serializers.py:1217
 msgid "Stock transaction notes"
 msgstr ""
 
