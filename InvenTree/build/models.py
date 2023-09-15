@@ -1186,7 +1186,8 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         BuildLine.objects.bulk_create(lines)
 
-        logger.info(f"Created {len(lines)} BuildLine objects for BuildOrder")
+        if len(lines) > 0:
+            logger.info(f"Created {len(lines)} BuildLine objects for BuildOrder")
 
     @transaction.atomic
     def update_build_line_items(self):
