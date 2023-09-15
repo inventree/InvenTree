@@ -3749,6 +3749,18 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         """Return the list API endpoint URL associated with the BomItem model"""
         return reverse('api-bom-list')
 
+    def get_assemblies(self):
+        """Return a list of assemblies which use this BomItem"""
+
+        assemblies = [self.part]
+
+        if self.inherited:
+            assemblies += list(
+                self.part.get_descendants(include_self=False)
+            )
+
+        return assemblies
+
     def get_valid_parts_for_allocation(self, allow_variants=True, allow_substitutes=True):
         """Return a list of valid parts which can be allocated against this BomItem.
 
@@ -4046,6 +4058,18 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         pmax = decimal2money(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+
+
+@receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')
+def update_bom_build_lines(sender, instance, created, **kwargs):
+    """Update existing build orders when a BomItem is created or edited"""
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+        import build.tasks
+        InvenTree.tasks.offload_task(
+            build.tasks.update_build_order_lines,
+            instance.pk
+        )
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='post_save_bom_item')
