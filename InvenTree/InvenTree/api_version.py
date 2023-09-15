@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 134
+INVENTREE_API_VERSION = 135
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v135 -> 2023-09-15 : https://github.com/inventree/InvenTree/pull/5509
+    - Add new BarcodePOReceive endpoint to receive line items by scanning supplier barcodes
 
 v134 -> 2023-09-11 : https://github.com/inventree/InvenTree/pull/5525
     - Allow "Attachment" list endpoints to be searched by attachment, link and comment fields
