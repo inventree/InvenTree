@@ -239,6 +239,7 @@ INSTALLED_APPS = [
     'dbbackup',                             # Backups - django-dbbackup
     'taggit',                               # Tagging
     'flags',                                # Flagging - django-flags
+    "django_structlog",                    # Structured logging
 
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
@@ -274,6 +275,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'InvenTree.middleware.Check2FAMiddleware',                  # Check if the user should be forced to use MFA
     'maintenance_mode.middleware.MaintenanceModeMiddleware',
     'InvenTree.middleware.InvenTreeExceptionProcessor',         # Error reporting
+    "django_structlog.middlewares.RequestMiddleware",           # Structured logging
 ])
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [

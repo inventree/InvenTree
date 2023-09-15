@@ -5,7 +5,9 @@
 #    pip-compile --output-file=requirements.txt requirements.in
 #
 asgiref==3.7.2
-    # via django
+    # via
+    #   django
+    #   django-structlog
 async-timeout==4.0.3
     # via redis
 attrs==23.1.0
@@ -74,6 +76,7 @@ django==3.2.21
     #   django-sql-utils
     #   django-sslserver
     #   django-stdimage
+    #   django-structlog
     #   django-taggit
     #   django-user-sessions
     #   django-weasyprint
@@ -107,6 +110,8 @@ django-ical==1.9.2
     # via -r requirements.in
 django-import-export==2.5.0
     # via -r requirements.in
+django-ipware==5.0.0
+    # via django-structlog
 django-js-asset==2.1.0
     # via django-mptt
 django-maintenance-mode==0.18.0
@@ -136,6 +141,8 @@ django-sql-utils==0.6.1
 django-sslserver==0.22
     # via -r requirements.in
 django-stdimage==5.3.0
+    # via -r requirements.in
+django-structlog==5.3.0
     # via -r requirements.in
 django-taggit==4.0.0
     # via -r requirements.in
@@ -290,6 +297,8 @@ sqlparse==0.4.4
     # via
     #   django
     #   django-sql-utils
+structlog==23.1.0
+    # via django-structlog
 tablib[html,ods,xls,xlsx,yaml]==3.5.0
     # via
     #   -r requirements.in
