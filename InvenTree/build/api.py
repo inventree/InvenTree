@@ -35,6 +35,7 @@ class BuildFilter(rest_filters.FilterSet):
             'parent',
             'sales_order',
             'part',
+            'issued_by',
         ]
 
     status = rest_filters.NumberFilter(label='Status')
@@ -581,10 +582,6 @@ class BuildAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
 
     queryset = BuildOrderAttachment.objects.all()
     serializer_class = build.serializers.BuildAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
 
     filterset_fields = [
         'build',

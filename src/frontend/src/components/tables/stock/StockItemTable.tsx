@@ -8,6 +8,7 @@ import { ActionButton } from '../../items/ActionButton';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
+import { RowAction } from '../RowActions';
 import { InvenTreeTable } from './../InvenTreeTable';
 
 /**
@@ -65,7 +66,7 @@ function stockItemTableColumns(): TableColumn[] {
         // TODO: Custom renderer for location
         return record.location;
       }
-    },
+    }
     // TODO: stocktake column
     // TODO: expiry date
     // TODO: last updated
@@ -75,31 +76,6 @@ function stockItemTableColumns(): TableColumn[] {
     // TODO: stock value
     // TODO: packaging
     // TODO: notes
-    {
-      accessor: 'actions',
-      title: t`Actions`,
-      sortable: false,
-      render: function (record: any) {
-        return (
-          <Group position="right" spacing={5} noWrap={true}>
-            {/* {EditButton(setEditing, editing)} */}
-            {/* {DeleteButton()} */}
-            <ActionButton
-              color="green"
-              icon={<IconEdit />}
-              tooltip="Edit stock item"
-              onClick={() => notYetImplemented()}
-            />
-            <ActionButton
-              color="red"
-              tooltip="Delete stock item"
-              icon={<IconTrash />}
-              onClick={() => notYetImplemented()}
-            />
-          </Group>
-        );
-      }
-    }
   ];
 }
 
@@ -141,6 +117,19 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
+  function stockItemRowActions(record: any): RowAction[] {
+    let actions: RowAction[] = [];
+
+    actions.push({
+      title: t`Edit`,
+      onClick: () => {
+        notYetImplemented();
+      }
+    });
+
+    return actions;
+  }
+
   return (
     <InvenTreeTable
       url="stock/"
@@ -150,6 +139,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
       params={tableParams}
       columns={tableColumns}
       customFilters={tableFilters}
+      rowActions={stockItemRowActions}
     />
   );
 }

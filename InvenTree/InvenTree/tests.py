@@ -320,6 +320,34 @@ class FormatTest(TestCase):
 class TestHelpers(TestCase):
     """Tests for InvenTree helper functions."""
 
+    def test_absolute_url(self):
+        """Test helper function for generating an absolute URL"""
+
+        base = "https://demo.inventree.org:12345"
+
+        InvenTreeSetting.set_setting('INVENTREE_BASE_URL', base, change_user=None)
+
+        tests = {
+            "": base,
+            "api/": base + "/api/",
+            "/api/": base + "/api/",
+            "api": base + "/api",
+            "media/label/output/": base + "/media/label/output/",
+            "static/logo.png": base + "/static/logo.png",
+            "https://www.google.com": "https://www.google.com",
+            "https://demo.inventree.org:12345/out.html": "https://demo.inventree.org:12345/out.html",
+            "https://demo.inventree.org/test.html": "https://demo.inventree.org/test.html",
+            "http://www.cwi.nl:80/%7Eguido/Python.html": "http://www.cwi.nl:80/%7Eguido/Python.html",
+            "test.org": base + "/test.org",
+        }
+
+        for url, expected in tests.items():
+            # Test with supplied base URL
+            self.assertEqual(InvenTree.helpers_model.construct_absolute_url(url, site_url=base), expected)
+
+            # Test without supplied base URL
+            self.assertEqual(InvenTree.helpers_model.construct_absolute_url(url), expected)
+
     def test_image_url(self):
         """Test if a filename looks like an image."""
         for name in ['ape.png', 'bat.GiF', 'apple.WeBP', 'BiTMap.Bmp']:
@@ -1180,6 +1208,9 @@ class MagicLoginTest(InvenTreeTestCase):
         # Check that the login works
         resp = self.client.get(reverse('sesame-login') + '?sesame=' + token)
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, '/platform/logged-in/')
+        self.assertEqual(resp.url, '/index/')
+        # Note: 2023-08-08 - This test has been changed because "platform UI" is not generally available yet
+        # TODO: In the future, the URL comparison will need to be reverted
+        # self.assertEqual(resp.url, '/platform/logged-in/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)

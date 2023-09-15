@@ -18,6 +18,30 @@
 */
 
 
+// Construct a dynamic API filter for the "issued by" field
+function constructIssuedByFilter() {
+    return {
+        title: '{% trans "Issued By" %}',
+        options: function() {
+            let users = {};
+
+            inventreeGet('{% url "api-user-list" %}', {}, {
+                async: false,
+                success: function(response) {
+                    for (let user of response) {
+                        users[user.pk] = {
+                            key: user.pk,
+                            value: user.username
+                        };
+                    }
+                }
+            });
+
+            return users;
+        }
+    }
+}
+
 // Construct a dynamic API filter for the "project" field
 function constructProjectCodeFilter() {
     return {
@@ -482,6 +506,7 @@ function getBuildTableFilters() {
                 return ownersList;
             },
         },
+        issued_by: constructIssuedByFilter(),
     };
 
     if (global_settings.PROJECT_CODES_ENABLED) {
