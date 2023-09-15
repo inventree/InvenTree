@@ -41,6 +41,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=201,
         ).data
 
+        print("A:", data)
+
         self.assertEqual(data['success'], True)
 
         # valid - github url
@@ -52,6 +54,9 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             },
             expected_code=201,
         ).data
+
+        print("B:", data)
+
         self.assertEqual(data['success'], True)
 
         # valid - github url and package name
@@ -66,6 +71,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         ).data
         self.assertEqual(data['success'], True)
 
+        print("C:", data)
+
         # invalid tries
         # no input
         self.post(url, {}, expected_code=400)
@@ -74,6 +81,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         data = self.post(url, {
             'confirm': True,
         }, expected_code=400).data
+
+        print("D:", data)
 
         self.assertEqual(data['url'][0].title().upper(), self.MSG_NO_PKG.upper())
         self.assertEqual(data['packagename'][0].title().upper(), self.MSG_NO_PKG.upper())
@@ -87,6 +96,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             'packagename': self.PKG_NAME,
             'confirm': False,
         }, expected_code=400).data
+
+        print("E:", data)
 
         self.assertEqual(data['confirm'][0].title().upper(), 'Installation not confirmed'.upper())
 
