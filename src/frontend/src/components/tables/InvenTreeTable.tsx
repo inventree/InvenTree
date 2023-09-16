@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Indicator, Space, Stack, Tooltip } from '@mantine/core';
 import { Group } from '@mantine/core';
-import { randomId } from '@mantine/hooks';
+import { useLocalStorage } from '@mantine/hooks';
 import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -18,28 +18,6 @@ import { FilterGroup } from './FilterGroup';
 import { FilterSelectModal } from './FilterSelectModal';
 import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
-
-/*
- * Load list of hidden columns from local storage.
- * Returns a list of column names which are "hidden" for the current table
- */
-function loadHiddenColumns(tableKey: string) {
-  return JSON.parse(
-    localStorage.getItem(`inventree-hidden-table-columns-${tableKey}`) || '[]'
-  );
-}
-
-/**
- * Write list of hidden columns to local storage
- * @param tableKey : string - unique key for the table
- * @param columns : string[] - list of column names
- */
-function saveHiddenColumns(tableKey: string, columns: any[]) {
-  localStorage.setItem(
-    `inventree-hidden-table-columns-${tableKey}`,
-    JSON.stringify(columns)
-  );
-}
 
 /**
  * Loads the list of active filters from local storage
@@ -176,10 +154,11 @@ export function InvenTreeTable({
     (col: TableColumn) => col.switchable
   );
 
-  // Manage state for switchable columns (initially load from local storage)
-  let [hiddenColumns, setHiddenColumns] = useState(() =>
-    loadHiddenColumns(tableName)
-  );
+  // A list of hidden columns, saved to local storage
+  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
+    key: `inventree-hidden-table-columns-${tableName}`,
+    defaultValue: []
+  });
 
   // Data selection
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
@@ -241,15 +220,9 @@ export function InvenTreeTable({
       newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
     }
 
-    let hiddenColumnNames = newColumns
-      .filter((col) => col.hidden)
-      .map((col) => col.accessor);
-
-    // Save list of hidden columns to local storage
-    saveHiddenColumns(tableName, hiddenColumnNames);
-
-    // Refresh state
-    setHiddenColumns(loadHiddenColumns(tableName));
+    setHiddenColumns(
+      newColumns.filter((col) => col.hidden).map((col) => col.accessor)
+    );
   }
 
   // Filter selection open state
