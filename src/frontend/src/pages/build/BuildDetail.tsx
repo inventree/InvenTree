@@ -122,7 +122,8 @@ export default function BuildDetail() {
     <>
       <Stack spacing="xs">
         <PageDetail
-          title={t`Build Order` + ' ' + build.reference}
+          title={t`Build Order`}
+          subtitle={build.reference}
           detail={
             <Alert color="teal" title="Build order detail goes here">
               <Text>TODO: Build details</Text>

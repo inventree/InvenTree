@@ -11,11 +11,13 @@ import { Breadcrumb, BreadcrumbList } from './BreadcrumbList';
  */
 export function PageDetail({
   title,
+  subtitle,
   detail,
   breadcrumbs,
   actions
 }: {
   title: string;
+  subtitle: string;
   detail: ReactNode;
   breadcrumbs?: Breadcrumb[];
   actions?: ReactNode[];
@@ -24,7 +26,10 @@ export function PageDetail({
     <Paper p="xs" radius="xs">
       <Stack spacing="xs">
         <Group position="apart">
-          <Text size="lg">{title}</Text>
+          <Group position="left">
+            <Text size="xl">{title}</Text>
+            <Text size="lg">{subtitle}</Text>
+          </Group>
           <Space />
           {actions && <Group position="right">{actions}</Group>}
         </Group>

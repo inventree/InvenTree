@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import {
+  Alert,
   Button,
   Group,
   LoadingOverlay,
@@ -29,7 +30,11 @@ import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
+import {
+  PlaceholderPanel,
+  PlaceholderPill
+} from '../../components/items/Placeholder';
+import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
@@ -196,31 +201,38 @@ export default function PartDetail() {
   return (
     <>
       <Stack spacing="xs">
+        <PageDetail
+          title={t`Part`}
+          subtitle={part.full_name}
+          detail={
+            <Alert color="teal" title="Part detail goes here">
+              <Text>TODO: Part details</Text>
+            </Alert>
+          }
+          breadcrumbs={[
+            { name: t`Parts`, url: '/part' },
+            { name: '...', url: '' },
+            { name: part.full_name, url: `/part/${part.pk}` }
+          ]}
+          actions={[
+            <Button
+              variant="outline"
+              color="blue"
+              onClick={() =>
+                part.pk &&
+                editPart({
+                  part_id: part.pk,
+                  callback: () => {
+                    partQuery.refetch();
+                  }
+                })
+              }
+            >
+              Edit Part
+            </Button>
+          ]}
+        />
         <LoadingOverlay visible={partQuery.isFetching} />
-        <Group position="apart">
-          <Group position="left">
-            <Text size="lg">Part Detail</Text>
-            <Text>{part.name}</Text>
-            <Text size="sm">{part.description}</Text>
-          </Group>
-          <Space />
-          <Text>In Stock: {part.total_in_stock}</Text>
-          <Button
-            variant="outline"
-            color="blue"
-            onClick={() =>
-              part.pk &&
-              editPart({
-                part_id: part.pk,
-                callback: () => {
-                  partQuery.refetch();
-                }
-              })
-            }
-          >
-            Edit Part
-          </Button>
-        </Group>
         <PanelGroup panels={partPanels} />
       </Stack>
     </>
