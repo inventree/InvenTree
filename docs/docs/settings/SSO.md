@@ -4,10 +4,10 @@ title: InvenTree Single Sign On
 
 ## Single Sign On
 
-InvenTree provides the possibility to use 3rd party services to authenticate users. This functionality makes use of [django-allauth](https://django-allauth.readthedocs.io/en/latest/) and supports a wide array of OpenID and OAuth [providers](https://django-allauth.readthedocs.io/en/latest/providers.html).
+InvenTree provides the possibility to use 3rd party services to authenticate users. This functionality makes use of [django-allauth](https://django-allauth.readthedocs.io/en/latest/) and supports a wide array of OpenID and OAuth [providers](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html).
 
 !!! tip "Provider Documentation"
-    There are a lot of technical considerations when configuring a particular SSO provider. A good starting point is the [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/providers.html)
+    There are a lot of technical considerations when configuring a particular SSO provider. A good starting point is the [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html)
 
 ## SSO Configuration
 
@@ -28,8 +28,8 @@ There are two variables in the configuration file which define the operation of 
 
 | Key | Description | More Info |
 | --- | --- | --- |
-| `social_backends` | A *list* of provider backends enabled for the InvenTree instance | [django-allauth docs](https://django-allauth.readthedocs.io/en/latest/installation.html) |
-| `social_providers` | A *dict* of settings specific to the installed providers | [provider documentation](https://django-allauth.readthedocs.io/en/latest/providers.html) |
+| `social_backends` | A *list* of provider backends enabled for the InvenTree instance | [django-allauth docs](https://django-allauth.readthedocs.io/en/latest/installation/quickstart.html) |
+| `social_providers` | A *dict* of settings specific to the installed providers | [provider documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) |
 
 In the example below, SSO provider modules are activated for *google*, *github* and *microsoft*. Specific configuration options are specified for the *microsoft* provider module:
 
@@ -48,7 +48,7 @@ In the example below, SSO provider modules are activated for *google*, *github* 
 The next step is to create an external authentication app with your provider of choice. This step is wholly separate to your InvenTree installation, and must be performed before continuing further.
 
 !!! info "Read the Documentation"
-    The [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/providers.html) is a good starting point here. There are also a number of good tutorials online (at least for the major supported SSO providers).
+    The [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) is a good starting point here. There are also a number of good tutorials online (at least for the major supported SSO providers).
 
 In general, the external app will generate a *key* and *secret* pair - although different terminology may be used, depending on the provider.
 
