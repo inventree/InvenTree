@@ -69,6 +69,10 @@ debug: True
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
 
+# Configure if logs should be output in JSON format
+# Use environment variable INVENTREE_JSON_LOG
+json_log: False
+
 # Select default system language (default is 'en-us')
 # Use the environment variable INVENTREE_LANGUAGE
 language: en-us

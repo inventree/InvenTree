@@ -22,6 +22,7 @@ from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
+import structlog
 from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
@@ -81,6 +82,7 @@ ENABLE_PLATFORM_FRONTEND = get_boolean_setting('INVENTREE_PLATFORM_FRONTEND', 'p
 
 # Configure logging settings
 log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
+json_log = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
 
 logging.basicConfig(
     level=log_level,
@@ -90,27 +92,80 @@ logging.basicConfig(
 if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
     log_level = 'WARNING'  # pragma: no cover
 
+
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': log_level,
-    },
+    "version": 1,
+    "disable_existing_loggers": False,
     'filters': {
         'require_not_maintenance_mode_503': {
             '()': 'maintenance_mode.logging.RequireNotMaintenanceMode503',
         },
     },
+    "formatters": {
+        "json_formatter": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.processors.JSONRenderer(),
+        },
+        "plain_console": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.dev.ConsoleRenderer(),
+        },
+        "key_value": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.processors.KeyValueRenderer(key_order=['timestamp', 'level', 'event', 'logger']),
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "plain_console",
+        }
+    },
+    "loggers": {
+        "django_structlog": {
+            "handlers": ["console", "log_file"],
+            "level": log_level,
+        },
+        "inventree": {
+            "handlers": ["console", "log_file"],
+            "level": log_level,
+        },
+    }
 }
 
+# Add handlers
+if json_log:  # pragma: no cover
+    LOGGING['loggers']['handlers']["log_file"] = {
+        "class": "logging.handlers.WatchedFileHandler",
+        "filename": BASE_DIR.joinpath('logs.json'),
+        "formatter": "json_formatter",
+    }
+else:
+    LOGGING['loggers']['handlers']["log_file"] = {
+        "class": "logging.handlers.WatchedFileHandler",
+        "filename": BASE_DIR.joinpath('logs.log'),
+        "formatter": "key_value",
+    },
+
+structlog.configure(
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        structlog.stdlib.filter_by_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.UnicodeDecoder(),
+        structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+    ],
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    cache_logger_on_first_use=True,
+)
+
 # Get a logger instance for this setup file
-logger = logging.getLogger("inventree")
+logger = structlog.getLogger("inventree")
 
 # Load SECRET_KEY
 SECRET_KEY = config.get_secret_key()
