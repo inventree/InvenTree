@@ -9,6 +9,7 @@ import { useMemo } from 'react';
 
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
+import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartListTable } from '../../components/tables/part/PartTable';
 
@@ -41,10 +42,18 @@ export default function PartIndex() {
 
   return (
     <>
-      <Stack spacing="xs">
-        <StylishText>
-          <Trans>Parts</Trans>
-        </StylishText>
+      <Stack>
+        <PageDetail
+          title={t`Parts`}
+          breadcrumbs={
+            [
+              // {
+              //   name: t`Parts`,
+              //   url: '/part',
+              // }
+            ]
+          }
+        />
         <PanelGroup panels={panels} />
       </Stack>
     </>

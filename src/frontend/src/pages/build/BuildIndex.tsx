@@ -1,9 +1,6 @@
-import { Trans, t } from '@lingui/macro';
-import { Button, Group, Stack, Text } from '@mantine/core';
-import { IconCirclePlus, IconTools } from '@tabler/icons-react';
+import { t } from '@lingui/macro';
+import { Button, Stack, Text } from '@mantine/core';
 
-import { PlaceholderPill } from '../../components/items/Placeholder';
-import { StylishText } from '../../components/items/StylishText';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { notYetImplemented } from '../../functions/notifications';

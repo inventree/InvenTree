@@ -23,19 +23,25 @@ export function PageDetail({
   actions?: ReactNode[];
 }) {
   return (
-    <Paper p="xs" radius="xs" shadow="xs">
-      <Stack spacing="xs">
-        <Group position="apart">
-          <Group position="left">
-            <Text size="xl">{title}</Text>
-            {subtitle && <Text size="lg">{subtitle}</Text>}
+    <Stack spacing="xs">
+      {breadcrumbs && breadcrumbs.length > 0 && (
+        <Paper p="xs" radius="xs" shadow="xs">
+          <BreadcrumbList breadcrumbs={breadcrumbs} />
+        </Paper>
+      )}
+      <Paper p="xs" radius="xs" shadow="xs">
+        <Stack spacing="xs">
+          <Group position="apart">
+            <Group position="left">
+              <Text size="xl">{title}</Text>
+              {subtitle && <Text size="lg">{subtitle}</Text>}
+            </Group>
+            <Space />
+            {actions && <Group position="right">{actions}</Group>}
           </Group>
-          <Space />
-          {actions && <Group position="right">{actions}</Group>}
-        </Group>
-        {breadcrumbs && <BreadcrumbList breadcrumbs={breadcrumbs} />}
-        {detail}
-      </Stack>
-    </Paper>
+          {detail}
+        </Stack>
+      </Paper>
+    </Stack>
   );
 }
