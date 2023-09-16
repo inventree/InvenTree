@@ -15,7 +15,10 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
-import { PlaceholderPill } from '../../components/items/Placeholder';
+import {
+  PlaceholderPanel,
+  PlaceholderPill
+} from '../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
@@ -47,37 +50,37 @@ export default function BuildDetail() {
         name: 'details',
         label: t`Build Details`,
         icon: <IconInfoCircle size="18" />,
-        content: <PlaceholderPill />
+        content: <PlaceholderPanel />
       },
       {
         name: 'allocate-stock',
         label: t`Allocate Stock`,
         icon: <IconListCheck size="18" />,
-        content: <PlaceholderPill />
+        content: <PlaceholderPanel />
       },
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
         icon: <IconClipboardList size="18" />,
-        content: <PlaceholderPill />
+        content: <PlaceholderPanel />
       },
       {
         name: 'complete-outputs',
         label: t`Complete Outputs`,
         icon: <IconClipboardCheck size="18" />,
-        content: <PlaceholderPill />
+        content: <PlaceholderPanel />
       },
       {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
         icon: <IconList size="18" />,
-        content: <PlaceholderPill />
+        content: <PlaceholderPanel />
       },
       {
         name: 'chiold-orders',
         label: t`Child Build Orders`,
         icon: <IconListTree size="18" />,
-        content: <PlaceholderPill />
+        content: <PlaceholderPanel />
       },
       {
         name: 'attachments',
