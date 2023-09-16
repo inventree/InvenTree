@@ -32,7 +32,7 @@ export default function BuildDetail() {
   const [build, setBuild] = useState<any>({});
 
   // Query hook for fetching build data
-  const buildQuery = useQuery(['build', id], async () => {
+  const buildQuery = useQuery(['build', id ?? -1], async () => {
     let url = `/build/${id}/`;
 
     return api

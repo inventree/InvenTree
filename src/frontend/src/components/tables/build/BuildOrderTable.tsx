@@ -52,12 +52,6 @@ function buildOrderTableColumns(): TableColumn[] {
       // TODO: Custom render function here
     },
     {
-      accessor: 'priority',
-      title: t`Priority`,
-      sortable: true,
-      switchable: true
-    },
-    {
       accessor: 'quantity',
       sortable: true,
       title: t`Quantity`,
@@ -89,15 +83,43 @@ function buildOrderTableColumns(): TableColumn[] {
       // TODO: Custom render function here (status label)
     },
     {
+      accessor: 'priority',
+      title: t`Priority`,
+      sortable: true,
+      switchable: true
+    },
+    {
       accessor: 'creation_date',
       sortable: true,
       title: t`Created`,
       switchable: true
+    },
+    {
+      accessor: 'target_date',
+      sortable: true,
+      title: t`Target Date`,
+      switchable: true
+    },
+    {
+      accessor: 'completion_date',
+      sortable: true,
+      title: t`Completed`,
+      switchable: true
+    },
+    {
+      accessor: 'issued_by',
+      sortable: true,
+      title: t`Issued By`,
+      switchable: true
+      // TODO: custom render function
+    },
+    {
+      accessor: 'responsible',
+      sortable: true,
+      title: t`Responsible`,
+      switchable: true
+      // TODO: custom render function
     }
-    // TODO: issued_by
-    // TODO: responsible
-    // TODO: target_date
-    // TODO: completion_date
   ];
 }
 
