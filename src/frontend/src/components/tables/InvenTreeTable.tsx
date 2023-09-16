@@ -81,7 +81,7 @@ function saveActiveFilters(tableKey: string, filters: TableFilter[]) {
 const defaultPageSize: number = 25;
 
 /**
- * Set of properties which can be passed to an InvenTreeTable component
+ * Set of optional properties which can be passed to an InvenTreeTable component
  *
  * @param url : string - The API endpoint to query
  * @param params : any - Base query parameters
@@ -105,7 +105,6 @@ const defaultPageSize: number = 25;
  */
 export type InvenTreeTableProps = {
   params?: any;
-  columns: TableColumn[];
   defaultSortColumn?: string;
   noRecordsText?: string;
   enableDownload?: boolean;
@@ -124,7 +123,7 @@ export type InvenTreeTableProps = {
 };
 
 /**
- * Default table properties
+ * Default table properties (used if not specified)
  */
 const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
