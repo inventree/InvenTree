@@ -19,43 +19,6 @@ import { FilterSelectModal } from './FilterSelectModal';
 import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
 
-/**
- * Loads the list of active filters from local storage
- * @param tableKey : string - unique key for the table
- * @param filterList : TableFilter[] - list of available filters
- * @returns a map of active filters for the current table, {name: value}
- */
-function loadActiveFilters(tableKey: string, filterList: TableFilter[]) {
-  let active = JSON.parse(
-    localStorage.getItem(`inventree-active-table-filters-${tableKey}`) || '{}'
-  );
-
-  // We expect that the active filter list is a map of {name: value}
-  // Return *only* those filters which are in the filter list
-  let x = filterList
-    .filter((f) => f.name in active)
-    .map((f) => ({
-      ...f,
-      value: active[f.name]
-    }));
-
-  return x;
-}
-
-/**
- * Write the list of active filters to local storage
- * @param tableKey : string - unique key for the table
- * @param filters : any - map of active filters, {name: value}
- */
-function saveActiveFilters(tableKey: string, filters: TableFilter[]) {
-  let active = Object.fromEntries(filters.map((flt) => [flt.name, flt.value]));
-
-  localStorage.setItem(
-    `inventree-active-table-filters-${tableKey}`,
-    JSON.stringify(active)
-  );
-}
-
 const defaultPageSize: number = 25;
 
 /**
@@ -160,6 +123,12 @@ export function InvenTreeTable({
     defaultValue: []
   });
 
+  // Active filters (saved to local storage)
+  const [activeFilters, setActiveFilters] = useLocalStorage<any[]>({
+    key: `inventree-active-table-filters-${tableName}`,
+    defaultValue: []
+  });
+
   // Data selection
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
@@ -234,11 +203,6 @@ export function InvenTreeTable({
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
-  // Map of currently active filters, {name: value}
-  const [activeFilters, setActiveFilters] = useState(() =>
-    loadActiveFilters(tableName, tableProps.customFilters ?? [])
-  );
-
   /*
    * Callback for the "add filter" button.
    * Launches a modal dialog to add a new filter
@@ -254,7 +218,6 @@ export function InvenTreeTable({
         value: value
       });
 
-      saveActiveFilters(tableName, filters);
       setActiveFilters(filters);
     }
   }
@@ -264,7 +227,7 @@ export function InvenTreeTable({
    */
   function onFilterRemove(filterName: string) {
     let filters = activeFilters.filter((flt) => flt.name != filterName);
-    saveActiveFilters(tableName, filters);
+
     setActiveFilters(filters);
   }
 
@@ -272,7 +235,6 @@ export function InvenTreeTable({
    * Callback function when all custom filters are removed from the table
    */
   function onFilterClearAll() {
-    saveActiveFilters(tableName, []);
     setActiveFilters([]);
   }
 
