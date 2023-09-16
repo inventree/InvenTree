@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-14 01:15\n"
+"PO-Revision-Date: 2023-09-16 01:32\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -188,7 +188,7 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:286
-#: src/components/nav/SearchDrawer.tsx:425
+#: src/components/nav/SearchDrawer.tsx:426
 #: src/components/tables/InvenTreeTable.tsx:378
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -210,7 +210,7 @@ msgstr "Đang tải"
 msgid "No results found"
 msgstr ""
 
-#: src/components/items/DocTooltip.tsx:89
+#: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
 msgstr "Xem thêm"
 
@@ -253,34 +253,43 @@ msgid "Unknown response"
 msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:98
+#: src/pages/Index/Scan.tsx:592
 msgid "Error while getting camera"
 msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:121
+#: src/pages/Index/Scan.tsx:615
 msgid "Error while scanning"
 msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:135
+#: src/pages/Index/Scan.tsx:629
 msgid "Error while stopping"
 msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:150
+#: src/defaults/menuItems.tsx:22
+#: src/pages/Index/Scan.tsx:698
 msgid "Scanning"
 msgstr "Đang quét"
 
 #: src/components/modals/QrCodeModal.tsx:150
+#: src/pages/Index/Scan.tsx:698
 msgid "Not scanning"
 msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:155
+#: src/pages/Index/Scan.tsx:704
 msgid "Select Camera"
 msgstr "Chọn camera"
 
 #: src/components/modals/QrCodeModal.tsx:165
+#: src/pages/Index/Scan.tsx:690
 msgid "Start scanning"
 msgstr "Bắt đầu quét"
 
 #: src/components/modals/QrCodeModal.tsx:172
+#: src/pages/Index/Scan.tsx:684
 msgid "Stop scanning"
 msgstr "Dừng quét"
 
@@ -293,23 +302,19 @@ msgid "Close modal"
 msgstr ""
 
 #: src/components/nav/MainMenu.tsx:38
-msgid "Notifications"
-msgstr "Thông báo"
-
-#: src/components/nav/MainMenu.tsx:42
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:46
+#: src/components/nav/MainMenu.tsx:42
 msgid "Settings"
 msgstr "Cài đặt"
 
-#: src/components/nav/MainMenu.tsx:49
+#: src/components/nav/MainMenu.tsx:45
 msgid "Account settings"
 msgstr "Cài đặt tài khoản"
 
-#: src/components/nav/MainMenu.tsx:57
+#: src/components/nav/MainMenu.tsx:53
 msgid "Logout"
 msgstr "Đăng xuất"
 
@@ -358,91 +363,102 @@ msgstr "Tài liệu"
 msgid "About"
 msgstr "Giới thiệu"
 
-#: src/components/nav/SearchDrawer.tsx:60
+#: src/components/nav/NotificationDrawer.tsx:67
+#: src/pages/Notifications.tsx:20
+#: src/pages/Notifications.tsx:87
+msgid "Notifications"
+msgstr "Thông báo"
+
+#: src/components/nav/NotificationDrawer.tsx:102
+#: src/pages/Notifications.tsx:29
+msgid "Mark as read"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:61
 #: src/defaults/links.tsx:26
 #: src/pages/part/PartIndex.tsx:23
 #: src/pages/part/PartIndex.tsx:46
 msgid "Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:68
+#: src/components/nav/SearchDrawer.tsx:69
 msgid "Supplier Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:81
+#: src/components/nav/SearchDrawer.tsx:82
 msgid "Manufacturer Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:94
+#: src/components/nav/SearchDrawer.tsx:95
 msgid "Part Categories"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:102
+#: src/components/nav/SearchDrawer.tsx:103
 #: src/pages/Index/Stock.tsx:13
 msgid "Stock Items"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:113
+#: src/components/nav/SearchDrawer.tsx:114
 msgid "Stock Locations"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:121
+#: src/components/nav/SearchDrawer.tsx:122
 #: src/pages/Index/Build.tsx:13
 #: src/pages/part/PartDetail.tsx:79
 msgid "Build Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:131
+#: src/components/nav/SearchDrawer.tsx:132
 msgid "Companies"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:140
+#: src/components/nav/SearchDrawer.tsx:141
 #: src/pages/part/PartDetail.tsx:106
 msgid "Purchase Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:150
+#: src/components/nav/SearchDrawer.tsx:151
 #: src/pages/part/PartDetail.tsx:113
 msgid "Sales Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:160
+#: src/components/nav/SearchDrawer.tsx:161
 msgid "Return Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:195
+#: src/components/nav/SearchDrawer.tsx:196
 msgid "results"
 msgstr "kết quả"
 
-#: src/components/nav/SearchDrawer.tsx:351
+#: src/components/nav/SearchDrawer.tsx:352
 msgid "Enter search text"
 msgstr "Nhập văn bản tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:378
+#: src/components/nav/SearchDrawer.tsx:379
 msgid "Search Options"
 msgstr "Tùy chọn tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:381
+#: src/components/nav/SearchDrawer.tsx:382
 msgid "Regex search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:391
+#: src/components/nav/SearchDrawer.tsx:392
 msgid "Whole word search"
 msgstr "Tìm phù hợp toàn bộ từ"
 
-#: src/components/nav/SearchDrawer.tsx:428
+#: src/components/nav/SearchDrawer.tsx:429
 msgid "An error occurred during search query"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:439
+#: src/components/nav/SearchDrawer.tsx:440
 msgid "No results"
 msgstr "Không có kết quả"
 
-#: src/components/nav/SearchDrawer.tsx:442
+#: src/components/nav/SearchDrawer.tsx:443
 msgid "No results available for search query"
 msgstr ""
 
-#: src/components/render/Instance.tsx:65
+#: src/components/render/Instance.tsx:70
 msgid "Unknown model: {model}"
 msgstr ""
 
@@ -471,6 +487,8 @@ msgstr ""
 #: src/components/tables/AttachmentTable.tsx:130
 #: src/components/tables/part/RelatedPartTable.tsx:97
 #: src/functions/forms.tsx:177
+#: src/pages/Index/Scan.tsx:306
+#: src/pages/Notifications.tsx:67
 msgid "Delete"
 msgstr ""
 
@@ -661,6 +679,23 @@ msgstr "Trạng thái"
 msgid "Created"
 msgstr "Được tạo"
 
+#: src/components/tables/notifications/NotificationsTable.tsx:23
+msgid "Age"
+msgstr ""
+
+#: src/components/tables/notifications/NotificationsTable.tsx:28
+#: src/components/tables/part/PartTable.tsx:57
+msgid "Category"
+msgstr "Danh mục"
+
+#: src/components/tables/notifications/NotificationsTable.tsx:33
+msgid "Notification"
+msgstr ""
+
+#: src/components/tables/notifications/NotificationsTable.tsx:37
+msgid "Message"
+msgstr ""
+
 #: src/components/tables/part/PartTable.tsx:39
 msgid "IPN"
 msgstr "IPN"
@@ -668,10 +703,6 @@ msgstr "IPN"
 #: src/components/tables/part/PartTable.tsx:46
 msgid "Units"
 msgstr "Đơn vị"
-
-#: src/components/tables/part/PartTable.tsx:57
-msgid "Category"
-msgstr "Danh mục"
 
 #: src/components/tables/part/PartTable.tsx:68
 #: src/components/tables/stock/StockItemTable.tsx:43
@@ -1004,7 +1035,7 @@ msgid "Build"
 msgstr "Xây dựng"
 
 #: src/defaults/links.tsx:31
-#: src/defaults/menuItems.tsx:25
+#: src/defaults/menuItems.tsx:32
 #: src/pages/Index/Playground.tsx:87
 msgid "Playground"
 msgstr ""
@@ -1100,6 +1131,10 @@ msgstr ""
 #: src/defaults/menuItems.tsx:22
 #~ msgid "The fluid of Smeargle’s tail secretions changes"
 #~ msgstr "The fluid of Smeargle’s tail secretions changes"
+
+#: src/defaults/menuItems.tsx:24
+msgid "View for interactive scanning and multiple actions."
+msgstr ""
 
 #: src/defaults/menuItems.tsx:24
 #~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
@@ -1309,6 +1344,7 @@ msgid "Checking if you are already logged in"
 msgstr ""
 
 #: src/pages/Auth/Login.tsx:25
+#: src/pages/Index/Scan.tsx:292
 msgid "No selection"
 msgstr "Không có lựa chọn"
 
@@ -1563,6 +1599,119 @@ msgstr ""
 msgid "Loader"
 msgstr ""
 
+#: src/pages/Index/Scan.tsx:188
+msgid "Manual input"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:189
+msgid "Image Barcode"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:219
+msgid "Selected elements are not known"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:226
+msgid "Multiple object types selected"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:233
+msgid "Actions for {0}"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:236
+msgid "Count"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:250
+msgid "Scan Page"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:253
+msgid "This page can be used for continuously scanning items and taking actions on them."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:268
+msgid "Select the input method you want to use to scan items."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:270
+msgid "Input"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:277
+msgid "Select input method"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:278
+msgid "Nothing found"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:286
+msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:288
+msgid "Action"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:297
+msgid "{0} items selected"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:300
+msgid "General Actions"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:313
+msgid "Lookup part"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:320
+msgid "Open Link"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:335
+msgid "History is locally kept in this browser."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:336
+msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:338
+#: src/pages/Notifications.tsx:46
+msgid "History"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:404
+msgid "No history"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:423
+msgid "Item"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:426
+msgid "Type"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:429
+msgid "Source"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:432
+msgid "Scanned at"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:484
+msgid "Enter item serial or data"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:496
+msgid "Add dummy item"
+msgstr ""
+
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
 #~ msgstr "Found an exsisting login - using it to log you in."
@@ -1578,6 +1727,10 @@ msgstr ""
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
 msgstr "Chuyển đến trang đầu"
+
+#: src/pages/Notifications.tsx:55
+msgid "Mark as unread"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:53
 msgid "Details"
