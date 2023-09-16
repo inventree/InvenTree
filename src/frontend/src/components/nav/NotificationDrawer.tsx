@@ -81,7 +81,9 @@ export function NotificationDrawer({
         <Divider />
         <LoadingOverlay visible={notificationQuery.isFetching} />
         {notificationQuery.data?.results?.length == 0 && (
-          <Alert title={t`No notifications to display`} color="green"></Alert>
+          <Alert color="green">
+            <Text size="sm">{t`You have no unread notifications.`}</Text>
+          </Alert>
         )}
         {notificationQuery.data?.results.map((notification: any) => (
           <Group position="apart">
