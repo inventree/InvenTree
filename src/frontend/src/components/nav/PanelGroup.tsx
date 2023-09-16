@@ -54,40 +54,41 @@ export function PanelGroup({
   }
 
   return (
-    <Tabs
-      value={activePanelName}
-      orientation="vertical"
-      onTabChange={handlePanelChange}
-      keepMounted={false}
-    >
-      <Tabs.List>
+    <Paper p="sm" radius="xs" shadow="xs">
+      <Tabs
+        value={activePanelName}
+        orientation="vertical"
+        onTabChange={handlePanelChange}
+        keepMounted={false}
+      >
+        <Tabs.List>
+          {panels.map(
+            (panel, idx) =>
+              !panel.hidden && (
+                <Tabs.Tab
+                  p="xs"
+                  value={panel.name}
+                  icon={panel.icon}
+                  hidden={panel.hidden}
+                >
+                  {panel.label}
+                </Tabs.Tab>
+              )
+          )}
+        </Tabs.List>
         {panels.map(
           (panel, idx) =>
             !panel.hidden && (
-              <Tabs.Tab
-                value={panel.name}
-                icon={panel.icon}
-                hidden={panel.hidden}
-              >
-                {panel.label}
-              </Tabs.Tab>
-            )
-        )}
-      </Tabs.List>
-      {panels.map(
-        (panel, idx) =>
-          !panel.hidden && (
-            <Tabs.Panel key={idx} value={panel.name}>
-              <Paper p="md" radius="xs">
+              <Tabs.Panel key={idx} value={panel.name} p="sm">
                 <Stack spacing="md">
                   <Text size="xl">{panel.label}</Text>
                   <Divider />
                   {panel.content}
                 </Stack>
-              </Paper>
-            </Tabs.Panel>
-          )
-      )}
-    </Tabs>
+              </Tabs.Panel>
+            )
+        )}
+      </Tabs>
+    </Paper>
   );
 }
