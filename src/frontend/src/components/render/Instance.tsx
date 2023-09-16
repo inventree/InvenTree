@@ -4,6 +4,7 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { Thumbnail } from '../items/Thumbnail';
+import { RenderBuildOrder } from './Build';
 import {
   RenderAddress,
   RenderCompany,
@@ -17,7 +18,7 @@ import {
   RenderSalesOrderShipment
 } from './Order';
 import { RenderPart, RenderPartCategory } from './Part';
-import { RenderStockLocation } from './Stock';
+import { RenderStockItem, RenderStockLocation } from './Stock';
 import { RenderOwner, RenderUser } from './User';
 
 // import { ApiFormFieldType } from "../forms/fields/ApiFormField";
@@ -35,6 +36,8 @@ export function RenderInstance({
   switch (model) {
     case 'address':
       return <RenderAddress address={instance} />;
+    case 'build':
+      return <RenderBuildOrder buildorder={instance} />;
     case 'company':
       return <RenderCompany company={instance} />;
     case 'contact':
@@ -55,6 +58,8 @@ export function RenderInstance({
       return <RenderSalesOrderShipment shipment={instance} />;
     case 'stocklocation':
       return <RenderStockLocation location={instance} />;
+    case 'stockitem':
+      return <RenderStockItem item={instance} />;
     case 'supplierpart':
       return <RenderSupplierPart supplierpart={instance} />;
     case 'user':

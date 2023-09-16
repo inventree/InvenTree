@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-12 00:10\n"
+"PO-Revision-Date: 2023-09-14 01:14\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -23,6 +23,7 @@ msgid "Title"
 msgstr ""
 
 #: src/components/forms/ApiForm.tsx:189
+#: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
 msgstr ""
 
@@ -158,6 +159,7 @@ msgid "Add Host"
 msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:89
+#: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
 msgstr ""
 
@@ -187,7 +189,9 @@ msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:286
 #: src/components/nav/SearchDrawer.tsx:425
-#: src/components/tables/InvenTreeTable.tsx:368
+#: src/components/tables/InvenTreeTable.tsx:378
+#: src/components/widgets/MarkdownEditor.tsx:108
+#: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 msgid "Error"
@@ -211,7 +215,7 @@ msgid "Read More"
 msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:360
+#: src/components/tables/InvenTreeTable.tsx:370
 msgid "Unknown error"
 msgstr ""
 
@@ -384,7 +388,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:121
 #: src/pages/Index/Build.tsx:13
-#: src/pages/part/PartDetail.tsx:76
+#: src/pages/part/PartDetail.tsx:79
 msgid "Build Orders"
 msgstr ""
 
@@ -393,12 +397,12 @@ msgid "Companies"
 msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:140
-#: src/pages/part/PartDetail.tsx:103
+#: src/pages/part/PartDetail.tsx:106
 msgid "Purchase Orders"
 msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:150
-#: src/pages/part/PartDetail.tsx:110
+#: src/pages/part/PartDetail.tsx:113
 msgid "Sales Orders"
 msgstr ""
 
@@ -444,6 +448,58 @@ msgstr ""
 
 #: src/components/render/Order.tsx:67
 msgid "Shipment"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:29
+msgid "Attachment"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:46
+msgid "Comment"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:55
+msgid "Uploaded"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:115
+#: src/components/tables/part/PartTable.tsx:203
+#: src/components/tables/stock/StockItemTable.tsx:124
+msgid "Edit"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:130
+#: src/components/tables/part/RelatedPartTable.tsx:97
+#: src/functions/forms.tsx:177
+msgid "Delete"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:156
+msgid "File uploaded"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:157
+msgid "File {0} uploaded successfully"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:168
+msgid "Upload Error"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:169
+msgid "File could not be uploaded"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:182
+msgid "Add attachment"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:201
+msgid "Add external link"
+msgstr ""
+
+#: src/components/tables/AttachmentTable.tsx:241
+msgid "Upload attachment"
 msgstr ""
 
 #: src/components/tables/ColumnSelect.tsx:17
@@ -523,41 +579,42 @@ msgstr ""
 msgid "No records found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:347
+#: src/components/tables/InvenTreeTable.tsx:357
 msgid "Bad request"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:350
+#: src/components/tables/InvenTreeTable.tsx:360
 msgid "Unauthorized"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:353
+#: src/components/tables/InvenTreeTable.tsx:363
 msgid "Forbidden"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:356
+#: src/components/tables/InvenTreeTable.tsx:366
 msgid "Not found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:405
-#: src/components/tables/InvenTreeTable.tsx:406
+#: src/components/tables/InvenTreeTable.tsx:427
+#: src/components/tables/InvenTreeTable.tsx:428
 msgid "Barcode actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:413
-#: src/components/tables/InvenTreeTable.tsx:414
+#: src/components/tables/InvenTreeTable.tsx:435
+#: src/components/tables/InvenTreeTable.tsx:436
 msgid "Print actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:431
+#: src/components/tables/InvenTreeTable.tsx:453
 msgid "Refresh data"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:449
+#: src/components/tables/InvenTreeTable.tsx:471
 msgid "Table filters"
 msgstr ""
 
-#: src/components/tables/RowActions.tsx:35
+#: src/components/tables/RowActions.tsx:33
+#: src/components/tables/RowActions.tsx:40
 msgid "Actions"
 msgstr ""
 
@@ -567,12 +624,14 @@ msgstr ""
 
 #: src/components/tables/build/BuildOrderTable.tsx:24
 #: src/components/tables/part/PartTable.tsx:25
+#: src/components/tables/part/RelatedPartTable.tsx:31
 #: src/components/tables/stock/StockItemTable.tsx:22
 msgid "Part"
 msgstr ""
 
 #: src/components/tables/build/BuildOrderTable.tsx:41
 #: src/components/tables/part/PartTable.tsx:51
+#: src/components/tables/part/RelatedPartTable.tsx:49
 #: src/components/tables/stock/StockItemTable.tsx:38
 msgid "Description"
 msgstr ""
@@ -617,7 +676,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:68
 #: src/components/tables/stock/StockItemTable.tsx:43
 #: src/defaults/links.tsx:27
-#: src/pages/part/PartDetail.tsx:56
+#: src/pages/part/PartDetail.tsx:59
 msgid "Stock"
 msgstr ""
 
@@ -731,13 +790,36 @@ msgstr ""
 msgid "Not Virtual"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:203
-#: src/components/tables/stock/StockItemTable.tsx:124
-msgid "Edit"
-msgstr ""
-
 #: src/components/tables/part/PartTable.tsx:216
 msgid "Detail"
+msgstr ""
+
+#: src/components/tables/part/RelatedPartTable.tsx:61
+msgid "Add Related Part"
+msgstr ""
+
+#: src/components/tables/part/RelatedPartTable.tsx:69
+msgid "Related Part"
+msgstr ""
+
+#: src/components/tables/part/RelatedPartTable.tsx:72
+msgid "Related part added"
+msgstr ""
+
+#: src/components/tables/part/RelatedPartTable.tsx:82
+msgid "Add related part"
+msgstr ""
+
+#: src/components/tables/part/RelatedPartTable.tsx:104
+msgid "Delete Related Part"
+msgstr ""
+
+#: src/components/tables/part/RelatedPartTable.tsx:105
+msgid "Related part deleted"
+msgstr ""
+
+#: src/components/tables/part/RelatedPartTable.tsx:107
+msgid "Are you sure you want to remove this relationship?"
 msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:58
@@ -785,6 +867,18 @@ msgstr ""
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
+msgstr ""
+
+#: src/components/widgets/MarkdownEditor.tsx:109
+msgid "Failed to upload image"
+msgstr ""
+
+#: src/components/widgets/MarkdownEditor.tsx:147
+msgid "Notes saved"
+msgstr ""
+
+#: src/components/widgets/MarkdownEditor.tsx:155
+msgid "Failed to save notes"
 msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:180
@@ -1098,8 +1192,48 @@ msgstr ""
 msgid "method parameter not supplied"
 msgstr ""
 
-#: src/functions/forms.tsx:177
-msgid "Delete"
+#: src/functions/forms/AttachmentForms.tsx:57
+msgid "Add File"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:57
+msgid "Add Link"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:58
+msgid "File added"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:58
+msgid "Link added"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:100
+msgid "Edit File"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:100
+msgid "Edit Link"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:101
+msgid "File updated"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:101
+msgid "Link updated"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:127
+msgid "Delete Attachment"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:128
+msgid "Attachment deleted"
+msgstr ""
+
+#: src/functions/forms/AttachmentForms.tsx:132
+msgid "Are you sure you want to delete this attachment?"
 msgstr ""
 
 #: src/functions/forms/PartForms.tsx:76
@@ -1445,43 +1579,43 @@ msgstr ""
 msgid "Go to the start page"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:50
+#: src/pages/part/PartDetail.tsx:53
 msgid "Details"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:62
+#: src/pages/part/PartDetail.tsx:65
 msgid "Variants"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:69
+#: src/pages/part/PartDetail.tsx:72
 msgid "Bill of Materials"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:83
+#: src/pages/part/PartDetail.tsx:86
 msgid "Used In"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:90
+#: src/pages/part/PartDetail.tsx:93
 msgid "Pricing"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:96
+#: src/pages/part/PartDetail.tsx:99
 msgid "Suppliers"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:117
+#: src/pages/part/PartDetail.tsx:120
 msgid "Test Templates"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:124
+#: src/pages/part/PartDetail.tsx:127
 msgid "Related Parts"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:130
+#: src/pages/part/PartDetail.tsx:133
 msgid "Attachments"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:136
+#: src/pages/part/PartDetail.tsx:139
 msgid "Notes"
 msgstr ""
 

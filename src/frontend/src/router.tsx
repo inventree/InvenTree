@@ -25,6 +25,8 @@ export const BuildDetail = Loadable(
   lazy(() => import('./pages/build/BuildDetail'))
 );
 
+export const Scan = Loadable(lazy(() => import('./pages/Index/Scan')));
+
 export const Dashboard = Loadable(
   lazy(() => import('./pages/Index/Dashboard'))
 );
@@ -78,6 +80,10 @@ export const router = createBrowserRouter(
         {
           path: 'playground/',
           element: <Playground />
+        },
+        {
+          path: 'scan',
+          element: <Scan />
         },
         {
           path: 'part/',

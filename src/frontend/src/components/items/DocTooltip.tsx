@@ -4,19 +4,24 @@ import { useEffect, useRef, useState } from 'react';
 
 import { InvenTreeStyle } from '../../globalStyle';
 
+export interface BaseDocProps {
+  text: string | JSX.Element;
+  detail?: string | JSX.Element;
+  link?: string;
+  docchildren?: React.ReactNode;
+}
+
+export interface DocTooltipProps extends BaseDocProps {
+  children: React.ReactNode;
+}
+
 export function DocTooltip({
   children,
   text,
   detail,
   link,
   docchildren
-}: {
-  children: React.ReactNode;
-  text: string | JSX.Element;
-  detail?: string | JSX.Element;
-  link?: string;
-  docchildren?: React.ReactNode;
-}) {
+}: DocTooltipProps) {
   const { classes } = InvenTreeStyle();
 
   return (
