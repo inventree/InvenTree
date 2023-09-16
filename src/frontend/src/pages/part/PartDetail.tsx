@@ -30,10 +30,7 @@ import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
-import {
-  PlaceholderPanel,
-  PlaceholderPill
-} from '../../components/items/Placeholder';
+import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
@@ -45,6 +42,9 @@ import {
 } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
 
+/**
+ * Detail view for a single Part instance
+ */
 export default function PartDetail() {
   const { id } = useParams();
 
