@@ -464,7 +464,7 @@ export function InvenTreeTable({
    */
   useEffect(() => {
     refetch();
-  }, [tableKey]);
+  }, [tableKey, props.params]);
 
   return (
     <>
