@@ -37,7 +37,11 @@ export default function BuildDetail() {
     let url = `/build/${id}/`;
 
     return api
-      .get(url)
+      .get(url, {
+        params: {
+          part_detail: true
+        }
+      })
       .then((response) => {
         setBuild(response.data);
       })
