@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-14 01:14\n"
+"PO-Revision-Date: 2023-09-16 01:31\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -210,7 +210,7 @@ msgstr "Betöltés"
 msgid "No results found"
 msgstr ""
 
-#: src/components/items/DocTooltip.tsx:89
+#: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
 msgstr "Tudj meg többet"
 
@@ -253,34 +253,43 @@ msgid "Unknown response"
 msgstr "Ismeretlen válasz"
 
 #: src/components/modals/QrCodeModal.tsx:98
+#: src/pages/Index/Scan.tsx:592
 msgid "Error while getting camera"
 msgstr "Hiba a kamera megnyitása közben"
 
 #: src/components/modals/QrCodeModal.tsx:121
+#: src/pages/Index/Scan.tsx:615
 msgid "Error while scanning"
 msgstr "Hiba a kódolvasás közben"
 
 #: src/components/modals/QrCodeModal.tsx:135
+#: src/pages/Index/Scan.tsx:629
 msgid "Error while stopping"
 msgstr "Hiba a leállítás közben"
 
 #: src/components/modals/QrCodeModal.tsx:150
+#: src/defaults/menuItems.tsx:22
+#: src/pages/Index/Scan.tsx:698
 msgid "Scanning"
 msgstr "Kódolvasás"
 
 #: src/components/modals/QrCodeModal.tsx:150
+#: src/pages/Index/Scan.tsx:698
 msgid "Not scanning"
 msgstr "Nincs kódolvasás"
 
 #: src/components/modals/QrCodeModal.tsx:155
+#: src/pages/Index/Scan.tsx:704
 msgid "Select Camera"
 msgstr "Kamera kiválasztása"
 
 #: src/components/modals/QrCodeModal.tsx:165
+#: src/pages/Index/Scan.tsx:690
 msgid "Start scanning"
 msgstr "Kódolvasás indítása"
 
 #: src/components/modals/QrCodeModal.tsx:172
+#: src/pages/Index/Scan.tsx:684
 msgid "Stop scanning"
 msgstr "Kódolvasás leállítása"
 
@@ -478,6 +487,7 @@ msgstr ""
 #: src/components/tables/AttachmentTable.tsx:130
 #: src/components/tables/part/RelatedPartTable.tsx:97
 #: src/functions/forms.tsx:177
+#: src/pages/Index/Scan.tsx:306
 #: src/pages/Notifications.tsx:67
 msgid "Delete"
 msgstr ""
@@ -1025,7 +1035,7 @@ msgid "Build"
 msgstr "Gyártás"
 
 #: src/defaults/links.tsx:31
-#: src/defaults/menuItems.tsx:25
+#: src/defaults/menuItems.tsx:32
 #: src/pages/Index/Playground.tsx:87
 msgid "Playground"
 msgstr "Játszótér"
@@ -1121,6 +1131,10 @@ msgstr "Felhasználói beállítások"
 #: src/defaults/menuItems.tsx:22
 #~ msgid "The fluid of Smeargle’s tail secretions changes"
 #~ msgstr "The fluid of Smeargle’s tail secretions changes"
+
+#: src/defaults/menuItems.tsx:24
+msgid "View for interactive scanning and multiple actions."
+msgstr ""
 
 #: src/defaults/menuItems.tsx:24
 #~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
@@ -1330,6 +1344,7 @@ msgid "Checking if you are already logged in"
 msgstr "Ellenőrzöm hogy be vagy-e már jelentkezve"
 
 #: src/pages/Auth/Login.tsx:25
+#: src/pages/Index/Scan.tsx:292
 msgid "No selection"
 msgstr "Nincs kijelölés"
 
@@ -1584,6 +1599,119 @@ msgstr "Szegély sugár"
 msgid "Loader"
 msgstr "Betöltő"
 
+#: src/pages/Index/Scan.tsx:188
+msgid "Manual input"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:189
+msgid "Image Barcode"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:219
+msgid "Selected elements are not known"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:226
+msgid "Multiple object types selected"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:233
+msgid "Actions for {0}"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:236
+msgid "Count"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:250
+msgid "Scan Page"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:253
+msgid "This page can be used for continuously scanning items and taking actions on them."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:268
+msgid "Select the input method you want to use to scan items."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:270
+msgid "Input"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:277
+msgid "Select input method"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:278
+msgid "Nothing found"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:286
+msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:288
+msgid "Action"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:297
+msgid "{0} items selected"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:300
+msgid "General Actions"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:313
+msgid "Lookup part"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:320
+msgid "Open Link"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:335
+msgid "History is locally kept in this browser."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:336
+msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:338
+#: src/pages/Notifications.tsx:46
+msgid "History"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:404
+msgid "No history"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:423
+msgid "Item"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:426
+msgid "Type"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:429
+msgid "Source"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:432
+msgid "Scanned at"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:484
+msgid "Enter item serial or data"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:496
+msgid "Add dummy item"
+msgstr ""
+
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
 #~ msgstr "Found an exsisting login - using it to log you in."
@@ -1599,10 +1727,6 @@ msgstr "Elnézést, ez az oldal ismeretlen vagy el lett mozgatva."
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
 msgstr "Ugrás a kezdőlapra"
-
-#: src/pages/Notifications.tsx:46
-msgid "History"
-msgstr ""
 
 #: src/pages/Notifications.tsx:55
 msgid "Mark as unread"
@@ -1667,3 +1791,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+
