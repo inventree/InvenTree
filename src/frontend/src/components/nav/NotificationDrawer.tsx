@@ -1,16 +1,17 @@
 import { t } from '@lingui/macro';
 import {
   ActionIcon,
+  Alert,
   Divider,
   Drawer,
   LoadingOverlay,
   Space,
   Tooltip
 } from '@mantine/core';
-import { Badge, Group, Stack, Text } from '@mantine/core';
-import { IconBellCheck, IconBellPlus, IconBookmark } from '@tabler/icons-react';
-import { IconMacro } from '@tabler/icons-react';
+import { Group, Stack, Text } from '@mantine/core';
+import { IconBellCheck, IconBellPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -79,6 +80,9 @@ export function NotificationDrawer({
       <Stack spacing="xs">
         <Divider />
         <LoadingOverlay visible={notificationQuery.isFetching} />
+        {notificationQuery.data?.results?.length == 0 && (
+          <Alert title={t`No notifications to display`} color="green"></Alert>
+        )}
         {notificationQuery.data?.results.map((notification: any) => (
           <Group position="apart">
             <Stack spacing="3">
