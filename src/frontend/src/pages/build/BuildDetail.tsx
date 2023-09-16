@@ -8,7 +8,8 @@ import {
   IconListCheck,
   IconListTree,
   IconNotes,
-  IconPaperclip
+  IconPaperclip,
+  IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
@@ -79,7 +80,7 @@ export default function BuildDetail() {
       {
         name: 'chiold-orders',
         label: t`Child Build Orders`,
-        icon: <IconListTree size="18" />,
+        icon: <IconSitemap size="18" />,
         content: <PlaceholderPanel />
       },
       {
