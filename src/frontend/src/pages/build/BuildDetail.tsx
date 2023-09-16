@@ -68,18 +68,27 @@ export default function BuildDetail() {
         label: t`Allocate Stock`,
         icon: <IconListCheck size="18" />,
         content: <PlaceholderPanel />
+        // TODO: Hide if build is complete
       },
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
         icon: <IconClipboardList size="18" />,
         content: <PlaceholderPanel />
+        // TODO: Hide if build is complete
       },
       {
         name: 'complete-outputs',
-        label: t`Complete Outputs`,
+        label: t`Completed Outputs`,
         icon: <IconClipboardCheck size="18" />,
-        content: <PlaceholderPanel />
+        content: (
+          <StockItemTable
+            params={{
+              build: build.pk ?? -1,
+              is_building: false
+            }}
+          />
+        )
       },
       {
         name: 'consumed-stock',
