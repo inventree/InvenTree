@@ -6,7 +6,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -25,6 +25,10 @@ export default function CategoryDetail({}: {}) {
   const { id } = useParams();
 
   const [category, setCategory] = useState<any>({});
+
+  useEffect(() => {
+    setCategory({});
+  }, [id]);
 
   const categoryQuery = useQuery({
     enabled: id != null && id != undefined,

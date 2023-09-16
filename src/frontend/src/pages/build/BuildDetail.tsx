@@ -12,7 +12,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -35,6 +35,10 @@ export default function BuildDetail() {
 
   // Build data
   const [build, setBuild] = useState<any>({});
+
+  useEffect(() => {
+    setBuild({});
+  }, [id]);
 
   // Query hook for fetching build data
   const buildQuery = useQuery(['build', id ?? -1], async () => {

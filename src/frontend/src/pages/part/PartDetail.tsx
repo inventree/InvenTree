@@ -25,7 +25,7 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -50,6 +50,10 @@ export default function PartDetail() {
 
   // Part data
   const [part, setPart] = useState<any>({});
+
+  useEffect(() => {
+    setPart({});
+  }, [id]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -212,7 +216,7 @@ export default function PartDetail() {
           breadcrumbs={[
             { name: t`Parts`, url: '/part' },
             { name: '...', url: '' },
-            { name: part.full_name, url: `/part/${part.pk}` }
+            { name: part.name, url: `/part/${part.pk}` }
           ]}
           actions={[
             <Button
