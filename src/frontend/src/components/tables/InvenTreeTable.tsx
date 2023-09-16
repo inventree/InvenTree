@@ -79,6 +79,8 @@ function saveActiveFilters(tableKey: string, filters: TableFilter[]) {
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
+ *
+ * TODO: Refactor table props into a single type
  */
 export function InvenTreeTable({
   url,
@@ -99,6 +101,7 @@ export function InvenTreeTable({
   customActionGroups = [],
   customFilters = [],
   rowActions,
+  onRowClick,
   refreshId
 }: {
   url: string;
@@ -119,6 +122,7 @@ export function InvenTreeTable({
   customActionGroups?: any[];
   customFilters?: TableFilter[];
   rowActions?: (record: any) => RowAction[];
+  onRowClick?: (record: any, index: number, event: any) => void;
   refreshId?: string;
 }) {
   // Check if any columns are switchable (can be hidden)
@@ -507,6 +511,7 @@ export function InvenTreeTable({
           noRecordsText={missingRecordsText}
           records={data?.results ?? data ?? []}
           columns={dataColumns}
+          onRowClick={onRowClick}
         />
       </Stack>
     </>
