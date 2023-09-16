@@ -202,7 +202,7 @@ class BarcodeMixin:
                     if line_item.quantity > quantity:
                         break
                 else:
-                    line_item = line_items[0]
+                    line_item = line_items.first()
 
         if not line_item:
             return {"error": _("Failed to find pending line item for supplier part")}
