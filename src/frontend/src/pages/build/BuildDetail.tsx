@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
@@ -20,6 +20,7 @@ import {
   PlaceholderPanel,
   PlaceholderPill
 } from '../../components/items/Placeholder';
+import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
@@ -120,6 +121,19 @@ export default function BuildDetail() {
   return (
     <>
       <Stack spacing="xs">
+        <PageDetail
+          title={t`Build Order` + ' ' + build.reference}
+          detail={
+            <Alert color="teal" title="Build order detail goes here">
+              <Text>TODO: Build details</Text>
+            </Alert>
+          }
+          breadcrumbs={[
+            { name: t`Build Orders`, url: '/build' },
+            { name: build.reference, url: `/build/${build.pk}` }
+          ]}
+          actions={[<PlaceholderPill key="1" />]}
+        />
         <LoadingOverlay visible={buildQuery.isFetching} />
         <PanelGroup panels={buildPanels} />
       </Stack>
