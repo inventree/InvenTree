@@ -80,17 +80,6 @@ function stockItemTableColumns(): TableColumn[] {
 }
 
 /**
- * Return a set of parameters for the stock item table
- */
-function stockItemTableParams(params: any): any {
-  return {
-    ...params,
-    part_detail: true,
-    location_detail: true
-  };
-}
-
-/**
  * Construct a list of available filters for the stock item table
  */
 function stockItemTableFilters(): TableFilter[] {
@@ -113,7 +102,14 @@ function stockItemTableFilters(): TableFilter[] {
  * Load a table of stock items
  */
 export function StockItemTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => stockItemTableParams(params), []);
+  let tableParams = useMemo(() => {
+    return {
+      part_detail: true,
+      location_detail: true,
+      ...params
+    };
+  }, [params]);
+
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 

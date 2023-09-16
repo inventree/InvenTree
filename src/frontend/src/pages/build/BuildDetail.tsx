@@ -24,8 +24,12 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
+import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 
+/**
+ * Detail page for a single Build Order
+ */
 export default function BuildDetail() {
   const { id } = useParams();
 
@@ -81,7 +85,13 @@ export default function BuildDetail() {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
         icon: <IconList size="18" />,
-        content: <PlaceholderPanel />
+        content: (
+          <StockItemTable
+            params={{
+              consumed_by: build.pk ?? -1
+            }}
+          />
+        )
       },
       {
         name: 'child-orders',
