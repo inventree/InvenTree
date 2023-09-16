@@ -22,6 +22,7 @@ import {
 } from '../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
+import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 
 export default function BuildDetail() {
@@ -78,10 +79,16 @@ export default function BuildDetail() {
         content: <PlaceholderPanel />
       },
       {
-        name: 'chiold-orders',
+        name: 'child-orders',
         label: t`Child Build Orders`,
         icon: <IconSitemap size="18" />,
-        content: <PlaceholderPanel />
+        content: (
+          <BuildOrderTable
+            params={{
+              parent: build.pk ?? -1
+            }}
+          />
+        )
       },
       {
         name: 'attachments',
