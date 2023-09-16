@@ -81,9 +81,7 @@ export function AttachmentTable({
   pk: number;
   model: string;
 }): ReactNode {
-  const tableId = useId();
-
-  const { refreshId, refreshTable } = useTableRefresh();
+  const { tableKey, refreshTable } = useTableRefresh(`${model}-attachments`);
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 
@@ -224,14 +222,16 @@ export function AttachmentTable({
     <Stack spacing="xs">
       <InvenTreeTable
         url={url}
-        tableKey={tableId}
-        refreshId={refreshId}
-        params={{
-          [model]: pk
-        }}
-        customActionGroups={customActionGroups}
+        tableKey={tableKey}
         columns={tableColumns}
-        rowActions={allowEdit && allowDelete ? rowActions : undefined}
+        props={{
+          enableSelection: true,
+          customActionGroups: customActionGroups,
+          rowActions: allowEdit && allowDelete ? rowActions : undefined,
+          params: {
+            [model]: pk
+          }
+        }}
       />
       {allowEdit && (
         <Dropzone onDrop={uploadFiles}>

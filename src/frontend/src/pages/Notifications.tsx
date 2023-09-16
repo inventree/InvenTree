@@ -10,8 +10,8 @@ import { NotificationTable } from '../components/tables/notifications/Notificati
 import { useTableRefresh } from '../hooks/TableRefresh';
 
 export default function NotificationsPage() {
-  const unreadRefresh = useTableRefresh();
-  const historyRefresh = useTableRefresh();
+  const unreadRefresh = useTableRefresh('unreadnotifications');
+  const historyRefresh = useTableRefresh('readnotifications');
 
   const notificationPanels = useMemo(() => {
     return [
@@ -22,8 +22,7 @@ export default function NotificationsPage() {
         content: (
           <NotificationTable
             params={{ read: false }}
-            refreshId={unreadRefresh.refreshId}
-            tableKey="notifications-unread"
+            tableKey={unreadRefresh.tableKey}
             actions={(record) => [
               {
                 title: t`Mark as read`,
@@ -48,8 +47,7 @@ export default function NotificationsPage() {
         content: (
           <NotificationTable
             params={{ read: true }}
-            refreshId={historyRefresh.refreshId}
-            tableKey="notifications-history"
+            tableKey={historyRefresh.tableKey}
             actions={(record) => [
               {
                 title: t`Mark as unread`,

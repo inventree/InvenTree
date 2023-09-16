@@ -13,6 +13,7 @@ import { api } from '../../App';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
 import { PartListTable } from '../../components/tables/part/PartTable';
 
 /**
@@ -49,8 +50,10 @@ export default function CategoryDetail({}: {}) {
         icon: <IconCategory size="18" />,
         content: (
           <PartListTable
-            params={{
-              category: id ?? null
+            props={{
+              params: {
+                category: category.pk ?? null
+              }
             }}
           />
         )
@@ -59,7 +62,13 @@ export default function CategoryDetail({}: {}) {
         name: 'subcategories',
         label: t`Subcategories`,
         icon: <IconSitemap size="18" />,
-        content: <PlaceholderPanel />
+        content: (
+          <PartCategoryTable
+            params={{
+              parent: category.pk ?? null
+            }}
+          />
+        )
       },
       {
         name: 'parameters',
@@ -68,7 +77,7 @@ export default function CategoryDetail({}: {}) {
         content: <PlaceholderPanel />
       }
     ],
-    [category]
+    [category, id]
   );
 
   return (
