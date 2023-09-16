@@ -1,10 +1,9 @@
 import { t } from '@lingui/macro';
-import { Group } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { Text } from '@mantine/core';
+import { useMemo } from 'react';
 
 import { notYetImplemented } from '../../../functions/notifications';
-import { ActionButton } from '../../items/ActionButton';
+import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
@@ -23,11 +22,12 @@ function stockItemTableColumns(): TableColumn[] {
       render: function (record: any) {
         let part = record.part_detail;
         return (
-          <ThumbnailHoverCard
-            src={part.thumbnail || part.image}
-            text={part.name}
-            link=""
-          />
+          <Text>{part.full_name}</Text>
+          // <ThumbnailHoverCard
+          //   src={part.thumbnail || part.image}
+          //   text={part.name}
+          //   link=""
+          // />
         );
       }
     },
@@ -102,16 +102,10 @@ function stockItemTableFilters(): TableFilter[] {
  * Load a table of stock items
  */
 export function StockItemTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => {
-    return {
-      part_detail: true,
-      location_detail: true,
-      ...params
-    };
-  }, [params]);
-
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
+
+  const { tableKey, refreshTable } = useTableRefresh('stockitem');
 
   function stockItemRowActions(record: any): RowAction[] {
     let actions: RowAction[] = [];
@@ -129,13 +123,19 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   return (
     <InvenTreeTable
       url="stock/"
-      tableKey="stock-table"
-      enableDownload
-      enableSelection
-      params={tableParams}
+      tableKey={tableKey}
       columns={tableColumns}
-      customFilters={tableFilters}
-      rowActions={stockItemRowActions}
+      props={{
+        enableDownload: true,
+        enableSelection: true,
+        customFilters: tableFilters,
+        rowActions: stockItemRowActions,
+        params: {
+          ...params,
+          part_detail: true,
+          location_detail: true
+        }
+      }}
     />
   );
 }

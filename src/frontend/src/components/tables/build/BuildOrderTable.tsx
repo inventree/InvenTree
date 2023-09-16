@@ -1,8 +1,9 @@
 import { t } from '@lingui/macro';
-import { Progress } from '@mantine/core';
+import { Progress, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
@@ -27,11 +28,12 @@ function buildOrderTableColumns(): TableColumn[] {
         let part = record.part_detail;
         return (
           part && (
-            <ThumbnailHoverCard
-              src={part.thumbnail || part.image}
-              text={part.full_name}
-              link=""
-            />
+            <Text>{part.full_name}</Text>
+            // <ThumbnailHoverCard
+            //   src={part.thumbnail || part.image}
+            //   text={part.full_name}
+            //   link=""
+            // />
           )
         );
       }
@@ -127,35 +129,31 @@ function buildOrderTableFilters(): TableFilter[] {
   return [];
 }
 
-function buildOrderTableParams(params: any): any {
-  return {
-    ...params,
-    part_detail: true
-  };
-}
-
 /*
  * Construct a table of build orders, according to the provided parameters
  */
 export function BuildOrderTable({ params = {} }: { params?: any }) {
-  // Add required query parameters
-  const tableParams = useMemo(() => buildOrderTableParams(params), [params]);
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
   const tableFilters = useMemo(() => buildOrderTableFilters(), []);
 
   const navigate = useNavigate();
 
-  tableParams.part_detail = true;
+  const { tableKey, refreshTable } = useTableRefresh('buildorder');
 
   return (
     <InvenTreeTable
       url="build/"
-      enableDownload
-      tableKey="build-order-table"
-      params={tableParams}
+      tableKey={tableKey}
       columns={tableColumns}
-      customFilters={tableFilters}
-      onRowClick={(row) => navigate(`/build/${row.pk}`)}
+      props={{
+        enableDownload: true,
+        params: {
+          ...params,
+          part_detail: true
+        },
+        customFilters: tableFilters,
+        onRowClick: (row) => navigate(`/build/${row.pk}`)
+      }}
     />
   );
 }

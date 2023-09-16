@@ -1,6 +1,7 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
+import { StylishText } from '../items/StylishText';
 import { Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 
 /**
@@ -33,7 +34,7 @@ export function PageDetail({
         <Stack spacing="xs">
           <Group position="apart">
             <Group position="left">
-              <Text size="xl">{title}</Text>
+              <StylishText size="xl">{title}</StylishText>
               {subtitle && <Text size="lg">{subtitle}</Text>}
             </Group>
             <Space />
