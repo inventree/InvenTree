@@ -368,7 +368,12 @@
     <tr>
         <td><span class='fas fa-th-list'></span></td>
         <td>{% trans "Sales Order" %}</td>
-        <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
+        <td>
+            <a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a>
+            {% if item.sales_order.customer %}
+            - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a>
+            {% endif %}
+        </td>
     </tr>
     {% else %}
     {% if allocated_to_sales_orders %}

@@ -106,7 +106,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
                 val = ureg.Quantity(value, unit)
             else:
                 # Convert to the provided unit (may raise an exception)
-                val = val.to(unit)
+                val = val.to(ureg.Unit(unit))
 
         # At this point we *should* have a valid pint value
         # To double check, look at the maginitude
@@ -134,7 +134,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     # So, we ensure that it is converted to a floating point value
     # If we wish to return a "raw" value, some trickery is required
     if unit:
-        magnitude = ureg.Quantity(val.to(unit)).magnitude
+        magnitude = ureg.Quantity(val.to(ureg.Unit(unit))).magnitude
     else:
         magnitude = ureg.Quantity(val.to_base_units()).magnitude
 

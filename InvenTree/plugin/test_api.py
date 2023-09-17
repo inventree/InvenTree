@@ -52,6 +52,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             },
             expected_code=201,
         ).data
+
         self.assertEqual(data['success'], True)
 
         # valid - github url and package name

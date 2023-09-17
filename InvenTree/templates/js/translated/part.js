@@ -275,6 +275,10 @@ function partFields(options={}) {
             value: global_settings.PART_COPY_BOM,
         };
 
+        fields.duplicate__copy_notes = {
+            value: true,
+        }
+
         fields.duplicate__copy_parameters = {
             value: global_settings.PART_COPY_PARAMETERS,
         };

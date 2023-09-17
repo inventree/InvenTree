@@ -1,13 +1,17 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { editPart } from '../../../functions/forms/PartForms';
 import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
+import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 
 /**
  * Construct a list of columns for the part table
@@ -17,15 +21,17 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'name',
       sortable: true,
+      noWrap: true,
       title: t`Part`,
       render: function (record: any) {
         // TODO - Link to the part detail page
         return (
-          <ThumbnailHoverCard
-            src={record.thumbnail || record.image}
-            text={record.name}
-            link=""
-          />
+          <Text>{record.full_name}</Text>
+          // <ThumbnailHoverCard
+          //   src={record.thumbnail || record.image}
+          //   text={record.name}
+          //   link=""
+          // />
         );
       }
     },
@@ -173,38 +179,61 @@ function partTableFilters(): TableFilter[] {
   ];
 }
 
-function partTableParams(params: any): any {
-  return {
-    ...params,
-    category_detail: true
-  };
-}
-
 /**
  * PartListTable - Displays a list of parts, based on the provided parameters
  * @param {Object} params - The query parameters to pass to the API
  * @returns
  */
-export function PartListTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => partTableParams(params), []);
+export function PartListTable({ props }: { props: InvenTreeTableProps }) {
   let tableColumns = useMemo(() => partTableColumns(), []);
   let tableFilters = useMemo(() => partTableFilters(), []);
 
-  // Add required query parameters
-  tableParams.category_detail = true;
+  const { tableKey, refreshTable } = useTableRefresh('part');
+
+  // Callback function for generating set of row actions
+  function partTableRowActions(record: any): RowAction[] {
+    let actions: RowAction[] = [];
+
+    actions.push({
+      title: t`Edit`,
+      onClick: () => {
+        editPart({
+          part_id: record.pk,
+          callback: () => {
+            // TODO: Reload the table, somehow?
+            notYetImplemented();
+          }
+        });
+      }
+    });
+
+    actions.push({
+      title: t`Detail`,
+      onClick: () => {
+        navigate(`/part/${record.pk}/`);
+      }
+    });
+
+    return actions;
+  }
+
+  const navigate = useNavigate();
 
   return (
     <InvenTreeTable
       url="part/"
-      enableDownload
-      tableKey="part-table"
-      printingActions={[
-        <Text onClick={notYetImplemented}>Hello</Text>,
-        <Text onClick={notYetImplemented}>World</Text>
-      ]}
-      params={tableParams}
+      tableKey={tableKey}
       columns={tableColumns}
-      customFilters={tableFilters}
+      props={{
+        ...props,
+        enableDownload: true,
+        customFilters: tableFilters,
+        rowActions: partTableRowActions,
+        params: {
+          ...props.params,
+          category_detail: true
+        }
+      }}
     />
   );
 }

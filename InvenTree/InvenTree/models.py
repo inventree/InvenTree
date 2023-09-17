@@ -887,6 +887,7 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
     if created:
         try:
+            import common.models
             import common.notifications
 
             users = get_user_model().objects.filter(is_staff=True)
@@ -902,13 +903,20 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                 'link': link
             }
 
-            common.notifications.trigger_notification(
-                instance,
-                'inventree.error_log',
-                context=context,
-                targets=users,
-                delivery_methods={common.notifications.UIMessageNotification, },
-            )
+            target_users = []
+
+            for user in users:
+                if common.models.InvenTreeUserSetting.get_setting('NOTIFICATION_ERROR_REPORT', True, user=user):
+                    target_users.append(user)
+
+            if len(target_users) > 0:
+                common.notifications.trigger_notification(
+                    instance,
+                    'inventree.error_log',
+                    context=context,
+                    targets=users,
+                    delivery_methods={common.notifications.UIMessageNotification, },
+                )
 
         except Exception as exc:
             """We do not want to throw an exception while reporting an exception"""

@@ -34,10 +34,6 @@ export function MainMenu() {
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Item icon={<IconHeart />}>
-          <Trans>Notifications</Trans>
-          <PlaceholderPill />
-        </Menu.Item>
         <Menu.Item icon={<IconUserCircle />}>
           <Trans>Profile</Trans> <PlaceholderPill />
         </Menu.Item>

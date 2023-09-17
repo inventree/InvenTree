@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/macro';
 
 import { DocumentationLinkItem } from '../components/items/DocumentationLinks';
+import { IS_DEV_OR_DEMO } from '../main';
 
 export const footerLinks = [
   {
@@ -22,12 +23,14 @@ export const footerLinks = [
 export const navTabs = [
   { text: <Trans>Home</Trans>, name: 'home' },
   { text: <Trans>Dashboard</Trans>, name: 'dashboard' },
-  { text: <Trans>Playground</Trans>, name: 'playground' },
-  { text: <Trans>Parts</Trans>, name: 'parts' },
+  { text: <Trans>Parts</Trans>, name: 'part' },
   { text: <Trans>Stock</Trans>, name: 'stock' },
   { text: <Trans>Build</Trans>, name: 'build' },
   { text: <Trans>Purchase Order</Trans>, name: 'order/purchase-order' }
 ];
+if (IS_DEV_OR_DEMO) {
+  navTabs.push({ text: <Trans>Playground</Trans>, name: 'playground' });
+}
 
 export const docLinks = {
   app: 'https://docs.inventree.org/en/latest/app/app/',

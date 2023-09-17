@@ -228,6 +228,12 @@ class AttachmentMixin:
 
     filter_backends = SEARCH_ORDER_FILTER
 
+    search_fields = [
+        'attachment',
+        'comment',
+        'link',
+    ]
+
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
         attachment = serializer.save()
@@ -286,6 +292,11 @@ class APISearchView(APIView):
             'limit': 1,
             'offset': 0,
         }
+
+        if 'search' not in data:
+            raise ValidationError({
+                'search': 'Search term must be provided',
+            })
 
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested

@@ -57,6 +57,14 @@ export enum ApiPaths {
   approval_detail_type = 'api-approval-detail-type',
   approval_start = 'api-approval-start',
   approval_decision = 'api-approval-decision',
+  barcode = 'api-barcode',
+  part_detail = 'api-part-detail',
+  supplier_part_detail = 'api-supplier-part-detail',
+  stock_item_detail = 'api-stock-item-detail',
+  stock_location_detail = 'api-stock-location-detail',
+  purchase_order_detail = 'api-purchase-order-detail',
+  sales_order_detail = 'api-sales-order-detail',
+  build_order_detail = 'api-build-order-detail',
 
   // Frontend
   frontend_user = 'frontend-user',
@@ -88,6 +96,22 @@ export function url(path: ApiPaths, pk?: any, kwargs?: any): string {
       return `/approval/`;
     case ApiPaths.approval_decision:
       return `/approval/${pk}/decision/`;
+    case ApiPaths.barcode:
+      return 'barcode/';
+    case ApiPaths.part_detail:
+      return `part/${pk}/`;
+    case ApiPaths.supplier_part_detail:
+      return `company/part/${pk}/`;
+    case ApiPaths.stock_item_detail:
+      return `stock/${pk}/`;
+    case ApiPaths.stock_location_detail:
+      return `stock/location/${pk}/`;
+    case ApiPaths.purchase_order_detail:
+      return `order/po/${pk}/`;
+    case ApiPaths.sales_order_detail:
+      return `order/so/${pk}/`;
+    case ApiPaths.build_order_detail:
+      return `build/${pk}/`;
 
     // Frontend
     case ApiPaths.frontend_user:

@@ -11,9 +11,23 @@ export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 export const Playground = Loadable(
   lazy(() => import('./pages/Index/Playground'))
 );
-export const Parts = Loadable(lazy(() => import('./pages/Index/Part')));
+
+export const CategoryDetail = Loadable(
+  lazy(() => import('./pages/part/CategoryDetail'))
+);
+export const PartDetail = Loadable(
+  lazy(() => import('./pages/part/PartDetail'))
+);
+
 export const Stock = Loadable(lazy(() => import('./pages/Index/Stock')));
-export const Build = Loadable(lazy(() => import('./pages/Index/Build')));
+
+export const BuildIndex = Loadable(
+  lazy(() => import('./pages/build/BuildIndex'))
+);
+export const BuildDetail = Loadable(
+  lazy(() => import('./pages/build/BuildDetail'))
+);
+
 export const PurchaseOrderIndex = Loadable(
   lazy(() => import('./pages/order/PurchaseOrderIndex'))
 );
@@ -21,8 +35,12 @@ export const PurchaseOrderDetail = Loadable(
   lazy(() => import('./pages/order/PurchaseOrderDetail'))
 );
 
+export const Scan = Loadable(lazy(() => import('./pages/Index/Scan')));
 export const Dashboard = Loadable(
   lazy(() => import('./pages/Index/Dashboard'))
+);
+export const Notifications = Loadable(
+  lazy(() => import('./pages/Notifications'))
 );
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
 export const Profile = Loadable(
@@ -44,10 +62,15 @@ export const routes = (
       <Route index element={<Home />} />,
       <Route path="home/" element={<Home />} />,
       <Route path="dashboard/" element={<Dashboard />} />,
+      <Route path="notifications/" element={<Notifications />} />,
+      <Route path="scan/" element={<Scan />} />,
       <Route path="playground/" element={<Playground />} />,
-      <Route path="parts/" element={<Parts />} />
+      <Route path="part/" element={<CategoryDetail />} />
+      <Route path="part/category/:id" element={<CategoryDetail />} />
+      <Route path="part/:id" element={<PartDetail />} />
       <Route path="stock/" element={<Stock />} />,
-      <Route path="build/" element={<Build />} />,
+      <Route path="build/" element={<BuildIndex />} />,
+      <Route path="build/:id" element={<BuildDetail />} />,
       <Route path="order/">
         <Route path="purchase-order/">
           <Route index element={<PurchaseOrderIndex />} />
