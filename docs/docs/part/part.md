@@ -81,6 +81,9 @@ By default, all parts are *Active*. Marking a part as inactive means it is not a
 
 Each type of part can define a custom "unit of measure" which is a standardized unit which is used to track quantities for a particular part. By default, the "unit of measure" for each part is blank, which means that each part is tracked in dimensionless quantities of "pieces".
 
+!!! info "Read More"
+    Read more on how InvenTree supports [physical units of measure](../concepts/units.md)
+
 ### Physical Units
 
 It is possible to track parts using physical quantity values, such as *metres* or *litres*. For example, it would make sense to track a "wire" in units of "metres":

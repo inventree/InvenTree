@@ -12,7 +12,6 @@
     modalShowSubmitButton,
     modalSubmit,
     openModal,
-    plugins_enabled,
     showAlertDialog,
     showMessage,
     user_settings,
@@ -34,24 +33,22 @@ function selectLabel(labels, items, options={}) {
     var plugins = [];
 
     // Request a list of available label printing plugins from the server
-    if (plugins_enabled) {
-        inventreeGet(
-            `/api/plugins/`,
-            {
-                mixin: 'labels',
-            },
-            {
-                async: false,
-                success: function(response) {
-                    plugins = response;
-                }
+    inventreeGet(
+        `/api/plugins/`,
+        {
+            mixin: 'labels',
+        },
+        {
+            async: false,
+            success: function(response) {
+                plugins = response;
             }
-        );
-    }
+        }
+    );
 
     var plugin_selection = '';
 
-    if (plugins_enabled && plugins.length > 0) {
+    if (plugins.length > 0) {
         plugin_selection =`
         <div class='form-group'>
             <label class='control-label requiredField' for='id_plugin'>
@@ -94,11 +91,11 @@ function selectLabel(labels, items, options={}) {
         null,
         function(item) {
             if (options.key == 'part')
-                return item.key == user_settings.DEFAULT_PART_LABEL_TEMPLATE;
+                return item.pk == user_settings.DEFAULT_PART_LABEL_TEMPLATE;
             else if (options.key == 'location')
-                return item.key == user_settings.DEFAULT_LOCATION_LABEL_TEMPLATE;
-            else if (options.key == 'stock')
-                return item.key == user_settings.DEFAULT_STOCK_LABEL_TEMPLATE;
+                return item.pk == user_settings.DEFAULT_LOCATION_LABEL_TEMPLATE;
+            else if (options.key == 'item')
+                return item.pk == user_settings.DEFAULT_ITEM_LABEL_TEMPLATE;
             return '';
         }
     );

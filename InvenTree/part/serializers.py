@@ -380,6 +380,11 @@ class DuplicatePartSerializer(serializers.Serializer):
         required=False, default=False,
     )
 
+    copy_notes = serializers.BooleanField(
+        label=_('Copy Notes'), help_text=_('Copy notes from original part'),
+        required=False, default=True,
+    )
+
 
 class InitialStockSerializer(serializers.Serializer):
     """Serializer for creating initial stock quantity."""
@@ -738,6 +743,10 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
             if duplicate['copy_bom']:
                 instance.copy_bom_from(original)
+
+            if duplicate['copy_notes']:
+                instance.notes = original.notes
+                instance.save()
 
             if duplicate['copy_image']:
                 instance.image = original.image

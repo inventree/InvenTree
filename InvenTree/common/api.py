@@ -486,6 +486,23 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
+class CustomUnitList(ListCreateAPI):
+    """List view for custom units"""
+
+    queryset = common.models.CustomUnit.objects.all()
+    serializer_class = common.serializers.CustomUnitSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    filter_backends = SEARCH_ORDER_FILTER
+
+
+class CustomUnitDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a particular custom unit"""
+
+    queryset = common.models.CustomUnit.objects.all()
+    serializer_class = common.serializers.CustomUnitSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+
 class FlagList(ListAPI):
     """List view for feature flags."""
 
@@ -552,6 +569,14 @@ common_api_urls = [
             re_path(r'^.*$', ProjectCodeDetail.as_view(), name='api-project-code-detail'),
         ])),
         re_path(r'^.*$', ProjectCodeList.as_view(), name='api-project-code-list'),
+    ])),
+
+    # Custom physical units
+    re_path(r'^units/', include([
+        path(r'<int:pk>/', include([
+            re_path(r'^.*$', CustomUnitDetail.as_view(), name='api-custom-unit-detail'),
+        ])),
+        re_path(r'^.*$', CustomUnitList.as_view(), name='api-custom-unit-list'),
     ])),
 
     # Currencies

@@ -11,6 +11,10 @@ The InvenTree docker image contains all the required system packages, python mod
 !!! tip "Compose Yourself"
     The InvenTree container requires linking with other docker containers (such as a database backend) for complete operation. Sample [docker compose](#docker-compose) scripts are provided to get you up and running
 
+
+!!! warning "Check the version"
+    Please make sure you are reading the [STABLE](https://docs.inventree.org/en/stable/start/docker_prod/) documentation when using the stable docker image tags.
+
 !!! warning "Assumed Knowledge"
     A very basic understanding of [Docker](https://www.docker.com/) and [docker compose](https://docs.docker.com/compose/) is assumed, for the following setup guides.
 
@@ -18,11 +22,11 @@ The InvenTree docker image contains all the required system packages, python mod
 
 Pre-built Docker images are available from [dockerhub](https://hub.docker.com/r/inventree/inventree) with the following tags:
 
-| Tag | Description |
-| --- | --- |
-| **inventree:stable** | The most recent *stable* release version of InvenTree |
-| **inventree:latest** | The most up-to-date *development* version of InvenTree. |
-| **inventree:_tag_** | Specific tagged images are built for each tagged release of InvenTree, e.g. `inventree:0.7.3`|
+| Tag | Description | Relevant documentation to follow |
+| --- | --- | --- |
+| **inventree:stable** | The most recent *stable* release version of InvenTree | [stable docs](https://docs.inventree.org/en/stable/start/docker/) |
+| **inventree:latest** | The most up-to-date *development* version of InvenTree. | [latest docs](https://docs.inventree.org/en/latest/start/docker/) |
+| **inventree:_tag_** | Specific tagged images are built for each tagged release of InvenTree, e.g. `inventree:0.7.3`| https://docs.inventree.org/en/INSERT_YOUR_TAG_HERE/start/docker/ |
 
 ### Docker Compose
 

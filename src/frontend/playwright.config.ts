@@ -6,7 +6,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
-  reporter: 'html',
+  reporter: process.env.CI ? 'github' : 'list',
 
   /* Configure projects for major browsers */
   projects: [

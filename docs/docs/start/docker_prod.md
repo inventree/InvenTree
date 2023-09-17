@@ -11,6 +11,9 @@ The following guide provides a streamlined production InvenTree installation, wi
 
 ### Before You Start
 
+!!! warning "Check the version"
+    Please make sure you are reading the [STABLE](https://docs.inventree.org/en/stable/start/docker_prod/) documentation when using the stable docker image tags.
+
 !!! warning "Docker Skills Required"
     This guide assumes that you are reasonably comfortable with the basic concepts of docker and docker compose.
 
@@ -132,7 +135,7 @@ The first step is to edit the environment variables, located in the `.env` file.
 Perform the initial database setup by running the following command:
 
 ```bash
-docker compose run inventree-server invoke update
+docker compose run inventree-server invoke update --no-frontend
 ```
 
 This command performs the following steps:
@@ -210,7 +213,7 @@ This ensures that the InvenTree containers will be running the latest version of
 Run the following command to ensure that the InvenTree database is updated:
 
 ```
-docker compose run inventree-server invoke update
+docker compose run inventree-server invoke update --no-frontend
 ```
 
 !!! info "Skip Backup"

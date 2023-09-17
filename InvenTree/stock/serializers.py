@@ -1138,9 +1138,16 @@ class StockMergeSerializer(serializers.Serializer):
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjument request.
 
-    Fields:
+    Required Fields:
         - item: StockItem object
         - quantity: Numerical quantity
+
+    Optional Fields (may be used by external tools)
+        - status: Change StockItem status code
+        - packaging: Change StockItem packaging
+        - batch: Change StockItem batch code
+
+    The optional fields can be used to adjust values for individual stock items
     """
 
     class Meta:
@@ -1165,6 +1172,28 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         decimal_places=5,
         min_value=0,
         required=True
+    )
+
+    batch = serializers.CharField(
+        max_length=100,
+        required=False, allow_blank=True,
+        label=_('Batch Code'),
+        help_text=_('Batch code for this stock item'),
+    )
+
+    status = serializers.ChoiceField(
+        choices=InvenTree.status_codes.StockStatus.items(),
+        default=InvenTree.status_codes.StockStatus.OK.value,
+        label=_('Status'),
+        help_text=_('Stock item status code'),
+        required=False, allow_blank=True,
+    )
+
+    packaging = serializers.CharField(
+        max_length=50,
+        required=False, allow_blank=True,
+        label=_('Packaging'),
+        help_text=_('Packaging this stock item is stored in'),
     )
 
 
@@ -1304,12 +1333,21 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         with transaction.atomic():
             for item in items:
 
+                # Required fields
                 stock_item = item['pk']
                 quantity = item['quantity']
+
+                # Optional fields
+                kwargs = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_name in item:
+                        kwargs[field_name] = item[field_name]
 
                 stock_item.move(
                     location,
                     notes,
                     request.user,
-                    quantity=quantity
+                    quantity=quantity,
+                    **kwargs
                 )

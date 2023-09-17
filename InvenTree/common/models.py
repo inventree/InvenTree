@@ -30,7 +30,9 @@ from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     URLValidator)
 from django.db import models, transaction
+from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError
+from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -168,7 +170,7 @@ class BaseInvenTreeSetting(models.Model):
 
         do_cache = kwargs.pop('cache', True)
 
-        self.clean(**kwargs)
+        self.clean()
         self.validate_unique()
 
         # Execute before_save action
@@ -580,7 +582,7 @@ class BaseInvenTreeSetting(models.Model):
 
     key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive)'))
 
-    value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
+    value = models.CharField(max_length=2000, blank=True, unique=False, help_text=_('Settings value'))
 
     @property
     def name(self):
@@ -602,7 +604,7 @@ class BaseInvenTreeSetting(models.Model):
         """Return units for setting."""
         return self.__class__.get_setting_units(self.key, **self.get_filters_for_instance())
 
-    def clean(self, **kwargs):
+    def clean(self):
         """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
         super().clean()
 
@@ -613,7 +615,7 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+        validator = self.__class__.get_setting_validator(self.key, **self.get_filters_for_instance())
 
         if validator is not None:
             self.run_validator(validator)
@@ -2189,6 +2191,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'NOTIFICATION_ERROR_REPORT': {
+            'name': _('Receive error reports'),
+            'description': _('Receive notifications for system errors'),
+            'default': True,
+            'validator': bool,
+        }
+
     }
 
     typ = 'user'
@@ -2794,3 +2803,90 @@ class NotesImage(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     date = models.DateTimeField(auto_now_add=True)
+
+
+class CustomUnit(models.Model):
+    """Model for storing custom physical unit definitions
+
+    Model Attributes:
+        name: Name of the unit
+        definition: Definition of the unit
+        symbol: Symbol for the unit (e.g. 'm' for 'metre') (optional)
+
+    Refer to the pint documentation for further information on unit definitions.
+    https://pint.readthedocs.io/en/stable/advanced/defining.html
+    """
+
+    def fmt_string(self):
+        """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'"""
+        fmt = f'{self.name} = {self.definition}'
+
+        if self.symbol:
+            fmt += f' = {self.symbol}'
+
+        return fmt
+
+    def clean(self):
+        """Validate that the provided custom unit is indeed valid"""
+
+        super().clean()
+
+        from InvenTree.conversion import get_unit_registry
+
+        registry = get_unit_registry()
+
+        # Check that the 'name' field is valid
+        self.name = self.name.strip()
+
+        # Cannot be zero length
+        if not self.name.isidentifier():
+            raise ValidationError({
+                'name': _('Unit name must be a valid identifier')
+            })
+
+        self.definition = self.definition.strip()
+
+        # Check that the 'definition' is valid, by itself
+        try:
+            registry.Quantity(self.definition)
+        except Exception as exc:
+            raise ValidationError({
+                'definition': str(exc)
+            })
+
+        # Finally, test that the entire custom unit definition is valid
+        try:
+            registry.define(self.fmt_string())
+        except Exception as exc:
+            raise ValidationError(str(exc))
+
+    name = models.CharField(
+        max_length=50,
+        verbose_name=_('Name'),
+        help_text=_('Unit name'),
+        unique=True, blank=False,
+    )
+
+    symbol = models.CharField(
+        max_length=10,
+        verbose_name=_('Symbol'),
+        help_text=_('Optional unit symbol'),
+        unique=True, blank=True,
+    )
+
+    definition = models.CharField(
+        max_length=50,
+        verbose_name=_('Definition'),
+        help_text=_('Unit definition'),
+        blank=False,
+    )
+
+
+@receiver(post_save, sender=CustomUnit, dispatch_uid='custom_unit_saved')
+@receiver(post_delete, sender=CustomUnit, dispatch_uid='custom_unit_deleted')
+def after_custom_unit_updated(sender, instance, **kwargs):
+    """Callback when a custom unit is updated or deleted"""
+
+    # Force reload of the unit registry
+    from InvenTree.conversion import reload_unit_registry
+    reload_unit_registry()

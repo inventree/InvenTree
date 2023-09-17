@@ -1295,6 +1295,44 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Build Output" %}',
                 switchable: false,
                 sortable: true,
+                sorter: function(fieldA, fieldB, rowA, rowB) {
+
+                    let serialA = parseInt(rowA.serial);
+                    let serialB = parseInt(rowB.serial);
+
+                    // Fallback to string representation
+                    if (isNaN(serialA)) {
+                        serialA = rowA.serial;
+                    } else if (isNaN(serialB)) {
+                        serialB = rowB.serial;
+                    }
+
+                    if (serialA && !serialB) {
+                        // Only rowA has a serial number
+                        return 1;
+                    } else if (serialB && !serialA) {
+                        // Only rowB has a serial number
+                        return -1;
+                    } else if (serialA && serialB) {
+                        // Both rows have serial numbers
+                        if (serialA > serialB) {
+                            return 1;
+                        } else if (serialA < serialB) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        // Neither row has a serial number
+                        if (rowA.quantity > rowB.quantity) {
+                            return 1;
+                        } else if (rowA.quantity < rowB.quantity) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                },
                 formatter: function(value, row) {
                     let text = '';
 
@@ -1339,6 +1377,19 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Required Tests" %}',
                 visible: test_templates.length > 0,
                 switchable: true,
+                sortable: true,
+                sorter: function(valueA, valueB, rowA, rowB) {
+                    let nA = getPassedTestCount(rowA);
+                    let nB = getPassedTestCount(rowB);
+
+                    if (nA > nB) {
+                        return 1;
+                    } else if (nA < nB) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                },
                 formatter: function(value, row) {
                     if (row.tests) {
                         return makeProgressBar(
@@ -2657,6 +2708,7 @@ function loadBuildLineTable(table, build_id, options={}) {
 
         deallocateStock(build_id, {
             build_line: pk,
+            output: output,
             onSuccess: function() {
                 $(table).bootstrapTable('refresh');
             }
