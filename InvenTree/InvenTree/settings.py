@@ -135,13 +135,13 @@ LOGGING = {
 
 # Add handlers
 if json_log:  # pragma: no cover
-    LOGGING['loggers']['handlers']["log_file"] = {
+    LOGGING['handlers']["log_file"] = {
         "class": "logging.handlers.WatchedFileHandler",
         "filename": BASE_DIR.joinpath('logs.json'),
         "formatter": "json_formatter",
     }
 else:
-    LOGGING['loggers']['handlers']["log_file"] = {
+    LOGGING['handlers']["log_file"] = {
         "class": "logging.handlers.WatchedFileHandler",
         "filename": BASE_DIR.joinpath('logs.log'),
         "formatter": "key_value",
