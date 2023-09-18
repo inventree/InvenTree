@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import {
+  Alert,
   Button,
   Group,
   LoadingOverlay,
@@ -24,11 +25,13 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
+import { PlaceholderPanel } from '../../components/items/Placeholder';
+import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
@@ -39,11 +42,18 @@ import {
 } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
 
+/**
+ * Detail view for a single Part instance
+ */
 export default function PartDetail() {
   const { id } = useParams();
 
   // Part data
   const [part, setPart] = useState<any>({});
+
+  useEffect(() => {
+    setPart({});
+  }, [id]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -52,7 +62,7 @@ export default function PartDetail() {
         name: 'details',
         label: t`Details`,
         icon: <IconInfoCircle size="18" />,
-        content: <Text>part details go here</Text>
+        content: <PlaceholderPanel />
       },
       {
         name: 'stock',
@@ -65,61 +75,61 @@ export default function PartDetail() {
         label: t`Variants`,
         icon: <IconVersions size="18" />,
         hidden: !part.is_template,
-        content: <Text>part variants go here</Text>
+        content: <PlaceholderPanel />
       },
       {
         name: 'bom',
         label: t`Bill of Materials`,
         icon: <IconListTree size="18" />,
         hidden: !part.assembly,
-        content: part.assembly && <Text>part BOM goes here</Text>
+        content: <PlaceholderPanel />
       },
       {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools size="18" />,
         hidden: !part.assembly && !part.component,
-        content: <Text>part builds go here</Text>
+        content: <PlaceholderPanel />
       },
       {
         name: 'used_in',
         label: t`Used In`,
         icon: <IconList size="18" />,
         hidden: !part.component,
-        content: <Text>part used in goes here</Text>
+        content: <PlaceholderPanel />
       },
       {
         name: 'pricing',
         label: t`Pricing`,
         icon: <IconCurrencyDollar size="18" />,
-        content: <Text>part pricing goes here</Text>
+        content: <PlaceholderPanel />
       },
       {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding size="18" />,
-        content: <Text>part suppliers go here</Text>,
-        hidden: !part.purchaseable
+        hidden: !part.purchaseable,
+        content: <PlaceholderPanel />
       },
       {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart size="18" />,
-        content: <Text>part purchase orders go here</Text>,
+        content: <PlaceholderPanel />,
         hidden: !part.purchaseable
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery size="18" />,
-        content: <Text>part sales orders go here</Text>,
+        content: <PlaceholderPanel />,
         hidden: !part.salable
       },
       {
         name: 'test_templates',
         label: t`Test Templates`,
         icon: <IconTestPipe size="18" />,
-        content: <Text>part test templates go here</Text>,
+        content: <PlaceholderPanel />,
         hidden: !part.trackable
       },
       {
@@ -195,31 +205,38 @@ export default function PartDetail() {
   return (
     <>
       <Stack spacing="xs">
+        <PageDetail
+          title={t`Part`}
+          subtitle={part.full_name}
+          detail={
+            <Alert color="teal" title="Part detail goes here">
+              <Text>TODO: Part details</Text>
+            </Alert>
+          }
+          breadcrumbs={[
+            { name: t`Parts`, url: '/part' },
+            { name: '...', url: '' },
+            { name: part.name, url: `/part/${part.pk}` }
+          ]}
+          actions={[
+            <Button
+              variant="outline"
+              color="blue"
+              onClick={() =>
+                part.pk &&
+                editPart({
+                  part_id: part.pk,
+                  callback: () => {
+                    partQuery.refetch();
+                  }
+                })
+              }
+            >
+              Edit Part
+            </Button>
+          ]}
+        />
         <LoadingOverlay visible={partQuery.isFetching} />
-        <Group position="apart">
-          <Group position="left">
-            <Text size="lg">Part Detail</Text>
-            <Text>{part.name}</Text>
-            <Text size="sm">{part.description}</Text>
-          </Group>
-          <Space />
-          <Text>In Stock: {part.total_in_stock}</Text>
-          <Button
-            variant="outline"
-            color="blue"
-            onClick={() =>
-              part.pk &&
-              editPart({
-                part_id: part.pk,
-                callback: () => {
-                  partQuery.refetch();
-                }
-              })
-            }
-          >
-            Edit Part
-          </Button>
-        </Group>
         <PanelGroup panels={partPanels} />
       </Stack>
     </>

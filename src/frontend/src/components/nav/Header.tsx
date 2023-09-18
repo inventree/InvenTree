@@ -62,7 +62,10 @@ export function Header() {
       <NavigationDrawer opened={navDrawerOpened} close={closeNavDrawer} />
       <NotificationDrawer
         opened={notificationDrawerOpened}
-        onClose={closeNotificationDrawer}
+        onClose={() => {
+          notifications.refetch();
+          closeNotificationDrawer();
+        }}
       />
       <Container className={classes.layoutHeaderSection} size={'xl'}>
         <Group position="apart">

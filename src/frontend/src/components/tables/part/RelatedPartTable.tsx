@@ -11,7 +11,7 @@ import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
-  const { refreshId, refreshTable } = useTableRefresh();
+  const { tableKey, refreshTable } = useTableRefresh('relatedparts');
 
   const navigate = useNavigate();
 
@@ -116,14 +116,16 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   return (
     <InvenTreeTable
       url="/part/related/"
-      tableKey="related-part-table"
-      refreshId={refreshId}
-      params={{
-        part: partId
-      }}
-      rowActions={rowActions}
+      tableKey={tableKey}
       columns={tableColumns}
-      customActionGroups={customActions}
+      props={{
+        params: {
+          part: partId,
+          catefory_detail: true
+        },
+        rowActions: rowActions,
+        customActionGroups: customActions
+      }}
     />
   );
 }
