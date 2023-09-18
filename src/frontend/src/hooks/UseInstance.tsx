@@ -21,8 +21,12 @@ export function useInstance(
 
   const instanceQuery = useQuery({
     queryKey: ['instance', url, pk, params],
-    enabled: pk != null && pk != undefined && pk.length > 0,
     queryFn: async () => {
+      if (pk == null || pk == undefined || pk.length == 0) {
+        setInstance({});
+        return null;
+      }
+
       return api
         .get(url + pk + '/', {
           params: params
@@ -47,12 +51,9 @@ export function useInstance(
     refetchOnWindowFocus: false
   });
 
-  const refreshInstance = useCallback(
-    function () {
-      instanceQuery.refetch();
-    },
-    [instanceQuery]
-  );
+  const refreshInstance = useCallback(function () {
+    instanceQuery.refetch();
+  }, []);
 
   return { instance, refreshInstance, instanceQuery };
 }
