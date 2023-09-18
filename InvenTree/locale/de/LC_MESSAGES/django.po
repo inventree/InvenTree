@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-15 04:54+0000\n"
-"PO-Revision-Date: 2023-09-16 01:31\n"
+"PO-Revision-Date: 2023-09-18 02:00\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -3471,11 +3471,11 @@ msgstr "Bilddatei"
 
 #: common/models.py:2844
 msgid "Unit name must be a valid identifier"
-msgstr ""
+msgstr "Einheitsname muss eine gültige Kennung sein"
 
 #: common/models.py:2866
 msgid "Unit name"
-msgstr ""
+msgstr "Einheitsname"
 
 #: common/models.py:2872 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
@@ -3483,7 +3483,7 @@ msgstr "Symbol"
 
 #: common/models.py:2873
 msgid "Optional unit symbol"
-msgstr ""
+msgstr "Optionales Einheitssymbol"
 
 #: common/models.py:2879 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
@@ -3491,7 +3491,7 @@ msgstr "Definition"
 
 #: common/models.py:2880
 msgid "Unit definition"
-msgstr ""
+msgstr "Einheitsdefinition"
 
 #: common/notifications.py:291
 #, python-brace-format
@@ -3512,7 +3512,7 @@ msgstr "Artikel wurden aus einer Bestellung erhalten"
 
 #: common/notifications.py:308
 msgid "Items have been received against a return order"
-msgstr ""
+msgstr "Artikel wurden aus einer Rücksendung erhalten"
 
 #: common/notifications.py:420
 msgid "Error raised by plugin"
@@ -3650,15 +3650,15 @@ msgstr "Adresstitel"
 
 #: company/models.py:333
 msgid "Title describing the address entry"
-msgstr ""
+msgstr "Titel zur Beschreibung des Adresseintrages"
 
 #: company/models.py:337
 msgid "Primary address"
-msgstr ""
+msgstr "Primäre Adresse"
 
 #: company/models.py:338
 msgid "Set as primary address"
-msgstr ""
+msgstr "Als primäre Adresse festlegen"
 
 #: company/models.py:341 templates/js/translated/company.js:941
 #: templates/js/translated/company.js:1002
@@ -3672,7 +3672,7 @@ msgstr "Adresszeile 1"
 #: company/models.py:346 templates/js/translated/company.js:942
 #: templates/js/translated/company.js:1008
 msgid "Line 2"
-msgstr ""
+msgstr "Linie 2"
 
 #: company/models.py:347
 msgid "Address line 2"
@@ -3693,7 +3693,7 @@ msgstr "Postleitzahl Stadt/Region"
 
 #: company/models.py:361
 msgid "State/Province"
-msgstr ""
+msgstr "Staat/Provinz"
 
 #: company/models.py:362
 msgid "State or province"
@@ -3705,11 +3705,11 @@ msgstr "Land"
 
 #: company/models.py:367
 msgid "Address country"
-msgstr ""
+msgstr "Adresse Land"
 
 #: company/models.py:371
 msgid "Courier shipping notes"
-msgstr ""
+msgstr "Kurierversandnotizen"
 
 #: company/models.py:372
 msgid "Notes for shipping courier"
@@ -3725,7 +3725,7 @@ msgstr "Versandnotizen für interne Verwendung"
 
 #: company/models.py:382
 msgid "Link to address information (external)"
-msgstr ""
+msgstr "Link zu Adressinformationen (extern)"
 
 #: company/models.py:427 company/models.py:703 stock/models.py:675
 #: stock/serializers.py:204 stock/templates/stock/item_base.html:143
@@ -3813,11 +3813,11 @@ msgstr "Parametereinheit"
 
 #: company/models.py:648
 msgid "Pack units must be compatible with the base part units"
-msgstr ""
+msgstr "Packeinheiten müssen mit den Basisteileinheiten kompatibel sein"
 
 #: company/models.py:654
 msgid "Pack units must be greater than zero"
-msgstr ""
+msgstr "Packeinheiten müssen größer als Null sein"
 
 #: company/models.py:670
 msgid "Linked manufacturer part must reference the same base part"
@@ -3909,7 +3909,7 @@ msgstr "Packmenge"
 
 #: company/models.py:757
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
-msgstr ""
+msgstr "Gesamtmenge, die in einer einzelnen Packung geliefert wird. Für Einzelstücke leer lassen."
 
 #: company/models.py:774 part/models.py:1930
 msgid "multiple"
@@ -4435,7 +4435,7 @@ msgstr "Muster für die Erstellung von Label-Dateinamen"
 #: label/models.py:288 label/models.py:329 label/models.py:357
 #: label/models.py:393
 msgid "Query filters (comma-separated list of key=value pairs)"
-msgstr ""
+msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
 #: label/models.py:289 label/models.py:330 label/models.py:358
 #: label/models.py:394 report/models.py:298 report/models.py:445
@@ -4502,23 +4502,23 @@ msgstr "Gesamtpreis für diese Bestellung"
 
 #: order/models.py:79 order/serializers.py:50
 msgid "Order Currency"
-msgstr ""
+msgstr "Auftragswährung"
 
 #: order/models.py:81 order/serializers.py:51
 msgid "Currency for this order (leave blank to use company default)"
-msgstr ""
+msgstr "Währung für diesen Auftrag (leer lassen, um Firmenstandard zu verwenden)"
 
 #: order/models.py:210
 msgid "Contact does not match selected company"
-msgstr ""
+msgstr "Kontakt stimmt nicht mit der ausgewählten Firma überein"
 
 #: order/models.py:232
 msgid "Order description (optional)"
-msgstr ""
+msgstr "Auftragsbeschreibung (optional)"
 
 #: order/models.py:237
 msgid "Select project code for this order"
-msgstr ""
+msgstr "Projektcode für diesen Auftrag auswählen"
 
 #: order/models.py:240 order/models.py:1107 order/models.py:1467
 msgid "Link to external page"
@@ -4538,11 +4538,11 @@ msgstr "Nutzer oder Gruppe der/die für diesen Auftrag zuständig ist/sind"
 
 #: order/models.py:271
 msgid "Point of contact for this order"
-msgstr ""
+msgstr "Ansprechpartner für diesen Auftrag"
 
 #: order/models.py:280
 msgid "Company address for this order"
-msgstr ""
+msgstr "Firmenadresse für diesen Auftrag"
 
 #: order/models.py:373 order/models.py:779
 msgid "Order reference"
@@ -4617,7 +4617,7 @@ msgstr "Auftrag kann nicht abgeschlossen werden, da keine Teile zugewiesen wurde
 
 #: order/models.py:874
 msgid "Only an open order can be marked as complete"
-msgstr ""
+msgstr "Nur ein offener Auftrag kann als abgeschlossen markiert werden"
 
 #: order/models.py:877 templates/js/translated/sales_order.js:503
 msgid "Order cannot be completed as there are incomplete shipments"
@@ -4736,7 +4736,7 @@ msgstr "Lieferdatum"
 
 #: order/models.py:1428
 msgid "Date of delivery of shipment"
-msgstr ""
+msgstr "Versanddatum"
 
 #: order/models.py:1435
 msgid "Checked By"
