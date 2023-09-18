@@ -161,6 +161,7 @@ class SetPasswordForm(HelperForm):
     old_password = forms.CharField(
         label=_("Old password"),
         strip=False,
+        required=False,
         widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'autofocus': True}),
     )
 
