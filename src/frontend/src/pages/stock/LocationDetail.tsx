@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Stack, Text } from '@mantine/core';
+import { LoadingOverlay, Stack, Text } from '@mantine/core';
 import { IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -51,6 +51,7 @@ export default function Stock() {
   return (
     <>
       <Stack>
+        <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Stock Items`}
           detail={<Text>{location.name ?? 'Top level'}</Text>}

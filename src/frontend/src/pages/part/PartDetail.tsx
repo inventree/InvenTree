@@ -134,7 +134,13 @@ export default function PartDetail() {
         name: 'attachments',
         label: t`Attachments`,
         icon: <IconPaperclip size="18" />,
-        content: partAttachmentsTab()
+        content: (
+          <AttachmentTable
+            url="/part/attachment/"
+            model="part"
+            pk={part.pk ?? -1}
+          />
+        )
       },
       {
         name: 'notes',
@@ -144,16 +150,6 @@ export default function PartDetail() {
       }
     ];
   }, [part]);
-
-  function partAttachmentsTab(): React.ReactNode {
-    return (
-      <AttachmentTable
-        url="/part/attachment/"
-        model="part"
-        pk={part.pk ?? -1}
-      />
-    );
-  }
 
   function partRelatedTab(): React.ReactNode {
     return <RelatedPartTable partId={part.pk ?? -1} />;
@@ -181,6 +177,7 @@ export default function PartDetail() {
   return (
     <>
       <Stack spacing="xs">
+        <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Part`}
           subtitle={part.full_name}
@@ -210,7 +207,6 @@ export default function PartDetail() {
             </Button>
           ]}
         />
-        <LoadingOverlay visible={instanceQuery.isFetching} />
         <PanelGroup panels={partPanels} />
       </Stack>
     </>

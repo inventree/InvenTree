@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Stack, Text } from '@mantine/core';
+import { LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconCategory,
   IconListDetails,
@@ -25,10 +25,11 @@ import { useInstance } from '../../hooks/UseInstance';
 export default function CategoryDetail({}: {}) {
   const { id } = useParams();
 
-  const { instance: category, refreshInstance } = useInstance(
-    '/part/category/',
-    id
-  );
+  const {
+    instance: category,
+    refreshInstance,
+    instanceQuery
+  } = useInstance('/part/category/', id);
 
   const categoryPanels: PanelType[] = useMemo(
     () => [
@@ -70,6 +71,7 @@ export default function CategoryDetail({}: {}) {
 
   return (
     <Stack spacing="xs">
+      <LoadingOverlay visible={instanceQuery.isFetching} />
       <PageDetail
         title={t`Part Category`}
         detail={<Text>{category.name ?? 'Top level'}</Text>}
