@@ -447,8 +447,7 @@ class SetPasswordView(AjaxUpdateView):
 
         if valid:
             # Old password must be correct
-
-            if not user.check_password(old_password):
+            if user.has_usable_password() and not user.check_password(old_password):
                 form.add_error('old_password', _('Wrong password provided'))
                 valid = False
 
