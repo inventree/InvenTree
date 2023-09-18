@@ -102,6 +102,14 @@ export default function StockDetail() {
             <Text>Quantity: {stockitem.quantity ?? 'idk'}</Text>
           </Alert>
         }
+        breadcrumbs={[
+          { name: t`Stock`, url: '/stock' },
+          { name: '...', url: '' },
+          {
+            name: stockitem.part_detail?.full_name ?? 'name goes here',
+            url: `/stock/item/${stockitem.pk}`
+          }
+        ]}
       />
       <PanelGroup panels={stockPanels} />
     </Stack>
