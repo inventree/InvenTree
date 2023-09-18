@@ -1,13 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Button,
-  Group,
-  LoadingOverlay,
-  Space,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Alert, Button, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBuilding,
   IconCurrencyDollar,
@@ -41,6 +33,7 @@ import {
   NotesEditor
 } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
+import { useInstance } from '../../hooks/UseInstance';
 
 /**
  * Detail view for a single Part instance
@@ -48,12 +41,11 @@ import { editPart } from '../../functions/forms/PartForms';
 export default function PartDetail() {
   const { id } = useParams();
 
-  // Part data
-  const [part, setPart] = useState<any>({});
-
-  useEffect(() => {
-    setPart({});
-  }, [id]);
+  const {
+    instance: part,
+    refreshInstance,
+    instanceQuery
+  } = useInstance('/part/', id);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -153,22 +145,6 @@ export default function PartDetail() {
     ];
   }, [part]);
 
-  // Query hook for fetching part data
-  const partQuery = useQuery(['part', id], async () => {
-    let url = `/part/${id}/`;
-
-    return api
-      .get(url)
-      .then((response) => {
-        setPart(response.data);
-        return response.data;
-      })
-      .catch((error) => {
-        setPart({});
-        return null;
-      });
-  });
-
   function partAttachmentsTab(): React.ReactNode {
     return (
       <AttachmentTable
@@ -226,9 +202,7 @@ export default function PartDetail() {
                 part.pk &&
                 editPart({
                   part_id: part.pk,
-                  callback: () => {
-                    partQuery.refetch();
-                  }
+                  callback: refreshInstance
                 })
               }
             >
@@ -236,7 +210,7 @@ export default function PartDetail() {
             </Button>
           ]}
         />
-        <LoadingOverlay visible={partQuery.isFetching} />
+        <LoadingOverlay visible={instanceQuery.isFetching} />
         <PanelGroup panels={partPanels} />
       </Stack>
     </>
