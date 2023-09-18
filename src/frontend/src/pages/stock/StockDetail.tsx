@@ -71,7 +71,7 @@ export default function StockDetail() {
         content: (
           <AttachmentTable
             url="/stock/attachment/"
-            model="stockitem"
+            model="stock_item"
             pk={stockitem.pk ?? -1}
           />
         )
