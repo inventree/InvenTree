@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-17 02:02\n"
+"PO-Revision-Date: 2023-09-18 02:00\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1279,7 +1279,7 @@ msgstr ""
 
 #: src/functions/forms/AttachmentForms.tsx:100
 msgid "Edit File"
-msgstr ""
+msgstr "Redigera fil"
 
 #: src/functions/forms/AttachmentForms.tsx:100
 msgid "Edit Link"
@@ -1295,7 +1295,7 @@ msgstr ""
 
 #: src/functions/forms/AttachmentForms.tsx:127
 msgid "Delete Attachment"
-msgstr ""
+msgstr "Radera bilaga"
 
 #: src/functions/forms/AttachmentForms.tsx:128
 msgid "Attachment deleted"
@@ -1814,11 +1814,11 @@ msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:67
 msgid "Subcategories"
-msgstr ""
+msgstr "Underkategorier"
 
 #: src/pages/part/CategoryDetail.tsx:79
 msgid "Parameters"
-msgstr ""
+msgstr "Parametrar"
 
 #: src/pages/part/CategoryDetail.tsx:90
 msgid "Part Category"
