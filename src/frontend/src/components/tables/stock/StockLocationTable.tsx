@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { TableColumn } from '../Column';
@@ -10,6 +11,8 @@ import { InvenTreeTable } from '../InvenTreeTable';
  */
 export function StockLocationTable({ params = {} }: { params?: any }) {
   const { tableKey, refreshTable } = useTableRefresh('stocklocation');
+
+  const navigate = useNavigate();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -45,7 +48,10 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
       columns={tableColumns}
       props={{
         enableDownload: true,
-        params: params
+        params: params,
+        onRowClick: (record) => {
+          navigate(`/stock/location/${record.pk}`);
+        }
         // TODO: allow for "tree view" with cascade
       }}
     />
