@@ -12,15 +12,21 @@ import { api } from '../App';
  * To use this hook:
  * const { instance, refreshInstance } = useInstance(url: string, pk: number)
  */
-export function useInstance(url: string, pk: string | undefined) {
+export function useInstance(
+  url: string,
+  pk: string | undefined,
+  params: any = {}
+) {
   const [instance, setInstance] = useState<any>({});
 
   const instanceQuery = useQuery({
-    queryKey: ['instance', url, pk],
+    queryKey: ['instance', url, pk, params],
     enabled: pk != null && pk != undefined && pk.length > 0,
     queryFn: async () => {
       return api
-        .get(url + pk + '/')
+        .get(url + pk + '/', {
+          params: params
+        })
         .then((response) => {
           switch (response.status) {
             case 200:

@@ -26,6 +26,7 @@ import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { useInstance } from '../../hooks/UseInstance';
 
 /**
  * Detail page for a single Build Order
@@ -33,30 +34,12 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 export default function BuildDetail() {
   const { id } = useParams();
 
-  // Build data
-  const [build, setBuild] = useState<any>({});
-
-  useEffect(() => {
-    setBuild({});
-  }, [id]);
-
-  // Query hook for fetching build data
-  const buildQuery = useQuery(['build', id ?? -1], async () => {
-    let url = `/build/${id}/`;
-
-    return api
-      .get(url, {
-        params: {
-          part_detail: true
-        }
-      })
-      .then((response) => {
-        setBuild(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-        setBuild({});
-      });
+  const {
+    instance: build,
+    refreshInstance,
+    instanceQuery
+  } = useInstance('/build/', id, {
+    part_detail: true
   });
 
   const buildPanels: PanelType[] = useMemo(() => {
@@ -162,7 +145,7 @@ export default function BuildDetail() {
           ]}
           actions={[<PlaceholderPill key="1" />]}
         />
-        <LoadingOverlay visible={buildQuery.isFetching} />
+        <LoadingOverlay visible={instanceQuery.isFetching} />
         <PanelGroup panels={buildPanels} />
       </Stack>
     </>
