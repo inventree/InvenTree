@@ -37,6 +37,22 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
         title: t`Stock Items`,
         switchable: true,
         sortable: true
+      },
+      {
+        accessor: 'structural',
+        title: t`Structural`,
+        switchable: true,
+        sortable: true,
+        render: (record: any) => (record.structural ? 'Y' : 'N')
+        // TODO: custom 'true / false' label,
+      },
+      {
+        accessor: 'external',
+        title: t`External`,
+        switchable: true,
+        sortable: true,
+        render: (record: any) => (record.structural ? 'Y' : 'N')
+        // TODO: custom 'true / false' label,
       }
     ];
   }, [params]);
