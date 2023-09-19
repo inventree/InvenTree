@@ -768,6 +768,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'description',
             'parent',
             'pathstring',
+            'path',
             'items',
             'owner',
             'icon',
@@ -780,6 +781,16 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         read_only_fields = [
             'barcode_hash',
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Optionally add or remove extra fields"""
+
+        path_detail = kwargs.pop('path_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not path_detail:
+            self.fields.pop('path')
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -799,6 +810,12 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     level = serializers.IntegerField(read_only=True)
 
     tags = TagListSerializerField(required=False)
+
+    path = serializers.ListField(
+        child=serializers.DictField(),
+        source='get_path',
+        read_only=True,
+    )
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):

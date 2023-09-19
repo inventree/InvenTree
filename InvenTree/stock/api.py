@@ -1343,6 +1343,20 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
 
+    def get_serializer(self, *args, **kwargs):
+        """Add extra context to serializer based on provided query parameters"""
+
+        try:
+            params = self.request.query_params
+
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint"""
 
