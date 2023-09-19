@@ -119,11 +119,16 @@ export function PurchaseOrderTable({ params = {} }: { params?: any }) {
   return (
     <InvenTreeTable
       url="order/po/"
-      enableDownload
       tableKey="purchase-order-table"
-      params={tableParams}
       columns={tableColumns}
-      customFilters={tableFilters}
+      props={{
+        enableDownload: true,
+        params: {
+          ...params,
+          ...tableParams
+        },
+        customFilters: tableFilters
+      }}
     />
   );
 }
