@@ -742,6 +742,24 @@ class InvenTreeTree(MPTTModel):
         """
         return self.parentpath + [self]
 
+    def get_path(self):
+        """Return a list of element in the item tree.
+
+        Contains the full path to this item, with each entry containing the following data:
+
+        {
+            pk: <pk>,
+            name: <name>,
+        }
+        """
+
+        return [
+            {
+                'pk': item.pk,
+                'name': item.name
+            } for item in self.path
+        ]
+
     def __str__(self):
         """String representation of a category is the full path to that category."""
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
