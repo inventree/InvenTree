@@ -498,6 +498,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'barcode_hash',
             'category',
             'category_detail',
+            'category_path',
             'component',
             'default_expiry',
             'default_location',
@@ -549,7 +550,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'copy_category_parameters',
 
             'tags',
-            'path',
         ]
 
         read_only_fields = [
@@ -579,7 +579,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             self.fields.pop('parameters')
 
         if not path_detail:
-            self.fields.pop('path')
+            self.fields.pop('category_path')
 
         if not create:
             # These fields are only used for the LIST API endpoint
@@ -692,6 +692,12 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
     # Extra detail for the category
     category_detail = CategorySerializer(source='category', many=False, read_only=True)
 
+    category_path = serializers.ListField(
+        child=serializers.DictField(),
+        source='category.get_path',
+        read_only=True,
+    )
+
     # Annotated fields
     allocated_to_build_orders = serializers.FloatField(read_only=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
@@ -718,12 +724,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
     parameters = PartParameterSerializer(
         many=True,
-        read_only=True,
-    )
-
-    path = serializers.ListField(
-        child=serializers.DictField(),
-        source='category.get_path',
         read_only=True,
     )
 

@@ -76,14 +76,14 @@ class StockDetail(RetrieveUpdateDestroyAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
-        kwargs['part_detail'] = True
-        kwargs['location_detail'] = True
-        kwargs['supplier_part_detail'] = True
         kwargs['context'] = self.get_serializer_context()
 
         try:
             params = self.request.query_params
 
+            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
+            kwargs['location_detail'] = str2bool(params.get('location_detail', True))
+            kwargs['supplier_part_detail'] = str2bool(params.get('supplier_part_detail', True))
             kwargs['path_detail'] = str2bool(params.get('path_detail', False))
         except AttributeError:
             pass

@@ -145,6 +145,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'link',
             'location',
             'location_detail',
+            'location_path',
             'notes',
             'owner',
             'packaging',
@@ -177,7 +178,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'tracking_items',
 
             'tags',
-            'path',
         ]
 
         """
@@ -206,7 +206,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         label=_("Part"),
     )
 
-    path = serializers.ListField(
+    location_path = serializers.ListField(
         child=serializers.DictField(),
         source='location.get_path',
         read_only=True,
@@ -353,7 +353,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             self.fields.pop('tests')
 
         if not path_detail:
-            self.fields.pop('path')
+            self.fields.pop('location_path')
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
