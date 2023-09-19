@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
-import { Group } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { Text } from '@mantine/core';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { notYetImplemented } from '../../../functions/notifications';
-import { ActionButton } from '../../items/ActionButton';
+import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
@@ -23,11 +23,12 @@ function stockItemTableColumns(): TableColumn[] {
       render: function (record: any) {
         let part = record.part_detail;
         return (
-          <ThumbnailHoverCard
-            src={part.thumbnail || part.image}
-            text={part.name}
-            link=""
-          />
+          <Text>{part.full_name}</Text>
+          // <ThumbnailHoverCard
+          //   src={part.thumbnail || part.image}
+          //   text={part.name}
+          //   link=""
+          // />
         );
       }
     },
@@ -80,17 +81,6 @@ function stockItemTableColumns(): TableColumn[] {
 }
 
 /**
- * Return a set of parameters for the stock item table
- */
-function stockItemTableParams(params: any): any {
-  return {
-    ...params,
-    part_detail: true,
-    location_detail: true
-  };
-}
-
-/**
  * Construct a list of available filters for the stock item table
  */
 function stockItemTableFilters(): TableFilter[] {
@@ -113,9 +103,10 @@ function stockItemTableFilters(): TableFilter[] {
  * Load a table of stock items
  */
 export function StockItemTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => stockItemTableParams(params), []);
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
+
+  const { tableKey, refreshTable } = useTableRefresh('stockitem');
 
   function stockItemRowActions(record: any): RowAction[] {
     let actions: RowAction[] = [];
@@ -130,16 +121,25 @@ export function StockItemTable({ params = {} }: { params?: any }) {
     return actions;
   }
 
+  const navigate = useNavigate();
+
   return (
     <InvenTreeTable
       url="stock/"
-      tableKey="stock-table"
-      enableDownload
-      enableSelection
-      params={tableParams}
+      tableKey={tableKey}
       columns={tableColumns}
-      customFilters={tableFilters}
-      rowActions={stockItemRowActions}
+      props={{
+        enableDownload: true,
+        enableSelection: true,
+        customFilters: tableFilters,
+        rowActions: stockItemRowActions,
+        onRowClick: (record) => navigate(`/stock/item/${record.pk}`),
+        params: {
+          ...params,
+          part_detail: true,
+          location_detail: true
+        }
+      }}
     />
   );
 }

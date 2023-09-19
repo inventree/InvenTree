@@ -16,6 +16,13 @@ export const menuItems: MenuLinkItem[] = [
     text: <Trans>Profile page</Trans>,
     link: '/profile/user',
     doctext: <Trans>User attributes and design settings.</Trans>
+  },
+  {
+    id: 'scan',
+    text: <Trans>Scanning</Trans>,
+    link: '/scan',
+    doctext: <Trans>View for interactive scanning and multiple actions.</Trans>,
+    highlight: true
   }
 ];
 
