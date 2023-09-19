@@ -1694,8 +1694,7 @@ class PartDetailTests(PartAPITestBase):
         )
 
         self.assertIn('category_path', response.data)
-
-        print(response.data['category_path'])
+        self.assertEqual(len(response.data['category_path']), 2)
 
 
 class PartListTests(PartAPITestBase):
