@@ -549,6 +549,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'copy_category_parameters',
 
             'tags',
+            'path',
         ]
 
         read_only_fields = [
@@ -567,6 +568,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         parameters = kwargs.pop('parameters', False)
         create = kwargs.pop('create', False)
         pricing = kwargs.pop('pricing', True)
+        path_detail = kwargs.pop('path_detail', False)
 
         super().__init__(*args, **kwargs)
 
@@ -575,6 +577,9 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
         if not parameters:
             self.fields.pop('parameters')
+
+        if not path_detail:
+            self.fields.pop('path')
 
         if not create:
             # These fields are only used for the LIST API endpoint
@@ -713,6 +718,12 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
     parameters = PartParameterSerializer(
         many=True,
+        read_only=True,
+    )
+
+    path = serializers.ListField(
+        child=serializers.DictField(),
+        source='category.get_path',
         read_only=True,
     )
 

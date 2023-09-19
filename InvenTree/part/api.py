@@ -1040,6 +1040,7 @@ class PartMixin:
 
             kwargs['parameters'] = str2bool(params.get('parameters', None))
             kwargs['category_detail'] = str2bool(params.get('category_detail', False))
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
 
         except AttributeError:
             pass
