@@ -19,7 +19,12 @@ export const PartDetail = Loadable(
   lazy(() => import('./pages/part/PartDetail'))
 );
 
-export const Stock = Loadable(lazy(() => import('./pages/Index/Stock')));
+export const LocationDetail = Loadable(
+  lazy(() => import('./pages/stock/LocationDetail'))
+);
+export const StockDetail = Loadable(
+  lazy(() => import('./pages/stock/StockDetail'))
+);
 
 export const BuildIndex = Loadable(
   lazy(() => import('./pages/build/BuildIndex'))
@@ -68,7 +73,9 @@ export const routes = (
       <Route path="part/" element={<CategoryDetail />} />
       <Route path="part/category/:id" element={<CategoryDetail />} />
       <Route path="part/:id" element={<PartDetail />} />
-      <Route path="stock/" element={<Stock />} />,
+      <Route path="stock/" element={<LocationDetail />} />
+      <Route path="stock/location/:id" element={<LocationDetail />} />
+      <Route path="stock/item/:id" element={<StockDetail />} />
       <Route path="build/" element={<BuildIndex />} />,
       <Route path="build/:id" element={<BuildDetail />} />,
       <Route path="order/">
