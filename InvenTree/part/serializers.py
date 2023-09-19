@@ -55,11 +55,22 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'parent',
             'part_count',
             'pathstring',
+            'path',
             'starred',
             'url',
             'structural',
             'icon',
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Optionally add or remove extra fields"""
+
+        path_detail = kwargs.pop('path_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not path_detail:
+            self.fields.pop('path')
 
     def get_starred(self, category):
         """Return True if the category is directly "starred" by the current user."""
@@ -83,6 +94,12 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
     level = serializers.IntegerField(read_only=True)
 
     starred = serializers.SerializerMethodField()
+
+    path = serializers.ListField(
+        child=serializers.DictField(),
+        source='get_path',
+        read_only=True,
+    )
 
 
 class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):

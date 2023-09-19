@@ -190,6 +190,18 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
 class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
 
+    def get_serializer(self, *args, **kwargs):
+        """Add additional context based on query parameters"""
+
+        try:
+            params = self.request.query_params
+
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        except AttributeError:
+            pass
+
+        return self.serializer_class(*args, **kwargs)
+
     def update(self, request, *args, **kwargs):
         """Perform 'update' function and mark this part as 'starred' (or not)"""
         # Clean up input data
