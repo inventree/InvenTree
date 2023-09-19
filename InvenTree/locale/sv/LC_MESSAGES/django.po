@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-15 04:54+0000\n"
-"PO-Revision-Date: 2023-09-16 01:32\n"
+"POT-Creation-Date: 2023-09-18 11:08+0000\n"
+"PO-Revision-Date: 2023-09-19 02:10\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -105,27 +105,27 @@ msgstr "Bekräfta nytt lösenord"
 msgid "Old password"
 msgstr "Tidigare lösenord"
 
-#: InvenTree/forms.py:199
+#: InvenTree/forms.py:200
 msgid "Email (again)"
 msgstr "E-post (igen)"
 
-#: InvenTree/forms.py:203
+#: InvenTree/forms.py:204
 msgid "Email address confirmation"
 msgstr "Bekräfta e-postadress"
 
-#: InvenTree/forms.py:224
+#: InvenTree/forms.py:225
 msgid "You must type the same email each time."
 msgstr "Du måste ange samma e-post varje gång."
 
-#: InvenTree/forms.py:255 InvenTree/forms.py:261
+#: InvenTree/forms.py:256 InvenTree/forms.py:262
 msgid "The provided primary email address is not valid."
 msgstr "Den angivna primära e-postadressen är inte giltig."
 
-#: InvenTree/forms.py:267
+#: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
 msgstr "Den angivna e-postdomänen är inte godkänd."
 
-#: InvenTree/forms.py:372
+#: InvenTree/forms.py:373
 msgid "Registration is disabled."
 msgstr ""
 
@@ -877,15 +877,15 @@ msgstr "Ställ in lösenord"
 msgid "Password fields must match"
 msgstr "Lösenorden måste matcha"
 
-#: InvenTree/views.py:448
+#: InvenTree/views.py:447
 msgid "Wrong password provided"
 msgstr "Felaktigt lösenord angivet"
 
-#: InvenTree/views.py:645 templates/navbar.html:157
+#: InvenTree/views.py:644 templates/navbar.html:157
 msgid "System Information"
 msgstr "Systeminformation"
 
-#: InvenTree/views.py:652 templates/navbar.html:168
+#: InvenTree/views.py:651 templates/navbar.html:168
 msgid "About InvenTree"
 msgstr "Om InvenTree"
 
