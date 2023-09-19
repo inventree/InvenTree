@@ -223,8 +223,8 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:286
-#: src/components/nav/SearchDrawer.tsx:425
-#: src/components/tables/InvenTreeTable.tsx:373
+#: src/components/nav/SearchDrawer.tsx:426
+#: src/components/tables/InvenTreeTable.tsx:378
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
@@ -250,7 +250,7 @@ msgid "Read More"
 msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:365
+#: src/components/tables/InvenTreeTable.tsx:370
 msgid "Unknown error"
 msgstr ""
 
@@ -332,23 +332,19 @@ msgid "Close modal"
 msgstr ""
 
 #: src/components/nav/MainMenu.tsx:38
-msgid "Notifications"
-msgstr ""
-
-#: src/components/nav/MainMenu.tsx:42
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:46
+#: src/components/nav/MainMenu.tsx:42
 msgid "Settings"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:49
+#: src/components/nav/MainMenu.tsx:45
 msgid "Account settings"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:57
+#: src/components/nav/MainMenu.tsx:53
 msgid "Logout"
 msgstr ""
 
@@ -397,91 +393,102 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:60
+#: src/components/nav/NotificationDrawer.tsx:67
+#: src/pages/Notifications.tsx:20
+#: src/pages/Notifications.tsx:87
+msgid "Notifications"
+msgstr ""
+
+#: src/components/nav/NotificationDrawer.tsx:102
+#: src/pages/Notifications.tsx:29
+msgid "Mark as read"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:61
 #: src/defaults/links.tsx:26
 #: src/pages/part/PartIndex.tsx:23
 #: src/pages/part/PartIndex.tsx:46
 msgid "Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:68
+#: src/components/nav/SearchDrawer.tsx:69
 msgid "Supplier Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:81
+#: src/components/nav/SearchDrawer.tsx:82
 msgid "Manufacturer Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:94
+#: src/components/nav/SearchDrawer.tsx:95
 msgid "Part Categories"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:102
+#: src/components/nav/SearchDrawer.tsx:103
 #: src/pages/Index/Stock.tsx:13
 msgid "Stock Items"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:113
+#: src/components/nav/SearchDrawer.tsx:114
 msgid "Stock Locations"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:121
+#: src/components/nav/SearchDrawer.tsx:122
 #: src/pages/Index/Build.tsx:13
 #: src/pages/part/PartDetail.tsx:79
 msgid "Build Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:131
+#: src/components/nav/SearchDrawer.tsx:132
 msgid "Companies"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:140
+#: src/components/nav/SearchDrawer.tsx:141
 #: src/pages/part/PartDetail.tsx:106
 msgid "Purchase Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:150
+#: src/components/nav/SearchDrawer.tsx:151
 #: src/pages/part/PartDetail.tsx:113
 msgid "Sales Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:160
+#: src/components/nav/SearchDrawer.tsx:161
 msgid "Return Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:195
+#: src/components/nav/SearchDrawer.tsx:196
 msgid "results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:351
+#: src/components/nav/SearchDrawer.tsx:352
 msgid "Enter search text"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:378
+#: src/components/nav/SearchDrawer.tsx:379
 msgid "Search Options"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:381
+#: src/components/nav/SearchDrawer.tsx:382
 msgid "Regex search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:391
+#: src/components/nav/SearchDrawer.tsx:392
 msgid "Whole word search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:428
+#: src/components/nav/SearchDrawer.tsx:429
 msgid "An error occurred during search query"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:439
+#: src/components/nav/SearchDrawer.tsx:440
 msgid "No results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:442
+#: src/components/nav/SearchDrawer.tsx:443
 msgid "No results available for search query"
 msgstr ""
 
-#: src/components/render/Instance.tsx:65
+#: src/components/render/Instance.tsx:70
 msgid "Unknown model: {model}"
 msgstr ""
 
@@ -510,6 +517,7 @@ msgstr ""
 #: src/components/tables/AttachmentTable.tsx:130
 #: src/components/tables/part/RelatedPartTable.tsx:97
 #: src/functions/forms.tsx:177
+#: src/pages/Notifications.tsx:67
 msgid "Delete"
 msgstr ""
 
@@ -618,37 +626,37 @@ msgstr ""
 msgid "No records found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:352
+#: src/components/tables/InvenTreeTable.tsx:357
 msgid "Bad request"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:355
+#: src/components/tables/InvenTreeTable.tsx:360
 msgid "Unauthorized"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:358
+#: src/components/tables/InvenTreeTable.tsx:363
 msgid "Forbidden"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:361
+#: src/components/tables/InvenTreeTable.tsx:366
 msgid "Not found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:422
-#: src/components/tables/InvenTreeTable.tsx:423
+#: src/components/tables/InvenTreeTable.tsx:427
+#: src/components/tables/InvenTreeTable.tsx:428
 msgid "Barcode actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:430
-#: src/components/tables/InvenTreeTable.tsx:431
+#: src/components/tables/InvenTreeTable.tsx:435
+#: src/components/tables/InvenTreeTable.tsx:436
 msgid "Print actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:448
+#: src/components/tables/InvenTreeTable.tsx:453
 msgid "Refresh data"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:466
+#: src/components/tables/InvenTreeTable.tsx:471
 msgid "Table filters"
 msgstr ""
 
@@ -700,16 +708,29 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
+#: src/components/tables/notifications/NotificationsTable.tsx:23
+msgid "Age"
+msgstr ""
+
+#: src/components/tables/notifications/NotificationsTable.tsx:28
+#: src/components/tables/part/PartTable.tsx:57
+msgid "Category"
+msgstr ""
+
+#: src/components/tables/notifications/NotificationsTable.tsx:33
+msgid "Notification"
+msgstr ""
+
+#: src/components/tables/notifications/NotificationsTable.tsx:37
+msgid "Message"
+msgstr ""
+
 #: src/components/tables/part/PartTable.tsx:39
 msgid "IPN"
 msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:46
 msgid "Units"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:57
-msgid "Category"
 msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:68
@@ -1616,6 +1637,14 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
+msgstr ""
+
+#: src/pages/Notifications.tsx:46
+msgid "History"
+msgstr ""
+
+#: src/pages/Notifications.tsx:55
+msgid "Mark as unread"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:53
