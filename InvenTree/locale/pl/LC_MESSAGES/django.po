@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-15 04:54+0000\n"
-"PO-Revision-Date: 2023-09-16 01:32\n"
+"POT-Creation-Date: 2023-09-18 11:08+0000\n"
+"PO-Revision-Date: 2023-09-19 02:10\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -105,27 +105,27 @@ msgstr "Potwierdź nowe hasło"
 msgid "Old password"
 msgstr "Stare hasło"
 
-#: InvenTree/forms.py:199
+#: InvenTree/forms.py:200
 msgid "Email (again)"
 msgstr "Adres email (ponownie)"
 
-#: InvenTree/forms.py:203
+#: InvenTree/forms.py:204
 msgid "Email address confirmation"
 msgstr "Potwierdzenie adresu email"
 
-#: InvenTree/forms.py:224
+#: InvenTree/forms.py:225
 msgid "You must type the same email each time."
 msgstr "Należy ponownie wpisać ten sam adres e-mail."
 
-#: InvenTree/forms.py:255 InvenTree/forms.py:261
+#: InvenTree/forms.py:256 InvenTree/forms.py:262
 msgid "The provided primary email address is not valid."
 msgstr "Podany podstawowy adres e-mail jest nieprawidłowy."
 
-#: InvenTree/forms.py:267
+#: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
 msgstr "Podany e-mail domeny nie został zatwierdzony."
 
-#: InvenTree/forms.py:372
+#: InvenTree/forms.py:373
 msgid "Registration is disabled."
 msgstr ""
 
@@ -877,15 +877,15 @@ msgstr "Ustaw hasło"
 msgid "Password fields must match"
 msgstr "Hasła muszą być zgodne"
 
-#: InvenTree/views.py:448
+#: InvenTree/views.py:447
 msgid "Wrong password provided"
 msgstr "Podano nieprawidłowe hasło"
 
-#: InvenTree/views.py:645 templates/navbar.html:157
+#: InvenTree/views.py:644 templates/navbar.html:157
 msgid "System Information"
 msgstr "Informacja systemowa"
 
-#: InvenTree/views.py:652 templates/navbar.html:168
+#: InvenTree/views.py:651 templates/navbar.html:168
 msgid "About InvenTree"
 msgstr "O InvenTree"
 
