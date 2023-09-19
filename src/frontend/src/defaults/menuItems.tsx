@@ -23,6 +23,13 @@ export const menuItems: MenuLinkItem[] = [
     link: '/scan',
     doctext: <Trans>View for interactive scanning and multiple actions.</Trans>,
     highlight: true
+  },
+  {
+    id: 'purchase-order',
+    text: <Trans>Purchase Order</Trans>,
+    link: '/order/purchase-order',
+    doctext: <Trans>View purchase orders.</Trans>,
+    highlight: true
   }
 ];
 
