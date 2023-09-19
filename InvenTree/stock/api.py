@@ -81,6 +81,13 @@ class StockDetail(RetrieveUpdateDestroyAPI):
         kwargs['supplier_part_detail'] = True
         kwargs['context'] = self.get_serializer_context()
 
+        try:
+            params = self.request.query_params
+
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        except AttributeError:
+            pass
+
         return self.serializer_class(*args, **kwargs)
 
 
