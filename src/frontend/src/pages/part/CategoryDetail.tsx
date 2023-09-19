@@ -29,7 +29,7 @@ export default function CategoryDetail({}: {}) {
     instance: category,
     refreshInstance,
     instanceQuery
-  } = useInstance('/part/category/', id);
+  } = useInstance('/part/category/', id, { path_detail: true });
 
   const categoryPanels: PanelType[] = useMemo(
     () => [
@@ -69,24 +69,24 @@ export default function CategoryDetail({}: {}) {
     [category, id]
   );
 
+  const breadcrumbs = useMemo(
+    () => [
+      { name: t`Parts`, url: '/part' },
+      ...(category.path ?? []).map((c: any) => ({
+        name: c.name,
+        url: `/part/category/${c.pk}`
+      }))
+    ],
+    [category]
+  );
+
   return (
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isFetching} />
       <PageDetail
         title={t`Part Category`}
         detail={<Text>{category.name ?? 'Top level'}</Text>}
-        breadcrumbs={
-          category.pk
-            ? [
-                { name: t`Parts`, url: '/part' },
-                { name: '...', url: '' },
-                {
-                  name: category.name ?? t`Top level`,
-                  url: `/part/category/${category.pk}`
-                }
-              ]
-            : []
-        }
+        breadcrumbs={breadcrumbs}
       />
       <PanelGroup panels={categoryPanels} />
     </Stack>

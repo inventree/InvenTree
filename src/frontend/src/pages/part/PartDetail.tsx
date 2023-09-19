@@ -16,22 +16,17 @@ import {
   IconTruckDelivery,
   IconVersions
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { api } from '../../App';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
-import {
-  MarkdownEditor,
-  NotesEditor
-} from '../../components/widgets/MarkdownEditor';
+import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
 
@@ -45,7 +40,7 @@ export default function PartDetail() {
     instance: part,
     refreshInstance,
     instanceQuery
-  } = useInstance('/part/', id);
+  } = useInstance('/part/', id, { path_detail: true });
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -174,6 +169,18 @@ export default function PartDetail() {
       />
     );
   }
+
+  const breadcrumbs = useMemo(
+    () => [
+      { name: t`Parts`, url: '/part' },
+      ...(part.category_path ?? []).map((c: any) => ({
+        name: c.name,
+        url: `/part/category/${c.pk}`
+      }))
+    ],
+    [part]
+  );
+
   return (
     <>
       <Stack spacing="xs">
@@ -186,11 +193,7 @@ export default function PartDetail() {
               <Text>TODO: Part details</Text>
             </Alert>
           }
-          breadcrumbs={[
-            { name: t`Parts`, url: '/part' },
-            { name: '...', url: '' },
-            { name: part.name, url: `/part/${part.pk}` }
-          ]}
+          breadcrumbs={breadcrumbs}
           actions={[
             <Button
               variant="outline"
