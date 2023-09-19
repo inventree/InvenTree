@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
@@ -120,6 +121,8 @@ export function StockItemTable({ params = {} }: { params?: any }) {
     return actions;
   }
 
+  const navigate = useNavigate();
+
   return (
     <InvenTreeTable
       url="stock/"
@@ -130,6 +133,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         enableSelection: true,
         customFilters: tableFilters,
         rowActions: stockItemRowActions,
+        onRowClick: (record) => navigate(`/stock/item/${record.pk}`),
         params: {
           ...params,
           part_detail: true,

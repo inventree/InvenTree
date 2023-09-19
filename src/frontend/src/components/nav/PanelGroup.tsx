@@ -1,6 +1,8 @@
-import { Divider, Paper, Stack, Tabs, Text } from '@mantine/core';
+import { Divider, Paper, Stack, Tabs } from '@mantine/core';
 import { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
+
+import { StylishText } from '../items/StylishText';
 
 /**
  * Type used to specify a single panel in a panel group
@@ -81,7 +83,7 @@ export function PanelGroup({
             !panel.hidden && (
               <Tabs.Panel key={idx} value={panel.name} p="sm">
                 <Stack spacing="md">
-                  <Text size="xl">{panel.label}</Text>
+                  <StylishText size="lg">{panel.label}</StylishText>
                   <Divider />
                   {panel.content}
                 </Stack>

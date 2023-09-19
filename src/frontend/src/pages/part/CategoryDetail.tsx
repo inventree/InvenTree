@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Stack, Text } from '@mantine/core';
+import { LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconCategory,
   IconListDetails,
@@ -15,6 +15,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
 import { PartListTable } from '../../components/tables/part/PartTable';
+import { useInstance } from '../../hooks/UseInstance';
 
 /**
  * Detail view for a single PartCategory instance.
@@ -24,27 +25,11 @@ import { PartListTable } from '../../components/tables/part/PartTable';
 export default function CategoryDetail({}: {}) {
   const { id } = useParams();
 
-  const [category, setCategory] = useState<any>({});
-
-  useEffect(() => {
-    setCategory({});
-  }, [id]);
-
-  const categoryQuery = useQuery({
-    enabled: id != null && id != undefined,
-    queryKey: ['category', id],
-    queryFn: async () => {
-      return api
-        .get(`/part/category/${id}/`)
-        .then((response) => {
-          setCategory(response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          console.error('Error fetching category data:', error);
-        });
-    }
-  });
+  const {
+    instance: category,
+    refreshInstance,
+    instanceQuery
+  } = useInstance('/part/category/', id);
 
   const categoryPanels: PanelType[] = useMemo(
     () => [
@@ -86,11 +71,12 @@ export default function CategoryDetail({}: {}) {
 
   return (
     <Stack spacing="xs">
+      <LoadingOverlay visible={instanceQuery.isFetching} />
       <PageDetail
         title={t`Part Category`}
         detail={<Text>{category.name ?? 'Top level'}</Text>}
         breadcrumbs={
-          id
+          category.pk
             ? [
                 { name: t`Parts`, url: '/part' },
                 { name: '...', url: '' },

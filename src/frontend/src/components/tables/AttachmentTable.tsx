@@ -225,6 +225,7 @@ export function AttachmentTable({
         tableKey={tableKey}
         columns={tableColumns}
         props={{
+          noRecordsText: t`No attachments found`,
           enableSelection: true,
           customActionGroups: customActionGroups,
           rowActions: allowEdit && allowDelete ? rowActions : undefined,
