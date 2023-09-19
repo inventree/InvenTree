@@ -45,7 +45,7 @@ def is_email_configured():
         configured = False
 
         if not testing:  # pragma: no cover
-            logger.warning("DEFAULT_FROM_EMAIL is not configured")
+            logger.debug("DEFAULT_FROM_EMAIL is not configured")
 
     return configured
 
