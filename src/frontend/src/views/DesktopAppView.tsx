@@ -6,7 +6,7 @@ import { queryClient, setApiDefaults } from '../App';
 import { BaseContext } from '../contexts/BaseContext';
 import { defaultHostList } from '../defaults/defaultHostList';
 import { url_base } from '../main';
-import { routes } from '../routes';
+import { routes } from '../router';
 import { useApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';

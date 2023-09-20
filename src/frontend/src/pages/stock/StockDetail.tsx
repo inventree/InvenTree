@@ -29,7 +29,8 @@ export default function StockDetail() {
     instanceQuery
   } = useInstance('/stock/', id, {
     part_detail: true,
-    location_detail: true
+    location_detail: true,
+    path_detail: true
   });
 
   const stockPanels: PanelType[] = useMemo(() => {
@@ -91,6 +92,17 @@ export default function StockDetail() {
     ];
   }, [stockitem, id]);
 
+  const breadcrumbs = useMemo(
+    () => [
+      { name: t`Stock`, url: '/stock' },
+      ...(stockitem.location_path ?? []).map((l: any) => ({
+        name: l.name,
+        url: `/stock/location/${l.pk}`
+      }))
+    ],
+    [stockitem]
+  );
+
   return (
     <Stack>
       <LoadingOverlay visible={instanceQuery.isFetching} />
@@ -102,14 +114,7 @@ export default function StockDetail() {
             <Text>Quantity: {stockitem.quantity ?? 'idk'}</Text>
           </Alert>
         }
-        breadcrumbs={[
-          { name: t`Stock`, url: '/stock' },
-          { name: '...', url: '' },
-          {
-            name: stockitem.part_detail?.full_name ?? 'name goes here',
-            url: `/stock/item/${stockitem.pk}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
       />
       <PanelGroup panels={stockPanels} />
     </Stack>

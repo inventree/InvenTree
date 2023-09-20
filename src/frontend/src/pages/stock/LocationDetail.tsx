@@ -17,7 +17,7 @@ export default function Stock() {
     instance: location,
     refreshInstance,
     instanceQuery
-  } = useInstance('/stock/location/', id);
+  } = useInstance('/stock/location/', id, { path_detail: true });
 
   const locationPanels: PanelType[] = useMemo(() => {
     return [
@@ -48,6 +48,17 @@ export default function Stock() {
     ];
   }, [location, id]);
 
+  const breadcrumbs = useMemo(
+    () => [
+      { name: t`Stock`, url: '/stock' },
+      ...(location.path ?? []).map((l: any) => ({
+        name: l.name,
+        url: `/stock/location/${l.pk}`
+      }))
+    ],
+    [location]
+  );
+
   return (
     <>
       <Stack>
@@ -55,18 +66,7 @@ export default function Stock() {
         <PageDetail
           title={t`Stock Items`}
           detail={<Text>{location.name ?? 'Top level'}</Text>}
-          breadcrumbs={
-            location.pk
-              ? [
-                  { name: t`Stock`, url: '/stock' },
-                  { name: '...', url: '' },
-                  {
-                    name: location.name ?? t`Top level`,
-                    url: `/stock/location/${location.pk}`
-                  }
-                ]
-              : []
-          }
+          breadcrumbs={breadcrumbs}
         />
         <PanelGroup panels={locationPanels} />
       </Stack>

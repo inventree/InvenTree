@@ -281,6 +281,12 @@ def get_plugin_file():
     return plugin_file
 
 
+def get_plugin_dir():
+    """Returns the path of the custom plugins directory"""
+
+    return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
+
+
 def get_secret_key():
     """Return the secret key value which will be used by django.
 

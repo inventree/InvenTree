@@ -441,6 +441,41 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         part.refresh_from_db()
         self.assertEqual(part.category.pk, non_structural_category.pk)
 
+    def test_path_detail(self):
+        """Test path_detail information"""
+
+        url = reverse('api-part-category-detail', kwargs={'pk': 5})
+
+        # First, request without path detail
+        response = self.get(
+            url,
+            {
+                'path_detail': False,
+            },
+            expected_code=200
+        )
+
+        # Check that the path detail information is not included
+        self.assertFalse('path' in response.data.keys())
+
+        # Now, request *with* path detail
+        response = self.get(
+            url,
+            {
+                'path_detail': True,
+            },
+            expected_code=200
+        )
+
+        self.assertTrue('path' in response.data.keys())
+
+        path = response.data['path']
+
+        self.assertEqual(len(path), 3)
+        self.assertEqual(path[0]['name'], 'Electronics')
+        self.assertEqual(path[1]['name'], 'IC')
+        self.assertEqual(path[2]['name'], 'MCU')
+
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
     """Tests for the various OPTIONS endpoints in the /part/ API.
@@ -1646,6 +1681,20 @@ class PartDetailTests(PartAPITestBase):
         # Some other checks
         self.assertEqual(data['in_stock'], 9000)
         self.assertEqual(data['unallocated_stock'], 9000)
+
+    def test_path_detail(self):
+        """Check that path_detail can be requested against the serializer"""
+
+        response = self.get(
+            reverse('api-part-detail', kwargs={'pk': 1}),
+            {
+                'path_detail': True,
+            },
+            expected_code=200,
+        )
+
+        self.assertIn('category_path', response.data)
+        self.assertEqual(len(response.data['category_path']), 2)
 
 
 class PartListTests(PartAPITestBase):

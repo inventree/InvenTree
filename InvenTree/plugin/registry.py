@@ -17,14 +17,14 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
-from django.urls import clear_url_caches, include, re_path
+from django.urls import clear_url_caches, re_path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
-from InvenTree.config import get_setting
+from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
 
 from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
@@ -239,7 +239,7 @@ class PluginsRegistry:
             if settings.TESTING:
                 custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
             else:  # pragma: no cover
-                custom_dirs = get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
+                custom_dirs = get_plugin_dir()
 
                 # Load from user specified directories (unless in testing mode)
                 dirs.append('plugins')
@@ -577,19 +577,28 @@ class PluginsRegistry:
         self.plugins_full: Dict[str, InvenTreePlugin] = {}
 
     def _update_urls(self):
-        from InvenTree.urls import frontendpatterns as urlpattern
-        from InvenTree.urls import urlpatterns as global_pattern
+        """Due to the order in which plugins are loaded, the patterns in urls.py may be out of date.
+
+        This function updates the patterns in urls.py to ensure that the correct patterns are loaded,
+        and then refreshes the django url cache.
+
+        Note that we also have to refresh the admin site URLS,
+        as any custom AppMixin plugins require admin integration
+        """
+
+        from InvenTree.urls import urlpatterns
         from plugin.urls import get_plugin_urls
 
-        for index, url in enumerate(urlpattern):
-            if hasattr(url, 'app_name'):
-                if url.app_name == 'admin':
-                    urlpattern[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
-                elif url.app_name == 'plugin':
-                    urlpattern[index] = get_plugin_urls()
+        for index, url in enumerate(urlpatterns):
 
-        # Replace frontendpatterns
-        global_pattern[0] = re_path('', include(urlpattern))
+            app_name = getattr(url, 'app_name', None)
+
+            if app_name == 'admin':
+                urlpatterns[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
+            if app_name == 'plugin':
+                urlpatterns[index] = get_plugin_urls()
+
+        # Refresh the URL cache
         clear_url_caches()
     # endregion
 
