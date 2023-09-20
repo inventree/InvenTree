@@ -245,5 +245,10 @@ if settings.DEBUG:
             path('__debug__/', include(debug_toolbar.urls)),
         ] + urlpatterns
 
+# Redirect for favicon.ico
+urlpatterns.append(
+    path('favicon.ico', RedirectView.as_view(url=f'{settings.STATIC_ROOT}/img/favicon/favicon.ico'))
+)
+
 # Send any unknown URLs to the parts page
 urlpatterns += [re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]
