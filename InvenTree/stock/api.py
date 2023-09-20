@@ -76,10 +76,17 @@ class StockDetail(RetrieveUpdateDestroyAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
-        kwargs['part_detail'] = True
-        kwargs['location_detail'] = True
-        kwargs['supplier_part_detail'] = True
         kwargs['context'] = self.get_serializer_context()
+
+        try:
+            params = self.request.query_params
+
+            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
+            kwargs['location_detail'] = str2bool(params.get('location_detail', True))
+            kwargs['supplier_part_detail'] = str2bool(params.get('supplier_part_detail', True))
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        except AttributeError:
+            pass
 
         return self.serializer_class(*args, **kwargs)
 
@@ -1342,6 +1349,20 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
 
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        """Add extra context to serializer based on provided query parameters"""
+
+        try:
+            params = self.request.query_params
+
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint"""
