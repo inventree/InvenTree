@@ -209,28 +209,26 @@ classic_frontendpatterns = [
 
 new_frontendpatterns = platform_urls
 
-# Load patterns for frontend according to settings
-frontendpatterns = [
+urlpatterns = [
     # admin sites
     re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
     re_path(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
-
 ]
 
-if settings.ENABLE_CLASSIC_FRONTEND:
-    frontendpatterns.append(re_path('', include(classic_frontendpatterns)))
-if settings.ENABLE_PLATFORM_FRONTEND:
-    frontendpatterns.append(re_path('', include(new_frontendpatterns)))
+urlpatterns += backendpatterns
 
+frontendpatterns = []
+
+if settings.ENABLE_CLASSIC_FRONTEND:
+    frontendpatterns += classic_frontendpatterns
+if settings.ENABLE_PLATFORM_FRONTEND:
+    frontendpatterns += new_frontendpatterns
+
+urlpatterns += frontendpatterns
 
 # Append custom plugin URLs (if plugin support is enabled)
 if settings.PLUGINS_ENABLED:
-    frontendpatterns.append(get_plugin_urls())
-
-urlpatterns = [
-    re_path('', include(frontendpatterns)),
-    re_path('', include(backendpatterns)),
-]
+    urlpatterns.append(get_plugin_urls())
 
 # Server running in "DEBUG" mode?
 if settings.DEBUG:
