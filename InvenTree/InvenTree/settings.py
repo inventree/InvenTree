@@ -977,7 +977,7 @@ CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', '
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
 
 # Frontend settings
-PUI_URL_BASE = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', None)
+PUI_URL_BASE = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', 'platform')
 PUI_SETTINGS = get_setting("INVENTREE_PUI_SETTINGS", "pui_settings", {})
 
 if DEBUG:
