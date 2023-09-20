@@ -24,7 +24,7 @@ from django.utils.translation import gettext_lazy as _
 from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
-from InvenTree.config import get_setting
+from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
 
 from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
@@ -239,7 +239,7 @@ class PluginsRegistry:
             if settings.TESTING:
                 custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
             else:  # pragma: no cover
-                custom_dirs = get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
+                custom_dirs = get_plugin_dir()
 
                 # Load from user specified directories (unless in testing mode)
                 dirs.append('plugins')
