@@ -155,7 +155,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | owner | The owner of the location if it has one. The owner can only be assigned in the admin interface |
 | parent | The parent location. Returns None if it is already the top most one |
 | path | A queryset of locations that contains the hierarchy starting from the top most parent |
-| pathsstring | A string that contains all names of the path separated by slashes e.g. A/B/C |
+| pathstring | A string that contains all names of the path separated by slashes e.g. A/B/C |
 | structural | True if the location is structural |
 
 ### Suppliers
