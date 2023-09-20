@@ -165,7 +165,7 @@ class AppMixin:
         if path.is_relative_to(settings.BASE_DIR):
             # Plugins which are located relative to the base code directory
             plugin_path = '.'.join(path.relative_to(settings.BASE_DIR).parts)
-        elif path.is_relative_to(custom_plugins_dir):
+        elif custom_plugins_dir and path.is_relative_to(custom_plugins_dir):
             # Plugins which are located relative to the custom plugins directory
             plugin_path = '.'.join(path.relative_to(custom_plugins_dir).parts)
 
