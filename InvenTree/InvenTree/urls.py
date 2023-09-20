@@ -189,10 +189,6 @@ classic_frontendpatterns = [
     re_path(r'^about/', AboutView.as_view(), name='about'),
     re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
-    # admin sites
-    re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
-    re_path(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
-
     # DB user sessions
     path('accounts/sessions/other/delete/', view=CustomSessionDeleteOtherView.as_view(), name='session_delete_other', ),
     re_path(r'^accounts/sessions/(?P<pk>\w+)/delete/$', view=CustomSessionDeleteView.as_view(), name='session_delete', ),
@@ -214,7 +210,13 @@ classic_frontendpatterns = [
 new_frontendpatterns = platform_urls
 
 # Load patterns for frontend according to settings
-frontendpatterns = []
+frontendpatterns = [
+    # admin sites
+    re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
+    re_path(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
+
+]
+
 if settings.ENABLE_CLASSIC_FRONTEND:
     frontendpatterns.append(re_path('', include(classic_frontendpatterns)))
 if settings.ENABLE_PLATFORM_FRONTEND:
