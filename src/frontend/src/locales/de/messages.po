@@ -388,8 +388,8 @@ msgstr ""
 #: src/components/tables/part/PartCategoryTable.tsx:39
 #: src/defaults/links.tsx:26
 #: src/pages/part/CategoryDetail.tsx:38
-#: src/pages/part/CategoryDetail.tsx:81
-#: src/pages/part/PartDetail.tsx:190
+#: src/pages/part/CategoryDetail.tsx:74
+#: src/pages/part/PartDetail.tsx:175
 msgid "Parts"
 msgstr ""
 
@@ -408,8 +408,8 @@ msgstr ""
 #: src/components/nav/SearchDrawer.tsx:103
 #: src/components/tables/stock/StockLocationTable.tsx:37
 #: src/pages/stock/LocationDetail.tsx:26
-#: src/pages/stock/LocationDetail.tsx:56
-#: src/pages/stock/StockDetail.tsx:98
+#: src/pages/stock/LocationDetail.tsx:67
+#: src/pages/stock/StockDetail.tsx:110
 msgid "Stock Items"
 msgstr ""
 
@@ -420,7 +420,7 @@ msgstr ""
 #: src/components/nav/SearchDrawer.tsx:122
 #: src/pages/build/BuildDetail.tsx:143
 #: src/pages/build/BuildIndex.tsx:16
-#: src/pages/part/PartDetail.tsx:81
+#: src/pages/part/PartDetail.tsx:76
 msgid "Build Orders"
 msgstr ""
 
@@ -429,12 +429,12 @@ msgid "Companies"
 msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:141
-#: src/pages/part/PartDetail.tsx:108
+#: src/pages/part/PartDetail.tsx:103
 msgid "Purchase Orders"
 msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:151
-#: src/pages/part/PartDetail.tsx:115
+#: src/pages/part/PartDetail.tsx:110
 msgid "Sales Orders"
 msgstr ""
 
@@ -666,7 +666,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:25
 #: src/components/tables/part/RelatedPartTable.tsx:31
 #: src/components/tables/stock/StockItemTable.tsx:22
-#: src/pages/part/PartDetail.tsx:182
+#: src/pages/part/PartDetail.tsx:189
 msgid "Part"
 msgstr ""
 
@@ -750,9 +750,9 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:69
 #: src/components/tables/stock/StockItemTable.tsx:44
 #: src/defaults/links.tsx:27
-#: src/pages/part/PartDetail.tsx:61
-#: src/pages/stock/LocationDetail.tsx:61
-#: src/pages/stock/StockDetail.tsx:106
+#: src/pages/part/PartDetail.tsx:56
+#: src/pages/stock/LocationDetail.tsx:53
+#: src/pages/stock/StockDetail.tsx:97
 msgid "Stock"
 msgstr ""
 
@@ -1810,14 +1810,14 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:106
-#: src/pages/part/PartDetail.tsx:135
-#: src/pages/stock/StockDetail.tsx:69
+#: src/pages/part/PartDetail.tsx:130
+#: src/pages/stock/StockDetail.tsx:70
 msgid "Attachments"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:118
-#: src/pages/part/PartDetail.tsx:147
-#: src/pages/stock/StockDetail.tsx:81
+#: src/pages/part/PartDetail.tsx:142
+#: src/pages/stock/StockDetail.tsx:82
 msgid "Notes"
 msgstr ""
 
@@ -1837,45 +1837,45 @@ msgstr ""
 msgid "Parameters"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:76
+#: src/pages/part/CategoryDetail.tsx:84
+#: src/pages/stock/LocationDetail.tsx:64
+#~ msgid "Top level"
+#~ msgstr ""
+
+#: src/pages/part/CategoryDetail.tsx:87
 msgid "Part Category"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:84
-#: src/pages/stock/LocationDetail.tsx:64
-msgid "Top level"
-msgstr ""
-
-#: src/pages/part/PartDetail.tsx:55
-#: src/pages/stock/StockDetail.tsx:39
+#: src/pages/part/PartDetail.tsx:50
+#: src/pages/stock/StockDetail.tsx:40
 msgid "Details"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:67
+#: src/pages/part/PartDetail.tsx:62
 msgid "Variants"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:74
+#: src/pages/part/PartDetail.tsx:69
 msgid "Bill of Materials"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:88
+#: src/pages/part/PartDetail.tsx:83
 msgid "Used In"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:95
+#: src/pages/part/PartDetail.tsx:90
 msgid "Pricing"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:101
+#: src/pages/part/PartDetail.tsx:96
 msgid "Suppliers"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:122
+#: src/pages/part/PartDetail.tsx:117
 msgid "Test Templates"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:129
+#: src/pages/part/PartDetail.tsx:124
 msgid "Related Parts"
 msgstr ""
 
@@ -1887,19 +1887,19 @@ msgstr ""
 msgid "Sublocations"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:45
+#: src/pages/stock/StockDetail.tsx:46
 msgid "Stock Tracking"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:51
+#: src/pages/stock/StockDetail.tsx:52
 msgid "Allocations"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:57
+#: src/pages/stock/StockDetail.tsx:58
 msgid "Installed Items"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:63
+#: src/pages/stock/StockDetail.tsx:64
 msgid "Child Items"
 msgstr ""
 
@@ -1914,4 +1914,3 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
-
