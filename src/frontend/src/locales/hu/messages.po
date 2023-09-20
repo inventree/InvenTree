@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-19 02:10\n"
+"PO-Revision-Date: 2023-09-20 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1837,11 +1837,6 @@ msgstr ""
 msgid "Parameters"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:84
-#: src/pages/stock/LocationDetail.tsx:64
-#~ msgid "Top level"
-#~ msgstr ""
-
 #: src/pages/part/CategoryDetail.tsx:87
 msgid "Part Category"
 msgstr ""
@@ -1914,3 +1909,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+
