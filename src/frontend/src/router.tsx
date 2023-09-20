@@ -68,14 +68,20 @@ export const routes = (
       <Route path="notifications/" element={<Notifications />} />,
       <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
-      <Route path="part/" element={<CategoryDetail />} />
-      <Route path="part/category/:id" element={<CategoryDetail />} />
-      <Route path="part/:id" element={<PartDetail />} />
-      <Route path="stock/" element={<LocationDetail />} />
-      <Route path="stock/location/:id" element={<LocationDetail />} />
-      <Route path="stock/item/:id" element={<StockDetail />} />
-      <Route path="build/" element={<BuildIndex />} />,
-      <Route path="build/:id" element={<BuildDetail />} />,
+      <Route path="part/">
+        <Route index element={<CategoryDetail />} />
+        <Route path="category/:id" element={<CategoryDetail />} />
+        <Route path=":id/" element={<PartDetail />} />
+      </Route>
+      <Route path="stock/">
+        <Route index element={<LocationDetail />} />
+        <Route path="location/:id" element={<LocationDetail />} />
+        <Route path="item/:id/" element={<StockDetail />} />
+      </Route>
+      <Route path="build/">
+        <Route index element={<BuildIndex />} />
+        <Route path=":id/" element={<BuildDetail />} />
+      </Route>
       <Route path="/profile/:tabValue" element={<Profile />} />
     </Route>
     <Route path="/" errorElement={<ErrorPage />}>
