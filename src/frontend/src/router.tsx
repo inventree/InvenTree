@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { Loadable } from './functions/loading';
 
@@ -58,100 +58,31 @@ export const Set_Password = Loadable(
 );
 
 // Routes
-export const router = createBrowserRouter(
-  [
-    {
-      path: '*',
-      element: <NotFound />,
-      errorElement: <ErrorPage />
-    },
-    {
-      path: '/',
-      element: <LayoutComponent />,
-      errorElement: <ErrorPage />,
-      children: [
-        {
-          index: true,
-          element: <Home />
-        },
-        {
-          path: 'home/',
-          element: <Home />
-        },
-        {
-          path: 'dashboard/',
-          element: <Dashboard />
-        },
-        {
-          path: 'notifications/',
-          element: <Notifications />
-        },
-        {
-          path: 'playground/',
-          element: <Playground />
-        },
-        {
-          path: 'scan',
-          element: <Scan />
-        },
-        {
-          path: 'part/',
-          element: <CategoryDetail />
-        },
-        {
-          path: 'part/category/:id',
-          element: <CategoryDetail />
-        },
-        {
-          path: 'part/:id',
-          element: <PartDetail />
-        },
-        {
-          path: 'stock/',
-          element: <LocationDetail />
-        },
-        {
-          path: 'stock/location/:id',
-          element: <LocationDetail />
-        },
-        {
-          path: 'stock/item/:id',
-          element: <StockDetail />
-        },
-        {
-          path: 'build/',
-          element: <BuildIndex />
-        },
-        {
-          path: 'build/:id',
-          element: <BuildDetail />
-        },
-        {
-          path: '/profile/:tabValue',
-          element: <Profile />
-        }
-      ]
-    },
-    {
-      path: '/login',
-      element: <Login />,
-      errorElement: <ErrorPage />
-    },
-    {
-      path: '/logged-in',
-      element: <Logged_In />,
-      errorElement: <ErrorPage />
-    },
-    {
-      path: '/reset-password',
-      element: <Reset />,
-      errorElement: <ErrorPage />
-    },
-    {
-      path: '/set-password',
-      element: <Set_Password />,
-      errorElement: <ErrorPage />
-    }
-  ],
-  { basename: '/platform' }
+export const routes = (
+  <Routes>
+    <Route path="*" element={<NotFound />} errorElement={<ErrorPage />} />
+    <Route path="/" element={<LayoutComponent />} errorElement={<ErrorPage />}>
+      <Route index element={<Home />} />,
+      <Route path="home/" element={<Home />} />,
+      <Route path="dashboard/" element={<Dashboard />} />,
+      <Route path="notifications/" element={<Notifications />} />,
+      <Route path="playground/" element={<Playground />} />,
+      <Route path="scan/" element={<Scan />} />,
+      <Route path="part/" element={<CategoryDetail />} />
+      <Route path="part/category/:id" element={<CategoryDetail />} />
+      <Route path="part/:id" element={<PartDetail />} />
+      <Route path="stock/" element={<LocationDetail />} />
+      <Route path="stock/location/:id" element={<LocationDetail />} />
+      <Route path="stock/item/:id" element={<StockDetail />} />
+      <Route path="build/" element={<BuildIndex />} />,
+      <Route path="build/:id" element={<BuildDetail />} />,
+      <Route path="/profile/:tabValue" element={<Profile />} />
+    </Route>
+    <Route path="/" errorElement={<ErrorPage />}>
+      <Route path="/login" element={<Login />} />,
+      <Route path="/logged-in" element={<Logged_In />} />
+      <Route path="/reset-password" element={<Reset />} />
+      <Route path="/set-password" element={<Set_Password />} />
+    </Route>
+  </Routes>
 );
