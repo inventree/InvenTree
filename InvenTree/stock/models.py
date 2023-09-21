@@ -217,7 +217,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         if self.location_type:
             return self.location_type.icon
 
-        return None
+        return ""
 
     @icon.setter
     def icon(self, value):
