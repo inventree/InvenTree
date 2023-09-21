@@ -600,6 +600,21 @@ class ConvertStockItemSerializer(serializers.Serializer):
 
         return part
 
+    def validate(self, data):
+        """Ensure that the stock item is valid for conversion:
+
+        - If a SupplierPart is assigned, we cannot convert!
+        """
+
+        data = super().validate(data)
+
+        stock_item = self.context['item']
+
+        if stock_item.supplier_part is not None:
+            raise ValidationError(_("Cannot convert stock item with assigned SupplierPart"))
+
+        return data
+
     def save(self):
         """Save the serializer to convert the StockItem to the selected Part"""
         data = self.validated_data
