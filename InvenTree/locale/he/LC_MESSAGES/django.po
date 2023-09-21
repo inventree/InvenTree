@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-19 07:45+0000\n"
-"PO-Revision-Date: 2023-09-20 02:19\n"
+"POT-Creation-Date: 2023-09-20 23:41+0000\n"
+"PO-Revision-Date: 2023-09-21 02:45\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -521,119 +521,119 @@ msgstr ""
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:753
+#: InvenTree/settings.py:748
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/settings.py:754
+#: InvenTree/settings.py:749
 msgid "Danish"
 msgstr ""
 
-#: InvenTree/settings.py:755
+#: InvenTree/settings.py:750
 msgid "German"
 msgstr "גרמנית"
 
-#: InvenTree/settings.py:756
+#: InvenTree/settings.py:751
 msgid "Greek"
 msgstr "יוונית"
 
-#: InvenTree/settings.py:757
+#: InvenTree/settings.py:752
 msgid "English"
 msgstr "אנגלית"
 
-#: InvenTree/settings.py:758
+#: InvenTree/settings.py:753
 msgid "Spanish"
 msgstr "ספרדית"
 
-#: InvenTree/settings.py:759
+#: InvenTree/settings.py:754
 msgid "Spanish (Mexican)"
 msgstr "ספרדית (מקסיקנית)"
 
-#: InvenTree/settings.py:760
+#: InvenTree/settings.py:755
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/settings.py:761
+#: InvenTree/settings.py:756
 msgid "Finnish"
 msgstr ""
 
-#: InvenTree/settings.py:762
+#: InvenTree/settings.py:757
 msgid "French"
 msgstr "צרפתית"
 
-#: InvenTree/settings.py:763
+#: InvenTree/settings.py:758
 msgid "Hebrew"
 msgstr "עברית"
 
-#: InvenTree/settings.py:764
+#: InvenTree/settings.py:759
 msgid "Hindi"
 msgstr ""
 
-#: InvenTree/settings.py:765
+#: InvenTree/settings.py:760
 msgid "Hungarian"
 msgstr ""
 
-#: InvenTree/settings.py:766
+#: InvenTree/settings.py:761
 msgid "Italian"
 msgstr "איטלקית"
 
-#: InvenTree/settings.py:767
+#: InvenTree/settings.py:762
 msgid "Japanese"
 msgstr "יפנית"
 
-#: InvenTree/settings.py:768
+#: InvenTree/settings.py:763
 msgid "Korean"
 msgstr "קוריאנית"
 
-#: InvenTree/settings.py:769
+#: InvenTree/settings.py:764
 msgid "Dutch"
 msgstr "הולנדית"
 
-#: InvenTree/settings.py:770
+#: InvenTree/settings.py:765
 msgid "Norwegian"
 msgstr "נורווגית"
 
-#: InvenTree/settings.py:771
+#: InvenTree/settings.py:766
 msgid "Polish"
 msgstr "פולנית"
 
-#: InvenTree/settings.py:772
+#: InvenTree/settings.py:767
 msgid "Portuguese"
 msgstr ""
 
-#: InvenTree/settings.py:773
+#: InvenTree/settings.py:768
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: InvenTree/settings.py:774
+#: InvenTree/settings.py:769
 msgid "Russian"
 msgstr "רוסית"
 
-#: InvenTree/settings.py:775
+#: InvenTree/settings.py:770
 msgid "Slovenian"
 msgstr ""
 
-#: InvenTree/settings.py:776
+#: InvenTree/settings.py:771
 msgid "Swedish"
 msgstr "שוודית"
 
-#: InvenTree/settings.py:777
+#: InvenTree/settings.py:772
 msgid "Thai"
 msgstr "תאילנדית"
 
-#: InvenTree/settings.py:778
+#: InvenTree/settings.py:773
 msgid "Turkish"
 msgstr "טורקית"
 
-#: InvenTree/settings.py:779
+#: InvenTree/settings.py:774
 msgid "Vietnamese"
 msgstr "ווייטנאמית"
 
-#: InvenTree/settings.py:780
+#: InvenTree/settings.py:775
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: InvenTree/settings.py:781
+#: InvenTree/settings.py:776
 msgid "Chinese (Traditional)"
 msgstr ""
 
