@@ -9,4 +9,5 @@
 .pkgr.yml               @matmair
 Procfile                @matmair
 runtime.txt             @matmair
-/contrib/               @matmair
+/contrib/installer      @matmair
+/contrib/packager.io    @matmair
