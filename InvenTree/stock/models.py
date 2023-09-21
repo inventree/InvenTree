@@ -56,6 +56,11 @@ class StockLocationType(MetadataMixin, models.Model):
         verbose_name = _("Stock Location type")
         verbose_name_plural = _("Stock Location types")
 
+    @staticmethod
+    def get_api_url():
+        """Return API url."""
+        return reverse('api-location-type-list')
+
     name = models.CharField(
         blank=False,
         max_length=100,
@@ -160,7 +165,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         """Return API url."""
         return reverse('api-location-list')
 
-    _icon = models.CharField(
+    custom_icon = models.CharField(
         blank=True,
         max_length=100,
         verbose_name=_("Icon"),
@@ -202,8 +207,8 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
         The icon field on this model takes precedences over the possibly assigned stock location type
         """
-        if self._icon:
-            return self._icon
+        if self.custom_icon:
+            return self.custom_icon
 
         if self.stock_location_type:
             return self.stock_location_type.icon
@@ -212,7 +217,12 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
     @icon.setter
     def icon(self, value):
-        self._icon = value
+        """Setter to keep model API compatibility. But be careful:
+
+        If the field gets loaded as default value by any form which is later saved,
+        the location no longer inherits its icon from the location type.
+        """
+        self.custom_icon = value
 
     def get_location_owner(self):
         """Get the closest "owner" for this location.

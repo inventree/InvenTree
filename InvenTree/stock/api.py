@@ -370,10 +370,16 @@ class StockLocationTypeList(ListCreateAPI):
 
     ordering_fields = [
         "name",
+        "location_count",
+        "icon",
+    ]
+
+    ordering = [
+        "-location_count",
     ]
 
     search_fields = [
-        "name"
+        "name",
     ]
 
     def get_queryset(self):

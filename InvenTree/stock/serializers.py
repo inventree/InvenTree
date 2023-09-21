@@ -783,14 +783,16 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'items',
             'owner',
             'icon',
+            'custom_icon',
             'structural',
             'external',
-
+            'stock_location_type',
             'tags',
         ]
 
         read_only_fields = [
             'barcode_hash',
+            'icon',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -827,6 +829,9 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         source='get_path',
         read_only=True,
     )
+
+    # explicitly set this field, so it gets included for AutoSchema
+    icon = serializers.CharField(read_only=True)
 
 
 class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
