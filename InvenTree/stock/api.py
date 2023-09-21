@@ -222,6 +222,25 @@ class StockMerge(CreateAPI):
         return ctx
 
 
+class StockLocationFilter(rest_filters.FilterSet):
+    """Base class for custom API filters for the StockLocation endpoint."""
+
+    location_type = rest_filters.ModelChoiceFilter(
+        queryset=StockLocationType.objects.all(),
+        field_name='location_type'
+    )
+
+    has_location_type = rest_filters.BooleanFilter(label='has_location_type', method='filter_has_location_type')
+
+    def filter_has_location_type(self, queryset, name, value):
+        """Filter by whether or not the location has a location type"""
+
+        if str2bool(value):
+            return queryset.exclude(location_type=None)
+        else:
+            return queryset.filter(location_type=None)
+
+
 class StockLocationList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for list view of StockLocation objects.
 
@@ -233,6 +252,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
         'tags',
     )
     serializer_class = StockSerializers.LocationSerializer
+    filterset_class = StockLocationFilter
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a data file"""
@@ -1452,15 +1472,12 @@ stock_api_urls = [
         re_path(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
     ])),
 
+    # Stock location type endpoints
     re_path(r'^location-type/', include([
-        # Stock location type detail endpoints
         path(r'<int:pk>/', include([
-
             re_path(r'^metadata/', MetadataView.as_view(), {'model': StockLocationType}, name='api-location-type-metadata'),
-
             re_path(r'^.*$', StockLocationTypeDetail.as_view(), name='api-location-type-detail'),
         ])),
-
         re_path(r'^.*$', StockLocationTypeList.as_view(), name="api-location-type-list"),
     ])),
 

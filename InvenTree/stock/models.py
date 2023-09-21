@@ -61,6 +61,10 @@ class StockLocationType(MetadataMixin, models.Model):
         """Return API url."""
         return reverse('api-location-type-list')
 
+    def __str__(self):
+        """String representation of a StockLocationType."""
+        return self.name
+
     name = models.CharField(
         blank=False,
         max_length=100,
@@ -94,7 +98,7 @@ class StockLocationManager(TreeManager):
 
         - Joins the StockLocationType by default for speedier icon access
         """
-        return super().get_queryset().select_related("stock_location_type")
+        return super().get_queryset().select_related("location_type")
 
 
 class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
@@ -192,10 +196,10 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         help_text=_('This is an external stock location')
     )
 
-    stock_location_type = models.ForeignKey(
+    location_type = models.ForeignKey(
         StockLocationType,
         on_delete=models.SET_NULL,
-        verbose_name=_("Stock location type"),
+        verbose_name=_("Location type"),
         related_name="stock_locations",
         null=True, blank=True,
         help_text=_("Stock location type of this location"),
@@ -210,8 +214,8 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         if self.custom_icon:
             return self.custom_icon
 
-        if self.stock_location_type:
-            return self.stock_location_type.icon
+        if self.location_type:
+            return self.location_type.icon
 
         return None
 

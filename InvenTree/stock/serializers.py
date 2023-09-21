@@ -748,6 +748,36 @@ class StockChangeStatusSerializer(serializers.Serializer):
         StockItemTracking.objects.bulk_create(transaction_notes)
 
 
+class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for StockLocationType model."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        model = StockLocationType
+        fields = [
+            "pk",
+            "name",
+            "description",
+            "icon",
+            "location_count",
+        ]
+
+        read_only_fields = [
+            "location_count",
+        ]
+
+    location_count = serializers.IntegerField(read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add location count to each location type."""
+
+        return queryset.annotate(
+            location_count=Count("stock_locations")
+        )
+
+
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a simple tree view."""
 
@@ -786,7 +816,8 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'custom_icon',
             'structural',
             'external',
-            'stock_location_type',
+            'location_type',
+            'location_type_detail',
             'tags',
         ]
 
@@ -833,35 +864,8 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     # explicitly set this field, so it gets included for AutoSchema
     icon = serializers.CharField(read_only=True)
 
-
-class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for StockLocationType model."""
-
-    class Meta:
-        """Serializer metaclass."""
-
-        model = StockLocationType
-        fields = [
-            "pk",
-            "name",
-            "description",
-            "icon",
-            "location_count",
-        ]
-
-        read_only_fields = [
-            "location_count",
-        ]
-
-    location_count = serializers.IntegerField(read_only=True)
-
-    @staticmethod
-    def annotate_queryset(queryset):
-        """Add location count to each location type."""
-
-        return queryset.annotate(
-            location_count=Count("stock_locations")
-        )
+    # Detail for location type
+    location_type_detail = StockLocationTypeSerializer(source="location_type", read_only=True, many=False)
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):

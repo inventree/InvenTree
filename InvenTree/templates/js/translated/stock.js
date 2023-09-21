@@ -138,6 +138,7 @@ function stockLocationTypeFields() {
         icon: {
             help_text: `{% trans "Default icon for all locations that have no icon set (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
+            icon: "fa-icons",
         },
     }
 
@@ -156,7 +157,7 @@ function stockLocationFields(options={}) {
         owner: {},
         structural: {},
         external: {},
-        stock_location_type: {
+        location_type: {
             secondary: {
                 title: '{% trans "Add Location type" %}',
                 fields: function() {
@@ -169,6 +170,7 @@ function stockLocationFields(options={}) {
         custom_icon: {
             help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
+            icon: "fa-icons",
         },
     };
 
@@ -2741,7 +2743,18 @@ function loadStockLocationTable(table, options) {
                 formatter: function(value) {
                     return yesNoLabel(value);
                 }
-            }
+            },
+            {
+                field: 'location_type',
+                title: '{% trans "Location type" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value, row) {
+                    if (row.location_type_detail) {
+                        return row.location_type_detail.name;
+                    }
+                }
+            },
         ]
     });
 }

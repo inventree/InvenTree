@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='stocklocation',
-            name='stock_location_type',
-            field=models.ForeignKey(blank=True, help_text='Stock location type of this location', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='stock_locations', to='stock.stocklocationtype', verbose_name='Stock location type'),
+            name='location_type',
+            field=models.ForeignKey(blank=True, help_text='Stock location type of this location', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='stock_locations', to='stock.stocklocationtype', verbose_name='Location type'),
         ),
     ]
