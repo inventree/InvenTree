@@ -26,6 +26,6 @@ urlpatterns = [
         path("set-password?uid=<uid>&token=<token>", spa_view, name="password_reset_confirm"),
         path("", spa_view),]
     )),
-    re_path(settings.PUI_URL_BASE, spa_view, name='platform'),
+    path(settings.PUI_URL_BASE, spa_view, name='platform'),
     path("assets/<path:path>", RedirectAssetView.as_view()),
 ]
