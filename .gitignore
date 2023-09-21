@@ -40,11 +40,11 @@ inventree-demo-dataset/
 inventree-data/
 dummy_image.*
 _tmp.csv
-InvenTree/label.pdf
-InvenTree/label.png
+src/backend/InvenTree/label.pdf
+src/backend/InvenTree/label.png
 label.pdf
 label.png
-InvenTree/my_special*
+src/backend/InvenTree/my_special*
 _tests*.txt
 
 # Local static and media file storage (only when running in development mode)
@@ -90,7 +90,7 @@ data/
 env/
 
 # Locale stats file
-locale_stats.json
+src/backend/locale_stats.json
 
 # node.js
 node_modules/
@@ -99,10 +99,10 @@ node_modules/
 maintenance_mode_state.txt
 
 # plugin dev directory
-InvenTree/plugins/
+src/backend/InvenTree/plugins/
 
 # Compiled translation files
 *.mo
 
 # web frontend (static files)
-InvenTree/web/static
+src/backend/InvenTree/web/static
