@@ -41,7 +41,7 @@ from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from stock.admin import LocationResource, StockItemResource
 from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
-                          StockItemTracking, StockLocation)
+                          StockItemTracking, StockLocation, StockLocationType)
 
 
 class StockDetail(RetrieveUpdateDestroyAPI):
@@ -354,6 +354,54 @@ class StockLocationTree(ListAPI):
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
+
+
+class StockLocationTypeList(ListCreateAPI):
+    """API endpoint for a list of StockLocationType objects.
+
+    - GET: Return a list of all StockLocationType objects
+    - POST: Create a StockLocationType
+    """
+
+    queryset = StockLocationType.objects.all()
+    serializer_class = StockSerializers.StockLocationTypeSerializer
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        "name",
+    ]
+
+    search_fields = [
+        "name"
+    ]
+
+    def get_queryset(self):
+        """Override the queryset method to include location count."""
+        queryset = super().get_queryset()
+        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(queryset)
+
+        return queryset
+
+
+class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
+    """API detail endpoint for a StockLocationType object.
+
+    - GET: return a single StockLocationType
+    - PUT: update a StockLocationType
+    - PATCH: partial update a StockLocationType
+    - DELETE: delete a StockLocationType
+    """
+
+    queryset = StockLocationType.objects.all()
+    serializer_class = StockSerializers.StockLocationTypeSerializer
+
+    def get_queryset(self):
+        """Override the queryset method to include location count."""
+        queryset = super().get_queryset()
+        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(queryset)
+
+        return queryset
 
 
 class StockFilter(rest_filters.FilterSet):
@@ -1396,6 +1444,18 @@ stock_api_urls = [
         ])),
 
         re_path(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
+    ])),
+
+    re_path(r'^location-type/', include([
+        # Stock location type detail endpoints
+        path(r'<int:pk>/', include([
+
+            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockLocationType}, name='api-location-type-metadata'),
+
+            re_path(r'^.*$', StockLocationTypeDetail.as_view(), name='api-location-type-detail'),
+        ])),
+
+        re_path(r'^.*$', StockLocationTypeList.as_view(), name="api-location-type-list"),
     ])),
 
     # Endpoints for bulk stock adjustment actions
