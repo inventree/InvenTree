@@ -576,7 +576,8 @@ class InvenTreeAttachment(models.Model):
             return self.link
 
         if self.attachment:
-            return InvenTree.helpers.getMediaUrl(self.attachment.url)
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
 
         return ''
 
