@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 135
+INVENTREE_API_VERSION = 136
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v136 -> 2023-09-21 : https://github.com/inventree/InvenTree/pull/5588
+    - Adds StockLocationType API endpoints
+    - Adds custom_icon, location_type to StockLocation endpoint
 
 v135 -> 2023-09-19 : https://github.com/inventree/InvenTree/pull/5569
     - Adds location path detail to StockLocation and StockItem API endpoints
