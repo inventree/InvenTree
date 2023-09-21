@@ -78,7 +78,7 @@ jobs:
           install: true
       - name: Check Templated JS Files
         run: |
-          cd ci
+          cd .github/scripts
           python3 check_js_templates.py
       - name: Lint Javascript Files
         run: |
@@ -103,7 +103,7 @@ jobs:
       - name: Check Version
         run: |
           pip install requests
-          python3 ci/version_check.py
+          python3 .github/scripts/version_check.py
 
   mkdocs:
     name: Style [Documentation]
@@ -210,7 +210,7 @@ jobs:
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
-        run: python3 ci/check_migration_files.py
+        run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
         run: invoke test --coverage
       - name: Upload Coverage Report

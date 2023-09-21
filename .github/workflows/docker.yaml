@@ -50,7 +50,7 @@ jobs:
         run: |
           pip install requests
           pip install pyyaml
-          python3 ci/version_check.py
+          python3 .github/scripts/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Build Docker Image

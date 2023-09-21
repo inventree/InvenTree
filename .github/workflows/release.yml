@@ -17,7 +17,7 @@ jobs:
       - name: Version Check
         run: |
           pip install requests
-          python3 ci/version_check.py
+          python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@4dcce6dea3e3c8187237fc86b7dfdc93e5aaae58 # pin@master
         if: env.stable_release == 'true'
