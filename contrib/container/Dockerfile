@@ -121,7 +121,7 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
 # Copy source code
 COPY InvenTree ./InvenTree
-COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ./InvenTree/web/static/web
+COPY --from=frontend ${INVENTREE_HOME}/src/backend/InvenTree/web/static/web ./src/backend/InvenTree/web/static/web
 
 # Launch the production server
 # TODO: Work out why environment variables cannot be interpolated in this command

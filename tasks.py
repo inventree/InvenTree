@@ -68,7 +68,7 @@ def localDir() -> Path:
 
 def managePyDir():
     """Returns the directory of the manage.py file."""
-    return localDir().joinpath('InvenTree')
+    return localDir().joinpath('src', 'backend', 'InvenTree')
 
 
 def managePyPath():
@@ -99,7 +99,7 @@ def yarn(c, cmd, pty: bool = False):
         pty (bool, optional): Run an interactive session. Defaults to False.
     """
 
-    path = managePyDir().parent.joinpath('src').joinpath('frontend')
+    path = localDir().joinpath('src').joinpath('frontend')
     c.run(f'cd "{path}" && {cmd}', pty=pty)
 
 
@@ -742,9 +742,10 @@ def schema(c, filename='schema.yml', overwrite=False):
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
-    import InvenTree.InvenTree.version as InvenTreeVersion
-    from InvenTree.InvenTree.config import (get_config_file, get_media_dir,
-                                            get_static_dir)
+    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion
+    from src.backend.InvenTree.InvenTree.config import (get_config_file,
+                                                        get_media_dir,
+                                                        get_static_dir)
 
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
@@ -847,7 +848,7 @@ def frontend_dev(c):
     'file': "destination to frontend-build.zip file",
     'repo': "GitHub repository, default: InvenTree/inventree",
     'extract': "Also extract and place at the correct destination, default: True",
-    'clean': "Delete old files from InvenTree/web/static/web first, default: True",
+    'clean': "Delete old files from src/backend/InvenTree/web/static/web first, default: True",
 })
 def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventree", extract=True, clean=True):
     """Download a pre-build frontend from GitHub if you dont want to install nodejs on your machine.
@@ -886,7 +887,7 @@ def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventre
         if not extract:
             return
 
-        dest_path = Path(__file__).parent / "InvenTree/web/static/web"
+        dest_path = Path(__file__).parent / "src/backend" / "InvenTree/web/static/web"
 
         # if clean, delete static/web directory
         if clean:

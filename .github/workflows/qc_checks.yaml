@@ -38,9 +38,9 @@ jobs:
       with:
         filters: |
           server:
-            - 'InvenTree/**'
-            - 'requirements.txt'
-            - 'requirements-dev.txt'
+            - 'src/backend/InvenTree/**'
+            - 'src/backend/requirements.txt'
+            - 'src/backend/requirements-dev.txt'
           migrations:
             - '**/migrations/**'
             - '.github/workflows**'
@@ -82,8 +82,8 @@ jobs:
           python3 check_js_templates.py
       - name: Lint Javascript Files
         run: |
-          python InvenTree/manage.py prerender
-          npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
+          python src/backend/InvenTree/manage.py prerender
+          npx eslint src/backend/InvenTree/InvenTree/static_i18n/i18n/*.js
 
   pre-commit:
     name: Style [pre-commit]
@@ -444,9 +444,9 @@ jobs:
         run: cd src/frontend && npm run build
       - name: Zip frontend
         run: |
-          cd InvenTree/web/static
+          cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/
       - uses: actions/upload-artifact@v3
         with:
           name: frontend-build
-          path: InvenTree/web/static/web
+          path: src/backend/InvenTree/web/static/web
