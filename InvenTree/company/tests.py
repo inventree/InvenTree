@@ -207,7 +207,7 @@ class AddressTest(TestCase):
 
         self.assertEqual(Address.objects.count(), 3)
         self.assertFalse(Address.objects.first().primary)
-        self.assertFalse(Address.objects.last().primary)
+        self.assertTrue(Address.objects.last().primary)
 
     def test_first_address_is_primary(self):
         """Test that first address related to company is always set to primary"""
