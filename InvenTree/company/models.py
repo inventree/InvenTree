@@ -315,18 +315,18 @@ class Address(models.Model):
 
         others = Address.objects.filter(company=self.company).exclude(pk=self.pk)
 
+        # If this is the *only* address for this company, make it the primary one
+        if others.count() == 0:
+            self.primary = True
+
+        super().save(*args, **kwargs)
+
+        # Once this address is saved, check others
         if self.primary:
             for addr in others:
                 if addr.primary:
                     addr.primary = False
                     addr.save()
-
-        else:
-            # If this is the *only* address for this company, make it the primary one
-            if others.count() == 0:
-                self.primary = True
-
-        super().save(*args, **kwargs)
 
     @staticmethod
     def get_api_url():
