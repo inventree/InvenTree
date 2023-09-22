@@ -2041,7 +2041,7 @@ function initializeRelatedField(field, fields, options={}) {
                         <button class="input-group-text" id="${name}_tree_search_btn"><i class="fas fa-search"></i></button>
                     </div>
 
-                    <div id="${tree_id}" style="height: 65vh; overflow-y: scroll;">
+                    <div id="${tree_id}" class="custom-disabled-treeview" style="height: 65vh; overflow-y: auto;">
                         <div class="d-flex justify-content-center">
                             <div class="spinner-border" role="status"></div>
                         </div>
@@ -2073,6 +2073,20 @@ function initializeRelatedField(field, fields, options={}) {
                         processNode: (node) => {
                             node.selectable = true;
                             node.text = node.name;
+
+                            // disable this node, if it doesn't match the filter criteria
+                            if (field.filters) {
+                                for (const [k, v] of Object.entries(field.filters)) {
+                                    if (node[k] !== v) {
+                                        node.selectable = false;
+                                        // we use checked with custom classes to make this row grayed out, because
+                                        // the disabled state wouldn't allow expansion
+                                        node.state.checked = true;
+                                        break;
+                                    }
+                                }
+                            }
+
                             return node;
                         }
                     });

@@ -1101,3 +1101,11 @@ a {
 .large-treeview-icon {
     font-size: 1em;
 }
+
+/* 
+ * For the custom disabled treeview, use checked as disabled instead of
+ * disabled, because disabled doesn't allow expansion.
+*/
+.treeview.custom-disabled-treeview .node-checked {
+    color: gray;
+}

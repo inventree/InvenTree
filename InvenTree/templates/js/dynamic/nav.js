@@ -165,14 +165,14 @@ function generateTreeStructure(data, options) {
         nodes[node.pk] = node;
         node.selectable = false;
 
-        if (options.processNode) {
-            node = options.processNode(node);
-        }
-
         node.state = {
             expanded: node.pk == options.selected,
             selected: node.pk == options.selected,
         };
+
+        if (options.processNode) {
+            node = options.processNode(node);
+        }
     }
 
     for (var i = 0; i < data.length; i++) {
