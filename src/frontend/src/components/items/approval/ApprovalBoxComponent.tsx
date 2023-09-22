@@ -4,16 +4,21 @@ import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../../App';
 import { ApiPaths, url } from '../../../states/ApiState';
+import { ModelType } from '../../render/ModelType';
 import { ExistingApprovalComponent } from './ExistingApprovalComponent';
 import { NewApprovalComponent } from './NewApprovalComponent';
 
-export function ApprovalBoxComponent({ poPK }: { poPK: string }) {
+interface ApprovalBoxInterface {
+  model: ModelType;
+  pk: string;
+}
+
+export function ApprovalBoxComponent({ model, pk }: ApprovalBoxInterface) {
   function fetchData() {
     return api
-      .get(
-        url(ApiPaths.approval_detail_type, poPK, { type: 'purchaseorder' }),
-        { params: { user_detail: true } }
-      )
+      .get(url(ApiPaths.approval_detail_type, pk, { type: model }), {
+        params: { user_detail: true }
+      })
       .then((res) => res.data)
       .catch((err) => {
         if (err.response?.status === 404) return [];
@@ -21,7 +26,7 @@ export function ApprovalBoxComponent({ poPK }: { poPK: string }) {
       });
   }
   const { isLoading, data, isError, refetch } = useQuery({
-    queryKey: [`approval-detail-${poPK}`],
+    queryKey: [`approval-detail-${model}-${pk}`],
     queryFn: fetchData,
     refetchOnWindowFocus: false
   });
@@ -34,7 +39,7 @@ export function ApprovalBoxComponent({ poPK }: { poPK: string }) {
       </Title>
       {ready ? (
         ready && data.length === 0 ? (
-          <NewApprovalComponent poPK={poPK} refetch={refetch} />
+          <NewApprovalComponent poPK={pk} refetch={refetch} />
         ) : (
           <ExistingApprovalComponent refetch={refetch} data={data} />
         )

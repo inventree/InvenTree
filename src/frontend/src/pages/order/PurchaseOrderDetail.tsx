@@ -7,6 +7,7 @@ import { api } from '../../App';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { ApprovalBoxComponent } from '../../components/items/approval/ApprovalBoxComponent';
 import { TwoColumnLayout } from '../../components/nav/TwoColumnLayout';
+import { ModelType } from '../../components/render/ModelType';
 import { ApiPaths, url } from '../../states/ApiState';
 import ErrorPage from '../ErrorPage';
 
@@ -29,7 +30,9 @@ export default function PurchaseOrderDetail() {
     <TwoColumnLayout
       title={<Trans>Purchase Order</Trans>}
       is_placeholder={true}
-      sidebar={<ApprovalBoxComponent poPK={poPK} />}
+      sidebar={
+        <ApprovalBoxComponent model={ModelType.purchaseorder} pk={poPK} />
+      }
     >
       <Title>
         <Trans>Details for {poPK} here</Trans>
