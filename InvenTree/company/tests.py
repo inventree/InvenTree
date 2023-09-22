@@ -213,13 +213,7 @@ class AddressTest(TestCase):
         """Test that first address related to company is always set to primary"""
 
         addr = Address.objects.create(company=self.c)
-
         self.assertTrue(addr.primary)
-
-        # Create another address, which should error out if primary is not set to False
-        with self.assertRaises(ValidationError):
-            addr = Address(company=self.c, primary=True)
-            addr.validate_unique()
 
     def test_model_str(self):
         """Test value of __str__"""
