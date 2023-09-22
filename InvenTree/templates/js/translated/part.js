@@ -304,6 +304,10 @@ function categoryFields(options={}) {
         parent: {
             help_text: '{% trans "Parent part category" %}',
             required: false,
+            tree_picker: {
+                url: '{% url "api-part-category-tree" %}',
+                default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+            },
         },
         name: {},
         description: {},
