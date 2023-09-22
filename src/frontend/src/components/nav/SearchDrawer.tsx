@@ -31,12 +31,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { RenderInstance } from '../render/Instance';
-import { ModelType } from '../render/ModelType';
+import { ModelLinks, ModelType } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
   name: ModelType;
-  title: string;
   enabled: boolean;
   parameters: any;
   results?: any;
@@ -59,7 +58,6 @@ function buildSearchQueries(): SearchQuery[] {
   return [
     {
       name: ModelType.part,
-      title: t`Parts`,
       parameters: {},
       enabled:
         permissionCheck('part.view') &&
@@ -67,7 +65,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.supplierpart,
-      title: t`Supplier Parts`,
       parameters: {
         part_detail: true,
         supplier_detail: true,
@@ -80,7 +77,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.manufacturerpart,
-      title: t`Manufacturer Parts`,
       parameters: {
         part_detail: true,
         supplier_detail: true,
@@ -93,7 +89,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.partcategory,
-      title: t`Part Categories`,
       parameters: {},
       enabled:
         permissionCheck('part_category.view') &&
@@ -101,7 +96,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.stockitem,
-      title: t`Stock Items`,
       parameters: {
         part_detail: true,
         location_detail: true
@@ -112,7 +106,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.stocklocation,
-      title: t`Stock Locations`,
       parameters: {},
       enabled:
         permissionCheck('stock_location.view') &&
@@ -120,7 +113,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.build,
-      title: t`Build Orders`,
       parameters: {
         part_detail: true
       },
@@ -130,7 +122,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.company,
-      title: t`Companies`,
       parameters: {},
       enabled:
         (permissionCheck('sales_order.view') ||
@@ -139,7 +130,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.purchaseorder,
-      title: t`Purchase Orders`,
       parameters: {
         supplier_detail: true
       },
@@ -149,7 +139,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.salesorder,
-      title: t`Sales Orders`,
       parameters: {
         customer_detail: true
       },
@@ -159,7 +148,6 @@ function buildSearchQueries(): SearchQuery[] {
     },
     {
       name: ModelType.returnorder,
-      title: t`Return Orders`,
       parameters: {
         customer_detail: true
       },
@@ -186,12 +174,13 @@ function QueryResultGroup({
     return null;
   }
 
+  const model = ModelLinks[query.name];
   return (
     <Paper shadow="sm" radius="xs" p="md">
       <Stack key={query.name}>
         <Group position="apart" noWrap={true}>
           <Group position="left" spacing={5} noWrap={true}>
-            <Text size="lg">{query.title}</Text>
+            <Text size="lg">{model.label_multiple}</Text>
             <Text size="sm" italic>
               {' '}
               - {query.results.count} <Trans>results</Trans>
@@ -336,7 +325,7 @@ export function SearchDrawer({
   // Callback when one of the search results is clicked
   function onResultClick(query: ModelType, pk: number) {
     closeDrawer();
-    navigate(`/${query}/${pk}/`);
+    navigate(ModelLinks[query].url_detail.replace(':pk', pk.toString()));
   }
 
   return (
