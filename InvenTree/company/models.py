@@ -313,11 +313,18 @@ class Address(models.Model):
         - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
         """
 
+        others = Address.objects.filter(company=self.company).exclude(pk=self.pk)
+
         if self.primary:
-            for addr in Address.objects.filter(company=self.company).exclude(pk=self.pk):
+            for addr in others:
                 if addr.primary:
                     addr.primary = False
                     addr.save()
+
+        else:
+            # If this is the *only* address for this company, make it the primary one
+            if others.count() == 0:
+                self.primary = True
 
         super().save(*args, **kwargs)
 
