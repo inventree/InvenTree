@@ -19,6 +19,8 @@
     showMessage,
     showModalSpinner,
     toBool,
+    showQuestionDialog,
+    generateTreeStructure,
 */
 
 /* exported
