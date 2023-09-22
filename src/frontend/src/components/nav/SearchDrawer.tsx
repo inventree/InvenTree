@@ -31,10 +31,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { RenderInstance } from '../render/Instance';
+import { ModelType } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
-  name: string;
+  name: ModelType;
   title: string;
   enabled: boolean;
   parameters: any;
@@ -57,7 +58,7 @@ function settingsCheck(setting: string) {
 function buildSearchQueries(): SearchQuery[] {
   return [
     {
-      name: 'part',
+      name: ModelType.part,
       title: t`Parts`,
       parameters: {},
       enabled:
@@ -65,7 +66,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_PARTS')
     },
     {
-      name: 'supplierpart',
+      name: ModelType.supplierpart,
       title: t`Supplier Parts`,
       parameters: {
         part_detail: true,
@@ -78,7 +79,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS')
     },
     {
-      name: 'manufacturerpart',
+      name: ModelType.manufacturerpart,
       title: t`Manufacturer Parts`,
       parameters: {
         part_detail: true,
@@ -91,7 +92,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS')
     },
     {
-      name: 'partcategory',
+      name: ModelType.partcategory,
       title: t`Part Categories`,
       parameters: {},
       enabled:
@@ -99,7 +100,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_CATEGORIES')
     },
     {
-      name: 'stockitem',
+      name: ModelType.stockitem,
       title: t`Stock Items`,
       parameters: {
         part_detail: true,
@@ -110,7 +111,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_STOCK')
     },
     {
-      name: 'stocklocation',
+      name: ModelType.stocklocation,
       title: t`Stock Locations`,
       parameters: {},
       enabled:
@@ -118,7 +119,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_LOCATIONS')
     },
     {
-      name: 'build',
+      name: ModelType.build,
       title: t`Build Orders`,
       parameters: {
         part_detail: true
@@ -128,7 +129,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
     },
     {
-      name: 'company',
+      name: ModelType.company,
       title: t`Companies`,
       parameters: {},
       enabled:
@@ -137,7 +138,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_COMPANIES')
     },
     {
-      name: 'purchaseorder',
+      name: ModelType.purchaseorder,
       title: t`Purchase Orders`,
       parameters: {
         supplier_detail: true
@@ -147,7 +148,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
     },
     {
-      name: 'salesorder',
+      name: ModelType.salesorder,
       title: t`Sales Orders`,
       parameters: {
         customer_detail: true
@@ -157,7 +158,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
     },
     {
-      name: 'returnorder',
+      name: ModelType.returnorder,
       title: t`Return Orders`,
       parameters: {
         customer_detail: true
@@ -178,8 +179,8 @@ function QueryResultGroup({
   onResultClick
 }: {
   query: SearchQuery;
-  onRemove: (query: string) => void;
-  onResultClick: (query: string, pk: number) => void;
+  onRemove: (query: ModelType) => void;
+  onResultClick: (query: ModelType, pk: number) => void;
 }) {
   if (query.results.count == 0) {
     return null;
@@ -320,7 +321,7 @@ export function SearchDrawer({
   }, [searchQuery.data]);
 
   // Callback to remove a set of results from the list
-  function removeResults(query: string) {
+  function removeResults(query: ModelType) {
     setQueryResults(queryResults.filter((q) => q.name != query));
   }
 
@@ -333,7 +334,7 @@ export function SearchDrawer({
   const navigate = useNavigate();
 
   // Callback when one of the search results is clicked
-  function onResultClick(query: string, pk: number) {
+  function onResultClick(query: ModelType, pk: number) {
     closeDrawer();
     navigate(`/${query}/${pk}/`);
   }

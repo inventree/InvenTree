@@ -11,6 +11,7 @@ import {
   RenderContact,
   RenderSupplierPart
 } from './Company';
+import { ModelType } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -30,39 +31,39 @@ export function RenderInstance({
   model,
   instance
 }: {
-  model: string;
+  model: ModelType;
   instance: any;
 }): ReactNode {
   switch (model) {
-    case 'address':
+    case ModelType.address:
       return <RenderAddress address={instance} />;
-    case 'build':
+    case ModelType.build:
       return <RenderBuildOrder buildorder={instance} />;
-    case 'company':
+    case ModelType.company:
       return <RenderCompany company={instance} />;
-    case 'contact':
+    case ModelType.contact:
       return <RenderContact contact={instance} />;
-    case 'owner':
+    case ModelType.owner:
       return <RenderOwner owner={instance} />;
-    case 'part':
+    case ModelType.part:
       return <RenderPart part={instance} />;
-    case 'partcategory':
+    case ModelType.partcategory:
       return <RenderPartCategory category={instance} />;
-    case 'purchaseorder':
+    case ModelType.purchaseorder:
       return <RenderPurchaseOrder order={instance} />;
-    case 'returnorder':
+    case ModelType.returnorder:
       return <RenderReturnOrder order={instance} />;
-    case 'salesoder':
+    case ModelType.salesorder:
       return <RenderSalesOrder order={instance} />;
-    case 'salesordershipment':
+    case ModelType.salesordershipment:
       return <RenderSalesOrderShipment shipment={instance} />;
-    case 'stocklocation':
+    case ModelType.stocklocation:
       return <RenderStockLocation location={instance} />;
-    case 'stockitem':
+    case ModelType.stockitem:
       return <RenderStockItem item={instance} />;
-    case 'supplierpart':
+    case ModelType.supplierpart:
       return <RenderSupplierPart supplierpart={instance} />;
-    case 'user':
+    case ModelType.user:
       return <RenderUser user={instance} />;
     default:
       // Unknown model
