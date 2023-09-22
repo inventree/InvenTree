@@ -2044,7 +2044,7 @@ function initializeRelatedField(field, fields, options={}) {
                         <button class="input-group-text" id="${name}_tree_search_btn"><i class="fas fa-search"></i></button>
                     </div>
 
-                    <div id="${tree_id}" class="custom-disabled-treeview" style="height: 65vh; overflow-y: auto;">
+                    <div id="${tree_id}" style="height: 65vh; overflow-y: auto;">
                         <div class="d-flex justify-content-center">
                             <div class="spinner-border" role="status"></div>
                         </div>
@@ -2081,9 +2081,7 @@ function initializeRelatedField(field, fields, options={}) {
                             for (const [k, v] of Object.entries(filters)) {
                                 if (k in node && node[k] !== v) {
                                     node.selectable = false;
-                                    // we use checked with custom classes to make this row grayed out, because
-                                    // the disabled state wouldn't allow expansion
-                                    node.state.checked = true;
+                                    node.color = "grey";
                                     break;
                                 }
                             }
@@ -2097,6 +2095,7 @@ function initializeRelatedField(field, fields, options={}) {
                         expandIcon: 'fas fa-plus-square large-treeview-icon',
                         collapseIcon: 'fa fa-minus-square large-treeview-icon',
                         nodeIcon: field.tree_picker.defaultIcon,
+                        color: "black",
                     });
                 }
             });
