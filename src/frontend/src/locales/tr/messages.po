@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-20 02:20\n"
+"PO-Revision-Date: 2023-09-22 03:20\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -25,7 +25,7 @@ msgstr "Başlık"
 #: src/components/forms/ApiForm.tsx:189
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "Başarılı"
 
 #: src/components/forms/ApiForm.tsx:262
 msgid "Form Errors Exist"
