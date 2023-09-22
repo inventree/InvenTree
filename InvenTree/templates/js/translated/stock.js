@@ -327,6 +327,10 @@ function stockItemFields(options={}) {
             filters: {
                 structural: false,
             },
+            tree_picker: {
+                url: '{% url "api-location-tree" %}',
+                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+            },
         },
         quantity: {
             help_text: '{% trans "Enter initial quantity for this stock item" %}',
@@ -882,7 +886,11 @@ function mergeStockItems(items, options={}) {
                 icon: 'fa-sitemap',
                 filters: {
                     structural: false,
-                }
+                },
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
             },
             notes: {
                 icon: 'fa-sticky-note',
@@ -3099,7 +3107,11 @@ function uninstallStockItem(installed_item_id, options={}) {
                     icon: 'fa-sitemap',
                     filters: {
                         structural: false,
-                    }
+                    },
+                    tree_picker: {
+                        url: '{% url "api-location-tree" %}',
+                        default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                    },
                 },
                 note: {
                     icon: 'fa-sticky-note',

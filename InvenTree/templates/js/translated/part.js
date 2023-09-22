@@ -147,7 +147,11 @@ function partFields(options={}) {
             icon: 'fa-sitemap',
             filters: {
                 structural: false,
-            }
+            },
+            tree_picker: {
+                url: '{% url "api-location-tree" %}',
+                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+            },
         },
         default_supplier: {
             icon: 'fa-building',
@@ -303,7 +307,11 @@ function categoryFields(options={}) {
             icon: 'fa-sitemap',
             filters: {
                 structural: false,
-            }
+            },
+            tree_picker: {
+                url: '{% url "api-location-tree" %}',
+                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+            },
         },
         default_keywords: {
             icon: 'fa-key',
