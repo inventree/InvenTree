@@ -113,6 +113,7 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
             'name',
             'parent',
             'icon',
+            'structural',
         ]
 
 

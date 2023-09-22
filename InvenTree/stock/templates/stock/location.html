@@ -238,7 +238,12 @@
     {% if stocktake_enable and roles.stocktake.add %}
     $('#location-stocktake').click(function() {
         generateStocktakeReport({
-            category: {},
+            category: {
+                tree_picker: {
+                    url: '{% url "api-part-category-tree" %}',
+                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+                },
+            },
             location: {
                 {% if location %}value: {{ location.pk }},{% endif %}
                 tree_picker: {

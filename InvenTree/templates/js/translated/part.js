@@ -128,6 +128,10 @@ function partFields(options={}) {
             filters: {
                 structural: false,
             },
+            tree_picker: {
+                url: '{% url "api-part-category-tree" %}',
+                default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+            },
         },
         name: {},
         IPN: {},
@@ -2193,7 +2197,12 @@ function setPartCategory(data, options={}) {
         method: 'POST',
         preFormContent: html,
         fields: {
-            category: {},
+            category: {
+                tree_picker: {
+                    url: '{% url "api-part-category-tree" %}',
+                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+                },
+            },
         },
         processBeforeUpload: function(data) {
             data.parts = parts;

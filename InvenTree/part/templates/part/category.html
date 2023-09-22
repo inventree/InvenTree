@@ -239,6 +239,10 @@
         generateStocktakeReport({
             category: {
                 {% if category %}value: {{ category.pk }},{% endif %}
+                tree_picker: {
+                    url: '{% url "api-part-category-tree" %}',
+                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+                },
             },
             location: {
                 tree_picker: {
