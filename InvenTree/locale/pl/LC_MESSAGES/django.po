@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-20 23:41+0000\n"
-"PO-Revision-Date: 2023-09-21 02:45\n"
+"POT-Creation-Date: 2023-09-21 03:56+0000\n"
+"PO-Revision-Date: 2023-09-22 03:19\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -53,7 +53,7 @@ msgstr "Szczegóły błędu można znaleźć w panelu administracyjnym"
 msgid "Enter date"
 msgstr "Wprowadź dane"
 
-#: InvenTree/fields.py:206 InvenTree/models.py:784 build/serializers.py:435
+#: InvenTree/fields.py:206 InvenTree/models.py:801 build/serializers.py:435
 #: build/serializers.py:514 build/templates/build/sidebar.html:21
 #: company/models.py:747 company/templates/company/sidebar.html:37
 #: order/models.py:1102 order/templates/order/po_sidebar.html:11
@@ -62,9 +62,9 @@ msgstr "Wprowadź dane"
 #: part/models.py:3042 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
 #: stock/admin.py:121 stock/models.py:2191 stock/models.py:2299
-#: stock/serializers.py:419 stock/serializers.py:553 stock/serializers.py:634
-#: stock/serializers.py:692 stock/serializers.py:984 stock/serializers.py:1083
-#: stock/serializers.py:1244 stock/templates/stock/stock_sidebar.html:25
+#: stock/serializers.py:419 stock/serializers.py:553 stock/serializers.py:649
+#: stock/serializers.py:707 stock/serializers.py:999 stock/serializers.py:1098
+#: stock/serializers.py:1259 stock/templates/stock/stock_sidebar.html:25
 #: templates/js/translated/barcode.js:143 templates/js/translated/bom.js:1254
 #: templates/js/translated/company.js:1715 templates/js/translated/order.js:347
 #: templates/js/translated/part.js:1061
@@ -249,25 +249,25 @@ msgstr "Odniesienie musi być zgodne z wymaganym wzorem"
 msgid "Reference number is too large"
 msgstr "Numer odniesienia jest zbyt duży"
 
-#: InvenTree/models.py:465
+#: InvenTree/models.py:466
 msgid "Missing file"
 msgstr "Brak pliku"
 
-#: InvenTree/models.py:466
+#: InvenTree/models.py:467
 msgid "Missing external link"
 msgstr "Brak zewnętrznego odnośnika"
 
-#: InvenTree/models.py:486 stock/models.py:2293
+#: InvenTree/models.py:487 stock/models.py:2293
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
 msgstr "Załącznik"
 
-#: InvenTree/models.py:487
+#: InvenTree/models.py:488
 msgid "Select file to attach"
 msgstr "Wybierz plik do załączenia"
 
-#: InvenTree/models.py:493 common/models.py:2758 company/models.py:128
+#: InvenTree/models.py:494 common/models.py:2758 company/models.py:128
 #: company/models.py:381 company/models.py:455 company/models.py:734
 #: order/models.py:240 order/models.py:1106 order/models.py:1466
 #: part/admin.py:39 part/models.py:905
@@ -284,21 +284,21 @@ msgstr "Wybierz plik do załączenia"
 msgid "Link"
 msgstr "Łącze"
 
-#: InvenTree/models.py:494 build/models.py:295 part/models.py:906
+#: InvenTree/models.py:495 build/models.py:295 part/models.py:906
 #: stock/models.py:735
 msgid "Link to external URL"
 msgstr "Link do zewnętrznego adresu URL"
 
-#: InvenTree/models.py:497 templates/js/translated/attachment.js:120
+#: InvenTree/models.py:498 templates/js/translated/attachment.js:120
 #: templates/js/translated/attachment.js:341
 msgid "Comment"
 msgstr "Komentarz"
 
-#: InvenTree/models.py:497
+#: InvenTree/models.py:498
 msgid "File comment"
 msgstr "Komentarz pliku"
 
-#: InvenTree/models.py:503 InvenTree/models.py:504 common/models.py:2217
+#: InvenTree/models.py:504 InvenTree/models.py:505 common/models.py:2217
 #: common/models.py:2218 common/models.py:2431 common/models.py:2432
 #: common/models.py:2688 common/models.py:2689 part/models.py:3050
 #: part/models.py:3138 part/models.py:3217 part/models.py:3237
@@ -308,44 +308,44 @@ msgstr "Komentarz pliku"
 msgid "User"
 msgstr "Użytkownik"
 
-#: InvenTree/models.py:507
+#: InvenTree/models.py:508
 msgid "upload date"
 msgstr "data przesłania"
 
-#: InvenTree/models.py:529
+#: InvenTree/models.py:530
 msgid "Filename must not be empty"
 msgstr "Nazwa pliku nie może być pusta"
 
-#: InvenTree/models.py:538
+#: InvenTree/models.py:539
 msgid "Invalid attachment directory"
 msgstr "Nieprawidłowy katalog załącznika"
 
-#: InvenTree/models.py:548
+#: InvenTree/models.py:549
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
 msgstr "Nazwa pliku zawiera niedozwolony znak '{c}'"
 
-#: InvenTree/models.py:551
+#: InvenTree/models.py:552
 msgid "Filename missing extension"
 msgstr "Brak rozszerzenia w nazwie pliku"
 
-#: InvenTree/models.py:558
+#: InvenTree/models.py:559
 msgid "Attachment with this filename already exists"
 msgstr "Załącznik o tej nazwie już istnieje"
 
-#: InvenTree/models.py:565
+#: InvenTree/models.py:566
 msgid "Error renaming file"
 msgstr "Błąd zmiany nazwy pliku"
 
-#: InvenTree/models.py:604
+#: InvenTree/models.py:621
 msgid "Duplicate names cannot exist under the same parent"
 msgstr ""
 
-#: InvenTree/models.py:623
+#: InvenTree/models.py:640
 msgid "Invalid choice"
 msgstr "Błędny wybór"
 
-#: InvenTree/models.py:648 InvenTree/models.py:649 common/models.py:2417
+#: InvenTree/models.py:665 InvenTree/models.py:666 common/models.py:2417
 #: common/models.py:2865 company/models.py:539 label/models.py:119
 #: part/models.py:851 part/models.py:3437 plugin/models.py:42
 #: report/models.py:164 templates/InvenTree/settings/mixins/urls.html:13
@@ -363,7 +363,7 @@ msgstr "Błędny wybór"
 msgid "Name"
 msgstr "Nazwa"
 
-#: InvenTree/models.py:655 build/models.py:168
+#: InvenTree/models.py:672 build/models.py:168
 #: build/templates/build/detail.html:24 common/models.py:113
 #: company/models.py:461 company/models.py:740
 #: company/templates/company/company_base.html:72
@@ -398,48 +398,48 @@ msgstr "Nazwa"
 msgid "Description"
 msgstr "Opis"
 
-#: InvenTree/models.py:656
+#: InvenTree/models.py:673
 msgid "Description (optional)"
 msgstr "Opis (opcjonalny)"
 
-#: InvenTree/models.py:664
+#: InvenTree/models.py:681
 msgid "parent"
 msgstr "nadrzędny"
 
-#: InvenTree/models.py:671 InvenTree/models.py:672
+#: InvenTree/models.py:688 InvenTree/models.py:689
 #: templates/js/translated/part.js:2768 templates/js/translated/stock.js:2690
 msgid "Path"
 msgstr "Ścieżka"
 
-#: InvenTree/models.py:785
+#: InvenTree/models.py:802
 msgid "Markdown notes (optional)"
 msgstr ""
 
-#: InvenTree/models.py:812
+#: InvenTree/models.py:829
 msgid "Barcode Data"
 msgstr "Dane kodu kreskowego"
 
-#: InvenTree/models.py:813
+#: InvenTree/models.py:830
 msgid "Third party barcode data"
 msgstr "Dane kodu kreskowego stron trzecich"
 
-#: InvenTree/models.py:818
+#: InvenTree/models.py:835
 msgid "Barcode Hash"
 msgstr "Hasz kodu kreskowego"
 
-#: InvenTree/models.py:819
+#: InvenTree/models.py:836
 msgid "Unique hash of barcode data"
 msgstr "Unikalny hasz danych kodu kreskowego"
 
-#: InvenTree/models.py:864
+#: InvenTree/models.py:881
 msgid "Existing barcode found"
 msgstr "Znaleziono istniejący kod kreskowy"
 
-#: InvenTree/models.py:919
+#: InvenTree/models.py:936
 msgid "Server Error"
 msgstr "Błąd serwera"
 
-#: InvenTree/models.py:920
+#: InvenTree/models.py:937
 msgid "An error has been logged by the server."
 msgstr "Błąd został zapisany w logach serwera."
 
@@ -1098,7 +1098,7 @@ msgid "Build status code"
 msgstr "Kod statusu budowania"
 
 #: build/models.py:250 build/serializers.py:277 order/serializers.py:512
-#: stock/models.py:739 stock/serializers.py:1208
+#: stock/models.py:739 stock/serializers.py:1223
 #: templates/js/translated/purchase_order.js:1114
 msgid "Batch Code"
 msgstr "Kod partii"
@@ -1305,8 +1305,8 @@ msgid "Selected stock item does not match BOM line"
 msgstr ""
 
 #: build/models.py:1535 build/serializers.py:799 order/serializers.py:1087
-#: order/serializers.py:1108 stock/serializers.py:490 stock/serializers.py:915
-#: stock/serializers.py:1041 stock/templates/stock/item_base.html:10
+#: order/serializers.py:1108 stock/serializers.py:490 stock/serializers.py:930
+#: stock/serializers.py:1056 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:195
 #: templates/js/translated/build.js:1718
@@ -1398,8 +1398,8 @@ msgstr ""
 
 #: build/serializers.py:423 build/serializers.py:496 order/serializers.py:493
 #: order/serializers.py:612 order/serializers.py:1616 part/serializers.py:970
-#: stock/serializers.py:412 stock/serializers.py:548 stock/serializers.py:629
-#: stock/serializers.py:1076 stock/serializers.py:1347
+#: stock/serializers.py:412 stock/serializers.py:548 stock/serializers.py:644
+#: stock/serializers.py:1091 stock/serializers.py:1362
 #: stock/templates/stock/item_base.html:395
 #: templates/js/translated/barcode.js:530
 #: templates/js/translated/barcode.js:778 templates/js/translated/build.js:980
@@ -1439,7 +1439,7 @@ msgstr ""
 #: build/serializers.py:503 build/templates/build/build_base.html:152
 #: build/templates/build/detail.html:62 order/models.py:804
 #: order/models.py:1763 order/serializers.py:530 stock/admin.py:106
-#: stock/serializers.py:688 stock/serializers.py:1215
+#: stock/serializers.py:703 stock/serializers.py:1230
 #: stock/templates/stock/item_base.html:428
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2161
 #: templates/js/translated/purchase_order.js:1293
@@ -1547,7 +1547,7 @@ msgstr ""
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:805 stock/serializers.py:928
+#: build/serializers.py:805 stock/serializers.py:943
 msgid "Item must be in stock"
 msgstr "Towar musi znajdować się w magazynie"
 
@@ -3886,7 +3886,7 @@ msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
 #: company/models.py:752 company/templates/company/supplier_part.html:161
-#: stock/admin.py:119 stock/models.py:701 stock/serializers.py:1223
+#: stock/admin.py:119 stock/models.py:701 stock/serializers.py:1238
 #: stock/templates/stock/item_base.html:241
 #: templates/js/translated/company.js:1677
 #: templates/js/translated/stock.js:2356
@@ -3992,7 +3992,7 @@ msgstr ""
 #: company/templates/company/company_base.html:87 order/models.py:792
 #: order/models.py:1751 order/templates/order/return_order_base.html:132
 #: order/templates/order/sales_order_base.html:145 stock/models.py:720
-#: stock/models.py:721 stock/serializers.py:970
+#: stock/models.py:721 stock/serializers.py:985
 #: stock/templates/stock/item_base.html:406
 #: templates/email/overdue_sales_order.html:16
 #: templates/js/translated/company.js:501
@@ -4345,7 +4345,7 @@ msgstr ""
 #: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:224
 #: part/templates/part/category.html:182
 #: part/templates/part/category_sidebar.html:17 stock/admin.py:47
-#: stock/serializers.py:673 stock/templates/stock/location.html:169
+#: stock/serializers.py:688 stock/templates/stock/location.html:169
 #: stock/templates/stock/location.html:183
 #: stock/templates/stock/location.html:195
 #: stock/templates/stock/location_sidebar.html:7
@@ -7842,7 +7842,7 @@ msgstr "Wybierz pasującą część dostawcy dla tego towaru"
 msgid "Where is this stock item located?"
 msgstr ""
 
-#: stock/models.py:702 stock/serializers.py:1224
+#: stock/models.py:702 stock/serializers.py:1239
 msgid "Packaging this stock item is stored in"
 msgstr ""
 
@@ -7854,7 +7854,7 @@ msgstr ""
 msgid "Serial number for this item"
 msgstr ""
 
-#: stock/models.py:741 stock/serializers.py:1209
+#: stock/models.py:741 stock/serializers.py:1224
 msgid "Batch code for this stock item"
 msgstr ""
 
@@ -7959,7 +7959,7 @@ msgstr ""
 msgid "Serialized stock cannot be merged"
 msgstr ""
 
-#: stock/models.py:1496 stock/serializers.py:1120
+#: stock/models.py:1496 stock/serializers.py:1135
 msgid "Duplicate stock items"
 msgstr ""
 
@@ -8036,7 +8036,7 @@ msgstr ""
 msgid "Enter serial numbers for new items"
 msgstr ""
 
-#: stock/serializers.py:413 stock/serializers.py:1077 stock/serializers.py:1348
+#: stock/serializers.py:413 stock/serializers.py:1092 stock/serializers.py:1363
 msgid "Destination stock location"
 msgstr ""
 
@@ -8052,8 +8052,8 @@ msgstr ""
 msgid "Select stock item to install"
 msgstr ""
 
-#: stock/serializers.py:496 stock/serializers.py:554 stock/serializers.py:635
-#: stock/serializers.py:693
+#: stock/serializers.py:496 stock/serializers.py:554 stock/serializers.py:650
+#: stock/serializers.py:708
 msgid "Add transaction note (optional)"
 msgstr ""
 
@@ -8077,79 +8077,83 @@ msgstr ""
 msgid "Selected part is not a valid option for conversion"
 msgstr ""
 
-#: stock/serializers.py:630
+#: stock/serializers.py:614
+msgid "Cannot convert stock item with assigned SupplierPart"
+msgstr ""
+
+#: stock/serializers.py:645
 msgid "Destination location for returned item"
 msgstr ""
 
-#: stock/serializers.py:674
+#: stock/serializers.py:689
 msgid "Select stock items to change status"
 msgstr ""
 
-#: stock/serializers.py:681
+#: stock/serializers.py:696
 msgid "No stock items selected"
 msgstr ""
 
-#: stock/serializers.py:932
+#: stock/serializers.py:947
 msgid "Part must be salable"
 msgstr "Część musi być dostępna do sprzedaży"
 
-#: stock/serializers.py:936
+#: stock/serializers.py:951
 msgid "Item is allocated to a sales order"
 msgstr ""
 
-#: stock/serializers.py:940
+#: stock/serializers.py:955
 msgid "Item is allocated to a build order"
 msgstr ""
 
-#: stock/serializers.py:971
+#: stock/serializers.py:986
 msgid "Customer to assign stock items"
 msgstr ""
 
-#: stock/serializers.py:977
+#: stock/serializers.py:992
 msgid "Selected company is not a customer"
 msgstr ""
 
-#: stock/serializers.py:985
+#: stock/serializers.py:1000
 msgid "Stock assignment notes"
 msgstr ""
 
-#: stock/serializers.py:995 stock/serializers.py:1255
+#: stock/serializers.py:1010 stock/serializers.py:1270
 msgid "A list of stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:1084
+#: stock/serializers.py:1099
 msgid "Stock merging notes"
 msgstr ""
 
-#: stock/serializers.py:1089
+#: stock/serializers.py:1104
 msgid "Allow mismatched suppliers"
 msgstr ""
 
-#: stock/serializers.py:1090
+#: stock/serializers.py:1105
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr ""
 
-#: stock/serializers.py:1095
+#: stock/serializers.py:1110
 msgid "Allow mismatched status"
 msgstr ""
 
-#: stock/serializers.py:1096
+#: stock/serializers.py:1111
 msgid "Allow stock items with different status codes to be merged"
 msgstr ""
 
-#: stock/serializers.py:1106
+#: stock/serializers.py:1121
 msgid "At least two stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:1195
+#: stock/serializers.py:1210
 msgid "StockItem primary key value"
 msgstr ""
 
-#: stock/serializers.py:1216
+#: stock/serializers.py:1231
 msgid "Stock item status code"
 msgstr ""
 
-#: stock/serializers.py:1245
+#: stock/serializers.py:1260
 msgid "Stock transaction notes"
 msgstr ""
 
