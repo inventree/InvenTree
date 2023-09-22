@@ -31,7 +31,7 @@ export function RenderInstance({
   model,
   instance
 }: {
-  model: ModelType;
+  model: ModelType | undefined;
   instance: any;
 }): ReactNode {
   switch (model) {
