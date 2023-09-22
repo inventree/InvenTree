@@ -27,6 +27,7 @@
     showFormInput,
     thumbnailImage,
     wrapButtons,
+    yesNoLabel,
 */
 
 /* exported
@@ -946,11 +947,7 @@ function loadAddressTable(table, options={}) {
                 title: '{% trans "Primary" %}',
                 switchable: false,
                 formatter: function(value) {
-                    let checked = '';
-                    if (value == true) {
-                        checked = 'checked="checked"';
-                    }
-                    return `<input type="checkbox" ${checked} disabled="disabled" value="${value? 1 : 0}">`;
+                    return yesNoLabel(value);
                 }
             },
             {
