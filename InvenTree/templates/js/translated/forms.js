@@ -2030,6 +2030,9 @@ function initializeRelatedField(field, fields, options={}) {
         // insert open tree picker button after select
         select.parent().find(".select2").after(button);
 
+        // save copy of filters, because of possible side effects
+        const filters = field.filters ? { ...field.filters } : {};
+
         button.on("click", () => {
             const tree_id = `${name}_tree`;
 
@@ -2075,15 +2078,13 @@ function initializeRelatedField(field, fields, options={}) {
                             node.text = node.name;
 
                             // disable this node, if it doesn't match the filter criteria
-                            if (field.filters) {
-                                for (const [k, v] of Object.entries(field.filters)) {
-                                    if (node[k] !== v) {
-                                        node.selectable = false;
-                                        // we use checked with custom classes to make this row grayed out, because
-                                        // the disabled state wouldn't allow expansion
-                                        node.state.checked = true;
-                                        break;
-                                    }
+                            for (const [k, v] of Object.entries(filters)) {
+                                if (k in node && node[k] !== v) {
+                                    node.selectable = false;
+                                    // we use checked with custom classes to make this row grayed out, because
+                                    // the disabled state wouldn't allow expansion
+                                    node.state.checked = true;
+                                    break;
                                 }
                             }
 
@@ -2332,7 +2333,7 @@ function constructField(name, parameters, options={}) {
     html += `<div class='controls'>`;
 
     // Does this input deserve "extra" decorators?
-    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null);
+    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null) || (parameters.tree_picker != null);
 
     // Some fields can have 'clear' inputs associated with them
     if (!parameters.required && !parameters.read_only) {
@@ -2353,7 +2354,7 @@ function constructField(name, parameters, options={}) {
     }
 
     if (extra) {
-        html += `<div class='input-group'>`;
+        html += `<div class='input-group flex-nowrap'>`;
 
         if (parameters.prefix) {
             html += `<span class='input-group-text'>${parameters.prefix}</span>`;
