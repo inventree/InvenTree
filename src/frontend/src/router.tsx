@@ -56,6 +56,10 @@ export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
 );
 
+export const ApprovalIndex = Loadable(
+  lazy(() => import('./pages/approval/ApprovalIndex'))
+);
+
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
@@ -96,6 +100,9 @@ export const routes = (
         </Route>
       </Route>
       <Route path="/profile/:tabValue" element={<Profile />} />
+      <Route path="approval/">
+        <Route index element={<ApprovalIndex />} />
+      </Route>
     </Route>
     <Route path="/" errorElement={<ErrorPage />}>
       <Route path="/login" element={<Login />} />,
