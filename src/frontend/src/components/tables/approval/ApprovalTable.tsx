@@ -75,6 +75,7 @@ export function ApprovalTable({
       columns={columns}
       props={{
         enableSelection: true,
+        idAccessor: 'id',
         params: params
       }}
     />
