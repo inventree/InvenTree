@@ -183,6 +183,11 @@ export function RelatedModelField({
         }}
         onChange={onChange}
         onMenuScrollToBottom={() => setOffset(offset + limit)}
+        onMenuOpen={() => {
+          setValue('');
+          setOffset(0);
+          selectQuery.refetch();
+        }}
         isLoading={
           selectQuery.isFetching ||
           selectQuery.isLoading ||
