@@ -8,13 +8,13 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-23 03:20\n"
+"PO-Revision-Date: 2023-09-24 03:25\n"
 "Last-Translator: \n"
-"Language-Team: Chinese Traditional\n"
+"Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: zh-TW\n"
+"X-Crowdin-Language: zh-CN\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
@@ -191,7 +191,7 @@ msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:286
 #: src/components/nav/SearchDrawer.tsx:426
-#: src/components/tables/InvenTreeTable.tsx:372
+#: src/components/tables/InvenTreeTable.tsx:374
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
@@ -217,7 +217,7 @@ msgid "Read More"
 msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:364
+#: src/components/tables/InvenTreeTable.tsx:366
 msgid "Unknown error"
 msgstr ""
 
@@ -613,43 +613,43 @@ msgstr ""
 msgid "Add Filter"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:71
-#: src/components/tables/InvenTreeTable.tsx:326
-#: src/components/tables/InvenTreeTable.tsx:347
+#: src/components/tables/InvenTreeTable.tsx:72
+#: src/components/tables/InvenTreeTable.tsx:328
+#: src/components/tables/InvenTreeTable.tsx:349
 msgid "No records found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:351
+#: src/components/tables/InvenTreeTable.tsx:353
 msgid "Bad request"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:354
+#: src/components/tables/InvenTreeTable.tsx:356
 msgid "Unauthorized"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:357
+#: src/components/tables/InvenTreeTable.tsx:359
 msgid "Forbidden"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:360
+#: src/components/tables/InvenTreeTable.tsx:362
 msgid "Not found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:421
-#: src/components/tables/InvenTreeTable.tsx:422
+#: src/components/tables/InvenTreeTable.tsx:423
+#: src/components/tables/InvenTreeTable.tsx:424
 msgid "Barcode actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:429
-#: src/components/tables/InvenTreeTable.tsx:430
+#: src/components/tables/InvenTreeTable.tsx:431
+#: src/components/tables/InvenTreeTable.tsx:432
 msgid "Print actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:447
+#: src/components/tables/InvenTreeTable.tsx:449
 msgid "Refresh data"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:466
+#: src/components/tables/InvenTreeTable.tsx:468
 msgid "Table filters"
 msgstr ""
 
