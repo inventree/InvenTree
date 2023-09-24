@@ -14,8 +14,13 @@ export function stockFields({}: {}): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {
     part: {
       onValueChange: (change: ApiFormChangeCallback) => {
-        // TODO: implement this
+        // TODO: implement remaining functionality from old stock.py
         console.log('part changed: ', change.value);
+
+        // Clear the 'supplier_part' field if the part is changed
+        change.form.setValues({
+          supplier_part: null
+        });
       }
     },
     supplier_part: {
