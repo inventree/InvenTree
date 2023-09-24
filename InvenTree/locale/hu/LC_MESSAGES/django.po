@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-23 00:16+0000\n"
-"PO-Revision-Date: 2023-09-23 03:19\n"
+"PO-Revision-Date: 2023-09-24 03:25\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -8076,7 +8076,7 @@ msgstr "A kiválasztott alkatrész nem megfelelő a konverzióhoz"
 
 #: stock/serializers.py:614
 msgid "Cannot convert stock item with assigned SupplierPart"
-msgstr ""
+msgstr "Készlet tétel hozzárendelt beszállítói alkatrésszel nem konvertálható"
 
 #: stock/serializers.py:645
 msgid "Destination location for returned item"
