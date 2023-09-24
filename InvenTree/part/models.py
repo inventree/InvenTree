@@ -979,7 +979,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         help_text=_('Expiry time (in days) for stock items of this part'),
     )
 
-    minimum_stock = models.PositiveIntegerField(
+    minimum_stock = models.DecimalField(
+        max_digits=19, decimal_places=6,
         default=0, validators=[MinValueValidator(0)],
         verbose_name=_('Minimum Stock'),
         help_text=_('Minimum allowed stock level')
