@@ -2346,6 +2346,8 @@ class PartPricing(common.models.MetaMixin):
     - Detailed pricing information is very context specific in any case
     """
 
+    price_modified = False
+
     @property
     def is_valid(self):
         """Return True if the cached pricing is valid"""
@@ -2472,7 +2474,7 @@ class PartPricing(common.models.MetaMixin):
             pass
 
         # Update parent assemblies and templates
-        if cascade:
+        if cascade and self.price_modified:
             self.update_assemblies(counter)
             self.update_templates(counter)
 
@@ -2572,6 +2574,9 @@ class PartPricing(common.models.MetaMixin):
 
                 any_max_elements = True
 
+        old_bom_cost_min = self.bom_cost_min
+        old_bom_cost_max = self.bom_cost_max
+
         if any_min_elements:
             self.bom_cost_min = cumulative_min
         else:
@@ -2581,6 +2586,9 @@ class PartPricing(common.models.MetaMixin):
             self.bom_cost_max = cumulative_max
         else:
             self.bom_cost_max = None
+
+        if old_bom_cost_min != self.bom_cost_min or old_bom_cost_max != self.bom_cost_max:
+            self.price_modified = True
 
         if save:
             self.save()
@@ -2646,6 +2654,9 @@ class PartPricing(common.models.MetaMixin):
                 if purchase_max is None or cost > purchase_max:
                     purchase_max = cost
 
+        if self.purchase_cost_min != purchase_min or self.purchase_cost_max != purchase_max:
+            self.price_modified = True
+
         self.purchase_cost_min = purchase_min
         self.purchase_cost_max = purchase_max
 
@@ -2672,6 +2683,9 @@ class PartPricing(common.models.MetaMixin):
 
                 if max_int_cost is None or cost > max_int_cost:
                     max_int_cost = cost
+
+        if self.internal_cost_min != min_int_cost or self.internal_cost_max != max_int_cost:
+            self.price_modified = True
 
         self.internal_cost_min = min_int_cost
         self.internal_cost_max = max_int_cost
@@ -2712,6 +2726,9 @@ class PartPricing(common.models.MetaMixin):
                     if max_sup_cost is None or cost > max_sup_cost:
                         max_sup_cost = cost
 
+        if self.supplier_price_min != min_sup_cost or self.supplier_price_max != max_sup_cost:
+            self.price_modified = True
+
         self.supplier_price_min = min_sup_cost
         self.supplier_price_max = max_sup_cost
 
@@ -2748,6 +2765,9 @@ class PartPricing(common.models.MetaMixin):
                 if v_max is not None:
                     if variant_max is None or v_max > variant_max:
                         variant_max = v_max
+
+        if self.variant_cost_min != variant_min or self.variant_cost_max != variant_max:
+            self.price_modified = True
 
         self.variant_cost_min = variant_min
         self.variant_cost_max = variant_max
@@ -2872,6 +2892,9 @@ class PartPricing(common.models.MetaMixin):
 
             if max_sell_history is None or cost > max_sell_history:
                 max_sell_history = cost
+
+        if self.sale_history_min != min_sell_history or self.sale_history_max != max_sell_history:
+            self.price_modified = True
 
         self.sale_history_min = min_sell_history
         self.sale_history_max = max_sell_history
