@@ -55,9 +55,14 @@ export function RelatedModelField({
   useEffect(() => {
     // If a value is provided, load the related object
     if (form.values) {
-      let formPk = form.values[fieldName];
+      let formPk = form.values[fieldName] ?? null;
 
-      if (formPk && formPk != pk) {
+      // If the value is unchanged, do nothing
+      if (formPk == pk) {
+        return;
+      }
+
+      if (formPk != null) {
         let url = (definition.api_url || '') + formPk + '/';
 
         // TODO: Fix this!!
@@ -78,9 +83,11 @@ export function RelatedModelField({
             setPk(data.pk);
           }
         });
+      } else {
+        setPk(null);
       }
     }
-  }, [form]);
+  }, [form.values[fieldName]]);
 
   const [offset, setOffset] = useState<number>(0);
 
@@ -173,7 +180,7 @@ export function RelatedModelField({
     <Input.Wrapper {...definition} error={error}>
       <Select
         id={fieldId}
-        value={data.find((item) => item.value == pk)}
+        value={pk != null && data.find((item) => item.value == pk)}
         options={data}
         filterOption={null}
         onInputChange={(value: any) => {
