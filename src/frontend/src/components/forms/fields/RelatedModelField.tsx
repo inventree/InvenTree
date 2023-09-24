@@ -112,8 +112,14 @@ export function RelatedModelField({
         url = url.substring(4);
       }
 
+      let filters = definition.filters ?? {};
+
+      if (definition.adjustFilters) {
+        filters = definition.adjustFilters(filters, form);
+      }
+
       let params = {
-        ...definition.filters,
+        ...filters,
         search: searchText,
         offset: offset,
         limit: limit

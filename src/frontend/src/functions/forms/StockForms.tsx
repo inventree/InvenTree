@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 
 import {
   ApiFormChangeCallback,
+  ApiFormData,
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../../components/forms/fields/ApiFormField';
@@ -29,6 +30,14 @@ export function stockFields({}: {}): ApiFormFieldSet {
       filters: {
         part_detail: true,
         supplier_detail: true
+      },
+      adjustFilters: (filters: any, form: ApiFormData) => {
+        let part = form.values.part;
+        if (part) {
+          filters.part = part;
+        }
+
+        return filters;
       }
     },
     use_pack_size: {
