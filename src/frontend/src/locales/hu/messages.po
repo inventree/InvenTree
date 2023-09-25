@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-24 03:25\n"
+"PO-Revision-Date: 2023-09-25 04:04\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -189,7 +189,7 @@ msgstr "Név: {0}"
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr "Státusz: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
-#: src/components/forms/fields/ApiFormField.tsx:286
+#: src/components/forms/fields/ApiFormField.tsx:290
 #: src/components/nav/SearchDrawer.tsx:426
 #: src/components/tables/InvenTreeTable.tsx:374
 #: src/components/widgets/MarkdownEditor.tsx:108
@@ -199,16 +199,16 @@ msgstr "Státusz: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgid "Error"
 msgstr "Hiba"
 
-#: src/components/forms/fields/RelatedModelField.tsx:194
+#: src/components/forms/fields/RelatedModelField.tsx:212
 msgid "Search"
 msgstr "Keresés"
 
-#: src/components/forms/fields/RelatedModelField.tsx:195
+#: src/components/forms/fields/RelatedModelField.tsx:213
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
 msgstr "Betöltés"
 
-#: src/components/forms/fields/RelatedModelField.tsx:197
+#: src/components/forms/fields/RelatedModelField.tsx:215
 msgid "No results found"
 msgstr "Nincs találat"
 
@@ -1187,7 +1187,7 @@ msgstr "Felhasználói beállítások"
 
 #: src/defaults/menuItems.tsx:24
 msgid "View for interactive scanning and multiple actions."
-msgstr ""
+msgstr "Nézet interaktív szkenneléshez és más műveletekhez."
 
 #: src/defaults/menuItems.tsx:24
 #~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
@@ -1266,11 +1266,11 @@ msgstr "Form hiba"
 
 #: src/functions/forms.tsx:49
 msgid "Form method not provided"
-msgstr ""
+msgstr "Form metódus nincs megadva"
 
 #: src/functions/forms.tsx:58
 msgid "Response did not contain action data"
-msgstr ""
+msgstr "A válaszban nincs művelet adat"
 
 #: src/functions/forms.tsx:96
 msgid "Invalid Form"
@@ -1278,7 +1278,7 @@ msgstr "Érvénytelen űrlap"
 
 #: src/functions/forms.tsx:97
 msgid "method parameter not supplied"
-msgstr ""
+msgstr "metódus paraméter nem támogatott"
 
 #: src/functions/forms/AttachmentForms.tsx:57
 msgid "Add File"
@@ -1344,27 +1344,27 @@ msgstr "Alkatrész frissítve"
 msgid "Parent part category"
 msgstr "Felsőbb szintű alkatrész kategória"
 
-#: src/functions/forms/StockForms.tsx:30
+#: src/functions/forms/StockForms.tsx:44
 msgid "Add given quantity as packs instead of individual items"
 msgstr "Mennyiség hozzáadása csomagolási egységenként egyedi tételek helyett"
 
-#: src/functions/forms/StockForms.tsx:39
+#: src/functions/forms/StockForms.tsx:53
 msgid "Enter initial quantity for this stock item"
 msgstr "Add meg a kezdeti mennyiséget ehhez a készlet tételhez"
 
-#: src/functions/forms/StockForms.tsx:44
+#: src/functions/forms/StockForms.tsx:58
 msgid "Serial Numbers"
 msgstr "Sorozatszámok"
 
-#: src/functions/forms/StockForms.tsx:45
+#: src/functions/forms/StockForms.tsx:59
 msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr "Add meg az új készlet tételhez tartozó sorozatszámokat (vagy hagyd üresen)"
 
-#: src/functions/forms/StockForms.tsx:90
+#: src/functions/forms/StockForms.tsx:104
 msgid "Create Stock Item"
 msgstr "Készlet tétel létrehozása"
 
-#: src/functions/forms/StockForms.tsx:104
+#: src/functions/forms/StockForms.tsx:118
 msgid "Edit Stock Item"
 msgstr "Készlet tétel szerkesztése"
 
@@ -1390,7 +1390,7 @@ msgstr "Érvénytelen visszatérési kód"
 
 #: src/functions/notifications.tsx:33
 msgid "Server returned status {returnCode}"
-msgstr ""
+msgstr "Szerver válaszkódja {returnCode}"
 
 #: src/pages/Auth/Logged-In.tsx:18
 msgid "Checking if you are already logged in"
@@ -1658,19 +1658,19 @@ msgstr "Kézi bevitel"
 
 #: src/pages/Index/Scan.tsx:189
 msgid "Image Barcode"
-msgstr ""
+msgstr "Vonalkód képe"
 
 #: src/pages/Index/Scan.tsx:219
 msgid "Selected elements are not known"
-msgstr ""
+msgstr "Kiválasztott elemek ismeretlenek"
 
 #: src/pages/Index/Scan.tsx:226
 msgid "Multiple object types selected"
-msgstr ""
+msgstr "Többféle objektum típus lett kiválasztva"
 
 #: src/pages/Index/Scan.tsx:233
 msgid "Actions for {0}"
-msgstr ""
+msgstr "{0} műveletei"
 
 #: src/pages/Index/Scan.tsx:236
 msgid "Count"
@@ -1678,15 +1678,15 @@ msgstr "Mennyiség"
 
 #: src/pages/Index/Scan.tsx:250
 msgid "Scan Page"
-msgstr ""
+msgstr "Kódolvasó lap"
 
 #: src/pages/Index/Scan.tsx:253
 msgid "This page can be used for continuously scanning items and taking actions on them."
-msgstr ""
+msgstr "Lap a tételek folyamatos kódolvasására és műveleteire."
 
 #: src/pages/Index/Scan.tsx:268
 msgid "Select the input method you want to use to scan items."
-msgstr ""
+msgstr "Válassz beviteli módot a tételek beolvasásához."
 
 #: src/pages/Index/Scan.tsx:270
 msgid "Input"
@@ -1702,7 +1702,7 @@ msgstr "Nincs találat"
 
 #: src/pages/Index/Scan.tsx:286
 msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
-msgstr ""
+msgstr "A kiválasztott alkatrészektől függő műveletek jelennek meg itt. Jelenleg nem minden vonalkód támogatott."
 
 #: src/pages/Index/Scan.tsx:288
 msgid "Action"
@@ -1714,11 +1714,11 @@ msgstr "{0} kiválasztott tétel"
 
 #: src/pages/Index/Scan.tsx:300
 msgid "General Actions"
-msgstr ""
+msgstr "Általános műveletek"
 
 #: src/pages/Index/Scan.tsx:313
 msgid "Lookup part"
-msgstr ""
+msgstr "Alkatrész keresés"
 
 #: src/pages/Index/Scan.tsx:320
 msgid "Open Link"
@@ -1726,11 +1726,11 @@ msgstr "Link megnyitása"
 
 #: src/pages/Index/Scan.tsx:335
 msgid "History is locally kept in this browser."
-msgstr ""
+msgstr "Az előzmények lokálisan a böngészőben tárolódnak."
 
 #: src/pages/Index/Scan.tsx:336
 msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
-msgstr ""
+msgstr "Az előzmények a böngésző helyi tárhelyén tárolódnak. Így nem lesz megosztva más felhasználókkal vagy más eszközökkel, de az újratöltések során megmarad. Kijelölhetsz elemeket az előzményekből, hogy műveleteket hajts végre rajtuk. Elemek hozzáadásához szkennelje be/írja be azokat a beviteli területen."
 
 #: src/pages/Index/Scan.tsx:338
 #: src/pages/Notifications.tsx:46
@@ -1755,15 +1755,15 @@ msgstr "Forrás"
 
 #: src/pages/Index/Scan.tsx:432
 msgid "Scanned at"
-msgstr ""
+msgstr "Szkennelve ekkor"
 
 #: src/pages/Index/Scan.tsx:484
 msgid "Enter item serial or data"
-msgstr ""
+msgstr "Add meg a tétel szériaszámát vagy adatát"
 
 #: src/pages/Index/Scan.tsx:496
 msgid "Add dummy item"
-msgstr ""
+msgstr "Ál-tétel hozzáadása"
 
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
