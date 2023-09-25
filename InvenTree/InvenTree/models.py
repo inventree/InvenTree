@@ -534,7 +534,7 @@ class InvenTreeAttachment(models.Model):
 
         # Check that there are no directory tricks going on...
         if new_file.parent != attachment_dir:
-            logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
+            logger.error("Attempted to rename attachment outside valid directory: '%s'", new_file)
             raise ValidationError(_("Invalid attachment directory"))
 
         # Ignore further checks if the filename is not actually being renamed
@@ -551,7 +551,7 @@ class InvenTreeAttachment(models.Model):
             raise ValidationError(_("Filename missing extension"))
 
         if not old_file.exists():
-            logger.error(f"Trying to rename attachment '{old_file}' which does not exist")
+            logger.error("Trying to rename attachment '%s' which does not exist", old_file)
             return
 
         if new_file.exists():
