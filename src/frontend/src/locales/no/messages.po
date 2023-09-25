@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-24 03:25\n"
+"PO-Revision-Date: 2023-09-25 04:05\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -189,7 +189,7 @@ msgstr ""
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
-#: src/components/forms/fields/ApiFormField.tsx:286
+#: src/components/forms/fields/ApiFormField.tsx:290
 #: src/components/nav/SearchDrawer.tsx:426
 #: src/components/tables/InvenTreeTable.tsx:374
 #: src/components/widgets/MarkdownEditor.tsx:108
@@ -199,16 +199,16 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:194
+#: src/components/forms/fields/RelatedModelField.tsx:212
 msgid "Search"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:195
+#: src/components/forms/fields/RelatedModelField.tsx:213
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:197
+#: src/components/forms/fields/RelatedModelField.tsx:215
 msgid "No results found"
 msgstr ""
 
@@ -1344,27 +1344,27 @@ msgstr ""
 msgid "Parent part category"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:30
+#: src/functions/forms/StockForms.tsx:44
 msgid "Add given quantity as packs instead of individual items"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:39
+#: src/functions/forms/StockForms.tsx:53
 msgid "Enter initial quantity for this stock item"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:44
+#: src/functions/forms/StockForms.tsx:58
 msgid "Serial Numbers"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:45
+#: src/functions/forms/StockForms.tsx:59
 msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:90
+#: src/functions/forms/StockForms.tsx:104
 msgid "Create Stock Item"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:104
+#: src/functions/forms/StockForms.tsx:118
 msgid "Edit Stock Item"
 msgstr ""
 
