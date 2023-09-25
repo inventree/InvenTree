@@ -74,8 +74,20 @@ class MetaMixin(models.Model):
     )
 
 
-class EmptyURLValidator(URLValidator):
-    """Validator for filed with url - that can be empty."""
+class BaseURLValidator(URLValidator):
+    """Validator for the InvenTree base URL:
+
+    - Allow empty value
+    - Allow value without specified TLD (top level domain)
+    """
+
+    def __init__(self, schemes=None, **kwargs):
+        """Custom init routine"""
+
+        super().__init__(schemes, **kwargs)
+
+        # Override default host_re value - allow optional tld regex
+        self.host_re = '(' + self.hostname_re + self.domain_re + f'({self.tld_re})?' + '|localhost)'
 
     def __call__(self, value):
         """Make sure empty values pass."""
@@ -1018,7 +1030,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_BASE_URL': {
             'name': _('Base URL'),
             'description': _('Base URL for server instance'),
-            'validator': EmptyURLValidator(),
+            'validator': BaseURLValidator(),
             'default': '',
             'after_save': update_instance_url,
         },
