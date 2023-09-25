@@ -446,7 +446,7 @@ for key in db_keys:
             try:
                 env_var = int(env_var)
             except ValueError:
-                logger.error(f"Invalid number for {env_key}: {env_var}")
+                logger.exception(f"Invalid number for {env_key}: {env_var}")
         # Override configuration value
         db_config[key] = env_var
 

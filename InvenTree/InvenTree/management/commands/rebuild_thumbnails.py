@@ -43,7 +43,7 @@ class Command(BaseCommand):
             try:
                 self.rebuild_thumbnail(part)
             except (OperationalError, ProgrammingError):
-                logger.error("ERROR: Database read error.")
+                logger.exception("ERROR: Database read error.")
                 break
 
         logger.info("Rebuilding Company thumbnails")
@@ -52,5 +52,5 @@ class Command(BaseCommand):
             try:
                 self.rebuild_thumbnail(company)
             except (OperationalError, ProgrammingError):
-                logger.error("ERROR: abase read error.")
+                logger.exception("ERROR: abase read error.")
                 break

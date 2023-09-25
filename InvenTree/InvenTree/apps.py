@@ -109,7 +109,7 @@ class InvenTreeConfig(AppConfig):
                 try:
                     import_module(f'{app.module.__package__}.tasks')
                 except Exception as e:  # pragma: no cover
-                    logger.error(f"Error loading tasks for {app_name}: {e}")
+                    logger.exception(f"Error loading tasks for {app_name}: {e}")
 
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.
@@ -162,7 +162,7 @@ class InvenTreeConfig(AppConfig):
             except OperationalError:
                 logger.warning("Could not update exchange rates - database not ready")
             except Exception as e:
-                logger.error(f"Error updating exchange rates: {e} ({type(e)})")
+                logger.exception(f"Error updating exchange rates: {e} ({type(e)})")
 
     def add_user_on_startup(self):
         """Add a user on startup."""

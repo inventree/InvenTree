@@ -772,7 +772,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
                         save=True
                     )
                 except IntegrityError:
-                    logger.error(f"Could not create new PartParameter for part {instance}")
+                    logger.exception(f"Could not create new PartParameter for part {instance}")
 
         # Create initial stock entry
         if initial_stock:

@@ -757,7 +757,7 @@ class BaseInvenTreeSetting(models.Model):
         try:
             (app, mdl) = model_name.strip().split('.')
         except ValueError:
-            logger.error(f"Invalid 'model' parameter for setting {self.key} : '{model_name}'")
+            logger.exception(f"Invalid 'model' parameter for setting {self.key} : '{model_name}'")
             return None
 
         app_models = apps.all_models.get(app, None)

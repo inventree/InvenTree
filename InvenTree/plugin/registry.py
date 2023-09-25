@@ -137,7 +137,7 @@ class PluginsRegistry:
                 logger.info('Database not accessible while loading plugins')
                 break
             except IntegrationPluginError as error:
-                logger.error(f'[PLUGIN] Encountered an error with {error.path}:\n{error.message}')
+                logger.exception(f'[PLUGIN] Encountered an error with {error.path}:\n{error.message}')
                 log_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
@@ -254,7 +254,7 @@ class PluginsRegistry:
                         try:
                             pd.mkdir(exist_ok=True)
                         except Exception:  # pragma: no cover
-                            logger.error(f"Could not create plugin directory '{pd}'")
+                            logger.exception(f"Could not create plugin directory '{pd}'")
                             continue
 
                     # Ensure the directory has an __init__.py file
@@ -264,7 +264,7 @@ class PluginsRegistry:
                         try:
                             init_filename.write_text("# InvenTree plugin directory\n")
                         except Exception:  # pragma: no cover
-                            logger.error(f"Could not create file '{init_filename}'")
+                            logger.exception(f"Could not create file '{init_filename}'")
                             continue
 
                     # By this point, we have confirmed that the directory at least exists
@@ -349,7 +349,7 @@ class PluginsRegistry:
         try:
             subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=settings.BASE_DIR.parent)
         except subprocess.CalledProcessError as error:  # pragma: no cover
-            logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
+            logger.exception(f'Ran into error while trying to install plugins!\n{str(error)}')
             return False
         except FileNotFoundError:  # pragma: no cover
             # System most likely does not have 'git' installed
@@ -427,7 +427,7 @@ class PluginsRegistry:
                     raise error  # pragma: no cover
                 plg_db = None
             except (IntegrityError) as error:  # pragma: no cover
-                logger.error(f"Error initializing plugin `{plg_name}`: {error}")
+                logger.exception(f"Error initializing plugin `{plg_name}`: {error}")
                 handle_error(error, log_name='init')
 
             # Append reference to plugin

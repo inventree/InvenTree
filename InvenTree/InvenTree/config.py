@@ -51,7 +51,7 @@ def to_dict(value):
     try:
         return json.loads(value)
     except Exception as error:
-        logger.error(f"Failed to parse value '{value}' as JSON with error {error}. Ensure value is a valid JSON string.")
+        logger.exception(f"Failed to parse value '{value}' as JSON with error {error}. Ensure value is a valid JSON string.")
     return {}
 
 
@@ -159,7 +159,7 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
                 set_metadata(source)
                 return val
             except Exception as error:
-                logger.error(f"Failed to typecast '{env_var}' with value '{value}' to type '{typecast}' with error {error}")
+                logger.exception(f"Failed to typecast '{env_var}' with value '{value}' to type '{typecast}' with error {error}")
 
         set_metadata(source)
         return value

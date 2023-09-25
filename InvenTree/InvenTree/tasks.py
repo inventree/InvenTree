@@ -523,7 +523,7 @@ def update_exchange_rates():
     except OperationalError:
         logger.warning("Could not update exchange rates - database not ready")
     except Exception as e:  # pragma: no cover
-        logger.error(f"Error updating exchange rates: {e} ({type(e)})")
+        logger.exception(f"Error updating exchange rates: {e} ({type(e)})")
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -597,7 +597,7 @@ def check_for_migrations(worker: bool = True):
         except NotSupportedError as e:  # pragma: no cover
             if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
                 raise e
-            logger.error(f'Error during migrations: {e}')
+            logger.exception(f'Error during migrations: {e}')
 
         print('Migrations done')
         logger.info('Ran migrations')

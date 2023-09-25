@@ -2409,7 +2409,7 @@ class PartPricing(common.models.MetaMixin):
             p = self.part
             p.refresh_from_db()
         except IntegrityError:
-            logger.error(f"Could not update PartPricing as Part '{self.part}' does not exist")
+            logger.exception(f"Could not update PartPricing as Part '{self.part}' does not exist")
             return
 
         if self.scheduled_for_update:
@@ -2427,7 +2427,7 @@ class PartPricing(common.models.MetaMixin):
             self.save()
         except IntegrityError:
             # An IntegrityError here likely indicates that the referenced part has already been deleted
-            logger.error(f"Could not save PartPricing for part '{self.part}' to the database")
+            logger.exception(f"Could not save PartPricing for part '{self.part}' to the database")
             return
 
         import part.tasks as part_tasks

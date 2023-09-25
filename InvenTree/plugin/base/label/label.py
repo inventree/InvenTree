@@ -46,7 +46,7 @@ def print_label(plugin_slug: str, **kwargs):
         if user:
             # Log an error message to the database
             log_error('plugin.print_label')
-            logger.error(f"Label printing failed: Sending notification to user '{user}'")  # pragma: no cover
+            logger.exception(f"Label printing failed: Sending notification to user '{user}'")  # pragma: no cover
 
             # Throw an error against the plugin instance
             common.notifications.trigger_notification(

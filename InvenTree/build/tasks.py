@@ -45,7 +45,7 @@ def check_build_stock(build: build.models.Build):
         part = build.part
     except part_models.Part.DoesNotExist:
         # Note: This error may be thrown during unit testing...
-        logger.error("Invalid build.part passed to 'build.tasks.check_build_stock'")
+        logger.exception("Invalid build.part passed to 'build.tasks.check_build_stock'")
         return
 
     for bom_item in part.get_bom_items():
