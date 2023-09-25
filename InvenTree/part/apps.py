@@ -36,7 +36,7 @@ class PartConfig(AppConfig):
             items = BomItem.objects.filter(part__trackable=False, sub_part__trackable=True)
 
             for item in items:
-                logger.info(f"Marking part '{item.part.name}' as trackable")
+                logger.info("Marking part '%s' as trackable", item.part.name)
                 item.part.trackable = True
                 item.part.clean()
                 item.part.save()

@@ -86,7 +86,7 @@ def check_build_stock(build: build.models.Build):
 
     if len(emails) > 0:
 
-        logger.info(f"Notifying users of stock required for build {build.pk}")
+        logger.info("Notifying users of stock required for build %s", build.pk)
 
         context = {
             'link': InvenTree.helpers_model.construct_absolute_url(build.get_absolute_url()),
