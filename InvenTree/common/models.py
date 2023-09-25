@@ -406,6 +406,9 @@ class BaseInvenTreeSetting(models.Model):
             **cls.get_filters(**kwargs),
         }
 
+        # Unless otherwise specified, attempt to create the setting
+        create = kwargs.pop('create', True)
+
         # Perform cache lookup by default
         do_cache = kwargs.pop('cache', True)
 
@@ -433,9 +436,6 @@ class BaseInvenTreeSetting(models.Model):
 
         # Setting does not exist! (Try to create it)
         if not setting:
-
-            # Unless otherwise specified, attempt to create the setting
-            create = kwargs.pop('create', True)
 
             # Prevent creation of new settings objects when importing data
             if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True, allow_shell=True):

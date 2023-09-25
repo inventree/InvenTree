@@ -15,7 +15,7 @@ def currency_code_default():
     from common.models import InvenTreeSetting
 
     try:
-        code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', create=False, cache=False)
+        code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', create=True, cache=True)
     except Exception:  # pragma: no cover
         # Database may not yet be ready, no need to throw an error here
         code = ''
