@@ -69,6 +69,10 @@ debug: True
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
 
+# Enable database-level logging
+# Use the environment variable INVENTREE_DB_LOGGING
+db_logging: False
+
 # Select default system language (default is 'en-us')
 # Use the environment variable INVENTREE_LANGUAGE
 language: en-us
