@@ -373,7 +373,7 @@ def update_group_roles(group, debug=False):
 
     # Iterate through each permission already assigned to this group,
     # and create a simplified permission key string
-    for p in group.permissions.all():
+    for p in group.permissions.all().prefetch_related('content_type'):
         (permission, app, model) = p.natural_key()
 
         permission_string = '{app}.{perm}'.format(
