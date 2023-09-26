@@ -30,7 +30,7 @@ def update_build_order_lines(bom_item_pk: int):
     This task is triggered when a BomItem is created or updated.
     """
 
-    logger.info(f"Updating build order lines for BomItem {bom_item_pk}")
+    logger.info("Updating build order lines for BomItem %s", bom_item_pk)
 
     bom_item = part_models.BomItem.objects.filter(pk=bom_item_pk).first()
 
@@ -70,7 +70,7 @@ def update_build_order_lines(bom_item_pk: int):
             )
 
     if builds.count() > 0:
-        logger.info(f"Updated {builds.count()} build orders for part {bom_item.part}")
+        logger.info("Updated %s build orders for part %s", builds.count(), bom_item.part)
 
 
 def check_build_stock(build: build.models.Build):
