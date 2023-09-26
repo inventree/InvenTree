@@ -583,10 +583,6 @@ class BuildAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = BuildOrderAttachment.objects.all()
     serializer_class = build.serializers.BuildAttachmentSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-
     filterset_fields = [
         'build',
     ]

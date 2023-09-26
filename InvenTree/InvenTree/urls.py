@@ -189,10 +189,6 @@ classic_frontendpatterns = [
     re_path(r'^about/', AboutView.as_view(), name='about'),
     re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
-    # admin sites
-    re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
-    re_path(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
-
     # DB user sessions
     path('accounts/sessions/other/delete/', view=CustomSessionDeleteOtherView.as_view(), name='session_delete_other', ),
     re_path(r'^accounts/sessions/(?P<pk>\w+)/delete/$', view=CustomSessionDeleteView.as_view(), name='session_delete', ),
@@ -213,22 +209,26 @@ classic_frontendpatterns = [
 
 new_frontendpatterns = platform_urls
 
-# Load patterns for frontend according to settings
-frontendpatterns = []
-if settings.ENABLE_CLASSIC_FRONTEND:
-    frontendpatterns.append(re_path('', include(classic_frontendpatterns)))
-if settings.ENABLE_PLATFORM_FRONTEND:
-    frontendpatterns.append(re_path('', include(new_frontendpatterns)))
+urlpatterns = [
+    # admin sites
+    re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
+    re_path(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
+]
 
+urlpatterns += backendpatterns
+
+frontendpatterns = []
+
+if settings.ENABLE_CLASSIC_FRONTEND:
+    frontendpatterns += classic_frontendpatterns
+if settings.ENABLE_PLATFORM_FRONTEND:
+    frontendpatterns += new_frontendpatterns
+
+urlpatterns += frontendpatterns
 
 # Append custom plugin URLs (if plugin support is enabled)
 if settings.PLUGINS_ENABLED:
-    frontendpatterns.append(get_plugin_urls())
-
-urlpatterns = [
-    re_path('', include(frontendpatterns)),
-    re_path('', include(backendpatterns)),
-]
+    urlpatterns.append(get_plugin_urls())
 
 # Server running in "DEBUG" mode?
 if settings.DEBUG:
@@ -244,6 +244,11 @@ if settings.DEBUG:
         urlpatterns = [
             path('__debug__/', include(debug_toolbar.urls)),
         ] + urlpatterns
+
+# Redirect for favicon.ico
+urlpatterns.append(
+    path('favicon.ico', RedirectView.as_view(url=f'{settings.STATIC_URL}img/favicon/favicon.ico'))
+)
 
 # Send any unknown URLs to the parts page
 urlpatterns += [re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]

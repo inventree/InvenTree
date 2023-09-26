@@ -14,6 +14,7 @@ declare global {
       server_list: HostList;
       default_server: string;
       show_server_selector: boolean;
+      url_base: string;
       sentry_dsn?: string;
       environment?: string;
     };
@@ -55,13 +56,15 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
   });
 }
 
+export const url_base = window.INVENTREE_SETTINGS.url_base || 'platform';
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
 );
 
-// Redirect to /platform if on /
+// Redirect to base url if on /
 if (window.location.pathname === '/') {
-  window.location.replace('/platform');
+  window.location.replace(`/${url_base}`);
 }

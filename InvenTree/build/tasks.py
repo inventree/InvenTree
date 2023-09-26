@@ -24,6 +24,55 @@ import part.models as part_models
 logger = logging.getLogger('inventree')
 
 
+def update_build_order_lines(bom_item_pk: int):
+    """Update all BuildOrderLineItem objects which reference a particular BomItem.
+
+    This task is triggered when a BomItem is created or updated.
+    """
+
+    logger.info(f"Updating build order lines for BomItem {bom_item_pk}")
+
+    bom_item = part_models.BomItem.objects.filter(pk=bom_item_pk).first()
+
+    # If the BomItem has been deleted, there is nothing to do
+    if not bom_item:
+        return
+
+    assemblies = bom_item.get_assemblies()
+
+    # Find all active builds which reference any of the parts
+    builds = build.models.Build.objects.filter(
+        part__in=list(assemblies),
+        status__in=BuildStatusGroups.ACTIVE_CODES
+    )
+
+    # Iterate through each build, and update the relevant line items
+    for bo in builds:
+        # Try to find a matching build order line
+        line = build.models.BuildLine.objects.filter(
+            build=bo,
+            bom_item=bom_item,
+        ).first()
+
+        q = bom_item.get_required_quantity(bo.quantity)
+
+        if line:
+            # Ensure quantity is correct
+            if line.quantity != q:
+                line.quantity = q
+                line.save()
+        else:
+            # Create a new line item
+            build.models.BuildLine.objects.create(
+                build=bo,
+                bom_item=bom_item,
+                quantity=q,
+            )
+
+    if builds.count() > 0:
+        logger.info(f"Updated {builds.count()} build orders for part {bom_item.part}")
+
+
 def check_build_stock(build: build.models.Build):
     """Check the required stock for a newly created build order.
 

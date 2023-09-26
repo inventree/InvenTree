@@ -74,8 +74,20 @@ class MetaMixin(models.Model):
     )
 
 
-class EmptyURLValidator(URLValidator):
-    """Validator for filed with url - that can be empty."""
+class BaseURLValidator(URLValidator):
+    """Validator for the InvenTree base URL:
+
+    - Allow empty value
+    - Allow value without specified TLD (top level domain)
+    """
+
+    def __init__(self, schemes=None, **kwargs):
+        """Custom init routine"""
+
+        super().__init__(schemes, **kwargs)
+
+        # Override default host_re value - allow optional tld regex
+        self.host_re = '(' + self.hostname_re + self.domain_re + f'({self.tld_re})?' + '|localhost)'
 
     def __call__(self, value):
         """Make sure empty values pass."""
@@ -170,7 +182,7 @@ class BaseInvenTreeSetting(models.Model):
 
         do_cache = kwargs.pop('cache', True)
 
-        self.clean(**kwargs)
+        self.clean()
         self.validate_unique()
 
         # Execute before_save action
@@ -450,6 +462,9 @@ class BaseInvenTreeSetting(models.Model):
             **cls.get_filters(**kwargs),
         }
 
+        # Unless otherwise specified, attempt to create the setting
+        create = kwargs.pop('create', True)
+
         # Perform cache lookup by default
         do_cache = kwargs.pop('cache', True)
 
@@ -477,9 +492,6 @@ class BaseInvenTreeSetting(models.Model):
 
         # Setting does not exist! (Try to create it)
         if not setting:
-
-            # Unless otherwise specified, attempt to create the setting
-            create = kwargs.pop('create', True)
 
             # Prevent creation of new settings objects when importing data
             if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True, allow_shell=True):
@@ -604,7 +616,7 @@ class BaseInvenTreeSetting(models.Model):
         """Return units for setting."""
         return self.__class__.get_setting_units(self.key, **self.get_filters_for_instance())
 
-    def clean(self, **kwargs):
+    def clean(self):
         """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
         super().clean()
 
@@ -615,7 +627,7 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+        validator = self.__class__.get_setting_validator(self.key, **self.get_filters_for_instance())
 
         if validator is not None:
             self.run_validator(validator)
@@ -1018,7 +1030,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_BASE_URL': {
             'name': _('Base URL'),
             'description': _('Base URL for server instance'),
-            'validator': EmptyURLValidator(),
+            'validator': BaseURLValidator(),
             'default': '',
             'after_save': update_instance_url,
         },

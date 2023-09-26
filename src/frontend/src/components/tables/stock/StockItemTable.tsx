@@ -1,13 +1,14 @@
 import { t } from '@lingui/macro';
-import { Group } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { Text } from '@mantine/core';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { notYetImplemented } from '../../../functions/notifications';
-import { ActionButton } from '../../items/ActionButton';
+import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ThumbnailHoverCard } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
+import { RowAction } from '../RowActions';
 import { InvenTreeTable } from './../InvenTreeTable';
 
 /**
@@ -22,11 +23,12 @@ function stockItemTableColumns(): TableColumn[] {
       render: function (record: any) {
         let part = record.part_detail;
         return (
-          <ThumbnailHoverCard
-            src={part.thumbnail || part.image}
-            text={part.name}
-            link=""
-          />
+          <Text>{part.full_name}</Text>
+          // <ThumbnailHoverCard
+          //   src={part.thumbnail || part.image}
+          //   text={part.name}
+          //   link=""
+          // />
         );
       }
     },
@@ -65,7 +67,7 @@ function stockItemTableColumns(): TableColumn[] {
         // TODO: Custom renderer for location
         return record.location;
       }
-    },
+    }
     // TODO: stocktake column
     // TODO: expiry date
     // TODO: last updated
@@ -75,43 +77,7 @@ function stockItemTableColumns(): TableColumn[] {
     // TODO: stock value
     // TODO: packaging
     // TODO: notes
-    {
-      accessor: 'actions',
-      title: t`Actions`,
-      sortable: false,
-      render: function (record: any) {
-        return (
-          <Group position="right" spacing={5} noWrap={true}>
-            {/* {EditButton(setEditing, editing)} */}
-            {/* {DeleteButton()} */}
-            <ActionButton
-              color="green"
-              icon={<IconEdit />}
-              tooltip="Edit stock item"
-              onClick={() => notYetImplemented()}
-            />
-            <ActionButton
-              color="red"
-              tooltip="Delete stock item"
-              icon={<IconTrash />}
-              onClick={() => notYetImplemented()}
-            />
-          </Group>
-        );
-      }
-    }
   ];
-}
-
-/**
- * Return a set of parameters for the stock item table
- */
-function stockItemTableParams(params: any): any {
-  return {
-    ...params,
-    part_detail: true,
-    location_detail: true
-  };
 }
 
 /**
@@ -137,19 +103,43 @@ function stockItemTableFilters(): TableFilter[] {
  * Load a table of stock items
  */
 export function StockItemTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => stockItemTableParams(params), []);
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
+
+  const { tableKey, refreshTable } = useTableRefresh('stockitem');
+
+  function stockItemRowActions(record: any): RowAction[] {
+    let actions: RowAction[] = [];
+
+    actions.push({
+      title: t`Edit`,
+      onClick: () => {
+        notYetImplemented();
+      }
+    });
+
+    return actions;
+  }
+
+  const navigate = useNavigate();
 
   return (
     <InvenTreeTable
       url="stock/"
-      tableKey="stock-table"
-      enableDownload
-      enableSelection
-      params={tableParams}
+      tableKey={tableKey}
       columns={tableColumns}
-      customFilters={tableFilters}
+      props={{
+        enableDownload: true,
+        enableSelection: true,
+        customFilters: tableFilters,
+        rowActions: stockItemRowActions,
+        onRowClick: (record) => navigate(`/stock/item/${record.pk}`),
+        params: {
+          ...params,
+          part_detail: true,
+          location_detail: true
+        }
+      }}
     />
   );
 }

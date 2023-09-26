@@ -64,7 +64,7 @@ class AuthRequiredMiddleware(object):
             elif request.path_info.startswith('/accounts/'):
                 authorized = True
 
-            elif request.path_info.startswith('/platform/') or request.path_info.startswith('/assets/') or request.path_info == '/platform':
+            elif request.path_info.startswith(f'/{settings.PUI_URL_BASE}/') or request.path_info.startswith('/assets/') or request.path_info == f'/{settings.PUI_URL_BASE}':
                 authorized = True
 
             elif 'Authorization' in request.headers.keys() or 'authorization' in request.headers.keys():

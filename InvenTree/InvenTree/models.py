@@ -440,7 +440,8 @@ class InvenTreeAttachment(models.Model):
     An attachment can be either an uploaded file, or an external URL
 
     Attributes:
-        attachment: File
+        attachment: Upload file
+        link: External URL
         comment: String descriptor for the attachment
         user: User associated with file upload
         upload_date: Date the file was uploaded
@@ -563,6 +564,22 @@ class InvenTreeAttachment(models.Model):
             self.save()
         except Exception:
             raise ValidationError(_("Error renaming file"))
+
+    def fully_qualified_url(self):
+        """Return a 'fully qualified' URL for this attachment.
+
+        - If the attachment is a link to an external resource, return the link
+        - If the attachment is an uploaded file, return the fully qualified media URL
+        """
+
+        if self.link:
+            return self.link
+
+        if self.attachment:
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
+
+        return ''
 
 
 class InvenTreeTree(MPTTModel):
@@ -741,6 +758,24 @@ class InvenTreeTree(MPTTModel):
             List of category names from the top level to this category
         """
         return self.parentpath + [self]
+
+    def get_path(self):
+        """Return a list of element in the item tree.
+
+        Contains the full path to this item, with each entry containing the following data:
+
+        {
+            pk: <pk>,
+            name: <name>,
+        }
+        """
+
+        return [
+            {
+                'pk': item.pk,
+                'name': item.name
+            } for item in self.path
+        ]
 
     def __str__(self):
         """String representation of a category is the full path to that category."""
