@@ -1602,7 +1602,16 @@ class SalesOrderAllocation(models.Model):
 
         try:
             if self.line.part != self.item.part:
-                errors['item'] = _('Cannot allocate stock item to a line with a different part')
+                # Check for variant_of mapping on item.part to see if this trees up to line.part
+                matches = False
+                current_part = self.item.part
+                while current_part.variant_of is not None:
+                    current_part = current_part.variant_of
+                    if self.line.part == current_part:
+                        matches = True
+                        break
+                if not matches:
+                    errors['item'] = _('Cannot allocate stock item to a line with a different part')
         except PartModels.Part.DoesNotExist:
             errors['line'] = _('Cannot allocate stock to a line without a part')
 
