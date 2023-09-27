@@ -61,7 +61,7 @@ jobs:
         with:
           dev-install: true
       - name: Run flake8
-        run: flake8 InvenTree --extend-ignore=D
+        run: flake8 src/backend/InvenTree --extend-ignore=D
 
   javascript:
     name: Style - Classic UI [JS]
@@ -182,7 +182,7 @@ jobs:
         with:
           install: true
       - name: Run flake8
-        run: flake8 InvenTree --statistics
+        run: flake8 src/backend/InvenTree --statistics
 
   coverage:
     name: Tests - DB [SQLite] + Coverage
