@@ -1,11 +1,54 @@
 """Install a plugin into the python virtual environment"""
 
+import logging
+import re
 import subprocess
 import sys
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+
+logger = logging.getLogger('inventree')
+
+
+def check_package_path(packagename):
+    """Determine the install path of a particular package
+
+    - If installed, return the installation path
+    - If not installed, return False
+    """
+
+    python = sys.executable
+
+    command = [python, '-m', 'pip', 'show', packagename]
+
+    logger.info(f"check_package_path: {packagename}")
+
+    try:
+        result = subprocess.check_output(
+            command,
+            cwd=settings.BASE_DIR.parent,
+            stderr=subprocess.STDOUT,
+        )
+
+        output = result.decode('utf-8').split("\n")
+
+        for line in output:
+            # Check if line matches pattern "Location: ..."
+            match = re.match(r'^Location:\s+(.+)$', line.strip())
+
+            if match:
+                return match.group(1)
+
+    except subprocess.CalledProcessError as error:
+
+        output = error.output.decode('utf-8')
+        logger.error(f"Plugin installation failed: {output}")
+        return False
+
+    # If we get here, the package is not installed
+    return False
 
 
 def install_plugin(url, packagename=None, user=None):
@@ -14,8 +57,6 @@ def install_plugin(url, packagename=None, user=None):
     - A staff user account is required
     - We must detect that we are running within a virtual environment
     """
-
-    print("install_plugin:", url, packagename)
 
     if user and not user.is_staff:
         raise ValidationError(_("Permission denied: only staff users can install plugins"))
@@ -29,10 +70,12 @@ def install_plugin(url, packagename=None, user=None):
     # Determine python executable
     python = sys.executable
 
-    # Check that we are running in a virtual environment
-    print("executable:", python)
-    print("sys.prefix:", sys.prefix)
-    print("sys.base_prefix:", sys.base_prefix)
+    logger.info(f"install_plugin: {url}, {packagename}")
+
+    # Debug information, might be useful for working out edge cases
+    logger.debug(f"python executable: {python}")
+    logger.debug(f"base prefix: {sys.base_prefix}")
+    logger.debug(f"python path: {sys.path}")
 
     # build up the command
     install_name = []
@@ -66,9 +109,6 @@ def install_plugin(url, packagename=None, user=None):
 
     success = False
 
-    print("cmd:", command)
-    print("cwd:", settings.BASE_DIR.parent)
-
     # Execute installation via pip
     try:
         result = subprocess.check_output(
@@ -77,14 +117,20 @@ def install_plugin(url, packagename=None, user=None):
             stderr=subprocess.STDOUT,
         )
 
-        print("Result:", result)
+        ret['result'] = _("Installed plugin successfully")
+        ret['output'] = str(result, 'utf-8')
 
-        ret['result'] = str(result, 'utf-8')
-        ret['success'] = success = True
+        success = True
+
+        if path := check_package_path(packagename):
+            # Override result information
+            ret['result'] = _(f"Installed plugin into {path}")
+
     except subprocess.CalledProcessError as error:
         # If an error was thrown, we need to parse the output
 
         output = error.output.decode('utf-8')
+        logger.error(f"Plugin installation failed: {output}")
 
         errors = []
 
@@ -102,8 +148,6 @@ def install_plugin(url, packagename=None, user=None):
     if success:
         # TODO: save plugin to plugins file
         ...
-
-    print("success:", success)
 
     # Check for migrations
     # TODO: offload_task

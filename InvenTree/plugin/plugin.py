@@ -14,6 +14,7 @@ from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+from InvenTree.config import get_plugin_dir
 from plugin.helpers import get_git_log
 
 logger = logging.getLogger("inventree")
@@ -327,13 +328,25 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @classmethod
     def check_package_path(cls):
         """Path to the plugin."""
+
         if cls.check_is_package():
             return cls.__module__  # pragma: no cover
 
-        try:
-            return cls.file().relative_to(settings.BASE_DIR)
-        except ValueError:
-            return cls.file()
+        # Check potential relative paths
+        relative_paths = [
+            settings.BASE_DIR,
+            get_plugin_dir(),
+        ]
+
+        for path in relative_paths:
+            try:
+                rel_path = cls.file().relative_to(path)
+                return rel_path
+            except ValueError:
+                pass
+
+        # Fallback to cls path
+        return cls.file()
 
     @property
     def package_path(self):
