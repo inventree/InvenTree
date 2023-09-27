@@ -512,7 +512,7 @@ class BaseInvenTreeSetting(models.Model):
                     # Wrap this statement in "atomic", so it can be rolled back if it fails
                     with transaction.atomic():
                         setting.save(**kwargs)
-                except (IntegrityError, OperationalError):
+                except (IntegrityError, OperationalError, ProgrammingError):
                     # It might be the case that the database isn't created yet
                     pass
                 except ValidationError:
