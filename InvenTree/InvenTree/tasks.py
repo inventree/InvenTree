@@ -269,8 +269,9 @@ def scheduled_task(interval: str, minutes: int = None, tasklist: TaskRegister = 
 
     Example:
     ```python
-    @register(ScheduledTask.DAILY)
-    def my_custom_funciton():
+    @scheduled_task(ScheduledTask.DAILY)
+    def my_custom_function():
+        # Perform a custom function once per day
         ...
     ```
 
