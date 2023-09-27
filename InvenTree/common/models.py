@@ -31,7 +31,7 @@ from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     URLValidator)
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
-from django.db.utils import IntegrityError, OperationalError
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.timezone import now
@@ -487,7 +487,7 @@ class BaseInvenTreeSetting(models.Model):
             setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
-        except (IntegrityError, OperationalError):
+        except (IntegrityError, OperationalError, ProgrammingError):
             setting = None
 
         # Setting does not exist! (Try to create it)
