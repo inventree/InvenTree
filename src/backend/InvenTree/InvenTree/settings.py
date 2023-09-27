@@ -109,6 +109,14 @@ LOGGING = {
     },
 }
 
+# Optionally add database-level logging
+if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):
+    LOGGING['loggers'] = {
+        'django.db.backends': {
+            'level': log_level or 'DEBUG',
+        },
+    }
+
 # Get a logger instance for this setup file
 logger = logging.getLogger("inventree")
 
