@@ -49,6 +49,7 @@ function loadPluginTable(table, options={}) {
                 field: 'active',
                 title: '',
                 sortable: true,
+                switchable: false,
                 formatter: function(value, row) {
                     if (row.active) {
                         return `<span class='fa fa-check-circle icon-green' title='{% trans "This plugin is active" %}'></span>`;
@@ -108,6 +109,7 @@ function loadPluginTable(table, options={}) {
             {
                 field: 'actions',
                 title: '',
+                switchable: false,
                 formatter: function(value, row) {
                     let buttons = '';
 
