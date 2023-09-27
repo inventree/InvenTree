@@ -71,17 +71,33 @@ def install_plugin(url, packagename=None, user=None):
 
     # Execute installation via pip
     try:
-        result = subprocess.check_output(command, cwd=settings.BASE_DIR.parent)
+        result = subprocess.check_output(
+            command,
+            cwd=settings.BASE_DIR.parent,
+            stderr=subprocess.STDOUT,
+        )
 
         print("Result:", result)
 
         ret['result'] = str(result, 'utf-8')
         ret['success'] = success = True
     except subprocess.CalledProcessError as error:
-        ret['result'] = str(error.output, 'utf-8')
-        ret['error'] = True
+        # If an error was thrown, we need to parse the output
 
-        print("Error:", error.output)
+        output = error.output.decode('utf-8')
+
+        errors = []
+
+        for msg in output.split("\n"):
+            msg = msg.strip()
+
+            if msg:
+                errors.append(msg)
+
+        if len(errors) > 1:
+            raise ValidationError(errors)
+        else:
+            raise ValidationError(errors[0])
 
     if success:
         # TODO: save plugin to plugins file
