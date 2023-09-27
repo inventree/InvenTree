@@ -1701,7 +1701,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
-            'description': _('Enable plugins to add URL routes'),
+            'description': _('Allow plugins to add custom URL routes'),
             'default': False,
             'validator': bool,
             'requires_restart': True,
@@ -1709,7 +1709,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'ENABLE_PLUGINS_NAVIGATION': {
             'name': _('Enable navigation integration'),
-            'description': _('Enable plugins to integrate into navigation'),
+            'description': _('Allow plugins to integrate into navigation'),
             'default': False,
             'validator': bool,
             'requires_restart': True,
@@ -1717,7 +1717,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'ENABLE_PLUGINS_APP': {
             'name': _('Enable app integration'),
-            'description': _('Enable plugins to add apps'),
+            'description': _('Allow plugins to add custom apps or models'),
             'default': False,
             'validator': bool,
             'requires_restart': True,
@@ -1725,7 +1725,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'ENABLE_PLUGINS_SCHEDULE': {
             'name': _('Enable schedule integration'),
-            'description': _('Enable plugins to run scheduled tasks'),
+            'description': _('Allow plugins to run custom scheduled tasks'),
             'default': False,
             'validator': bool,
             'requires_restart': True,
@@ -1733,7 +1733,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'ENABLE_PLUGINS_EVENTS': {
             'name': _('Enable event integration'),
-            'description': _('Enable plugins to respond to internal events'),
+            'description': _('Allow plugins to respond to internal events'),
             'default': False,
             'validator': bool,
             'requires_restart': True,
