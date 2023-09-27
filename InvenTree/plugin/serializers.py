@@ -122,38 +122,6 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
         return install_plugin(url, packagename=packagename)
 
-        """
-        command = 'python -m pip install'.split()
-        command.extend(install_name)
-        ret = {'command': ' '.join(command)}
-        success = False
-        # execute pypi
-        try:
-            result = subprocess.check_output(command, cwd=settings.BASE_DIR.parent)
-            ret['result'] = str(result, 'utf-8')
-            ret['success'] = True
-            success = True
-        except subprocess.CalledProcessError as error:  # pragma: no cover
-            ret['result'] = str(error.output, 'utf-8')
-            ret['error'] = True
-
-        # save plugin to plugin_file if installed successful
-        if success:
-            # Read content of plugin file
-            plg_lines = open(settings.PLUGIN_FILE).readlines()
-            with open(settings.PLUGIN_FILE, "a") as plugin_file:
-                # Check if last line has a newline
-                if plg_lines[-1][-1:] != '\n':
-                    plugin_file.write('\n')
-                # Write new plugin to file
-                plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
-
-        # Check for migrations
-        offload_task(check_for_migrations, worker=True)
-
-        return ret
-        """
-
 
 class PluginConfigEmptySerializer(serializers.Serializer):
     """Serializer for a PluginConfig."""
