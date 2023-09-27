@@ -958,6 +958,9 @@ MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.StaticStorageBackend
 # Are plugins enabled?
 PLUGINS_ENABLED = get_boolean_setting('INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False)
 
+# Are sample plugins enabled?
+PLUGINS_SAMPLES = get_boolean_setting('INVENTREE_PLUGINS_SAMPLES', 'plugins_samples', False)
+
 PLUGIN_FILE = config.get_plugin_file()
 
 # Plugin test settings
