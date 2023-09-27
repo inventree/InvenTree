@@ -182,8 +182,11 @@ class LabelConfig(AppConfig):
             shutil.copyfile(src_file, dst_file)
 
         # Check if a label matching the template already exists
-        if model.objects.filter(label=filename).exists():
-            return  # pragma: no cover
+        try:
+            if model.objects.filter(label=filename).exists():
+                return  # pragma: no cover
+        except Exception:
+            logger.error(f"Failed to query label for '{filename}' - you should run 'invoke update' first!")
 
         logger.info(f"Creating entry for {model} '{label['name']}'")
 

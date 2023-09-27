@@ -55,12 +55,15 @@ class PartConfig(AppConfig):
         if isImportingData():
             return
 
-        items = PartPricing.objects.filter(scheduled_for_update=True)
+        try:
+            items = PartPricing.objects.filter(scheduled_for_update=True)
 
-        if items.count() > 0:
-            # Find any pricing objects which have the 'scheduled_for_update' flag set
-            print(f"Resetting update flags for {items.count()} pricing objects...")
+            if items.count() > 0:
+                # Find any pricing objects which have the 'scheduled_for_update' flag set
+                logger.info(f"Resetting update flags for {items.count()} pricing objects...")
 
-            for pricing in items:
-                pricing.scheduled_for_update = False
-                pricing.save()
+                for pricing in items:
+                    pricing.scheduled_for_update = False
+                    pricing.save()
+        except Exception:
+            logger.error("Failed to reset pricing flags - database not ready")
