@@ -148,13 +148,14 @@ def install_plugin(url, packagename=None, user=None):
     if user and not user.is_staff:
         raise ValidationError(_("Permission denied: only staff users can install plugins"))
 
+    logger.info(f"install_plugin: {url}, {packagename}")
+
     # Check if we are running in a virtual environment
+    # For now, just log a warning
     in_venv = sys.prefix != sys.base_prefix
 
     if not in_venv:
-        raise ValidationError(_("Cannot install plugin: not running in a virtual environment"))
-
-    logger.info(f"install_plugin: {url}, {packagename}")
+        logger.warning("InvenTree is not running in a virtual environment")
 
     # build up the command
     install_name = []
