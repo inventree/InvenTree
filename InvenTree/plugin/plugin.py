@@ -329,9 +329,6 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     def check_package_path(cls):
         """Path to the plugin."""
 
-        if cls.check_is_package():
-            return cls.__module__  # pragma: no cover
-
         # Check potential relative paths
         relative_paths = [
             settings.BASE_DIR,
@@ -344,6 +341,10 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
                 return rel_path
             except ValueError:
                 pass
+
+        # Return class package path
+        if cls.check_is_package():
+            return cls.__module__  # pragma: no cover
 
         # Fallback to cls path
         return cls.file()

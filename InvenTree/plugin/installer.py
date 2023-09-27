@@ -12,6 +12,31 @@ from django.utils.translation import gettext_lazy as _
 logger = logging.getLogger('inventree')
 
 
+def pip_command(*args):
+    """Build and run a pip command using using the current python executable
+
+    returns: subprocess.check_output
+    throws: subprocess.CalledProcessError
+    """
+
+    python = sys.executable
+
+    command = [python, '-m', 'pip']
+    command.extend(args)
+
+    logger.info(f"running pip command: {' '.join(command)}")
+
+    # Debug information, might be useful for working out edge cases
+    logger.debug(f"base prefix: {sys.base_prefix}")
+    logger.debug(f"python path: {sys.path}")
+
+    return subprocess.check_output(
+        command,
+        cwd=settings.BASE_DIR.parent,
+        stderr=subprocess.STDOUT,
+    )
+
+
 def check_package_path(packagename):
     """Determine the install path of a particular package
 
@@ -19,18 +44,10 @@ def check_package_path(packagename):
     - If not installed, return False
     """
 
-    python = sys.executable
-
-    command = [python, '-m', 'pip', 'show', packagename]
-
     logger.info(f"check_package_path: {packagename}")
 
     try:
-        result = subprocess.check_output(
-            command,
-            cwd=settings.BASE_DIR.parent,
-            stderr=subprocess.STDOUT,
-        )
+        result = pip_command('show', packagename)
 
         output = result.decode('utf-8').split("\n")
 
@@ -67,15 +84,7 @@ def install_plugin(url, packagename=None, user=None):
     if not in_venv:
         raise ValidationError(_("Cannot install plugin: not running in a virtual environment"))
 
-    # Determine python executable
-    python = sys.executable
-
     logger.info(f"install_plugin: {url}, {packagename}")
-
-    # Debug information, might be useful for working out edge cases
-    logger.debug(f"python executable: {python}")
-    logger.debug(f"base prefix: {sys.base_prefix}")
-    logger.debug(f"python path: {sys.path}")
 
     # build up the command
     install_name = []
@@ -100,27 +109,14 @@ def install_plugin(url, packagename=None, user=None):
         # use pypi
         install_name.append(packagename)
 
-    command = [python, '-m', 'pip', 'install']
-    command.extend(install_name)
-
-    ret = {
-        'command': ' '.join(command),
-    }
-
-    success = False
+    ret = {}
 
     # Execute installation via pip
     try:
-        result = subprocess.check_output(
-            command,
-            cwd=settings.BASE_DIR.parent,
-            stderr=subprocess.STDOUT,
-        )
+        result = pip_command('install', *install_name)
 
         ret['result'] = _("Installed plugin successfully")
         ret['output'] = str(result, 'utf-8')
-
-        success = True
 
         if path := check_package_path(packagename):
             # Override result information
@@ -145,9 +141,9 @@ def install_plugin(url, packagename=None, user=None):
         else:
             raise ValidationError(errors[0])
 
-    if success:
-        # TODO: save plugin to plugins file
-        ...
+    # TODO: save plugin to plugins file
+
+    # TODO: run migrations for this plugin
 
     # Check for migrations
     # TODO: offload_task
