@@ -65,13 +65,9 @@ function loadPluginTable(table, options={}) {
                 formatter: function(value, row) {
                     let html = '';
 
-                    if (row.active) {
-                        html += `<strong>${value}</strong>`;
-                        if (row.meta && row.meta.description) {
-                            html += ` - <small>${row.meta.description}</small>`;
-                        }
-                    } else {
-                        html += `<em>${value}</em>`;
+                    html += `<strong>${value}</strong>`;
+                    if (row.meta && row.meta.description) {
+                        html += ` - <small>${row.meta.description}</small>`;
                     }
 
                     if (row.is_builtin) {
@@ -119,6 +115,11 @@ function loadPluginTable(table, options={}) {
                             buttons += makeIconButton('fa-stop-circle icon-red', 'btn-plugin-disable', row.pk, '{% trans "Disable Plugin" %}');
                         } else {
                             buttons += makeIconButton('fa-play-circle icon-green', 'btn-plugin-enable', row.pk, '{% trans "Enable Plugin" %}');
+
+                            // Add a button to uninstall the plugin (only if installed via PIP)
+                            if (row.meta && !row.meta.package_path.endsWith('.py')) {
+                                buttons += makeIconButton('fa-trash-alt icon-red', 'btn-plugin-uninstall', row.pk, '{% trans "Uninstall Plugin" %}');
+                            }
                         }
                     }
 

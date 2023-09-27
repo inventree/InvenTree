@@ -76,15 +76,16 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         # Append settings from registry
         plugin = registry.plugins_full.get(self.key, None)
 
-        def get_plugin_meta(name):
+        # Check for uninstantiated plugin (inactive)
+        if plugin is not None and type(plugin) is type:
+            # To extract metadata, create an instance of the plugin
+            plugin = plugin()
+
+        def get_plugin_meta(plugin, name):
             """Return a meta-value associated with this plugin"""
 
             # Ignore if the plugin config is not defined
             if not plugin:
-                return None
-
-            # Ignore if the plugin is not active
-            if not self.active:
                 return None
 
             result = getattr(plugin, name, None)
@@ -95,9 +96,11 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             return result
 
         self.meta = {
-            key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',
-                                                  'pub_date', 'version', 'website', 'license',
-                                                  'package_path', 'settings_url', ]
+            key: get_plugin_meta(plugin, key) for key in [
+                'slug', 'human_name', 'description', 'author',
+                'pub_date', 'version', 'website', 'license',
+                'package_path', 'settings_url'
+            ]
         }
 
         # Save plugin
