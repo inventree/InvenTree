@@ -1,16 +1,12 @@
 """JSON serializers for plugin app."""
 
-import subprocess
-
-from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
-from InvenTree.tasks import check_for_migrations, offload_task
+from plugin.installer import install_plugin
 from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
 
 
@@ -124,29 +120,9 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         packagename = data.get('packagename', '')
         url = data.get('url', '')
 
-        # build up the command
-        install_name = []
+        return install_plugin(url, packagename=packagename)
 
-        if url:
-            # use custom registration / VCS
-            if True in [identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn', ]]:
-                # using a VCS provider
-                if packagename:
-                    install_name.append(f'{packagename}@{url}')
-                else:
-                    install_name.append(url)
-            else:  # pragma: no cover
-                # using a custom package repositories
-                # This is only for pypa compliant directory services (all current are tested above)
-                # and not covered by tests.
-                install_name.append('-i')
-                install_name.append(url)
-                install_name.append(packagename)
-
-        elif packagename:
-            # use pypi
-            install_name.append(packagename)
-
+        """
         command = 'python -m pip install'.split()
         command.extend(install_name)
         ret = {'command': ' '.join(command)}
@@ -176,6 +152,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         offload_task(check_for_migrations, worker=True)
 
         return ret
+        """
 
 
 class PluginConfigEmptySerializer(serializers.Serializer):

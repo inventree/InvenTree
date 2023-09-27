@@ -60,15 +60,14 @@
 
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
+  "containerUser": "vscode",
   "features": {
     "git": "os-provided",
     "github-cli": "latest"
   },
 
   "remoteEnv": {
-    // InvenTree config
-    "INVENTREE_DEBUG": "True",
-    "INVENTREE_LOG_LEVEL": "INFO",
+    // InvenTree config (note that other settings can be edited in the dev/config.yaml file)
     "INVENTREE_DB_ENGINE": "sqlite3",
     "INVENTREE_DB_NAME": "${containerWorkspaceFolder}/dev/database.sqlite3",
     "INVENTREE_MEDIA_ROOT": "${containerWorkspaceFolder}/dev/media",
