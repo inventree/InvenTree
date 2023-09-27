@@ -1,6 +1,7 @@
 """Install a plugin into the python virtual environment"""
 
 import logging
+import os
 import re
 import subprocess
 import sys
@@ -66,6 +67,75 @@ def check_package_path(packagename):
 
     # If we get here, the package is not installed
     return False
+
+
+def install_plugins_file():
+    """Install plugins from the plugins file"""
+
+    logger.info("Installing plugins from plugins file")
+
+    pf = settings.PLUGIN_FILE
+
+    if not os.path.exists(pf):
+        logger.warning(f"Plugin file {pf} does not exist")
+        return
+
+    pf = os.path.abspath(pf)
+
+    try:
+        pip_command('install', '-U', '-r', pf)
+    except subprocess.CalledProcessError as error:
+        output = error.output.decode('utf-8')
+        logger.error(f"Plugin installation failed: {output}")
+        return False
+    except Exception as exc:
+        logger.error(f"Plugin installation failed: {str(exc)}")
+        return False
+
+    # At this point, the plugins file has been installed
+    return True
+
+
+def add_plugin_to_file(install_name):
+    """Add a plugin to the plugins file"""
+
+    logger.info(f"Adding plugin to plugins file: {install_name}")
+
+    pf = settings.PLUGIN_FILE
+
+    if not os.path.exists(pf):
+        logger.warning(f"Plugin file {pf} does not exist")
+        return
+
+    pf = os.path.abspath(pf)
+
+    # First, read in existing plugin file
+    try:
+        with open(pf, 'r') as f:
+            lines = f.readlines()
+    except Exception as exc:
+        logger.error(f"Failed to read plugins file: {str(exc)}")
+        return
+
+    # Check if plugin is already in file
+    for line in lines:
+        if line.strip() == install_name:
+            logger.info("Plugin already exists in file")
+            return
+
+    # Append plugin to file
+    lines.append(f'{install_name}')
+
+    # Write file back to disk
+    try:
+        with open(pf, 'w') as f:
+            for line in lines:
+                f.write(line)
+
+                if not line.endswith('\n'):
+                    f.write('\n')
+    except Exception as exc:
+        logger.error(f"Failed to add plugin to plugins file: {str(exc)}")
 
 
 def install_plugin(url, packagename=None, user=None):
@@ -141,7 +211,8 @@ def install_plugin(url, packagename=None, user=None):
         else:
             raise ValidationError(errors[0])
 
-    # TODO: save plugin to plugins file
+    # Save plugin to plugins file
+    add_plugin_to_file(' '.join(install_name))
 
     # TODO: run migrations for this plugin
 
