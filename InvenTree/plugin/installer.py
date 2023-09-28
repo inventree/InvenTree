@@ -62,7 +62,7 @@ def check_package_path(packagename):
     except subprocess.CalledProcessError as error:
 
         output = error.output.decode('utf-8')
-        logger.error(f"Plugin installation failed: {output}")
+        logger.error(f"Plugin lookup failed: {output}")
         return False
 
     # If we get here, the package is not installed
@@ -86,10 +86,10 @@ def install_plugins_file():
         pip_command('install', '-U', '-r', pf)
     except subprocess.CalledProcessError as error:
         output = error.output.decode('utf-8')
-        logger.error(f"Plugin installation failed: {output}")
+        logger.error(f"Plugin file installation failed: {output}")
         return False
     except Exception as exc:
-        logger.error(f"Plugin installation failed: {str(exc)}")
+        logger.error(f"Plugin file installation failed: {str(exc)}")
         return False
 
     # At this point, the plugins file has been installed
