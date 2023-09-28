@@ -231,8 +231,8 @@ class PluginsRegistry:
         if settings.PLUGINS_ENABLED:
             # Any 'external' plugins are only loaded if PLUGINS_ENABLED is set to True
 
-            if settings.TESTING or settings.PLUGINS_SAMPLES:
-                # If in TEST mode, or sample plugins are enabled, load plugins from the 'samples' directory
+            if settings.TESTING or settings.DEBUG:
+                # If in TEST mode, or DEBUG mode, load plugins from the 'samples' directory
                 dirs.append('plugin.samples')
 
             if settings.TESTING:
