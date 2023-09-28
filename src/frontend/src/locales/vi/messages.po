@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-27 04:32\n"
+"PO-Revision-Date: 2023-09-28 05:05\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -831,7 +831,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:146
 #: src/defaults/dashboardItems.tsx:41
 msgid "Low Stock"
-msgstr ""
+msgstr "Còn ít hàng"
 
 #: src/components/tables/part/PartTable.tsx:147
 msgid "Filter by parts which have low stock"
@@ -839,7 +839,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:152
 msgid "Purchaseable"
-msgstr ""
+msgstr "Có thể mua"
 
 #: src/components/tables/part/PartTable.tsx:153
 msgid "Filter by parts which are purchaseable"
@@ -847,7 +847,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:158
 msgid "Salable"
-msgstr ""
+msgstr "Có thể bán"
 
 #: src/components/tables/part/PartTable.tsx:159
 msgid "Filter by parts which are salable"
@@ -856,7 +856,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:164
 #: src/components/tables/part/PartTable.tsx:168
 msgid "Virtual"
-msgstr ""
+msgstr "Ảo"
 
 #: src/components/tables/part/PartTable.tsx:165
 msgid "Filter by parts which are virtual"
@@ -864,7 +864,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:169
 msgid "Not Virtual"
-msgstr ""
+msgstr "Không ảo"
 
 #: src/components/tables/part/PartTable.tsx:211
 msgid "Detail"
@@ -900,7 +900,7 @@ msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:59
 msgid "Batch"
-msgstr ""
+msgstr "Lệnh gộp"
 
 #: src/components/tables/stock/StockItemTable.tsx:65
 msgid "Location"
@@ -916,11 +916,11 @@ msgstr ""
 
 #: src/components/tables/stock/StockLocationTable.tsx:43
 msgid "Structural"
-msgstr ""
+msgstr "Cấu trúc"
 
 #: src/components/tables/stock/StockLocationTable.tsx:51
 msgid "External"
-msgstr ""
+msgstr "Bên ngoài"
 
 #: src/components/widgets/DisplayWidget.tsx:11
 #: src/pages/Index/Profile/UserPanel.tsx:137
@@ -1091,7 +1091,7 @@ msgstr "Xây dựng"
 #: src/defaults/menuItems.tsx:32
 #: src/pages/Index/Playground.tsx:87
 msgid "Playground"
-msgstr ""
+msgstr "Sân chơi"
 
 #: src/defaults/links.tsx:45
 msgid "Getting Started"
@@ -1111,11 +1111,11 @@ msgstr "Tài liệu InvenTree API"
 
 #: src/defaults/links.tsx:58
 msgid "Developer Manual"
-msgstr ""
+msgstr "Sổ tay lập trình"
 
 #: src/defaults/links.tsx:59
 msgid "InvenTree developer manual"
-msgstr ""
+msgstr "Sổ tay lập trình InvenTree"
 
 #: src/defaults/links.tsx:64
 msgid "FAQ"
@@ -1123,11 +1123,11 @@ msgstr "Câu hỏi thường gặp"
 
 #: src/defaults/links.tsx:65
 msgid "Frequently asked questions"
-msgstr ""
+msgstr "Câu hỏi thường gặp"
 
 #: src/defaults/links.tsx:74
 msgid "Instance"
-msgstr ""
+msgstr "Thực thể"
 
 #: src/defaults/links.tsx:75
 msgid "About this Inventree instance"
@@ -1326,23 +1326,23 @@ msgstr ""
 
 #: src/functions/forms/PartForms.tsx:76
 msgid "Create Part"
-msgstr ""
+msgstr "Tạo phụ kiện"
 
 #: src/functions/forms/PartForms.tsx:78
 msgid "Part created"
-msgstr ""
+msgstr "Phụ kiện đã tạo"
 
 #: src/functions/forms/PartForms.tsx:96
 msgid "Edit Part"
-msgstr ""
+msgstr "Sửa phụ kiện"
 
 #: src/functions/forms/PartForms.tsx:99
 msgid "Part updated"
-msgstr ""
+msgstr "Phụ kiện đã cập nhật"
 
 #: src/functions/forms/PartForms.tsx:111
 msgid "Parent part category"
-msgstr ""
+msgstr "Danh mục phụ kiện cha"
 
 #: src/functions/forms/StockForms.tsx:44
 msgid "Add given quantity as packs instead of individual items"
@@ -1354,7 +1354,7 @@ msgstr ""
 
 #: src/functions/forms/StockForms.tsx:58
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Số sê-ri"
 
 #: src/functions/forms/StockForms.tsx:59
 msgid "Enter serial numbers for new stock (or leave blank)"
@@ -1674,11 +1674,11 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:236
 msgid "Count"
-msgstr ""
+msgstr "Đếm"
 
 #: src/pages/Index/Scan.tsx:250
 msgid "Scan Page"
-msgstr ""
+msgstr "Quét trang"
 
 #: src/pages/Index/Scan.tsx:253
 msgid "This page can be used for continuously scanning items and taking actions on them."
@@ -1714,11 +1714,11 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:300
 msgid "General Actions"
-msgstr ""
+msgstr "Chức năng chung"
 
 #: src/pages/Index/Scan.tsx:313
 msgid "Lookup part"
-msgstr ""
+msgstr "Tra cứu phụ kiện"
 
 #: src/pages/Index/Scan.tsx:320
 msgid "Open Link"
@@ -1726,7 +1726,7 @@ msgstr "Mở liên kết"
 
 #: src/pages/Index/Scan.tsx:335
 msgid "History is locally kept in this browser."
-msgstr ""
+msgstr "Lịch sử được lưu tạm trên trình duyệt của máy này."
 
 #: src/pages/Index/Scan.tsx:336
 msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
