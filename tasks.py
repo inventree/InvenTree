@@ -165,20 +165,20 @@ def plugins(c):
 @task(post=[plugins])
 def install(c):
     """Installs required python packages."""
-    print("Installing required python packages from 'requirements.txt'")
+    print("Installing required python packages from 'src/backend/requirements.txt'")
 
     # Install required Python packages with PIP
     c.run('pip3 install --upgrade pip')
-    c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
+    c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r src/backend/requirements.txt')
 
 
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
     """Sets up everything needed for the dev environment."""
-    print("Installing required python packages from 'requirements-dev.txt'")
+    print("Installing required python packages from 'src/backend/requirements-dev.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install -U -r requirements-dev.txt')
+    c.run('pip3 install -U -r src/backend/requirements-dev.txt')
 
     # Install pre-commit hook
     print("Installing pre-commit for checks before git commits...")
