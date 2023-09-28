@@ -51,7 +51,7 @@ def to_dict(value):
     try:
         return json.loads(value)
     except Exception as error:
-        logger.error(f"Failed to parse value '{value}' as JSON with error {error}. Ensure value is a valid JSON string.")
+        logger.exception("Failed to parse value '%s' as JSON with error %s. Ensure value is a valid JSON string.", value, error)
     return {}
 
 
@@ -159,7 +159,7 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
                 set_metadata(source)
                 return val
             except Exception as error:
-                logger.error(f"Failed to typecast '{env_var}' with value '{value}' to type '{typecast}' with error {error}")
+                logger.exception("Failed to typecast '%s' with value '%s' to type '%s' with error %s", env_var, value, typecast, error)
 
         set_metadata(source)
         return value
@@ -272,7 +272,7 @@ def get_plugin_file():
 
     if not plugin_file.exists():
         logger.warning("Plugin configuration file does not exist - creating default file")
-        logger.info(f"Creating plugin file at '{plugin_file}'")
+        logger.info("Creating plugin file at '%s'", plugin_file)
         ensure_dir(plugin_file.parent)
 
         # If opening the file fails (no write permission, for example), then this will throw an error
@@ -311,7 +311,7 @@ def get_secret_key():
         secret_key_file = get_base_dir().joinpath("secret_key.txt").resolve()
 
     if not secret_key_file.exists():
-        logger.info(f"Generating random key file at '{secret_key_file}'")
+        logger.info("Generating random key file at '%s'", secret_key_file)
         ensure_dir(secret_key_file.parent)
 
         # Create a random key file
@@ -319,7 +319,7 @@ def get_secret_key():
         key = ''.join([random.choice(options) for i in range(100)])
         secret_key_file.write_text(key)
 
-    logger.info(f"Loading SECRET_KEY from '{secret_key_file}'")
+    logger.info("Loading SECRET_KEY from '%s'", secret_key_file)
 
     key_data = secret_key_file.read_text().strip()
 
@@ -342,12 +342,12 @@ def get_custom_file(env_ref: str, conf_ref: str, log_ref: str, lookup_media: boo
     static_storage = StaticFilesStorage()
 
     if static_storage.exists(value):
-        logger.info(f"Loading {log_ref} from static directory: {value}")
+        logger.info("Loading %s from %s directory: %s", log_ref, 'static', value)
     elif lookup_media and default_storage.exists(value):
-        logger.info(f"Loading {log_ref} from media directory: {value}")
+        logger.info("Loading %s from %s directory: %s", log_ref, 'media', value)
     else:
         add_dir_str = ' or media' if lookup_media else ''
-        logger.warning(f"The {log_ref} file '{value}' could not be found in the static{add_dir_str} directories")
+        logger.warning("The %s file '%s' could not be found in the static %s directories", log_ref, value, add_dir_str)
         value = False
 
     return value

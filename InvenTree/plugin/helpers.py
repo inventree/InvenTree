@@ -209,7 +209,7 @@ def render_template(plugin, template_file, context=None):
     try:
         tmp = template.loader.get_template(template_file)
     except template.TemplateDoesNotExist:
-        logger.error(f"Plugin {plugin.slug} could not locate template '{template_file}'")
+        logger.exception("Plugin %s could not locate template '%s'", plugin.slug, template_file)
 
         return f"""
         <div class='alert alert-block alert-danger'>

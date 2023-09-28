@@ -55,7 +55,7 @@ def reload_unit_registry():
             try:
                 reg.define(cu.fmt_string())
             except Exception as e:
-                logger.error(f'Failed to load custom unit: {cu.fmt_string()} - {e}')
+                logger.exception('Failed to load custom unit: %s - %s', cu.fmt_string(), e)
 
         # Once custom units are loaded, save registry
         _unit_registry = reg
@@ -65,7 +65,7 @@ def reload_unit_registry():
         pass
 
     dt = time.time() - t_start
-    logger.debug(f'Loaded unit registry in {dt:.3f}s')
+    logger.debug('Loaded unit registry in %s.3f s', dt)
 
     return reg
 

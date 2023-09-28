@@ -465,7 +465,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                     n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
 
                     if n_refs == 0:
-                        logger.info(f"Deleting unused image file '{previous.image}'")
+                        logger.info("Deleting unused image file '%s'", previous.image)
                         previous.image.delete(save=False)
             except Part.DoesNotExist:
                 pass
@@ -748,7 +748,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         except Exception as attr_err:
 
-            logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
+            logger.warning("exception while trying to create full name for part %s: %s", self.name, attr_err)
 
             # Fallback to default format
             elements = []
@@ -1858,7 +1858,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         for item in self.get_bom_items().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
-                logger.warning(f"WARNING: BomItem ID {item.pk} contains itself in BOM")
+                logger.warning("WARNING: BomItem ID %s contains itself in BOM", item.pk)
                 continue
 
             q = decimal.Decimal(quantity)
@@ -2373,7 +2373,7 @@ class PartPricing(common.models.MetaMixin):
         try:
             result = convert_money(money, target_currency)
         except MissingRate:
-            logger.warning(f"No currency conversion rate available for {money.currency} -> {target_currency}")
+            logger.warning("No currency conversion rate available for %s -> %s", money.currency, target_currency)
             result = None
 
         return result
@@ -2404,7 +2404,7 @@ class PartPricing(common.models.MetaMixin):
                 self.refresh_from_db()
         except (PartPricing.DoesNotExist, IntegrityError):
             # Error thrown if this PartPricing instance has already been removed
-            logger.warning(f"Error refreshing PartPricing instance for part '{self.part}'")
+            logger.warning("Error refreshing PartPricing instance for part '%s'", self.part)
             return
 
         # Ensure that the referenced part still exists in the database
@@ -2412,12 +2412,12 @@ class PartPricing(common.models.MetaMixin):
             p = self.part
             p.refresh_from_db()
         except IntegrityError:
-            logger.error(f"Could not update PartPricing as Part '{self.part}' does not exist")
+            logger.exception("Could not update PartPricing as Part '%s' does not exist", self.part)
             return
 
         if self.scheduled_for_update:
             # Ignore if the pricing is already scheduled to be updated
-            logger.debug(f"Pricing for {p} already scheduled for update - skipping")
+            logger.debug("Pricing for %s already scheduled for update - skipping", p)
             return
 
         if counter > 25:
@@ -2430,7 +2430,7 @@ class PartPricing(common.models.MetaMixin):
             self.save()
         except IntegrityError:
             # An IntegrityError here likely indicates that the referenced part has already been deleted
-            logger.error(f"Could not save PartPricing for part '{self.part}' to the database")
+            logger.exception("Could not save PartPricing for part '%s' to the database", self.part)
             return
 
         import part.tasks as part_tasks
