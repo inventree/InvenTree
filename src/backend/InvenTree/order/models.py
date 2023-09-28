@@ -135,7 +135,7 @@ class TotalPriceMixin(models.Model):
                 kind, info, data = sys.exc_info()
 
                 log_error('order.calculate_total_price')
-                logger.error(f"Missing exchange rate for '{target_currency}'")
+                logger.exception("Missing exchange rate for '%s'", target_currency)
 
                 # Return None to indicate the calculated price is invalid
                 return None
@@ -152,7 +152,7 @@ class TotalPriceMixin(models.Model):
                 # Record the error, try to press on
 
                 log_error('order.calculate_total_price')
-                logger.error(f"Missing exchange rate for '{target_currency}'")
+                logger.exception("Missing exchange rate for '%s'", target_currency)
 
                 # Return None to indicate the calculated price is invalid
                 return None
