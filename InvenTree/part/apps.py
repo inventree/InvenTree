@@ -60,10 +60,10 @@ class PartConfig(AppConfig):
 
             if items.count() > 0:
                 # Find any pricing objects which have the 'scheduled_for_update' flag set
-                logger.info("Resetting update flags for %s pricing objects...", items.count())
+                logger.info(f"Resetting update flags for {items.count()} pricing objects...")
 
                 for pricing in items:
                     pricing.scheduled_for_update = False
                     pricing.save()
         except Exception:
-            logger.exception("Failed to reset pricing flags - database not ready")
+            logger.error("Failed to reset pricing flags - database not ready")
