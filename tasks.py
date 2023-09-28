@@ -254,7 +254,7 @@ def translate_stats(c):
     except Exception:
         print("WARNING: Translation files could not be compiled:")
 
-    path = Path('InvenTree', 'script', 'translation_stats.py')
+    path = Path('src', 'backend', 'InvenTree', 'script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
 
