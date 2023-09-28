@@ -186,7 +186,7 @@ class LabelConfig(AppConfig):
             if model.objects.filter(label=filename).exists():
                 return  # pragma: no cover
         except Exception:
-            logger.error(f"Failed to query label for '{filename}' - you should run 'invoke update' first!")
+            logger.exception("Failed to query label for '%s' - you should run 'invoke update' first!", filename)
 
         logger.info("Creating entry for %s '%s'", model, label['name'])
 
