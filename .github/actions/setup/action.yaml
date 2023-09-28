@@ -62,6 +62,7 @@ runs:
         with:
           node-version: ${{ env.node_version }}
           cache: 'npm'
+          cache-dependency-path: src/backend/package-lock.json
       - name: Install npm packages
         if: ${{ inputs.npm == 'true' }}
         shell: bash
