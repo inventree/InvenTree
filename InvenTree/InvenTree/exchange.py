@@ -15,19 +15,19 @@ from common.settings import currency_code_default, currency_codes
 class InvenTreeExchange(SimpleExchangeBackend):
     """Backend for automatically updating currency exchange rates.
 
-    Uses the `exchangerate.host` service API
+    Uses the `frankfurter.app` service API
     """
 
-    name = "InvenTreeExchange"
+    name = "InvenTreeExchange-frankfurter"
 
     def __init__(self):
         """Set API url."""
-        self.url = "https://api.exchangerate.host/latest"
+        self.url = "https://api.frankfurter.app/latest"
 
         super().__init__()
 
     def get_params(self):
-        """Placeholder to set API key. Currently not required by `exchangerate.host`."""
+        """Placeholder to set API key. Currently not required by `frankfurter.app`."""
         # No API key is required
         return {
         }
