@@ -152,7 +152,7 @@ def check_file_existance(filename: str, overwrite: bool = False):
 @task
 def plugins(c):
     """Installs all plugins as specified in 'plugins.txt'."""
-    from InvenTree.InvenTree.config import get_plugin_file
+    from src.backend.InvenTree.InvenTree.config import get_plugin_file
 
     plugin_file = get_plugin_file()
 
@@ -691,7 +691,7 @@ def test(c, disable_pty=False, runtest='', migrations=False, report=False, cover
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing environment."""
 
-    from InvenTree.InvenTree.config import get_media_dir
+    from src.backend.InvenTree.InvenTree.config import get_media_dir
 
     if not ignore_update:
         update(c)
