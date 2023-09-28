@@ -1,12 +1,10 @@
-"""Exchangerate backend to use `exchangerate.host` to get rates."""
+"""Exchangerate backend to use `frankfurter.app` to get rates."""
 
-import ssl
 from urllib.error import URLError
-from urllib.request import urlopen
 
 from django.db.utils import OperationalError
 
-import certifi
+import requests
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 
 from common.settings import currency_code_default, currency_codes
@@ -40,9 +38,8 @@ class InvenTreeExchange(SimpleExchangeBackend):
         url = self.get_url(**kwargs)
 
         try:
-            context = ssl.create_default_context(cafile=certifi.where())
-            response = urlopen(url, timeout=5, context=context)
-            return response.read()
+            response = requests.get(url=url, timeout=5)
+            return response.content
         except Exception:
             # Something has gone wrong, but we can just try again next time
             # Raise a TypeError so the outer function can handle this
