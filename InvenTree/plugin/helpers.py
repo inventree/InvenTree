@@ -230,3 +230,33 @@ def render_text(text, context=None):
     return template.Template(text).render(ctx)
 
 # endregion
+
+
+def check_can_install_plugin(plg):
+    """Determine if a plugin can be installed.
+
+    This check is based on which mixins are inherited by the plugin class,
+    combined with the global plugin settings.
+
+    Note that not all mixins are gated behind a configurable setting.
+    """
+
+    import common.models
+    import plugin.mixins
+
+    # Map of setting values to plugin mixin type
+    plugin_settings = {
+        'ENABLE_PLUGINS_URL': plugin.mixins.UrlsMixin,
+        'ENABLE_PLUGINS_NAVIGATION': plugin.mixins.NavigationMixin,
+        'ENABLE_PLUGINS_APP': plugin.mixins.AppMixin,
+        'ENABLE_PLUGINS_SCHEDULE': plugin.mixins.ScheduleMixin,
+        'ENABLE_PLUGINS_EVENTS': plugin.mixins.EventMixin,
+    }
+
+    for key, mixin in plugin_settings.items():
+        if plg.inherits_mixin(mixin):
+            if not common.models.InvenTreeSetting.get_setting(key, False, cache=False):
+                return False
+
+    # All checks passed
+    return True

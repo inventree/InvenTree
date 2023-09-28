@@ -211,8 +211,18 @@ function activatePlugin(plugin_id, active=true) {
                         location.reload();
                     },
                     error: function(xhr) {
-                        $(opts.modal).modal('hide');
-                        showApiError(xhr, url);
+
+                        $(opts.modal).find('#modal-progress-spinner').hide();
+
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, {}, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr, url);
+                            break;
+                        }
                     }
                 }
             )

@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+import plugin.helpers
 from common.serializers import GenericReferencedSettingSerializer
 from plugin.installer import install_plugin
 from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
@@ -138,6 +139,19 @@ class PluginActivateSerializer(serializers.Serializer):
         label=_('Activate Plugin'),
         help_text=_('Activate this plugin')
     )
+
+    def validate(self, data):
+        """Determine if the plugin can be activated or deactivated."""
+
+        data = super().validate(data)
+
+        if self.instance and not self.instance.active and data.get('active', False):
+            # If we are trying to enable a plugin which is not already active
+
+            if not plugin.helpers.check_can_install_plugin(self.instance.plugin):
+                raise ValidationError(_("Cannot activate plugin as it requires plugin features which are currently disabled"))
+
+        return data
 
     def update(self, instance, validated_data):
         """Apply the new 'active' value to the plugin instance"""

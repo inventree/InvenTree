@@ -132,6 +132,15 @@ class MixinBase:
         self._mixins = {}
         super().__init__(*args, **kwargs)
 
+    @classmethod
+    def inherits_mixin(cls, mixin_class):
+        """Check if a particular mixin is inherited by this class.
+
+        This check is separate to the following 'mixin_enabled' method,
+        as it is class method which can be called without instantiating the plugin.
+        """
+        return issubclass(cls, mixin_class)
+
     def mixin(self, key):
         """Check if mixin is registered."""
         return key in self._mixins
