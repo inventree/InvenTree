@@ -249,10 +249,6 @@ def generate_stocktake_report(**kwargs):
             location=location,
         )
 
-        if stocktake.quantity == 0:
-            # Skip rows with zero total quantity
-            continue
-
         total_parts += 1
 
         stocktake_instances.append(stocktake)
