@@ -74,7 +74,7 @@ class InvenTreeConfig(AppConfig):
         try:
             Schedule.objects.filter(func__in=obsolete).delete()
         except Exception:
-            logger.error("Failed to remove obsolete tasks - database not ready")
+            logger.exception("Failed to remove obsolete tasks - database not ready")
 
     def start_background_tasks(self):
         """Start all background tests for InvenTree."""
