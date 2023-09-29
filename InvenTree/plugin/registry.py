@@ -67,6 +67,9 @@ class PluginsRegistry:
 
     def get_plugin(self, slug):
         """Lookup plugin by slug (unique key)."""
+
+        self.check_reload()
+
         if slug not in self.plugins:
             logger.warning(f"Plugin registry has no record of plugin '{slug}'")
             return None
@@ -96,6 +99,9 @@ class PluginsRegistry:
 
         Instead, any error messages are returned to the worker.
         """
+
+        self.check_reload()
+
         plugin = self.get_plugin(slug)
 
         if not plugin:
@@ -166,6 +172,8 @@ class PluginsRegistry:
 
         # Cleanup old plugin configs
         self.cleanup_old_plugin_configs()
+
+        self.update_plugin_hash()
 
         # Remove maintenance mode
         if not _maintenance:
@@ -376,6 +384,9 @@ class PluginsRegistry:
     # region registry functions
     def with_mixin(self, mixin: str, active=None, builtin=None):
         """Returns reference to all plugins that have a specified mixin enabled."""
+
+        self.check_reload()
+
         result = []
 
         for plugin in self.plugins.values():
@@ -614,10 +625,63 @@ class PluginsRegistry:
         clear_url_caches()
     # endregion
 
+    def update_plugin_hash(self):
+        """When the state of the plugin registry changes, update the hash"""
+
+        from common.models import InvenTreeSetting
+
+        plg_hash = self.calculate_plugin_hash()
+
+        try:
+            old_hash = InvenTreeSetting.get_setting("_PLUGIN_REGISTRY_HASH", "", create=False, cache=False)
+        except Exception:
+            old_hash = ""
+
+        if old_hash != plg_hash:
+            try:
+                logger.info(f"Updating plugin registry hash: {plg_hash}")
+                InvenTreeSetting.set_setting("_PLUGIN_REGISTRY_HASH", plg_hash, change_user=None)
+            except Exception as exc:
+                logger.error(f"Failed to update plugin registry hash: {exc}")
+
+    def calculate_plugin_hash(self):
+        """Calculate a 'hash' value for the current registry
+
+        This is used to detect changes in the plugin registry,
+        and to inform other processes that the plugin registry has changed
+        """
+
+        data = ""
+
+        for slug, plug in self.plugins.items():
+            data += str(slug)
+            data += str(plug.version)
+            data += str(plug.is_active())
+
+        return str(hash(data))
+
+    def check_reload(self):
+        """Determine if the registry needs to be reloaded"""
+
+        from common.models import InvenTreeSetting
+
+        logger.debug("Checking plugin registry hash")
+
+        try:
+            reg_hash = InvenTreeSetting.get_setting("_PLUGIN_REGISTRY_HASH", "", create=False, cache=False)
+        except Exception as exc:
+            logger.error(f"Failed to retrieve plugin registry hash: {exc}")
+            return
+
+        if reg_hash and reg_hash != self.calculate_plugin_hash():
+            logger.info("Plugin registry hash has changed - reloading")
+            self.reload_plugins(full_reload=True, force_reload=True)
+
 
 registry: PluginsRegistry = PluginsRegistry()
 
 
 def call_function(plugin_name, function_name, *args, **kwargs):
     """Global helper function to call a specific member function of a plugin."""
+
     return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)

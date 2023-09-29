@@ -95,7 +95,7 @@ def process_event(plugin_slug, event, *args, **kwargs):
     This function may queue multiple functions to be handled by the background worker.
     """
 
-    plugin = registry.plugins.get(plugin_slug, None)
+    plugin = registry.get_plugin(plugin_slug)
 
     if plugin is None:  # pragma: no cover
         logger.error(f"Could not find matching plugin for '{plugin_slug}'")

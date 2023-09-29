@@ -158,6 +158,11 @@ class PluginActivateSerializer(serializers.Serializer):
 
         instance.active = validated_data.get('active', True)
         instance.save()
+
+        # Reload the plugin registry
+        from plugin.registry import registry
+        registry.reload_plugins(full_reload=True, force_reload=True)
+
         return instance
 
 

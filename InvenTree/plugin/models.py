@@ -75,7 +75,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         import plugin.meta
 
-        # Append settings from registry
+        # Load all plugins (even those which are not "active")
         plugin_class = registry.plugins_full.get(self.key, None)
 
         self.meta = {
