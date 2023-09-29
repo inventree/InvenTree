@@ -215,9 +215,9 @@ def install_plugin(url, packagename=None, user=None):
     # Save plugin to plugins file
     add_plugin_to_file(' '.join(install_name))
 
-    # TODO: run migrations for this plugin
+    # Reload the plugin registry
+    from plugin.registry import registry
 
-    # Check for migrations
-    # TODO: offload_task
+    registry.reload_plugins(full_reload=True, force_reload=True)
 
     return ret
