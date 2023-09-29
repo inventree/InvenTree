@@ -17,11 +17,6 @@ class MetaBase:
     SLUG = None
     TITLE = None
 
-    def get_meta_value(self, key: str, old_key: str = None, __default=None):
-        """Reference a meta item with a key"""
-
-        return plugin.meta.get_plugin_metavalue(self, key, old_key=old_key, default_value=__default)
-
     def plugin_name(self):
         """Name of plugin."""
         return plugin.meta.get_plugin_name(self)
