@@ -164,6 +164,9 @@ class PluginsRegistry:
         # ensure plugins_loaded is True
         self.plugins_loaded = True
 
+        # Cleanup old plugin configs
+        self.cleanup_old_plugin_configs()
+
         # Remove maintenance mode
         if not _maintenance:
             set_maintenance_mode(False)
@@ -221,6 +224,20 @@ class PluginsRegistry:
             self.load_plugins(full_reload=full_reload)
 
         logger.info('Finished reloading plugins')
+
+    def cleanup_old_plugin_configs(self):
+        """Remove any plugin configurations for plugins which no longer exist"""
+
+        from plugin.models import PluginConfig
+
+        try:
+            for cfg in PluginConfig.objects.all():
+
+                if not cfg.plugin:
+                    logger.info(f"Removing PluginConfig for non-existent plugin: {cfg.key} - {cfg.name}")
+                    cfg.delete()
+        except Exception as exc:
+            logger.warning(f"Failed to cleanup old plugin configs: {exc}")
 
     def plugin_dirs(self):
         """Construct a list of directories from where plugins can be loaded"""

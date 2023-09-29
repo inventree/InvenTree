@@ -158,7 +158,7 @@ def install_plugin(url, packagename=None, user=None):
         logger.warning("InvenTree is not running in a virtual environment")
 
     # build up the command
-    install_name = []
+    install_name = ['-U']
 
     if url:
         # use custom registration / VCS

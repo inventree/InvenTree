@@ -117,9 +117,9 @@ function loadPluginTable(table, options={}) {
                             buttons += makeIconButton('fa-play-circle icon-green', 'btn-plugin-enable', row.pk, '{% trans "Enable Plugin" %}');
 
                             // Add a button to uninstall the plugin (only if installed via PIP)
-                            if (row.meta && !row.meta.package_path.endsWith('.py')) {
-                                buttons += makeIconButton('fa-trash-alt icon-red', 'btn-plugin-uninstall', row.pk, '{% trans "Uninstall Plugin" %}');
-                            }
+                            // if (row.meta && !row.meta.package_path.endsWith('.py')) {
+                            //     buttons += makeIconButton('fa-trash-alt icon-red', 'btn-plugin-uninstall', row.pk, '{% trans "Uninstall Plugin" %}');
+                            // }
                         }
                     }
 

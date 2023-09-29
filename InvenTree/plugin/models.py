@@ -73,38 +73,26 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
+        import plugin.meta
+
         # Append settings from registry
-        plugin = registry.plugins_full.get(self.key, None)
-
-        # Check for uninstantiated plugin (inactive)
-        if plugin is not None and type(plugin) is type:
-            # To extract metadata, create an instance of the plugin
-            plugin = plugin()
-
-        def get_plugin_meta(plugin, name):
-            """Return a meta-value associated with this plugin"""
-
-            # Ignore if the plugin config is not defined
-            if not plugin:
-                return None
-
-            result = getattr(plugin, name, None)
-
-            if result is not None:
-                result = str(result)
-
-            return result
+        plugin_class = registry.plugins_full.get(self.key, None)
 
         self.meta = {
-            key: get_plugin_meta(plugin, key) for key in [
-                'slug', 'human_name', 'description', 'author',
-                'pub_date', 'version', 'website', 'license',
-                'package_path', 'settings_url'
-            ]
+            'slug': plugin.meta.get_plugin_slug(plugin_class),
+            'human_name': plugin.meta.get_plugin_title(plugin_class),
+            'description': plugin.meta.get_plugin_description(plugin_class),
+            'author': plugin.meta.get_plugin_author(plugin_class),
+            'pub_date': plugin.meta.get_plugin_pubdate(plugin_class),
+            'version': plugin.meta.get_plugin_version(plugin_class),
+            'website': plugin.meta.get_plugin_website(plugin_class),
+            'license': plugin.meta.get_plugin_license(plugin_class),
+            'package_path': plugin.meta.get_plugin_pathstring(plugin_class),
+            'settings_url': plugin.meta.get_plugin_settings_url(plugin_class)
         }
 
         # Save plugin
-        self.plugin: InvenTreePlugin = plugin
+        self.plugin: InvenTreePlugin = plugin_class
 
     def __getstate__(self):
         """Customize pickeling behaviour."""

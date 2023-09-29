@@ -1,21 +1,10 @@
 """Base Class for InvenTree plugins."""
 
-import inspect
 import logging
-import warnings
-from datetime import datetime
 from distutils.sysconfig import get_python_lib
-from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
 
-from django.conf import settings
-from django.db.utils import OperationalError, ProgrammingError
-from django.urls.base import reverse
-from django.utils.text import slugify
-from django.utils.translation import gettext_lazy as _
-
-from InvenTree.config import get_plugin_dir
-from plugin.helpers import get_git_log
+import plugin.meta
 
 logger = logging.getLogger("inventree")
 
@@ -29,34 +18,13 @@ class MetaBase:
     TITLE = None
 
     def get_meta_value(self, key: str, old_key: str = None, __default=None):
-        """Reference a meta item with a key.
+        """Reference a meta item with a key"""
 
-        Args:
-            key (str): key for the value
-            old_key (str, optional): deprecated key - will throw warning
-            __default (optional): Value if nothing with key can be found. Defaults to None.
-
-        Returns:
-            Value referenced with key, old_key or __default if set and not value found
-        """
-        value = getattr(self, key, None)
-
-        # The key was not used
-        if old_key and value is None:
-            value = getattr(self, old_key, None)
-
-            # Sound of a warning if old_key worked
-            if value:
-                warnings.warn(f'Usage of {old_key} was depreciated in 0.7.0 in favour of {key}', DeprecationWarning, stacklevel=2)
-
-        # Use __default if still nothing set
-        if (value is None) and __default:
-            return __default
-        return value
+        return plugin.meta.get_plugin_metavalue(self, key, old_key=old_key, default_value=__default)
 
     def plugin_name(self):
         """Name of plugin."""
-        return self.get_meta_value('NAME', 'PLUGIN_NAME')
+        return plugin.meta.get_plugin_name(self)
 
     @property
     def name(self):
@@ -64,15 +32,8 @@ class MetaBase:
         return self.plugin_name()
 
     def plugin_slug(self):
-        """Slug of plugin.
-
-        If not set plugin name slugified
-        """
-        slug = self.get_meta_value('SLUG', 'PLUGIN_SLUG', None)
-        if not slug:
-            slug = self.plugin_name()
-
-        return slugify(slug.lower())
+        """Return the slug associated with this plugin class"""
+        return plugin.meta.get_plugin_slug(self)
 
     @property
     def slug(self):
@@ -80,11 +41,8 @@ class MetaBase:
         return self.plugin_slug()
 
     def plugin_title(self):
-        """Title of plugin."""
-        title = self.get_meta_value('TITLE', 'PLUGIN_TITLE', None)
-        if title:
-            return title
-        return self.plugin_name()
+        """Return the title associated with this plugin class"""
+        return plugin.meta.get_plugin_title(self)
 
     @property
     def human_name(self):
@@ -93,17 +51,7 @@ class MetaBase:
 
     def plugin_config(self):
         """Return the PluginConfig object associated with this plugin."""
-        try:
-            import plugin.models
-
-            cfg, _ = plugin.models.PluginConfig.objects.get_or_create(
-                key=self.plugin_slug(),
-                name=self.plugin_name(),
-            )
-        except (OperationalError, ProgrammingError):
-            cfg = None
-
-        return cfg
+        return plugin.meta.get_plugin_config(self)
 
     def is_active(self):
         """Return True if this plugin is currently active."""
@@ -234,12 +182,12 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         super().__init__()
         self.add_mixin('base')
 
-        self.define_package()
+        self.package = self._get_package_metadata()
 
     @classmethod
     def file(cls) -> Path:
         """File that contains plugin definition."""
-        return Path(inspect.getfile(cls))
+        return plugin.meta.get_plugin_file(cls)
 
     def path(self) -> Path:
         """Path to plugins base folder."""
@@ -260,49 +208,35 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             val = self.package.get(package_name, None)
         return val
 
-    # region properties
     @property
     def description(self):
         """Description of plugin."""
-        description = self._get_value('DESCRIPTION', 'description')
-        if not description:
-            description = self.plugin_name()
-        return description
+        return plugin.meta.get_plugin_description(self)
 
     @property
     def author(self):
         """Author of plugin - either from plugin settings or git."""
-        author = self._get_value('AUTHOR', 'author')
-        if not author:
-            author = _('No author found')  # pragma: no cover
-        return author
+        return plugin.meta.get_plugin_author(self)
 
     @property
     def pub_date(self):
         """Publishing date of plugin - either from plugin settings or git."""
-        pub_date = getattr(self, 'PUBLISH_DATE', None)
-        if not pub_date:
-            pub_date = self.package.get('date')
-        else:
-            pub_date = datetime.fromisoformat(str(pub_date))
-
-        return pub_date
+        return plugin.meta.get_plugin_pubdate(self)
 
     @property
     def version(self):
         """Version of plugin."""
-        return self._get_value('VERSION', 'version')
+        return plugin.meta.get_plugin_version(self)
 
     @property
     def website(self):
         """Website of plugin - if set else None."""
-        return self._get_value('WEBSITE', 'website')
+        return plugin.meta.get_plugin_website(self)
 
     @property
     def license(self):
         """License of plugin."""
-        return self._get_value('LICENSE', 'license')
-    # endregion
+        return plugin.meta.get_plugin_license(self)
 
     @classmethod
     def check_is_package(cls):
@@ -338,25 +272,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     def check_package_path(cls):
         """Path to the plugin."""
 
-        # Check potential relative paths
-        relative_paths = [
-            settings.BASE_DIR,
-            get_plugin_dir(),
-        ]
-
-        for path in relative_paths:
-            try:
-                rel_path = cls.file().relative_to(path)
-                return rel_path
-            except ValueError:
-                pass
-
-        # Return class package path
-        if cls.check_is_package():
-            return cls.__module__  # pragma: no cover
-
-        # Fallback to cls path
-        return cls.file()
+        return plugin.meta.get_plugin_path(cls)
 
     @property
     def package_path(self):
@@ -366,13 +282,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @property
     def settings_url(self):
         """URL to the settings panel for this plugin."""
-        return f'{reverse("settings")}#select-plugin-{self.slug}'
-
-    # region package info
-    def _get_package_commit(self):
-        """Get last git commit for the plugin."""
-
-        return get_git_log(str(self.file()))
+        return plugin.meta.get_plugin_settings_url(self)
 
     @classmethod
     def is_editable(cls):
@@ -385,39 +295,4 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     def _get_package_metadata(cls):
         """Get package metadata for plugin."""
 
-        # Try simple metadata lookup
-        try:
-            meta = metadata(cls.__name__)
-        # Simple lookup did not work - get data from module
-        except PackageNotFoundError:
-
-            try:
-                meta = metadata(cls.__module__.split('.')[0])
-            except PackageNotFoundError:
-                # Not much information we can extract at this point
-                return {}
-
-        try:
-            website = meta['Project-URL'].split(', ')[1]
-        except (ValueError, IndexError, AttributeError, ):
-            website = meta['Project-URL']
-
-        return {
-            'author': meta['Author-email'],
-            'description': meta['Summary'],
-            'version': meta['Version'],
-            'website': website,
-            'license': meta['License']
-        }
-
-    def define_package(self):
-        """Add package info of the plugin into plugins context."""
-        package = self._get_package_metadata() if self._is_package else self._get_package_commit()
-
-        # process date
-        if package.get('date'):
-            package['date'] = datetime.fromisoformat(package.get('date'))
-
-        # set variables
-        self.package = package
-    # endregion
+        return plugin.meta.get_plugin_metadata(cls)

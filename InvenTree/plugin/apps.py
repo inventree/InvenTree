@@ -46,22 +46,6 @@ class PluginAppConfig(AppConfig):
                 registry.plugin_modules = registry.collect_plugins()
                 registry.load_plugins()
 
-                self.cleanup_old_plugin_configs()
-
                 # drop out of maintenance
                 # makes sure we did not have an error in reloading and maintenance is still active
                 set_maintenance_mode(False)
-
-    def cleanup_old_plugin_configs(self):
-        """Remove any plugin configurations for plugins which no longer exist"""
-
-        from plugin.models import PluginConfig
-
-        try:
-            for cfg in PluginConfig.objects.all():
-
-                if not cfg.plugin:
-                    logger.info(f"Removing PluginConfig for non-existent plugin: {cfg.key} - {cfg.name}")
-                    cfg.delete()
-        except Exception as exc:
-            logger.warning(f"Failed to cleanup old plugin configs: {exc}")
