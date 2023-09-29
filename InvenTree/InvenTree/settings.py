@@ -678,7 +678,7 @@ else:
         },
     }
 
-_q_worker_timeout = int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90))
+_q_worker_timeout = int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 120))
 
 # django-q background worker configuration
 Q_CLUSTER = {

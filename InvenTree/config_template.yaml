@@ -169,7 +169,7 @@ backup_storage: django.core.files.storage.FileSystemStorage
 # Background worker options
 background:
   workers: 4
-  timeout: 90
+  timeout: 120
   max_attempts: 5
 
 # Optional URL schemes to allow in URL fields
