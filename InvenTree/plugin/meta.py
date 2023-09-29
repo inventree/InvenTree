@@ -290,11 +290,11 @@ def get_plugin_pubdate(plugin):
 def get_plugin_config(plugin):
     """Return the PluginConfig object associated with a particular plugin"""
 
+    slug = get_plugin_slug(plugin)
+    name = get_plugin_name(plugin)
+
     try:
         import plugin.models
-
-        slug = get_plugin_slug(plugin)
-        name = get_plugin_name(plugin)
 
         if not slug or not name:
             return None
