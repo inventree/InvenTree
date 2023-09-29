@@ -156,12 +156,26 @@ class PluginActivateSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         """Apply the new 'active' value to the plugin instance"""
 
-        instance.active = validated_data.get('active', True)
+        active = validated_data.get('active', True)
+
+        instance.active = active
         instance.save()
 
         # Reload the plugin registry
+        from common.models import InvenTreeSetting
+        from InvenTree.tasks import check_for_migrations, offload_task
         from plugin.registry import registry
+
         registry.reload_plugins(full_reload=True, force_reload=True)
+
+        # Run any new migrations (in a background thread)
+        try:
+            app_mixin_enabled = InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP', False)
+        except Exception:
+            app_mixin_enabled = False
+
+        if active and app_mixin_enabled:
+            offload_task(check_for_migrations, force_async=True)
 
         return instance
 

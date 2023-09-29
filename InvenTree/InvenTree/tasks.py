@@ -557,11 +557,18 @@ def check_for_migrations(worker: bool = True):
 
     If the setting auto_update is enabled we will start updating.
     """
+
+    logger.info("Checking for migrations...")
+
     # Test if auto-updates are enabled
-    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update', default_value=True):
+        logger.info("Auto migrations disabled for server - skipping update")
         return
 
     from plugin import registry
+
+    # Reload plugin registry, to ensure that all plugins are loaded
+    registry.reload_plugins(force_reload=True, full_reload=True)
 
     plan = get_migration_plan()
 
@@ -570,7 +577,7 @@ def check_for_migrations(worker: bool = True):
         logger.info('There are no open migrations')
         return
 
-    logger.info('There are open migrations')
+    logger.info(f'There are {len(plan)} open migrations to run')
 
     # Log open migrations
     for migration in plan:
@@ -589,8 +596,7 @@ def check_for_migrations(worker: bool = True):
     # Ok now we are ready to go ahead!
     # To be sure we are in maintenance this is wrapped
     with maintenance_mode_on():
-        logger.info('Starting migrations')
-        print('Starting migrations')
+        logger.info('Starting migrations...')
 
         try:
             call_command('migrate', interactive=False)
@@ -599,14 +605,10 @@ def check_for_migrations(worker: bool = True):
                 raise e
             logger.error(f'Error during migrations: {e}')
 
-        print('Migrations done')
-        logger.info('Ran migrations')
+        logger.info('Completed database migrations')
 
     # Make sure we are out of maintenance again
-    logger.info('Checking InvenTree left maintenance mode')
     if get_maintenance_mode():
-
-        logger.warning('Mainentance was still on - releasing now')
         set_maintenance_mode(False)
         logger.info('Released out of maintenance')
 
