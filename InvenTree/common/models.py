@@ -2269,7 +2269,7 @@ class PriceBreak(MetaMixin):
         try:
             converted = convert_money(self.price, currency_code)
         except MissingRate:
-            logger.warning(f"No currency conversion rate available for {self.price_currency} -> {currency_code}")
+            logger.debug(f"No currency conversion rate available for {self.price_currency} -> {currency_code}")
             return self.price.amount
 
         return converted.amount

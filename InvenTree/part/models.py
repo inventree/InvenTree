@@ -2373,7 +2373,7 @@ class PartPricing(common.models.MetaMixin):
         try:
             result = convert_money(money, target_currency)
         except MissingRate:
-            logger.warning(f"No currency conversion rate available for {money.currency} -> {target_currency}")
+            logger.debug(f"No currency conversion rate available for {money.currency} -> {target_currency}")
             result = None
 
         return result
