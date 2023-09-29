@@ -76,6 +76,7 @@
     "INVENTREE_CONFIG_FILE": "${containerWorkspaceFolder}/dev/config.yaml",
     "INVENTREE_SECRET_KEY_FILE": "${containerWorkspaceFolder}/dev/secret_key.txt",
     "INVENTREE_PLUGINS_ENABLED": "True",
+    "INVENTREE_AUTO_UPDATE": "True",
     "INVENTREE_PLUGIN_DIR": "${containerWorkspaceFolder}/dev/plugins",
     "INVENTREE_PLUGIN_FILE": "${containerWorkspaceFolder}/dev/plugins.txt",
 
