@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 06:56+0000\n"
-"PO-Revision-Date: 2023-09-27 04:32\n"
+"PO-Revision-Date: 2023-09-29 05:45\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -43,7 +43,7 @@ msgstr "El valor proporcionado no puede ser convertido a la unidad especificada"
 
 #: InvenTree/conversion.py:127
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -567,7 +567,7 @@ msgstr "Hebreo"
 
 #: InvenTree/settings.py:767
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: InvenTree/settings.py:768
 msgid "Hungarian"
@@ -1302,7 +1302,7 @@ msgstr "La cantidad debe ser 1 para el stock serializado"
 
 #: build/models.py:1463
 msgid "Selected stock item does not match BOM line"
-msgstr "El artículo de almacén selelccionado no coincide con la linea BOM"
+msgstr "El artículo de almacén selelccionado no coincide con la línea BOM"
 
 #: build/models.py:1535 build/serializers.py:799 order/serializers.py:1087
 #: order/serializers.py:1108 stock/serializers.py:490 stock/serializers.py:930
@@ -1541,7 +1541,7 @@ msgstr "La salida de la construcción debe apuntar a la misma construcción"
 
 #: build/serializers.py:776
 msgid "Build Line Item"
-msgstr ""
+msgstr "Crear partida"
 
 #: build/serializers.py:790
 msgid "bom_item.part must point to the same part as the build order"
@@ -1879,11 +1879,11 @@ msgstr "Asignar Stock a Trabajo"
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
-msgstr ""
+msgstr "Desasignar existencias"
 
 #: build/templates/build/detail.html:182
 msgid "Deallocate Stock"
-msgstr ""
+msgstr "Desasignar existencias"
 
 #: build/templates/build/detail.html:184
 msgid "Automatically allocate stock to build"
@@ -1924,7 +1924,7 @@ msgstr "Nueva Salida de Trabajo"
 
 #: build/templates/build/detail.html:232 build/templates/build/sidebar.html:15
 msgid "Consumed Stock"
-msgstr ""
+msgstr "Existencias consumidas"
 
 #: build/templates/build/detail.html:244
 msgid "Completed Build Outputs"
@@ -1956,7 +1956,7 @@ msgstr "Asignación completa"
 
 #: build/templates/build/detail.html:423
 msgid "All lines have been fully allocated"
-msgstr ""
+msgstr "Todas las líneas han sido completamente asignadas"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
@@ -2418,7 +2418,7 @@ msgstr "Icono por defecto de la categoría de parte (vacío significa que no hay
 
 #: common/models.py:1321
 msgid "Enforce Parameter Units"
-msgstr ""
+msgstr "Forzar unidades de parámetro"
 
 #: common/models.py:1322
 msgid "If units are provided, parameter values must match the specified units"
@@ -2586,7 +2586,7 @@ msgstr "Autorellenar números de serie en formularios"
 
 #: common/models.py:1491
 msgid "Delete Depleted Stock"
-msgstr ""
+msgstr "Eliminar existencias agotadas"
 
 #: common/models.py:1492
 msgid "Determines default behaviour when a stock item is depleted"
@@ -4621,7 +4621,7 @@ msgstr "El pedido no se puede completar porque hay envíos incompletos"
 
 #: order/models.py:880
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr "El pedido no se puede completar porque hay artículos de línea incompletos"
+msgstr "El pedido no se puede completar porque hay partidas incompletas"
 
 #: order/models.py:1087
 msgid "Item quantity"
@@ -4629,19 +4629,19 @@ msgstr "Cantidad del artículo"
 
 #: order/models.py:1100
 msgid "Line item reference"
-msgstr "Referencia de línea en la orden"
+msgstr "Referencia de partida"
 
 #: order/models.py:1102
 msgid "Line item notes"
-msgstr "Notas del artículo de línea"
+msgstr "Notas de partida"
 
 #: order/models.py:1113
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr "Fecha objetivo para este artículo de línea (dejar en blanco para usar la fecha de destino de la orden)"
+msgstr "Fecha objetivo para esta partida (dejar en blanco para usar la fecha de destino de la orden)"
 
 #: order/models.py:1131
 msgid "Line item description (optional)"
-msgstr "Descripción del artículo de línea (opcional)"
+msgstr "Descripción de partida (opcional)"
 
 #: order/models.py:1136
 msgid "Context"
@@ -4859,11 +4859,11 @@ msgstr "Resultado"
 
 #: order/models.py:1947
 msgid "Outcome for this line item"
-msgstr "Salida para este artículo de línea"
+msgstr "Salida para esta partida"
 
 #: order/models.py:1953
 msgid "Cost associated with return or repair for this line item"
-msgstr "Costo asociado con la devolución o reparación para este artículo de línea"
+msgstr "Costo asociado con la devolución o reparación para esta partida"
 
 #: order/serializers.py:253
 msgid "Order cannot be cancelled"
@@ -4871,11 +4871,11 @@ msgstr "El pedido no puede ser cancelado"
 
 #: order/serializers.py:268 order/serializers.py:1156
 msgid "Allow order to be closed with incomplete line items"
-msgstr "Permitir cerrar el pedido con artículos de línea incompletos"
+msgstr "Permitir cerrar el pedido con partidas incompletas"
 
 #: order/serializers.py:279 order/serializers.py:1167
 msgid "Order has incomplete line items"
-msgstr "El pedido tiene artículos de línea incompletos"
+msgstr "El pedido tiene partidas incompletas"
 
 #: order/serializers.py:392
 msgid "Order is not open"
@@ -4903,11 +4903,11 @@ msgstr "La orden de compra debe coincidir con el proveedor"
 
 #: order/serializers.py:478 order/serializers.py:1244
 msgid "Line Item"
-msgstr "Artículo en línea"
+msgstr "Partida"
 
 #: order/serializers.py:484
 msgid "Line item does not match purchase order"
-msgstr "La línea del artículo no coincide con la orden de compra"
+msgstr "La partida no coincide con la orden de compra"
 
 #: order/serializers.py:494 order/serializers.py:613 order/serializers.py:1617
 msgid "Select destination location for received items"
@@ -4939,7 +4939,7 @@ msgstr "Debe proporcionarse una cantidad entera para las partes rastreables"
 
 #: order/serializers.py:629 order/serializers.py:1632
 msgid "Line items must be provided"
-msgstr "Se deben proporcionar artículos de línea"
+msgstr "Se deben proporcionar las partidas"
 
 #: order/serializers.py:646
 msgid "Destination location must be specified"
@@ -4959,7 +4959,7 @@ msgstr "No se proporcionaron detalles de envío"
 
 #: order/serializers.py:1099 order/serializers.py:1253
 msgid "Line item is not associated with this order"
-msgstr "Artículo en línea no está asociado con este pedido"
+msgstr "La partida no está asociada con este pedido"
 
 #: order/serializers.py:1121
 msgid "Quantity must be positive"
@@ -4987,15 +4987,15 @@ msgstr "Los siguientes números de serie ya están asignados"
 
 #: order/serializers.py:1583
 msgid "Return order line item"
-msgstr "Artículo de línea de orden de devolución"
+msgstr "Partida de orden de devolución"
 
 #: order/serializers.py:1590
 msgid "Line item does not match return order"
-msgstr "El artículo de línea no coincide con la orden de devolución"
+msgstr "La partida no coincide con la orden de devolución"
 
 #: order/serializers.py:1593
 msgid "Line item has already been received"
-msgstr "El artículo de línea ya ha sido recibido"
+msgstr "La partida ya ha sido recibida"
 
 #: order/serializers.py:1625
 msgid "Items can only be received against orders which are in progress"
@@ -5104,7 +5104,7 @@ msgstr "No hay información disponible sobre el proveedor"
 #: order/templates/order/order_base.html:154
 #: order/templates/order/sales_order_base.html:158
 msgid "Completed Line Items"
-msgstr "Artículos de línea completados"
+msgstr "Partidas completadas"
 
 #: order/templates/order/order_base.html:160
 #: order/templates/order/sales_order_base.html:164
@@ -5239,7 +5239,7 @@ msgstr "Paso %(step)s de %(count)s"
 #: report/templates/report/inventree_return_order_report_base.html:19
 #: report/templates/report/inventree_so_report_base.html:22
 msgid "Line Items"
-msgstr "Línea de pedido"
+msgstr "Partidas"
 
 #: order/templates/order/po_sidebar.html:7
 msgid "Received Stock"
@@ -5256,14 +5256,14 @@ msgstr "Comprar artículos de orden"
 #: templates/js/translated/return_order.js:456
 #: templates/js/translated/sales_order.js:234
 msgid "Add Line Item"
-msgstr "Añadir artículo de línea"
+msgstr "Añadir partida"
 
 #: order/templates/order/purchase_order_detail.html:31
 #: order/templates/order/purchase_order_detail.html:32
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
 msgid "Receive Line Items"
-msgstr "Recibir artículos de línea"
+msgstr "Recibir partidas"
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/return_order_detail.html:45
@@ -7586,7 +7586,7 @@ msgstr "Precio Unitario"
 #: report/templates/report/inventree_return_order_report_base.html:48
 #: report/templates/report/inventree_so_report_base.html:55
 msgid "Extra Line Items"
-msgstr "Elementos de línea extra"
+msgstr "Partida extra"
 
 #: report/templates/report/inventree_po_report_base.html:72
 #: report/templates/report/inventree_so_report_base.html:72
@@ -10334,7 +10334,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:1915
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
-msgstr ""
+msgstr "Los artículos de almacén se asignarán automáticamente a este pedido de construcción, de acuerdo con las pautas proporcionadas"
 
 #: templates/js/translated/build.js:1917
 msgid "If a location is specified, stock will only be allocated from that location"
@@ -10945,7 +10945,7 @@ msgstr "Las notificaciones cargarán aquí"
 
 #: templates/js/translated/order.js:89
 msgid "Add Extra Line Item"
-msgstr ""
+msgstr "Añadir partida extra"
 
 #: templates/js/translated/order.js:126
 msgid "Export Order"
@@ -10966,7 +10966,7 @@ msgstr "Eliminar línea"
 #: templates/js/translated/order.js:281
 #: templates/js/translated/purchase_order.js:1965
 msgid "No line items found"
-msgstr "No hay artículos de línea"
+msgstr "No hay partidas"
 
 #: templates/js/translated/order.js:369
 msgid "Duplicate line"
@@ -11110,7 +11110,7 @@ msgstr "Has cancelado la suscripción a las notificaciones de este artículo"
 
 #: templates/js/translated/part.js:600
 msgid "Validating the BOM will mark each line item as valid"
-msgstr "Validar el BOM marcará cada artículo de línea como válido"
+msgstr "Validar el BOM marcará cada partida como válida"
 
 #: templates/js/translated/part.js:610
 msgid "Validate Bill of Materials"
@@ -11211,12 +11211,12 @@ msgstr "No se encontraron órdenes de compra"
 #: templates/js/translated/return_order.js:749
 #: templates/js/translated/sales_order.js:1872
 msgid "This line item is overdue"
-msgstr ""
+msgstr "Esta partida está atrasada"
 
 #: templates/js/translated/part.js:1885
 #: templates/js/translated/purchase_order.js:2195
 msgid "Receive line item"
-msgstr "Recibir ítem de línea"
+msgstr "Recibir partida"
 
 #: templates/js/translated/part.js:1948
 msgid "Delete part relationship"
@@ -11430,11 +11430,11 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:173
 msgid "Duplicate Line Items"
-msgstr "Duplicar artículos de línea"
+msgstr "Duplicar partidas"
 
 #: templates/js/translated/purchase_order.js:174
 msgid "Duplicate all line items from the selected order"
-msgstr ""
+msgstr "Duplicar todos las partidas del pedido seleccionado"
 
 #: templates/js/translated/purchase_order.js:181
 msgid "Duplicate Extra Lines"
@@ -11442,7 +11442,7 @@ msgstr "Duplicar líneas adicionales"
 
 #: templates/js/translated/purchase_order.js:182
 msgid "Duplicate extra line items from the selected order"
-msgstr ""
+msgstr "Duplicar las partidas extra del pedido seleccionado"
 
 #: templates/js/translated/purchase_order.js:203
 msgid "Edit Purchase Order"
@@ -11464,16 +11464,16 @@ msgstr "Marcar pedido como completado?"
 
 #: templates/js/translated/purchase_order.js:470
 msgid "All line items have been received"
-msgstr ""
+msgstr "Todos las partidas han sido recibidas"
 
 #: templates/js/translated/purchase_order.js:475
 msgid "This order has line items which have not been marked as received."
-msgstr "Este pedido tiene artículos de línea que no han sido marcados como recibidos."
+msgstr "Este pedido tiene partidas que no han sido marcadas como recibidas."
 
 #: templates/js/translated/purchase_order.js:476
 #: templates/js/translated/sales_order.js:511
 msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr "Completar este pedido significa que los artículos de orden y línea ya no serán editables."
+msgstr "Completar este pedido significa que la orden y las partidas ya no serán editables."
 
 #: templates/js/translated/purchase_order.js:499
 msgid "Cancel Purchase Order"
@@ -11490,7 +11490,7 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:531
 #: templates/js/translated/return_order.js:161
 msgid "After placing this order, line items will no longer be editable."
-msgstr ""
+msgstr "Después de realizar esta orden de compra, las partidas ya no serán editables."
 
 #: templates/js/translated/purchase_order.js:536
 msgid "Issue Purchase Order"
@@ -11526,12 +11526,12 @@ msgstr "No hay órdenes de compra coincidentes"
 
 #: templates/js/translated/purchase_order.js:1058
 msgid "Select Line Items"
-msgstr "Seleccionar Artículos de Línea"
+msgstr "Seleccionar partidas"
 
 #: templates/js/translated/purchase_order.js:1059
 #: templates/js/translated/return_order.js:489
 msgid "At least one line item must be selected"
-msgstr "Debe seleccionar al menos un artículo de línea"
+msgstr "Debe seleccionar al menos una partida"
 
 #: templates/js/translated/purchase_order.js:1089
 msgid "Received Quantity"
@@ -11614,46 +11614,46 @@ msgstr "Artículos"
 
 #: templates/js/translated/purchase_order.js:1818
 msgid "All selected Line items will be deleted"
-msgstr ""
+msgstr "Todos las partidas seleccionadas serán eliminadas"
 
 #: templates/js/translated/purchase_order.js:1836
 msgid "Delete selected Line items?"
-msgstr ""
+msgstr "¿Eliminar partidas seleccionadas?"
 
 #: templates/js/translated/purchase_order.js:1891
 #: templates/js/translated/sales_order.js:2067
 msgid "Duplicate Line Item"
-msgstr "Duplicar artículo de línea"
+msgstr "Duplicar partida"
 
 #: templates/js/translated/purchase_order.js:1906
 #: templates/js/translated/return_order.js:473
 #: templates/js/translated/return_order.js:662
 #: templates/js/translated/sales_order.js:2080
 msgid "Edit Line Item"
-msgstr "Editar Ítem de Línea"
+msgstr "Editar partida"
 
 #: templates/js/translated/purchase_order.js:1917
 #: templates/js/translated/return_order.js:675
 #: templates/js/translated/sales_order.js:2091
 msgid "Delete Line Item"
-msgstr "Eliminar Ítemde Línea"
+msgstr "Eliminar partida"
 
 #: templates/js/translated/purchase_order.js:2199
 #: templates/js/translated/sales_order.js:2021
 msgid "Duplicate line item"
-msgstr "Duplicar artículo de línea"
+msgstr "Duplicar partida"
 
 #: templates/js/translated/purchase_order.js:2200
 #: templates/js/translated/return_order.js:794
 #: templates/js/translated/sales_order.js:2022
 msgid "Edit line item"
-msgstr "Editar artículo de línea"
+msgstr "Editar partida"
 
 #: templates/js/translated/purchase_order.js:2201
 #: templates/js/translated/return_order.js:798
 #: templates/js/translated/sales_order.js:2028
 msgid "Delete line item"
-msgstr "Eliminar artículo de línea"
+msgstr "Eliminar partida"
 
 #: templates/js/translated/report.js:63
 msgid "items selected"
@@ -11720,7 +11720,7 @@ msgstr "Recibir artículos de pedido de devolución"
 #: templates/js/translated/return_order.js:686
 #: templates/js/translated/sales_order.js:2227
 msgid "No matching line items"
-msgstr "No hay artículos de línea coincidentes"
+msgstr "No hay partidas coincidentes"
 
 #: templates/js/translated/return_order.js:791
 msgid "Mark item as received"
@@ -11768,7 +11768,7 @@ msgstr "Omitir"
 
 #: templates/js/translated/sales_order.js:510
 msgid "This order has line items which have not been completed."
-msgstr "Este pedido tiene artículos de línea que no han sido completados."
+msgstr "Este pedido tiene partidas que no han sido completadas."
 
 #: templates/js/translated/sales_order.js:532
 msgid "Issue this Sales Order?"
