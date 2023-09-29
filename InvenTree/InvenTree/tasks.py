@@ -567,8 +567,8 @@ def check_for_migrations(worker: bool = True):
 
     from plugin import registry
 
-    # Reload plugin registry, to ensure that all plugins are loaded
-    registry.reload_plugins(force_reload=True, full_reload=True)
+    # Check if plugins need to be reloaded
+    registry.check_reload()
 
     plan = get_migration_plan()
 

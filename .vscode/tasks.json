@@ -57,7 +57,7 @@
     {
       "label": "update",
       "type": "shell",
-      "command": "inv update",
+      "command": "inv update -s",
       "problemMatcher": [],
     },
   ]
