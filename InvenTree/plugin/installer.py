@@ -215,7 +215,7 @@ def install_plugin(url, packagename=None, user=None):
     # Save plugin to plugins file
     add_plugin_to_file(' '.join(install_name))
 
-    # Reload the plugin registry
+    # Reload the plugin registry, to discover the new plugin
     from plugin.registry import registry
 
     registry.reload_plugins(full_reload=True, force_reload=True)
