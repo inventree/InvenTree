@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-28 05:05\n"
+"PO-Revision-Date: 2023-09-29 05:45\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -51,7 +51,7 @@ msgstr "Đăng nhập thất bại"
 #: src/components/forms/AuthenticationForm.tsx:63
 #: src/functions/auth.tsx:90
 msgid "Check your input and try again."
-msgstr ""
+msgstr "Kiểm tra đầu vào của bạn và thử lại."
 
 #: src/components/forms/AuthenticationForm.tsx:42
 msgid "Login successful"
@@ -74,7 +74,7 @@ msgstr "Chào mừng bạn đã trở lại!"
 #: src/components/forms/AuthenticationForm.tsx:54
 #: src/functions/auth.tsx:81
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "Thư đã được gửi đi thành công"
 
 #: src/components/forms/AuthenticationForm.tsx:55
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
@@ -91,7 +91,7 @@ msgstr "Lỗi đầu vào"
 
 #: src/components/forms/AuthenticationForm.tsx:74
 msgid "Welcome, log in below"
-msgstr ""
+msgstr "Chào bạn, đăng nhập bên dưới"
 
 #: src/components/forms/AuthenticationForm.tsx:81
 msgid "Username"
@@ -120,7 +120,7 @@ msgstr "Địa chỉ email"
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "We will send you a link to login - if you are registered"
-msgstr ""
+msgstr "Chúng tôi sẽ gửi bạn 1 liên kết để đăng nhập - nếu bạn đã đăng ký"
 
 #: src/components/forms/AuthenticationForm.tsx:124
 msgid "Send me an email"
@@ -128,7 +128,7 @@ msgstr "Gửi email cho chúng tôi"
 
 #: src/components/forms/AuthenticationForm.tsx:126
 msgid "I will use username and password"
-msgstr ""
+msgstr "Tôi sẽ sử dụng tên đăng nhập và mật khẩu"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 msgid "Log in"
@@ -154,7 +154,7 @@ msgstr "Tên"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr ""
+msgstr "Không có ai ở đây..."
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
@@ -261,7 +261,7 @@ msgstr "Trả lời không xác định"
 #: src/components/modals/QrCodeModal.tsx:98
 #: src/pages/Index/Scan.tsx:592
 msgid "Error while getting camera"
-msgstr ""
+msgstr "Có lỗi khi lấy camera"
 
 #: src/components/modals/QrCodeModal.tsx:121
 #: src/pages/Index/Scan.tsx:615
@@ -426,7 +426,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:132
 msgid "Companies"
-msgstr ""
+msgstr "Doanh nghiệp"
 
 #: src/components/nav/SearchDrawer.tsx:141
 #: src/pages/part/PartDetail.tsx:103
@@ -625,11 +625,11 @@ msgstr "Yêu cầu không hợp lệ"
 
 #: src/components/tables/InvenTreeTable.tsx:356
 msgid "Unauthorized"
-msgstr ""
+msgstr "Chưa cấp quyền"
 
 #: src/components/tables/InvenTreeTable.tsx:359
 msgid "Forbidden"
-msgstr ""
+msgstr "Bị cấm"
 
 #: src/components/tables/InvenTreeTable.tsx:362
 msgid "Not found"
@@ -638,12 +638,12 @@ msgstr "Không tìm thấy"
 #: src/components/tables/InvenTreeTable.tsx:423
 #: src/components/tables/InvenTreeTable.tsx:424
 msgid "Barcode actions"
-msgstr ""
+msgstr "Chức năng mã vạch"
 
 #: src/components/tables/InvenTreeTable.tsx:431
 #: src/components/tables/InvenTreeTable.tsx:432
 msgid "Print actions"
-msgstr ""
+msgstr "Chức năng in ấn"
 
 #: src/components/tables/InvenTreeTable.tsx:449
 msgid "Refresh data"
@@ -707,19 +707,19 @@ msgstr "Được tạo"
 
 #: src/components/tables/build/BuildOrderTable.tsx:102
 msgid "Target Date"
-msgstr ""
+msgstr "Ngày mục tiêu"
 
 #: src/components/tables/build/BuildOrderTable.tsx:114
 msgid "Issued By"
-msgstr ""
+msgstr "Phát hành bởi"
 
 #: src/components/tables/build/BuildOrderTable.tsx:121
 msgid "Responsible"
-msgstr ""
+msgstr "Chịu trách nhiệm"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:21
 msgid "Age"
-msgstr ""
+msgstr "Tuổi"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:26
 #: src/components/tables/part/PartTable.tsx:58
@@ -728,16 +728,16 @@ msgstr "Danh mục"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:31
 msgid "Notification"
-msgstr ""
+msgstr "Thông báo"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:35
 msgid "Message"
-msgstr ""
+msgstr "Nội dụng tin nhắn"
 
 #: src/components/tables/part/PartCategoryTable.tsx:33
 #: src/components/tables/stock/StockLocationTable.tsx:31
 msgid "Path"
-msgstr ""
+msgstr "Đường dẫn"
 
 #: src/components/tables/part/PartTable.tsx:40
 msgid "IPN"
@@ -770,11 +770,11 @@ msgstr "Hoạt động"
 
 #: src/components/tables/part/PartTable.tsx:99
 msgid "Filter by part active status"
-msgstr ""
+msgstr "Lọc theo trạng thái mở phụ kiện"
 
 #: src/components/tables/part/PartTable.tsx:104
 msgid "Assembly"
-msgstr ""
+msgstr "Lắp ráp"
 
 #: src/components/tables/part/PartTable.tsx:105
 msgid "Filter by assembly attribute"
@@ -872,27 +872,27 @@ msgstr "Chi tiết"
 
 #: src/components/tables/part/RelatedPartTable.tsx:61
 msgid "Add Related Part"
-msgstr ""
+msgstr "Thêm phụ kiện liên quan"
 
 #: src/components/tables/part/RelatedPartTable.tsx:69
 msgid "Related Part"
-msgstr ""
+msgstr "Phụ kiện liên quan"
 
 #: src/components/tables/part/RelatedPartTable.tsx:72
 msgid "Related part added"
-msgstr ""
+msgstr "Phụ kiện liên quan đã được thêm"
 
 #: src/components/tables/part/RelatedPartTable.tsx:82
 msgid "Add related part"
-msgstr ""
+msgstr "Thêm phụ kiện liên quan"
 
 #: src/components/tables/part/RelatedPartTable.tsx:104
 msgid "Delete Related Part"
-msgstr ""
+msgstr "Xóa phụ kiện liên quan"
 
 #: src/components/tables/part/RelatedPartTable.tsx:105
 msgid "Related part deleted"
-msgstr ""
+msgstr "Phụ kiện liên quan đã được xóa"
 
 #: src/components/tables/part/RelatedPartTable.tsx:107
 msgid "Are you sure you want to remove this relationship?"
@@ -912,7 +912,7 @@ msgstr "Kiểm thử bộ lọc"
 
 #: src/components/tables/stock/StockItemTable.tsx:91
 msgid "This is a test filter"
-msgstr ""
+msgstr "Đây là bộ lọc kiểm thử"
 
 #: src/components/tables/stock/StockLocationTable.tsx:43
 msgid "Structural"
@@ -1139,11 +1139,11 @@ msgstr "InvenTree"
 
 #: src/defaults/links.tsx:82
 msgid "About the InvenTree org"
-msgstr ""
+msgstr "Giới thiệu InvenTree org"
 
 #: src/defaults/links.tsx:88
 msgid "Licenses"
-msgstr ""
+msgstr "Giấy phép"
 
 #: src/defaults/links.tsx:89
 msgid "Licenses for packages used by InvenTree"
@@ -1262,7 +1262,7 @@ msgstr ""
 #: src/functions/forms.tsx:57
 #: src/functions/forms.tsx:137
 msgid "Form Error"
-msgstr ""
+msgstr "Lỗi form"
 
 #: src/functions/forms.tsx:49
 msgid "Form method not provided"
@@ -1378,7 +1378,7 @@ msgstr ""
 
 #: src/functions/notifications.tsx:20
 msgid "Permission denied"
-msgstr ""
+msgstr "Quyền truy cập bị từ chối"
 
 #: src/functions/notifications.tsx:21
 msgid "You do not have permission to perform this action"
@@ -1386,15 +1386,15 @@ msgstr ""
 
 #: src/functions/notifications.tsx:32
 msgid "Invalid Return Code"
-msgstr ""
+msgstr "Mã trả hàng không hợp lệ"
 
 #: src/functions/notifications.tsx:33
 msgid "Server returned status {returnCode}"
-msgstr ""
+msgstr "Mã phản hồi của máy chủ {returnCode}"
 
 #: src/pages/Auth/Logged-In.tsx:18
 msgid "Checking if you are already logged in"
-msgstr ""
+msgstr "Đang kiểm tra trạng thái đăng nhập của bạn"
 
 #: src/pages/Auth/Login.tsx:25
 #: src/pages/Index/Scan.tsx:292
@@ -1610,7 +1610,7 @@ msgstr ""
 
 #: src/pages/Index/Profile/UserPanel.tsx:120
 msgid "Username: {0}"
-msgstr ""
+msgstr "Tên đăng nhập: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:152
 msgid "Use pseudo language"
@@ -1670,7 +1670,7 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:233
 msgid "Actions for {0}"
-msgstr ""
+msgstr "Chức năng cho {0}"
 
 #: src/pages/Index/Scan.tsx:236
 msgid "Count"
@@ -1813,13 +1813,13 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:130
 #: src/pages/stock/StockDetail.tsx:70
 msgid "Attachments"
-msgstr ""
+msgstr "Đính kèm"
 
 #: src/pages/build/BuildDetail.tsx:118
 #: src/pages/part/PartDetail.tsx:142
 #: src/pages/stock/StockDetail.tsx:82
 msgid "Notes"
-msgstr ""
+msgstr "Ghi chú"
 
 #: src/pages/build/BuildDetail.tsx:135
 msgid "Build Order"
