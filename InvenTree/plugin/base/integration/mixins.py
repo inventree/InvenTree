@@ -492,7 +492,7 @@ class PanelMixin:
             required_keys = ['title', 'content']
 
             if any(key not in panel for key in required_keys):
-                logger.warning(f"Custom panel for plugin {__class__} is missing a required parameter")
+                logger.warning("Custom panel for plugin %s is missing a required parameter", __class__)
                 continue
 
             # Add some information on this plugin

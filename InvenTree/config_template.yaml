@@ -69,6 +69,10 @@ debug: True
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
 
+# Enable database-level logging
+# Use the environment variable INVENTREE_DB_LOGGING
+db_logging: False
+
 # Select default system language (default is 'en-us')
 # Use the environment variable INVENTREE_LANGUAGE
 language: en-us
@@ -250,6 +254,8 @@ remote_login_header: HTTP_REMOTE_USER
 #   show_server_selector: false
 #   sentry_dsn: https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920
 #   environment: development
+# Base URL for serving Platform UI
+# pui_url_base: 'platform'
 
 # Custom flags
 # InvenTree uses django-flags; read more in their docs at https://cfpb.github.io/django-flags/conditions/

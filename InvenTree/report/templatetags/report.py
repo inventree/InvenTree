@@ -129,7 +129,7 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
             exists = False
 
     if exists and validate and not InvenTree.helpers.TestIfImage(full_path):
-        logger.warning(f"File '{filename}' is not a valid image")
+        logger.warning("File '%s' is not a valid image", filename)
         exists = False
 
     if not exists and not replace_missing:

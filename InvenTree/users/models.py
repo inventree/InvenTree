@@ -286,7 +286,7 @@ class RuleSet(models.Model):
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
-        logger.debug(f"User '{name}' failed permission check for {table}.{permission}")
+        logger.debug("User '%s' failed permission check for %s.%s", name, table, permission)
 
         return False
 
@@ -376,7 +376,7 @@ def update_group_roles(group, debug=False):
 
     # Iterate through each permission already assigned to this group,
     # and create a simplified permission key string
-    for p in group.permissions.all():
+    for p in group.permissions.all().prefetch_related('content_type'):
         (permission, app, model) = p.natural_key()
 
         permission_string = '{app}.{perm}'.format(
@@ -457,7 +457,7 @@ def update_group_roles(group, debug=False):
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
         except ContentType.DoesNotExist:  # pragma: no cover
-            logger.warning(f"Error: Could not find permission matching '{permission_string}'")
+            logger.warning("Error: Could not find permission matching '%s'", permission_string)
             permission = None
 
         return permission
@@ -475,7 +475,7 @@ def update_group_roles(group, debug=False):
             group.permissions.add(permission)
 
         if debug:  # pragma: no cover
-            logger.debug(f"Adding permission {perm} to group {group.name}")
+            logger.debug("Adding permission %s to group %s", perm, group.name)
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -490,7 +490,7 @@ def update_group_roles(group, debug=False):
             group.permissions.remove(permission)
 
         if debug:  # pragma: no cover
-            logger.debug(f"Removing permission {perm} from group {group.name}")
+            logger.debug("Removing permission %s from group %s", perm, group.name)
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
@@ -512,7 +512,7 @@ def update_group_roles(group, debug=False):
                     permission = get_permission_object(child_perm)
                     if permission:
                         group.permissions.add(permission)
-                        logger.debug(f"Adding permission {child_perm} to group {group.name}")
+                        logger.debug("Adding permission %s to group %s", child_perm, group.name)
 
 
 def clear_user_role_cache(user):

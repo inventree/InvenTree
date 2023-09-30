@@ -93,7 +93,7 @@ def delete_old_notes_images():
     # Remove any notes which point to non-existent image files
     for note in NotesImage.objects.all():
         if not os.path.exists(note.image.path):
-            logger.info(f"Deleting note {note.image.path} - image file does not exist")
+            logger.info("Deleting note %s - image file does not exist", note.image.path)
             note.delete()
 
     note_classes = getModelsWithMixin(InvenTreeNotesMixin)
@@ -112,7 +112,7 @@ def delete_old_notes_images():
                 break
 
         if not found:
-            logger.info(f"Deleting note {img} - image file not linked to a note")
+            logger.info("Deleting note %s - image file not linked to a note", img)
             note.delete()
 
     # Finally, remove any images in the notes dir which are not linked to a note
@@ -136,5 +136,5 @@ def delete_old_notes_images():
                 break
 
         if not found:
-            logger.info(f"Deleting note {image} - image file not linked to a note")
+            logger.info("Deleting note %s - image file not linked to a note", image)
             os.remove(os.path.join(notes_dir, image))

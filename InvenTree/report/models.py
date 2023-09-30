@@ -130,7 +130,7 @@ class ReportBase(models.Model):
         if str(filename) == str(self.template):
 
             if fullpath.exists():
-                logger.info(f"Deleting existing report template: '{filename}'")
+                logger.info("Deleting existing report template: '%s'", filename)
                 os.remove(fullpath)
 
         # Ensure that the cache is cleared for this template!
@@ -555,7 +555,7 @@ def rename_snippet(instance, filename):
     if str(filename) == str(instance.snippet):
 
         if fullpath.exists():
-            logger.info(f"Deleting existing snippet file: '{filename}'")
+            logger.info("Deleting existing snippet file: '%s'", filename)
             os.remove(fullpath)
 
     # Ensure that the cache is deleted for this snippet
@@ -593,7 +593,7 @@ def rename_asset(instance, filename):
         fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
         if fullpath.exists():
-            logger.info(f"Deleting existing asset file: '{filename}'")
+            logger.info("Deleting existing asset file: '%s'", filename)
             os.remove(fullpath)
 
     return path

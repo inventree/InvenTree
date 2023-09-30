@@ -196,7 +196,7 @@ class MethodStorageClass:
             filtered_list[ref] = item
 
         storage.liste = list(filtered_list.values())
-        logger.info(f'Found {len(storage.liste)} notification methods')
+        logger.info('Found %s notification methods', len(storage.liste))
 
     def get_usersettings(self, user) -> list:
         """Returns all user settings for a specific user.
@@ -339,10 +339,10 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     delta = timedelta(days=1)
 
     if common.models.NotificationEntry.check_recent(category, obj_ref_value, delta):
-        logger.info(f"Notification '{category}' has recently been sent for '{str(obj)}' - SKIPPING")
+        logger.info("Notification '%s' has recently been sent for '%s' - SKIPPING", category, str(obj))
         return
 
-    logger.info(f"Gathering users for notification '{category}'")
+    logger.info("Gathering users for notification '%s'", category)
 
     if target_exclude is None:
         target_exclude = set()
@@ -376,10 +376,10 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
                         target_users.add(user)
             # Unhandled type
             else:
-                logger.error(f"Unknown target passed to trigger_notification method: {target}")
+                logger.error("Unknown target passed to trigger_notification method: %s", target)
 
     if target_users:
-        logger.info(f"Sending notification '{category}' for '{str(obj)}'")
+        logger.info("Sending notification '%s' for '%s'", category, str(obj))
 
         # Collect possible methods
         if delivery_methods is None:
@@ -388,19 +388,19 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
             delivery_methods = (delivery_methods - IGNORED_NOTIFICATION_CLS)
 
         for method in delivery_methods:
-            logger.info(f"Triggering notification method '{method.METHOD_NAME}'")
+            logger.info("Triggering notification method '%s'", method.METHOD_NAME)
             try:
                 deliver_notification(method, obj, category, target_users, context)
             except NotImplementedError as error:
                 # Allow any single notification method to fail, without failing the others
-                logger.error(error)
+                logger.error(error)  # noqa: LOG005
             except Exception as error:
-                logger.error(error)
+                logger.error(error)  # noqa: LOG005
 
         # Set delivery flag
         common.models.NotificationEntry.notify(category, obj_ref_value)
     else:
-        logger.info(f"No possible users for notification '{category}'")
+        logger.info("No possible users for notification '%s'", category)
 
 
 def trigger_superuser_notification(plugin: PluginConfig, msg: str):
@@ -440,7 +440,7 @@ def deliver_notification(cls: NotificationMethod, obj, category: str, targets, c
 
     if method.targets and len(method.targets) > 0:
         # Log start
-        logger.info(f"Notify users via '{method.METHOD_NAME}' for notification '{category}' for '{str(obj)}'")
+        logger.info("Notify users via '%s' for notification '%s' for '%s'", method.METHOD_NAME, category, str(obj))
 
         # Run setup for delivery method
         method.setup()
@@ -465,6 +465,6 @@ def deliver_notification(cls: NotificationMethod, obj, category: str, targets, c
         method.cleanup()
 
         # Log results
-        logger.info(f"Notified {success_count} users via '{method.METHOD_NAME}' for notification '{category}' for '{str(obj)}' successfully")
+        logger.info("Notified %s users via '%s' for notification '%s' for '%s' successfully", success_count, method.METHOD_NAME, category, str(obj))
         if not success:
             logger.info("There were some problems")

@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q, Sum, UniqueConstraint
-from django.db.models.signals import post_delete, post_save, pre_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -281,10 +281,13 @@ class Address(models.Model):
         link: External link to additional address information
     """
 
+    class Meta:
+        """Metaclass defines extra model options"""
+        verbose_name_plural = "Addresses"
+
     def __init__(self, *args, **kwargs):
         """Custom init function"""
-        if 'confirm_primary' in kwargs:
-            self.confirm_primary = kwargs.pop('confirm_primary', None)
+
         super().__init__(*args, **kwargs)
 
     def __str__(self):
@@ -304,24 +307,31 @@ class Address(models.Model):
 
         return ", ".join(populated_lines)
 
-    class Meta:
-        """Metaclass defines extra model options"""
-        verbose_name_plural = "Addresses"
+    def save(self, *args, **kwargs):
+        """Run checks when saving an address:
+
+        - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
+        """
+
+        others = list(Address.objects.filter(company=self.company).exclude(pk=self.pk).all())
+
+        # If this is the *only* address for this company, make it the primary one
+        if len(others) == 0:
+            self.primary = True
+
+        super().save(*args, **kwargs)
+
+        # Once this address is saved, check others
+        if self.primary:
+            for addr in others:
+                if addr.primary:
+                    addr.primary = False
+                    addr.save()
 
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the Contcat model"""
         return reverse('api-address-list')
-
-    def validate_unique(self, exclude=None):
-        """Ensure that only one primary address exists per company"""
-
-        super().validate_unique(exclude=exclude)
-
-        if self.primary:
-            # Check that no other primary address exists for this company
-            if Address.objects.filter(company=self.company, primary=True).exclude(pk=self.pk).exists():
-                raise ValidationError({'primary': _('Company already has a primary address')})
 
     company = models.ForeignKey(Company, related_name='addresses',
                                 on_delete=models.CASCADE,
@@ -380,26 +390,6 @@ class Address(models.Model):
     link = InvenTreeURLField(blank=True,
                              verbose_name=_('Link'),
                              help_text=_('Link to address information (external)'))
-
-
-@receiver(pre_save, sender=Address)
-def check_primary(sender, instance, **kwargs):
-    """Removes primary flag from current primary address if the to-be-saved address is marked as primary"""
-
-    if instance.company.primary_address is None:
-        instance.primary = True
-
-    # If confirm_primary is not present, this function does not need to do anything
-    if not hasattr(instance, 'confirm_primary') or \
-       instance.primary is False or \
-       instance.company.primary_address is None or \
-       instance.id == instance.company.primary_address.id:
-        return
-
-    if instance.confirm_primary is True:
-        adr = Address.objects.get(id=instance.company.primary_address.id)
-        adr.primary = False
-        adr.save()
 
 
 class ManufacturerPart(MetadataMixin, models.Model):

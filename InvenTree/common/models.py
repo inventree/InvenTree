@@ -31,7 +31,7 @@ from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     URLValidator)
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
-from django.db.utils import IntegrityError, OperationalError
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.timezone import now
@@ -74,8 +74,20 @@ class MetaMixin(models.Model):
     )
 
 
-class EmptyURLValidator(URLValidator):
-    """Validator for filed with url - that can be empty."""
+class BaseURLValidator(URLValidator):
+    """Validator for the InvenTree base URL:
+
+    - Allow empty value
+    - Allow value without specified TLD (top level domain)
+    """
+
+    def __init__(self, schemes=None, **kwargs):
+        """Custom init routine"""
+
+        super().__init__(schemes, **kwargs)
+
+        # Override default host_re value - allow optional tld regex
+        self.host_re = '(' + self.hostname_re + self.domain_re + f'({self.tld_re})?' + '|localhost)'
 
     def __call__(self, value):
         """Make sure empty values pass."""
@@ -215,7 +227,7 @@ class BaseInvenTreeSetting(models.Model):
         if self.pk is None:
             return
 
-        logger.debug(f"Saving setting '{ckey}' to cache")
+        logger.debug("Saving setting '%s' to cache", ckey)
 
         try:
             cache.set(
@@ -450,6 +462,9 @@ class BaseInvenTreeSetting(models.Model):
             **cls.get_filters(**kwargs),
         }
 
+        # Unless otherwise specified, attempt to create the setting
+        create = kwargs.pop('create', True)
+
         # Perform cache lookup by default
         do_cache = kwargs.pop('cache', True)
 
@@ -472,14 +487,11 @@ class BaseInvenTreeSetting(models.Model):
             setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
-        except (IntegrityError, OperationalError):
+        except (IntegrityError, OperationalError, ProgrammingError):
             setting = None
 
         # Setting does not exist! (Try to create it)
         if not setting:
-
-            # Unless otherwise specified, attempt to create the setting
-            create = kwargs.pop('create', True)
 
             # Prevent creation of new settings objects when importing data
             if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True, allow_shell=True):
@@ -500,7 +512,7 @@ class BaseInvenTreeSetting(models.Model):
                     # Wrap this statement in "atomic", so it can be rolled back if it fails
                     with transaction.atomic():
                         setting.save(**kwargs)
-                except (IntegrityError, OperationalError):
+                except (IntegrityError, OperationalError, ProgrammingError):
                     # It might be the case that the database isn't created yet
                     pass
                 except ValidationError:
@@ -757,19 +769,19 @@ class BaseInvenTreeSetting(models.Model):
         try:
             (app, mdl) = model_name.strip().split('.')
         except ValueError:
-            logger.error(f"Invalid 'model' parameter for setting {self.key} : '{model_name}'")
+            logger.exception("Invalid 'model' parameter for setting '%s': '%s'", self.key, model_name)
             return None
 
         app_models = apps.all_models.get(app, None)
 
         if app_models is None:
-            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no app named '{app}'")
+            logger.error("Error retrieving model class '%s' for setting '%s' - no app named '%s'", model_name, self.key, app)
             return None
 
         model = app_models.get(mdl, None)
 
         if model is None:
-            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no model named '{mdl}'")
+            logger.error("Error retrieving model class '%s' for setting '%s' - no model named '%s'", model_name, self.key, mdl)
             return None
 
         # Looks like we have found a model!
@@ -1018,7 +1030,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_BASE_URL': {
             'name': _('Base URL'),
             'description': _('Base URL for server instance'),
-            'validator': EmptyURLValidator(),
+            'validator': BaseURLValidator(),
             'default': '',
             'after_save': update_instance_url,
         },
@@ -2257,7 +2269,7 @@ class PriceBreak(MetaMixin):
         try:
             converted = convert_money(self.price, currency_code)
         except MissingRate:
-            logger.warning(f"No currency conversion rate available for {self.price_currency} -> {currency_code}")
+            logger.warning("No currency conversion rate available for %s -> %s", self.price_currency, currency_code)
             return self.price.amount
 
         return converted.amount

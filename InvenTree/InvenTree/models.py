@@ -440,7 +440,8 @@ class InvenTreeAttachment(models.Model):
     An attachment can be either an uploaded file, or an external URL
 
     Attributes:
-        attachment: File
+        attachment: Upload file
+        link: External URL
         comment: String descriptor for the attachment
         user: User associated with file upload
         upload_date: Date the file was uploaded
@@ -534,7 +535,7 @@ class InvenTreeAttachment(models.Model):
 
         # Check that there are no directory tricks going on...
         if new_file.parent != attachment_dir:
-            logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
+            logger.error("Attempted to rename attachment outside valid directory: '%s'", new_file)
             raise ValidationError(_("Invalid attachment directory"))
 
         # Ignore further checks if the filename is not actually being renamed
@@ -551,7 +552,7 @@ class InvenTreeAttachment(models.Model):
             raise ValidationError(_("Filename missing extension"))
 
         if not old_file.exists():
-            logger.error(f"Trying to rename attachment '{old_file}' which does not exist")
+            logger.error("Trying to rename attachment '%s' which does not exist", old_file)
             return
 
         if new_file.exists():
@@ -563,6 +564,22 @@ class InvenTreeAttachment(models.Model):
             self.save()
         except Exception:
             raise ValidationError(_("Error renaming file"))
+
+    def fully_qualified_url(self):
+        """Return a 'fully qualified' URL for this attachment.
+
+        - If the attachment is a link to an external resource, return the link
+        - If the attachment is an uploaded file, return the fully qualified media URL
+        """
+
+        if self.link:
+            return self.link
+
+        if self.attachment:
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
+
+        return ''
 
 
 class InvenTreeTree(MPTTModel):
@@ -938,4 +955,4 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
         except Exception as exc:
             """We do not want to throw an exception while reporting an exception"""
-            logger.error(exc)
+            logger.error(exc)  # noqa: LOG005
