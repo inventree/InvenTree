@@ -1004,6 +1004,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'hidden': True,
         },
 
+        'PENDING_DB_MIGRATIONS': {
+            'name': _('Pending Migrations'),
+            'description': _('Database has pending schema migrations'),
+            'default': False,
+            'validator': bool,
+            'hidden': True,
+        },
+
         'INVENTREE_INSTANCE': {
             'name': _('Server Instance Name'),
             'default': 'InvenTree',

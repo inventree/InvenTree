@@ -369,12 +369,19 @@ def setting_object(key, *args, **kwargs):
 @register.simple_tag()
 def settings_value(key, *args, **kwargs):
     """Return a settings value specified by the given key."""
-    if 'user' in kwargs:
-        if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated is False):
-            return InvenTreeUserSetting.get_setting(key)
-        return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
 
-    return InvenTreeSetting.get_setting(key)
+    setting_args = {
+        'create': kwargs.pop('create', True),
+        'cache': kwargs.pop('cache', True),
+    }
+
+    if user := kwargs.pop('user', None):
+        if user.is_authenticated:
+            setting_args['user'] = user
+
+        return InvenTreeUserSetting.get_setting(key, **setting_args)
+    else:
+        return InvenTreeSetting.get_setting(key, **setting_args)
 
 
 @register.simple_tag()

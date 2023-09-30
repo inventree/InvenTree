@@ -18,7 +18,7 @@ def set_pending_migration_flag(pending: bool) -> None:
 
     import common.models
 
-    common.models.InvenTreeSetting.set_setting('_PENDING_DB_MIGRATIONS', pending, None)
+    common.models.InvenTreeSetting.set_setting('PENDING_DB_MIGRATIONS', pending, None)
 
 
 def get_migration_plan():
