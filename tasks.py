@@ -557,7 +557,9 @@ def server(c, address="127.0.0.1:8000"):
 @task(pre=[wait])
 def worker(c):
     """Run the InvenTree background worker process."""
-    manage(c, 'qcluster', pty=True)
+
+    print("Running background worker task...")
+    manage(c, 'qcluster', pty=False)
 
 
 # Testing tasks
