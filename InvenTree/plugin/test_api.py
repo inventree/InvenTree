@@ -132,7 +132,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         url = reverse('admin:plugin_pluginconfig_changelist')
 
         test_plg = self.plugin_confs.first()
-        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", self.plugin_confs.first())
         # deactivate plugin
         response = self.client.post(url, {
             'action': 'plugin_deactivate',
