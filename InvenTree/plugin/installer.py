@@ -25,11 +25,8 @@ def pip_command(*args):
     command = [python, '-m', 'pip']
     command.extend(args)
 
-    logger.info(f"running pip command: {' '.join(command)}")
-
-    # Debug information, might be useful for working out edge cases
-    logger.debug(f"base prefix: {sys.base_prefix}")
-    logger.debug(f"python path: {sys.path}")
+    logger.info("running pip command: %s", ' '.join(command))
+    logger.debug("python executable path: %s", python)
 
     return subprocess.check_output(
         command,
@@ -45,7 +42,7 @@ def check_package_path(packagename):
     - If not installed, return False
     """
 
-    logger.info(f"check_package_path: {packagename}")
+    logger.info("check_package_path: %s", packagename)
 
     try:
         result = pip_command('show', packagename)
@@ -62,7 +59,7 @@ def check_package_path(packagename):
     except subprocess.CalledProcessError as error:
 
         output = error.output.decode('utf-8')
-        logger.error(f"Plugin lookup failed: {output}")
+        logger.exception("Plugin lookup failed: %s", str(output))
         return False
 
     # If we get here, the package is not installed
@@ -77,7 +74,7 @@ def install_plugins_file():
     pf = settings.PLUGIN_FILE
 
     if not os.path.exists(pf):
-        logger.warning(f"Plugin file {pf} does not exist")
+        logger.warning("Plugin file %s does not exist", str(pf))
         return
 
     pf = os.path.abspath(pf)
@@ -86,10 +83,10 @@ def install_plugins_file():
         pip_command('install', '-U', '-r', pf)
     except subprocess.CalledProcessError as error:
         output = error.output.decode('utf-8')
-        logger.error(f"Plugin file installation failed: {output}")
+        logger.exception("Plugin file installation failed: %s", str(output))
         return False
     except Exception as exc:
-        logger.error(f"Plugin file installation failed: {str(exc)}")
+        logger.exception("Plugin file installation failed: %s", exc)
         return False
 
     # At this point, the plugins file has been installed
@@ -99,12 +96,12 @@ def install_plugins_file():
 def add_plugin_to_file(install_name):
     """Add a plugin to the plugins file"""
 
-    logger.info(f"Adding plugin to plugins file: {install_name}")
+    logger.info("Adding plugin to plugins file: %s", install_name)
 
     pf = settings.PLUGIN_FILE
 
     if not os.path.exists(pf):
-        logger.warning(f"Plugin file {pf} does not exist")
+        logger.warning("Plugin file %s does not exist", str(pf))
         return
 
     pf = os.path.abspath(pf)
@@ -114,7 +111,7 @@ def add_plugin_to_file(install_name):
         with open(pf, 'r') as f:
             lines = f.readlines()
     except Exception as exc:
-        logger.error(f"Failed to read plugins file: {str(exc)}")
+        logger.exception("Failed to read plugins file: %s", str(exc))
         return
 
     # Check if plugin is already in file
@@ -135,7 +132,7 @@ def add_plugin_to_file(install_name):
                 if not line.endswith('\n'):
                     f.write('\n')
     except Exception as exc:
-        logger.error(f"Failed to add plugin to plugins file: {str(exc)}")
+        logger.exception("Failed to add plugin to plugins file: %s", str(exc))
 
 
 def install_plugin(url, packagename=None, user=None):
@@ -148,7 +145,7 @@ def install_plugin(url, packagename=None, user=None):
     if user and not user.is_staff:
         raise ValidationError(_("Permission denied: only staff users can install plugins"))
 
-    logger.info(f"install_plugin: {url}, {packagename}")
+    logger.info("install_plugin: %s, %s", url, packagename)
 
     # Check if we are running in a virtual environment
     # For now, just log a warning
@@ -197,7 +194,7 @@ def install_plugin(url, packagename=None, user=None):
         # If an error was thrown, we need to parse the output
 
         output = error.output.decode('utf-8')
-        logger.error(f"Plugin installation failed: {output}")
+        logger.exception("Plugin installation failed: %s", str(output))
 
         errors = []
 
