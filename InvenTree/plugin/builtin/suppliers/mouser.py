@@ -39,8 +39,8 @@ class MouserPlugin(BarcodeMixin, SettingsMixin, InvenTreePlugin):
         if (mouser_pk := self.get_setting("MOUSER_SUPPLIER")):
             if not (mouser := Company.objects.get(pk=mouser_pk)):
                 logger.error(
-                    f"No company with pk {mouser_pk} "
-                    f"(set \"MOUSER_SUPPLIER\" pk to a valid value)"
+                    "No company with pk %d (set \"MOUSER_SUPPLIER\" pk to a valid value)",
+                    mouser_pk
                 )
                 return None
         else:

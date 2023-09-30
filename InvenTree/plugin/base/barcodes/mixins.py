@@ -75,9 +75,7 @@ class BarcodeMixin:
         if sku:
             supplier_parts = SupplierPart.objects.filter(SKU__iexact=sku)
             if len(supplier_parts) != 1:
-                logger.warning(
-                    f"Found {len(supplier_parts)} supplier parts for SKU {sku}"
-                )
+                logger.warning("Found %d supplier parts for SKU %s", len(supplier_parts), sku)
                 return None
             return supplier_parts[0]
 
@@ -87,7 +85,7 @@ class BarcodeMixin:
         manufacturer_parts = ManufacturerPart.objects.filter(MPN__iexact=mpn)
         if len(manufacturer_parts) != 1:
             logger.warning(
-                f"Found {len(manufacturer_parts)} manufacturer parts for MPN {mpn}"
+                "Found %d manufacturer parts for MPN %s", len(manufacturer_parts), mpn
             )
             return None
         manufacturer_part = manufacturer_parts[0]
@@ -96,8 +94,8 @@ class BarcodeMixin:
             manufacturer_part=manufacturer_part.pk, supplier=supplier.pk)
         if len(supplier_parts) != 1:
             logger.warning(
-                f"Found {len(supplier_parts)} supplier parts for MPN {mpn} and "
-                f"supplier '{supplier.name}'"
+                "Found %d supplier parts for MPN %s and supplier %s",
+                len(supplier_parts), mpn, supplier.name
             )
             return None
         return supplier_parts[0]
@@ -181,7 +179,7 @@ class BarcodeMixin:
             try:
                 quantity = int(quantity)
             except ValueError:
-                logger.warning(f"Failed to parse quantity '{quantity}'")
+                logger.warning("Failed to parse quantity '%s'", quantity)
                 quantity = None
 
         #  find incomplete line_items that match the supplier_part
