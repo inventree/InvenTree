@@ -495,9 +495,9 @@ if 'sqlite' in db_engine:
     db_name = str(Path(db_name).resolve())
     db_config['NAME'] = db_name
 
-logger.info("DB_ENGINE: ", db_engine)
-logger.info("DB_NAME: ", db_name)
-logger.info("DB_HOST: ", db_host)
+logger.info("DB_ENGINE: %s", db_engine)
+logger.info("DB_NAME: %s", db_name)
+logger.info("DB_HOST: %s", db_host)
 
 """
 In addition to base-level database configuration, we may wish to specify specific options to the database backend
@@ -971,7 +971,7 @@ PLUGIN_FILE_CHECKED = False                                                     
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
 if SITE_URL:
-    logger.info("Site URL: ", SITE_URL)
+    logger.info("Site URL: %s", SITE_URL)
 
     # Check that the site URL is valid
     validator = URLValidator()
@@ -1008,9 +1008,9 @@ FLAGS = {
 CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
 if CUSTOM_FLAGS:
     if not isinstance(CUSTOM_FLAGS, dict):
-        logger.error("Invalid custom flags, must be valid dict: ", CUSTOM_FLAGS)
+        logger.error("Invalid custom flags, must be valid dict: %s", str(CUSTOM_FLAGS))
     else:
-        logger.info("Custom flags: ". CUSTOM_FLAGS)
+        logger.info("Custom flags: %s", str(CUSTOM_FLAGS))
         FLAGS.update(CUSTOM_FLAGS)
 
 # Magic login django-sesame
