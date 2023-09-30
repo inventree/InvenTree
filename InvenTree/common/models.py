@@ -227,7 +227,7 @@ class BaseInvenTreeSetting(models.Model):
         if self.pk is None:
             return
 
-        logger.debug(f"Saving setting '{ckey}' to cache")
+        logger.debug("Saving setting '%s' to cache", ckey)
 
         try:
             cache.set(
@@ -769,19 +769,19 @@ class BaseInvenTreeSetting(models.Model):
         try:
             (app, mdl) = model_name.strip().split('.')
         except ValueError:
-            logger.error(f"Invalid 'model' parameter for setting {self.key} : '{model_name}'")
+            logger.exception("Invalid 'model' parameter for setting '%s': '%s'", self.key, model_name)
             return None
 
         app_models = apps.all_models.get(app, None)
 
         if app_models is None:
-            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no app named '{app}'")
+            logger.error("Error retrieving model class '%s' for setting '%s' - no app named '%s'", model_name, self.key, app)
             return None
 
         model = app_models.get(mdl, None)
 
         if model is None:
-            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no model named '{mdl}'")
+            logger.error("Error retrieving model class '%s' for setting '%s' - no model named '%s'", model_name, self.key, mdl)
             return None
 
         # Looks like we have found a model!
@@ -2269,7 +2269,7 @@ class PriceBreak(MetaMixin):
         try:
             converted = convert_money(self.price, currency_code)
         except MissingRate:
-            logger.debug(f"No currency conversion rate available for {self.price_currency} -> {currency_code}")
+            logger.info("No currency conversion rate available for %s -> %s", str(self.price_currency), (currency_code))
             return self.price.amount
 
         return converted.amount

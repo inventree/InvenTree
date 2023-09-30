@@ -36,7 +36,7 @@ class PartConfig(AppConfig):
             items = BomItem.objects.filter(part__trackable=False, sub_part__trackable=True)
 
             for item in items:
-                logger.info(f"Marking part '{item.part.name}' as trackable")
+                logger.info("Marking part '%s' as trackable", item.part.name)
                 item.part.trackable = True
                 item.part.clean()
                 item.part.save()
@@ -60,10 +60,10 @@ class PartConfig(AppConfig):
 
             if items.count() > 0:
                 # Find any pricing objects which have the 'scheduled_for_update' flag set
-                logger.info(f"Resetting update flags for {items.count()} pricing objects...")
+                logger.info("Resetting update flags for %s pricing objects...", items.count())
 
                 for pricing in items:
                     pricing.scheduled_for_update = False
                     pricing.save()
         except Exception:
-            logger.error("Failed to reset pricing flags - database not ready")
+            logger.exception("Failed to reset pricing flags - database not ready")
