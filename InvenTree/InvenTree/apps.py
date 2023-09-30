@@ -40,7 +40,11 @@ class InvenTreeConfig(AppConfig):
             return
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
-            InvenTree.tasks.check_for_migrations(worker=False)
+
+            InvenTree.tasks.offload_task(
+                InvenTree.tasks.check_for_migrations,
+                force_async=True,
+            )
 
             self.remove_obsolete_tasks()
 

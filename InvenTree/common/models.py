@@ -590,7 +590,11 @@ class BaseInvenTreeSetting(models.Model):
             value = InvenTree.helpers.str2bool(value)
 
         setting.value = str(value)
-        setting.save()
+
+        try:
+            setting.save()
+        except Exception as exc:
+            logger.exception("Error saving setting '%s': %s", key, str(exc))
 
     key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive)'))
 

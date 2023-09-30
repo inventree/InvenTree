@@ -651,14 +651,16 @@ class PluginsRegistry:
         and to inform other processes that the plugin registry has changed
         """
 
-        data = ""
+        from hashlib import md5
 
+        data = md5()
+
+        # Hash for all *active* plugins
         for slug, plug in self.plugins.items():
-            data += str(slug)
-            data += str(plug.version)
-            data += str(plug.is_active())
+            data.update(str(slug).encode())
+            data.update(str(plug.version).encode())
 
-        return str(hash(data))
+        return str(data.hexdigest())
 
     def check_reload(self):
         """Determine if the registry needs to be reloaded"""

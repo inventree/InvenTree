@@ -35,6 +35,8 @@ INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv or 'TESTING' in os.environ
 
+WORKER = 'qcluster' in sys.argv
+
 if TESTING:
 
     # Use a weaker password hasher for testing (improves testing speed)
@@ -465,8 +467,6 @@ for key in required_keys:
     if key not in db_config:  # pragma: no cover
         error_msg = f'Missing required database configuration value {key}'
         logger.error(error_msg)
-
-        print('Error: ' + error_msg)
         sys.exit(-1)
 
 """
@@ -679,12 +679,17 @@ else:
     }
 
 _q_worker_timeout = int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 120))
+_q_worker_count = max(1, int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)))
+
+# Prevent too many workers from overloading sqlite server
+if 'sqlite' in db_engine:
+    _q_worker_count = 1
 
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
-    'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
+    'workers': _q_worker_count,
     'timeout': _q_worker_timeout,
     'retry': min(120, _q_worker_timeout + 30),
     'max_attempts': int(get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)),
@@ -696,6 +701,9 @@ Q_CLUSTER = {
     'sync': False,
     'save_limit': 100,
 }
+
+if WORKER:
+    logger.info("Running background task monitor with %d workers", _q_worker_count)
 
 # Configure django-q sentry integration
 if SENTRY_ENABLED and SENTRY_DSN:
