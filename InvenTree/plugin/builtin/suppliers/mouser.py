@@ -27,7 +27,7 @@ class MouserPlugin(BarcodeMixin, SettingsMixin, InvenTreePlugin):
         "MOUSER_SUPPLIER": {
             "name": _("Mouser Supplier"),
             "description": _("The Supplier which acts as 'Mouser'"),
-            "model": "company.company",
+            # "model": "company.company",
         }
     }
 
