@@ -68,6 +68,8 @@
 
   "remoteEnv": {
     // InvenTree config (note that other settings can be edited in the dev/config.yaml file)
+    "INVENTREE_DEBUG": "True",
+    "INVENTREE_LOG_LEVEL": "INFO",
     "INVENTREE_DB_ENGINE": "sqlite3",
     "INVENTREE_DB_NAME": "${containerWorkspaceFolder}/dev/database.sqlite3",
     "INVENTREE_MEDIA_ROOT": "${containerWorkspaceFolder}/dev/media",
