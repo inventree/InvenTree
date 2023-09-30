@@ -481,7 +481,7 @@ class PluginsRegistry:
                     t_start = time.time()
                     plg_i: InvenTreePlugin = plg()
                     dt = time.time() - t_start
-                    logger.info('Loaded plugin `%s` in {%.3f}s', plg_name, dt)
+                    logger.info('Loaded plugin `%s` in %.3fs', plg_name, dt)
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
                     logger.warning("Plugin `%s` could not be loaded", plg_name)
