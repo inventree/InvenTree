@@ -15,6 +15,7 @@ from typing import Any, Dict, List, OrderedDict
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
+from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.urls import clear_url_caches, re_path
 from django.utils.text import slugify
@@ -230,6 +231,8 @@ class PluginsRegistry:
             self.unload_plugins(force_reload=force_reload)
             self.plugins_loaded = True
             self.load_plugins(full_reload=full_reload)
+
+            self._update_urls()
 
         logger.info('Finished reloading plugins')
 
@@ -563,6 +566,8 @@ class PluginsRegistry:
         try:
             cmd(*args, **kwargs)
             return True, []
+        except AppRegistryNotReady:
+            logger.info("App registry not ready - cannot load plugins yet")
         except Exception as error:  # pragma: no cover
             handle_error(error)
 
