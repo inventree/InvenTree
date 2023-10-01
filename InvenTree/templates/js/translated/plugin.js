@@ -47,26 +47,22 @@ function loadPluginTable(table, options={}) {
         },
         columns: [
             {
-                field: 'active',
-                title: '',
-                sortable: true,
-                switchable: false,
-                formatter: function(value, row) {
-                    if (row.active) {
-                        return `<span class='fa fa-check-circle icon-green' title='{% trans "This plugin is active" %}'></span>`;
-                    } else {
-                        return `<span class='fa fa-times-circle icon-red' title ='{% trans "This plugin is not active" %}'></span>`;
-                    }
-                }
-            },
-            {
                 field: 'name',
                 title: '{% trans "Plugin" %}',
                 visible: true,
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
-                    let html = value;
+                    let html = '';
+
+                    if (row.active) {
+                        html += `<span class='fa fa-check-circle icon-green' title='{% trans "This plugin is active" %}'></span>`;
+                    } else {
+                        html += `<span class='fa fa-times-circle icon-red' title ='{% trans "This plugin is not active" %}'></span>`;
+                    }
+
+                    html += `&nbsp;<span>${value}</span>`;
+
                     if (row.is_builtin) {
                         html += `<span class='badge bg-success rounded-pill badge-right'>{% trans "Builtin" %}</span>`;
                     }
