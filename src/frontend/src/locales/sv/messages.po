@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-25 04:05\n"
+"PO-Revision-Date: 2023-10-01 10:13\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -201,7 +201,7 @@ msgstr "Fel"
 
 #: src/components/forms/fields/RelatedModelField.tsx:212
 msgid "Search"
-msgstr ""
+msgstr "Sök"
 
 #: src/components/forms/fields/RelatedModelField.tsx:213
 #: src/components/widgets/WidgetLayout.tsx:134
@@ -498,7 +498,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:198
 #: src/components/tables/stock/StockItemTable.tsx:115
 msgid "Edit"
-msgstr ""
+msgstr "Redigera"
 
 #: src/components/tables/AttachmentTable.tsx:128
 #: src/components/tables/part/RelatedPartTable.tsx:97
@@ -1302,7 +1302,7 @@ msgstr "Redigera fil"
 
 #: src/functions/forms/AttachmentForms.tsx:100
 msgid "Edit Link"
-msgstr ""
+msgstr "Redigera länk"
 
 #: src/functions/forms/AttachmentForms.tsx:101
 msgid "File updated"
