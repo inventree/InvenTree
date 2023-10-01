@@ -81,7 +81,7 @@ class InvenTreePluginTests(TestCase):
         cls.named_plugin = NamedPlugin()
 
         class SimpleInvenTreePlugin(InvenTreePlugin):
-            NAME = 'SimplePlugin'
+            NAME = 'SimpleTreePlugin'
 
         cls.plugin_simple = SimpleInvenTreePlugin()
 
