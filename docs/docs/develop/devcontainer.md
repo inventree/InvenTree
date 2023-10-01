@@ -47,7 +47,7 @@ If you only need a superuser, run the `superuser` task. It should prompt you for
 
 #### Run background workers
 
-If you want need to process your queue with background workers, run the `worker` task.
+If you need to process your queue with background workers, run the `worker` task.
 
 ### Running InvenTree
 
