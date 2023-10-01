@@ -185,7 +185,7 @@ def get_plugin_slug(plugin):
     if slug:
         return slugify(slug.lower())
     else:
-        return None
+        return ''
 
 
 def get_plugin_title(plugin):
