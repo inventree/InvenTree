@@ -101,10 +101,12 @@ class BarcodeMixin:
         return supplier_parts[0]
 
     @staticmethod
-    def parse_ecia_barcode2d(barcode_data: str) -> dict[str, str]:
+    def parse_ecia_barcode2d(barcode_data: str | list[str]) -> dict[str, str]:
         """Parse a standard ECIA 2D barcode, according to https://www.ecianow.org/assets/docs/ECIA_Specifications.pdf"""
 
-        if not (data_split := BarcodeMixin.parse_isoiec_15434_barcode2d(barcode_data)):
+        if not isinstance(barcode_data, str):
+            data_split = barcode_data
+        elif not (data_split := BarcodeMixin.parse_isoiec_15434_barcode2d(barcode_data)):
             return None
 
         barcode_fields = {}
