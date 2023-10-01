@@ -6,7 +6,7 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import PurchaseOrder  # , PurchaseOrderLineItem
 from part.models import Part
-from stock.models import StockItem  # , StockLocation
+from stock.models import StockItem, StockLocation
 
 
 class SupplierBarcodeTests(InvenTreeAPITestCase):
@@ -177,19 +177,19 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         assert stock_item.quantity == 3
         assert stock_item.location is None
 
-#    def test_receive_one_stock_location(self):
-#        """Test receiving an item when only one stock location exists"""
-#
-#        stock_location = StockLocation.objects.create(name="Test Location")
-#
-#        url = reverse("api-barcode-po-receive")
-#        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
-#        assert "success" in result1.data
-#
-#        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
-#        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
-#        assert stock_item.location == stock_location
-#
+    def test_receive_one_stock_location(self):
+        """Test receiving an item when only one stock location exists"""
+
+        stock_location = StockLocation.objects.create(name="Test Location")
+
+        url = reverse("api-barcode-po-receive")
+        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
+        assert "success" in result1.data
+
+        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
+        assert stock_item.location == stock_location
+
 #    def test_receive_default_line_item_location(self):
 #        """Test receiving an item into the default line_item location"""
 #
