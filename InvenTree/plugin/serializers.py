@@ -153,13 +153,29 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         success = False
         # execute pypi
         try:
-            result = subprocess.check_output(command, cwd=settings.BASE_DIR.parent)
+            result = subprocess.check_output(command, cwd=settings.BASE_DIR.parent, stderr=subprocess.STDOUT)
             ret['result'] = str(result, 'utf-8')
             ret['success'] = True
+            ret['error'] = False
             success = True
         except subprocess.CalledProcessError as error:  # pragma: no cover
-            ret['result'] = str(error.output, 'utf-8')
-            ret['error'] = True
+            output = error.output.decode('utf-8')
+
+            # Raise a ValidationError as the plugin install failed
+            errors = []
+
+            for msg in output.split('\n'):
+                msg = msg.strip()
+                if msg:
+                    errors.append(msg)
+
+            if len(errors) == 0:
+                errors.append(_('Unknown error'))
+
+            if len(errors) > 1:
+                raise ValidationError(errors)
+            else:
+                raise ValidationError(errors[0])
 
         # save plugin to plugin_file if installed successful
         if success:
