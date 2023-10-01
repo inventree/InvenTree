@@ -1,7 +1,6 @@
 """Install a plugin into the python virtual environment"""
 
 import logging
-import os
 import re
 import subprocess
 import sys
@@ -46,6 +45,10 @@ def check_package_path(packagename):
 
     logger.info("check_package_path: %s", packagename)
 
+    # Remove version information
+    for c in '<>=! ':
+        packagename = packagename.split(c)[0]
+
     try:
         result = pip_command('show', packagename)
 
@@ -75,14 +78,12 @@ def install_plugins_file():
 
     pf = settings.PLUGIN_FILE
 
-    if not os.path.exists(pf):
+    if not pf or not pf.exists():
         logger.warning("Plugin file %s does not exist", str(pf))
         return
 
-    pf = os.path.abspath(pf)
-
     try:
-        pip_command('install', '-U', '-r', pf)
+        pip_command('install', '-Ur', str(pf))
     except subprocess.CalledProcessError as error:
         output = error.output.decode('utf-8')
         logger.exception("Plugin file installation failed: %s", str(output))
@@ -102,15 +103,13 @@ def add_plugin_to_file(install_name):
 
     pf = settings.PLUGIN_FILE
 
-    if not os.path.exists(pf):
+    if not pf or not pf.exists():
         logger.warning("Plugin file %s does not exist", str(pf))
         return
 
-    pf = os.path.abspath(pf)
-
     # First, read in existing plugin file
     try:
-        with open(pf, 'r') as f:
+        with pf.open(mode='r') as f:
             lines = f.readlines()
     except Exception as exc:
         logger.exception("Failed to read plugins file: %s", str(exc))
@@ -127,7 +126,7 @@ def add_plugin_to_file(install_name):
 
     # Write file back to disk
     try:
-        with open(pf, 'w') as f:
+        with pf.open(mode='w') as f:
             for line in lines:
                 f.write(line)
 
@@ -159,27 +158,32 @@ def install_plugin(url=None, packagename=None, user=None):
     # build up the command
     install_name = ['-U']
 
+    full_pkg = ''
+
     if url:
         # use custom registration / VCS
         if True in [identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn', ]]:
             # using a VCS provider
             if packagename:
-                install_name.append(f'{packagename}@{url}')
+                full_pkg = f'{packagename}@{url}'
             else:
-                install_name.append(url)
+                full_pkg = url
         else:  # pragma: no cover
             # using a custom package repositories
             # This is only for pypa compliant directory services (all current are tested above)
             # and not covered by tests.
             install_name.append('-i')
-            install_name.append(url)
 
-            if packagename:
-                install_name.append(packagename)
+            if url:
+                full_pkg = url
+            elif packagename:
+                full_pkg = packagename
 
     elif packagename:
         # use pypi
-        install_name.append(packagename)
+        full_pkg = packagename
+
+    install_name.append(full_pkg)
 
     ret = {}
 
@@ -214,7 +218,7 @@ def install_plugin(url=None, packagename=None, user=None):
             raise ValidationError(errors[0])
 
     # Save plugin to plugins file
-    add_plugin_to_file(' '.join(install_name))
+    add_plugin_to_file(full_pkg)
 
     # Reload the plugin registry, to discover the new plugin
     from plugin.registry import registry
