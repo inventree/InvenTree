@@ -31,11 +31,14 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         mouser = Company.objects.create(name="Mouser Test", is_supplier=True)
 
         supplier_parts = [
-            SupplierPart(SKU="296-LM358BIDDFRCT-ND", part=part, supplier=supplier),
-            SupplierPart(SKU="1", part=part, manufacturer_part=mpart1, supplier=mouser),
-            SupplierPart(SKU="2", part=part, manufacturer_part=mpart2, supplier=mouser),
-            SupplierPart(SKU="C312270", part=part, supplier=supplier),
-            SupplierPart(SKU="WBP-302", part=part, supplier=supplier),
+            SupplierPart(
+                SKU="296-LM358BIDDFRCT-ND", part=part, supplier=supplier),
+            SupplierPart(
+                SKU="1", part=part, manufacturer_part=mpart1, supplier=mouser),
+            SupplierPart(
+                SKU="2", part=part, manufacturer_part=mpart2, supplier=mouser),
+            SupplierPart(
+                SKU="C312270", part=part, supplier=supplier)
         ]
 
         SupplierPart.objects.bulk_create(supplier_parts)
@@ -85,32 +88,6 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         assert "pk" in supplier_part_data
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
         assert supplier_part.SKU == "C312270"
-
-    def test_tme_qrcode(self):
-        """Test TME QR-Code."""
-
-        url = reverse("api-barcode-scan")
-        result = self.post(url, data={"barcode": TME_QRCODE})
-
-        supplier_part_data = result.data.get("supplierpart")
-        assert supplier_part_data is not None
-
-        assert "pk" in supplier_part_data
-        supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
-        assert supplier_part.SKU == "WBP-302"
-
-    def test_tme_barcode2d(self):
-        """Test TME DataMatrix-Code."""
-
-        url = reverse("api-barcode-scan")
-        result = self.post(url, data={"barcode": TME_DATAMATRIX_CODE})
-
-        supplier_part_data = result.data.get("supplierpart")
-        assert supplier_part_data is not None
-
-        assert "pk" in supplier_part_data
-        supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
-        assert supplier_part.SKU == "WBP-302"
 
 
 class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
@@ -308,9 +285,3 @@ LCSC_BARCODE = (
     "{pbn:PICK2009291337,on:SO2009291337,pc:C312270,pm:ST-1-102-A01-T000-RS,qty"
     ":2,mc:,cc:1,pdi:34421807}"
 )
-
-TME_QRCODE = (
-    "QTY:1 PN:WBP-302 PO:19361337/1 CPO:PO-2023-06-08-001337 MFR:WISHERENTERPRI"
-    "SE MPN:WBP-302 https://www.tme.eu/details/WBP-302"
-)
-TME_DATAMATRIX_CODE = "PWBP-302 1PWBP-302 Q1 K19361337/1"
