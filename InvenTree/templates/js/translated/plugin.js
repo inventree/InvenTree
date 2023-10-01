@@ -61,22 +61,31 @@ function loadPluginTable(table, options={}) {
             },
             {
                 field: 'name',
-                title: '{% trans "Plugin Description" %}',
+                title: '{% trans "Plugin" %}',
+                visible: true,
+                switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
-                    let html = '';
-
-                    html += `<strong>${value}</strong>`;
-                    if (row.meta && row.meta.description) {
-                        html += ` - <small>${row.meta.description}</small>`;
-                    }
-
+                    let html = value;
                     if (row.is_builtin) {
                         html += `<span class='badge bg-success rounded-pill badge-right'>{% trans "Builtin" %}</span>`;
                     }
-
                     if (row.is_sample) {
                         html += `<span class='badge bg-info rounded-pill badge-right'>{% trans "Sample" %}</span>`;
+                    }
+                    return html;
+                }
+            },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+                switchable: true,
+                formatter: function(value, row) {
+                    let html = '';
+
+                    if (row.meta && row.meta.description) {
+                        html = `<small>${row.meta.description}</small>`;
                     }
 
                     return html;
