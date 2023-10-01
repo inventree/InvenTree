@@ -172,7 +172,10 @@ def get_plugin_name(plugin):
 
 
 def get_plugin_slug(plugin):
-    """Return the 'slug' of a plugin"""
+    """Return the 'slug' of a plugin
+
+    If no slug is found, default to the plugin name (slugified)
+    """
 
     slug = get_plugin_metavalue(plugin, 'SLUG', old_key='PLUGIN_SLUG')
 
@@ -186,7 +189,10 @@ def get_plugin_slug(plugin):
 
 
 def get_plugin_title(plugin):
-    """Return the 'title' of a plugin"""
+    """Return the 'title' of a plugin.
+
+    If no title is found, default to the plugin name
+    """
 
     title = get_plugin_metavalue(plugin, 'TITLE', old_key='PLUGIN_TITLE')
 
