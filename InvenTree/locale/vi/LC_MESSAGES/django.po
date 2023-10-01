@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-29 21:02+0000\n"
-"PO-Revision-Date: 2023-09-27 04:32\n"
+"POT-Creation-Date: 2023-09-25 06:56+0000\n"
+"PO-Revision-Date: 2023-10-01 10:14\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -1796,7 +1796,7 @@ msgstr ""
 #: build/templates/build/build_base.html:212
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2126
 msgid "Priority"
-msgstr ""
+msgstr "Độ ưu tiên"
 
 #: build/templates/build/build_base.html:274
 msgid "Delete Build Order"
@@ -1845,7 +1845,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:289
 #: templates/js/translated/table_filters.js:380
 msgid "Batch"
-msgstr ""
+msgstr "Hàng loạt"
 
 #: build/templates/build/detail.html:133
 #: order/templates/order/order_base.html:173
@@ -1853,7 +1853,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:187
 #: templates/js/translated/build.js:2169
 msgid "Created"
-msgstr ""
+msgstr "Đã tạo"
 
 #: build/templates/build/detail.html:144
 msgid "No target date set"
@@ -2143,11 +2143,11 @@ msgstr ""
 
 #: common/models.py:1072
 msgid "Require confirm"
-msgstr ""
+msgstr "Yêu cầu xác nhận"
 
 #: common/models.py:1073
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "Yêu cầu người dùng xác nhận rõ ràng với một số chức năng nhất định."
 
 #: common/models.py:1079
 msgid "Tree Depth"
@@ -12832,8 +12832,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -12968,3 +12967,4 @@ msgstr ""
 #: users/models.py:256
 msgid "Permission to delete items"
 msgstr ""
+
