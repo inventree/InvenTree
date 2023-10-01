@@ -53,7 +53,7 @@ def sso_check_provider(provider):
     if allauth.app_settings.SITES_ENABLED:
         # At least one matching site must be specified
         if not app.sites.exists():
-            logger.error(f"SocialApp {app} has no sites configured")
+            logger.error("SocialApp %s has no sites configured", app)
             return False
 
     # At this point, we assume that the provider is correctly configured

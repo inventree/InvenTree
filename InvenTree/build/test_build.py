@@ -146,6 +146,7 @@ class BuildTest(BuildTestBase):
     def test_ref_int(self):
         """Test the "integer reference" field used for natural sorting"""
 
+        # Set build reference to new value
         common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref}-???', change_user=None)
 
         refs = {
@@ -167,6 +168,9 @@ class BuildTest(BuildTestBase):
             self.assertEqual(build.reference_int, 0)
             build.save()
             self.assertEqual(build.reference_int, ref_int)
+
+        # Set build reference back to default value
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None)
 
     def test_ref_validation(self):
         """Test that the reference field validation works as expected"""
@@ -214,6 +218,9 @@ class BuildTest(BuildTestBase):
                 title='Valid reference',
             )
 
+        # Set build reference back to default value
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None)
+
     def test_next_ref(self):
         """Test that the next reference is automatically generated"""
 
@@ -237,6 +244,9 @@ class BuildTest(BuildTestBase):
 
         self.assertEqual(build.reference, 'XYZ-000988')
         self.assertEqual(build.reference_int, 988)
+
+        # Set build reference back to default value
+        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None)
 
     def test_init(self):
         """Perform some basic tests before we start the ball rolling"""

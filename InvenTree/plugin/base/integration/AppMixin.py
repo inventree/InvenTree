@@ -93,7 +93,7 @@ class AppMixin:
                     models += [model._meta.model_name]
             except LookupError:  # pragma: no cover
                 # if an error occurs the app was never loaded right -> so nothing to do anymore
-                logger.debug(f'{app_name} App was not found during deregistering')
+                logger.debug('%s App was not found during deregistering', app_name)
                 break
 
             # unregister the models (yes, models are just kept in multilevel dicts)
@@ -130,7 +130,7 @@ class AppMixin:
                 app_config = apps.get_app_config(app_name)
             except LookupError:  # pragma: no cover
                 # the plugin was never loaded correctly
-                logger.debug(f'{app_name} App was not found during deregistering')
+                logger.debug('%s App was not found during deregistering', app_name)
                 break
 
             # reload models if they were set

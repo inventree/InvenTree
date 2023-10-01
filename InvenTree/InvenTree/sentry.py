@@ -60,7 +60,7 @@ def report_exception(exc):
     if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
 
         if not any(isinstance(exc, e) for e in sentry_ignore_errors()):
-            logger.info(f"Reporting exception to sentry.io: {exc}")
+            logger.info("Reporting exception to sentry.io: %s", exc)
 
             try:
                 sentry_sdk.capture_exception(exc)

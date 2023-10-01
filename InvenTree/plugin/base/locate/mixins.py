@@ -45,7 +45,7 @@ class LocateMixin:
 
         Note: A custom implementation could always change this behaviour
         """
-        logger.info(f"LocateMixin: Attempting to locate StockItem pk={item_pk}")
+        logger.info("LocateMixin: Attempting to locate StockItem pk=%s", item_pk)
 
         from stock.models import StockItem
 
