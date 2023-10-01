@@ -202,12 +202,13 @@ class PluginsRegistry:
 
         logger.info('Finished unloading plugins')
 
-    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False):
+    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False, collect: bool = False):
         """Safely reload.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
             force_reload (bool, optional): Also reload base apps. Defaults to False.
+            collect (bool, optional): Collect plugins before reloading. Defaults to False.
         """
         # Do not reload when currently loading
         if self.is_loading:
@@ -216,6 +217,10 @@ class PluginsRegistry:
         logger.info('Start reloading plugins')
 
         with maintenance_mode_on():
+            if collect:
+                logger.info('Collecting plugins')
+                self.plugin_modules = self.collect_plugins()
+
             self.plugins_loaded = False
             self.unload_plugins(force_reload=force_reload)
             self.plugins_loaded = True
