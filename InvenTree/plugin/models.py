@@ -95,9 +95,9 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         self.plugin: InvenTreePlugin = plugin_class
 
     def __getstate__(self):
-        """Customize pickeling behaviour."""
+        """Customize pickling behavior"""
         state = super().__getstate__()
-        state.pop("plugin", None)  # plugin cannot be pickelt in some circumstances when used with drf views, remove it (#5408)
+        state.pop("plugin", None)  # plugin cannot be pickled in some circumstances when used with drf views, remove it (#5408)
         return state
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):

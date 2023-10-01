@@ -67,7 +67,7 @@ class PluginsRegistry:
         self.installed_apps = []                                # Holds all added plugin_paths
 
     def get_plugin(self, slug):
-        """Lookup plugin by slug (unique key)."""
+        """Lookup active plugin by slug (unique key)."""
 
         # Check if the plugin registry needs reloading (blocking)
         self.check_reload()
@@ -124,10 +124,12 @@ class PluginsRegistry:
 
         logger.info('Loading plugins')
 
-        # Set maintanace mode
+        # Set maintenance mode
         _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
             set_maintenance_mode(True)
+
+        self.plugin_modules = self.collect_plugins()
 
         registered_successful = False
         blocked_plugin = None
@@ -195,9 +197,9 @@ class PluginsRegistry:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
 
-        logger.info('Start unloading plugins')
+        logger.debug('Start unloading plugins')
 
-        # Set maintanace mode
+        # Set maintenance mode
         _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
             set_maintenance_mode(True)  # pragma: no cover
@@ -212,7 +214,7 @@ class PluginsRegistry:
         if not _maintenance:
             set_maintenance_mode(False)  # pragma: no cover
 
-        logger.info('Finished unloading plugins')
+        logger.debug('Finished unloading plugins')
 
     def reload_plugins(self, full_reload: bool = False, force_reload: bool = False):
         """Safely reload.
@@ -225,7 +227,7 @@ class PluginsRegistry:
         if self.is_loading:
             return  # pragma: no cover
 
-        logger.info('Start reloading plugins')
+        logger.debug('Start reloading plugins')
 
         with maintenance_mode_on():
             self.plugins_loaded = False
@@ -235,7 +237,7 @@ class PluginsRegistry:
 
             self._update_urls()
 
-        logger.info('Finished reloading plugins')
+        logger.debug('Finished reloading plugins')
 
     def cleanup_old_plugin_configs(self):
         """Remove any plugin configurations for plugins which no longer exist"""
@@ -244,7 +246,7 @@ class PluginsRegistry:
 
         # Do not delete configs if we are in test mode
         if settings.TESTING:
-            logger.info("Skipping cleanup of old plugin configs (in test mode)")
+            logger.debug("Skipping cleanup of old plugin configs (in test mode)")
             return
 
         try:
@@ -379,7 +381,7 @@ class PluginsRegistry:
         """Make sure all plugins are installed in the current environment."""
 
         if settings.PLUGIN_FILE_CHECKED:
-            logger.info('Plugin file was already checked')
+            logger.debug('Plugin file was already checked')
             return True
 
         from .installer import install_plugins_file
@@ -419,7 +421,7 @@ class PluginsRegistry:
     # endregion
     # endregion
 
-    # region general internal loading /activating / deactivating / deloading
+    # region general internal loading / activating / deactivating / unloading
     def _init_plugins(self, disabled: str = None):
         """Initialise all found plugins.
 
@@ -445,7 +447,7 @@ class PluginsRegistry:
                 self.plugins_inactive[key] = plugin.db
             self.plugins_full[key] = plugin
 
-        logger.debug('Starting plugin initialisation')
+        logger.debug('Starting plugin initialization')
 
         # Initialize plugins
         for plg in self.plugin_modules:
@@ -562,7 +564,7 @@ class PluginsRegistry:
             if hasattr(mixin, '_deactivate_mixin'):
                 mixin._deactivate_mixin(self, force_reload=force_reload)
 
-        logger.info('Done deactivating')
+        logger.debug('Done deactivating')
     # endregion
 
     # region mixin specific loading ...

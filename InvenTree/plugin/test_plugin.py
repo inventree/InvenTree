@@ -9,6 +9,7 @@ from unittest import mock
 
 from django.test import TestCase, override_settings
 
+import plugin.meta
 import plugin.templatetags.plugin_extras as plugin_tags
 from plugin import InvenTreePlugin, registry
 from plugin.samples.integration.another_sample import (NoIntegrationPlugin,
@@ -29,7 +30,7 @@ class PluginTagTests(TestCase):
         """Test that all plugins are listed."""
         self.assertEqual(plugin_tags.plugin_list(), registry.plugins)
 
-    def test_tag_incative_plugin_list(self):
+    def test_tag_inactive_plugin_list(self):
         """Test that all inactive plugins are listed."""
         self.assertEqual(plugin_tags.inactive_plugin_list(), registry.plugins_inactive)
 
@@ -45,9 +46,11 @@ class PluginTagTests(TestCase):
         key = 'urls'
         # mixin enabled
         self.assertEqual(plugin_tags.mixin_enabled(self.sample, key), True)
+
         # mixin not enabled
         self.assertEqual(plugin_tags.mixin_enabled(self.plugin_wrong, key), False)
-        # mxixn not existing
+
+        # mixin does not exist
         self.assertEqual(plugin_tags.mixin_enabled(self.plugin_no, key), False)
 
     def test_tag_safe_url(self):
@@ -114,7 +117,7 @@ class InvenTreePluginTests(TestCase):
     def test_basic_plugin_init(self):
         """Check if a basic plugin intis."""
         self.assertEqual(self.plugin.NAME, '')
-        self.assertEqual(self.plugin.plugin_name(), '')
+        self.assertEqual(self.plugin.plugin_name(), 'InvenTreePlugin')
 
     def test_basic_plugin_name(self):
         """Check if the name of a basic plugin can be set."""
@@ -128,26 +131,26 @@ class InvenTreePluginTests(TestCase):
     def test_action_name(self):
         """Check the name definition possibilities."""
         # plugin_name
-        self.assertEqual(self.plugin.plugin_name(), '')
+        self.assertEqual(self.plugin.plugin_name(), 'InvenTreePlugin')
         self.assertEqual(self.plugin_simple.plugin_name(), 'SimplePlugin')
         self.assertEqual(self.plugin_name.plugin_name(), 'Aplugin')
 
-        # is_sampe
+        # is_sample
         self.assertEqual(self.plugin.is_sample, False)
         self.assertEqual(self.plugin_sample.is_sample, True)
 
         # slug
-        self.assertEqual(self.plugin.slug, '')
+        self.assertEqual(self.plugin.slug, 'inventreeplugin')
         self.assertEqual(self.plugin_simple.slug, 'simpleplugin')
         self.assertEqual(self.plugin_name.slug, 'a')
 
         # human_name
-        self.assertEqual(self.plugin.human_name, '')
+        self.assertEqual(self.plugin.human_name, 'InvenTreePlugin')
         self.assertEqual(self.plugin_simple.human_name, 'SimplePlugin')
         self.assertEqual(self.plugin_name.human_name, 'a titel')
 
         # description
-        self.assertEqual(self.plugin.description, '')
+        self.assertEqual(self.plugin.description, 'InvenTreePlugin')
         self.assertEqual(self.plugin_simple.description, 'SimplePlugin')
         self.assertEqual(self.plugin_name.description, 'A description')
 
@@ -201,13 +204,14 @@ class RegistryTests(TestCase):
         # Patch environment variable to add dir
         envs = {'INVENTREE_PLUGIN_TEST_DIR': directory}
         with mock.patch.dict(os.environ, envs):
-            # Reload to redicsover plugins
+            # Reload to rediscover plugins
             registry.reload_plugins(full_reload=True)
 
             # Depends on the meta set in InvenTree/plugin/mock/simple:SimplePlugin
-            plg = registry.get_plugin('simple')
-            self.assertEqual(plg.slug, 'simple')
-            self.assertEqual(plg.human_name, 'SimplePlugin')
+            plg = registry.plugins_full.get('simple', None)
+            self.assertIsNotNone(plg)
+            self.assertEqual(plugin.meta.get_plugin_slug(plg), 'simple')
+            self.assertEqual(plugin.meta.get_plugin_name(plg), 'SimplePlugin')
 
     def test_custom_loading(self):
         """Test if data in custom dir is loaded correctly."""
@@ -247,12 +251,12 @@ class RegistryTests(TestCase):
         # Install sample package
         from plugin.installer import install_plugin
 
+        # Install the plugin (this will reload the plugin registry)
         install_plugin(packagename='inventree-zapier')
 
-        # Reload to discover plugin
-        registry.reload_plugins(full_reload=True)
+        # Test that plugin was installed (but not yet activated)
+        plg = registry.plugins_full.get('zapier', None)
 
-        # Test that plugin was installed
-        plg = registry.get_plugin('zapier')
-        self.assertEqual(plg.slug, 'zapier')
-        self.assertEqual(plg.name, 'inventree_zapier')
+        self.assertIsNotNone(plg)
+        self.assertEqual(plugin.meta.get_plugin_slug(plg), 'zapier')
+        self.assertEqual(plugin.meta.get_plugin_name(plg), 'inventree_zapier')

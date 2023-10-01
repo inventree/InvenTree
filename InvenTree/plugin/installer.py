@@ -26,7 +26,7 @@ def pip_command(*args):
 
     command = [str(x) for x in command]
 
-    logger.info("running pip command: %s", ' '.join(command))
+    logger.info("Running pip command: %s", ' '.join(command))
     logger.debug("python executable path: %s", python)
 
     return subprocess.check_output(
@@ -43,7 +43,7 @@ def check_package_path(packagename):
     - If not installed, return False
     """
 
-    logger.info("check_package_path: %s", packagename)
+    logger.debug("check_package_path: %s", packagename)
 
     # Remove version information
     for c in '<>=! ':
@@ -146,7 +146,7 @@ def install_plugin(url=None, packagename=None, user=None):
     if user and not user.is_staff:
         raise ValidationError(_("Permission denied: only staff users can install plugins"))
 
-    logger.info("install_plugin: %s, %s", url, packagename)
+    logger.debug("install_plugin: %s, %s", url, packagename)
 
     # Check if we are running in a virtual environment
     # For now, just log a warning
@@ -234,7 +234,7 @@ def uninstall_plugin(plugin_name):
     Note: This is intended to be implemented in a future version
 
     - Run pip uninstall (only if plugin is installed in venv)
-    - Revese any migrations for plugins which implement the app mixin
+    - Reverse any migrations for plugins which implement the app mixin
     - Raise error if located in "plugins" or external plugin dir
     """
     ...

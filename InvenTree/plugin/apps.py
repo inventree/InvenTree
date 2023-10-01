@@ -30,8 +30,6 @@ class PluginAppConfig(AppConfig):
         if not canAppAccessDatabase(allow_test=True, allow_plugins=True):
             logger.info("Skipping plugin loading sequence")  # pragma: no cover
         else:
-            logger.info('Loading InvenTree plugins')
-
             if not registry.is_loading:
                 # this is the first startup
                 try:
@@ -42,10 +40,5 @@ class PluginAppConfig(AppConfig):
                 except Exception:  # pragma: no cover
                     pass
 
-                # get plugins and init them
-                registry.plugin_modules = registry.collect_plugins()
                 registry.load_plugins()
-
-                # drop out of maintenance
-                # makes sure we did not have an error in reloading and maintenance is still active
                 set_maintenance_mode(False)

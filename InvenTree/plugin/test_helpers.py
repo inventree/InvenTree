@@ -19,5 +19,5 @@ class HelperTests(TestCase):
 
         # Wrong sample
         response = render_template(ErrorSource(), 'sample/wrongsample.html', {'abc': 123})
-        self.assertTrue('lert alert-block alert-danger' in response)
+        self.assertTrue('alert alert-block alert-danger' in response)
         self.assertTrue('Template file <em>sample/wrongsample.html</em>' in response)

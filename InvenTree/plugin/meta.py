@@ -48,7 +48,7 @@ def get_plugin_metadata(plugin) -> dict:
         fn = str(get_plugin_file(plugin))
         data = get_git_log(fn)
 
-    # Extract website ifnormation
+    # Extract website information (if provided)
     try:
         website = data['Project-URL'].split(', ')[1]
     except Exception:
@@ -162,13 +162,21 @@ def get_plugin_metavalue(plugin, key: str, old_key: str = None, default_value=No
     if value is None and default_value is not None:
         value = default_value
 
-    return value
+    return value or ''
 
 
 def get_plugin_name(plugin):
-    """Return the 'name' of a plugin"""
+    """Return the 'name' of a plugin.
 
-    return get_plugin_metavalue(plugin, 'NAME', old_key='PLUGIN_NAME')
+    If no NAME attribute is specified, default to the plugin class name.
+    """
+
+    name = get_plugin_metavalue(plugin, 'NAME', old_key='PLUGIN_NAME')
+
+    if not name:
+        name = str(plugin.__class__.__name__)
+
+    return name
 
 
 def get_plugin_slug(plugin):
