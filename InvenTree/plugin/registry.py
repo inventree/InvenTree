@@ -680,6 +680,10 @@ class PluginsRegistry:
 
         from common.models import InvenTreeSetting
 
+        if settings.TESTING:
+            # Skip if running during unit testing
+            return
+
         logger.debug("Checking plugin registry hash")
 
         try:

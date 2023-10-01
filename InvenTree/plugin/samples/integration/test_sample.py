@@ -36,6 +36,8 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
         # no error, should pass validator
         plugin.set_setting('VALIDATOR_SETTING', valid_json)
 
+        self.assertEqual(plugin.get_setting('VALIDATOR_SETTING'), valid_json)
+
         # should throw an error
         with self.assertRaises(ValidationError):
             plugin.set_setting('VALIDATOR_SETTING', not_valid_json)

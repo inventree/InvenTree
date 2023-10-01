@@ -13,6 +13,7 @@ from plugin.mixins import AppMixin, NavigationMixin, SettingsMixin, UrlsMixin
 
 def validate_json(value):
     """Example validator for json input."""
+
     try:
         json.loads(value)
     except Exception as e:

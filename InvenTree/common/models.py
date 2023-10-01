@@ -593,7 +593,11 @@ class BaseInvenTreeSetting(models.Model):
 
         try:
             setting.save()
+        except ValidationError as exc:
+            # Re-throw any ValidationError (caught by API)
+            raise exc
         except Exception as exc:
+            # Anything else, log the error
             logger.exception("Error saving setting '%s': %s", key, str(exc))
 
     key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive)'))
