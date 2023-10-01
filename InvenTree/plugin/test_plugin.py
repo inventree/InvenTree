@@ -206,7 +206,7 @@ class RegistryTests(TestCase):
         envs = {'INVENTREE_PLUGIN_TEST_DIR': directory}
         with mock.patch.dict(os.environ, envs):
             # Reload to redicsover plugins
-            registry.reload_plugins(full_reload=True)
+            registry.reload_plugins(full_reload=True, collect=True)
 
             # Depends on the meta set in InvenTree/plugin/mock/simple:SimplePlugin
             plg = registry.get_plugin('simple')
@@ -252,7 +252,7 @@ class RegistryTests(TestCase):
         subprocess.check_output('pip install inventree-zapier'.split())
 
         # Reload to discover plugin
-        registry.reload_plugins(full_reload=True)
+        registry.reload_plugins(full_reload=True, collect=True)
 
         # Test that plugin was installed
         plg = registry.get_plugin('zapier')
