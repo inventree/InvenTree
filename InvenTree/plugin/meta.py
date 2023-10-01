@@ -142,14 +142,14 @@ def get_plugin_metavalue(plugin, key: str, old_key: str = None, default_value=No
         old_key: Old metadata key (for backwards compatibility)
         default_value: Default value if key is not found
     """
+    value = None
 
     if key and hasattr(plugin, str(key)):
         value = getattr(plugin, str(key), None)
-    elif old_key and hasattr(plugin, str(old_key)):
+
+    if value is None and old_key and hasattr(plugin, str(old_key)):
         warnings.warn(f'Usage of {old_key} was deprecated in 0.7.0 in favour of {key}', DeprecationWarning, stacklevel=2)
         value = getattr(plugin, str(old_key), None)
-    else:
-        value = None
 
     if value and callable(value):
         # Prevent plugin class from overriding with a callable

@@ -69,6 +69,7 @@ class PluginsRegistry:
     def get_plugin(self, slug):
         """Lookup plugin by slug (unique key)."""
 
+        # Check if the plugin registry needs reloading (blocking)
         self.check_reload()
 
         if slug not in self.plugins:
@@ -248,7 +249,6 @@ class PluginsRegistry:
 
         try:
             for cfg in PluginConfig.objects.all():
-
                 if not cfg.plugin:
                     logger.info("Removing PluginConfig for non-existent plugin: %s - %s", cfg.key, cfg.name)
                     cfg.delete()
@@ -314,7 +314,10 @@ class PluginsRegistry:
         return dirs
 
     def collect_plugins(self):
-        """Collect plugins from all possible ways of loading. Returned as list."""
+        """Collect plugins from all possible ways of loading.
+
+        returns: List of plugins
+        """
 
         collected_plugins = []
 

@@ -172,9 +172,8 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(self.plugin_simple.license, None)
         self.assertEqual(self.plugin_name.license, 'MIT')
 
-    def test_depreciation(self):
-        """Check if depreciations raise as expected."""
-        # check deprecation warning is firing
+    def test_deprecation(self):
+        """Check if DeprecationWarning is raised as expected."""
         with self.assertWarns(DeprecationWarning):
             self.assertEqual(self.plugin_old.slug, 'old')
 
