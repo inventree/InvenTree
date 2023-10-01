@@ -4,9 +4,9 @@ from django.urls import reverse
 
 from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.unit_test import InvenTreeAPITestCase
-from order.models import PurchaseOrder  # , PurchaseOrderLineItem
+from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import Part
-from stock.models import StockItem  # , StockLocation
+from stock.models import StockItem, StockLocation
 
 
 class SupplierBarcodeTests(InvenTreeAPITestCase):
@@ -163,51 +163,51 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         assert stock_item.quantity == 10
         assert stock_item.location is None
 
-#    def test_receive_custom_order_number(self):
-#        """Test receiving an item from a barcode with a custom order number."""
-#
-#        url = reverse("api-barcode-po-receive")
-#        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
-#        assert "success" in result1.data
-#
-#        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
-#        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
-#        assert stock_item.supplier_part.SKU == "42"
-#        assert stock_item.supplier_part.manufacturer_part.MPN == "MC34063ADR"
-#        assert stock_item.quantity == 3
-#        assert stock_item.location is None
-#
-#    def test_receive_one_stock_location(self):
-#        """Test receiving an item when only one stock location exists"""
-#
-#        stock_location = StockLocation.objects.create(name="Test Location")
-#
-#        url = reverse("api-barcode-po-receive")
-#        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
-#        assert "success" in result1.data
-#
-#        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
-#        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
-#        assert stock_item.location == stock_location
-#
-#    def test_receive_default_line_item_location(self):
-#        """Test receiving an item into the default line_item location"""
-#
-#        StockLocation.objects.create(name="Test Location 1")
-#        stock_location2 = StockLocation.objects.create(name="Test Location 2")
-#
-#        line_item = PurchaseOrderLineItem.objects.filter(part__SKU="42")[0]
-#        line_item.destination = stock_location2
-#        line_item.save()
-#
-#        url = reverse("api-barcode-po-receive")
-#        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
-#        assert "success" in result1.data
-#
-#        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
-#        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
-#        assert stock_item.location == stock_location2
-#
+    def test_receive_custom_order_number(self):
+        """Test receiving an item from a barcode with a custom order number."""
+
+        url = reverse("api-barcode-po-receive")
+        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
+        assert "success" in result1.data
+
+        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
+        assert stock_item.supplier_part.SKU == "42"
+        assert stock_item.supplier_part.manufacturer_part.MPN == "MC34063ADR"
+        assert stock_item.quantity == 3
+        assert stock_item.location is None
+
+    def test_receive_one_stock_location(self):
+        """Test receiving an item when only one stock location exists"""
+
+        stock_location = StockLocation.objects.create(name="Test Location")
+
+        url = reverse("api-barcode-po-receive")
+        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
+        assert "success" in result1.data
+
+        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
+        assert stock_item.location == stock_location
+
+    def test_receive_default_line_item_location(self):
+        """Test receiving an item into the default line_item location"""
+
+        StockLocation.objects.create(name="Test Location 1")
+        stock_location2 = StockLocation.objects.create(name="Test Location 2")
+
+        line_item = PurchaseOrderLineItem.objects.filter(part__SKU="42")[0]
+        line_item.destination = stock_location2
+        line_item.save()
+
+        url = reverse("api-barcode-po-receive")
+        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
+        assert "success" in result1.data
+
+        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
+        assert stock_item.location == stock_location2
+
 #    def test_receive_default_part_location(self):
 #        """Test receiving an item into the default part location"""
 #
