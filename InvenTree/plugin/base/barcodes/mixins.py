@@ -251,6 +251,60 @@ class BarcodeMixin:
         return response
 
 
+class SupplierBarcodeMixin(BarcodeMixin):
+    """Mixin that provides default implementations for scan functions for supplier barcodes.
+
+    Custom supplier barcode plugins should use this mixin and implement the
+    parse_supplier_barcode_data function.
+    """
+
+    def parse_supplier_barcode_data(self, barcode_data) -> tuple[SupplierPart, dict] | None:
+        """Get supplier_part and other barcode_fields from barcode data.
+
+        This function should return the matched supplier part and a dictionary containing the
+        remaining barcode fields.
+        The dictionary should contain these additional fields, if available:
+            "quantity", "purchase_order_number"
+        To get the supplier part it's recommended to use the get_supplier_part helper function.
+
+        If no supplier part can be matched from the barcode_data this function should return None.
+        """
+
+        return None
+
+    def scan(self, barcode_data):
+        """Try to match a supplier barcode to a supplier part."""
+
+        if (parsed := self.parse_supplier_barcode_data(barcode_data)) is None:
+            return None
+        supplier_part, _ = parsed
+
+        data = {
+            "pk": supplier_part.pk,
+            "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
+            "web_url": supplier_part.get_absolute_url(),
+        }
+
+        return {SupplierPart.barcode_model_type(): data}
+
+    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
+        """Try to scan a supplier barcode to receive a purchase order item."""
+
+        if (parsed := self.parse_supplier_barcode_data(barcode_data)) is None:
+            return None
+        supplier_part, barcode_fields = parsed
+
+        return self.receive_purchase_order_item(
+            supplier_part,
+            user,
+            quantity=barcode_fields.get("quantity"),
+            order_number=barcode_fields.get("purchase_order_number"),
+            purchase_order=purchase_order,
+            location=location,
+            barcode=barcode_data,
+        )
+
+
 # Map ECIA Data Identifier to human readable identifier
 # The following identifiers haven't been implemented: 3S, 4S, 5S, S
 ECIA_DATA_IDENTIFIER_MAP = {

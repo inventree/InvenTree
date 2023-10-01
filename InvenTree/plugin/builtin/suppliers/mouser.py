@@ -7,14 +7,14 @@ import logging
 
 from django.utils.translation import gettext_lazy as _
 
-from company.models import Company, SupplierPart
+from company.models import Company
 from plugin import InvenTreePlugin
-from plugin.mixins import BarcodeMixin, SettingsMixin
+from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 
 logger = logging.getLogger('inventree')
 
 
-class MouserPlugin(BarcodeMixin, SettingsMixin, InvenTreePlugin):
+class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the Mouser API into Inventree."""
 
     NAME = "MouserPlugin"
@@ -53,53 +53,21 @@ class MouserPlugin(BarcodeMixin, SettingsMixin, InvenTreePlugin):
 
         return mouser
 
-    def parse_barcode_data(self, barcode_data):
-        """Get supplier_part and barcode_fields from barcode data"""
+    def parse_supplier_barcode_data(self, barcode_data):
+        """Get supplier_part and barcode_fields from Mouser DataMatrix-Code."""
 
         if not isinstance(barcode_data, str):
-            return None, None
+            return None
 
         if not (mouser := self.get_mouser_supplier()):
-            return None, None
+            return None
 
         if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
-            return None, None
+            return None
 
         sku = barcode_fields.get("supplier_part_number")
         mpn = barcode_fields.get("manufacturer_part_number")
         if not (supplier_part := self.get_supplier_part(sku, mouser, mpn)):
-            return None, None
+            return None
 
         return supplier_part, barcode_fields
-
-    def scan(self, barcode_data):
-        """Process a barcode to determine if it is a Mouser barcode."""
-
-        supplier_part, _ = self.parse_barcode_data(barcode_data)
-        if supplier_part is None:
-            return None
-
-        data = {
-            "pk": supplier_part.pk,
-            "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
-            "web_url": supplier_part.get_absolute_url(),
-        }
-
-        return {SupplierPart.barcode_model_type(): data}
-
-    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
-        """Process a mouser barcode to receive an item from a placed purchase order."""
-
-        supplier_part, barcode_fields = self.parse_barcode_data(barcode_data)
-        if supplier_part is None:
-            return None
-
-        return self.receive_purchase_order_item(
-            supplier_part,
-            user,
-            quantity=barcode_fields.get("quantity"),
-            order_number=barcode_fields.get("purchase_order_number"),
-            purchase_order=purchase_order,
-            location=location,
-            barcode=barcode_data,
-        )

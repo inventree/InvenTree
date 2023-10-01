@@ -3,7 +3,7 @@
 from common.notifications import (BulkNotificationMethod,
                                   SingleNotificationMethod)
 from plugin.base.action.mixins import ActionMixin
-from plugin.base.barcodes.mixins import BarcodeMixin
+from plugin.base.barcodes.mixins import BarcodeMixin, SupplierBarcodeMixin
 from plugin.base.event.mixins import EventMixin
 from plugin.base.integration.AppMixin import AppMixin
 from plugin.base.integration.mixins import (APICallMixin, NavigationMixin,
@@ -30,6 +30,7 @@ __all__ = [
     'PanelMixin',
     'ActionMixin',
     'BarcodeMixin',
+    'SupplierBarcodeMixin',
     'LocateMixin',
     'ValidationMixin',
     'SingleNotificationMethod',
