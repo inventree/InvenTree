@@ -68,13 +68,13 @@ def register_event(event, *args, **kwargs):
                 if not plugin.mixin_enabled('events'):
                     continue
 
+                # Only allow event registering for 'active' plugins
                 if not plugin.is_active():
                     continue
 
+                # Let the plugin decide if it wants to process this event
                 if not plugin.wants_process_event(event):
                     continue
-
-                # Only allow event registering for 'active' plugins
 
                 logger.debug("Registering callback for plugin '%s'", slug)
 
