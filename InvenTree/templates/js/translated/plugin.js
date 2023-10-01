@@ -4,7 +4,7 @@
 /* globals
     addCachedAlert,
     constructForm,
-    showMessage,
+    handleFormErrors,
     inventreeGet,
     inventreePut,
     loadTableFilters,
@@ -12,6 +12,7 @@
     renderDate,
     setupFilterList,
     showApiError,
+    showMessage,
     showModalSpinner,
     wrapButtons,
 */
