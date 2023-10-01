@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-29 05:45\n"
+"PO-Revision-Date: 2023-10-01 10:14\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1039,7 +1039,7 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:97
 msgid "Overdue Purchase Orders"
-msgstr ""
+msgstr "Đơn mua quá hạn"
 
 #: src/defaults/dashboardItems.tsx:104
 msgid "Outstanding Sales Orders"
@@ -1047,7 +1047,7 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:111
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Đơn đặt quá hạn"
 
 #: src/defaults/dashboardItems.tsx:118
 msgid "Current News"
@@ -1274,7 +1274,7 @@ msgstr ""
 
 #: src/functions/forms.tsx:96
 msgid "Invalid Form"
-msgstr ""
+msgstr "Mẫu không hợp lệ"
 
 #: src/functions/forms.tsx:97
 msgid "method parameter not supplied"
@@ -1370,11 +1370,11 @@ msgstr ""
 
 #: src/functions/notifications.tsx:9
 msgid "Not implemented"
-msgstr ""
+msgstr "Chưa triển khai"
 
 #: src/functions/notifications.tsx:10
 msgid "This feature is not yet implemented"
-msgstr ""
+msgstr "Tính năng này vẫn chưa được triển khai"
 
 #: src/functions/notifications.tsx:20
 msgid "Permission denied"
@@ -1382,7 +1382,7 @@ msgstr "Quyền truy cập bị từ chối"
 
 #: src/functions/notifications.tsx:21
 msgid "You do not have permission to perform this action"
-msgstr ""
+msgstr "Bạn không có quyền thực hiện hành động này"
 
 #: src/functions/notifications.tsx:32
 msgid "Invalid Return Code"
@@ -1602,11 +1602,11 @@ msgstr "Thông tin người dung"
 
 #: src/pages/Index/Profile/UserPanel.tsx:114
 msgid "First name: {0}"
-msgstr ""
+msgstr "Tên - {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:117
 msgid "Last name: {0}"
-msgstr ""
+msgstr "Họ - {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:120
 msgid "Username: {0}"
@@ -1614,23 +1614,23 @@ msgstr "Tên đăng nhập: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:152
 msgid "Use pseudo language"
-msgstr ""
+msgstr "Sử dụng ngôn ngữ pseudo"
 
 #: src/pages/Index/Profile/UserTheme.tsx:70
 msgid "bars"
-msgstr ""
+msgstr "thanh"
 
 #: src/pages/Index/Profile/UserTheme.tsx:71
 msgid "oval"
-msgstr ""
+msgstr "trái xoan"
 
 #: src/pages/Index/Profile/UserTheme.tsx:72
 msgid "dots"
-msgstr ""
+msgstr "chấm"
 
 #: src/pages/Index/Profile/UserTheme.tsx:83
 msgid "Design <0/>"
-msgstr ""
+msgstr "Thiết kế <0/>"
 
 #: src/pages/Index/Profile/UserTheme.tsx:91
 msgid "Primary color"
@@ -1646,19 +1646,19 @@ msgstr "Màu đen"
 
 #: src/pages/Index/Profile/UserTheme.tsx:120
 msgid "Border Radius"
-msgstr ""
+msgstr "Bo viền"
 
 #: src/pages/Index/Profile/UserTheme.tsx:136
 msgid "Loader"
-msgstr ""
+msgstr "Thanh tải"
 
 #: src/pages/Index/Scan.tsx:188
 msgid "Manual input"
-msgstr ""
+msgstr "Nhập thủ công"
 
 #: src/pages/Index/Scan.tsx:189
 msgid "Image Barcode"
-msgstr ""
+msgstr "Mã vạch dạng ảnh"
 
 #: src/pages/Index/Scan.tsx:219
 msgid "Selected elements are not known"
