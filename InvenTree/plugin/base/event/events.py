@@ -32,10 +32,10 @@ def trigger_event(event, *args, **kwargs):
 
     # Make sure the database can be accessed and is not being tested rn
     if not canAppAccessDatabase(allow_shell=True) and not settings.PLUGIN_TESTING_EVENTS:
-        logger.debug(f"Ignoring triggered event '{event}' - database not ready")
+        logger.debug("Ignoring triggered event '%s' - database not ready", event)
         return
 
-    logger.debug(f"Event triggered: '{event}'")
+    logger.debug("Event triggered: '%s'", event)
 
     # By default, force the event to be processed asynchronously
     if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
@@ -57,7 +57,7 @@ def register_event(event, *args, **kwargs):
     """
     from common.models import InvenTreeSetting
 
-    logger.debug(f"Registering triggered event: '{event}'")
+    logger.debug("Registering triggered event: '%s'", event)
 
     # Determine if there are any plugins which are interested in responding
     if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS'):
@@ -71,7 +71,7 @@ def register_event(event, *args, **kwargs):
                     if plugin.is_active():
                         # Only allow event registering for 'active' plugins
 
-                        logger.debug(f"Registering callback for plugin '{slug}'")
+                        logger.debug("Registering callback for plugin '%s'", slug)
 
                         # This task *must* be processed by the background worker,
                         # unless we are running CI tests
@@ -98,11 +98,11 @@ def process_event(plugin_slug, event, *args, **kwargs):
     plugin = registry.plugins.get(plugin_slug, None)
 
     if plugin is None:  # pragma: no cover
-        logger.error(f"Could not find matching plugin for '{plugin_slug}'")
+        logger.error("Could not find matching plugin for '%s'", plugin_slug)
         return
 
     plugin.process_event(event, *args, **kwargs)
-    logger.debug(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
+    logger.debug("Plugin '%s' is processing triggered event '%s'", plugin_slug, event)
 
 
 def allow_table_event(table_name):

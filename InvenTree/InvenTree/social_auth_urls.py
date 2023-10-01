@@ -84,12 +84,12 @@ for provider in providers.registry.get_list():
         urls = handle_oauth2(adapter=adapters[0])
     else:
         if provider.id in legacy:
-            logger.warning(f'`{provider.id}` is not supported on platform UI. Use `{legacy[provider.id]}` instead.')
+            logger.warning('`%s` is not supported on platform UI. Use `%s` instead.', provider.id, legacy[provider.id])
             continue
         elif provider.id == 'keycloak':
             urls = handle_keycloak()
         else:
-            logger.error(f'Found handler that is not yet ready for platform UI: `{provider.id}`. Open an feature request on GitHub if you need it implemented.')
+            logger.error('Found handler that is not yet ready for platform UI: `%s`. Open an feature request on GitHub if you need it implemented.', provider.id)
             continue
     provider_urlpatterns += [path(f'{provider.id}/', include(urls))]
 

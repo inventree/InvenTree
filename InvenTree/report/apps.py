@@ -55,7 +55,7 @@ class ReportConfig(AppConfig):
         )
 
         if not dst_dir.exists():
-            logger.info(f"Creating missing directory: '{dst_dir}'")
+            logger.info("Creating missing directory: '%s'", dst_dir)
             dst_dir.mkdir(parents=True, exist_ok=True)
 
         # Copy each report template across (if required)
@@ -73,7 +73,7 @@ class ReportConfig(AppConfig):
             dst_file = settings.MEDIA_ROOT.joinpath(filename)
 
             if not dst_file.exists():
-                logger.info(f"Copying test report template '{dst_file}'")
+                logger.info("Copying test report template '%s'", dst_file)
                 shutil.copyfile(src_file, dst_file)
 
             try:
@@ -81,7 +81,7 @@ class ReportConfig(AppConfig):
                 if model.objects.filter(template=filename).exists():
                     continue
 
-                logger.info(f"Creating new TestReport for '{report['name']}'")
+                logger.info("Creating new TestReport for '%s'", report.get('name'))
 
                 model.objects.create(
                     name=report['name'],

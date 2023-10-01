@@ -69,7 +69,7 @@ class PluginsRegistry:
     def get_plugin(self, slug):
         """Lookup plugin by slug (unique key)."""
         if slug not in self.plugins:
-            logger.warning(f"Plugin registry has no record of plugin '{slug}'")
+            logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return None
 
         return self.plugins[slug]
@@ -82,7 +82,7 @@ class PluginsRegistry:
             state (bool): Plugin state - true = active, false = inactive
         """
         if slug not in self.plugins_full:
-            logger.warning(f"Plugin registry has no record of plugin '{slug}'")
+            logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return
 
         plugin = self.plugins_full[slug].db
@@ -137,7 +137,7 @@ class PluginsRegistry:
                 logger.info('Database not accessible while loading plugins')
                 break
             except IntegrationPluginError as error:
-                logger.error(f'[PLUGIN] Encountered an error with {error.path}:\n{error.message}')
+                logger.exception('[PLUGIN] Encountered an error with %s:\n%s', error.path, error.message)
                 log_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
@@ -254,7 +254,7 @@ class PluginsRegistry:
                         try:
                             pd.mkdir(exist_ok=True)
                         except Exception:  # pragma: no cover
-                            logger.error(f"Could not create plugin directory '{pd}'")
+                            logger.exception("Could not create plugin directory '%s'", pd)
                             continue
 
                     # Ensure the directory has an __init__.py file
@@ -264,7 +264,7 @@ class PluginsRegistry:
                         try:
                             init_filename.write_text("# InvenTree plugin directory\n")
                         except Exception:  # pragma: no cover
-                            logger.error(f"Could not create file '{init_filename}'")
+                            logger.exception("Could not create file '%s'", init_filename)
                             continue
 
                     # By this point, we have confirmed that the directory at least exists
@@ -277,7 +277,7 @@ class PluginsRegistry:
 
                         # Add path
                         dirs.append(pd_path)
-                        logger.info(f"Added plugin directory: '{pd}' as '{pd_path}'")
+                        logger.info("Added plugin directory: '%s' as '%s'", pd, pd_path)
 
         return dirs
 
@@ -289,7 +289,7 @@ class PluginsRegistry:
         # Collect plugins from paths
         for plugin in self.plugin_dirs():
 
-            logger.debug(f"Loading plugins from directory '{plugin}'")
+            logger.debug("Loading plugins from directory '%s'", plugin)
 
             parent_path = None
             parent_obj = Path(plugin)
@@ -326,7 +326,7 @@ class PluginsRegistry:
                         handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
-        logger.info(f'Collected {len(collected_plugins)} plugins')
+        logger.info('Collected %s plugins', len(collected_plugins))
         logger.debug(", ".join([a.__module__ for a in collected_plugins]))
 
         return collected_plugins
@@ -349,7 +349,7 @@ class PluginsRegistry:
         try:
             subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=settings.BASE_DIR.parent)
         except subprocess.CalledProcessError as error:  # pragma: no cover
-            logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
+            logger.exception('Ran into error while trying to install plugins!\n%s', str(error))
             return False
         except FileNotFoundError:  # pragma: no cover
             # System most likely does not have 'git' installed
@@ -427,7 +427,7 @@ class PluginsRegistry:
                     raise error  # pragma: no cover
                 plg_db = None
             except (IntegrityError) as error:  # pragma: no cover
-                logger.error(f"Error initializing plugin `{plg_name}`: {error}")
+                logger.exception("Error initializing plugin `%s`: %s", plg_name, error)
                 handle_error(error, log_name='init')
 
             # Append reference to plugin
@@ -452,16 +452,16 @@ class PluginsRegistry:
                     continue  # continue -> the plugin is not loaded
 
                 # Initialize package - we can be sure that an admin has activated the plugin
-                logger.debug(f'Loading plugin `{plg_name}`')
+                logger.debug('Loading plugin `%s`', plg_name)
 
                 try:
                     t_start = time.time()
                     plg_i: InvenTreePlugin = plg()
                     dt = time.time() - t_start
-                    logger.info(f'Loaded plugin `{plg_name}` in {dt:.3f}s')
+                    logger.info('Loaded plugin `%s` in %.3fs', plg_name, dt)
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
-                    logger.warning(f"Plugin `{plg_name}` could not be loaded")
+                    logger.warning("Plugin `%s` could not be loaded", plg_name)
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)
@@ -510,7 +510,7 @@ class PluginsRegistry:
 
         # Activate integrations
         plugins = self.plugins.items()
-        logger.info(f'Found {len(plugins)} active plugins')
+        logger.info('Found %s active plugins', len(plugins))
 
         for mixin in self.__get_mixin_order():
             if hasattr(mixin, '_activate_mixin'):
