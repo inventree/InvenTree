@@ -245,7 +245,7 @@ class PluginsRegistry:
             for cfg in PluginConfig.objects.all():
 
                 if not cfg.plugin:
-                    logger.info("Removing PluginConfig for non-existent plugin: %s - %s", cfg.key, cfg.nameå)
+                    logger.info("Removing PluginConfig for non-existent plugin: %s - %s", cfg.key, cfg.name)
                     cfg.delete()
         except Exception as exc:
             logger.warning("Failed to cleanup old plugin configs: %s", str(exc))
