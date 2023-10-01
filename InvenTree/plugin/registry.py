@@ -241,6 +241,11 @@ class PluginsRegistry:
 
         from plugin.models import PluginConfig
 
+        # Do not delete configs if we are in test mode
+        if settings.TESTING:
+            logger.info("Skipping cleanup of old plugin configs (in test mode)")
+            return
+
         try:
             for cfg in PluginConfig.objects.all():
 

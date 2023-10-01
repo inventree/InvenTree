@@ -2,7 +2,6 @@
 
 import os
 import shutil
-import subprocess
 import tempfile
 from datetime import datetime
 from pathlib import Path
@@ -247,7 +246,9 @@ class RegistryTests(TestCase):
     def test_package_loading(self):
         """Test that package distributed plugins work."""
         # Install sample package
-        subprocess.check_output('pip install inventree-zapier'.split())
+        from plugin.installer import install_plugin
+
+        install_plugin(packagename='inventree-zapier')
 
         # Reload to discover plugin
         registry.reload_plugins(full_reload=True)

@@ -25,6 +25,8 @@ def pip_command(*args):
     command = [python, '-m', 'pip']
     command.extend(args)
 
+    command = [str(x) for x in command]
+
     logger.info("running pip command: %s", ' '.join(command))
     logger.debug("python executable path: %s", python)
 
@@ -135,7 +137,7 @@ def add_plugin_to_file(install_name):
         logger.exception("Failed to add plugin to plugins file: %s", str(exc))
 
 
-def install_plugin(url, packagename=None, user=None):
+def install_plugin(url=None, packagename=None, user=None):
     """Install a plugin into the python virtual environment:
 
     - A staff user account is required
@@ -171,7 +173,9 @@ def install_plugin(url, packagename=None, user=None):
             # and not covered by tests.
             install_name.append('-i')
             install_name.append(url)
-            install_name.append(packagename)
+
+            if packagename:
+                install_name.append(packagename)
 
     elif packagename:
         # use pypi
