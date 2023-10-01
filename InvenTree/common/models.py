@@ -930,6 +930,12 @@ def update_instance_name(setting):
     site_obj.save()
 
 
+def reload_plugins(setting):
+    """Reload the plugin registry after a plugin setting is changed"""
+    from plugin import registry
+    registry.reload_plugins(full_reload=True, force_reload=True)
+
+
 def validate_email_domains(setting):
     """Validate the email domains setting."""
     if not setting.value:
@@ -1716,7 +1722,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Allow plugins to add custom URL routes'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugins,
         },
 
         'ENABLE_PLUGINS_NAVIGATION': {
@@ -1725,6 +1731,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
+            'after_save': reload_plugins,
         },
 
         'ENABLE_PLUGINS_APP': {
@@ -1733,6 +1740,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
+            'after_save': reload_plugins,
         },
 
         'ENABLE_PLUGINS_SCHEDULE': {
@@ -1741,6 +1749,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
+            'after_save': reload_plugins,
         },
 
         'ENABLE_PLUGINS_EVENTS': {
@@ -1749,6 +1758,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
+            'after_save': reload_plugins,
         },
 
         "PROJECT_CODES_ENABLED": {
