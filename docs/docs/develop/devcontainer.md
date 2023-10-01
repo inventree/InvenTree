@@ -45,6 +45,10 @@ If you need some demo test-data, run the `setup-test` task. This will import an 
 
 If you only need a superuser, run the `superuser` task. It should prompt you for credentials.
 
+#### Run background workers
+
+If you need to process your queue with background workers, run the `worker` task.
+
 ### Running InvenTree
 
 You can either only run InvenTree or use the integrated debugger for debugging. Goto the `Run and debug` side panel make sure `InvenTree Server` is selected. Click on the play button on the left.
