@@ -29,4 +29,4 @@ class FilteredEventPluginSample(EventMixin, InvenTreePlugin):
 
         # Issue warning that we can test for
         if settings.PLUGIN_TESTING:
-            logger.debug(f'Event `{event}` triggered in sample plugin')
+            logger.debug('Event `%s` triggered in sample plugin', event)
