@@ -195,7 +195,7 @@ class InvenTreePluginTests(TestCase):
 class RegistryTests(TestCase):
     """Tests for registry loading methods."""
 
-    def mockDir(self) -> None:
+    def mockDir(self) -> str:
         """Returns path to mock dir"""
         return str(Path(__file__).parent.joinpath('mock').absolute())
 
