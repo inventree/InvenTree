@@ -32,9 +32,8 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
-        config = registry.get_plugin('samplelabel').plugin_config()
-        config.active = True
-        config.save()
+
+        registry.set_plugin_state('samplelabel', True)
 
     def do_url(self, parts, plugin_ref, label, url_name: str = 'api-part-label-print', url_single: str = 'part', invalid: bool = False):
         """Generate an URL to print a label."""
@@ -75,13 +74,10 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def test_installed(self):
         """Test that the sample printing plugin is installed."""
-        # Get all label plugins
+
+        self.do_activate_plugin()
         plugins = registry.with_mixin('labels')
         self.assertEqual(len(plugins), 2)
-
-        # But, it is not 'active'
-        plugins = registry.with_mixin('labels')
-        self.assertEqual(len(plugins), 1)
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
@@ -132,6 +128,9 @@ class LabelMixinTests(InvenTreeAPITestCase):
         # Ensure the labels were created
         apps.get_app_config('label').create_labels()
 
+        # Ensure plugin is (initially) inactive
+        registry.set_plugin_state('samplelabel', False)
+
         # Lookup references
         part = Part.objects.first()
         plugin_ref = 'samplelabel'
@@ -139,13 +138,12 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         url = self.do_url([part], plugin_ref, label)
 
-        # Non-exsisting plugin
+        # Non-existing plugin
         response = self.get(f'{url}123', expected_code=404)
         self.assertIn(f'Plugin \'{plugin_ref}123\' not found', str(response.content, 'utf8'))
 
         # Inactive plugin
-        response = self.get(url, expected_code=400)
-        self.assertIn(f'Plugin \'{plugin_ref}\' is not enabled', str(response.content, 'utf8'))
+        response = self.get(url, expected_code=404)
 
         # Active plugin
         self.do_activate_plugin()

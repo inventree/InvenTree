@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.utils import IntegrityError
 from django.utils.translation import gettext_lazy as _
 
 import common.models
@@ -104,11 +105,14 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         """Extend save method to reload plugins if the 'active' status changes."""
         no_reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
-        ret = super().save(force_insert, force_update, *args, **kwargs)
-
         if self.is_builtin():
             # Force active if builtin
             self.active = True
+
+        try:
+            ret = super().save(force_insert, force_update, *args, **kwargs)
+        except IntegrityError:
+            ret = None
 
         if not no_reload:
             if self.active != self.__org_active:

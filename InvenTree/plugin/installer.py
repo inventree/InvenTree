@@ -36,7 +36,7 @@ def pip_command(*args):
     )
 
 
-def check_package_path(packagename):
+def check_package_path(packagename: str):
     """Determine the install path of a particular package
 
     - If installed, return the installation path
@@ -62,7 +62,6 @@ def check_package_path(packagename):
                 return match.group(1)
 
     except subprocess.CalledProcessError as error:
-
         output = error.output.decode('utf-8')
         logger.exception("Plugin lookup failed: %s", str(output))
         return False

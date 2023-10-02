@@ -23,7 +23,7 @@ class BarcodeScan(APIView):
     and sent to this endpoint (as a JSON object) for validation.
 
     A barcode could follow the internal InvenTree barcode format,
-    or it could match to a third-party barcode format (e.g. Digikey).
+    or it could match to a third-party barcode format (e.g. DigiKey).
 
     When a barcode is sent to the server, the following parameters must be provided:
 
@@ -172,7 +172,7 @@ class BarcodeAssign(APIView):
 
 
 class BarcodeUnassign(APIView):
-    """Endpoint for unlinking / unassigning a custom barcode from a database object"""
+    """Endpoint for unlinking / un-assigning a custom barcode from a database object"""
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -245,7 +245,7 @@ barcode_api_urls = [
     # Link a third-party barcode to an item (e.g. Part / StockItem / etc)
     path('link/', BarcodeAssign.as_view(), name='api-barcode-link'),
 
-    # Unlink a third-pary barcode from an item
+    # Unlink a third-party barcode from an item
     path('unlink/', BarcodeUnassign.as_view(), name='api-barcode-unlink'),
 
     # Catch-all performs barcode 'scan'

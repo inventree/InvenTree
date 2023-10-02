@@ -43,7 +43,7 @@ class ActionMixinTests(TestCase):
 
     def test_action_name(self):
         """Check the name definition possibilities."""
-        self.assertEqual(self.plugin.action_name(), '')
+        self.assertEqual(self.plugin.action_name(), 'SimplePlugin')
         self.assertEqual(self.action_plugin.action_name(), 'abc123')
         self.assertEqual(self.action_name.action_name(), 'Aplugin')
 
@@ -54,7 +54,7 @@ class ActionMixinTests(TestCase):
         self.assertEqual(self.plugin.get_result(), False)
         self.assertIsNone(self.plugin.get_info())
         self.assertEqual(self.plugin.get_response(), {
-            "action": '',
+            "action": 'SimplePlugin',
             "result": False,
             "info": None,
         })
@@ -83,10 +83,10 @@ class APITests(InvenTreeTestCase):
             {'error': 'No action specified'}
         )
 
-        # Test non-exsisting action
-        response = self.client.post('/api/action/', data={'action': "nonexsisting"})
+        # Test non-existing action
+        response = self.client.post('/api/action/', data={'action': "nonexisting"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.data,
-            {'error': 'No matching action found', 'action': 'nonexsisting'}
+            {'error': 'No matching action found', 'action': 'nonexisting'}
         )

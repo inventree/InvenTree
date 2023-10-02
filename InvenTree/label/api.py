@@ -245,7 +245,7 @@ class StockLocationLabelMixin:
 
 
 class StockLocationLabelList(StockLocationLabelMixin, LabelListView):
-    """API endpoint for viewiing list of StockLocationLabel objects.
+    """API endpoint for viewing list of StockLocationLabel objects.
 
     Filterable by:
 
