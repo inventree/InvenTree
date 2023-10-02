@@ -65,27 +65,32 @@ def register_event(event, *args, **kwargs):
         with transaction.atomic():
 
             for slug, plugin in registry.plugins.items():
+                if not plugin.mixin_enabled('events'):
+                    continue
 
-                if plugin.mixin_enabled('events'):
+                # Only allow event registering for 'active' plugins
+                if not plugin.is_active():
+                    continue
 
-                    if plugin.is_active():
-                        # Only allow event registering for 'active' plugins
+                # Let the plugin decide if it wants to process this event
+                if not plugin.wants_process_event(event):
+                    continue
 
-                        logger.debug("Registering callback for plugin '%s'", slug)
+                logger.debug("Registering callback for plugin '%s'", slug)
 
-                        # This task *must* be processed by the background worker,
-                        # unless we are running CI tests
-                        if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
-                            kwargs['force_async'] = True
+                # This task *must* be processed by the background worker,
+                # unless we are running CI tests
+                if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
+                    kwargs['force_async'] = True
 
-                        # Offload a separate task for each plugin
-                        offload_task(
-                            process_event,
-                            slug,
-                            event,
-                            *args,
-                            **kwargs
-                        )
+                # Offload a separate task for each plugin
+                offload_task(
+                    process_event,
+                    slug,
+                    event,
+                    *args,
+                    **kwargs
+                )
 
 
 def process_event(plugin_slug, event, *args, **kwargs):
