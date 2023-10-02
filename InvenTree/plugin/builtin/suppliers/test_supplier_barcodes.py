@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.unit_test import InvenTreeAPITestCase
-from order.models import PurchaseOrder  # , PurchaseOrderLineItem
+from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import Part
 from stock.models import StockItem, StockLocation
 
@@ -213,69 +213,69 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
         assert stock_item.location == stock_location
 
-#    def test_receive_default_line_item_location(self):
-#        """Test receiving an item into the default line_item location"""
-#
-#        StockLocation.objects.create(name="Test Location 1")
-#        stock_location2 = StockLocation.objects.create(name="Test Location 2")
-#
-#        line_item = PurchaseOrderLineItem.objects.filter(part__SKU="42")[0]
-#        line_item.destination = stock_location2
-#        line_item.save()
-#
-#        url = reverse("api-barcode-po-receive")
-#        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
-#        assert "success" in result1.data
-#
-#        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
-#        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
-#        assert stock_item.location == stock_location2
-#
-#    def test_receive_default_part_location(self):
-#        """Test receiving an item into the default part location"""
-#
-#        StockLocation.objects.create(name="Test Location 1")
-#        stock_location2 = StockLocation.objects.create(name="Test Location 2")
-#
-#        part = Part.objects.all()[0]
-#        part.default_location = stock_location2
-#        part.save()
-#
-#        url = reverse("api-barcode-po-receive")
-#        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
-#        assert "success" in result1.data
-#
-#        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
-#        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
-#        assert stock_item.location == stock_location2
-#
-#    def test_receive_specific_order_and_location(self):
-#        """Test receiving an item from a specific order into a specific location"""
-#
-#        StockLocation.objects.create(name="Test Location 1")
-#        stock_location2 = StockLocation.objects.create(name="Test Location 2")
-#
-#        url = reverse("api-barcode-po-receive")
-#        barcode = MOUSER_BARCODE.replace("\x1dKP0-1337", "")
-#        result1 = self.post(url, data={
-#            "barcode": barcode,
-#            "purchase_order": self.purchase_order2.pk,
-#            "location": stock_location2.pk,
-#        })
-#        assert "success" in result1.data
-#
-#        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": barcode})
-#        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
-#        assert stock_item.location == stock_location2
-#
-#    def test_receive_missing_quantity(self):
-#        """Test receiving an with missing quantity information"""
-#
-#        url = reverse("api-barcode-po-receive")
-#        barcode = MOUSER_BARCODE.replace("\x1dQ3", "")
-#        result = self.post(url, data={"barcode": barcode})
-#        assert "lineitem" in result.data
-#        assert "quantity" not in result.data["lineitem"]
+    def test_receive_default_line_item_location(self):
+        """Test receiving an item into the default line_item location"""
+
+        StockLocation.objects.create(name="Test Location 1")
+        stock_location2 = StockLocation.objects.create(name="Test Location 2")
+
+        line_item = PurchaseOrderLineItem.objects.filter(part__SKU="42")[0]
+        line_item.destination = stock_location2
+        line_item.save()
+
+        url = reverse("api-barcode-po-receive")
+        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
+        assert "success" in result1.data
+
+        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
+        assert stock_item.location == stock_location2
+
+    def test_receive_default_part_location(self):
+        """Test receiving an item into the default part location"""
+
+        StockLocation.objects.create(name="Test Location 1")
+        stock_location2 = StockLocation.objects.create(name="Test Location 2")
+
+        part = Part.objects.all()[0]
+        part.default_location = stock_location2
+        part.save()
+
+        url = reverse("api-barcode-po-receive")
+        result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
+        assert "success" in result1.data
+
+        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
+        assert stock_item.location == stock_location2
+
+    def test_receive_specific_order_and_location(self):
+        """Test receiving an item from a specific order into a specific location"""
+
+        StockLocation.objects.create(name="Test Location 1")
+        stock_location2 = StockLocation.objects.create(name="Test Location 2")
+
+        url = reverse("api-barcode-po-receive")
+        barcode = MOUSER_BARCODE.replace("\x1dKP0-1337", "")
+        result1 = self.post(url, data={
+            "barcode": barcode,
+            "purchase_order": self.purchase_order2.pk,
+            "location": stock_location2.pk,
+        })
+        assert "success" in result1.data
+
+        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": barcode})
+        stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
+        assert stock_item.location == stock_location2
+
+    def test_receive_missing_quantity(self):
+        """Test receiving an with missing quantity information"""
+
+        url = reverse("api-barcode-po-receive")
+        barcode = MOUSER_BARCODE.replace("\x1dQ3", "")
+        result = self.post(url, data={"barcode": barcode})
+        assert "lineitem" in result.data
+        assert "quantity" not in result.data["lineitem"]
 
 
 DIGIKEY_BARCODE = (
