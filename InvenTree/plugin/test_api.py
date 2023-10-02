@@ -7,6 +7,7 @@ from rest_framework.exceptions import NotFound
 from InvenTree.unit_test import InvenTreeAPITestCase, PluginMixin
 from plugin.api import check_plugin
 from plugin.models import PluginConfig
+from plugin.registry import registry
 
 
 class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
@@ -170,12 +171,18 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.assertIn('base', mixin_dict)
         self.assertDictContainsSubset({'base': {'key': 'base', 'human_name': 'base'}}, mixin_dict)
 
-        # check reload on save
-        with self.assertWarns(Warning) as cm:
-            plg_inactive = self.plugin_confs.filter(active=False).first()
-            plg_inactive.active = True
-            plg_inactive.save()
-        self.assertEqual(cm.warning.args[0], 'A reload was triggered')
+        plg_inactive = self.plugin_confs.filter(active=False).first()
+        plg_inactive.active = False
+        plg_inactive.save()
+
+        # check reload on save (hash will be different)
+        reg_hash = registry.calculate_plugin_hash()
+
+        plg_inactive.active = True
+        plg_inactive.save()
+
+        # Check that the registry hash has changed (because we have reloaded the plugin registry)
+        self.assertNotEqual(reg_hash, registry.calculate_plugin_hash())
 
     def test_check_plugin(self):
         """Test check_plugin function."""

@@ -121,7 +121,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         packagename = data.get('packagename', '')
         url = data.get('url', '')
 
-        return install_plugin(url, packagename=packagename)
+        return install_plugin(url=url, packagename=packagename)
 
 
 class PluginConfigEmptySerializer(serializers.Serializer):

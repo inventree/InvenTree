@@ -489,6 +489,8 @@ class BaseInvenTreeSetting(models.Model):
             setting = None
         except (IntegrityError, OperationalError, ProgrammingError):
             setting = None
+        except AppRegistryNotReady:
+            setting = None
 
         # Setting does not exist! (Try to create it)
         if not setting:
@@ -514,6 +516,8 @@ class BaseInvenTreeSetting(models.Model):
                         setting.save(**kwargs)
                 except (IntegrityError, OperationalError, ProgrammingError):
                     # It might be the case that the database isn't created yet
+                    pass
+                except AppRegistryNotReady:
                     pass
                 except ValidationError:
                     # The setting failed validation - might be due to duplicate keys

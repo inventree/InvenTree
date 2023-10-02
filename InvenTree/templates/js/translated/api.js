@@ -157,6 +157,7 @@ function inventreePut(url, data={}, options={}) {
         data: JSON.stringify(data),
         dataType: 'json',
         contentType: 'application/json',
+        timeout: options.timeout || 60000,
         success: function(response, status) {
             if (options.success) {
                 options.success(response, status);

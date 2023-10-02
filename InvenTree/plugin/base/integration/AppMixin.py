@@ -6,6 +6,7 @@ from pathlib import Path
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
+from django.core.exceptions import AppRegistryNotReady
 
 from InvenTree.config import get_plugin_dir
 
@@ -94,6 +95,9 @@ class AppMixin:
             except LookupError:  # pragma: no cover
                 # if an error occurs the app was never loaded right -> so nothing to do anymore
                 logger.debug('%s App was not found during deregistering', app_name)
+                break
+            except AppRegistryNotReady:
+                logger.info('AppRegistryNotReady - app %s was not unloaded', app_name)
                 break
 
             # unregister the models (yes, models are just kept in multilevel dicts)

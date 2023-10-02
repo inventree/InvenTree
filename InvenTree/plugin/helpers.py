@@ -12,7 +12,6 @@ from importlib.metadata import entry_points
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import IntegrityError
 
 logger = logging.getLogger('inventree')
 
@@ -63,6 +62,7 @@ def log_error(error, reference: str = 'general'):
 
 def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: str = ''):
     """Handles an error and casts it as an IntegrationPluginError."""
+
     package_path = traceback.extract_tb(error.__traceback__)[-1].filename
     install_path = sysconfig.get_paths()["purelib"]
 
@@ -91,13 +91,6 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
         if log_name:
             log_kwargs['reference'] = log_name
         log_error({package_name: str(error)}, **log_kwargs)
-
-    if do_raise:
-        # do a straight raise if we are playing with environment variables at execution time, ignore the broken sample
-        if settings.TESTING_ENV and package_name != 'integration.broken_sample' and isinstance(error, IntegrityError):
-            raise error  # pragma: no cover
-
-        raise IntegrationPluginError(package_name, str(error))
 
 
 def get_entrypoints():

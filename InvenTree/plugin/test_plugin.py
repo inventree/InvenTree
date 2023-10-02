@@ -252,7 +252,7 @@ class RegistryTests(TestCase):
         # Install sample package
         from plugin.installer import install_plugin
 
-        install_plugin('inventree-zapier')
+        install_plugin(packagename='inventree-zapier')
 
         # Reload to discover plugin
         registry.reload_plugins(full_reload=True, collect=True)
@@ -270,14 +270,13 @@ class RegistryTests(TestCase):
 
         # Reload the registry with the broken samples dir
         brokenDir = str(Path(__file__).parent.joinpath('broken').absolute())
+
         with mock.patch.dict(os.environ, {'INVENTREE_PLUGIN_TEST_DIR': brokenDir}):
-            # Reload to redicsover plugins
+            # Reload to rediscover plugins
             registry.reload_plugins(full_reload=True, collect=True)
 
-        self.assertEqual(len(registry.errors), 3)
+        self.assertEqual(len(registry.errors), 2)
+
         # There should be at least one discovery error in the module `broken_file`
         self.assertTrue(len(registry.errors.get('discovery')) > 0)
         self.assertEqual(registry.errors.get('discovery')[0]['broken_file'], "name 'bb' is not defined")
-        # There should be at least one load error with an intentional KeyError
-        self.assertTrue(len(registry.errors.get('load')) > 0)
-        self.assertEqual(registry.errors.get('load')[0]['broken_sample'], "'This is a dummy error'")

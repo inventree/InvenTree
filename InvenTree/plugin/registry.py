@@ -10,6 +10,7 @@ import logging
 import os
 import time
 from pathlib import Path
+from threading import Lock
 from typing import Any, Dict, List, OrderedDict
 
 from django.apps import apps
@@ -59,12 +60,18 @@ class PluginsRegistry:
 
         self.errors = {}                                        # Holds discovering errors
 
+        self.loading_lock = Lock()
+
         # flags
-        self.is_loading = False                                 # Are plugins being loaded right now
         self.plugins_loaded = False                             # Marks if the registry fully loaded and all django apps are reloaded
         self.apps_loading = True                                # Marks if apps were reloaded yet
 
         self.installed_apps = []                                # Holds all added plugin_paths
+
+    @property
+    def is_loading(self):
+        """Return True if the plugin registry is currently loading"""
+        return self.loading_lock.locked()
 
     def get_plugin(self, slug):
         """Lookup active plugin by slug (unique key)."""
@@ -115,7 +122,7 @@ class PluginsRegistry:
 
     # region public functions
     # region loading / unloading
-    def load_plugins(self, full_reload: bool = False, collect: bool = False):
+    def _load_plugins(self, full_reload: bool = False, collect: bool = False):
         """Load and activate all IntegrationPlugins.
 
         Args:
@@ -123,7 +130,7 @@ class PluginsRegistry:
             collect (bool, optional): Collect plugins before reloading. Defaults to False.
         """
 
-        logger.info('Loading plugins')
+        logger.debug('Loading plugins')
 
         # Set maintenance mode
         _maintenance = bool(get_maintenance_mode())
@@ -131,17 +138,17 @@ class PluginsRegistry:
             set_maintenance_mode(True)
 
         if collect:
-            logger.info('Collecting plugins')
+            logger.debug('Collecting plugins')
             self.plugin_modules = self.collect_plugins()
 
         registered_successful = False
-        blocked_plugin = None
-        retry_counter = settings.PLUGIN_RETRY
+        blocked_plugins = []
+        retry_counter = settings.PLUGIN_RETRY if not settings.TESTING else 2
 
         while not registered_successful:
             try:
                 # We are using the db so for migrations etc we need to try this block
-                self._init_plugins(blocked_plugin)
+                self._init_plugins(blocked_plugins)
                 self._activate_plugins(full_reload=full_reload)
                 registered_successful = True
             except (OperationalError, ProgrammingError):  # pragma: no cover
@@ -151,7 +158,8 @@ class PluginsRegistry:
             except IntegrationPluginError as error:
                 logger.exception('[PLUGIN] Encountered an error with %s:\n%s', error.path, error.message)
                 log_error({error.path: error.message}, 'load')
-                blocked_plugin = error.path  # we will not try to load this app again
+
+                blocked_plugins.append(error.path)  # we will not try to load this app again
 
                 # Initialize apps without any plugins
                 self._clean_registry()
@@ -162,20 +170,14 @@ class PluginsRegistry:
                 retry_counter -= 1
 
                 if retry_counter <= 0:  # pragma: no cover
-                    if settings.PLUGIN_TESTING:
-                        print('[PLUGIN] Max retries, breaking loading')
+                    logger.info('[PLUGIN] Max retries, breaking loading')
                     break
-                if settings.PLUGIN_TESTING:
-                    print(f'[PLUGIN] Above error occurred during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
-
-                # now the loading will re-start up with init
+            else:
+                break
 
             # disable full reload after the first round
             if full_reload:
                 full_reload = False
-
-        # ensure plugins_loaded is True
-        self.plugins_loaded = True
 
         # Cleanup old plugin configs
         self.cleanup_old_plugin_configs()
@@ -188,12 +190,7 @@ class PluginsRegistry:
 
         logger.debug('Finished loading plugins')
 
-        # Trigger plugins_loaded event
-        if canAppAccessDatabase():
-            from plugin.events import trigger_event
-            trigger_event('plugins_loaded')
-
-    def unload_plugins(self, force_reload: bool = False):
+    def _unload_plugins(self, force_reload: bool = False):
         """Unload and deactivate all IntegrationPlugins.
 
         Args:
@@ -220,7 +217,10 @@ class PluginsRegistry:
         logger.debug('Finished unloading plugins')
 
     def reload_plugins(self, full_reload: bool = False, force_reload: bool = False, collect: bool = False):
-        """Safely reload.
+        """Reload the plugin registry.
+
+        This is designed to be the single entrypoint for loading / reloading plugins,
+        and is guarded by a mutex lock to prevent multiple threads from attempting to reload plugins at the same time.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
@@ -229,20 +229,27 @@ class PluginsRegistry:
         """
         # Do not reload when currently loading
         if self.is_loading:
-            return  # pragma: no cover
+            logger.info('Skipping reload - plugin registry is currently loading')
+            return
 
-        logger.debug('Start reloading plugins')
+        if self.loading_lock.acquire(blocking=False):
+            logger.info('Plugin Registry: Reloading plugins')
+            with maintenance_mode_on():
 
-        with maintenance_mode_on():
+                self.plugins_loaded = False
+                self._unload_plugins(force_reload=force_reload)
+                self._load_plugins(full_reload=full_reload, collect=collect)
+                self._update_urls()
+                self.plugins_loaded = True
 
-            self.plugins_loaded = False
-            self.unload_plugins(force_reload=force_reload)
-            self.plugins_loaded = True
-            self.load_plugins(full_reload=full_reload, collect=collect)
+                # Trigger plugins_loaded event
+                if canAppAccessDatabase():
+                    from plugin.events import trigger_event
+                    trigger_event('plugins_loaded')
 
-            self._update_urls()
+            self.loading_lock.release()
 
-        logger.debug('Finished reloading plugins')
+            logger.info("Plugin Registry: Loaded %s plugins", len(self.plugins))
 
     def cleanup_old_plugin_configs(self):
         """Remove any plugin configurations for plugins which no longer exist"""
@@ -368,7 +375,7 @@ class PluginsRegistry:
                         handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
-        logger.info('Collected %s plugins', len(collected_plugins))
+        logger.debug('Collected %s plugins', len(collected_plugins))
         logger.debug(", ".join([a.__module__ for a in collected_plugins]))
 
         return collected_plugins
@@ -427,7 +434,7 @@ class PluginsRegistry:
     # endregion
 
     # region general internal loading / activating / deactivating / unloading
-    def _init_plugins(self, disabled: str = None):
+    def _init_plugins(self, disabled: list[str] = None):
         """Initialise all found plugins.
 
         Args:
@@ -446,7 +453,7 @@ class PluginsRegistry:
                 self.plugins[key] = plugin
             else:
                 # Deactivate plugin in db
-                if not settings.PLUGIN_TESTING:  # pragma: no cover
+                if not self.is_loading and not settings.PLUGIN_TESTING:  # pragma: no cover
                     plugin.db.active = False
                     plugin.db.save(no_reload=True)
                 self.plugins_inactive[key] = plugin.db
@@ -469,7 +476,7 @@ class PluginsRegistry:
                 plg_db = None
             except (IntegrityError) as error:  # pragma: no cover
                 logger.exception("Error initializing plugin `%s`: %s", plg_name, error)
-                handle_error(error, log_name='init')
+                handle_error(error, do_raise=False, log_name='init')
 
             # Append reference to plugin
             plg.db = plg_db
@@ -488,7 +495,8 @@ class PluginsRegistry:
             # - If this plugin has been explicitly enabled by the user
             if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
                 # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
-                if disabled and ((plg.__name__ == disabled) or (plg.__module__ == disabled)):
+                if disabled and ((plg.__name__ in disabled) or (plg.__module__ in disabled)):
+                    logger.info("Skipping plugin `%s` as it was blocked", plg_name)
                     safe_reference(plugin=plg, key=plg_key, active=False)
                     continue  # continue -> the plugin is not loaded
 
@@ -503,11 +511,12 @@ class PluginsRegistry:
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
                     logger.warning("Plugin `%s` could not be loaded", plg_name)
-
-                # Safe extra attributes
-                plg_i.is_package = getattr(plg_i, 'is_package', False)
-                plg_i.pk = plg_db.pk if plg_db else None
-                plg_i.db = plg_db
+                    continue
+                else:
+                    # Safe extra attributes
+                    plg_i.is_package = getattr(plg_i, 'is_package', False)
+                    plg_i.pk = plg_db.pk if plg_db else None
+                    plg_i.db = plg_db
 
                 # Run version check for plugin
                 if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
@@ -551,7 +560,7 @@ class PluginsRegistry:
 
         # Activate integrations
         plugins = self.plugins.items()
-        logger.info('Found %s active plugins', len(plugins))
+        logger.debug('Found %s active plugins', len(plugins))
 
         for mixin in self.__get_mixin_order():
             if hasattr(mixin, '_activate_mixin'):
@@ -578,6 +587,7 @@ class PluginsRegistry:
 
         Throws an custom error that gets handled by the loading function.
         """
+
         try:
             cmd(*args, **kwargs)
             return True, []
@@ -593,9 +603,7 @@ class PluginsRegistry:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
-        # If full_reloading is set to true we do not want to set the flag
-        if not full_reload:
-            self.is_loading = True  # set flag to disable loop reloading
+
         if force_reload:
             # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()
@@ -604,7 +612,6 @@ class PluginsRegistry:
             self._try_reload(apps.populate, settings.INSTALLED_APPS)
         else:
             self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
-        self.is_loading = False
 
     def _clean_installed_apps(self):
         for plugin in self.installed_apps:
@@ -659,7 +666,7 @@ class PluginsRegistry:
 
         if old_hash != plg_hash:
             try:
-                logger.info("Updating plugin registry hash: %s", str(plg_hash))
+                logger.debug("Updating plugin registry hash: %s", str(plg_hash))
                 InvenTreeSetting.set_setting("_PLUGIN_REGISTRY_HASH", plg_hash, change_user=None)
             except Exception as exc:
                 logger.exception("Failed to update plugin registry hash: %s", str(exc))
@@ -675,10 +682,11 @@ class PluginsRegistry:
 
         data = md5()
 
-        # Hash for all *active* plugins
+        # Hash for all loaded plugins
         for slug, plug in self.plugins.items():
             data.update(str(slug).encode())
             data.update(str(plug.version).encode())
+            data.update(str(plug.is_active).encode())
 
         return str(data.hexdigest())
 
@@ -701,7 +709,7 @@ class PluginsRegistry:
 
         if reg_hash and reg_hash != self.calculate_plugin_hash():
             logger.info("Plugin registry hash has changed - reloading")
-            self.reload_plugins(full_reload=True, force_reload=True)
+            self.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
 
 registry: PluginsRegistry = PluginsRegistry()
