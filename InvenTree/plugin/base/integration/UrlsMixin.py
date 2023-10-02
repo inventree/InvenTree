@@ -35,7 +35,7 @@ class UrlsMixin:
         """
         from common.models import InvenTreeSetting
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL'):
-            logger.info('Registering UrlsMixin Plugin')
+            logger.debug('Registering UrlsMixin Plugin')
             urls_changed = False
             # check whether an activated plugin extends UrlsMixin
             for _key, plugin in plugins:

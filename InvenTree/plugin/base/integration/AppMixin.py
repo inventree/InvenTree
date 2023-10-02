@@ -38,7 +38,7 @@ class AppMixin:
         from common.models import InvenTreeSetting
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP'):
-            logger.info('Registering IntegrationPlugin apps')
+            logger.debug('Registering IntegrationPlugin apps')
             apps_changed = False
 
             # add them to the INSTALLED_APPS

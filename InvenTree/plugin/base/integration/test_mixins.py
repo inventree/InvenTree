@@ -81,6 +81,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
             def test():
                 return 'ccc'
             URLS = [re_path('testpath', test, name='test'), ]
+
         self.mixin = UrlsCls()
 
         class NoUrlsCls(UrlsMixin, InvenTreePlugin):
@@ -89,7 +90,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
 
     def test_function(self):
         """Test that the mixin functions."""
-        plg_name = self.mixin.plugin_name()
+        plg_name = self.mixin.plugin_slug()
 
         # base_url
         target_url = f'{PLUGIN_BASE}/{plg_name}/'
@@ -99,9 +100,11 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         target_pattern = re_path(f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name)
         self.assertEqual(self.mixin.urlpatterns.reverse_dict, target_pattern.reverse_dict)
 
+        patterns = self.mixin.urlpatterns
+
         # resolve the view
-        self.assertEqual(self.mixin.urlpatterns.resolve('/testpath').func(), 'ccc')
-        self.assertEqual(self.mixin.urlpatterns.reverse('test'), 'testpath')
+        self.assertEqual(patterns.resolve(f'{plg_name}/testpath').func(), 'ccc')
+        self.assertEqual(patterns.reverse('test'), 'testpath')
 
         # no url
         self.assertIsNone(self.mixin_nothing.urls)
@@ -156,7 +159,7 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
 
         # navigation name
         self.assertEqual(self.mixin.navigation_name, 'abcd1')
-        self.assertEqual(self.nothing_mixin.navigation_name, '')
+        self.assertEqual(self.nothing_mixin.navigation_name, 'NothingNavigationCls')
 
     def test_fail(self):
         """Test that wrong links fail."""

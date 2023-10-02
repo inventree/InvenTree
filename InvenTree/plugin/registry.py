@@ -564,7 +564,7 @@ class PluginsRegistry:
             if hasattr(mixin, '_deactivate_mixin'):
                 mixin._deactivate_mixin(self, force_reload=force_reload)
 
-        logger.debug('Done deactivating')
+        logger.debug('Finished deactivating plugins')
     # endregion
 
     # region mixin specific loading ...
