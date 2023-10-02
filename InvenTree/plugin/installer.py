@@ -27,7 +27,6 @@ def pip_command(*args):
     command = [str(x) for x in command]
 
     logger.info("Running pip command: %s", ' '.join(command))
-    logger.debug("python executable path: %s", python)
 
     return subprocess.check_output(
         command,
