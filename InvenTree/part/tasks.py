@@ -314,10 +314,6 @@ def generate_stocktake_report(**kwargs):
         # Create a new stocktake for this part (do not commit, this will take place later on)
         stocktake = perform_stocktake(p, user, commit=False)
 
-        if stocktake.quantity == 0:
-            # Skip rows with zero total quantity
-            continue
-
         total_parts += 1
 
         stocktake_instances.append(stocktake)
