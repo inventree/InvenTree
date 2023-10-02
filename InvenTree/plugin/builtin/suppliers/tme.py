@@ -49,7 +49,7 @@ class TMEPlugin(SupplierBarcodeMixin, InvenTreePlugin):
         return supplier_part, barcode_fields
 
 
-TME_IS_QRCODE_REGEX = re.compile(r"^(([^\s:]+):([^\s:]+)(\s+|$))+")
+TME_IS_QRCODE_REGEX = re.compile(r"^(\S+(\s+|$))+")
 TME_PARSE_QRCODE_REGEX = re.compile(r"([^\s:]+):([^\s:]+)(?:\s+|$)")
 TME_BARCODE2D_REGEX = re.compile(r"([^\s]+)(?:\s+|$)")
 QRCODE_FIELD_NAME_MAP = {
