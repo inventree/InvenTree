@@ -1,5 +1,6 @@
 """Exchangerate backend to use `frankfurter.app` to get rates."""
 
+from decimal import Decimal
 from urllib.error import URLError
 
 from django.db.utils import OperationalError
@@ -44,6 +45,15 @@ class InvenTreeExchange(SimpleExchangeBackend):
             # Something has gone wrong, but we can just try again next time
             # Raise a TypeError so the outer function can handle this
             raise TypeError
+
+    def get_rates(self, **params):
+        """Intersect the requested currency codes with the available codes."""
+        rates = super().get_rates(**params)
+
+        # Add the base currency to the rates
+        rates[params["base_currency"]] = Decimal("1.0")
+
+        return rates
 
     def update_rates(self, base_currency=None):
         """Set the requested currency codes and get rates."""
