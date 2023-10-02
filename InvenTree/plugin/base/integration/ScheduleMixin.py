@@ -57,7 +57,7 @@ class ScheduleMixin:
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):
         """Activate scheudles from plugins with the ScheduleMixin."""
-        logger.info('Activating plugin tasks')
+        logger.debug('Activating plugin tasks')
 
         from common.models import InvenTreeSetting
 
