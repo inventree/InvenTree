@@ -10,9 +10,8 @@ from error_report.models import Error
 
 from InvenTree.unit_test import InvenTreeTestCase
 from plugin import InvenTreePlugin
-from plugin.base.integration.mixins import PanelMixin
 from plugin.helpers import MixinNotImplementedError
-from plugin.mixins import (APICallMixin, AppMixin, NavigationMixin,
+from plugin.mixins import (APICallMixin, AppMixin, NavigationMixin, PanelMixin,
                            SettingsMixin, UrlsMixin)
 from plugin.registry import registry
 from plugin.urls import PLUGIN_BASE
@@ -22,7 +21,7 @@ class BaseMixinDefinition:
     """Mixin to test the meta functions of all mixins."""
 
     def test_mixin_name(self):
-        """Test that the mixin registers itseld correctly."""
+        """Test that the mixin registers itself correctly."""
         # mixin name
         self.assertIn(self.MIXIN_NAME, {item['key'] for item in self.mixin.registered_mixins.values()})
         # human name
@@ -133,6 +132,8 @@ class AppMixinTest(BaseMixinDefinition, TestCase):
         from common.models import InvenTreeSetting
 
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_APP', True, None)
+
+        registry.set_plugin_state('sample', True)
         registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
         self.assertIn('plugin.samples.integration', settings.INSTALLED_APPS)
