@@ -404,12 +404,17 @@ class PluginsRegistry:
 
         self.mixin_modules = collected_mixins
 
-    def install_plugin_file(self):
+    def install_plugin_file(self, force=False):
         """Make sure all plugins are installed in the current environment."""
 
-        if settings.PLUGIN_FILE_CHECKED:
-            logger.debug('Plugin file was already checked')
-            return True
+        if not force:
+            if settings.TESTING:
+                logger.debug('Skipping plugin file installation in testing mode')
+                return True
+
+            if settings.PLUGIN_FILE_CHECKED:
+                logger.debug('Plugin file was already checked')
+                return True
 
         from .installer import install_plugins_file
 

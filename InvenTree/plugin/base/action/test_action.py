@@ -77,7 +77,8 @@ class APITests(InvenTreeTestCase):
         """Check the possible errors with post."""
         # Test empty request
         response = self.client.post('/api/action/')
-        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data,
             {'error': 'No action specified'}
@@ -85,7 +86,7 @@ class APITests(InvenTreeTestCase):
 
         # Test non-existing action
         response = self.client.post('/api/action/', data={'action': "nonexisting"})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data,
             {'error': 'No matching action found', 'action': 'nonexisting'}

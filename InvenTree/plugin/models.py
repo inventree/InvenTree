@@ -101,16 +101,17 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         state.pop("plugin", None)  # plugin cannot be pickled in some circumstances when used with drf views, remove it (#5408)
         return state
 
-    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+    def save(self, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
-        no_reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
+
+        no_reload = kwargs.pop('no_reload', False)
 
         if self.is_builtin():
             # Force active if builtin
             self.active = True
 
         try:
-            ret = super().save(force_insert, force_update, *args, **kwargs)
+            ret = super().save(*args, **kwargs)
         except IntegrityError:
             ret = None
 

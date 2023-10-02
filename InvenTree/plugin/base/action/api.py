@@ -23,9 +23,12 @@ class ActionPluginView(APIView):
         data = request.data.get('data', None)
 
         if action is None:
-            return Response({
-                'error': _("No action specified")
-            })
+            return Response(
+                {
+                    'error': _("No action specified")
+                },
+                status=400,
+            )
 
         action_plugins = registry.with_mixin('action')
         for plugin in action_plugins:

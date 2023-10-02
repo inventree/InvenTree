@@ -63,7 +63,7 @@ class ConversionTest(TestCase):
             self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
 
     def test_dimensionless_units(self):
-        """Tests for 'dimensonless' unit quantities"""
+        """Tests for 'dimensionless' unit quantities"""
 
         # Test some dimensionless units
         tests = {
@@ -860,7 +860,7 @@ class CurrencyTests(TestCase):
 class TestStatus(TestCase):
     """Unit tests for status functions."""
 
-    def test_check_system_healt(self):
+    def test_check_system_health(self):
         """Test that the system health check is false in testing -> background worker not running."""
         self.assertEqual(status.check_system_health(), False)
 
@@ -949,15 +949,15 @@ class TestSettings(InvenTreeTestCase):
 
         if not settings.DOCKER:
             # Check an install run
-            response = registry.install_plugin_file()
+            response = registry.install_plugin_file(force=True)
             self.assertEqual(response, 'first_run')
 
             # Set dynamic setting to True and rerun to launch install
             InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
             registry.reload_plugins(full_reload=True)
 
-        # Check that there was anotehr run
-        response = registry.install_plugin_file()
+        # Check that there was another run
+        response = registry.install_plugin_file(force=True)
         self.assertEqual(response, True)
 
     def test_helpers_cfg_file(self):
@@ -1150,7 +1150,7 @@ class BarcodeMixinTest(InvenTreeTestCase):
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
         self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
 
-    def test_bacode_hash(self):
+    def test_barcode_hash(self):
         """Test that the barcode hashing function provides correct results"""
 
         # Test multiple values for the hashing function
@@ -1179,7 +1179,7 @@ class SanitizerTest(TestCase):
         # Test that valid string
         self.assertEqual(valid_string, sanitize_svg(valid_string))
 
-        # Test that invalid string is cleanded
+        # Test that invalid string is cleaned
         self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))
 
 
