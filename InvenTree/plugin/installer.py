@@ -223,7 +223,7 @@ def install_plugin(url=None, packagename=None, user=None):
     # Reload the plugin registry, to discover the new plugin
     from plugin.registry import registry
 
-    registry.reload_plugins(full_reload=True, force_reload=True)
+    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     return ret
 

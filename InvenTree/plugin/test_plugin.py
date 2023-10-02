@@ -195,7 +195,7 @@ class InvenTreePluginTests(TestCase):
 class RegistryTests(TestCase):
     """Tests for registry loading methods."""
 
-    def mockDir(self) -> None:
+    def mockDir(self) -> str:
         """Returns path to mock dir"""
         return str(Path(__file__).parent.joinpath('mock').absolute())
 
@@ -205,8 +205,8 @@ class RegistryTests(TestCase):
         # Patch environment variable to add dir
         envs = {'INVENTREE_PLUGIN_TEST_DIR': directory}
         with mock.patch.dict(os.environ, envs):
-            # Reload to rediscover plugins
-            registry.reload_plugins(full_reload=True)
+            # Reload to redicsover plugins
+            registry.reload_plugins(full_reload=True, collect=True)
 
             # Depends on the meta set in InvenTree/plugin/mock/simple:SimplePlugin
             plg = registry.plugins_full.get('simple', None)
@@ -252,12 +252,32 @@ class RegistryTests(TestCase):
         # Install sample package
         from plugin.installer import install_plugin
 
-        # Install the plugin (this will reload the plugin registry)
-        install_plugin(packagename='inventree-zapier')
+        install_plugin('inventree-zapier')
 
-        # Test that plugin was installed (but not yet activated)
-        plg = registry.plugins_full.get('zapier', None)
+        # Reload to discover plugin
+        registry.reload_plugins(full_reload=True, collect=True)
 
-        self.assertIsNotNone(plg)
-        self.assertEqual(plugin.meta.get_plugin_slug(plg), 'zapier')
-        self.assertEqual(plugin.meta.get_plugin_name(plg), 'inventree_zapier')
+        # Test that plugin was installed
+        plg = registry.get_plugin('zapier')
+        self.assertEqual(plg.slug, 'zapier')
+        self.assertEqual(plg.name, 'inventree_zapier')
+
+    def test_broken_samples(self):
+        """Test that the broken samples trigger reloads."""
+
+        # In the base setup there are no errors
+        self.assertEqual(len(registry.errors), 1)
+
+        # Reload the registry with the broken samples dir
+        brokenDir = str(Path(__file__).parent.joinpath('broken').absolute())
+        with mock.patch.dict(os.environ, {'INVENTREE_PLUGIN_TEST_DIR': brokenDir}):
+            # Reload to redicsover plugins
+            registry.reload_plugins(full_reload=True, collect=True)
+
+        self.assertEqual(len(registry.errors), 3)
+        # There should be at least one discovery error in the module `broken_file`
+        self.assertTrue(len(registry.errors.get('discovery')) > 0)
+        self.assertEqual(registry.errors.get('discovery')[0]['broken_file'], "name 'bb' is not defined")
+        # There should be at least one load error with an intentional KeyError
+        self.assertTrue(len(registry.errors.get('load')) > 0)
+        self.assertEqual(registry.errors.get('load')[0]['broken_sample'], "'This is a dummy error'")

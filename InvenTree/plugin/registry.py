@@ -115,11 +115,12 @@ class PluginsRegistry:
 
     # region public functions
     # region loading / unloading
-    def load_plugins(self, full_reload: bool = False):
+    def load_plugins(self, full_reload: bool = False, collect: bool = False):
         """Load and activate all IntegrationPlugins.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+            collect (bool, optional): Collect plugins before reloading. Defaults to False.
         """
 
         logger.info('Loading plugins')
@@ -129,7 +130,9 @@ class PluginsRegistry:
         if not _maintenance:
             set_maintenance_mode(True)
 
-        self.plugin_modules = self.collect_plugins()
+        if collect:
+            logger.info('Collecting plugins')
+            self.plugin_modules = self.collect_plugins()
 
         registered_successful = False
         blocked_plugin = None
@@ -216,12 +219,13 @@ class PluginsRegistry:
 
         logger.debug('Finished unloading plugins')
 
-    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False):
+    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False, collect: bool = False):
         """Safely reload.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
             force_reload (bool, optional): Also reload base apps. Defaults to False.
+            collect (bool, optional): Collect plugins before reloading. Defaults to False.
         """
         # Do not reload when currently loading
         if self.is_loading:
@@ -230,10 +234,11 @@ class PluginsRegistry:
         logger.debug('Start reloading plugins')
 
         with maintenance_mode_on():
+
             self.plugins_loaded = False
             self.unload_plugins(force_reload=force_reload)
             self.plugins_loaded = True
-            self.load_plugins(full_reload=full_reload)
+            self.load_plugins(full_reload=full_reload, collect=collect)
 
             self._update_urls()
 

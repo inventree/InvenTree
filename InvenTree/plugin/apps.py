@@ -40,5 +40,9 @@ class PluginAppConfig(AppConfig):
                 except Exception:  # pragma: no cover
                     pass
 
-                registry.load_plugins()
+                registry.load_plugins(
+                    full_reload=True,
+                    collect=True,
+                )
+
                 set_maintenance_mode(False)
