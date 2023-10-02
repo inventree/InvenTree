@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-25 06:56+0000\n"
-"PO-Revision-Date: 2023-10-01 10:14\n"
+"POT-Creation-Date: 2023-10-02 07:26+0000\n"
+"PO-Revision-Date: 2023-10-02 11:14\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -6527,11 +6527,11 @@ msgstr ""
 msgid "Total Cost Max"
 msgstr ""
 
-#: part/stocktake.py:295
+#: part/stocktake.py:291
 msgid "Stocktake Report Available"
 msgstr ""
 
-#: part/stocktake.py:296
+#: part/stocktake.py:292
 msgid "A new stocktake report is available for download"
 msgstr ""
 
@@ -7368,17 +7368,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:478
+#: plugin/registry.py:483
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:480
+#: plugin/registry.py:485
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:482
+#: plugin/registry.py:487
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
