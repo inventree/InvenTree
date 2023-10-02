@@ -24,10 +24,11 @@ class InvenTreePluginViewMixin:
 
             try:
                 panels += plug.render_panels(self, self.request, ctx)
-            except Exception:
+            except Exception as exc:
                 # Log the error to the database
                 log_error(self.request.path)
                 logger.exception("Plugin '%s' could not render custom panels at '%s'", plug.slug, self.request.path)
+                logger.exception("Rednering error: %s", str(exc))
 
         return panels
 
