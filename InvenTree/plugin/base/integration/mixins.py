@@ -5,6 +5,7 @@ import logging
 
 import requests
 
+import plugin.meta
 from plugin.helpers import MixinNotImplementedError
 
 logger = logging.getLogger('inventree')
@@ -48,7 +49,7 @@ class NavigationMixin:
         name = getattr(self, 'NAVIGATION_TAB_NAME', None)
 
         if not name:
-            name = str(self.__class__.__name__)
+            name = plugin.meta.get_plugin_classname(self)
 
         return name
 

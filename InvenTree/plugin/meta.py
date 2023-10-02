@@ -28,10 +28,7 @@ def get_plugin_metadata(plugin) -> dict:
         return {}
 
     try:
-        if hasattr(plugin, '__name__'):
-            data = metadata(plugin.__name__)
-        elif hasattr(plugin, '__class__'):
-            data = metadata(plugin.__class__.__name__)
+        data = metadata(get_plugin_classname(plugin))
     except PackageNotFoundError:
         data = None
     else:
@@ -165,6 +162,21 @@ def get_plugin_metavalue(plugin, key: str, old_key: str = None, default_value=No
     return value or ''
 
 
+def get_plugin_classname(plugin):
+    """Return the 'class name' of a plugin
+
+    Note that the supplied plugin may either be the class definition,
+    or an instantiated object (and we must accommodate both)
+    """
+
+    if hasattr(plugin, '__name__'):
+        return str(plugin.__name__)
+    elif hasattr(plugin, '__class__'):
+        return str(plugin.__class__.__name__)
+    else:
+        return str(plugin)
+
+
 def get_plugin_name(plugin):
     """Return the 'name' of a plugin.
 
@@ -174,7 +186,7 @@ def get_plugin_name(plugin):
     name = get_plugin_metavalue(plugin, 'NAME', old_key='PLUGIN_NAME')
 
     if not name:
-        name = str(plugin.__class__.__name__)
+        name = get_plugin_classname(plugin)
 
     return name
 

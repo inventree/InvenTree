@@ -118,7 +118,7 @@ def add_plugin_to_file(install_name):
     # Check if plugin is already in file
     for line in lines:
         if line.strip() == install_name:
-            logger.info("Plugin already exists in file")
+            logger.debug("Plugin already exists in file")
             return
 
     # Append plugin to file
