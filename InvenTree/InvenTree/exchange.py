@@ -17,7 +17,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
     Uses the `frankfurter.app` service API
     """
 
-    name = "InvenTreeExchange-frankfurter"
+    name = "InvenTreeExchange"
 
     def __init__(self):
         """Set API url."""
