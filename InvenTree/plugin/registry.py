@@ -92,13 +92,28 @@ class PluginsRegistry:
             slug (str): Plugin slug
             state (bool): Plugin state - true = active, false = inactive
         """
+
+        from common.models import InvenTreeSetting
+        from InvenTree.tasks import check_for_migrations, offload_task
+
         if slug not in self.plugins_full:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return
 
-        plugin = self.plugins_full[slug].db
-        plugin.active = state
-        plugin.save()
+        config = self.plugins_full[slug].db
+
+        # Update the plugin state (may cause plugin registry to be reloaded)
+        config.active = state
+        config.save()
+
+        # Run any new migrations (in a background thread)
+        try:
+            app_mixin_enabled = InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP', False)
+        except Exception:
+            app_mixin_enabled = False
+
+        if state and app_mixin_enabled:
+            offload_task(check_for_migrations, force_async=True)
 
     def call_plugin_function(self, slug, func, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
@@ -229,7 +244,7 @@ class PluginsRegistry:
         """
         # Do not reload when currently loading
         if self.is_loading:
-            logger.info('Skipping reload - plugin registry is currently loading')
+            logger.debug('Skipping reload - plugin registry is currently loading')
             return
 
         if self.loading_lock.acquire(blocking=False):
@@ -407,8 +422,8 @@ class PluginsRegistry:
     # endregion
 
     # region registry functions
-    def with_mixin(self, mixin: str, active=None, builtin=None):
-        """Returns reference to all plugins that have a specified mixin enabled."""
+    def with_mixin(self, mixin: str, builtin=None):
+        """Returns reference to all *active* plugins that have a specified mixin enabled."""
 
         self.check_reload()
 
@@ -417,10 +432,8 @@ class PluginsRegistry:
         for plugin in self.plugins.values():
             if plugin.mixin_enabled(mixin):
 
-                if active is not None:
-                    # Filter by 'active' status of plugin
-                    if active != plugin.is_active():
-                        continue
+                if not plugin.is_active():
+                    continue
 
                 if builtin is not None:
                     # Filter by 'builtin' status of plugin
@@ -496,7 +509,7 @@ class PluginsRegistry:
             if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
                 # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
                 if disabled and ((plg.__name__ in disabled) or (plg.__module__ in disabled)):
-                    logger.info("Skipping plugin `%s` as it was blocked", plg_name)
+                    logger.debug("Skipping plugin `%s` as it was blocked", plg_name)
                     safe_reference(plugin=plg, key=plg_key, active=False)
                     continue  # continue -> the plugin is not loaded
 

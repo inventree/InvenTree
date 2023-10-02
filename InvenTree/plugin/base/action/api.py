@@ -34,7 +34,10 @@ class ActionPluginView(APIView):
                 return Response(plugin.get_response(request.user, data=data))
 
         # If we got to here, no matching action was found
-        return Response({
-            'error': _("No matching action found"),
-            "action": action,
-        })
+        return Response(
+            {
+                'error': _("No matching action found"),
+                "action": action,
+            },
+            status=400
+        )

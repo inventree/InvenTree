@@ -20,7 +20,7 @@ class InvenTreePluginViewMixin:
         """Return a list of extra 'plugin panels' associated with this view."""
         panels = []
 
-        for plug in registry.with_mixin('panel', active=True):
+        for plug in registry.with_mixin('panel'):
 
             try:
                 panels += plug.render_panels(self, self.request, ctx)
@@ -28,7 +28,7 @@ class InvenTreePluginViewMixin:
                 # Log the error to the database
                 log_error(self.request.path)
                 logger.exception("Plugin '%s' could not render custom panels at '%s'", plug.slug, self.request.path)
-                logger.exception("Rednering error: %s", str(exc))
+                logger.exception("Rendering error: %s", str(exc))
 
         return panels
 

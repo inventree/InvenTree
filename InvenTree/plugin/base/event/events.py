@@ -26,7 +26,7 @@ def trigger_event(event, *args, **kwargs):
         # Do nothing if plugins are not enabled
         return  # pragma: no cover
 
-    if not InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS', False):
+    if not InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS', False, cache=False):
         # Do nothing if plugin events are not enabled
         return
 

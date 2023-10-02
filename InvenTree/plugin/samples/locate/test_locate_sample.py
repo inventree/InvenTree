@@ -2,13 +2,14 @@
 
 from django.urls import reverse
 
+from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from plugin import InvenTreePlugin, registry
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import LocateMixin
 
 
-class SampleLocatePlugintests(InvenTreeAPITestCase):
+class SampleLocatePluginTests(InvenTreeAPITestCase):
     """Tests for SampleLocatePlugin."""
 
     fixtures = [
@@ -18,12 +19,20 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
         'stock'
     ]
 
+    @classmethod
+    def setUpTestData(cls):
+        """Ensure the plugins are correctly configured"""
+        super().setUpTestData()
+
+        # Ensure URL mixins are allowed
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_URL', True, None)
+
+        # Toggle plugin state to ensure we get a good reload
+        registry.set_plugin_state('samplelocate', False)
+        registry.set_plugin_state('samplelocate', True)
+
     def test_run_locator(self):
         """Check if the event is issued."""
-        # Activate plugin
-        config = registry.get_plugin('samplelocate').plugin_config()
-        config.active = True
-        config.save()
 
         # Test APIs
         url = reverse('api-locate-plugin')

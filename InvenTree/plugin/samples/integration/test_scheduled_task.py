@@ -13,6 +13,9 @@ class ExampleScheduledTaskPluginTests(TestCase):
 
     def test_function(self):
         """Check if the scheduling works."""
+
+        registry.set_plugin_state('schedule', True)
+
         # The plugin should be defined
         self.assertIn('schedule', registry.plugins)
         plg = registry.plugins['schedule']
@@ -58,11 +61,14 @@ class ExampleScheduledTaskPluginTests(TestCase):
 
     def test_calling(self):
         """Check if a function can be called without errors."""
+
+        registry.set_plugin_state('schedule', True)
+
         # Check with right parameters
         self.assertEqual(call_function('schedule', 'member_func'), False)
 
         # Check with wrong key
-        self.assertEqual(call_function('does_not_exsist', 'member_func'), None)
+        self.assertEqual(call_function('does_not_exist', 'member_func'), None)
 
 
 class ScheduledTaskPluginTests(TestCase):

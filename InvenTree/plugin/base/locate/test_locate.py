@@ -18,6 +18,12 @@ class LocatePluginTests(InvenTreeAPITestCase):
         'stock',
     ]
 
+    def setUp(self):
+        """Set up the test case."""
+        super().setUp()
+
+        registry.set_plugin_state('samplelocate', True)
+
     def test_installed(self):
         """Test that a locate plugin is actually installed."""
         plugins = registry.with_mixin('locate')

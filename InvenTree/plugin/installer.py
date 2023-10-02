@@ -83,7 +83,7 @@ def install_plugins_file():
         return
 
     try:
-        pip_command('install', '-Ur', str(pf))
+        pip_command('install', '-r', str(pf))
     except subprocess.CalledProcessError as error:
         output = error.output.decode('utf-8')
         logger.exception("Plugin file installation failed: %s", str(output))
@@ -156,7 +156,7 @@ def install_plugin(url=None, packagename=None, user=None):
         logger.warning("InvenTree is not running in a virtual environment")
 
     # build up the command
-    install_name = ['-U']
+    install_name = ['install', '-U']
 
     full_pkg = ''
 
@@ -188,14 +188,15 @@ def install_plugin(url=None, packagename=None, user=None):
 
     # Execute installation via pip
     try:
-        result = pip_command('install', *install_name)
+        result = pip_command(*install_name)
 
-        ret['result'] = _("Installed plugin successfully")
+        ret['result'] = ret['success'] = _("Installed plugin successfully")
         ret['output'] = str(result, 'utf-8')
 
-        if path := check_package_path(packagename):
-            # Override result information
-            ret['result'] = _(f"Installed plugin into {path}")
+        if packagename:
+            if path := check_package_path(packagename):
+                # Override result information
+                ret['result'] = _(f"Installed plugin into {path}")
 
     except subprocess.CalledProcessError as error:
         # If an error was thrown, we need to parse the output
@@ -203,7 +204,9 @@ def install_plugin(url=None, packagename=None, user=None):
         output = error.output.decode('utf-8')
         logger.exception("Plugin installation failed: %s", str(output))
 
-        errors = []
+        errors = [
+            _("Plugin installation failed"),
+        ]
 
         for msg in output.split("\n"):
             msg = msg.strip()

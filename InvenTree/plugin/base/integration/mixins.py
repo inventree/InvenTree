@@ -181,7 +181,7 @@ class NavigationMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('navigation', 'has_naviation', __class__)
+        self.add_mixin('navigation', 'has_navigation', __class__)
         self.navigation = self.setup_navigation()
 
     def setup_navigation(self):
@@ -195,7 +195,7 @@ class NavigationMixin:
         return nav_links
 
     @property
-    def has_naviation(self):
+    def has_navigation(self):
         """Does this plugin define navigation elements."""
         return bool(self.navigation)
 
@@ -203,8 +203,10 @@ class NavigationMixin:
     def navigation_name(self):
         """Name for navigation tab."""
         name = getattr(self, 'NAVIGATION_TAB_NAME', None)
+
         if not name:
-            name = self.human_name
+            name = str(self.__class__.__name__)
+
         return name
 
     @property

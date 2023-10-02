@@ -9,8 +9,8 @@ class EventMixin:
     Implementing classes must provide a "process_event" function:
     """
 
-    def wants_process_event(self, event):
-        """Function to subscribe to events.
+    def wants_process_event(self, event: str):
+        """Function to subscribe to events, based on the name of the event
 
         Return true if you're interested in the given event, false if not.
         """

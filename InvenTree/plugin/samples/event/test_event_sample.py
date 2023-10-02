@@ -15,6 +15,13 @@ from .event_sample import logger
 class EventPluginSampleTests(TestCase):
     """Tests for EventPluginSample."""
 
+    def setUp(self):
+        """Setup for EventPluginSampleTests."""
+        super().setUp()
+
+        # Ensure the plugin is installed
+        registry.set_plugin_state('sampleevent', True)
+
     def test_run_event(self):
         """Check if the event is issued."""
         # Activate plugin
@@ -29,7 +36,8 @@ class EventPluginSampleTests(TestCase):
         # Check that an event is issued
         with self.assertLogs(logger=logger, level="DEBUG") as cm:
             trigger_event('test.event')
-        self.assertIn('DEBUG:inventree:Event `test.event` triggered in sample plugin', cm[1])
+
+        self.assertIn("DEBUG:inventree:Plugin 'sampleevent' is processing triggered event 'test.event'", cm[1])
 
         # Disable again
         settings.PLUGIN_TESTING_EVENTS = False

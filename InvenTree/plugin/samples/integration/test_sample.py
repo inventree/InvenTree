@@ -2,12 +2,23 @@
 
 from django.core.exceptions import ValidationError
 
+from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeTestCase
 from plugin import registry
 
 
 class SampleIntegrationPluginTests(InvenTreeTestCase):
     """Tests for SampleIntegrationPlugin."""
+
+    def setUp(self):
+        """Setup for SampleIntegrationPlugin tests."""
+        super().setUp()
+
+        # Ensure the URLs mixin is enabled (required for the test)
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_URL', True, None)
+
+        # Ensure the plugin is installed
+        registry.set_plugin_state('sample', True)
 
     def test_view(self):
         """Check the function of the custom  sample plugin."""

@@ -80,7 +80,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.assertEqual(len(plugins), 2)
 
         # But, it is not 'active'
-        plugins = registry.with_mixin('labels', active=True)
+        plugins = registry.with_mixin('labels')
         self.assertEqual(len(plugins), 1)
 
     def test_api(self):

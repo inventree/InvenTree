@@ -129,6 +129,12 @@ class AppMixinTest(BaseMixinDefinition, TestCase):
 
     def test_function(self):
         """Test that the sample plugin registers in settings."""
+
+        from common.models import InvenTreeSetting
+
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_APP', True, None)
+        registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
         self.assertIn('plugin.samples.integration', settings.INSTALLED_APPS)
 
 
@@ -137,7 +143,7 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
 
     MIXIN_HUMAN_NAME = 'Navigation Links'
     MIXIN_NAME = 'navigation'
-    MIXIN_ENABLE_CHECK = 'has_naviation'
+    MIXIN_ENABLE_CHECK = 'has_navigation'
 
     def setUp(self):
         """Setup for all tests."""
@@ -327,22 +333,20 @@ class PanelMixinTests(InvenTreeTestCase):
 
     def test_installed(self):
         """Test that the sample panel plugin is installed."""
+
+        registry.set_plugin_state('samplepanel', True)
+
         plugins = registry.with_mixin('panel')
 
         self.assertTrue(len(plugins) > 0)
 
         self.assertIn('samplepanel', [p.slug for p in plugins])
 
-        plugins = registry.with_mixin('panel', active=True)
-
-        self.assertEqual(len(plugins), 0)
-
     def test_disabled(self):
         """Test that the panels *do not load* if the plugin is not enabled."""
-        plugin = registry.get_plugin('samplepanel')
 
-        plugin.set_setting('ENABLE_HELLO_WORLD', True)
-        plugin.set_setting('ENABLE_BROKEN_PANEL', True)
+        registry.set_plugin_state('samplepanel', False)
+        plugin = registry.plugins_full.get('samplepanel')
 
         # Ensure that the plugin is *not* enabled
         config = plugin.plugin_config()
@@ -368,17 +372,17 @@ class PanelMixinTests(InvenTreeTestCase):
 
     def test_enabled(self):
         """Test that the panels *do* load if the plugin is enabled."""
-        plugin = registry.get_plugin('samplepanel')
+        registry.set_plugin_state('samplepanel', False)
+        plugin = registry.plugins_full.get('samplepanel')
 
-        self.assertEqual(len(registry.with_mixin('panel', active=True)), 0)
+        self.assertEqual(len(registry.with_mixin('panel')), 0)
 
         # Ensure that the plugin is enabled
-        config = plugin.plugin_config()
-        config.active = True
-        config.save()
+        registry.set_plugin_state('samplepanel', True)
 
-        self.assertTrue(config.active)
-        self.assertEqual(len(registry.with_mixin('panel', active=True)), 1)
+        plugin = registry.get_plugin('samplepanel')
+
+        self.assertEqual(len(registry.with_mixin('panel')), 1)
 
         # Load some pages, ensure that the panel content is *not* loaded
         urls = [

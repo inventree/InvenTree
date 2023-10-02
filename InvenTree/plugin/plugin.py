@@ -17,36 +17,40 @@ class MetaBase:
     SLUG = None
     TITLE = None
 
-    def plugin_name(self):
+    @classmethod
+    def plugin_name(cls):
         """Name of plugin."""
-        return plugin.meta.get_plugin_name(self)
+        return plugin.meta.get_plugin_name(cls)
 
     @property
     def name(self):
         """Name of plugin."""
         return self.plugin_name()
 
-    def plugin_slug(self):
+    @classmethod
+    def plugin_slug(cls):
         """Return the slug associated with this plugin class"""
-        return plugin.meta.get_plugin_slug(self)
+        return plugin.meta.get_plugin_slug(cls)
 
     @property
     def slug(self):
         """Slug of plugin."""
         return self.plugin_slug()
 
-    def plugin_title(self):
+    @classmethod
+    def plugin_title(cls):
         """Return the title associated with this plugin class"""
-        return plugin.meta.get_plugin_title(self)
+        return plugin.meta.get_plugin_title(cls)
 
     @property
     def human_name(self):
         """Human readable name of plugin."""
         return self.plugin_title()
 
-    def plugin_config(self):
+    @classmethod
+    def plugin_config(cls):
         """Return the PluginConfig object associated with this plugin."""
-        return plugin.meta.get_plugin_config(self)
+        return plugin.meta.get_plugin_config(cls)
 
     def is_active(self):
         """Return True if this plugin is currently active."""
@@ -184,9 +188,10 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         """File that contains plugin definition."""
         return plugin.meta.get_plugin_file(cls)
 
-    def path(self) -> Path:
+    @classmethod
+    def path(cls) -> Path:
         """Path to plugins base folder."""
-        return self.file().parent
+        return cls.file().parent
 
     def _get_value(self, meta_name: str, package_name: str) -> str:
         """Extract values from class meta or package info.

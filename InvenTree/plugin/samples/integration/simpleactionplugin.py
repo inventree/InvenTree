@@ -9,6 +9,7 @@ class SimpleActionPlugin(ActionMixin, InvenTreePlugin):
 
     NAME = "SimpleActionPlugin"
     ACTION_NAME = "simple"
+    SLUG = 'simpleaction'
 
     def perform_action(self, user=None, data=None):
         """Sample method."""
