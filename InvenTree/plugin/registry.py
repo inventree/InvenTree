@@ -75,6 +75,10 @@ class PluginsRegistry:
 
     def get_plugin(self, slug):
         """Lookup plugin by slug (unique key)."""
+
+        # Check if the registry needs to be reloaded
+        self.check_reload()
+
         if slug not in self.plugins:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return None
@@ -88,6 +92,10 @@ class PluginsRegistry:
             slug (str): Plugin slug
             state (bool): Plugin state - true = active, false = inactive
         """
+
+        # Check if the registry needs to be reloaded
+        self.check_reload()
+
         if slug not in self.plugins_full:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return
@@ -104,6 +112,10 @@ class PluginsRegistry:
 
         Instead, any error messages are returned to the worker.
         """
+
+        # Check if the registry needs to be reloaded
+        self.check_reload()
+
         plugin = self.get_plugin(slug)
 
         if not plugin:
@@ -113,7 +125,33 @@ class PluginsRegistry:
 
         return plugin_func(*args, **kwargs)
 
-    # region public functions
+    # region registry functions
+    def with_mixin(self, mixin: str, active=None, builtin=None):
+        """Returns reference to all plugins that have a specified mixin enabled."""
+
+        # Check if the registry needs to be loaded
+        self.check_reload()
+
+        result = []
+
+        for plugin in self.plugins.values():
+            if plugin.mixin_enabled(mixin):
+
+                if active is not None:
+                    # Filter by 'active' status of plugin
+                    if active != plugin.is_active():
+                        continue
+
+                if builtin is not None:
+                    # Filter by 'builtin' status of plugin
+                    if builtin != plugin.is_builtin:
+                        continue
+
+                result.append(plugin)
+
+        return result
+    # endregion
+
     # region loading / unloading
     def _load_plugins(self, full_reload: bool = False):
         """Load and activate all IntegrationPlugins.
@@ -377,30 +415,6 @@ class PluginsRegistry:
         settings.PLUGIN_FILE_CHECKED = True
         return 'first_run'
 
-    # endregion
-
-    # region registry functions
-    def with_mixin(self, mixin: str, active=None, builtin=None):
-        """Returns reference to all plugins that have a specified mixin enabled."""
-        result = []
-
-        for plugin in self.plugins.values():
-            if plugin.mixin_enabled(mixin):
-
-                if active is not None:
-                    # Filter by 'active' status of plugin
-                    if active != plugin.is_active():
-                        continue
-
-                if builtin is not None:
-                    # Filter by 'builtin' status of plugin
-                    if builtin != plugin.is_builtin:
-                        continue
-
-                result.append(plugin)
-
-        return result
-    # endregion
     # endregion
 
     # region general internal loading /activating / deactivating / deloading
