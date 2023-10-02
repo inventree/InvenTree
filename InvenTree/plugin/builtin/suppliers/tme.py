@@ -39,6 +39,9 @@ class TMEPlugin(SupplierBarcodeMixin, InvenTreePlugin):
         else:
             return None
 
+        if po_number := barcode_fields.get("purchase_order_number"):
+            barcode_fields["purchase_order_number"] = po_number.split("/")[0]
+
         sku = barcode_fields.get("supplier_part_number")
         if not (supplier_part := self.get_supplier_part(sku)):
             return None
