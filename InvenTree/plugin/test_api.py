@@ -97,10 +97,16 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
     def test_plugin_activate(self):
         """Test the plugin activate."""
 
-        test_plg = self.plugin_confs.first()
+        registry.set_plugin_state('sample', False)
 
-        def assert_plugin_active(self, active):
-            self.assertEqual(PluginConfig.objects.all().first().active, active)
+        # Find the first available inactive plugin
+        cfg = PluginConfig.objects.filter(active=False).first()
+        slug = cfg.key
+
+        self.assertFalse(registry.get_plugin_state(slug))
+
+        self.user.is_superuser = False
+        self.user.save()
 
         # Should not work - not a superuser
         response = self.client.post(reverse('api-plugin-activate'), {}, follow=True)
@@ -110,25 +116,21 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.user.is_superuser = True
         self.user.save()
 
-        # Deactivate plugin
-        test_plg.active = False
-        test_plg.save()
-
         # Activate plugin with detail url
-        assert_plugin_active(self, False)
-        response = self.client.patch(reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.id}), {}, follow=True)
+        response = self.client.patch(reverse('api-plugin-detail-activate', kwargs={'pk': cfg.pk}), {}, follow=True)
         self.assertEqual(response.status_code, 200)
-        assert_plugin_active(self, True)
+
+        self.assertTrue(registry.get_plugin_state(slug))
 
         # Deactivate plugin
-        test_plg.active = False
-        test_plg.save()
+        registry.set_plugin_state(slug, False)
+        self.assertFalse(registry.get_plugin_state(slug))
 
         # Activate plugin
-        assert_plugin_active(self, False)
-        response = self.client.patch(reverse('api-plugin-activate'), {'pk': test_plg.pk}, follow=True)
+        response = self.client.patch(reverse('api-plugin-activate'), {'pk': cfg.pk}, follow=True)
         self.assertEqual(response.status_code, 200)
-        assert_plugin_active(self, True)
+
+        self.assertTrue(registry.get_plugin_state(slug))
 
     def test_admin_action(self):
         """Test the PluginConfig action commands."""

@@ -168,7 +168,7 @@ class SetPasswordForm(HelperForm):
 
 # override allauth
 class CustomLoginForm(LoginForm):
-    """Custom login form to override default allauth behaviour"""
+    """Custom login form to override default allauth behavior"""
 
     def login(self, request, redirect_url=None):
         """Perform login action.
@@ -214,7 +214,7 @@ class CustomSignupForm(SignupForm):
         set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
 
     def clean(self):
-        """Make sure the supllied emails match if enabled in settings."""
+        """Make sure the supplied emails match if enabled in settings."""
         cleaned_data = super().clean()
 
         # check for two mail fields
@@ -232,7 +232,7 @@ def registration_enabled():
     return settings.EMAIL_HOST and (InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'))
 
 
-class RegistratonMixin:
+class RegistrationMixin:
     """Mixin to check if registration should be enabled."""
 
     def is_open_for_signup(self, request, *args, **kwargs):
@@ -293,7 +293,7 @@ class CustomUrlMixin:
         return Site.objects.get_current().domain + url
 
 
-class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
+class CustomAccountAdapter(CustomUrlMixin, RegistrationMixin, OTPAdapter, DefaultAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def send_mail(self, template_prefix, email, context):
@@ -321,7 +321,7 @@ class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, Default
         return url
 
 
-class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter):
+class CustomSocialAccountAdapter(CustomUrlMixin, RegistrationMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def is_auto_signup_allowed(self, request, sociallogin):

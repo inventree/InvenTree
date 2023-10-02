@@ -82,7 +82,7 @@ v113 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
     - Adds API endpoints for scrapping a build output
 
 v112 -> 2023-05-13: https://github.com/inventree/InvenTree/pull/4741
-    - Adds flag use_pack_size to the stock addition API, which allows addings packs
+    - Adds flag use_pack_size to the stock addition API, which allows adding packs
 
 v111 -> 2023-05-02 : https://github.com/inventree/InvenTree/pull/4367
     - Adds tags to the Part serializer
@@ -162,7 +162,7 @@ v90 -> 2023-01-25 : https://github.com/inventree/InvenTree/pull/4186/files
 
 v89 -> 2023-01-25 : https://github.com/inventree/InvenTree/pull/4214
     - Adds updated field to SupplierPart API
-    - Adds API date orddering for supplier part list
+    - Adds API date ordering for supplier part list
 
 v88 -> 2023-01-17: https://github.com/inventree/InvenTree/pull/4225
     - Adds 'priority' field to Build model and api endpoints

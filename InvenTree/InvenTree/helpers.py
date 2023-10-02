@@ -120,7 +120,7 @@ def getLogoImage(as_file=False, custom=True):
         return getStaticUrl('img/inventree.png')
 
 
-def getSplashScren(custom=True):
+def getSplashScreen(custom=True):
     """Return the InvenTree splash screen, or a custom splash if available"""
 
     static_storage = StaticFilesStorage()

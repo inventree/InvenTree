@@ -88,10 +88,10 @@ class CleanMixin():
         `ugly`. Prevents XSS on the server-level.
 
         Args:
-            data (dict): Data that should be sanatized.
+            data (dict): Data that should be sanitized.
 
         Returns:
-            dict: Provided data sanatized; still in the same order.
+            dict: Provided data sanitized; still in the same order.
         """
 
         clean_data = {}

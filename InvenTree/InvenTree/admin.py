@@ -16,7 +16,7 @@ class InvenTreeResource(ModelResource):
     """
 
     def export_resource(self, obj):
-        """Custom function to override default row export behaviour.
+        """Custom function to override default row export behavior.
 
         Specifically, strip illegal leading characters to prevent formula injection
         """

@@ -85,7 +85,7 @@ class PluginsRegistry:
 
         return self.plugins[slug]
 
-    def set_plugin_state(self, slug, state):
+    def set_plugin_state(self, slug: str, state: bool):
         """Set the state(active/inactive) of a plugin.
 
         Args:
@@ -114,6 +114,20 @@ class PluginsRegistry:
 
         if state and app_mixin_enabled:
             offload_task(check_for_migrations, force_async=True)
+
+    def get_plugin_state(self, slug: str) -> bool:
+        """Determine the 'state' of the plugin with the given slug
+
+        Args:
+            slug: Plugin slug
+
+        Returns:
+            bool: True if plugin is active, False otherwise
+        """
+
+        self.check_reload()
+
+        return slug in self.plugins
 
     def call_plugin_function(self, slug, func, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.

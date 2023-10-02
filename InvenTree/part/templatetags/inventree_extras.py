@@ -219,7 +219,7 @@ def inventree_logo(**kwargs):
 def inventree_splash(**kwargs):
     """Return the URL for the InvenTree splash screen, *or* a custom screen if the user has provided one."""
 
-    return InvenTree.helpers.getSplashScren(**kwargs)
+    return InvenTree.helpers.getSplashScreen(**kwargs)
 
 
 @register.simple_tag()

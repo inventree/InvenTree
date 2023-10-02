@@ -17,7 +17,7 @@ class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
     """
 
     def download_file(self, filename, prefix):
-        """Function to `download`(copy) a file to a temporary firectory."""
+        """Function to `download`(copy) a file to a temporary directory."""
         url = os.path.join(prefix, filename)
 
         response = self.client.get(url)
