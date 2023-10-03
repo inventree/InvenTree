@@ -471,6 +471,10 @@ function getPluginTableFilters() {
             type: 'bool',
             title: '{% trans "Sample" %}',
         },
+        installed: {
+            type: 'bool',
+            title: '{% trans "Installed" %}'
+        },
     };
 }
 
