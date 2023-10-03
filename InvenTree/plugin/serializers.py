@@ -61,12 +61,14 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'mixins',
             'is_builtin',
             'is_sample',
+            'is_installed',
         ]
 
         read_only_fields = [
             'key',
             'is_builtin',
             'is_sample',
+            'is_installed',
         ]
 
     meta = serializers.DictField(read_only=True)
