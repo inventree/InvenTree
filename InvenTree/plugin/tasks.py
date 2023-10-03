@@ -23,5 +23,13 @@ def cleanup_old_plugin_configs():
         logger.info("Deleting %s old plugin configurations", configs.count())
 
         for config in configs:
-            logger.debug("- %s", config.key)
+            if config.is_builtin:
+                logger.debug("Cannot delete builtin plugin config '%s'", config.key)
+                continue
+
+            if config.is_sample:
+                logger.debug("Cannot delete sample plugin config '%s'", config.key)
+                continue
+
+            logger.debug("- Deleting plugin config '%s'", config.key)
             config.delete()
