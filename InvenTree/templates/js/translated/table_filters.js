@@ -463,6 +463,14 @@ function getPluginTableFilters() {
             type: 'bool',
             title: '{% trans "Active" %}',
         },
+        builtin: {
+            type: 'bool',
+            title: '{% trans "Builtin" %}',
+        },
+        sample: {
+            type: 'bool',
+            title: '{% trans "Sample" %}',
+        },
     };
 }
 
