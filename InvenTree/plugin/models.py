@@ -1,6 +1,8 @@
 """Plugin model definitions."""
 
+import datetime
 import inspect
+import logging
 import warnings
 
 from django.conf import settings
@@ -13,6 +15,8 @@ import common.models
 import InvenTree.models
 from plugin import InvenTreePlugin, registry
 
+logger = logging.getLogger('inventree')
+
 
 class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
     """A PluginConfig object holds settings for plugins.
@@ -21,6 +25,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         key: slug of the plugin (this must be unique across all installed plugins!)
         name: PluginName of the plugin - serves for a manual double check  if the right plugin is used
         active: Should the plugin be loaded?
+        last_updated: When was the plugin last updated? Used to determine if a plugin config can be deleted
     """
 
     class Meta:
@@ -47,6 +52,12 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         default=False,
         verbose_name=_('Active'),
         help_text=_('Is the plugin active'),
+    )
+
+    last_updated = models.DateField(
+        auto_now=False, auto_now_add=False,
+        verbose_name=_('Last Updated'),
+        blank=True, null=True,
     )
 
     def __str__(self) -> str:
@@ -103,25 +114,32 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         # Save plugin
         self.plugin: InvenTreePlugin = plugin
 
+        today = datetime.datetime.now().date()
+
+        # If we have discovered a matching plugin, update the last_updated date
+        if plugin is not None and self.last_updated != today:
+            logger.debug("Updating plugin updated date:", self.name, "=>", today)
+            self.last_updated = today
+            self.save(no_reload=True)
+
     def __getstate__(self):
-        """Customize pickeling behaviour."""
+        """Customize pickling behavior."""
         state = super().__getstate__()
-        state.pop("plugin", None)  # plugin cannot be pickelt in some circumstances when used with drf views, remove it (#5408)
+        state.pop("plugin", None)  # plugin cannot be pickled in some circumstances when used with drf views, remove it (#5408)
         return state
 
-    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+    def save(self, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
         reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
-        ret = super().save(force_insert, force_update, *args, **kwargs)
+        ret = super().save(*args, **kwargs)
 
         if self.is_builtin():
             # Force active if builtin
             self.active = True
 
         if not reload:
-            if (self.active is False and self.__org_active is True) or \
-               (self.active is True and self.__org_active is False):
+            if self.active != self.__org_active:
                 if settings.PLUGIN_TESTING:
                     warnings.warn('A reload was triggered', stacklevel=2)
                 registry.reload_plugins()
