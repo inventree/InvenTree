@@ -1,12 +1,11 @@
-"""Exchangerate backend to use `exchangerate.host` to get rates."""
+"""Exchangerate backend to use `frankfurter.app` to get rates."""
 
-import ssl
+from decimal import Decimal
 from urllib.error import URLError
-from urllib.request import urlopen
 
 from django.db.utils import OperationalError
 
-import certifi
+import requests
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 
 from common.settings import currency_code_default, currency_codes
@@ -15,19 +14,19 @@ from common.settings import currency_code_default, currency_codes
 class InvenTreeExchange(SimpleExchangeBackend):
     """Backend for automatically updating currency exchange rates.
 
-    Uses the `exchangerate.host` service API
+    Uses the `frankfurter.app` service API
     """
 
     name = "InvenTreeExchange"
 
     def __init__(self):
         """Set API url."""
-        self.url = "https://api.exchangerate.host/latest"
+        self.url = "https://api.frankfurter.app/latest"
 
         super().__init__()
 
     def get_params(self):
-        """Placeholder to set API key. Currently not required by `exchangerate.host`."""
+        """Placeholder to set API key. Currently not required by `frankfurter.app`."""
         # No API key is required
         return {
         }
@@ -40,13 +39,21 @@ class InvenTreeExchange(SimpleExchangeBackend):
         url = self.get_url(**kwargs)
 
         try:
-            context = ssl.create_default_context(cafile=certifi.where())
-            response = urlopen(url, timeout=5, context=context)
-            return response.read()
+            response = requests.get(url=url, timeout=5)
+            return response.content
         except Exception:
             # Something has gone wrong, but we can just try again next time
             # Raise a TypeError so the outer function can handle this
             raise TypeError
+
+    def get_rates(self, **params):
+        """Intersect the requested currency codes with the available codes."""
+        rates = super().get_rates(**params)
+
+        # Add the base currency to the rates
+        rates[params["base_currency"]] = Decimal("1.0")
+
+        return rates
 
     def update_rates(self, base_currency=None):
         """Set the requested currency codes and get rates."""

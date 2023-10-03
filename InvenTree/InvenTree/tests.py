@@ -807,10 +807,6 @@ class CurrencyTests(TestCase):
     def test_rates(self):
         """Test exchange rate update."""
 
-        # 2023-09-28 check DISABLED due to https://github.com/inventree/InvenTree/issues/5631
-        # TODO re-enable after #5631 is solved
-        return True
-
         # Initially, there will not be any exchange rate information
         rates = Rate.objects.all()
 
@@ -837,6 +833,7 @@ class CurrencyTests(TestCase):
 
             else:  # pragma: no cover
                 print("Exchange rate update failed - retrying")
+                print(f'Expected {currency_codes()}, got {[a.currency for a in rates]}')
                 time.sleep(1)
 
         self.assertTrue(update_successful)
