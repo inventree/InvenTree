@@ -225,15 +225,3 @@ def install_plugin(url=None, packagename=None, user=None):
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     return ret
-
-
-def uninstall_plugin(plugin_name):
-    """Uninstall a plugin from the python virtual environment.
-
-    Note: This is intended to be implemented in a future version
-
-    - Run pip uninstall (only if plugin is installed in venv)
-    - Reverse any migrations for plugins which implement the app mixin
-    - Raise error if located in "plugins" or external plugin dir
-    """
-    ...
