@@ -30,7 +30,7 @@ type ModelDictory = {
   [key in keyof typeof ModelType]: ModelInformatonInterface;
 };
 
-export const ModelLinks: ModelDictory = {
+export const ModelInformationDict: ModelDictory = {
   part: {
     label: t`Part`,
     label_multiple: t`Parts`,

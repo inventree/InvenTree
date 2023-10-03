@@ -31,7 +31,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { RenderInstance } from '../render/Instance';
-import { ModelLinks, ModelType } from '../render/ModelType';
+import { ModelInformationDict, ModelType } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
@@ -174,7 +174,7 @@ function QueryResultGroup({
     return null;
   }
 
-  const model = ModelLinks[query.name];
+  const model = ModelInformationDict[query.name];
   return (
     <Paper shadow="sm" radius="xs" p="md">
       <Stack key={query.name}>
@@ -325,7 +325,9 @@ export function SearchDrawer({
   // Callback when one of the search results is clicked
   function onResultClick(query: ModelType, pk: number) {
     closeDrawer();
-    navigate(ModelLinks[query].url_detail.replace(':pk', pk.toString()));
+    navigate(
+      ModelInformationDict[query].url_detail.replace(':pk', pk.toString())
+    );
   }
 
   return (
