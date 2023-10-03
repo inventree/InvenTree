@@ -1026,10 +1026,6 @@ class CurrencyAPITests(InvenTreeAPITestCase):
     def test_refresh_endpoint(self):
         """Call the 'refresh currencies' endpoint"""
 
-        # 2023-09-28 check DISABLED due to https://github.com/inventree/InvenTree/issues/5631
-        # TODO re-enable after #5631 is solved
-        return True
-
         from djmoney.contrib.exchange.models import Rate
 
         # Delete any existing exchange rate data
