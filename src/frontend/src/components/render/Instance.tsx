@@ -22,6 +22,35 @@ import { RenderPart, RenderPartCategory } from './Part';
 import { RenderStockItem, RenderStockLocation } from './Stock';
 import { RenderOwner, RenderUser } from './User';
 
+type EnumDictionary<T extends string | symbol | number, U> = {
+  [K in T]: U;
+};
+
+/**
+ * Lookup table for rendering a model instance
+ */
+const RendererLookup: EnumDictionary<
+  ModelType,
+  (props: { instance: any }) => ReactNode
+> = {
+  [ModelType.address]: RenderAddress,
+  [ModelType.build]: RenderBuildOrder,
+  [ModelType.company]: RenderCompany,
+  [ModelType.contact]: RenderContact,
+  [ModelType.owner]: RenderOwner,
+  [ModelType.part]: RenderPart,
+  [ModelType.partcategory]: RenderPartCategory,
+  [ModelType.purchaseorder]: RenderPurchaseOrder,
+  [ModelType.returnorder]: RenderReturnOrder,
+  [ModelType.salesorder]: RenderSalesOrder,
+  [ModelType.salesordershipment]: RenderSalesOrderShipment,
+  [ModelType.stocklocation]: RenderStockLocation,
+  [ModelType.stockitem]: RenderStockItem,
+  [ModelType.supplierpart]: RenderSupplierPart,
+  [ModelType.user]: RenderUser,
+  [ModelType.manufacturerpart]: RenderPart
+};
+
 // import { ApiFormFieldType } from "../forms/fields/ApiFormField";
 
 /**
@@ -34,45 +63,9 @@ export function RenderInstance({
   model: ModelType | undefined;
   instance: any;
 }): ReactNode {
-  switch (model) {
-    case ModelType.address:
-      return <RenderAddress address={instance} />;
-    case ModelType.build:
-      return <RenderBuildOrder buildorder={instance} />;
-    case ModelType.company:
-      return <RenderCompany company={instance} />;
-    case ModelType.contact:
-      return <RenderContact contact={instance} />;
-    case ModelType.owner:
-      return <RenderOwner owner={instance} />;
-    case ModelType.part:
-      return <RenderPart part={instance} />;
-    case ModelType.partcategory:
-      return <RenderPartCategory category={instance} />;
-    case ModelType.purchaseorder:
-      return <RenderPurchaseOrder order={instance} />;
-    case ModelType.returnorder:
-      return <RenderReturnOrder order={instance} />;
-    case ModelType.salesorder:
-      return <RenderSalesOrder order={instance} />;
-    case ModelType.salesordershipment:
-      return <RenderSalesOrderShipment shipment={instance} />;
-    case ModelType.stocklocation:
-      return <RenderStockLocation location={instance} />;
-    case ModelType.stockitem:
-      return <RenderStockItem item={instance} />;
-    case ModelType.supplierpart:
-      return <RenderSupplierPart supplierpart={instance} />;
-    case ModelType.user:
-      return <RenderUser user={instance} />;
-    default:
-      // Unknown model
-      return (
-        <Alert color="red" title={t`Unknown model: ${model}`}>
-          <></>
-        </Alert>
-      );
-  }
+  if (model === undefined) return <UnknownRenderer model={model} />;
+  const RenderComponent = RendererLookup[model];
+  return <RenderComponent instance={instance} />;
 }
 
 /**
@@ -100,5 +93,17 @@ export function RenderInlineModel({
       <Text size="sm">{primary}</Text>
       {secondary && <Text size="xs">{secondary}</Text>}
     </Group>
+  );
+}
+
+export function UnknownRenderer({
+  model
+}: {
+  model: ModelType | undefined;
+}): ReactNode {
+  return (
+    <Alert color="red" title={t`Unknown model: ${model}`}>
+      <></>
+    </Alert>
   );
 }
