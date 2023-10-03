@@ -11,8 +11,24 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
 
     def test_view(self):
         """Check the function of the custom  sample plugin."""
-        response = self.client.get('/plugin/sample/ho/he/')
+
+        from common.models import InvenTreeSetting
+
+        # First, check with custom URLs disabled
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_URL', False, None)
+
+        url = '/plugin/sample/ho/he/'
+
+        # URL should redirect to index page
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+
+        # Now, check with custom URLs enabled
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_URL', True, None)
+
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
         self.assertEqual(response.content, b'Hi there testuser this works')
 
     def test_settings(self):
