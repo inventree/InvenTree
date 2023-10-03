@@ -532,12 +532,12 @@ class InstallStockItemSerializer(serializers.Serializer):
 
         return stock_item
 
-
     def save(self):
         """Install the selected stock item into this one."""
         data = self.validated_data
 
         stock_item = data['stock_item']
+        quantity_to_install = data['quantity']
         note = data.get('note', '')
 
         parent_item = self.context['item']
@@ -545,10 +545,11 @@ class InstallStockItemSerializer(serializers.Serializer):
 
         parent_item.installStockItem(
             stock_item,
-            stock_item.quantity,
+            quantity_to_install,
             request.user,
             note,
         )
+
 
 
 class UninstallStockItemSerializer(serializers.Serializer):
