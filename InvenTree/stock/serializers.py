@@ -490,6 +490,13 @@ class InstallStockItemSerializer(serializers.Serializer):
         label=_('Stock Item'),
         help_text=_('Select stock item to install'),
     )
+    
+    quantity = serializers.IntegerField(
+        min_value=1,  
+        required=True,
+        label=_('Quantity to Install'),
+        help_text=_('Enter the quantity to install'),
+    )
 
     note = serializers.CharField(
         label=_('Note'),
@@ -497,6 +504,18 @@ class InstallStockItemSerializer(serializers.Serializer):
         required=False,
         allow_blank=True,
     )
+    
+    def validate_quantity(self, quantity):
+        """Validate the quantity value."""
+        stock_item = self.validated_data.get('stock_item')
+
+        if quantity < 1:
+            raise ValidationError(_("Quantity to install must be at least 1"))
+
+        if quantity > stock_item.quantity:
+            raise ValidationError(_("Quantity to install exceeds available stock quantity"))
+
+        return quantity
 
     def validate_stock_item(self, stock_item):
         """Validate the selected stock item."""
@@ -504,14 +523,15 @@ class InstallStockItemSerializer(serializers.Serializer):
             # StockItem must be in stock to be "installed"
             raise ValidationError(_("Stock item is unavailable"))
 
-        # Extract the "parent" item - the item into which the stock item will be installed
         parent_item = self.context['item']
         parent_part = parent_item.part
 
+        # Check if the selected part is in the Bill of Materials of the parent item
         if not parent_part.check_if_part_in_bom(stock_item.part):
             raise ValidationError(_("Selected part is not in the Bill of Materials"))
 
         return stock_item
+
 
     def save(self):
         """Install the selected stock item into this one."""
