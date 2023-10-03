@@ -30,7 +30,7 @@ def update_build_order_lines(bom_item_pk: int):
     This task is triggered when a BomItem is created or updated.
     """
 
-    logger.info(f"Updating build order lines for BomItem {bom_item_pk}")
+    logger.info("Updating build order lines for BomItem %s", bom_item_pk)
 
     bom_item = part_models.BomItem.objects.filter(pk=bom_item_pk).first()
 
@@ -70,7 +70,7 @@ def update_build_order_lines(bom_item_pk: int):
             )
 
     if builds.count() > 0:
-        logger.info(f"Updated {builds.count()} build orders for part {bom_item.part}")
+        logger.info("Updated %s build orders for part %s", builds.count(), bom_item.part)
 
 
 def check_build_stock(build: build.models.Build):
@@ -94,7 +94,7 @@ def check_build_stock(build: build.models.Build):
         part = build.part
     except part_models.Part.DoesNotExist:
         # Note: This error may be thrown during unit testing...
-        logger.error("Invalid build.part passed to 'build.tasks.check_build_stock'")
+        logger.exception("Invalid build.part passed to 'build.tasks.check_build_stock'")
         return
 
     for bom_item in part.get_bom_items():
@@ -135,7 +135,7 @@ def check_build_stock(build: build.models.Build):
 
     if len(emails) > 0:
 
-        logger.info(f"Notifying users of stock required for build {build.pk}")
+        logger.info("Notifying users of stock required for build %s", build.pk)
 
         context = {
             'link': InvenTree.helpers_model.construct_absolute_url(build.get_absolute_url()),

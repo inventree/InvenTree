@@ -7,12 +7,10 @@ import { RowAction } from '../RowActions';
 
 export function NotificationTable({
   params,
-  refreshId,
   tableKey,
   actions
 }: {
   params: any;
-  refreshId: string;
   tableKey: string;
   actions: (record: any) => RowAction[];
 }) {
@@ -43,10 +41,12 @@ export function NotificationTable({
     <InvenTreeTable
       url="/notifications/"
       tableKey={tableKey}
-      refreshId={refreshId}
-      params={params}
-      rowActions={actions}
       columns={columns}
+      props={{
+        rowActions: actions,
+        enableSelection: true,
+        params: params
+      }}
     />
   );
 }

@@ -1,6 +1,8 @@
-import { Divider, Paper, Stack, Tabs, Text } from '@mantine/core';
+import { Divider, Paper, Stack, Tabs } from '@mantine/core';
 import { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
+
+import { StylishText } from '../items/StylishText';
 
 /**
  * Type used to specify a single panel in a panel group
@@ -54,40 +56,41 @@ export function PanelGroup({
   }
 
   return (
-    <Tabs
-      value={activePanelName}
-      orientation="vertical"
-      onTabChange={handlePanelChange}
-      keepMounted={false}
-    >
-      <Tabs.List>
+    <Paper p="sm" radius="xs" shadow="xs">
+      <Tabs
+        value={activePanelName}
+        orientation="vertical"
+        onTabChange={handlePanelChange}
+        keepMounted={false}
+      >
+        <Tabs.List>
+          {panels.map(
+            (panel, idx) =>
+              !panel.hidden && (
+                <Tabs.Tab
+                  p="xs"
+                  value={panel.name}
+                  icon={panel.icon}
+                  hidden={panel.hidden}
+                >
+                  {panel.label}
+                </Tabs.Tab>
+              )
+          )}
+        </Tabs.List>
         {panels.map(
           (panel, idx) =>
             !panel.hidden && (
-              <Tabs.Tab
-                value={panel.name}
-                icon={panel.icon}
-                hidden={panel.hidden}
-              >
-                {panel.label}
-              </Tabs.Tab>
-            )
-        )}
-      </Tabs.List>
-      {panels.map(
-        (panel, idx) =>
-          !panel.hidden && (
-            <Tabs.Panel key={idx} value={panel.name}>
-              <Paper p="md" radius="xs">
+              <Tabs.Panel key={idx} value={panel.name} p="sm">
                 <Stack spacing="md">
-                  <Text size="xl">{panel.label}</Text>
+                  <StylishText size="lg">{panel.label}</StylishText>
                   <Divider />
                   {panel.content}
                 </Stack>
-              </Paper>
-            </Tabs.Panel>
-          )
-      )}
-    </Tabs>
+              </Tabs.Panel>
+            )
+        )}
+      </Tabs>
+    </Paper>
   );
 }

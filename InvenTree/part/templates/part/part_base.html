@@ -203,7 +203,7 @@
         <tr>
             <td><span class='fas fa-flag'></span></td>
             <td>{% trans "Minimum Stock" %}</td>
-            <td>{{ part.minimum_stock }} {% include "part/part_units.html" %}</td>
+            <td>{% decimal part.minimum_stock %} {% include "part/part_units.html" %}</td>
         </tr>
         {% endif %}
         {% if on_order > 0 %}
@@ -291,7 +291,7 @@
             <tr>
                 <td><span class='fas fa-flag'></span></td>
                 <td>{% trans "Minimum stock level" %}</td>
-                <td>{{ part.minimum_stock }}</td>
+                <td>{% decimal part.minimum_stock %}</td>
             </tr>
             {% endif %}
             {% if part.keywords %}

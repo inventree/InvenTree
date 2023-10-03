@@ -806,6 +806,7 @@ class CurrencyTests(TestCase):
 
     def test_rates(self):
         """Test exchange rate update."""
+
         # Initially, there will not be any exchange rate information
         rates = Rate.objects.all()
 
@@ -832,6 +833,7 @@ class CurrencyTests(TestCase):
 
             else:  # pragma: no cover
                 print("Exchange rate update failed - retrying")
+                print(f'Expected {currency_codes()}, got {[a.currency for a in rates]}')
                 time.sleep(1)
 
         self.assertTrue(update_successful)
@@ -1211,6 +1213,6 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.url, '/index/')
         # Note: 2023-08-08 - This test has been changed because "platform UI" is not generally available yet
         # TODO: In the future, the URL comparison will need to be reverted
-        # self.assertEqual(resp.url, '/platform/logged-in/')
+        # self.assertEqual(resp.url, f'/{settings.PUI_URL_BASE}/logged-in/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)
