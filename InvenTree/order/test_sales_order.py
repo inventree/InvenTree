@@ -33,11 +33,23 @@ class SalesOrderTest(TestCase):
         cls.customer = Company.objects.create(name="ABC Co", description="My customer", is_customer=True)
 
         # Create a Part to ship
-        cls.part = Part.objects.create(name='Spanner', salable=True, description='A spanner that I sell')
+        cls.part = Part.objects.create(
+            name='Spanner',
+            salable=True,
+            description='A spanner that I sell',
+            is_template=True,
+        )
+        cls.variant = Part.objects.create(
+            name='Blue Spanner',
+            salable=True,
+            description='A blue spanner that I sell',
+            variant_of=cls.part,
+        )
 
         # Create some stock!
         cls.Sa = StockItem.objects.create(part=cls.part, quantity=100)
         cls.Sb = StockItem.objects.create(part=cls.part, quantity=200)
+        cls.Sc = StockItem.objects.create(part=cls.variant, quantity=100)
 
         # Create a SalesOrder to ship against
         cls.order = SalesOrder.objects.create(
@@ -145,6 +157,16 @@ class SalesOrderTest(TestCase):
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.allocated_quantity(), 50)
 
+    def test_allocate_variant(self):
+        """Allocate a variant of the designated item"""
+        SalesOrderAllocation.objects.create(
+            line=self.line,
+            shipment=self.shipment,
+            item=StockItem.objects.get(pk=self.Sc.pk),
+            quantity=50
+        )
+        self.assertEqual(self.line.allocated_quantity(), 50)
+
     def test_order_cancel(self):
         """Allocate line items then cancel the order"""
         self.allocate_stock(True)
@@ -166,8 +188,8 @@ class SalesOrderTest(TestCase):
     def test_complete_order(self):
         """Allocate line items, then ship the order"""
         # Assert some stuff before we run the test
-        # Initially there are two stock items
-        self.assertEqual(StockItem.objects.count(), 2)
+        # Initially there are three stock items
+        self.assertEqual(StockItem.objects.count(), 3)
 
         # Take 25 units from each StockItem
         self.allocate_stock(True)
@@ -194,15 +216,17 @@ class SalesOrderTest(TestCase):
         self.assertEqual(self.order.status, status.SalesOrderStatus.SHIPPED)
         self.assertIsNotNone(self.order.shipment_date)
 
-        # There should now be 4 stock items
-        self.assertEqual(StockItem.objects.count(), 4)
+        # There should now be 5 stock items
+        self.assertEqual(StockItem.objects.count(), 5)
 
         sa = StockItem.objects.get(pk=self.Sa.pk)
         sb = StockItem.objects.get(pk=self.Sb.pk)
+        sc = StockItem.objects.get(pk=self.Sc.pk)
 
-        # 25 units subtracted from each of the original items
+        # 25 units subtracted from each of the original non-variant items
         self.assertEqual(sa.quantity, 75)
         self.assertEqual(sb.quantity, 175)
+        self.assertEqual(sc.quantity, 100)
 
         # And 2 items created which are associated with the order
         outputs = StockItem.objects.filter(sales_order=self.order)
