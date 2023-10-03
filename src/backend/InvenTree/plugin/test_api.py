@@ -31,6 +31,16 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         """Test the plugin install command."""
         url = reverse('api-plugin-install')
 
+        # invalid package name
+        self.post(
+            url,
+            {
+                'confirm': True,
+                'packagename': 'invalid_package_name-asdads-asfd-asdf-asdf-asdf'
+            },
+            expected_code=400
+        )
+
         # valid - Pypi
         data = self.post(
             url,
@@ -41,7 +51,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=201,
         ).data
 
-        self.assertEqual(data['success'], True)
+        self.assertEqual(data['success'], 'Installed plugin successfully')
 
         # valid - github url
         data = self.post(
@@ -53,7 +63,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=201,
         ).data
 
-        self.assertEqual(data['success'], True)
+        self.assertEqual(data['success'], 'Installed plugin successfully')
 
         # valid - github url and package name
         data = self.post(
@@ -65,7 +75,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             },
             expected_code=201,
         ).data
-        self.assertEqual(data['success'], True)
+        self.assertEqual(data['success'], 'Installed plugin successfully')
 
         # invalid tries
         # no input
