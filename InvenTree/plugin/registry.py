@@ -8,7 +8,6 @@ import imp
 import importlib
 import logging
 import os
-import subprocess
 import time
 from pathlib import Path
 from typing import Any, Dict, List, OrderedDict
@@ -351,18 +350,13 @@ class PluginsRegistry:
             logger.info('Plugin file was already checked')
             return True
 
-        try:
-            subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=settings.BASE_DIR.parent)
-        except subprocess.CalledProcessError as error:  # pragma: no cover
-            logger.exception('Ran into error while trying to install plugins!\n%s', str(error))
-            return False
-        except FileNotFoundError:  # pragma: no cover
-            # System most likely does not have 'git' installed
-            return False
+        from plugin.installer import install_plugins_file
 
-        # do not run again
-        settings.PLUGIN_FILE_CHECKED = True
-        return 'first_run'
+        if install_plugins_file():
+            settings.PLUGIN_FILE_CHECKED = True
+            return 'first_run'
+        else:
+            return False
 
     # endregion
 

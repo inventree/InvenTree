@@ -157,6 +157,9 @@ function installPlugin() {
         onSuccess: function(data) {
             let msg = '{% trans "The Plugin was installed" %}';
             showMessage(msg, {style: 'success', details: data.result, timeout: 30000});
+
+            // Reload the plugin table
+            $('#table-plugins').bootstrapTable('refresh');
         }
     });
 }
