@@ -100,15 +100,18 @@ function loadPluginTable(table, options={}) {
             {
                 field: 'meta.author',
                 title: '{% trans "Author" %}',
+                sortable: false,
             },
             {
                 field: 'actions',
                 title: '',
+                switchable: false,
+                sortable: false,
                 formatter: function(value, row) {
                     let buttons = '';
 
                     // Check if custom plugins are enabled for this instance
-                    if (options.custom && !row.is_builtin) {
+                    if (options.custom && !row.is_builtin && row.is_installed) {
                         if (row.active) {
                             buttons += makeIconButton('fa-stop-circle icon-red', 'btn-plugin-disable', row.pk, '{% trans "Disable Plugin" %}');
                         } else {
