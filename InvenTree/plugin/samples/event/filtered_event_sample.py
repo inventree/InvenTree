@@ -10,12 +10,16 @@ from plugin.mixins import EventMixin
 logger = logging.getLogger('inventree')
 
 
-class EventPluginSample(EventMixin, InvenTreePlugin):
+class FilteredEventPluginSample(EventMixin, InvenTreePlugin):
     """A sample plugin which provides supports for triggered events."""
 
-    NAME = "EventPlugin"
-    SLUG = "sampleevent"
-    TITLE = "Triggered Events"
+    NAME = "FilteredEventPlugin"
+    SLUG = "filteredsampleevent"
+    TITLE = "Triggered by test.event only"
+
+    def wants_process_event(self, event):
+        """Return whether given event should be processed or not."""
+        return event == "test.event"
 
     def process_event(self, event, *args, **kwargs):
         """Custom event processing."""

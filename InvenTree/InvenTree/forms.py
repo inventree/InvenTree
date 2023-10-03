@@ -252,7 +252,7 @@ class RegistratonMixin:
 
         split_email = email.split('@')
         if len(split_email) != 2:
-            logger.error(f'The user {email} has an invalid email address')
+            logger.error('The user %s has an invalid email address', email)
             raise forms.ValidationError(_('The provided primary email address is not valid.'))
 
         mailoptions = mail_restriction.split(',')
@@ -264,7 +264,7 @@ class RegistratonMixin:
                 if split_email[1] == option[1:]:
                     return super().clean_email(email)
 
-        logger.info(f'The provided email domain for {email} is not approved')
+        logger.info('The provided email domain for %s is not approved', email)
         raise forms.ValidationError(_('The provided email domain is not approved.'))
 
     def save_user(self, request, user, form, commit=True):
@@ -279,7 +279,7 @@ class RegistratonMixin:
                 group = Group.objects.get(id=start_group)
                 user.groups.add(group)
             except Group.DoesNotExist:
-                logger.error('The setting `SIGNUP_GROUP` contains an non existent group', start_group)
+                logger.exception('The setting `SIGNUP_GROUP` contains an non existent group', start_group)
         user.save()
         return user
 

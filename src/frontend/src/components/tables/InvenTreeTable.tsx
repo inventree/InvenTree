@@ -59,6 +59,7 @@ export type InvenTreeTableProps = {
   customFilters?: TableFilter[];
   customActionGroups?: any[];
   printingActions?: any[];
+  idAccessor?: string;
   rowActions?: (record: any) => RowAction[];
   onRowClick?: (record: any, index: number, event: any) => void;
 };
@@ -81,6 +82,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   barcodeActions: [],
   customFilters: [],
   customActionGroups: [],
+  idAccessor: 'pk',
   rowActions: (record: any) => [],
   onRowClick: (record: any, index: number, event: any) => {}
 };
@@ -486,7 +488,7 @@ export function InvenTreeTable({
           striped
           highlightOnHover
           loaderVariant="dots"
-          idAccessor={'pk'}
+          idAccessor={tableProps.idAccessor}
           minHeight={200}
           totalRecords={data?.count ?? data?.length ?? 0}
           recordsPerPage={tableProps.pageSize ?? defaultPageSize}

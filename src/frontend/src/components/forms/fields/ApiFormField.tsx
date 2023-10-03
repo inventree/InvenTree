@@ -19,6 +19,8 @@ import { ApiFormProps } from '../ApiForm';
 import { ChoiceField } from './ChoiceField';
 import { RelatedModelField } from './RelatedModelField';
 
+export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
+
 /**
  * Callback function type when a form field value changes
  */
@@ -26,7 +28,7 @@ export type ApiFormChangeCallback = {
   name: string;
   value: any;
   field: ApiFormFieldType;
-  form: UseFormReturnType<Record<string, unknown>>;
+  form: ApiFormData;
 };
 
 /* Definition of the ApiForm field component.
@@ -52,6 +54,7 @@ export type ApiFormChangeCallback = {
  * @param preFieldContent : Content to render before the field
  * @param postFieldContent : Content to render after the field
  * @param onValueChange : Callback function to call when the field value changes
+ * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -72,6 +75,7 @@ export type ApiFormFieldType = {
   preFieldContent?: JSX.Element | (() => JSX.Element);
   postFieldContent?: JSX.Element | (() => JSX.Element);
   onValueChange?: (change: ApiFormChangeCallback) => void;
+  adjustFilters?: (filters: any, form: ApiFormData) => any;
 };
 
 /*

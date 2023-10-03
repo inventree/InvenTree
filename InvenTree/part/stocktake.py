@@ -61,7 +61,7 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
 
     if not pricing.is_valid:
         # If pricing is not valid, let's update
-        logger.info(f"Pricing not valid for {target} - updating")
+        logger.info("Pricing not valid for %s - updating", target)
         pricing.update_pricing(cascade=False)
         pricing.refresh_from_db()
 
@@ -209,7 +209,7 @@ def generate_stocktake_report(**kwargs):
         logger.info("No parts selected for stocktake report - exiting")
         return
 
-    logger.info(f"Generating new stocktake report for {n_parts} parts")
+    logger.info("Generating new stocktake report for %s parts", n_parts)
 
     base_currency = common.settings.currency_code_default()
 
@@ -248,10 +248,6 @@ def generate_stocktake_report(**kwargs):
             exclude_external=exclude_external,
             location=location,
         )
-
-        if stocktake.quantity == 0:
-            # Skip rows with zero total quantity
-            continue
 
         total_parts += 1
 
@@ -309,4 +305,4 @@ def generate_stocktake_report(**kwargs):
         )
 
     t_stocktake = time.time() - t_start
-    logger.info(f"Generated stocktake report for {total_parts} parts in {round(t_stocktake, 2)}s")
+    logger.info("Generated stocktake report for %s parts in %ss", total_parts, round(t_stocktake, 2))

@@ -806,6 +806,7 @@ class CurrencyTests(TestCase):
 
     def test_rates(self):
         """Test exchange rate update."""
+
         # Initially, there will not be any exchange rate information
         rates = Rate.objects.all()
 
@@ -832,6 +833,7 @@ class CurrencyTests(TestCase):
 
             else:  # pragma: no cover
                 print("Exchange rate update failed - retrying")
+                print(f'Expected {currency_codes()}, got {[a.currency for a in rates]}')
                 time.sleep(1)
 
         self.assertTrue(update_successful)

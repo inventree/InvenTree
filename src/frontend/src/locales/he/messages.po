@@ -8,7 +8,7 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-19 02:10\n"
+"PO-Revision-Date: 2023-09-25 04:04\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -189,9 +189,9 @@ msgstr ""
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
-#: src/components/forms/fields/ApiFormField.tsx:286
+#: src/components/forms/fields/ApiFormField.tsx:290
 #: src/components/nav/SearchDrawer.tsx:426
-#: src/components/tables/InvenTreeTable.tsx:372
+#: src/components/tables/InvenTreeTable.tsx:374
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
@@ -199,16 +199,16 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:194
+#: src/components/forms/fields/RelatedModelField.tsx:212
 msgid "Search"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:195
+#: src/components/forms/fields/RelatedModelField.tsx:213
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:197
+#: src/components/forms/fields/RelatedModelField.tsx:215
 msgid "No results found"
 msgstr ""
 
@@ -217,7 +217,7 @@ msgid "Read More"
 msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:364
+#: src/components/tables/InvenTreeTable.tsx:366
 msgid "Unknown error"
 msgstr ""
 
@@ -388,8 +388,8 @@ msgstr ""
 #: src/components/tables/part/PartCategoryTable.tsx:39
 #: src/defaults/links.tsx:26
 #: src/pages/part/CategoryDetail.tsx:38
-#: src/pages/part/CategoryDetail.tsx:81
-#: src/pages/part/PartDetail.tsx:190
+#: src/pages/part/CategoryDetail.tsx:74
+#: src/pages/part/PartDetail.tsx:175
 msgid "Parts"
 msgstr ""
 
@@ -408,8 +408,8 @@ msgstr ""
 #: src/components/nav/SearchDrawer.tsx:103
 #: src/components/tables/stock/StockLocationTable.tsx:37
 #: src/pages/stock/LocationDetail.tsx:26
-#: src/pages/stock/LocationDetail.tsx:56
-#: src/pages/stock/StockDetail.tsx:98
+#: src/pages/stock/LocationDetail.tsx:67
+#: src/pages/stock/StockDetail.tsx:110
 msgid "Stock Items"
 msgstr ""
 
@@ -420,7 +420,7 @@ msgstr ""
 #: src/components/nav/SearchDrawer.tsx:122
 #: src/pages/build/BuildDetail.tsx:143
 #: src/pages/build/BuildIndex.tsx:16
-#: src/pages/part/PartDetail.tsx:81
+#: src/pages/part/PartDetail.tsx:76
 msgid "Build Orders"
 msgstr ""
 
@@ -429,12 +429,12 @@ msgid "Companies"
 msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:141
-#: src/pages/part/PartDetail.tsx:108
+#: src/pages/part/PartDetail.tsx:103
 msgid "Purchase Orders"
 msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:151
-#: src/pages/part/PartDetail.tsx:115
+#: src/pages/part/PartDetail.tsx:110
 msgid "Sales Orders"
 msgstr ""
 
@@ -613,43 +613,43 @@ msgstr ""
 msgid "Add Filter"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:71
-#: src/components/tables/InvenTreeTable.tsx:326
-#: src/components/tables/InvenTreeTable.tsx:347
+#: src/components/tables/InvenTreeTable.tsx:72
+#: src/components/tables/InvenTreeTable.tsx:328
+#: src/components/tables/InvenTreeTable.tsx:349
 msgid "No records found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:351
+#: src/components/tables/InvenTreeTable.tsx:353
 msgid "Bad request"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:354
+#: src/components/tables/InvenTreeTable.tsx:356
 msgid "Unauthorized"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:357
+#: src/components/tables/InvenTreeTable.tsx:359
 msgid "Forbidden"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:360
+#: src/components/tables/InvenTreeTable.tsx:362
 msgid "Not found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:421
-#: src/components/tables/InvenTreeTable.tsx:422
+#: src/components/tables/InvenTreeTable.tsx:423
+#: src/components/tables/InvenTreeTable.tsx:424
 msgid "Barcode actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:429
-#: src/components/tables/InvenTreeTable.tsx:430
+#: src/components/tables/InvenTreeTable.tsx:431
+#: src/components/tables/InvenTreeTable.tsx:432
 msgid "Print actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:447
+#: src/components/tables/InvenTreeTable.tsx:449
 msgid "Refresh data"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:466
+#: src/components/tables/InvenTreeTable.tsx:468
 msgid "Table filters"
 msgstr ""
 
@@ -666,7 +666,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:25
 #: src/components/tables/part/RelatedPartTable.tsx:31
 #: src/components/tables/stock/StockItemTable.tsx:22
-#: src/pages/part/PartDetail.tsx:182
+#: src/pages/part/PartDetail.tsx:189
 msgid "Part"
 msgstr ""
 
@@ -750,9 +750,9 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:69
 #: src/components/tables/stock/StockItemTable.tsx:44
 #: src/defaults/links.tsx:27
-#: src/pages/part/PartDetail.tsx:61
-#: src/pages/stock/LocationDetail.tsx:61
-#: src/pages/stock/StockDetail.tsx:106
+#: src/pages/part/PartDetail.tsx:56
+#: src/pages/stock/LocationDetail.tsx:53
+#: src/pages/stock/StockDetail.tsx:97
 msgid "Stock"
 msgstr ""
 
@@ -1344,27 +1344,27 @@ msgstr ""
 msgid "Parent part category"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:30
+#: src/functions/forms/StockForms.tsx:44
 msgid "Add given quantity as packs instead of individual items"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:39
+#: src/functions/forms/StockForms.tsx:53
 msgid "Enter initial quantity for this stock item"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:44
+#: src/functions/forms/StockForms.tsx:58
 msgid "Serial Numbers"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:45
+#: src/functions/forms/StockForms.tsx:59
 msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:90
+#: src/functions/forms/StockForms.tsx:104
 msgid "Create Stock Item"
 msgstr ""
 
-#: src/functions/forms/StockForms.tsx:104
+#: src/functions/forms/StockForms.tsx:118
 msgid "Edit Stock Item"
 msgstr ""
 
@@ -1810,14 +1810,14 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:106
-#: src/pages/part/PartDetail.tsx:135
-#: src/pages/stock/StockDetail.tsx:69
+#: src/pages/part/PartDetail.tsx:130
+#: src/pages/stock/StockDetail.tsx:70
 msgid "Attachments"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:118
-#: src/pages/part/PartDetail.tsx:147
-#: src/pages/stock/StockDetail.tsx:81
+#: src/pages/part/PartDetail.tsx:142
+#: src/pages/stock/StockDetail.tsx:82
 msgid "Notes"
 msgstr ""
 
@@ -1837,45 +1837,40 @@ msgstr ""
 msgid "Parameters"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:76
+#: src/pages/part/CategoryDetail.tsx:87
 msgid "Part Category"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:84
-#: src/pages/stock/LocationDetail.tsx:64
-msgid "Top level"
-msgstr ""
-
-#: src/pages/part/PartDetail.tsx:55
-#: src/pages/stock/StockDetail.tsx:39
+#: src/pages/part/PartDetail.tsx:50
+#: src/pages/stock/StockDetail.tsx:40
 msgid "Details"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:67
+#: src/pages/part/PartDetail.tsx:62
 msgid "Variants"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:74
+#: src/pages/part/PartDetail.tsx:69
 msgid "Bill of Materials"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:88
+#: src/pages/part/PartDetail.tsx:83
 msgid "Used In"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:95
+#: src/pages/part/PartDetail.tsx:90
 msgid "Pricing"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:101
+#: src/pages/part/PartDetail.tsx:96
 msgid "Suppliers"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:122
+#: src/pages/part/PartDetail.tsx:117
 msgid "Test Templates"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:129
+#: src/pages/part/PartDetail.tsx:124
 msgid "Related Parts"
 msgstr ""
 
@@ -1887,19 +1882,19 @@ msgstr ""
 msgid "Sublocations"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:45
+#: src/pages/stock/StockDetail.tsx:46
 msgid "Stock Tracking"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:51
+#: src/pages/stock/StockDetail.tsx:52
 msgid "Allocations"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:57
+#: src/pages/stock/StockDetail.tsx:58
 msgid "Installed Items"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:63
+#: src/pages/stock/StockDetail.tsx:64
 msgid "Child Items"
 msgstr ""
 

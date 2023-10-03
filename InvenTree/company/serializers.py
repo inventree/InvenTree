@@ -67,10 +67,7 @@ class AddressSerializer(InvenTreeModelSerializer):
             'shipping_notes',
             'internal_shipping_notes',
             'link',
-            'confirm_primary'
         ]
-
-    confirm_primary = serializers.BooleanField(default=False)
 
 
 class AddressBriefSerializer(InvenTreeModelSerializer):
