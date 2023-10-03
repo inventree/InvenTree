@@ -117,10 +117,13 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         today = datetime.datetime.now().date()
 
         # If we have discovered a matching plugin, update the last_updated date
-        if plugin is not None and self.last_updated != today:
+        if plugin is not None and self.pk and self.last_updated != today:
             logger.debug("Updating plugin updated date:", self.name, "=>", today)
             self.last_updated = today
-            self.save(no_reload=True)
+            try:
+                self.save(no_reload=True)
+            except Exception:
+                pass
 
     def __getstate__(self):
         """Customize pickling behavior."""
