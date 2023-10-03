@@ -745,6 +745,7 @@ class CurrencyTests(TestCase):
 
             else:  # pragma: no cover
                 print("Exchange rate update failed - retrying")
+                print(f'Expected {currency_codes()}, got {[a.currency for a in rates]}')
                 time.sleep(1)
 
         self.assertTrue(update_successful)
