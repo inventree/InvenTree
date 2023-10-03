@@ -319,7 +319,7 @@ def get_secret_key():
         key = ''.join([random.choice(options) for i in range(100)])
         secret_key_file.write_text(key)
 
-    logger.info("Loading SECRET_KEY from '%s'", secret_key_file)
+    logger.debug("Loading SECRET_KEY from '%s'", secret_key_file)
 
     key_data = secret_key_file.read_text().strip()
 
