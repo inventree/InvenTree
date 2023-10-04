@@ -3,6 +3,7 @@
 import datetime
 import logging
 
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
@@ -39,6 +40,17 @@ class ApiToken(AuthToken):
         unique_together = [
             ('user', 'name')
         ]
+
+    # Override the 'key' field - force it to be unique
+    key = models.CharField(verbose_name=_('Key'), max_length=40, db_index=True, unique=True)
+
+    # Override the 'user' field, to allow multiple tokens per user
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name=_('User'),
+        related_name='api_tokens',
+    )
 
     name = models.CharField(
         max_length=100,

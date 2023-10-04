@@ -16,11 +16,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ApiToken',
             fields=[
-                ('key', models.CharField(max_length=40, primary_key=True, serialize=False, verbose_name='Key')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('key', models.CharField(max_length=40, db_index=True, unique=True, verbose_name='Key')),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created')),
                 ('name', models.CharField(blank=True, help_text='Custom token name', max_length=100, verbose_name='Token Name')),
                 ('expiry', models.DateField(blank=True, help_text='Token expiry date', null=True, verbose_name='Expiry Date')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='auth_token', to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='api_tokens', to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
             options={
                 'verbose_name': 'API Token',
