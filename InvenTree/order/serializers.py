@@ -674,8 +674,8 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         with transaction.atomic():
             for item in items:
 
-                # Select location
-                loc = item.get('location', None) or item['line_item'].get_destination() or location
+                # Select location (in descending order of priority)
+                loc = location or item.get('location', None) or item['line_item'].get_destination()
 
                 try:
                     order.receive_line_item(
@@ -880,7 +880,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Initializion routine for the serializer:
+        """Initialization routine for the serializer:
 
         - Add extra related serializer information if required
         """
