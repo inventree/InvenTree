@@ -805,6 +805,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'name',
             'parent',
             'icon',
+            'structural',
         ]
 
 

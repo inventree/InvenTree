@@ -247,7 +247,7 @@ if settings.DEBUG:
 
 # Redirect for favicon.ico
 urlpatterns.append(
-    path('favicon.ico', RedirectView.as_view(url=f'{settings.STATIC_URL}/img/favicon/favicon.ico'))
+    path('favicon.ico', RedirectView.as_view(url=f'{settings.STATIC_URL}img/favicon/favicon.ico'))
 )
 
 # Send any unknown URLs to the parts page

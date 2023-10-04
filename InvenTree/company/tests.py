@@ -4,7 +4,6 @@ import os
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
 from django.test import TestCase
 
 from part.models import Part
@@ -195,39 +194,26 @@ class AddressTest(TestCase):
 
     def test_primary_constraint(self):
         """Test that there can only be one company-'primary=true' pair"""
-        c2 = Company.objects.create(name='Test Corp2.', description='We make stuff good')
+
         Address.objects.create(company=self.c, primary=True)
         Address.objects.create(company=self.c, primary=False)
 
         self.assertEqual(Address.objects.count(), 2)
 
-        # Testing the constraint itself
-        # Intentionally throwing exceptions breaks unit tests unless performed in an atomic block
-        with transaction.atomic():
-            with self.assertRaises(ValidationError):
-                addr = Address(company=self.c, primary=True, confirm_primary=False)
-                addr.validate_unique()
+        self.assertTrue(Address.objects.first().primary)
 
-        Address.objects.create(company=c2, primary=True, line1="Hellothere", line2="generalkenobi")
-
-        with transaction.atomic():
-            with self.assertRaises(ValidationError):
-                addr = Address(company=c2, primary=True, confirm_primary=False)
-                addr.validate_unique()
+        # Create another address, specify *this* as primary
+        Address.objects.create(company=self.c, primary=True)
 
         self.assertEqual(Address.objects.count(), 3)
+        self.assertFalse(Address.objects.first().primary)
+        self.assertTrue(Address.objects.last().primary)
 
     def test_first_address_is_primary(self):
         """Test that first address related to company is always set to primary"""
 
         addr = Address.objects.create(company=self.c)
-
         self.assertTrue(addr.primary)
-
-        # Create another address, which should error out if primary is not set to False
-        with self.assertRaises(ValidationError):
-            addr = Address(company=self.c, primary=True)
-            addr.validate_unique()
 
     def test_model_str(self):
         """Test value of __str__"""

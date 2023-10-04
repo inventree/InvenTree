@@ -19,6 +19,8 @@
     showMessage,
     showModalSpinner,
     toBool,
+    showQuestionDialog,
+    generateTreeStructure,
 */
 
 /* exported
@@ -2022,6 +2024,94 @@ function initializeRelatedField(field, fields, options={}) {
             }
         });
     }
+
+    if(field.tree_picker) {
+        // construct button
+        const button = $(`<button class="input-group-text px-2"><i class="fas fa-external-link-alt"></i></button>`);
+
+        // insert open tree picker button after select
+        select.parent().find(".select2").after(button);
+
+        // save copy of filters, because of possible side effects
+        const filters = field.filters ? { ...field.filters } : {};
+
+        button.on("click", () => {
+            const tree_id = `${name}_tree`;
+
+            const title = '{% trans "Select" %}' + " " + options.actions[name].label;
+            const content = `
+                <div class="mb-1">
+                    <div class="input-group mb-2">
+                        <input class="form-control" type="text" id="${name}_tree_search" placeholder="{% trans "Search" %} ${options.actions[name].label}..." />
+                        <button class="input-group-text" id="${name}_tree_search_btn"><i class="fas fa-search"></i></button>
+                    </div>
+
+                    <div id="${tree_id}" style="height: 65vh; overflow-y: auto;">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border" role="status"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showQuestionDialog(title, content, {
+                accept_text: '{% trans "Select" %}',
+                accept: () => {
+                    const selectedNode = $(`#${tree_id}`).treeview('getSelected');
+                    if(selectedNode.length > 0) {
+                        const url = `${field.api_url}/${selectedNode[0].pk}/`.replace('//', '/');
+
+                        inventreeGet(url, field.filters || {}, {
+                            success: function(data) {
+                                setRelatedFieldData(name, data, options);
+                            }
+                        });
+                    }
+                }
+            });
+
+            inventreeGet(field.tree_picker.url, {}, {
+                success: (data) => {
+                    const current_value = getFormFieldValue(name, field, options);
+
+                    const rootNodes = generateTreeStructure(data, {
+                        selected: current_value,
+                        processNode: (node) => {
+                            node.selectable = true;
+                            node.text = node.name;
+
+                            // disable this node, if it doesn't match the filter criteria
+                            for (const [k, v] of Object.entries(filters)) {
+                                if (k in node && node[k] !== v) {
+                                    node.selectable = false;
+                                    node.color = "grey";
+                                    break;
+                                }
+                            }
+
+                            return node;
+                        }
+                    });
+
+                    $(`#${tree_id}`).treeview({
+                        data: rootNodes,
+                        expandIcon: 'fas fa-plus-square large-treeview-icon',
+                        collapseIcon: 'fa fa-minus-square large-treeview-icon',
+                        nodeIcon: field.tree_picker.defaultIcon,
+                        color: "black",
+                    });
+                }
+            });
+
+            $(`#${name}_tree_search_btn`).on("click", () => {
+                const searchValue = $(`#${name}_tree_search`).val();
+                $(`#${tree_id}`).treeview("search", [searchValue, {
+                    ignoreCase: true,
+                    exactMatch: false,
+                    revealResults: true,
+                }]);
+            });
+        });
+    }
 }
 
 
@@ -2244,7 +2334,7 @@ function constructField(name, parameters, options={}) {
     html += `<div class='controls'>`;
 
     // Does this input deserve "extra" decorators?
-    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null);
+    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null) || (parameters.tree_picker != null);
 
     // Some fields can have 'clear' inputs associated with them
     if (!parameters.required && !parameters.read_only) {
@@ -2265,7 +2355,7 @@ function constructField(name, parameters, options={}) {
     }
 
     if (extra) {
-        html += `<div class='input-group'>`;
+        html += `<div class='input-group flex-nowrap'>`;
 
         if (parameters.prefix) {
             html += `<span class='input-group-text'>${parameters.prefix}</span>`;
@@ -2282,9 +2372,9 @@ function constructField(name, parameters, options={}) {
 
         if (!parameters.required && !options.hideClearButton) {
             html += `
-            <span class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
+            <button class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>
-            </span>`;
+            </button>`;
         }
 
         html += `</div>`; // input-group

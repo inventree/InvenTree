@@ -156,6 +156,7 @@
     variant_of: 10000
     IPN: "R.CH"
     trackable: true
+    salable: true
     category: 7
     tree_id: 1
     level: 0

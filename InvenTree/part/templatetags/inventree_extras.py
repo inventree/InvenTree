@@ -67,7 +67,7 @@ def render_date(context, date_object):
         try:
             date_object = date.fromisoformat(date_object)
         except ValueError:
-            logger.warning(f"Tried to convert invalid date string: {date_object}")
+            logger.warning("Tried to convert invalid date string: %s", date_object)
             return None
 
     # We may have already pre-cached the date format by calling this already!

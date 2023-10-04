@@ -11,8 +11,33 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
 
     def test_view(self):
         """Check the function of the custom  sample plugin."""
-        response = self.client.get('/plugin/sample/ho/he/')
+
+        from common.models import InvenTreeSetting
+
+        url = '/plugin/sample/ho/he/'
+
+        # First, check with custom URLs disabled
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_URL', False, None)
+
+        # Requires a full reload of the registry
+        registry.reload_plugins()
+
+        # URL should redirect to index page
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+
+        # Now, check with custom URLs enabled
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_URL', True, None)
+
+        # Requires a full reload of the registry
+        registry.reload_plugins()
+
+        # And ensure that the plugin is enabled
+        registry.set_plugin_state('sample', True)
+
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
         self.assertEqual(response.content, b'Hi there testuser this works')
 
     def test_settings(self):

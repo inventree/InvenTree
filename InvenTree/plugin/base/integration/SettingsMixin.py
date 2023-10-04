@@ -37,7 +37,7 @@ class SettingsMixin:
         Add all defined settings form the plugins to a unified dict in the registry.
         This dict is referenced by the PluginSettings for settings definitions.
         """
-        logger.info('Activating plugin settings')
+        logger.debug('Activating plugin settings')
 
         registry.mixins_settings = {}
 
@@ -49,7 +49,7 @@ class SettingsMixin:
     @classmethod
     def _deactivate_mixin(cls, registry, **kwargs):
         """Deactivate all plugin settings."""
-        logger.info('Deactivating plugin settings')
+        logger.debug('Deactivating plugin settings')
         # clear settings cache
         registry.mixins_settings = {}
 
@@ -80,7 +80,7 @@ class SettingsMixin:
 
         if not plugin:  # pragma: no cover
             # Cannot find associated plugin model, return
-            logger.error(f"Plugin configuration not found for plugin '{self.slug}'")
+            logger.error("Plugin configuration not found for plugin '%s'", self.slug)
             return
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)

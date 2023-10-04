@@ -44,6 +44,9 @@ function createNewModal(options={}) {
         if (modal_id >= id) {
             id = modal_id + 1;
         }
+
+        // move all other modals behind the backdrops
+        $(this).css('z-index', 1000);
     });
 
     var submitClass = options.submitClass || 'primary';
@@ -125,6 +128,9 @@ function createNewModal(options={}) {
     // Automatically remove the modal when it is deleted!
     $(modal_name).on('hidden.bs.modal', function() {
         $(modal_name).remove();
+
+        // restore all modals before backdrop
+        $('.inventree-modal').last().css("z-index", 10000);
     });
 
     // Capture "enter" key input

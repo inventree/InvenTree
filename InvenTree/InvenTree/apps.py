@@ -71,7 +71,10 @@ class InvenTreeConfig(AppConfig):
             return
 
         # Remove any existing obsolete tasks
-        Schedule.objects.filter(func__in=obsolete).delete()
+        try:
+            Schedule.objects.filter(func__in=obsolete).delete()
+        except Exception:
+            logger.exception("Failed to remove obsolete tasks - database not ready")
 
     def start_background_tasks(self):
         """Start all background tests for InvenTree."""
@@ -96,7 +99,7 @@ class InvenTreeConfig(AppConfig):
             force_async=True,
         )
 
-        logger.info(f"Started {len(tasks)} scheduled background tasks...")
+        logger.info("Started %s scheduled background tasks...", len(tasks))
 
     def collect_tasks(self):
         """Collect all background tasks."""
@@ -109,7 +112,7 @@ class InvenTreeConfig(AppConfig):
                 try:
                     import_module(f'{app.module.__package__}.tasks')
                 except Exception as e:  # pragma: no cover
-                    logger.error(f"Error loading tasks for {app_name}: {e}")
+                    logger.exception("Error loading tasks for %s: %s", app_name, e)
 
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.
@@ -145,7 +148,7 @@ class InvenTreeConfig(AppConfig):
 
                 # Backend currency has changed?
                 if base_currency != backend.base_currency:
-                    logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
+                    logger.info("Base currency changed from %s to %s", backend.base_currency, base_currency)
                     update = True
 
         except (ExchangeBackend.DoesNotExist):
@@ -162,7 +165,7 @@ class InvenTreeConfig(AppConfig):
             except OperationalError:
                 logger.warning("Could not update exchange rates - database not ready")
             except Exception as e:
-                logger.error(f"Error updating exchange rates: {e} ({type(e)})")
+                logger.exception("Error updating exchange rates: %s (%s)", e, type(e))
 
     def add_user_on_startup(self):
         """Add a user on startup."""
@@ -189,7 +192,7 @@ class InvenTreeConfig(AppConfig):
 
         # not all needed variables set
         if set_variables < 3:
-            logger.warn('Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD')
+            logger.warning('Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD')
             settings.USER_ADDED = True
             return
 
@@ -198,12 +201,12 @@ class InvenTreeConfig(AppConfig):
         try:
             with transaction.atomic():
                 if user.objects.filter(username=add_user).exists():
-                    logger.info(f"User {add_user} already exists - skipping creation")
+                    logger.info("User %s already exists - skipping creation", add_user)
                 else:
                     new_user = user.objects.create_superuser(add_user, add_email, add_password)
-                    logger.info(f'User {str(new_user)} was created!')
+                    logger.info('User %s was created!', str(new_user))
         except IntegrityError:
-            logger.warning(f'The user "{add_user}" could not be created')
+            logger.warning('The user "%s" could not be created', add_user)
 
         # do not try again
         settings.USER_ADDED = True

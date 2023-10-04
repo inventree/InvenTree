@@ -113,6 +113,7 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
             'name',
             'parent',
             'icon',
+            'structural',
         ]
 
 
@@ -809,7 +810,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
                         save=True
                     )
                 except IntegrityError:
-                    logger.error(f"Could not create new PartParameter for part {instance}")
+                    logger.exception("Could not create new PartParameter for part %s", instance)
 
         # Create initial stock entry
         if initial_stock:
