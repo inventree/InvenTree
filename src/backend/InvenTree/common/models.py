@@ -951,6 +951,16 @@ def update_exchange_rates(setting):
     InvenTree.tasks.update_exchange_rates()
 
 
+def reload_plugin_registry(setting):
+    """When a core plugin setting is changed, reload the plugin registry"""
+
+    from plugin import registry
+
+    logger.info("Reloading plugin registry due to change in setting '%s'", setting.key)
+
+    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -1704,7 +1714,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to add URL routes'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         'ENABLE_PLUGINS_NAVIGATION': {
@@ -1712,7 +1722,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to integrate into navigation'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         'ENABLE_PLUGINS_APP': {
@@ -1720,7 +1730,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to add apps'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         'ENABLE_PLUGINS_SCHEDULE': {
@@ -1728,7 +1738,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to run scheduled tasks'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         'ENABLE_PLUGINS_EVENTS': {
@@ -1736,7 +1746,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to respond to internal events'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         "PROJECT_CODES_ENABLED": {

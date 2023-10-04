@@ -54,6 +54,9 @@ class PluginsRegistry:
         self.plugins_inactive: Dict[str, InvenTreePlugin] = {}  # List of inactive instances
         self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
 
+        # Keep an internal hash of the plugin registry state
+        self.registry_hash = None
+
         self.plugin_modules: List[InvenTreePlugin] = []         # Holds all discovered plugins
         self.mixin_modules: Dict[str, Any] = {}                 # Holds all discovered mixins
 
@@ -275,6 +278,8 @@ class PluginsRegistry:
                 self.plugins_loaded = True
                 self._load_plugins(full_reload=full_reload)
 
+            self.update_plugin_hash()
+
             self.loading_lock.release()
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
 
@@ -484,7 +489,7 @@ class PluginsRegistry:
                     t_start = time.time()
                     plg_i: InvenTreePlugin = plg()
                     dt = time.time() - t_start
-                    logger.info('Loaded plugin `%s` in %.3fs', plg_name, dt)
+                    logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
                     logger.warning("Plugin `%s` could not be loaded", plg_name)
@@ -554,7 +559,7 @@ class PluginsRegistry:
             if hasattr(mixin, '_deactivate_mixin'):
                 mixin._deactivate_mixin(self, force_reload=force_reload)
 
-        logger.info('Done deactivating')
+        logger.debug('Finished deactivating plugins')
     # endregion
 
     # region mixin specific loading ...
@@ -631,17 +636,17 @@ class PluginsRegistry:
 
         from common.models import InvenTreeSetting
 
-        plg_hash = self.calculate_plugin_hash()
+        self.registry_hash = self.calculate_plugin_hash()
 
         try:
             old_hash = InvenTreeSetting.get_setting("_PLUGIN_REGISTRY_HASH", "", create=False, cache=False)
         except Exception:
             old_hash = ""
 
-        if old_hash != plg_hash:
+        if old_hash != self.registry_hash:
             try:
-                logger.debug("Updating plugin registry hash: %s", str(plg_hash))
-                InvenTreeSetting.set_setting("_PLUGIN_REGISTRY_HASH", plg_hash, change_user=None)
+                logger.debug("Updating plugin registry hash: %s", str(self.registry_hash))
+                InvenTreeSetting.set_setting("_PLUGIN_REGISTRY_HASH", self.registry_hash, change_user=None)
             except Exception as exc:
                 logger.exception("Failed to update plugin registry hash: %s", str(exc))
 
@@ -654,13 +659,30 @@ class PluginsRegistry:
 
         from hashlib import md5
 
+        from common.models import InvenTreeSetting
+
         data = md5()
 
         # Hash for all loaded plugins
         for slug, plug in self.plugins.items():
             data.update(str(slug).encode())
             data.update(str(plug.version).encode())
-            data.update(str(plug.is_active).encode())
+            data.update(str(plug.is_active()).encode())
+
+        # Also hash for all config settings which define plugin behavior
+        keys = [
+            'ENABLE_PLUGINS_URL',
+            'ENABLE_PLUGINS_NAVIGATION',
+            'ENABLE_PLUGINS_APP',
+            'ENABLE_PLUGINS_SCHEDULE',
+            'ENABLE_PLUGINS_EVENTS'
+        ]
+
+        for k in keys:
+            try:
+                data.update(str(InvenTreeSetting.get_setting(k, False, cache=False, create=False)).encode())
+            except Exception:
+                pass
 
         return str(data.hexdigest())
 
@@ -675,13 +697,17 @@ class PluginsRegistry:
 
         logger.debug("Checking plugin registry hash")
 
+        # If not already cached, calculate the hash
+        if not self.registry_hash:
+            self.registry_hash = self.calculate_plugin_hash()
+
         try:
             reg_hash = InvenTreeSetting.get_setting("_PLUGIN_REGISTRY_HASH", "", create=False, cache=False)
         except Exception as exc:
             logger.exception("Failed to retrieve plugin registry hash: %s", str(exc))
             return
 
-        if reg_hash and reg_hash != self.calculate_plugin_hash():
+        if reg_hash and reg_hash != self.registry_hash:
             logger.info("Plugin registry hash has changed - reloading")
             self.reload_plugins(full_reload=True, force_reload=True, collect=True)
 

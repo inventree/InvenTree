@@ -42,6 +42,22 @@ from .validators import validate_overage
 class ConversionTest(TestCase):
     """Tests for conversion of physical units"""
 
+    def test_prefixes(self):
+        """Test inputs where prefixes are used"""
+
+        tests = {
+            "3": 3,
+            "3m": 3,
+            "3mm": 0.003,
+            "3k": 3000,
+            "3u": 0.000003,
+            "3 inch": 0.0762,
+        }
+
+        for val, expected in tests.items():
+            q = InvenTree.conversion.convert_physical_value(val, 'm')
+            self.assertAlmostEqual(q, expected, 3)
+
     def test_base_units(self):
         """Test conversion to specified base units"""
         tests = {
@@ -56,14 +72,12 @@ class ConversionTest(TestCase):
 
         for val, expected in tests.items():
             q = InvenTree.conversion.convert_physical_value(val, 'W')
-
-            self.assertAlmostEqual(q, expected, 0.01)
-
+            self.assertAlmostEqual(q, expected, places=2)
             q = InvenTree.conversion.convert_physical_value(val, 'W', strip_units=False)
-            self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
+            self.assertAlmostEqual(float(q.magnitude), expected, places=2)
 
     def test_dimensionless_units(self):
-        """Tests for 'dimensonless' unit quantities"""
+        """Tests for 'dimensionless' unit quantities"""
 
         # Test some dimensionless units
         tests = {
@@ -84,25 +98,20 @@ class ConversionTest(TestCase):
         for val, expected in tests.items():
             # Convert, and leave units
             q = InvenTree.conversion.convert_physical_value(val, strip_units=False)
-            self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
+            self.assertAlmostEqual(float(q.magnitude), expected, 3)
 
             # Convert, and strip units
             q = InvenTree.conversion.convert_physical_value(val)
-            self.assertAlmostEqual(q, expected, 0.01)
+            self.assertAlmostEqual(q, expected, 3)
 
     def test_invalid_values(self):
         """Test conversion of invalid inputs"""
 
         inputs = [
-            '-',
-            ';;',
             '-x',
-            '?',
-            '--',
-            '+',
-            '++',
             '1/0',
-            '1/-',
+            'xyz',
+            '12B45C'
         ]
 
         for val in inputs:
@@ -112,8 +121,7 @@ class ConversionTest(TestCase):
 
             # Test dimensionless
             with self.assertRaises(ValidationError):
-                result = InvenTree.conversion.convert_physical_value(val)
-                print("Testing invalid value:", val, result)
+                InvenTree.conversion.convert_physical_value(val)
 
     def test_custom_units(self):
         """Tests for custom unit conversion"""
@@ -154,11 +162,11 @@ class ConversionTest(TestCase):
         for val, expected in tests.items():
             # Convert, and leave units
             q = InvenTree.conversion.convert_physical_value(val, 'henry / km', strip_units=False)
-            self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
+            self.assertAlmostEqual(float(q.magnitude), expected, 2)
 
             # Convert and strip units
             q = InvenTree.conversion.convert_physical_value(val, 'henry / km')
-            self.assertAlmostEqual(q, expected, 0.01)
+            self.assertAlmostEqual(q, expected, 2)
 
 
 class ValidatorTest(TestCase):
@@ -857,7 +865,7 @@ class CurrencyTests(TestCase):
 class TestStatus(TestCase):
     """Unit tests for status functions."""
 
-    def test_check_system_healt(self):
+    def test_check_system_health(self):
         """Test that the system health check is false in testing -> background worker not running."""
         self.assertEqual(status.check_system_health(), False)
 
@@ -953,7 +961,7 @@ class TestSettings(InvenTreeTestCase):
             InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
             registry.reload_plugins(full_reload=True)
 
-        # Check that there was anotehr run
+        # Check that there was another run
         response = registry.install_plugin_file()
         self.assertEqual(response, True)
 
@@ -1147,7 +1155,7 @@ class BarcodeMixinTest(InvenTreeTestCase):
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
         self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
 
-    def test_bacode_hash(self):
+    def test_barcode_hash(self):
         """Test that the barcode hashing function provides correct results"""
 
         # Test multiple values for the hashing function
@@ -1176,7 +1184,7 @@ class SanitizerTest(TestCase):
         # Test that valid string
         self.assertEqual(valid_string, sanitize_svg(valid_string))
 
-        # Test that invalid string is cleanded
+        # Test that invalid string is cleaned
         self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))
 
 

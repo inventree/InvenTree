@@ -436,7 +436,12 @@
                 part: {
                     value: {{ part.pk }}
                 },
-                location: {},
+                location: {
+                    tree_picker: {
+                        url: '{% url "api-location-tree" %}',
+                        default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                    },
+                },
                 generate_report: {
                     value: false,
                 },
