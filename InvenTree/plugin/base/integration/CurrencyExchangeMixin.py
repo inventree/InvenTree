@@ -1,6 +1,9 @@
 """Plugin mixin class for supporting currency exchange data"""
 
 
+from plugin.helpers import MixinNotImplementedError
+
+
 class CurrencyExchangeMixin:
     """Mixin class which provides support for currency exchange rates
 
@@ -26,4 +29,4 @@ class CurrencyExchangeMixin:
 
         This method must be implemented by the plugin class.
         """
-        raise NotImplementedError("Plugin must implement update_exchange_rates method")
+        raise MixinNotImplementedError("Plugin must implement update_exchange_rates method")
