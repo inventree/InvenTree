@@ -9,9 +9,16 @@ from django.contrib.auth.models import Group
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from users.models import Owner, RuleSet
+from users.models import ApiToken, Owner, RuleSet
 
 User = get_user_model()
+
+
+class ApiTokenAdmin(admin.ModelAdmin):
+    """Admin class for the ApiToken model."""
+
+    list_display = ('key', 'user', 'created')
+    fields = ('key', 'user', 'created')
 
 
 class RuleSetInline(admin.TabularInline):
@@ -239,3 +246,5 @@ admin.site.unregister(User)
 admin.site.register(User, InvenTreeUserAdmin)
 
 admin.site.register(Owner, OwnerAdmin)
+
+admin.site.register(ApiToken, ApiTokenAdmin)

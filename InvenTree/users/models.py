@@ -1,5 +1,6 @@
 """Database model definitions for the 'users' app"""
 
+import datetime
 import logging
 
 from django.contrib.auth import get_user_model
@@ -15,9 +16,47 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from rest_framework.authtoken.models import Token as AuthToken
+
 from InvenTree.ready import canAppAccessDatabase
 
 logger = logging.getLogger("inventree")
+
+
+class ApiToken(AuthToken):
+    """Extends the default token model provided by djangorestframework.authtoken, as follows:
+
+    - Adds an 'expiry' date - tokens can be set to expire after a certain date
+    - Adds a 'name' field - tokens can be given a custom name (in addition to the user information)
+    """
+
+    class Meta:
+        """Metaclass defines model properties"""
+        verbose_name = _('API Token')
+        verbose_name_plural = _('API Tokens')
+        abstract = False
+        unique_together = [
+            ('user', 'name')
+        ]
+
+    name = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_('Token Name'),
+        help_text=_('Custom token name'),
+    )
+
+    expiry = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Expiry Date'),
+        help_text=_('Token expiry date'),
+        auto_now=False, auto_now_add=False,
+    )
+
+    @property
+    def expired(self):
+        """Test if this token has expired"""
+        return self.expiry is not None and self.expiry < datetime.datetime.now().date()
 
 
 class RuleSet(models.Model):
