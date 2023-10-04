@@ -136,7 +136,9 @@ class LabelTest(InvenTreeAPITestCase):
         # Print via the API (Note: will default to the builtin plugin if no plugin supplied)
         url = reverse('api-part-label-print', kwargs={'pk': label.pk})
 
-        part_pk = Part.objects.first().pk
+        prt = Part.objects.first()
+        part_pk = prt.pk
+        part_name = prt.name
 
         response = self.get(f'{url}?parts={part_pk}', expected_code=200)
         data = json.loads(response.content)
@@ -150,9 +152,9 @@ class LabelTest(InvenTreeAPITestCase):
             content = f.read()
 
         # Test that each element has been rendered correctly
-        self.assertIn("part: 1 - M2x4 LPHS", content)
+        self.assertIn(f"part: {part_pk} - {part_name}", content)
         self.assertIn(f'data: {{"part": {part_pk}}}', content)
-        self.assertIn("http://testserver/part/1/", content)
+        self.assertIn(f'http://testserver/part/{part_pk}/', content)
         self.assertIn("img/blank_image.png", content)
         self.assertIn("img/inventree.png", content)
 

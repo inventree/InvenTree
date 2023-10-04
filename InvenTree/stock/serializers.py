@@ -145,6 +145,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'link',
             'location',
             'location_detail',
+            'location_path',
             'notes',
             'owner',
             'packaging',
@@ -203,6 +204,12 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         many=False, allow_null=False,
         help_text=_("Base Part"),
         label=_("Part"),
+    )
+
+    location_path = serializers.ListField(
+        child=serializers.DictField(),
+        source='location.get_path',
+        read_only=True,
     )
 
     """
@@ -329,6 +336,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         location_detail = kwargs.pop('location_detail', False)
         supplier_part_detail = kwargs.pop('supplier_part_detail', False)
         tests = kwargs.pop('tests', False)
+        path_detail = kwargs.pop('path_detail', False)
 
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
@@ -343,6 +351,9 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
         if not tests:
             self.fields.pop('tests')
+
+        if not path_detail:
+            self.fields.pop('location_path')
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
@@ -589,6 +600,21 @@ class ConvertStockItemSerializer(serializers.Serializer):
 
         return part
 
+    def validate(self, data):
+        """Ensure that the stock item is valid for conversion:
+
+        - If a SupplierPart is assigned, we cannot convert!
+        """
+
+        data = super().validate(data)
+
+        stock_item = self.context['item']
+
+        if stock_item.supplier_part is not None:
+            raise ValidationError(_("Cannot convert stock item with assigned SupplierPart"))
+
+        return data
+
     def save(self):
         """Save the serializer to convert the StockItem to the selected Part"""
         data = self.validated_data
@@ -768,6 +794,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'description',
             'parent',
             'pathstring',
+            'path',
             'items',
             'owner',
             'icon',
@@ -780,6 +807,16 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         read_only_fields = [
             'barcode_hash',
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Optionally add or remove extra fields"""
+
+        path_detail = kwargs.pop('path_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not path_detail:
+            self.fields.pop('path')
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -799,6 +836,12 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     level = serializers.IntegerField(read_only=True)
 
     tags = TagListSerializerField(required=False)
+
+    path = serializers.ListField(
+        child=serializers.DictField(),
+        source='get_path',
+        read_only=True,
+    )
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
@@ -1138,9 +1181,16 @@ class StockMergeSerializer(serializers.Serializer):
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjument request.
 
-    Fields:
+    Required Fields:
         - item: StockItem object
         - quantity: Numerical quantity
+
+    Optional Fields (may be used by external tools)
+        - status: Change StockItem status code
+        - packaging: Change StockItem packaging
+        - batch: Change StockItem batch code
+
+    The optional fields can be used to adjust values for individual stock items
     """
 
     class Meta:
@@ -1165,6 +1215,28 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         decimal_places=5,
         min_value=0,
         required=True
+    )
+
+    batch = serializers.CharField(
+        max_length=100,
+        required=False, allow_blank=True,
+        label=_('Batch Code'),
+        help_text=_('Batch code for this stock item'),
+    )
+
+    status = serializers.ChoiceField(
+        choices=InvenTree.status_codes.StockStatus.items(),
+        default=InvenTree.status_codes.StockStatus.OK.value,
+        label=_('Status'),
+        help_text=_('Stock item status code'),
+        required=False, allow_blank=True,
+    )
+
+    packaging = serializers.CharField(
+        max_length=50,
+        required=False, allow_blank=True,
+        label=_('Packaging'),
+        help_text=_('Packaging this stock item is stored in'),
     )
 
 
@@ -1304,12 +1376,21 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         with transaction.atomic():
             for item in items:
 
+                # Required fields
                 stock_item = item['pk']
                 quantity = item['quantity']
+
+                # Optional fields
+                kwargs = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_name in item:
+                        kwargs[field_name] = item[field_name]
 
                 stock_item.move(
                     location,
                     notes,
                     request.user,
-                    quantity=quantity
+                    quantity=quantity,
+                    **kwargs
                 )

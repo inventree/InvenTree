@@ -719,14 +719,22 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                         if items.exists() and items.count() == 1:
                             stock_item = items[0]
 
-                            # Allocate the stock item
-                            BuildItem.objects.create(
-                                build=self,
-                                bom_item=bom_item,
-                                stock_item=stock_item,
-                                quantity=1,
-                                install_into=output,
-                            )
+                            # Find the 'BuildLine' object which points to this BomItem
+                            try:
+                                build_line = BuildLine.objects.get(
+                                    build=self,
+                                    bom_item=bom_item
+                                )
+
+                                # Allocate the stock items against the BuildLine
+                                BuildItem.objects.create(
+                                    build_line=build_line,
+                                    stock_item=stock_item,
+                                    quantity=1,
+                                    install_into=output,
+                                )
+                            except BuildLine.DoesNotExist:
+                                pass
 
         else:
             """Create a single build output of the given quantity."""
@@ -1156,13 +1164,13 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         bom_items = self.part.get_bom_items()
 
-        logger.info(f"Creating BuildLine objects for BuildOrder {self.pk} ({len(bom_items)} items))")
+        logger.info("Creating BuildLine objects for BuildOrder %s (%s items)", self.pk, len(bom_items))
 
         # Iterate through each part required to build the parent part
         for bom_item in bom_items:
             if prevent_duplicates:
                 if BuildLine.objects.filter(build=self, bom_item=bom_item).exists():
-                    logger.info(f"BuildLine already exists for BuildOrder {self.pk} and BomItem {bom_item.pk}")
+                    logger.info("BuildLine already exists for BuildOrder %s and BomItem %s", self.pk, bom_item.pk)
                     continue
 
             # Calculate required quantity
@@ -1178,7 +1186,8 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         BuildLine.objects.bulk_create(lines)
 
-        logger.info(f"Created {len(lines)} BuildLine objects for BuildOrder")
+        if len(lines) > 0:
+            logger.info("Created %s BuildLine objects for BuildOrder", len(lines))
 
     @transaction.atomic
     def update_build_line_items(self):
@@ -1192,7 +1201,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
 
         BuildLine.objects.bulk_update(lines_to_update, ['quantity'])
 
-        logger.info(f"Updated {len(lines_to_update)} BuildLine objects for BuildOrder")
+        logger.info("Updated %s BuildLine objects for BuildOrder", len(lines_to_update))
 
 
 @receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')

@@ -1716,7 +1716,7 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertIn('Shipment is not associated with this order', str(response.data['shipment']))
 
     def test_allocate(self):
-        """Test the the allocation endpoint acts as expected, when provided with valid data!"""
+        """Test that the allocation endpoint acts as expected, when provided with valid data!"""
         # First, check that there are no line items allocated against this SalesOrder
         self.assertEqual(self.order.stock_allocations.count(), 0)
 
@@ -1744,6 +1744,43 @@ class SalesOrderAllocateTest(OrderTest):
 
         for line in self.order.lines.all():
             self.assertEqual(line.allocations.count(), 1)
+
+    def test_allocate_variant(self):
+        """Test that the allocation endpoint acts as expected, when provided with variant"""
+        # First, check that there are no line items allocated against this SalesOrder
+        self.assertEqual(self.order.stock_allocations.count(), 0)
+
+        data = {
+            "items": [],
+            "shipment": self.shipment.pk,
+        }
+
+        def check_template(line_item):
+            return line_item.part.is_template
+
+        for line in filter(check_template, self.order.lines.all()):
+
+            stock_item = None
+
+            # Allocate a matching variant
+            parts = Part.objects.filter(salable=True).filter(variant_of=line.part.pk)
+            for part in parts:
+                stock_item = part.stock_items.last()
+                break
+
+            # Fully-allocate each line
+            data['items'].append({
+                "line_item": line.pk,
+                "stock_item": stock_item.pk,
+                "quantity": 5
+            })
+
+        self.post(self.url, data, expected_code=201)
+
+        # At least one item should be allocated, and all should be variants
+        self.assertGreater(self.order.stock_allocations.count(), 0)
+        for allocation in self.order.stock_allocations.all():
+            self.assertNotEquals(allocation.item.part.pk, allocation.line.part.pk)
 
     def test_shipment_complete(self):
         """Test that we can complete a shipment via the API."""

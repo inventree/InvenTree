@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.forms import SignupForm, set_form_field_order
+from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
@@ -161,11 +161,30 @@ class SetPasswordForm(HelperForm):
     old_password = forms.CharField(
         label=_("Old password"),
         strip=False,
+        required=False,
         widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'autofocus': True}),
     )
 
 
 # override allauth
+class CustomLoginForm(LoginForm):
+    """Custom login form to override default allauth behaviour"""
+
+    def login(self, request, redirect_url=None):
+        """Perform login action.
+
+        First check that:
+        - A valid user has been supplied
+        """
+
+        if not self.user:
+            # No user supplied - redirect to the login page
+            return HttpResponseRedirect(reverse('account_login'))
+
+        # Now perform default login action
+        return super().login(request, redirect_url)
+
+
 class CustomSignupForm(SignupForm):
     """Override to use dynamic settings."""
 
@@ -233,7 +252,7 @@ class RegistratonMixin:
 
         split_email = email.split('@')
         if len(split_email) != 2:
-            logger.error(f'The user {email} has an invalid email address')
+            logger.error('The user %s has an invalid email address', email)
             raise forms.ValidationError(_('The provided primary email address is not valid.'))
 
         mailoptions = mail_restriction.split(',')
@@ -245,7 +264,7 @@ class RegistratonMixin:
                 if split_email[1] == option[1:]:
                     return super().clean_email(email)
 
-        logger.info(f'The provided email domain for {email} is not approved')
+        logger.info('The provided email domain for %s is not approved', email)
         raise forms.ValidationError(_('The provided email domain is not approved.'))
 
     def save_user(self, request, user, form, commit=True):
@@ -260,7 +279,7 @@ class RegistratonMixin:
                 group = Group.objects.get(id=start_group)
                 user.groups.add(group)
             except Group.DoesNotExist:
-                logger.error('The setting `SIGNUP_GROUP` contains an non existent group', start_group)
+                logger.exception('The setting `SIGNUP_GROUP` contains an non existent group', start_group)
         user.save()
         return user
 
@@ -291,6 +310,15 @@ class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, Default
             return result
 
         return False
+
+    def get_email_confirmation_url(self, request, emailconfirmation):
+        """Construct the email confirmation url"""
+
+        from InvenTree.helpers_model import construct_absolute_url
+
+        url = super().get_email_confirmation_url(request, emailconfirmation)
+        url = construct_absolute_url(url)
+        return url
 
 
 class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter):

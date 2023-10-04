@@ -440,7 +440,8 @@ class InvenTreeAttachment(models.Model):
     An attachment can be either an uploaded file, or an external URL
 
     Attributes:
-        attachment: File
+        attachment: Upload file
+        link: External URL
         comment: String descriptor for the attachment
         user: User associated with file upload
         upload_date: Date the file was uploaded
@@ -534,7 +535,7 @@ class InvenTreeAttachment(models.Model):
 
         # Check that there are no directory tricks going on...
         if new_file.parent != attachment_dir:
-            logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
+            logger.error("Attempted to rename attachment outside valid directory: '%s'", new_file)
             raise ValidationError(_("Invalid attachment directory"))
 
         # Ignore further checks if the filename is not actually being renamed
@@ -551,7 +552,7 @@ class InvenTreeAttachment(models.Model):
             raise ValidationError(_("Filename missing extension"))
 
         if not old_file.exists():
-            logger.error(f"Trying to rename attachment '{old_file}' which does not exist")
+            logger.error("Trying to rename attachment '%s' which does not exist", old_file)
             return
 
         if new_file.exists():
@@ -563,6 +564,22 @@ class InvenTreeAttachment(models.Model):
             self.save()
         except Exception:
             raise ValidationError(_("Error renaming file"))
+
+    def fully_qualified_url(self):
+        """Return a 'fully qualified' URL for this attachment.
+
+        - If the attachment is a link to an external resource, return the link
+        - If the attachment is an uploaded file, return the fully qualified media URL
+        """
+
+        if self.link:
+            return self.link
+
+        if self.attachment:
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
+
+        return ''
 
 
 class InvenTreeTree(MPTTModel):
@@ -742,6 +759,24 @@ class InvenTreeTree(MPTTModel):
         """
         return self.parentpath + [self]
 
+    def get_path(self):
+        """Return a list of element in the item tree.
+
+        Contains the full path to this item, with each entry containing the following data:
+
+        {
+            pk: <pk>,
+            name: <name>,
+        }
+        """
+
+        return [
+            {
+                'pk': item.pk,
+                'name': item.name
+            } for item in self.path
+        ]
+
     def __str__(self):
         """String representation of a category is the full path to that category."""
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
@@ -887,6 +922,7 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
     if created:
         try:
+            import common.models
             import common.notifications
 
             users = get_user_model().objects.filter(is_staff=True)
@@ -902,14 +938,21 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                 'link': link
             }
 
-            common.notifications.trigger_notification(
-                instance,
-                'inventree.error_log',
-                context=context,
-                targets=users,
-                delivery_methods={common.notifications.UIMessageNotification, },
-            )
+            target_users = []
+
+            for user in users:
+                if common.models.InvenTreeUserSetting.get_setting('NOTIFICATION_ERROR_REPORT', True, user=user):
+                    target_users.append(user)
+
+            if len(target_users) > 0:
+                common.notifications.trigger_notification(
+                    instance,
+                    'inventree.error_log',
+                    context=context,
+                    targets=users,
+                    delivery_methods={common.notifications.UIMessageNotification, },
+                )
 
         except Exception as exc:
             """We do not want to throw an exception while reporting an exception"""
-            logger.error(exc)
+            logger.error(exc)  # noqa: LOG005

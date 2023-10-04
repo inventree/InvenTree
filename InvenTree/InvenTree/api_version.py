@@ -2,10 +2,26 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 130
+INVENTREE_API_VERSION = 135
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v135 -> 2023-09-19 : https://github.com/inventree/InvenTree/pull/5569
+    - Adds location path detail to StockLocation and StockItem API endpoints
+    - Adds category path detail to PartCategory and Part API endpoints
+
+v134 -> 2023-09-11 : https://github.com/inventree/InvenTree/pull/5525
+    - Allow "Attachment" list endpoints to be searched by attachment, link and comment fields
+
+v133 -> 2023-09-08 : https://github.com/inventree/InvenTree/pull/5518
+    - Add extra optional fields which can be used for StockAdjustment endpoints
+
+v132 -> 2023-09-07 : https://github.com/inventree/InvenTree/pull/5515
+    - Add 'issued_by' filter to BuildOrder API list endpoint
+
+v131 -> 2023-08-09 : https://github.com/inventree/InvenTree/pull/5415
+    - Annotate 'available_variant_stock' to the SalesOrderLine serializer
 
 v130 -> 2023-07-14 : https://github.com/inventree/InvenTree/pull/5251
     - Refactor label printing interface

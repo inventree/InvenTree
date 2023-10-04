@@ -103,6 +103,12 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         # Save plugin
         self.plugin: InvenTreePlugin = plugin
 
+    def __getstate__(self):
+        """Customize pickling behavior."""
+        state = super().__getstate__()
+        state.pop("plugin", None)  # plugin cannot be pickled in some circumstances when used with drf views, remove it (#5408)
+        return state
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
         reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
@@ -114,13 +120,22 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             self.active = True
 
         if not reload:
-            if (self.active is False and self.__org_active is True) or \
-               (self.active is True and self.__org_active is False):
+            if self.active != self.__org_active:
                 if settings.PLUGIN_TESTING:
                     warnings.warn('A reload was triggered', stacklevel=2)
                 registry.reload_plugins()
 
         return ret
+
+    @admin.display(boolean=True, description=_('Installed'))
+    def is_installed(self) -> bool:
+        """Simple check to determine if this plugin is installed.
+
+        A plugin might not be installed if it has been removed from the system,
+        but the PluginConfig associated with it still exists.
+        """
+
+        return self.plugin is not None
 
     @admin.display(boolean=True, description=_('Sample plugin'))
     def is_sample(self) -> bool:

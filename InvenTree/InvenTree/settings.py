@@ -109,6 +109,14 @@ LOGGING = {
     },
 }
 
+# Optionally add database-level logging
+if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):
+    LOGGING['loggers'] = {
+        'django.db.backends': {
+            'level': log_level or 'DEBUG',
+        },
+    }
+
 # Get a logger instance for this setup file
 logger = logging.getLogger("inventree")
 
@@ -199,13 +207,13 @@ INSTALLED_APPS = [
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
+    'plugin.apps.PluginAppConfig',          # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
     'label.apps.LabelConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
-    'plugin.apps.PluginAppConfig',
     'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
@@ -446,7 +454,7 @@ for key in db_keys:
             try:
                 env_var = int(env_var)
             except ValueError:
-                logger.error(f"Invalid number for {env_key}: {env_var}")
+                logger.exception("Invalid number for %s: %s", env_key, env_var)
         # Override configuration value
         db_config[key] = env_var
 
@@ -487,9 +495,9 @@ if 'sqlite' in db_engine:
     db_name = str(Path(db_name).resolve())
     db_config['NAME'] = db_name
 
-logger.info(f"DB_ENGINE: {db_engine}")
-logger.info(f"DB_NAME: {db_name}")
-logger.info(f"DB_HOST: {db_host}")
+logger.info("DB_ENGINE: %s", db_engine)
+logger.info("DB_NAME: %s", db_name)
+logger.info("DB_HOST: %s", db_host)
 
 """
 In addition to base-level database configuration, we may wish to specify specific options to the database backend
@@ -605,10 +613,6 @@ DATABASES = {
 # login settings
 REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
-
-# Magic login django-sesame
-SESAME_MAX_AGE = 300
-LOGIN_REDIRECT_URL = "/platform/logged-in/"
 
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
@@ -746,6 +750,8 @@ LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
 LANGUAGE_COOKIE_AGE = 2592000
 
 # If a new language translation is supported, it must be added here
+# After adding a new language, run the following command:
+# python manage.py makemessages -l <language_code> -e html,js,py --nowrap
 LANGUAGES = [
     ('cs', _('Czech')),
     ('da', _('Danish')),
@@ -758,6 +764,7 @@ LANGUAGES = [
     ('fi', _('Finnish')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
+    ('hi', _('Hindi')),
     ('hu', _('Hungarian')),
     ('it', _('Italian')),
     ('ja', _('Japanese')),
@@ -814,7 +821,7 @@ CURRENCY_DECIMAL_PLACES = 6
 # Check that each provided currency is supported
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:  # pragma: no cover
-        logger.error(f"Currency code '{currency}' is not supported")
+        logger.error("Currency code '%s' is not supported", currency)
         sys.exit(1)
 
 # Custom currency exchange backend
@@ -887,7 +894,7 @@ REMOVE_SUCCESS_URL = 'settings'
 
 # override forms / adapters
 ACCOUNT_FORMS = {
-    'login': 'allauth.account.forms.LoginForm',
+    'login': 'InvenTree.forms.CustomLoginForm',
     'signup': 'InvenTree.forms.CustomSignupForm',
     'add_email': 'allauth.account.forms.AddEmailForm',
     'change_password': 'allauth.account.forms.ChangePasswordForm',
@@ -964,7 +971,7 @@ PLUGIN_FILE_CHECKED = False                                                     
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
 if SITE_URL:
-    logger.info(f"Site URL: {SITE_URL}")
+    logger.info("Site URL: %s", SITE_URL)
 
     # Check that the site URL is valid
     validator = URLValidator()
@@ -975,11 +982,16 @@ CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom
 CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
 
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
+
+# Frontend settings
+PUI_URL_BASE = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', 'platform')
+PUI_SETTINGS = get_setting("INVENTREE_PUI_SETTINGS", "pui_settings", {})
+
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 
-logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
+logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
 
 # Flags
 FLAGS = {
@@ -996,7 +1008,12 @@ FLAGS = {
 CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
 if CUSTOM_FLAGS:
     if not isinstance(CUSTOM_FLAGS, dict):
-        logger.error(f"Invalid custom flags, must be valid dict: {CUSTOM_FLAGS}")
+        logger.error("Invalid custom flags, must be valid dict: %s", str(CUSTOM_FLAGS))
     else:
-        logger.info(f"Custom flags: {CUSTOM_FLAGS}")
+        logger.info("Custom flags: %s", str(CUSTOM_FLAGS))
         FLAGS.update(CUSTOM_FLAGS)
+
+# Magic login django-sesame
+SESAME_MAX_AGE = 300
+# LOGIN_REDIRECT_URL = f"/{PUI_URL_BASE}/logged-in/"
+LOGIN_REDIRECT_URL = "/index/"

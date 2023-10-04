@@ -53,6 +53,7 @@ The following basic options are available:
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | True |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
+| INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
 | ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
@@ -234,9 +235,9 @@ InvenTree provides allowance for additional sign-in options. The following optio
 
 ### Single Sign On
 
-SSO backends for all required authentication providers need to be added to the config file as a list under the key `social_backends`. The correct backend-name can be found in django-allauths [configuration documentation](https://django-allauth.readthedocs.io/en/latest/installation.html#django).
+SSO backends for all required authentication providers need to be added to the config file as a list under the key `social_backends`. The correct backend-name can be found in django-allauths [configuration documentation](https://django-allauth.readthedocs.io/en/latest/installation/quickstart.html).
 
-If the selected providers need additional settings they must be added as dicts under the key `social_providers`. The correct settings can be found in the django-allauths [provider documentation](https://django-allauth.readthedocs.io/en/latest/providers.html).
+If the selected providers need additional settings they must be added as dicts under the key `social_providers`. The correct settings can be found in the django-allauths [provider documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html).
 
 !!! warning "You are not done"
     SSO still needs credentials for all providers and has to be enabled in the [global settings](../settings/global.md)!

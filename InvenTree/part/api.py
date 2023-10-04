@@ -190,6 +190,18 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
 class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
 
+    def get_serializer(self, *args, **kwargs):
+        """Add additional context based on query parameters"""
+
+        try:
+            params = self.request.query_params
+
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        except AttributeError:
+            pass
+
+        return self.serializer_class(*args, **kwargs)
+
     def update(self, request, *args, **kwargs):
         """Perform 'update' function and mark this part as 'starred' (or not)"""
         # Clean up input data
@@ -325,10 +337,6 @@ class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
 
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
 
     filterset_fields = [
         'part',
@@ -1032,6 +1040,7 @@ class PartMixin:
 
             kwargs['parameters'] = str2bool(params.get('parameters', None))
             kwargs['category_detail'] = str2bool(params.get('category_detail', False))
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
 
         except AttributeError:
             pass
@@ -1878,7 +1887,7 @@ class BomItemValidate(UpdateAPI):
         serializer = self.get_serializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        if type(instance) == BomItem:
+        if isinstance(instance, BomItem):
             instance.validate_hash(valid)
 
         return Response(serializer.data)

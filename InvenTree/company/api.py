@@ -4,7 +4,6 @@ from django.db.models import Q
 from django.urls import include, path, re_path
 
 from django_filters import rest_framework as rest_filters
-from django_filters.rest_framework import DjangoFilterBackend
 
 import part.models
 from InvenTree.api import (AttachmentMixin, ListCreateDestroyAPIView,
@@ -88,10 +87,6 @@ class CompanyAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
 
     queryset = CompanyAttachment.objects.all()
     serializer_class = CompanyAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
 
     filterset_fields = [
         'company',
@@ -245,10 +240,6 @@ class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
 
     queryset = ManufacturerPartAttachment.objects.all()
     serializer_class = ManufacturerPartAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
 
     filterset_fields = [
         'manufacturer_part',

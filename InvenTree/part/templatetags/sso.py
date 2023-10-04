@@ -38,9 +38,13 @@ def sso_check_provider(provider):
     from allauth.socialaccount.models import SocialApp
 
     # First, check that the provider is enabled
-    apps = SocialApp.objects.filter(provider__iexact=provider.name)
+    apps = SocialApp.objects.filter(provider__iexact=provider.id)
 
     if not apps.exists():
+        logging.error(
+            "SSO SocialApp %s does not exist (known providers: %s)",
+            provider.id, [obj.provider for obj in SocialApp.objects.all()]
+        )
         return False
 
     # Next, check that the provider is correctly configured
@@ -49,7 +53,7 @@ def sso_check_provider(provider):
     if allauth.app_settings.SITES_ENABLED:
         # At least one matching site must be specified
         if not app.sites.exists():
-            logger.error(f"SocialApp {app} has no sites configured")
+            logger.error("SocialApp %s has no sites configured", app)
             return False
 
     # At this point, we assume that the provider is correctly configured

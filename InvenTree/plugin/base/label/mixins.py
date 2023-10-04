@@ -116,6 +116,8 @@ class LabelPrintingMixin:
                 self.print_label(**print_args)
             else:
                 # Non-blocking print job
+
+                # Offload the print job to a background worker
                 self.offload_label(**print_args)
 
         # Return a JSON response to the user
@@ -150,6 +152,9 @@ class LabelPrintingMixin:
 
         Offloads a call to the 'print_label' method (of this plugin) to a background worker.
         """
+
+        # Exclude the 'pdf_file' object - cannot be pickled
+        kwargs.pop('pdf_file', None)
 
         offload_task(
             plugin_label.print_label,

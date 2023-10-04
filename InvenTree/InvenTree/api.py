@@ -59,14 +59,39 @@ class NotFoundView(AjaxView):
 
     permission_classes = [permissions.AllowAny]
 
-    def get(self, request, *args, **kwargs):
-        """Process an `not found` event on the API."""
-        data = {
-            'details': _('API endpoint not found'),
-            'url': request.build_absolute_uri(),
-        }
+    def not_found(self, request):
+        """Return a 404 error"""
+        return JsonResponse(
+            {
+                'detail': _('API endpoint not found'),
+                'url': request.build_absolute_uri(),
+            },
+            status=404
+        )
 
-        return JsonResponse(data, status=404)
+    def options(self, request, *args, **kwargs):
+        """Return 404"""
+        return self.not_found(request)
+
+    def get(self, request, *args, **kwargs):
+        """Return 404"""
+        return self.not_found(request)
+
+    def post(self, request, *args, **kwargs):
+        """Return 404"""
+        return self.not_found(request)
+
+    def patch(self, request, *args, **kwargs):
+        """Return 404"""
+        return self.not_found(request)
+
+    def put(self, request, *args, **kwargs):
+        """Return 404"""
+        return self.not_found(request)
+
+    def delete(self, request, *args, **kwargs):
+        """Return 404"""
+        return self.not_found(request)
 
 
 class BulkDeleteMixin:
@@ -203,6 +228,12 @@ class AttachmentMixin:
 
     filter_backends = SEARCH_ORDER_FILTER
 
+    search_fields = [
+        'attachment',
+        'comment',
+        'link',
+    ]
+
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
         attachment = serializer.save()
@@ -261,6 +292,11 @@ class APISearchView(APIView):
             'limit': 1,
             'offset': 0,
         }
+
+        if 'search' not in data:
+            raise ValidationError({
+                'search': 'Search term must be provided',
+            })
 
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested

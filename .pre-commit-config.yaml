@@ -3,7 +3,8 @@
 exclude: |
     (?x)^(
         InvenTree/InvenTree/static/.*|
-        InvenTree/locale/.*
+        InvenTree/locale/.*|
+        src/frontend/src/locales/.*
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
@@ -23,7 +24,8 @@ repos:
                 'flake8-docstrings',
                 'flake8-string-format',
                 'flake8-tidy-imports',
-                'pep8-naming'
+                'pep8-naming',
+                'flake8-logging'
         ]
 -   repo: https://github.com/pycqa/isort
     rev: '5.12.0'
