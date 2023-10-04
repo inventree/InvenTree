@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
 from django.db.models import F
@@ -142,7 +143,7 @@ class BarcodeMixin:
     def receive_purchase_order_item(
             supplier_part: SupplierPart,
             user: User,
-            quantity: int | str = None,
+            quantity: Decimal | str = None,
             order_number: str = None,
             purchase_order: PurchaseOrder = None,
             location: StockLocation = None,
@@ -177,10 +178,10 @@ class BarcodeMixin:
             elif not (purchase_order := purchase_orders.first()):
                 return {"error": _(f"Failed to find placed purchase order for '{order_number}'")}
 
-        if quantity and not isinstance(quantity, int):
+        if quantity:
             try:
-                quantity = int(quantity)
-            except ValueError:
+                quantity = Decimal(quantity)
+            except InvalidOperation:
                 logger.warning("Failed to parse quantity '%s'", quantity)
                 quantity = None
 
