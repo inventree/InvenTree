@@ -1053,6 +1053,22 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'after_save': update_exchange_rates,
         },
 
+        'CURRENCY_UPDATE_INTERVAL': {
+            'name': _('Currency Update Interval'),
+            'description': _('How often to update exchange rates (set to zero to disable)'),
+            'default': 1,
+            'units': _('days'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+        },
+
+        'CURRENCY_UPDATE_PLUGIN': {
+            'name': _('Currency Update Plugin'),
+            'description': _('Currency update plugin to use'),
+        },
+
         'INVENTREE_DOWNLOAD_FROM_URL': {
             'name': _('Download from URL'),
             'description': _('Allow download of remote images and files from external URL'),
