@@ -6,6 +6,7 @@ from plugin.base.action.mixins import ActionMixin
 from plugin.base.barcodes.mixins import BarcodeMixin
 from plugin.base.event.mixins import EventMixin
 from plugin.base.integration.AppMixin import AppMixin
+from plugin.base.integration.CurrencyExchangeMixin import CurrencyExchangeMixin
 from plugin.base.integration.mixins import (APICallMixin, NavigationMixin,
                                             PanelMixin, SettingsContentMixin,
                                             ValidationMixin)
@@ -19,6 +20,7 @@ from plugin.base.locate.mixins import LocateMixin
 __all__ = [
     'APICallMixin',
     'AppMixin',
+    'CurrencyExchangeMixin',
     'EventMixin',
     'LabelPrintingMixin',
     'NavigationMixin',
