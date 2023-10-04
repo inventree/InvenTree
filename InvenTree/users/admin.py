@@ -17,8 +17,8 @@ User = get_user_model()
 class ApiTokenAdmin(admin.ModelAdmin):
     """Admin class for the ApiToken model."""
 
-    list_display = ('key', 'user', 'created')
-    fields = ('user', 'name', 'expiry')
+    list_display = ('key', 'user', 'name', 'expiry', 'active')
+    fields = ('user', 'name', 'revoked', 'expiry')
     readonly_fields = ('key', 'created')
 
 

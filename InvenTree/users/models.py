@@ -3,6 +3,7 @@
 import datetime
 import logging
 
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -53,10 +54,23 @@ class ApiToken(AuthToken):
         auto_now=False, auto_now_add=False,
     )
 
+    revoked = models.BooleanField(
+        default=False,
+        verbose_name=_('Revoked'),
+        help_text=_('Token has been revoked'),
+    )
+
     @property
+    @admin.display(boolean=True, description=_('Expired'))
     def expired(self):
         """Test if this token has expired"""
         return self.expiry is not None and self.expiry < datetime.datetime.now().date()
+
+    @property
+    @admin.display(boolean=True, description=_('Active'))
+    def active(self):
+        """Test if this token is active"""
+        return not self.revoked and not self.expired
 
 
 class RuleSet(models.Model):
