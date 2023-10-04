@@ -484,7 +484,7 @@ class PluginsRegistry:
                     t_start = time.time()
                     plg_i: InvenTreePlugin = plg()
                     dt = time.time() - t_start
-                    logger.info('Loaded plugin `%s` in %.3fs', plg_name, dt)
+                    logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
                 except Exception as error:
                     handle_error(error, log_name='init')  # log error and raise it -> disable plugin
                     logger.warning("Plugin `%s` could not be loaded", plg_name)
@@ -554,7 +554,7 @@ class PluginsRegistry:
             if hasattr(mixin, '_deactivate_mixin'):
                 mixin._deactivate_mixin(self, force_reload=force_reload)
 
-        logger.info('Done deactivating')
+        logger.debug('Finished deactivating plugins')
     # endregion
 
     # region mixin specific loading ...
