@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-03 08:45+0000\n"
-"PO-Revision-Date: 2023-10-03 11:11\n"
+"POT-Creation-Date: 2023-10-04 06:30+0000\n"
+"PO-Revision-Date: 2023-10-04 11:18\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -25,25 +25,18 @@ msgstr "API eindpunt niet gevonden"
 msgid "User does not have permission to view this model"
 msgstr "Gebruiker heeft geen rechten om dit model te bekijken"
 
-#: InvenTree/conversion.py:93
+#: InvenTree/conversion.py:96
 msgid "No value provided"
 msgstr "Geen waarde opgegeven"
 
-#: InvenTree/conversion.py:115
-msgid "Provided value is not a valid number"
-msgstr "Opgegeven waarde is geen geldig nummer"
+#: InvenTree/conversion.py:129
+#, python-brace-format
+msgid "Could not convert {original} to {unit}"
+msgstr ""
 
-#: InvenTree/conversion.py:117
-msgid "Provided value has an invalid unit"
-msgstr "De opgegeven waarde heeft een ongeldige eenheid"
-
-#: InvenTree/conversion.py:122
-msgid "Provided value could not be converted to the specified unit"
-msgstr "De opgegeven waarde kon niet geconverteerd worden naar de opgegeven eenheid"
-
-#: InvenTree/conversion.py:127
-msgid "Error"
-msgstr "Fout"
+#: InvenTree/conversion.py:131
+msgid "Invalid quantity supplied"
+msgstr ""
 
 #: InvenTree/exceptions.py:90
 msgid "Error details can be found in the admin panel"
@@ -965,7 +958,7 @@ msgid "Build Order Reference"
 msgstr "Productieorderreferentie"
 
 #: build/models.py:160 order/models.py:372 order/models.py:778
-#: order/models.py:1100 order/models.py:1737 part/admin.py:278
+#: order/models.py:1100 order/models.py:1739 part/admin.py:278
 #: part/models.py:3881 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
@@ -1123,7 +1116,7 @@ msgstr "Verwachte opleveringsdatum"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Doeldatum voor productie voltooiing. Productie zal achterstallig zijn na deze datum."
 
-#: build/models.py:265 order/models.py:422 order/models.py:1780
+#: build/models.py:265 order/models.py:422 order/models.py:1782
 #: templates/js/translated/build.js:2217
 msgid "Completion Date"
 msgstr "Opleveringsdatum"
@@ -1232,7 +1225,7 @@ msgstr "Bouw object"
 #: build/models.py:1288 build/models.py:1548 build/serializers.py:206
 #: build/serializers.py:244 build/templates/build/build_base.html:103
 #: build/templates/build/detail.html:34 common/models.py:2251
-#: order/models.py:1086 order/models.py:1658 order/serializers.py:1261
+#: order/models.py:1086 order/models.py:1660 order/serializers.py:1261
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:277
 #: part/forms.py:47 part/models.py:3053 part/models.py:3862
 #: part/templates/part/part_pricing.html:16
@@ -1289,11 +1282,11 @@ msgstr "Productieartikel moet een productieuitvoer specificeren, omdat het hoofd
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Toegewezen hoeveelheid ({q}) mag de beschikbare voorraad ({a}) niet overschrijden"
 
-#: build/models.py:1390 order/models.py:1614
+#: build/models.py:1390 order/models.py:1616
 msgid "Stock item is over-allocated"
 msgstr "Voorraad item is te veel toegewezen"
 
-#: build/models.py:1396 order/models.py:1617
+#: build/models.py:1396 order/models.py:1619
 msgid "Allocation quantity must be greater than zero"
 msgstr "Toewijzing hoeveelheid moet groter zijn dan nul"
 
@@ -1439,7 +1432,7 @@ msgstr "Locatie van voltooide productieuitvoeren"
 
 #: build/serializers.py:503 build/templates/build/build_base.html:152
 #: build/templates/build/detail.html:62 order/models.py:804
-#: order/models.py:1763 order/serializers.py:530 stock/admin.py:106
+#: order/models.py:1765 order/serializers.py:530 stock/admin.py:106
 #: stock/serializers.py:703 stock/serializers.py:1230
 #: stock/templates/stock/item_base.html:428
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2161
@@ -3330,7 +3323,7 @@ msgid "Price break quantity"
 msgstr ""
 
 #: common/models.py:2259 company/serializers.py:488 order/admin.py:43
-#: order/models.py:1145 order/models.py:1952
+#: order/models.py:1145 order/models.py:1954
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1864
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:734
@@ -3987,7 +3980,7 @@ msgid "Delete image"
 msgstr ""
 
 #: company/templates/company/company_base.html:87 order/models.py:792
-#: order/models.py:1751 order/templates/order/return_order_base.html:132
+#: order/models.py:1753 order/templates/order/return_order_base.html:132
 #: order/templates/order/sales_order_base.html:145 stock/models.py:720
 #: stock/models.py:721 stock/serializers.py:985
 #: stock/templates/stock/item_base.html:406
@@ -4480,7 +4473,7 @@ msgstr ""
 msgid "Purchase Order"
 msgstr "Inkooporder"
 
-#: order/api.py:1444 order/models.py:1922 order/models.py:1968
+#: order/api.py:1444 order/models.py:1924 order/models.py:1970
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4566,15 +4559,15 @@ msgstr "Order referentiecode van leverancier"
 msgid "received by"
 msgstr "ontvangen door"
 
-#: order/models.py:416 order/models.py:1774
+#: order/models.py:416 order/models.py:1776
 msgid "Issue Date"
 msgstr "Datum van uitgifte"
 
-#: order/models.py:417 order/models.py:1775
+#: order/models.py:417 order/models.py:1777
 msgid "Date order was issued"
 msgstr "Order uitgegeven op datum"
 
-#: order/models.py:423 order/models.py:1781
+#: order/models.py:423 order/models.py:1783
 msgid "Date order was completed"
 msgstr "Order voltooid op datum"
 
@@ -4590,11 +4583,11 @@ msgstr "Hoeveelheid moet een positief getal zijn"
 msgid "Company to which the items are being sold"
 msgstr "Bedrijf waaraan de artikelen worden verkocht"
 
-#: order/models.py:812 order/models.py:1768
+#: order/models.py:812 order/models.py:1770
 msgid "Customer Reference "
 msgstr "Klantreferentie "
 
-#: order/models.py:812 order/models.py:1769
+#: order/models.py:812 order/models.py:1771
 msgid "Customer order reference code"
 msgstr "Klant order referentiecode"
 
@@ -4665,8 +4658,8 @@ msgid "deleted"
 msgstr "verwijderd"
 
 #: order/models.py:1190 order/models.py:1275 order/models.py:1316
-#: order/models.py:1415 order/models.py:1564 order/models.py:1921
-#: order/models.py:1968 templates/js/translated/sales_order.js:1485
+#: order/models.py:1415 order/models.py:1564 order/models.py:1923
+#: order/models.py:1970 templates/js/translated/sales_order.js:1485
 msgid "Order"
 msgstr "Order"
 
@@ -4743,7 +4736,7 @@ msgstr "Gecontroleerd door"
 msgid "User who checked this shipment"
 msgstr "Gebruiker die deze zending gecontroleerd heeft"
 
-#: order/models.py:1443 order/models.py:1640 order/serializers.py:1276
+#: order/models.py:1443 order/models.py:1642 order/serializers.py:1276
 #: order/serializers.py:1404 templates/js/translated/model_renderers.js:433
 msgid "Shipment"
 msgstr "Zending"
@@ -4780,89 +4773,89 @@ msgstr "Zending heeft geen toegewezen voorraadartikelen"
 msgid "Stock item has not been assigned"
 msgstr "Voorraadartikel is niet toegewezen"
 
-#: order/models.py:1605
+#: order/models.py:1607
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Kan het voorraadartikel niet toewijzen aan een regel met een ander onderdeel"
 
-#: order/models.py:1607
+#: order/models.py:1609
 msgid "Cannot allocate stock to a line without a part"
 msgstr "Kan voorraad niet toewijzen aan een regel zonder onderdeel"
 
-#: order/models.py:1610
+#: order/models.py:1612
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Toewijzingshoeveelheid kan niet hoger zijn dan de voorraadhoeveelheid"
 
-#: order/models.py:1620 order/serializers.py:1138
+#: order/models.py:1622 order/serializers.py:1138
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Hoeveelheid moet 1 zijn voor geserialiseerd voorraadartikel"
 
-#: order/models.py:1623
+#: order/models.py:1625
 msgid "Sales order does not match shipment"
 msgstr "Verkooporder komt niet overeen met zending"
 
-#: order/models.py:1624
+#: order/models.py:1626
 msgid "Shipment does not match sales order"
 msgstr "Verzending komt niet overeen met verkooporder"
 
-#: order/models.py:1632
+#: order/models.py:1634
 msgid "Line"
 msgstr "Regel"
 
-#: order/models.py:1641
+#: order/models.py:1643
 msgid "Sales order shipment reference"
 msgstr "Verzendreferentie verkooporder"
 
-#: order/models.py:1654 order/models.py:1929
+#: order/models.py:1656 order/models.py:1931
 #: templates/js/translated/return_order.js:715
 msgid "Item"
 msgstr "Artikel"
 
-#: order/models.py:1655
+#: order/models.py:1657
 msgid "Select stock item to allocate"
 msgstr "Selecteer voorraadartikel om toe te wijzen"
 
-#: order/models.py:1658
+#: order/models.py:1660
 msgid "Enter stock allocation quantity"
 msgstr "Voer voorraadtoewijzingshoeveelheid in"
 
-#: order/models.py:1738
+#: order/models.py:1740
 msgid "Return Order reference"
 msgstr ""
 
-#: order/models.py:1752
+#: order/models.py:1754
 msgid "Company from which items are being returned"
 msgstr ""
 
-#: order/models.py:1763
+#: order/models.py:1765
 msgid "Return order status"
 msgstr ""
 
-#: order/models.py:1914
+#: order/models.py:1916
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr ""
 
-#: order/models.py:1930
+#: order/models.py:1932
 msgid "Select item to return from customer"
 msgstr ""
 
-#: order/models.py:1935
+#: order/models.py:1937
 msgid "Received Date"
 msgstr ""
 
-#: order/models.py:1936
+#: order/models.py:1938
 msgid "The date this this return item was received"
 msgstr ""
 
-#: order/models.py:1947 templates/js/translated/return_order.js:726
+#: order/models.py:1949 templates/js/translated/return_order.js:726
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr ""
 
-#: order/models.py:1947
+#: order/models.py:1949
 msgid "Outcome for this line item"
 msgstr ""
 
-#: order/models.py:1953
+#: order/models.py:1955
 msgid "Cost associated with return or repair for this line item"
 msgstr ""
 
@@ -7392,17 +7385,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:477
+#: plugin/registry.py:504
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:479
+#: plugin/registry.py:506
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:481
+#: plugin/registry.py:508
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
@@ -9740,10 +9733,18 @@ msgid "Connection timeout while requesting data from server"
 msgstr ""
 
 #: templates/js/translated/api.js:261
-msgid "Unhandled Error Code"
+msgid "Error 503: Service Unavailable"
 msgstr ""
 
 #: templates/js/translated/api.js:262
+msgid "The server is currently unavailable"
+msgstr ""
+
+#: templates/js/translated/api.js:265
+msgid "Unhandled Error Code"
+msgstr ""
+
+#: templates/js/translated/api.js:266
 msgid "Error code"
 msgstr ""
 
