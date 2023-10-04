@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-25 04:05\n"
+"PO-Revision-Date: 2023-10-04 11:18\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -25,23 +25,23 @@ msgstr "Заголовок"
 #: src/components/forms/ApiForm.tsx:189
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "Успешно"
 
 #: src/components/forms/ApiForm.tsx:262
 msgid "Form Errors Exist"
-msgstr ""
+msgstr "Форма содержит ошибки"
 
 #: src/components/forms/ApiForm.tsx:301
 #: src/components/tables/FilterSelectModal.tsx:166
 #: src/contexts/ThemeContext.tsx:65
 msgid "Cancel"
-msgstr ""
+msgstr "Отменить"
 
 #: src/components/forms/ApiForm.tsx:310
 #: src/contexts/ThemeContext.tsx:65
 #: src/pages/Index/Profile/UserPanel.tsx:107
 msgid "Submit"
-msgstr ""
+msgstr "Подтвердить"
 
 #: src/components/forms/AuthenticationForm.tsx:36
 msgid "Login failed"
@@ -78,7 +78,7 @@ msgstr "Отправка почты прошла успешно"
 
 #: src/components/forms/AuthenticationForm.tsx:55
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr ""
+msgstr "Проверьте свой почтовый ящик на наличие ссылки для входа в систему. Если у вас есть учетная запись, вы получите ссылку для входа в систему. Проверьте также спам."
 
 #: src/components/forms/AuthenticationForm.tsx:62
 msgid "Input error"
@@ -91,7 +91,7 @@ msgstr "Ошибка ввода"
 
 #: src/components/forms/AuthenticationForm.tsx:74
 msgid "Welcome, log in below"
-msgstr ""
+msgstr "Добро пожаловать, войдите ниже"
 
 #: src/components/forms/AuthenticationForm.tsx:81
 msgid "Username"
@@ -100,94 +100,94 @@ msgstr "Имя пользователя"
 #: src/components/forms/AuthenticationForm.tsx:87
 #: src/pages/Auth/Set-Password.tsx:105
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:88
 msgid "Your password"
-msgstr ""
+msgstr "Ваш пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:99
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "Сбросить пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:107
 #: src/pages/Auth/Reset.tsx:31
 msgid "Email"
-msgstr ""
+msgstr "Электронная почта"
 
 #: src/components/forms/AuthenticationForm.tsx:108
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "We will send you a link to login - if you are registered"
-msgstr ""
+msgstr "Мы вышлем вам ссылку для входа - если вы зарегистрированы"
 
 #: src/components/forms/AuthenticationForm.tsx:124
 msgid "Send me an email"
-msgstr ""
+msgstr "Отправьте мне электронное письмо"
 
 #: src/components/forms/AuthenticationForm.tsx:126
 msgid "I will use username and password"
-msgstr ""
+msgstr "Я буду использовать имя пользователя и пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 msgid "Log in"
-msgstr ""
+msgstr "Войти"
 
 #: src/components/forms/AuthenticationForm.tsx:133
 #: src/pages/Auth/Reset.tsx:41
 #: src/pages/Auth/Set-Password.tsx:111
 msgid "Send mail"
-msgstr ""
+msgstr "Отправить письмо"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr ""
+msgstr "Узел"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
 #: src/components/tables/part/PartCategoryTable.tsx:21
 #: src/components/tables/stock/StockLocationTable.tsx:21
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr ""
+msgstr "Здесь никого..."
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "Добавить узел"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr ""
+msgstr "Сохранить"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr ""
+msgstr "Выберите объект назначения"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr ""
+msgstr "Редактировать возможные параметры узла"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "Версия: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr ""
+msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr ""
+msgstr "Название: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr ""
+msgstr "Состояние: <0>рабочий </0> ({0}), <1>плагины</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:290
 #: src/components/nav/SearchDrawer.tsx:426
@@ -197,45 +197,45 @@ msgstr ""
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 #: src/components/forms/fields/RelatedModelField.tsx:212
 msgid "Search"
-msgstr ""
+msgstr "Поиск"
 
 #: src/components/forms/fields/RelatedModelField.tsx:213
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
-msgstr ""
+msgstr "Загрузка"
 
 #: src/components/forms/fields/RelatedModelField.tsx:215
 msgid "No results found"
-msgstr ""
+msgstr "Ничего не найдено"
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr ""
+msgstr "Подробнее"
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/components/tables/InvenTreeTable.tsx:366
 msgid "Unknown error"
-msgstr ""
+msgstr "Неизвестная ошибка"
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr ""
+msgstr "Произошла ошибка:"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "Подробнее"
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "Логотип InvenTree"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr ""
+msgstr "Данная функция/кнопка/сайт является условным обозначением функции, которая не реализована, только частично или предназначена для тестирования."
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
@@ -243,86 +243,86 @@ msgstr ""
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
-msgstr ""
+msgstr "Эта панель является условной."
 
 #: src/components/items/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr ""
+msgstr "Сканировать QR код"
 
 #: src/components/items/Thumbnail.tsx:10
 #: src/components/items/Thumbnail.tsx:43
 msgid "Thumbnail"
-msgstr ""
+msgstr "Миниатюра"
 
 #: src/components/modals/QrCodeModal.tsx:68
 msgid "Unknown response"
-msgstr ""
+msgstr "Неизвестный ответ"
 
 #: src/components/modals/QrCodeModal.tsx:98
 #: src/pages/Index/Scan.tsx:592
 msgid "Error while getting camera"
-msgstr ""
+msgstr "Ошибка при получении камеры"
 
 #: src/components/modals/QrCodeModal.tsx:121
 #: src/pages/Index/Scan.tsx:615
 msgid "Error while scanning"
-msgstr ""
+msgstr "Ошибка при сканировании"
 
 #: src/components/modals/QrCodeModal.tsx:135
 #: src/pages/Index/Scan.tsx:629
 msgid "Error while stopping"
-msgstr ""
+msgstr "Ошибка при остановке"
 
 #: src/components/modals/QrCodeModal.tsx:150
 #: src/defaults/menuItems.tsx:22
 #: src/pages/Index/Scan.tsx:698
 msgid "Scanning"
-msgstr ""
+msgstr "Сканирование"
 
 #: src/components/modals/QrCodeModal.tsx:150
 #: src/pages/Index/Scan.tsx:698
 msgid "Not scanning"
-msgstr ""
+msgstr "Не сканировать"
 
 #: src/components/modals/QrCodeModal.tsx:155
 #: src/pages/Index/Scan.tsx:704
 msgid "Select Camera"
-msgstr ""
+msgstr "Выбрать камеру"
 
 #: src/components/modals/QrCodeModal.tsx:165
 #: src/pages/Index/Scan.tsx:690
 msgid "Start scanning"
-msgstr ""
+msgstr "Начать сканирование"
 
 #: src/components/modals/QrCodeModal.tsx:172
 #: src/pages/Index/Scan.tsx:684
 msgid "Stop scanning"
-msgstr ""
+msgstr "Остановить сканирование"
 
 #: src/components/modals/QrCodeModal.tsx:177
 msgid "No scans yet!"
-msgstr ""
+msgstr "Сканирования пока не было!"
 
 #: src/components/modals/QrCodeModal.tsx:197
 msgid "Close modal"
-msgstr ""
+msgstr "Закрыть модальное окно"
 
 #: src/components/nav/MainMenu.tsx:38
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
-msgstr ""
+msgstr "Профиль"
 
 #: src/components/nav/MainMenu.tsx:42
 msgid "Settings"
-msgstr ""
+msgstr "Настройки"
 
 #: src/components/nav/MainMenu.tsx:45
 msgid "Account settings"
-msgstr ""
+msgstr "Настройки аккаунта"
 
 #: src/components/nav/MainMenu.tsx:53
 msgid "Logout"
-msgstr ""
+msgstr "Выход"
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
@@ -334,16 +334,16 @@ msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:52
 msgid "Open Navigation"
-msgstr ""
+msgstr "Открыть панель навигации"
 
 #: src/components/nav/NavHoverMenu.tsx:70
 msgid "View all"
-msgstr ""
+msgstr "Показать все"
 
 #: src/components/nav/NavHoverMenu.tsx:84
 #: src/components/nav/NavHoverMenu.tsx:94
 msgid "Get started"
-msgstr ""
+msgstr "Начало работы"
 
 #: src/components/nav/NavHoverMenu.tsx:87
 msgid "Overview over high-level objects, functions and possible usecases."
@@ -351,19 +351,19 @@ msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:59
 msgid "Navigation"
-msgstr ""
+msgstr "Панель навигации"
 
 #: src/components/nav/NavigationDrawer.tsx:62
 msgid "Pages"
-msgstr ""
+msgstr "Страницы"
 
 #: src/components/nav/NavigationDrawer.tsx:67
 msgid "Plugins"
-msgstr ""
+msgstr "Плагины"
 
 #: src/components/nav/NavigationDrawer.tsx:77
 msgid "Documentation"
-msgstr ""
+msgstr "Документация"
 
 #: src/components/nav/NavigationDrawer.tsx:80
 msgid "About"
@@ -373,16 +373,16 @@ msgstr ""
 #: src/pages/Notifications.tsx:21
 #: src/pages/Notifications.tsx:86
 msgid "Notifications"
-msgstr ""
+msgstr "Уведомления"
 
 #: src/components/nav/NotificationDrawer.tsx:85
 msgid "You have no unread notifications."
-msgstr ""
+msgstr "У вас нет непрочитанных уведомлений."
 
 #: src/components/nav/NotificationDrawer.tsx:108
 #: src/pages/Notifications.tsx:29
 msgid "Mark as read"
-msgstr ""
+msgstr "Пометить как прочитанное"
 
 #: src/components/nav/SearchDrawer.tsx:61
 #: src/components/tables/part/PartCategoryTable.tsx:39
@@ -391,19 +391,19 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:74
 #: src/pages/part/PartDetail.tsx:175
 msgid "Parts"
-msgstr ""
+msgstr "Детали"
 
 #: src/components/nav/SearchDrawer.tsx:69
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Детали поставщиков"
 
 #: src/components/nav/SearchDrawer.tsx:82
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Детали производителей"
 
 #: src/components/nav/SearchDrawer.tsx:95
 msgid "Part Categories"
-msgstr ""
+msgstr "Категории деталей"
 
 #: src/components/nav/SearchDrawer.tsx:103
 #: src/components/tables/stock/StockLocationTable.tsx:37
@@ -411,11 +411,11 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:67
 #: src/pages/stock/StockDetail.tsx:110
 msgid "Stock Items"
-msgstr ""
+msgstr "Складские позиции"
 
 #: src/components/nav/SearchDrawer.tsx:114
 msgid "Stock Locations"
-msgstr ""
+msgstr "Места хранения"
 
 #: src/components/nav/SearchDrawer.tsx:122
 #: src/pages/build/BuildDetail.tsx:143
@@ -426,25 +426,25 @@ msgstr "Заказы на сборку"
 
 #: src/components/nav/SearchDrawer.tsx:132
 msgid "Companies"
-msgstr ""
+msgstr "Компании"
 
 #: src/components/nav/SearchDrawer.tsx:141
 #: src/pages/part/PartDetail.tsx:103
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Заказы на закупку"
 
 #: src/components/nav/SearchDrawer.tsx:151
 #: src/pages/part/PartDetail.tsx:110
 msgid "Sales Orders"
-msgstr ""
+msgstr "Заказы на продажу"
 
 #: src/components/nav/SearchDrawer.tsx:161
 msgid "Return Orders"
-msgstr ""
+msgstr "Заказы на возврат"
 
 #: src/components/nav/SearchDrawer.tsx:196
 msgid "results"
-msgstr ""
+msgstr "результаты"
 
 #: src/components/nav/SearchDrawer.tsx:352
 msgid "Enter search text"
@@ -452,11 +452,11 @@ msgstr "Введите слова для поиска"
 
 #: src/components/nav/SearchDrawer.tsx:379
 msgid "Search Options"
-msgstr ""
+msgstr "Параметры поиска"
 
 #: src/components/nav/SearchDrawer.tsx:382
 msgid "Regex search"
-msgstr ""
+msgstr "Поиск по выражению"
 
 #: src/components/nav/SearchDrawer.tsx:392
 msgid "Whole word search"
@@ -464,19 +464,19 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:429
 msgid "An error occurred during search query"
-msgstr ""
+msgstr "Произошла ошибка во время поиска запроса"
 
 #: src/components/nav/SearchDrawer.tsx:440
 msgid "No results"
-msgstr ""
+msgstr "Нет результатов"
 
 #: src/components/nav/SearchDrawer.tsx:443
 msgid "No results available for search query"
-msgstr ""
+msgstr "Нет доступных результатов для поискового запроса"
 
 #: src/components/render/Instance.tsx:70
 msgid "Unknown model: {model}"
-msgstr ""
+msgstr "Неизвестная модель: {model}"
 
 #: src/components/render/Order.tsx:67
 msgid "Shipment"
@@ -488,7 +488,7 @@ msgstr ""
 
 #: src/components/tables/AttachmentTable.tsx:46
 msgid "Comment"
-msgstr ""
+msgstr "Комментарий"
 
 #: src/components/tables/AttachmentTable.tsx:55
 msgid "Uploaded"
@@ -498,7 +498,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:198
 #: src/components/tables/stock/StockItemTable.tsx:115
 msgid "Edit"
-msgstr ""
+msgstr "Изменить"
 
 #: src/components/tables/AttachmentTable.tsx:128
 #: src/components/tables/part/RelatedPartTable.tsx:97
@@ -506,7 +506,7 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:306
 #: src/pages/Notifications.tsx:66
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 #: src/components/tables/AttachmentTable.tsx:154
 msgid "File uploaded"
@@ -538,52 +538,52 @@ msgstr ""
 
 #: src/components/tables/AttachmentTable.tsx:242
 msgid "Upload attachment"
-msgstr ""
+msgstr "Загрузить вложения"
 
 #: src/components/tables/ColumnSelect.tsx:17
 #: src/components/tables/ColumnSelect.tsx:24
 msgid "Select Columns"
-msgstr ""
+msgstr "Выбрать столбцы"
 
 #: src/components/tables/DownloadAction.tsx:15
 msgid "CSV"
-msgstr ""
+msgstr "CSV"
 
 #: src/components/tables/DownloadAction.tsx:16
 msgid "TSV"
-msgstr ""
+msgstr "TSV"
 
 #: src/components/tables/DownloadAction.tsx:17
 msgid "Excel"
-msgstr ""
+msgstr "Excel"
 
 #: src/components/tables/DownloadAction.tsx:25
 msgid "Download selected data"
-msgstr ""
+msgstr "Загрузить выбранные данные"
 
 #: src/components/tables/FilterBadge.tsx:44
 msgid "Remove filter"
-msgstr ""
+msgstr "Убрать фильтрацию"
 
 #: src/components/tables/FilterGroup.tsx:29
 msgid "Add table filter"
-msgstr ""
+msgstr "Добавление фильтра таблицы"
 
 #: src/components/tables/FilterGroup.tsx:44
 msgid "Clear all filters"
-msgstr ""
+msgstr "Очистить все фильтры"
 
 #: src/components/tables/FilterGroup.tsx:51
 msgid "Add filter"
-msgstr ""
+msgstr "Добавить фильтр"
 
 #: src/components/tables/FilterSelectModal.tsx:56
 msgid "True"
-msgstr ""
+msgstr "Истина"
 
 #: src/components/tables/FilterSelectModal.tsx:57
 msgid "False"
-msgstr ""
+msgstr "Ложь"
 
 #: src/components/tables/FilterSelectModal.tsx:143
 msgid "Add Table Filter"
@@ -595,15 +595,15 @@ msgstr ""
 
 #: src/components/tables/FilterSelectModal.tsx:149
 msgid "Filter"
-msgstr ""
+msgstr "Отфильтровать"
 
 #: src/components/tables/FilterSelectModal.tsx:150
 msgid "Select filter"
-msgstr ""
+msgstr "Выбрать фильтр"
 
 #: src/components/tables/FilterSelectModal.tsx:159
 msgid "Value"
-msgstr ""
+msgstr "Значение"
 
 #: src/components/tables/FilterSelectModal.tsx:160
 msgid "Select filter value"
@@ -611,7 +611,7 @@ msgstr ""
 
 #: src/components/tables/FilterSelectModal.tsx:172
 msgid "Add Filter"
-msgstr ""
+msgstr "Добавить фильтр"
 
 #: src/components/tables/InvenTreeTable.tsx:72
 #: src/components/tables/InvenTreeTable.tsx:328
@@ -943,7 +943,7 @@ msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:20
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr ""
+msgstr "Мы создаем новый пользовательский интерфейс с современным стеком. То, что вы видите сейчас, не является фиксированным и будет переработано, но демонстрирует возможности UI/UX, которые мы будем иметь в будущем."
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
@@ -1243,7 +1243,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:82
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
-msgstr ""
+msgstr "Проверьте свой почтовый ящик, чтобы получить ссылку на сброс. Это работает только в том случае, если у вас есть учетная запись. Проверьте также спам."
 
 #: src/functions/auth.tsx:89
 #: src/pages/Auth/Set-Password.tsx:38
@@ -1411,31 +1411,31 @@ msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:30
 msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Для установки нового пароля необходимо предоставить действующий токен. Проверьте свой почтовый ящик, чтобы получить ссылку на сброс пароля."
 
 #: src/pages/Auth/Set-Password.tsx:48
 msgid "No token provided"
-msgstr ""
+msgstr "Не указан токен"
 
 #: src/pages/Auth/Set-Password.tsx:49
 msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Для установки нового пароля необходимо предоставить токен. Проверьте свой почтовый ящик, чтобы получить ссылку на сброс пароля."
 
 #: src/pages/Auth/Set-Password.tsx:72
 msgid "Password set"
-msgstr ""
+msgstr "Пароль установлен"
 
 #: src/pages/Auth/Set-Password.tsx:73
 msgid "The password was set successfully. You can now login with your new password"
-msgstr ""
+msgstr "Пароль был установлен успешно. Теперь вы можете войти в систему с новым паролем"
 
 #: src/pages/Auth/Set-Password.tsx:100
 msgid "Set new password"
-msgstr ""
+msgstr "Установить новый пароль"
 
 #: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
-msgstr ""
+msgstr "Ошибка: {0}"
 
 #: src/pages/ErrorPage.tsx:28
 msgid "Sorry, an unexpected error has occurred."
@@ -1443,7 +1443,7 @@ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
-msgstr ""
+msgstr "Автообновление"
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
@@ -1602,15 +1602,15 @@ msgstr ""
 
 #: src/pages/Index/Profile/UserPanel.tsx:114
 msgid "First name: {0}"
-msgstr ""
+msgstr "Имя: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:117
 msgid "Last name: {0}"
-msgstr ""
+msgstr "Фамилия: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:120
 msgid "Username: {0}"
-msgstr ""
+msgstr "Имя пользователя: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:152
 msgid "Use pseudo language"
@@ -1678,7 +1678,7 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:250
 msgid "Scan Page"
-msgstr ""
+msgstr "Сканировать страницу"
 
 #: src/pages/Index/Scan.tsx:253
 msgid "This page can be used for continuously scanning items and taking actions on them."
@@ -1710,7 +1710,7 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:297
 msgid "{0} items selected"
-msgstr ""
+msgstr "{0} объектов выбраны"
 
 #: src/pages/Index/Scan.tsx:300
 msgid "General Actions"
@@ -1735,27 +1735,27 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:338
 #: src/pages/Notifications.tsx:46
 msgid "History"
-msgstr ""
+msgstr "История"
 
 #: src/pages/Index/Scan.tsx:404
 msgid "No history"
-msgstr ""
+msgstr "Нет истории"
 
 #: src/pages/Index/Scan.tsx:423
 msgid "Item"
-msgstr ""
+msgstr "Элемент"
 
 #: src/pages/Index/Scan.tsx:426
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #: src/pages/Index/Scan.tsx:429
 msgid "Source"
-msgstr ""
+msgstr "Источник"
 
 #: src/pages/Index/Scan.tsx:432
 msgid "Scanned at"
-msgstr ""
+msgstr "Отсканирован в"
 
 #: src/pages/Index/Scan.tsx:484
 msgid "Enter item serial or data"
@@ -1787,7 +1787,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:49
 msgid "Build Details"
-msgstr ""
+msgstr "Подробности сборки"
 
 #: src/pages/build/BuildDetail.tsx:55
 msgid "Allocate Stock"
