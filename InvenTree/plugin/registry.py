@@ -275,6 +275,8 @@ class PluginsRegistry:
                 self.plugins_loaded = True
                 self._load_plugins(full_reload=full_reload)
 
+            self.update_plugin_hash()
+
             self.loading_lock.release()
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
 
@@ -660,7 +662,7 @@ class PluginsRegistry:
         for slug, plug in self.plugins.items():
             data.update(str(slug).encode())
             data.update(str(plug.version).encode())
-            data.update(str(plug.is_active).encode())
+            data.update(str(plug.is_active()).encode())
 
         return str(data.hexdigest())
 
