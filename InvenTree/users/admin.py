@@ -18,7 +18,8 @@ class ApiTokenAdmin(admin.ModelAdmin):
     """Admin class for the ApiToken model."""
 
     list_display = ('key', 'user', 'created')
-    fields = ('key', 'user', 'created')
+    fields = ('user', 'name', 'expiry')
+    readonly_fields = ('key', 'created')
 
 
 class RuleSetInline(admin.TabularInline):
