@@ -115,6 +115,7 @@ tomli==2.0.1
 typing-extensions==4.8.0
     # via
     #   -c requirements.txt
+    #   asgiref
     #   django-test-migrations
 urllib3==2.0.6
     # via
