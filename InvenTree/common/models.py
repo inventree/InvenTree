@@ -569,6 +569,8 @@ class BaseInvenTreeSetting(models.Model):
         if change_user is not None and not change_user.is_staff:
             return
 
+        attempts = int(kwargs.get('attempts', 3))
+
         filters = {
             'key__iexact': key,
 
@@ -589,8 +591,19 @@ class BaseInvenTreeSetting(models.Model):
         if setting.is_bool():
             value = InvenTree.helpers.str2bool(value)
 
-        setting.value = str(value)
-        setting.save()
+        try:
+            setting.value = str(value)
+            setting.save()
+        except IntegrityError:
+            # Likely a race condition has caused a duplicate entry to be created
+            if attempts > 0:
+                # Try again
+                logger.info("Duplicate setting key '%s' for %s - trying again", key, str(cls))
+                cls.set_setting(key, value, change_user, create=create, attempts=attempts - 1, **kwargs)
+        except Exception as exc:
+            # Some other error
+            logger.exception("Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc)))
+            pass
 
     key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive)'))
 
