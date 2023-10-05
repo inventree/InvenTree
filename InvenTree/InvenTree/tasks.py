@@ -577,7 +577,6 @@ def check_for_migrations():
     logger.info("Checking for pending database migrations")
 
     # Force plugin registry reload
-    # registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
     registry.check_reload()
 
     plan = get_migration_plan()
