@@ -551,6 +551,13 @@ def run_backup():
     record_task_success('run_backup')
 
 
+def get_migration_plan():
+    """Returns a list of migrations which are needed to be run."""
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
+    return plan
+
+
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations():
     """Checks if migrations are needed.
@@ -575,12 +582,14 @@ def check_for_migrations():
 
     plan = get_migration_plan()
 
+    n = len(plan)
+
     # Check if there are any open migrations
     if not plan:
         set_pending_migrations(0)
         return
 
-    set_pending_migrations(len(plan))
+    set_pending_migrations(n)
 
     # Test if auto-updates are enabled
     if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
@@ -607,15 +616,10 @@ def check_for_migrations():
         else:
             set_pending_migrations(0)
 
+            logger.info("Completed %s migrations", n)
+
     set_maintenance_mode(False)
 
     # We should be current now - triggering full reload to make sure all models
     # are loaded fully in their new state.
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
-
-
-def get_migration_plan():
-    """Returns a list of migrations which are needed to be run."""
-    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
-    plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
-    return plan
