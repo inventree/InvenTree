@@ -54,8 +54,19 @@ class CommonConfig(AppConfig):
         try:
             # Fill in default values for global settings
             logger.debug("Filling default values for global settings")
-            for key in common.models.InvenTreeSetting.SETTINGS.keys():
-                common.models.InvenTreeSetting.get_setting(key, create=True, cache=False)
+
+            existing_keys = common.models.InvenTreeSetting.objects.values_list('key', flat=True)
+            settings_keys = common.models.InvenTreeSetting.SETTINGS.keys()
+
+            missing_keys = set(settings_keys) - set(existing_keys)
+
+            common.models.InvenTreeSetting.objects.bulk_create([
+                common.models.InvenTreeSetting(
+                    key=key,
+                    value=common.models.InvenTreeSetting.get_setting_default(key)
+                ) for key in missing_keys if not key.startswith('_')
+            ])
+
         except Exception as exc:
             logger.info("Failed to fill default values for global settings: %s", str(type(exc)))
             pass
@@ -63,9 +74,19 @@ class CommonConfig(AppConfig):
         try:
             # Fill in default values for user settings
             logger.debug("Filling default values for user settings")
+            settings_keys = common.models.InvenTreeUserSetting.SETTINGS.keys()
+
             for user in get_user_model().objects.all():
-                for key in common.models.UserSetting.SETTINGS.keys():
-                    common.models.UserSetting.get_setting(key, user=user, create=True, cache=False)
+                existing_keys = common.models.InvenTreeUserSetting.objects.filter(user=user).values_list('key', flat=True)
+                missing_keys = set(settings_keys) - set(existing_keys)
+
+                common.models.InvenTreeUserSetting.objects.bulk_create([
+                    common.models.InvenTreeUserSetting(
+                        user=user,
+                        key=key,
+                        value=common.models.InvenTreeUserSetting.get_setting_default(key)
+                    ) for key in missing_keys if not key.startswith('_')
+                ])
 
         except Exception as exc:
             logger.info("Failed to fill default values for user settings: %s", str(type(exc)))
