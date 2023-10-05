@@ -21,7 +21,8 @@ from django.db.utils import (NotSupportedError, OperationalError,
 from django.utils import timezone
 
 import requests
-from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
+from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
+                                   set_maintenance_mode)
 
 from InvenTree.config import get_setting
 
@@ -617,7 +618,11 @@ def check_for_migrations():
 
             logger.info("Completed %s migrations", n)
 
-    set_maintenance_mode(False)
+    # Make sure we are out of maintenance mode
+    if get_maintenance_mode():
+        logger.warning("Maintenance mode was not disabled - forcing it now")
+        set_maintenance_mode(False)
+        logger.info("Manually released maintenance mode")
 
     # We should be current now - triggering full reload to make sure all models
     # are loaded fully in their new state.
