@@ -594,6 +594,9 @@ class BaseInvenTreeSetting(models.Model):
         try:
             setting.value = str(value)
             setting.save()
+        except ValidationError as exc:
+            # We need to know about validation errors
+            raise exc
         except IntegrityError:
             # Likely a race condition has caused a duplicate entry to be created
             if attempts > 0:
