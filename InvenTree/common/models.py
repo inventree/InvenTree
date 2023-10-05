@@ -1023,6 +1023,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'hidden': True,
         },
 
+        '_PENDING_MIGRATIONS': {
+            'name': _('Pending migrations'),
+            'description': _('Number of pending database migrations'),
+            'default': 0,
+            'validator': int,
+        },
+
         'INVENTREE_INSTANCE': {
             'name': _('Server Instance Name'),
             'default': 'InvenTree',

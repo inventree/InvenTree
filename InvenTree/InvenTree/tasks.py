@@ -21,8 +21,7 @@ from django.db.utils import (NotSupportedError, OperationalError,
 from django.utils import timezone
 
 import requests
-from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
-                                   set_maintenance_mode)
+from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 from InvenTree.config import get_setting
 
@@ -553,45 +552,51 @@ def run_backup():
 
 
 @scheduled_task(ScheduledTask.DAILY)
-def check_for_migrations(worker: bool = True):
+def check_for_migrations():
     """Checks if migrations are needed.
 
     If the setting auto_update is enabled we will start updating.
     """
-    # Test if auto-updates are enabled
-    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
-        return
 
+    from common.models import InvenTreeSetting
     from plugin import registry
+
+    def set_pending_migrations(n: int):
+        """Helper function to inform the user about pending migrations"""
+
+        logger.info('There are %s pending migrations', n)
+        InvenTreeSetting.set_setting('_PENDING_MIGRATIONS', n, None)
+
+    logger.info("Checking for pending database migrations")
+
+    # Force plugin registry reload
+    # registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+    registry.check_reload()
 
     plan = get_migration_plan()
 
     # Check if there are any open migrations
     if not plan:
-        logger.info('There are no open migrations')
+        set_pending_migrations(0)
         return
 
-    logger.info('There are open migrations')
+    set_pending_migrations(len(plan))
+
+    # Test if auto-updates are enabled
+    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+        logger.info("Auto-update is disabled - skipping migrations")
+        return
 
     # Log open migrations
     for migration in plan:
-        logger.info(migration[0])
+        logger.info("- %s", str(migration[0]))
 
     # Set the application to maintenance mode - no access from now on.
-    logger.info('Going into maintenance')
     set_maintenance_mode(True)
-    logger.info('Mainentance mode is on now')
 
-    # Check if we are worker - go kill all other workers then.
-    # Only the frontend workers run updates.
-    if worker:
-        logger.info('Current process is a worker - shutting down cluster')
-
-    # Ok now we are ready to go ahead!
     # To be sure we are in maintenance this is wrapped
     with maintenance_mode_on():
-        logger.info('Starting migrations')
-        print('Starting migrations')
+        logger.info('Starting migration process...')
 
         try:
             call_command('migrate', interactive=False)
@@ -599,21 +604,14 @@ def check_for_migrations(worker: bool = True):
             if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
                 raise e
             logger.exception('Error during migrations: %s', e)
+        else:
+            set_pending_migrations(0)
 
-        print('Migrations done')
-        logger.info('Ran migrations')
-
-    # Make sure we are out of maintenance again
-    logger.info('Checking InvenTree left maintenance mode')
-    if get_maintenance_mode():
-
-        logger.warning('Mainentance was still on - releasing now')
-        set_maintenance_mode(False)
-        logger.info('Released out of maintenance')
+    set_maintenance_mode(False)
 
     # We should be current now - triggering full reload to make sure all models
     # are loaded fully in their new state.
-    registry.reload_plugins(full_reload=True, force_reload=True)
+    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
 
 def get_migration_plan():
