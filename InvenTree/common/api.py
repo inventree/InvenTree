@@ -160,7 +160,7 @@ class CurrencyRefreshView(APIView):
 
         from InvenTree.tasks import update_exchange_rates
 
-        update_exchange_rates()
+        update_exchange_rates(force=True)
 
         return Response({
             'success': 'Exchange rates updated',
@@ -191,6 +191,12 @@ class GlobalSettingsList(SettingsList):
 
     queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith="_")
     serializer_class = common.serializers.GlobalSettingsSerializer
+
+    def list(self, request, *args, **kwargs):
+        """Ensure all global settings are created"""
+
+        common.models.InvenTreeSetting.build_default_values()
+        return super().list(request, *args, **kwargs)
 
 
 class GlobalSettingsPermissions(permissions.BasePermission):
@@ -244,6 +250,12 @@ class UserSettingsList(SettingsList):
 
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
+
+    def list(self, request, *args, **kwargs):
+        """Ensure all user settings are created"""
+
+        common.models.InvenTreeUserSetting.build_default_values(user=request.user)
+        return super().list(request, *args, **kwargs)
 
     def filter_queryset(self, queryset):
         """Only list settings which apply to the current user."""
