@@ -4,7 +4,8 @@ import logging
 
 from django.apps import AppConfig
 
-from InvenTree.ready import canAppAccessDatabase, isImportingData
+from InvenTree.ready import (canAppAccessDatabase, isImportingData,
+                             isInMainThread, isRunningMigrations)
 
 logger = logging.getLogger('inventree')
 
@@ -38,10 +39,10 @@ class CommonConfig(AppConfig):
     def fill_default_settings(self):
         """Fill in default values for settings where they don't exist"""
 
-        if isImportingData():
+        if isImportingData() or isRunningMigrations() or not isInMainThread():
             return
 
-        if not canAppAccessDatabase(allow_test=True):
+        if not canAppAccessDatabase(allow_test=False):
             return
 
         try:
