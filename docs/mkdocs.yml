@@ -202,6 +202,7 @@ nav:
       - API Mixin: extend/plugins/api.md
       - App Mixin: extend/plugins/app.md
       - Barcode Mixin: extend/plugins/barcode.md
+      - Currency Mixin: extend/plugins/currency.md
       - Event Mixin: extend/plugins/event.md
       - Label Printing Mixin: extend/plugins/label.md
       - Locate Mixin: extend/plugins/locate.md
