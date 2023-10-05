@@ -24,10 +24,30 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
     DESCRIPTION = _("Default currency exchange integration")
     VERSION = "1.0.0"
 
-    EXCHANGE_URL = 'https://frankfurter.app'
-
     def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
         """Request exchange rate data from external API"""
 
-        print("updating exchange rates:", base_currency, symbols)
-        return None
+        response = self.api_call(
+            'latest',
+            url_args={
+                'from': [base_currency],
+                'to': symbols,
+            },
+            simple_response=False
+        )
+
+        if response.status_code == 200:
+
+            rates = response.json().get('rates', {})
+            rates[base_currency] = 1.00
+
+            return rates
+
+        else:
+            logger.warning("Failed to update exchange rates from %s: Server returned status %s", self.api_url, response.status_code)
+            return None
+
+    @property
+    def api_url(self):
+        """Return the API URL for this plugin"""
+        return 'https://api.frankfurter.app'
