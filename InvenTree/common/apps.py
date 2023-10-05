@@ -56,7 +56,8 @@ class CommonConfig(AppConfig):
             logger.debug("Filling default values for global settings")
             for key in common.models.InvenTreeSetting.SETTINGS.keys():
                 common.models.InvenTreeSetting.get_setting(key, create=True, cache=False)
-        except Exception:
+        except Exception as exc:
+            logger.info("Failed to fill default values for global settings: %s", str(type(exc)))
             pass
 
         try:
@@ -66,5 +67,6 @@ class CommonConfig(AppConfig):
                 for key in common.models.UserSetting.SETTINGS.keys():
                     common.models.UserSetting.get_setting(key, user=user, create=True, cache=False)
 
-        except Exception:
+        except Exception as exc:
+            logger.info("Failed to fill default values for user settings: %s", str(type(exc)))
             pass
