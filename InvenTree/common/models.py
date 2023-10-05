@@ -939,6 +939,16 @@ def validate_email_domains(setting):
             raise ValidationError(_(f'Invalid domain name: {domain}'))
 
 
+def currency_exchange_plugins():
+    """Return a set of plugin choices which can be used for currency exchange"""
+
+    from plugin import registry
+
+    plugs = registry.with_mixin('currencyexchange', active=True)
+
+    return [(plug.slug, plug.human_name) for plug in plugs]
+
+
 def update_exchange_rates(setting):
     """Update exchange rates when base currency is changed"""
 
@@ -1067,6 +1077,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'CURRENCY_UPDATE_PLUGIN': {
             'name': _('Currency Update Plugin'),
             'description': _('Currency update plugin to use'),
+            'choices': currency_exchange_plugins,
         },
 
         'INVENTREE_DOWNLOAD_FROM_URL': {
