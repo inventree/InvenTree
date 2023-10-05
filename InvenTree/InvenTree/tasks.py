@@ -541,7 +541,7 @@ def update_exchange_rates(force: bool = False):
     except OperationalError:
         logger.warning("Could not update exchange rates - database not ready")
     except Exception as e:  # pragma: no cover
-        logger.exception("Error updating exchange rates: %s (%s)", e, type(e))
+        logger.exception("Error updating exchange rates: %s", str(type(e)))
 
 
 @scheduled_task(ScheduledTask.DAILY)
