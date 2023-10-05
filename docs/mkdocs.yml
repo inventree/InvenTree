@@ -162,7 +162,7 @@ nav:
     - Error Logs: settings/logs.md
     - Email: settings/email.md
     - Background Tasks: settings/tasks.md
-    - Currency Data: settings/currency.md
+    - Currency Support: settings/currency.md
   - App:
     - InvenTree App: app/app.md
     - Connect: app/connect.md
