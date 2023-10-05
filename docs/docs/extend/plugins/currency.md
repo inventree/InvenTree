@@ -9,28 +9,37 @@ The `CurrencyExchangeMixin` class enabled plugins to provide custom backends for
 Any implementing classes must provide the `update_exchange_rates` method. A simple example is shown below (with fake data).
 
 ```python
-def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
-    """Update currency exchange rates.
 
-    This method *must* be implemented by the plugin class.
+from plugin import InvenTreePlugin
+from plugin.mixins import CurrencyExchangeMixin
 
-    Arguments:
-        base_currency: The base currency to use for exchange rates
-        symbols: A list of currency symbols to retrieve exchange rates for
+class MyFirstCurrencyExchangePlugin(CurrencyExchangeMixin, InvenTreePlugin):
+    """Sample currency exchange plugin"""
 
-    Returns:
-        A dictionary of exchange rates, or None if the update failed
+    ...
 
-    Raises:
-        Can raise any exception if the update fails
-    """
+    def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
+        """Update currency exchange rates.
 
-    rates = {
-        'base_currency': 1.00
-    }
+        This method *must* be implemented by the plugin class.
 
-    for sym in symbols:
-        rates[sym] = random.randrange(5, 15) * 0.1
+        Arguments:
+            base_currency: The base currency to use for exchange rates
+            symbols: A list of currency symbols to retrieve exchange rates for
 
-    return rates
+        Returns:
+            A dictionary of exchange rates, or None if the update failed
+
+        Raises:
+            Can raise any exception if the update fails
+        """
+
+        rates = {
+            'base_currency': 1.00
+        }
+
+        for sym in symbols:
+            rates[sym] = random.randrange(5, 15) * 0.1
+
+        return rates
 ```
