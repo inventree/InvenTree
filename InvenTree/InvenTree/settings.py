@@ -751,6 +751,7 @@ Q_CLUSTER = {
     'orm': 'default',
     'cache': 'default',
     'sync': False,
+    'poll': 1.5,
 }
 
 # Configure django-q sentry integration
