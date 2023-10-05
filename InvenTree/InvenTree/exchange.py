@@ -48,6 +48,8 @@ class InvenTreeExchange(SimpleExchangeBackend):
             logger.warning('No active currency exchange plugins found - skipping update')
             return {}
 
+        logger.info("Running exchange rate update using plugin '%s'", plugin.name)
+
         # Plugin found - run the update task
         try:
             rates = plugin.update_exchange_rates(base_currency, symbols)
