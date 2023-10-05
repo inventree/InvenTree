@@ -197,6 +197,32 @@ class BaseInvenTreeSetting(models.Model):
         # Execute after_save action
         self._call_settings_function('after_save', args, kwargs)
 
+    @classmethod
+    def build_default_values(cls, **kwargs):
+        """Ensure that all values defined in SETTINGS are present in the database
+
+        If a particular setting is not present, create it with the default value
+        """
+
+        try:
+            existing_keys = cls.objects.filter(**kwargs).values_list('key', flat=True)
+            settings_keys = cls.SETTINGS.keys()
+
+            missing_keys = set(settings_keys) - set(existing_keys)
+
+            if len(missing_keys) > 0:
+                logger.info("Building %s default values for %s", len(missing_keys), str(cls))
+                cls.objects.bulk_create([
+                    cls(
+                        key=key,
+                        value=cls.get_setting_default(key),
+                        **kwargs
+                    ) for key in missing_keys if not key.startswith('_')
+                ])
+        except Exception as exc:
+            logger.exception("Failed to build default values for %s (%s)", str(cls), str(type(exc)))
+            pass
+
     def _call_settings_function(self, reference: str, args, kwargs):
         """Call a function associated with a particular setting.
 
