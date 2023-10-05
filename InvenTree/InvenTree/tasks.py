@@ -497,11 +497,17 @@ def check_for_updates():
 
 
 @scheduled_task(ScheduledTask.DAILY)
-def update_exchange_rates():
-    """Update currency exchange rates."""
+def update_exchange_rates(force: bool = False):
+    """Update currency exchange rates
+
+    Arguments:
+        force: If True, force the update to run regardless of the last update time
+    """
+
     try:
         from djmoney.contrib.exchange.models import Rate
 
+        from common.models import InvenTreeSetting
         from common.settings import currency_code_default, currency_codes
         from InvenTree.exchange import InvenTreeExchange
     except AppRegistryNotReady:  # pragma: no cover
@@ -512,6 +518,13 @@ def update_exchange_rates():
         logger.info("Could not perform 'update_exchange_rates' - %s", exc)
         return
 
+    if not force:
+        interval = int(InvenTreeSetting.get_setting('CURRENCY_UPDATE_INTERVAL', 1, cache=False))
+
+        if not check_daily_holdoff('update_exchange_rates', interval):
+            logger.info("Skipping exchange rate update (interval not reached)")
+            return
+
     backend = InvenTreeExchange()
     base = currency_code_default()
     logger.info("Updating exchange rates using base currency '%s'", base)
@@ -521,6 +534,10 @@ def update_exchange_rates():
 
         # Remove any exchange rates which are not in the provided currencies
         Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
+
+        # Record successful task execution
+        record_task_success('update_exchange_rates')
+
     except OperationalError:
         logger.warning("Could not update exchange rates - database not ready")
     except Exception as e:  # pragma: no cover

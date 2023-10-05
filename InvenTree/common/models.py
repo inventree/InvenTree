@@ -958,7 +958,7 @@ def update_exchange_rates(setting):
     if not InvenTree.ready.canAppAccessDatabase():
         return
 
-    InvenTree.tasks.update_exchange_rates()
+    InvenTree.tasks.update_exchange_rates(force=True)
 
 
 def reload_plugin_registry(setting):
