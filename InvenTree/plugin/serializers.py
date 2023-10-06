@@ -146,8 +146,15 @@ class PluginActivateSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         """Apply the new 'active' value to the plugin instance"""
 
+        from InvenTree.tasks import check_for_migrations, offload_task
+
         instance.active = validated_data.get('active', True)
         instance.save()
+
+        if instance.active:
+            # A plugin has just been activated - check for database migrations
+            offload_task(check_for_migrations)
+
         return instance
 
 
