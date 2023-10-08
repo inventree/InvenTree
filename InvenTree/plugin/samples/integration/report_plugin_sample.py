@@ -10,8 +10,8 @@ from report.models import PurchaseOrderReport
 class SampleReportPlugin(ReportMixin, InvenTreePlugin):
     """Sample plugin which provides extra context data to a report"""
 
-    NAME = "Report Plugin"
-    SLUG = "reportexample"
+    NAME = "Sample Report Plugin"
+    SLUG = "samplereport"
     TITLE = "Sample Report Plugin"
     DESCRIPTION = "A sample plugin which provides extra context data to a report"
     VERSION = "1.0"
