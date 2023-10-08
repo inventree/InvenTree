@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-09-25 04:05\n"
+"PO-Revision-Date: 2023-10-08 09:27\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -189,8 +189,8 @@ msgstr ""
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
-#: src/components/forms/fields/ApiFormField.tsx:290
-#: src/components/nav/SearchDrawer.tsx:426
+#: src/components/forms/fields/ApiFormField.tsx:291
+#: src/components/nav/SearchDrawer.tsx:418
 #: src/components/tables/InvenTreeTable.tsx:374
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -384,7 +384,52 @@ msgstr ""
 msgid "Mark as read"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:61
+#: src/components/nav/SearchDrawer.tsx:186
+msgid "results"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:344
+msgid "Enter search text"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:371
+msgid "Search Options"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:374
+msgid "Regex search"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:384
+msgid "Whole word search"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:421
+msgid "An error occurred during search query"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:432
+msgid "No results"
+msgstr ""
+
+#: src/components/nav/SearchDrawer.tsx:435
+msgid "No results available for search query"
+msgstr ""
+
+#: src/components/render/Instance.tsx:105
+msgid "Unknown model: {model}"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:35
+#: src/components/tables/build/BuildOrderTable.tsx:26
+#: src/components/tables/part/PartTable.tsx:25
+#: src/components/tables/part/RelatedPartTable.tsx:31
+#: src/components/tables/stock/StockItemTable.tsx:22
+#: src/pages/part/PartDetail.tsx:189
+msgid "Part"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:36
 #: src/components/tables/part/PartCategoryTable.tsx:39
 #: src/defaults/links.tsx:26
 #: src/pages/part/CategoryDetail.tsx:38
@@ -393,19 +438,36 @@ msgstr ""
 msgid "Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:69
+#: src/components/render/ModelType.tsx:41
+msgid "Supplier Part"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:42
 msgid "Supplier Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:82
+#: src/components/render/ModelType.tsx:47
+msgid "Manufacturer Part"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:48
 msgid "Manufacturer Parts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:95
+#: src/components/render/ModelType.tsx:53
+#: src/pages/part/CategoryDetail.tsx:87
+msgid "Part Category"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:54
 msgid "Part Categories"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:103
+#: src/components/render/ModelType.tsx:59
+msgid "Stock Item"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:60
 #: src/components/tables/stock/StockLocationTable.tsx:37
 #: src/pages/stock/LocationDetail.tsx:26
 #: src/pages/stock/LocationDetail.tsx:67
@@ -413,72 +475,99 @@ msgstr ""
 msgid "Stock Items"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:114
+#: src/components/render/ModelType.tsx:65
+msgid "Stock Location"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:66
 msgid "Stock Locations"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:122
-#: src/pages/build/BuildDetail.tsx:143
-#: src/pages/build/BuildIndex.tsx:16
-#: src/pages/part/PartDetail.tsx:76
-msgid "Build Orders"
+#: src/components/render/ModelType.tsx:71
+#: src/defaults/links.tsx:28
+msgid "Build"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:132
+#: src/components/render/ModelType.tsx:72
+msgid "Builds"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:77
+msgid "Company"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:78
 msgid "Companies"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:141
+#: src/components/render/ModelType.tsx:83
+msgid "Purchase Order"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:84
 #: src/pages/part/PartDetail.tsx:103
 msgid "Purchase Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:151
+#: src/components/render/ModelType.tsx:89
+msgid "Sales Order"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:90
 #: src/pages/part/PartDetail.tsx:110
 msgid "Sales Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:161
+#: src/components/render/ModelType.tsx:95
+msgid "Sales Order Shipment"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:96
+msgid "Sales Order Shipments"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:101
+msgid "Return Order"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:102
 msgid "Return Orders"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:196
-msgid "results"
+#: src/components/render/ModelType.tsx:107
+msgid "Address"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:352
-msgid "Enter search text"
+#: src/components/render/ModelType.tsx:108
+msgid "Addresses"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:379
-msgid "Search Options"
+#: src/components/render/ModelType.tsx:113
+msgid "Contact"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:382
-msgid "Regex search"
+#: src/components/render/ModelType.tsx:114
+msgid "Contacts"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:392
-msgid "Whole word search"
+#: src/components/render/ModelType.tsx:119
+msgid "Owner"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:429
-msgid "An error occurred during search query"
+#: src/components/render/ModelType.tsx:120
+msgid "Owners"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:440
-msgid "No results"
+#: src/components/render/ModelType.tsx:125
+#: src/pages/Index/Profile/Profile.tsx:23
+msgid "User"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:443
-msgid "No results available for search query"
+#: src/components/render/ModelType.tsx:126
+msgid "Users"
 msgstr ""
 
-#: src/components/render/Instance.tsx:70
-msgid "Unknown model: {model}"
-msgstr ""
-
-#: src/components/render/Order.tsx:67
+#: src/components/render/Order.tsx:71
 msgid "Shipment"
 msgstr ""
 
@@ -660,14 +749,6 @@ msgstr ""
 
 #: src/components/tables/build/BuildOrderTable.tsx:20
 msgid "Reference"
-msgstr ""
-
-#: src/components/tables/build/BuildOrderTable.tsx:26
-#: src/components/tables/part/PartTable.tsx:25
-#: src/components/tables/part/RelatedPartTable.tsx:31
-#: src/components/tables/stock/StockItemTable.tsx:22
-#: src/pages/part/PartDetail.tsx:189
-msgid "Part"
 msgstr ""
 
 #: src/components/tables/build/BuildOrderTable.tsx:44
@@ -1083,10 +1164,6 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: src/defaults/links.tsx:28
-msgid "Build"
-msgstr ""
-
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:32
 #: src/pages/Index/Playground.tsx:87
@@ -1457,10 +1534,6 @@ msgstr ""
 msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr ""
 
-#: src/pages/Index/Profile/Profile.tsx:23
-msgid "User"
-msgstr ""
-
 #: src/pages/Index/Profile/Profile.tsx:27
 #: src/pages/Index/Profile/Profile.tsx:46
 #~ msgid "User Settings"
@@ -1825,6 +1898,12 @@ msgstr ""
 msgid "Build Order"
 msgstr ""
 
+#: src/pages/build/BuildDetail.tsx:143
+#: src/pages/build/BuildIndex.tsx:16
+#: src/pages/part/PartDetail.tsx:76
+msgid "Build Orders"
+msgstr ""
+
 #: src/pages/build/BuildIndex.tsx:19
 msgid "New Build Order"
 msgstr ""
@@ -1835,10 +1914,6 @@ msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:64
 msgid "Parameters"
-msgstr ""
-
-#: src/pages/part/CategoryDetail.tsx:87
-msgid "Part Category"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:50
