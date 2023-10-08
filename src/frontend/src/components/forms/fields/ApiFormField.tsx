@@ -14,6 +14,7 @@ import { IconX } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { useMemo } from 'react';
 
+import { ModelType } from '../../render/ModelType';
 import { ApiFormProps } from '../ApiForm';
 import { ChoiceField } from './ChoiceField';
 import { RelatedModelField } from './RelatedModelField';
@@ -63,7 +64,7 @@ export type ApiFormFieldType = {
   fieldType?: string;
   api_url?: string;
   read_only?: boolean;
-  model?: string;
+  model?: ModelType;
   filters?: any;
   required?: boolean;
   choices?: any[];
