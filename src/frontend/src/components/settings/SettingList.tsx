@@ -12,8 +12,6 @@ export function SettingList({
   settings: SettingType[];
   keys: string[];
 }) {
-  console.log('SettingList: ', settings, keys);
-
   return (
     <>
       <Stack spacing="xs">
