@@ -18,6 +18,7 @@ import build.models
 import common.models
 import order.models
 import part.models
+import report.helpers
 import stock.models
 from InvenTree.helpers import validateFilterString
 from InvenTree.helpers_model import get_base_url
@@ -99,6 +100,14 @@ class ReportBase(models.Model):
         """Metaclass options. Abstract ensures no database table is created."""
 
         abstract = True
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the particular report instance"""
+
+        super().__init__(*args, **kwargs)
+
+        # Store the original filename
+        self.fields['page_size'].choices = report.helpers.report_page_size_options()
 
     def save(self, *args, **kwargs):
         """Perform additional actions when the report is saved"""
@@ -183,6 +192,19 @@ class ReportBase(models.Model):
         verbose_name=_("Revision"),
         help_text=_("Report revision number (auto-increments)"),
         editable=False,
+    )
+
+    page_size = models.CharField(
+        max_length=20,
+        default=report.helpers.report_page_size_default,
+        verbose_name=_('Page Size'),
+        help_text=_('Page size for PDF reports'),
+    )
+
+    landscape = models.BooleanField(
+        default=False,
+        verbose_name=_('Landscape'),
+        help_text=_('Render report in landscape orientation'),
     )
 
 
