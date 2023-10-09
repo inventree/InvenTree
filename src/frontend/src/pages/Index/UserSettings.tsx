@@ -33,31 +33,6 @@ export default function UserSettings() {
     defaultValue: []
   });
 
-  useEffect(() => {
-    console.warn('Settings:');
-    console.warn(settings);
-  }, [settings]);
-
-  useEffect(() => {
-    reloadSettings();
-  }, []);
-
-  // // Load settings on page load
-  // useEffect(() => {
-  //   console.log('Fetching settings:');
-  //   settingsQuery.refetch();
-  // }, []);
-
-  const userSettings: SettingType[] = useMemo(() => {
-    console.log('loaded settings:', settings);
-
-    if (settings) {
-      return settings as SettingType[];
-    } else {
-      return [];
-    }
-  }, [settings]);
-
   const userSettingsPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -82,7 +57,9 @@ export default function UserSettings() {
         name: 'search',
         label: t`Search`,
         icon: <IconSearch size="18" />,
-        content: <PlaceholderPanel />
+        content: (
+          <SettingList settings={settings} keys={['SEARCH_PREVIEW_RESULTS']} />
+        )
       },
       {
         name: 'notifications',
