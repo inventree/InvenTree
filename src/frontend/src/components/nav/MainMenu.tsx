@@ -4,37 +4,28 @@ import {
   IconChevronDown,
   IconHeart,
   IconLogout,
+  IconPlugConnected,
   IconSettings,
   IconUserCircle,
   IconUserCog
 } from '@tabler/icons-react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
+import { UserContext } from '../../contexts/UserContext';
 import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
-import { useApiState } from '../../states/ApiState';
 
 export function MainMenu() {
   const { classes, theme } = InvenTreeStyle();
-  const [username] = useApiState((state) => [state.user?.name]);
+
+  const user = useContext(UserContext);
+
   return (
     <Menu width={260} position="bottom-end">
       <Menu.Target>
         <UnstyledButton className={classes.layoutHeaderUser}>
           <Group spacing={7}>
-            {false && (
-              <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                {username ? (
-                  username
-                ) : (
-                  <Skeleton
-                    height={20}
-                    width={40}
-                    radius={theme.defaultRadius}
-                  />
-                )}
-              </Text>
-            )}
             <IconChevronDown />
           </Group>
         </UnstyledButton>
@@ -43,12 +34,29 @@ export function MainMenu() {
         <Menu.Label>
           <Trans>Settings</Trans>
         </Menu.Label>
-        <Menu.Item icon={<IconUserCog />} component={Link} to="/settings/user">
-          <Trans>Account settings</Trans>
-        </Menu.Item>
-        <Menu.Item icon={<IconSettings />} component={Link} to="/settings/">
-          <Trans>System Settings</Trans>
-        </Menu.Item>
+        {user && (
+          <Menu.Item
+            icon={<IconUserCog />}
+            component={Link}
+            to="/settings/user"
+          >
+            <Trans>Account settings</Trans>
+          </Menu.Item>
+        )}
+        {user?.is_staff && (
+          <Menu.Item icon={<IconSettings />} component={Link} to="/settings/">
+            <Trans>System Settings</Trans>
+          </Menu.Item>
+        )}
+        {user?.is_staff && (
+          <Menu.Item
+            icon={<IconPlugConnected />}
+            component={Link}
+            to="/settings/plugin"
+          >
+            <Trans>Plugins</Trans>
+          </Menu.Item>
+        )}
         <Menu.Divider />
         <Menu.Item
           icon={<IconLogout />}

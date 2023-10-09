@@ -57,6 +57,10 @@ export const SystemSettings = Loadable(
   lazy(() => import('./pages/Index/SystemSettings'))
 );
 
+export const PluginSettings = Loadable(
+  lazy(() => import('./pages/Index/PluginSettings'))
+);
+
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
@@ -79,6 +83,7 @@ export const routes = (
       <Route path="settings/">
         <Route index element={<SystemSettings />} />
         <Route path="user/" element={<UserSettings />} />
+        <Route path="plugin/" element={<PluginSettings />} />
       </Route>
       <Route path="part/">
         <Route index element={<CategoryDetail />} />
