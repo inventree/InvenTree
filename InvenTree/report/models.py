@@ -106,8 +106,7 @@ class ReportBase(models.Model):
 
         super().__init__(*args, **kwargs)
 
-        # Store the original filename
-        self.fields['page_size'].choices = report.helpers.report_page_size_options()
+        self._meta.get_field('page_size').choices = report.helpers.report_page_size_options()
 
     def save(self, *args, **kwargs):
         """Perform additional actions when the report is saved"""
