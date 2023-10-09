@@ -8,14 +8,14 @@ import {
   IconSearch,
   IconUserCircle
 } from '@tabler/icons-react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { SettingType } from '../../components/settings/SettingItem';
 import { SettingList } from '../../components/settings/SettingList';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths, url } from '../../states/ApiState';
 
 /**
  * User settings page
@@ -27,7 +27,7 @@ export default function UserSettings() {
     refreshInstance: reloadSettings,
     instanceQuery: settingsQuery
   } = useInstance({
-    url: '/settings/user/',
+    url: url(ApiPaths.settings_user),
     hasPrimaryKey: false,
     fetchOnMount: true,
     defaultValue: []

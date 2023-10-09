@@ -11,6 +11,8 @@ export interface UserProps {
   name: string;
   email: string;
   username: string;
+  is_staff: boolean;
+  is_superuser: boolean;
 }
 
 export interface ServerAPIProps {

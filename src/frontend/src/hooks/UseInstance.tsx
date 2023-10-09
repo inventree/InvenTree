@@ -53,7 +53,7 @@ export function useInstance({
   }, [url, pk]);
 
   const instanceQuery = useQuery({
-    queryKey: ['instance', url, pk, params],
+    queryKey: ['instance', api, url, pk, params],
     queryFn: async () => {
       if (hasPrimaryKey) {
         if (pk == null || pk == undefined || pk.length == 0) {

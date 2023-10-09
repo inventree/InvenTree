@@ -50,6 +50,9 @@ export enum ApiPaths {
   user_reset = 'api-user-reset',
   user_reset_set = 'api-user-reset-set',
 
+  settings_user = 'api-settings-user',
+  settings_global = 'api-settings-global',
+
   barcode = 'api-barcode',
   part_detail = 'api-part-detail',
   supplier_part_detail = 'api-supplier-part-detail',
@@ -72,6 +75,11 @@ export function url(path: ApiPaths, pk?: any): string {
       return '/auth/password/reset/';
     case ApiPaths.user_reset_set:
       return '/auth/password/reset/confirm/';
+
+    case ApiPaths.settings_user:
+      return 'settings/user/';
+    case ApiPaths.settings_global:
+      return 'settings/global/';
 
     case ApiPaths.barcode:
       return 'barcode/';

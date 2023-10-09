@@ -19,12 +19,12 @@ import {
   IconTools,
   IconTruckDelivery
 } from '@tabler/icons-react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths, url } from '../../states/ApiState';
 
 /**
  * System settings page
@@ -36,7 +36,7 @@ export default function SystemSettings() {
     refreshInstance: reloadSettings,
     instanceQuery: settingsQuery
   } = useInstance({
-    url: '/settings/global/',
+    url: url(ApiPaths.settings_global),
     hasPrimaryKey: false,
     fetchOnMount: true,
     defaultValue: []
