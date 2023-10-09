@@ -224,6 +224,21 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         """Supply context data to the template for rendering."""
         return {}
 
+    def get_report_size(self):
+        """Return the printable page size for this report"""
+
+        try:
+            page_size_default = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4')
+        except Exception:
+            page_size_default = 'A4'
+
+        page_size = self.page_size or page_size_default
+
+        if self.landscape:
+            page_size = page_size + ' landscape'
+
+        return page_size
+
     def context(self, request):
         """All context to be passed to the renderer."""
         # Generate custom context data based on the particular report subclass
@@ -232,7 +247,8 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         context['base_url'] = get_base_url(request=request)
         context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
-        context['default_page_size'] = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE')
+        context['page_size'] = self.get_report_size()
+        context['report_template'] = self
         context['report_description'] = self.description
         context['report_name'] = self.name
         context['report_revision'] = self.revision
