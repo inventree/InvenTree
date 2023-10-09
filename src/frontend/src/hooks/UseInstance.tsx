@@ -36,6 +36,8 @@ export function useInstance({
 }) {
   const [instance, setInstance] = useState<any>(defaultValue);
 
+  const [statusCode, setStatusCode] = useState<number>(0);
+
   const queryUrl = useMemo(() => {
     let _url = url;
 
@@ -65,6 +67,8 @@ export function useInstance({
           params: params
         })
         .then((response) => {
+          setStatusCode(response.status);
+
           switch (response.status) {
             case 200:
               setInstance(response.data);
@@ -88,5 +92,5 @@ export function useInstance({
     instanceQuery.refetch();
   }, []);
 
-  return { instance, refreshInstance, instanceQuery };
+  return { instance, refreshInstance, instanceQuery, statusCode };
 }
