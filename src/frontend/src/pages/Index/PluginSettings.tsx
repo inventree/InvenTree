@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PluginListTable } from '../../components/tables/plugin/PluginListTable';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, url } from '../../states/ApiState';
 
@@ -29,7 +30,12 @@ export default function PluginSettings() {
       {
         name: 'plugins',
         label: t`Plugins`,
-        icon: <IconPlugConnected />
+        icon: <IconPlugConnected />,
+        content: (
+          <Stack spacing="xs">
+            <PluginListTable props={{}} />
+          </Stack>
+        )
       }
     ];
   }, []);
