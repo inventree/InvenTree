@@ -211,8 +211,11 @@ HTML and javascript files are passed through the django templating engine. Trans
 ```
 
 ## Github use
+
 ### Tags
+
 The tags describe issues and PRs in multiple areas:
+
 | Area | Name | Description |
 | --- | --- | --- |
 | Triage Labels |  |  |

@@ -18,6 +18,7 @@ import build.models
 import common.models
 import order.models
 import part.models
+import report.helpers
 import stock.models
 from InvenTree.helpers import validateFilterString
 from InvenTree.helpers_model import get_base_url
@@ -99,6 +100,13 @@ class ReportBase(models.Model):
         """Metaclass options. Abstract ensures no database table is created."""
 
         abstract = True
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the particular report instance"""
+
+        super().__init__(*args, **kwargs)
+
+        self._meta.get_field('page_size').choices = report.helpers.report_page_size_options()
 
     def save(self, *args, **kwargs):
         """Perform additional actions when the report is saved"""
@@ -185,6 +193,19 @@ class ReportBase(models.Model):
         editable=False,
     )
 
+    page_size = models.CharField(
+        max_length=20,
+        default=report.helpers.report_page_size_default,
+        verbose_name=_('Page Size'),
+        help_text=_('Page size for PDF reports'),
+    )
+
+    landscape = models.BooleanField(
+        default=False,
+        verbose_name=_('Landscape'),
+        help_text=_('Render report in landscape orientation'),
+    )
+
 
 class ReportTemplateBase(MetadataMixin, ReportBase):
     """Reporting template model.
@@ -203,6 +224,21 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         """Supply context data to the template for rendering."""
         return {}
 
+    def get_report_size(self):
+        """Return the printable page size for this report"""
+
+        try:
+            page_size_default = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4')
+        except Exception:
+            page_size_default = 'A4'
+
+        page_size = self.page_size or page_size_default
+
+        if self.landscape:
+            page_size = page_size + ' landscape'
+
+        return page_size
+
     def context(self, request):
         """All context to be passed to the renderer."""
         # Generate custom context data based on the particular report subclass
@@ -211,7 +247,8 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         context['base_url'] = get_base_url(request=request)
         context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
-        context['default_page_size'] = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE')
+        context['page_size'] = self.get_report_size()
+        context['report_template'] = self
         context['report_description'] = self.description
         context['report_name'] = self.name
         context['report_revision'] = self.revision

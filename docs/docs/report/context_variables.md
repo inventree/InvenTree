@@ -15,7 +15,8 @@ Each report has access to a number of context variables by default. The followin
 | --- | --- |
 | date | Current date, represented as a Python datetime.date object |
 | datetime | Current datetime, represented as a Python datetime object |
-| default_page_size | InvenTree default page size variable |
+| page_size | The specified page size for this report, e.g. `A4` or `Letter landscape` |
+| report_template | The report template model instance |
 | report_name | Name of the report template |
 | report_description | Description of the report template |
 | report_revision | Revision of the report template |
