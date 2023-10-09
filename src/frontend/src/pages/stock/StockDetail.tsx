@@ -42,37 +42,32 @@ export default function StockDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconInfoCircle />
       },
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconHistory />
       },
       {
         name: 'allocations',
         label: t`Allocations`,
-        icon: <IconBookmark size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconBookmark />
       },
       {
         name: 'installed_items',
         label: t`Installed Items`,
-        icon: <IconBoxPadding size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconBoxPadding />
       },
       {
         name: 'child_items',
         label: t`Child Items`,
-        icon: <IconSitemap size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconSitemap />
       },
       {
         name: 'attachments',
         label: t`Attachments`,
-        icon: <IconPaperclip size="18" />,
+        icon: <IconPaperclip />,
         content: (
           <AttachmentTable
             url="/stock/attachment/"
@@ -84,7 +79,7 @@ export default function StockDetail() {
       {
         name: 'notes',
         label: t`Notes`,
-        icon: <IconNotes size="18" />,
+        icon: <IconNotes />,
         content: (
           <NotesEditor
             url={`/stock/${stockitem.pk}/`}

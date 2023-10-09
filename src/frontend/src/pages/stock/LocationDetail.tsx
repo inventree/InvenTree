@@ -28,7 +28,7 @@ export default function Stock() {
       {
         name: 'stock-items',
         label: t`Stock Items`,
-        icon: <IconPackages size="18" />,
+        icon: <IconPackages />,
         content: (
           <StockItemTable
             params={{
@@ -40,7 +40,7 @@ export default function Stock() {
       {
         name: 'sublocations',
         label: t`Sublocations`,
-        icon: <IconSitemap size="18" />,
+        icon: <IconSitemap />,
         content: (
           <StockLocationTable
             params={{

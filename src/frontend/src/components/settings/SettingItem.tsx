@@ -1,4 +1,4 @@
-import { Group, Text } from '@mantine/core';
+import { Group, Paper, Stack, Text } from '@mantine/core';
 
 export type SettingType = {
   pk: number;
@@ -18,9 +18,11 @@ export type SettingType = {
 export function SettingItem({ setting }: { setting: SettingType }) {
   return (
     <>
-      <Group position="apart">
-        <Text>{setting.name}</Text>
-        <Text>{setting.description}</Text>
+      <Group position="apart" p="10">
+        <Stack spacing="2">
+          <Text>{setting.name}</Text>
+          <Text size="xs">{setting.description}</Text>
+        </Stack>
         <Text>{setting.type}</Text>
       </Group>
     </>

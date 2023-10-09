@@ -42,7 +42,7 @@ export default function CategoryDetail({}: {}) {
       {
         name: 'parts',
         label: t`Parts`,
-        icon: <IconCategory size="18" />,
+        icon: <IconCategory />,
         content: (
           <PartListTable
             props={{
@@ -56,7 +56,7 @@ export default function CategoryDetail({}: {}) {
       {
         name: 'subcategories',
         label: t`Subcategories`,
-        icon: <IconSitemap size="18" />,
+        icon: <IconSitemap />,
         content: (
           <PartCategoryTable
             params={{
@@ -68,8 +68,7 @@ export default function CategoryDetail({}: {}) {
       {
         name: 'parameters',
         label: t`Parameters`,
-        icon: <IconListDetails size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconListDetails />
       }
     ],
     [category, id]

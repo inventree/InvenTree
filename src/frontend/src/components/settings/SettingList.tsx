@@ -21,8 +21,6 @@ export function SettingList({
           const setting = settings.find((setting) => setting.key === key);
           if (setting) {
             return <SettingItem setting={setting} />;
-          } else {
-            return <Text key={key}>{key}</Text>;
           }
         })}
       </Stack>

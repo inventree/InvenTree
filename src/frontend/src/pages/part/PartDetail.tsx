@@ -52,87 +52,77 @@ export default function PartDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconInfoCircle />
       },
       {
         name: 'stock',
         label: t`Stock`,
-        icon: <IconPackages size="18" />,
+        icon: <IconPackages />,
         content: partStockTab()
       },
       {
         name: 'variants',
         label: t`Variants`,
-        icon: <IconVersions size="18" />,
-        hidden: !part.is_template,
-        content: <PlaceholderPanel />
+        icon: <IconVersions />,
+        hidden: !part.is_template
       },
       {
         name: 'bom',
         label: t`Bill of Materials`,
-        icon: <IconListTree size="18" />,
-        hidden: !part.assembly,
-        content: <PlaceholderPanel />
+        icon: <IconListTree />,
+        hidden: !part.assembly
       },
       {
         name: 'builds',
         label: t`Build Orders`,
-        icon: <IconTools size="18" />,
-        hidden: !part.assembly && !part.component,
-        content: <PlaceholderPanel />
+        icon: <IconTools />,
+        hidden: !part.assembly && !part.component
       },
       {
         name: 'used_in',
         label: t`Used In`,
-        icon: <IconList size="18" />,
-        hidden: !part.component,
-        content: <PlaceholderPanel />
+        icon: <IconList />,
+        hidden: !part.component
       },
       {
         name: 'pricing',
         label: t`Pricing`,
-        icon: <IconCurrencyDollar size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconCurrencyDollar />
       },
       {
         name: 'suppliers',
         label: t`Suppliers`,
-        icon: <IconBuilding size="18" />,
-        hidden: !part.purchaseable,
-        content: <PlaceholderPanel />
+        icon: <IconBuilding />,
+        hidden: !part.purchaseable
       },
       {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
-        icon: <IconShoppingCart size="18" />,
-        content: <PlaceholderPanel />,
+        icon: <IconShoppingCart />,
         hidden: !part.purchaseable
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
-        icon: <IconTruckDelivery size="18" />,
-        content: <PlaceholderPanel />,
+        icon: <IconTruckDelivery />,
         hidden: !part.salable
       },
       {
         name: 'test_templates',
         label: t`Test Templates`,
-        icon: <IconTestPipe size="18" />,
-        content: <PlaceholderPanel />,
+        icon: <IconTestPipe />,
         hidden: !part.trackable
       },
       {
         name: 'related_parts',
         label: t`Related Parts`,
-        icon: <IconLayersLinked size="18" />,
+        icon: <IconLayersLinked />,
         content: partRelatedTab()
       },
       {
         name: 'attachments',
         label: t`Attachments`,
-        icon: <IconPaperclip size="18" />,
+        icon: <IconPaperclip />,
         content: (
           <AttachmentTable
             url="/part/attachment/"
@@ -144,7 +134,7 @@ export default function PartDetail() {
       {
         name: 'notes',
         label: t`Notes`,
-        icon: <IconNotes size="18" />,
+        icon: <IconNotes />,
         content: partNotesTab()
       }
     ];

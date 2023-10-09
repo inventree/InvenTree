@@ -38,25 +38,22 @@ export default function UserSettings() {
       {
         name: 'account',
         label: t`Account`,
-        icon: <IconUserCircle size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconUserCircle />
       },
       {
         name: 'dashboard',
         label: t`Dashboard`,
-        icon: <IconDeviceDesktopAnalytics size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconDeviceDesktopAnalytics />
       },
       {
         name: 'display',
         label: t`Display Options`,
-        icon: <IconDeviceDesktop size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconDeviceDesktop />
       },
       {
         name: 'search',
         label: t`Search`,
-        icon: <IconSearch size="18" />,
+        icon: <IconSearch />,
         content: (
           <SettingList settings={settings} keys={['SEARCH_PREVIEW_RESULTS']} />
         )
@@ -64,14 +61,12 @@ export default function UserSettings() {
       {
         name: 'notifications',
         label: t`Notifications`,
-        icon: <IconBellCog size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconBellCog />
       },
       {
         name: 'reporting',
         label: t`Reporting`,
-        icon: <IconFileAnalytics size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconFileAnalytics />
       }
     ];
   }, [settings]);

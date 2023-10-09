@@ -1,7 +1,27 @@
 import { t } from '@lingui/macro';
 import { LoadingOverlay, Stack } from '@mantine/core';
+import {
+  IconBellCog,
+  IconCategory,
+  IconClipboardCheck,
+  IconCurrencyDollar,
+  IconFileAnalytics,
+  IconFingerprint,
+  IconList,
+  IconListDetails,
+  IconPackages,
+  IconQrcode,
+  IconScale,
+  IconServerCog,
+  IconShoppingCart,
+  IconSitemap,
+  IconTag,
+  IconTools,
+  IconTruckDelivery
+} from '@tabler/icons-react';
 import { useEffect, useMemo } from 'react';
 
+import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { useInstance } from '../../hooks/UseInstance';
@@ -18,16 +38,98 @@ export default function SystemSettings() {
   } = useInstance({
     url: '/settings/global/',
     hasPrimaryKey: false,
+    fetchOnMount: true,
     defaultValue: []
   });
 
-  // Load settings on page load
-  useEffect(() => {
-    settingsQuery.refetch();
-  }, []);
-
   const systemSettingsPanels: PanelType[] = useMemo(() => {
-    return [];
+    return [
+      {
+        name: 'server',
+        label: t`Server`,
+        icon: <IconServerCog />
+      },
+      {
+        name: 'login',
+        label: t`Login`,
+        icon: <IconFingerprint />
+      },
+      {
+        name: 'barcode',
+        label: t`Barcodes`,
+        icon: <IconQrcode />
+      },
+      {
+        name: 'projectcodes',
+        label: t`Project Codes`,
+        icon: <IconListDetails />
+      },
+      {
+        name: 'physicalunits',
+        label: t`Physical Units`,
+        icon: <IconScale />
+      },
+      {
+        name: 'notifications',
+        label: t`Notifications`,
+        icon: <IconBellCog />
+      },
+      {
+        name: 'pricing',
+        label: t`Pricing`,
+        icon: <IconCurrencyDollar />
+      },
+      {
+        name: 'labels',
+        label: t`Labels`,
+        icon: <IconTag />
+      },
+      {
+        name: 'reporting',
+        label: t`Reporting`,
+        icon: <IconFileAnalytics />
+      },
+      {
+        name: 'categories',
+        label: t`Part Categories`,
+        icon: <IconSitemap />
+      },
+      {
+        name: 'parts',
+        label: t`Parts`,
+        icon: <IconCategory />
+      },
+      {
+        name: 'parameters',
+        label: t`Part Parameters`,
+        icon: <IconList />
+      },
+      {
+        name: 'stock',
+        label: t`Stock`,
+        icon: <IconPackages />
+      },
+      {
+        name: 'stocktake',
+        label: t`Stocktake`,
+        icon: <IconClipboardCheck />
+      },
+      {
+        name: 'buildorders',
+        label: t`Build Orders`,
+        icon: <IconTools />
+      },
+      {
+        name: 'purchaseorders',
+        label: t`Purchase Orders`,
+        icon: <IconShoppingCart />
+      },
+      {
+        name: 'salesorders',
+        label: t`Sales Orders`,
+        icon: <IconTruckDelivery />
+      }
+    ];
   }, [settings]);
 
   return (
