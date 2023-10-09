@@ -15,7 +15,11 @@ export default function SystemSettings() {
     instance: settings,
     refreshInstance: reloadSettings,
     instanceQuery: settingsQuery
-  } = useInstance('/settings/global/', null, {});
+  } = useInstance({
+    url: '/settings/global/',
+    hasPrimaryKey: false,
+    defaultValue: []
+  });
 
   // Load settings on page load
   useEffect(() => {

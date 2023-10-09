@@ -29,7 +29,13 @@ export default function CategoryDetail({}: {}) {
     instance: category,
     refreshInstance,
     instanceQuery
-  } = useInstance('/part/category/', id, { path_detail: true });
+  } = useInstance({
+    url: '/part/category/',
+    pk: id,
+    params: {
+      path_detail: true
+    }
+  });
 
   const categoryPanels: PanelType[] = useMemo(
     () => [

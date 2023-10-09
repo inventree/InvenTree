@@ -17,7 +17,11 @@ export default function Stock() {
     instance: location,
     refreshInstance,
     instanceQuery
-  } = useInstance('/stock/location/', id, { path_detail: true });
+  } = useInstance({
+    url: '/stock/location/',
+    pk: id,
+    params: { path_detail: true }
+  });
 
   const locationPanels: PanelType[] = useMemo(() => {
     return [

@@ -27,10 +27,14 @@ export default function StockDetail() {
     instance: stockitem,
     refreshInstance,
     instanceQuery
-  } = useInstance('/stock/', id, {
-    part_detail: true,
-    location_detail: true,
-    path_detail: true
+  } = useInstance({
+    url: '/stock/',
+    pk: id,
+    params: {
+      part_detail: true,
+      location_detail: true,
+      path_detail: true
+    }
   });
 
   const stockPanels: PanelType[] = useMemo(() => {

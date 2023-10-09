@@ -26,13 +26,27 @@ export default function UserSettings() {
     instance: settings,
     refreshInstance: reloadSettings,
     instanceQuery: settingsQuery
-  } = useInstance('/settings/user/', null, {});
+  } = useInstance({
+    url: '/settings/user/',
+    hasPrimaryKey: false,
+    fetchOnMount: true,
+    defaultValue: []
+  });
 
-  // Load settings on page load
   useEffect(() => {
-    console.log('Fetching settings:');
-    settingsQuery.refetch();
+    console.warn('Settings:');
+    console.warn(settings);
+  }, [settings]);
+
+  useEffect(() => {
+    reloadSettings();
   }, []);
+
+  // // Load settings on page load
+  // useEffect(() => {
+  //   console.log('Fetching settings:');
+  //   settingsQuery.refetch();
+  // }, []);
 
   const userSettings: SettingType[] = useMemo(() => {
     console.log('loaded settings:', settings);
