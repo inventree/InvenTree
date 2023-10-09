@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { LoadingOverlay, Stack } from '@mantine/core';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -15,7 +15,12 @@ export default function SystemSettings() {
     instance: settings,
     refreshInstance: reloadSettings,
     instanceQuery: settingsQuery
-  } = useInstance('/settings/');
+  } = useInstance('/settings/global/', null, {});
+
+  // Load settings on page load
+  useEffect(() => {
+    settingsQuery.refetch();
+  }, []);
 
   const systemSettingsPanels: PanelType[] = useMemo(() => {
     return [];

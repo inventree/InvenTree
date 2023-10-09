@@ -8,11 +8,13 @@ import {
   IconSearch,
   IconUserCircle
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { SettingType } from '../../components/settings/SettingItem';
+import { SettingList } from '../../components/settings/SettingList';
 import { useInstance } from '../../hooks/UseInstance';
 
 /**
@@ -24,7 +26,23 @@ export default function UserSettings() {
     instance: settings,
     refreshInstance: reloadSettings,
     instanceQuery: settingsQuery
-  } = useInstance('/settings/user');
+  } = useInstance('/settings/user/', null, {});
+
+  // Load settings on page load
+  useEffect(() => {
+    console.log('Fetching settings:');
+    settingsQuery.refetch();
+  }, []);
+
+  const userSettings: SettingType[] = useMemo(() => {
+    console.log('loaded settings:', settings);
+
+    if (settings) {
+      return settings as SettingType[];
+    } else {
+      return [];
+    }
+  }, [settings]);
 
   const userSettingsPanels: PanelType[] = useMemo(() => {
     return [

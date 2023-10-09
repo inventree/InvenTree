@@ -69,6 +69,7 @@ export function PanelGroup({
               !panel.hidden && (
                 <Tabs.Tab
                   p="xs"
+                  key={panel.name}
                   value={panel.name}
                   icon={panel.icon}
                   hidden={panel.hidden}

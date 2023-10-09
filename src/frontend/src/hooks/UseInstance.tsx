@@ -14,24 +14,10 @@ import { api } from '../App';
  */
 export function useInstance(
   url: string,
-  pk: string | null | undefined = null,
+  pk: string | undefined,
   params: any = {}
 ) {
   const [instance, setInstance] = useState<any>({});
-
-  function makeUrl(): string {
-    let _url = url;
-
-    if (!_url.endsWith('/')) {
-      _url += '/';
-    }
-
-    if (pk) {
-      _url += pk + '/';
-    }
-
-    return url;
-  }
 
   const instanceQuery = useQuery({
     queryKey: ['instance', url, pk, params],
@@ -42,7 +28,7 @@ export function useInstance(
       }
 
       return api
-        .get(makeUrl(), {
+        .get(url + pk + '/', {
           params: params
         })
         .then((response) => {
@@ -57,7 +43,7 @@ export function useInstance(
         })
         .catch((error) => {
           setInstance({});
-          console.error(`Error fetching instance ${makeUrl()}:`, error);
+          console.error(`Error fetching instance ${url}${pk}:`, error);
           return null;
         });
     },
