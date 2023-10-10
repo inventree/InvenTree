@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Button, Group, Space, Stack, Switch, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { api } from '../../App';
 import { SettingsContext } from '../../contexts/SettingsContext';
@@ -47,6 +47,12 @@ function SettingValue({ setting }: { setting: SettingType }) {
 
   // Callback function to open the edit dialog (for non-boolean settings)
   function onEditButton() {
+    let fieldType = setting?.type ?? 'string';
+
+    if (setting?.choices) {
+      fieldType = 'choice';
+    }
+
     openModalApiForm({
       name: 'setting-edit',
       url: url,
@@ -57,7 +63,7 @@ function SettingValue({ setting }: { setting: SettingType }) {
       fields: {
         value: {
           value: setting?.value ?? '',
-          fieldType: setting?.type ?? 'string',
+          fieldType: fieldType,
           choices: setting?.choices || null,
           label: setting?.name,
           description: setting?.description
@@ -68,6 +74,17 @@ function SettingValue({ setting }: { setting: SettingType }) {
       }
     });
   }
+
+  // Determine the text to display for the setting value
+  const valueText: string = useMemo(() => {
+    // If the setting has a choice, display the choice label
+    if (setting?.choices) {
+      const choice = setting.choices.find((c) => c.value == setting.value);
+      return choice?.display_name || setting.value;
+    }
+
+    return setting.value;
+  }, [setting]);
 
   switch (setting?.type || 'string') {
     case 'boolean':
@@ -83,7 +100,7 @@ function SettingValue({ setting }: { setting: SettingType }) {
         <Group spacing="xs" position="right">
           <Space />
           <Button variant="subtle" onClick={onEditButton}>
-            {setting.value || 'no value'}
+            {valueText}
           </Button>
         </Group>
       );
