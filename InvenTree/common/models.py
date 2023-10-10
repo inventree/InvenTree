@@ -1240,7 +1240,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
-            'description': _('Enable barcode scanner support'),
+            'description': _('Enable barcode scanner support in the web interface'),
             'default': True,
             'validator': bool,
         },
