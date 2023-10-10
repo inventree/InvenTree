@@ -36,7 +36,29 @@ export default function SystemSettings() {
       {
         name: 'server',
         label: t`Server`,
-        icon: <IconServerCog />
+        icon: <IconServerCog />,
+        content: (
+          <SettingList
+            keys={[
+              'INVENTREE_BASE_URL',
+              'INVENTREE_COMPANY_NAME',
+              'INVENTREE_INSTANCE',
+              'INVENTREE_INSTANCE_TITLE',
+              'INVENTREE_RESTRICT_ABOUT',
+              'INVENTREE_UPDATE_CHECK_INTERVAL',
+              'INVENTREE_DOWNLOAD_FROM_URL',
+              'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
+              'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
+              'INVENTREE_REQUIRE_CONFIRM',
+              'INVENTREE_TREE_DEPTH',
+              'INVENTREE_BACKUP_ENABLE',
+              'INVENTREE_BACKUP_DAYS',
+              'INVENTREE_DELETE_TASKS_DAYS',
+              'INVENTREE_DELETE_ERRORS_DAYS',
+              'INVENTREE_DELETE_NOTIFICATIONS_DAYS'
+            ]}
+          />
+        )
       },
       {
         name: 'login',

@@ -10,6 +10,7 @@ interface ApiStateProps {
   fetchApiState: () => void;
 }
 
+// TODO: Remove this, and use the UserContext instead
 export const useApiState = create<ApiStateProps>((set, get) => ({
   user: undefined,
   setUser: (newUser: UserProps) => set({ user: newUser }),
@@ -19,7 +20,9 @@ export const useApiState = create<ApiStateProps>((set, get) => ({
       const user: UserProps = {
         name: `${response.data.first_name} ${response.data.last_name}`,
         email: response.data.email,
-        username: response.data.username
+        username: response.data.username,
+        is_staff: response.data.is_staff ?? false,
+        is_superuser: response.data.is_superuser ?? false
       };
       set({ user: user });
     });
