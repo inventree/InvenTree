@@ -135,7 +135,24 @@ export default function SystemSettings() {
       {
         name: 'stock',
         label: t`Stock`,
-        icon: <IconPackages />
+        icon: <IconPackages />,
+        content: (
+          <SettingList
+            keys={[
+              'SERIAL_NUMBER_GLOBALLY_UNIQUE',
+              'SERIAL_NUMBER_AUTOFILL',
+              'STOCK_DELETE_DEPLETED_DEFAULT',
+              'STOCK_BATCH_CODE_TEMPLATE',
+              'STOCK_ENABLE_EXPIRY',
+              'STOCK_STALE_DAYS',
+              'STOCK_ALLOW_EXPIRED_SALE',
+              'STOCK_ALLOW_EXPIRED_BUILD',
+              'STOCK_OWNERSHIP_CONTROL',
+              'STOCK_LOCATION_DEFAULT_ICON',
+              'STOCK_SHOW_INSTALLED_ITEMS'
+            ]}
+          />
+        )
       },
       {
         name: 'stocktake',
@@ -145,17 +162,35 @@ export default function SystemSettings() {
       {
         name: 'buildorders',
         label: t`Build Orders`,
-        icon: <IconTools />
+        icon: <IconTools />,
+        content: <SettingList keys={['BUILDORDER_REFERENCE_PATTERN']} />
       },
       {
         name: 'purchaseorders',
         label: t`Purchase Orders`,
-        icon: <IconShoppingCart />
+        icon: <IconShoppingCart />,
+        content: (
+          <SettingList
+            keys={[
+              'PURCHASEORDER_REFERENCE_PATTERN',
+              'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
+            ]}
+          />
+        )
       },
       {
         name: 'salesorders',
         label: t`Sales Orders`,
-        icon: <IconTruckDelivery />
+        icon: <IconTruckDelivery />,
+        content: (
+          <SettingList
+            keys={[
+              'SALESORDER_REFERENCE_PATTERN',
+              'SALESORDER_DEFAULT_SHIPMENT',
+              'SALESORDER_EDIT_COMPLETED_ORDERS'
+            ]}
+          />
+        )
       }
     ];
   }, []);
