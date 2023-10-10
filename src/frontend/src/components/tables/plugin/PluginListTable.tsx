@@ -67,7 +67,14 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         accessor: 'meta.description',
         title: t`Description`,
         sortable: false,
-        switchable: true
+        switchable: true,
+        render: function (record: any) {
+          if (record.active) {
+            return record.meta.description;
+          } else {
+            return <Text italic>{t`Description not available`}</Text>;
+          }
+        }
       },
       {
         accessor: 'meta.version',
@@ -79,7 +86,8 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
       {
         accessor: 'meta.author',
         title: 'Author',
-        sortable: true
+        sortable: false,
+        switchable: true
       }
     ],
     []
