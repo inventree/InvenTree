@@ -76,7 +76,7 @@ export function extractAvailableFields(
     fields[fieldName] = {
       ...field,
       name: fieldName,
-      fieldType: field.type,
+      field_type: field.type,
       description: field.help_text,
       value: field.value ?? field.default
     };

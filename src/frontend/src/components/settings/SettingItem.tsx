@@ -17,6 +17,7 @@ export type SettingType = {
   choices: any[];
   model_name: string;
   api_url: string;
+  units: string;
 };
 
 /**
@@ -47,10 +48,10 @@ function SettingValue({ setting }: { setting: SettingType }) {
 
   // Callback function to open the edit dialog (for non-boolean settings)
   function onEditButton() {
-    let fieldType = setting?.type ?? 'string';
+    let field_type = setting?.type ?? 'string';
 
     if (setting?.choices) {
-      fieldType = 'choice';
+      field_type = 'choice';
     }
 
     openModalApiForm({
@@ -63,8 +64,8 @@ function SettingValue({ setting }: { setting: SettingType }) {
       fields: {
         value: {
           value: setting?.value ?? '',
-          fieldType: fieldType,
-          choices: setting?.choices || null,
+          field_type: field_type,
+          choices: setting?.choices || [],
           label: setting?.name,
           description: setting?.description
         }
@@ -77,13 +78,19 @@ function SettingValue({ setting }: { setting: SettingType }) {
 
   // Determine the text to display for the setting value
   const valueText: string = useMemo(() => {
+    let value = setting.value;
+
     // If the setting has a choice, display the choice label
     if (setting?.choices) {
       const choice = setting.choices.find((c) => c.value == setting.value);
-      return choice?.display_name || setting.value;
+      value = choice?.display_name || setting.value;
     }
 
-    return setting.value;
+    if (setting?.units) {
+      value = `${value} ${setting.units}`;
+    }
+
+    return value;
   }, [setting]);
 
   switch (setting?.type || 'string') {

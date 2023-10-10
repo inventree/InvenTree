@@ -17,18 +17,20 @@ export function SettingList({ keys }: { keys: string[] }) {
   return (
     <>
       <Stack spacing="xs">
-        <LoadingOverlay visible={settings.settingsQuery?.isFetching ?? false} />
+        <LoadingOverlay visible={settings.settingsQuery?.isLoading ?? false} />
         {keys.map((key) => {
           const setting = settings.settingsData.find((s: any) => s.key === key);
-          if (setting) {
-            return <SettingItem setting={setting} />;
-          } else {
-            return (
-              <Text size="sm" italic color="red">
-                Setting {key} not found
-              </Text>
-            );
-          }
+          return (
+            <div key={key}>
+              {setting ? (
+                <SettingItem setting={setting} />
+              ) : (
+                <Text size="sm" italic color="red">
+                  Setting {key} not found
+                </Text>
+              )}
+            </div>
+          );
         })}
       </Stack>
     </>

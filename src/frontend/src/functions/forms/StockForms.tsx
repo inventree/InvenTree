@@ -54,7 +54,7 @@ export function stockFields({}: {}): ApiFormFieldSet {
     },
     serial_numbers: {
       // TODO: icon
-      fieldType: 'string',
+      field_type: 'string',
       label: t`Serial Numbers`,
       description: t`Enter serial numbers for new stock (or leave blank)`,
       required: false
