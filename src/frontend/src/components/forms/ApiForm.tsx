@@ -218,6 +218,8 @@ export function ApiForm({
                 closeForm();
                 break;
             }
+
+            setIsLoading(false);
           } else {
             invalidResponse(0);
             closeForm();

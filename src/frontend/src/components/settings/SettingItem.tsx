@@ -50,7 +50,7 @@ function SettingValue({ setting }: { setting: SettingType }) {
   function onEditButton() {
     let field_type = setting?.type ?? 'string';
 
-    if (setting?.choices) {
+    if (setting?.choices && setting?.choices?.length > 0) {
       field_type = 'choice';
     }
 
@@ -81,7 +81,7 @@ function SettingValue({ setting }: { setting: SettingType }) {
     let value = setting.value;
 
     // If the setting has a choice, display the choice label
-    if (setting?.choices) {
+    if (setting?.choices && setting?.choices?.length > 0) {
       const choice = setting.choices.find((c) => c.value == setting.value);
       value = choice?.display_name || setting.value;
     }
