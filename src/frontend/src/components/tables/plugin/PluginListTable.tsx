@@ -1,4 +1,10 @@
 import { t } from '@lingui/macro';
+import { Group, Text, Tooltip } from '@mantine/core';
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconHelpCircle
+} from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { notYetImplemented } from '../../../functions/notifications';
@@ -6,6 +12,33 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { TableColumn } from '../Column';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
+
+/**
+ * Construct an indicator icon for a single plugin
+ */
+function PluginIcon(plugin: any) {
+  if (plugin.is_installed) {
+    if (plugin.active) {
+      return (
+        <Tooltip label={t`Plugin is active`}>
+          <IconCircleCheck color="green" />
+        </Tooltip>
+      );
+    } else {
+      return (
+        <Tooltip label={t`Plugin is inactive`}>
+          <IconCircleX color="red" />
+        </Tooltip>
+      );
+    }
+  } else {
+    return (
+      <Tooltip label={t`Plugin is not installed`}>
+        <IconHelpCircle />
+      </Tooltip>
+    );
+  }
+}
 
 /**
  * Table displaying list of available plugins
@@ -18,9 +51,17 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
       {
         accessor: 'name',
         title: t`Plugin`,
-        sortable: true
-        // TODO: Add link to plugin detail page
-        // TODO: Add custom badges
+        sortable: true,
+        render: function (record: any) {
+          // TODO: Add link to plugin detail page
+          // TODO: Add custom badges
+          return (
+            <Group position="left">
+              <PluginIcon {...record} />
+              <Text>{record.name}</Text>
+            </Group>
+          );
+        }
       },
       {
         accessor: 'meta.description',
