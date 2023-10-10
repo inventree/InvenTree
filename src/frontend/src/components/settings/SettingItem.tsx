@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Button, Group, Space, Stack, Switch, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
+import { IconEdit } from '@tabler/icons-react';
 import { useContext, useMemo } from 'react';
 
 import { api } from '../../App';
@@ -103,13 +104,17 @@ function SettingValue({ setting }: { setting: SettingType }) {
         />
       );
     default:
-      return (
+      return valueText ? (
         <Group spacing="xs" position="right">
           <Space />
           <Button variant="subtle" onClick={onEditButton}>
             {valueText}
           </Button>
         </Group>
+      ) : (
+        <Button variant="subtle" onClick={onEditButton}>
+          <IconEdit />
+        </Button>
       );
   }
 }

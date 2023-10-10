@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Stack } from '@mantine/core';
+import { Divider, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
@@ -24,6 +24,7 @@ import { useMemo } from 'react';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { SettingList } from '../../components/settings/SettingList';
+import { ProjectCodeTable } from '../../components/tables/settings/ProjectCodeTable';
 import { InvenTreeSettingsContext } from '../../contexts/SettingsContext';
 import { ApiPaths, url } from '../../states/ApiState';
 
@@ -99,7 +100,14 @@ export default function SystemSettings() {
       {
         name: 'projectcodes',
         label: t`Project Codes`,
-        icon: <IconListDetails />
+        icon: <IconListDetails />,
+        content: (
+          <Stack spacing="xs">
+            <SettingList keys={['PROJECT_CODES_ENABLED']} />
+            <Divider />
+            <ProjectCodeTable />
+          </Stack>
+        )
       },
       {
         name: 'physicalunits',
