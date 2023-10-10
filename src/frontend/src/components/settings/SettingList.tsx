@@ -19,9 +19,7 @@ export function SettingList({ keys }: { keys: string[] }) {
       <Stack spacing="xs">
         <LoadingOverlay visible={settings.settingsQuery?.isFetching ?? false} />
         {keys.map((key) => {
-          const setting = settings.settingsData.find(
-            (setting) => setting.key === key
-          );
+          const setting = settings.settingsData.find((s: any) => s.key === key);
           if (setting) {
             return <SettingItem setting={setting} />;
           } else {

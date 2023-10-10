@@ -4,18 +4,8 @@ import { createContext, useMemo } from 'react';
 import { useInstance } from '../hooks/UseInstance';
 
 export type SettingsContextType = {
-  global: {
-    settingsData: any[];
-    settingsQuery: null | UseQueryResult<any, unknown>;
-  };
-  user: {
-    settingsData: any[];
-    settingsQuery: null | UseQueryResult<any, unknown>;
-  };
-  plugin: {
-    settingsData: any[];
-    settingsQuery: null | UseQueryResult<any, unknown>;
-  };
+  settingsData: any[];
+  settingsQuery: null | UseQueryResult<any, unknown>;
 };
 
 /**
