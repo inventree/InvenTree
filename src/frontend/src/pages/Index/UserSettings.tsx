@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack, Text } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
@@ -12,27 +12,14 @@ import { useMemo } from 'react';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { SettingType } from '../../components/settings/SettingItem';
 import { SettingList } from '../../components/settings/SettingList';
-import { useInstance } from '../../hooks/UseInstance';
+import { InvenTreeSettingsContext } from '../../contexts/SettingsContext';
 import { ApiPaths, url } from '../../states/ApiState';
 
 /**
  * User settings page
  */
 export default function UserSettings() {
-  // Query manager for user settings
-  const {
-    instance: settings,
-    refreshInstance: reloadSettings,
-    instanceQuery: settingsQuery
-  } = useInstance({
-    url: url(ApiPaths.settings_user),
-    hasPrimaryKey: false,
-    fetchOnMount: true,
-    defaultValue: []
-  });
-
   const userSettingsPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -48,14 +35,49 @@ export default function UserSettings() {
       {
         name: 'display',
         label: t`Display Options`,
-        icon: <IconDeviceDesktop />
+        icon: <IconDeviceDesktop />,
+        content: (
+          <SettingList
+            keys={[
+              'STICKY_HEADER',
+              'DATE_DISPLAY_FORMAT',
+              'FORMS_CLOSE_USING_ESCAPE',
+              'PART_SHOW_QUANTITY_IN_FORMS',
+              'DISPLAY_SCHEDULE_TAB',
+              'DISPLAY_STOCKTAKE_TAB',
+              'TABLE_STRING_MAX_LENGTH'
+            ]}
+          />
+        )
       },
       {
         name: 'search',
         label: t`Search`,
         icon: <IconSearch />,
         content: (
-          <SettingList settings={settings} keys={['SEARCH_PREVIEW_RESULTS']} />
+          <SettingList
+            keys={[
+              'SEARCH_WHOLE',
+              'SEARCH_REGEX',
+              'SEARCH_PREVIEW_RESULTS',
+              'SEARCH_PREVIEW_SHOW_PARTS',
+              'SEARCH_HIDE_INACTIVE_PARTS',
+              'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS',
+              'SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS',
+              'SEARCH_PREVIEW_SHOW_CATEGORIES',
+              'SEARCH_PREVIEW_SHOW_STOCK',
+              'SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK',
+              'SEARCH_PREVIEW_SHOW_LOCATIONS',
+              'SEARCH_PREVIEW_SHOW_COMPANIES',
+              'SEARCH_PREVIEW_SHOW_BUILD_ORDERS',
+              'SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS',
+              'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS',
+              'SEARCH_PREVIEW_SHOW_SALES_ORDERS',
+              'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS',
+              'SEARCH_PREVIEW_SHOW_RETURN_ORDERS',
+              'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS'
+            ]}
+          />
         )
       },
       {
@@ -66,21 +88,27 @@ export default function UserSettings() {
       {
         name: 'reporting',
         label: t`Reporting`,
-        icon: <IconFileAnalytics />
+        icon: <IconFileAnalytics />,
+        content: (
+          <SettingList
+            keys={['REPORT_INLINE', 'LABEL_INLINE', 'LABEL_DEFAULT_PRINTER']}
+          />
+        )
       }
     ];
-  }, [settings]);
+  }, []);
 
   return (
     <>
-      <Stack spacing="xs">
-        <LoadingOverlay visible={settingsQuery.isFetching} />
-        <PageDetail
-          title={t`User Settings`}
-          detail={<Text>TODO: Filler</Text>}
-        />
-        <PanelGroup panels={userSettingsPanels} />
-      </Stack>
+      <InvenTreeSettingsContext url={url(ApiPaths.settings_user)}>
+        <Stack spacing="xs">
+          <PageDetail
+            title={t`User Settings`}
+            detail={<Text>TODO: Filler</Text>}
+          />
+          <PanelGroup panels={userSettingsPanels} />
+        </Stack>
+      </InvenTreeSettingsContext>
     </>
   );
 }

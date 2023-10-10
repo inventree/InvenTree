@@ -185,8 +185,8 @@ function partTableFilters(): TableFilter[] {
  * @returns
  */
 export function PartListTable({ props }: { props: InvenTreeTableProps }) {
-  let tableColumns = useMemo(() => partTableColumns(), []);
-  let tableFilters = useMemo(() => partTableFilters(), []);
+  const tableColumns = useMemo(() => partTableColumns(), []);
+  const tableFilters = useMemo(() => partTableFilters(), []);
 
   const { tableKey, refreshTable } = useTableRefresh('part');
 
