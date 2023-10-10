@@ -1,10 +1,11 @@
 import { t } from '@lingui/macro';
-import { Group, Stack, Switch, Text } from '@mantine/core';
+import { Button, Group, Space, Stack, Switch, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useContext } from 'react';
 
 import { api } from '../../App';
 import { SettingsContext } from '../../contexts/SettingsContext';
+import { openModalApiForm } from '../../functions/forms';
 
 export type SettingType = {
   pk: number;
@@ -21,46 +22,18 @@ export type SettingType = {
 /**
  * Render a single setting value
  */
-function SettingValue({
-  setting,
-  onEdit
-}: {
-  setting: SettingType;
-  onEdit: (value: any) => void;
-}) {
-  switch (setting?.type || 'string') {
-    case 'boolean':
-      return (
-        <Switch
-          size="sm"
-          checked={setting.value.toLowerCase() == 'true'}
-          onChange={(event) => onEdit(event.currentTarget.checked)}
-        />
-      );
-    default:
-      return (
-        <Text>
-          {setting.value} - {setting.type}
-        </Text>
-      );
-  }
-}
-
-/**
- * Display a single setting item, and allow editing of the value
- */
-export function SettingItem({ setting }: { setting: SettingType }) {
+function SettingValue({ setting }: { setting: SettingType }) {
   const settings = useContext(SettingsContext);
 
-  // Callback function when the particular setting value is changed
-  function onEdit(value: any) {
-    // TODO: Get URL from top level query
-    let url = `/settings/global/${setting.key}/`;
+  // TODO: extract URL from top-level query (only global settings work currently)
+  const url = '/settings/global/';
 
+  // Callback function when a boolean value is changed
+  function onToggle(value: boolean) {
     api
-      .patch(url, { value: value })
+      .patch(`${url}${setting.key}/`, { value: value })
       .then(() => {
-        settings?.settingsQuery?.refetch();
+        settings.settingsQuery?.refetch();
       })
       .catch((error) => {
         console.log('Error editing setting', error);
@@ -72,6 +45,55 @@ export function SettingItem({ setting }: { setting: SettingType }) {
       });
   }
 
+  // Callback function to open the edit dialog (for non-boolean settings)
+  function onEditButton() {
+    openModalApiForm({
+      name: 'setting-edit',
+      url: url,
+      pk: setting.key,
+      method: 'PATCH',
+      title: t`Edit Setting`,
+      ignoreOptionsCheck: true,
+      fields: {
+        value: {
+          value: setting?.value ?? '',
+          fieldType: setting?.type ?? 'string',
+          choices: setting?.choices || null,
+          label: setting?.name,
+          description: setting?.description
+        }
+      },
+      onFormSuccess() {
+        settings.settingsQuery?.refetch();
+      }
+    });
+  }
+
+  switch (setting?.type || 'string') {
+    case 'boolean':
+      return (
+        <Switch
+          size="sm"
+          checked={setting.value.toLowerCase() == 'true'}
+          onChange={(event) => onToggle(event.currentTarget.checked)}
+        />
+      );
+    default:
+      return (
+        <Group spacing="xs" position="right">
+          <Space />
+          <Button variant="subtle" onClick={onEditButton}>
+            {setting.value || 'no value'}
+          </Button>
+        </Group>
+      );
+  }
+}
+
+/**
+ * Display a single setting item, and allow editing of the value
+ */
+export function SettingItem({ setting }: { setting: SettingType }) {
   return (
     <>
       <Group position="apart" p="10">
@@ -79,7 +101,7 @@ export function SettingItem({ setting }: { setting: SettingType }) {
           <Text>{setting.name}</Text>
           <Text size="xs">{setting.description}</Text>
         </Stack>
-        <SettingValue setting={setting} onEdit={onEdit} />
+        <SettingValue setting={setting} />
       </Group>
     </>
   );

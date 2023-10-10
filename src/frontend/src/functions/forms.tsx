@@ -19,7 +19,7 @@ export function constructFormUrl(props: ApiFormProps): string {
     url += '/';
   }
 
-  if (props.pk && props.pk > 0) {
+  if (props.pk != undefined && props.pk != null) {
     url += `${props.pk}/`;
   }
 
@@ -106,9 +106,14 @@ export function openModalApiForm(props: ApiFormProps) {
   api
     .options(url)
     .then((response) => {
-      // Extract available fields from the OPTIONS response (and handle any errors)
-      let fields: Record<string, ApiFormFieldType> | null =
-        extractAvailableFields(response, props.method);
+      let fields: Record<string, ApiFormFieldType> | null = null;
+
+      if (props.ignoreOptionsCheck) {
+        fields = props.fields ?? null;
+      } else {
+        // Extract available fields from the OPTIONS response (and handle any errors)
+        fields = extractAvailableFields(response, props.method);
+      }
 
       if (fields == null) {
         return;

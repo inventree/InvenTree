@@ -189,7 +189,22 @@ export function ApiFormField({
     }
   }
 
+  // Extract the current value (for this field) from the form
   const value: any = useMemo(() => form.values[fieldName], [form.values]);
+
+  // Coerce the value to a numerical value
+  const numericalValue: number | undefined = useMemo(() => {
+    switch (definition.fieldType) {
+      case 'integer':
+        return parseInt(value);
+      case 'decimal':
+      case 'float':
+      case 'number':
+        return parseFloat(value);
+      default:
+        return undefined;
+    }
+  }, [value]);
 
   // Construct the individual field
   function buildField() {
@@ -259,7 +274,7 @@ export function ApiFormField({
             {...definition}
             radius="sm"
             id={fieldId}
-            value={value}
+            value={numericalValue}
             error={error}
             onChange={(value: number) => onChange(value)}
           />

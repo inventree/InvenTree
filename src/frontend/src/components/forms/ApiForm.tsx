@@ -46,7 +46,7 @@ import {
 export interface ApiFormProps {
   name: string;
   url: string;
-  pk?: number;
+  pk?: number | string | undefined;
   title: string;
   fields?: ApiFormFieldSet;
   cancelText?: string;
@@ -54,6 +54,7 @@ export interface ApiFormProps {
   submitColor?: string;
   cancelColor?: string;
   fetchInitialData?: boolean;
+  ignoreOptionsCheck?: boolean;
   method?: string;
   preFormContent?: JSX.Element | (() => JSX.Element);
   postFormContent?: JSX.Element | (() => JSX.Element);
@@ -109,7 +110,7 @@ export function ApiForm({
     }
   }, [props]);
 
-  // Query manager for retrieiving initial data from the server
+  // Query manager for retrieving initial data from the server
   const initialDataQuery = useQuery({
     enabled: false,
     queryKey: ['form-initial-data', props.name, props.url, props.pk],
