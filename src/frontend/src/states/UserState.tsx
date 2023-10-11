@@ -6,6 +6,7 @@ import { UserProps } from './states';
 
 interface UserStateProps {
   user: UserProps | undefined;
+  username: () => string;
   setUser: (newUser: UserProps) => void;
   fetchUserState: () => void;
 }
@@ -15,6 +16,10 @@ interface UserStateProps {
  */
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
+  username: () => {
+    const user: UserProps = get().user as UserProps;
+    return user?.name || user?.username;
+  },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
     // Fetch user data
