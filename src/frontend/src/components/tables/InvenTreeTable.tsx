@@ -24,7 +24,6 @@ const defaultPageSize: number = 25;
 /**
  * Set of optional properties which can be passed to an InvenTreeTable component
  *
- * @param url : string - The API endpoint to query
  * @param params : any - Base query parameters
  * @param tableKey : string - Unique key for the table (used for local storage)
  * @param refreshId : string - Unique ID for the table (used to trigger a refresh)

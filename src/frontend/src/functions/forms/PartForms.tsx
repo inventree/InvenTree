@@ -4,6 +4,7 @@ import {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../../states/ApiState';
 import { openCreateApiForm, openEditApiForm } from '../forms';
 
 /**
@@ -74,7 +75,7 @@ export function createPart() {
   openCreateApiForm({
     name: 'part-create',
     title: t`Create Part`,
-    url: '/part/',
+    url: ApiPaths.part_list,
     successMessage: t`Part created`,
     fields: partFields({})
   });
@@ -94,7 +95,7 @@ export function editPart({
   openEditApiForm({
     name: 'part-edit',
     title: t`Edit Part`,
-    url: '/part/',
+    url: ApiPaths.part_list,
     pk: part_id,
     successMessage: t`Part updated`,
     fields: partFields({ editing: true }),

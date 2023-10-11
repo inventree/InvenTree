@@ -22,6 +22,7 @@ export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
 }));
 
 export enum ApiPaths {
+  // User information
   user_me = 'api-user-me',
   user_roles = 'api-user-roles',
   user_token = 'api-user-token',
@@ -31,18 +32,40 @@ export enum ApiPaths {
 
   settings_global_list = 'api-settings-global-list',
   settings_user_list = 'api-settings-user-list',
+  notifications_list = 'api-notifications-list',
 
   barcode = 'api-barcode',
-  part_detail = 'api-part-detail',
-  supplier_part_detail = 'api-supplier-part-detail',
-  stock_item_detail = 'api-stock-item-detail',
-  stock_location_detail = 'api-stock-location-detail',
-  purchase_order_detail = 'api-purchase-order-detail',
-  sales_order_detail = 'api-sales-order-detail',
-  build_order_detail = 'api-build-order-detail'
+
+  // Build order URLs
+  build_order_list = 'api-build-list',
+  build_order_attachment_list = 'api-build-attachment-list',
+
+  // Part URLs
+  part_list = 'api-part-list',
+  category_list = 'api-category-list',
+  related_part_list = 'api-related-part-list',
+  part_attachment_list = 'api-part-attachment-list',
+
+  // Company URLs
+  company_list = 'api-company-list',
+  supplier_part_list = 'api-supplier-part-list',
+
+  // Stock Item URLs
+  stock_item_list = 'api-stock-item-list',
+  stock_location_list = 'api-stock-location-list',
+  stock_attachment_list = 'api-stock-attachment-list',
+
+  // Purchase Order URLs
+  purchase_order_list = 'api-purchase-order-list',
+
+  // Sales Order URLs
+  sales_order_list = 'api-sales-order-list'
 }
 
-export function url(path: ApiPaths, pk?: any): string {
+/**
+ * Return the endpoint associated with a given API path
+ */
+export function endpoint(path: ApiPaths): string {
   switch (path) {
     case ApiPaths.user_me:
       return 'user/me/';
@@ -60,24 +83,51 @@ export function url(path: ApiPaths, pk?: any): string {
       return 'settings/global/';
     case ApiPaths.settings_user_list:
       return 'settings/user/';
+    case ApiPaths.notifications_list:
+      return 'notifications/';
     case ApiPaths.barcode:
       return 'barcode/';
-    case ApiPaths.part_detail:
-      return `part/${pk}/`;
-    case ApiPaths.supplier_part_detail:
-      return `company/part/${pk}/`;
-    case ApiPaths.stock_item_detail:
-      return `stock/${pk}/`;
-    case ApiPaths.stock_location_detail:
-      return `stock/location/${pk}/`;
-    case ApiPaths.purchase_order_detail:
-      return `order/po/${pk}/`;
-    case ApiPaths.sales_order_detail:
-      return `order/so/${pk}/`;
-    case ApiPaths.build_order_detail:
-      return `build/${pk}/`;
+    case ApiPaths.build_order_list:
+      return 'build/';
+    case ApiPaths.build_order_attachment_list:
+      return 'build/attachment/';
+    case ApiPaths.part_list:
+      return 'part/';
+    case ApiPaths.category_list:
+      return 'part/category/';
+    case ApiPaths.related_part_list:
+      return 'part/related/';
+    case ApiPaths.part_attachment_list:
+      return 'part/attachment/';
+    case ApiPaths.company_list:
+      return 'company/';
+    case ApiPaths.supplier_part_list:
+      return 'company/part/';
+    case ApiPaths.stock_item_list:
+      return 'stock/';
+    case ApiPaths.stock_location_list:
+      return 'stock/location/';
+    case ApiPaths.stock_attachment_list:
+      return 'stock/attachment/';
+    case ApiPaths.purchase_order_list:
+      return 'order/po/';
+    case ApiPaths.sales_order_list:
+      return 'order/so/';
 
     default:
       return '';
   }
+}
+
+/**
+ * Construct an API URL with an endpoint and (optional) pk value
+ */
+export function url(path: ApiPaths, pk?: any): string {
+  let _url = endpoint(path);
+
+  if (_url && pk) {
+    _url += `${pk}/`;
+  }
+
+  return _url;
 }

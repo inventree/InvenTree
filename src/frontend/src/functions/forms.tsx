@@ -6,6 +6,7 @@ import { AxiosResponse } from 'axios';
 import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
+import { url } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
@@ -13,17 +14,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(props: ApiFormProps): string {
-  let url = props.url;
-
-  if (!url.endsWith('/')) {
-    url += '/';
-  }
-
-  if (props.pk && props.pk > 0) {
-    url += `${props.pk}/`;
-  }
-
-  return url;
+  return url(props.url, props.pk);
 }
 
 /**
@@ -76,7 +67,7 @@ export function extractAvailableFields(
     fields[fieldName] = {
       ...field,
       name: fieldName,
-      fieldType: field.type,
+      field_type: field.type,
       description: field.help_text,
       value: field.value ?? field.default
     };
