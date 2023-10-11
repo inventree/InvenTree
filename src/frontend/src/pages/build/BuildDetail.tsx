@@ -39,8 +39,12 @@ export default function BuildDetail() {
     instance: build,
     refreshInstance,
     instanceQuery
-  } = useInstance('/build/', id, {
-    part_detail: true
+  } = useInstance({
+    endpoint: ApiPaths.build_order_list,
+    pk: id,
+    params: {
+      part_detail: true
+    }
   });
 
   const buildPanels: PanelType[] = useMemo(() => {

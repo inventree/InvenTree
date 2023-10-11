@@ -41,7 +41,13 @@ export default function PartDetail() {
     instance: part,
     refreshInstance,
     instanceQuery
-  } = useInstance('/part/', id, { path_detail: true });
+  } = useInstance({
+    endpoint: ApiPaths.part_list,
+    pk: id,
+    params: {
+      path_detail: true
+    }
+  });
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
