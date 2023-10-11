@@ -6,6 +6,7 @@ import { AxiosResponse } from 'axios';
 import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
+import { url } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
@@ -13,17 +14,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(props: ApiFormProps): string {
-  let url = props.url;
-
-  if (!url.endsWith('/')) {
-    url += '/';
-  }
-
-  if (props.pk != undefined && props.pk != null) {
-    url += `${props.pk}/`;
-  }
-
-  return url;
+  return url(props.url, props.pk);
 }
 
 /**
@@ -106,14 +97,9 @@ export function openModalApiForm(props: ApiFormProps) {
   api
     .options(url)
     .then((response) => {
-      let fields: Record<string, ApiFormFieldType> | null = null;
-
-      if (props.ignoreOptionsCheck) {
-        fields = props.fields ?? null;
-      } else {
-        // Extract available fields from the OPTIONS response (and handle any errors)
-        fields = extractAvailableFields(response, props.method);
-      }
+      // Extract available fields from the OPTIONS response (and handle any errors)
+      let fields: Record<string, ApiFormFieldType> | null =
+        extractAvailableFields(response, props.method);
 
       if (fields == null) {
         return;

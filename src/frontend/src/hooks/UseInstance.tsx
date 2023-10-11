@@ -1,17 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { api } from '../App';
-
-export type InstanceQueryProps = {
-  url: string;
-  pk: string | undefined;
-  params?: any;
-  default: any;
-};
+import { ApiPaths, url } from '../states/ApiState';
 
 /**
- * Custom hook for loading a single endpoint from the API
+ * Custom hook for loading a single instance of an instance from the API
  *
  * - Queries the API for a single instance of an object, and returns the result.
  * - Provides a callback function to refresh the instance
@@ -20,71 +14,45 @@ export type InstanceQueryProps = {
  * const { instance, refreshInstance } = useInstance(url: string, pk: number)
  */
 export function useInstance({
-  url,
+  endpoint,
   pk,
-  params = {},
-  defaultValue = {},
-  fetchOnMount = false,
-  hasPrimaryKey = true
+  params = {}
 }: {
-  url: string;
-  pk?: string;
+  endpoint: ApiPaths;
+  pk: string | undefined;
   params?: any;
-  hasPrimaryKey?: boolean;
-  defaultValue?: any;
-  fetchOnMount?: boolean;
 }) {
-  const [instance, setInstance] = useState<any>(defaultValue);
-
-  const [statusCode, setStatusCode] = useState<number>(0);
-
-  const queryUrl = useMemo(() => {
-    let _url = url;
-
-    if (!_url.endsWith('/')) {
-      _url += '/';
-    }
-
-    if (hasPrimaryKey && pk) {
-      _url += pk + '/';
-    }
-
-    return _url;
-  }, [url, pk]);
+  const [instance, setInstance] = useState<any>({});
 
   const instanceQuery = useQuery({
-    queryKey: ['instance', api, url, pk, params],
+    queryKey: ['instance', endpoint, pk, params],
     queryFn: async () => {
-      if (hasPrimaryKey) {
-        if (pk == null || pk == undefined || pk.length == 0) {
-          setInstance(defaultValue);
-          return null;
-        }
+      if (pk == null || pk == undefined || pk.length == 0) {
+        setInstance({});
+        return null;
       }
 
       return api
-        .get(queryUrl, {
+        .get(url(endpoint, pk), {
           params: params
         })
         .then((response) => {
-          setStatusCode(response.status);
-
           switch (response.status) {
             case 200:
               setInstance(response.data);
               return response.data;
             default:
-              setInstance(defaultValue);
+              setInstance({});
               return null;
           }
         })
         .catch((error) => {
-          setInstance(defaultValue);
+          setInstance({});
           console.error(`Error fetching instance ${url}${pk}:`, error);
           return null;
         });
     },
-    refetchOnMount: fetchOnMount,
+    refetchOnMount: false,
     refetchOnWindowFocus: false
   });
 
@@ -92,5 +60,5 @@ export function useInstance({
     instanceQuery.refetch();
   }, []);
 
-  return { instance, refreshInstance, instanceQuery, statusCode };
+  return { instance, refreshInstance, instanceQuery };
 }

@@ -29,6 +29,7 @@ import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths, url } from '../../states/ApiState';
 
 /**
  * Detail view for a single Part instance
@@ -41,9 +42,11 @@ export default function PartDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    url: '/part/',
+    endpoint: ApiPaths.part_list,
     pk: id,
-    params: { path_detail: true }
+    params: {
+      path_detail: true
+    }
   });
 
   // Part data panels (recalculate when part data changes)
@@ -52,80 +55,90 @@ export default function PartDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle />
+        icon: <IconInfoCircle size="18" />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'stock',
         label: t`Stock`,
-        icon: <IconPackages />,
+        icon: <IconPackages size="18" />,
         content: partStockTab()
       },
       {
         name: 'variants',
         label: t`Variants`,
-        icon: <IconVersions />,
-        hidden: !part.is_template
+        icon: <IconVersions size="18" />,
+        hidden: !part.is_template,
+        content: <PlaceholderPanel />
       },
       {
         name: 'bom',
         label: t`Bill of Materials`,
-        icon: <IconListTree />,
-        hidden: !part.assembly
+        icon: <IconListTree size="18" />,
+        hidden: !part.assembly,
+        content: <PlaceholderPanel />
       },
       {
         name: 'builds',
         label: t`Build Orders`,
-        icon: <IconTools />,
-        hidden: !part.assembly && !part.component
+        icon: <IconTools size="18" />,
+        hidden: !part.assembly && !part.component,
+        content: <PlaceholderPanel />
       },
       {
         name: 'used_in',
         label: t`Used In`,
-        icon: <IconList />,
-        hidden: !part.component
+        icon: <IconList size="18" />,
+        hidden: !part.component,
+        content: <PlaceholderPanel />
       },
       {
         name: 'pricing',
         label: t`Pricing`,
-        icon: <IconCurrencyDollar />
+        icon: <IconCurrencyDollar size="18" />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'suppliers',
         label: t`Suppliers`,
-        icon: <IconBuilding />,
-        hidden: !part.purchaseable
+        icon: <IconBuilding size="18" />,
+        hidden: !part.purchaseable,
+        content: <PlaceholderPanel />
       },
       {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
-        icon: <IconShoppingCart />,
+        icon: <IconShoppingCart size="18" />,
+        content: <PlaceholderPanel />,
         hidden: !part.purchaseable
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
-        icon: <IconTruckDelivery />,
+        icon: <IconTruckDelivery size="18" />,
+        content: <PlaceholderPanel />,
         hidden: !part.salable
       },
       {
         name: 'test_templates',
         label: t`Test Templates`,
-        icon: <IconTestPipe />,
+        icon: <IconTestPipe size="18" />,
+        content: <PlaceholderPanel />,
         hidden: !part.trackable
       },
       {
         name: 'related_parts',
         label: t`Related Parts`,
-        icon: <IconLayersLinked />,
-        content: partRelatedTab()
+        icon: <IconLayersLinked size="18" />,
+        content: <RelatedPartTable partId={part.pk ?? -1} />
       },
       {
         name: 'attachments',
         label: t`Attachments`,
-        icon: <IconPaperclip />,
+        icon: <IconPaperclip size="18" />,
         content: (
           <AttachmentTable
-            url="/part/attachment/"
+            url={ApiPaths.part_attachment_list}
             model="part"
             pk={part.pk ?? -1}
           />
@@ -134,20 +147,17 @@ export default function PartDetail() {
       {
         name: 'notes',
         label: t`Notes`,
-        icon: <IconNotes />,
+        icon: <IconNotes size="18" />,
         content: partNotesTab()
       }
     ];
   }, [part]);
 
-  function partRelatedTab(): React.ReactNode {
-    return <RelatedPartTable partId={part.pk ?? -1} />;
-  }
   function partNotesTab(): React.ReactNode {
     // TODO: Set edit permission based on user permissions
     return (
       <NotesEditor
-        url={`/part/${part.pk}/`}
+        url={url(ApiPaths.part_list, part.pk)}
         data={part.notes ?? ''}
         allowEdit={true}
       />

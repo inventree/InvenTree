@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { ActionIcon } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
@@ -14,6 +13,7 @@ import {
   editAttachment
 } from '../../functions/forms/AttachmentForms';
 import { useTableRefresh } from '../../hooks/TableRefresh';
+import { ApiPaths } from '../../states/ApiState';
 import { AttachmentLink } from '../items/AttachmentLink';
 import { TableColumn } from './Column';
 import { InvenTreeTable } from './InvenTreeTable';
@@ -77,7 +77,7 @@ export function AttachmentTable({
   model,
   pk
 }: {
-  url: string;
+  url: ApiPaths;
   pk: number;
   model: string;
 }): ReactNode {

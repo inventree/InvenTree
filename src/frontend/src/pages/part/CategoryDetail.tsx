@@ -16,6 +16,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
 import { PartListTable } from '../../components/tables/part/PartTable';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths } from '../../states/ApiState';
 
 /**
  * Detail view for a single PartCategory instance.
@@ -30,7 +31,7 @@ export default function CategoryDetail({}: {}) {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    url: '/part/category/',
+    endpoint: ApiPaths.category_list,
     pk: id,
     params: {
       path_detail: true
@@ -42,7 +43,7 @@ export default function CategoryDetail({}: {}) {
       {
         name: 'parts',
         label: t`Parts`,
-        icon: <IconCategory />,
+        icon: <IconCategory size="18" />,
         content: (
           <PartListTable
             props={{
@@ -56,7 +57,7 @@ export default function CategoryDetail({}: {}) {
       {
         name: 'subcategories',
         label: t`Subcategories`,
-        icon: <IconSitemap />,
+        icon: <IconSitemap size="18" />,
         content: (
           <PartCategoryTable
             params={{
@@ -68,7 +69,8 @@ export default function CategoryDetail({}: {}) {
       {
         name: 'parameters',
         label: t`Parameters`,
-        icon: <IconListDetails />
+        icon: <IconListDetails size="18" />,
+        content: <PlaceholderPanel />
       }
     ],
     [category, id]

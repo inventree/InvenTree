@@ -6,6 +6,7 @@ import {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../../states/ApiState';
 import { openCreateApiForm, openEditApiForm } from '../forms';
 
 /**
@@ -99,7 +100,7 @@ export function stockFields({}: {}): ApiFormFieldSet {
 export function createStockItem() {
   openCreateApiForm({
     name: 'stockitem-create',
-    url: '/stock/',
+    url: ApiPaths.stock_item_list,
     fields: stockFields({}),
     title: t`Create Stock Item`
   });
@@ -112,7 +113,7 @@ export function createStockItem() {
 export function editStockItem(item: number) {
   openEditApiForm({
     name: 'stockitem-edit',
-    url: '/stock/',
+    url: ApiPaths.stock_item_list,
     pk: item,
     fields: stockFields({}),
     title: t`Edit Stock Item`

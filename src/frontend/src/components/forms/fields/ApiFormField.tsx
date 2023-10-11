@@ -43,7 +43,6 @@ export type ApiFormChangeCallback = {
  * @param icon : An icon to display next to the field
  * @param field_type : The type of field to render
  * @param api_url : The API endpoint to fetch data from (for related fields)
- * @param read_only : Whether the field is read-only
  * @param model : The model to use for related fields
  * @param filters : Optional API filters to apply to related fields
  * @param required : Whether the field is required
@@ -63,7 +62,6 @@ export type ApiFormFieldType = {
   icon?: ReactNode;
   field_type?: string;
   api_url?: string;
-  read_only?: boolean;
   model?: ModelType;
   filters?: any;
   required?: boolean;
@@ -98,8 +96,6 @@ export function constructField({
     ...def,
     ...field
   };
-
-  def.disabled = def.disabled || def.read_only;
 
   // Retrieve the latest value from the form
   let value = form.values[fieldName];
@@ -190,7 +186,6 @@ export function ApiFormField({
     }
   }
 
-  // Extract the current value (for this field) from the form
   const value: any = useMemo(() => form.values[fieldName], [form.values]);
 
   // Coerce the value to a numerical value
@@ -229,7 +224,7 @@ export function ApiFormField({
             {...definition}
             id={fieldId}
             type={definition.field_type}
-            value={value}
+            value={value || ''}
             error={error}
             radius="sm"
             onChange={(event) => onChange(event.currentTarget.value)}

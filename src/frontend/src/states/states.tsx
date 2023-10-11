@@ -7,14 +7,17 @@ export interface HostList {
   [key: string]: Host;
 }
 
+// Type interface fully defining the current user
 export interface UserProps {
   name: string;
   email: string;
   username: string;
-  is_staff: boolean;
-  is_superuser: boolean;
+  is_staff?: boolean;
+  is_superuser?: boolean;
+  roles?: Record<string, string[]>;
 }
 
+// Type interface fully defining the current server
 export interface ServerAPIProps {
   server: null | string;
   version: null | string;

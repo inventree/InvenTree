@@ -7,10 +7,9 @@ import {
   IconInfoCircle,
   IconNotes,
   IconPaperclip,
-  IconSitemap,
-  IconTransferIn
+  IconSitemap
 } from '@tabler/icons-react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { PlaceholderPanel } from '../../components/items/Placeholder';
@@ -19,6 +18,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths, url } from '../../states/ApiState';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -28,7 +28,7 @@ export default function StockDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    url: '/stock/',
+    endpoint: ApiPaths.stock_item_list,
     pk: id,
     params: {
       part_detail: true,
@@ -42,35 +42,40 @@ export default function StockDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle />
+        icon: <IconInfoCircle size="18" />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory />
+        icon: <IconHistory size="18" />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'allocations',
         label: t`Allocations`,
-        icon: <IconBookmark />
+        icon: <IconBookmark size="18" />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'installed_items',
         label: t`Installed Items`,
-        icon: <IconBoxPadding />
+        icon: <IconBoxPadding size="18" />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'child_items',
         label: t`Child Items`,
-        icon: <IconSitemap />
+        icon: <IconSitemap size="18" />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'attachments',
         label: t`Attachments`,
-        icon: <IconPaperclip />,
+        icon: <IconPaperclip size="18" />,
         content: (
           <AttachmentTable
-            url="/stock/attachment/"
+            url={ApiPaths.stock_attachment_list}
             model="stock_item"
             pk={stockitem.pk ?? -1}
           />
@@ -79,10 +84,10 @@ export default function StockDetail() {
       {
         name: 'notes',
         label: t`Notes`,
-        icon: <IconNotes />,
+        icon: <IconNotes size="18" />,
         content: (
           <NotesEditor
-            url={`/stock/${stockitem.pk}/`}
+            url={url(ApiPaths.stock_item_list, stockitem.pk)}
             data={stockitem.notes ?? ''}
             allowEdit={true}
           />
