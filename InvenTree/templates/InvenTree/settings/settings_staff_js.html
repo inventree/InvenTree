@@ -408,6 +408,82 @@ onPanelLoad('parts', function() {
     });
 });
 
+// Javascript for the Stock settings panel
+onPanelLoad("stock", function() {
+
+    // Construct the stock location type table
+    $('#location-type-table').bootstrapTable({
+        url: '{% url "api-location-type-list" %}',
+        search: true,
+        sortable: true,
+        formatNoMatches: function() {
+            return '{% trans "No stock location types found" %}';
+        },
+        columns: [
+            {
+                field: 'name',
+                sortable: true,
+                title: '{% trans "Name" %}',
+            },
+            {
+                field: 'description',
+                sortable: false,
+                title: '{% trans "Description" %}',
+            },
+            {
+                field: 'icon',
+                sortable: true,
+                title: '{% trans "Icon" %}',
+            },
+            {
+                field: 'location_count',
+                sortable: true,
+                title: '{% trans "Location count" %}',
+                formatter: function(value, row) {
+                    let html = value;
+                    let buttons = '';
+
+                    buttons += makeEditButton('button-location-type-edit', row.pk, '{% trans "Edit Location Type" %}');
+                    buttons += makeDeleteButton('button-location-type-delete', row.pk, '{% trans "Delete Location type" %}');
+
+                    html += wrapButtons(buttons);
+                    return html;
+                }
+            }
+        ]
+    });
+
+    $('#location-type-table').on('click', '.button-location-type-edit', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-location-type-list" %}${pk}/`, {
+            title: '{% trans "Edit Location Type" %}',
+            fields: stockLocationTypeFields(),
+            refreshTable: '#location-type-table',
+        });
+    });
+
+    $('#location-type-table').on('click', '.button-location-type-delete', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-location-type-list" %}${pk}/`, {
+            title: '{% trans "Delete Location Type" %}',
+            method: 'DELETE',
+            refreshTable: '#location-type-table',
+        });
+    });
+
+    $('#new-location-type').click(function() {
+        // Construct a new location type
+        constructForm('{% url "api-location-type-list" %}', {
+            fields: stockLocationTypeFields(),
+            title: '{% trans "New Location Type" %}',
+            method: 'POST',
+            refreshTable: '#location-type-table',
+        });
+    });
+});
+
 // Javascript for the Stocktake settings panel
 onPanelLoad('stocktake', function() {
 

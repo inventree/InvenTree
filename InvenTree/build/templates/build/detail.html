@@ -106,7 +106,7 @@
                 <tr>
                     <td><span class='fas fa-link'></span></td>
                     <td>{% trans "External Link" %}</td>
-                    <td>{% include 'clip_link.html' with link=build.link %}</td>
+                    <td>{% include 'clip_link.html' with link=build.link new_window=True %}</td>
                 </tr>
                 {% endif %}
                 {% if build.issued_by %}

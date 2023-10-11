@@ -50,6 +50,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import report.helpers
 from plugin import registry
 
 logger = logging.getLogger('inventree')
@@ -1551,11 +1552,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Page Size'),
             'description': _('Default page size for PDF reports'),
             'default': 'A4',
-            'choices': [
-                ('A4', 'A4'),
-                ('Legal', 'Legal'),
-                ('Letter', 'Letter')
-            ],
+            'choices': report.helpers.report_page_size_options,
         },
 
         'REPORT_ENABLE_TEST_REPORT': {

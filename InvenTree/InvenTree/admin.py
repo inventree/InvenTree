@@ -5,6 +5,7 @@ from django.http.request import HttpRequest
 
 from djmoney.contrib.exchange.admin import RateAdmin
 from djmoney.contrib.exchange.models import Rate
+from import_export.exceptions import ImportExportError
 from import_export.resources import ModelResource
 
 
@@ -15,8 +16,39 @@ class InvenTreeResource(ModelResource):
     Ref: https://owasp.org/www-community/attacks/CSV_Injection
     """
 
+    MAX_IMPORT_ROWS = 1000
+    MAX_IMPORT_COLS = 100
+
+    def import_data_inner(
+        self,
+        dataset,
+        dry_run,
+        raise_errors,
+        using_transactions,
+        collect_failed_rows,
+        rollback_on_validation_errors=None,
+        **kwargs
+    ):
+        """Override the default import_data_inner function to provide better error handling"""
+
+        if len(dataset) > self.MAX_IMPORT_ROWS:
+            raise ImportExportError(f"Dataset contains too many rows (max {self.MAX_IMPORT_ROWS})")
+
+        if len(dataset.headers) > self.MAX_IMPORT_COLS:
+            raise ImportExportError(f"Dataset contains too many columns (max {self.MAX_IMPORT_COLS})")
+
+        return super().import_data_inner(
+            dataset,
+            dry_run,
+            raise_errors,
+            using_transactions,
+            collect_failed_rows,
+            rollback_on_validation_errors=rollback_on_validation_errors,
+            **kwargs
+        )
+
     def export_resource(self, obj):
-        """Custom function to override default row export behaviour.
+        """Custom function to override default row export behavior.
 
         Specifically, strip illegal leading characters to prevent formula injection
         """

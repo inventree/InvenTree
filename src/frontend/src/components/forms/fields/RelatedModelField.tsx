@@ -160,7 +160,7 @@ export function RelatedModelField({
     // TODO: If a custom render function is provided, use that
 
     return (
-      <RenderInstance instance={data} model={definition.model ?? 'undefined'} />
+      <RenderInstance instance={data} model={definition.model ?? undefined} />
     );
   }
 
