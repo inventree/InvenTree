@@ -229,9 +229,9 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
 
     def get_object(self):
         """Attempt to find a global setting object with the provided key."""
-        key = self.kwargs['key']
+        key = str(self.kwargs['key']).upper()
 
-        if key not in common.models.InvenTreeSetting.SETTINGS.keys():
+        if key.startswith('_') or key not in common.models.InvenTreeSetting.SETTINGS.keys():
             raise NotFound()
 
         return common.models.InvenTreeSetting.get_setting_object(
@@ -296,9 +296,9 @@ class UserSettingsDetail(RetrieveUpdateAPI):
 
     def get_object(self):
         """Attempt to find a user setting object with the provided key."""
-        key = self.kwargs['key']
+        key = str(self.kwargs['key']).upper()
 
-        if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
+        if key.startswith('_') or key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
             raise NotFound()
 
         return common.models.InvenTreeUserSetting.get_setting_object(

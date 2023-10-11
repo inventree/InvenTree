@@ -51,6 +51,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     value = SettingsValueField()
 
+    units = serializers.CharField(read_only=True)
+
     def get_choices(self, obj):
         """Returns the choices available for a given item."""
         results = []
@@ -81,6 +83,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'name',
             'description',
             'type',
+            'units',
             'choices',
             'model_name',
             'api_url',
@@ -103,6 +106,7 @@ class UserSettingsSerializer(SettingsSerializer):
             'description',
             'user',
             'type',
+            'units',
             'choices',
             'model_name',
             'api_url',
