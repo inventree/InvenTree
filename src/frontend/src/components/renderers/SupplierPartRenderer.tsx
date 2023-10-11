@@ -23,7 +23,7 @@ export const SupplierPartRenderer = ({ pk }: { pk: string }) => {
   };
   return (
     <GeneralRenderer
-      api_key={ApiPaths.supplier_part_detail}
+      api_key={ApiPaths.supplier_part_list}
       api_ref="supplier_part"
       link={`/supplier-part/${pk}`}
       pk={pk}

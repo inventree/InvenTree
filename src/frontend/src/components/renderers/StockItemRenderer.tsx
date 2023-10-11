@@ -17,7 +17,7 @@ export const StockItemRenderer = ({ pk }: { pk: string }) => {
   };
   return (
     <GeneralRenderer
-      api_key={ApiPaths.stock_item_detail}
+      api_key={ApiPaths.stock_item_list}
       api_ref="stockitem"
       link={`/stock/item/${pk}`}
       pk={pk}

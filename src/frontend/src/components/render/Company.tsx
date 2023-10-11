@@ -5,23 +5,23 @@ import { RenderInlineModel } from './Instance';
 /**
  * Inline rendering of a single Address instance
  */
-export function RenderAddress({ address }: { address: any }): ReactNode {
+export function RenderAddress({ instance }: { instance: any }): ReactNode {
   let text = [
-    address.title,
-    address.country,
-    address.postal_code,
-    address.postal_city,
-    address.province,
-    address.line1,
-    address.line2
+    instance.title,
+    instance.country,
+    instance.postal_code,
+    instance.postal_city,
+    instance.province,
+    instance.line1,
+    instance.line2
   ]
     .filter(Boolean)
     .join(', ');
 
   return (
     <RenderInlineModel
-      primary={address.description}
-      secondary={address.address}
+      primary={instance.description}
+      secondary={instance.address}
     />
   );
 }
@@ -29,14 +29,14 @@ export function RenderAddress({ address }: { address: any }): ReactNode {
 /**
  * Inline rendering of a single Company instance
  */
-export function RenderCompany({ company }: { company: any }): ReactNode {
+export function RenderCompany({ instance }: { instance: any }): ReactNode {
   // TODO: Handle URL
 
   return (
     <RenderInlineModel
-      image={company.thumnbnail || company.image}
-      primary={company.name}
-      secondary={company.description}
+      image={instance.thumnbnail || instance.image}
+      primary={instance.name}
+      secondary={instance.description}
     />
   );
 }
@@ -44,25 +44,37 @@ export function RenderCompany({ company }: { company: any }): ReactNode {
 /**
  * Inline rendering of a single Contact instance
  */
-export function RenderContact({ contact }: { contact: any }): ReactNode {
-  return <RenderInlineModel primary={contact.name} />;
+export function RenderContact({ instance }: { instance: any }): ReactNode {
+  return <RenderInlineModel primary={instance.name} />;
 }
 
 /**
  * Inline rendering of a single SupplierPart instance
  */
-export function RenderSupplierPart({
-  supplierpart
-}: {
-  supplierpart: any;
-}): ReactNode {
+export function RenderSupplierPart({ instance }: { instance: any }): ReactNode {
   // TODO: Handle image
   // TODO: handle URL
 
-  let supplier = supplierpart.supplier_detail ?? {};
-  let part = supplierpart.part_detail ?? {};
+  let supplier = instance.supplier_detail ?? {};
+  let part = instance.part_detail ?? {};
 
-  let text = supplierpart.SKU;
+  let text = instance.SKU;
+
+  if (supplier.name) {
+    text = `${supplier.name} | ${text}`;
+  }
+
+  return <RenderInlineModel primary={text} secondary={part.full_name} />;
+}
+
+/**
+ * Inline rendering of a single ManufacturerPart instance
+ */
+export function ManufacturerPart({ instance }: { instance: any }): ReactNode {
+  let supplier = instance.supplier_detail ?? {};
+  let part = instance.part_detail ?? {};
+
+  let text = instance.SKU;
 
   if (supplier.name) {
     text = `${supplier.name} | ${text}`;

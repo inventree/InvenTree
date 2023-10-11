@@ -335,8 +335,10 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         response = self.get(url, expected_code=200)
 
+        n_public_settings = len([k for k in InvenTreeSetting.SETTINGS.keys() if not k.startswith('_')])
+
         # Number of results should match the number of settings
-        self.assertEqual(len(response.data), len(InvenTreeSetting.SETTINGS.keys()))
+        self.assertEqual(len(response.data), n_public_settings)
 
     def test_company_name(self):
         """Test a settings object lifecycle e2e."""

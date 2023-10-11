@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { ApiPaths, url } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -53,13 +54,20 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
         sortable: true,
         render: (record: any) => (record.structural ? 'Y' : 'N')
         // TODO: custom 'true / false' label,
+      },
+      {
+        accessor: 'location_type',
+        title: t`Location Type`,
+        switchable: true,
+        sortable: false,
+        render: (record: any) => record.location_type_detail?.name
       }
     ];
   }, [params]);
 
   return (
     <InvenTreeTable
-      url="stock/location/"
+      url={url(ApiPaths.stock_location_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{

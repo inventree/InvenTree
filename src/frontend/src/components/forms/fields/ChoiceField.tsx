@@ -80,6 +80,7 @@ export function ChoiceField({
       data={choices}
       value={value}
       onChange={(value) => onChange(value)}
+      withinPortal={true}
     />
   );
 }

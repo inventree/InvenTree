@@ -5,12 +5,12 @@ import { RenderInlineModel } from './Instance';
 /**
  * Inline rendering of a single Part instance
  */
-export function RenderPart({ part }: { part: any }): ReactNode {
+export function RenderPart({ instance }: { instance: any }): ReactNode {
   return (
     <RenderInlineModel
-      primary={part.name}
-      secondary={part.description}
-      image={part.thumnbnail || part.image}
+      primary={instance.name}
+      secondary={instance.description}
+      image={instance.thumnbnail || instance.image}
     />
   );
 }
@@ -18,15 +18,15 @@ export function RenderPart({ part }: { part: any }): ReactNode {
 /**
  * Inline rendering of a PartCategory instance
  */
-export function RenderPartCategory({ category }: { category: any }): ReactNode {
+export function RenderPartCategory({ instance }: { instance: any }): ReactNode {
   // TODO: Handle URL
 
-  let lvl = '-'.repeat(category.level || 0);
+  let lvl = '-'.repeat(instance.level || 0);
 
   return (
     <RenderInlineModel
-      primary={`${lvl} ${category.name}`}
-      secondary={category.description}
+      primary={`${lvl} ${instance.name}`}
+      secondary={instance.description}
     />
   );
 }

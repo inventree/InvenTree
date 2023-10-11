@@ -40,7 +40,6 @@ class InvenTreeConfig(AppConfig):
             return
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
-            InvenTree.tasks.check_for_migrations(worker=False)
 
             self.remove_obsolete_tasks()
 
@@ -49,6 +48,8 @@ class InvenTreeConfig(AppConfig):
 
             if not isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
+                # Let the background worker check for migrations
+                InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
         self.collect_notification_methods()
 

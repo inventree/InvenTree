@@ -2,17 +2,17 @@ import { ReactNode } from 'react';
 
 import { RenderInlineModel } from './Instance';
 
-export function RenderOwner({ owner }: { owner: any }): ReactNode {
+export function RenderOwner({ instance }: { instance: any }): ReactNode {
   // TODO: Icon based on user / group status?
 
-  return <RenderInlineModel primary={owner.name} />;
+  return <RenderInlineModel primary={instance.name} />;
 }
 
-export function RenderUser({ user }: { user: any }): ReactNode {
+export function RenderUser({ instance }: { instance: any }): ReactNode {
   return (
     <RenderInlineModel
-      primary={user.username}
-      secondary={`${user.first_name} ${user.last_name}`}
+      primary={instance.username}
+      secondary={`${instance.first_name} ${instance.last_name}`}
     />
   );
 }
