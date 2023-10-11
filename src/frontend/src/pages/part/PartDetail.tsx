@@ -29,6 +29,7 @@ import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths, url } from '../../states/ApiState';
 
 /**
  * Detail view for a single Part instance
@@ -40,7 +41,13 @@ export default function PartDetail() {
     instance: part,
     refreshInstance,
     instanceQuery
-  } = useInstance('/part/', id, { path_detail: true });
+  } = useInstance({
+    endpoint: ApiPaths.part_list,
+    pk: id,
+    params: {
+      path_detail: true
+    }
+  });
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -123,7 +130,7 @@ export default function PartDetail() {
         name: 'related_parts',
         label: t`Related Parts`,
         icon: <IconLayersLinked size="18" />,
-        content: partRelatedTab()
+        content: <RelatedPartTable partId={part.pk ?? -1} />
       },
       {
         name: 'attachments',
@@ -131,7 +138,7 @@ export default function PartDetail() {
         icon: <IconPaperclip size="18" />,
         content: (
           <AttachmentTable
-            url="/part/attachment/"
+            url={ApiPaths.part_attachment_list}
             model="part"
             pk={part.pk ?? -1}
           />
@@ -146,14 +153,11 @@ export default function PartDetail() {
     ];
   }, [part]);
 
-  function partRelatedTab(): React.ReactNode {
-    return <RelatedPartTable partId={part.pk ?? -1} />;
-  }
   function partNotesTab(): React.ReactNode {
     // TODO: Set edit permission based on user permissions
     return (
       <NotesEditor
-        url={`/part/${part.pk}/`}
+        url={url(ApiPaths.part_list, part.pk)}
         data={part.notes ?? ''}
         allowEdit={true}
       />

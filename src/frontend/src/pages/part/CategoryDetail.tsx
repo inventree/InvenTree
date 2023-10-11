@@ -16,6 +16,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
 import { PartListTable } from '../../components/tables/part/PartTable';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths } from '../../states/ApiState';
 
 /**
  * Detail view for a single PartCategory instance.
@@ -29,7 +30,13 @@ export default function CategoryDetail({}: {}) {
     instance: category,
     refreshInstance,
     instanceQuery
-  } = useInstance('/part/category/', id, { path_detail: true });
+  } = useInstance({
+    endpoint: ApiPaths.category_list,
+    pk: id,
+    params: {
+      path_detail: true
+    }
+  });
 
   const categoryPanels: PanelType[] = useMemo(
     () => [

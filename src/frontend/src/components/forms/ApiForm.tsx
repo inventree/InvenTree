@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { api } from '../../App';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
+import { ApiPaths } from '../../states/ApiState';
 import {
   ApiFormField,
   ApiFormFieldSet,
@@ -45,8 +46,8 @@ import {
  */
 export interface ApiFormProps {
   name: string;
-  url: string;
-  pk?: number;
+  url: ApiPaths;
+  pk?: number | string;
   title: string;
   fields?: ApiFormFieldSet;
   cancelText?: string;

@@ -41,9 +41,8 @@ export type ApiFormChangeCallback = {
  * @param value : The value of the field
  * @param default : The default value of the field
  * @param icon : An icon to display next to the field
- * @param fieldType : The type of field to render
+ * @param field_type : The type of field to render
  * @param api_url : The API endpoint to fetch data from (for related fields)
- * @param read_only : Whether the field is read-only
  * @param model : The model to use for related fields
  * @param filters : Optional API filters to apply to related fields
  * @param required : Whether the field is required
@@ -61,9 +60,8 @@ export type ApiFormFieldType = {
   value?: any;
   default?: any;
   icon?: ReactNode;
-  fieldType?: string;
+  field_type?: string;
   api_url?: string;
-  read_only?: boolean;
   model?: ModelType;
   filters?: any;
   required?: boolean;
@@ -99,8 +97,6 @@ export function constructField({
     ...field
   };
 
-  def.disabled = def.disabled || def.read_only;
-
   // Retrieve the latest value from the form
   let value = form.values[fieldName];
 
@@ -109,7 +105,7 @@ export function constructField({
   }
 
   // Change value to a date object if required
-  switch (def.fieldType) {
+  switch (def.field_type) {
     case 'date':
       if (def.value) {
         def.value = new Date(def.value);
@@ -192,9 +188,23 @@ export function ApiFormField({
 
   const value: any = useMemo(() => form.values[fieldName], [form.values]);
 
+  // Coerce the value to a numerical value
+  const numericalValue: number | undefined = useMemo(() => {
+    switch (definition.field_type) {
+      case 'integer':
+        return parseInt(value);
+      case 'decimal':
+      case 'float':
+      case 'number':
+        return parseFloat(value);
+      default:
+        return undefined;
+    }
+  }, [value]);
+
   // Construct the individual field
   function buildField() {
-    switch (definition.fieldType) {
+    switch (definition.field_type) {
       case 'related field':
         return (
           <RelatedModelField
@@ -213,8 +223,8 @@ export function ApiFormField({
           <TextInput
             {...definition}
             id={fieldId}
-            type={definition.fieldType}
-            value={value}
+            type={definition.field_type}
+            value={value || ''}
             error={error}
             radius="sm"
             onChange={(event) => onChange(event.currentTarget.value)}
@@ -260,7 +270,7 @@ export function ApiFormField({
             {...definition}
             radius="sm"
             id={fieldId}
-            value={value}
+            value={numericalValue}
             error={error}
             onChange={(value: number) => onChange(value)}
           />
@@ -289,7 +299,8 @@ export function ApiFormField({
       default:
         return (
           <Alert color="red" title={t`Error`}>
-            Invalid field type for field '{fieldName}': '{definition.fieldType}'
+            Invalid field type for field '{fieldName}': '{definition.field_type}
+            '
           </Alert>
         );
     }

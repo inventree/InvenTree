@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { ApiPaths, url } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -59,7 +60,7 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url="stock/location/"
+      url={url(ApiPaths.stock_location_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{

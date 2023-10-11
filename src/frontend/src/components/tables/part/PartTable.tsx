@@ -7,7 +7,7 @@ import { editPart } from '../../../functions/forms/PartForms';
 import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ThumbnailHoverCard } from '../../items/Thumbnail';
+import { ApiPaths, url } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
@@ -221,7 +221,7 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
 
   return (
     <InvenTreeTable
-      url="part/"
+      url={url(ApiPaths.part_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{
