@@ -27,6 +27,7 @@ import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths, url } from '../../states/ApiState';
 
 /**
  * Detail page for a single Build Order
@@ -107,7 +108,7 @@ export default function BuildDetail() {
         icon: <IconPaperclip size="18" />,
         content: (
           <AttachmentTable
-            url="/build/attachment/"
+            url={url(ApiPaths.build_order_attachment_list)}
             model="build"
             pk={build.pk ?? -1}
           />

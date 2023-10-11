@@ -19,6 +19,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths, url } from '../../states/ApiState';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -71,7 +72,7 @@ export default function StockDetail() {
         icon: <IconPaperclip size="18" />,
         content: (
           <AttachmentTable
-            url="/stock/attachment/"
+            url={url(ApiPaths.stock_attachment_list)}
             model="stock_item"
             pk={stockitem.pk ?? -1}
           />
