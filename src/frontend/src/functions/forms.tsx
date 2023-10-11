@@ -14,6 +14,9 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(props: ApiFormProps): string {
+  console.log('constructFormUrl:', props.url, props.pk);
+  let output = url(props.url, props.pk);
+  console.log('output url:', output);
   return url(props.url, props.pk);
 }
 
@@ -98,8 +101,11 @@ export function openModalApiForm(props: ApiFormProps) {
     .options(url)
     .then((response) => {
       // Extract available fields from the OPTIONS response (and handle any errors)
-      let fields: Record<string, ApiFormFieldType> | null =
+      let fields: Record<string, ApiFormFieldType> | null = {};
+
+      if (!props.ignorePermissionCheck) {
         extractAvailableFields(response, props.method);
+      }
 
       if (fields == null) {
         return;

@@ -25,13 +25,15 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { SettingList } from '../../components/settings/SettingList';
 import { ProjectCodeTable } from '../../components/tables/settings/ProjectCodeTable';
-import { InvenTreeSettingsContext } from '../../contexts/SettingsContext';
 import { ApiPaths, url } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 
 /**
  * System settings page
  */
 export default function SystemSettings() {
+  const globalSettings = useGlobalSettingsState();
+
   const systemSettingsPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -40,6 +42,7 @@ export default function SystemSettings() {
         icon: <IconServerCog />,
         content: (
           <SettingList
+            settingsState={globalSettings}
             keys={[
               'INVENTREE_BASE_URL',
               'INVENTREE_COMPANY_NAME',
@@ -67,6 +70,7 @@ export default function SystemSettings() {
         icon: <IconFingerprint />,
         content: (
           <SettingList
+            settingsState={globalSettings}
             keys={[
               'LOGIN_ENABLE_PWD_FORGOT',
               'LOGIN_MAIL_REQUIRED',
@@ -89,6 +93,7 @@ export default function SystemSettings() {
         icon: <IconQrcode />,
         content: (
           <SettingList
+            settingsState={globalSettings}
             keys={[
               'BARCODE_ENABLE',
               'BARCODE_INPUT_DELAY',
@@ -103,7 +108,10 @@ export default function SystemSettings() {
         icon: <IconListDetails />,
         content: (
           <Stack spacing="xs">
-            <SettingList keys={['PROJECT_CODES_ENABLED']} />
+            <SettingList
+              settingsState={globalSettings}
+              keys={['PROJECT_CODES_ENABLED']}
+            />
             <Divider />
             <ProjectCodeTable />
           </Stack>
@@ -128,7 +136,12 @@ export default function SystemSettings() {
         name: 'labels',
         label: t`Labels`,
         icon: <IconTag />,
-        content: <SettingList keys={['LABEL_ENABLE', 'LABEL_DPI']} />
+        content: (
+          <SettingList
+            settingsState={globalSettings}
+            keys={['LABEL_ENABLE', 'LABEL_DPI']}
+          />
+        )
       },
       {
         name: 'reporting',
@@ -136,6 +149,7 @@ export default function SystemSettings() {
         icon: <IconFileAnalytics />,
         content: (
           <SettingList
+            settingsState={globalSettings}
             keys={[
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
@@ -155,7 +169,7 @@ export default function SystemSettings() {
         name: 'parts',
         label: t`Parts`,
         icon: <IconCategory />,
-        content: <SettingList keys={[]} />
+        content: <SettingList settingsState={globalSettings} keys={[]} />
       },
       {
         name: 'parameters',
@@ -168,6 +182,7 @@ export default function SystemSettings() {
         icon: <IconPackages />,
         content: (
           <SettingList
+            settingsState={globalSettings}
             keys={[
               'SERIAL_NUMBER_GLOBALLY_UNIQUE',
               'SERIAL_NUMBER_AUTOFILL',
@@ -193,7 +208,12 @@ export default function SystemSettings() {
         name: 'buildorders',
         label: t`Build Orders`,
         icon: <IconTools />,
-        content: <SettingList keys={['BUILDORDER_REFERENCE_PATTERN']} />
+        content: (
+          <SettingList
+            settingsState={globalSettings}
+            keys={['BUILDORDER_REFERENCE_PATTERN']}
+          />
+        )
       },
       {
         name: 'purchaseorders',
@@ -201,6 +221,7 @@ export default function SystemSettings() {
         icon: <IconShoppingCart />,
         content: (
           <SettingList
+            settingsState={globalSettings}
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
@@ -214,6 +235,7 @@ export default function SystemSettings() {
         icon: <IconTruckDelivery />,
         content: (
           <SettingList
+            settingsState={globalSettings}
             keys={[
               'SALESORDER_REFERENCE_PATTERN',
               'SALESORDER_DEFAULT_SHIPMENT',
@@ -227,12 +249,10 @@ export default function SystemSettings() {
 
   return (
     <>
-      <InvenTreeSettingsContext url={url(ApiPaths.settings_global)}>
-        <Stack spacing="xs">
-          <PageDetail title={t`System Settings`} />
-          <PanelGroup panels={systemSettingsPanels} />
-        </Stack>
-      </InvenTreeSettingsContext>
+      <Stack spacing="xs">
+        <PageDetail title={t`System Settings`} />
+        <PanelGroup panels={systemSettingsPanels} />
+      </Stack>
     </>
   );
 }

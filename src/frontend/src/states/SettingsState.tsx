@@ -7,7 +7,7 @@ import { api } from '../App';
 import { ApiPaths, url } from './ApiState';
 import { Setting } from './states';
 
-interface SettingsStateProps {
+export interface SettingsStateProps {
   settings: Setting[];
   fetchSettings: () => void;
 }

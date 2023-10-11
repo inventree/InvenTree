@@ -2,40 +2,33 @@ import { t } from '@lingui/macro';
 import { Button, Group, Space, Stack, Switch, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconEdit } from '@tabler/icons-react';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { api } from '../../App';
-import { SettingsContext } from '../../contexts/SettingsContext';
 import { openModalApiForm } from '../../functions/forms';
-
-export type SettingType = {
-  pk: number;
-  key: string;
-  value: string;
-  name: string;
-  description: string;
-  type: string;
-  choices: any[];
-  model_name: string;
-  api_url: string;
-  units: string;
-};
+import { ApiPaths, url } from '../../states/ApiState';
+import { SettingsStateProps } from '../../states/SettingsState';
+import { Setting } from '../../states/states';
 
 /**
  * Render a single setting value
  */
-function SettingValue({ setting }: { setting: SettingType }) {
-  const settings = useContext(SettingsContext);
-
+function SettingValue({
+  settingsState,
+  setting
+}: {
+  settingsState: SettingsStateProps;
+  setting: Setting;
+}) {
   // TODO: extract URL from top-level query (only global settings work currently)
-  const url = '/settings/global/';
+  const endpoint = ApiPaths.settings_global_list;
 
   // Callback function when a boolean value is changed
   function onToggle(value: boolean) {
     api
-      .patch(`${url}${setting.key}/`, { value: value })
+      .patch(url(endpoint, setting.key), { value: value })
       .then(() => {
-        settings.settingsQuery?.refetch();
+        settingsState.fetchSettings();
       })
       .catch((error) => {
         console.log('Error editing setting', error);
@@ -49,7 +42,7 @@ function SettingValue({ setting }: { setting: SettingType }) {
 
   // Callback function to open the edit dialog (for non-boolean settings)
   function onEditButton() {
-    let field_type = setting?.type ?? 'string';
+    let field_type: string = setting?.type ?? 'string';
 
     if (setting?.choices && setting?.choices?.length > 0) {
       field_type = 'choice';
@@ -57,11 +50,11 @@ function SettingValue({ setting }: { setting: SettingType }) {
 
     openModalApiForm({
       name: 'setting-edit',
-      url: url,
+      url: endpoint,
       pk: setting.key,
       method: 'PATCH',
       title: t`Edit Setting`,
-      ignoreOptionsCheck: true,
+      ignorePermissionCheck: true,
       fields: {
         value: {
           value: setting?.value ?? '',
@@ -72,7 +65,7 @@ function SettingValue({ setting }: { setting: SettingType }) {
         }
       },
       onFormSuccess() {
-        settings.settingsQuery?.refetch();
+        settingsState.fetchSettings();
       }
     });
   }
@@ -122,7 +115,13 @@ function SettingValue({ setting }: { setting: SettingType }) {
 /**
  * Display a single setting item, and allow editing of the value
  */
-export function SettingItem({ setting }: { setting: SettingType }) {
+export function SettingItem({
+  settingsState,
+  setting
+}: {
+  settingsState: SettingsStateProps;
+  setting: Setting;
+}) {
   return (
     <>
       <Group position="apart" p="10">
@@ -130,7 +129,7 @@ export function SettingItem({ setting }: { setting: SettingType }) {
           <Text>{setting.name}</Text>
           <Text size="xs">{setting.description}</Text>
         </Stack>
-        <SettingValue setting={setting} />
+        <SettingValue settingsState={settingsState} setting={setting} />
       </Group>
     </>
   );

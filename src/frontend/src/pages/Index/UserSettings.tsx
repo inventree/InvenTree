@@ -13,7 +13,6 @@ import { useMemo } from 'react';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { SettingList } from '../../components/settings/SettingList';
-import { InvenTreeSettingsContext } from '../../contexts/SettingsContext';
 import { ApiPaths, url } from '../../states/ApiState';
 
 /**
@@ -100,15 +99,13 @@ export default function UserSettings() {
 
   return (
     <>
-      <InvenTreeSettingsContext url={url(ApiPaths.settings_user)}>
-        <Stack spacing="xs">
-          <PageDetail
-            title={t`User Settings`}
-            detail={<Text>TODO: Filler</Text>}
-          />
-          <PanelGroup panels={userSettingsPanels} />
-        </Stack>
-      </InvenTreeSettingsContext>
+      <Stack spacing="xs">
+        <PageDetail
+          title={t`User Settings`}
+          detail={<Text>TODO: Filler</Text>}
+        />
+        <PanelGroup panels={userSettingsPanels} />
+      </Stack>
     </>
   );
 }

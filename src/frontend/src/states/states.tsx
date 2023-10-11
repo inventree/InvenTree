@@ -61,7 +61,8 @@ export enum SettingTyp {
 export enum SettingType {
   Boolean = 'boolean',
   Integer = 'integer',
-  String = 'string'
+  String = 'string',
+  Choice = 'choice'
 }
 
 export interface PluginProps {
