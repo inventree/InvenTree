@@ -4,13 +4,16 @@ import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ServerAPIProps, UserProps } from './states';
 
-interface ApiStateProps {
+interface UserStateProps {
   user: UserProps | undefined;
   setUser: (newUser: UserProps) => void;
   fetchApiState: () => void;
 }
 
-export const useApiState = create<ApiStateProps>((set, get) => ({
+/**
+ * Global user information state, using Zustand manager
+ */
+export const useApiState = create<UserStateProps>((set, get) => ({
   user: undefined,
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchApiState: async () => {
@@ -45,6 +48,7 @@ export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
 
 export enum ApiPaths {
   user_me = 'api-user-me',
+  user_roles = 'api-user-roles',
   user_token = 'api-user-token',
   user_simple_login = 'api-user-simple-login',
   user_reset = 'api-user-reset',
@@ -64,6 +68,8 @@ export function url(path: ApiPaths, pk?: any): string {
   switch (path) {
     case ApiPaths.user_me:
       return 'user/me/';
+    case ApiPaths.user_roles:
+      return 'user/roles/';
     case ApiPaths.user_token:
       return 'user/token/';
     case ApiPaths.user_simple_login:
