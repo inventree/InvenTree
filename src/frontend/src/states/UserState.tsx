@@ -42,6 +42,8 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       .get(url(ApiPaths.user_roles))
       .then((response) => {
         const user: UserProps = get().user as UserProps;
+
+        // Update user with role data
         user.roles = response.data.roles;
         user.is_staff = response.data.is_staff ?? false;
         user.is_superuser = response.data.is_superuser ?? false;
