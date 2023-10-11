@@ -45,5 +45,15 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       .catch((error) => {
         console.error('Error fetching user roles:', error);
       });
+  },
+  checkUserRole: (role: string, permission: string) => {
+    // Check if the user has the specified permission for the specified role
+    const user: UserProps = get().user as UserProps;
+
+    if (user.is_superuser) return true;
+    if (user.roles === undefined) return false;
+    if (user.roles[role] === undefined) return false;
+
+    return user.roles[role].includes(permission);
   }
 }));
