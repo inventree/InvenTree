@@ -19,7 +19,8 @@ from common.models import InvenTreeSetting
 from InvenTree.status_codes import StockHistoryCode, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
-from stock.models import StockItem, StockItemTestResult, StockLocation
+from stock.models import (StockItem, StockItemTestResult, StockLocation,
+                          StockLocationType)
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
@@ -94,7 +95,10 @@ class StockLocationTest(StockAPITestCase):
             'items',
             'pathstring',
             'owner',
-            'url'
+            'url',
+            'icon',
+            'location_type',
+            'location_type_detail',
         ]
 
         response = self.get(self.list_url, expected_code=200)
@@ -292,6 +296,89 @@ class StockLocationTest(StockAPITestCase):
         non_structural_location.structural = True
         with self.assertRaises(ValidationError):
             non_structural_location.full_clean()
+
+    def test_stock_location_icon(self):
+        """Test stock location icon inheritance from StockLocationType."""
+        parent_location = StockLocation.objects.create(name="Parent location")
+
+        location_type = StockLocationType.objects.create(name="Box", description="This is a very cool type of box", icon="fas fa-box")
+        location = StockLocation.objects.create(name="Test location", custom_icon="fas fa-microscope", location_type=location_type, parent=parent_location)
+
+        res = self.get(self.list_url, {"parent": str(parent_location.pk)}, expected_code=200).json()
+        self.assertEqual(res[0]["icon"], "fas fa-microscope", "Custom icon from location should be returned")
+
+        location.custom_icon = ""
+        location.save()
+        res = self.get(self.list_url, {"parent": str(parent_location.pk)}, expected_code=200).json()
+        self.assertEqual(res[0]["icon"], "fas fa-box", "Custom icon is None, therefore it should inherit the location type icon")
+
+        location_type.icon = ""
+        location_type.save()
+        res = self.get(self.list_url, {"parent": str(parent_location.pk)}, expected_code=200).json()
+        self.assertEqual(res[0]["icon"], "", "Custom icon and location type icon is None, None should be returned")
+
+    def test_stock_location_list_filter(self):
+        """Test stock location list filters."""
+        parent_location = StockLocation.objects.create(name="Parent location")
+
+        location_type = StockLocationType.objects.create(name="Box", description="This is a very cool type of box", icon="fas fa-box")
+        location_type2 = StockLocationType.objects.create(name="Shelf", description="This is a very cool type of shelf", icon="fas fa-shapes")
+        StockLocation.objects.create(name="Test location w. type", location_type=location_type, parent=parent_location)
+        StockLocation.objects.create(name="Test location w. type 2", parent=parent_location, location_type=location_type2)
+        StockLocation.objects.create(name="Test location wo type", parent=parent_location)
+
+        res = self.get(self.list_url, {"parent": str(parent_location.pk), "has_location_type": "1"}, expected_code=200).json()
+        self.assertEqual(len(res), 2)
+        self.assertEqual(res[0]["name"], "Test location w. type")
+        self.assertEqual(res[1]["name"], "Test location w. type 2")
+
+        res = self.get(self.list_url, {"parent": str(parent_location.pk), "location_type": str(location_type.pk)}, expected_code=200).json()
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0]["name"], "Test location w. type")
+
+        res = self.get(self.list_url, {"parent": str(parent_location.pk), "has_location_type": "0"}, expected_code=200).json()
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0]["name"], "Test location wo type")
+
+
+class StockLocationTypeTest(StockAPITestCase):
+    """Tests for the StockLocationType API endpoints."""
+
+    list_url = reverse('api-location-type-list')
+
+    def test_list(self):
+        """Test that the list endpoint works as expected."""
+
+        location_types = [
+            StockLocationType.objects.create(name="Type 1", description="Type 1 desc", icon="fas fa-box"),
+            StockLocationType.objects.create(name="Type 2", description="Type 2 desc", icon="fas fa-box"),
+            StockLocationType.objects.create(name="Type 3", description="Type 3 desc", icon="fas fa-box"),
+        ]
+
+        StockLocation.objects.create(name="Loc 1", location_type=location_types[0])
+        StockLocation.objects.create(name="Loc 2", location_type=location_types[0])
+        StockLocation.objects.create(name="Loc 3", location_type=location_types[1])
+
+        res = self.get(self.list_url, expected_code=200).json()
+        self.assertEqual(len(res), 3)
+        self.assertCountEqual([r["location_count"] for r in res], [2, 1, 0])
+
+    def test_delete(self):
+        """Test that we can delete a location type via API."""
+        location_type = StockLocationType.objects.create(name="Type 1", description="Type 1 desc", icon="fas fa-box")
+        self.delete(reverse('api-location-type-detail', kwargs={"pk": location_type.pk}), expected_code=204)
+        self.assertEqual(StockLocationType.objects.count(), 0)
+
+    def test_create(self):
+        """Test that we can create a location type via API."""
+        self.post(self.list_url, {"name": "Test Type 1", "description": "Test desc 1", "icon": "fas fa-box"}, expected_code=201)
+        self.assertIsNotNone(StockLocationType.objects.filter(name="Test Type 1").first())
+
+    def test_update(self):
+        """Test that we can update a location type via API."""
+        location_type = StockLocationType.objects.create(name="Type 1", description="Type 1 desc", icon="fas fa-box")
+        res = self.patch(reverse('api-location-type-detail', kwargs={"pk": location_type.pk}), {"icon": "fas fa-shapes"}, expected_code=200).json()
+        self.assertEqual(res["icon"], "fas fa-shapes")
 
 
 class StockItemListTest(StockAPITestCase):

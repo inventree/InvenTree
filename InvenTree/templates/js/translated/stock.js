@@ -81,6 +81,7 @@
     serializeStockItem,
     stockItemFields,
     stockLocationFields,
+    stockLocationTypeFields,
     uninstallStockItem,
 */
 
@@ -130,6 +131,20 @@ function serializeStockItem(pk, options={}) {
     constructForm(url, options);
 }
 
+function stockLocationTypeFields() {
+    const fields = {
+        name: {},
+        description: {},
+        icon: {
+            help_text: `{% trans "Default icon for all locations that have no icon set (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
+            placeholder: 'fas fa-box',
+            icon: "fa-icons",
+        },
+    }
+
+    return fields;
+}
+
 
 function stockLocationFields(options={}) {
     var fields = {
@@ -146,9 +161,20 @@ function stockLocationFields(options={}) {
         owner: {},
         structural: {},
         external: {},
-        icon: {
+        location_type: {
+            secondary: {
+                title: '{% trans "Add Location type" %}',
+                fields: function() {
+                    const fields = stockLocationTypeFields();
+
+                    return fields;
+                }
+            },
+        },
+        custom_icon: {
             help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
+            icon: "fa-icons",
         },
     };
 
@@ -2729,7 +2755,18 @@ function loadStockLocationTable(table, options) {
                 formatter: function(value) {
                     return yesNoLabel(value);
                 }
-            }
+            },
+            {
+                field: 'location_type',
+                title: '{% trans "Location type" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value, row) {
+                    if (row.location_type_detail) {
+                        return row.location_type_detail.name;
+                    }
+                }
+            },
         ]
     });
 }

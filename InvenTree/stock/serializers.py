@@ -5,7 +5,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import BooleanField, Case, Q, Value, When
+from django.db.models import BooleanField, Case, Count, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
@@ -28,7 +28,7 @@ from InvenTree.serializers import (InvenTreeCurrencySerializer,
 from part.serializers import PartBriefSerializer
 
 from .models import (StockItem, StockItemAttachment, StockItemTestResult,
-                     StockItemTracking, StockLocation)
+                     StockItemTracking, StockLocation, StockLocationType)
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -763,6 +763,36 @@ class StockChangeStatusSerializer(serializers.Serializer):
         StockItemTracking.objects.bulk_create(transaction_notes)
 
 
+class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for StockLocationType model."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        model = StockLocationType
+        fields = [
+            "pk",
+            "name",
+            "description",
+            "icon",
+            "location_count",
+        ]
+
+        read_only_fields = [
+            "location_count",
+        ]
+
+    location_count = serializers.IntegerField(read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add location count to each location type."""
+
+        return queryset.annotate(
+            location_count=Count("stock_locations")
+        )
+
+
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a simple tree view."""
 
@@ -799,14 +829,17 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'items',
             'owner',
             'icon',
+            'custom_icon',
             'structural',
             'external',
-
+            'location_type',
+            'location_type_detail',
             'tags',
         ]
 
         read_only_fields = [
             'barcode_hash',
+            'icon',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -843,6 +876,12 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         source='get_path',
         read_only=True,
     )
+
+    # explicitly set this field, so it gets included for AutoSchema
+    icon = serializers.CharField(read_only=True)
+
+    # Detail for location type
+    location_type_detail = StockLocationTypeSerializer(source="location_type", read_only=True, many=False)
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
