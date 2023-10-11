@@ -4,31 +4,6 @@ import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ServerAPIProps, UserProps } from './states';
 
-interface UserStateProps {
-  user: UserProps | undefined;
-  setUser: (newUser: UserProps) => void;
-  fetchApiState: () => void;
-}
-
-/**
- * Global user information state, using Zustand manager
- */
-export const useApiState = create<UserStateProps>((set, get) => ({
-  user: undefined,
-  setUser: (newUser: UserProps) => set({ user: newUser }),
-  fetchApiState: async () => {
-    // Fetch user data
-    await api.get(url(ApiPaths.user_me)).then((response) => {
-      const user: UserProps = {
-        name: `${response.data.first_name} ${response.data.last_name}`,
-        email: response.data.email,
-        username: response.data.username
-      };
-      set({ user: user });
-    });
-  }
-}));
-
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
@@ -55,6 +30,8 @@ export enum ApiPaths {
   user_reset = 'api-user-reset',
   user_reset_set = 'api-user-reset-set',
 
+  settings_global_list = 'api-settings-global-list',
+  settings_user_list = 'api-settings-user-list',
   notifications_list = 'api-notifications-list',
 
   barcode = 'api-barcode',
@@ -102,6 +79,10 @@ export function endpoint(path: ApiPaths): string {
       return '/auth/password/reset/';
     case ApiPaths.user_reset_set:
       return '/auth/password/reset/confirm/';
+    case ApiPaths.settings_global_list:
+      return 'settings/global/';
+    case ApiPaths.settings_user_list:
+      return 'settings/user/';
     case ApiPaths.notifications_list:
       return 'notifications/';
     case ApiPaths.barcode:
