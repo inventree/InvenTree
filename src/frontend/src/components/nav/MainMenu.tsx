@@ -11,12 +11,12 @@ import { Link } from 'react-router-dom';
 
 import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
-import { useApiState } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { PlaceholderPill } from '../items/Placeholder';
 
 export function MainMenu() {
   const { classes, theme } = InvenTreeStyle();
-  const [username] = useApiState((state) => [state.user?.name]);
+  const [username] = useUserState((state) => [state.user?.name]);
   return (
     <Menu width={260} position="bottom-end">
       <Menu.Target>

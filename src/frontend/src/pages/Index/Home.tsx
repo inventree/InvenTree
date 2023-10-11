@@ -7,7 +7,7 @@ import {
   WidgetLayout
 } from '../../components/widgets/WidgetLayout';
 import { LoadingItem } from '../../functions/loading';
-import { useApiState } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 
 const vals: LayoutItemType[] = [
   {
@@ -51,7 +51,7 @@ const vals: LayoutItemType[] = [
 ];
 
 export default function Home() {
-  const [username] = useApiState((state) => [state.user?.name]);
+  const [username] = useUserState((state) => [state.user?.name]);
   return (
     <>
       <Title order={1}>
