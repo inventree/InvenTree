@@ -75,7 +75,7 @@ export default function StockDetail() {
         icon: <IconPaperclip size="18" />,
         content: (
           <AttachmentTable
-            url={url(ApiPaths.stock_attachment_list)}
+            url={ApiPaths.stock_attachment_list}
             model="stock_item"
             pk={stockitem.pk ?? -1}
           />

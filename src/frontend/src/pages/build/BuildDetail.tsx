@@ -6,16 +6,13 @@ import {
   IconInfoCircle,
   IconList,
   IconListCheck,
-  IconListTree,
   IconNotes,
   IconPaperclip,
   IconSitemap
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { api } from '../../App';
 import {
   PlaceholderPanel,
   PlaceholderPill
@@ -112,7 +109,7 @@ export default function BuildDetail() {
         icon: <IconPaperclip size="18" />,
         content: (
           <AttachmentTable
-            url={url(ApiPaths.build_order_attachment_list)}
+            url={ApiPaths.build_order_attachment_list}
             model="build"
             pk={build.pk ?? -1}
           />
