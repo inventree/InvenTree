@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../../states/ApiState';
 import {
   openCreateApiForm,
   openDeleteApiForm,
@@ -31,7 +32,7 @@ export function addAttachment({
   attachmentType,
   callback
 }: {
-  url: string;
+  url: ApiPaths;
   model: string;
   pk: number;
   attachmentType: 'file' | 'link';
@@ -77,7 +78,7 @@ export function editAttachment({
   attachmentType,
   callback
 }: {
-  url: string;
+  url: ApiPaths;
   model: string;
   pk: number;
   attachmentType: 'file' | 'link';
@@ -116,7 +117,7 @@ export function deleteAttachment({
   pk,
   callback
 }: {
-  url: string;
+  url: ApiPaths;
   pk: number;
   callback: () => void;
 }) {

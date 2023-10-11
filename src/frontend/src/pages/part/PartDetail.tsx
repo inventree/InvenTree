@@ -157,7 +157,7 @@ export default function PartDetail() {
     // TODO: Set edit permission based on user permissions
     return (
       <NotesEditor
-        url={`/part/${part.pk}/`}
+        url={url(ApiPaths.part_list, part.pk)}
         data={part.notes ?? ''}
         allowEdit={true}
       />

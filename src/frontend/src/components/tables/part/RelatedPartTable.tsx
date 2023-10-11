@@ -60,7 +60,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
     openCreateApiForm({
       name: 'add-related-part',
       title: t`Add Related Part`,
-      url: '/part/related/',
+      url: ApiPaths.related_part_list,
       fields: {
         part_1: {
           hidden: true,
@@ -100,7 +100,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
         onClick: () => {
           openDeleteApiForm({
             name: 'delete-related-part',
-            url: '/part/related/',
+            url: ApiPaths.related_part_list,
             pk: record.pk,
             title: t`Delete Related Part`,
             successMessage: t`Related part deleted`,

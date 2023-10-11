@@ -7,10 +7,9 @@ import {
   IconInfoCircle,
   IconNotes,
   IconPaperclip,
-  IconSitemap,
-  IconTransferIn
+  IconSitemap
 } from '@tabler/icons-react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { PlaceholderPanel } from '../../components/items/Placeholder';
@@ -88,7 +87,7 @@ export default function StockDetail() {
         icon: <IconNotes size="18" />,
         content: (
           <NotesEditor
-            url={`/stock/${stockitem.pk}/`}
+            url={url(ApiPaths.stock_item_list, stockitem.pk)}
             data={stockitem.notes ?? ''}
             allowEdit={true}
           />

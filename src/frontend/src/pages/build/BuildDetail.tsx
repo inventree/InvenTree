@@ -124,7 +124,7 @@ export default function BuildDetail() {
         icon: <IconNotes size="18" />,
         content: (
           <NotesEditor
-            url={`/build/${build.pk}/`}
+            url={url(ApiPaths.build_order_list, build.pk)}
             data={build.notes ?? ''}
             allowEdit={true}
           />
