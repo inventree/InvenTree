@@ -7,6 +7,10 @@ import { api } from '../App';
 import { ApiPaths, url, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../states/SettingsState';
 import { useUserState } from '../states/UserState';
 
 export const doClassicLogin = async (username: string, password: string) => {
@@ -56,14 +60,19 @@ export const doSimpleLogin = async (email: string) => {
   return mail;
 };
 
+// Perform a login using a token
 export const doTokenLogin = (token: string) => {
   const { setToken } = useSessionState.getState();
   const { fetchUserState } = useUserState.getState();
   const { fetchServerApiState } = useServerApiState.getState();
+  const globalSettingsState = useGlobalSettingsState.getState();
+  const userSettingsState = useUserSettingsState.getState();
 
   setToken(token);
   fetchUserState();
   fetchServerApiState();
+  globalSettingsState.fetchSettings();
+  userSettingsState.fetchSettings();
 };
 
 export function handleReset(navigate: any, values: { email: string }) {
