@@ -83,6 +83,18 @@ class PluginList(ListAPI):
 
             queryset = queryset.filter(pk__in=matches)
 
+        # Filter queryset by 'installed' flag
+        if 'installed' in params:
+            installed = str2bool(params['installed'])
+
+            matches = []
+
+            for result in queryset:
+                if result.is_installed() == installed:
+                    matches.append(result.pk)
+
+            queryset = queryset.filter(pk__in=matches)
+
         return queryset
 
     filter_backends = SEARCH_ORDER_FILTER

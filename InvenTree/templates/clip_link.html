@@ -1,5 +1,5 @@
 {% load i18n %}
 
 {% if link %}
-<a href="{{ link }}">{{ link }}</a>{% include 'clip.html' %}
+<a href="{{ link }}" {% if new_window %}target="_blank" rel="noopener"{% endif %}>{{ link }}</a>{% include 'clip.html' %}
 {% endif %}

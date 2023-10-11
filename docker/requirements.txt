@@ -14,3 +14,7 @@ mariadb>=1.0.7,<1.1.0
 
 # gunicorn web server
 gunicorn>=20.1.0
+
+# LDAP required packages
+django-auth-ldap                # Django integration for ldap auth
+python-ldap                     # LDAP auth support

@@ -16,7 +16,7 @@ export const PurchaseOrderRenderer = ({ pk }: { pk: string }) => {
   };
   return (
     <GeneralRenderer
-      api_key={ApiPaths.purchase_order_detail}
+      api_key={ApiPaths.purchase_order_list}
       api_ref="pruchaseorder"
       link={`/order/purchase-order/${pk}`}
       pk={pk}

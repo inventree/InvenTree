@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ThumbnailHoverCard } from '../../items/Thumbnail';
+import { ApiPaths, url } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -142,7 +142,7 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url="build/"
+      url={url(ApiPaths.build_order_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{
