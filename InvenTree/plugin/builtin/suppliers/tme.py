@@ -9,6 +9,7 @@ import re
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
+from plugin.base.barcodes.mixins import SupplierBarcodeData
 from plugin.mixins import SupplierBarcodeMixin
 
 logger = logging.getLogger('inventree')
@@ -39,14 +40,15 @@ class TMEPlugin(SupplierBarcodeMixin, InvenTreePlugin):
         else:
             return None
 
-        sku = barcode_fields.get("supplier_part_number")
-        if not (supplier_part := self.get_supplier_part(sku)):
-            return None
+        if order_number := barcode_fields.get("purchase_order_number"):
+            order_number = order_number.split("/")[0]
 
-        if po_number := barcode_fields.get("purchase_order_number"):
-            barcode_fields["purchase_order_number"] = po_number.split("/")[0]
-
-        return supplier_part, barcode_fields
+        return SupplierBarcodeData(
+            SKU=barcode_fields.get("supplier_part_number"),
+            MPN=barcode_fields.get("manufacturer_part_number"),
+            quantity=barcode_fields.get("quantity"),
+            order_number=order_number,
+        )
 
 
 TME_IS_QRCODE_REGEX = re.compile(r"([^\s:]+:[^\s:]+\s+)+PN:[^\s:]+\s+(\S+(\s|$)+)+")

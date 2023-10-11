@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
 from django.db.models import F
 from django.utils.translation import gettext_lazy as _
 
-from company.models import Company, ManufacturerPart, SupplierPart
+from company.models import Company, SupplierPart
 from order.models import PurchaseOrder, PurchaseOrderStatus
+from plugin.base.integration.SettingsMixin import SettingsMixin
 from stock.models import StockLocation
 
 logger = logging.getLogger('inventree')
@@ -71,37 +73,6 @@ class BarcodeMixin:
         return None
 
     @staticmethod
-    def get_supplier_part(sku: str, supplier: Company = None, mpn: str = None):
-        """Get a supplier part from SKU or by supplier and MPN."""
-        if sku:
-            supplier_parts = SupplierPart.objects.filter(SKU__iexact=sku)
-            if len(supplier_parts) != 1:
-                logger.warning("Found %d supplier parts for SKU %s", len(supplier_parts), sku)
-                return None
-            return supplier_parts[0]
-
-        if not supplier or not mpn:
-            return None
-
-        manufacturer_parts = ManufacturerPart.objects.filter(MPN__iexact=mpn)
-        if len(manufacturer_parts) != 1:
-            logger.warning(
-                "Found %d manufacturer parts for MPN %s", len(manufacturer_parts), mpn
-            )
-            return None
-        manufacturer_part = manufacturer_parts[0]
-
-        supplier_parts = SupplierPart.objects.filter(
-            manufacturer_part=manufacturer_part.pk, supplier=supplier.pk)
-        if len(supplier_parts) != 1:
-            logger.warning(
-                "Found %d supplier parts for MPN %s and supplier %s",
-                len(supplier_parts), mpn, supplier.name
-            )
-            return None
-        return supplier_parts[0]
-
-    @staticmethod
     def parse_ecia_barcode2d(barcode_data: str | list[str]) -> dict[str, str]:
         """Parse a standard ECIA 2D barcode, according to https://www.ecianow.org/assets/docs/ECIA_Specifications.pdf"""
 
@@ -138,6 +109,39 @@ class BarcodeMixin:
         actual_data = barcode_data.split(HEADER, 1)[1].rsplit(TRAILER, 1)[0]
 
         return actual_data.split("\x1D")
+
+    @staticmethod
+    def get_supplier_parts(sku: str, supplier: Company = None, mpn: str = None):
+        """Get a supplier part from SKU or by supplier and MPN."""
+        supplier_parts = SupplierPart.objects
+
+        if sku:
+            supplier_parts = supplier_parts.filter(SKU__iexact=sku)
+            if len(supplier_parts) == 1:
+                return supplier_parts
+
+        if supplier:
+            supplier_parts = supplier_parts.filter(supplier=supplier.pk)
+            if len(supplier_parts) == 1:
+                return supplier_parts
+
+        if mpn:
+            supplier_parts = SupplierPart.objects.filter(manufacturer_part__MPN__iexact=mpn)
+            if len(supplier_parts) == 1:
+                return supplier_parts
+
+        if supplier_parts is SupplierPart.objects:
+            supplier_parts = []
+
+        logger.warning(
+            "Found %d supplier parts for SKU '%s', supplier '%s', MPN '%s'",
+            len(supplier_parts),
+            sku,
+            supplier.name,
+            mpn,
+        )
+
+        return supplier_parts
 
     @staticmethod
     def receive_purchase_order_item(
@@ -254,6 +258,15 @@ class BarcodeMixin:
         return response
 
 
+@dataclass
+class SupplierBarcodeData:
+    """Data parsed from a supplier barcode."""
+    SKU: str = None
+    MPN: str = None
+    quantity: Decimal | str = None
+    order_number: str = None
+
+
 class SupplierBarcodeMixin(BarcodeMixin):
     """Mixin that provides default implementations for scan functions for supplier barcodes.
 
@@ -261,7 +274,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
     parse_supplier_barcode_data function.
     """
 
-    def parse_supplier_barcode_data(self, barcode_data) -> tuple[SupplierPart, dict] | None:
+    def parse_supplier_barcode_data(self, barcode_data) -> SupplierBarcodeData | None:
         """Get supplier_part and other barcode_fields from barcode data.
 
         This function should return the matched supplier part and a dictionary containing the
@@ -278,9 +291,15 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def scan(self, barcode_data):
         """Try to match a supplier barcode to a supplier part."""
 
-        if (parsed := self.parse_supplier_barcode_data(barcode_data)) is None:
+        if not (parsed := self.parse_supplier_barcode_data(barcode_data)):
             return None
-        supplier_part, _ = parsed
+
+        supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
+        if not supplier_parts:
+            return {"error": _("Failed to find supplier part for barcode")}
+        elif len(supplier_parts) > 1:
+            return {"error": _("Found multiple matching supplier parts for barcode")}
+        supplier_part = supplier_parts[0]
 
         data = {
             "pk": supplier_part.pk,
@@ -295,17 +314,52 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         if (parsed := self.parse_supplier_barcode_data(barcode_data)) is None:
             return None
-        supplier_part, barcode_fields = parsed
+
+        supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
+        if not supplier_parts:
+            return {"error": _("Failed to find supplier part for barcode")}
+        elif len(supplier_parts) > 1:
+            return {"error": _("Found multiple matching supplier parts for barcode")}
+        supplier_part = supplier_parts[0]
 
         return self.receive_purchase_order_item(
             supplier_part,
             user,
-            quantity=barcode_fields.get("quantity"),
-            order_number=barcode_fields.get("purchase_order_number"),
+            quantity=parsed.quantity,
+            order_number=parsed.order_number,
             purchase_order=purchase_order,
             location=location,
             barcode=barcode_data,
         )
+
+    def get_supplier(self) -> Company | None:
+        """Get the supplier for the SUPPLIER_ID set in the plugin settings.
+
+        If it's not defined, try to guess it and set it if possible.
+        """
+
+        if not isinstance(self, SettingsMixin):
+            return None
+
+        if supplier_pk := self.get_setting("SUPPLIER_ID"):
+            if (supplier := Company.objects.get(pk=supplier_pk)):
+                return supplier
+            else:
+                logger.error(
+                    "No company with pk %d (set \"SUPPLIER_ID\" setting to a valid value)",
+                    supplier_pk
+                )
+                return None
+
+        if not (supplier_name := getattr(self, "DEFAULT_SUPPLIER_NAME", None)):
+            return None
+
+        suppliers = Company.objects.filter(name__icontains=supplier_name, is_supplier=True)
+        if len(suppliers) != 1:
+            return None
+        self.set_setting("SUPPLIER_ID", suppliers.first().pk)
+
+        return suppliers.first()
 
 
 # Map ECIA Data Identifier to human readable identifier

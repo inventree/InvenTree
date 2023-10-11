@@ -9,6 +9,7 @@ import re
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
+from plugin.base.barcodes.mixins import SupplierBarcodeData
 from plugin.mixins import SupplierBarcodeMixin
 
 logger = logging.getLogger('inventree')
@@ -32,23 +33,14 @@ class LCSCPlugin(SupplierBarcodeMixin, InvenTreePlugin):
         if not (match := LCSC_BARCODE_REGEX.fullmatch(barcode_data)):
             return None
 
-        barcode_pairs = (pair.split(":") for pair in match.group(1).split(","))
-        barcode_fields = {
-            BARCODE_FIELD_NAME_MAP.get(field_name, field_name): value
-            for field_name, value in barcode_pairs
-        }
+        barcode_fields = dict(pair.split(":") for pair in match.group(1).split(","))
 
-        sku = barcode_fields.get("supplier_part_number")
-        if not (supplier_part := self.get_supplier_part(sku)):
-            return None
-
-        return supplier_part, barcode_fields
+        return SupplierBarcodeData(
+            SKU=barcode_fields.get("pc"),
+            MPN=barcode_fields.get("pm"),
+            quantity=barcode_fields.get("qty"),
+            order_number=barcode_fields.get("on"),
+        )
 
 
 LCSC_BARCODE_REGEX = re.compile(r"^{((?:[^:,]+:[^:,]*,)*(?:[^:,]+:[^:,]*))}$")
-BARCODE_FIELD_NAME_MAP = {
-    "pc": "supplier_part_number",
-    "on": "purchase_order_number",
-    "pm": "manufacturer_part_number",
-    "qty": "quantity",
-}

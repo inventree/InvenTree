@@ -8,6 +8,7 @@ import logging
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
+from plugin.base.barcodes.mixins import SupplierBarcodeData
 from plugin.mixins import SupplierBarcodeMixin
 
 logger = logging.getLogger('inventree')
@@ -31,8 +32,9 @@ class DigiKeyPlugin(SupplierBarcodeMixin, InvenTreePlugin):
         if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
             return None
 
-        sku = barcode_fields.get("supplier_part_number")
-        if not (supplier_part := self.get_supplier_part(sku)):
-            return None
-
-        return supplier_part, barcode_fields
+        return SupplierBarcodeData(
+            SKU=barcode_fields.get("supplier_part_number"),
+            MPN=barcode_fields.get("manufacturer_part_number"),
+            quantity=barcode_fields.get("quantity"),
+            order_number=barcode_fields.get("purchase_order_number"),
+        )
