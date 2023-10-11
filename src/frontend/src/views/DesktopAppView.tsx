@@ -9,11 +9,22 @@ import { url_base } from '../main';
 import { routes } from '../router';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../states/SettingsState';
 import { useUserState } from '../states/UserState';
 
 export default function DesktopAppView() {
   const [hostList] = useLocalState((state) => [state.hostList]);
   const [fetchUserState] = useUserState((state) => [state.fetchUserState]);
+
+  const [fetchGlobalSettings] = useGlobalSettingsState((state) => [
+    state.fetchSettings
+  ]);
+  const [fetchUserSettings] = useUserSettingsState((state) => [
+    state.fetchSettings
+  ]);
 
   // Local state initialization
   if (Object.keys(hostList).length === 0) {
@@ -30,6 +41,8 @@ export default function DesktopAppView() {
     if (token && !fetchedServerSession) {
       setFetchedServerSession(true);
       fetchUserState();
+      fetchGlobalSettings();
+      fetchUserSettings();
     }
   }, [token, fetchedServerSession]);
 
