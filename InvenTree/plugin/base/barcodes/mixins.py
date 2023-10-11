@@ -60,14 +60,16 @@ class BarcodeMixin:
 
         It's recommended to use the receive_purchase_order_item method to return from this function.
 
-        If the barcode contains information about a supplier part and this plugin finds a valid
-        purchase order line item for it, it should return a dict, containing said "lineitem".
-        If location and quantity information is available as well, the dict should also contain
-        a "success" message.
-        If either or both aren't available it should contain an "action_required" message.
-        If any errors occur during this, it should contain an "error" message.
+        Returns:
+            None if the barcode_data could not be parsed.
 
-        Default return value is None
+            A dict object containing:
+                - on success:
+                    a "success" message and the received "lineitem"
+                - on partial success (if there's missing information):
+                    an "action_required" message and the matched, but not yet received "lineitem"
+                - on failure:
+                    an "error" message
         """
 
         return None
@@ -155,10 +157,11 @@ class BarcodeMixin:
     ) -> dict:
         """Try to receive a purchase order item.
 
-        Returns a dict object containing:
-            - on success: a "success" message
-            - on partial success: the "lineitem" with quantity and location (both can be None)
-            - on failure: an "error" message
+        Returns:
+            A dict object containing:
+                - on success: a "success" message
+                - on partial success: the "lineitem" with quantity and location (both can be None)
+                - on failure: an "error" message
         """
 
         if not purchase_order:
@@ -277,13 +280,11 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def parse_supplier_barcode_data(self, barcode_data) -> SupplierBarcodeData | None:
         """Get supplier_part and other barcode_fields from barcode data.
 
-        This function should return the matched supplier part and a dictionary containing the
-        remaining barcode fields.
-        The dictionary should contain these additional fields, if available:
-            "quantity", "purchase_order_number"
-        To get the supplier part it's recommended to use the get_supplier_part helper function.
+        Returns:
+            None if the barcode_data is not from a valid barcode of the supplier.
 
-        If no supplier part can be matched from the barcode_data this function should return None.
+            A SupplierBarcodeData object containing the SKU, MPN, quantity and order number
+            if available.
         """
 
         return None
