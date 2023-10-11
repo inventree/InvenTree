@@ -10,7 +10,6 @@ Increment this API version number whenever there is a significant change to the 
 v138 -> 2023-10-11 : https://github.com/inventree/InvenTree/pull/5679
     - Settings keys are no longer case sensitive
     - Include settings units in API serializer
-    - Add "admin" and "superuser" status to user serializer
 
 v137 -> 2023-10-04 : https://github.com/inventree/InvenTree/pull/5588
     - Adds StockLocationType API endpoints

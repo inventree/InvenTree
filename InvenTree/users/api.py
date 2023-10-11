@@ -102,8 +102,6 @@ class RoleDetails(APIView):
             'user': user.pk,
             'username': user.username,
             'roles': roles,
-            'is_staff': user.is_staff,
-            'is_superuser': user.is_superuser,
         }
 
         return Response(data)
