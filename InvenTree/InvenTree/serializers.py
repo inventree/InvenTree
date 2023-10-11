@@ -299,14 +299,10 @@ class UserSerializer(InvenTreeModelSerializer):
             'first_name',
             'last_name',
             'email',
-            'is_staff',
-            'is_superuser',
         ]
 
         read_only_fields = [
             'username',
-            'is_staff',
-            'is_superuser',
         ]
 
 
