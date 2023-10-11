@@ -4,31 +4,6 @@ import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ServerAPIProps, UserProps } from './states';
 
-interface UserStateProps {
-  user: UserProps | undefined;
-  setUser: (newUser: UserProps) => void;
-  fetchApiState: () => void;
-}
-
-/**
- * Global user information state, using Zustand manager
- */
-export const useApiState = create<UserStateProps>((set, get) => ({
-  user: undefined,
-  setUser: (newUser: UserProps) => set({ user: newUser }),
-  fetchApiState: async () => {
-    // Fetch user data
-    await api.get(url(ApiPaths.user_me)).then((response) => {
-      const user: UserProps = {
-        name: `${response.data.first_name} ${response.data.last_name}`,
-        email: response.data.email,
-        username: response.data.username
-      };
-      set({ user: user });
-    });
-  }
-}));
-
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
