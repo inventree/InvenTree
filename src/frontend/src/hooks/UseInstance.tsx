@@ -32,8 +32,10 @@ export function useInstance({
         return null;
       }
 
+      let url = apiUrl(endpoint, pk);
+
       return api
-        .get(apiUrl(endpoint, pk), {
+        .get(url, {
           params: params
         })
         .then((response) => {
@@ -48,7 +50,7 @@ export function useInstance({
         })
         .catch((error) => {
           setInstance({});
-          console.error(`Error fetching instance ${url}${pk}:`, error);
+          console.error(`Error fetching instance ${url}:`, error);
           return null;
         });
     },
