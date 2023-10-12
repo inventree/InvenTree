@@ -29,7 +29,7 @@ import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, url } from '../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 
 /**
  * Detail view for a single Part instance
@@ -157,7 +157,7 @@ export default function PartDetail() {
     // TODO: Set edit permission based on user permissions
     return (
       <NotesEditor
-        url={url(ApiPaths.part_list, part.pk)}
+        url={apiUrl(ApiPaths.part_list, part.pk)}
         data={part.notes ?? ''}
         allowEdit={true}
       />

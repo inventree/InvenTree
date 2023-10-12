@@ -5,8 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, url } from '../../../states/ApiState';
-import { ThumbnailHoverCard } from '../../items/Thumbnail';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { RowAction } from '../RowActions';
@@ -126,7 +125,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url={url(ApiPaths.stock_item_list)}
+      url={apiUrl(ApiPaths.stock_item_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{

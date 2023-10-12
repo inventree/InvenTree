@@ -18,7 +18,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, url } from '../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -87,7 +87,7 @@ export default function StockDetail() {
         icon: <IconNotes size="18" />,
         content: (
           <NotesEditor
-            url={url(ApiPaths.stock_item_list, stockitem.pk)}
+            url={apiUrl(ApiPaths.stock_item_list, stockitem.pk)}
             data={stockitem.notes ?? ''}
             allowEdit={true}
           />

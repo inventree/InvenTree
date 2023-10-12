@@ -68,6 +68,7 @@ export function PanelGroup({
             (panel, idx) =>
               !panel.hidden && (
                 <Tabs.Tab
+                  key={`panel-tab-${panel.name}`}
                   p="xs"
                   value={panel.name}
                   icon={panel.icon}

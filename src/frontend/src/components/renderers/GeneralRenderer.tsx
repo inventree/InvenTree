@@ -2,7 +2,7 @@ import { Anchor, Loader } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
-import { ApiPaths, url } from '../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { ThumbnailHoverCard } from '../items/Thumbnail';
 
 export function GeneralRenderer({
@@ -33,7 +33,7 @@ export function GeneralRenderer({
       queryKey: [ref, pk],
       queryFn: () => {
         return api
-          .get(url(api_key, pk))
+          .get(apiUrl(api_key, pk))
           .then((res) => res.data)
           .catch(() => {
             {

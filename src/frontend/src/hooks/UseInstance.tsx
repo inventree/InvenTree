@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
 import { api } from '../App';
-import { ApiPaths, url } from '../states/ApiState';
+import { ApiPaths, apiUrl } from '../states/ApiState';
 
 /**
  * Custom hook for loading a single instance of an instance from the API
@@ -32,8 +32,10 @@ export function useInstance({
         return null;
       }
 
+      let url = apiUrl(endpoint, pk);
+
       return api
-        .get(url(endpoint, pk), {
+        .get(url, {
           params: params
         })
         .then((response) => {
@@ -48,7 +50,7 @@ export function useInstance({
         })
         .catch((error) => {
           setInstance({});
-          console.error(`Error fetching instance ${url}${pk}:`, error);
+          console.error(`Error fetching instance ${url}:`, error);
           return null;
         });
     },

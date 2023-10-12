@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 
 /**
  * Construct a notification drawer.
@@ -33,7 +34,7 @@ export function NotificationDrawer({
     queryKey: ['notifications', opened],
     queryFn: async () =>
       api
-        .get('/notifications/', {
+        .get(apiUrl(ApiPaths.notifications_list), {
           params: {
             read: false,
             limit: 10

@@ -15,13 +15,17 @@ export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
   setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
   fetchServerApiState: async () => {
     // Fetch server data
-    await api.get('/').then((response) => {
+    await api.get(apiUrl(ApiPaths.api_server_info)).then((response) => {
       set({ server: response.data });
     });
   }
 }));
 
 export enum ApiPaths {
+  api_server_info = 'api-server-info',
+
+  api_search = 'api-search',
+
   // User information
   user_me = 'api-user-me',
   user_roles = 'api-user-roles',
@@ -63,10 +67,20 @@ export enum ApiPaths {
 }
 
 /**
+ * Function to return the API prefix.
+ * For now it is fixed, but may be configurable in the future.
+ */
+export function apiPrefix(): string {
+  return '/api/';
+}
+
+/**
  * Return the endpoint associated with a given API path
  */
-export function endpoint(path: ApiPaths): string {
+export function apiEndpoint(path: ApiPaths): string {
   switch (path) {
+    case ApiPaths.api_server_info:
+      return '';
     case ApiPaths.user_me:
       return 'user/me/';
     case ApiPaths.user_roles:
@@ -76,9 +90,13 @@ export function endpoint(path: ApiPaths): string {
     case ApiPaths.user_simple_login:
       return 'email/generate/';
     case ApiPaths.user_reset:
+      // Note leading prefix here
       return '/auth/password/reset/';
     case ApiPaths.user_reset_set:
+      // Note leading prefix here
       return '/auth/password/reset/confirm/';
+    case ApiPaths.api_search:
+      return 'search/';
     case ApiPaths.settings_global_list:
       return 'settings/global/';
     case ApiPaths.settings_user_list:
@@ -122,8 +140,13 @@ export function endpoint(path: ApiPaths): string {
 /**
  * Construct an API URL with an endpoint and (optional) pk value
  */
-export function url(path: ApiPaths, pk?: any): string {
-  let _url = endpoint(path);
+export function apiUrl(path: ApiPaths, pk?: any): string {
+  let _url = apiEndpoint(path);
+
+  // If the URL does not start with a '/', add the API prefix
+  if (!_url.startsWith('/')) {
+    _url = apiPrefix() + _url;
+  }
 
   if (_url && pk) {
     _url += `${pk}/`;

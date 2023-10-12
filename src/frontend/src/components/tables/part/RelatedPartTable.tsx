@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, url } from '../../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../items/Thumbnail';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -116,7 +116,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
 
   return (
     <InvenTreeTable
-      url={url(ApiPaths.related_part_list)}
+      url={apiUrl(ApiPaths.related_part_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{
