@@ -35,8 +35,10 @@ class TMEPlugin(SupplierBarcodeMixin, InvenTreePlugin):
                 QRCODE_FIELD_NAME_MAP.get(field_name, field_name): value
                 for field_name, value in TME_PARSE_QRCODE_REGEX.findall(barcode_data)
             }
-        elif barcode_split := TME_PARSE_BARCODE2D_REGEX.findall(barcode_data):
-            barcode_fields = self.parse_ecia_barcode2d(barcode_split)
+        elif TME_IS_BARCODE2D_REGEX.fullmatch(barcode_data):
+            barcode_fields = self.parse_ecia_barcode2d(
+                TME_PARSE_BARCODE2D_REGEX.findall(barcode_data)
+            )
         else:
             return None
 
@@ -51,8 +53,9 @@ class TMEPlugin(SupplierBarcodeMixin, InvenTreePlugin):
         )
 
 
-TME_IS_QRCODE_REGEX = re.compile(r"([^\s:]+:[^\s:]+\s+)+PN:[^\s:]+\s+(\S+(\s|$)+)+")
+TME_IS_QRCODE_REGEX = re.compile(r"([^\s:]+:[^\s:]+\s+)+(\S+(\s|$)+)+")
 TME_PARSE_QRCODE_REGEX = re.compile(r"([^\s:]+):([^\s:]+)(?:\s+|$)")
+TME_IS_BARCODE2D_REGEX = re.compile(r"(([^\s]+)(\s+|$))+")
 TME_PARSE_BARCODE2D_REGEX = re.compile(r"([^\s]+)(?:\s+|$)")
 QRCODE_FIELD_NAME_MAP = {
     "PN": "supplier_part_number",

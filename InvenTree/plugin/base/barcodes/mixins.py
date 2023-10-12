@@ -294,12 +294,14 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         if not (parsed := self.parse_supplier_barcode_data(barcode_data)):
             return None
+        if parsed.SKU is None and parsed.MPN is None:
+            return None
 
         supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
-        if not supplier_parts:
-            return {"error": _("Failed to find supplier part for barcode")}
-        elif len(supplier_parts) > 1:
+        if len(supplier_parts) > 1:
             return {"error": _("Found multiple matching supplier parts for barcode")}
+        elif not supplier_parts:
+            return None
         supplier_part = supplier_parts[0]
 
         data = {
@@ -313,14 +315,16 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Try to scan a supplier barcode to receive a purchase order item."""
 
-        if (parsed := self.parse_supplier_barcode_data(barcode_data)) is None:
+        if not (parsed := self.parse_supplier_barcode_data(barcode_data)):
+            return None
+        if parsed.SKU is None and parsed.MPN is None:
             return None
 
         supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
-        if not supplier_parts:
-            return {"error": _("Failed to find supplier part for barcode")}
-        elif len(supplier_parts) > 1:
+        if len(supplier_parts) > 1:
             return {"error": _("Found multiple matching supplier parts for barcode")}
+        elif not supplier_parts:
+            return None
         supplier_part = supplier_parts[0]
 
         return self.receive_purchase_order_item(
