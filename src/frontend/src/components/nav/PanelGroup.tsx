@@ -67,16 +67,15 @@ export function PanelGroup({
           {panels.map(
             (panel, idx) =>
               !panel.hidden && (
-                <div key={`panel-tab-${panel.name}`}>
-                  <Tabs.Tab
-                    p="xs"
-                    value={panel.name}
-                    icon={panel.icon}
-                    hidden={panel.hidden}
-                  >
-                    {panel.label}
-                  </Tabs.Tab>
-                </div>
+                <Tabs.Tab
+                  key={`panel-tab-${panel.name}`}
+                  p="xs"
+                  value={panel.name}
+                  icon={panel.icon}
+                  hidden={panel.hidden}
+                >
+                  {panel.label}
+                </Tabs.Tab>
               )
           )}
         </Tabs.List>
