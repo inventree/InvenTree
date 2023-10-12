@@ -139,7 +139,7 @@ class BarcodeMixin:
             "Found %d supplier parts for SKU '%s', supplier '%s', MPN '%s'",
             len(supplier_parts),
             sku,
-            supplier.name,
+            supplier.name if supplier else None,
             mpn,
         )
 
