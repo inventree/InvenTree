@@ -19,6 +19,7 @@ import { api, queryClient } from '../../../App';
 import { ColorToggle } from '../../../components/items/ColorToggle';
 import { EditButton } from '../../../components/items/EditButton';
 import { LanguageSelect } from '../../../components/items/LanguageSelect';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useLocalState } from '../../../states/LocalState';
 import { UserTheme } from './UserTheme';
 
@@ -29,7 +30,8 @@ export function UserPanel() {
 
   // data
   function fetchData() {
-    return api.get('user/me/').then((res) => res.data);
+    // TODO: Replace this call with the global user state, perhaps?
+    return api.get(apiUrl(ApiPaths.user_me)).then((res) => res.data);
   }
   const { isLoading, data } = useQuery({
     queryKey: ['user-me'],
@@ -68,7 +70,7 @@ export function UserInfo({ data }: { data: any }) {
   const form = useForm({ initialValues: data });
   const [editing, setEditing] = useToggle([false, true] as const);
   function SaveData(values: any) {
-    api.put('user/me/', values).then((res) => {
+    api.put(apiUrl(ApiPaths.user_me)).then((res) => {
       if (res.status === 200) {
         setEditing();
         queryClient.invalidateQueries(['user-me']);

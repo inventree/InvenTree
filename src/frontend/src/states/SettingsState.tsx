@@ -4,7 +4,7 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
-import { ApiPaths, url } from './ApiState';
+import { ApiPaths, apiUrl } from './ApiState';
 import { Setting } from './states';
 
 interface SettingsStateProps {
@@ -20,7 +20,7 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
     settings: [],
     fetchSettings: async () => {
       await api
-        .get(url(ApiPaths.settings_global_list))
+        .get(apiUrl(ApiPaths.settings_global_list))
         .then((response) => {
           set({ settings: response.data });
         })
@@ -38,7 +38,7 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   settings: [],
   fetchSettings: async () => {
     await api
-      .get(url(ApiPaths.settings_user_list))
+      .get(apiUrl(ApiPaths.settings_user_list))
       .then((response) => {
         set({ settings: response.data });
       })

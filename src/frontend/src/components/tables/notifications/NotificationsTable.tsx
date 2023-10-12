@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import { ApiPaths, url } from '../../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
@@ -40,7 +40,7 @@ export function NotificationTable({
 
   return (
     <InvenTreeTable
-      url={url(ApiPaths.notifications_list)}
+      url={apiUrl(ApiPaths.notifications_list)}
       tableKey={tableKey}
       columns={columns}
       props={{
