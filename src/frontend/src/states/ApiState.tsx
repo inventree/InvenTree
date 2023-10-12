@@ -24,6 +24,8 @@ export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
 export enum ApiPaths {
   api_server_info = 'api-server-info',
 
+  api_search = 'api-search',
+
   // User information
   user_me = 'api-user-me',
   user_roles = 'api-user-roles',
@@ -93,6 +95,8 @@ export function apiEndpoint(path: ApiPaths): string {
     case ApiPaths.user_reset_set:
       // Note leading prefix here
       return '/auth/password/reset/confirm/';
+    case ApiPaths.api_search:
+      return 'search/';
     case ApiPaths.settings_global_list:
       return 'settings/global/';
     case ApiPaths.settings_user_list:
