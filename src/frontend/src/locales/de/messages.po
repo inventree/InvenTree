@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-12 01:01\n"
+"PO-Revision-Date: 2023-10-13 01:16\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -39,17 +39,18 @@ msgstr "Abbrechen"
 
 #: src/components/forms/ApiForm.tsx:311
 #: src/contexts/ThemeContext.tsx:65
-#: src/pages/Index/Profile/UserPanel.tsx:107
+#: src/pages/Index/Profile/UserPanel.tsx:109
 msgid "Submit"
 msgstr "Speichern"
 
 #: src/components/forms/AuthenticationForm.tsx:36
+#: src/functions/auth.tsx:28
 msgid "Login failed"
 msgstr "Login fehlgeschlagen"
 
 #: src/components/forms/AuthenticationForm.tsx:37
 #: src/components/forms/AuthenticationForm.tsx:63
-#: src/functions/auth.tsx:95
+#: src/functions/auth.tsx:103
 msgid "Check your input and try again."
 msgstr ""
 
@@ -72,7 +73,7 @@ msgstr "Willkommen zurück!"
 #~ msgstr "Login successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:54
-#: src/functions/auth.tsx:86
+#: src/functions/auth.tsx:94
 msgid "Mail delivery successful"
 msgstr ""
 
@@ -190,7 +191,7 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:301
-#: src/components/nav/SearchDrawer.tsx:418
+#: src/components/nav/SearchDrawer.tsx:419
 #: src/components/tables/InvenTreeTable.tsx:373
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -254,56 +255,56 @@ msgstr "QR-Code scannen"
 msgid "Thumbnail"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:68
+#: src/components/modals/QrCodeModal.tsx:71
 msgid "Unknown response"
 msgstr "Unbekannte Antwort"
 
-#: src/components/modals/QrCodeModal.tsx:98
+#: src/components/modals/QrCodeModal.tsx:101
 #: src/pages/Index/Scan.tsx:592
 msgid "Error while getting camera"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:121
+#: src/components/modals/QrCodeModal.tsx:124
 #: src/pages/Index/Scan.tsx:615
 msgid "Error while scanning"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:135
+#: src/components/modals/QrCodeModal.tsx:138
 #: src/pages/Index/Scan.tsx:629
 msgid "Error while stopping"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:150
+#: src/components/modals/QrCodeModal.tsx:153
 #: src/defaults/menuItems.tsx:22
 #: src/pages/Index/Scan.tsx:698
 msgid "Scanning"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:150
+#: src/components/modals/QrCodeModal.tsx:153
 #: src/pages/Index/Scan.tsx:698
 msgid "Not scanning"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:155
+#: src/components/modals/QrCodeModal.tsx:158
 #: src/pages/Index/Scan.tsx:704
 msgid "Select Camera"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:165
+#: src/components/modals/QrCodeModal.tsx:168
 #: src/pages/Index/Scan.tsx:690
 msgid "Start scanning"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:172
+#: src/components/modals/QrCodeModal.tsx:175
 #: src/pages/Index/Scan.tsx:684
 msgid "Stop scanning"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:177
+#: src/components/modals/QrCodeModal.tsx:180
 msgid "No scans yet!"
 msgstr ""
 
-#: src/components/modals/QrCodeModal.tsx:197
+#: src/components/modals/QrCodeModal.tsx:200
 msgid "Close modal"
 msgstr "Dialog schließen"
 
@@ -369,50 +370,50 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:68
+#: src/components/nav/NotificationDrawer.tsx:69
 #: src/pages/Notifications.tsx:21
 #: src/pages/Notifications.tsx:86
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: src/components/nav/NotificationDrawer.tsx:85
+#: src/components/nav/NotificationDrawer.tsx:86
 msgid "You have no unread notifications."
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:108
+#: src/components/nav/NotificationDrawer.tsx:109
 #: src/pages/Notifications.tsx:29
 msgid "Mark as read"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:186
+#: src/components/nav/SearchDrawer.tsx:187
 msgid "results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:344
+#: src/components/nav/SearchDrawer.tsx:345
 msgid "Enter search text"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:371
+#: src/components/nav/SearchDrawer.tsx:372
 msgid "Search Options"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:374
+#: src/components/nav/SearchDrawer.tsx:375
 msgid "Regex search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:384
+#: src/components/nav/SearchDrawer.tsx:385
 msgid "Whole word search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:421
+#: src/components/nav/SearchDrawer.tsx:422
 msgid "An error occurred during search query"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:432
+#: src/components/nav/SearchDrawer.tsx:433
 msgid "No results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:435
+#: src/components/nav/SearchDrawer.tsx:436
 msgid "No results available for search query"
 msgstr ""
 
@@ -424,7 +425,7 @@ msgstr ""
 #: src/components/tables/build/BuildOrderTable.tsx:26
 #: src/components/tables/part/PartTable.tsx:25
 #: src/components/tables/part/RelatedPartTable.tsx:32
-#: src/components/tables/stock/StockItemTable.tsx:23
+#: src/components/tables/stock/StockItemTable.tsx:22
 #: src/pages/part/PartDetail.tsx:193
 msgid "Part"
 msgstr ""
@@ -585,7 +586,7 @@ msgstr ""
 
 #: src/components/tables/AttachmentTable.tsx:113
 #: src/components/tables/part/PartTable.tsx:198
-#: src/components/tables/stock/StockItemTable.tsx:116
+#: src/components/tables/stock/StockItemTable.tsx:115
 msgid "Edit"
 msgstr ""
 
@@ -755,7 +756,7 @@ msgstr ""
 #: src/components/tables/part/PartCategoryTable.tsx:28
 #: src/components/tables/part/PartTable.tsx:52
 #: src/components/tables/part/RelatedPartTable.tsx:50
-#: src/components/tables/stock/StockItemTable.tsx:40
+#: src/components/tables/stock/StockItemTable.tsx:39
 #: src/components/tables/stock/StockLocationTable.tsx:27
 msgid "Description"
 msgstr ""
@@ -774,7 +775,7 @@ msgid "Completed"
 msgstr ""
 
 #: src/components/tables/build/BuildOrderTable.tsx:83
-#: src/components/tables/stock/StockItemTable.tsx:53
+#: src/components/tables/stock/StockItemTable.tsx:52
 msgid "Status"
 msgstr ""
 
@@ -829,7 +830,7 @@ msgid "Units"
 msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:69
-#: src/components/tables/stock/StockItemTable.tsx:45
+#: src/components/tables/stock/StockItemTable.tsx:44
 #: src/defaults/links.tsx:27
 #: src/pages/part/PartDetail.tsx:63
 #: src/pages/stock/LocationDetail.tsx:60
@@ -979,19 +980,19 @@ msgstr ""
 msgid "Are you sure you want to remove this relationship?"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:60
+#: src/components/tables/stock/StockItemTable.tsx:59
 msgid "Batch"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:66
+#: src/components/tables/stock/StockItemTable.tsx:65
 msgid "Location"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:91
+#: src/components/tables/stock/StockItemTable.tsx:90
 msgid "Test Filter"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:92
+#: src/components/tables/stock/StockItemTable.tsx:91
 msgid "This is a test filter"
 msgstr ""
 
@@ -1008,17 +1009,17 @@ msgid "Location Type"
 msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:11
-#: src/pages/Index/Profile/UserPanel.tsx:137
+#: src/pages/Index/Profile/UserPanel.tsx:139
 msgid "Display Settings"
 msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:15
-#: src/pages/Index/Profile/UserPanel.tsx:141
+#: src/pages/Index/Profile/UserPanel.tsx:143
 msgid "Color Mode"
 msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:21
-#: src/pages/Index/Profile/UserPanel.tsx:147
+#: src/pages/Index/Profile/UserPanel.tsx:149
 msgid "Language"
 msgstr ""
 
@@ -1310,32 +1311,36 @@ msgstr ""
 #~ msgid "Combusken battles with the intensely hot flames it spews"
 #~ msgstr "Combusken battles with the intensely hot flames it spews"
 
+#: src/functions/auth.tsx:29
+msgid "Error fetching token from server."
+msgstr ""
+
 #: src/functions/auth.tsx:36
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:41
+#: src/functions/auth.tsx:49
 msgid "Logout successful"
 msgstr ""
 
-#: src/functions/auth.tsx:42
+#: src/functions/auth.tsx:50
 msgid "See you soon."
 msgstr "Auf Wiedersehen."
 
-#: src/functions/auth.tsx:87
+#: src/functions/auth.tsx:95
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Prüfen Sie Ihren Posteingang für einen Link zum Zurücksetzen. Dies funktioniert nur, wenn Sie ein Konto haben. Prüfen Sie auch den Spam-Ordner."
 
-#: src/functions/auth.tsx:94
+#: src/functions/auth.tsx:102
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
 msgstr "Zurücksetzen fehlgeschlagen"
 
-#: src/functions/auth.tsx:110
+#: src/functions/auth.tsx:118
 msgid "Already logged in"
 msgstr "Bereits angemeldet"
 
-#: src/functions/auth.tsx:111
+#: src/functions/auth.tsx:119
 msgid "Found an existing login - using it to log you in."
 msgstr "Es existiert ein Login - mit dem Sie angemeldet werden."
 
@@ -1673,23 +1678,23 @@ msgstr ""
 #~ msgid "Method: {0}"
 #~ msgstr "Method: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:83
+#: src/pages/Index/Profile/UserPanel.tsx:85
 msgid "Userinfo"
 msgstr "Benutzerdetails"
 
-#: src/pages/Index/Profile/UserPanel.tsx:114
+#: src/pages/Index/Profile/UserPanel.tsx:116
 msgid "First name: {0}"
 msgstr "Vorname: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:117
+#: src/pages/Index/Profile/UserPanel.tsx:119
 msgid "Last name: {0}"
 msgstr "Nachname: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:120
+#: src/pages/Index/Profile/UserPanel.tsx:122
 msgid "Username: {0}"
 msgstr "Benutzername: {0}"
 
-#: src/pages/Index/Profile/UserPanel.tsx:152
+#: src/pages/Index/Profile/UserPanel.tsx:154
 msgid "Use pseudo language"
 msgstr ""
 
