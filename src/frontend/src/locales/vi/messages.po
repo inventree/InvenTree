@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-13 01:16\n"
+"PO-Revision-Date: 2023-10-14 16:24\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -79,7 +79,7 @@ msgstr "Thư đã được gửi đi thành công"
 
 #: src/components/forms/AuthenticationForm.tsx:55
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr ""
+msgstr "Kiểm tra hộp thư để nhận liên kết đăng nhập. Nếu bạn đã có tài khoản, bạn sẽ nhận một liên kết đăng nhập. Kiểm tra đồng thời thư mục spam."
 
 #: src/components/forms/AuthenticationForm.tsx:62
 msgid "Input error"
@@ -399,7 +399,7 @@ msgstr "Tùy chọn tìm kiếm"
 
 #: src/components/nav/SearchDrawer.tsx:375
 msgid "Regex search"
-msgstr ""
+msgstr "Tìm kiếm regex"
 
 #: src/components/nav/SearchDrawer.tsx:385
 msgid "Whole word search"
@@ -537,27 +537,27 @@ msgstr "Đơn hàng trả lại"
 
 #: src/components/render/ModelType.tsx:107
 msgid "Address"
-msgstr ""
+msgstr "Địa chỉ"
 
 #: src/components/render/ModelType.tsx:108
 msgid "Addresses"
-msgstr ""
+msgstr "Địa chỉ"
 
 #: src/components/render/ModelType.tsx:113
 msgid "Contact"
-msgstr ""
+msgstr "Liên hệ"
 
 #: src/components/render/ModelType.tsx:114
 msgid "Contacts"
-msgstr ""
+msgstr "Danh bạ"
 
 #: src/components/render/ModelType.tsx:119
 msgid "Owner"
-msgstr ""
+msgstr "Chủ sở hữu"
 
 #: src/components/render/ModelType.tsx:120
 msgid "Owners"
-msgstr ""
+msgstr "Chủ sở hữu"
 
 #: src/components/render/ModelType.tsx:125
 #: src/pages/Index/Profile/Profile.tsx:23
@@ -566,7 +566,7 @@ msgstr "Người dùng"
 
 #: src/components/render/ModelType.tsx:126
 msgid "Users"
-msgstr ""
+msgstr "Người dùng"
 
 #: src/components/render/Order.tsx:71
 msgid "Shipment"
