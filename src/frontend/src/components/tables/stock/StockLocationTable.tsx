@@ -54,6 +54,13 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
         sortable: true,
         render: (record: any) => (record.structural ? 'Y' : 'N')
         // TODO: custom 'true / false' label,
+      },
+      {
+        accessor: 'location_type',
+        title: t`Location Type`,
+        switchable: true,
+        sortable: false,
+        render: (record: any) => record.location_type_detail?.name
       }
     ];
   }, [params]);
