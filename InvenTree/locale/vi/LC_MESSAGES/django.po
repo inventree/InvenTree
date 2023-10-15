@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-11 12:00+0000\n"
-"PO-Revision-Date: 2023-10-12 01:01\n"
+"PO-Revision-Date: 2023-10-15 16:33\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -1822,11 +1822,11 @@ msgstr ""
 #: build/templates/build/detail.html:49 order/models.py:1235
 #: templates/js/translated/purchase_order.js:2168
 msgid "Destination"
-msgstr ""
+msgstr "Đích đến"
 
 #: build/templates/build/detail.html:56
 msgid "Destination location not specified"
-msgstr ""
+msgstr "Địa điểm đích chưa được xác định"
 
 #: build/templates/build/detail.html:73
 msgid "Allocated Parts"
@@ -1854,7 +1854,7 @@ msgstr "Đã tạo"
 
 #: build/templates/build/detail.html:144
 msgid "No target date set"
-msgstr ""
+msgstr "Chưa đặt ngày mục tiêu"
 
 #: build/templates/build/detail.html:149
 #: order/templates/order/sales_order_base.html:203
@@ -1864,7 +1864,7 @@ msgstr "Đã hoàn thành"
 
 #: build/templates/build/detail.html:153
 msgid "Build not complete"
-msgstr ""
+msgstr "Xây dựng chưa hoàn thiện"
 
 #: build/templates/build/detail.html:164 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
@@ -2183,19 +2183,19 @@ msgstr "Yêu cầu người dùng xác nhận rõ ràng với một số chức 
 
 #: common/models.py:1179
 msgid "Tree Depth"
-msgstr ""
+msgstr "Cấp độ cây"
 
 #: common/models.py:1180
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
-msgstr ""
+msgstr "Độ sâu cây mặc định cho màn hình cây. Cấp độ sâu hơn sẽ sử dụng kỹ thuật tải chậm nếu cần thiết."
 
 #: common/models.py:1189
 msgid "Update Check Interval"
-msgstr ""
+msgstr "Thời gian kiểm tra bản cập nhật"
 
 #: common/models.py:1190
 msgid "How often to check for updates (set to zero to disable)"
-msgstr ""
+msgstr "Mức độ thường xuyên để kiểm tra bản cập nhật (điền 0 để tắt)"
 
 #: common/models.py:1200
 msgid "Automatic Backup"
@@ -2211,43 +2211,43 @@ msgstr "Khoảng thời gian sao lưu tự động"
 
 #: common/models.py:1208
 msgid "Specify number of days between automated backup events"
-msgstr ""
+msgstr "Xác định số ngày giữa các kỳ sao lưu tự động"
 
 #: common/models.py:1218
 msgid "Task Deletion Interval"
-msgstr ""
+msgstr "Khoảng thời gian xóa tác vụ"
 
 #: common/models.py:1219
 msgid "Background task results will be deleted after specified number of days"
-msgstr ""
+msgstr "Kết quả tác vụ chạy ngầm sẽ bị xóa sau số ngày được chỉ định"
 
 #: common/models.py:1229
 msgid "Error Log Deletion Interval"
-msgstr ""
+msgstr "Khoảng thời gian xóa nhật ký lỗi"
 
 #: common/models.py:1230
 msgid "Error logs will be deleted after specified number of days"
-msgstr ""
+msgstr "Nhật ký lỗi sẽ bị xóa sau số ngày được chỉ định"
 
 #: common/models.py:1240
 msgid "Notification Deletion Interval"
-msgstr ""
+msgstr "Khoảng thời gian xóa thông báo"
 
 #: common/models.py:1241
 msgid "User notifications will be deleted after specified number of days"
-msgstr ""
+msgstr "Thông báo sẽ bị xóa sau số ngày được chỉ định"
 
 #: common/models.py:1251 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Hỗ trợ mã vạch"
 
 #: common/models.py:1252
 msgid "Enable barcode scanner support in the web interface"
-msgstr ""
+msgstr "Bật hỗ trợ máy quét mã vạch trong giao diện web"
 
 #: common/models.py:1258
 msgid "Barcode Input Delay"
-msgstr ""
+msgstr "Độ trễ quét mã vạch"
 
 #: common/models.py:1259
 msgid "Barcode input processing delay time"
@@ -2788,11 +2788,11 @@ msgstr ""
 
 #: common/models.py:1741
 msgid "Email required"
-msgstr ""
+msgstr "Yêu cầu email"
 
 #: common/models.py:1742
 msgid "Require user to supply mail on signup"
-msgstr ""
+msgstr "Yêu cầu người dùng cung cấp email để đăng ký"
 
 #: common/models.py:1748
 msgid "Auto-fill SSO users"
@@ -2804,7 +2804,7 @@ msgstr ""
 
 #: common/models.py:1755
 msgid "Mail twice"
-msgstr ""
+msgstr "Thư 2 lần"
 
 #: common/models.py:1756
 msgid "On signup ask users twice for their mail"
@@ -2812,7 +2812,7 @@ msgstr ""
 
 #: common/models.py:1762
 msgid "Password twice"
-msgstr ""
+msgstr "Mật khẩu 2 lần"
 
 #: common/models.py:1763
 msgid "On signup ask users twice for their password"
@@ -2924,7 +2924,7 @@ msgstr ""
 
 #: common/models.py:1870
 msgid "Report Deletion Interval"
-msgstr ""
+msgstr "Khoảng thời gian xóa báo cáo"
 
 #: common/models.py:1871
 msgid "Stocktake reports will be deleted after specified number of days"
@@ -2932,11 +2932,11 @@ msgstr ""
 
 #: common/models.py:1888 common/models.py:2318
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Khóa thiết lập (phải duy nhất - phân biệt hoa thường"
 
 #: common/models.py:1929
 msgid "Hide inactive parts"
-msgstr ""
+msgstr "Ẩn phụ kiện ngừng hoạt động"
 
 #: common/models.py:1930
 msgid "Hide inactive parts in results displayed on the homepage"
@@ -2984,23 +2984,23 @@ msgstr ""
 
 #: common/models.py:1971
 msgid "Show low stock"
-msgstr ""
+msgstr "Hiển thị hàng còn ít"
 
 #: common/models.py:1972
 msgid "Show low stock items on the homepage"
-msgstr ""
+msgstr "Hiển thị hàng hóa còn ít tại trang chủ"
 
 #: common/models.py:1978
 msgid "Show depleted stock"
-msgstr ""
+msgstr "Hiển thị hết hàng"
 
 #: common/models.py:1979
 msgid "Show depleted stock items on the homepage"
-msgstr ""
+msgstr "Hiển thị hàng hóa đã bán hết tại trang chủ"
 
 #: common/models.py:1985
 msgid "Show needed stock"
-msgstr ""
+msgstr "Hiển thị hàng cần thiết"
 
 #: common/models.py:1986
 msgid "Show stock items needed for builds on the homepage"
@@ -3052,31 +3052,31 @@ msgstr ""
 
 #: common/models.py:2028
 msgid "Show overdue POs on the homepage"
-msgstr ""
+msgstr "Hiện đơn mua hàng quá hạn trên trang chủ"
 
 #: common/models.py:2034
 msgid "Show outstanding SOs"
-msgstr ""
+msgstr "Hiện đơn hàng vận chuyển nổi bật"
 
 #: common/models.py:2035
 msgid "Show outstanding SOs on the homepage"
-msgstr ""
+msgstr "Hiện đơn hàng vận chuyển nổi bật tại trang chủ"
 
 #: common/models.py:2041
 msgid "Show overdue SOs"
-msgstr ""
+msgstr "Hiện đơn vận chuyển quá hạn"
 
 #: common/models.py:2042
 msgid "Show overdue SOs on the homepage"
-msgstr ""
+msgstr "Hiện đơn vận chuyển quá hạn trên trang chủ"
 
 #: common/models.py:2048
 msgid "Show pending SO shipments"
-msgstr ""
+msgstr "Hiện đơn vận chuyển chờ xử lý"
 
 #: common/models.py:2049
 msgid "Show pending SO shipments on the homepage"
-msgstr ""
+msgstr "Hiện đơn vận chuyển chờ xử lý trên trang chủ"
 
 #: common/models.py:2055
 msgid "Show News"
@@ -3088,11 +3088,11 @@ msgstr "Hiện tin tức trên trang chủ"
 
 #: common/models.py:2062
 msgid "Inline label display"
-msgstr ""
+msgstr "Hiển thị nhãn cùng dòng"
 
 #: common/models.py:2063
 msgid "Display PDF labels in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "Hiển thị nhãn PDF trong trình duyệt, thay vì tải về dạng tệp tin"
 
 #: common/models.py:2069
 msgid "Default label printer"
@@ -3144,87 +3144,87 @@ msgstr ""
 
 #: common/models.py:2111
 msgid "Search Categories"
-msgstr ""
+msgstr "Tìm kiếm danh mục"
 
 #: common/models.py:2112
 msgid "Display part categories in search preview window"
-msgstr ""
+msgstr "Hiện danh mục phụ kiện trong cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2118
 msgid "Search Stock"
-msgstr ""
+msgstr "Tìm kiếm kho"
 
 #: common/models.py:2119
 msgid "Display stock items in search preview window"
-msgstr ""
+msgstr "Hiện hàng hóa ở kho trong cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2125
 msgid "Hide Unavailable Stock Items"
-msgstr ""
+msgstr "Ẩn hàng hóa trong kho không có sẵn"
 
 #: common/models.py:2126
 msgid "Exclude stock items which are not available from the search preview window"
-msgstr ""
+msgstr "Không bao gồm hàng hóa trong kho mà không sẵn sàng từ màn hình xem trước tìm kiếm"
 
 #: common/models.py:2132
 msgid "Search Locations"
-msgstr ""
+msgstr "Tìm kiếm vị trí"
 
 #: common/models.py:2133
 msgid "Display stock locations in search preview window"
-msgstr ""
+msgstr "Hiện vị trí kho hàng trong cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2139
 msgid "Search Companies"
-msgstr ""
+msgstr "Tìm kiếm công ty"
 
 #: common/models.py:2140
 msgid "Display companies in search preview window"
-msgstr ""
+msgstr "Hiện công ty trong cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2146
 msgid "Search Build Orders"
-msgstr ""
+msgstr "Tìm kiếm đặt hàng xây dựng"
 
 #: common/models.py:2147
 msgid "Display build orders in search preview window"
-msgstr ""
+msgstr "Hiện đơn đặt xây dựng trong cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2153
 msgid "Search Purchase Orders"
-msgstr ""
+msgstr "Tìm kiếm đơn đặt mua"
 
 #: common/models.py:2154
 msgid "Display purchase orders in search preview window"
-msgstr ""
+msgstr "Hiện đơn đặt mua trong cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2160
 msgid "Exclude Inactive Purchase Orders"
-msgstr ""
+msgstr "Loại trừ đơn đặt mua không hoạt động"
 
 #: common/models.py:2161
 msgid "Exclude inactive purchase orders from search preview window"
-msgstr ""
+msgstr "Loại trừ đơn đặt mua không hoạt động ra khỏi cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2167
 msgid "Search Sales Orders"
-msgstr ""
+msgstr "Tìm đơn đặt hàng người mua"
 
 #: common/models.py:2168
 msgid "Display sales orders in search preview window"
-msgstr ""
+msgstr "Hiện đơn đặt hàng người mua trong cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2174
 msgid "Exclude Inactive Sales Orders"
-msgstr ""
+msgstr "Loại trừ đơn đặt hàng người mua không hoạt động"
 
 #: common/models.py:2175
 msgid "Exclude inactive sales orders from search preview window"
-msgstr ""
+msgstr "Không bao gồm đơn đặt hàng người mua không hoạt động trong cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2181
 msgid "Search Return Orders"
-msgstr ""
+msgstr "Tìm kiếm đơn hàng trả lại"
 
 #: common/models.py:2182
 msgid "Display return orders in search preview window"
@@ -3240,23 +3240,23 @@ msgstr ""
 
 #: common/models.py:2195
 msgid "Search Preview Results"
-msgstr ""
+msgstr "Kết quả xem trước tìm kiếm"
 
 #: common/models.py:2196
 msgid "Number of results to show in each section of the search preview window"
-msgstr ""
+msgstr "Số kết quả cần hiển thị trong từng phần của cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2202
 msgid "Regex Search"
-msgstr ""
+msgstr "Tìm kiếm biểu thức"
 
 #: common/models.py:2203
 msgid "Enable regular expressions in search queries"
-msgstr ""
+msgstr "Bật tìm kiếm biểu thức chính quy trong câu truy vấn tìm kiếm"
 
 #: common/models.py:2209
 msgid "Whole Word Search"
-msgstr ""
+msgstr "Tìm phù hợp toàn bộ chữ"
 
 #: common/models.py:2210
 msgid "Search queries return results for whole word matches"
@@ -3264,7 +3264,7 @@ msgstr ""
 
 #: common/models.py:2216
 msgid "Show Quantity in Forms"
-msgstr ""
+msgstr "Hiện số lượng trong biểu mẫu"
 
 #: common/models.py:2217
 msgid "Display available part quantity in some forms"
@@ -3425,61 +3425,61 @@ msgstr ""
 
 #: common/models.py:2678
 msgid "Header"
-msgstr ""
+msgstr "Đầu mục"
 
 #: common/models.py:2679
 msgid "Header of this message"
-msgstr ""
+msgstr "Đầu mục tin nhắn"
 
 #: common/models.py:2685
 msgid "Body"
-msgstr ""
+msgstr "Thân"
 
 #: common/models.py:2686
 msgid "Body of this message"
-msgstr ""
+msgstr "Thân tin nhắn này"
 
 #: common/models.py:2695
 msgid "Endpoint on which this message was received"
-msgstr ""
+msgstr "Đầu mối của tin nhắn này đã nhận được"
 
 #: common/models.py:2700
 msgid "Worked on"
-msgstr ""
+msgstr "Làm việc vào"
 
 #: common/models.py:2701
 msgid "Was the work on this message finished?"
-msgstr ""
+msgstr "Công việc trong tin nhắn này đã kết thúc?"
 
 #: common/models.py:2855
 msgid "Id"
-msgstr ""
+msgstr "Mã"
 
 #: common/models.py:2861 templates/js/translated/company.js:955
 #: templates/js/translated/news.js:44
 msgid "Title"
-msgstr ""
+msgstr "Tiêu đề"
 
 #: common/models.py:2871 templates/js/translated/news.js:60
 msgid "Published"
-msgstr ""
+msgstr "Đã công bố"
 
 #: common/models.py:2876 templates/InvenTree/settings/plugin_settings.html:32
 #: templates/js/translated/news.js:56 templates/js/translated/plugin.js:102
 msgid "Author"
-msgstr ""
+msgstr "Tác giả"
 
 #: common/models.py:2881 templates/js/translated/news.js:52
 msgid "Summary"
-msgstr ""
+msgstr "Tóm tắt"
 
 #: common/models.py:2886
 msgid "Read"
-msgstr ""
+msgstr "Đọc"
 
 #: common/models.py:2887
 msgid "Was this news item read?"
-msgstr ""
+msgstr "Tin này đã được đọc?"
 
 #: common/models.py:2907 company/models.py:139 part/models.py:918
 #: report/templates/report/inventree_bill_of_materials_report.html:126
@@ -3489,11 +3489,11 @@ msgstr ""
 #: templates/hover_image.html:7 templates/hover_image.html:9
 #: templates/modals.html:6
 msgid "Image"
-msgstr ""
+msgstr "Hình ảnh"
 
 #: common/models.py:2908
 msgid "Image file"
-msgstr ""
+msgstr "Tệp ảnh"
 
 #: common/models.py:2952
 msgid "Unit name must be a valid identifier"
@@ -3501,11 +3501,11 @@ msgstr ""
 
 #: common/models.py:2974
 msgid "Unit name"
-msgstr ""
+msgstr "Tên đơn vị"
 
 #: common/models.py:2980 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
-msgstr ""
+msgstr "Biểu tượng"
 
 #: common/models.py:2981
 msgid "Optional unit symbol"
@@ -3594,7 +3594,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:54
 #: templates/js/translated/company.js:522
 msgid "Website"
-msgstr ""
+msgstr "Trang web"
 
 #: company/models.py:114
 msgid "Company website URL"
@@ -3602,54 +3602,54 @@ msgstr ""
 
 #: company/models.py:118
 msgid "Phone number"
-msgstr ""
+msgstr "Số điện thoại"
 
 #: company/models.py:119
 msgid "Contact phone number"
-msgstr ""
+msgstr "Số điện thoại liên hệ"
 
 #: company/models.py:122
 msgid "Contact email address"
-msgstr ""
+msgstr "Địa chỉ email liên hệ"
 
 #: company/models.py:125 company/templates/company/company_base.html:140
 #: order/models.py:270 order/templates/order/order_base.html:203
 #: order/templates/order/return_order_base.html:175
 #: order/templates/order/sales_order_base.html:215
 msgid "Contact"
-msgstr ""
+msgstr "Liên hệ"
 
 #: company/models.py:126
 msgid "Point of contact"
-msgstr ""
+msgstr "Đầu mối liên hệ"
 
 #: company/models.py:128
 msgid "Link to external company information"
-msgstr ""
+msgstr "Liên kết đến thông tin công ty ngoài"
 
 #: company/models.py:142
 msgid "is customer"
-msgstr ""
+msgstr "là khách hàng"
 
 #: company/models.py:142
 msgid "Do you sell items to this company?"
-msgstr ""
+msgstr "Bạn có bán hàng cho công ty này?"
 
 #: company/models.py:144
 msgid "is supplier"
-msgstr ""
+msgstr "là nhà cung cấp"
 
 #: company/models.py:144
 msgid "Do you purchase items from this company?"
-msgstr ""
+msgstr "Bạn có mua hàng từ công ty này?"
 
 #: company/models.py:146
 msgid "is manufacturer"
-msgstr ""
+msgstr "là nhà sản xuất"
 
 #: company/models.py:146
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "Công ty này có sản xuất phụ kiện?"
 
 #: company/models.py:153
 msgid "Default currency used for this company"
@@ -3807,7 +3807,7 @@ msgstr ""
 
 #: company/models.py:530
 msgid "Parameter name"
-msgstr ""
+msgstr "Tên tham số"
 
 #: company/models.py:536
 #: report/templates/report/inventree_test_report_base.html:104
@@ -3815,11 +3815,11 @@ msgstr ""
 #: templates/js/translated/company.js:1409 templates/js/translated/part.js:1489
 #: templates/js/translated/stock.js:1502
 msgid "Value"
-msgstr ""
+msgstr "Giá trị"
 
 #: company/models.py:537
 msgid "Parameter value"
-msgstr ""
+msgstr "Giá trị tham số"
 
 #: company/models.py:543 company/templates/company/supplier_part.html:169
 #: part/admin.py:40 part/models.py:992 part/models.py:3468
@@ -3827,11 +3827,11 @@ msgstr ""
 #: templates/js/translated/company.js:1415 templates/js/translated/part.js:1508
 #: templates/js/translated/part.js:1612 templates/js/translated/part.js:2365
 msgid "Units"
-msgstr ""
+msgstr "Đơn vị"
 
 #: company/models.py:544
 msgid "Parameter units"
-msgstr ""
+msgstr "Đơn vị tham số"
 
 #: company/models.py:638
 msgid "Pack units must be compatible with the base part units"
@@ -4034,16 +4034,16 @@ msgstr ""
 #: order/templates/order/return_order_base.html:182
 #: order/templates/order/sales_order_base.html:222
 msgid "Address"
-msgstr ""
+msgstr "Địa chỉ"
 
 #: company/templates/company/company_base.html:126
 msgid "Phone"
-msgstr ""
+msgstr "Điện thoại"
 
 #: company/templates/company/company_base.html:206
 #: part/templates/part/part_base.html:530
 msgid "Remove Image"
-msgstr ""
+msgstr "Xoá hình ảnh"
 
 #: company/templates/company/company_base.html:207
 msgid "Remove associated image from this company"
@@ -4054,7 +4054,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:88
 #: templates/InvenTree/settings/user_sso.html:43
 msgid "Remove"
-msgstr ""
+msgstr "Xóa"
 
 #: company/templates/company/company_base.html:238
 #: part/templates/part/part_base.html:562
