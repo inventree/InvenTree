@@ -50,13 +50,6 @@ export function ApiImage(props: ImageProps) {
     refetchOnWindowFocus: true
   });
 
-  useEffect(() => {
-    console.log('mounting:', props.src);
-    if (props.src) {
-      imgQuery.refetch();
-    }
-  }, []);
-
   return (
     <Stack>
       <LoadingOverlay visible={imgQuery.isLoading || imgQuery.isFetching} />

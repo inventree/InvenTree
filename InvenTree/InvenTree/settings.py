@@ -139,7 +139,7 @@ ALLOWED_HOSTS = get_setting(
 
 # Cross Origin Resource Sharing (CORS) options
 
-# Only allow CORS access to API
+# Only allow CORS access to API and media endpoints
 CORS_URLS_REGEX = r'^/(api|media)/.*$'
 
 # Extract CORS options from configuration file
