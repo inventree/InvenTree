@@ -3,7 +3,7 @@ import { Alert } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
-import { Thumbnail } from '../items/Thumbnail';
+import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildOrder } from './Build';
 import {
   RenderAddress,

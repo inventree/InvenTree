@@ -3,7 +3,7 @@ import { Anchor, Image } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { Text } from '@mantine/core';
 
-import { api } from '../../App';
+import { ApiImage } from './ApiImage';
 
 export function Thumbnail({
   src,
@@ -16,12 +16,9 @@ export function Thumbnail({
 }) {
   // TODO: Use HoverCard to display a larger version of the image
 
-  // TODO: This is a hack until we work out the /api/ path issue
-  let url = api.getUri({ url: '..' + src });
-
   return (
-    <Image
-      src={url}
+    <ApiImage
+      src={src}
       alt={alt}
       width={size}
       fit="contain"

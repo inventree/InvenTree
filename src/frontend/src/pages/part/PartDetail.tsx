@@ -18,8 +18,11 @@ import {
 } from '@tabler/icons-react';
 import React from 'react';
 import { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+import { api } from '../../App';
+import { ApiImage } from '../../components/images/ApiImage';
+import { Thumbnail } from '../../components/images/Thumbnail';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -46,7 +49,9 @@ export default function PartDetail() {
     pk: id,
     params: {
       path_detail: true
-    }
+    },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
   });
 
   // Part data panels (recalculate when part data changes)
@@ -193,9 +198,17 @@ export default function PartDetail() {
           title={t`Part`}
           subtitle={part.full_name}
           detail={
-            <Alert color="teal" title="Part detail goes here">
-              <Text>TODO: Part details</Text>
-            </Alert>
+            <Stack>
+              <Alert color="teal" title="Part detail goes here">
+                <Text>TODO: Part details</Text>
+              </Alert>
+              <ApiImage
+                src={String(part.thumbnail || part.image || '')}
+                radius="sm"
+                height={200}
+                width={200}
+              />
+            </Stack>
           }
           breadcrumbs={breadcrumbs}
           actions={[
