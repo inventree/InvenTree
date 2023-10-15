@@ -925,8 +925,9 @@ class BuildAllocationSerializer(serializers.Serializer):
                         install_into=output,
                     )
                     if created:
-                        build_item.quantity = 0
-                    build_item.quantity += quantity
+                        build_item.quantity = quantity
+                    else:
+                        build_item.quantity += quantity
                     build_item.save()
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors
