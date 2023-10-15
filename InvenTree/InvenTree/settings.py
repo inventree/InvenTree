@@ -140,7 +140,7 @@ ALLOWED_HOSTS = get_setting(
 # Cross Origin Resource Sharing (CORS) options
 
 # Only allow CORS access to API
-CORS_URLS_REGEX = r'^/api/.*$'
+CORS_URLS_REGEX = r'^/(api|media)/.*$'
 
 # Extract CORS options from configuration file
 CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
