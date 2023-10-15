@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-11 12:00+0000\n"
-"PO-Revision-Date: 2023-10-12 01:01\n"
+"PO-Revision-Date: 2023-10-15 16:33\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -32,7 +32,7 @@ msgstr "Kein Wert angegeben"
 #: InvenTree/conversion.py:129
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "Konnte {original} nicht in {unit} umwandeln"
 
 #: InvenTree/conversion.py:131
 msgid "Invalid quantity supplied"
@@ -2060,7 +2060,7 @@ msgstr "Ungültiger Domainname: {domain}"
 
 #: common/models.py:1003
 msgid "No plugin"
-msgstr ""
+msgstr "Kein Plugin"
 
 #: common/models.py:1071
 msgid "Restart required"
@@ -2128,7 +2128,7 @@ msgstr "Wählen Sie die Basiswährung für Preisberechnungen aus"
 
 #: common/models.py:1129
 msgid "Currency Update Interval"
-msgstr ""
+msgstr "Währungsaktualisierungsintervall"
 
 #: common/models.py:1130
 msgid "How often to update exchange rates (set to zero to disable)"
@@ -3328,11 +3328,11 @@ msgstr ""
 
 #: common/models.py:2285
 msgid "Default stock item template"
-msgstr ""
+msgstr "Lagerartikel-Standardvorlage"
 
 #: common/models.py:2286
 msgid "The stock item label template to be automatically selected"
-msgstr ""
+msgstr "Die Lagerartikel-Etikettenvorlage soll automatisch ausgewählt werden"
 
 #: common/models.py:2294
 msgid "Default stock location label template"
@@ -6075,7 +6075,7 @@ msgstr "Muss für diesen Test ein Anhang für das Test-Ergebnis hinzugefügt wer
 
 #: part/models.py:3407
 msgid "Checkbox parameters cannot have units"
-msgstr ""
+msgstr "Checkbox-Parameter können keine Einheiten haben"
 
 #: part/models.py:3412
 msgid "Checkbox parameters cannot have choices"
@@ -6104,15 +6104,15 @@ msgstr "Parameter-Beschreibung"
 #: part/models.py:3484 templates/js/translated/part.js:1624
 #: templates/js/translated/table_filters.js:817
 msgid "Checkbox"
-msgstr ""
+msgstr "Checkbox"
 
 #: part/models.py:3485
 msgid "Is this parameter a checkbox?"
-msgstr ""
+msgstr "Ist dieser Parameter eine Checkbox?"
 
 #: part/models.py:3490 templates/js/translated/part.js:1633
 msgid "Choices"
-msgstr ""
+msgstr "Auswahlmöglichkeiten"
 
 #: part/models.py:3491
 msgid "Valid choices for this parameter (comma-separated)"
@@ -7480,7 +7480,7 @@ msgstr ""
 
 #: plugin/samples/integration/sample_currency_exchange.py:18
 msgid "InvenTree Contributors"
-msgstr ""
+msgstr "InvenTree Mitwirkende"
 
 #: plugin/serializers.py:87
 msgid "Source URL"
@@ -7537,15 +7537,15 @@ msgstr "Testbericht"
 
 #: report/helpers.py:14
 msgid "A4"
-msgstr ""
+msgstr "A4"
 
 #: report/helpers.py:15
 msgid "Legal"
-msgstr ""
+msgstr "US-Legal"
 
 #: report/helpers.py:16
 msgid "Letter"
-msgstr ""
+msgstr "US-Letter"
 
 #: report/models.py:173
 msgid "Template name"
@@ -7565,11 +7565,11 @@ msgstr "Bericht Revisionsnummer (autom. erhöht)"
 
 #: report/models.py:200
 msgid "Page size for PDF reports"
-msgstr ""
+msgstr "Seitengröße für PDF-Berichte"
 
 #: report/models.py:205
 msgid "Landscape"
-msgstr ""
+msgstr "Querformat"
 
 #: report/models.py:206
 msgid "Render report in landscape orientation"
@@ -8129,7 +8129,7 @@ msgstr ""
 
 #: stock/serializers.py:323
 msgid "Purchase price of this stock item, per unit or pack"
-msgstr ""
+msgstr "Einkaufspreis dieses Lagerartikels, pro Einheit oder Verpackungseinheit"
 
 #: stock/serializers.py:384
 msgid "Enter number of stock items to serialize"
@@ -8913,11 +8913,11 @@ msgstr "Inventurberichte"
 #: templates/InvenTree/settings/physical_units.html:8
 #: templates/InvenTree/settings/sidebar.html:35
 msgid "Physical Units"
-msgstr ""
+msgstr "Physikalische Einheiten"
 
 #: templates/InvenTree/settings/physical_units.html:12
 msgid "Add Unit"
-msgstr ""
+msgstr "Einheit hinzufügen"
 
 #: templates/InvenTree/settings/plugin.html:9
 #: templates/InvenTree/settings/sidebar.html:64
@@ -9014,7 +9014,7 @@ msgstr "Beispiel"
 
 #: templates/InvenTree/settings/plugin_settings.html:108
 msgid "This is a sample plugin"
-msgstr ""
+msgstr "Dies ist ein Beispiel-Plugin"
 
 #: templates/InvenTree/settings/plugin_settings.html:113
 msgid "Commit Author"
