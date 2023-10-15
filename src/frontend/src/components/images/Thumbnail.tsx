@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Anchor, Image } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { Text } from '@mantine/core';
+import { useMemo } from 'react';
 
 import { ApiImage } from './ApiImage';
 
@@ -46,20 +47,21 @@ export function ThumbnailHoverCard({
   alt?: string;
   size?: number;
 }) {
-  function MainGroup() {
+  const card = useMemo(() => {
     return (
-      <Group position="left" spacing={10}>
+      <Group position="left" spacing={10} noWrap={true}>
         <Thumbnail src={src} alt={alt} size={size} />
         <Text>{text}</Text>
       </Group>
     );
-  }
+  }, [src, text, alt, size]);
 
   if (link)
     return (
       <Anchor href={link} style={{ textDecoration: 'none' }}>
-        <MainGroup />
+        {card}
       </Anchor>
     );
-  return <MainGroup />;
+
+  return <div>{card}</div>;
 }
