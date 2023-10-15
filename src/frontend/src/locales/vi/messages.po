@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-14 16:24\n"
+"PO-Revision-Date: 2023-10-15 16:33\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1049,7 +1049,7 @@ msgstr ""
 
 #: src/components/widgets/MarkdownEditor.tsx:155
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Không lưu được chú thích"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
@@ -1061,7 +1061,7 @@ msgstr "Đặt lại bố cục"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
-msgstr ""
+msgstr "Ngưng chỉnh sửa"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
@@ -1069,19 +1069,19 @@ msgstr "Sửa bố cục"
 
 #: src/components/widgets/WidgetLayout.tsx:205
 msgid "Appearance"
-msgstr ""
+msgstr "Diện mạo"
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
-msgstr ""
+msgstr "Hiển thị hộp"
 
 #: src/defaults/dashboardItems.tsx:6
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Phụ kiện đã đăng ký"
 
 #: src/defaults/dashboardItems.tsx:13
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Danh mục đã đăng ký"
 
 #: src/defaults/dashboardItems.tsx:20
 msgid "Latest Parts"
@@ -1089,7 +1089,7 @@ msgstr "Phụ kiện mới nhất"
 
 #: src/defaults/dashboardItems.tsx:27
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "BOM đợi phê chuẩn"
 
 #: src/defaults/dashboardItems.tsx:34
 msgid "Recently Updated"
@@ -1325,7 +1325,7 @@ msgstr "Đăng xuất thành công"
 
 #: src/functions/auth.tsx:50
 msgid "See you soon."
-msgstr ""
+msgstr "Hẹn gặp lại."
 
 #: src/functions/auth.tsx:95
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
@@ -1936,7 +1936,7 @@ msgstr "Biến thể"
 
 #: src/pages/part/PartDetail.tsx:76
 msgid "Bill of Materials"
-msgstr ""
+msgstr "Hóa đơn nguyên vật liệu"
 
 #: src/pages/part/PartDetail.tsx:90
 msgid "Used In"
@@ -1976,19 +1976,19 @@ msgstr "Phân bổ"
 
 #: src/pages/stock/StockDetail.tsx:62
 msgid "Installed Items"
-msgstr ""
+msgstr "Mục đã cài đặt"
 
 #: src/pages/stock/StockDetail.tsx:68
 msgid "Child Items"
-msgstr ""
+msgstr "Mục con"
 
 #: src/views/MobileAppView.tsx:14
 msgid "Mobile viewport detected"
-msgstr ""
+msgstr "Khung nhìn màn hình di dộng đã được nhận dạng"
 
 #: src/views/MobileAppView.tsx:17
 msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
-msgstr ""
+msgstr "Giao diện nền tảng được tối ưu cho máy tính bảng và máy để bàn, bạn có thể sử dụng ứng dụng chính thức cho trải nghiệm di động."
 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
