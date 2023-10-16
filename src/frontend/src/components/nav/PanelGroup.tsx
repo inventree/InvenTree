@@ -96,9 +96,9 @@ export function PanelGroup({
             onClick={() => setExpanded(!expanded)}
             icon={
               expanded ? (
-                <IconLayoutSidebarLeftCollapse />
+                <IconLayoutSidebarLeftCollapse opacity={0.35} size={18} />
               ) : (
-                <IconLayoutSidebarRightCollapse />
+                <IconLayoutSidebarRightCollapse opacity={0.35} size={18} />
               )
             }
           />
