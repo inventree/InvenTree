@@ -52,7 +52,7 @@ function SettingValue({
 
     openModalApiForm({
       name: 'setting-edit',
-      url: endpoint,
+      url: settingsState.endpoint,
       pk: setting.key,
       method: 'PATCH',
       title: t`Edit Setting`,
@@ -99,8 +99,12 @@ function SettingValue({
       return (
         <Switch
           size="sm"
+          radius="lg"
           checked={setting.value.toLowerCase() == 'true'}
           onChange={(event) => onToggle(event.currentTarget.checked)}
+          style={{
+            paddingRight: '20px'
+          }}
         />
       );
     default:
