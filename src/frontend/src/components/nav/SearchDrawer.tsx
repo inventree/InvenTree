@@ -30,6 +30,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { RenderInstance } from '../render/Instance';
 import { ModelInformationDict, ModelType } from '../render/ModelType';
 
@@ -264,7 +265,7 @@ export function SearchDrawer({
     });
 
     return api
-      .post(`/search/`, params)
+      .post(apiUrl(ApiPaths.api_search), params)
       .then(function (response) {
         return response.data;
       })

@@ -1509,6 +1509,13 @@ class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
         'data': ['data_numeric', 'data'],
     }
 
+    search_fields = [
+        'data',
+        'template__name',
+        'template__description',
+        'template__units',
+    ]
+
     filterset_fields = [
         'part',
         'template',

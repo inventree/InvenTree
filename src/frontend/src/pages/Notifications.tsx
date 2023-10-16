@@ -9,6 +9,7 @@ import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/nav/PanelGroup';
 import { NotificationTable } from '../components/tables/notifications/NotificationsTable';
 import { useTableRefresh } from '../hooks/TableRefresh';
+import { ApiPaths, apiUrl } from '../states/ApiState';
 
 export default function NotificationsPage() {
   const unreadRefresh = useTableRefresh('unreadnotifications');
@@ -28,8 +29,9 @@ export default function NotificationsPage() {
               {
                 title: t`Mark as read`,
                 onClick: () => {
+                  let url = apiUrl(ApiPaths.notifications_list, record.pk);
                   api
-                    .patch(`/notifications/${record.pk}/`, {
+                    .patch(url, {
                       read: true
                     })
                     .then((response) => {
@@ -53,8 +55,10 @@ export default function NotificationsPage() {
               {
                 title: t`Mark as unread`,
                 onClick: () => {
+                  let url = apiUrl(ApiPaths.notifications_list, record.pk);
+
                   api
-                    .patch(`/notifications/${record.pk}/`, {
+                    .patch(url, {
                       read: false
                     })
                     .then((response) => {
@@ -84,7 +88,7 @@ export default function NotificationsPage() {
     <>
       <Stack>
         <PageDetail title={t`Notifications`} />
-        <PanelGroup panels={notificationPanels} />
+        <PanelGroup pageKey="notifications" panels={notificationPanels} />
       </Stack>
     </>
   );

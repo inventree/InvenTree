@@ -1573,20 +1573,26 @@ class BomImportSubmitSerializer(serializers.Serializer):
 
         items = data['items']
 
+        bom_items = []
+
         try:
-            with transaction.atomic():
 
-                for item in items:
+            for item in items:
 
-                    part = item['part']
-                    sub_part = item['sub_part']
+                part = item['part']
+                sub_part = item['sub_part']
 
-                    # Ignore duplicate BOM items
-                    if BomItem.objects.filter(part=part, sub_part=sub_part).exists():
-                        continue
+                # Ignore duplicate BOM items
+                if BomItem.objects.filter(part=part, sub_part=sub_part).exists():
+                    continue
 
-                    # Create a new BomItem object
-                    BomItem.objects.create(**item)
+                bom_items.append(
+                    BomItem(**item)
+                )
+
+            if len(bom_items) > 0:
+                logger.info("Importing %s BOM items", len(bom_items))
+                BomItem.objects.bulk_create(bom_items)
 
         except Exception as e:
             raise serializers.ValidationError(detail=serializers.as_serializer_error(e))

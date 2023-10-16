@@ -18,11 +18,7 @@ import { api } from '../../App';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
 import { ApiPaths } from '../../states/ApiState';
-import {
-  ApiFormField,
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from './fields/ApiFormField';
+import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
 
 /**
  * Properties for the ApiForm component
@@ -211,6 +207,7 @@ export function ApiForm({
                 // Data validation error
                 form.setErrors(error.response.data);
                 setNonFieldErrors(error.response.data.non_field_errors ?? []);
+                setIsLoading(false);
                 break;
               default:
                 // Unexpected state on form error

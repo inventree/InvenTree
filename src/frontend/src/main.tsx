@@ -28,13 +28,13 @@ export const IS_DEV_OR_DEMO = IS_DEV || IS_DEMO;
 window.INVENTREE_SETTINGS = {
   server_list: {
     'mantine-cqj63coxn': {
-      host: `${window.location.origin}/api/`,
+      host: `${window.location.origin}/`,
       name: 'Current Server'
     },
     ...(IS_DEV_OR_DEMO
       ? {
           'mantine-u56l5jt85': {
-            host: 'https://demo.inventree.org/api/',
+            host: 'https://demo.inventree.org/',
             name: 'InvenTree Demo'
           }
         }

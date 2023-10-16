@@ -50,7 +50,7 @@ import { TitleWithDoc } from '../../components/items/TitleWithDoc';
 import { Render, RenderTypes } from '../../components/renderers';
 import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
-import { ApiPaths, url } from '../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 
 interface ScanItem {
   id: string;
@@ -136,7 +136,7 @@ export default function Scan() {
 
   function runBarcode(value: string, id?: string) {
     api
-      .post(url(ApiPaths.barcode), { barcode: value })
+      .post(apiUrl(ApiPaths.barcode), { barcode: value })
       .then((response) => {
         // update item in history
         if (!id) return;

@@ -1,4 +1,16 @@
-import { Divider, Paper, Stack, Tabs } from '@mantine/core';
+import {
+  ActionIcon,
+  Divider,
+  Paper,
+  Stack,
+  Tabs,
+  Tooltip
+} from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
+import {
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarRightCollapse
+} from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
@@ -25,29 +37,31 @@ export type PanelType = {
  * @returns
  */
 export function PanelGroup({
+  pageKey,
   panels,
   selectedPanel,
   onPanelChange
 }: {
+  pageKey: string;
   panels: PanelType[];
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
 }): ReactNode {
-  // Default to the provided panel name, or the first panel
-  const [activePanelName, setActivePanelName] = useState<string>(
-    selectedPanel || panels.length > 0 ? panels[0].name : ''
-  );
+  const [activePanel, setActivePanel] = useLocalStorage<string>({
+    key: `panel-group-active-panel-${pageKey}`,
+    defaultValue: selectedPanel || panels.length > 0 ? panels[0].name : ''
+  });
 
   // Update the active panel when the selected panel changes
   useEffect(() => {
     if (selectedPanel) {
-      setActivePanelName(selectedPanel);
+      setActivePanel(selectedPanel);
     }
   }, [selectedPanel]);
 
   // Callback when the active panel changes
   function handlePanelChange(panel: string) {
-    setActivePanelName(panel);
+    setActivePanel(panel);
 
     // Optionally call external callback hook
     if (onPanelChange) {
@@ -55,28 +69,48 @@ export function PanelGroup({
     }
   }
 
+  const [expanded, setExpanded] = useState<boolean>(true);
+
   return (
     <Paper p="sm" radius="xs" shadow="xs">
       <Tabs
-        value={activePanelName}
+        value={activePanel}
         orientation="vertical"
         onTabChange={handlePanelChange}
         keepMounted={false}
       >
-        <Tabs.List>
+        <Tabs.List position="left">
           {panels.map(
             (panel, idx) =>
               !panel.hidden && (
-                <Tabs.Tab
-                  p="xs"
-                  value={panel.name}
-                  icon={panel.icon}
-                  hidden={panel.hidden}
+                <Tooltip
+                  label={panel.label}
+                  key={`panel-tab-tooltip-${panel.name}`}
                 >
-                  {panel.label}
-                </Tabs.Tab>
+                  <Tabs.Tab
+                    key={`panel-tab-${panel.name}`}
+                    p="xs"
+                    value={panel.name}
+                    icon={panel.icon}
+                    hidden={panel.hidden}
+                  >
+                    {expanded && panel.label}
+                  </Tabs.Tab>
+                </Tooltip>
               )
           )}
+          <ActionIcon
+            style={{
+              paddingLeft: '10px'
+            }}
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? (
+              <IconLayoutSidebarLeftCollapse opacity={0.5} />
+            ) : (
+              <IconLayoutSidebarRightCollapse opacity={0.5} />
+            )}
+          </ActionIcon>
         </Tabs.List>
         {panels.map(
           (panel, idx) =>
