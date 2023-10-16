@@ -18,22 +18,21 @@ import {
   IconPackages,
   IconPaperclip,
   IconShoppingCart,
+  IconStack2,
   IconTestPipe,
   IconTools,
   IconTruckDelivery,
   IconVersions
 } from '@tabler/icons-react';
-import React from 'react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { api } from '../../App';
 import { ApiImage } from '../../components/images/ApiImage';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
+import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
 import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
@@ -74,7 +73,7 @@ export default function PartDetail() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconList />,
-        content: <PlaceholderPanel />
+        content: <PartParameterTable partId={id ?? -1} />
       },
       {
         name: 'stock',
@@ -112,7 +111,7 @@ export default function PartDetail() {
       {
         name: 'used_in',
         label: t`Used In`,
-        icon: <IconList />,
+        icon: <IconStack2 />,
         hidden: !part.component,
         content: <PlaceholderPanel />
       },
@@ -236,7 +235,7 @@ export default function PartDetail() {
             </Button>
           ]}
         />
-        <PanelGroup panels={partPanels} />
+        <PanelGroup pageKey="part" panels={partPanels} />
       </Stack>
     </>
   );

@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert } from '@mantine/core';
+import { Alert, Space } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
@@ -18,7 +18,11 @@ import {
   RenderSalesOrder,
   RenderSalesOrderShipment
 } from './Order';
-import { RenderPart, RenderPartCategory } from './Part';
+import {
+  RenderPart,
+  RenderPartCategory,
+  RenderPartParameterTemplate
+} from './Part';
 import { RenderStockItem, RenderStockLocation } from './Stock';
 import { RenderOwner, RenderUser } from './User';
 
@@ -40,6 +44,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.owner]: RenderOwner,
   [ModelType.part]: RenderPart,
   [ModelType.partcategory]: RenderPartCategory,
+  [ModelType.partparametertemplate]: RenderPartParameterTemplate,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
   [ModelType.salesorder]: RenderSalesOrder,
@@ -84,12 +89,14 @@ export function RenderInstance({
 export function RenderInlineModel({
   primary,
   secondary,
+  suffix,
   image,
   labels,
   url
 }: {
   primary: string;
   secondary?: string;
+  suffix?: string;
   image?: string;
   labels?: string[];
   url?: string;
@@ -98,10 +105,18 @@ export function RenderInlineModel({
   // TODO: Handle URL
 
   return (
-    <Group spacing="xs">
-      {image && Thumbnail({ src: image, size: 18 })}
-      <Text size="sm">{primary}</Text>
-      {secondary && <Text size="xs">{secondary}</Text>}
+    <Group spacing="xs" position="apart">
+      <Group spacing="xs" position="left">
+        {image && Thumbnail({ src: image, size: 18 })}
+        <Text size="sm">{primary}</Text>
+        {secondary && <Text size="xs">{secondary}</Text>}
+      </Group>
+      {suffix && (
+        <>
+          <Space />
+          <Text size="xs">{suffix}</Text>
+        </>
+      )}
     </Group>
   );
 }
