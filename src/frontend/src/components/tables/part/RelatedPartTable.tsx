@@ -59,7 +59,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
         }
       }
     ];
-  }, []);
+  }, [partId]);
 
   const addRelatedPart = useCallback(() => {
     openCreateApiForm({
