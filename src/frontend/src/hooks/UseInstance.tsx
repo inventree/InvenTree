@@ -17,23 +17,29 @@ export function useInstance({
   endpoint,
   pk,
   params = {},
+  defaultValue = {},
+  hasPrimaryKey = true,
   refetchOnMount = false,
   refetchOnWindowFocus = false
 }: {
   endpoint: ApiPaths;
-  pk: string | undefined;
+  pk?: string | undefined;
+  hasPrimaryKey?: boolean;
   params?: any;
+  defaultValue?: any;
   refetchOnMount?: boolean;
   refetchOnWindowFocus?: boolean;
 }) {
-  const [instance, setInstance] = useState<any>({});
+  const [instance, setInstance] = useState<any>(defaultValue);
 
   const instanceQuery = useQuery({
     queryKey: ['instance', endpoint, pk, params],
     queryFn: async () => {
-      if (pk == null || pk == undefined || pk.length == 0) {
-        setInstance({});
-        return null;
+      if (hasPrimaryKey) {
+        if (pk == null || pk == undefined || pk.length == 0) {
+          setInstance(defaultValue);
+          return null;
+        }
       }
 
       let url = apiUrl(endpoint, pk);
@@ -48,12 +54,12 @@ export function useInstance({
               setInstance(response.data);
               return response.data;
             default:
-              setInstance({});
+              setInstance(defaultValue);
               return null;
           }
         })
         .catch((error) => {
-          setInstance({});
+          setInstance(defaultValue);
           console.error(`Error fetching instance ${url}:`, error);
           return null;
         });
