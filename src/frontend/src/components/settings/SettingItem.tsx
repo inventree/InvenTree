@@ -28,6 +28,11 @@ function SettingValue({
     api
       .patch(apiUrl(endpoint, setting.key), { value: value })
       .then(() => {
+        showNotification({
+          title: t`Setting updated`,
+          message: t`${setting?.name} updated successfully`,
+          color: 'green'
+        });
         settingsState.fetchSettings();
       })
       .catch((error) => {
@@ -65,6 +70,11 @@ function SettingValue({
         }
       },
       onFormSuccess() {
+        showNotification({
+          title: t`Setting updated`,
+          message: t`${setting?.name} updated successfully`,
+          color: 'green'
+        });
         settingsState.fetchSettings();
       }
     });
