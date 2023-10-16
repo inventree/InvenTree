@@ -31,6 +31,7 @@ def sentry_ignore_errors():
         Http404,
         ValidationError,
         rest_framework.exceptions.AuthenticationFailed,
+        rest_framework.exceptions.NotAuthenticated,
         rest_framework.exceptions.PermissionDenied,
         rest_framework.exceptions.ValidationError,
     ]
