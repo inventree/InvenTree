@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
@@ -48,7 +49,7 @@ export function ProjectCodeTable() {
 
   return (
     <InvenTreeTable
-      url="/project-code/"
+      url={apiUrl(ApiPaths.project_code_list)}
       tableKey={tableKey}
       columns={columns}
       props={{

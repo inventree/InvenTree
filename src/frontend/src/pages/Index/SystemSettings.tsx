@@ -23,17 +23,15 @@ import { useMemo } from 'react';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { SettingList } from '../../components/settings/SettingList';
+import { GlobalSettingList } from '../../components/settings/SettingList';
 import { ProjectCodeTable } from '../../components/tables/settings/ProjectCodeTable';
-import { ApiPaths, url } from '../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 
 /**
  * System settings page
  */
 export default function SystemSettings() {
-  const globalSettings = useGlobalSettingsState();
-
   const systemSettingsPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -41,8 +39,7 @@ export default function SystemSettings() {
         label: t`Server`,
         icon: <IconServerCog />,
         content: (
-          <SettingList
-            settingsState={globalSettings}
+          <GlobalSettingList
             keys={[
               'INVENTREE_BASE_URL',
               'INVENTREE_COMPANY_NAME',
@@ -69,8 +66,7 @@ export default function SystemSettings() {
         label: t`Login`,
         icon: <IconFingerprint />,
         content: (
-          <SettingList
-            settingsState={globalSettings}
+          <GlobalSettingList
             keys={[
               'LOGIN_ENABLE_PWD_FORGOT',
               'LOGIN_MAIL_REQUIRED',
@@ -92,8 +88,7 @@ export default function SystemSettings() {
         label: t`Barcodes`,
         icon: <IconQrcode />,
         content: (
-          <SettingList
-            settingsState={globalSettings}
+          <GlobalSettingList
             keys={[
               'BARCODE_ENABLE',
               'BARCODE_INPUT_DELAY',
@@ -108,10 +103,7 @@ export default function SystemSettings() {
         icon: <IconListDetails />,
         content: (
           <Stack spacing="xs">
-            <SettingList
-              settingsState={globalSettings}
-              keys={['PROJECT_CODES_ENABLED']}
-            />
+            <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
             <Divider />
             <ProjectCodeTable />
           </Stack>
@@ -136,20 +128,14 @@ export default function SystemSettings() {
         name: 'labels',
         label: t`Labels`,
         icon: <IconTag />,
-        content: (
-          <SettingList
-            settingsState={globalSettings}
-            keys={['LABEL_ENABLE', 'LABEL_DPI']}
-          />
-        )
+        content: <GlobalSettingList keys={['LABEL_ENABLE', 'LABEL_DPI']} />
       },
       {
         name: 'reporting',
         label: t`Reporting`,
         icon: <IconFileAnalytics />,
         content: (
-          <SettingList
-            settingsState={globalSettings}
+          <GlobalSettingList
             keys={[
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
@@ -169,7 +155,7 @@ export default function SystemSettings() {
         name: 'parts',
         label: t`Parts`,
         icon: <IconCategory />,
-        content: <SettingList settingsState={globalSettings} keys={[]} />
+        content: <GlobalSettingList keys={[]} />
       },
       {
         name: 'parameters',
@@ -181,8 +167,7 @@ export default function SystemSettings() {
         label: t`Stock`,
         icon: <IconPackages />,
         content: (
-          <SettingList
-            settingsState={globalSettings}
+          <GlobalSettingList
             keys={[
               'SERIAL_NUMBER_GLOBALLY_UNIQUE',
               'SERIAL_NUMBER_AUTOFILL',
@@ -208,20 +193,14 @@ export default function SystemSettings() {
         name: 'buildorders',
         label: t`Build Orders`,
         icon: <IconTools />,
-        content: (
-          <SettingList
-            settingsState={globalSettings}
-            keys={['BUILDORDER_REFERENCE_PATTERN']}
-          />
-        )
+        content: <GlobalSettingList keys={['BUILDORDER_REFERENCE_PATTERN']} />
       },
       {
         name: 'purchaseorders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         content: (
-          <SettingList
-            settingsState={globalSettings}
+          <GlobalSettingList
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
@@ -234,8 +213,7 @@ export default function SystemSettings() {
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
         content: (
-          <SettingList
-            settingsState={globalSettings}
+          <GlobalSettingList
             keys={[
               'SALESORDER_REFERENCE_PATTERN',
               'SALESORDER_DEFAULT_SHIPMENT',
@@ -251,7 +229,7 @@ export default function SystemSettings() {
     <>
       <Stack spacing="xs">
         <PageDetail title={t`System Settings`} />
-        <PanelGroup panels={systemSettingsPanels} />
+        <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
       </Stack>
     </>
   );

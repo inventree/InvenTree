@@ -7,7 +7,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PluginListTable } from '../../components/tables/plugin/PluginListTable';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, url } from '../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 
 /**
  * Plugins settings page
@@ -19,9 +19,9 @@ export default function PluginSettings() {
     refreshInstance: reloadSettings,
     instanceQuery: settingsQuery
   } = useInstance({
-    url: url(ApiPaths.settings_global),
+    endpoint: ApiPaths.settings_global_list,
     hasPrimaryKey: false,
-    fetchOnMount: true,
+    refetchOnMount: true,
     defaultValue: []
   });
 
@@ -45,7 +45,7 @@ export default function PluginSettings() {
       <Stack spacing="xs">
         <LoadingOverlay visible={settingsQuery.isFetching} />
         <PageDetail title={t`Plugin Settings`} />
-        <PanelGroup panels={pluginPanels} />
+        <PanelGroup pageKey="plugin-settings" panels={pluginPanels} />
       </Stack>
     </>
   );

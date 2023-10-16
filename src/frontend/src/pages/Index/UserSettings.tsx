@@ -12,8 +12,7 @@ import { useMemo } from 'react';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { SettingList } from '../../components/settings/SettingList';
-import { ApiPaths, url } from '../../states/ApiState';
+import { UserSettingList } from '../../components/settings/SettingList';
 
 /**
  * User settings page
@@ -36,7 +35,7 @@ export default function UserSettings() {
         label: t`Display Options`,
         icon: <IconDeviceDesktop />,
         content: (
-          <SettingList
+          <UserSettingList
             keys={[
               'STICKY_HEADER',
               'DATE_DISPLAY_FORMAT',
@@ -54,7 +53,7 @@ export default function UserSettings() {
         label: t`Search`,
         icon: <IconSearch />,
         content: (
-          <SettingList
+          <UserSettingList
             keys={[
               'SEARCH_WHOLE',
               'SEARCH_REGEX',
@@ -89,7 +88,7 @@ export default function UserSettings() {
         label: t`Reporting`,
         icon: <IconFileAnalytics />,
         content: (
-          <SettingList
+          <UserSettingList
             keys={['REPORT_INLINE', 'LABEL_INLINE', 'LABEL_DEFAULT_PRINTER']}
           />
         )
@@ -104,7 +103,7 @@ export default function UserSettings() {
           title={t`User Settings`}
           detail={<Text>TODO: Filler</Text>}
         />
-        <PanelGroup panels={userSettingsPanels} />
+        <PanelGroup pageKey="user-settings" panels={userSettingsPanels} />
       </Stack>
     </>
   );

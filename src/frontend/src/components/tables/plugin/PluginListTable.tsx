@@ -9,6 +9,7 @@ import { useMemo } from 'react';
 
 import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
@@ -121,7 +122,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
 
   return (
     <InvenTreeTable
-      url="plugins/"
+      url={apiUrl(ApiPaths.plugin_list)}
       tableKey={tableKey}
       columns={pluginTableColumns}
       props={{

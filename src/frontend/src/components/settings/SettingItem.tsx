@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 
 import { api } from '../../App';
 import { openModalApiForm } from '../../functions/forms';
-import { ApiPaths, url } from '../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { SettingsStateProps } from '../../states/SettingsState';
 import { Setting } from '../../states/states';
 
@@ -26,7 +26,7 @@ function SettingValue({
   // Callback function when a boolean value is changed
   function onToggle(value: boolean) {
     api
-      .patch(url(endpoint, setting.key), { value: value })
+      .patch(apiUrl(endpoint, setting.key), { value: value })
       .then(() => {
         settingsState.fetchSettings();
       })

@@ -1,6 +1,10 @@
 import { LoadingOverlay, Stack, Text } from '@mantine/core';
 
-import { SettingsStateProps } from '../../states/SettingsState';
+import {
+  SettingsStateProps,
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsState';
 import { SettingItem } from './SettingItem';
 
 /**
@@ -35,4 +39,16 @@ export function SettingList({
       </Stack>
     </>
   );
+}
+
+export function UserSettingList({ keys }: { keys: string[] }) {
+  const userSettings = useUserSettingsState();
+
+  return <SettingList settingsState={userSettings} keys={keys} />;
+}
+
+export function GlobalSettingList({ keys }: { keys: string[] }) {
+  const globalSettings = useGlobalSettingsState();
+
+  return <SettingList settingsState={globalSettings} keys={keys} />;
 }
