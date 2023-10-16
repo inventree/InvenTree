@@ -11,6 +11,9 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
+/**
+ * Construct a table listing related parts for a given part
+ */
 export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   const { tableKey, refreshTable } = useTableRefresh('relatedparts');
 

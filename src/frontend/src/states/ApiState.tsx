@@ -49,6 +49,8 @@ export enum ApiPaths {
   category_list = 'api-category-list',
   related_part_list = 'api-related-part-list',
   part_attachment_list = 'api-part-attachment-list',
+  part_parameter_list = 'api-part-parameter-list',
+  part_parameter_template_list = 'api-part-parameter-template-list',
 
   // Company URLs
   company_list = 'api-company-list',
@@ -111,6 +113,10 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'build/attachment/';
     case ApiPaths.part_list:
       return 'part/';
+    case ApiPaths.part_parameter_list:
+      return 'part/parameter/';
+    case ApiPaths.part_parameter_template_list:
+      return 'part/parameter/template/';
     case ApiPaths.category_list:
       return 'part/category/';
     case ApiPaths.related_part_list:
