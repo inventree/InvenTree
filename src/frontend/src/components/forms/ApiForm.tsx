@@ -207,6 +207,7 @@ export function ApiForm({
                 // Data validation error
                 form.setErrors(error.response.data);
                 setNonFieldErrors(error.response.data.non_field_errors ?? []);
+                setIsLoading(false);
                 break;
               default:
                 // Unexpected state on form error

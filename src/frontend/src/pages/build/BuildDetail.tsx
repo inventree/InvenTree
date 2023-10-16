@@ -148,7 +148,7 @@ export default function BuildDetail() {
           actions={[<PlaceholderPill key="1" />]}
         />
         <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PanelGroup panels={buildPanels} />
+        <PanelGroup pageKey="build" panels={buildPanels} />
       </Stack>
     </>
   );

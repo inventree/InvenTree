@@ -35,11 +35,6 @@ function partTableColumns(): TableColumn[] {
             />
             <Text>{record.full_name}</Text>
           </Group>
-          // <ThumbnailHoverCard
-          //   src={record.thumbnail || record.image}
-          //   text={record.name}
-          //   link=""
-          // />
         );
       }
     },
@@ -68,7 +63,7 @@ function partTableColumns(): TableColumn[] {
       render: function (record: any) {
         // TODO: Link to the category detail page
         return shortenString({
-          str: record.category_detail.pathstring
+          str: record.category_detail?.pathstring
         });
       }
     },

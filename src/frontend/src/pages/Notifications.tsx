@@ -88,7 +88,7 @@ export default function NotificationsPage() {
     <>
       <Stack>
         <PageDetail title={t`Notifications`} />
-        <PanelGroup panels={notificationPanels} />
+        <PanelGroup pageKey="notifications" panels={notificationPanels} />
       </Stack>
     </>
   );

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -44,16 +45,14 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
         title: t`Structural`,
         switchable: true,
         sortable: true,
-        render: (record: any) => (record.structural ? 'Y' : 'N')
-        // TODO: custom 'true / false' label,
+        render: (record: any) => <YesNoButton value={record.structural} />
       },
       {
         accessor: 'external',
         title: t`External`,
         switchable: true,
         sortable: true,
-        render: (record: any) => (record.structural ? 'Y' : 'N')
-        // TODO: custom 'true / false' label,
+        render: (record: any) => <YesNoButton value={record.external} />
       },
       {
         accessor: 'location_type',

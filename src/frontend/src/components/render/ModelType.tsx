@@ -5,6 +5,7 @@ export enum ModelType {
   supplierpart = 'supplierpart',
   manufacturerpart = 'manufacturerpart',
   partcategory = 'partcategory',
+  partparametertemplate = 'partparametertemplate',
   stockitem = 'stockitem',
   stocklocation = 'stocklocation',
   build = 'build',
@@ -36,6 +37,12 @@ export const ModelInformationDict: ModelDictory = {
     label_multiple: t`Parts`,
     url_overview: '/part',
     url_detail: '/part/:pk/'
+  },
+  partparametertemplate: {
+    label: t`Part Parameter Template`,
+    label_multiple: t`Part Parameter Templates`,
+    url_overview: '/partparametertemplate',
+    url_detail: '/partparametertemplate/:pk/'
   },
   supplierpart: {
     label: t`Supplier Part`,

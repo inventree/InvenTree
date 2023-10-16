@@ -1,116 +1,118 @@
 import { t } from '@lingui/macro';
 
+import { ApiPaths, apiUrl } from '../states/ApiState';
+
 export const dashboardItems = [
   {
     id: 'starred-parts',
     text: t`Subscribed Parts`,
     icon: 'fa-bell',
-    url: 'part',
+    url: apiUrl(ApiPaths.part_list),
     params: { starred: true }
   },
   {
     id: 'starred-categories',
     text: t`Subscribed Categories`,
     icon: 'fa-bell',
-    url: 'part/category',
+    url: apiUrl(ApiPaths.category_list),
     params: { starred: true }
   },
   {
     id: 'latest-parts',
     text: t`Latest Parts`,
     icon: 'fa-newspaper',
-    url: 'part',
+    url: apiUrl(ApiPaths.part_list),
     params: { ordering: '-creation_date', limit: 10 }
   },
   {
     id: 'bom-validation',
     text: t`BOM Waiting Validation`,
     icon: 'fa-times-circle',
-    url: 'part',
+    url: apiUrl(ApiPaths.part_list),
     params: { bom_valid: false }
   },
   {
     id: 'recently-updated-stock',
     text: t`Recently Updated`,
     icon: 'fa-clock',
-    url: 'stock',
+    url: apiUrl(ApiPaths.stock_item_list),
     params: { part_detail: true, ordering: '-updated', limit: 10 }
   },
   {
     id: 'low-stock',
     text: t`Low Stock`,
     icon: 'fa-flag',
-    url: 'part',
+    url: apiUrl(ApiPaths.part_list),
     params: { low_stock: true }
   },
   {
     id: 'depleted-stock',
     text: t`Depleted Stock`,
     icon: 'fa-times',
-    url: 'part',
+    url: apiUrl(ApiPaths.part_list),
     params: { depleted_stock: true }
   },
   {
     id: 'stock-to-build',
     text: t`Required for Build Orders`,
     icon: 'fa-bullhorn',
-    url: 'part',
+    url: apiUrl(ApiPaths.part_list),
     params: { stock_to_build: true }
   },
   {
     id: 'expired-stock',
     text: t`Expired Stock`,
     icon: 'fa-calendar-times',
-    url: 'stock',
+    url: apiUrl(ApiPaths.stock_item_list),
     params: { expired: true }
   },
   {
     id: 'stale-stock',
     text: t`Stale Stock`,
     icon: 'fa-stopwatch',
-    url: 'stock',
+    url: apiUrl(ApiPaths.stock_item_list),
     params: { stale: true, expired: true }
   },
   {
     id: 'build-pending',
     text: t`Build Orders In Progress`,
     icon: 'fa-cogs',
-    url: 'build',
+    url: apiUrl(ApiPaths.build_order_list),
     params: { active: true }
   },
   {
     id: 'build-overdue',
     text: t`Overdue Build Orders`,
     icon: 'fa-calendar-times',
-    url: 'build',
+    url: apiUrl(ApiPaths.build_order_list),
     params: { overdue: true }
   },
   {
     id: 'po-outstanding',
     text: t`Outstanding Purchase Orders`,
     icon: 'fa-sign-in-alt',
-    url: 'order/po',
+    url: apiUrl(ApiPaths.purchase_order_list),
     params: { supplier_detail: true, outstanding: true }
   },
   {
     id: 'po-overdue',
     text: t`Overdue Purchase Orders`,
     icon: 'fa-calendar-times',
-    url: 'order/po',
+    url: apiUrl(ApiPaths.purchase_order_list),
     params: { supplier_detail: true, overdue: true }
   },
   {
     id: 'so-outstanding',
     text: t`Outstanding Sales Orders`,
     icon: 'fa-sign-out-alt',
-    url: 'order/so',
+    url: apiUrl(ApiPaths.sales_order_list),
     params: { customer_detail: true, outstanding: true }
   },
   {
     id: 'so-overdue',
     text: t`Overdue Sales Orders`,
     icon: 'fa-calendar-times',
-    url: 'order/so',
+    url: apiUrl(ApiPaths.sales_order_list),
     params: { customer_detail: true, overdue: true }
   },
   {

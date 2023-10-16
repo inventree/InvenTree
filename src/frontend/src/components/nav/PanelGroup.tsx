@@ -1,4 +1,12 @@
-import { Divider, Paper, Stack, Tabs, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Divider,
+  Paper,
+  Stack,
+  Tabs,
+  Tooltip
+} from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
@@ -29,29 +37,31 @@ export type PanelType = {
  * @returns
  */
 export function PanelGroup({
+  pageKey,
   panels,
   selectedPanel,
   onPanelChange
 }: {
+  pageKey: string;
   panels: PanelType[];
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
 }): ReactNode {
-  // Default to the provided panel name, or the first panel
-  const [activePanelName, setActivePanelName] = useState<string>(
-    selectedPanel || panels.length > 0 ? panels[0].name : ''
-  );
+  const [activePanel, setActivePanel] = useLocalStorage<string>({
+    key: `panel-group-active-panel-${pageKey}`,
+    defaultValue: selectedPanel || panels.length > 0 ? panels[0].name : ''
+  });
 
   // Update the active panel when the selected panel changes
   useEffect(() => {
     if (selectedPanel) {
-      setActivePanelName(selectedPanel);
+      setActivePanel(selectedPanel);
     }
   }, [selectedPanel]);
 
   // Callback when the active panel changes
   function handlePanelChange(panel: string) {
-    setActivePanelName(panel);
+    setActivePanel(panel);
 
     // Optionally call external callback hook
     if (onPanelChange) {
@@ -64,7 +74,7 @@ export function PanelGroup({
   return (
     <Paper p="sm" radius="xs" shadow="xs">
       <Tabs
-        value={activePanelName}
+        value={activePanel}
         orientation="vertical"
         onTabChange={handlePanelChange}
         keepMounted={false}
@@ -89,19 +99,18 @@ export function PanelGroup({
                 </Tooltip>
               )
           )}
-          <Tabs.Tab
-            key="panel-tab-collapse-toggle"
-            p="xs"
-            value="collapse-toggle"
+          <ActionIcon
+            style={{
+              paddingLeft: '10px'
+            }}
             onClick={() => setExpanded(!expanded)}
-            icon={
-              expanded ? (
-                <IconLayoutSidebarLeftCollapse opacity={0.35} size={18} />
-              ) : (
-                <IconLayoutSidebarRightCollapse opacity={0.35} size={18} />
-              )
-            }
-          />
+          >
+            {expanded ? (
+              <IconLayoutSidebarLeftCollapse opacity={0.5} />
+            ) : (
+              <IconLayoutSidebarRightCollapse opacity={0.5} />
+            )}
+          </ActionIcon>
         </Tabs.List>
         {panels.map(
           (panel, idx) =>
