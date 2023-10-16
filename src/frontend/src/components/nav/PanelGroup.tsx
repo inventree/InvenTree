@@ -1,4 +1,5 @@
 import { Divider, Group, Paper, Stack, Tabs, Tooltip } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
@@ -25,29 +26,31 @@ export type PanelType = {
  * @returns
  */
 export function PanelGroup({
+  pageKey,
   panels,
   selectedPanel,
   onPanelChange
 }: {
+  pageKey: string;
   panels: PanelType[];
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
 }): ReactNode {
-  // Default to the provided panel name, or the first panel
-  const [activePanelName, setActivePanelName] = useState<string>(
-    selectedPanel || panels.length > 0 ? panels[0].name : ''
-  );
+  const [activePanel, setActivePanel] = useLocalStorage<string>({
+    key: `panel-group-${pageKey}-active-panel`,
+    defaultValue: selectedPanel || panels.length > 0 ? panels[0].name : ''
+  });
 
   // Update the active panel when the selected panel changes
   useEffect(() => {
     if (selectedPanel) {
-      setActivePanelName(selectedPanel);
+      setActivePanel(selectedPanel);
     }
   }, [selectedPanel]);
 
   // Callback when the active panel changes
   function handlePanelChange(panel: string) {
-    setActivePanelName(panel);
+    setActivePanel(panel);
 
     // Optionally call external callback hook
     if (onPanelChange) {
@@ -60,7 +63,7 @@ export function PanelGroup({
   return (
     <Paper p="sm" radius="xs" shadow="xs">
       <Tabs
-        value={activePanelName}
+        value={activePanel}
         orientation="vertical"
         onTabChange={handlePanelChange}
         keepMounted={false}
