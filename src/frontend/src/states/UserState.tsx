@@ -6,6 +6,7 @@ import { UserProps } from './states';
 
 interface UserStateProps {
   user: UserProps | undefined;
+  username: () => string;
   setUser: (newUser: UserProps) => void;
   fetchUserState: () => void;
 }
@@ -15,6 +16,15 @@ interface UserStateProps {
  */
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
+  username: () => {
+    const user: UserProps = get().user as UserProps;
+
+    if (user.first_name || user.last_name) {
+      return `${user.first_name} ${user.last_name}`.trim();
+    } else {
+      return user.username;
+    }
+  },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
     // Fetch user data
@@ -22,7 +32,8 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       .get(apiUrl(ApiPaths.user_me))
       .then((response) => {
         const user: UserProps = {
-          name: `${response.data.first_name} ${response.data.last_name}`,
+          first_name: response.data?.first_name ?? '',
+          last_name: response.data?.last_name ?? '',
           email: response.data.email,
           username: response.data.username
         };

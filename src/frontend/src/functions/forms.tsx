@@ -98,11 +98,15 @@ export function openModalApiForm(props: ApiFormProps) {
     .options(url)
     .then((response) => {
       // Extract available fields from the OPTIONS response (and handle any errors)
-      let fields: Record<string, ApiFormFieldType> | null =
-        extractAvailableFields(response, props.method);
 
-      if (fields == null) {
-        return;
+      let fields: Record<string, ApiFormFieldType> | null = {};
+
+      if (!props.ignorePermissionCheck) {
+        fields = extractAvailableFields(response, props.method);
+
+        if (fields == null) {
+          return;
+        }
       }
 
       // Generate a random modal ID for controller

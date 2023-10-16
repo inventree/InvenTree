@@ -75,10 +75,10 @@ export function Header() {
             <NavTabs />
           </Group>
           <Group>
-            <ScanButton />
             <ActionIcon onClick={openSearchDrawer}>
               <IconSearch />
             </ActionIcon>
+            <ScanButton />
             <ActionIcon onClick={openNotificationDrawer}>
               <Indicator
                 radius="lg"

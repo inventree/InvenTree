@@ -43,7 +43,7 @@ import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
 export interface ApiFormProps {
   name: string;
   url: ApiPaths;
-  pk?: number | string;
+  pk?: number | string | undefined;
   title: string;
   fields?: ApiFormFieldSet;
   cancelText?: string;
@@ -51,6 +51,7 @@ export interface ApiFormProps {
   submitColor?: string;
   cancelColor?: string;
   fetchInitialData?: boolean;
+  ignorePermissionCheck?: boolean;
   method?: string;
   preFormContent?: JSX.Element | (() => JSX.Element);
   postFormContent?: JSX.Element | (() => JSX.Element);
