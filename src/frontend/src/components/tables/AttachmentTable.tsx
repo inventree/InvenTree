@@ -90,6 +90,8 @@ export function AttachmentTable({
 
   const url = useMemo(() => apiUrl(endpoint), [endpoint]);
 
+  const validPk = useMemo(() => pk > 0, [pk]);
+
   // Determine which permissions are available for this URL
   useEffect(() => {
     api
@@ -236,7 +238,7 @@ export function AttachmentTable({
           }
         }}
       />
-      {allowEdit && (
+      {allowEdit && validPk && (
         <Dropzone onDrop={uploadFiles}>
           <Dropzone.Idle>
             <Group position="center">
