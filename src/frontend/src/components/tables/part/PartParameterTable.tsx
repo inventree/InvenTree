@@ -1,8 +1,13 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { ActionIcon, Text, Tooltip } from '@mantine/core';
+import { IconTextPlus } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
+import {
+  openCreateApiForm,
+  openDeleteApiForm,
+  openEditApiForm
+} from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -108,6 +113,44 @@ export function PartParameterTable({ partId }: { partId: any }) {
     return actions;
   }, []);
 
+  const addParameter = useCallback(() => {
+    if (!partId) {
+      return;
+    }
+
+    openCreateApiForm({
+      name: 'add-part-parameter',
+      url: ApiPaths.part_parameter_list,
+      title: t`Add Part Parameter`,
+      fields: {
+        part: {
+          hidden: true,
+          value: partId
+        },
+        template: {},
+        data: {}
+      },
+      successMessage: t`Part parameter added`,
+      onFormSuccess: refreshTable
+    });
+  }, [partId]);
+
+  // Custom table actions
+  const tableActions = useMemo(() => {
+    let actions = [];
+
+    // TODO: Hide if user does not have permission to edit parts
+    actions.push(
+      <Tooltip label={t`Add parameter`}>
+        <ActionIcon radius="sm" onClick={addParameter}>
+          <IconTextPlus color="green" />
+        </ActionIcon>
+      </Tooltip>
+    );
+
+    return actions;
+  }, []);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.part_parameter_list)}
@@ -115,6 +158,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
       columns={tableColumns}
       props={{
         rowActions: rowActions,
+        customActionGroups: tableActions,
         params: {
           part: partId,
           template_detail: true
