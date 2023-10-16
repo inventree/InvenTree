@@ -18,7 +18,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
   username: () => {
     const user: UserProps = get().user as UserProps;
-    return user?.name || user?.username;
+
+    if (user.first_name || user.last_name) {
+      return `${user.first_name} ${user.last_name}`.trim();
+    } else {
+      return user.username;
+    }
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
@@ -27,7 +32,8 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       .get(apiUrl(ApiPaths.user_me))
       .then((response) => {
         const user: UserProps = {
-          name: `${response.data.first_name} ${response.data.last_name}`,
+          first_name: response.data?.first_name ?? '',
+          last_name: response.data?.last_name ?? '',
           email: response.data.email,
           username: response.data.username
         };

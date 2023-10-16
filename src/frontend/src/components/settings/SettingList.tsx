@@ -1,4 +1,5 @@
 import { LoadingOverlay, Stack, Text } from '@mantine/core';
+import { useEffect } from 'react';
 
 import {
   SettingsStateProps,
@@ -17,6 +18,10 @@ export function SettingList({
   settingsState: SettingsStateProps;
   keys: string[];
 }) {
+  useEffect(() => {
+    settingsState.fetchSettings();
+  }, []);
+
   return (
     <>
       <Stack spacing="xs">
