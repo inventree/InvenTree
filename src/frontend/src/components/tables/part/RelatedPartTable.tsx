@@ -78,7 +78,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
       successMessage: t`Related part added`,
       onFormSuccess: refreshTable
     });
-  }, []);
+  }, [partId]);
 
   const customActions: ReactNode[] = useMemo(() => {
     // TODO: Hide if user does not have permission to edit parts
