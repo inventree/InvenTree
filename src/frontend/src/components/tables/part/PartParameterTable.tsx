@@ -10,6 +10,7 @@ import {
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -44,7 +45,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
           let template = record.template_detail;
 
           if (template?.checkbox) {
-            // TODO: Render boolean chip
+            return <YesNoButton value={record.data} />;
           }
 
           if (record.data_numeric) {

@@ -35,11 +35,6 @@ function partTableColumns(): TableColumn[] {
             />
             <Text>{record.full_name}</Text>
           </Group>
-          // <ThumbnailHoverCard
-          //   src={record.thumbnail || record.image}
-          //   text={record.name}
-          //   link=""
-          // />
         );
       }
     },
