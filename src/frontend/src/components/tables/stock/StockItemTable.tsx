@@ -1,11 +1,12 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { RowAction } from '../RowActions';
@@ -21,14 +22,16 @@ function stockItemTableColumns(): TableColumn[] {
       sortable: true,
       title: t`Part`,
       render: function (record: any) {
-        let part = record.part_detail;
+        let part = record.part_detail ?? {};
         return (
-          <Text>{part.full_name}</Text>
-          // <ThumbnailHoverCard
-          //   src={part.thumbnail || part.image}
-          //   text={part.name}
-          //   link=""
-          // />
+          <Group spacing="xs" noWrap={true}>
+            <Thumbnail
+              src={part?.thumbnail || part?.image}
+              alt={part?.name}
+              size={24}
+            />
+            <Text>{part.full_name}</Text>
+          </Group>
         );
       }
     },
