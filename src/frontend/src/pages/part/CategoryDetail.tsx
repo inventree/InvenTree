@@ -95,7 +95,7 @@ export default function CategoryDetail({}: {}) {
         detail={<Text>{category.name ?? 'Top level'}</Text>}
         breadcrumbs={breadcrumbs}
       />
-      <PanelGroup panels={categoryPanels} />
+      <PanelGroup pageKey="partcategory" panels={categoryPanels} />
     </Stack>
   );
 }

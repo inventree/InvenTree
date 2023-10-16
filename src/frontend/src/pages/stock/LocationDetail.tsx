@@ -75,7 +75,7 @@ export default function Stock() {
           detail={<Text>{location.name ?? 'Top level'}</Text>}
           breadcrumbs={breadcrumbs}
         />
-        <PanelGroup panels={locationPanels} />
+        <PanelGroup pageKey="stocklocation" panels={locationPanels} />
       </Stack>
     </>
   );

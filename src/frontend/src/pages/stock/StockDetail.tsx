@@ -120,7 +120,7 @@ export default function StockDetail() {
         }
         breadcrumbs={breadcrumbs}
       />
-      <PanelGroup panels={stockPanels} />
+      <PanelGroup pageKey="stockitem" panels={stockPanels} />
     </Stack>
   );
 }
