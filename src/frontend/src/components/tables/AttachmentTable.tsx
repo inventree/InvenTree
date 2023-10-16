@@ -13,7 +13,7 @@ import {
   editAttachment
 } from '../../functions/forms/AttachmentForms';
 import { useTableRefresh } from '../../hooks/TableRefresh';
-import { ApiPaths } from '../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { AttachmentLink } from '../items/AttachmentLink';
 import { TableColumn } from './Column';
 import { InvenTreeTable } from './InvenTreeTable';
@@ -73,11 +73,11 @@ function attachmentTableColumns(): TableColumn[] {
  * Construct a table for displaying uploaded attachments
  */
 export function AttachmentTable({
-  url,
+  endpoint,
   model,
   pk
 }: {
-  url: ApiPaths;
+  endpoint: ApiPaths;
   pk: number;
   model: string;
 }): ReactNode {
@@ -87,6 +87,8 @@ export function AttachmentTable({
 
   const [allowEdit, setAllowEdit] = useState<boolean>(false);
   const [allowDelete, setAllowDelete] = useState<boolean>(false);
+
+  const url = useMemo(() => apiUrl(endpoint), [endpoint]);
 
   // Determine which permissions are available for this URL
   useEffect(() => {
@@ -113,7 +115,7 @@ export function AttachmentTable({
         title: t`Edit`,
         onClick: () => {
           editAttachment({
-            url: url,
+            endpoint: endpoint,
             model: model,
             pk: record.pk,
             attachmentType: record.attachment ? 'file' : 'link',
@@ -129,7 +131,7 @@ export function AttachmentTable({
         color: 'red',
         onClick: () => {
           deleteAttachment({
-            url: url,
+            endpoint: endpoint,
             pk: record.pk,
             callback: refreshTable
           });
@@ -182,7 +184,7 @@ export function AttachmentTable({
             radius="sm"
             onClick={() => {
               addAttachment({
-                url: url,
+                endpoint: endpoint,
                 model: model,
                 pk: pk,
                 attachmentType: 'file',
@@ -201,7 +203,7 @@ export function AttachmentTable({
             radius="sm"
             onClick={() => {
               addAttachment({
-                url: url,
+                endpoint: endpoint,
                 model: model,
                 pk: pk,
                 attachmentType: 'link',
