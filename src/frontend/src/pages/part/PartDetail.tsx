@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Alert, Button, LoadingOverlay, Stack, Text } from '@mantine/core';
+import {
+  Alert,
+  Button,
+  Group,
+  LoadingOverlay,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBuilding,
   IconCurrencyDollar,
@@ -190,26 +197,31 @@ export default function PartDetail() {
     [part]
   );
 
+  const partDetail = useMemo(() => {
+    return (
+      <Group spacing="xs" noWrap={true}>
+        <ApiImage
+          src={String(part.image || '')}
+          radius="sm"
+          height={64}
+          width={64}
+        />
+        <Stack spacing="xs">
+          <Text size="lg" weight={500}>
+            {part.full_name}
+          </Text>
+          <Text size="sm">{part.description}</Text>
+        </Stack>
+      </Group>
+    );
+  }, [part, id]);
+
   return (
     <>
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
-          title={t`Part`}
-          subtitle={part.full_name}
-          detail={
-            <Stack>
-              <Alert color="teal" title="Part detail goes here">
-                <Text>TODO: Part details</Text>
-              </Alert>
-              <ApiImage
-                src={String(part.thumbnail || part.image || '')}
-                radius="sm"
-                height={200}
-                width={200}
-              />
-            </Stack>
-          }
+          detail={partDetail}
           breadcrumbs={breadcrumbs}
           actions={[
             <Button
