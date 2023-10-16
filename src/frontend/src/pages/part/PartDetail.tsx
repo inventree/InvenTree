@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Alert, Button, LoadingOverlay, Stack, Text } from '@mantine/core';
+import {
+  Alert,
+  Button,
+  Group,
+  LoadingOverlay,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBuilding,
   IconCurrencyDollar,
@@ -18,8 +25,11 @@ import {
 } from '@tabler/icons-react';
 import React from 'react';
 import { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+import { api } from '../../App';
+import { ApiImage } from '../../components/images/ApiImage';
+import { Thumbnail } from '../../components/images/Thumbnail';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -46,7 +56,9 @@ export default function PartDetail() {
     pk: id,
     params: {
       path_detail: true
-    }
+    },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
   });
 
   // Part data panels (recalculate when part data changes)
@@ -185,18 +197,31 @@ export default function PartDetail() {
     [part]
   );
 
+  const partDetail = useMemo(() => {
+    return (
+      <Group spacing="xs" noWrap={true}>
+        <ApiImage
+          src={String(part.image || '')}
+          radius="sm"
+          height={64}
+          width={64}
+        />
+        <Stack spacing="xs">
+          <Text size="lg" weight={500}>
+            {part.full_name}
+          </Text>
+          <Text size="sm">{part.description}</Text>
+        </Stack>
+      </Group>
+    );
+  }, [part, id]);
+
   return (
     <>
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
-          title={t`Part`}
-          subtitle={part.full_name}
-          detail={
-            <Alert color="teal" title="Part detail goes here">
-              <Text>TODO: Part details</Text>
-            </Alert>
-          }
+          detail={partDetail}
           breadcrumbs={breadcrumbs}
           actions={[
             <Button

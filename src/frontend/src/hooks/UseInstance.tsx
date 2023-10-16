@@ -16,11 +16,15 @@ import { ApiPaths, apiUrl } from '../states/ApiState';
 export function useInstance({
   endpoint,
   pk,
-  params = {}
+  params = {},
+  refetchOnMount = false,
+  refetchOnWindowFocus = false
 }: {
   endpoint: ApiPaths;
   pk: string | undefined;
   params?: any;
+  refetchOnMount?: boolean;
+  refetchOnWindowFocus?: boolean;
 }) {
   const [instance, setInstance] = useState<any>({});
 
@@ -54,8 +58,8 @@ export function useInstance({
           return null;
         });
     },
-    refetchOnMount: false,
-    refetchOnWindowFocus: false
+    refetchOnMount: refetchOnMount,
+    refetchOnWindowFocus: refetchOnWindowFocus
   });
 
   const refreshInstance = useCallback(function () {

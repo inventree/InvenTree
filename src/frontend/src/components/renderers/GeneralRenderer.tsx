@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
-import { ThumbnailHoverCard } from '../items/Thumbnail';
+import { ThumbnailHoverCard } from '../images/Thumbnail';
 
 export function GeneralRenderer({
   api_key,

@@ -17,7 +17,7 @@ export function PageDetail({
   breadcrumbs,
   actions
 }: {
-  title: string;
+  title?: string;
   subtitle?: string;
   detail?: ReactNode;
   breadcrumbs?: Breadcrumb[];
@@ -34,13 +34,15 @@ export function PageDetail({
         <Stack spacing="xs">
           <Group position="apart">
             <Group position="left">
-              <StylishText size="xl">{title}</StylishText>
-              {subtitle && <Text size="lg">{subtitle}</Text>}
+              <Stack spacing="xs">
+                {title && <StylishText size="xl">{title}</StylishText>}
+                {subtitle && <Text size="lg">{subtitle}</Text>}
+                {detail}
+              </Stack>
             </Group>
             <Space />
             {actions && <Group position="right">{actions}</Group>}
           </Group>
-          {detail}
         </Stack>
       </Paper>
     </Stack>
