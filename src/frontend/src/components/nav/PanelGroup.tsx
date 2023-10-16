@@ -1,4 +1,8 @@
-import { Divider, Group, Paper, Stack, Tabs, Tooltip } from '@mantine/core';
+import { Divider, Paper, Stack, Tabs, Tooltip } from '@mantine/core';
+import {
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarRightCollapse
+} from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
@@ -55,7 +59,7 @@ export function PanelGroup({
     }
   }
 
-  const [showText, setShowText] = useState<boolean>(true);
+  const [expanded, setExpanded] = useState<boolean>(true);
 
   return (
     <Paper p="sm" radius="xs" shadow="xs">
@@ -65,37 +69,40 @@ export function PanelGroup({
         onTabChange={handlePanelChange}
         keepMounted={false}
       >
-        <Group spacing="xs">
-          <Divider
-            size="md"
-            orientation="vertical"
-            onClick={() => setShowText(!showText)}
-            style={{
-              cursor: 'pointer'
-            }}
-          />
-          <Tabs.List>
-            {panels.map(
-              (panel, idx) =>
-                !panel.hidden && (
-                  <Tooltip
-                    label={panel.label}
-                    key={`panel-tab-tooltip-${panel.name}`}
+        <Tabs.List position="left">
+          {panels.map(
+            (panel, idx) =>
+              !panel.hidden && (
+                <Tooltip
+                  label={panel.label}
+                  key={`panel-tab-tooltip-${panel.name}`}
+                >
+                  <Tabs.Tab
+                    key={`panel-tab-${panel.name}`}
+                    p="xs"
+                    value={panel.name}
+                    icon={panel.icon}
+                    hidden={panel.hidden}
                   >
-                    <Tabs.Tab
-                      key={`panel-tab-${panel.name}`}
-                      p="xs"
-                      value={panel.name}
-                      icon={panel.icon}
-                      hidden={panel.hidden}
-                    >
-                      {showText && panel.label}
-                    </Tabs.Tab>
-                  </Tooltip>
-                )
-            )}
-          </Tabs.List>
-        </Group>
+                    {expanded && panel.label}
+                  </Tabs.Tab>
+                </Tooltip>
+              )
+          )}
+          <Tabs.Tab
+            key="panel-tab-collapse-toggle"
+            p="xs"
+            value="collapse-toggle"
+            onClick={() => setExpanded(!expanded)}
+            icon={
+              expanded ? (
+                <IconLayoutSidebarLeftCollapse opacity={0.35} size={18} />
+              ) : (
+                <IconLayoutSidebarRightCollapse opacity={0.35} size={18} />
+              )
+            }
+          />
+        </Tabs.List>
         {panels.map(
           (panel, idx) =>
             !panel.hidden && (
