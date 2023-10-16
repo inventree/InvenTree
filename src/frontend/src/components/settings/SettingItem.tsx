@@ -20,13 +20,10 @@ function SettingValue({
   settingsState: SettingsStateProps;
   setting: Setting;
 }) {
-  // TODO: extract URL from top-level query (only global settings work currently)
-  const endpoint = ApiPaths.settings_global_list;
-
   // Callback function when a boolean value is changed
   function onToggle(value: boolean) {
     api
-      .patch(apiUrl(endpoint, setting.key), { value: value })
+      .patch(apiUrl(settingsState.endpoint, setting.key), { value: value })
       .then(() => {
         showNotification({
           title: t`Setting updated`,

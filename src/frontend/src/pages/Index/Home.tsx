@@ -51,7 +51,7 @@ const vals: LayoutItemType[] = [
 ];
 
 export default function Home() {
-  const [username] = useUserState((state) => [state.user?.name]);
+  const [username] = useUserState((state) => [state.username()]);
   return (
     <>
       <Title order={1}>
