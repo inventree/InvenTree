@@ -97,8 +97,9 @@ export function NotificationDrawer({
               color="gray"
               variant="hover"
               onClick={() => {
+                let url = apiUrl(ApiPaths.notifications_list, notification.pk);
                 api
-                  .patch(`/notifications/${notification.pk}/`, {
+                  .patch(url, {
                     read: true
                   })
                   .then((response) => {

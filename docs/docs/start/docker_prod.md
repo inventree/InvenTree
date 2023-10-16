@@ -61,7 +61,7 @@ The example docker compose file launches the following containers:
 | --- | --- |
 | inventree-db | PostgreSQL database |
 | inventree-server | Gunicorn web server |
-| invenrtee-worker | django-q background worker |
+| inventree-worker | django-q background worker |
 | inventree-proxy | nginx proxy server |
 | *inventree-cache* | *redis cache (optional)* |
 
@@ -91,7 +91,7 @@ This container uses the official [redis image](https://hub.docker.com/_/redis).
 
 !!! info "Redis on Docker"
     Docker adds an additional network layer - that might lead to lower performance than bare metal.
-    To optimise and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
+    To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
 
 !!! warning "Disabled by default"
     The *redis* container is not enabled in the default configuration. This is provided as an example for users wishing to use redis.
@@ -204,6 +204,9 @@ docker compose pull
 ```
 
 This ensures that the InvenTree containers will be running the latest version of the InvenTree source code.
+
+!!! tip "Docker Directory"
+    All `docker compose` commands must be performed in the same directory as the [docker-compose.yml file](#required-files)
 
 !!! info "Tagged Version"
     If you are targeting a particular "tagged" version of InvenTree, you may wish to edit the `INVENTREE_TAG` variable in the `.env` file before issuing the `docker compose pull` command

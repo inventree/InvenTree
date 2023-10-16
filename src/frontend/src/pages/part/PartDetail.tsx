@@ -150,7 +150,7 @@ export default function PartDetail() {
         icon: <IconPaperclip size="18" />,
         content: (
           <AttachmentTable
-            url={ApiPaths.part_attachment_list}
+            endpoint={ApiPaths.part_attachment_list}
             model="part"
             pk={part.pk ?? -1}
           />

@@ -104,6 +104,21 @@ class ConversionTest(TestCase):
             q = InvenTree.conversion.convert_physical_value(val)
             self.assertAlmostEqual(q, expected, 3)
 
+    def test_invalid_units(self):
+        """Test conversion with bad units"""
+
+        tests = {
+            '3': '10',
+            '13': '-?-',
+            '-3': 'xyz',
+            '-12': '-12',
+            '1/0': '1/0',
+        }
+
+        for val, unit in tests.items():
+            with self.assertRaises(ValidationError):
+                InvenTree.conversion.convert_physical_value(val, unit)
+
     def test_invalid_values(self):
         """Test conversion of invalid inputs"""
 
