@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Text, Tooltip } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
@@ -9,7 +8,6 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -17,22 +15,30 @@ import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
 
 /**
- * Table for displaying list of project codes
+ * Table for displaying list of custom physical units
  */
-export function ProjectCodeTable() {
-  const { tableKey, refreshTable } = useTableRefresh('project-code');
+export function CustomUnitsTable() {
+  const { tableKey, refreshTable } = useTableRefresh('custom-units');
 
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'code',
-        sortable: true,
-        title: t`Project Code`
+        accessor: 'name',
+        title: t`Name`,
+        switchable: false,
+        sortable: true
       },
       {
-        accessor: 'description',
-        sortable: false,
-        title: t`Description`
+        accessor: 'definition',
+        title: t`Definition`,
+        switchable: false,
+        sortable: false
+      },
+      {
+        accessor: 'symbol',
+        title: t`Symbol`,
+        switchable: false,
+        sortable: true
       }
     ];
   }, []);
@@ -43,32 +49,32 @@ export function ProjectCodeTable() {
         title: t`Edit`,
         onClick: () => {
           openEditApiForm({
-            name: 'edit-project-code',
-            url: ApiPaths.project_code_list,
+            name: 'edit-custom-unit',
+            url: ApiPaths.custom_unit_list,
             pk: record.pk,
-            title: t`Edit project code`,
+            title: t`Edit custom unit`,
             fields: {
-              code: {},
-              description: {}
+              name: {},
+              definition: {},
+              symbol: {}
             },
             onFormSuccess: refreshTable,
-            successMessage: t`Project code updated`
+            successMessage: t`Custom unit updated`
           });
         }
       },
       {
         title: t`Delete`,
-        color: 'red',
         onClick: () => {
           openDeleteApiForm({
-            name: 'delete-project-code',
-            url: ApiPaths.project_code_list,
+            name: 'delete-custom-unit',
+            url: ApiPaths.custom_unit_list,
             pk: record.pk,
-            title: t`Delete project code`,
-            successMessage: t`Project code deleted`,
+            title: t`Delete custom unit`,
+            successMessage: t`Custom unit deleted`,
             onFormSuccess: refreshTable,
             preFormContent: (
-              <Text>{t`Are you sure you want to remove this project code?`}</Text>
+              <Text>{t`Are you sure you want to remove this custom unit?`}</Text>
             )
           });
         }
@@ -76,17 +82,18 @@ export function ProjectCodeTable() {
     ];
   }, []);
 
-  const addProjectCode = useCallback(() => {
+  const addCustomUnit = useCallback(() => {
     openCreateApiForm({
-      name: 'add-project-code',
-      url: ApiPaths.project_code_list,
-      title: t`Add project code`,
+      name: 'add-custom-unit',
+      url: ApiPaths.custom_unit_list,
+      title: t`Add custom unit`,
       fields: {
-        code: {},
-        description: {}
+        name: {},
+        definition: {},
+        symbol: {}
       },
-      onFormSuccess: refreshTable,
-      successMessage: t`Added project code`
+      successMessage: t`Custom unit created`,
+      onFormSuccess: refreshTable
     });
   }, []);
 
@@ -94,8 +101,8 @@ export function ProjectCodeTable() {
     let actions = [];
 
     actions.push(
-      <Tooltip label={t`Add project code`}>
-        <ActionIcon radius="sm" onClick={addProjectCode}>
+      <Tooltip label={t`Add custom unit`}>
+        <ActionIcon radius="sm" onClick={addCustomUnit}>
           <IconCirclePlus color="green" />
         </ActionIcon>
       </Tooltip>
@@ -106,7 +113,7 @@ export function ProjectCodeTable() {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.project_code_list)}
+      url={apiUrl(ApiPaths.custom_unit_list)}
       tableKey={tableKey}
       columns={columns}
       props={{

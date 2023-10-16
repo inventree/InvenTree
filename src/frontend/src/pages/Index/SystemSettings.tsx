@@ -24,9 +24,8 @@ import { useMemo } from 'react';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { GlobalSettingList } from '../../components/settings/SettingList';
+import { CustomUnitsTable } from '../../components/tables/settings/CustomUnitsTable';
 import { ProjectCodeTable } from '../../components/tables/settings/ProjectCodeTable';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
 
 /**
  * System settings page
@@ -112,7 +111,8 @@ export default function SystemSettings() {
       {
         name: 'physicalunits',
         label: t`Physical Units`,
-        icon: <IconScale />
+        icon: <IconScale />,
+        content: <CustomUnitsTable />
       },
       {
         name: 'notifications',

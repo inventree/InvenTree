@@ -70,7 +70,8 @@ export enum ApiPaths {
   // Plugin URLs
   plugin_list = 'api-plugin-list',
 
-  project_code_list = 'api-project-code-list'
+  project_code_list = 'api-project-code-list',
+  custom_unit_list = 'api-custom-unit-list'
 }
 
 /**
@@ -146,6 +147,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'plugins/';
     case ApiPaths.project_code_list:
       return 'project-code/';
+    case ApiPaths.custom_unit_list:
+      return 'units/';
     default:
       return '';
   }
