@@ -845,15 +845,6 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         # Check that the quantity does not exceed the available amount from the stock item
         q = stock_item.unallocated_quantity()
 
-        # Check if an allocation for this stock item already exists
-        build_item = BuildItem.objects.filter(
-            build_line=build_line,
-            stock_item=stock_item,
-            install_into=output
-        ).first()
-        if build_item:
-            quantity += build_item.quantity
-
         if quantity > q:
 
             q = InvenTree.helpers.clean_decimal(q)
