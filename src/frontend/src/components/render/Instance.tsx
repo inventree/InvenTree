@@ -63,8 +63,18 @@ export function RenderInstance({
   model: ModelType | undefined;
   instance: any;
 }): ReactNode {
-  if (model === undefined) return <UnknownRenderer model={model} />;
+  if (model === undefined) {
+    console.error('RenderInstance: No model provided');
+    return <UnknownRenderer model={model} />;
+  }
+
   const RenderComponent = RendererLookup[model];
+
+  if (!RenderComponent) {
+    console.error(`RenderInstance: No renderer for model ${model}`);
+    return <UnknownRenderer model={model} />;
+  }
+
   return <RenderComponent instance={instance} />;
 }
 
