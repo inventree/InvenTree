@@ -67,87 +67,99 @@ export default function PartDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle size="18" />,
+        icon: <IconInfoCircle />,
+        content: <PlaceholderPanel />
+      },
+      {
+        name: 'parameters',
+        label: t`Parameters`,
+        icon: <IconList />,
         content: <PlaceholderPanel />
       },
       {
         name: 'stock',
         label: t`Stock`,
-        icon: <IconPackages size="18" />,
-        content: partStockTab()
+        icon: <IconPackages />,
+        content: (
+          <StockItemTable
+            params={{
+              part: part.pk ?? -1
+            }}
+          />
+        )
       },
       {
         name: 'variants',
         label: t`Variants`,
-        icon: <IconVersions size="18" />,
+        icon: <IconVersions />,
         hidden: !part.is_template,
         content: <PlaceholderPanel />
       },
       {
         name: 'bom',
         label: t`Bill of Materials`,
-        icon: <IconListTree size="18" />,
+        icon: <IconListTree />,
         hidden: !part.assembly,
         content: <PlaceholderPanel />
       },
       {
         name: 'builds',
         label: t`Build Orders`,
-        icon: <IconTools size="18" />,
+        icon: <IconTools />,
         hidden: !part.assembly && !part.component,
         content: <PlaceholderPanel />
       },
       {
         name: 'used_in',
         label: t`Used In`,
-        icon: <IconList size="18" />,
+        icon: <IconList />,
         hidden: !part.component,
         content: <PlaceholderPanel />
       },
       {
         name: 'pricing',
         label: t`Pricing`,
-        icon: <IconCurrencyDollar size="18" />,
+        icon: <IconCurrencyDollar />,
         content: <PlaceholderPanel />
       },
       {
         name: 'suppliers',
         label: t`Suppliers`,
-        icon: <IconBuilding size="18" />,
+        icon: <IconBuilding />,
         hidden: !part.purchaseable,
         content: <PlaceholderPanel />
       },
       {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
-        icon: <IconShoppingCart size="18" />,
+        icon: <IconShoppingCart />,
         content: <PlaceholderPanel />,
         hidden: !part.purchaseable
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
-        icon: <IconTruckDelivery size="18" />,
+        icon: <IconTruckDelivery />,
         content: <PlaceholderPanel />,
         hidden: !part.salable
       },
       {
         name: 'test_templates',
         label: t`Test Templates`,
-        icon: <IconTestPipe size="18" />,
+        icon: <IconTestPipe />,
         content: <PlaceholderPanel />,
         hidden: !part.trackable
       },
       {
         name: 'related_parts',
         label: t`Related Parts`,
-        icon: <IconLayersLinked size="18" />,
+        icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk ?? -1} />
       },
       {
         name: 'attachments',
         label: t`Attachments`,
-        icon: <IconPaperclip size="18" />,
+        icon: <IconPaperclip />,
         content: (
           <AttachmentTable
             endpoint={ApiPaths.part_attachment_list}
@@ -159,32 +171,17 @@ export default function PartDetail() {
       {
         name: 'notes',
         label: t`Notes`,
-        icon: <IconNotes size="18" />,
-        content: partNotesTab()
+        icon: <IconNotes />,
+        content: (
+          <NotesEditor
+            url={apiUrl(ApiPaths.part_list, part.pk)}
+            data={part.notes ?? ''}
+            allowEdit={true}
+          />
+        )
       }
     ];
   }, [part]);
-
-  function partNotesTab(): React.ReactNode {
-    // TODO: Set edit permission based on user permissions
-    return (
-      <NotesEditor
-        url={apiUrl(ApiPaths.part_list, part.pk)}
-        data={part.notes ?? ''}
-        allowEdit={true}
-      />
-    );
-  }
-
-  function partStockTab(): React.ReactNode {
-    return (
-      <StockItemTable
-        params={{
-          part: part.pk ?? -1
-        }}
-      />
-    );
-  }
 
   const breadcrumbs = useMemo(
     () => [
