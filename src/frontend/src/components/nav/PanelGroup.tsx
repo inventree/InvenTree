@@ -1,4 +1,4 @@
-import { Divider, Paper, Stack, Tabs } from '@mantine/core';
+import { Divider, Group, Paper, Stack, Tabs, Tooltip } from '@mantine/core';
 import { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
@@ -55,6 +55,8 @@ export function PanelGroup({
     }
   }
 
+  const [showText, setShowText] = useState<boolean>(true);
+
   return (
     <Paper p="sm" radius="xs" shadow="xs">
       <Tabs
@@ -63,22 +65,37 @@ export function PanelGroup({
         onTabChange={handlePanelChange}
         keepMounted={false}
       >
-        <Tabs.List>
-          {panels.map(
-            (panel, idx) =>
-              !panel.hidden && (
-                <Tabs.Tab
-                  key={`panel-tab-${panel.name}`}
-                  p="xs"
-                  value={panel.name}
-                  icon={panel.icon}
-                  hidden={panel.hidden}
-                >
-                  {panel.label}
-                </Tabs.Tab>
-              )
-          )}
-        </Tabs.List>
+        <Group spacing="xs">
+          <Divider
+            size="md"
+            orientation="vertical"
+            onClick={() => setShowText(!showText)}
+            style={{
+              cursor: 'pointer'
+            }}
+          />
+          <Tabs.List>
+            {panels.map(
+              (panel, idx) =>
+                !panel.hidden && (
+                  <Tooltip
+                    label={panel.label}
+                    key={`panel-tab-tooltip-${panel.name}`}
+                  >
+                    <Tabs.Tab
+                      key={`panel-tab-${panel.name}`}
+                      p="xs"
+                      value={panel.name}
+                      icon={panel.icon}
+                      hidden={panel.hidden}
+                    >
+                      {showText && panel.label}
+                    </Tabs.Tab>
+                  </Tooltip>
+                )
+            )}
+          </Tabs.List>
+        </Group>
         {panels.map(
           (panel, idx) =>
             !panel.hidden && (
