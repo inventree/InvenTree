@@ -18,11 +18,7 @@ import { api } from '../../App';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
 import { ApiPaths } from '../../states/ApiState';
-import {
-  ApiFormField,
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from './fields/ApiFormField';
+import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
 
 /**
  * Properties for the ApiForm component
