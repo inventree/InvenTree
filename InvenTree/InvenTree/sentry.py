@@ -10,7 +10,7 @@ import rest_framework.exceptions
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-from InvenTree.version import INVENTREE_SW_VERSION
+import InvenTree.version
 
 logger = logging.getLogger('inventree')
 
@@ -47,11 +47,18 @@ def init_sentry(dsn, sample_rate, tags):
         traces_sample_rate=sample_rate,
         send_default_pii=True,
         ignore_errors=sentry_ignore_errors(),
-        release=INVENTREE_SW_VERSION,
+        release=InvenTree.version.INVENTREE_SW_VERSION,
+        environment='development' if InvenTree.version.isInvenTreeDevelopmentVersion() else 'production'
     )
 
     for key, val in tags.items():
         sentry_sdk.set_tag(f'inventree_{key}', val)
+
+    sentry_sdk.set_tag('api', InvenTree.version.inventreeApiVersion())
+    sentry_sdk.set_tag('platform', InvenTree.version.inventreePlatform())
+    sentry_sdk.set_tag('git_branch', InvenTree.version.inventreeBranch())
+    sentry_sdk.set_tag('git_commit', InvenTree.version.inventreeCommitHash())
+    sentry_sdk.set_tag('git_date', InvenTree.version.inventreeCommitDate())
 
 
 def report_exception(exc):
