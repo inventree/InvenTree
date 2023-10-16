@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-11 12:00+0000\n"
+"POT-Creation-Date: 2023-10-16 13:56+0000\n"
 "PO-Revision-Date: 2023-10-12 01:01\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
@@ -36,6 +36,11 @@ msgstr ""
 
 #: InvenTree/conversion.py:131
 msgid "Invalid quantity supplied"
+msgstr ""
+
+#: InvenTree/conversion.py:145
+#, python-brace-format
+msgid "Invalid quantity supplied ({exc})"
 msgstr ""
 
 #: InvenTree/exceptions.py:90
@@ -13006,7 +13011,8 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13141,4 +13147,3 @@ msgstr ""
 #: users/models.py:257
 msgid "Permission to delete items"
 msgstr ""
-
