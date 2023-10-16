@@ -2,7 +2,8 @@ import { t } from '@lingui/macro';
 import { Badge } from '@mantine/core';
 
 export function YesNoButton(value: any) {
-  const bool = value in ['true', true, 1, '1'];
+  const bool =
+    String(value).toLowerCase().trim() in ['true', '1', 't', 'y', 'yes'];
 
   return (
     <Badge
