@@ -73,8 +73,8 @@ EXPOSE 8000
 RUN mkdir -p ${INVENTREE_HOME}
 WORKDIR ${INVENTREE_HOME}
 
-COPY ./docker/requirements.txt base_requirements.txt
-COPY ./requirements.txt ./
+COPY contrib/container/requirements.txt base_requirements.txt
+COPY src/backend/requirements.txt ./
 
 # For ARMv7 architecture, add the piwheels repo (for cryptography library)
 # Otherwise, we have to build from source, which is difficult
@@ -92,18 +92,17 @@ RUN apk add --no-cache --virtual .build-deps \
     pip install -r base_requirements.txt -r requirements.txt --no-cache-dir && \
     apk --purge del .build-deps
 
-COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
+COPY contrib/container/* contrib/container/
 
-RUN chmod +x init.sh
+RUN chmod +x contrib/container/init.sh
 
-ENTRYPOINT ["/bin/sh", "./init.sh"]
+ENTRYPOINT ["/bin/sh", "./contrib/container/init.sh"]
 
 # Frontend builder image:
 FROM inventree_base as frontend
 
 RUN apk add --no-cache --update nodejs npm && npm install -g yarn
 RUN yarn config set network-timeout 600000 -g
-COPY InvenTree ${INVENTREE_HOME}/InvenTree
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
 RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
@@ -148,7 +147,7 @@ ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
 WORKDIR ${INVENTREE_HOME}
 
 # Entrypoint ensures that we are running in the python virtual environment
-ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
+ENTRYPOINT ["/bin/ash", "./contrib/container/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]

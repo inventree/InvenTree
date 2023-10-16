@@ -40,6 +40,7 @@ services:
           - inventree-dev-db
         build: &build_config
             context: .
+            dockerfile: contrib/container/Dockerfile
             target: dev
         # Cache the built image to be used by the inventree-dev-worker process
         image: inventree-dev-image
@@ -50,7 +51,7 @@ services:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree:z
         env_file:
-            - docker.dev.env
+            - contrib/container/docker.dev.env
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -64,5 +65,5 @@ services:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree:z
         env_file:
-            - docker.dev.env
+            - contrib/container/docker.dev.env
         restart: unless-stopped

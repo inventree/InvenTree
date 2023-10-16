@@ -56,14 +56,14 @@ jobs:
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: |
-          docker-compose build --no-cache -f contrib/container/docker-compose.yml
+          docker-compose --project-directory . -f contrib/container/docker-compose.yml build --no-cache
       - name: Update Docker Image
         run: |
-          docker-compose run inventree-dev-server invoke update -f contrib/container/docker-compose.yml
-          docker-compose run inventree-dev-server invoke setup-dev -f contrib/container/docker-compose.yml
-          docker-compose up -d -f contrib/container/docker-compose.yml
-          docker-compose run inventree-dev-server pip install setuptools==68.1.2 -f contrib/container/docker-compose.yml
-          docker-compose run inventree-dev-server invoke wait -f contrib/container/docker-compose.yml
+          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke update
+          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke setup-dev
+          docker-compose --project-directory . -f contrib/container/docker-compose.yml up -d
+          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server pip install setuptools==68.1.2
+          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke wait
       - name: Check Data Directory
         # The following file structure should have been created by the docker image
         run: |
@@ -79,9 +79,9 @@ jobs:
       - name: Run Unit Tests
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
-          docker-compose run inventree-dev-server invoke test --disable-pty -f contrib/container/docker-compose.yml
-          docker-compose run inventree-dev-server invoke test --migrations --disable-pty -f contrib/container/docker-compose.yml
-          docker-compose down -f contrib/container/docker-compose.yml
+          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke test --disable-pty
+          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke test --migrations --disable-pty
+          docker-compose --project-directory . -f contrib/container/docker-compose.yml down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18 # pin@v2.1.0
