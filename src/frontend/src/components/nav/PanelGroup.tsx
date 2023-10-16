@@ -1,4 +1,11 @@
-import { Divider, Paper, Stack, Tabs, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Divider,
+  Paper,
+  Stack,
+  Tabs,
+  Tooltip
+} from '@mantine/core';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
@@ -89,19 +96,18 @@ export function PanelGroup({
                 </Tooltip>
               )
           )}
-          <Tabs.Tab
-            key="panel-tab-collapse-toggle"
-            p="xs"
-            value="collapse-toggle"
+          <ActionIcon
+            style={{
+              paddingLeft: '10px'
+            }}
             onClick={() => setExpanded(!expanded)}
-            icon={
-              expanded ? (
-                <IconLayoutSidebarLeftCollapse opacity={0.35} size={18} />
-              ) : (
-                <IconLayoutSidebarRightCollapse opacity={0.35} size={18} />
-              )
-            }
-          />
+          >
+            {expanded ? (
+              <IconLayoutSidebarLeftCollapse opacity={0.5} />
+            ) : (
+              <IconLayoutSidebarRightCollapse opacity={0.5} />
+            )}
+          </ActionIcon>
         </Tabs.List>
         {panels.map(
           (panel, idx) =>
