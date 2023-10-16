@@ -36,12 +36,12 @@ repos:
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [requirements-dev.in, -o, requirements-dev.txt]
-        files: ^requirements-dev\.(in|txt)$
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt]
+        files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [requirements.in, -o, requirements.txt]
-        files: ^requirements\.(in|txt)$
+        args: [src/backend/requirements.in, -o, src/backend/requirements.txt]
+        files: src/backend/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.30.2
     hooks:

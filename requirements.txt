@@ -1,0 +1,2 @@
+# Dummy requirements file to trigger the package pipeline
+# The new requirements file is located in src/backend/requirements.txt
