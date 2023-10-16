@@ -2,8 +2,9 @@ import { t } from '@lingui/macro';
 import { Anchor, Image } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { Text } from '@mantine/core';
+import { useMemo } from 'react';
 
-import { api } from '../../App';
+import { ApiImage } from './ApiImage';
 
 export function Thumbnail({
   src,
@@ -16,12 +17,9 @@ export function Thumbnail({
 }) {
   // TODO: Use HoverCard to display a larger version of the image
 
-  // TODO: This is a hack until we work out the /api/ path issue
-  let url = api.getUri({ url: '..' + src });
-
   return (
-    <Image
-      src={url}
+    <ApiImage
+      src={src}
       alt={alt}
       width={size}
       fit="contain"
@@ -49,20 +47,21 @@ export function ThumbnailHoverCard({
   alt?: string;
   size?: number;
 }) {
-  function MainGroup() {
+  const card = useMemo(() => {
     return (
-      <Group position="left" spacing={10}>
+      <Group position="left" spacing={10} noWrap={true}>
         <Thumbnail src={src} alt={alt} size={size} />
         <Text>{text}</Text>
       </Group>
     );
-  }
+  }, [src, text, alt, size]);
 
   if (link)
     return (
       <Anchor href={link} style={{ textDecoration: 'none' }}>
-        <MainGroup />
+        {card}
       </Anchor>
     );
-  return <MainGroup />;
+
+  return <div>{card}</div>;
 }

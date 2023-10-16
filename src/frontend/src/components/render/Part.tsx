@@ -30,3 +30,20 @@ export function RenderPartCategory({ instance }: { instance: any }): ReactNode {
     />
   );
 }
+
+/**
+ * Inline rendering of a PartParameterTemplate instance
+ */
+export function RenderPartParameterTemplate({
+  instance
+}: {
+  instance: any;
+}): ReactNode {
+  return (
+    <RenderInlineModel
+      primary={instance.name}
+      secondary={instance.description}
+      suffix={instance.units}
+    />
+  );
+}

@@ -387,7 +387,7 @@ export function InvenTreeTable({
     fetchTableData,
     {
       refetchOnWindowFocus: false,
-      refetchOnMount: 'always'
+      refetchOnMount: true
     }
   );
 

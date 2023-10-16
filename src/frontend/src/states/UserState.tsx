@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
-import { ApiPaths, url } from './ApiState';
+import { ApiPaths, apiUrl } from './ApiState';
 import { UserProps } from './states';
 
 interface UserStateProps {
@@ -24,7 +24,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   fetchUserState: async () => {
     // Fetch user data
     await api
-      .get(url(ApiPaths.user_me))
+      .get(apiUrl(ApiPaths.user_me))
       .then((response) => {
         const user: UserProps = {
           name: `${response.data.first_name} ${response.data.last_name}`,
@@ -39,7 +39,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
 
     // Fetch role data
     await api
-      .get(url(ApiPaths.user_roles))
+      .get(apiUrl(ApiPaths.user_roles))
       .then((response) => {
         const user: UserProps = get().user as UserProps;
 

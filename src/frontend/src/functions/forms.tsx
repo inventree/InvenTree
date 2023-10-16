@@ -6,7 +6,7 @@ import { AxiosResponse } from 'axios';
 import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
-import { url } from '../states/ApiState';
+import { apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
@@ -14,10 +14,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(props: ApiFormProps): string {
-  console.log('constructFormUrl:', props.url, props.pk);
-  let output = url(props.url, props.pk);
-  console.log('output url:', output);
-  return url(props.url, props.pk);
+  return apiUrl(props.url, props.pk);
 }
 
 /**
@@ -101,11 +98,8 @@ export function openModalApiForm(props: ApiFormProps) {
     .options(url)
     .then((response) => {
       // Extract available fields from the OPTIONS response (and handle any errors)
-      let fields: Record<string, ApiFormFieldType> | null = {};
-
-      if (!props.ignorePermissionCheck) {
+      let fields: Record<string, ApiFormFieldType> | null =
         extractAvailableFields(response, props.method);
-      }
 
       if (fields == null) {
         return;

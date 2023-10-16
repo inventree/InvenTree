@@ -3,7 +3,8 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, url } from '../../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -44,23 +45,28 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
         title: t`Structural`,
         switchable: true,
         sortable: true,
-        render: (record: any) => (record.structural ? 'Y' : 'N')
-        // TODO: custom 'true / false' label,
+        render: (record: any) => <YesNoButton value={record.structural} />
       },
       {
         accessor: 'external',
         title: t`External`,
         switchable: true,
         sortable: true,
-        render: (record: any) => (record.structural ? 'Y' : 'N')
-        // TODO: custom 'true / false' label,
+        render: (record: any) => <YesNoButton value={record.external} />
+      },
+      {
+        accessor: 'location_type',
+        title: t`Location Type`,
+        switchable: true,
+        sortable: false,
+        render: (record: any) => record.location_type_detail?.name
       }
     ];
   }, [params]);
 
   return (
     <InvenTreeTable
-      url={url(ApiPaths.stock_location_list)}
+      url={apiUrl(ApiPaths.stock_location_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{

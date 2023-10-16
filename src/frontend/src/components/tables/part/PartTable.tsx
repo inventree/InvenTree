@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,7 +7,8 @@ import { editPart } from '../../../functions/forms/PartForms';
 import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, url } from '../../../states/ApiState';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
@@ -26,12 +27,14 @@ function partTableColumns(): TableColumn[] {
       render: function (record: any) {
         // TODO - Link to the part detail page
         return (
-          <Text>{record.full_name}</Text>
-          // <ThumbnailHoverCard
-          //   src={record.thumbnail || record.image}
-          //   text={record.name}
-          //   link=""
-          // />
+          <Group spacing="xs" align="left" noWrap={true}>
+            <Thumbnail
+              src={record.thumbnail || record.image}
+              alt={record.name}
+              size={24}
+            />
+            <Text>{record.full_name}</Text>
+          </Group>
         );
       }
     },
@@ -60,7 +63,7 @@ function partTableColumns(): TableColumn[] {
       render: function (record: any) {
         // TODO: Link to the category detail page
         return shortenString({
-          str: record.category_detail.pathstring
+          str: record.category_detail?.pathstring
         });
       }
     },
@@ -221,7 +224,7 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
 
   return (
     <InvenTreeTable
-      url={url(ApiPaths.part_list)}
+      url={apiUrl(ApiPaths.part_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{
