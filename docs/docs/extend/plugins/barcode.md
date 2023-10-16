@@ -42,14 +42,14 @@ class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     VERSION = "0.0.1"
     AUTHOR = "Michael"
 
-    Status=0
+    status = 0
 
     def scan(self, barcode_data):
 
-        self.Status=self.Status+1
-        print('Started barcode plugin', self.Status)
+        self.status = self.status+1
+        print('Started barcode plugin', self.status)
         print(barcode_data)
-        response={}
+        response = {}
         return response
 
 ```
