@@ -15,7 +15,6 @@ logger = logging.getLogger('inventree')
 
 def get_unit_registry():
     """Return a custom instance of the Pint UnitRegistry."""
-
     global _unit_registry
 
     # Cache the unit registry for speedier access
@@ -30,7 +29,6 @@ def reload_unit_registry():
 
     This function is called at startup, and whenever the database is updated.
     """
-
     import time
     t_start = time.time()
 
@@ -84,7 +82,6 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     Returns:
         The converted quantity, in the specified units
     """
-
     original = str(value).strip()
 
     # Ensure that the value is a string

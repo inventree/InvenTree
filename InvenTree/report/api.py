@@ -69,7 +69,6 @@ class ReportFilterMixin:
 
     def get_items(self):
         """Return a list of database objects from query parameters"""
-
         if not self.ITEM_MODEL:
             raise NotImplementedError(f"ITEM_MODEL attribute not defined for {__class__}")
 
@@ -100,7 +99,6 @@ class ReportFilterMixin:
         As each 'report' instance may optionally define its own filters,
         the resulting queryset is the 'union' of the two
         """
-
         queryset = super().filter_queryset(queryset)
 
         items = self.get_items()
@@ -308,7 +306,6 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
 
     def report_callback(self, item, report, request):
         """Callback to (optionally) save a copy of the generated report"""
-
         if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT', cache=False):
 
             # Construct a PDF file object

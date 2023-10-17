@@ -41,7 +41,6 @@ def construct_absolute_url(*arg, **kwargs):
     2. If the InvenTree setting INVENTREE_BASE_URL is set, use that
     3. Otherwise, use the current request URL (if available)
     """
-
     relative_url = '/'.join(arg)
 
     # If a site URL is provided, use that
@@ -96,7 +95,6 @@ def download_image_from_url(remote_url, timeout=2.5):
         ValueError: Server responded with invalid 'Content-Length' value
         TypeError: Response is not a valid image
     """
-
     # Check that the provided URL at least looks valid
     validator = URLValidator()
     validator(remote_url)
@@ -180,7 +178,6 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
     """
-
     if money in [None, '']:
         return '-'
 
@@ -234,7 +231,6 @@ def getModelsWithMixin(mixin_class) -> list:
     Returns:
         List of models that inherit from the given mixin class
     """
-
     from django.contrib.contenttypes.models import ContentType
 
     db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]

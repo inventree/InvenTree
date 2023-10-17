@@ -11,7 +11,6 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
 
     def test_view(self):
         """Check the function of the custom  sample plugin."""
-
         from common.models import InvenTreeSetting
 
         url = '/plugin/sample/ho/he/'
@@ -53,7 +52,6 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
         # validator
     def test_settings_validator(self):
         """Test settings validator for plugins."""
-
         plugin = registry.get_plugin('sample')
         valid_json = '{"ts": 13}'
         not_valid_json = '{"ts""13"}'

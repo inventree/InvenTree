@@ -310,7 +310,6 @@ def generate_batch_code():
     Also, this function is exposed to the ValidationMixin plugin class,
     allowing custom plugins to be used to generate new batch code values
     """
-
     # First, check if any plugins can generate batch codes
     from plugin.registry import registry
 
@@ -346,7 +345,6 @@ def default_delete_on_deplete():
     Prior to 2022-12-24, this field was set to True by default.
     Now, there is a user-configurable setting to govern default behaviour.
     """
-
     try:
         return common.models.InvenTreeSetting.get_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
     except (IntegrityError, OperationalError):
@@ -416,7 +414,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         This is used for efficient numerical sorting
         """
-
         serial = str(getattr(self, 'serial', '')).strip()
 
         from plugin.registry import registry
@@ -505,7 +502,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         - Unique serial number requirement
         - Adds a transaction note when the item is first created.
         """
-
         self.validate_unique()
         self.clean()
 
@@ -601,7 +597,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         - Validation is performed by custom plugins.
         - By default, no validation checks are performed
         """
-
         from plugin.registry import registry
 
         for plugin in registry.with_mixin('validation'):
@@ -622,7 +617,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         - The location is not structural
         - Quantity must be 1 if the StockItem has a serial number
         """
-
         if self.location is not None and self.location.structural:
             raise ValidationError(
                 {'location': _("Stock items cannot be located into structural stock locations!")})
@@ -1167,7 +1161,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
     def sales_order_allocation_count(self, active=True):
         """Return the total quantity allocated to SalesOrders."""
-
         query = self.get_sales_order_allocations(active=active)
         query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 

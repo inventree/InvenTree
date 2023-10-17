@@ -45,7 +45,6 @@ class BuildTestBase(TestCase):
         - 7 x output_2
 
         """
-
         super().setUpTestData()
 
         # Create a base "Part"
@@ -145,7 +144,6 @@ class BuildTest(BuildTestBase):
 
     def test_ref_int(self):
         """Test the "integer reference" field used for natural sorting"""
-
         # Set build reference to new value
         common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref}-???', change_user=None)
 
@@ -174,9 +172,7 @@ class BuildTest(BuildTestBase):
 
     def test_ref_validation(self):
         """Test that the reference field validation works as expected"""
-
         # Default reference pattern = 'BO-{ref:04d}
-
         # These patterns should fail
         for ref in [
             'BO-1234x',
@@ -223,7 +219,6 @@ class BuildTest(BuildTestBase):
 
     def test_next_ref(self):
         """Test that the next reference is automatically generated"""
-
         common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'XYZ-{ref:06d}', change_user=None)
 
         build = Build.objects.create(
@@ -250,7 +245,6 @@ class BuildTest(BuildTestBase):
 
     def test_init(self):
         """Perform some basic tests before we start the ball rolling"""
-
         self.assertEqual(StockItem.objects.count(), 10)
 
         # Build is PENDING
@@ -272,7 +266,6 @@ class BuildTest(BuildTestBase):
 
     def test_build_item_clean(self):
         """Ensure that dodgy BuildItem objects cannot be created"""
-
         stock = StockItem.objects.create(part=self.assembly, quantity=99)
 
         # Create a BuiltItem which points to an invalid StockItem
@@ -299,7 +292,6 @@ class BuildTest(BuildTestBase):
 
     def test_duplicate_bom_line(self):
         """Try to add a duplicate BOM item - it should be allowed"""
-
         BomItem.objects.create(
             part=self.assembly,
             sub_part=self.sub_part_1,
@@ -313,7 +305,6 @@ class BuildTest(BuildTestBase):
             output: StockItem object (or None)
             allocations: Map of {StockItem: quantity}
         """
-
         items_to_create = []
 
         for item, quantity in allocations.items():
@@ -335,7 +326,6 @@ class BuildTest(BuildTestBase):
 
     def test_partial_allocation(self):
         """Test partial allocation of stock"""
-
         # Fully allocate tracked stock against build output 1
         self.allocate_stock(
             self.output_1,
@@ -409,7 +399,6 @@ class BuildTest(BuildTestBase):
 
     def test_overallocation_and_trim(self):
         """Test overallocation of stock and trim function"""
-
         # Fully allocate tracked stock (not eligible for trimming)
         self.allocate_stock(
             self.output_1,
@@ -484,9 +473,7 @@ class BuildTest(BuildTestBase):
 
     def test_cancel(self):
         """Test cancellation of the build"""
-
         # TODO
-
         """
         self.allocate_stock(50, 50, 200, self.output_1)
         self.build.cancel_build(None)
@@ -497,7 +484,6 @@ class BuildTest(BuildTestBase):
 
     def test_complete(self):
         """Test completion of a build output"""
-
         self.stock_1_1.quantity = 1000
         self.stock_1_1.save()
 
@@ -567,7 +553,6 @@ class BuildTest(BuildTestBase):
 
     def test_overdue_notification(self):
         """Test sending of notifications when a build order is overdue."""
-
         self.build.target_date = datetime.now().date() - timedelta(days=1)
         self.build.save()
 
@@ -583,7 +568,6 @@ class BuildTest(BuildTestBase):
 
     def test_new_build_notification(self):
         """Test that a notification is sent when a new build is created"""
-
         Build.objects.create(
             reference='BO-9999',
             title='Some new build',
@@ -609,7 +593,6 @@ class BuildTest(BuildTestBase):
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
-
         # Make sure a BuildItem exists before trying to run this test
         b = BuildItem(stock_item=self.stock_1_2, build_line=self.line_1, install_into=self.output_1, quantity=10)
         b.save()
@@ -664,7 +647,6 @@ class AutoAllocationTests(BuildTestBase):
 
         A "fully auto" allocation should allocate *all* of these stock items to the build
         """
-
         # No build item allocations have been made against the build
         self.assertEqual(self.build.allocated_stock.count(), 0)
 
@@ -717,7 +699,6 @@ class AutoAllocationTests(BuildTestBase):
 
     def test_fully_auto(self):
         """We should be able to auto-allocate against a build in a single go"""
-
         self.build.auto_allocate_stock(
             interchangeable=True,
             substitutes=True,

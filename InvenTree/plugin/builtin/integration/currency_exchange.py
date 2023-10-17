@@ -26,7 +26,6 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
 
     def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
         """Request exchange rate data from external API"""
-
         response = self.api_call(
             'latest',
             url_args={

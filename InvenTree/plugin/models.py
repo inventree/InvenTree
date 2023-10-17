@@ -78,7 +78,6 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         def get_plugin_meta(name):
             """Return a meta-value associated with this plugin"""
-
             # Ignore if the plugin config is not defined
             if not plugin:
                 return None
@@ -134,13 +133,11 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         A plugin might not be installed if it has been removed from the system,
         but the PluginConfig associated with it still exists.
         """
-
         return self.plugin is not None
 
     @admin.display(boolean=True, description=_('Sample plugin'))
     def is_sample(self) -> bool:
         """Is this plugin a sample app?"""
-
         if not self.plugin:
             return False
 
@@ -149,7 +146,6 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
     @admin.display(boolean=True, description=_('Builtin Plugin'))
     def is_builtin(self) -> bool:
         """Return True if this is a 'builtin' plugin"""
-
         if not self.plugin:
             return False
 

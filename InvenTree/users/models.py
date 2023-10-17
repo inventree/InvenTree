@@ -259,7 +259,6 @@ class RuleSet(models.Model):
     @classmethod
     def check_table_permission(cls, user, table, permission):
         """Check if the provided user has the specified permission against the table."""
-
         # Superuser knows no bounds
         if user.is_superuser:
             return True
@@ -531,7 +530,6 @@ def clear_user_role_cache(user):
     Args:
         user: The User object to be expunged from the cache
     """
-
     for role in RuleSet.RULESET_MODELS.keys():
         for perm in ['add', 'change', 'view', 'delete']:
             key = f"role_{user}_{role}_{perm}"
@@ -540,7 +538,6 @@ def clear_user_role_cache(user):
 
 def get_user_roles(user):
     """Return all roles available to a given user"""
-
     roles = set()
 
     for group in user.groups.all():
@@ -738,7 +735,6 @@ class Owner(models.Model):
 
     def is_user_allowed(self, user, include_group: bool = False):
         """Check if user is allowed to access something owned by this owner."""
-
         user_owner = Owner.get_owner(user)
         return user_owner in self.get_related_owners(include_group=include_group)
 
@@ -761,7 +757,6 @@ def delete_owner(sender, instance, **kwargs):
 @receiver(post_save, sender=get_user_model(), dispatch_uid='clear_user_cache')
 def clear_user_cache(sender, instance, **kwargs):
     """Callback function when a user object is saved"""
-
     clear_user_role_cache(instance)
 
 

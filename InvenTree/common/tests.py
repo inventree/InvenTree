@@ -268,7 +268,6 @@ class SettingsTest(InvenTreeTestCase):
 
     def test_global_setting_caching(self):
         """Test caching operations for the global settings class"""
-
         key = 'PART_NAME_FORMAT'
 
         cache_key = InvenTreeSetting.create_cache_key(key)
@@ -290,7 +289,6 @@ class SettingsTest(InvenTreeTestCase):
 
     def test_user_setting_caching(self):
         """Test caching operation for the user settings class"""
-
         cache.clear()
 
         # Generate a number of new users
@@ -610,7 +608,6 @@ class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
 
     def test_setting(self):
         """Test the string name for NotificationUserSetting."""
-
         NotificationUserSetting.set_setting('NOTIFICATION_METHOD_MAIL', True, change_user=self.user, user=self.user)
         test_setting = NotificationUserSetting.get_setting_object('NOTIFICATION_METHOD_MAIL', user=self.user)
         self.assertEqual(str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): True')
@@ -823,7 +820,6 @@ class NotificationTest(InvenTreeAPITestCase):
 
     def test_api_list(self):
         """Test list URL."""
-
         url = reverse('api-notifications-list')
 
         self.get(url, expected_code=200)
@@ -843,7 +839,6 @@ class NotificationTest(InvenTreeAPITestCase):
 
     def test_bulk_delete(self):
         """Tests for bulk deletion of user notifications"""
-
         from error_report.models import Error
 
         # Create some notification messages by throwing errors
@@ -1019,7 +1014,6 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
     def test_exchange_endpoint(self):
         """Test that the currency exchange endpoint works as expected"""
-
         response = self.get(reverse('api-currency-exchange'), expected_code=200)
 
         self.assertIn('base_currency', response.data)
@@ -1027,7 +1021,6 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
     def test_refresh_endpoint(self):
         """Call the 'refresh currencies' endpoint"""
-
         from djmoney.contrib.exchange.models import Rate
 
         # Delete any existing exchange rate data
@@ -1053,7 +1046,6 @@ class NotesImageTest(InvenTreeAPITestCase):
 
     def test_invalid_files(self):
         """Test that invalid files are rejected."""
-
         n = NotesImage.objects.count()
 
         # Test upload of a simple text file
@@ -1085,7 +1077,6 @@ class NotesImageTest(InvenTreeAPITestCase):
 
     def test_valid_image(self):
         """Test upload of a valid image file"""
-
         n = NotesImage.objects.count()
 
         # Construct a simple image file
@@ -1132,13 +1123,11 @@ class ProjectCodesTest(InvenTreeAPITestCase):
 
     def test_list(self):
         """Test that the list endpoint works as expected"""
-
         response = self.get(self.url, expected_code=200)
         self.assertEqual(len(response.data), ProjectCode.objects.count())
 
     def test_delete(self):
         """Test we can delete a project code via the API"""
-
         n = ProjectCode.objects.count()
 
         # Get the first project code
@@ -1155,7 +1144,6 @@ class ProjectCodesTest(InvenTreeAPITestCase):
 
     def test_duplicate_code(self):
         """Test that we cannot create two project codes with the same code"""
-
         # Create a new project code
         response = self.post(
             self.url,
@@ -1170,7 +1158,6 @@ class ProjectCodesTest(InvenTreeAPITestCase):
 
     def test_write_access(self):
         """Test that non-staff users have read-only access"""
-
         # By default user has staff access, can create a new project code
         response = self.post(
             self.url,
@@ -1240,13 +1227,11 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
 
     def test_list(self):
         """Test API list functionality"""
-
         response = self.get(self.url, expected_code=200)
         self.assertEqual(len(response.data), CustomUnit.objects.count())
 
     def test_edit(self):
         """Test edit permissions for CustomUnit model"""
-
         unit = CustomUnit.objects.first()
 
         # Try to edit without permission
@@ -1278,7 +1263,6 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
 
     def test_validation(self):
         """Test that validation works as expected"""
-
         unit = CustomUnit.objects.first()
 
         self.user.is_staff = True

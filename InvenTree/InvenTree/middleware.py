@@ -125,7 +125,6 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
     """Check if user is required to have MFA enabled."""
     def require_2fa(self, request):
         """Use setting to check if MFA should be enforced for frontend page."""
-
         from common.models import InvenTreeSetting
 
         try:

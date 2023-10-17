@@ -49,7 +49,6 @@ class CleanMixin():
         Ref: https://github.com/mozilla/bleach/issues/192
 
         """
-
         cleaned = strip_html_tags(data, field_name=field)
 
         # By default, newline characters are removed
@@ -93,7 +92,6 @@ class CleanMixin():
         Returns:
             dict: Provided data sanatized; still in the same order.
         """
-
         clean_data = {}
 
         for k, v in data.items():

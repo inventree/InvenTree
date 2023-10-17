@@ -137,7 +137,6 @@ class PartTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Create some Part instances as part of init routine"""
-
         super().setUpTestData()
 
         cls.r1 = Part.objects.get(name='R_2K2_0805')
@@ -149,7 +148,6 @@ class PartTest(TestCase):
 
     def test_barcode_mixin(self):
         """Test the barcode mixin functionality"""
-
         self.assertEqual(Part.barcode_model_type(), 'part')
 
         p = Part.objects.get(pk=1)
@@ -292,7 +290,6 @@ class PartTest(TestCase):
 
     def test_related(self):
         """Unit tests for the PartRelated model"""
-
         # Create a part relationship
         # Count before creation
         countbefore = PartRelated.objects.count()
@@ -341,7 +338,6 @@ class PartTest(TestCase):
 
     def test_stocktake(self):
         """Test for adding stocktake data"""
-
         # Grab a part
         p = Part.objects.all().first()
 
@@ -419,7 +415,6 @@ class PartSettingsTest(InvenTreeTestCase):
 
     def make_part(self):
         """Helper function to create a simple part."""
-
         cache.clear()
 
         part = Part.objects.create(
@@ -432,7 +427,6 @@ class PartSettingsTest(InvenTreeTestCase):
 
     def test_defaults(self):
         """Test that the default values for the part settings are correct."""
-
         cache.clear()
 
         self.assertTrue(part.settings.part_component_default())
@@ -442,7 +436,6 @@ class PartSettingsTest(InvenTreeTestCase):
 
     def test_initial(self):
         """Test the 'initial' default values (no default values have been set)"""
-
         cache.clear()
 
         part = self.make_part()

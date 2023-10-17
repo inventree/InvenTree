@@ -279,7 +279,6 @@ class BuildTest(BuildAPITest):
 
     def test_delete(self):
         """Test that we can delete a BuildOrder via the API"""
-
         bo = Build.objects.get(pk=1)
 
         url = reverse('api-build-detail', kwargs={'pk': bo.pk})
@@ -684,9 +683,7 @@ class BuildAllocationTest(BuildAPITest):
 
     def test_invalid_bom_item(self):
         """Test by passing an invalid BOM item."""
-
         # Find the right (in this case, wrong) BuildLine instance
-
         si = StockItem.objects.get(pk=11)
         lines = self.build.build_lines.all()
 
@@ -718,7 +715,6 @@ class BuildAllocationTest(BuildAPITest):
 
         This should result in creation of a new BuildItem object
         """
-
         # Find the correct BuildLine
         si = StockItem.objects.get(pk=2)
 
@@ -758,7 +754,6 @@ class BuildAllocationTest(BuildAPITest):
 
         This should increment the quantity of the existing BuildItem object
         """
-
         # Find the correct BuildLine
         si = StockItem.objects.get(pk=2)
 
@@ -875,7 +870,6 @@ class BuildOverallocationTest(BuildAPITest):
 
     def test_setup(self):
         """Validate expected state after set-up."""
-
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
         self.assertEqual(self.build.complete_outputs.count(), 1)
         self.assertEqual(self.build.completed, self.build.quantity)
@@ -1040,7 +1034,6 @@ class BuildOutputScrapTest(BuildAPITest):
 
     def scrap(self, build_id, data, expected_code=None):
         """Helper method to POST to the scrap API"""
-
         url = reverse('api-build-output-scrap', kwargs={'pk': build_id})
 
         response = self.post(url, data, expected_code=expected_code)
@@ -1049,7 +1042,6 @@ class BuildOutputScrapTest(BuildAPITest):
 
     def test_invalid_scraps(self):
         """Test that invalid scrap attempts are rejected"""
-
         # Test with missing required fields
         response = self.scrap(1, {}, expected_code=400)
 
@@ -1113,7 +1105,6 @@ class BuildOutputScrapTest(BuildAPITest):
 
     def test_valid_scraps(self):
         """Test that valid scrap attempts succeed"""
-
         # Create a build output
         build = Build.objects.get(pk=1)
 

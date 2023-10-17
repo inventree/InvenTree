@@ -22,9 +22,7 @@ class SampleReportPlugin(ReportMixin, InvenTreePlugin):
 
     def add_report_context(self, report_instance, model_instance, request, context):
         """Add example content to the report instance"""
-
         # We can add any extra context data we want to the report
-
         # Generate a random string of data
         context['random_text'] = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=20))
 

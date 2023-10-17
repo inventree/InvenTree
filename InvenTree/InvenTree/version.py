@@ -178,5 +178,4 @@ def inventreeTarget():
 
 def inventreePlatform():
     """Returns the platform for the instance."""
-
     return platform.platform(aliased=True)

@@ -160,7 +160,6 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
         This property exists for backwards compatibility
         """
-
         addr = self.primary_address
 
         return str(addr) if addr is not None else None
@@ -287,7 +286,6 @@ class Address(models.Model):
 
     def __init__(self, *args, **kwargs):
         """Custom init function"""
-
         super().__init__(*args, **kwargs)
 
     def __str__(self):
@@ -312,7 +310,6 @@ class Address(models.Model):
 
         - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
         """
-
         others = list(Address.objects.filter(company=self.company).exclude(pk=self.pk).all())
 
         # If this is the *only* address for this company, make it the primary one
@@ -755,7 +752,6 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     def base_quantity(self, quantity=1) -> Decimal:
         """Calculate the base unit quantiy for a given quantity."""
-
         q = Decimal(quantity) * Decimal(self.pack_quantity_native)
         q = round(q, 10).normalize()
 
@@ -780,7 +776,6 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     def update_available_quantity(self, quantity):
         """Update the available quantity for this SupplierPart"""
-
         self.available = quantity
         self.availability_updated = datetime.now()
         self.save()
@@ -918,7 +913,6 @@ class SupplierPriceBreak(common.models.PriceBreak):
 @receiver(post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break')
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated"""
-
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:
@@ -928,7 +922,6 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=SupplierPriceBreak, dispatch_uid='post_delete_supplier_price_break')
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted"""
-
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:

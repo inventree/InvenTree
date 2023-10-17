@@ -267,7 +267,6 @@ class BulkDeleteTests(InvenTreeAPITestCase):
 
     def test_errors(self):
         """Test that the correct errors are thrown"""
-
         url = reverse('api-stock-test-result-list')
 
         # DELETE without any of the required fields
@@ -318,7 +317,6 @@ class SearchTests(InvenTreeAPITestCase):
 
     def test_empty(self):
         """Test empty request"""
-
         data = [
             '',
             None,
@@ -331,7 +329,6 @@ class SearchTests(InvenTreeAPITestCase):
 
     def test_results(self):
         """Test individual result types"""
-
         response = self.post(
             reverse('api-search'),
             {
@@ -374,7 +371,6 @@ class SearchTests(InvenTreeAPITestCase):
 
     def test_permissions(self):
         """Test that users with insufficient permissions are handled correctly"""
-
         # First, remove all roles
         for ruleset in self.group.rule_sets.all():
             ruleset.can_view = False

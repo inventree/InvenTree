@@ -66,7 +66,6 @@ class TestParams(TestCase):
 
     def test_get_parameter(self):
         """Test the Part.get_parameter method"""
-
         prt = Part.objects.get(pk=3)
 
         # Check that we can get a parameter by name
@@ -119,7 +118,6 @@ class ParameterTests(TestCase):
 
     def test_choice_validation(self):
         """Test that parameter choices are correctly validated"""
-
         template = PartParameterTemplate.objects.create(
             name='My Template',
             description='A template with choices',
@@ -142,7 +140,6 @@ class ParameterTests(TestCase):
 
     def test_unit_validation(self):
         """Test validation of 'units' field for PartParameterTemplate"""
-
         # Test that valid units pass
         for unit in [None, '', '%', 'mm', 'A', 'm^2', 'Pa', 'V', 'C', 'F', 'uF', 'mF', 'millifarad']:
             tmp = PartParameterTemplate(name='test', units=unit)
@@ -156,7 +153,6 @@ class ParameterTests(TestCase):
 
     def test_param_unit_validation(self):
         """Test that parameters are correctly validated against template units"""
-
         template = PartParameterTemplate.objects.create(
             name='My Template',
             units='m',
@@ -198,7 +194,6 @@ class ParameterTests(TestCase):
 
     def test_param_unit_conversion(self):
         """Test that parameters are correctly converted to template units"""
-
         template = PartParameterTemplate.objects.create(
             name='My Template',
             units='m',
@@ -263,7 +258,6 @@ class PartParameterTest(InvenTreeAPITestCase):
 
     def test_param_template_validation(self):
         """Test that part parameter template validation routines work correctly."""
-
         # Checkbox parameter cannot have "units" specified
         with self.assertRaises(django_exceptions.ValidationError):
             template = PartParameterTemplate(

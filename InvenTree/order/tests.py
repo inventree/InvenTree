@@ -39,7 +39,6 @@ class OrderTest(TestCase):
 
     def test_basics(self):
         """Basic tests e.g. repr functions etc."""
-
         for pk in range(1, 8):
 
             order = PurchaseOrder.objects.get(pk=pk)
@@ -53,7 +52,6 @@ class OrderTest(TestCase):
 
     def test_rebuild_reference(self):
         """Test that the reference_int field is correctly updated when the model is saved"""
-
         order = PurchaseOrder.objects.get(pk=1)
         order.save()
         self.assertEqual(order.reference_int, 1)
@@ -219,7 +217,6 @@ class OrderTest(TestCase):
 
     def test_receive_pack_size(self):
         """Test receiving orders from suppliers with different pack_size values"""
-
         prt = Part.objects.get(pk=1)
         sup = Company.objects.get(pk=1)
 
@@ -366,7 +363,6 @@ class OrderTest(TestCase):
         - The responsible user(s) should receive a notification
         - The creating user should *not* receive a notification
         """
-
         po = PurchaseOrder.objects.create(
             supplier=Company.objects.get(pk=1),
             reference='XYZABC',

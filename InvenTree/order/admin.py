@@ -173,7 +173,6 @@ class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
 
     def dehydrate_purchase_price(self, line):
         """Return a string value of the 'purchase_price' field, rather than the 'Money' object"""
-
         if line.purchase_price:
             return line.purchase_price.amount
         else:

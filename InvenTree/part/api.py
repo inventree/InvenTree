@@ -50,7 +50,6 @@ class CategoryMixin:
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryDetail endpoint"""
-
         queryset = super().get_queryset(*args, **kwargs)
         queryset = part_serializers.CategorySerializer.annotate_queryset(queryset)
         return queryset
@@ -77,7 +76,6 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a data file"""
-
         dataset = PartCategoryResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
         filename = f"InvenTree_Categories.{export_format}"
@@ -192,7 +190,6 @@ class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Add additional context based on query parameters"""
-
         try:
             params = self.request.query_params
 
@@ -466,7 +463,6 @@ class PartScheduling(RetrieveAPI):
 
     def retrieve(self, request, *args, **kwargs):
         """Return scheduling information for the referenced Part instance"""
-
         part = self.get_object()
 
         schedule = []
@@ -674,7 +670,6 @@ class PartRequirements(RetrieveAPI):
 
     def retrieve(self, request, *args, **kwargs):
         """Construct a response detailing Part requirements"""
-
         part = self.get_object()
 
         data = {
@@ -700,13 +695,11 @@ class PartPricingDetail(RetrieveUpdateAPI):
 
     def get_object(self):
         """Return the PartPricing object associated with the linked Part"""
-
         part = super().get_object()
         return part.pricing
 
     def _get_serializer(self, *args, **kwargs):
         """Return a part pricing serializer object"""
-
         part = self.get_object()
         kwargs['instance'] = part.pricing
 
@@ -825,7 +818,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_has_units(self, queryset, name, value):
         """Filter by whether the Part has units or not"""
-
         if str2bool(value):
             return queryset.exclude(units='')
         else:
@@ -836,7 +828,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_has_ipn(self, queryset, name, value):
         """Filter by whether the Part has an IPN (internal part number) or not"""
-
         if str2bool(value):
             return queryset.exclude(IPN='')
         else:
@@ -860,7 +851,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_low_stock(self, queryset, name, value):
         """Filter by "low stock" status."""
-
         if str2bool(value):
             # Ignore any parts which do not have a specified 'minimum_stock' level
             # Filter items which have an 'in_stock' level lower than 'minimum_stock'
@@ -874,7 +864,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_has_stock(self, queryset, name, value):
         """Filter by whether the Part has any stock"""
-
         if str2bool(value):
             return queryset.filter(Q(in_stock__gt=0))
         else:
@@ -885,7 +874,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_unallocated_stock(self, queryset, name, value):
         """Filter by whether the Part has unallocated stock"""
-
         if str2bool(value):
             return queryset.filter(Q(unallocated_stock__gt=0))
         else:
@@ -905,7 +893,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_exclude_tree(self, queryset, name, part):
         """Exclude all parts and variants 'down' from the specified part from the queryset"""
-
         children = part.get_descendants(include_self=True)
 
         return queryset.exclude(id__in=children)
@@ -914,7 +901,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_ancestor(self, queryset, name, part):
         """Limit queryset to descendants of the specified ancestor part"""
-
         descendants = part.get_descendants(include_self=False)
         return queryset.filter(id__in=descendants)
 
@@ -922,14 +908,12 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_variant_of(self, queryset, name, part):
         """Limit queryset to direct children (variants) of the specified part"""
-
         return queryset.filter(id__in=part.get_children())
 
     in_bom_for = rest_filters.ModelChoiceFilter(label='In BOM Of', queryset=Part.objects.all(), method='filter_in_bom')
 
     def filter_in_bom(self, queryset, name, part):
         """Limit queryset to parts in the BOM for the specified part"""
-
         bom_parts = part.get_parts_in_bom()
         return queryset.filter(id__in=[p.pk for p in bom_parts])
 
@@ -937,7 +921,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_has_pricing(self, queryset, name, value):
         """Filter the queryset based on whether pricing information is available for the sub_part"""
-
         q_a = Q(pricing_data=None)
         q_b = Q(pricing_data__overall_min=None, pricing_data__overall_max=None)
 
@@ -950,7 +933,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_has_stocktake(self, queryset, name, value):
         """Filter the queryset based on whether stocktake data is available"""
-
         if str2bool(value):
             return queryset.exclude(last_stocktake=None)
         else:
@@ -960,7 +942,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_stock_to_build(self, queryset, name, value):
         """Filter the queryset based on whether part stock is required for a pending BuildOrder"""
-
         if str2bool(value):
             # Return parts which are required for a build order, but have not yet been allocated
             return queryset.filter(required_for_build_orders__gt=F('allocated_to_build_orders'))
@@ -972,7 +953,6 @@ class PartFilter(rest_filters.FilterSet):
 
     def filter_depleted_stock(self, queryset, name, value):
         """Filter the queryset based on whether the part is fully depleted of stock"""
-
         if str2bool(value):
             return queryset.filter(Q(in_stock=0) & ~Q(stock_item_count=0))
         else:
@@ -1234,7 +1214,6 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         - Only parts which have a matching parameter are returned
         - Queryset is ordered based on parameter value
         """
-
         # Extract "ordering" parameter from query args
         ordering = self.request.query_params.get('ordering', None)
 
@@ -1379,7 +1358,6 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
 
     def filter_has_choices(self, queryset, name, value):
         """Filter queryset to include only PartParameterTemplates with choices."""
-
         if str2bool(value):
             return queryset.exclude(Q(choices=None) | Q(choices=''))
         else:
@@ -1392,7 +1370,6 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
 
     def filter_has_units(self, queryset, name, value):
         """Filter queryset to include only PartParameterTemplates with units."""
-
         if str2bool(value):
             return queryset.exclude(Q(units=None) | Q(units=''))
         else:
@@ -1488,7 +1465,6 @@ class PartParameterAPIMixin:
         - part_detail
         - template_detail
         """
-
         try:
             kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', False))
             kwargs['template_detail'] = str2bool(self.request.GET.get('template_detail', True))
@@ -1515,7 +1491,6 @@ class PartParameterFilter(rest_filters.FilterSet):
 
         If 'include_variants' query parameter is provided, filter against variant parts also
         """
-
         try:
             include_variants = str2bool(self.request.GET.get('include_variants', False))
         except AttributeError:
@@ -1679,7 +1654,6 @@ class BomFilter(rest_filters.FilterSet):
 
     def filter_available_stock(self, queryset, name, value):
         """Filter the queryset based on whether each line item has any available stock"""
-
         if str2bool(value):
             return queryset.filter(available_stock__gt=0)
         else:
@@ -1689,7 +1663,6 @@ class BomFilter(rest_filters.FilterSet):
 
     def filter_on_order(self, queryset, name, value):
         """Filter the queryset based on whether each line item has any stock on order"""
-
         if str2bool(value):
             return queryset.filter(on_order__gt=0)
         else:
@@ -1699,7 +1672,6 @@ class BomFilter(rest_filters.FilterSet):
 
     def filter_has_pricing(self, queryset, name, value):
         """Filter the queryset based on whether pricing information is available for the sub_part"""
-
         q_a = Q(sub_part__pricing_data=None)
         q_b = Q(sub_part__pricing_data__overall_min=None, sub_part__pricing_data__overall_max=None)
 
@@ -1722,7 +1694,6 @@ class BomMixin:
         - part_detail
         - sub_part_detail
         """
-
         # Do we wish to include extra detail?
         try:
             kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', None))
@@ -1760,7 +1731,6 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
 
     def list(self, request, *args, **kwargs):
         """Return serialized list response for this endpoint"""
-
         queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)

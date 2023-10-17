@@ -35,7 +35,6 @@ class InfoView(AjaxView):
 
     def worker_pending_tasks(self):
         """Return the current number of outstanding background tasks"""
-
         return OrmQ.objects.count()
 
     def get(self, request, *args, **kwargs):
@@ -256,7 +255,6 @@ class APISearchView(APIView):
 
     def get_result_types(self):
         """Construct a list of search types we can return"""
-
         import build.api
         import company.api
         import order.api
@@ -279,7 +277,6 @@ class APISearchView(APIView):
 
     def post(self, request, *args, **kwargs):
         """Perform search query against available models"""
-
         data = request.data
 
         results = {}
