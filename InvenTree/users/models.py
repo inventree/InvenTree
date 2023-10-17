@@ -420,15 +420,19 @@ def update_group_roles(group, debug=False):
             if permission_string not in permissions_to_add:
                 permissions_to_delete.add(permission_string)
 
+    # Pre-fetch all the RuleSet objects
+    rulesets = {
+        r.name: r for r in RuleSet.objects.filter(group=group).prefetch_related('group')
+    }
+
     # Get all the rulesets associated with this group
     for r in RuleSet.RULESET_CHOICES:
 
         rulename = r[0]
 
-        try:
-            ruleset = RuleSet.objects.get(group=group, name=rulename)
-        except RuleSet.DoesNotExist:
-            # Create the ruleset with default values (if it does not exist)
+        if ruleset := rulesets.get(rulename, None):
+            pass
+        else:
             ruleset = RuleSet.objects.create(group=group, name=rulename)
 
         # Which database tables does this RuleSet touch?
