@@ -240,37 +240,6 @@ class PartParameterTemplateSerializer(InvenTree.serializers.InvenTreeModelSerial
         ]
 
 
-class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """JSON serializers for the PartParameter model."""
-
-    class Meta:
-        """Metaclass defining serializer fields"""
-        model = PartParameter
-        fields = [
-            'pk',
-            'part',
-            'template',
-            'template_detail',
-            'data',
-            'data_numeric',
-        ]
-
-    def __init__(self, *args, **kwargs):
-        """Custom initialization method for the serializer.
-
-        Allows us to optionally include or exclude particular information
-        """
-
-        template_detail = kwargs.pop('template_detail', True)
-
-        super().__init__(*args, **kwargs)
-
-        if not template_detail:
-            self.fields.pop('template_detail')
-
-    template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
-
-
 class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for Part (brief detail)"""
 
@@ -319,6 +288,43 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     # Pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(source='pricing_data.overall_min', allow_null=True, read_only=True)
     pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(source='pricing_data.overall_max', allow_null=True, read_only=True)
+
+
+class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """JSON serializers for the PartParameter model."""
+
+    class Meta:
+        """Metaclass defining serializer fields"""
+        model = PartParameter
+        fields = [
+            'pk',
+            'part',
+            'part_detail',
+            'template',
+            'template_detail',
+            'data',
+            'data_numeric',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Custom initialization method for the serializer.
+
+        Allows us to optionally include or exclude particular information
+        """
+
+        template_detail = kwargs.pop('template_detail', True)
+        part_detail = kwargs.pop('part_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not part_detail:
+            self.fields.pop('part_detail')
+
+        if not template_detail:
+            self.fields.pop('template_detail')
+
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
 
 
 class PartSetCategorySerializer(serializers.Serializer):
