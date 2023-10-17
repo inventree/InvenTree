@@ -39,6 +39,7 @@ export enum ApiPaths {
   notifications_list = 'api-notifications-list',
 
   barcode = 'api-barcode',
+  news = 'news',
 
   // Build order URLs
   build_order_list = 'api-build-list',
@@ -113,6 +114,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'notifications/';
     case ApiPaths.barcode:
       return 'barcode/';
+    case ApiPaths.news:
+      return 'news/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:
