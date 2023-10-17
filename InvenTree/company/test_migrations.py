@@ -286,7 +286,7 @@ class TestAddressMigration(MigratorTestCase):
     migrate_from = ('company', '0063_auto_20230502_1956')
     migrate_to = ('company', '0064_move_address_field_to_address_model')
 
-    # Setting up string values for re-use
+    # Setting up string values for reuse
     short_l1 = 'Less than 50 characters long address'
     long_l1 = 'More than 50 characters long address testing line '
     l2 = 'splitting functionality'
