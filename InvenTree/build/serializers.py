@@ -866,10 +866,6 @@ class BuildAllocationItemSerializer(serializers.Serializer):
                 'output': _('Build output cannot be specified for allocation of untracked parts'),
             })
 
-        # Check if this allocation would be unique
-        if BuildItem.objects.filter(build_line=build_line, stock_item=stock_item, install_into=output).exists():
-            raise ValidationError(_('This stock item has already been allocated to this build output'))
-
         return data
 
 
@@ -914,12 +910,16 @@ class BuildAllocationSerializer(serializers.Serializer):
 
                 try:
                     # Create a new BuildItem to allocate stock
-                    BuildItem.objects.create(
+                    build_item, created = BuildItem.objects.get_or_create(
                         build_line=build_line,
                         stock_item=stock_item,
-                        quantity=quantity,
-                        install_into=output
+                        install_into=output,
                     )
+                    if created:
+                        build_item.quantity = quantity
+                    else:
+                        build_item.quantity += quantity
+                    build_item.save()
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors
                     raise ValidationError(detail=serializers.as_serializer_error(exc))

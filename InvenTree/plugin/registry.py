@@ -164,7 +164,7 @@ class PluginsRegistry:
 
         logger.info('Loading plugins')
 
-        # Set maintanace mode
+        # Set maintenance mode
         _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
             set_maintenance_mode(True)
@@ -232,7 +232,7 @@ class PluginsRegistry:
 
         logger.info('Start unloading plugins')
 
-        # Set maintanace mode
+        # Set maintenance mode
         _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
             set_maintenance_mode(True)  # pragma: no cover
@@ -415,7 +415,7 @@ class PluginsRegistry:
 
     # endregion
 
-    # region general internal loading /activating / deactivating / deloading
+    # region general internal loading / activating / deactivating / unloading
     def _init_plugins(self, disabled: str = None):
         """Initialise all found plugins.
 
@@ -434,14 +434,19 @@ class PluginsRegistry:
             if active:
                 self.plugins[key] = plugin
             else:
-                # Deactivate plugin in db
-                if not settings.PLUGIN_TESTING:  # pragma: no cover
+                # Deactivate plugin in db (if currently set as active)
+                if not settings.PLUGIN_TESTING and plugin.db.active:  # pragma: no cover
                     plugin.db.active = False
                     plugin.db.save(no_reload=True)
                 self.plugins_inactive[key] = plugin.db
             self.plugins_full[key] = plugin
 
-        logger.debug('Starting plugin initialisation')
+        logger.debug('Starting plugin initialization')
+
+        # Fetch and cache list of existing plugin configuration instances
+        plugin_configs = {
+            cfg.key: cfg for cfg in PluginConfig.objects.all()
+        }
 
         # Initialize plugins
         for plg in self.plugin_modules:
@@ -450,7 +455,12 @@ class PluginsRegistry:
             plg_key = slugify(plg.SLUG if getattr(plg, 'SLUG', None) else plg_name)  # keys are slugs!
 
             try:
-                plg_db, _created = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
+                if plg_key in plugin_configs:
+                    # Configuration already exists
+                    plg_db = plugin_configs[plg_key]
+                else:
+                    # Configuration needs to be created
+                    plg_db, _created = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:

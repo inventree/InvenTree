@@ -30,7 +30,7 @@ function stockItemTableColumns(): TableColumn[] {
               alt={part?.name}
               size={24}
             />
-            <Text>{part.full_name}</Text>
+            <Text>{part?.full_name}</Text>
           </Group>
         );
       }
