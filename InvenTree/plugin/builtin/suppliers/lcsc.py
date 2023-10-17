@@ -24,6 +24,15 @@ class LCSCPlugin(SupplierBarcodeMixin, InvenTreePlugin):
     VERSION = "1.0.0"
     AUTHOR = _("InvenTree contributors")
 
+    DEFAULT_SUPPLIER_NAME = "LCSC"
+    SETTINGS = {
+        "SUPPLIER_ID": {
+            "name": _("Supplier"),
+            "description": _("The Supplier which acts as 'LCSC'"),
+            "model": "company.company",
+        }
+    }
+
     def parse_supplier_barcode_data(self, barcode_data):
         """Get supplier_part and barcode_fields from LCSC QR-Code."""
 

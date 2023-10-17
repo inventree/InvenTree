@@ -23,6 +23,15 @@ class DigiKeyPlugin(SupplierBarcodeMixin, InvenTreePlugin):
     VERSION = "1.0.0"
     AUTHOR = _("InvenTree contributors")
 
+    DEFAULT_SUPPLIER_NAME = "DigiKey"
+    SETTINGS = {
+        "SUPPLIER_ID": {
+            "name": _("Supplier"),
+            "description": _("The Supplier which acts as 'DigiKey'"),
+            "model": "company.company",
+        }
+    }
+
     def parse_supplier_barcode_data(self, barcode_data):
         """Get supplier_part and barcode_fields from DigiKey DataMatrix-Code."""
 
