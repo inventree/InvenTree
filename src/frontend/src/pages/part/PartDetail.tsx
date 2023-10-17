@@ -57,8 +57,7 @@ export default function PartDetail() {
     params: {
       path_detail: true
     },
-    refetchOnMount: true,
-    refetchOnWindowFocus: true
+    refetchOnMount: true
   });
 
   // Part data panels (recalculate when part data changes)
