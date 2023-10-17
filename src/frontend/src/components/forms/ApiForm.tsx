@@ -14,7 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
-import { api } from '../../App';
+import { api, queryClient } from '../../App';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
 import { ApiPaths } from '../../states/ApiState';
@@ -149,7 +149,9 @@ export function ApiForm({
 
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
-      initialDataQuery.remove();
+      queryClient.removeQueries({
+        queryKey: ['form-initial-data', props.name, props.url, props.pk]
+      });
       initialDataQuery.refetch();
     }
   }, []);
