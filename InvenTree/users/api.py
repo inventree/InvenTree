@@ -5,15 +5,14 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions, status
-from rest_framework.authtoken.models import Token
+from rest_framework import exceptions, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
 from InvenTree.serializers import UserSerializer
-from users.models import Owner, RuleSet, check_user_role
+from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
 
@@ -190,12 +189,27 @@ class GetAuthToken(APIView):
         - If the user already has a token, return it
         - Otherwise, create a new token
         """
+
         if request.user.is_authenticated:
+
+            name = request.query_params.get('name', '')
+
             # Get the user token (or create one if it does not exist)
-            token, created = Token.objects.get_or_create(user=request.user)
-            return Response({
+            token, _created = ApiToken.objects.get_or_create(user=request.user, name=name)
+
+            data = {
                 'token': token.key,
-            })
+                'active': token.active,
+                'revoked': token.revoked,
+                'expiry': token.expiry,
+                'expired': token.expired,
+                'name': token.name,
+            }
+
+            return Response(data)
+
+        else:
+            raise exceptions.NotAuthenticated()
 
     def delete(self, request):
         """User has requested deletion of API token"""
