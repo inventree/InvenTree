@@ -221,7 +221,7 @@ jobs:
         env:
           DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
         run: |
-          coverage xml
+          coverage xml -i
           curl -sSL https://deepsource.io/cli | sh
           ./bin/deepsource report --analyzer test-coverage --key python --value-file coverage.xml
 
