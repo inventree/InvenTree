@@ -1475,19 +1475,56 @@ class PartParameterAPIMixin:
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Override get_queryset method to prefetch related fields"""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = queryset.prefetch_related('part', 'template')
+        return queryset
+
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this API endpoint.
 
         If requested, extra detail fields are annotated to the queryset:
+        - part_detail
         - template_detail
         """
 
         try:
+            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', False))
             kwargs['template_detail'] = str2bool(self.request.GET.get('template_detail', True))
         except AttributeError:
             pass
 
         return self.serializer_class(*args, **kwargs)
+
+
+class PartParameterFilter(rest_filters.FilterSet):
+    """Custom filters for the PartParameterList API endpoint"""
+
+    class Meta:
+        """Metaclass options for the filterset"""
+        model = PartParameter
+        fields = [
+            'template'
+        ]
+
+    part = rest_filters.ModelChoiceFilter(queryset=Part.objects.all(), method='filter_part')
+
+    def filter_part(self, queryset, name, part):
+        """Filter against the provided part.
+
+        If 'include_variants' query parameter is provided, filter against variant parts also
+        """
+
+        try:
+            include_variants = str2bool(self.request.GET.get('include_variants', False))
+        except AttributeError:
+            include_variants = False
+
+        if include_variants:
+            return queryset.filter(part__in=part.get_descendants(include_self=True))
+        else:
+            return queryset.filter(part=part)
 
 
 class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
@@ -1497,11 +1534,15 @@ class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
     - POST: Create a new PartParameter object
     """
 
+    filterset_class = PartParameterFilter
+
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
         'name',
         'data',
+        'part',
+        'template',
     ]
 
     ordering_field_aliases = {
@@ -1514,11 +1555,6 @@ class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
         'template__name',
         'template__description',
         'template__units',
-    ]
-
-    filterset_fields = [
-        'part',
-        'template',
     ]
 
 

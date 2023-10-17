@@ -11,7 +11,7 @@ export function Thumbnail({
   alt = t`Thumbnail`,
   size = 20
 }: {
-  src: string;
+  src?: string | undefined;
   alt?: string;
   size?: number;
 }) {
