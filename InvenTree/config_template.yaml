@@ -273,13 +273,14 @@ remote_login_header: HTTP_REMOTE_USER
 # Customization options
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
+# Logo and splash paths and filenames must be relative to the static_root directory
 # customize:
 #   login_message: InvenTree demo instance - <a href='https://inventree.org/demo.html'> Click here for login details</a>
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
-#   logo: logo.png
-#   splash: splash_screen.jpg
 #   hide_admin_link: true
 #   hide_password_reset: true
+#   logo: img/custom_logo.png
+#   splash: img/custom_splash.jpg
 
 # Platform UI options
 # pui_settings:
