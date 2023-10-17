@@ -301,30 +301,6 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         return self.stock_item_count()
 
 
-class StockItemManager(TreeManager):
-    """Custom database manager for the StockItem class.
-
-    StockItem querysets will automatically prefetch related fields.
-    """
-
-    def get_queryset(self):
-        """Prefetch queryset to optimise db hits."""
-        return super().get_queryset().prefetch_related(
-            'belongs_to',
-            'build',
-            'customer',
-            'purchase_order',
-            'sales_order',
-            'supplier_part',
-            'supplier_part__supplier',
-            'allocations',
-            'sales_order_allocations',
-            'location',
-            'part',
-            'tracking_info'
-        )
-
-
 def generate_batch_code():
     """Generate a default 'batch code' for a new StockItem.
 
