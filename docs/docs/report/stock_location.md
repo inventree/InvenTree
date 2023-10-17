@@ -4,7 +4,7 @@ title: Stock Location Reports
 
 ## Stock location Reports
 
-You can print a formatted report of a stock location. This makes sense if you have several parts inside one location, e.g. a box that is sent out to a manufacturing partner. Whit a report you can create a box content list. 
+You can print a formatted report of a stock location. This makes sense if you have several parts inside one location, e.g. a box that is sent out to a manufacturing partner. Whit a report you can create a box content list.
 
 ### Context Variables
 You can use all content variables from the [StockLocation](./context_variables.md#stocklocation) object.
