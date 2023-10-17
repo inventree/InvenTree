@@ -430,8 +430,8 @@ def update_group_roles(group, debug=False):
 
         rulename = r[0]
 
-        if ruleset := rulesets.get(rulename, None):
-            pass
+        if rulename in rulesets:
+            ruleset = rulesets[rulename]
         else:
             ruleset = RuleSet.objects.create(group=group, name=rulename)
 
