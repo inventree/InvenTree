@@ -11,8 +11,9 @@ import {
   Overlay,
   Stack
 } from '@mantine/core';
+import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { api } from '../../App';
 
@@ -22,8 +23,10 @@ import { api } from '../../App';
 export function ApiImage(props: ImageProps) {
   const [image, setImage] = useState<string>('');
 
+  const queryKey = useId();
+
   const imgQuery = useQuery({
-    queryKey: ['image', props.src],
+    queryKey: ['image', queryKey, props.src],
     enabled: props.src != undefined && props.src != null && props.src != '',
     queryFn: async () => {
       if (!props.src) {
@@ -47,7 +50,7 @@ export function ApiImage(props: ImageProps) {
         });
     },
     refetchOnMount: true,
-    refetchOnWindowFocus: true
+    refetchOnWindowFocus: false
   });
 
   return (

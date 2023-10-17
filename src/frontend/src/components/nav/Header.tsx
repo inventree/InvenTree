@@ -68,7 +68,7 @@ export function Header() {
           closeNotificationDrawer();
         }}
       />
-      <Container className={classes.layoutHeaderSection} size={'xl'}>
+      <Container className={classes.layoutHeaderSection} size="100%">
         <Group position="apart">
           <Group>
             <NavHoverMenu openDrawer={openNavDrawer} />

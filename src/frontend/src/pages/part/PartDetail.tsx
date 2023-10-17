@@ -33,6 +33,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
+import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
@@ -56,8 +57,7 @@ export default function PartDetail() {
     params: {
       path_detail: true
     },
-    refetchOnMount: true,
-    refetchOnWindowFocus: true
+    refetchOnMount: true
   });
 
   // Part data panels (recalculate when part data changes)
@@ -92,7 +92,7 @@ export default function PartDetail() {
         label: t`Variants`,
         icon: <IconVersions />,
         hidden: !part.is_template,
-        content: <PlaceholderPanel />
+        content: <PartVariantTable partId={String(id)} />
       },
       {
         name: 'bom',
