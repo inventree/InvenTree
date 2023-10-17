@@ -115,7 +115,10 @@ class BarcodeMixin:
     @staticmethod
     def get_supplier_parts(sku: str, supplier: Company = None, mpn: str = None):
         """Get a supplier part from SKU or by supplier and MPN."""
-        supplier_parts = SupplierPart.objects
+        if not (sku or supplier or mpn):
+            return SupplierPart.objects.none()
+
+        supplier_parts = SupplierPart.objects.all()
 
         if sku:
             supplier_parts = supplier_parts.filter(SKU__iexact=sku)
@@ -132,12 +135,9 @@ class BarcodeMixin:
             if len(supplier_parts) == 1:
                 return supplier_parts
 
-        if supplier_parts is SupplierPart.objects:
-            supplier_parts = []
-
         logger.warning(
             "Found %d supplier parts for SKU '%s', supplier '%s', MPN '%s'",
-            len(supplier_parts),
+            supplier_parts.count(),
             sku,
             supplier.name if supplier else None,
             mpn,
