@@ -73,7 +73,7 @@ class SupplierPartPackUnitsTests(InvenTreeTestCase):
             SKU='TEST-SKU'
         )
 
-        # All these values are valid for a part with dimesion 'm'
+        # All these values are valid for a part with dimension 'm'
         pass_tests = {
             '': 1,
             '1': 1,

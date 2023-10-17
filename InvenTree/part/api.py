@@ -403,7 +403,7 @@ class PartThumbs(ListAPI):
     serializer_class = part_serializers.PartThumbSerializer
 
     def get_queryset(self):
-        """Return a queryset which exlcudes any parts without images"""
+        """Return a queryset which excludes any parts without images"""
         queryset = super().get_queryset()
 
         # Get all Parts which have an associated image
@@ -1219,11 +1219,11 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
                 except (ValueError, PartCategory.DoesNotExist):
                     pass
 
-        queryset = self.filter_parameteric_data(queryset)
+        queryset = self.filter_parametric_data(queryset)
 
         return queryset
 
-    def filter_parameteric_data(self, queryset):
+    def filter_parametric_data(self, queryset):
         """Filter queryset against part parameters.
 
         Here we can perform a number of different functions:

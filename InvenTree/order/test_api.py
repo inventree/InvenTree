@@ -443,7 +443,7 @@ class PurchaseOrderTest(OrderTest):
 
         url = reverse('api-po-cancel', kwargs={'pk': po.pk})
 
-        # Try to cancel the PO, but without reqiured permissions
+        # Try to cancel the PO, but without required permissions
         self.post(url, {}, expected_code=403)
 
         self.assignRole('purchase_order.add')

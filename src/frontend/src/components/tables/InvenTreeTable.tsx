@@ -375,8 +375,8 @@ export function InvenTreeTable({
       });
   };
 
-  const { data, isError, isFetching, isLoading, refetch } = useQuery(
-    [
+  const { data, isError, isFetching, isLoading, refetch } = useQuery({
+    queryKey: [
       `table-${tableName}`,
       sortStatus.columnAccessor,
       sortStatus.direction,
@@ -384,12 +384,10 @@ export function InvenTreeTable({
       activeFilters,
       searchTerm
     ],
-    fetchTableData,
-    {
-      refetchOnWindowFocus: false,
-      refetchOnMount: true
-    }
-  );
+    queryFn: fetchTableData,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true
+  });
 
   /*
    * Reload the table whenever the refetch changes

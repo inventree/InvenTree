@@ -78,9 +78,9 @@ pip-tools==7.3.0
     # via -r requirements-dev.in
 platformdirs==3.11.0
     # via virtualenv
-pre-commit==3.4.0
+pre-commit==3.5.0
     # via -r requirements-dev.in
-pycodestyle==2.11.0
+pycodestyle==2.11.1
     # via flake8
 pydocstyle==6.3.0
     # via flake8-docstrings
@@ -117,7 +117,7 @@ typing-extensions==4.8.0
     #   -c requirements.txt
     #   asgiref
     #   django-test-migrations
-urllib3==2.0.6
+urllib3==2.0.7
     # via
     #   -c requirements.txt
     #   requests
