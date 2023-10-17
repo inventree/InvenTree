@@ -214,7 +214,7 @@ class CustomSignupForm(SignupForm):
         set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
 
     def clean(self):
-        """Make sure the supllied emails match if enabled in settings."""
+        """Make sure the supplied emails match if enabled in settings."""
         cleaned_data = super().clean()
 
         # check for two mail fields

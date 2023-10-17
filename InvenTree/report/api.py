@@ -217,7 +217,7 @@ class ReportPrintMixin:
                 report_name += '.pdf'
 
             if debug_mode:
-                """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
+                """Concatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
 
                 html = "\n".join(outputs)
 

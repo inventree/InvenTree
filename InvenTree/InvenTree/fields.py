@@ -18,7 +18,7 @@ from .validators import AllowedURLValidator, allowable_url_schemes
 
 
 class InvenTreeRestURLField(RestURLField):
-    """Custom field for DRF with custom scheme vaildators."""
+    """Custom field for DRF with custom scheme validators."""
 
     def __init__(self, **kwargs):
         """Update schemes."""
