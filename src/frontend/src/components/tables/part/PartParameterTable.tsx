@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import { IconTextPlus } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
@@ -10,6 +10,7 @@ import {
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -23,11 +24,35 @@ export function PartParameterTable({ partId }: { partId: any }) {
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
+        accessor: 'part',
+        title: t`Part`,
+        switchable: true,
+        sortable: true,
+        render: function (record: any) {
+          let part = record?.part_detail ?? {};
+
+          return (
+            <Group spacing="xs" align="left" noWrap={true}>
+              <Thumbnail
+                src={part?.thumbnail || part?.image}
+                alt={part?.name}
+                size={24}
+              />
+              <Text>{part?.full_name}</Text>
+            </Group>
+          );
+        }
+      },
+      {
         accessor: 'name',
         title: t`Parameter`,
         switchable: false,
         sortable: true,
-        render: (record) => record.template_detail?.name
+        render: (record) => {
+          let variant = String(partId) != String(record.part);
+
+          return <Text italic={variant}>{record.template_detail?.name}</Text>;
+        }
       },
       {
         accessor: 'description',
@@ -65,54 +90,62 @@ export function PartParameterTable({ partId }: { partId: any }) {
         render: (record) => record.template_detail?.units
       }
     ];
-  }, []);
+  }, [partId]);
 
   // Callback for row actions
   // TODO: Adjust based on user permissions
-  const rowActions = useCallback((record: any) => {
-    let actions = [];
+  const rowActions = useCallback(
+    (record: any) => {
+      // Actions not allowed for "variant" rows
+      if (String(partId) != String(record.part)) {
+        return [];
+      }
 
-    actions.push({
-      title: t`Edit`,
-      onClick: () => {
-        openEditApiForm({
-          name: 'edit-part-parameter',
-          url: ApiPaths.part_parameter_list,
-          pk: record.pk,
-          title: t`Edit Part Parameter`,
-          fields: {
-            part: {
-              hidden: true
+      let actions = [];
+
+      actions.push({
+        title: t`Edit`,
+        onClick: () => {
+          openEditApiForm({
+            name: 'edit-part-parameter',
+            url: ApiPaths.part_parameter_list,
+            pk: record.pk,
+            title: t`Edit Part Parameter`,
+            fields: {
+              part: {
+                hidden: true
+              },
+              template: {},
+              data: {}
             },
-            template: {},
-            data: {}
-          },
-          successMessage: t`Part parameter updated`,
-          onFormSuccess: refreshTable
-        });
-      }
-    });
+            successMessage: t`Part parameter updated`,
+            onFormSuccess: refreshTable
+          });
+        }
+      });
 
-    actions.push({
-      title: t`Delete`,
-      color: 'red',
-      onClick: () => {
-        openDeleteApiForm({
-          name: 'delete-part-parameter',
-          url: ApiPaths.part_parameter_list,
-          pk: record.pk,
-          title: t`Delete Part Parameter`,
-          successMessage: t`Part parameter deleted`,
-          onFormSuccess: refreshTable,
-          preFormContent: (
-            <Text>{t`Are you sure you want to remove this parameter?`}</Text>
-          )
-        });
-      }
-    });
+      actions.push({
+        title: t`Delete`,
+        color: 'red',
+        onClick: () => {
+          openDeleteApiForm({
+            name: 'delete-part-parameter',
+            url: ApiPaths.part_parameter_list,
+            pk: record.pk,
+            title: t`Delete Part Parameter`,
+            successMessage: t`Part parameter deleted`,
+            onFormSuccess: refreshTable,
+            preFormContent: (
+              <Text>{t`Are you sure you want to remove this parameter?`}</Text>
+            )
+          });
+        }
+      });
 
-    return actions;
-  }, []);
+      return actions;
+    },
+    [partId]
+  );
 
   const addParameter = useCallback(() => {
     if (!partId) {
@@ -160,9 +193,17 @@ export function PartParameterTable({ partId }: { partId: any }) {
       props={{
         rowActions: rowActions,
         customActionGroups: tableActions,
+        customFilters: [
+          {
+            name: 'include_variants',
+            label: t`Include Variants`,
+            type: 'boolean'
+          }
+        ],
         params: {
           part: partId,
-          template_detail: true
+          template_detail: true,
+          part_detail: true
         }
       }}
     />
