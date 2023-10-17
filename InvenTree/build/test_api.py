@@ -753,6 +753,80 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(allocation.bom_item.pk, 1)
         self.assertEqual(allocation.stock_item.pk, 2)
 
+    def test_reallocate(self):
+        """Test reallocating an existing built item with the same stock item.
+
+        This should increment the quantity of the existing BuildItem object
+        """
+
+        # Find the correct BuildLine
+        si = StockItem.objects.get(pk=2)
+
+        right_line = None
+        for line in self.build.build_lines.all():
+            if line.bom_item.sub_part.pk == si.part.pk:
+                right_line = line
+                break
+
+        self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "build_line": right_line.pk,
+                        "stock_item": 2,
+                        "quantity": 3000,
+                    }
+                ]
+            },
+            expected_code=201
+        )
+
+        # A new BuildItem should have been created
+        self.assertEqual(self.n + 1, BuildItem.objects.count())
+
+        allocation = BuildItem.objects.last()
+
+        self.assertEqual(allocation.quantity, 3000)
+        self.assertEqual(allocation.bom_item.pk, 1)
+        self.assertEqual(allocation.stock_item.pk, 2)
+
+        # Try to allocate more than the required quantity (this should fail)
+        self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "build_line": right_line.pk,
+                        "stock_item": 2,
+                        "quantity": 2001,
+                    }
+                ]
+            },
+            expected_code=400
+        )
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.quantity, 3000)
+
+        # Try to allocate the remaining items
+        self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "build_line": right_line.pk,
+                        "stock_item": 2,
+                        "quantity": 2000,
+                    }
+                ]
+            },
+            expected_code=201
+        )
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.quantity, 5000)
+
 
 class BuildOverallocationTest(BuildAPITest):
     """Unit tests for over allocation of stock items against a build order.
