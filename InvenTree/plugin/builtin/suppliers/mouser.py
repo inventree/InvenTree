@@ -23,6 +23,7 @@ class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     VERSION = "1.0.0"
     AUTHOR = _("InvenTree contributors")
 
+    DEFAULT_SUPPLIER_NAME = "Mouser"
     SETTINGS = {
         "SUPPLIER_ID": {
             "name": _("Supplier"),
