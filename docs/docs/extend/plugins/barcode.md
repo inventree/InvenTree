@@ -54,4 +54,4 @@ class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
 ```
 
-To try it just copy the file to src/InvenTree/plugins and restart the server. Open the scan barcode window and start to scan codes or type in text manually. Each time the timeout is hit the plugin will execute and printout the result. The timeout can be changed in settings->Barcode Support->Barcode Input Delay.  
+To try it just copy the file to src/InvenTree/plugins and restart the server. Open the scan barcode window and start to scan codes or type in text manually. Each time the timeout is hit the plugin will execute and printout the result. The timeout can be changed in `Settings->Barcode Support->Barcode Input Delay`.
