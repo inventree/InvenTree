@@ -488,7 +488,7 @@ class PluginsRegistry:
             # - If this plugin has been explicitly enabled by the user
             if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
                 # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
-                if disabled and ((plg.__name__ == disabled) or (plg.__module__ == disabled)):
+                if disabled and disabled in (plg.__name__, plg.__module__):
                     safe_reference(plugin=plg, key=plg_key, active=False)
                     continue  # continue -> the plugin is not loaded
 

@@ -137,11 +137,9 @@ class StockLocationTest(StockAPITestCase):
             delete_sub_locations: bool = False
             delete_stock_items: bool = False
 
-            if i == Target.move_sub_locations_to_parent_delete_stockitems \
-                    or i == Target.delete_sub_locations_delete_stockitems:
+            if i in (Target.move_sub_locations_to_parent_delete_stockitems, Target.delete_sub_locations_delete_stockitems):
                 delete_stock_items = True
-            if i == Target.delete_sub_locations_move_stockitems_to_parent \
-                    or i == Target.delete_sub_locations_delete_stockitems:
+            if i in (Target.delete_sub_locations_move_stockitems_to_parent, Target.delete_sub_locations_delete_stockitems):
                 delete_sub_locations = True
 
             # Create a parent stock location
