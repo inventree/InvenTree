@@ -112,8 +112,7 @@ class OrderFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.filter(responsible__in=owners)
-        else:
-            return queryset.exclude(responsible__in=owners)
+        return queryset.exclude(responsible__in=owners)
 
     overdue = rest_filters.BooleanFilter(label='overdue', method='filter_overdue')
 
@@ -125,8 +124,7 @@ class OrderFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.filter(self.Meta.model.overdue_filter())
-        else:
-            return queryset.exclude(self.Meta.model.overdue_filter())
+        return queryset.exclude(self.Meta.model.overdue_filter())
 
     outstanding = rest_filters.BooleanFilter(label='outstanding', method='filter_outstanding')
 
@@ -135,8 +133,7 @@ class OrderFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.filter(status__in=self.Meta.model.get_status_class().OPEN)
-        else:
-            return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
+        return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
     project_code = rest_filters.ModelChoiceFilter(
         queryset=common_models.ProjectCode.objects.all(),
@@ -150,8 +147,7 @@ class OrderFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(project_code=None)
-        else:
-            return queryset.filter(project_code=None)
+        return queryset.filter(project_code=None)
 
 
 class LineItemFilter(rest_filters.FilterSet):
@@ -168,8 +164,7 @@ class LineItemFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(**filters)
-        else:
-            return queryset.filter(**filters)
+        return queryset.filter(**filters)
 
 
 class PurchaseOrderFilter(OrderFilter):
@@ -435,8 +430,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
 
         if str2bool(value):
             return queryset.filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
-        else:
-            return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
+        return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
@@ -449,9 +443,8 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
 
         if str2bool(value):
             return queryset.filter(q)
-        else:
-            # Only count "pending" orders
-            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
+        # Only count "pending" orders
+        return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
 
 class PurchaseOrderLineItemMixin:
@@ -760,8 +753,7 @@ class SalesOrderLineItemFilter(LineItemFilter):
 
         if str2bool(value):
             return queryset.filter(q)
-        else:
-            return queryset.exclude(q)
+        return queryset.exclude(q)
 
 
 class SalesOrderLineItemMixin:
@@ -1016,8 +1008,7 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         """Filter SalesOrder list by 'shipped' status (boolean)"""
         if str2bool(value):
             return queryset.exclude(shipment_date=None)
-        else:
-            return queryset.filter(shipment_date=None)
+        return queryset.filter(shipment_date=None)
 
     delivered = rest_filters.BooleanFilter(label='delivered', method='filter_delivered')
 
@@ -1025,8 +1016,7 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         """Filter SalesOrder list by 'delivered' status (boolean)"""
         if str2bool(value):
             return queryset.exclude(delivery_date=None)
-        else:
-            return queryset.filter(delivery_date=None)
+        return queryset.filter(delivery_date=None)
 
 
 class SalesOrderShipmentList(ListCreateAPI):
@@ -1255,8 +1245,7 @@ class ReturnOrderLineItemFilter(LineItemFilter):
 
         if str2bool(value):
             return queryset.exclude(received_date=None)
-        else:
-            return queryset.filter(received_date=None)
+        return queryset.filter(received_date=None)
 
 
 class ReturnOrderLineItemMixin:

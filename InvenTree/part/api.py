@@ -828,8 +828,7 @@ class PartFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(units='')
-        else:
-            return queryset.filter(units='')
+        return queryset.filter(units='')
 
     # Filter by parts which have (or not) an IPN value
     has_ipn = rest_filters.BooleanFilter(label='Has IPN', method='filter_has_ipn')
@@ -839,8 +838,7 @@ class PartFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(IPN='')
-        else:
-            return queryset.filter(IPN='')
+        return queryset.filter(IPN='')
 
     # Regex filter for name
     name_regex = rest_filters.CharFilter(label='Filter by name (regex)', field_name='name', lookup_expr='iregex')
@@ -865,9 +863,8 @@ class PartFilter(rest_filters.FilterSet):
             # Ignore any parts which do not have a specified 'minimum_stock' level
             # Filter items which have an 'in_stock' level lower than 'minimum_stock'
             return queryset.exclude(minimum_stock=0).filter(Q(total_in_stock__lt=F('minimum_stock')))
-        else:
-            # Filter items which have an 'in_stock' level higher than 'minimum_stock'
-            return queryset.filter(Q(total_in_stock__gte=F('minimum_stock')))
+        # Filter items which have an 'in_stock' level higher than 'minimum_stock'
+        return queryset.filter(Q(total_in_stock__gte=F('minimum_stock')))
 
     # has_stock filter
     has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
@@ -877,8 +874,7 @@ class PartFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.filter(Q(in_stock__gt=0))
-        else:
-            return queryset.filter(Q(in_stock__lte=0))
+        return queryset.filter(Q(in_stock__lte=0))
 
     # unallocated_stock filter
     unallocated_stock = rest_filters.BooleanFilter(label='Unallocated stock', method='filter_unallocated_stock')
@@ -888,8 +884,7 @@ class PartFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.filter(Q(unallocated_stock__gt=0))
-        else:
-            return queryset.filter(Q(unallocated_stock__lte=0))
+        return queryset.filter(Q(unallocated_stock__lte=0))
 
     convert_from = rest_filters.ModelChoiceFilter(label="Can convert from", queryset=Part.objects.all(), method='filter_convert_from')
 
@@ -943,8 +938,7 @@ class PartFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q_a | q_b)
-        else:
-            return queryset.filter(q_a | q_b)
+        return queryset.filter(q_a | q_b)
 
     stocktake = rest_filters.BooleanFilter(label="Has stocktake", method='filter_has_stocktake')
 
@@ -953,8 +947,7 @@ class PartFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(last_stocktake=None)
-        else:
-            return queryset.filter(last_stocktake=None)
+        return queryset.filter(last_stocktake=None)
 
     stock_to_build = rest_filters.BooleanFilter(label='Required for Build Order', method='filter_stock_to_build')
 
@@ -964,9 +957,8 @@ class PartFilter(rest_filters.FilterSet):
         if str2bool(value):
             # Return parts which are required for a build order, but have not yet been allocated
             return queryset.filter(required_for_build_orders__gt=F('allocated_to_build_orders'))
-        else:
-            # Return parts which are not required for a build order, or have already been allocated
-            return queryset.filter(required_for_build_orders__lte=F('allocated_to_build_orders'))
+        # Return parts which are not required for a build order, or have already been allocated
+        return queryset.filter(required_for_build_orders__lte=F('allocated_to_build_orders'))
 
     depleted_stock = rest_filters.BooleanFilter(label='Depleted Stock', method='filter_depleted_stock')
 
@@ -975,8 +967,7 @@ class PartFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.filter(Q(in_stock=0) & ~Q(stock_item_count=0))
-        else:
-            return queryset.exclude(Q(in_stock=0) & ~Q(stock_item_count=0))
+        return queryset.exclude(Q(in_stock=0) & ~Q(stock_item_count=0))
 
     is_template = rest_filters.BooleanFilter()
 
@@ -1095,8 +1086,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
             return self.get_paginated_response(data)
         elif request.is_ajax():
             return JsonResponse(data, safe=False)
-        else:
-            return Response(data)
+        return Response(data)
 
     def filter_queryset(self, queryset):
         """Perform custom filtering of the queryset"""
@@ -1301,10 +1291,9 @@ class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
         if not part.active:
             # Delete
             return super(PartDetail, self).destroy(request, *args, **kwargs)
-        else:
-            # Return 405 error
-            message = 'Part is active: cannot delete'
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
+        # Return 405 error
+        message = 'Part is active: cannot delete'
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
 
     def update(self, request, *args, **kwargs):
         """Custom update functionality for Part instance.
@@ -1382,8 +1371,7 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(Q(choices=None) | Q(choices=''))
-        else:
-            return queryset.filter(Q(choices=None) | Q(choices=''))
+        return queryset.filter(Q(choices=None) | Q(choices=''))
 
     has_units = rest_filters.BooleanFilter(
         method='filter_has_units',
@@ -1395,8 +1383,7 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(Q(units=None) | Q(units=''))
-        else:
-            return queryset.filter(Q(units=None) | Q(units=''))
+        return queryset.filter(Q(units=None) | Q(units=''))
 
 
 class PartParameterTemplateList(ListCreateAPI):
@@ -1646,8 +1633,7 @@ class BomFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.filter(available_stock__gt=0)
-        else:
-            return queryset.filter(available_stock=0)
+        return queryset.filter(available_stock=0)
 
     on_order = rest_filters.BooleanFilter(label="On order", method="filter_on_order")
 
@@ -1656,8 +1642,7 @@ class BomFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.filter(on_order__gt=0)
-        else:
-            return queryset.filter(on_order=0)
+        return queryset.filter(on_order=0)
 
     has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method="filter_has_pricing")
 
@@ -1669,8 +1654,7 @@ class BomFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q_a | q_b)
-        else:
-            return queryset.filter(q_a | q_b)
+        return queryset.filter(q_a | q_b)
 
 
 class BomMixin:
@@ -1745,8 +1729,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
             return self.get_paginated_response(data)
         elif request.is_ajax():
             return JsonResponse(data, safe=False)
-        else:
-            return Response(data)
+        return Response(data)
 
     def filter_queryset(self, queryset):
         """Custom query filtering for the BomItem list API"""

@@ -115,8 +115,7 @@ class MetaBase:
 
         if config:
             return config.active
-        else:
-            return False  # pragma: no cover
+        return False  # pragma: no cover
 
 
 class MixinBase:

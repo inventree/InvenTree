@@ -21,8 +21,7 @@ def get_unit_registry():
     # Cache the unit registry for speedier access
     if _unit_registry is None:
         return reload_unit_registry()
-    else:
-        return _unit_registry
+    return _unit_registry
 
 
 def reload_unit_registry():
@@ -148,8 +147,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
         return magnitude
     elif unit or value.units:
         return ureg.Quantity(magnitude, unit or value.units)
-    else:
-        return ureg.Quantity(magnitude)
+    return ureg.Quantity(magnitude)
 
 
 def is_dimensionless(value):

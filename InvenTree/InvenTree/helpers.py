@@ -109,15 +109,13 @@ def getLogoImage(as_file=False, custom=True):
         if storage is not None:
             if as_file:
                 return f"file://{storage.path(settings.CUSTOM_LOGO)}"
-            else:
-                return storage.url(settings.CUSTOM_LOGO)
+            return storage.url(settings.CUSTOM_LOGO)
 
     # If we have got to this point, return the default logo
     if as_file:
         path = settings.STATIC_ROOT.joinpath('img/inventree.png')
         return f"file://{path}"
-    else:
-        return getStaticUrl('img/inventree.png')
+    return getStaticUrl('img/inventree.png')
 
 
 def getSplashScren(custom=True):
@@ -159,8 +157,7 @@ def str2bool(text, test=True):
     """
     if test:
         return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', 'on', ]
-    else:
-        return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
+    return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
 
 
 def str2int(text, default=None):
@@ -185,8 +182,7 @@ def is_bool(text):
         return True
     elif str2bool(text, False):
         return True
-    else:
-        return False
+    return False
 
 
 def isNull(text):

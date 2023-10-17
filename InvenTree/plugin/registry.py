@@ -411,8 +411,7 @@ class PluginsRegistry:
         if install_plugins_file():
             settings.PLUGIN_FILE_CHECKED = True
             return 'first_run'
-        else:
-            return False
+        return False
 
     # endregion
 
