@@ -114,6 +114,7 @@ class RuleSet(models.Model):
         ],
         'stock_location': [
             'stock_stocklocation',
+            'stock_stocklocationtype',
             'label_stocklocationlabel',
             'report_stocklocationreport'
         ],

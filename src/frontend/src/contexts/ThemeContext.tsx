@@ -8,9 +8,7 @@ import {
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
-import { QueryClientProvider } from '@tanstack/react-query';
 
-import { queryClient } from '../App';
 import { QrCodeModal } from '../components/modals/QrCodeModal';
 import { useLocalState } from '../states/LocalState';
 
@@ -60,14 +58,12 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
     >
       <MantineProvider theme={myTheme} withGlobalStyles withNormalizeCSS>
         <Notifications />
-        <QueryClientProvider client={queryClient}>
-          <ModalsProvider
-            labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
-            modals={{ qr: QrCodeModal }}
-          >
-            {children}
-          </ModalsProvider>
-        </QueryClientProvider>
+        <ModalsProvider
+          labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
+          modals={{ qr: QrCodeModal }}
+        >
+          {children}
+        </ModalsProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   );

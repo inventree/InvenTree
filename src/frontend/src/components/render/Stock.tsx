@@ -6,24 +6,24 @@ import { RenderInlineModel } from './Instance';
  * Inline rendering of a single StockLocation instance
  */
 export function RenderStockLocation({
-  location
+  instance
 }: {
-  location: any;
+  instance: any;
 }): ReactNode {
   return (
     <RenderInlineModel
-      primary={location.name}
-      secondary={location.description}
+      primary={instance.name}
+      secondary={instance.description}
     />
   );
 }
 
-export function RenderStockItem({ item }: { item: any }): ReactNode {
+export function RenderStockItem({ instance }: { instance: any }): ReactNode {
   return (
     <RenderInlineModel
-      primary={item.part_detail?.full_name}
-      secondary={item.quantity}
-      image={item.part_detail?.thumbnail || item.part_detail?.image}
+      primary={instance.part_detail?.full_name}
+      secondary={instance.quantity}
+      image={instance.part_detail?.thumbnail || instance.part_detail?.image}
     />
   );
 }

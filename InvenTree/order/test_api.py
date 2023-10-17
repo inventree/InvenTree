@@ -982,9 +982,9 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(stock_1.count(), 1)
         self.assertEqual(stock_2.count(), 1)
 
-        # Different location for each received item
+        # Same location for each received item, as overall 'location' field is provided
         self.assertEqual(stock_1.last().location.pk, 1)
-        self.assertEqual(stock_2.last().location.pk, 2)
+        self.assertEqual(stock_2.last().location.pk, 1)
 
         # Barcodes should have been assigned to the stock items
         self.assertTrue(StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-123').exists())
@@ -1562,7 +1562,7 @@ class SalesOrderDownloadTest(OrderTest):
             self.assertTrue(isinstance(file, io.BytesIO))
 
     def test_download_csv(self):
-        """Tesst that the list of sales orders can be downloaded as a .csv file"""
+        """Test that the list of sales orders can be downloaded as a .csv file"""
         url = reverse('api-so-list')
 
         required_cols = [
@@ -1846,7 +1846,7 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(self.shipment.delivery_date, datetime(2023, 12, 5).date())
         self.assertTrue(self.shipment.is_delivered())
 
-    def test_shipment_deliverydate(self):
+    def test_shipment_delivery_date(self):
         """Test delivery date functions via API."""
         url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
 
@@ -1891,7 +1891,7 @@ class SalesOrderAllocateTest(OrderTest):
         url = reverse('api-so-shipment-list')
 
         # Count before creation
-        countbefore = models.SalesOrderShipment.objects.count()
+        count_before = models.SalesOrderShipment.objects.count()
 
         # Create some new shipments via the API
         for order in models.SalesOrder.objects.all():
@@ -1922,7 +1922,7 @@ class SalesOrderAllocateTest(OrderTest):
         # List *all* shipments
         response = self.get(url, expected_code=200)
 
-        self.assertEqual(len(response.data), countbefore + 3 * models.SalesOrder.objects.count())
+        self.assertEqual(len(response.data), count_before + 3 * models.SalesOrder.objects.count())
 
 
 class ReturnOrderTests(InvenTreeAPITestCase):

@@ -30,12 +30,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { RenderInstance } from '../render/Instance';
+import { ModelInformationDict, ModelType } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
-  name: string;
-  title: string;
+  name: ModelType;
   enabled: boolean;
   parameters: any;
   results?: any;
@@ -57,16 +58,14 @@ function settingsCheck(setting: string) {
 function buildSearchQueries(): SearchQuery[] {
   return [
     {
-      name: 'part',
-      title: t`Parts`,
+      name: ModelType.part,
       parameters: {},
       enabled:
         permissionCheck('part.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_PARTS')
     },
     {
-      name: 'supplierpart',
-      title: t`Supplier Parts`,
+      name: ModelType.supplierpart,
       parameters: {
         part_detail: true,
         supplier_detail: true,
@@ -78,8 +77,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS')
     },
     {
-      name: 'manufacturerpart',
-      title: t`Manufacturer Parts`,
+      name: ModelType.manufacturerpart,
       parameters: {
         part_detail: true,
         supplier_detail: true,
@@ -91,16 +89,14 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS')
     },
     {
-      name: 'partcategory',
-      title: t`Part Categories`,
+      name: ModelType.partcategory,
       parameters: {},
       enabled:
         permissionCheck('part_category.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_CATEGORIES')
     },
     {
-      name: 'stockitem',
-      title: t`Stock Items`,
+      name: ModelType.stockitem,
       parameters: {
         part_detail: true,
         location_detail: true
@@ -110,16 +106,14 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_STOCK')
     },
     {
-      name: 'stocklocation',
-      title: t`Stock Locations`,
+      name: ModelType.stocklocation,
       parameters: {},
       enabled:
         permissionCheck('stock_location.view') &&
         settingsCheck('SEARCH_PREVIEW_SHOW_LOCATIONS')
     },
     {
-      name: 'build',
-      title: t`Build Orders`,
+      name: ModelType.build,
       parameters: {
         part_detail: true
       },
@@ -128,8 +122,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
     },
     {
-      name: 'company',
-      title: t`Companies`,
+      name: ModelType.company,
       parameters: {},
       enabled:
         (permissionCheck('sales_order.view') ||
@@ -137,8 +130,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck('SEARCH_PREVIEW_SHOW_COMPANIES')
     },
     {
-      name: 'purchaseorder',
-      title: t`Purchase Orders`,
+      name: ModelType.purchaseorder,
       parameters: {
         supplier_detail: true
       },
@@ -147,8 +139,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
     },
     {
-      name: 'salesorder',
-      title: t`Sales Orders`,
+      name: ModelType.salesorder,
       parameters: {
         customer_detail: true
       },
@@ -157,8 +148,7 @@ function buildSearchQueries(): SearchQuery[] {
         settingsCheck(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
     },
     {
-      name: 'returnorder',
-      title: t`Return Orders`,
+      name: ModelType.returnorder,
       parameters: {
         customer_detail: true
       },
@@ -178,19 +168,20 @@ function QueryResultGroup({
   onResultClick
 }: {
   query: SearchQuery;
-  onRemove: (query: string) => void;
-  onResultClick: (query: string, pk: number) => void;
+  onRemove: (query: ModelType) => void;
+  onResultClick: (query: ModelType, pk: number) => void;
 }) {
   if (query.results.count == 0) {
     return null;
   }
 
+  const model = ModelInformationDict[query.name];
   return (
     <Paper shadow="sm" radius="xs" p="md">
       <Stack key={query.name}>
         <Group position="apart" noWrap={true}>
           <Group position="left" spacing={5} noWrap={true}>
-            <Text size="lg">{query.title}</Text>
+            <Text size="lg">{model.label_multiple}</Text>
             <Text size="sm" italic>
               {' '}
               - {query.results.count} <Trans>results</Trans>
@@ -274,7 +265,7 @@ export function SearchDrawer({
     });
 
     return api
-      .post(`/search/`, params)
+      .post(apiUrl(ApiPaths.api_search), params)
       .then(function (response) {
         return response.data;
       })
@@ -320,7 +311,7 @@ export function SearchDrawer({
   }, [searchQuery.data]);
 
   // Callback to remove a set of results from the list
-  function removeResults(query: string) {
+  function removeResults(query: ModelType) {
     setQueryResults(queryResults.filter((q) => q.name != query));
   }
 
@@ -333,9 +324,11 @@ export function SearchDrawer({
   const navigate = useNavigate();
 
   // Callback when one of the search results is clicked
-  function onResultClick(query: string, pk: number) {
+  function onResultClick(query: ModelType, pk: number) {
     closeDrawer();
-    navigate(`/${query}/${pk}/`);
+    navigate(
+      ModelInformationDict[query].url_detail.replace(':pk', pk.toString())
+    );
   }
 
   return (

@@ -5,16 +5,12 @@ import { RenderInlineModel } from './Instance';
 /**
  * Inline rendering of a single BuildOrder instance
  */
-export function RenderBuildOrder({
-  buildorder
-}: {
-  buildorder: any;
-}): ReactNode {
+export function RenderBuildOrder({ instance }: { instance: any }): ReactNode {
   return (
     <RenderInlineModel
-      primary={buildorder.reference}
-      secondary={buildorder.title}
-      image={buildorder.part_detail?.thumbnail || buildorder.part_detail?.image}
+      primary={instance.reference}
+      secondary={instance.title}
+      image={instance.part_detail?.thumbnail || instance.part_detail?.image}
     />
   );
 }

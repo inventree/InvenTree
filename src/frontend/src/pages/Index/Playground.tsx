@@ -15,6 +15,7 @@ import {
   partCategoryFields
 } from '../../functions/forms/PartForms';
 import { createStockItem } from '../../functions/forms/StockForms';
+import { ApiPaths } from '../../states/ApiState';
 
 // Generate some example forms using the modal API forms interface
 function ApiFormsPlayground() {
@@ -22,7 +23,7 @@ function ApiFormsPlayground() {
 
   const editCategoryForm: ApiFormProps = {
     name: 'partcategory',
-    url: '/part/category/',
+    url: ApiPaths.category_list,
     pk: 2,
     title: 'Edit Category',
     fields: fields
@@ -30,7 +31,7 @@ function ApiFormsPlayground() {
 
   const createAttachmentForm: ApiFormProps = {
     name: 'createattachment',
-    url: '/part/attachment/',
+    url: ApiPaths.part_attachment_list,
     title: 'Create Attachment',
     successMessage: 'Attachment uploaded',
     fields: {

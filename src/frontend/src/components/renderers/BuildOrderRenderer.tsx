@@ -21,7 +21,7 @@ export const BuildOrderRenderer = ({ pk }: { pk: string }) => {
   };
   return (
     <GeneralRenderer
-      api_key={ApiPaths.build_order_detail}
+      api_key={ApiPaths.build_order_list}
       api_ref="build_order"
       link={`/build/${pk}`}
       pk={pk}

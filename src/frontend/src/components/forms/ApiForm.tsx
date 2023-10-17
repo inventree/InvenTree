@@ -17,11 +17,8 @@ import { useState } from 'react';
 import { api } from '../../App';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
-import {
-  ApiFormField,
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from './fields/ApiFormField';
+import { ApiPaths } from '../../states/ApiState';
+import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
 
 /**
  * Properties for the ApiForm component
@@ -45,8 +42,8 @@ import {
  */
 export interface ApiFormProps {
   name: string;
-  url: string;
-  pk?: number;
+  url: ApiPaths;
+  pk?: number | string | undefined;
   title: string;
   fields?: ApiFormFieldSet;
   cancelText?: string;
@@ -54,6 +51,7 @@ export interface ApiFormProps {
   submitColor?: string;
   cancelColor?: string;
   fetchInitialData?: boolean;
+  ignorePermissionCheck?: boolean;
   method?: string;
   preFormContent?: JSX.Element | (() => JSX.Element);
   postFormContent?: JSX.Element | (() => JSX.Element);
@@ -210,6 +208,7 @@ export function ApiForm({
                 // Data validation error
                 form.setErrors(error.response.data);
                 setNonFieldErrors(error.response.data.non_field_errors ?? []);
+                setIsLoading(false);
                 break;
               default:
                 // Unexpected state on form error

@@ -3,7 +3,7 @@ import { Input } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
 
@@ -65,11 +65,6 @@ export function RelatedModelField({
       if (formPk != null) {
         let url = (definition.api_url || '') + formPk + '/';
 
-        // TODO: Fix this!!
-        if (url.startsWith('/api')) {
-          url = url.substring(4);
-        }
-
         api.get(url).then((response) => {
           let data = response.data;
 
@@ -105,13 +100,6 @@ export function RelatedModelField({
         return null;
       }
 
-      // TODO: Fix this in the api controller
-      let url = definition.api_url;
-
-      if (url.startsWith('/api')) {
-        url = url.substring(4);
-      }
-
       let filters = definition.filters ?? {};
 
       if (definition.adjustFilters) {
@@ -126,7 +114,7 @@ export function RelatedModelField({
       };
 
       return api
-        .get(url, {
+        .get(definition.api_url, {
           params: params
         })
         .then((response) => {
@@ -160,7 +148,7 @@ export function RelatedModelField({
     // TODO: If a custom render function is provided, use that
 
     return (
-      <RenderInstance instance={data} model={definition.model ?? 'undefined'} />
+      <RenderInstance instance={data} model={definition.model ?? undefined} />
     );
   }
 

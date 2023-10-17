@@ -6,14 +6,18 @@ import { RenderInlineModel } from './Instance';
 /**
  * Inline rendering of a single PurchaseOrder instance
  */
-export function RenderPurchaseOrder({ order }: { order: any }): ReactNode {
-  let supplier = order.supplier_detail || {};
+export function RenderPurchaseOrder({
+  instance
+}: {
+  instance: any;
+}): ReactNode {
+  let supplier = instance.supplier_detail || {};
 
   // TODO: Handle URL
   return (
     <RenderInlineModel
-      primary={order.reference}
-      secondary={order.description}
+      primary={instance.reference}
+      secondary={instance.description}
       image={supplier.thumnbnail || supplier.image}
     />
   );
@@ -22,13 +26,13 @@ export function RenderPurchaseOrder({ order }: { order: any }): ReactNode {
 /**
  * Inline rendering of a single ReturnOrder instance
  */
-export function RenderReturnOrder({ order }: { order: any }): ReactNode {
-  let customer = order.customer_detail || {};
+export function RenderReturnOrder({ instance }: { instance: any }): ReactNode {
+  let customer = instance.customer_detail || {};
 
   return (
     <RenderInlineModel
-      primary={order.reference}
-      secondary={order.description}
+      primary={instance.reference}
+      secondary={instance.description}
       image={customer.thumnbnail || customer.image}
     />
   );
@@ -37,15 +41,15 @@ export function RenderReturnOrder({ order }: { order: any }): ReactNode {
 /**
  * Inline rendering of a single SalesOrder instance
  */
-export function RenderSalesOrder({ order }: { order: any }): ReactNode {
-  let customer = order.customer_detail || {};
+export function RenderSalesOrder({ instance }: { instance: any }): ReactNode {
+  let customer = instance.customer_detail || {};
 
   // TODO: Handle URL
 
   return (
     <RenderInlineModel
-      primary={order.reference}
-      secondary={order.description}
+      primary={instance.reference}
+      secondary={instance.description}
       image={customer.thumnbnail || customer.image}
     />
   );
@@ -55,16 +59,16 @@ export function RenderSalesOrder({ order }: { order: any }): ReactNode {
  * Inline rendering of a single SalesOrderAllocation instance
  */
 export function RenderSalesOrderShipment({
-  shipment
+  instance
 }: {
-  shipment: any;
+  instance: any;
 }): ReactNode {
-  let order = shipment.sales_order_detail || {};
+  let order = instance.sales_order_detail || {};
 
   return (
     <RenderInlineModel
       primary={order.reference}
-      secondary={t`Shipment` + ` ${shipment.description}`}
+      secondary={t`Shipment` + ` ${instance.description}`}
     />
   );
 }

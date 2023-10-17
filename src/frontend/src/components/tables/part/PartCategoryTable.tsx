@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -45,7 +46,7 @@ export function PartCategoryTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url="part/category/"
+      url={apiUrl(ApiPaths.category_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{

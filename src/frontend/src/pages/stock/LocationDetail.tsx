@@ -9,6 +9,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { StockLocationTable } from '../../components/tables/stock/StockLocationTable';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths } from '../../states/ApiState';
 
 export default function Stock() {
   const { id } = useParams();
@@ -17,14 +18,20 @@ export default function Stock() {
     instance: location,
     refreshInstance,
     instanceQuery
-  } = useInstance('/stock/location/', id, { path_detail: true });
+  } = useInstance({
+    endpoint: ApiPaths.stock_location_list,
+    pk: id,
+    params: {
+      path_detail: true
+    }
+  });
 
   const locationPanels: PanelType[] = useMemo(() => {
     return [
       {
         name: 'stock-items',
         label: t`Stock Items`,
-        icon: <IconPackages size="18" />,
+        icon: <IconPackages />,
         content: (
           <StockItemTable
             params={{
@@ -35,8 +42,8 @@ export default function Stock() {
       },
       {
         name: 'sublocations',
-        label: t`Sublocations`,
-        icon: <IconSitemap size="18" />,
+        label: t`Stock Locations`,
+        icon: <IconSitemap />,
         content: (
           <StockLocationTable
             params={{
@@ -68,7 +75,7 @@ export default function Stock() {
           detail={<Text>{location.name ?? 'Top level'}</Text>}
           breadcrumbs={breadcrumbs}
         />
-        <PanelGroup panels={locationPanels} />
+        <PanelGroup pageKey="stocklocation" panels={locationPanels} />
       </Stack>
     </>
   );

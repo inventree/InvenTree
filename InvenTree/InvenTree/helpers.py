@@ -120,7 +120,7 @@ def getLogoImage(as_file=False, custom=True):
         return getStaticUrl('img/inventree.png')
 
 
-def getSplashScren(custom=True):
+def getSplashScreen(custom=True):
     """Return the InvenTree splash screen, or a custom splash if available"""
 
     static_storage = StaticFilesStorage()
@@ -333,7 +333,7 @@ def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
         object_type: string describing the object type e.g. 'StockItem'
         object_id: ID (Primary Key) of the object in the database
         object_url: url for JSON API detail view of the object
-        data: Python dict object containing extra datawhich will be rendered to string (must only contain stringable values)
+        data: Python dict object containing extra data which will be rendered to string (must only contain stringable values)
 
     Returns:
         json string of the supplied data plus some other data
@@ -441,7 +441,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     - Individual serials are separated by comma: 1, 2, 3, 6,22
     - Sequential ranges with provided limits are separated by hyphens: 1-5, 20 - 40
     - The "next" available serial number can be specified with the tilde (~) character
-    - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
+    - Serial numbers can be supplied as <start>+ for getting all expected numbers starting from <start>
     - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
 
     Actual generation of sequential serials is passed to the 'validation' plugin mixin,
