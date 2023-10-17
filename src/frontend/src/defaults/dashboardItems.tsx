@@ -119,7 +119,7 @@ export const dashboardItems = [
     id: 'news',
     text: t`Current News`,
     icon: 'fa-newspaper',
-    url: 'news',
+    url: apiUrl(ApiPaths.news),
     params: {}
   }
 ];
