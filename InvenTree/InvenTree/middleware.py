@@ -108,10 +108,8 @@ class AuthRequiredMiddleware(object):
                     # Save the 'next' parameter to pass through to the login view
 
                     return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
-
-                else:
-                    # Return a 401 (Unauthorized) response code for this request
-                    return HttpResponse('Unauthorized', status=401)
+                # Return a 401 (Unauthorized) response code for this request
+                return HttpResponse('Unauthorized', status=401)
 
         response = self.get_response(request)
 

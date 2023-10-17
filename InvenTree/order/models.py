@@ -1184,8 +1184,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         """
         if self.part is None:
             return None
-        else:
-            return self.part.part
+        return self.part.part
 
     part = models.ForeignKey(
         SupplierPart, on_delete=models.SET_NULL,

@@ -308,8 +308,7 @@ class RuleSet(models.Model):
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
                    f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
                    f'c: {str(self.can_change).ljust(5)} | d: {str(self.can_delete).ljust(5)}'
-        else:
-            return self.name
+        return self.name
 
     def save(self, *args, **kwargs):
         """Intercept the 'save' functionality to make additional permission changes:

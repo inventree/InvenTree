@@ -206,9 +206,8 @@ class GlobalSettingsPermissions(permissions.BasePermission):
 
             if request.method in ['GET', 'HEAD', 'OPTIONS']:
                 return True
-            else:
-                # Any other methods require staff access permissions
-                return user.is_staff
+            # Any other methods require staff access permissions
+            return user.is_staff
 
         except AttributeError:  # pragma: no cover
             return False

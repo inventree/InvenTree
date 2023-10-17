@@ -231,8 +231,7 @@ class ReferenceIndexingMixin(models.Model):
 
         if query.exists():
             return query.first()
-        else:
-            return None
+        return None
 
     @classmethod
     def get_next_reference(cls):
@@ -471,8 +470,7 @@ class InvenTreeAttachment(models.Model):
         """Human name for attachment."""
         if self.attachment is not None:
             return os.path.basename(self.attachment.name)
-        else:
-            return str(self.link)
+        return str(self.link)
 
     attachment = models.FileField(upload_to=rename_attachment, verbose_name=_('Attachment'),
                                   help_text=_('Select file to attach'),
@@ -502,8 +500,7 @@ class InvenTreeAttachment(models.Model):
         """Base name/path for attachment."""
         if self.attachment:
             return os.path.basename(self.attachment.name)
-        else:
-            return None
+        return None
 
     @basename.setter
     def basename(self, fn):

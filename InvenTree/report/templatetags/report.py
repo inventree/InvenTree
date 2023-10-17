@@ -64,8 +64,7 @@ def getkey(container: dict, key):
 
     if key in container:
         return container[key]
-    else:
-        return None
+    return None
 
 
 @register.simple_tag()
@@ -93,8 +92,7 @@ def asset(filename):
 
     if debug_mode:
         return os.path.join(settings.MEDIA_URL, 'report', 'assets', filename)
-    else:
-        return f"file://{full_path}"
+    return f"file://{full_path}"
 
 
 @register.simple_tag()
@@ -137,8 +135,7 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         # In debug mode, return a web path
         if exists:
             return os.path.join(settings.MEDIA_URL, filename)
-        else:
-            return os.path.join(settings.STATIC_URL, 'img', replacement_file)
+        return os.path.join(settings.STATIC_URL, 'img', replacement_file)
     else:
         # Return file path
         if exists:
@@ -209,8 +206,7 @@ def part_parameter(part: Part, parameter_name: str):
     """
     if type(part) is Part:
         return part.get_parameter(parameter_name)
-    else:
-        return None
+    return None
 
 
 @register.simple_tag()

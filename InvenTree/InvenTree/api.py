@@ -207,10 +207,8 @@ class APIDownloadMixin:
         if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
             queryset = self.filter_queryset(self.get_queryset())
             return self.download_queryset(queryset, export_format)
-
-        else:
-            # Default to the parent class implementation
-            return super().get(request, *args, **kwargs)
+        # Default to the parent class implementation
+        return super().get(request, *args, **kwargs)
 
     def download_queryset(self, queryset, export_format):
         """This function must be implemented to provide a downloadFile request."""

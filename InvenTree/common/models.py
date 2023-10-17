@@ -404,8 +404,7 @@ class BaseInvenTreeSetting(models.Model):
 
         if settings is not None and key in settings:
             return settings[key]
-        else:
-            return {}
+        return {}
 
     @classmethod
     def get_setting_name(cls, key, **kwargs):
@@ -458,8 +457,7 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(default):
             return default()
-        else:
-            return default
+        return default
 
     @classmethod
     def get_setting_choices(cls, key, **kwargs):
@@ -881,9 +879,7 @@ class BaseInvenTreeSetting(models.Model):
 
         elif self.is_model():
             return 'related field'
-
-        else:
-            return 'string'
+        return 'string'
 
     @classmethod
     def validator_is_bool(cls, validator):
@@ -1891,8 +1887,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         if options:
             return options.get('requires_restart', False)
-        else:
-            return False
+        return False
 
 
 def label_printer_options():
@@ -2430,8 +2425,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
     if pb_found:
         cost = pb_cost * quantity
         return InvenTree.helpers.normalize(cost + instance.base_cost)
-    else:
-        return None
+    return None
 
 
 class ColorTheme(models.Model):

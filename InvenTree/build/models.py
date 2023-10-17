@@ -314,9 +314,8 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """Return all Build Order objects under this one."""
         if cascade:
             return Build.objects.filter(parent=self.pk)
-        else:
-            descendants = self.get_descendants(include_self=True)
-            Build.objects.filter(parent__pk__in=[d.pk for d in descendants])
+        descendants = self.get_descendants(include_self=True)
+        Build.objects.filter(parent__pk__in=[d.pk for d in descendants])
 
     def sub_build_count(self, cascade=True):
         """Return the number of sub builds under this one.
@@ -957,8 +956,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
                 return 1
             elif item.part in variant_parts:
                 return 2
-            else:
-                return 3
+            return 3
 
         new_items = []
 

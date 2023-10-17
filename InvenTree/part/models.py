@@ -765,15 +765,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Return the URL of the image for this part."""
         if self.image:
             return helpers.getMediaUrl(self.image.url)
-        else:
-            return helpers.getBlankImage()
+        return helpers.getBlankImage()
 
     def get_thumbnail_url(self):
         """Return the URL of the image thumbnail for this part."""
         if self.image:
             return helpers.getMediaUrl(self.image.thumbnail.url)
-        else:
-            return helpers.getBlankThumbnail()
+        return helpers.getBlankThumbnail()
 
     def validate_unique(self, exclude=None):
         """Validate that this Part instance is 'unique'.
@@ -1906,12 +1904,10 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         elif bom_price_range is None:
             return buy_price_range
-
-        else:
-            return (
-                min(buy_price_range[0], bom_price_range[0]),
-                max(buy_price_range[1], bom_price_range[1])
-            )
+        return (
+            min(buy_price_range[0], bom_price_range[0]),
+            max(buy_price_range[1], bom_price_range[1])
+        )
 
     base_cost = models.DecimalField(max_digits=19, decimal_places=6, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
@@ -3102,8 +3098,7 @@ class PartStocktakeReport(models.Model):
         """Return the URL for the associaed report file for download"""
         if self.report:
             return self.report.url
-        else:
-            return None
+        return None
 
     date = models.DateField(
         verbose_name=_('Date'),
@@ -3644,8 +3639,7 @@ class PartCategoryParameterTemplate(MetadataMixin, models.Model):
         """String representation of a PartCategoryParameterTemplate (admin interface)."""
         if self.default_value:
             return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
-        else:
-            return f'{self.category.name} | {self.parameter_template.name}'
+        return f'{self.category.name} | {self.parameter_template.name}'
 
     category = models.ForeignKey(PartCategory,
                                  on_delete=models.CASCADE,

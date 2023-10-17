@@ -171,8 +171,7 @@ class LabelPrintMixin(LabelFilterMixin):
             if plugin.is_active():
                 # Only return the plugin if it is enabled!
                 return plugin
-            else:
-                raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
+            raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
         else:
             raise NotFound(f"Plugin '{plugin_key}' not found")
 
@@ -196,8 +195,7 @@ class LabelPrintMixin(LabelFilterMixin):
         if isinstance(result, JsonResponse):
             result['plugin'] = plugin.plugin_slug()
             return result
-        else:
-            raise ValidationError(f"Plugin '{plugin.plugin_slug()}' returned invalid response type '{type(result)}'")
+        raise ValidationError(f"Plugin '{plugin.plugin_slug()}' returned invalid response type '{type(result)}'")
 
 
 class StockItemLabelMixin:

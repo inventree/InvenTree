@@ -1842,9 +1842,8 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             self.delete()
 
             return False
-        else:
-            self.save()
-            return True
+        self.save()
+        return True
 
     @transaction.atomic
     def stocktake(self, count, user, notes=''):
@@ -2234,8 +2233,7 @@ class StockItemTracking(models.Model):
         """Return label."""
         if self.tracking_type in StockHistoryCode.keys():
             return StockHistoryCode.label(self.tracking_type)
-        else:
-            return self.title
+        return self.title
 
     tracking_type = models.IntegerField(
         default=StockHistoryCode.LEGACY,

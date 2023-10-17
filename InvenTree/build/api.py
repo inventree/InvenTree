@@ -46,8 +46,7 @@ class BuildFilter(rest_filters.FilterSet):
         """Filter the queryset to either include or exclude orders which are active."""
         if str2bool(value):
             return queryset.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
-        else:
-            return queryset.exclude(status__in=BuildStatusGroups.ACTIVE_CODES)
+        return queryset.exclude(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     overdue = rest_filters.BooleanFilter(label='Build is overdue', method='filter_overdue')
 
@@ -55,8 +54,7 @@ class BuildFilter(rest_filters.FilterSet):
         """Filter the queryset to either include or exclude orders which are overdue."""
         if str2bool(value):
             return queryset.filter(Build.OVERDUE_FILTER)
-        else:
-            return queryset.exclude(Build.OVERDUE_FILTER)
+        return queryset.exclude(Build.OVERDUE_FILTER)
 
     assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
 
@@ -69,8 +67,7 @@ class BuildFilter(rest_filters.FilterSet):
 
         if value:
             return queryset.filter(responsible__in=owners)
-        else:
-            return queryset.exclude(responsible__in=owners)
+        return queryset.exclude(responsible__in=owners)
 
     assigned_to = rest_filters.NumberFilter(label='responsible', method='filter_responsible')
 
@@ -102,8 +99,7 @@ class BuildFilter(rest_filters.FilterSet):
         """Filter by whether or not the order has a project code"""
         if str2bool(value):
             return queryset.exclude(project_code=None)
-        else:
-            return queryset.filter(project_code=None)
+        return queryset.filter(project_code=None)
 
 
 class BuildList(APIDownloadMixin, ListCreateAPI):
@@ -292,8 +288,7 @@ class BuildLineFilter(rest_filters.FilterSet):
         """Filter by whether each BuildLine is fully allocated"""
         if str2bool(value):
             return queryset.filter(allocated__gte=F('quantity'))
-        else:
-            return queryset.filter(allocated__lt=F('quantity'))
+        return queryset.filter(allocated__lt=F('quantity'))
 
     available = rest_filters.BooleanFilter(label=_('Available'), method='filter_available')
 
@@ -310,8 +305,7 @@ class BuildLineFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.filter(flt)
-        else:
-            return queryset.exclude(flt)
+        return queryset.exclude(flt)
 
 
 class BuildLineEndpoint:
@@ -508,8 +502,7 @@ class BuildItemFilter(rest_filters.FilterSet):
         """Filter the queryset based on whether build items are tracked"""
         if str2bool(value):
             return queryset.exclude(install_into=None)
-        else:
-            return queryset.filter(install_into=None)
+        return queryset.filter(install_into=None)
 
 
 class BuildItemList(ListCreateAPI):

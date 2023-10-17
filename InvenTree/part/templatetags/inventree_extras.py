@@ -486,10 +486,8 @@ def primitive_to_javascript(primitive):
 
     elif type(primitive) in [int, float]:
         return primitive
-
-    else:
-        # Wrap with quotes
-        return format_html("'{}'", primitive)  # noqa: P103
+    # Wrap with quotes
+    return format_html("'{}'", primitive)  # noqa: P103
 
 
 @register.simple_tag()
@@ -497,8 +495,7 @@ def js_bool(val):
     """Return a javascript boolean value (true or false)"""
     if val:
         return 'true'
-    else:
-        return 'false'
+    return 'false'
 
 
 @register.filter

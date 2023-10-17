@@ -195,15 +195,13 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         """Return the URL of the image for this company."""
         if self.image:
             return InvenTree.helpers.getMediaUrl(self.image.url)
-        else:
-            return InvenTree.helpers.getBlankImage()
+        return InvenTree.helpers.getBlankImage()
 
     def get_thumbnail_url(self):
         """Return the URL for the thumbnail image for this Company."""
         if self.image:
             return InvenTree.helpers.getMediaUrl(self.image.thumbnail.url)
-        else:
-            return InvenTree.helpers.getBlankThumbnail()
+        return InvenTree.helpers.getBlankThumbnail()
 
     @property
     def parts(self):
@@ -849,8 +847,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
         if q is None or r is None:
             return 0
-        else:
-            return max(q - r, 0)
+        return max(q - r, 0)
 
     def purchase_orders(self):
         """Returns a list of purchase orders relating to this supplier part."""
