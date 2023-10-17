@@ -193,33 +193,6 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
 
   const { tableKey, refreshTable } = useTableRefresh('part');
 
-  // Callback function for generating set of row actions
-  function partTableRowActions(record: any): RowAction[] {
-    let actions: RowAction[] = [];
-
-    actions.push({
-      title: t`Edit`,
-      onClick: () => {
-        editPart({
-          part_id: record.pk,
-          callback: () => {
-            // TODO: Reload the table, somehow?
-            notYetImplemented();
-          }
-        });
-      }
-    });
-
-    actions.push({
-      title: t`Detail`,
-      onClick: () => {
-        navigate(`/part/${record.pk}/`);
-      }
-    });
-
-    return actions;
-  }
-
   const navigate = useNavigate();
 
   return (
@@ -231,10 +204,12 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
         ...props,
         enableDownload: true,
         customFilters: tableFilters,
-        rowActions: partTableRowActions,
         params: {
           ...props.params,
           category_detail: true
+        },
+        onRowClick: (record, index, event) => {
+          navigate(`/part/${record.pk}/`);
         }
       }}
     />
