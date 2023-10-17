@@ -22,7 +22,7 @@ export function DashboardItemProxy({
 }) {
   function fetchData() {
     return api
-      .get(`${apiUrl(url)}/?search=&offset=0&limit=25`, { params: params })
+      .get(`${apiUrl(url)}?search=&offset=0&limit=25`, { params: params })
       .then((res) => res.data);
   }
   const { isLoading, error, data, isFetching } = useQuery({
