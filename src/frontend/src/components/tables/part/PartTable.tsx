@@ -3,8 +3,6 @@ import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { editPart } from '../../../functions/forms/PartForms';
-import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
@@ -12,7 +10,6 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
 
 /**
  * Construct a list of columns for the part table
@@ -208,7 +205,7 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
           ...props.params,
           category_detail: true
         },
-        onRowClick: (record, index, event) => {
+        onRowClick: (record, _index, _event) => {
           navigate(`/part/${record.pk}/`);
         }
       }}

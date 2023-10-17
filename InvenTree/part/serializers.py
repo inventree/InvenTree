@@ -1478,7 +1478,8 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
             # At least one part column is required!
             raise serializers.ValidationError(_("No part column specified"))
 
-    def process_row(self, row):
+    @staticmethod
+    def process_row(row):
         """Process a single row from the loaded BOM file"""
         # Skip any rows which are at a lower "level"
         level = row.get('level', None)
