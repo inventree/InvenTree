@@ -289,11 +289,9 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             delete_child_categories: bool = False
             delete_parts: bool = False
 
-            if i == Target.move_subcategories_to_parent_delete_parts \
-                    or i == Target.delete_subcategories_delete_parts:
+            if i in (Target.move_subcategories_to_parent_delete_parts, Target.delete_subcategories_delete_parts):
                 delete_parts = True
-            if i == Target.delete_subcategories_move_parts_to_parent \
-                    or i == Target.delete_subcategories_delete_parts:
+            if i in (Target.delete_subcategories_move_parts_to_parent, Target.delete_subcategories_delete_parts):
                 delete_child_categories = True
 
             # Create a parent category
