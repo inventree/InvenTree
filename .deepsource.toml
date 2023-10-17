@@ -6,6 +6,10 @@ exclude_patterns = [
   "ci/**",
   "InvenTree/**/migrations/*.py"
 ]
+test_patterns = [
+  "test_.*.py"
+]
+
 
 [[analyzers]]
 name = "shell"
