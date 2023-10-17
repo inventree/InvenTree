@@ -433,7 +433,7 @@ def update_group_roles(group, debug=False):
         if rulename in rulesets:
             ruleset = rulesets[rulename]
         else:
-            ruleset = RuleSet.objects.create(group=group, name=rulename)
+            ruleset = RuleSet.objects.get_or_create(group=group, name=rulename)
 
         # Which database tables does this RuleSet touch?
         models = ruleset.get_models()
