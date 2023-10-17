@@ -44,13 +44,23 @@ class InvenTreeURLField(models.URLField):
         super().__init__(**kwargs)
 
 
-def money_kwargs():
+def money_kwargs(**kwargs):
     """Returns the database settings for MoneyFields."""
     from common.settings import currency_code_default, currency_code_mappings
 
-    kwargs = {}
-    kwargs['currency_choices'] = currency_code_mappings()
-    kwargs['default_currency'] = currency_code_default()
+    # Default values (if not specified)
+    if 'max_digits' not in kwargs:
+        kwargs['max_digits'] = 19
+
+    if 'decimal_places' not in kwargs:
+        kwargs['decimal_places'] = 6
+
+    if 'currency_choices' not in kwargs:
+        kwargs['currency_choices'] = currency_code_mappings()
+
+    if 'default_currency' not in kwargs:
+        kwargs['default_currency'] = currency_code_default()
+
     return kwargs
 
 
@@ -64,16 +74,8 @@ class InvenTreeModelMoneyField(ModelMoneyField):
             # remove currency information for a clean migration
             kwargs['default_currency'] = ''
             kwargs['currency_choices'] = []
-        else:
-            # set defaults
-            kwargs.update(money_kwargs())
 
-        # Default values (if not specified)
-        if 'max_digits' not in kwargs:
-            kwargs['max_digits'] = 19
-
-        if 'decimal_places' not in kwargs:
-            kwargs['decimal_places'] = 6
+        kwargs = money_kwargs(**kwargs)
 
         # Set a minimum value validator
         validators = kwargs.get('validators', [])
@@ -115,11 +117,8 @@ class InvenTreeMoneyField(MoneyField):
 
     def __init__(self, *args, **kwargs):
         """Override initial values with the real info from database."""
-        kwargs.update(money_kwargs())
 
-        kwargs['max_digits'] = 19
-        kwargs['decimal_places'] = 6
-
+        kwargs = money_kwargs(**kwargs)
         super().__init__(*args, **kwargs)
 
 
