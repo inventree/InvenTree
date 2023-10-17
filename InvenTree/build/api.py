@@ -100,7 +100,6 @@ class BuildFilter(rest_filters.FilterSet):
 
     def filter_has_project_code(self, queryset, name, value):
         """Filter by whether or not the order has a project code"""
-
         if str2bool(value):
             return queryset.exclude(project_code=None)
         else:
@@ -235,7 +234,6 @@ class BuildDetail(RetrieveUpdateDestroyAPI):
 
     def destroy(self, request, *args, **kwargs):
         """Only allow deletion of a BuildOrder if the build status is CANCELLED"""
-
         build = self.get_object()
 
         if build.status != BuildStatus.CANCELLED:
@@ -292,7 +290,6 @@ class BuildLineFilter(rest_filters.FilterSet):
 
     def filter_allocated(self, queryset, name, value):
         """Filter by whether each BuildLine is fully allocated"""
-
         if str2bool(value):
             return queryset.filter(allocated__gte=F('quantity'))
         else:
@@ -309,7 +306,6 @@ class BuildLineFilter(rest_filters.FilterSet):
         - The quantity available for each BuildLine
         - The quantity allocated for each BuildLine
         """
-
         flt = Q(quantity__lte=F('total_available_stock') + F('allocated'))
 
         if str2bool(value):

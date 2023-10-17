@@ -22,7 +22,6 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
 
         Normally here the connection to the printer and transfer of the label would take place.
         """
-
         # Test that the expected kwargs are present
         print(f"Printing Label: {kwargs['filename']} (User: {kwargs['user']})")
 

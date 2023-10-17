@@ -113,7 +113,6 @@ class CurrencyExchangeView(APIView):
 
     def get(self, request, format=None):
         """Return information on available currency conversions"""
-
         # Extract a list of all available rates
         try:
             rates = Rate.objects.all()
@@ -157,7 +156,6 @@ class CurrencyRefreshView(APIView):
 
     def post(self, request, *args, **kwargs):
         """Performing a POST request will update currency exchange rates"""
-
         from InvenTree.tasks import update_exchange_rates
 
         update_exchange_rates(force=True)
@@ -194,7 +192,6 @@ class GlobalSettingsList(SettingsList):
 
     def list(self, request, *args, **kwargs):
         """Ensure all global settings are created"""
-
         common.models.InvenTreeSetting.build_default_values()
         return super().list(request, *args, **kwargs)
 
@@ -253,7 +250,6 @@ class UserSettingsList(SettingsList):
 
     def list(self, request, *args, **kwargs):
         """Ensure all user settings are created"""
-
         common.models.InvenTreeUserSetting.build_default_values(user=request.user)
         return super().list(request, *args, **kwargs)
 
@@ -385,7 +381,6 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
 
     def filter_delete_queryset(self, queryset, request):
         """Ensure that the user can only delete their *own* notifications"""
-
         queryset = queryset.filter(user=request.user)
         return queryset
 

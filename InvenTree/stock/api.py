@@ -234,7 +234,6 @@ class StockLocationFilter(rest_filters.FilterSet):
 
     def filter_has_location_type(self, queryset, name, value):
         """Filter by whether or not the location has a location type"""
-
         if str2bool(value):
             return queryset.exclude(location_type=None)
         else:
@@ -256,7 +255,6 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a data file"""
-
         dataset = LocationResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
         filename = f"InvenTree_Locations.{export_format}"
@@ -265,7 +263,6 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint"""
-
         queryset = super().get_queryset(*args, **kwargs)
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
@@ -477,14 +474,12 @@ class StockFilter(rest_filters.FilterSet):
 
     def filter_status(self, queryset, name, value):
         """Filter by integer status code"""
-
         return queryset.filter(status=value)
 
     allocated = rest_filters.BooleanFilter(label='Is Allocated', method='filter_allocated')
 
     def filter_allocated(self, queryset, name, value):
         """Filter by whether or not the stock item is 'allocated'"""
-
         if str2bool(value):
             # Filter StockItem with either build allocations or sales order allocations
             return queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
@@ -496,7 +491,6 @@ class StockFilter(rest_filters.FilterSet):
 
     def filter_expired(self, queryset, name, value):
         """Filter by whether or not the stock item has expired"""
-
         if not common.settings.stock_expiry_enabled():
             return queryset
 
@@ -509,7 +503,6 @@ class StockFilter(rest_filters.FilterSet):
 
     def filter_external(self, queryset, name, value):
         """Filter by whether or not the stock item is located in an external location"""
-
         if str2bool(value):
             return queryset.filter(location__external=True)
         else:
@@ -643,7 +636,6 @@ class StockFilter(rest_filters.FilterSet):
 
     def filter_ancestor(self, queryset, name, ancestor):
         """Filter based on ancestor stock item"""
-
         return queryset.filter(
             parent__in=ancestor.get_descendants(include_self=True)
         )
@@ -1426,7 +1418,6 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Add extra context to serializer based on provided query parameters"""
-
         try:
             params = self.request.query_params
 
@@ -1440,7 +1431,6 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint"""
-
         queryset = super().get_queryset(*args, **kwargs)
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset

@@ -41,7 +41,6 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
 
     In this case, the stocktake *report* will be limited to the specified location.
     """
-
     # Determine which locations are "valid" for the generated report
     location = kwargs.get('location', None)
     locations = location.get_descendants(include_self=True) if location else []
@@ -158,7 +157,6 @@ def generate_stocktake_report(**kwargs):
         generate_report: If True, generate a stocktake report from the calculated data (default=True)
         update_parts: If True, save stocktake information against each filtered Part (default = True)
     """
-
     # Determine if external locations should be excluded
     exclude_external = kwargs.get(
         'exclude_exernal',

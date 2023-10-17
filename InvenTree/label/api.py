@@ -41,7 +41,6 @@ class LabelFilterMixin:
 
     def get_items(self):
         """Return a list of database objects from query parameter"""
-
         ids = []
 
         # Construct a list of possible query parameter value options
@@ -73,7 +72,6 @@ class LabelListView(LabelFilterMixin, ListAPI):
         As each 'label' instance may optionally define its own filters,
         the resulting queryset is the 'union' of the two.
         """
-
         queryset = super().filter_queryset(queryset)
 
         items = self.get_items()

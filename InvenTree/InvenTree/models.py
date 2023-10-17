@@ -73,7 +73,6 @@ class MetadataMixin(models.Model):
 
     def validate_metadata(self):
         """Validate the metadata field."""
-
         # Ensure that the 'metadata' field is a valid dict object
         if self.metadata is None:
             self.metadata = {}
@@ -202,7 +201,6 @@ class ReferenceIndexingMixin(models.Model):
 
         This is defined by a global setting object, specified by the REFERENCE_PATTERN_SETTING attribute
         """
-
         # By default, we return an empty string
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
@@ -218,7 +216,6 @@ class ReferenceIndexingMixin(models.Model):
         - Returns a python dict object which contains the context data for formatting the reference string.
         - The default implementation provides some default context information
         """
-
         return {
             'ref': cls.get_next_reference(),
             'date': datetime.now(),
@@ -230,7 +227,6 @@ class ReferenceIndexingMixin(models.Model):
 
         In practice, this means the item with the highest reference value
         """
-
         query = cls.objects.all().order_by('-reference_int', '-pk')
 
         if query.exists():
@@ -241,7 +237,6 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def get_next_reference(cls):
         """Return the next available reference value for this particular class."""
-
         # Find the "most recent" item
         latest = cls.get_most_recent_item()
 
@@ -270,7 +265,6 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def generate_reference(cls):
         """Generate the next 'reference' field based on specified pattern"""
-
         fmt = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
 
@@ -310,7 +304,6 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def validate_reference_pattern(cls, pattern):
         """Ensure that the provided pattern is valid"""
-
         ctx = cls.get_reference_context()
 
         try:
@@ -336,7 +329,6 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def validate_reference_field(cls, value):
         """Check that the provided 'reference' value matches the requisite pattern"""
-
         pattern = cls.get_reference_pattern()
 
         value = str(value).strip()
@@ -368,7 +360,6 @@ class ReferenceIndexingMixin(models.Model):
 
         If we cannot extract using the pattern for some reason, fallback to the entire reference
         """
-
         try:
             # Extract named group based on provided pattern
             reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
@@ -390,7 +381,6 @@ class ReferenceIndexingMixin(models.Model):
 
 def extract_int(reference, clip=0x7fffffff, allow_negative=False):
     """Extract an integer out of reference."""
-
     # Default value if we cannot convert to an integer
     ref_int = 0
 
@@ -571,7 +561,6 @@ class InvenTreeAttachment(models.Model):
         - If the attachment is a link to an external resource, return the link
         - If the attachment is an uploaded file, return the fully qualified media URL
         """
-
         if self.link:
             return self.link
 
@@ -608,7 +597,6 @@ class InvenTreeTree(MPTTModel):
         Note that a 'unique_together' requirement for ('name', 'parent') is insufficient,
         as it ignores cases where parent=None (i.e. top-level items)
         """
-
         super().validate_unique(exclude)
 
         results = self.__class__.objects.filter(
@@ -631,7 +619,6 @@ class InvenTreeTree(MPTTModel):
 
     def save(self, *args, **kwargs):
         """Custom save method for InvenTreeTree abstract model"""
-
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
@@ -769,7 +756,6 @@ class InvenTreeTree(MPTTModel):
             name: <name>,
         }
         """
-
         return [
             {
                 'pk': item.pk,
@@ -839,13 +825,11 @@ class InvenTreeBarcodeMixin(models.Model):
     @classmethod
     def barcode_model_type(cls):
         """Return the model 'type' for creating a custom QR code."""
-
         # By default, use the name of the class
         return cls.__name__.lower()
 
     def format_barcode(self, **kwargs):
         """Return a JSON string for formatting a QR code for this model instance."""
-
         return InvenTree.helpers.MakeBarcode(
             self.__class__.barcode_model_type(),
             self.pk,
@@ -855,18 +839,15 @@ class InvenTreeBarcodeMixin(models.Model):
     @property
     def barcode(self):
         """Format a minimal barcode string (e.g. for label printing)"""
-
         return self.format_barcode(brief=True)
 
     @classmethod
     def lookup_barcode(cls, barcode_hash):
         """Check if a model instance exists with the specified third-party barcode hash."""
-
         return cls.objects.filter(barcode_hash=barcode_hash).first()
 
     def assign_barcode(self, barcode_hash=None, barcode_data=None, raise_error=True, save=True):
         """Assign an external (third-party) barcode to this object."""
-
         # Must provide either barcode_hash or barcode_data
         if barcode_hash is None and barcode_data is None:
             raise ValueError("Provide either 'barcode_hash' or 'barcode_data'")
@@ -894,7 +875,6 @@ class InvenTreeBarcodeMixin(models.Model):
 
     def unassign_barcode(self):
         """Unassign custom barcode from this model"""
-
         self.barcode_data = ''
         self.barcode_hash = ''
 
@@ -919,7 +899,6 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
     - Send a UI notification to all users with staff status
     """
-
     if created:
         try:
             import common.models

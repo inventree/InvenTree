@@ -144,7 +144,6 @@ class PanelMixin:
         Returns:
             Array of panels
         """
-
         panels = []
 
         # Construct an updated context object for template rendering

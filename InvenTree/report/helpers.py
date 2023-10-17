@@ -9,7 +9,6 @@ logger = logging.getLogger('inventree')
 
 def report_page_size_options():
     """Returns a list of page size options for PDF reports."""
-
     return [
         ('A4', _('A4')),
         ('Legal', _('Legal')),
@@ -19,7 +18,6 @@ def report_page_size_options():
 
 def report_page_size_default():
     """Returns the default page size for PDF reports."""
-
     from common.models import InvenTreeSetting
 
     try:

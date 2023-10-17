@@ -240,7 +240,6 @@ class StockLocationTest(StockAPITestCase):
         - Stock items cannot be located to structural locations
         - Check that stock location change to structural fails if items located into it
         """
-
         # Create our structural stock location
         structural_location = StockLocation.objects.create(
             name='Structural stock location',
@@ -348,7 +347,6 @@ class StockLocationTypeTest(StockAPITestCase):
 
     def test_list(self):
         """Test that the list endpoint works as expected."""
-
         location_types = [
             StockLocationType.objects.create(name="Type 1", description="Type 1 desc", icon="fas fa-box"),
             StockLocationType.objects.create(name="Type 2", description="Type 2 desc", icon="fas fa-box"),
@@ -397,7 +395,6 @@ class StockItemListTest(StockAPITestCase):
 
     def test_top_level_filtering(self):
         """Test filtering against "top level" stock location"""
-
         # No filters, should return *all* items
         response = self.get(self.list_url, {}, expected_code=200)
         self.assertEqual(len(response.data), StockItem.objects.count())
@@ -789,7 +786,6 @@ class StockItemTest(StockAPITestCase):
 
     def test_stock_item_create_withsupplierpart(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
-
         # POST with non-existent supplier part
         response = self.post(
             self.list_url,
@@ -1140,7 +1136,6 @@ class StockItemTest(StockAPITestCase):
 
     def test_return_from_customer(self):
         """Test that we can return a StockItem from a customer, via the API"""
-
         # Assign item to customer
         item = StockItem.objects.get(pk=521)
         customer = company.models.Company.objects.get(pk=4)
@@ -1179,7 +1174,6 @@ class StockItemTest(StockAPITestCase):
 
     def test_convert_to_variant(self):
         """Test that we can convert a StockItem to a variant part via the API"""
-
         category = part.models.PartCategory.objects.get(pk=3)
 
         # First, construct a set of template / variant parts
@@ -1242,7 +1236,6 @@ class StockItemTest(StockAPITestCase):
 
     def test_set_status(self):
         """Test API endpoint for setting StockItem status"""
-
         url = reverse('api-stock-change-status')
 
         prt = Part.objects.first()
@@ -1512,7 +1505,6 @@ class StockTestResultTest(StockAPITestCase):
 
     def test_bulk_delete(self):
         """Test that the BulkDelete endpoint works for this model"""
-
         n = StockItemTestResult.objects.count()
 
         tests = []
@@ -1687,7 +1679,6 @@ class StockMergeTest(StockAPITestCase):
     @classmethod
     def setUpTestData(cls):
         """Setup for all tests."""
-
         super().setUpTestData()
 
         cls.part = part.models.Part.objects.get(pk=25)
@@ -1877,7 +1868,6 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
 
     def metatester(self, apikey, model):
         """Generic tester"""
-
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
@@ -1906,7 +1896,6 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
 
     def test_metadata(self):
         """Test all endpoints"""
-
         for apikey, model in {
             'api-location-metadata': StockLocation,
             'api-stock-test-result-metadata': StockItemTestResult,

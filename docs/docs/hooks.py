@@ -11,7 +11,6 @@ import requests
 
 def fetch_rtd_versions():
     """Get a list of RTD docs versions to build the version selector"""
-
     print("Fetching documentation versions from ReadTheDocs")
 
     versions = []
@@ -94,7 +93,6 @@ def get_release_data():
     - First look to see if 'releases.json' file exists
     - If data does not exist in this file, request via the github API
     """
-
     json_file = os.path.join(os.path.dirname(__file__), 'releases.json')
 
     releases = []
@@ -153,7 +151,6 @@ def on_config(config, *args, **kwargs):
 
     We can use these to determine (at run time) where we are hosting
     """
-
     rtd = os.environ.get('READTHEDOCS', False)
 
     # Check for 'versions.json' file

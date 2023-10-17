@@ -30,7 +30,6 @@ class InvenTreeResource(ModelResource):
         **kwargs
     ):
         """Override the default import_data_inner function to provide better error handling"""
-
         if len(dataset) > self.MAX_IMPORT_ROWS:
             raise ImportExportError(f"Dataset contains too many rows (max {self.MAX_IMPORT_ROWS})")
 
@@ -71,7 +70,6 @@ class InvenTreeResource(ModelResource):
 
     def get_fields(self, **kwargs):
         """Return fields, with some common exclusions"""
-
         fields = super().get_fields(**kwargs)
 
         fields_to_exclude = [

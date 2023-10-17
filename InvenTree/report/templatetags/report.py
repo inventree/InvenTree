@@ -30,7 +30,6 @@ def getindex(container: list, index: int):
         container: A python list object
         index: The index to retrieve from the list
     """
-
     # Index *must* be an integer
     try:
         index = int(index)
@@ -110,7 +109,6 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
     Returns:
         A fully qualified path to the image
     """
-
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
@@ -154,7 +152,6 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
 @register.simple_tag()
 def encode_svg_image(filename):
     """Return a base64-encoded svg image data string"""
-
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
@@ -190,7 +187,6 @@ def part_image(part: Part):
     Raises:
         TypeError if provided part is not a Part instance
     """
-
     if type(part) is Part:
         img = part.image.name
 
@@ -227,7 +223,6 @@ def company_image(company):
     Raises:
         TypeError if provided company is not a Company instance
     """
-
     if type(company) is Company:
         img = company.image.name
     else:
@@ -243,7 +238,6 @@ def logo_image(**kwargs):
     - If a custom logo has been provided, return a path to that logo
     - Otherwise, return a path to the default InvenTree logo
     """
-
     # If in debug mode, return URL to the image, not a local file
     debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
@@ -294,7 +288,6 @@ def divide(x, y):
 @register.simple_tag
 def render_currency(money, **kwargs):
     """Render a currency / Money object"""
-
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
@@ -307,7 +300,6 @@ def render_html_text(text: str, **kwargs):
         italic: Boolean, whether italic (or not)
         heading: str, heading level e.g. 'h3'
     """
-
     tags = []
 
     if kwargs.get('bold', False):

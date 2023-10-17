@@ -89,7 +89,6 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     Note that this function creates some *hidden* global settings (designated with the _ prefix),
     which are used to keep a running track of when the particular task was was last run.
     """
-
     from common.models import InvenTreeSetting
     from InvenTree.ready import isInTestMode
 
@@ -146,7 +145,6 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
 
 def record_task_attempt(task_name: str):
     """Record that a multi-day task has been attempted *now*"""
-
     from common.models import InvenTreeSetting
 
     logger.info("Logging task attempt for '%s'", task_name)
@@ -156,7 +154,6 @@ def record_task_attempt(task_name: str):
 
 def record_task_success(task_name: str):
     """Record that a multi-day task was successful *now*"""
-
     from common.models import InvenTreeSetting
 
     InvenTreeSetting.set_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
@@ -168,7 +165,6 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
     If workers are not running or force_sync flag
     is set then the task is ran synchronously.
     """
-
     try:
         import importlib
 
@@ -353,7 +349,6 @@ def delete_successful_tasks():
 @scheduled_task(ScheduledTask.DAILY)
 def delete_failed_tasks():
     """Delete failed task logs which are older than a specified period"""
-
     try:
         from django_q.models import Failure
 
@@ -402,7 +397,6 @@ def delete_old_error_logs():
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_notifications():
     """Delete old notification logs"""
-
     try:
         from common.models import (InvenTreeSetting, NotificationEntry,
                                    NotificationMessage)
@@ -503,7 +497,6 @@ def update_exchange_rates(force: bool = False):
     Arguments:
         force: If True, force the update to run regardless of the last update time
     """
-
     try:
         from djmoney.contrib.exchange.models import Rate
 
@@ -547,7 +540,6 @@ def update_exchange_rates(force: bool = False):
 @scheduled_task(ScheduledTask.DAILY)
 def run_backup():
     """Run the backup command."""
-
     from common.models import InvenTreeSetting
 
     if not InvenTreeSetting.get_setting('INVENTREE_BACKUP_ENABLE', False, cache=False):
@@ -582,7 +574,6 @@ def check_for_migrations():
 
     If the setting auto_update is enabled we will start updating.
     """
-
     from common.models import InvenTreeSetting
     from plugin import registry
 

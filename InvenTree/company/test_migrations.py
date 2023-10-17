@@ -293,7 +293,6 @@ class TestAddressMigration(MigratorTestCase):
 
     def prepare(self):
         """Set up some companies with addresses"""
-
         Company = self.old_state.apps.get_model('company', 'company')
 
         Company.objects.create(name='Company 1', address=self.short_l1)
@@ -301,7 +300,6 @@ class TestAddressMigration(MigratorTestCase):
 
     def test_address_migration(self):
         """Test database state after applying the migration"""
-
         Address = self.new_state.apps.get_model('company', 'address')
         Company = self.new_state.apps.get_model('company', 'company')
 
@@ -329,7 +327,6 @@ class TestSupplierPartQuantity(MigratorTestCase):
 
     def prepare(self):
         """Prepare a number of SupplierPart objects"""
-
         Part = self.old_state.apps.get_model('part', 'part')
         Company = self.old_state.apps.get_model('company', 'company')
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
@@ -356,7 +353,6 @@ class TestSupplierPartQuantity(MigratorTestCase):
 
     def test_supplier_part_quantity(self):
         """Test that the supplier part quantity is correctly migrated."""
-
         SupplierPart = self.new_state.apps.get_model('company', 'supplierpart')
 
         for i, sp in enumerate(SupplierPart.objects.all()):

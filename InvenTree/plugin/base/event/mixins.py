@@ -14,7 +14,6 @@ class EventMixin:
 
         Return true if you're interested in the given event, false if not.
         """
-
         # Default implementation always returns true (backwards compatibility)
         return True
 
