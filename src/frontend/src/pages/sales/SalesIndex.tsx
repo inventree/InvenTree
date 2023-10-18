@@ -10,19 +10,23 @@ import { useMemo } from 'react';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { CompanyTable } from '../../components/tables/general/CompanyTable';
+import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
+import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable';
 
 export default function PurchasingIndex() {
   const panels = useMemo(() => {
     return [
       {
-        name: 'purchaseorders',
+        name: 'salesorders',
         label: t`Sales Orders`,
-        icon: <IconTruckDelivery />
+        icon: <IconTruckDelivery />,
+        content: <SalesOrderTable />
       },
       {
         name: 'returnorders',
         label: t`Return Orders`,
-        icon: <IconTruckReturn />
+        icon: <IconTruckReturn />,
+        content: <ReturnOrderTable />
       },
       {
         name: 'suppliers',

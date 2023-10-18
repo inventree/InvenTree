@@ -68,6 +68,9 @@ export enum ApiPaths {
   // Sales Order URLs
   sales_order_list = 'api-sales-order-list',
 
+  // Return Order URLs
+  return_order_list = 'api-return-order-list',
+
   // Plugin URLs
   plugin_list = 'api-plugin-list',
 
@@ -146,6 +149,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'order/po/';
     case ApiPaths.sales_order_list:
       return 'order/so/';
+    case ApiPaths.return_order_list:
+      return 'order/ro/';
     case ApiPaths.plugin_list:
       return 'plugins/';
     case ApiPaths.project_code_list:
