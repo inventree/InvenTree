@@ -22,7 +22,7 @@ msgstr ""
 msgid "Title"
 msgstr "Başlık"
 
-#: src/components/forms/ApiForm.tsx:190
+#: src/components/forms/ApiForm.tsx:189
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
 msgstr "Başarılı"
@@ -33,12 +33,12 @@ msgstr ""
 
 #: src/components/forms/ApiForm.tsx:302
 #: src/components/tables/FilterSelectModal.tsx:166
-#: src/contexts/ThemeContext.tsx:65
+#: src/contexts/ThemeContext.tsx:62
 msgid "Cancel"
 msgstr "Vazgeç"
 
 #: src/components/forms/ApiForm.tsx:311
-#: src/contexts/ThemeContext.tsx:65
+#: src/contexts/ThemeContext.tsx:62
 #: src/pages/Index/Profile/UserPanel.tsx:109
 msgid "Submit"
 msgstr "Gönder"
@@ -149,7 +149,8 @@ msgstr "Sunucu"
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
 #: src/components/tables/part/PartCategoryTable.tsx:22
-#: src/components/tables/stock/StockLocationTable.tsx:22
+#: src/components/tables/settings/CustomUnitsTable.tsx:27
+#: src/components/tables/stock/StockLocationTable.tsx:23
 msgid "Name"
 msgstr "Adı"
 
@@ -191,7 +192,7 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr "Durum: <0>worker</0> ({0}), <1>eklenti</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:301
-#: src/components/nav/SearchDrawer.tsx:419
+#: src/components/nav/SearchDrawer.tsx:417
 #: src/components/tables/InvenTreeTable.tsx:373
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -200,18 +201,24 @@ msgstr "Durum: <0>worker</0> ({0}), <1>eklenti</1>{1}"
 msgid "Error"
 msgstr "Hata"
 
-#: src/components/forms/fields/RelatedModelField.tsx:212
+#: src/components/forms/fields/RelatedModelField.tsx:200
+#: src/pages/Index/UserSettings.tsx:53
 msgid "Search"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:213
+#: src/components/forms/fields/RelatedModelField.tsx:201
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
 msgstr "Yükleniyor"
 
-#: src/components/forms/fields/RelatedModelField.tsx:215
+#: src/components/forms/fields/RelatedModelField.tsx:203
 msgid "No results found"
 msgstr ""
+
+#: src/components/images/Thumbnail.tsx:11
+#: src/components/images/Thumbnail.tsx:41
+msgid "Thumbnail"
+msgstr "Küçük resim"
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
@@ -250,10 +257,13 @@ msgstr ""
 msgid "Scan QR code"
 msgstr "QR kodunu tara"
 
-#: src/components/items/Thumbnail.tsx:10
-#: src/components/items/Thumbnail.tsx:43
-msgid "Thumbnail"
-msgstr "Küçük resim"
+#: src/components/items/YesNoButton.tsx:15
+msgid "Yes"
+msgstr ""
+
+#: src/components/items/YesNoButton.tsx:15
+msgid "No"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:71
 msgid "Unknown response"
@@ -318,12 +328,20 @@ msgid "Settings"
 msgstr "Ayarlar"
 
 #: src/components/nav/MainMenu.tsx:47
+#: src/components/nav/MainMenu.tsx:50
 msgid "Account settings"
 msgstr "Hesap ayarları"
 
-#: src/components/nav/MainMenu.tsx:55
-msgid "Logout"
-msgstr "Çıkış"
+#: src/components/nav/MainMenu.tsx:54
+#: src/pages/Index/SystemSettings.tsx:256
+msgid "System Settings"
+msgstr ""
+
+#: src/components/nav/MainMenu.tsx:63
+#: src/components/nav/NavigationDrawer.tsx:67
+#: src/pages/Index/PluginSettings.tsx:32
+msgid "Plugins"
+msgstr "Eklentiler"
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
@@ -332,6 +350,10 @@ msgstr "Çıkış"
 #: src/components/nav/MainMenu.tsx:71
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
+
+#: src/components/nav/MainMenu.tsx:74
+msgid "Logout"
+msgstr "Çıkış"
 
 #: src/components/nav/NavHoverMenu.tsx:52
 msgid "Open Navigation"
@@ -358,10 +380,6 @@ msgstr "Gezinme"
 msgid "Pages"
 msgstr "Sayfalar"
 
-#: src/components/nav/NavigationDrawer.tsx:67
-msgid "Plugins"
-msgstr "Eklentiler"
-
 #: src/components/nav/NavigationDrawer.tsx:77
 msgid "Documentation"
 msgstr "Dokümantasyon"
@@ -371,8 +389,10 @@ msgid "About"
 msgstr "Hakkında"
 
 #: src/components/nav/NotificationDrawer.tsx:69
-#: src/pages/Notifications.tsx:21
-#: src/pages/Notifications.tsx:86
+#: src/pages/Index/SystemSettings.tsx:119
+#: src/pages/Index/UserSettings.tsx:83
+#: src/pages/Notifications.tsx:22
+#: src/pages/Notifications.tsx:90
 msgid "Notifications"
 msgstr "Bildirimler"
 
@@ -380,8 +400,8 @@ msgstr "Bildirimler"
 msgid "You have no unread notifications."
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:109
-#: src/pages/Notifications.tsx:29
+#: src/components/nav/NotificationDrawer.tsx:110
+#: src/pages/Notifications.tsx:30
 msgid "Mark as read"
 msgstr ""
 
@@ -389,187 +409,219 @@ msgstr ""
 msgid "results"
 msgstr "sonuçlar"
 
-#: src/components/nav/SearchDrawer.tsx:345
+#: src/components/nav/SearchDrawer.tsx:343
 msgid "Enter search text"
 msgstr "Arama metnini gir"
 
-#: src/components/nav/SearchDrawer.tsx:372
+#: src/components/nav/SearchDrawer.tsx:370
 msgid "Search Options"
 msgstr "Arama Seçenekleri"
 
-#: src/components/nav/SearchDrawer.tsx:375
+#: src/components/nav/SearchDrawer.tsx:373
 msgid "Regex search"
 msgstr "Regex arama"
 
-#: src/components/nav/SearchDrawer.tsx:385
+#: src/components/nav/SearchDrawer.tsx:383
 msgid "Whole word search"
 msgstr "Tam kelime arama"
 
-#: src/components/nav/SearchDrawer.tsx:422
+#: src/components/nav/SearchDrawer.tsx:420
 msgid "An error occurred during search query"
 msgstr "Arama sorgusu sırasında bir hata oluştu"
 
-#: src/components/nav/SearchDrawer.tsx:433
+#: src/components/nav/SearchDrawer.tsx:431
 msgid "No results"
 msgstr "Sonuç yok"
 
-#: src/components/nav/SearchDrawer.tsx:436
+#: src/components/nav/SearchDrawer.tsx:434
 msgid "No results available for search query"
 msgstr "Arama sorgusu için sonuç yok"
 
-#: src/components/render/Instance.tsx:105
+#: src/components/render/Instance.tsx:130
 msgid "Unknown model: {model}"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:35
-#: src/components/tables/build/BuildOrderTable.tsx:26
-#: src/components/tables/part/PartTable.tsx:25
-#: src/components/tables/part/RelatedPartTable.tsx:32
-#: src/components/tables/stock/StockItemTable.tsx:22
-#: src/pages/part/PartDetail.tsx:193
+#: src/components/render/ModelType.tsx:36
+#: src/components/tables/build/BuildOrderTable.tsx:27
+#: src/components/tables/part/PartParameterTable.tsx:28
+#: src/components/tables/part/PartTable.tsx:23
+#: src/components/tables/part/RelatedPartTable.tsx:35
+#: src/components/tables/stock/StockItemTable.tsx:23
 msgid "Part"
 msgstr "Parça"
 
-#: src/components/render/ModelType.tsx:36
+#: src/components/render/ModelType.tsx:37
 #: src/components/tables/part/PartCategoryTable.tsx:40
 #: src/defaults/links.tsx:26
+#: src/pages/Index/SystemSettings.tsx:156
 #: src/pages/part/CategoryDetail.tsx:45
 #: src/pages/part/CategoryDetail.tsx:81
-#: src/pages/part/PartDetail.tsx:179
+#: src/pages/part/PartDetail.tsx:187
 msgid "Parts"
 msgstr "Parçalar"
 
-#: src/components/render/ModelType.tsx:41
-msgid "Supplier Part"
+#: src/components/render/ModelType.tsx:42
+msgid "Part Parameter Template"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:42
-msgid "Supplier Parts"
-msgstr "Tedarikçi Parçaları"
-
-#: src/components/render/ModelType.tsx:47
-msgid "Manufacturer Part"
+#: src/components/render/ModelType.tsx:43
+msgid "Part Parameter Templates"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:48
+msgid "Supplier Part"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:49
+msgid "Supplier Parts"
+msgstr "Tedarikçi Parçaları"
+
+#: src/components/render/ModelType.tsx:54
+msgid "Manufacturer Part"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:55
 msgid "Manufacturer Parts"
 msgstr "Üretici Parçaları"
 
-#: src/components/render/ModelType.tsx:53
+#: src/components/render/ModelType.tsx:60
 #: src/pages/part/CategoryDetail.tsx:94
 msgid "Part Category"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:54
+#: src/components/render/ModelType.tsx:61
+#: src/pages/Index/SystemSettings.tsx:151
+#: src/pages/part/CategoryDetail.tsx:59
 msgid "Part Categories"
 msgstr "Parça Kategorileri"
 
-#: src/components/render/ModelType.tsx:59
+#: src/components/render/ModelType.tsx:66
 msgid "Stock Item"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:60
-#: src/components/tables/stock/StockLocationTable.tsx:38
+#: src/components/render/ModelType.tsx:67
+#: src/components/tables/stock/StockLocationTable.tsx:39
 #: src/pages/stock/LocationDetail.tsx:33
 #: src/pages/stock/LocationDetail.tsx:74
 #: src/pages/stock/StockDetail.tsx:114
 msgid "Stock Items"
 msgstr "Stok Kalemleri"
 
-#: src/components/render/ModelType.tsx:65
+#: src/components/render/ModelType.tsx:72
 msgid "Stock Location"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:66
+#: src/components/render/ModelType.tsx:73
+#: src/pages/stock/LocationDetail.tsx:45
 msgid "Stock Locations"
 msgstr "Stok Konumları"
 
-#: src/components/render/ModelType.tsx:71
+#: src/components/render/ModelType.tsx:78
 #: src/defaults/links.tsx:28
 msgid "Build"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:72
+#: src/components/render/ModelType.tsx:79
 msgid "Builds"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:77
+#: src/components/render/ModelType.tsx:84
 msgid "Company"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:78
+#: src/components/render/ModelType.tsx:85
 msgid "Companies"
 msgstr "Şirketler"
 
-#: src/components/render/ModelType.tsx:83
+#: src/components/render/ModelType.tsx:90
 msgid "Purchase Order"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:84
-#: src/pages/part/PartDetail.tsx:110
+#: src/components/render/ModelType.tsx:91
+#: src/pages/Index/SystemSettings.tsx:225
+#: src/pages/part/PartDetail.tsx:133
 msgid "Purchase Orders"
 msgstr "Satın Alma Emirleri"
 
-#: src/components/render/ModelType.tsx:89
+#: src/components/render/ModelType.tsx:96
 msgid "Sales Order"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:90
-#: src/pages/part/PartDetail.tsx:117
+#: src/components/render/ModelType.tsx:97
+#: src/pages/Index/SystemSettings.tsx:238
+#: src/pages/part/PartDetail.tsx:140
 msgid "Sales Orders"
 msgstr "Satış Emirleri"
 
-#: src/components/render/ModelType.tsx:95
+#: src/components/render/ModelType.tsx:102
 msgid "Sales Order Shipment"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:96
+#: src/components/render/ModelType.tsx:103
 msgid "Sales Order Shipments"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:101
+#: src/components/render/ModelType.tsx:108
 msgid "Return Order"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:102
+#: src/components/render/ModelType.tsx:109
 msgid "Return Orders"
 msgstr "İade Emirleri"
 
-#: src/components/render/ModelType.tsx:107
+#: src/components/render/ModelType.tsx:114
 msgid "Address"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:108
+#: src/components/render/ModelType.tsx:115
 msgid "Addresses"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:113
+#: src/components/render/ModelType.tsx:120
 msgid "Contact"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:114
+#: src/components/render/ModelType.tsx:121
 msgid "Contacts"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:119
+#: src/components/render/ModelType.tsx:126
 msgid "Owner"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:120
+#: src/components/render/ModelType.tsx:127
 msgid "Owners"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:125
+#: src/components/render/ModelType.tsx:132
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
 msgstr "Kullanıcı"
 
-#: src/components/render/ModelType.tsx:126
+#: src/components/render/ModelType.tsx:133
 msgid "Users"
 msgstr ""
 
 #: src/components/render/Order.tsx:71
 msgid "Shipment"
+msgstr ""
+
+#: src/components/settings/SettingItem.tsx:29
+#: src/components/settings/SettingItem.tsx:71
+msgid "Setting updated"
+msgstr ""
+
+#: src/components/settings/SettingItem.tsx:30
+#: src/components/settings/SettingItem.tsx:72
+msgid "{0} updated successfully"
+msgstr ""
+
+#: src/components/settings/SettingItem.tsx:38
+msgid "Error editing setting"
+msgstr ""
+
+#: src/components/settings/SettingItem.tsx:58
+msgid "Edit Setting"
 msgstr ""
 
 #: src/components/tables/AttachmentTable.tsx:29
@@ -584,49 +636,54 @@ msgstr ""
 msgid "Uploaded"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:113
-#: src/components/tables/part/PartTable.tsx:198
-#: src/components/tables/stock/StockItemTable.tsx:115
+#: src/components/tables/AttachmentTable.tsx:117
+#: src/components/tables/part/PartParameterTable.tsx:107
+#: src/components/tables/settings/CustomUnitsTable.tsx:49
+#: src/components/tables/settings/ProjectCodeTable.tsx:43
+#: src/components/tables/stock/StockItemTable.tsx:118
 msgid "Edit"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:128
-#: src/components/tables/part/RelatedPartTable.tsx:98
-#: src/functions/forms.tsx:168
+#: src/components/tables/AttachmentTable.tsx:132
+#: src/components/tables/part/PartParameterTable.tsx:128
+#: src/components/tables/part/RelatedPartTable.tsx:103
+#: src/components/tables/settings/CustomUnitsTable.tsx:67
+#: src/components/tables/settings/ProjectCodeTable.tsx:60
+#: src/functions/forms.tsx:172
 #: src/pages/Index/Scan.tsx:306
-#: src/pages/Notifications.tsx:66
+#: src/pages/Notifications.tsx:70
 msgid "Delete"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:154
+#: src/components/tables/AttachmentTable.tsx:158
 msgid "File uploaded"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:155
+#: src/components/tables/AttachmentTable.tsx:159
 msgid "File {0} uploaded successfully"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:166
+#: src/components/tables/AttachmentTable.tsx:170
 msgid "Upload Error"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:167
+#: src/components/tables/AttachmentTable.tsx:171
 msgid "File could not be uploaded"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:180
+#: src/components/tables/AttachmentTable.tsx:184
 msgid "Add attachment"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:199
+#: src/components/tables/AttachmentTable.tsx:203
 msgid "Add external link"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:228
+#: src/components/tables/AttachmentTable.tsx:232
 msgid "No attachments found"
 msgstr ""
 
-#: src/components/tables/AttachmentTable.tsx:242
+#: src/components/tables/AttachmentTable.tsx:246
 msgid "Upload attachment"
 msgstr ""
 
@@ -692,6 +749,7 @@ msgid "Select filter"
 msgstr "Filtre seç"
 
 #: src/components/tables/FilterSelectModal.tsx:159
+#: src/components/tables/part/PartParameterTable.tsx:66
 msgid "Value"
 msgstr "Değer"
 
@@ -725,21 +783,21 @@ msgstr "Yasaklı"
 msgid "Not found"
 msgstr "Bulunamadı"
 
-#: src/components/tables/InvenTreeTable.tsx:422
-#: src/components/tables/InvenTreeTable.tsx:423
+#: src/components/tables/InvenTreeTable.tsx:420
+#: src/components/tables/InvenTreeTable.tsx:421
 msgid "Barcode actions"
 msgstr "Barkod işlemleri"
 
-#: src/components/tables/InvenTreeTable.tsx:430
-#: src/components/tables/InvenTreeTable.tsx:431
+#: src/components/tables/InvenTreeTable.tsx:428
+#: src/components/tables/InvenTreeTable.tsx:429
 msgid "Print actions"
 msgstr "Yazdırma işlemleri"
 
-#: src/components/tables/InvenTreeTable.tsx:448
+#: src/components/tables/InvenTreeTable.tsx:446
 msgid "Refresh data"
 msgstr "Veriyi yenile"
 
-#: src/components/tables/InvenTreeTable.tsx:467
+#: src/components/tables/InvenTreeTable.tsx:465
 msgid "Table filters"
 msgstr "Tablo filtreleri"
 
@@ -748,54 +806,58 @@ msgstr "Tablo filtreleri"
 msgid "Actions"
 msgstr "Eylemler"
 
-#: src/components/tables/build/BuildOrderTable.tsx:20
+#: src/components/tables/build/BuildOrderTable.tsx:21
 msgid "Reference"
 msgstr "Referans"
 
-#: src/components/tables/build/BuildOrderTable.tsx:44
+#: src/components/tables/build/BuildOrderTable.tsx:45
 #: src/components/tables/part/PartCategoryTable.tsx:28
+#: src/components/tables/part/PartParameterTable.tsx:59
 #: src/components/tables/part/PartTable.tsx:52
-#: src/components/tables/part/RelatedPartTable.tsx:50
-#: src/components/tables/stock/StockItemTable.tsx:39
-#: src/components/tables/stock/StockLocationTable.tsx:27
+#: src/components/tables/part/RelatedPartTable.tsx:55
+#: src/components/tables/plugin/PluginListTable.tsx:69
+#: src/components/tables/settings/ProjectCodeTable.tsx:35
+#: src/components/tables/stock/StockItemTable.tsx:42
+#: src/components/tables/stock/StockLocationTable.tsx:28
 msgid "Description"
 msgstr "Açıklama"
 
-#: src/components/tables/build/BuildOrderTable.tsx:49
+#: src/components/tables/build/BuildOrderTable.tsx:50
+#: src/components/tables/settings/ProjectCodeTable.tsx:30
 msgid "Project Code"
 msgstr "Proje Kodu"
 
-#: src/components/tables/build/BuildOrderTable.tsx:59
+#: src/components/tables/build/BuildOrderTable.tsx:60
 msgid "Quantity"
 msgstr "Miktar"
 
-#: src/components/tables/build/BuildOrderTable.tsx:65
-#: src/components/tables/build/BuildOrderTable.tsx:108
+#: src/components/tables/build/BuildOrderTable.tsx:66
+#: src/components/tables/build/BuildOrderTable.tsx:109
 msgid "Completed"
 msgstr "Tamamlandı"
 
-#: src/components/tables/build/BuildOrderTable.tsx:83
-#: src/components/tables/stock/StockItemTable.tsx:52
+#: src/components/tables/build/BuildOrderTable.tsx:84
+#: src/components/tables/stock/StockItemTable.tsx:55
 msgid "Status"
 msgstr "Durum"
 
-#: src/components/tables/build/BuildOrderTable.tsx:89
+#: src/components/tables/build/BuildOrderTable.tsx:90
 msgid "Priority"
 msgstr "Öncelik"
 
-#: src/components/tables/build/BuildOrderTable.tsx:96
+#: src/components/tables/build/BuildOrderTable.tsx:97
 msgid "Created"
 msgstr "Oluşturuldu"
 
-#: src/components/tables/build/BuildOrderTable.tsx:102
+#: src/components/tables/build/BuildOrderTable.tsx:103
 msgid "Target Date"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:114
+#: src/components/tables/build/BuildOrderTable.tsx:115
 msgid "Issued By"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:121
+#: src/components/tables/build/BuildOrderTable.tsx:122
 msgid "Responsible"
 msgstr ""
 
@@ -817,22 +879,64 @@ msgid "Message"
 msgstr ""
 
 #: src/components/tables/part/PartCategoryTable.tsx:34
-#: src/components/tables/stock/StockLocationTable.tsx:32
+#: src/components/tables/stock/StockLocationTable.tsx:33
 msgid "Path"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:48
+msgid "Parameter"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:87
+#: src/components/tables/part/PartTable.tsx:47
+msgid "Units"
+msgstr "Birim"
+
+#: src/components/tables/part/PartParameterTable.tsx:113
+msgid "Edit Part Parameter"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:121
+msgid "Part parameter updated"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:135
+msgid "Delete Part Parameter"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:136
+msgid "Part parameter deleted"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:139
+msgid "Are you sure you want to remove this parameter?"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:158
+msgid "Add Part Parameter"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:167
+msgid "Part parameter added"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:178
+msgid "Add parameter"
+msgstr ""
+
+#: src/components/tables/part/PartParameterTable.tsx:199
+msgid "Include Variants"
 msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:40
 msgid "IPN"
 msgstr "DPN"
 
-#: src/components/tables/part/PartTable.tsx:47
-msgid "Units"
-msgstr "Birim"
-
 #: src/components/tables/part/PartTable.tsx:69
-#: src/components/tables/stock/StockItemTable.tsx:44
+#: src/components/tables/stock/StockItemTable.tsx:47
 #: src/defaults/links.tsx:27
-#: src/pages/part/PartDetail.tsx:63
+#: src/pages/Index/SystemSettings.tsx:192
+#: src/pages/part/PartDetail.tsx:80
 #: src/pages/stock/LocationDetail.tsx:60
 #: src/pages/stock/StockDetail.tsx:101
 msgid "Stock"
@@ -847,6 +951,7 @@ msgid "Link"
 msgstr "Bağlantı"
 
 #: src/components/tables/part/PartTable.tsx:98
+#: src/components/tables/plugin/PluginListTable.tsx:138
 msgid "Active"
 msgstr "Aktif"
 
@@ -911,7 +1016,7 @@ msgid "Filter by parts which have stock"
 msgstr "Stoğu olan parçaları filtrele"
 
 #: src/components/tables/part/PartTable.tsx:146
-#: src/defaults/dashboardItems.tsx:41
+#: src/defaults/dashboardItems.tsx:43
 msgid "Low Stock"
 msgstr "Düşük Stok"
 
@@ -949,54 +1054,164 @@ msgid "Not Virtual"
 msgstr "Sanal Değil"
 
 #: src/components/tables/part/PartTable.tsx:211
-msgid "Detail"
-msgstr ""
+#~ msgid "Detail"
+#~ msgstr ""
 
-#: src/components/tables/part/RelatedPartTable.tsx:62
+#: src/components/tables/part/RelatedPartTable.tsx:67
 msgid "Add Related Part"
 msgstr ""
 
-#: src/components/tables/part/RelatedPartTable.tsx:70
+#: src/components/tables/part/RelatedPartTable.tsx:75
 msgid "Related Part"
 msgstr ""
 
-#: src/components/tables/part/RelatedPartTable.tsx:73
+#: src/components/tables/part/RelatedPartTable.tsx:78
 msgid "Related part added"
 msgstr ""
 
-#: src/components/tables/part/RelatedPartTable.tsx:83
+#: src/components/tables/part/RelatedPartTable.tsx:88
 msgid "Add related part"
 msgstr ""
 
-#: src/components/tables/part/RelatedPartTable.tsx:105
+#: src/components/tables/part/RelatedPartTable.tsx:110
 msgid "Delete Related Part"
 msgstr ""
 
-#: src/components/tables/part/RelatedPartTable.tsx:106
+#: src/components/tables/part/RelatedPartTable.tsx:111
 msgid "Related part deleted"
 msgstr ""
 
-#: src/components/tables/part/RelatedPartTable.tsx:108
+#: src/components/tables/part/RelatedPartTable.tsx:113
 msgid "Are you sure you want to remove this relationship?"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:59
+#: src/components/tables/plugin/PluginListTable.tsx:24
+msgid "Plugin is active"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:30
+msgid "Plugin is inactive"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:37
+msgid "Plugin is not installed"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:54
+msgid "Plugin"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:76
+msgid "Description not available"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:82
+msgid "Version"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:104
+msgid "Deactivate"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:112
+msgid "Activate"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:143
+msgid "Builtin"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:148
+msgid "Sample"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:153
+msgid "Installed"
+msgstr ""
+
+#: src/components/tables/settings/CustomUnitsTable.tsx:33
+msgid "Definition"
+msgstr ""
+
+#: src/components/tables/settings/CustomUnitsTable.tsx:39
+msgid "Symbol"
+msgstr ""
+
+#: src/components/tables/settings/CustomUnitsTable.tsx:55
+msgid "Edit custom unit"
+msgstr ""
+
+#: src/components/tables/settings/CustomUnitsTable.tsx:62
+msgid "Custom unit updated"
+msgstr ""
+
+#: src/components/tables/settings/CustomUnitsTable.tsx:73
+msgid "Delete custom unit"
+msgstr ""
+
+#: src/components/tables/settings/CustomUnitsTable.tsx:74
+msgid "Custom unit deleted"
+msgstr ""
+
+#: src/components/tables/settings/CustomUnitsTable.tsx:77
+msgid "Are you sure you want to remove this custom unit?"
+msgstr ""
+
+#: src/components/tables/settings/CustomUnitsTable.tsx:89
+#: src/components/tables/settings/CustomUnitsTable.tsx:104
+msgid "Add custom unit"
+msgstr ""
+
+#: src/components/tables/settings/CustomUnitsTable.tsx:95
+msgid "Custom unit created"
+msgstr ""
+
+#: src/components/tables/settings/ProjectCodeTable.tsx:49
+msgid "Edit project code"
+msgstr ""
+
+#: src/components/tables/settings/ProjectCodeTable.tsx:55
+msgid "Project code updated"
+msgstr ""
+
+#: src/components/tables/settings/ProjectCodeTable.tsx:67
+msgid "Delete project code"
+msgstr ""
+
+#: src/components/tables/settings/ProjectCodeTable.tsx:68
+msgid "Project code deleted"
+msgstr ""
+
+#: src/components/tables/settings/ProjectCodeTable.tsx:71
+msgid "Are you sure you want to remove this project code?"
+msgstr ""
+
+#: src/components/tables/settings/ProjectCodeTable.tsx:83
+#: src/components/tables/settings/ProjectCodeTable.tsx:97
+msgid "Add project code"
+msgstr ""
+
+#: src/components/tables/settings/ProjectCodeTable.tsx:89
+msgid "Added project code"
+msgstr ""
+
+#: src/components/tables/stock/StockItemTable.tsx:62
 msgid "Batch"
 msgstr "Toplu"
 
-#: src/components/tables/stock/StockItemTable.tsx:65
+#: src/components/tables/stock/StockItemTable.tsx:68
 msgid "Location"
 msgstr "Konum"
 
-#: src/components/tables/stock/StockItemTable.tsx:90
+#: src/components/tables/stock/StockItemTable.tsx:93
 msgid "Test Filter"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:91
+#: src/components/tables/stock/StockItemTable.tsx:94
 msgid "This is a test filter"
 msgstr ""
 
-#: src/components/tables/stock/StockLocationTable.tsx:44
+#: src/components/tables/stock/StockLocationTable.tsx:45
 msgid "Structural"
 msgstr ""
 
@@ -1004,7 +1219,7 @@ msgstr ""
 msgid "External"
 msgstr ""
 
-#: src/components/tables/stock/StockLocationTable.tsx:60
+#: src/components/tables/stock/StockLocationTable.tsx:59
 msgid "Location Type"
 msgstr ""
 
@@ -1075,67 +1290,67 @@ msgstr "Görünüm"
 msgid "Show Boxes"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:6
+#: src/defaults/dashboardItems.tsx:8
 msgid "Subscribed Parts"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:13
+#: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Categories"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:20
+#: src/defaults/dashboardItems.tsx:22
 msgid "Latest Parts"
 msgstr "Son Parçalar"
 
-#: src/defaults/dashboardItems.tsx:27
+#: src/defaults/dashboardItems.tsx:29
 msgid "BOM Waiting Validation"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:34
+#: src/defaults/dashboardItems.tsx:36
 msgid "Recently Updated"
 msgstr "Son Güncellenenler"
 
-#: src/defaults/dashboardItems.tsx:48
+#: src/defaults/dashboardItems.tsx:50
 msgid "Depleted Stock"
 msgstr "Tükenmiş Stok"
 
-#: src/defaults/dashboardItems.tsx:55
+#: src/defaults/dashboardItems.tsx:57
 msgid "Required for Build Orders"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:62
+#: src/defaults/dashboardItems.tsx:64
 msgid "Expired Stock"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:69
+#: src/defaults/dashboardItems.tsx:71
 msgid "Stale Stock"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:76
+#: src/defaults/dashboardItems.tsx:78
 msgid "Build Orders In Progress"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:83
+#: src/defaults/dashboardItems.tsx:85
 msgid "Overdue Build Orders"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:90
+#: src/defaults/dashboardItems.tsx:92
 msgid "Outstanding Purchase Orders"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:97
+#: src/defaults/dashboardItems.tsx:99
 msgid "Overdue Purchase Orders"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:104
+#: src/defaults/dashboardItems.tsx:106
 msgid "Outstanding Sales Orders"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:111
+#: src/defaults/dashboardItems.tsx:113
 msgid "Overdue Sales Orders"
 msgstr ""
 
-#: src/defaults/dashboardItems.tsx:118
+#: src/defaults/dashboardItems.tsx:120
 msgid "Current News"
 msgstr "Güncel Haberler"
 
@@ -1166,6 +1381,7 @@ msgstr "Ana Sayfa"
 
 #: src/defaults/links.tsx:25
 #: src/pages/Index/Dashboard.tsx:19
+#: src/pages/Index/UserSettings.tsx:30
 msgid "Dashboard"
 msgstr "Panel"
 
@@ -1346,7 +1562,7 @@ msgstr ""
 
 #: src/functions/forms.tsx:39
 #: src/functions/forms.tsx:48
-#: src/functions/forms.tsx:128
+#: src/functions/forms.tsx:132
 msgid "Form Error"
 msgstr ""
 
@@ -1543,10 +1759,9 @@ msgstr ""
 msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr ""
 
-#: src/pages/Index/Profile/Profile.tsx:27
-#: src/pages/Index/Profile/Profile.tsx:46
-#~ msgid "User Settings"
-#~ msgstr "User Settings"
+#: src/pages/Index/PluginSettings.tsx:47
+msgid "Plugin Settings"
+msgstr "Plugin Settings"
 
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
@@ -1556,12 +1771,6 @@ msgstr ""
 #: src/pages/Index/Profile/Profile.tsx:33
 #~ msgid "Global Settings"
 #~ msgstr "Global Settings"
-
-#: src/pages/Index/Profile/Profile.tsx:36
-#: src/pages/Index/Profile/Profile.tsx:312
-#: src/pages/Index/Profile/Profile.tsx:329
-#~ msgid "Plugin Settings"
-#~ msgstr "Plugin Settings"
 
 #: src/pages/Index/Profile/Profile.tsx:47
 #~ msgid "Settings for the current user"
@@ -1815,7 +2024,7 @@ msgid "The history is kept in this browser's local storage. So it won't be share
 msgstr ""
 
 #: src/pages/Index/Scan.tsx:338
-#: src/pages/Notifications.tsx:46
+#: src/pages/Notifications.tsx:48
 msgid "History"
 msgstr ""
 
@@ -1847,6 +2056,67 @@ msgstr ""
 msgid "Add dummy item"
 msgstr ""
 
+#: src/pages/Index/SystemSettings.tsx:38
+msgid "Server"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:65
+msgid "Login"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:87
+msgid "Barcodes"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:101
+msgid "Project Codes"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:113
+msgid "Physical Units"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:124
+#: src/pages/part/PartDetail.tsx:120
+msgid "Pricing"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:129
+msgid "Labels"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:135
+#: src/pages/Index/UserSettings.tsx:88
+msgid "Reporting"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:187
+msgid "Part Parameters"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:214
+msgid "Stocktake"
+msgstr ""
+
+#: src/pages/Index/SystemSettings.tsx:219
+#: src/pages/build/BuildDetail.tsx:145
+#: src/pages/build/BuildIndex.tsx:16
+#: src/pages/part/PartDetail.tsx:106
+msgid "Build Orders"
+msgstr "Yapım İşi Emirleri"
+
+#: src/pages/Index/UserSettings.tsx:25
+msgid "Account"
+msgstr ""
+
+#: src/pages/Index/UserSettings.tsx:35
+msgid "Display Options"
+msgstr ""
+
+#: src/pages/Index/UserSettings.tsx:103
+msgid "User Settings"
+msgstr "User Settings"
+
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
 #~ msgstr "Found an exsisting login - using it to log you in."
@@ -1863,7 +2133,7 @@ msgstr "Üzgünüz, böyle bir sayfa yok veya taşınmış."
 msgid "Go to the start page"
 msgstr "Başlangıç ​​sayfasına git"
 
-#: src/pages/Notifications.tsx:54
+#: src/pages/Notifications.tsx:56
 msgid "Mark as unread"
 msgstr ""
 
@@ -1892,13 +2162,13 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:108
-#: src/pages/part/PartDetail.tsx:137
+#: src/pages/part/PartDetail.tsx:160
 #: src/pages/stock/StockDetail.tsx:74
 msgid "Attachments"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:120
-#: src/pages/part/PartDetail.tsx:149
+#: src/pages/part/PartDetail.tsx:172
 #: src/pages/stock/StockDetail.tsx:86
 msgid "Notes"
 msgstr ""
@@ -1907,54 +2177,45 @@ msgstr ""
 msgid "Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:145
-#: src/pages/build/BuildIndex.tsx:16
-#: src/pages/part/PartDetail.tsx:83
-msgid "Build Orders"
-msgstr "Yapım İşi Emirleri"
-
 #: src/pages/build/BuildIndex.tsx:19
 msgid "New Build Order"
 msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:59
-msgid "Subcategories"
-msgstr ""
+#~ msgid "Subcategories"
+#~ msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:71
+#: src/pages/part/PartDetail.tsx:74
 msgid "Parameters"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:57
+#: src/pages/part/PartDetail.tsx:68
 #: src/pages/stock/StockDetail.tsx:44
 msgid "Details"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:69
+#: src/pages/part/PartDetail.tsx:92
 msgid "Variants"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:76
+#: src/pages/part/PartDetail.tsx:99
 msgid "Bill of Materials"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:90
+#: src/pages/part/PartDetail.tsx:113
 msgid "Used In"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:97
-msgid "Pricing"
-msgstr ""
-
-#: src/pages/part/PartDetail.tsx:103
+#: src/pages/part/PartDetail.tsx:126
 msgid "Suppliers"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:124
+#: src/pages/part/PartDetail.tsx:147
 msgid "Test Templates"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:131
+#: src/pages/part/PartDetail.tsx:154
 msgid "Related Parts"
 msgstr ""
 
@@ -1963,8 +2224,8 @@ msgstr ""
 #~ msgstr "Categories"
 
 #: src/pages/stock/LocationDetail.tsx:45
-msgid "Sublocations"
-msgstr ""
+#~ msgid "Sublocations"
+#~ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:50
 msgid "Stock Tracking"
@@ -1993,4 +2254,3 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Belgeleri okuyun"
-
