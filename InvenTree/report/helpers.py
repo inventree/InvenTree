@@ -11,6 +11,7 @@ def report_page_size_options():
     """Returns a list of page size options for PDF reports."""
     return [
         ('A4', _('A4')),
+        ('A3', _('A3')),
         ('Legal', _('Legal')),
         ('Letter', _('Letter')),
     ]
