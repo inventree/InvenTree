@@ -201,24 +201,24 @@ export default function Scan() {
 
   // selected actions component
   const SelectedActions = () => {
-    const uniqueObjectTypes = [
+    const selectedItems = [
       ...new Set(
         selection
           .map((id) => {
-            return history.find((item) => item.id === id)?.objectType;
+            return history.find((item) => item.id === id);
           })
           .filter((item) => item != undefined)
       )
     ];
 
-    if (uniqueObjectTypes.length === 0) {
+    if (selectedItems.length === 0) {
       return (
         <Group spacing={0}>
           <IconQuestionMark color="orange" />
           <Trans>Selected elements are not known</Trans>
         </Group>
       );
-    } else if (uniqueObjectTypes.length > 1) {
+    } else if (selectedItems.length > 1) {
       return (
         <Group spacing={0}>
           <IconAlertCircle color="orange" />
@@ -226,12 +226,14 @@ export default function Scan() {
         </Group>
       );
     }
+    if (selectedItems[0] === undefined) return <></>;
+
     return (
       <>
         <Text fz="sm" c="dimmed">
-          <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
+          <Trans>Actions for {selectedItems[0].objectType} </Trans>
         </Text>
-        <ActionControls type={uniqueObjectTypes[0]} />
+        <ActionControls type={selectedItems[0].objectType} />
       </>
     );
   };
