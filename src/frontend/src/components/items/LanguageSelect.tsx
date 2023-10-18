@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Locales, languages } from '../../contexts/LanguageContext';
 import { useLocalState } from '../../states/LocalState';
 
-export function LanguageSelect() {
+export function LanguageSelect({ width = 80 }: { width?: number }) {
   const [value, setValue] = useState<string | null>(null);
   const [locale, setLanguage] = useLocalState((state) => [
     state.language,
@@ -21,6 +21,18 @@ export function LanguageSelect() {
   useEffect(() => {
     setValue(locale);
   }, [locale]);
+  const langOptions = Object.keys(languages).map((key) => ({
+    value: key,
+    label: languages[key as Locales]
+  }));
 
-  return <Select w={80} data={languages} value={value} onChange={setValue} />;
+  return (
+    <Select
+      w={width}
+      data={langOptions}
+      value={value}
+      onChange={setValue}
+      searchable
+    />
+  );
 }

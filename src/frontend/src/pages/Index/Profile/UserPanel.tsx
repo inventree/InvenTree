@@ -149,7 +149,7 @@ function DisplaySettings({ height }: { height: number }) {
           <Trans>Language</Trans>
         </Text>
         <Stack>
-          <LanguageSelect />
+          <LanguageSelect width={200} />
           <Button onClick={enablePseudoLang} variant="light">
             <Trans>Use pseudo language</Trans>
           </Button>
