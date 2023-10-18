@@ -180,7 +180,7 @@ export default function PartDetail() {
         )
       }
     ];
-  }, [part]);
+  }, [id, part]);
 
   const breadcrumbs = useMemo(
     () => [

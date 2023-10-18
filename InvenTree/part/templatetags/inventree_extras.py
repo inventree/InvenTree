@@ -105,7 +105,6 @@ def render_date(context, date_object):
 @register.simple_tag
 def render_currency(money, **kwargs):
     """Render a currency / Money object"""
-
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
@@ -211,14 +210,12 @@ def inventree_logo(**kwargs):
 
     Returns a path to an image file, which can be rendered in the web interface
     """
-
     return InvenTree.helpers.getLogoImage(**kwargs)
 
 
 @register.simple_tag()
 def inventree_splash(**kwargs):
     """Return the URL for the InvenTree splash screen, *or* a custom screen if the user has provided one."""
-
     return InvenTree.helpers.getSplashScreen(**kwargs)
 
 
@@ -344,7 +341,6 @@ def setting_object(key, *args, **kwargs):
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
     """
-
     cache = kwargs.get('cache', True)
 
     if 'plugin' in kwargs:
@@ -490,20 +486,16 @@ def primitive_to_javascript(primitive):
 
     elif type(primitive) in [int, float]:
         return primitive
-
-    else:
-        # Wrap with quotes
-        return format_html("'{}'", primitive)  # noqa: P103
+    # Wrap with quotes
+    return format_html("'{}'", primitive)  # noqa: P103
 
 
 @register.simple_tag()
 def js_bool(val):
     """Return a javascript boolean value (true or false)"""
-
     if val:
         return 'true'
-    else:
-        return 'false'
+    return 'false'
 
 
 @register.filter

@@ -42,7 +42,7 @@ Multiple results can be uploaded against the same test name. In cases where mult
 
 For any information regarding the reporting architecture, please refer to the [Report Generation](../report/report.md) page.
 
-### Automated Test Intgration
+### Automated Test Integration
 
 The stock item testing framework is especially useful when integrating with an automated acceptance testing framework. Test results can be uploaded using the [InvenTree API](../api/api.md) or the [InvenTree Python Interface](../api/python/python.md).
 

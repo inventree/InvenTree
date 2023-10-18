@@ -18,7 +18,6 @@ def pip_command(*args):
     returns: subprocess.check_output
     throws: subprocess.CalledProcessError
     """
-
     python = sys.executable
 
     command = [python, '-m', 'pip']
@@ -41,7 +40,6 @@ def check_package_path(packagename: str):
     - If installed, return the installation path
     - If not installed, return False
     """
-
     logger.debug("check_package_path: %s", packagename)
 
     # Remove version information
@@ -71,7 +69,6 @@ def check_package_path(packagename: str):
 
 def install_plugins_file():
     """Install plugins from the plugins file"""
-
     logger.info("Installing plugins from plugins file")
 
     pf = settings.PLUGIN_FILE
@@ -96,7 +93,6 @@ def install_plugins_file():
 
 def add_plugin_to_file(install_name):
     """Add a plugin to the plugins file"""
-
     logger.info("Adding plugin to plugins file: %s", install_name)
 
     pf = settings.PLUGIN_FILE
@@ -140,7 +136,6 @@ def install_plugin(url=None, packagename=None, user=None):
     - A staff user account is required
     - We must detect that we are running within a virtual environment
     """
-
     if user and not user.is_staff:
         raise ValidationError(_("Permission denied: only staff users can install plugins"))
 

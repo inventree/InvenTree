@@ -62,7 +62,6 @@ class TotalPriceMixin(models.Model):
 
     def save(self, *args, **kwargs):
         """Update the total_price field when saved"""
-
         # Recalculate total_price for this order
         self.update_total_price(commit=False)
         super().save(*args, **kwargs)
@@ -90,7 +89,6 @@ class TotalPriceMixin(models.Model):
         - Otherwise, return the currency associated with the company
         - Finally, return the default currency code
         """
-
         if self.order_currency:
             return self.order_currency
 
@@ -102,7 +100,6 @@ class TotalPriceMixin(models.Model):
 
     def update_total_price(self, commit=True):
         """Recalculate and save the total_price for this order"""
-
         self.total_price = self.calculate_total_price(target_currency=self.currency)
 
         if commit:
@@ -200,7 +197,6 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
 
     def clean(self):
         """Custom clean method for the generic order class"""
-
         super().clean()
 
         # Check that the referenced 'contact' matches the correct 'company'
@@ -216,7 +212,6 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
 
         It requires any subclasses to implement the get_status_class() class method
         """
-
         today = datetime.now().date()
         return Q(status__in=cls.get_status_class().OPEN) & ~Q(target_date=None) & Q(target_date__lt=today)
 
@@ -226,7 +221,6 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
 
         Makes use of the overdue_filter() method to avoid code duplication
         """
-
         return self.__class__.objects.filter(pk=self.pk).filter(self.__class__.overdue_filter()).exists()
 
     description = models.CharField(max_length=250, blank=True, verbose_name=_('Description'), help_text=_('Order description (optional)'))
@@ -284,7 +278,6 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
     @classmethod
     def get_status_class(cls):
         """Return the enumeration class which represents the 'status' field for this model"""
-
         raise NotImplementedError(f"get_status_class() not implemented for {__class__}")
 
 
@@ -315,7 +308,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @classmethod
     def api_defaults(cls, request):
         """Return default values for this model when issuing an API OPTIONS request"""
-
         defaults = {
             'reference': order.validators.generate_next_purchase_order_reference(),
         }
@@ -362,7 +354,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this PurchaseOrder"""
-
         return f"{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
 
     reference = models.CharField(
@@ -768,7 +759,6 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this SalesOrder"""
-
         return f"{self.reference} - {self.customer.name if self.customer else _('deleted')}"
 
     reference = models.CharField(
@@ -895,7 +885,6 @@ class SalesOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def issue_order(self):
         """Change this order from 'PENDING' to 'IN_PROGRESS'"""
-
         if self.status == SalesOrderStatus.PENDING:
             self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = datetime.now().date()
@@ -1069,7 +1058,6 @@ class OrderLineItem(MetadataMixin, models.Model):
 
         Calls save method on the linked order
         """
-
         super().save(*args, **kwargs)
         self.order.save()
 
@@ -1078,7 +1066,6 @@ class OrderLineItem(MetadataMixin, models.Model):
 
         Calls save method on the linked order
         """
-
         super().delete(*args, **kwargs)
         self.order.save()
 
@@ -1093,7 +1080,6 @@ class OrderLineItem(MetadataMixin, models.Model):
     @property
     def total_line_price(self):
         """Return the total price for this line item"""
-
         if self.price:
             return self.quantity * self.price
 
@@ -1198,8 +1184,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         """
         if self.part is None:
             return None
-        else:
-            return self.part.part
+        return self.part.part
 
     part = models.ForeignKey(
         SupplierPart, on_delete=models.SET_NULL,
@@ -1295,7 +1280,6 @@ class SalesOrderLineItem(OrderLineItem):
 
     def clean(self):
         """Perform extra validation steps for this SalesOrderLineItem instance"""
-
         super().clean()
 
         if self.part:
@@ -1729,7 +1713,6 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this ReturnOrder"""
-
         return f"{self.reference} - {self.customer.name if self.customer else _('no customer')}"
 
     reference = models.CharField(
@@ -1810,7 +1793,6 @@ class ReturnOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def complete_order(self):
         """Complete this ReturnOrder (if not already completed)"""
-
         if self.status == ReturnOrderStatus.IN_PROGRESS:
             self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = datetime.now().date()
@@ -1825,7 +1807,6 @@ class ReturnOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def issue_order(self):
         """Issue this ReturnOrder (if currently pending)"""
-
         if self.status == ReturnOrderStatus.PENDING:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = datetime.now().date()
@@ -1842,7 +1823,6 @@ class ReturnOrder(TotalPriceMixin, Order):
         - Adds a tracking entry to the StockItem
         - Removes the 'customer' reference from the StockItem
         """
-
         # Prevent an item from being "received" multiple times
         if line.received_date is not None:
             logger.warning("receive_line_item called with item already returned")
@@ -1908,7 +1888,6 @@ class ReturnOrderLineItem(OrderLineItem):
 
     def clean(self):
         """Perform extra validation steps for the ReturnOrderLineItem model"""
-
         super().clean()
 
         if self.item and not self.item.serialized:
@@ -1977,7 +1956,6 @@ class ReturnOrderAttachment(InvenTreeAttachment):
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the ReturnOrderAttachment class"""
-
         return reverse('api-return-order-attachment-list')
 
     def getSubdir(self):

@@ -12,7 +12,6 @@ logger = logging.getLogger('inventree')
 
 def currency_code_default():
     """Returns the default currency code (or USD if not specified)"""
-
     from common.models import InvenTreeSetting
 
     cached_value = cache.get('currency_code_default', '')

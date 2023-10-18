@@ -101,7 +101,6 @@ class BarcodeAssign(APIView):
 
         Checks inputs and assign barcode (hash) to StockItem.
         """
-
         data = request.data
 
         barcode_data = data.get('barcode', None)
@@ -180,7 +179,6 @@ class BarcodeUnassign(APIView):
 
     def post(self, request, *args, **kwargs):
         """Respond to a barcode unassign POST request"""
-
         # The following database models support assignment of third-party barcodes
         supported_models = InvenTreeInternalBarcodePlugin.get_supported_barcode_models()
 

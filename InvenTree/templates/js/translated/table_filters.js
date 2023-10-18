@@ -828,7 +828,7 @@ function getPartParameterTemplateFilters() {
 }
 
 
-// Return a dictionary of filters for the "parameteric part" table
+// Return a dictionary of filters for the "parametric part" table
 function getParametricPartTableFilters() {
     let filters = getPartTableFilters();
 

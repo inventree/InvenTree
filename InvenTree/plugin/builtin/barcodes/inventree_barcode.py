@@ -30,12 +30,10 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     @staticmethod
     def get_supported_barcode_models():
         """Returns a list of database models which support barcode functionality"""
-
         return getModelsWithMixin(InvenTreeBarcodeMixin)
 
     def format_matched_response(self, label, model, instance):
         """Format a response for the scanned data"""
-
         data = {
             'pk': instance.pk
         }
@@ -65,7 +63,6 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
         Here we are looking for a dict object which contains a reference to a particular InvenTree database object
         """
-
         # Create hash from raw barcode data
         barcode_hash = hash_barcode(barcode_data)
 

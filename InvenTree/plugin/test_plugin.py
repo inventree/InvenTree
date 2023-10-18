@@ -69,7 +69,6 @@ class InvenTreePluginTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Setup for all tests."""
-
         super().setUpTestData()
 
         cls.plugin = InvenTreePlugin()
@@ -184,7 +183,6 @@ class InvenTreePluginTests(TestCase):
 
     def test_version(self):
         """Test Version checks"""
-
         self.assertFalse(self.plugin_version.check_version([0, 0, 3]))
         self.assertTrue(self.plugin_version.check_version([0, 1, 0]))
         self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
@@ -202,7 +200,6 @@ class RegistryTests(TestCase):
 
     def run_package_test(self, directory):
         """General runner for testing package based installs."""
-
         # Patch environment variable to add dir
         envs = {'INVENTREE_PLUGIN_TEST_DIR': directory}
         with mock.patch.dict(os.environ, envs):
@@ -236,7 +233,6 @@ class RegistryTests(TestCase):
 
     def test_folder_loading(self):
         """Test that plugins in folders outside of BASE_DIR get loaded."""
-
         # Run in temporary directory -> always a new random name
         with tempfile.TemporaryDirectory() as tmp:
             # Fill directory with sample data
@@ -262,7 +258,6 @@ class RegistryTests(TestCase):
 
     def test_broken_samples(self):
         """Test that the broken samples trigger reloads."""
-
         # In the base setup there are no errors
         self.assertEqual(len(registry.errors), 0)
 

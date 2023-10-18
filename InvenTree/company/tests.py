@@ -29,7 +29,6 @@ class CompanySimpleTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Perform initialization for the tests in this class"""
-
         super().setUpTestData()
 
         Company.objects.create(name='ABC Co.',
@@ -194,7 +193,6 @@ class AddressTest(TestCase):
 
     def test_primary_constraint(self):
         """Test that there can only be one company-'primary=true' pair"""
-
         Address.objects.create(company=self.c, primary=True)
         Address.objects.create(company=self.c, primary=False)
 
@@ -211,7 +209,6 @@ class AddressTest(TestCase):
 
     def test_first_address_is_primary(self):
         """Test that first address related to company is always set to primary"""
-
         addr = Address.objects.create(company=self.c)
         self.assertTrue(addr.primary)
 
@@ -255,7 +252,6 @@ class ManufacturerPartSimpleTest(TestCase):
 
     def setUp(self):
         """Initialization for the unit tests in this class"""
-
         # Create a manufacturer part
         self.part = Part.objects.get(pk=1)
         manufacturer = Company.objects.get(pk=1)

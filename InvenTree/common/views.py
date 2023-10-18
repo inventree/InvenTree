@@ -480,8 +480,7 @@ class FileManagementAjaxView(AjaxView):
             self.render_done(form)
             data = {'form_valid': True, 'success': _('Parts imported')}
             return self.renderJsonResponse(request, data=data)
-        else:
-            self.storage.current_step = self.steps.next
+        self.storage.current_step = self.steps.next
 
         return self.renderJsonResponse(request, data={'form_valid': None})
 

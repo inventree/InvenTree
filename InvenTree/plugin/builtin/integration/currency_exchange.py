@@ -26,7 +26,6 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
 
     def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
         """Request exchange rate data from external API"""
-
         response = self.api_call(
             'latest',
             url_args={
@@ -42,10 +41,8 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
             rates[base_currency] = 1.00
 
             return rates
-
-        else:
-            logger.warning("Failed to update exchange rates from %s: Server returned status %s", self.api_url, response.status_code)
-            return None
+        logger.warning("Failed to update exchange rates from %s: Server returned status %s", self.api_url, response.status_code)
+        return None
 
     @property
     def api_url(self):
