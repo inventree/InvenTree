@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Text, Tooltip } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
@@ -9,7 +8,6 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';

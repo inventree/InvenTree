@@ -9,6 +9,7 @@ import { useMemo } from 'react';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
+import { CompanyTable } from '../../components/tables/general/CompanyTable';
 
 export default function PurchasingIndex() {
   const panels = useMemo(() => {
@@ -21,12 +22,14 @@ export default function PurchasingIndex() {
       {
         name: 'suppliers',
         label: t`Suppliers`,
-        icon: <IconBuildingStore />
+        icon: <IconBuildingStore />,
+        content: <CompanyTable params={{ is_supplier: true }} />
       },
       {
         name: 'manufacturer',
         label: t`Manufacturers`,
-        icon: <IconBuildingFactory2 />
+        icon: <IconBuildingFactory2 />,
+        content: <CompanyTable params={{ is_manufacturer: true }} />
       }
     ];
   }, []);
