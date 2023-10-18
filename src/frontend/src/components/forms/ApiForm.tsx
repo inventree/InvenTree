@@ -136,13 +136,19 @@ export function ApiForm({
   useEffect(() => {
     // Provide initial form data
     Object.entries(props.fields ?? {}).forEach(([fieldName, field]) => {
-      if (field.value !== undefined) {
+      // fieldDefinition is supplied by the API, and can serve as a backup
+      let fieldDefinition = fieldDefinitions[fieldName] ?? {};
+
+      let v =
+        field.value ??
+        field.default ??
+        fieldDefinition.value ??
+        fieldDefinition.default ??
+        undefined;
+
+      if (v !== undefined) {
         form.setValues({
-          [fieldName]: field.value
-        });
-      } else if (field.default !== undefined) {
-        form.setValues({
-          [fieldName]: field.default
+          [fieldName]: v
         });
       }
     });
