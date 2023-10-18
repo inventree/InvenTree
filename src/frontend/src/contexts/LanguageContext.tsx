@@ -7,7 +7,7 @@ import { api } from '../App';
 import { useLocalState } from '../states/LocalState';
 
 // Definitions
-export type Locales = keyof typeof languages;
+export type Locales = keyof typeof languages | 'pseudo-LOCALE';
 
 export const languages: Record<string, string> = {
   cs: t`Czech`,
@@ -38,8 +38,7 @@ export const languages: Record<string, string> = {
   tr: t`Turkish`,
   vi: t`Vietnamese`,
   'zh-hans': t`Chinese (Simplified)`,
-  'zh-hant': t`Chinese (Traditional)`,
-  'pseudo-LOCALE': t`Pseudo Locale`
+  'zh-hant': t`Chinese (Traditional)`
 };
 
 export function LanguageContext({ children }: { children: JSX.Element }) {
