@@ -6,6 +6,7 @@ import { AxiosResponse } from 'axios';
 import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
+import { apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
@@ -13,17 +14,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(props: ApiFormProps): string {
-  let url = props.url;
-
-  if (!url.endsWith('/')) {
-    url += '/';
-  }
-
-  if (props.pk && props.pk > 0) {
-    url += `${props.pk}/`;
-  }
-
-  return url;
+  return apiUrl(props.url, props.pk);
 }
 
 /**
@@ -76,10 +67,14 @@ export function extractAvailableFields(
     fields[fieldName] = {
       ...field,
       name: fieldName,
-      fieldType: field.type,
+      field_type: field.type,
       description: field.help_text,
-      value: field.value ?? field.default
+      value: field.value ?? field.default,
+      disabled: field.read_only ?? false
     };
+
+    // Remove the 'read_only' field - plays havoc with react components
+    delete fields['read_only'];
   }
 
   return fields;
@@ -107,11 +102,15 @@ export function openModalApiForm(props: ApiFormProps) {
     .options(url)
     .then((response) => {
       // Extract available fields from the OPTIONS response (and handle any errors)
-      let fields: Record<string, ApiFormFieldType> | null =
-        extractAvailableFields(response, props.method);
 
-      if (fields == null) {
-        return;
+      let fields: Record<string, ApiFormFieldType> | null = {};
+
+      if (!props.ignorePermissionCheck) {
+        fields = extractAvailableFields(response, props.method);
+
+        if (fields == null) {
+          return;
+        }
       }
 
       // Generate a random modal ID for controller

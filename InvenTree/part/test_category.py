@@ -22,7 +22,6 @@ class CategoryTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Extract some interesting categories for time-saving"""
-
         super().setUpTestData()
 
         cls.electronics = PartCategory.objects.get(name='Electronics')
@@ -68,7 +67,6 @@ class CategoryTest(TestCase):
 
     def test_path_string(self):
         """Test that the category path string works correctly."""
-
         # Note that due to data migrations, these fields need to be saved first
         self.resistors.save()
         self.transceivers.save()
@@ -137,7 +135,6 @@ class CategoryTest(TestCase):
 
     def test_part_count(self):
         """Test that the Category part count works."""
-
         self.assertEqual(self.fasteners.partcount(), 2)
         self.assertEqual(self.capacitors.partcount(), 1)
 
@@ -203,7 +200,6 @@ class CategoryTest(TestCase):
 
     def test_default_locations(self):
         """Test traversal for default locations."""
-
         self.assertIsNotNone(self.fasteners.default_location)
         self.fasteners.default_location.save()
         self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer_1 - In my desk')

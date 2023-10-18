@@ -22,12 +22,12 @@ export default function Login() {
     state.fetchServerApiState
   ]);
   const hostname =
-    hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey].name;
+    hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
 
   // Data manipulation functions
   function ChangeHost(newHost: string): void {
-    setHost(hostList[newHost].host, newHost);
+    setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
     fetchServerApiState();
   }

@@ -18,7 +18,6 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         """Called when the 'users' app is loaded at runtime"""
-
         # skip loading if plugin registry is not loaded or we run in a background thread
         if not isPluginRegistryLoaded() or not isInMainThread():
             return

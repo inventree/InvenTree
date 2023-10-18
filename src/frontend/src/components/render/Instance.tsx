@@ -1,9 +1,9 @@
 import { t } from '@lingui/macro';
-import { Alert } from '@mantine/core';
+import { Alert, Space } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
-import { Thumbnail } from '../items/Thumbnail';
+import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildOrder } from './Build';
 import {
   RenderAddress,
@@ -11,15 +11,50 @@ import {
   RenderContact,
   RenderSupplierPart
 } from './Company';
+import { ModelType } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
   RenderSalesOrder,
   RenderSalesOrderShipment
 } from './Order';
-import { RenderPart, RenderPartCategory } from './Part';
+import {
+  RenderPart,
+  RenderPartCategory,
+  RenderPartParameterTemplate
+} from './Part';
 import { RenderStockItem, RenderStockLocation } from './Stock';
 import { RenderOwner, RenderUser } from './User';
+
+type EnumDictionary<T extends string | symbol | number, U> = {
+  [K in T]: U;
+};
+
+/**
+ * Lookup table for rendering a model instance
+ */
+const RendererLookup: EnumDictionary<
+  ModelType,
+  (props: { instance: any }) => ReactNode
+> = {
+  [ModelType.address]: RenderAddress,
+  [ModelType.build]: RenderBuildOrder,
+  [ModelType.company]: RenderCompany,
+  [ModelType.contact]: RenderContact,
+  [ModelType.owner]: RenderOwner,
+  [ModelType.part]: RenderPart,
+  [ModelType.partcategory]: RenderPartCategory,
+  [ModelType.partparametertemplate]: RenderPartParameterTemplate,
+  [ModelType.purchaseorder]: RenderPurchaseOrder,
+  [ModelType.returnorder]: RenderReturnOrder,
+  [ModelType.salesorder]: RenderSalesOrder,
+  [ModelType.salesordershipment]: RenderSalesOrderShipment,
+  [ModelType.stocklocation]: RenderStockLocation,
+  [ModelType.stockitem]: RenderStockItem,
+  [ModelType.supplierpart]: RenderSupplierPart,
+  [ModelType.user]: RenderUser,
+  [ModelType.manufacturerpart]: RenderPart
+};
 
 // import { ApiFormFieldType } from "../forms/fields/ApiFormField";
 
@@ -30,48 +65,22 @@ export function RenderInstance({
   model,
   instance
 }: {
-  model: string;
+  model: ModelType | undefined;
   instance: any;
 }): ReactNode {
-  switch (model) {
-    case 'address':
-      return <RenderAddress address={instance} />;
-    case 'build':
-      return <RenderBuildOrder buildorder={instance} />;
-    case 'company':
-      return <RenderCompany company={instance} />;
-    case 'contact':
-      return <RenderContact contact={instance} />;
-    case 'owner':
-      return <RenderOwner owner={instance} />;
-    case 'part':
-      return <RenderPart part={instance} />;
-    case 'partcategory':
-      return <RenderPartCategory category={instance} />;
-    case 'purchaseorder':
-      return <RenderPurchaseOrder order={instance} />;
-    case 'returnorder':
-      return <RenderReturnOrder order={instance} />;
-    case 'salesoder':
-      return <RenderSalesOrder order={instance} />;
-    case 'salesordershipment':
-      return <RenderSalesOrderShipment shipment={instance} />;
-    case 'stocklocation':
-      return <RenderStockLocation location={instance} />;
-    case 'stockitem':
-      return <RenderStockItem item={instance} />;
-    case 'supplierpart':
-      return <RenderSupplierPart supplierpart={instance} />;
-    case 'user':
-      return <RenderUser user={instance} />;
-    default:
-      // Unknown model
-      return (
-        <Alert color="red" title={t`Unknown model: ${model}`}>
-          <></>
-        </Alert>
-      );
+  if (model === undefined) {
+    console.error('RenderInstance: No model provided');
+    return <UnknownRenderer model={model} />;
   }
+
+  const RenderComponent = RendererLookup[model];
+
+  if (!RenderComponent) {
+    console.error(`RenderInstance: No renderer for model ${model}`);
+    return <UnknownRenderer model={model} />;
+  }
+
+  return <RenderComponent instance={instance} />;
 }
 
 /**
@@ -80,12 +89,14 @@ export function RenderInstance({
 export function RenderInlineModel({
   primary,
   secondary,
+  suffix,
   image,
   labels,
   url
 }: {
   primary: string;
   secondary?: string;
+  suffix?: string;
   image?: string;
   labels?: string[];
   url?: string;
@@ -94,10 +105,30 @@ export function RenderInlineModel({
   // TODO: Handle URL
 
   return (
-    <Group spacing="xs">
-      {image && Thumbnail({ src: image, size: 18 })}
-      <Text size="sm">{primary}</Text>
-      {secondary && <Text size="xs">{secondary}</Text>}
+    <Group spacing="xs" position="apart">
+      <Group spacing="xs" position="left">
+        {image && Thumbnail({ src: image, size: 18 })}
+        <Text size="sm">{primary}</Text>
+        {secondary && <Text size="xs">{secondary}</Text>}
+      </Group>
+      {suffix && (
+        <>
+          <Space />
+          <Text size="xs">{suffix}</Text>
+        </>
+      )}
     </Group>
+  );
+}
+
+export function UnknownRenderer({
+  model
+}: {
+  model: ModelType | undefined;
+}): ReactNode {
+  return (
+    <Alert color="red" title={t`Unknown model: ${model}`}>
+      <></>
+    </Alert>
   );
 }

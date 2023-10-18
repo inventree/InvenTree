@@ -35,7 +35,7 @@ class NotificationMethod:
         This checks that:
         - All needed functions are implemented
         - The method is not disabled via plugin
-        - All needed contaxt values were provided
+        - All needed context values were provided
         """
         # Check if a sending fnc is defined
         if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
@@ -242,7 +242,6 @@ class UIMessageNotification(SingleNotificationMethod):
 
     def get_targets(self):
         """Only send notifications for active users"""
-
         return [target for target in self.targets if target.is_active]
 
     def send(self, target):

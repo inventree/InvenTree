@@ -31,7 +31,6 @@ class GenericOAuth2ApiConnectView(GenericOAuth2ApiLoginView):
 
     def dispatch(self, request, *args, **kwargs):
         """Dispatch the connect request directly."""
-
         # Override the request method be in connection mode
         request.GET = request.GET.copy()
         request.GET['process'] = 'connect'

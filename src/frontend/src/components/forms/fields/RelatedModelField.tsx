@@ -3,7 +3,7 @@ import { Input } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
 
@@ -37,16 +37,18 @@ export function RelatedModelField({
 
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(
-    () =>
-      constructField({
-        form: form,
-        field: field,
-        fieldName: fieldName,
-        definitions: definitions
-      }),
-    [form.values, field, definitions]
-  );
+  const definition: ApiFormFieldType = useMemo(() => {
+    let def = constructField({
+      form: form,
+      field: field,
+      fieldName: fieldName,
+      definitions: definitions
+    });
+
+    // Remove the 'read_only' attribute (causes issues with Mantine)
+    delete def['read_only'];
+    return def;
+  }, [form.values, field, definitions]);
 
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
@@ -64,11 +66,6 @@ export function RelatedModelField({
 
       if (formPk != null) {
         let url = (definition.api_url || '') + formPk + '/';
-
-        // TODO: Fix this!!
-        if (url.startsWith('/api')) {
-          url = url.substring(4);
-        }
 
         api.get(url).then((response) => {
           let data = response.data;
@@ -105,13 +102,6 @@ export function RelatedModelField({
         return null;
       }
 
-      // TODO: Fix this in the api controller
-      let url = definition.api_url;
-
-      if (url.startsWith('/api')) {
-        url = url.substring(4);
-      }
-
       let filters = definition.filters ?? {};
 
       if (definition.adjustFilters) {
@@ -126,7 +116,7 @@ export function RelatedModelField({
       };
 
       return api
-        .get(url, {
+        .get(definition.api_url, {
           params: params
         })
         .then((response) => {
@@ -160,7 +150,7 @@ export function RelatedModelField({
     // TODO: If a custom render function is provided, use that
 
     return (
-      <RenderInstance instance={data} model={definition.model ?? 'undefined'} />
+      <RenderInstance instance={data} model={definition.model ?? undefined} />
     );
   }
 
@@ -182,8 +172,20 @@ export function RelatedModelField({
     }
   }
 
+  /* Construct a "cut-down" version of the definition,
+   * which does not include any attributes that the lower components do not recognize
+   */
+  const fieldDefinition = useMemo(() => {
+    return {
+      ...definition,
+      onValueChange: undefined,
+      adjustFilters: undefined,
+      read_only: undefined
+    };
+  }, [definition]);
+
   return (
-    <Input.Wrapper {...definition} error={error}>
+    <Input.Wrapper {...fieldDefinition} error={error}>
       <Select
         id={fieldId}
         value={pk != null && data.find((item) => item.value == pk)}

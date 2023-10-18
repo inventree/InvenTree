@@ -40,7 +40,6 @@ class InvenTreeConfig(AppConfig):
             return
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
-            InvenTree.tasks.check_for_migrations(worker=False)
 
             self.remove_obsolete_tasks()
 
@@ -49,6 +48,8 @@ class InvenTreeConfig(AppConfig):
 
             if not isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
+                # Let the background worker check for migrations
+                InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
         self.collect_notification_methods()
 
@@ -78,19 +79,54 @@ class InvenTreeConfig(AppConfig):
 
     def start_background_tasks(self):
         """Start all background tests for InvenTree."""
-
         logger.info("Starting background tasks...")
+
+        from django_q.models import Schedule
+
+        # List of existing scheduled tasks (in the database)
+        existing_tasks = {}
+
+        for existing_task in Schedule.objects.all():
+            existing_tasks[existing_task.func] = existing_task
+
+        tasks_to_create = []
+        tasks_to_update = []
 
         # List of collected tasks found with the @scheduled_task decorator
         tasks = InvenTree.tasks.tasks.task_list
 
         for task in tasks:
+
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
-            InvenTree.tasks.schedule_task(
-                ref_name,
-                schedule_type=task.interval,
-                minutes=task.minutes,
-            )
+
+            if ref_name in existing_tasks.keys():
+                # This task already exists - update the details if required
+                existing_task = existing_tasks[ref_name]
+
+                if existing_task.schedule_type != task.interval or existing_task.minutes != task.minutes:
+
+                    existing_task.schedule_type = task.interval
+                    existing_task.minutes = task.minutes
+                    tasks_to_update.append(existing_task)
+
+            else:
+                # This task does *not* already exist - create it
+                tasks_to_create.append(
+                    Schedule(
+                        name=ref_name,
+                        func=ref_name,
+                        schedule_type=task.interval,
+                        minutes=task.minutes,
+                    )
+                )
+
+        if len(tasks_to_create) > 0:
+            Schedule.objects.bulk_create(tasks_to_create)
+            logger.info("Created %s new scheduled tasks", len(tasks_to_create))
+
+        if len(tasks_to_update) > 0:
+            Schedule.objects.bulk_update(tasks_to_update, ['schedule_type', 'minutes'])
+            logger.info("Updated %s existing scheduled tasks", len(tasks_to_update))
 
         # Put at least one task onto the background worker stack,
         # which will be processed as soon as the worker comes online
@@ -103,7 +139,6 @@ class InvenTreeConfig(AppConfig):
 
     def collect_tasks(self):
         """Collect all background tasks."""
-
         for app_name, app in apps.app_configs.items():
             if app_name == 'InvenTree':
                 continue

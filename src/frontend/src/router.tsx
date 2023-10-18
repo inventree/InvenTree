@@ -49,6 +49,18 @@ export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
 );
 
+export const UserSettings = Loadable(
+  lazy(() => import('./pages/Index/UserSettings'))
+);
+
+export const SystemSettings = Loadable(
+  lazy(() => import('./pages/Index/SystemSettings'))
+);
+
+export const PluginSettings = Loadable(
+  lazy(() => import('./pages/Index/PluginSettings'))
+);
+
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
@@ -68,6 +80,11 @@ export const routes = (
       <Route path="notifications/" element={<Notifications />} />,
       <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
+      <Route path="settings/">
+        <Route index element={<SystemSettings />} />
+        <Route path="user/" element={<UserSettings />} />
+        <Route path="plugin/" element={<PluginSettings />} />
+      </Route>
       <Route path="part/">
         <Route index element={<CategoryDetail />} />
         <Route path="category/:id" element={<CategoryDetail />} />

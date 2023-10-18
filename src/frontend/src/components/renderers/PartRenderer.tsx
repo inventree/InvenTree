@@ -12,7 +12,7 @@ export const PartRenderer = ({
 }) => {
   return (
     <GeneralRenderer
-      api_key={ApiPaths.part_detail}
+      api_key={ApiPaths.part_list}
       api_ref="part"
       link={link ? `/part/${pk}` : ''}
       pk={pk}

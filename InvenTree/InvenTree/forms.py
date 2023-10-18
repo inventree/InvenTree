@@ -176,7 +176,6 @@ class CustomLoginForm(LoginForm):
         First check that:
         - A valid user has been supplied
         """
-
         if not self.user:
             # No user supplied - redirect to the login page
             return HttpResponseRedirect(reverse('account_login'))
@@ -214,7 +213,7 @@ class CustomSignupForm(SignupForm):
         set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
 
     def clean(self):
-        """Make sure the supllied emails match if enabled in settings."""
+        """Make sure the supplied emails match if enabled in settings."""
         cleaned_data = super().clean()
 
         # check for two mail fields
@@ -313,7 +312,6 @@ class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, Default
 
     def get_email_confirmation_url(self, request, emailconfirmation):
         """Construct the email confirmation url"""
-
         from InvenTree.helpers_model import construct_absolute_url
 
         url = super().get_email_confirmation_url(request, emailconfirmation)

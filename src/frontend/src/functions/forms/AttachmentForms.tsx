@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../../states/ApiState';
 import {
   openCreateApiForm,
   openDeleteApiForm,
@@ -25,13 +26,13 @@ export function attachmentFields(editing: boolean): ApiFormFieldSet {
  * Add a new attachment (either a file or a link)
  */
 export function addAttachment({
-  url,
+  endpoint,
   model,
   pk,
   attachmentType,
   callback
 }: {
-  url: string;
+  endpoint: ApiPaths;
   model: string;
   pk: number;
   attachmentType: 'file' | 'link';
@@ -60,7 +61,7 @@ export function addAttachment({
   openCreateApiForm({
     name: 'attachment-add',
     title: title,
-    url: url,
+    url: endpoint,
     successMessage: message,
     fields: formFields,
     onFormSuccess: callback
@@ -71,13 +72,13 @@ export function addAttachment({
  * Edit an existing attachment (either a file or a link)
  */
 export function editAttachment({
-  url,
+  endpoint,
   model,
   pk,
   attachmentType,
   callback
 }: {
-  url: string;
+  endpoint: ApiPaths;
   model: string;
   pk: number;
   attachmentType: 'file' | 'link';
@@ -103,7 +104,7 @@ export function editAttachment({
   openEditApiForm({
     name: 'attachment-edit',
     title: title,
-    url: url,
+    url: endpoint,
     pk: pk,
     successMessage: message,
     fields: formFields,
@@ -112,16 +113,16 @@ export function editAttachment({
 }
 
 export function deleteAttachment({
-  url,
+  endpoint,
   pk,
   callback
 }: {
-  url: string;
+  endpoint: ApiPaths;
   pk: number;
   callback: () => void;
 }) {
   openDeleteApiForm({
-    url: url,
+    url: endpoint,
     pk: pk,
     name: 'attachment-edit',
     title: t`Delete Attachment`,

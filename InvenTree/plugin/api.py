@@ -183,7 +183,6 @@ class PluginActivate(UpdateAPI):
 
     def perform_update(self, serializer):
         """Activate the plugin."""
-
         serializer.save()
 
 

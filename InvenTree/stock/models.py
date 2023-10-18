@@ -41,12 +41,74 @@ from plugin.events import trigger_event
 from users.models import Owner
 
 
+class StockLocationType(MetadataMixin, models.Model):
+    """A type of stock location like Warehouse, room, shelf, drawer.
+
+    Attributes:
+        name: brief name
+        description: longer form description
+        icon: icon class
+    """
+
+    class Meta:
+        """Metaclass defines extra model properties."""
+
+        verbose_name = _("Stock Location type")
+        verbose_name_plural = _("Stock Location types")
+
+    @staticmethod
+    def get_api_url():
+        """Return API url."""
+        return reverse('api-location-type-list')
+
+    def __str__(self):
+        """String representation of a StockLocationType."""
+        return self.name
+
+    name = models.CharField(
+        blank=False,
+        max_length=100,
+        verbose_name=_("Name"),
+        help_text=_("Name"),
+    )
+
+    description = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_("Description"),
+        help_text=_("Description (optional)")
+    )
+
+    icon = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_("Icon"),
+        help_text=_("Default icon for all locations that have no icon set (optional)")
+    )
+
+
+class StockLocationManager(TreeManager):
+    """Custom database manager for the StockLocation class.
+
+    StockLocation querysets will automatically select related fields for performance.
+    """
+
+    def get_queryset(self):
+        """Prefetch queryset to optimize db hits.
+
+        - Joins the StockLocationType by default for speedier icon access
+        """
+        return super().get_queryset().select_related("location_type")
+
+
 class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     """Organization tree for StockItem objects.
 
     A "StockLocation" can be considered a warehouse, or storage location
     Stock locations can be hierarchical as required
     """
+
+    objects = StockLocationManager()
 
     class Meta:
         """Metaclass defines extra model properties"""
@@ -107,11 +169,12 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         """Return API url."""
         return reverse('api-location-list')
 
-    icon = models.CharField(
+    custom_icon = models.CharField(
         blank=True,
         max_length=100,
         verbose_name=_("Icon"),
-        help_text=_("Icon (optional)")
+        help_text=_("Icon (optional)"),
+        db_column="icon",
     )
 
     owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
@@ -132,6 +195,38 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         verbose_name=_('External'),
         help_text=_('This is an external stock location')
     )
+
+    location_type = models.ForeignKey(
+        StockLocationType,
+        on_delete=models.SET_NULL,
+        verbose_name=_("Location type"),
+        related_name="stock_locations",
+        null=True, blank=True,
+        help_text=_("Stock location type of this location"),
+    )
+
+    @property
+    def icon(self):
+        """Get the current icon used for this location.
+
+        The icon field on this model takes precedences over the possibly assigned stock location type
+        """
+        if self.custom_icon:
+            return self.custom_icon
+
+        if self.location_type:
+            return self.location_type.icon
+
+        return ""
+
+    @icon.setter
+    def icon(self, value):
+        """Setter to keep model API compatibility. But be careful:
+
+        If the field gets loaded as default value by any form which is later saved,
+        the location no longer inherits its icon from the location type.
+        """
+        self.custom_icon = value
 
     def get_location_owner(self):
         """Get the closest "owner" for this location.
@@ -206,30 +301,6 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         return self.stock_item_count()
 
 
-class StockItemManager(TreeManager):
-    """Custom database manager for the StockItem class.
-
-    StockItem querysets will automatically prefetch related fields.
-    """
-
-    def get_queryset(self):
-        """Prefetch queryset to optimise db hits."""
-        return super().get_queryset().prefetch_related(
-            'belongs_to',
-            'build',
-            'customer',
-            'purchase_order',
-            'sales_order',
-            'supplier_part',
-            'supplier_part__supplier',
-            'allocations',
-            'sales_order_allocations',
-            'location',
-            'part',
-            'tracking_info'
-        )
-
-
 def generate_batch_code():
     """Generate a default 'batch code' for a new StockItem.
 
@@ -239,7 +310,6 @@ def generate_batch_code():
     Also, this function is exposed to the ValidationMixin plugin class,
     allowing custom plugins to be used to generate new batch code values
     """
-
     # First, check if any plugins can generate batch codes
     from plugin.registry import registry
 
@@ -275,7 +345,6 @@ def default_delete_on_deplete():
     Prior to 2022-12-24, this field was set to True by default.
     Now, there is a user-configurable setting to govern default behaviour.
     """
-
     try:
         return common.models.InvenTreeSetting.get_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
     except (IntegrityError, OperationalError):
@@ -345,7 +414,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         This is used for efficient numerical sorting
         """
-
         serial = str(getattr(self, 'serial', '')).strip()
 
         from plugin.registry import registry
@@ -434,7 +502,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         - Unique serial number requirement
         - Adds a transaction note when the item is first created.
         """
-
         self.validate_unique()
         self.clean()
 
@@ -530,7 +597,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         - Validation is performed by custom plugins.
         - By default, no validation checks are performed
         """
-
         from plugin.registry import registry
 
         for plugin in registry.with_mixin('validation'):
@@ -551,7 +617,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         - The location is not structural
         - Quantity must be 1 if the StockItem has a serial number
         """
-
         if self.location is not None and self.location.structural:
             raise ValidationError(
                 {'location': _("Stock items cannot be located into structural stock locations!")})
@@ -1096,7 +1161,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
     def sales_order_allocation_count(self, active=True):
         """Return the total quantity allocated to SalesOrders."""
-
         query = self.get_sales_order_allocations(active=active)
         query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 
@@ -1778,9 +1842,8 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             self.delete()
 
             return False
-        else:
-            self.save()
-            return True
+        self.save()
+        return True
 
     @transaction.atomic
     def stocktake(self, count, user, notes=''):
@@ -2170,8 +2233,7 @@ class StockItemTracking(models.Model):
         """Return label."""
         if self.tracking_type in StockHistoryCode.keys():
             return StockHistoryCode.label(self.tracking_type)
-        else:
-            return self.title
+        return self.title
 
     tracking_type = models.IntegerField(
         default=StockHistoryCode.LEGACY,

@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { InvenTreeStyle } from '../../globalStyle';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { ScanButton } from '../items/ScanButton';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
@@ -36,7 +37,7 @@ export function Header() {
     queryKey: ['notification-count'],
     queryFn: async () => {
       return api
-        .get('/notifications/', {
+        .get(apiUrl(ApiPaths.notifications_list), {
           params: {
             read: false,
             limit: 1
@@ -67,17 +68,17 @@ export function Header() {
           closeNotificationDrawer();
         }}
       />
-      <Container className={classes.layoutHeaderSection} size={'xl'}>
+      <Container className={classes.layoutHeaderSection} size="100%">
         <Group position="apart">
           <Group>
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
           <Group>
-            <ScanButton />
             <ActionIcon onClick={openSearchDrawer}>
               <IconSearch />
             </ActionIcon>
+            <ScanButton />
             <ActionIcon onClick={openNotificationDrawer}>
               <Indicator
                 radius="lg"

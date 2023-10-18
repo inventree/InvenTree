@@ -24,7 +24,6 @@ const defaultPageSize: number = 25;
 /**
  * Set of optional properties which can be passed to an InvenTreeTable component
  *
- * @param url : string - The API endpoint to query
  * @param params : any - Base query parameters
  * @param tableKey : string - Unique key for the table (used for local storage)
  * @param refreshId : string - Unique ID for the table (used to trigger a refresh)
@@ -376,8 +375,8 @@ export function InvenTreeTable({
       });
   };
 
-  const { data, isError, isFetching, isLoading, refetch } = useQuery(
-    [
+  const { data, isError, isFetching, isLoading, refetch } = useQuery({
+    queryKey: [
       `table-${tableName}`,
       sortStatus.columnAccessor,
       sortStatus.direction,
@@ -385,12 +384,10 @@ export function InvenTreeTable({
       activeFilters,
       searchTerm
     ],
-    fetchTableData,
-    {
-      refetchOnWindowFocus: false,
-      refetchOnMount: 'always'
-    }
-  );
+    queryFn: fetchTableData,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true
+  });
 
   /*
    * Reload the table whenever the refetch changes
