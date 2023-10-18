@@ -4,7 +4,8 @@ exclude_patterns = [
   "docs/ci/**",
   "InvenTree/InvenTree/static/**",
   "ci/**",
-  "InvenTree/**/migrations/*.py"
+  "InvenTree/**/migrations/*.py",
+  "src/frontend/src/locales/**"
 ]
 
 [[analyzers]]
