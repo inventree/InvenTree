@@ -37,16 +37,18 @@ export function RelatedModelField({
 
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(
-    () =>
-      constructField({
-        form: form,
-        field: field,
-        fieldName: fieldName,
-        definitions: definitions
-      }),
-    [form.values, field, definitions]
-  );
+  const definition: ApiFormFieldType = useMemo(() => {
+    let def = constructField({
+      form: form,
+      field: field,
+      fieldName: fieldName,
+      definitions: definitions
+    });
+
+    // Remove the 'read_only' attribute (causes issues with Mantine)
+    delete def['read_only'];
+    return def;
+  }, [form.values, field, definitions]);
 
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);

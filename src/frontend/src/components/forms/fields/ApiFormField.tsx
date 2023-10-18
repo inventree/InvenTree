@@ -68,6 +68,7 @@ export type ApiFormFieldType = {
   choices?: any[];
   hidden?: boolean;
   disabled?: boolean;
+  read_only?: boolean;
   placeholder?: string;
   description?: string;
   preFieldContent?: JSX.Element | (() => JSX.Element);
