@@ -162,12 +162,16 @@ def record_task_success(task_name: str):
     InvenTreeSetting.set_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
 
 
-def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs):
+def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs) -> bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
-    If workers are not running or force_sync flag
-    is set then the task is ran synchronously.
+    If workers are not running or force_sync flag, is set then the task is ran synchronously.
+
+    Returns:
+        bool: True if the task was offloaded (or ran), False otherwise
     """
+
+    import traceback
 
     try:
         import importlib
@@ -177,9 +181,20 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
         from InvenTree.status import is_worker_running
     except AppRegistryNotReady:  # pragma: no cover
         logger.warning("Could not offload task '%s' - app registry not ready", taskname)
-        return
+        
+        if force_async:
+            # Cannot async the task, so return False
+            return False
+        else:
+            force_sync = True
     except (OperationalError, ProgrammingError):  # pragma: no cover
         raise_warning(f"Could not offload task '{taskname}' - database not ready")
+
+        if force_async:
+            # Cannot async the task, so return False
+            return False
+        else:
+            force_sync = True
 
     if force_async or (is_worker_running() and not force_sync):
         # Running as asynchronous task
@@ -187,9 +202,11 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
             task = AsyncTask(taskname, *args, **kwargs)
             task.run()
         except ImportError:
-            raise_warning(f"WARNING: '{taskname}' not started - Function not found")
+            raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
+            return False
         except Exception as exc:
-            raise_warning(f"WARNING: '{taskname}' not started due to {type(exc)}")
+            raise_warning(f"WARNING: '{taskname}' not offloaded due to {str(exc)}")
+            return False
     else:
 
         if callable(taskname):
@@ -202,14 +219,14 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
                 app_mod = app + '.' + mod
             except ValueError:
                 raise_warning(f"WARNING: '{taskname}' not started - Malformed function path")
-                return
+                return False
 
             # Import module from app
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
                 raise_warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
-                return
+                return False
 
             # Retrieve function
             try:
@@ -223,10 +240,18 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
                     _func = eval(func)  # pragma: no cover
             except NameError:
                 raise_warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
-                return
+                return False
 
         # Workers are not running: run it as synchronous task
-        _func(*args, **kwargs)
+        try:
+            _func(*args, **kwargs)
+        except Exception as exc:
+            raise_warning(f"WARNING: '{taskname}' not started due to {str(exc)}")
+            return False
+        
+    # Finally, task either completed successfully or was offloaded
+    return True
+
 
 
 @dataclass()
