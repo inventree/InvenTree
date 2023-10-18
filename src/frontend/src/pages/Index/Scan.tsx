@@ -30,7 +30,6 @@ import {
   IconArrowsMaximize,
   IconArrowsMinimize,
   IconLink,
-  IconNumber,
   IconPlayerPlayFilled,
   IconPlayerStopFilled,
   IconPlus,
@@ -44,11 +43,11 @@ import { CameraDevice } from 'html5-qrcode/camera/core';
 import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
+import { ActionControls } from '../../actions';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
 import { Render, RenderTypes } from '../../components/renderers';
-import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 
@@ -232,11 +231,7 @@ export default function Scan() {
         <Text fz="sm" c="dimmed">
           <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
         </Text>
-        <Group>
-          <ActionIcon onClick={notYetImplemented} title={t`Count`}>
-            <IconNumber />
-          </ActionIcon>
-        </Group>
+        <ActionControls type={uniqueObjectTypes[0]} />
       </>
     );
   };
