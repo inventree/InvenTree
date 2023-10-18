@@ -5,9 +5,14 @@ import { RenderTypes } from '../components/renderers';
 import { dummyDefaultActions } from './dummy';
 import { purchase_orderActions } from './purchase_order';
 
+export interface ActionFunctionType {
+  barcode: string;
+  data: any;
+}
+
 export interface ActionType {
   title: string;
-  function: () => void;
+  function: ({ barcode, data }: ActionFunctionType) => void;
   icon?: JSX.Element;
 }
 
@@ -21,7 +26,11 @@ const actionsDict = {
   [RenderTypes.build_order]: dummyDefaultActions
 };
 
-export function ActionControls({ type }: { type: RenderTypes | undefined }) {
+interface ActionControlsProps extends ActionFunctionType {
+  type: RenderTypes | undefined;
+}
+
+export function ActionControls({ type, barcode, data }: ActionControlsProps) {
   if (type === undefined) {
     return <Group></Group>;
   }
@@ -31,7 +40,11 @@ export function ActionControls({ type }: { type: RenderTypes | undefined }) {
     <>
       <Group>
         {actions.map((action, idx) => (
-          <ActionIcon onClick={action.function} title={action.title} key={idx}>
+          <ActionIcon
+            onClick={() => action.function({ barcode, data })}
+            title={action.title}
+            key={idx}
+          >
             {action.icon ? action.icon : <IconQuestionMark />}
           </ActionIcon>
         ))}

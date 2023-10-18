@@ -233,7 +233,11 @@ export default function Scan() {
         <Text fz="sm" c="dimmed">
           <Trans>Actions for {selectedItems[0].objectType} </Trans>
         </Text>
-        <ActionControls type={selectedItems[0].objectType} />
+        <ActionControls
+          type={selectedItems[0].objectType}
+          barcode={selectedItems[0].ref}
+          data={selectedItems[0]}
+        />
       </>
     );
   };
