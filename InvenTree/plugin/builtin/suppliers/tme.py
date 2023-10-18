@@ -10,12 +10,12 @@ from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
 from plugin.base.barcodes.mixins import SupplierBarcodeData
-from plugin.mixins import SupplierBarcodeMixin
+from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 
 logger = logging.getLogger('inventree')
 
 
-class TMEPlugin(SupplierBarcodeMixin, InvenTreePlugin):
+class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the TME API into Inventree."""
 
     NAME = "TMEPlugin"

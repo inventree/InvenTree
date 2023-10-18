@@ -10,12 +10,12 @@ from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
 from plugin.base.barcodes.mixins import SupplierBarcodeData
-from plugin.mixins import SupplierBarcodeMixin
+from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 
 logger = logging.getLogger('inventree')
 
 
-class LCSCPlugin(SupplierBarcodeMixin, InvenTreePlugin):
+class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the LCSC API into Inventree."""
 
     NAME = "LCSCPlugin"
