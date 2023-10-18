@@ -116,6 +116,10 @@ export function constructField({
       break;
   }
 
+  // Clear out the 'read_only' attribute
+  def.disabled = def.disabled ?? def.read_only ?? false;
+  delete def['read_only'];
+
   return def;
 }
 

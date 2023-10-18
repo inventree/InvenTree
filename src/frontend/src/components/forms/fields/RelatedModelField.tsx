@@ -172,8 +172,20 @@ export function RelatedModelField({
     }
   }
 
+  /* Construct a "cut-down" version of the definition,
+   * which does not include any attributes that the lower components do not recognize
+   */
+  const fieldDefinition = useMemo(() => {
+    return {
+      ...definition,
+      onValueChange: undefined,
+      adjustFilters: undefined,
+      read_only: undefined
+    };
+  }, [definition]);
+
   return (
-    <Input.Wrapper {...definition} error={error}>
+    <Input.Wrapper {...fieldDefinition} error={error}>
       <Select
         id={fieldId}
         value={pk != null && data.find((item) => item.value == pk)}
