@@ -63,7 +63,7 @@ class ConversionTest(TestCase):
             self.assertAlmostEqual(float(q.magnitude), expected, 0.01)
 
     def test_dimensionless_units(self):
-        """Tests for 'dimensonless' unit quantities"""
+        """Tests for 'dimensionless' unit quantities"""
 
         # Test some dimensionless units
         tests = {
@@ -857,7 +857,7 @@ class CurrencyTests(TestCase):
 class TestStatus(TestCase):
     """Unit tests for status functions."""
 
-    def test_check_system_healt(self):
+    def test_check_system_health(self):
         """Test that the system health check is false in testing -> background worker not running."""
         self.assertEqual(status.check_system_health(), False)
 
@@ -953,7 +953,7 @@ class TestSettings(InvenTreeTestCase):
             InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
             registry.reload_plugins(full_reload=True)
 
-        # Check that there was anotehr run
+        # Check that there was another run
         response = registry.install_plugin_file()
         self.assertEqual(response, True)
 
@@ -1061,25 +1061,38 @@ class TestOffloadTask(InvenTreeTestCase):
         Ref: https://github.com/inventree/InvenTree/pull/3273
         """
 
-        offload_task(
-            'dummy_tasks.parts',
-            part=Part.objects.get(pk=1),
-            cat=PartCategory.objects.get(pk=1),
-            force_async=True
-        )
-
-        offload_task(
+        self.assertTrue(offload_task(
             'dummy_tasks.stock',
             item=StockItem.objects.get(pk=1),
             loc=StockLocation.objects.get(pk=1),
             force_async=True
-        )
+        ))
 
-        offload_task(
+        self.assertTrue(offload_task(
             'dummy_task.numbers',
             1, 2, 3, 4, 5,
             force_async=True
-        )
+        ))
+
+        # Offload a dummy task, but force sync
+        # This should fail, because the function does not exist
+        with self.assertLogs(logger='inventree', level='WARNING') as log:
+            self.assertFalse(offload_task(
+                'dummy_task.numbers',
+                1, 1, 1,
+                force_sync=True
+            ))
+
+            self.assertIn("Malformed function path", str(log.output))
+
+        # Offload dummy task with a Part instance
+        # This should succeed, ensuring that the Part instance is correctly pickled
+        self.assertTrue(offload_task(
+            'dummy_tasks.parts',
+            part=Part.objects.get(pk=1),
+            cat=PartCategory.objects.get(pk=1),
+            force_async=True
+        ))
 
     def test_daily_holdoff(self):
         """Tests for daily task holdoff helper functions"""
@@ -1147,7 +1160,7 @@ class BarcodeMixinTest(InvenTreeTestCase):
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
         self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
 
-    def test_bacode_hash(self):
+    def test_barcode_hash(self):
         """Test that the barcode hashing function provides correct results"""
 
         # Test multiple values for the hashing function
@@ -1176,7 +1189,7 @@ class SanitizerTest(TestCase):
         # Test that valid string
         self.assertEqual(valid_string, sanitize_svg(valid_string))
 
-        # Test that invalid string is cleanded
+        # Test that invalid string is cleaned
         self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))
 
 
