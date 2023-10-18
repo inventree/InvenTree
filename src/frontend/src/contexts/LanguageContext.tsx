@@ -7,39 +7,9 @@ import { api } from '../App';
 import { useLocalState } from '../states/LocalState';
 
 // Definitions
-export type Locales =
-  | 'cs'
-  | 'da'
-  | 'de'
-  | 'el'
-  | 'en'
-  | 'es'
-  | 'es-mx'
-  | 'fa'
-  | 'fi'
-  | 'fr'
-  | 'he'
-  | 'hi'
-  | 'hu'
-  | 'it'
-  | 'ja'
-  | 'ko'
-  | 'nl'
-  | 'no'
-  | 'pl'
-  | 'pt'
-  | 'pt-br'
-  | 'ru'
-  | 'sl'
-  | 'sv'
-  | 'th'
-  | 'tr'
-  | 'vi'
-  | 'zh-hans'
-  | 'zh-hant'
-  | 'pseudo-LOCALE';
+export type Locales = keyof typeof languages;
 
-export const languages: Record<Locales, string> = {
+export const languages: Record<string, string> = {
   cs: t`Czech`,
   da: t`Danish`,
   de: t`German`,
