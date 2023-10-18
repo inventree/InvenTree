@@ -12,7 +12,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
  * based on the provided filter parameters
  */
 export function CompanyTable({ params }: { params?: any }) {
-  const { tableKey, refreshTable } = useTableRefresh('company');
+  const { tableKey } = useTableRefresh('company');
 
   const columns = useMemo(() => {
     return [
