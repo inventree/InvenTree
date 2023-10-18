@@ -10,6 +10,7 @@ import { useMemo } from 'react';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { CompanyTable } from '../../components/tables/general/CompanyTable';
+import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
 
 export default function PurchasingIndex() {
   const panels = useMemo(() => {
@@ -17,7 +18,9 @@ export default function PurchasingIndex() {
       {
         name: 'purchaseorders',
         label: t`Purchase Orders`,
-        icon: <IconShoppingCart />
+        icon: <IconShoppingCart />,
+        content: <PurchaseOrderTable />
+        // TODO: Add optional "calendar" display here...
       },
       {
         name: 'suppliers',

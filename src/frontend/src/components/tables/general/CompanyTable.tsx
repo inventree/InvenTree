@@ -54,7 +54,9 @@ export function CompanyTable({ params }: { params?: any }) {
       tableKey={tableKey}
       columns={columns}
       props={{
-        params: params
+        params: {
+          ...params
+        }
       }}
     />
   );
