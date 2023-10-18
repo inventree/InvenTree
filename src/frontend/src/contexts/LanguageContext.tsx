@@ -6,8 +6,69 @@ import { api } from '../App';
 import { useLocalState } from '../states/LocalState';
 
 // Definitions
-export type Locales = 'en' | 'de' | 'hu' | 'pseudo-LOCALE';
-export const languages: Locales[] = ['en', 'de', 'hu'];
+export type Locales =
+  | 'cs'
+  | 'da'
+  | 'de'
+  | 'el'
+  | 'en'
+  | 'es'
+  | 'es-mx'
+  | 'fa'
+  | 'fi'
+  | 'fr'
+  | 'he'
+  | 'hi'
+  | 'hu'
+  | 'it'
+  | 'ja'
+  | 'ko'
+  | 'nl'
+  | 'no'
+  | 'pl'
+  | 'pt'
+  | 'pt-br'
+  | 'ru'
+  | 'sl'
+  | 'sv'
+  | 'th'
+  | 'tr'
+  | 'vi'
+  | 'zh-hans'
+  | 'zh-hant'
+  | 'pseudo-LOCALE';
+
+export const languages: Locales[] = [
+  'cs',
+  'da',
+  'de',
+  'el',
+  'en',
+  'es',
+  'es-mx',
+  'fa',
+  'fi',
+  'fr',
+  'he',
+  'hi',
+  'hu',
+  'it',
+  'ja',
+  'ko',
+  'nl',
+  'no',
+  'pl',
+  'pt',
+  'pt-br',
+  'ru',
+  'sl',
+  'sv',
+  'th',
+  'tr',
+  'vi',
+  'zh-hans',
+  'zh-hant'
+];
 
 export function LanguageContext({ children }: { children: JSX.Element }) {
   const [language] = useLocalState((state) => [state.language]);
