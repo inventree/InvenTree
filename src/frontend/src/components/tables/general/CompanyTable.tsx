@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
@@ -11,8 +12,16 @@ import { InvenTreeTable } from '../InvenTreeTable';
  * A table which displays a list of company records,
  * based on the provided filter parameters
  */
-export function CompanyTable({ params }: { params?: any }) {
+export function CompanyTable({
+  params,
+  path
+}: {
+  params?: any;
+  path?: string;
+}) {
   const { tableKey } = useTableRefresh('company');
+
+  const navigate = useNavigate();
 
   const columns = useMemo(() => {
     return [
@@ -24,7 +33,7 @@ export function CompanyTable({ params }: { params?: any }) {
           return (
             <Group spacing="xs" noWrap={true}>
               <Thumbnail
-                src={record.thumbnail ?? record.image}
+                src={record.thumbnail ?? record.image ?? ''}
                 alt={record.name}
                 size={24}
               />
@@ -56,6 +65,10 @@ export function CompanyTable({ params }: { params?: any }) {
       props={{
         params: {
           ...params
+        },
+        onRowClick: (row: any) => {
+          let base = path ?? 'company';
+          navigate(`/${base}/${row.pk}`);
         }
       }}
     />
