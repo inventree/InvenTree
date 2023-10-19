@@ -30,6 +30,7 @@ import { AttachmentTable } from '../../components/tables/general/AttachmentTable
 import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
 import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
+import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editCompany } from '../../functions/forms/CompanyForms';
 import { useInstance } from '../../hooks/UseInstance';
@@ -92,7 +93,10 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         name: 'stock-items',
         label: t`Stock Items`,
         icon: <IconPackages />,
-        hidden: !company?.is_manufacturer && !company?.is_supplier
+        hidden: !company?.is_manufacturer && !company?.is_supplier,
+        content: company?.pk && (
+          <StockItemTable params={{ company: company.pk }} />
+        )
       },
       {
         name: 'sales-orders',
