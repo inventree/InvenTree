@@ -1,15 +1,9 @@
 import { t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Group,
-  LoadingOverlay,
-  Stack,
-  Text,
-  Tooltip
-} from '@mantine/core';
+import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
+  IconDots,
   IconEdit,
   IconInfoCircle,
   IconMap2,
@@ -18,6 +12,7 @@ import {
   IconPackages,
   IconPaperclip,
   IconShoppingCart,
+  IconTrash,
   IconTruckDelivery,
   IconTruckReturn,
   IconUsersGroup
@@ -26,20 +21,25 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editCompany } from '../../functions/forms/CompanyForms';
+import { notYetImplemented } from '../../functions/notifications';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 
 /**
  * Detail view for a single company instance
  */
 export default function CompanyDetail() {
   const { id } = useParams();
+
+  const user = useUserState();
 
   const {
     instance: company,
@@ -157,26 +157,40 @@ export default function CompanyDetail() {
   }, [id, company]);
 
   const companyActions = useMemo(() => {
+    // TODO: Finer fidelity on these permissions, perhaps?
+    let canEdit = user.checkUserRole('purchase_order', 'change');
+    let canDelete = user.checkUserRole('purchase_order', 'delete');
+
     return [
-      <Tooltip label={t`Edit Company`}>
-        <ActionIcon
-          variant="outline"
-          radius="sm"
-          color="blue"
-          onClick={() => {
-            if (company?.pk) {
-              editCompany({
-                pk: company?.pk,
-                callback: refreshInstance
-              });
+      <ActionDropdown
+        tooltip={t`Actions`}
+        icon={<IconDots />}
+        actions={[
+          {
+            icon: <IconEdit />,
+            name: 'Edit',
+            tooltip: t`Edit Company`,
+            disabled: !canEdit,
+            onClick: () => {
+              if (company?.pk) {
+                editCompany({
+                  pk: company?.pk,
+                  callback: refreshInstance
+                });
+              }
             }
-          }}
-        >
-          <IconEdit />
-        </ActionIcon>
-      </Tooltip>
+          },
+          {
+            icon: <IconTrash color="red" />,
+            name: 'Delete',
+            tooltip: t`Delete Company`,
+            disabled: !canDelete,
+            onClick: notYetImplemented
+          }
+        ]}
+      />
     ];
-  }, [id, company]);
+  }, [id, company, userState]);
 
   return (
     <Stack spacing="xs">
