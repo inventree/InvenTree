@@ -242,6 +242,30 @@ function getStockLocationFilters() {
             type: 'bool',
             title: '{% trans "External" %}',
         },
+        location_type: {
+            title: '{% trans "Location type" %}',
+            options: function() {
+                const locationTypes = {};
+
+                inventreeGet('{% url "api-location-type-list" %}', {}, {
+                    async: false,
+                    success: function(response) {
+                        for(const locationType of response) {
+                            locationTypes[locationType.pk] = {
+                                key: locationType.pk,
+                                value: locationType.name,
+                            }
+                        }
+                    }
+                });
+
+                return locationTypes;
+            },
+        },
+        has_location_type: {
+            type: 'bool',
+            title: '{% trans "Has location type" %}'
+        },
     };
 }
 
@@ -462,6 +486,18 @@ function getPluginTableFilters() {
         active: {
             type: 'bool',
             title: '{% trans "Active" %}',
+        },
+        builtin: {
+            type: 'bool',
+            title: '{% trans "Builtin" %}',
+        },
+        sample: {
+            type: 'bool',
+            title: '{% trans "Sample" %}',
+        },
+        installed: {
+            type: 'bool',
+            title: '{% trans "Installed" %}'
         },
     };
 }
@@ -792,7 +828,7 @@ function getPartParameterTemplateFilters() {
 }
 
 
-// Return a dictionary of filters for the "parameteric part" table
+// Return a dictionary of filters for the "parametric part" table
 function getParametricPartTableFilters() {
     let filters = getPartTableFilters();
 

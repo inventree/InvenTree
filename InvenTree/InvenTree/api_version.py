@@ -2,10 +2,34 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 132
+INVENTREE_API_VERSION = 139
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v139 -> 2023-10-11 : https://github.com/inventree/InvenTree/pull/5509
+    - Add new BarcodePOReceive endpoint to receive line items by scanning supplier barcodes
+
+v138 -> 2023-10-11 : https://github.com/inventree/InvenTree/pull/5679
+    - Settings keys are no longer case sensitive
+    - Include settings units in API serializer
+
+v137 -> 2023-10-04 : https://github.com/inventree/InvenTree/pull/5588
+    - Adds StockLocationType API endpoints
+    - Adds custom_icon, location_type to StockLocation endpoint
+
+v136 -> 2023-09-23 : https://github.com/inventree/InvenTree/pull/5595
+    - Adds structural to StockLocation and PartCategory tree endpoints
+
+v135 -> 2023-09-19 : https://github.com/inventree/InvenTree/pull/5569
+    - Adds location path detail to StockLocation and StockItem API endpoints
+    - Adds category path detail to PartCategory and Part API endpoints
+
+v134 -> 2023-09-11 : https://github.com/inventree/InvenTree/pull/5525
+    - Allow "Attachment" list endpoints to be searched by attachment, link and comment fields
+
+v133 -> 2023-09-08 : https://github.com/inventree/InvenTree/pull/5518
+    - Add extra optional fields which can be used for StockAdjustment endpoints
 
 v132 -> 2023-09-07 : https://github.com/inventree/InvenTree/pull/5515
     - Add 'issued_by' filter to BuildOrder API list endpoint
@@ -72,7 +96,7 @@ v113 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
     - Adds API endpoints for scrapping a build output
 
 v112 -> 2023-05-13: https://github.com/inventree/InvenTree/pull/4741
-    - Adds flag use_pack_size to the stock addition API, which allows addings packs
+    - Adds flag use_pack_size to the stock addition API, which allows adding packs
 
 v111 -> 2023-05-02 : https://github.com/inventree/InvenTree/pull/4367
     - Adds tags to the Part serializer
@@ -152,7 +176,7 @@ v90 -> 2023-01-25 : https://github.com/inventree/InvenTree/pull/4186/files
 
 v89 -> 2023-01-25 : https://github.com/inventree/InvenTree/pull/4214
     - Adds updated field to SupplierPart API
-    - Adds API date orddering for supplier part list
+    - Adds API date ordering for supplier part list
 
 v88 -> 2023-01-17: https://github.com/inventree/InvenTree/pull/4225
     - Adds 'priority' field to Build model and api endpoints

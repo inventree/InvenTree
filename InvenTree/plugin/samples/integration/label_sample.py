@@ -10,8 +10,8 @@ from plugin.mixins import LabelPrintingMixin
 class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
     """Sample plugin which provides a 'fake' label printer endpoint."""
 
-    NAME = "Label Printer"
-    SLUG = "samplelabel"
+    NAME = "Sample Label Printer"
+    SLUG = "samplelabelprinter"
     TITLE = "Sample Label Printer"
     DESCRIPTION = "A sample plugin which provides a (fake) label printer interface"
     AUTHOR = "InvenTree contributors"
@@ -22,7 +22,6 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
 
         Normally here the connection to the printer and transfer of the label would take place.
         """
-
         # Test that the expected kwargs are present
         print(f"Printing Label: {kwargs['filename']} (User: {kwargs['user']})")
 

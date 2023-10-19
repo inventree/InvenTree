@@ -109,6 +109,14 @@ LOGGING = {
     },
 }
 
+# Optionally add database-level logging
+if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):
+    LOGGING['loggers'] = {
+        'django.db.backends': {
+            'level': log_level or 'DEBUG',
+        },
+    }
+
 # Get a logger instance for this setup file
 logger = logging.getLogger("inventree")
 
@@ -131,8 +139,8 @@ ALLOWED_HOSTS = get_setting(
 
 # Cross Origin Resource Sharing (CORS) options
 
-# Only allow CORS access to API
-CORS_URLS_REGEX = r'^/api/.*$'
+# Only allow CORS access to API and media endpoints
+CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
 
 # Extract CORS options from configuration file
 CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
@@ -282,6 +290,63 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
     "sesame.backends.ModelBackend",                             # Magic link login django-sesame
 ])
+
+# LDAP support
+LDAP_AUTH = get_boolean_setting("INVENTREE_LDAP_ENABLED", "ldap.enabled", False)
+if LDAP_AUTH:
+    import ldap
+    from django_auth_ldap.config import LDAPSearch
+
+    AUTHENTICATION_BACKENDS.append("django_auth_ldap.backend.LDAPBackend")
+
+    # debug mode to troubleshoot configuration
+    LDAP_DEBUG = get_boolean_setting("INVENTREE_LDAP_DEBUG", "ldap.debug", False)
+    if LDAP_DEBUG:
+        if "loggers" not in LOGGING:
+            LOGGING["loggers"] = {}
+        LOGGING["loggers"]["django_auth_ldap"] = {"level": "DEBUG", "handlers": ["console"]}
+
+    # get global options from dict and use ldap.OPT_* as keys and values
+    global_options_dict = get_setting("INVENTREE_LDAP_GLOBAL_OPTIONS", "ldap.global_options", {}, dict)
+    global_options = {}
+    for k, v in global_options_dict.items():
+        # keys are always ldap.OPT_* constants
+        k_attr = getattr(ldap, k, None)
+        if not k.startswith("OPT_") or k_attr is None:
+            print(f"[LDAP] ldap.global_options, key '{k}' not found, skipping...")
+            continue
+
+        # values can also be other strings, e.g. paths
+        v_attr = v
+        if v.startswith("OPT_"):
+            v_attr = getattr(ldap, v, None)
+
+        if v_attr is None:
+            print(f"[LDAP] ldap.global_options, value key '{v}' not found, skipping...")
+            continue
+
+        global_options[k_attr] = v_attr
+    AUTH_LDAP_GLOBAL_OPTIONS = global_options
+    if LDAP_DEBUG:
+        print("[LDAP] ldap.global_options =", global_options)
+
+    AUTH_LDAP_SERVER_URI = get_setting("INVENTREE_LDAP_SERVER_URI", "ldap.server_uri")
+    AUTH_LDAP_START_TLS = get_boolean_setting("INVENTREE_LDAP_START_TLS", "ldap.start_tls", False)
+    AUTH_LDAP_BIND_DN = get_setting("INVENTREE_LDAP_BIND_DN", "ldap.bind_dn")
+    AUTH_LDAP_BIND_PASSWORD = get_setting("INVENTREE_LDAP_BIND_PASSWORD", "ldap.bind_password")
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        get_setting("INVENTREE_LDAP_SEARCH_BASE_DN", "ldap.search_base_dn"),
+        ldap.SCOPE_SUBTREE,
+        str(get_setting("INVENTREE_LDAP_SEARCH_FILTER_STR", "ldap.search_filter_str", "(uid= %(user)s)"))
+    )
+    AUTH_LDAP_USER_DN_TEMPLATE = get_setting("INVENTREE_LDAP_USER_DN_TEMPLATE", "ldap.user_dn_template")
+    AUTH_LDAP_USER_ATTR_MAP = get_setting("INVENTREE_LDAP_USER_ATTR_MAP", "ldap.user_attr_map", {
+        'first_name': 'givenName',
+        'last_name': 'sn',
+        'email': 'mail',
+    }, dict)
+    AUTH_LDAP_ALWAYS_UPDATE_USER = get_boolean_setting("INVENTREE_LDAP_ALWAYS_UPDATE_USER", "ldap.always_update_user", True)
+    AUTH_LDAP_CACHE_TIMEOUT = get_setting("INVENTREE_LDAP_CACHE_TIMEOUT", "ldap.cache_timeout", 3600, int)
 
 DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
 
@@ -446,7 +511,7 @@ for key in db_keys:
             try:
                 env_var = int(env_var)
             except ValueError:
-                logger.error(f"Invalid number for {env_key}: {env_var}")
+                logger.exception("Invalid number for %s: %s", env_key, env_var)
         # Override configuration value
         db_config[key] = env_var
 
@@ -487,9 +552,9 @@ if 'sqlite' in db_engine:
     db_name = str(Path(db_name).resolve())
     db_config['NAME'] = db_name
 
-logger.info(f"DB_ENGINE: {db_engine}")
-logger.info(f"DB_NAME: {db_name}")
-logger.info(f"DB_HOST: {db_host}")
+logger.info("DB_ENGINE: %s", db_engine)
+logger.info("DB_NAME: %s", db_name)
+logger.info("DB_HOST: %s", db_host)
 
 """
 In addition to base-level database configuration, we may wish to specify specific options to the database backend
@@ -606,11 +671,6 @@ DATABASES = {
 REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
 
-# Magic login django-sesame
-SESAME_MAX_AGE = 300
-# LOGIN_REDIRECT_URL = "/platform/logged-in/"
-LOGIN_REDIRECT_URL = "/index/"
-
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
 
@@ -691,6 +751,7 @@ Q_CLUSTER = {
     'orm': 'default',
     'cache': 'default',
     'sync': False,
+    'poll': 1.5,
 }
 
 # Configure django-q sentry integration
@@ -818,7 +879,7 @@ CURRENCY_DECIMAL_PLACES = 6
 # Check that each provided currency is supported
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:  # pragma: no cover
-        logger.error(f"Currency code '{currency}' is not supported")
+        logger.error("Currency code '%s' is not supported", currency)
         sys.exit(1)
 
 # Custom currency exchange backend
@@ -968,7 +1029,7 @@ PLUGIN_FILE_CHECKED = False                                                     
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
 if SITE_URL:
-    logger.info(f"Site URL: {SITE_URL}")
+    logger.info("Site URL: %s", SITE_URL)
 
     # Check that the site URL is valid
     validator = URLValidator()
@@ -981,13 +1042,14 @@ CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', '
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
 
 # Frontend settings
+PUI_URL_BASE = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', 'platform')
 PUI_SETTINGS = get_setting("INVENTREE_PUI_SETTINGS", "pui_settings", {})
 
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 
-logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
+logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
 
 # Flags
 FLAGS = {
@@ -1004,7 +1066,12 @@ FLAGS = {
 CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
 if CUSTOM_FLAGS:
     if not isinstance(CUSTOM_FLAGS, dict):
-        logger.error(f"Invalid custom flags, must be valid dict: {CUSTOM_FLAGS}")
+        logger.error("Invalid custom flags, must be valid dict: %s", str(CUSTOM_FLAGS))
     else:
-        logger.info(f"Custom flags: {CUSTOM_FLAGS}")
+        logger.info("Custom flags: %s", str(CUSTOM_FLAGS))
         FLAGS.update(CUSTOM_FLAGS)
+
+# Magic login django-sesame
+SESAME_MAX_AGE = 300
+# LOGIN_REDIRECT_URL = f"/{PUI_URL_BASE}/logged-in/"
+LOGIN_REDIRECT_URL = "/index/"

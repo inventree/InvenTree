@@ -53,6 +53,7 @@ The following basic options are available:
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | True |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
+| INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
 | ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
@@ -163,13 +164,20 @@ The following email settings are available:
 The "sender" email address is the address from which InvenTree emails are sent (by default) and must be specified for outgoing emails to function:
 
 !!! info "Fallback"
-     If `INVENTREE_EMAIL_SENDER` is not provided, the system will fall back to `INVENTREE_EMAIL_USERNAME` (if the username is a valid email address)
+    If `INVENTREE_EMAIL_SENDER` is not provided, the system will fall back to `INVENTREE_EMAIL_USERNAME` (if the username is a valid email address)
 
 ## Supported Currencies
 
 The currencies supported by InvenTree must be specified in the [configuration file](#configuration-file).
 
-A list of currency codes (e.g. *AUD*, *CAD*, *JPY*, *USD*) can be specified using the `currencies` variable.
+A list of currency codes (e.g. *AUD*, *CAD*, *JPY*, *USD*) can be specified using the `currencies` variable (or using the `INVENTREE_CURRENCIES` environment variable).
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_CURRENCIES | currencies | List of supported currencies| `AUD`, `CAD`, `CNY`, `EUR`, `GBP`, `JPY`, `NZD`, `USD` |
+
+!!! tip "More Info"
+    Read the [currencies documentation](../settings/currency.md) for more information on currency support in InvenTree
 
 ## Allowed Hosts / CORS
 

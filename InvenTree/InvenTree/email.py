@@ -45,14 +45,13 @@ def is_email_configured():
         configured = False
 
         if not testing:  # pragma: no cover
-            logger.warning("DEFAULT_FROM_EMAIL is not configured")
+            logger.debug("DEFAULT_FROM_EMAIL is not configured")
 
     return configured
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
     """Send an email with the specified subject and body, to the specified recipients list."""
-
     if isinstance(recipients, str):
         recipients = [recipients]
 

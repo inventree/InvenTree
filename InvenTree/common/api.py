@@ -113,7 +113,6 @@ class CurrencyExchangeView(APIView):
 
     def get(self, request, format=None):
         """Return information on available currency conversions"""
-
         # Extract a list of all available rates
         try:
             rates = Rate.objects.all()
@@ -157,10 +156,9 @@ class CurrencyRefreshView(APIView):
 
     def post(self, request, *args, **kwargs):
         """Performing a POST request will update currency exchange rates"""
-
         from InvenTree.tasks import update_exchange_rates
 
-        update_exchange_rates()
+        update_exchange_rates(force=True)
 
         return Response({
             'success': 'Exchange rates updated',
@@ -192,6 +190,11 @@ class GlobalSettingsList(SettingsList):
     queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith="_")
     serializer_class = common.serializers.GlobalSettingsSerializer
 
+    def list(self, request, *args, **kwargs):
+        """Ensure all global settings are created"""
+        common.models.InvenTreeSetting.build_default_values()
+        return super().list(request, *args, **kwargs)
+
 
 class GlobalSettingsPermissions(permissions.BasePermission):
     """Special permission class to determine if the user is "staff"."""
@@ -203,9 +206,8 @@ class GlobalSettingsPermissions(permissions.BasePermission):
 
             if request.method in ['GET', 'HEAD', 'OPTIONS']:
                 return True
-            else:
-                # Any other methods require staff access permissions
-                return user.is_staff
+            # Any other methods require staff access permissions
+            return user.is_staff
 
         except AttributeError:  # pragma: no cover
             return False
@@ -223,9 +225,9 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
 
     def get_object(self):
         """Attempt to find a global setting object with the provided key."""
-        key = self.kwargs['key']
+        key = str(self.kwargs['key']).upper()
 
-        if key not in common.models.InvenTreeSetting.SETTINGS.keys():
+        if key.startswith('_') or key not in common.models.InvenTreeSetting.SETTINGS.keys():
             raise NotFound()
 
         return common.models.InvenTreeSetting.get_setting_object(
@@ -244,6 +246,11 @@ class UserSettingsList(SettingsList):
 
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
+
+    def list(self, request, *args, **kwargs):
+        """Ensure all user settings are created"""
+        common.models.InvenTreeUserSetting.build_default_values(user=request.user)
+        return super().list(request, *args, **kwargs)
 
     def filter_queryset(self, queryset):
         """Only list settings which apply to the current user."""
@@ -284,9 +291,9 @@ class UserSettingsDetail(RetrieveUpdateAPI):
 
     def get_object(self):
         """Attempt to find a user setting object with the provided key."""
-        key = self.kwargs['key']
+        key = str(self.kwargs['key']).upper()
 
-        if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
+        if key.startswith('_') or key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
             raise NotFound()
 
         return common.models.InvenTreeUserSetting.get_setting_object(
@@ -373,7 +380,6 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
 
     def filter_delete_queryset(self, queryset, request):
         """Ensure that the user can only delete their *own* notifications"""
-
         queryset = queryset.filter(user=request.user)
         return queryset
 

@@ -43,8 +43,7 @@ def auth_request(request):
     """
     if request.user.is_authenticated:
         return HttpResponse(status=200)
-    else:
-        return HttpResponse(status=403)
+    return HttpResponse(status=403)
 
 
 class InvenTreeRoleMixin(PermissionRequiredMixin):
@@ -222,8 +221,7 @@ class AjaxMixin(InvenTreeRoleMixin):
         """
         if method == 'POST':
             return self.request.POST.get(name, None)
-        else:
-            return self.request.GET.get(name, None)
+        return self.request.GET.get(name, None)
 
     def get_data(self):
         """Get extra context data (default implementation is empty dict).
@@ -443,8 +441,7 @@ class SetPasswordView(AjaxUpdateView):
 
         if valid:
             # Old password must be correct
-
-            if not user.check_password(old_password):
+            if user.has_usable_password() and not user.check_password(old_password):
                 form.add_error('old_password', _('Wrong password provided'))
                 valid = False
 

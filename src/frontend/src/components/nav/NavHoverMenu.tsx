@@ -34,7 +34,7 @@ export function NavHoverMenu({
 
   useEffect(() => {
     if (hostKey && hostList[hostKey]) {
-      setInstanceName(hostList[hostKey].name);
+      setInstanceName(hostList[hostKey]?.name);
     }
   }, [hostKey]);
 

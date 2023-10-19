@@ -64,7 +64,7 @@ class AuthRequiredMiddleware(object):
             elif request.path_info.startswith('/accounts/'):
                 authorized = True
 
-            elif request.path_info.startswith('/platform/') or request.path_info.startswith('/assets/') or request.path_info == '/platform':
+            elif request.path_info.startswith(f'/{settings.PUI_URL_BASE}/') or request.path_info.startswith('/assets/') or request.path_info == f'/{settings.PUI_URL_BASE}':
                 authorized = True
 
             elif 'Authorization' in request.headers.keys() or 'authorization' in request.headers.keys():
@@ -82,7 +82,7 @@ class AuthRequiredMiddleware(object):
                         authorized = True
 
                     except Token.DoesNotExist:
-                        logger.warning(f"Access denied for unknown token {token_key}")
+                        logger.warning("Access denied for unknown token %s", token_key)
 
             # No authorization was found for the request
             if not authorized:
@@ -108,10 +108,8 @@ class AuthRequiredMiddleware(object):
                     # Save the 'next' parameter to pass through to the login view
 
                     return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
-
-                else:
-                    # Return a 401 (Unauthorized) response code for this request
-                    return HttpResponse('Unauthorized', status=401)
+                # Return a 401 (Unauthorized) response code for this request
+                return HttpResponse('Unauthorized', status=401)
 
         response = self.get_response(request)
 
@@ -125,7 +123,6 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
     """Check if user is required to have MFA enabled."""
     def require_2fa(self, request):
         """Use setting to check if MFA should be enforced for frontend page."""
-
         from common.models import InvenTreeSetting
 
         try:

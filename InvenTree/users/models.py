@@ -114,6 +114,7 @@ class RuleSet(models.Model):
         ],
         'stock_location': [
             'stock_stocklocation',
+            'stock_stocklocationtype',
             'label_stocklocationlabel',
             'report_stocklocationreport'
         ],
@@ -258,7 +259,6 @@ class RuleSet(models.Model):
     @classmethod
     def check_table_permission(cls, user, table, permission):
         """Check if the provided user has the specified permission against the table."""
-
         # Superuser knows no bounds
         if user.is_superuser:
             return True
@@ -286,7 +286,7 @@ class RuleSet(models.Model):
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
-        logger.debug(f"User '{name}' failed permission check for {table}.{permission}")
+        logger.debug("User '%s' failed permission check for %s.%s", name, table, permission)
 
         return False
 
@@ -308,8 +308,7 @@ class RuleSet(models.Model):
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
                    f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
                    f'c: {str(self.can_change).ljust(5)} | d: {str(self.can_delete).ljust(5)}'
-        else:
-            return self.name
+        return self.name
 
     def save(self, *args, **kwargs):
         """Intercept the 'save' functionality to make additional permission changes:
@@ -376,7 +375,7 @@ def update_group_roles(group, debug=False):
 
     # Iterate through each permission already assigned to this group,
     # and create a simplified permission key string
-    for p in group.permissions.all():
+    for p in group.permissions.all().prefetch_related('content_type'):
         (permission, app, model) = p.natural_key()
 
         permission_string = '{app}.{perm}'.format(
@@ -419,16 +418,23 @@ def update_group_roles(group, debug=False):
             if permission_string not in permissions_to_add:
                 permissions_to_delete.add(permission_string)
 
+    # Pre-fetch all the RuleSet objects
+    rulesets = {
+        r.name: r for r in RuleSet.objects.filter(group=group).prefetch_related('group')
+    }
+
     # Get all the rulesets associated with this group
     for r in RuleSet.RULESET_CHOICES:
 
         rulename = r[0]
 
-        try:
-            ruleset = RuleSet.objects.get(group=group, name=rulename)
-        except RuleSet.DoesNotExist:
-            # Create the ruleset with default values (if it does not exist)
-            ruleset = RuleSet.objects.create(group=group, name=rulename)
+        if rulename in rulesets:
+            ruleset = rulesets[rulename]
+        else:
+            try:
+                ruleset = RuleSet.objects.get(group=group, name=rulename)
+            except RuleSet.DoesNotExist:
+                ruleset = RuleSet.objects.create(group=group, name=rulename)
 
         # Which database tables does this RuleSet touch?
         models = ruleset.get_models()
@@ -457,7 +463,7 @@ def update_group_roles(group, debug=False):
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
         except ContentType.DoesNotExist:  # pragma: no cover
-            logger.warning(f"Error: Could not find permission matching '{permission_string}'")
+            logger.warning("Error: Could not find permission matching '%s'", permission_string)
             permission = None
 
         return permission
@@ -475,7 +481,7 @@ def update_group_roles(group, debug=False):
             group.permissions.add(permission)
 
         if debug:  # pragma: no cover
-            logger.debug(f"Adding permission {perm} to group {group.name}")
+            logger.debug("Adding permission %s to group %s", perm, group.name)
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -490,7 +496,7 @@ def update_group_roles(group, debug=False):
             group.permissions.remove(permission)
 
         if debug:  # pragma: no cover
-            logger.debug(f"Removing permission {perm} from group {group.name}")
+            logger.debug("Removing permission %s from group %s", perm, group.name)
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
@@ -512,7 +518,7 @@ def update_group_roles(group, debug=False):
                     permission = get_permission_object(child_perm)
                     if permission:
                         group.permissions.add(permission)
-                        logger.debug(f"Adding permission {child_perm} to group {group.name}")
+                        logger.debug("Adding permission %s to group %s", child_perm, group.name)
 
 
 def clear_user_role_cache(user):
@@ -523,7 +529,6 @@ def clear_user_role_cache(user):
     Args:
         user: The User object to be expunged from the cache
     """
-
     for role in RuleSet.RULESET_MODELS.keys():
         for perm in ['add', 'change', 'view', 'delete']:
             key = f"role_{user}_{role}_{perm}"
@@ -532,7 +537,6 @@ def clear_user_role_cache(user):
 
 def get_user_roles(user):
     """Return all roles available to a given user"""
-
     roles = set()
 
     for group in user.groups.all():
@@ -730,7 +734,6 @@ class Owner(models.Model):
 
     def is_user_allowed(self, user, include_group: bool = False):
         """Check if user is allowed to access something owned by this owner."""
-
         user_owner = Owner.get_owner(user)
         return user_owner in self.get_related_owners(include_group=include_group)
 
@@ -753,7 +756,6 @@ def delete_owner(sender, instance, **kwargs):
 @receiver(post_save, sender=get_user_model(), dispatch_uid='clear_user_cache')
 def clear_user_cache(sender, instance, **kwargs):
     """Callback function when a user object is saved"""
-
     clear_user_role_cache(instance)
 
 

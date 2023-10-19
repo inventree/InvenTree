@@ -56,8 +56,8 @@ class ScheduleMixin:
 
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):
-        """Activate scheudles from plugins with the ScheduleMixin."""
-        logger.info('Activating plugin tasks')
+        """Activate schedules from plugins with the ScheduleMixin."""
+        logger.debug('Activating plugin tasks')
 
         from common.models import InvenTreeSetting
 
@@ -76,7 +76,7 @@ class ScheduleMixin:
                         task_keys += plugin.get_task_names()
 
         if len(task_keys) > 0:
-            logger.info(f"Activated {len(task_keys)} scheduled tasks")
+            logger.info("Activated %s scheduled tasks", len(task_keys))
 
         # Remove any scheduled tasks which do not match
         # This stops 'old' plugin tasks from accumulating
@@ -93,7 +93,7 @@ class ScheduleMixin:
                     deleted_count += 1
 
             if deleted_count > 0:
-                logger.info(f"Removed {deleted_count} old scheduled tasks")  # pragma: no cover
+                logger.info("Removed %s old scheduled tasks", deleted_count)  # pragma: no cover
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             logger.warning("activate_integration_schedule failed, database not ready")
@@ -172,13 +172,13 @@ class ScheduleMixin:
 
                 if Schedule.objects.filter(name=task_name).exists():
                     # Scheduled task already exists - update it!
-                    logger.info(f"Updating scheduled task '{task_name}'")
+                    logger.info("Updating scheduled task '%s'", task_name)
                     instance = Schedule.objects.get(name=task_name)
                     for item in obj:
                         setattr(instance, item, obj[item])
                     instance.save()
                 else:
-                    logger.info(f"Adding scheduled task '{task_name}'")
+                    logger.info("Adding scheduled task '%s'", task_name)
                     # Create a new scheduled task
                     Schedule.objects.create(**obj)
 

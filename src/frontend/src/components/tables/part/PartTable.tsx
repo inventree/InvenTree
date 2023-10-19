@@ -1,13 +1,15 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
-import { ThumbnailHoverCard } from '../../items/Thumbnail';
+import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 
 /**
  * Construct a list of columns for the part table
@@ -17,15 +19,19 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'name',
       sortable: true,
+      noWrap: true,
       title: t`Part`,
       render: function (record: any) {
         // TODO - Link to the part detail page
         return (
-          <ThumbnailHoverCard
-            src={record.thumbnail || record.image}
-            text={record.name}
-            link=""
-          />
+          <Group spacing="xs" align="left" noWrap={true}>
+            <Thumbnail
+              src={record.thumbnail || record.image}
+              alt={record.name}
+              size={24}
+            />
+            <Text>{record.full_name}</Text>
+          </Group>
         );
       }
     },
@@ -54,7 +60,7 @@ function partTableColumns(): TableColumn[] {
       render: function (record: any) {
         // TODO: Link to the category detail page
         return shortenString({
-          str: record.category_detail.pathstring
+          str: record.category_detail?.pathstring
         });
       }
     },
@@ -173,38 +179,36 @@ function partTableFilters(): TableFilter[] {
   ];
 }
 
-function partTableParams(params: any): any {
-  return {
-    ...params,
-    category_detail: true
-  };
-}
-
 /**
  * PartListTable - Displays a list of parts, based on the provided parameters
  * @param {Object} params - The query parameters to pass to the API
  * @returns
  */
-export function PartListTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => partTableParams(params), []);
-  let tableColumns = useMemo(() => partTableColumns(), []);
-  let tableFilters = useMemo(() => partTableFilters(), []);
+export function PartListTable({ props }: { props: InvenTreeTableProps }) {
+  const tableColumns = useMemo(() => partTableColumns(), []);
+  const tableFilters = useMemo(() => partTableFilters(), []);
 
-  // Add required query parameters
-  tableParams.category_detail = true;
+  const { tableKey, refreshTable } = useTableRefresh('part');
+
+  const navigate = useNavigate();
 
   return (
     <InvenTreeTable
-      url="part/"
-      enableDownload
-      tableKey="part-table"
-      printingActions={[
-        <Text onClick={notYetImplemented}>Hello</Text>,
-        <Text onClick={notYetImplemented}>World</Text>
-      ]}
-      params={tableParams}
+      url={apiUrl(ApiPaths.part_list)}
+      tableKey={tableKey}
       columns={tableColumns}
-      customFilters={tableFilters}
+      props={{
+        ...props,
+        enableDownload: true,
+        customFilters: tableFilters,
+        params: {
+          ...props.params,
+          category_detail: true
+        },
+        onRowClick: (record, _index, _event) => {
+          navigate(`/part/${record.pk}/`);
+        }
+      }}
     />
   );
 }

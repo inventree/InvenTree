@@ -1,8 +1,11 @@
 import { t } from '@lingui/macro';
-import { Progress } from '@mantine/core';
+import { Progress, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { ThumbnailHoverCard } from '../../items/Thumbnail';
+import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -29,6 +32,7 @@ function buildOrderTableColumns(): TableColumn[] {
             <ThumbnailHoverCard
               src={part.thumbnail || part.image}
               text={part.full_name}
+              alt={part.description}
               link=""
             />
           )
@@ -49,12 +53,6 @@ function buildOrderTableColumns(): TableColumn[] {
       hidden: true
       // TODO: Hide this if project code is not enabled
       // TODO: Custom render function here
-    },
-    {
-      accessor: 'priority',
-      title: t`Priority`,
-      sortable: true,
-      switchable: true
     },
     {
       accessor: 'quantity',
@@ -88,15 +86,43 @@ function buildOrderTableColumns(): TableColumn[] {
       // TODO: Custom render function here (status label)
     },
     {
+      accessor: 'priority',
+      title: t`Priority`,
+      sortable: true,
+      switchable: true
+    },
+    {
       accessor: 'creation_date',
       sortable: true,
       title: t`Created`,
       switchable: true
+    },
+    {
+      accessor: 'target_date',
+      sortable: true,
+      title: t`Target Date`,
+      switchable: true
+    },
+    {
+      accessor: 'completion_date',
+      sortable: true,
+      title: t`Completed`,
+      switchable: true
+    },
+    {
+      accessor: 'issued_by',
+      sortable: true,
+      title: t`Issued By`,
+      switchable: true
+      // TODO: custom render function
+    },
+    {
+      accessor: 'responsible',
+      sortable: true,
+      title: t`Responsible`,
+      switchable: true
+      // TODO: custom render function
     }
-    // TODO: issued_by
-    // TODO: responsible
-    // TODO: target_date
-    // TODO: completion_date
   ];
 }
 
@@ -104,32 +130,31 @@ function buildOrderTableFilters(): TableFilter[] {
   return [];
 }
 
-function buildOrderTableParams(params: any): any {
-  return {
-    ...params,
-    part_detail: true
-  };
-}
-
 /*
  * Construct a table of build orders, according to the provided parameters
  */
 export function BuildOrderTable({ params = {} }: { params?: any }) {
-  // Add required query parameters
-  let tableParams = useMemo(() => buildOrderTableParams(params), [params]);
-  let tableColumns = useMemo(() => buildOrderTableColumns(), []);
-  let tableFilters = useMemo(() => buildOrderTableFilters(), []);
+  const tableColumns = useMemo(() => buildOrderTableColumns(), []);
+  const tableFilters = useMemo(() => buildOrderTableFilters(), []);
 
-  tableParams.part_detail = true;
+  const navigate = useNavigate();
+
+  const { tableKey, refreshTable } = useTableRefresh('buildorder');
 
   return (
     <InvenTreeTable
-      url="build/"
-      enableDownload
-      tableKey="build-order-table"
-      params={tableParams}
+      url={apiUrl(ApiPaths.build_order_list)}
+      tableKey={tableKey}
       columns={tableColumns}
-      customFilters={tableFilters}
+      props={{
+        enableDownload: true,
+        params: {
+          ...params,
+          part_detail: true
+        },
+        customFilters: tableFilters,
+        onRowClick: (row) => navigate(`/build/${row.pk}`)
+      }}
     />
   );
 }

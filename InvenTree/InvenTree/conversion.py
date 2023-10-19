@@ -15,14 +15,12 @@ logger = logging.getLogger('inventree')
 
 def get_unit_registry():
     """Return a custom instance of the Pint UnitRegistry."""
-
     global _unit_registry
 
     # Cache the unit registry for speedier access
     if _unit_registry is None:
         return reload_unit_registry()
-    else:
-        return _unit_registry
+    return _unit_registry
 
 
 def reload_unit_registry():
@@ -30,7 +28,6 @@ def reload_unit_registry():
 
     This function is called at startup, and whenever the database is updated.
     """
-
     import time
     t_start = time.time()
 
@@ -55,7 +52,7 @@ def reload_unit_registry():
             try:
                 reg.define(cu.fmt_string())
             except Exception as e:
-                logger.error(f'Failed to load custom unit: {cu.fmt_string()} - {e}')
+                logger.exception('Failed to load custom unit: %s - %s', cu.fmt_string(), e)
 
         # Once custom units are loaded, save registry
         _unit_registry = reg
@@ -65,7 +62,7 @@ def reload_unit_registry():
         pass
 
     dt = time.time() - t_start
-    logger.debug(f'Loaded unit registry in {dt:.3f}s')
+    logger.debug('Loaded unit registry in %s.3f s', dt)
 
     return reg
 
@@ -84,68 +81,70 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     Returns:
         The converted quantity, in the specified units
     """
+    original = str(value).strip()
 
     # Ensure that the value is a string
-    value = str(value).strip()
+    value = str(value).strip() if value else ''
+    unit = str(unit).strip() if unit else ''
 
     # Error on blank values
     if not value:
         raise ValidationError(_('No value provided'))
 
+    # Create a "backup" value which be tried if the first value fails
+    # e.g. value = "10k" and unit = "ohm" -> "10kohm"
+    # e.g. value = "10m" and unit = "F" -> "10mF"
+    if unit:
+        backup_value = value + unit
+    else:
+        backup_value = None
+
     ureg = get_unit_registry()
-    error = ''
 
     try:
-        # Convert to a quantity
-        val = ureg.Quantity(value)
+        value = ureg.Quantity(value)
 
         if unit:
-
-            if is_dimensionless(val):
-                # If the provided value is dimensionless, assume that the unit is correct
-                val = ureg.Quantity(value, unit)
+            if is_dimensionless(value):
+                magnitude = value.to_base_units().magnitude
+                value = ureg.Quantity(magnitude, unit)
             else:
-                # Convert to the provided unit (may raise an exception)
-                val = val.to(unit)
+                value = value.to(unit)
 
-        # At this point we *should* have a valid pint value
-        # To double check, look at the maginitude
-        float(ureg.Quantity(val.magnitude).magnitude)
-    except (TypeError, ValueError, AttributeError):
-        error = _('Provided value is not a valid number')
-    except (pint.errors.UndefinedUnitError, pint.errors.DefinitionSyntaxError):
-        error = _('Provided value has an invalid unit')
+    except Exception:
+        if backup_value:
+            try:
+                value = ureg.Quantity(backup_value)
+            except Exception:
+                value = None
+        else:
+            value = None
+
+    if value is None:
         if unit:
-            error += f' ({unit})'
-
-    except pint.errors.DimensionalityError:
-        error = _('Provided value could not be converted to the specified unit')
-        if unit:
-            error += f' ({unit})'
-
-    except Exception as e:
-        error = _('Error') + ': ' + str(e)
-
-    if error:
-        raise ValidationError(error)
+            raise ValidationError(_(f'Could not convert {original} to {unit}'))
+        else:
+            raise ValidationError(_("Invalid quantity supplied"))
 
     # Calculate the "magnitude" of the value, as a float
-    # If the value is specified strangely (e.g. as a fraction or a dozen), this can cause isuses
+    # If the value is specified strangely (e.g. as a fraction or a dozen), this can cause issues
     # So, we ensure that it is converted to a floating point value
     # If we wish to return a "raw" value, some trickery is required
-    if unit:
-        magnitude = ureg.Quantity(val.to(unit)).magnitude
-    else:
-        magnitude = ureg.Quantity(val.to_base_units()).magnitude
+    try:
+        if unit:
+            magnitude = ureg.Quantity(value.to(ureg.Unit(unit))).magnitude
+        else:
+            magnitude = ureg.Quantity(value.to_base_units()).magnitude
 
-    magnitude = float(ureg.Quantity(magnitude).to_base_units().magnitude)
+        magnitude = float(ureg.Quantity(magnitude).to_base_units().magnitude)
+    except Exception as exc:
+        raise ValidationError(_(f'Invalid quantity supplied ({exc})'))
 
     if strip_units:
         return magnitude
-    elif unit or val.units:
-        return ureg.Quantity(magnitude, unit or val.units)
-    else:
-        return ureg.Quantity(magnitude)
+    elif unit or value.units:
+        return ureg.Quantity(magnitude, unit or value.units)
+    return ureg.Quantity(magnitude)
 
 
 def is_dimensionless(value):
