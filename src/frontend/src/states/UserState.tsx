@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
+import { doClassicLogout } from '../functions/auth';
 import { ApiPaths, apiUrl } from './ApiState';
 import { UserProps } from './states';
 
@@ -19,17 +20,19 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   username: () => {
     const user: UserProps = get().user as UserProps;
 
-    if (user.first_name || user.last_name) {
+    if (user?.first_name || user?.last_name) {
       return `${user.first_name} ${user.last_name}`.trim();
     } else {
-      return user.username;
+      return user?.username ?? '';
     }
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
     // Fetch user data
     await api
-      .get(apiUrl(ApiPaths.user_me))
+      .get(apiUrl(ApiPaths.user_me), {
+        timeout: 1000
+      })
       .then((response) => {
         const user: UserProps = {
           first_name: response.data?.first_name ?? '',
@@ -40,7 +43,9 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         set({ user: user });
       })
       .catch((error) => {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching user data');
+        // Redirect to login page
+        doClassicLogout();
       });
 
     // Fetch role data
