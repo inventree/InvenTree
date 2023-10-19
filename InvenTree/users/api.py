@@ -186,7 +186,8 @@ class GetAuthToken(APIView):
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated
 
-        - If the user already has a token, return it
+        - If the user already has a token, and the token is active, return it
+        - If the user has an invalid token matching the provided token name, remove the invalid token and create a new one
         - Otherwise, create a new token
         """
 
@@ -196,6 +197,12 @@ class GetAuthToken(APIView):
 
             # Get the user token (or create one if it does not exist)
             token, _created = ApiToken.objects.get_or_create(user=request.user, name=name)
+
+            if not token.active:
+                # User is authenticated, and requesting a token against the provided name.
+                # Remove the old token, create a new one
+                token.delete()
+                token, _created = ApiToken.objects.create(user=request.user, name=name)
 
             data = {
                 'token': token.key,
