@@ -1,4 +1,3 @@
-import { StateManagerFactory } from 'html5-qrcode/esm/state-manager';
 import { create } from 'zustand';
 
 interface ModalStateProps {
