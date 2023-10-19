@@ -19,7 +19,7 @@ export function Thumbnail({
 
   return (
     <ApiImage
-      src={src}
+      src={src || '/static/img/blank_image.png'}
       alt={alt}
       width={size}
       fit="contain"
