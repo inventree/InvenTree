@@ -1,5 +1,7 @@
 """DRF API definition for the 'users' app"""
 
+import logging
+
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import include, path, re_path
@@ -14,6 +16,8 @@ from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
 from InvenTree.serializers import UserSerializer
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
+
+logger = logging.getLogger('inventree')
 
 
 class OwnerList(ListAPI):
@@ -207,6 +211,8 @@ class GetAuthToken(APIView):
                 'name': token.name,
                 'expiry': token.expiry,
             }
+
+            logger.info("Created new API token for user '%s' (name='%s')", user.username, name)
 
             return Response(data)
 
