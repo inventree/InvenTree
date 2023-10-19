@@ -163,12 +163,12 @@ export default function CompanyDetail() {
 
     return [
       <ActionDropdown
-        tooltip={t`Actions`}
+        tooltip={t`Company Actions`}
         icon={<IconDots />}
         actions={[
           {
             icon: <IconEdit />,
-            name: 'Edit',
+            name: t`Edit`,
             tooltip: t`Edit Company`,
             disabled: !canEdit,
             onClick: () => {
@@ -182,15 +182,14 @@ export default function CompanyDetail() {
           },
           {
             icon: <IconTrash color="red" />,
-            name: 'Delete',
+            name: t`Delete`,
             tooltip: t`Delete Company`,
-            disabled: !canDelete,
-            onClick: notYetImplemented
+            disabled: !canDelete
           }
         ]}
       />
     ];
-  }, [id, company, userState]);
+  }, [id, company, user]);
 
   return (
     <Stack spacing="xs">

@@ -1,6 +1,8 @@
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 
+import { notYetImplemented } from '../../functions/notifications';
+
 export type ActionDropdownItem = {
   icon: ReactNode;
   name: string;
@@ -31,7 +33,7 @@ export function ActionDropdown({
     <Menu position="bottom-end">
       <Menu.Target>
         <Tooltip label={tooltip}>
-          <ActionIcon size="lg" variant="outline">
+          <ActionIcon size="lg" radius="sm" variant="outline">
             {icon}
           </ActionIcon>
         </Tooltip>
@@ -43,7 +45,13 @@ export function ActionDropdown({
               <Menu.Item
                 icon={action.icon}
                 key={index}
-                onClick={action.onClick}
+                onClick={() => {
+                  if (action.onClick != undefined) {
+                    action.onClick();
+                  } else {
+                    notYetImplemented();
+                  }
+                }}
                 disabled={action.disabled}
               >
                 {action.name}

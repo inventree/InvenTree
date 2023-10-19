@@ -1,32 +1,36 @@
 import { t } from '@lingui/macro';
-import {
-  Button,
-  Group,
-  LoadingOverlay,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Button, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBuilding,
+  IconClipboardList,
   IconCurrencyDollar,
+  IconDots,
+  IconEdit,
   IconInfoCircle,
   IconLayersLinked,
+  IconLink,
   IconList,
   IconListTree,
   IconNotes,
   IconPackages,
   IconPaperclip,
+  IconQrcode,
+  IconScan,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
   IconTools,
+  IconTransfer,
+  IconTrash,
   IconTruckDelivery,
+  IconUnlink,
   IconVersions
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ApiImage } from '../../components/images/ApiImage';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
@@ -36,14 +40,18 @@ import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable'
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
+import { notYetImplemented } from '../../functions/notifications';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 
 /**
  * Detail view for a single Part instance
  */
 export default function PartDetail() {
   const { id } = useParams();
+
+  const user = useUserState();
 
   const {
     instance: part,
@@ -64,7 +72,7 @@ export default function PartDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle />,
+        icon: <IconInfoCircle />
       },
       {
         name: 'parameters',
@@ -95,30 +103,30 @@ export default function PartDetail() {
         name: 'bom',
         label: t`Bill of Materials`,
         icon: <IconListTree />,
-        hidden: !part.assembly,
+        hidden: !part.assembly
       },
       {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly && !part.component,
+        hidden: !part.assembly && !part.component
       },
       {
         name: 'used_in',
         label: t`Used In`,
         icon: <IconStack2 />,
-        hidden: !part.component,
+        hidden: !part.component
       },
       {
         name: 'pricing',
         label: t`Pricing`,
-        icon: <IconCurrencyDollar />,
+        icon: <IconCurrencyDollar />
       },
       {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding />,
-        hidden: !part.purchaseable,
+        hidden: !part.purchaseable
       },
       {
         name: 'purchase_orders',
@@ -201,6 +209,74 @@ export default function PartDetail() {
     );
   }, [part, id]);
 
+  const partActions = useMemo(() => {
+    // TODO: Disable actions based on user permissions
+    return [
+      <ActionDropdown
+        tooltip={t`Barcode Actions`}
+        icon={<IconQrcode />}
+        actions={[
+          {
+            icon: <IconQrcode />,
+            name: t`View`,
+            tooltip: t`View part barcode`
+          },
+          {
+            icon: <IconLink />,
+            name: t`Link Barcode`,
+            tooltip: t`Link custom barcode to part`,
+            disabled: part?.barcode_hash
+          },
+          {
+            icon: <IconUnlink />,
+            name: t`Unlink Barcode`,
+            tooltip: t`Unlink custom barcode from part`,
+            disabled: !part?.barcode_hash
+          }
+        ]}
+      />,
+      <ActionDropdown
+        tooltip={t`Stock Actions`}
+        icon={<IconPackages />}
+        actions={[
+          {
+            icon: <IconClipboardList color="blue" />,
+            name: t`Count Stock`,
+            tooltip: t`Count part stock`
+          },
+          {
+            icon: <IconTransfer color="blue" />,
+            name: t`Transfer Stock`,
+            tooltip: t`Transfer part stock`
+          }
+        ]}
+      />,
+      <ActionDropdown
+        tooltip={t`Part Actions`}
+        icon={<IconDots />}
+        actions={[
+          {
+            icon: <IconEdit />,
+            name: t`Edit`,
+            tooltip: t`Edit Part`,
+            onClick: () => {
+              part.pk &&
+                editPart({
+                  part_id: part.pk,
+                  callback: refreshInstance
+                });
+            }
+          },
+          {
+            icon: <IconTrash color="red" />,
+            name: t`Delete`,
+            tooltip: t`Delete Part`
+          }
+        ]}
+      />
+    ];
+  }, [id, part, user]);
+
   return (
     <>
       <Stack spacing="xs">
@@ -208,21 +284,7 @@ export default function PartDetail() {
         <PageDetail
           detail={partDetail}
           breadcrumbs={breadcrumbs}
-          actions={[
-            <Button
-              variant="outline"
-              color="blue"
-              onClick={() =>
-                part.pk &&
-                editPart({
-                  part_id: part.pk,
-                  callback: refreshInstance
-                })
-              }
-            >
-              Edit Part
-            </Button>
-          ]}
+          actions={partActions}
         />
         <PanelGroup pageKey="part" panels={partPanels} />
       </Stack>

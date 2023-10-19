@@ -41,7 +41,11 @@ export function PageDetail({
               </Stack>
             </Group>
             <Space />
-            {actions && <Group position="right">{actions}</Group>}
+            {actions && (
+              <Group spacing={5} position="right">
+                {actions}
+              </Group>
+            )}
           </Group>
         </Stack>
       </Paper>
