@@ -277,24 +277,22 @@ export function ApiForm({
           </Alert>
         )}
         {preFormElement}
-        <ScrollArea>
-          <Stack spacing="xs">
-            {Object.entries(props.fields ?? {}).map(
-              ([fieldName, field]) =>
-                !field.hidden && (
-                  <ApiFormField
-                    key={fieldName}
-                    field={field}
-                    fieldName={fieldName}
-                    formProps={props}
-                    form={form}
-                    error={form.errors[fieldName] ?? null}
-                    definitions={fieldDefinitions}
-                  />
-                )
-            )}
-          </Stack>
-        </ScrollArea>
+        <Stack spacing="xs">
+          {Object.entries(props.fields ?? {}).map(
+            ([fieldName, field]) =>
+              !field.hidden && (
+                <ApiFormField
+                  key={fieldName}
+                  field={field}
+                  fieldName={fieldName}
+                  formProps={props}
+                  form={form}
+                  error={form.errors[fieldName] ?? null}
+                  definitions={fieldDefinitions}
+                />
+              )
+          )}
+        </Stack>
         {postFormElement}
       </Stack>
       <Divider />
