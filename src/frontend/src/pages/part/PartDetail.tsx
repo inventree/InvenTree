@@ -2,7 +2,9 @@ import { t } from '@lingui/macro';
 import { Button, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBuilding,
+  IconCalendarStats,
   IconClipboardList,
+  IconCopy,
   IconCurrencyDollar,
   IconDots,
   IconEdit,
@@ -141,6 +143,16 @@ export default function PartDetail() {
         hidden: !part.salable
       },
       {
+        name: 'scheduling',
+        label: t`Scheduling`,
+        icon: <IconCalendarStats />
+      },
+      {
+        name: 'stocktake',
+        label: t`Stocktake`,
+        icon: <IconClipboardList />
+      },
+      {
         name: 'test_templates',
         label: t`Test Templates`,
         icon: <IconTestPipe />,
@@ -256,9 +268,14 @@ export default function PartDetail() {
         icon={<IconDots />}
         actions={[
           {
-            icon: <IconEdit />,
+            icon: <IconCopy color="green" />,
+            name: t`Duplicate`,
+            tooltip: t`Duplicate part`
+          },
+          {
+            icon: <IconEdit color="blue" />,
             name: t`Edit`,
-            tooltip: t`Edit Part`,
+            tooltip: t`Edit part`,
             onClick: () => {
               part.pk &&
                 editPart({
@@ -270,7 +287,7 @@ export default function PartDetail() {
           {
             icon: <IconTrash color="red" />,
             name: t`Delete`,
-            tooltip: t`Delete Part`
+            tooltip: t`Delete part`
           }
         ]}
       />

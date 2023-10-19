@@ -26,6 +26,9 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
+import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
+import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable';
+import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editCompany } from '../../functions/forms/CompanyForms';
 import { notYetImplemented } from '../../functions/notifications';
@@ -75,7 +78,10 @@ export default function CompanyDetail() {
         name: 'purchase-orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !company?.is_supplier
+        hidden: !company?.is_supplier,
+        content: company?.pk && (
+          <PurchaseOrderTable params={{ supplier: company.pk }} />
+        )
       },
       {
         name: 'stock-items',
@@ -87,13 +93,19 @@ export default function CompanyDetail() {
         name: 'sales-orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !company?.is_customer
+        hidden: !company?.is_customer,
+        content: company?.pk && (
+          <SalesOrderTable params={{ customer: company.pk }} />
+        )
       },
       {
         name: 'return-orders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden: !company?.is_customer
+        hidden: !company?.is_customer,
+        content: company.pk && (
+          <ReturnOrderTable params={{ customer: company.pk }} />
+        )
       },
       {
         name: 'assigned-stock',
