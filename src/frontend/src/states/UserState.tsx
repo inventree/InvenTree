@@ -43,7 +43,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         set({ user: user });
       })
       .catch((error) => {
-        console.error('Error fetching user data');
+        console.error('Error fetching user data:', error);
         // Redirect to login page
         doClassicLogout();
       });

@@ -63,7 +63,7 @@ export const doSimpleLogin = async (email: string) => {
       email: email
     })
     .then((response) => response.data)
-    .catch((error) => {
+    .catch((_error) => {
       return false;
     });
   return mail;
@@ -132,7 +132,7 @@ export function checkLoginState(navigate: any, redirect?: string) {
       }
     })
     .catch((error) => {
-      console.error('Error fetching login information');
+      console.error('Error fetching login information:', error);
       navigate('/login');
     });
 }
