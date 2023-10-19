@@ -25,6 +25,11 @@ from InvenTree.ready import canAppAccessDatabase
 logger = logging.getLogger("inventree")
 
 
+def default_token():
+    """Generate a default value for the token"""
+    return AuthToken.generate_key()
+
+
 def default_token_expiry():
     """Generate an expiry date for a newly created token"""
 
@@ -53,8 +58,13 @@ class ApiToken(AuthToken):
         """String representation uses the redacted token"""
         return self.token
 
+    @classmethod
+    def generate_key(cls, prefix='inv-'):
+        """Generate a new token key - with custom prefix"""
+        return prefix + str(AuthToken.generate_key())
+
     # Override the 'key' field - force it to be unique
-    key = models.CharField(verbose_name=_('Key'), max_length=40, db_index=True, unique=True)
+    key = models.CharField(default=default_token, verbose_name=_('Key'), max_length=40, db_index=True, unique=True)
 
     # Override the 'user' field, to allow multiple tokens per user
     user = models.ForeignKey(
@@ -91,6 +101,10 @@ class ApiToken(AuthToken):
 
         The *raw* key value should never be displayed anywhere!
         """
+
+        # If the token has not yet been saved, return the raw key
+        if self.pk is None:
+            return self.key
 
         N = 8
         M = len(self.key) - N
