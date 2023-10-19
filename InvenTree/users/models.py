@@ -27,7 +27,7 @@ logger = logging.getLogger("inventree")
 
 def default_token():
     """Generate a default value for the token"""
-    return AuthToken.generate_key()
+    return ApiToken.generate_key()
 
 
 def default_token_expiry():

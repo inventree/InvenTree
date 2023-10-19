@@ -18,8 +18,15 @@ class ApiTokenAdmin(admin.ModelAdmin):
     """Admin class for the ApiToken model."""
 
     list_display = ('token', 'user', 'name', 'expiry', 'active')
-    fields = ('token', 'name', 'revoked', 'expiry')
-    readonly_fields = ('token', 'created')
+    fields = ('token', 'user', 'name', 'revoked', 'expiry')
+
+    def get_readonly_fields(self, request, obj=None):
+        """Some fields are read-only after creation"""
+
+        if obj:
+            return ['token', 'user', 'expiry']
+        else:
+            return ['token']
 
 
 class RuleSetInline(admin.TabularInline):
