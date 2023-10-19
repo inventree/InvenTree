@@ -12,6 +12,10 @@ export const Playground = Loadable(
   lazy(() => import('./pages/Index/Playground'))
 );
 
+export const CompanyDetail = Loadable(
+  lazy(() => import('./pages/general/CompanyDetail'))
+);
+
 export const CategoryDetail = Loadable(
   lazy(() => import('./pages/part/CategoryDetail'))
 );
@@ -110,6 +114,7 @@ export const routes = (
       <Route path="purchasing/">
         <Route index element={<PurchasingIndex />} />
       </Route>
+      <Route path="company/:id/" element={<CompanyDetail />} />
       <Route path="sales/">
         <Route index element={<SalesIndex />} />
       </Route>

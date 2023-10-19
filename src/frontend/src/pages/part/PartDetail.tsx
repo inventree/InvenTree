@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import {
-  Alert,
   Button,
   Group,
   LoadingOverlay,
@@ -28,7 +27,6 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ApiImage } from '../../components/images/ApiImage';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
@@ -67,7 +65,6 @@ export default function PartDetail() {
         name: 'details',
         label: t`Details`,
         icon: <IconInfoCircle />,
-        content: <PlaceholderPanel />
       },
       {
         name: 'parameters',
@@ -99,54 +96,46 @@ export default function PartDetail() {
         label: t`Bill of Materials`,
         icon: <IconListTree />,
         hidden: !part.assembly,
-        content: <PlaceholderPanel />
       },
       {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
         hidden: !part.assembly && !part.component,
-        content: <PlaceholderPanel />
       },
       {
         name: 'used_in',
         label: t`Used In`,
         icon: <IconStack2 />,
         hidden: !part.component,
-        content: <PlaceholderPanel />
       },
       {
         name: 'pricing',
         label: t`Pricing`,
         icon: <IconCurrencyDollar />,
-        content: <PlaceholderPanel />
       },
       {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding />,
         hidden: !part.purchaseable,
-        content: <PlaceholderPanel />
       },
       {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        content: <PlaceholderPanel />,
         hidden: !part.purchaseable
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        content: <PlaceholderPanel />,
         hidden: !part.salable
       },
       {
         name: 'test_templates',
         label: t`Test Templates`,
         icon: <IconTestPipe />,
-        content: <PlaceholderPanel />,
         hidden: !part.trackable
       },
       {

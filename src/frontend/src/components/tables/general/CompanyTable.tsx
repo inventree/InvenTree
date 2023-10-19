@@ -6,6 +6,7 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * A table which displays a list of company records,
@@ -13,6 +14,8 @@ import { InvenTreeTable } from '../InvenTreeTable';
  */
 export function CompanyTable({ params }: { params?: any }) {
   const { tableKey } = useTableRefresh('company');
+
+  const navigate = useNavigate();
 
   const columns = useMemo(() => {
     return [
@@ -56,7 +59,8 @@ export function CompanyTable({ params }: { params?: any }) {
       props={{
         params: {
           ...params
-        }
+        },
+        onRowClick: (row: any) => { navigate(`/company/${row.pk}`) },
       }}
     />
   );
