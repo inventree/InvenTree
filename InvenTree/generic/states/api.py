@@ -26,7 +26,7 @@ class StatusView(APIView):
     MODEL_REF = 'statusmodel'
 
     def get_status_model(self, *args, **kwargs):
-        """Return the StatusCode moedl based on extra parameters passed to the view"""
+        """Return the StatusCode model based on extra parameters passed to the view"""
         status_model = self.kwargs.get(self.MODEL_REF, None)
 
         if status_model is None:
