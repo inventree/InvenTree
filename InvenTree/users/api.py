@@ -186,23 +186,21 @@ class GetAuthToken(APIView):
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated
 
-        - If the user already has a token, and the token is active, return it
-        - If the user has an invalid token matching the provided token name, remove the invalid token and create a new one
-        - Otherwise, create a new token
+        - If the user already has a matching token, delete it and create a new one
+        - Existing tokens are *never* exposed again via the API
+        - Once the token is provided, it can be used for auth until it expires
         """
 
         if request.user.is_authenticated:
 
+            user = request.user
             name = request.query_params.get('name', '')
 
-            # Get the user token (or create one if it does not exist)
-            token, _created = ApiToken.objects.get_or_create(user=request.user, name=name)
+            # Delete any matching tokens
+            ApiToken.objects.filter(user=user, name=name).delete()
 
-            if not token.active:
-                # User is authenticated, and requesting a token against the provided name.
-                # Remove the old token, create a new one
-                token.delete()
-                token = ApiToken.objects.create(user=request.user, name=name)
+            # User is authenticated, and requesting a token against the provided name.
+            token = ApiToken.objects.create(user=request.user, name=name)
 
             data = {
                 'token': token.key,
