@@ -10,6 +10,7 @@ interface UserStateProps {
   username: () => string;
   setUser: (newUser: UserProps) => void;
   fetchUserState: () => void;
+  checkUserRole: (role: string, permission: string) => boolean;
 }
 
 /**

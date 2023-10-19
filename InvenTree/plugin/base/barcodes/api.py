@@ -10,9 +10,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from InvenTree.helpers import hash_barcode
+from order.models import PurchaseOrder
 from plugin import registry
 from plugin.builtin.barcodes.inventree_barcode import \
     InvenTreeInternalBarcodePlugin
+from stock.models import StockLocation
 from users.models import RuleSet
 
 
@@ -230,7 +232,7 @@ class BarcodeUnassign(APIView):
                 instance.unassign_barcode()
 
                 return Response({
-                    'success': 'Barcode unassigned from {label} instance',
+                    'success': f'Barcode unassigned from {label} instance',
                 })
 
         # If we get to this point, something has gone wrong!
@@ -239,12 +241,93 @@ class BarcodeUnassign(APIView):
         })
 
 
+class BarcodePOReceive(APIView):
+    """Endpoint for handling receiving parts by scanning their barcode.
+
+    Barcode data are decoded by the client application,
+    and sent to this endpoint (as a JSON object) for validation.
+
+    The barcode should follow a third-party barcode format (e.g. Digikey)
+    and ideally contain order_number and quantity information.
+
+    The following parameters are available:
+
+    - barcode: The raw barcode data (required)
+    - purchase_order: The purchase order containing the item to receive (optional)
+    - location: The destination location for the received item (optional)
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def post(self, request, *args, **kwargs):
+        """Respond to a barcode POST request."""
+
+        data = request.data
+        if not (barcode_data := data.get("barcode")):
+            raise ValidationError({"barcode": _("Missing barcode data")})
+
+        purchase_order = None
+        if purchase_order_pk := data.get("purchase_order"):
+            purchase_order = PurchaseOrder.objects.filter(pk=purchase_order_pk).first()
+            if not purchase_order:
+                raise ValidationError({"purchase_order": _("Invalid purchase order")})
+
+        location = None
+        if (location_pk := data.get("location")):
+            location = StockLocation.objects.get(pk=location_pk)
+            if not location:
+                raise ValidationError({"location": _("Invalid stock location")})
+
+        plugins = registry.with_mixin("barcode")
+
+        # Look for a barcode plugin which knows how to deal with this barcode
+        plugin = None
+        response = {}
+
+        internal_barcode_plugin = next(filter(
+            lambda plugin: plugin.name == "InvenTreeBarcode", plugins))
+        if internal_barcode_plugin.scan(barcode_data):
+            response["error"] = _("Item has already been received")
+            raise ValidationError(response)
+
+        for current_plugin in plugins:
+            result = current_plugin.scan_receive_item(
+                barcode_data,
+                request.user,
+                purchase_order=purchase_order,
+                location=location,
+            )
+
+            if result is not None:
+                plugin = current_plugin
+                response = result
+                break
+
+        response["plugin"] = plugin.name if plugin else None
+        response["barcode_data"] = barcode_data
+        response["barcode_hash"] = hash_barcode(barcode_data)
+
+        # A plugin has not been found!
+        if plugin is None:
+            response["error"] = _("Invalid supplier barcode")
+            raise ValidationError(response)
+        elif "error" in response:
+            raise ValidationError(response)
+        else:
+            return Response(response)
+
+
 barcode_api_urls = [
     # Link a third-party barcode to an item (e.g. Part / StockItem / etc)
     path('link/', BarcodeAssign.as_view(), name='api-barcode-link'),
 
     # Unlink a third-pary barcode from an item
     path('unlink/', BarcodeUnassign.as_view(), name='api-barcode-unlink'),
+
+    # Receive a purchase order item by scanning its barcode
+    path("po-receive/", BarcodePOReceive.as_view(), name="api-barcode-po-receive"),
 
     # Catch-all performs barcode 'scan'
     re_path(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),

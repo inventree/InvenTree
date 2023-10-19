@@ -1,7 +1,8 @@
-import { Container, Flex, Space } from '@mantine/core';
+import { Container, Flex, LoadingOverlay, Space } from '@mantine/core';
 import { Navigate, Outlet } from 'react-router-dom';
 
 import { InvenTreeStyle } from '../../globalStyle';
+import { useModalState } from '../../states/ModalState';
 import { useSessionState } from '../../states/SessionState';
 import { Footer } from './Footer';
 import { Header } from './Header';
@@ -19,9 +20,12 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 export default function LayoutComponent() {
   const { classes } = InvenTreeStyle();
 
+  const modalState = useModalState();
+
   return (
     <ProtectedRoute>
       <Flex direction="column" mih="100vh">
+        <LoadingOverlay visible={modalState.loading} />
         <Header />
         <Container className={classes.layoutContent} size="100%">
           <Outlet />

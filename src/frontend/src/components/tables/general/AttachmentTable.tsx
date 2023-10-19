@@ -224,20 +224,22 @@ export function AttachmentTable({
 
   return (
     <Stack spacing="xs">
-      <InvenTreeTable
-        url={url}
-        tableKey={tableKey}
-        columns={tableColumns}
-        props={{
-          noRecordsText: t`No attachments found`,
-          enableSelection: true,
-          customActionGroups: customActionGroups,
-          rowActions: allowEdit && allowDelete ? rowActions : undefined,
-          params: {
-            [model]: pk
-          }
-        }}
-      />
+      {pk && pk > 0 && (
+        <InvenTreeTable
+          url={url}
+          tableKey={tableKey}
+          columns={tableColumns}
+          props={{
+            noRecordsText: t`No attachments found`,
+            enableSelection: true,
+            customActionGroups: customActionGroups,
+            rowActions: allowEdit && allowDelete ? rowActions : undefined,
+            params: {
+              [model]: pk
+            }
+          }}
+        />
+      )}
       {allowEdit && validPk && (
         <Dropzone onDrop={uploadFiles}>
           <Dropzone.Idle>
