@@ -1,12 +1,12 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { useNavigate } from 'react-router-dom';
 
 /**
  * A table which displays a list of company records,
@@ -27,7 +27,7 @@ export function CompanyTable({ params }: { params?: any }) {
           return (
             <Group spacing="xs" noWrap={true}>
               <Thumbnail
-                src={record.thumbnail ?? record.image}
+                src={record.thumbnail ?? record.image ?? ''}
                 alt={record.name}
                 size={24}
               />
@@ -60,7 +60,9 @@ export function CompanyTable({ params }: { params?: any }) {
         params: {
           ...params
         },
-        onRowClick: (row: any) => { navigate(`/company/${row.pk}`) },
+        onRowClick: (row: any) => {
+          navigate(`/company/${row.pk}`);
+        }
       }}
     />
   );

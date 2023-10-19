@@ -1,8 +1,16 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import {
+  ActionIcon,
+  Group,
+  LoadingOverlay,
+  Stack,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
+  IconEdit,
   IconInfoCircle,
   IconMap2,
   IconNotes,
@@ -17,10 +25,13 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { Thumbnail } from '../../components/images/Thumbnail';
+import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { editCompany } from '../../functions/forms/CompanyForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 
@@ -127,9 +138,50 @@ export default function CompanyDetail() {
     ];
   }, [id, company]);
 
+  const companyDetail = useMemo(() => {
+    return (
+      <Group spacing="xs" noWrap={true}>
+        <Thumbnail
+          src={String(company.image || '')}
+          size={128}
+          alt={company?.name}
+        />
+        <Stack spacing="xs">
+          <Text size="lg" weight={500}>
+            {company.name}
+          </Text>
+          <Text size="sm">{company.description}</Text>
+        </Stack>
+      </Group>
+    );
+  }, [id, company]);
+
+  const companyActions = useMemo(() => {
+    return [
+      <Tooltip label={t`Edit Company`}>
+        <ActionIcon
+          variant="outline"
+          radius="sm"
+          color="blue"
+          onClick={() => {
+            if (company?.pk) {
+              editCompany({
+                pk: company?.pk,
+                callback: refreshInstance
+              });
+            }
+          }}
+        >
+          <IconEdit />
+        </ActionIcon>
+      </Tooltip>
+    ];
+  }, [id, company]);
+
   return (
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isFetching} />
+      <PageDetail detail={companyDetail} actions={companyActions} />
       <PanelGroup pageKey="company" panels={companyPanels} />
     </Stack>
   );
