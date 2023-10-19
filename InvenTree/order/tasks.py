@@ -15,7 +15,6 @@ from plugin.events import trigger_event
 
 def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
     """Notify users that a PurchaseOrder has just become 'overdue'"""
-
     targets = []
 
     if po.created_by:
@@ -64,7 +63,6 @@ def check_overdue_purchase_orders():
     - Look at the 'target_date' of any outstanding PurchaseOrder objects
     - If the 'target_date' expired *yesterday* then the order is just out of date
     """
-
     yesterday = datetime.now().date() - timedelta(days=1)
 
     overdue_orders = order.models.PurchaseOrder.objects.filter(
@@ -78,7 +76,6 @@ def check_overdue_purchase_orders():
 
 def notify_overdue_sales_order(so: order.models.SalesOrder):
     """Notify appropriate users that a SalesOrder has just become 'overdue'"""
-
     targets = []
 
     if so.created_by:
@@ -127,7 +124,6 @@ def check_overdue_sales_orders():
     - Look at the 'target_date' of any outstanding SalesOrder objects
     - If the 'target_date' expired *yesterday* then the order is just out of date
     """
-
     yesterday = datetime.now().date() - timedelta(days=1)
 
     overdue_orders = order.models.SalesOrder.objects.filter(

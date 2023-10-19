@@ -7,6 +7,12 @@ exclude_patterns = [
   "InvenTree/**/migrations/*.py",  # Backend: Migration files
   "src/frontend/src/locales/**"  # Frontend: Translations
 ]
+test_patterns = [
+  "test_.*.py",
+  "test.py",
+  "tests.py"
+]
+
 
 [[analyzers]]
 name = "shell"

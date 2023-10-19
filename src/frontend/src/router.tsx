@@ -34,6 +34,14 @@ export const BuildDetail = Loadable(
   lazy(() => import('./pages/build/BuildDetail'))
 );
 
+export const PurchasingIndex = Loadable(
+  lazy(() => import('./pages/purchasing/PurchasingIndex'))
+);
+
+export const SalesIndex = Loadable(
+  lazy(() => import('./pages/sales/SalesIndex'))
+);
+
 export const Scan = Loadable(lazy(() => import('./pages/Index/Scan')));
 
 export const Dashboard = Loadable(
@@ -98,6 +106,12 @@ export const routes = (
       <Route path="build/">
         <Route index element={<BuildIndex />} />
         <Route path=":id/" element={<BuildDetail />} />
+      </Route>
+      <Route path="purchasing/">
+        <Route index element={<PurchasingIndex />} />
+      </Route>
+      <Route path="sales/">
+        <Route index element={<SalesIndex />} />
       </Route>
       <Route path="/profile/:tabValue" element={<Profile />} />
     </Route>

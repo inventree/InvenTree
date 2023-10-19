@@ -35,7 +35,6 @@ class InfoView(AjaxView):
 
     def worker_pending_tasks(self):
         """Return the current number of outstanding background tasks"""
-
         return OrmQ.objects.count()
 
     def get(self, request, *args, **kwargs):
@@ -208,10 +207,8 @@ class APIDownloadMixin:
         if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
             queryset = self.filter_queryset(self.get_queryset())
             return self.download_queryset(queryset, export_format)
-
-        else:
-            # Default to the parent class implementation
-            return super().get(request, *args, **kwargs)
+        # Default to the parent class implementation
+        return super().get(request, *args, **kwargs)
 
     def download_queryset(self, queryset, export_format):
         """This function must be implemented to provide a downloadFile request."""
@@ -256,7 +253,6 @@ class APISearchView(APIView):
 
     def get_result_types(self):
         """Construct a list of search types we can return"""
-
         import build.api
         import company.api
         import order.api
@@ -279,7 +275,6 @@ class APISearchView(APIView):
 
     def post(self, request, *args, **kwargs):
         """Perform search query against available models"""
-
         data = request.data
 
         results = {}

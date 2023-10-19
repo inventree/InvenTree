@@ -22,7 +22,6 @@ class InvenTreeExchange(SimpleExchangeBackend):
 
     def get_rates(self, **kwargs) -> None:
         """Set the requested currency codes and get rates."""
-
         from common.models import InvenTreeSetting
         from plugin import registry
 
@@ -74,7 +73,6 @@ class InvenTreeExchange(SimpleExchangeBackend):
     @atomic
     def update_rates(self, base_currency=None, **kwargs):
         """Call to update all exchange rates"""
-
         backend, _ = ExchangeBackend.objects.update_or_create(name=self.name, defaults={"base_currency": base_currency})
 
         if base_currency is None:

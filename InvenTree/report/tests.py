@@ -31,7 +31,6 @@ class ReportTagTest(TestCase):
 
     def test_getindex(self):
         """Tests for the 'getindex' template tag"""
-
         fn = report_tags.getindex
         data = [1, 2, 3, 4, 5, 6]
 
@@ -45,7 +44,6 @@ class ReportTagTest(TestCase):
 
     def test_getkey(self):
         """Tests for the 'getkey' template tag"""
-
         data = {
             'hello': 'world',
             'foo': 'bar',
@@ -58,7 +56,6 @@ class ReportTagTest(TestCase):
 
     def test_asset(self):
         """Tests for asset files"""
-
         # Test that an error is raised if the file does not exist
         for b in [True, False]:
             self.debug_mode(b)
@@ -87,7 +84,6 @@ class ReportTagTest(TestCase):
 
     def test_uploaded_image(self):
         """Tests for retrieving uploaded images"""
-
         # Test for a missing image
         for b in [True, False]:
             self.debug_mode(b)
@@ -132,19 +128,16 @@ class ReportTagTest(TestCase):
 
     def test_part_image(self):
         """Unit tests for the 'part_image' tag"""
-
         with self.assertRaises(TypeError):
             report_tags.part_image(None)
 
     def test_company_image(self):
         """Unit tests for the 'company_image' tag"""
-
         with self.assertRaises(TypeError):
             report_tags.company_image(None)
 
     def test_logo_image(self):
         """Unit tests for the 'logo_image' tag"""
-
         # By default, should return the core InvenTree logo
         for b in [True, False]:
             self.debug_mode(b)
@@ -153,7 +146,6 @@ class ReportTagTest(TestCase):
 
     def test_maths_tags(self):
         """Simple tests for mathematical operator tags"""
-
         self.assertEqual(report_tags.add(1, 2), 3)
         self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
         self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
@@ -165,7 +157,6 @@ class BarcodeTagTest(TestCase):
 
     def test_barcode(self):
         """Test the barcode generation tag"""
-
         barcode = barcode_tags.barcode("12345")
 
         self.assertTrue(isinstance(barcode, str))
@@ -178,7 +169,6 @@ class BarcodeTagTest(TestCase):
 
     def test_qrcode(self):
         """Test the qrcode generation tag"""
-
         # Test with default settings
         qrcode = barcode_tags.qrcode("hello world")
         self.assertTrue(isinstance(qrcode, str))

@@ -242,7 +242,6 @@ class UIMessageNotification(SingleNotificationMethod):
 
     def get_targets(self):
         """Only send notifications for active users"""
-
         return [target for target in self.targets if target.is_active]
 
     def send(self, target):

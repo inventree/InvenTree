@@ -79,7 +79,6 @@ class InvenTreeConfig(AppConfig):
 
     def start_background_tasks(self):
         """Start all background tests for InvenTree."""
-
         logger.info("Starting background tasks...")
 
         from django_q.models import Schedule
@@ -140,7 +139,6 @@ class InvenTreeConfig(AppConfig):
 
     def collect_tasks(self):
         """Collect all background tasks."""
-
         for app_name, app in apps.app_configs.items():
             if app_name == 'InvenTree':
                 continue

@@ -6,18 +6,18 @@ import { notifications } from '@mantine/notifications';
 import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
+import { api } from '../../../App';
 import {
   addAttachment,
   deleteAttachment,
   editAttachment
-} from '../../functions/forms/AttachmentForms';
-import { useTableRefresh } from '../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
-import { AttachmentLink } from '../items/AttachmentLink';
-import { TableColumn } from './Column';
-import { InvenTreeTable } from './InvenTreeTable';
-import { RowAction } from './RowActions';
+} from '../../../functions/forms/AttachmentForms';
+import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { AttachmentLink } from '../../items/AttachmentLink';
+import { TableColumn } from '../Column';
+import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 
 /**
  * Define set of columns to display for the attachment table

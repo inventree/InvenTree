@@ -23,7 +23,6 @@ def to_list(value, delimiter=','):
     However, the same setting may be specified via an environment variable,
     using a comma delimited string!
     """
-
     if type(value) in [list, tuple]:
         return value
 
@@ -70,7 +69,6 @@ def ensure_dir(path: Path) -> None:
 
     If it does not exist, create it.
     """
-
     if not path.exists():
         path.mkdir(parents=True, exist_ok=True)
 
@@ -143,7 +141,6 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
     """
     def try_typecasting(value, source: str):
         """Attempt to typecast the value"""
-
         # Force 'list' of strings
         if typecast is list:
             value = to_list(value)
@@ -201,13 +198,11 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
 def get_boolean_setting(env_var=None, config_key=None, default_value=False):
     """Helper function for retrieving a boolean configuration setting"""
-
     return is_true(get_setting(env_var, config_key, default_value))
 
 
 def get_media_dir(create=True):
     """Return the absolute path for the 'media' directory (where uploaded files are stored)"""
-
     md = get_setting('INVENTREE_MEDIA_ROOT', 'media_root')
 
     if not md:
@@ -223,7 +218,6 @@ def get_media_dir(create=True):
 
 def get_static_dir(create=True):
     """Return the absolute path for the 'static' directory (where static files are stored)"""
-
     sd = get_setting('INVENTREE_STATIC_ROOT', 'static_root')
 
     if not sd:
@@ -239,7 +233,6 @@ def get_static_dir(create=True):
 
 def get_backup_dir(create=True):
     """Return the absolute path for the backup directory"""
-
     bd = get_setting('INVENTREE_BACKUP_DIR', 'backup_dir')
 
     if not bd:
@@ -258,7 +251,6 @@ def get_plugin_file():
 
     Note: It will be created if it does not already exist!
     """
-
     # Check if the plugin.txt file (specifying required plugins) is specified
     plugin_file = get_setting('INVENTREE_PLUGIN_FILE', 'plugin_file')
 
@@ -283,7 +275,6 @@ def get_plugin_file():
 
 def get_plugin_dir():
     """Returns the path of the custom plugins directory"""
-
     return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
 
@@ -297,7 +288,6 @@ def get_secret_key():
     C) Look for default key file "secret_key.txt"
     D) Create "secret_key.txt" if it does not exist
     """
-
     # Look for environment variable
     if secret_key := get_setting('INVENTREE_SECRET_KEY', 'secret_key'):
         logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover

@@ -176,7 +176,6 @@ class CustomLoginForm(LoginForm):
         First check that:
         - A valid user has been supplied
         """
-
         if not self.user:
             # No user supplied - redirect to the login page
             return HttpResponseRedirect(reverse('account_login'))
@@ -313,7 +312,6 @@ class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, Default
 
     def get_email_confirmation_url(self, request, emailconfirmation):
         """Construct the email confirmation url"""
-
         from InvenTree.helpers_model import construct_absolute_url
 
         url = super().get_email_confirmation_url(request, emailconfirmation)

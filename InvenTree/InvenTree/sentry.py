@@ -17,7 +17,6 @@ logger = logging.getLogger('inventree')
 
 def default_sentry_dsn():
     """Return the default Sentry.io DSN for InvenTree"""
-
     return 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
 
 
@@ -26,7 +25,6 @@ def sentry_ignore_errors():
 
     These error types will *not* be reported to sentry.io.
     """
-
     return [
         Http404,
         ValidationError,
@@ -39,7 +37,6 @@ def sentry_ignore_errors():
 
 def init_sentry(dsn, sample_rate, tags):
     """Initialize sentry.io error reporting"""
-
     logger.info("Initializing sentry.io integration")
 
     sentry_sdk.init(
@@ -64,7 +61,6 @@ def init_sentry(dsn, sample_rate, tags):
 
 def report_exception(exc):
     """Report an exception to sentry.io"""
-
     if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
 
         if not any(isinstance(exc, e) for e in sentry_ignore_errors()):

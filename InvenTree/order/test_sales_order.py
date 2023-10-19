@@ -72,7 +72,6 @@ class SalesOrderTest(TestCase):
 
     def test_so_reference(self):
         """Unit tests for sales order generation"""
-
         # Test that a good reference is created when we have no existing orders
         SalesOrder.objects.all().delete()
 
@@ -80,7 +79,6 @@ class SalesOrderTest(TestCase):
 
     def test_rebuild_reference(self):
         """Test that the 'reference_int' field gets rebuilt when the model is saved"""
-
         self.assertEqual(self.order.reference_int, 1234)
 
         self.order.reference = '999'
@@ -121,7 +119,6 @@ class SalesOrderTest(TestCase):
 
     def test_add_duplicate_line_item(self):
         """Adding a duplicate line item to a SalesOrder is accepted"""
-
         for ii in range(1, 5):
             SalesOrderLineItem.objects.create(order=self.order, part=self.part, quantity=ii)
 
@@ -283,14 +280,12 @@ class SalesOrderTest(TestCase):
 
     def test_shipment_delivery(self):
         """Test the shipment delivery settings"""
-
         # Shipment delivery date should be empty before setting date
         self.assertIsNone(self.shipment.delivery_date)
         self.assertFalse(self.shipment.is_delivered())
 
     def test_overdue_notification(self):
         """Test overdue sales order notification"""
-
         self.order.created_by = get_user_model().objects.get(pk=3)
         self.order.responsible = Owner.create(obj=Group.objects.get(pk=2))
         self.order.target_date = datetime.now().date() - timedelta(days=1)
@@ -311,7 +306,6 @@ class SalesOrderTest(TestCase):
         - The responsible user should receive a notification
         - The creating user should *not* receive a notification
         """
-
         SalesOrder.objects.create(
             customer=self.customer,
             reference='1234567',

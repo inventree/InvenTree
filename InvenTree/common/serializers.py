@@ -192,7 +192,6 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
     def get_target(self, obj):
         """Function to resolve generic object reference to target."""
-
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
         if target and 'link' not in target:

@@ -68,6 +68,7 @@ export type ApiFormFieldType = {
   choices?: any[];
   hidden?: boolean;
   disabled?: boolean;
+  read_only?: boolean;
   placeholder?: string;
   description?: string;
   preFieldContent?: JSX.Element | (() => JSX.Element);
@@ -114,6 +115,10 @@ export function constructField({
     default:
       break;
   }
+
+  // Clear out the 'read_only' attribute
+  def.disabled = def.disabled ?? def.read_only ?? false;
+  delete def['read_only'];
 
   return def;
 }
@@ -190,16 +195,26 @@ export function ApiFormField({
 
   // Coerce the value to a numerical value
   const numericalValue: number | undefined = useMemo(() => {
+    let val = 0;
+
     switch (definition.field_type) {
       case 'integer':
-        return parseInt(value);
+        val = parseInt(value) ?? 0;
+        break;
       case 'decimal':
       case 'float':
       case 'number':
-        return parseFloat(value);
+        val = parseFloat(value) ?? 0;
+        break;
       default:
-        return undefined;
+        break;
     }
+
+    if (isNaN(val) || !isFinite(val)) {
+      val = 0;
+    }
+
+    return val;
   }, [value]);
 
   // Construct the individual field

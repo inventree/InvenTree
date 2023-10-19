@@ -49,7 +49,6 @@ class PartConfig(AppConfig):
 
         Prevents issues with state machine if the server is restarted mid-update
         """
-
         from .models import PartPricing
 
         if isImportingData():

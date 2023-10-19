@@ -37,16 +37,18 @@ export function RelatedModelField({
 
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(
-    () =>
-      constructField({
-        form: form,
-        field: field,
-        fieldName: fieldName,
-        definitions: definitions
-      }),
-    [form.values, field, definitions]
-  );
+  const definition: ApiFormFieldType = useMemo(() => {
+    let def = constructField({
+      form: form,
+      field: field,
+      fieldName: fieldName,
+      definitions: definitions
+    });
+
+    // Remove the 'read_only' attribute (causes issues with Mantine)
+    delete def['read_only'];
+    return def;
+  }, [form.values, field, definitions]);
 
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
@@ -170,8 +172,20 @@ export function RelatedModelField({
     }
   }
 
+  /* Construct a "cut-down" version of the definition,
+   * which does not include any attributes that the lower components do not recognize
+   */
+  const fieldDefinition = useMemo(() => {
+    return {
+      ...definition,
+      onValueChange: undefined,
+      adjustFilters: undefined,
+      read_only: undefined
+    };
+  }, [definition]);
+
   return (
-    <Input.Wrapper {...definition} error={error}>
+    <Input.Wrapper {...fieldDefinition} error={error}>
       <Select
         id={fieldId}
         value={pk != null && data.find((item) => item.value == pk)}

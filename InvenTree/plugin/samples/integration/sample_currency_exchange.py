@@ -19,7 +19,6 @@ class SampleCurrencyExchangePlugin(CurrencyExchangeMixin, InvenTreePlugin):
 
     def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
         """Return dummy data for some currencies"""
-
         rates = {
             base_currency: 1.00,
         }
