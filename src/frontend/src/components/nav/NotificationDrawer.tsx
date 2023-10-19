@@ -81,12 +81,12 @@ export function NotificationDrawer({
       <Stack spacing="xs">
         <Divider />
         <LoadingOverlay visible={notificationQuery.isFetching} />
-        {notificationQuery.data?.results?.length == 0 && (
+        {(notificationQuery.data?.results?.length ?? 0) == 0 && (
           <Alert color="green">
             <Text size="sm">{t`You have no unread notifications.`}</Text>
           </Alert>
         )}
-        {notificationQuery.data?.results.map((notification: any) => (
+        {notificationQuery.data?.results?.map((notification: any) => (
           <Group position="apart">
             <Stack spacing="3">
               <Text size="sm">{notification.target?.name ?? 'target'}</Text>
