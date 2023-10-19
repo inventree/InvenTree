@@ -103,7 +103,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_activate(self):
         """Test the plugin activate."""
-
         test_plg = self.plugin_confs.first()
 
         def assert_plugin_active(self, active):
@@ -189,7 +188,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_check_plugin(self):
         """Test check_plugin function."""
-
         # No argument
         with self.assertRaises(NotFound) as exc:
             check_plugin(plugin_slug=None, plugin_pk=None)
@@ -207,7 +205,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_settings(self):
         """Test plugin settings access via the API"""
-
         # Ensure we have superuser permissions
         self.user.is_superuser = True
         self.user.save()

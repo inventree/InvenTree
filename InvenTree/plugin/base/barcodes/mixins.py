@@ -35,5 +35,4 @@ class BarcodeMixin:
 
         Default return value is None
         """
-
         return None

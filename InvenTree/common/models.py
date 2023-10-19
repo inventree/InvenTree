@@ -84,7 +84,6 @@ class BaseURLValidator(URLValidator):
 
     def __init__(self, schemes=None, **kwargs):
         """Custom init routine"""
-
         super().__init__(schemes, **kwargs)
 
         # Override default host_re value - allow optional tld regex
@@ -204,7 +203,6 @@ class BaseInvenTreeSetting(models.Model):
 
         If a particular setting is not present, create it with the default value
         """
-
         cache_key = f"BUILD_DEFAULT_VALUES:{str(cls.__name__)}"
 
         if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
@@ -255,7 +253,6 @@ class BaseInvenTreeSetting(models.Model):
 
     def save_to_cache(self):
         """Save this setting object to cache"""
-
         ckey = self.cache_key
 
         # skip saving to cache if no pk is set
@@ -283,7 +280,6 @@ class BaseInvenTreeSetting(models.Model):
         - The unique KEY string
         - Any key:value kwargs associated with the particular setting type (e.g. user-id)
         """
-
         key = f"{str(cls.__name__)}:{setting_key}"
 
         for k, v in kwargs.items():
@@ -408,8 +404,7 @@ class BaseInvenTreeSetting(models.Model):
 
         if settings is not None and key in settings:
             return settings[key]
-        else:
-            return {}
+        return {}
 
     @classmethod
     def get_setting_name(cls, key, **kwargs):
@@ -462,8 +457,7 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(default):
             return default()
-        else:
-            return default
+        return default
 
     @classmethod
     def get_setting_choices(cls, key, **kwargs):
@@ -885,9 +879,7 @@ class BaseInvenTreeSetting(models.Model):
 
         elif self.is_model():
             return 'related field'
-
-        else:
-            return 'string'
+        return 'string'
 
     @classmethod
     def validator_is_bool(cls, validator):
@@ -992,7 +984,6 @@ def validate_email_domains(setting):
 
 def currency_exchange_plugins():
     """Return a set of plugin choices which can be used for currency exchange"""
-
     try:
         from plugin import registry
         plugs = registry.with_mixin('currencyexchange', active=True)
@@ -1006,7 +997,6 @@ def currency_exchange_plugins():
 
 def update_exchange_rates(setting):
     """Update exchange rates when base currency is changed"""
-
     if InvenTree.ready.isImportingData():
         return
 
@@ -1018,7 +1008,6 @@ def update_exchange_rates(setting):
 
 def reload_plugin_registry(setting):
     """When a core plugin setting is changed, reload the plugin registry"""
-
     from plugin import registry
 
     logger.info("Reloading plugin registry due to change in setting '%s'", setting.key)
@@ -1898,8 +1887,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         if options:
             return options.get('requires_restart', False)
-        else:
-            return False
+        return False
 
 
 def label_printer_options():
@@ -2437,8 +2425,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
     if pb_found:
         cost = pb_cost * quantity
         return InvenTree.helpers.normalize(cost + instance.base_cost)
-    else:
-        return None
+    return None
 
 
 class ColorTheme(models.Model):
@@ -2891,7 +2878,6 @@ class NewsFeedEntry(models.Model):
 
 def rename_notes_image(instance, filename):
     """Function for renaming uploading image file. Will store in the 'notes' directory."""
-
     fname = os.path.basename(filename)
     return os.path.join('notes', fname)
 
@@ -2936,7 +2922,6 @@ class CustomUnit(models.Model):
 
     def clean(self):
         """Validate that the provided custom unit is indeed valid"""
-
         super().clean()
 
         from InvenTree.conversion import get_unit_registry
@@ -2994,7 +2979,6 @@ class CustomUnit(models.Model):
 @receiver(post_delete, sender=CustomUnit, dispatch_uid='custom_unit_deleted')
 def after_custom_unit_updated(sender, instance, **kwargs):
     """Callback when a custom unit is updated or deleted"""
-
     # Force reload of the unit registry
     from InvenTree.conversion import reload_unit_registry
     reload_unit_registry()

@@ -108,10 +108,8 @@ class AuthRequiredMiddleware(object):
                     # Save the 'next' parameter to pass through to the login view
 
                     return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
-
-                else:
-                    # Return a 401 (Unauthorized) response code for this request
-                    return HttpResponse('Unauthorized', status=401)
+                # Return a 401 (Unauthorized) response code for this request
+                return HttpResponse('Unauthorized', status=401)
 
         response = self.get_response(request)
 
@@ -125,7 +123,6 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
     """Check if user is required to have MFA enabled."""
     def require_2fa(self, request):
         """Use setting to check if MFA should be enforced for frontend page."""
-
         from common.models import InvenTreeSetting
 
         try:

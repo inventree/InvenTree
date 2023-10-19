@@ -20,7 +20,7 @@ export function partFields({
   let fields: ApiFormFieldSet = {
     category: {
       filters: {
-        strucural: false
+        structural: false
       }
     },
     name: {},

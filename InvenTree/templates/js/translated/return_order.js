@@ -546,7 +546,7 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
         fields: {
             location: {
                 filters: {
-                    strucutral: false,
+                    structural: false,
                 },
                 tree_picker: {
                     url: '{% url "api-location-tree" %}',

@@ -41,8 +41,7 @@ def inventreeInstanceTitle():
 
     if common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE_TITLE", False):
         return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")
-    else:
-        return 'InvenTree'
+    return 'InvenTree'
 
 
 def inventreeVersion():
@@ -73,8 +72,7 @@ def inventreeDocsVersion():
     """
     if isInvenTreeDevelopmentVersion():
         return "latest"
-    else:
-        return INVENTREE_SW_VERSION  # pragma: no cover
+    return INVENTREE_SW_VERSION  # pragma: no cover
 
 
 def isInvenTreeUpToDate():
@@ -178,5 +176,4 @@ def inventreeTarget():
 
 def inventreePlatform():
     """Returns the platform for the instance."""
-
     return platform.platform(aliased=True)

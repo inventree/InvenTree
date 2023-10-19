@@ -77,7 +77,6 @@ class PluginsRegistry:
 
     def get_plugin(self, slug):
         """Lookup plugin by slug (unique key)."""
-
         # Check if the registry needs to be reloaded
         self.check_reload()
 
@@ -94,7 +93,6 @@ class PluginsRegistry:
             slug (str): Plugin slug
             state (bool): Plugin state - true = active, false = inactive
         """
-
         # Check if the registry needs to be reloaded
         self.check_reload()
 
@@ -114,7 +112,6 @@ class PluginsRegistry:
 
         Instead, any error messages are returned to the worker.
         """
-
         # Check if the registry needs to be reloaded
         self.check_reload()
 
@@ -130,7 +127,6 @@ class PluginsRegistry:
     # region registry functions
     def with_mixin(self, mixin: str, active=None, builtin=None):
         """Returns reference to all plugins that have a specified mixin enabled."""
-
         # Check if the registry needs to be loaded
         self.check_reload()
 
@@ -161,7 +157,6 @@ class PluginsRegistry:
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
-
         logger.info('Loading plugins')
 
         # Set maintenance mode
@@ -229,7 +224,6 @@ class PluginsRegistry:
         Args:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
         """
-
         logger.info('Start unloading plugins')
 
         # Set maintenance mode
@@ -285,7 +279,6 @@ class PluginsRegistry:
 
     def plugin_dirs(self):
         """Construct a list of directories from where plugins can be loaded"""
-
         # Builtin plugins are *always* loaded
         dirs = ['plugin.builtin', ]
 
@@ -343,7 +336,6 @@ class PluginsRegistry:
 
     def collect_plugins(self):
         """Collect plugins from all possible ways of loading. Returned as list."""
-
         collected_plugins = []
 
         # Collect plugins from paths
@@ -411,8 +403,7 @@ class PluginsRegistry:
         if install_plugins_file():
             settings.PLUGIN_FILE_CHECKED = True
             return 'first_run'
-        else:
-            return False
+        return False
 
     # endregion
 
@@ -488,7 +479,7 @@ class PluginsRegistry:
             # - If this plugin has been explicitly enabled by the user
             if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
                 # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
-                if disabled and ((plg.__name__ == disabled) or (plg.__module__ == disabled)):
+                if disabled and disabled in (plg.__name__, plg.__module__):
                     safe_reference(plugin=plg, key=plg_key, active=False)
                     continue  # continue -> the plugin is not loaded
 
@@ -591,7 +582,6 @@ class PluginsRegistry:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
-
         if force_reload:
             # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()
@@ -623,7 +613,6 @@ class PluginsRegistry:
         Note that we also have to refresh the admin site URLS,
         as any custom AppMixin plugins require admin integration
         """
-
         from InvenTree.urls import urlpatterns
         from plugin.urls import get_plugin_urls
 
@@ -643,7 +632,6 @@ class PluginsRegistry:
     # region plugin registry hash calculations
     def update_plugin_hash(self):
         """When the state of the plugin registry changes, update the hash"""
-
         from common.models import InvenTreeSetting
 
         self.registry_hash = self.calculate_plugin_hash()
@@ -666,7 +654,6 @@ class PluginsRegistry:
         This is used to detect changes in the plugin registry,
         and to inform other processes that the plugin registry has changed
         """
-
         from hashlib import md5
 
         from common.models import InvenTreeSetting
@@ -698,7 +685,6 @@ class PluginsRegistry:
 
     def check_reload(self):
         """Determine if the registry needs to be reloaded"""
-
         from common.models import InvenTreeSetting
 
         if settings.TESTING:

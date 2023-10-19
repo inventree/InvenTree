@@ -16,7 +16,6 @@ class InvenTreeTemplateLoader(CachedLoader):
         Any custom report or label templates will be forced to reload (without cache).
         This ensures that generated PDF reports / labels are always up-to-date.
         """
-
         # List of template patterns to skip cache for
         skip_cache_dirs = [
             os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'report')),

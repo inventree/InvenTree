@@ -347,7 +347,18 @@ export function InvenTreeTable({
             setMissingRecordsText(
               tableProps.noRecordsText ?? t`No records found`
             );
-            return response.data;
+
+            // Extract returned data (accounting for pagination) and ensure it is a list
+            let results = response.data?.results ?? response.data ?? [];
+
+            if (!Array.isArray(results)) {
+              setMissingRecordsText(t`Server returned incorrect data type`);
+              results = [];
+            }
+
+            setRecordCount(response.data?.count ?? results.length);
+
+            return results;
           case 400:
             setMissingRecordsText(t`Bad request`);
             break;
@@ -375,8 +386,8 @@ export function InvenTreeTable({
       });
   };
 
-  const { data, isError, isFetching, isLoading, refetch } = useQuery(
-    [
+  const { data, isError, isFetching, isLoading, refetch } = useQuery({
+    queryKey: [
       `table-${tableName}`,
       sortStatus.columnAccessor,
       sortStatus.direction,
@@ -384,12 +395,12 @@ export function InvenTreeTable({
       activeFilters,
       searchTerm
     ],
-    fetchTableData,
-    {
-      refetchOnWindowFocus: false,
-      refetchOnMount: true
-    }
-  );
+    queryFn: fetchTableData,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true
+  });
+
+  const [recordCount, setRecordCount] = useState<number>(0);
 
   /*
    * Reload the table whenever the refetch changes
@@ -489,7 +500,7 @@ export function InvenTreeTable({
           loaderVariant="dots"
           idAccessor={tableProps.idAccessor}
           minHeight={200}
-          totalRecords={data?.count ?? data?.length ?? 0}
+          totalRecords={recordCount}
           recordsPerPage={tableProps.pageSize ?? defaultPageSize}
           page={page}
           onPageChange={setPage}
@@ -503,7 +514,7 @@ export function InvenTreeTable({
           }
           fetching={isFetching}
           noRecordsText={missingRecordsText}
-          records={data?.results ?? data ?? []}
+          records={data}
           columns={dataColumns}
           onRowClick={tableProps.onRowClick}
         />

@@ -129,7 +129,6 @@ class BuildSerializer(InvenTreeModelSerializer):
 
     def validate_reference(self, reference):
         """Custom validation for the Build reference field"""
-
         # Ensure the reference matches the required pattern
         Build.validate_reference_field(reference)
 
@@ -209,7 +208,6 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
 
     def validate(self, data):
         """Validate the serializer data"""
-
         data = super().validate(data)
 
         output = data.get('output')
@@ -450,7 +448,6 @@ class BuildOutputScrapSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer to scrap the build outputs"""
-
         build = self.context['build']
         request = self.context['request']
         data = self.validated_data
@@ -625,7 +622,6 @@ class BuildCompleteSerializer(serializers.Serializer):
 
         This is so we can determine (at run time) whether the build is ready to be completed.
         """
-
         build = self.context['build']
 
         return {
@@ -1095,7 +1091,6 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         - available: Total stock available for allocation against this build line
         - on_order: Total stock on order for this build line
         """
-
         queryset = queryset.select_related(
             'build', 'bom_item',
         )

@@ -116,7 +116,6 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
     def save(self):
         """Install a plugin from a package registry and set operational results as instance data."""
-
         from plugin.installer import install_plugin
 
         data = self.validated_data
@@ -145,7 +144,6 @@ class PluginActivateSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         """Apply the new 'active' value to the plugin instance"""
-
         from InvenTree.tasks import check_for_migrations, offload_task
 
         instance.active = validated_data.get('active', True)

@@ -69,8 +69,12 @@ export function extractAvailableFields(
       name: fieldName,
       field_type: field.type,
       description: field.help_text,
-      value: field.value ?? field.default
+      value: field.value ?? field.default,
+      disabled: field.read_only ?? false
     };
+
+    // Remove the 'read_only' field - plays havoc with react components
+    delete fields['read_only'];
   }
 
   return fields;

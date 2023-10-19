@@ -64,7 +64,6 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """Optionally add or remove extra fields"""
-
         path_detail = kwargs.pop('path_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -79,7 +78,6 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset"""
-
         # Annotate the number of 'parts' which exist in each category (including subcategories!)
         queryset = queryset.annotate(
             part_count=part.filters.annotate_category_parts()
@@ -274,7 +272,6 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """Custom initialization routine for the PartBrief serializer"""
-
         pricing = kwargs.pop('pricing', True)
 
         super().__init__(*args, **kwargs)
@@ -311,7 +308,6 @@ class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         Allows us to optionally include or exclude particular information
         """
-
         template_detail = kwargs.pop('template_detail', True)
         part_detail = kwargs.pop('part_detail', False)
 
@@ -360,7 +356,6 @@ class PartSetCategorySerializer(serializers.Serializer):
     @transaction.atomic
     def save(self):
         """Save the serializer to change the location of the selected parts"""
-
         data = self.validated_data
         parts = data['parts']
         category = data['category']
@@ -453,7 +448,6 @@ class InitialSupplierSerializer(serializers.Serializer):
 
     def validate_supplier(self, company):
         """Validation for the provided Supplier"""
-
         if company and not company.is_supplier:
             raise serializers.ValidationError(_('Selected company is not a valid supplier'))
 
@@ -461,7 +455,6 @@ class InitialSupplierSerializer(serializers.Serializer):
 
     def validate_manufacturer(self, company):
         """Validation for the provided Manufacturer"""
-
         if company and not company.is_manufacturer:
             raise serializers.ValidationError(_('Selected company is not a valid manufacturer'))
 
@@ -469,7 +462,6 @@ class InitialSupplierSerializer(serializers.Serializer):
 
     def validate(self, data):
         """Extra validation for this serializer"""
-
         if company.models.ManufacturerPart.objects.filter(
             manufacturer=data.get('manufacturer', None),
             MPN=data.get('mpn', '')
@@ -603,7 +595,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new Part instance"""
-
         fields = super().skip_create_fields()
 
         fields += [
@@ -621,7 +612,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
         Performing database queries as efficiently as possible, to reduce database trips.
         """
-
         # Annotate with the total number of stock items
         queryset = queryset.annotate(
             stock_item_count=SubqueryCount('stock_items')
@@ -759,7 +749,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
     @transaction.atomic
     def create(self, validated_data):
         """Custom method for creating a new Part instance using this serializer"""
-
         duplicate = validated_data.pop('duplicate', None)
         initial_stock = validated_data.pop('initial_stock', None)
         initial_supplier = validated_data.pop('initial_supplier', None)
@@ -862,7 +851,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
     def save(self):
         """Save the Part instance"""
-
         super().save()
 
         part = self.instance
@@ -925,7 +913,6 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     def save(self):
         """Called when this serializer is saved"""
-
         data = self.validated_data
 
         # Add in user information automatically
@@ -997,7 +984,6 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
 
     def validate(self, data):
         """Custom validation for this serializer"""
-
         # Stocktake functionality must be enabled
         if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
             raise serializers.ValidationError(_("Stocktake functionality is not enabled"))
@@ -1010,7 +996,6 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
 
     def save(self):
         """Saving this serializer instance requests generation of a new stocktake report"""
-
         data = self.validated_data
         user = self.context['request'].user
 

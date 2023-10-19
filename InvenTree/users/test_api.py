@@ -11,7 +11,6 @@ class UserAPITests(InvenTreeAPITestCase):
 
     def test_user_api(self):
         """Tests for User API endpoints"""
-
         response = self.get(
             reverse('api-user-list'),
             expected_code=200
@@ -36,7 +35,6 @@ class UserAPITests(InvenTreeAPITestCase):
 
     def test_group_api(self):
         """Tests for the Group API endpoints"""
-
         response = self.get(
             reverse('api-group-list'),
             expected_code=200,

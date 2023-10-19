@@ -18,11 +18,10 @@ from .validators import AllowedURLValidator, allowable_url_schemes
 
 
 class InvenTreeRestURLField(RestURLField):
-    """Custom field for DRF with custom scheme vaildators."""
+    """Custom field for DRF with custom scheme validators."""
 
     def __init__(self, **kwargs):
         """Update schemes."""
-
         # Enforce 'max length' parameter in form validation
         if 'max_length' not in kwargs:
             kwargs['max_length'] = 200
@@ -38,7 +37,6 @@ class InvenTreeURLField(models.URLField):
 
     def __init__(self, **kwargs):
         """Initialization method for InvenTreeURLField"""
-
         # Max length for InvenTreeURLField is set to 200
         kwargs['max_length'] = 200
         super().__init__(**kwargs)
@@ -117,7 +115,6 @@ class InvenTreeMoneyField(MoneyField):
 
     def __init__(self, *args, **kwargs):
         """Override initial values with the real info from database."""
-
         kwargs = money_kwargs(**kwargs)
         super().__init__(*args, **kwargs)
 
@@ -150,7 +147,6 @@ class DatePickerFormField(forms.DateField):
 
 def round_decimal(value, places, normalize=False):
     """Round value to the specified number of places."""
-
     if type(value) in [Decimal, float]:
         value = round(value, places)
 
@@ -187,7 +183,6 @@ class RoundingDecimalField(models.DecimalField):
 
     def formfield(self, **kwargs):
         """Return a Field instance for this field."""
-
         kwargs['form_class'] = RoundingDecimalFormField
 
         return super().formfield(**kwargs)

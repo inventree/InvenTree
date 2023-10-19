@@ -20,7 +20,8 @@ export const doClassicLogin = async (username: string, password: string) => {
   const token = await axios
     .get(apiUrl(ApiPaths.user_token), {
       auth: { username, password },
-      baseURL: host.toString()
+      baseURL: host.toString(),
+      timeout: 5000
     })
     .then((response) => response.data.token)
     .catch((error) => {
@@ -62,7 +63,7 @@ export const doSimpleLogin = async (email: string) => {
       email: email
     })
     .then((response) => response.data)
-    .catch((error) => {
+    .catch((_error) => {
       return false;
     });
   return mail;
@@ -107,9 +108,14 @@ export function handleReset(navigate: any, values: { email: string }) {
     });
 }
 
-export function checkLoginState(navigate: any) {
+/**
+ * Check login state, and redirect the user as required
+ */
+export function checkLoginState(navigate: any, redirect?: string) {
   api
-    .get(apiUrl(ApiPaths.user_token))
+    .get(apiUrl(ApiPaths.user_token), {
+      timeout: 5000
+    })
     .then((val) => {
       if (val.status === 200 && val.data.token) {
         doTokenLogin(val.data.token);
@@ -120,13 +126,13 @@ export function checkLoginState(navigate: any) {
           color: 'green',
           icon: <IconCheck size="1rem" />
         });
-
-        navigate('/home');
+        navigate(redirect ?? '/home');
       } else {
         navigate('/login');
       }
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error('Error fetching login information:', error);
       navigate('/login');
     });
 }

@@ -55,7 +55,6 @@ class LabelPrintingMixin:
 
     def render_to_png(self, label: LabelTemplate, request=None, **kwargs):
         """Render this label to PNG format"""
-
         # Check if pdf data is provided
         pdf_data = kwargs.get('pdf_data', None)
 
@@ -85,7 +84,6 @@ class LabelPrintingMixin:
         The default implementation simply calls print_label() for each label, producing multiple single label output "jobs"
         but this can be overridden by the particular plugin.
         """
-
         try:
             user = request.user
         except AttributeError:
@@ -152,7 +150,6 @@ class LabelPrintingMixin:
 
         Offloads a call to the 'print_label' method (of this plugin) to a background worker.
         """
-
         # Exclude the 'pdf_file' object - cannot be pickled
         kwargs.pop('pdf_file', None)
 

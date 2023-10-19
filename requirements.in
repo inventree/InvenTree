@@ -46,7 +46,7 @@ qrcode[pil]                             # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
 regex                                   # Advanced regular expressions
 sentry-sdk                              # Error reporting (optional)
-setuptools                              # Standard depenedency
+setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 weasyprint==54.3                        # PDF generation
 

@@ -29,7 +29,6 @@ def update_build_order_lines(bom_item_pk: int):
 
     This task is triggered when a BomItem is created or updated.
     """
-
     logger.info("Updating build order lines for BomItem %s", bom_item_pk)
 
     bom_item = part_models.BomItem.objects.filter(pk=bom_item_pk).first()
@@ -156,7 +155,6 @@ def check_build_stock(build: build.models.Build):
 
 def notify_overdue_build_order(bo: build.models.Build):
     """Notify appropriate users that a Build has just become 'overdue'"""
-
     targets = []
 
     if bo.issued_by:
@@ -202,7 +200,6 @@ def check_overdue_build_orders():
     - Look at the 'target_date' of any outstanding BuildOrder objects
     - If the 'target_date' expired *yesterday* then the order is just out of date
     """
-
     yesterday = datetime.now().date() - timedelta(days=1)
 
     overdue_orders = build.models.Build.objects.filter(

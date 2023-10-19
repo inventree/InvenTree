@@ -56,7 +56,6 @@ class TestBomItemMigrations(MigratorTestCase):
 
     def prepare(self):
         """Create initial dataset"""
-
         Part = self.old_state.apps.get_model('part', 'part')
         BomItem = self.old_state.apps.get_model('part', 'bomitem')
 
@@ -75,7 +74,6 @@ class TestBomItemMigrations(MigratorTestCase):
 
     def test_validated_field(self):
         """Test that the 'validated' field is added to the BomItem objects"""
-
         BomItem = self.new_state.apps.get_model('part', 'bomitem')
 
         self.assertEqual(BomItem.objects.count(), 2)
@@ -92,7 +90,6 @@ class TestParameterMigrations(MigratorTestCase):
 
     def prepare(self):
         """Create some parts, and templates with parameters"""
-
         Part = self.old_state.apps.get_model('part', 'part')
         PartParameter = self.old_state.apps.get_model('part', 'partparameter')
         PartParameterTemlate = self.old_state.apps.get_model('part', 'partparametertemplate')
@@ -121,7 +118,6 @@ class TestParameterMigrations(MigratorTestCase):
 
     def test_data_migration(self):
         """Test that the template units and values have been updated correctly"""
-
         Part = self.new_state.apps.get_model('part', 'part')
         PartParameter = self.new_state.apps.get_model('part', 'partparameter')
         PartParameterTemlate = self.new_state.apps.get_model('part', 'partparametertemplate')
@@ -164,7 +160,6 @@ class PartUnitsMigrationTest(MigratorTestCase):
 
     def prepare(self):
         """Prepare some parts with units"""
-
         Part = self.old_state.apps.get_model('part', 'part')
 
         units = ['mm', 'INCH', '', '%']
@@ -177,7 +172,6 @@ class PartUnitsMigrationTest(MigratorTestCase):
 
     def test_units_migration(self):
         """Test that the units have migrated OK"""
-
         Part = self.new_state.apps.get_model('part', 'part')
 
         part_1 = Part.objects.get(name='Part 1')
@@ -202,7 +196,6 @@ class TestPartParameterTemplateMigration(MigratorTestCase):
 
     def prepare(self):
         """Prepare some parts with units"""
-
         PartParameterTemplate = self.old_state.apps.get_model('part', 'partparametertemplate')
 
         # Create a test template
@@ -217,7 +210,6 @@ class TestPartParameterTemplateMigration(MigratorTestCase):
 
     def test_units_migration(self):
         """Test that the new fields have been added correctly"""
-
         PartParameterTemplate = self.new_state.apps.get_model('part', 'partparametertemplate')
 
         template = PartParameterTemplate.objects.get(name='Template 1')

@@ -342,7 +342,6 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
-
         # Check if 'available' quantity was supplied
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
@@ -402,7 +401,6 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
         Fields:
             in_stock: Current stock quantity for each SupplierPart
         """
-
         queryset = queryset.annotate(
             in_stock=part.filters.annotate_total_stock()
         )
@@ -411,7 +409,6 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
 
     def update(self, supplier_part, data):
         """Custom update functionality for the serializer"""
-
         available = data.pop('available', None)
 
         response = super().update(supplier_part, data)
@@ -423,7 +420,6 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
 
     def create(self, validated_data):
         """Extract manufacturer data and process ManufacturerPart."""
-
         # Extract 'available' quantity from the serializer
         available = validated_data.pop('available', None)
 
@@ -468,7 +464,6 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra fields as required"""
-
         supplier_detail = kwargs.pop('supplier_detail', False)
         part_detail = kwargs.pop('part_detail', False)
 

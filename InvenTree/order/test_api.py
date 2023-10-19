@@ -62,7 +62,6 @@ class PurchaseOrderTest(OrderTest):
 
     def test_options(self):
         """Test the PurchaseOrder OPTIONS endpoint."""
-
         self.assignRole('purchase_order.add')
 
         response = self.options(self.LIST_URL, expected_code=200)
@@ -144,7 +143,6 @@ class PurchaseOrderTest(OrderTest):
 
     def test_total_price(self):
         """Unit tests for the 'total_price' field"""
-
         # Ensure we have exchange rate data
         self.generate_exchange_rates()
 
@@ -360,7 +358,6 @@ class PurchaseOrderTest(OrderTest):
 
     def test_po_duplicate(self):
         """Test that we can duplicate a PurchaseOrder via the API"""
-
         self.assignRole('purchase_order.add')
 
         po = models.PurchaseOrder.objects.get(pk=1)
@@ -443,7 +440,7 @@ class PurchaseOrderTest(OrderTest):
 
         url = reverse('api-po-cancel', kwargs={'pk': po.pk})
 
-        # Try to cancel the PO, but without reqiured permissions
+        # Try to cancel the PO, but without required permissions
         self.post(url, {}, expected_code=403)
 
         self.assignRole('purchase_order.add')
@@ -511,7 +508,6 @@ class PurchaseOrderTest(OrderTest):
 
     def test_po_calendar(self):
         """Test the calendar export endpoint"""
-
         # Create required purchase orders
         self.assignRole('purchase_order.add')
 
@@ -1120,7 +1116,6 @@ class SalesOrderTest(OrderTest):
 
     def test_total_price(self):
         """Unit tests for the 'total_price' field"""
-
         # Ensure we have exchange rate data
         self.generate_exchange_rates()
 
@@ -1359,7 +1354,6 @@ class SalesOrderTest(OrderTest):
 
     def test_so_calendar(self):
         """Test the calendar export endpoint"""
-
         # Create required sales orders
         self.assignRole('sales_order.add')
 
@@ -1420,7 +1414,6 @@ class SalesOrderTest(OrderTest):
 
     def test_export(self):
         """Test we can export the SalesOrder list"""
-
         n = models.SalesOrder.objects.count()
 
         # Check there are some sales orders
@@ -1940,7 +1933,6 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
     def test_options(self):
         """Test the OPTIONS endpoint"""
-
         self.assignRole('return_order.add')
         data = self.options(reverse('api-return-order-list'), expected_code=200).data
 
@@ -1958,7 +1950,6 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
     def test_list(self):
         """Tests for the list endpoint"""
-
         url = reverse('api-return-order-list')
 
         response = self.get(url, expected_code=200)
@@ -2024,7 +2015,6 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
     def test_create(self):
         """Test creation of ReturnOrder via the API"""
-
         url = reverse('api-return-order-list')
 
         # Do not have required permissions yet
@@ -2055,7 +2045,6 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
     def test_update(self):
         """Test that we can update a ReturnOrder via the API"""
-
         url = reverse('api-return-order-detail', kwargs={'pk': 1})
 
         # Test detail endpoint
@@ -2087,7 +2076,6 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
     def test_ro_issue(self):
         """Test the 'issue' order for a ReturnOrder"""
-
         order = models.ReturnOrder.objects.get(pk=1)
         self.assertEqual(order.status, ReturnOrderStatus.PENDING)
         self.assertIsNone(order.issue_date)
@@ -2106,7 +2094,6 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
     def test_receive(self):
         """Test that we can receive items against a ReturnOrder"""
-
         customer = Company.objects.get(pk=4)
 
         # Create an order
@@ -2209,7 +2196,6 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
     def test_ro_calendar(self):
         """Test the calendar export endpoint"""
-
         # Full test is in test_po_calendar. Since these use the same backend, test only
         # that the endpoint is available
         url = reverse('api-po-so-calendar', kwargs={'ordertype': 'return-order'})
@@ -2243,7 +2229,6 @@ class OrderMetadataAPITest(InvenTreeAPITestCase):
 
     def metatester(self, apikey, model):
         """Generic tester"""
-
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
@@ -2272,7 +2257,6 @@ class OrderMetadataAPITest(InvenTreeAPITestCase):
 
     def test_metadata(self):
         """Test all endpoints"""
-
         for apikey, model in {
             'api-po-metadata': models.PurchaseOrder,
             'api-po-line-metadata': models.PurchaseOrderLineItem,

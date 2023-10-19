@@ -86,14 +86,12 @@ class AbstractOrderSerializer(serializers.Serializer):
 
     def validate_reference(self, reference):
         """Custom validation for the reference field"""
-
         self.Meta.model.validate_reference_field(reference)
         return reference
 
     @staticmethod
     def annotate_queryset(queryset):
         """Add extra information to the queryset"""
-
         queryset = queryset.annotate(
             line_items=SubqueryCount('lines')
         )
@@ -103,7 +101,6 @@ class AbstractOrderSerializer(serializers.Serializer):
     @staticmethod
     def order_fields(extra_fields):
         """Construct a set of fields for this serializer"""
-
         return [
             'pk',
             'creation_date',
@@ -272,7 +269,6 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
 
     def validate_accept_incomplete(self, value):
         """Check if the 'accept_incomplete' field is required"""
-
         order = self.context['order']
 
         if not value and not order.is_complete:
@@ -910,7 +906,6 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         - "overdue" status (boolean field)
         - "available_quantity"
         """
-
         queryset = queryset.annotate(
             overdue=Case(
                 When(
@@ -1160,7 +1155,6 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
 
     def validate_accept_incomplete(self, value):
         """Check if the 'accept_incomplete' field is required"""
-
         order = self.context['order']
 
         if not value and not order.is_completed():
@@ -1170,7 +1164,6 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
 
     def get_context_data(self):
         """Custom context data for this serializer"""
-
         order = self.context['order']
 
         return {
@@ -1498,7 +1491,6 @@ class ReturnOrderSerializer(AbstractOrderSerializer, TotalPriceMixin, InvenTreeM
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer"""
-
         customer_detail = kwargs.pop('customer_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -1509,7 +1501,6 @@ class ReturnOrderSerializer(AbstractOrderSerializer, TotalPriceMixin, InvenTreeM
     @staticmethod
     def annotate_queryset(queryset):
         """Custom annotation for the serializer queryset"""
-
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
 
         queryset = queryset.annotate(
@@ -1585,7 +1576,6 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
 
     def validate_line_item(self, item):
         """Validation for a single line item"""
-
         if item.order != self.context['order']:
             raise ValidationError(_("Line item does not match return order"))
 
@@ -1619,7 +1609,6 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
     def validate(self, data):
         """Perform data validation for this serializer"""
-
         order = self.context['order']
         if order.status != ReturnOrderStatus.IN_PROGRESS:
             raise ValidationError(_("Items can only be received against orders which are in progress"))
@@ -1636,7 +1625,6 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     @transaction.atomic
     def save(self):
         """Saving this serializer marks the returned items as received"""
-
         order = self.context['order']
         request = self.context['request']
 
@@ -1682,7 +1670,6 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer"""
-
         order_detail = kwargs.pop('order_detail', False)
         item_detail = kwargs.pop('item_detail', False)
         part_detail = kwargs.pop('part_detail', False)

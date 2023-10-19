@@ -94,7 +94,6 @@ class LabelTest(InvenTreeAPITestCase):
 
     def test_print_part_label(self):
         """Actually 'print' a label, and ensure that the correct information is contained."""
-
         label_data = """
         {% load barcode %}
         {% load report %}

@@ -109,7 +109,6 @@ def get_entrypoints():
 # region git-helpers
 def get_git_log(path):
     """Get dict with info of the last commit to file named in path."""
-
     import datetime
 
     from dulwich.repo import NotGitRepository, Repo

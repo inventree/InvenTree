@@ -63,7 +63,6 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
     Returns:
         StreamingHttpResponse: Response that can be passed to the endpoint
     """
-
     parameter_data = str2bool(kwargs.get('parameter_data', False))
     stock_data = str2bool(kwargs.get('stock_data', False))
     supplier_data = str2bool(kwargs.get('supplier_data', False))

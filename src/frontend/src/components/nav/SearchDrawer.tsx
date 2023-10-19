@@ -276,13 +276,11 @@ export function SearchDrawer({
   };
 
   // Search query manager
-  const searchQuery = useQuery(
-    ['search', searchText, searchRegex, searchWhole],
-    performSearch,
-    {
-      refetchOnWindowFocus: false
-    }
-  );
+  const searchQuery = useQuery({
+    queryKey: ['search', searchText, searchRegex, searchWhole],
+    queryFn: performSearch,
+    refetchOnWindowFocus: false
+  });
 
   // A list of queries which return valid results
   const [queryResults, setQueryResults] = useState<SearchQuery[]>([]);

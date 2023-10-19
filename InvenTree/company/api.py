@@ -382,7 +382,6 @@ class SupplierPartList(ListCreateDestroyAPIView):
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint"""
-
         # Do we wish to include extra detail?
         try:
             params = self.request.query_params
@@ -489,7 +488,6 @@ class SupplierPriceBreakList(ListCreateAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint"""
-
         try:
             params = self.request.query_params
 
