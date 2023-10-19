@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-18 03:46+0000\n"
-"PO-Revision-Date: 2023-10-13 01:16\n"
+"POT-Creation-Date: 2023-10-19 12:30+0000\n"
+"PO-Revision-Date: 2023-10-19 16:28\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -3849,7 +3849,9 @@ msgstr ""
 #: company/models.py:699 company/templates/company/company_base.html:82
 #: company/templates/company/supplier_part.html:130 order/models.py:386
 #: order/templates/order/order_base.html:136 part/bom.py:284 part/bom.py:312
-#: part/serializers.py:429 stock/templates/stock/item_base.html:225
+#: part/serializers.py:429 plugin/builtin/suppliers/digikey.py:29
+#: plugin/builtin/suppliers/lcsc.py:30 plugin/builtin/suppliers/mouser.py:29
+#: plugin/builtin/suppliers/tme.py:30 stock/templates/stock/item_base.html:225
 #: templates/email/overdue_purchase_order.html:16
 #: templates/js/translated/company.js:350
 #: templates/js/translated/company.js:510
@@ -7259,25 +7261,72 @@ msgstr ""
 msgid "No matching action found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:54 plugin/base/barcodes/api.py:109
+#: plugin/base/barcodes/api.py:56 plugin/base/barcodes/api.py:111
+#: plugin/base/barcodes/api.py:269
 msgid "Missing barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:80
+#: plugin/base/barcodes/api.py:82
 msgid "No match found for barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:84
+#: plugin/base/barcodes/api.py:86
 msgid "Match found for barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:119
+#: plugin/base/barcodes/api.py:121
 #: templates/js/translated/purchase_order.js:1391
 msgid "Barcode matches existing item"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:215
+#: plugin/base/barcodes/api.py:217
 msgid "No match found for provided value"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:275
+msgid "Invalid purchase order"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:281
+msgid "Invalid stock location"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:292
+msgid "Item has already been received"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:314
+msgid "Invalid supplier barcode"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:170
+msgid "Supplier barcode doesn't contain order number"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:183
+#, python-brace-format
+msgid "Found multiple placed purchase orders for '{order_number}'"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:185
+#, python-brace-format
+msgid "Failed to find placed purchase order for '{order_number}'"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:215
+msgid "Failed to find pending line item for supplier part"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:248
+msgid "Further information required to receive line item"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:259
+msgid "Received purchase order line item"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:301 plugin/base/barcodes/mixins.py:324
+msgid "Found multiple matching supplier parts for barcode"
 msgstr ""
 
 #: plugin/base/label/label.py:40
@@ -7296,6 +7345,8 @@ msgstr ""
 #: plugin/builtin/integration/core_notifications.py:34
 #: plugin/builtin/integration/currency_exchange.py:22
 #: plugin/builtin/labels/inventree_label.py:23
+#: plugin/builtin/suppliers/digikey.py:24 plugin/builtin/suppliers/lcsc.py:25
+#: plugin/builtin/suppliers/mouser.py:24 plugin/builtin/suppliers/tme.py:25
 msgid "InvenTree contributors"
 msgstr ""
 
@@ -7359,6 +7410,54 @@ msgstr ""
 
 #: plugin/builtin/labels/inventree_label.py:30
 msgid "Enable debug mode - returns raw HTML instead of PDF"
+msgstr ""
+
+#: plugin/builtin/suppliers/digikey.py:21
+msgid "Supplier Integration - DigiKey"
+msgstr ""
+
+#: plugin/builtin/suppliers/digikey.py:22
+msgid "Provides support for scanning DigiKey barcodes"
+msgstr ""
+
+#: plugin/builtin/suppliers/digikey.py:30
+msgid "The Supplier which acts as 'DigiKey'"
+msgstr ""
+
+#: plugin/builtin/suppliers/lcsc.py:22
+msgid "Supplier Integration - LCSC"
+msgstr ""
+
+#: plugin/builtin/suppliers/lcsc.py:23
+msgid "Provides support for scanning LCSC barcodes"
+msgstr ""
+
+#: plugin/builtin/suppliers/lcsc.py:31
+msgid "The Supplier which acts as 'LCSC'"
+msgstr ""
+
+#: plugin/builtin/suppliers/mouser.py:21
+msgid "Supplier Integration - Mouser"
+msgstr ""
+
+#: plugin/builtin/suppliers/mouser.py:22
+msgid "Provides support for scanning Mouser barcodes"
+msgstr ""
+
+#: plugin/builtin/suppliers/mouser.py:30
+msgid "The Supplier which acts as 'Mouser'"
+msgstr ""
+
+#: plugin/builtin/suppliers/tme.py:22
+msgid "Supplier Integration - TME"
+msgstr ""
+
+#: plugin/builtin/suppliers/tme.py:23
+msgid "Provides support for scanning TME barcodes"
+msgstr ""
+
+#: plugin/builtin/suppliers/tme.py:31
+msgid "The Supplier which acts as 'TME'"
 msgstr ""
 
 #: plugin/installer.py:140
@@ -13011,8 +13110,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13147,3 +13245,4 @@ msgstr ""
 #: users/models.py:257
 msgid "Permission to delete items"
 msgstr ""
+
