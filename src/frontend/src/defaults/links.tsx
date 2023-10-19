@@ -25,7 +25,9 @@ export const navTabs = [
   { text: <Trans>Dashboard</Trans>, name: 'dashboard' },
   { text: <Trans>Parts</Trans>, name: 'part' },
   { text: <Trans>Stock</Trans>, name: 'stock' },
-  { text: <Trans>Build</Trans>, name: 'build' }
+  { text: <Trans>Build</Trans>, name: 'build' },
+  { text: <Trans>Purchasing</Trans>, name: 'purchasing' },
+  { text: <Trans>Sales</Trans>, name: 'sales' }
 ];
 if (IS_DEV_OR_DEMO) {
   navTabs.push({ text: <Trans>Playground</Trans>, name: 'playground' });
