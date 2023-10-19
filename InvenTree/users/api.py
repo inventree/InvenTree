@@ -204,11 +204,8 @@ class GetAuthToken(APIView):
 
             data = {
                 'token': token.key,
-                'active': token.active,
-                'revoked': token.revoked,
-                'expiry': token.expiry,
-                'expired': token.expired,
                 'name': token.name,
+                'expiry': token.expiry,
             }
 
             return Response(data)
