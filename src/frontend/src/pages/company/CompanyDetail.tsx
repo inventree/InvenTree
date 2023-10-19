@@ -22,7 +22,7 @@ import { useParams } from 'react-router-dom';
 
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
-import { BreadcrumbList } from '../../components/nav/BreadcrumbList';
+import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { PanelType } from '../../components/nav/PanelGroup';
@@ -39,7 +39,7 @@ import { useUserState } from '../../states/UserState';
 
 export type CompanyDetailProps = {
   title: string;
-  breadcrumbs: BreadcrumbList;
+  breadcrumbs: Breadcrumb[];
 };
 
 /**

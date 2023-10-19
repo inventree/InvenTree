@@ -7,7 +7,7 @@ import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 import { apiUrl } from '../states/ApiState';
-import { useModalState } from '../states/ModalState.tsx';
+import { useModalState } from '../states/ModalState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
