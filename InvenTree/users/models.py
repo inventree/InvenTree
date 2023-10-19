@@ -25,6 +25,14 @@ from InvenTree.ready import canAppAccessDatabase
 logger = logging.getLogger("inventree")
 
 
+def default_token_expiry():
+    """Generate an expiry date for a newly created token"""
+
+    # TODO: Custom value for default expiry timeout
+    # TODO: For now, tokens last for 1 year
+    return datetime.datetime.now().date() + datetime.timedelta(days=365)
+
+
 class ApiToken(AuthToken):
     """Extends the default token model provided by djangorestframework.authtoken, as follows:
 
@@ -60,7 +68,7 @@ class ApiToken(AuthToken):
     )
 
     expiry = models.DateField(
-        blank=True, null=True,
+        default=default_token_expiry,
         verbose_name=_('Expiry Date'),
         help_text=_('Token expiry date'),
         auto_now=False, auto_now_add=False,
