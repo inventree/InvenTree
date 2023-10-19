@@ -14,14 +14,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
-import { api } from '../../App';
+import { api, queryClient } from '../../App';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
-import {
-  ApiFormField,
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from './fields/ApiFormField';
+import { ApiPaths } from '../../states/ApiState';
+import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
 
 /**
  * Properties for the ApiForm component
@@ -45,8 +42,8 @@ import {
  */
 export interface ApiFormProps {
   name: string;
-  url: string;
-  pk?: number;
+  url: ApiPaths;
+  pk?: number | string | undefined;
   title: string;
   fields?: ApiFormFieldSet;
   cancelText?: string;
@@ -54,6 +51,7 @@ export interface ApiFormProps {
   submitColor?: string;
   cancelColor?: string;
   fetchInitialData?: boolean;
+  ignorePermissionCheck?: boolean;
   method?: string;
   preFormContent?: JSX.Element | (() => JSX.Element);
   postFormContent?: JSX.Element | (() => JSX.Element);
@@ -138,20 +136,28 @@ export function ApiForm({
   useEffect(() => {
     // Provide initial form data
     Object.entries(props.fields ?? {}).forEach(([fieldName, field]) => {
-      if (field.value !== undefined) {
+      // fieldDefinition is supplied by the API, and can serve as a backup
+      let fieldDefinition = fieldDefinitions[fieldName] ?? {};
+
+      let v =
+        field.value ??
+        field.default ??
+        fieldDefinition.value ??
+        fieldDefinition.default ??
+        undefined;
+
+      if (v !== undefined) {
         form.setValues({
-          [fieldName]: field.value
-        });
-      } else if (field.default !== undefined) {
-        form.setValues({
-          [fieldName]: field.default
+          [fieldName]: v
         });
       }
     });
 
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
-      initialDataQuery.remove();
+      queryClient.removeQueries({
+        queryKey: ['form-initial-data', props.name, props.url, props.pk]
+      });
       initialDataQuery.refetch();
     }
   }, []);
@@ -210,6 +216,7 @@ export function ApiForm({
                 // Data validation error
                 form.setErrors(error.response.data);
                 setNonFieldErrors(error.response.data.non_field_errors ?? []);
+                setIsLoading(false);
                 break;
               default:
                 // Unexpected state on form error

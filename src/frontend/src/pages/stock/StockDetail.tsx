@@ -7,18 +7,18 @@ import {
   IconInfoCircle,
   IconNotes,
   IconPaperclip,
-  IconSitemap,
-  IconTransferIn
+  IconSitemap
 } from '@tabler/icons-react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { AttachmentTable } from '../../components/tables/AttachmentTable';
+import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -27,10 +27,14 @@ export default function StockDetail() {
     instance: stockitem,
     refreshInstance,
     instanceQuery
-  } = useInstance('/stock/', id, {
-    part_detail: true,
-    location_detail: true,
-    path_detail: true
+  } = useInstance({
+    endpoint: ApiPaths.stock_item_list,
+    pk: id,
+    params: {
+      part_detail: true,
+      location_detail: true,
+      path_detail: true
+    }
   });
 
   const stockPanels: PanelType[] = useMemo(() => {
@@ -38,40 +42,40 @@ export default function StockDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle size="18" />,
+        icon: <IconInfoCircle />,
         content: <PlaceholderPanel />
       },
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory size="18" />,
+        icon: <IconHistory />,
         content: <PlaceholderPanel />
       },
       {
         name: 'allocations',
         label: t`Allocations`,
-        icon: <IconBookmark size="18" />,
+        icon: <IconBookmark />,
         content: <PlaceholderPanel />
       },
       {
         name: 'installed_items',
         label: t`Installed Items`,
-        icon: <IconBoxPadding size="18" />,
+        icon: <IconBoxPadding />,
         content: <PlaceholderPanel />
       },
       {
         name: 'child_items',
         label: t`Child Items`,
-        icon: <IconSitemap size="18" />,
+        icon: <IconSitemap />,
         content: <PlaceholderPanel />
       },
       {
         name: 'attachments',
         label: t`Attachments`,
-        icon: <IconPaperclip size="18" />,
+        icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            url="/stock/attachment/"
+            endpoint={ApiPaths.stock_attachment_list}
             model="stock_item"
             pk={stockitem.pk ?? -1}
           />
@@ -80,10 +84,10 @@ export default function StockDetail() {
       {
         name: 'notes',
         label: t`Notes`,
-        icon: <IconNotes size="18" />,
+        icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={`/stock/${stockitem.pk}/`}
+            url={apiUrl(ApiPaths.stock_item_list, stockitem.pk)}
             data={stockitem.notes ?? ''}
             allowEdit={true}
           />
@@ -116,7 +120,7 @@ export default function StockDetail() {
         }
         breadcrumbs={breadcrumbs}
       />
-      <PanelGroup panels={stockPanels} />
+      <PanelGroup pageKey="stockitem" panels={stockPanels} />
     </Stack>
   );
 }

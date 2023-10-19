@@ -26,7 +26,7 @@ export function InstanceOptions({
   ]);
   const hostListData = Object.keys(hostList).map((key) => ({
     value: key,
-    label: hostList[key].name
+    label: hostList[key]?.name
   }));
 
   function SaveOptions(newHostList: HostList): void {
@@ -93,7 +93,7 @@ function ServerInfo({
 
   return (
     <Text>
-      {hostList[hostKey].host}
+      {hostList[hostKey]?.host}
       <br />
       <Trans>Version: {server.version}</Trans>
       <br />

@@ -17,7 +17,7 @@ logger = logging.getLogger("inventree")
 
 
 def is_worker_running(**kwargs):
-    """Return True if the background worker process is oprational."""
+    """Return True if the background worker process is operational."""
     clusters = Stat.get_all()
 
     if len(clusters) > 0:

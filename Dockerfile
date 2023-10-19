@@ -58,7 +58,7 @@ RUN apk add --no-cache \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
     # SQLite support
     sqlite \
     # PostgreSQL support
@@ -84,7 +84,7 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
     fi
 
 RUN apk add --no-cache --virtual .build-deps \
-    gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev \
+    gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev openldap-dev \
     # Image format dev libs
     jpeg-dev openjpeg-dev libwebp-dev zlib-dev \
     # DB specific dev libs

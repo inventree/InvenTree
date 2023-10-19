@@ -99,7 +99,6 @@ def process_event(plugin_slug, event, *args, **kwargs):
     This function is run by the background worker process.
     This function may queue multiple functions to be handled by the background worker.
     """
-
     plugin = registry.plugins.get(plugin_slug, None)
 
     if plugin is None:  # pragma: no cover

@@ -1107,6 +1107,11 @@ function loadBomTable(table, options={}) {
 
                 var row = data[idx];
 
+                // Do not include pricing for items which are associated with sub-assemblies
+                if (row.parentId != parent_id) {
+                    continue;
+                }
+
                 // No pricing data available for this row
                 if (row.pricing_min == null && row.pricing_max == null) {
                     complete_pricing = false;

@@ -109,7 +109,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
     def test_part_count(self):
         """Test that the 'part_count' field is annotated correctly"""
-
         url = reverse('api-part-category-list')
 
         # Create a parent category
@@ -162,7 +161,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
     def test_category_parameters(self):
         """Test that the PartCategoryParameterTemplate API function work"""
-
         url = reverse('api-part-category-parameter-list')
 
         response = self.get(url, {}, expected_code=200)
@@ -216,7 +214,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         This helps to protect against XSS injection
         """
-
         url = reverse('api-part-category-detail', kwargs={'pk': 1})
 
         # Invalid values containing tags
@@ -258,7 +255,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
     def test_invisible_chars(self):
         """Test that invisible characters are removed from the input data"""
-
         url = reverse('api-part-category-detail', kwargs={'pk': 1})
 
         values = [
@@ -293,11 +289,9 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             delete_child_categories: bool = False
             delete_parts: bool = False
 
-            if i == Target.move_subcategories_to_parent_delete_parts \
-                    or i == Target.delete_subcategories_delete_parts:
+            if i in (Target.move_subcategories_to_parent_delete_parts, Target.delete_subcategories_delete_parts):
                 delete_parts = True
-            if i == Target.delete_subcategories_move_parts_to_parent \
-                    or i == Target.delete_subcategories_delete_parts:
+            if i in (Target.delete_subcategories_move_parts_to_parent, Target.delete_subcategories_delete_parts):
                 delete_child_categories = True
 
             # Create a parent category
@@ -395,7 +389,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         - Parts cannot be created in structural categories
         - Parts cannot be assigned to structural categories
         """
-
         # Create our structural part category
         structural_category = PartCategory.objects.create(
             name='Structural category',
@@ -443,7 +436,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
     def test_path_detail(self):
         """Test path_detail information"""
-
         url = reverse('api-part-category-detail', kwargs={'pk': 5})
 
         # First, request without path detail
@@ -718,7 +710,6 @@ class PartAPITest(PartAPITestBase):
 
     def test_filter_by_in_bom(self):
         """Test that we can filter part list by the 'in_bom_for' parameter"""
-
         url = reverse('api-part-list')
 
         response = self.get(
@@ -755,7 +746,6 @@ class PartAPITest(PartAPITestBase):
 
     def test_filter_by_convert(self):
         """Test that we can correctly filter the Part list by conversion options"""
-
         category = PartCategory.objects.get(pk=3)
 
         # First, construct a set of template / variant parts
@@ -1207,7 +1197,6 @@ class PartCreationTests(PartAPITestBase):
 
         def submit(stock_data, expected_code=None):
             """Helper function for submitting with initial stock data"""
-
             data = {
                 'category': 1,
                 'name': "My lil' test part",
@@ -1252,7 +1241,6 @@ class PartCreationTests(PartAPITestBase):
 
         def submit(supplier_data, expected_code=400):
             """Helper function for submitting with supplier data"""
-
             data = {
                 'name': 'My test part',
                 'description': 'A test part thingy',
@@ -1355,7 +1343,6 @@ class PartCreationTests(PartAPITestBase):
 
     def test_duplication(self):
         """Test part duplication options"""
-
         # Run a matrix of tests
         for bom in [True, False]:
             for img in [True, False]:
@@ -1384,7 +1371,6 @@ class PartCreationTests(PartAPITestBase):
 
     def test_category_parameters(self):
         """Test that category parameters are correctly applied"""
-
         cat = PartCategory.objects.get(pk=1)
 
         # Add some parameter template to the parent category
@@ -1684,7 +1670,6 @@ class PartDetailTests(PartAPITestBase):
 
     def test_path_detail(self):
         """Check that path_detail can be requested against the serializer"""
-
         response = self.get(
             reverse('api-part-detail', kwargs={'pk': 1}),
             {
@@ -1702,7 +1687,6 @@ class PartListTests(PartAPITestBase):
 
     def test_query_count(self):
         """Test that the query count is unchanged, independent of query results"""
-
         queries = [
             {'limit': 1},
             {'limit': 10},
@@ -1768,7 +1752,6 @@ class PartNotesTests(InvenTreeAPITestCase):
 
     def test_long_notes(self):
         """Test that very long notes field is rejected"""
-
         # Ensure that we cannot upload a very long piece of text
         url = reverse('api-part-detail', kwargs={'pk': 1})
 
@@ -1784,7 +1767,6 @@ class PartNotesTests(InvenTreeAPITestCase):
 
     def test_multiline_formatting(self):
         """Ensure that markdown formatting is retained"""
-
         url = reverse('api-part-detail', kwargs={'pk': 1})
 
         notes = """
@@ -1828,12 +1810,10 @@ class PartPricingDetailTests(InvenTreeAPITestCase):
 
     def url(self, pk):
         """Construct a pricing URL"""
-
         return reverse('api-part-pricing', kwargs={'pk': pk})
 
     def test_pricing_detail(self):
         """Test an empty pricing detail"""
-
         response = self.get(
             self.url(1),
             expected_code=200
@@ -2100,7 +2080,6 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         This queryset annotation takes into account any outstanding line items for active orders,
         and should also use the 'pack_size' of the supplier part objects.
         """
-
         supplier = Company.objects.create(
             name='Paint Supplies',
             description='A supplier of paints',
@@ -2284,7 +2263,6 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_bom_list_search(self):
         """Test that we can search the BOM list API endpoint"""
-
         url = reverse('api-bom-list')
 
         response = self.get(url, expected_code=200)
@@ -2328,7 +2306,6 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_bom_list_ordering(self):
         """Test that the BOM list results can be ordered"""
-
         url = reverse('api-bom-list')
 
         # Order by increasing quantity
@@ -2698,7 +2675,6 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
     def test_add_attachment(self):
         """Test that we can create a new PartAttachment via the API"""
-
         url = reverse('api-part-attachment-list')
 
         # Upload without permission
@@ -2795,7 +2771,6 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
 
     def test_create_price_breaks(self):
         """Test we can create price breaks at various quantities"""
-
         url = reverse('api-part-internal-price-list')
 
         breaks = [
@@ -2859,7 +2834,6 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
     def test_list_endpoint(self):
         """Test the list endpoint for the stocktake data"""
-
         url = reverse('api-part-stocktake-list')
 
         self.assignRole('part.view')
@@ -2911,7 +2885,6 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
     def test_create_stocktake(self):
         """Test that stocktake entries can be created via the API"""
-
         url = reverse('api-part-stocktake-list')
 
         self.assignRole('stocktake.add')
@@ -2948,7 +2921,6 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
         Note that only 'staff' users can perform these actions.
         """
-
         p = Part.objects.all().first()
 
         st = PartStocktake.objects.create(part=p, quantity=10)
@@ -2989,7 +2961,6 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
     def test_report_list(self):
         """Test for PartStocktakeReport list endpoint"""
-
         from part.stocktake import generate_stocktake_report
 
         # Initially, no stocktake records are available
@@ -3021,7 +2992,6 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
     def test_report_generate(self):
         """Test API functionality for generating a new stocktake report"""
-
         url = reverse('api-part-stocktake-report-generate')
 
         # Permission denied, initially
@@ -3064,7 +3034,6 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
 
     def metatester(self, apikey, model):
         """Generic tester"""
-
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
@@ -3093,7 +3062,6 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
 
     def test_metadata(self):
         """Test all endpoints"""
-
         for apikey, model in {
             'api-part-category-parameter-metadata': PartCategoryParameterTemplate,
             'api-part-category-metadata': PartCategory,
@@ -3113,7 +3081,6 @@ class PartSchedulingTest(PartAPITestBase):
 
     def test_get_schedule(self):
         """Test that the scheduling endpoint returns OK"""
-
         part_ids = [
             1, 3, 100, 101,
         ]

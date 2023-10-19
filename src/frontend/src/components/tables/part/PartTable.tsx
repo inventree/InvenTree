@@ -1,17 +1,15 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { editPart } from '../../../functions/forms/PartForms';
-import { notYetImplemented } from '../../../functions/notifications';
 import { shortenString } from '../../../functions/tables';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ThumbnailHoverCard } from '../../items/Thumbnail';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
 
 /**
  * Construct a list of columns for the part table
@@ -26,12 +24,14 @@ function partTableColumns(): TableColumn[] {
       render: function (record: any) {
         // TODO - Link to the part detail page
         return (
-          <Text>{record.full_name}</Text>
-          // <ThumbnailHoverCard
-          //   src={record.thumbnail || record.image}
-          //   text={record.name}
-          //   link=""
-          // />
+          <Group spacing="xs" align="left" noWrap={true}>
+            <Thumbnail
+              src={record.thumbnail || record.image}
+              alt={record.name}
+              size={24}
+            />
+            <Text>{record.full_name}</Text>
+          </Group>
         );
       }
     },
@@ -60,7 +60,7 @@ function partTableColumns(): TableColumn[] {
       render: function (record: any) {
         // TODO: Link to the category detail page
         return shortenString({
-          str: record.category_detail.pathstring
+          str: record.category_detail?.pathstring
         });
       }
     },
@@ -185,53 +185,28 @@ function partTableFilters(): TableFilter[] {
  * @returns
  */
 export function PartListTable({ props }: { props: InvenTreeTableProps }) {
-  let tableColumns = useMemo(() => partTableColumns(), []);
-  let tableFilters = useMemo(() => partTableFilters(), []);
+  const tableColumns = useMemo(() => partTableColumns(), []);
+  const tableFilters = useMemo(() => partTableFilters(), []);
 
   const { tableKey, refreshTable } = useTableRefresh('part');
-
-  // Callback function for generating set of row actions
-  function partTableRowActions(record: any): RowAction[] {
-    let actions: RowAction[] = [];
-
-    actions.push({
-      title: t`Edit`,
-      onClick: () => {
-        editPart({
-          part_id: record.pk,
-          callback: () => {
-            // TODO: Reload the table, somehow?
-            notYetImplemented();
-          }
-        });
-      }
-    });
-
-    actions.push({
-      title: t`Detail`,
-      onClick: () => {
-        navigate(`/part/${record.pk}/`);
-      }
-    });
-
-    return actions;
-  }
 
   const navigate = useNavigate();
 
   return (
     <InvenTreeTable
-      url="part/"
+      url={apiUrl(ApiPaths.part_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{
         ...props,
         enableDownload: true,
         customFilters: tableFilters,
-        rowActions: partTableRowActions,
         params: {
           ...props.params,
           category_detail: true
+        },
+        onRowClick: (record, _index, _event) => {
+          navigate(`/part/${record.pk}/`);
         }
       }}
     />

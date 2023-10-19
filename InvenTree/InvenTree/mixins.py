@@ -49,7 +49,6 @@ class CleanMixin():
         Ref: https://github.com/mozilla/bleach/issues/192
 
         """
-
         cleaned = strip_html_tags(data, field_name=field)
 
         # By default, newline characters are removed
@@ -88,12 +87,11 @@ class CleanMixin():
         `ugly`. Prevents XSS on the server-level.
 
         Args:
-            data (dict): Data that should be sanatized.
+            data (dict): Data that should be Sanitized.
 
         Returns:
-            dict: Provided data sanatized; still in the same order.
+            dict: Provided data Sanitized; still in the same order.
         """
-
         clean_data = {}
 
         for k, v in data.items():

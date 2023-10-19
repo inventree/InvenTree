@@ -16,6 +16,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
 import { PartListTable } from '../../components/tables/part/PartTable';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths } from '../../states/ApiState';
 
 /**
  * Detail view for a single PartCategory instance.
@@ -29,14 +30,20 @@ export default function CategoryDetail({}: {}) {
     instance: category,
     refreshInstance,
     instanceQuery
-  } = useInstance('/part/category/', id, { path_detail: true });
+  } = useInstance({
+    endpoint: ApiPaths.category_list,
+    pk: id,
+    params: {
+      path_detail: true
+    }
+  });
 
   const categoryPanels: PanelType[] = useMemo(
     () => [
       {
         name: 'parts',
         label: t`Parts`,
-        icon: <IconCategory size="18" />,
+        icon: <IconCategory />,
         content: (
           <PartListTable
             props={{
@@ -49,8 +56,8 @@ export default function CategoryDetail({}: {}) {
       },
       {
         name: 'subcategories',
-        label: t`Subcategories`,
-        icon: <IconSitemap size="18" />,
+        label: t`Part Categories`,
+        icon: <IconSitemap />,
         content: (
           <PartCategoryTable
             params={{
@@ -62,7 +69,7 @@ export default function CategoryDetail({}: {}) {
       {
         name: 'parameters',
         label: t`Parameters`,
-        icon: <IconListDetails size="18" />,
+        icon: <IconListDetails />,
         content: <PlaceholderPanel />
       }
     ],
@@ -88,7 +95,7 @@ export default function CategoryDetail({}: {}) {
         detail={<Text>{category.name ?? 'Top level'}</Text>}
         breadcrumbs={breadcrumbs}
       />
-      <PanelGroup panels={categoryPanels} />
+      <PanelGroup pageKey="partcategory" panels={categoryPanels} />
     </Stack>
   );
 }

@@ -34,8 +34,6 @@ export function ChoiceField({
       definitions: definitions
     });
 
-    form.setValues({ [fieldName]: def.value ?? def.default });
-
     return def;
   }, [fieldName, field, definitions]);
 
@@ -80,6 +78,7 @@ export function ChoiceField({
       data={choices}
       value={value}
       onChange={(value) => onChange(value)}
+      withinPortal={true}
     />
   );
 }

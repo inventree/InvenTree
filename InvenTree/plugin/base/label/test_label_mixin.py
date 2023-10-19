@@ -32,7 +32,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
-        config = registry.get_plugin('samplelabel').plugin_config()
+        config = registry.get_plugin('samplelabelprinter').plugin_config()
         config.active = True
         config.save()
 
@@ -125,7 +125,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), 2)
         data = response.data[1]
-        self.assertEqual(data['key'], 'samplelabel')
+        self.assertEqual(data['key'], 'samplelabelprinter')
 
     def test_printing_process(self):
         """Test that a label can be printed."""
@@ -134,7 +134,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Lookup references
         part = Part.objects.first()
-        plugin_ref = 'samplelabel'
+        plugin_ref = 'samplelabelprinter'
         label = PartLabel.objects.first()
 
         url = self.do_url([part], plugin_ref, label)
@@ -185,7 +185,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`."""
-        plugin_ref = 'samplelabel'
+        plugin_ref = 'samplelabelprinter'
 
         # Activate the label components
         apps.get_app_config('label').create_labels()

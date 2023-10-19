@@ -74,7 +74,6 @@ def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
         pricing: The target PartPricing instance to be updated
         counter: How many times this function has been called in sequence
     """
-
     logger.info("Updating part pricing for %s", pricing.part)
 
     pricing.update_pricing(counter=counter)
@@ -91,7 +90,6 @@ def check_missing_pricing(limit=250):
     Arguments:
         limit: Maximum number of parts to process at once
     """
-
     # Find parts for which pricing information has never been updated
     results = part.models.PartPricing.objects.filter(updated=None)[:limit]
 
@@ -144,7 +142,6 @@ def scheduled_stocktake_reports():
     - Delete 'old' stocktake report files after the specified period
     - Generate new reports at the specified period
     """
-
     # Sleep a random number of seconds to prevent worker conflict
     time.sleep(random.randint(1, 5))
 
@@ -185,7 +182,6 @@ def rebuild_parameters(template_id):
     This function is called when a base template is changed,
     which may cause the base unit to be adjusted.
     """
-
     try:
         template = part.models.PartParameterTemplate.objects.get(pk=template_id)
     except part.models.PartParameterTemplate.DoesNotExist:
@@ -215,7 +211,6 @@ def rebuild_supplier_parts(part_id):
     This function is called when a bart part is changed,
     which may cause the native units of any supplier parts to be updated
     """
-
     try:
         prt = part.models.Part.objects.get(pk=part_id)
     except part.models.Part.DoesNotExist:

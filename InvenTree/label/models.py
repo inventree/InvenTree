@@ -399,7 +399,6 @@ class BuildLineLabel(LabelTemplate):
 
     def get_context_data(self, request):
         """Generate context data for each provided BuildLine object."""
-
         build_line = self.object_to_print
 
         return {

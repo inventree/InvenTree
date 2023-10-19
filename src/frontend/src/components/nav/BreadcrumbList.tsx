@@ -17,7 +17,10 @@ export function BreadcrumbList({ breadcrumbs }: { breadcrumbs: Breadcrumb[] }) {
       <Breadcrumbs>
         {breadcrumbs.map((breadcrumb, index) => {
           return (
-            <Anchor onClick={() => breadcrumb.url && navigate(breadcrumb.url)}>
+            <Anchor
+              key={`breadcrumb-${index}`}
+              onClick={() => breadcrumb.url && navigate(breadcrumb.url)}
+            >
               <Text size="sm">{breadcrumb.name}</Text>
             </Anchor>
           );

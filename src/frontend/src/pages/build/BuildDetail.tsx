@@ -6,27 +6,25 @@ import {
   IconInfoCircle,
   IconList,
   IconListCheck,
-  IconListTree,
   IconNotes,
   IconPaperclip,
   IconSitemap
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { api } from '../../App';
 import {
   PlaceholderPanel,
   PlaceholderPill
 } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { AttachmentTable } from '../../components/tables/AttachmentTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
+import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 
 /**
  * Detail page for a single Build Order
@@ -38,8 +36,12 @@ export default function BuildDetail() {
     instance: build,
     refreshInstance,
     instanceQuery
-  } = useInstance('/build/', id, {
-    part_detail: true
+  } = useInstance({
+    endpoint: ApiPaths.build_order_list,
+    pk: id,
+    params: {
+      part_detail: true
+    }
   });
 
   const buildPanels: PanelType[] = useMemo(() => {
@@ -107,7 +109,7 @@ export default function BuildDetail() {
         icon: <IconPaperclip size="18" />,
         content: (
           <AttachmentTable
-            url="/build/attachment/"
+            endpoint={ApiPaths.build_order_attachment_list}
             model="build"
             pk={build.pk ?? -1}
           />
@@ -119,7 +121,7 @@ export default function BuildDetail() {
         icon: <IconNotes size="18" />,
         content: (
           <NotesEditor
-            url={`/build/${build.pk}/`}
+            url={apiUrl(ApiPaths.build_order_list, build.pk)}
             data={build.notes ?? ''}
             allowEdit={true}
           />
@@ -146,7 +148,7 @@ export default function BuildDetail() {
           actions={[<PlaceholderPill key="1" />]}
         />
         <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PanelGroup panels={buildPanels} />
+        <PanelGroup pageKey="build" panels={buildPanels} />
       </Stack>
     </>
   );
