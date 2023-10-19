@@ -22,6 +22,7 @@ import { useParams } from 'react-router-dom';
 
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import { BreadcrumbList } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { PanelType } from '../../components/nav/PanelGroup';
@@ -31,15 +32,19 @@ import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editCompany } from '../../functions/forms/CompanyForms';
-import { notYetImplemented } from '../../functions/notifications';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 
+export type CompanyDetailProps = {
+  title: string;
+  breadcrumbs: BreadcrumbList;
+};
+
 /**
  * Detail view for a single company instance
  */
-export default function CompanyDetail() {
+export default function CompanyDetail(props: CompanyDetailProps) {
   const { id } = useParams();
 
   const user = useUserState();
@@ -179,9 +184,9 @@ export default function CompanyDetail() {
         icon={<IconDots />}
         actions={[
           {
-            icon: <IconEdit />,
+            icon: <IconEdit color="blue" />,
             name: t`Edit`,
-            tooltip: t`Edit Company`,
+            tooltip: t`Edit company`,
             disabled: !canEdit,
             onClick: () => {
               if (company?.pk) {
@@ -195,7 +200,7 @@ export default function CompanyDetail() {
           {
             icon: <IconTrash color="red" />,
             name: t`Delete`,
-            tooltip: t`Delete Company`,
+            tooltip: t`Delete company`,
             disabled: !canDelete
           }
         ]}
@@ -206,7 +211,11 @@ export default function CompanyDetail() {
   return (
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isFetching} />
-      <PageDetail detail={companyDetail} actions={companyActions} />
+      <PageDetail
+        detail={companyDetail}
+        actions={companyActions}
+        breadcrumbs={props.breadcrumbs}
+      />
       <PanelGroup pageKey="company" panels={companyPanels} />
     </Stack>
   );

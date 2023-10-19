@@ -12,7 +12,13 @@ import { InvenTreeTable } from '../InvenTreeTable';
  * A table which displays a list of company records,
  * based on the provided filter parameters
  */
-export function CompanyTable({ params }: { params?: any }) {
+export function CompanyTable({
+  params,
+  path
+}: {
+  params?: any;
+  path?: string;
+}) {
   const { tableKey } = useTableRefresh('company');
 
   const navigate = useNavigate();
@@ -61,7 +67,8 @@ export function CompanyTable({ params }: { params?: any }) {
           ...params
         },
         onRowClick: (row: any) => {
-          navigate(`/company/${row.pk}`);
+          let base = path ?? 'company';
+          navigate(`/${base}/${row.pk}`);
         }
       }}
     />
