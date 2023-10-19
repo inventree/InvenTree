@@ -202,7 +202,7 @@ class GetAuthToken(APIView):
                 # User is authenticated, and requesting a token against the provided name.
                 # Remove the old token, create a new one
                 token.delete()
-                token, _created = ApiToken.objects.create(user=request.user, name=name)
+                token = ApiToken.objects.create(user=request.user, name=name)
 
             data = {
                 'token': token.key,
