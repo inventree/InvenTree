@@ -1,3 +1,4 @@
+import { StateManagerFactory } from 'html5-qrcode/esm/state-manager';
 import { create } from 'zustand';
 
 interface ModalStateProps {
@@ -9,8 +10,8 @@ interface ModalStateProps {
 /**
  * Global state manager for modal forms.
  */
-export const useModalState = create<ModalStateProps>((set, get) => ({
+export const useModalState = create<ModalStateProps>((set) => ({
   loading: false,
-  lock: () => set((state) => ({ loading: true })),
-  unlock: () => set((state) => ({ loading: false }))
+  lock: () => set(() => ({ loading: true })),
+  unlock: () => set(() => ({ loading: false }))
 }));

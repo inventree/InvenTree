@@ -1,11 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Divider,
-  LoadingOverlay,
-  ScrollArea,
-  Text
-} from '@mantine/core';
+import { Alert, Divider, LoadingOverlay, Text } from '@mantine/core';
 import { Button, Group, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';

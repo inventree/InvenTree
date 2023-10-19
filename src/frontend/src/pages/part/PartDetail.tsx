@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Button, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBuilding,
   IconCalendarStats,
@@ -17,7 +17,6 @@ import {
   IconPackages,
   IconPaperclip,
   IconQrcode,
-  IconScan,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
@@ -42,7 +41,6 @@ import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable'
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
-import { notYetImplemented } from '../../functions/notifications';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -268,11 +266,6 @@ export default function PartDetail() {
         icon={<IconDots />}
         actions={[
           {
-            icon: <IconCopy color="green" />,
-            name: t`Duplicate`,
-            tooltip: t`Duplicate part`
-          },
-          {
             icon: <IconEdit color="blue" />,
             name: t`Edit`,
             tooltip: t`Edit part`,
@@ -283,6 +276,11 @@ export default function PartDetail() {
                   callback: refreshInstance
                 });
             }
+          },
+          {
+            icon: <IconCopy color="green" />,
+            name: t`Duplicate`,
+            tooltip: t`Duplicate part`
           },
           {
             icon: <IconTrash color="red" />,
