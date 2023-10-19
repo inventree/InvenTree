@@ -49,6 +49,10 @@ class ApiToken(AuthToken):
             ('user', 'name')
         ]
 
+    def __str__(self):
+        """String representation uses the redacted token"""
+        return self.token
+
     # Override the 'key' field - force it to be unique
     key = models.CharField(verbose_name=_('Key'), max_length=40, db_index=True, unique=True)
 
@@ -79,6 +83,19 @@ class ApiToken(AuthToken):
         verbose_name=_('Revoked'),
         help_text=_('Token has been revoked'),
     )
+
+    @property
+    @admin.display(description=_('Token'))
+    def token(self):
+        """Provide a redacted version of the token.
+
+        The *raw* key value should never be displayed anywhere!
+        """
+
+        N = 8
+        M = len(self.key) - N
+
+        return self.key[:N] + '*' * M
 
     @property
     @admin.display(boolean=True, description=_('Expired'))
