@@ -232,7 +232,6 @@ INSTALLED_APPS = [
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
     'rest_framework',                       # DRF (Django Rest Framework)
-    'rest_framework.authtoken',             # Token authentication for API
     'corsheaders',                          # Cross-origin Resource Sharing for DRF
     'crispy_forms',                         # Improved form rendering
     'import_export',                        # Import / export tables to file
@@ -433,7 +432,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'users.authentication.ApiTokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -445,7 +444,8 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+    'TOKEN_MODEL': 'users.models.ApiToken',
 }
 
 if DEBUG:
