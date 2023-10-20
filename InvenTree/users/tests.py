@@ -5,10 +5,8 @@ from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
 
-from rest_framework.authtoken.models import Token
-
 from InvenTree.unit_test import InvenTreeTestCase
-from users.models import Owner, RuleSet
+from users.models import ApiToken, Owner, RuleSet
 
 
 class RuleSetModelTest(TestCase):
@@ -242,7 +240,7 @@ class OwnerModelTest(InvenTreeTestCase):
         """Test token mechanisms."""
         self.client.logout()
 
-        token = Token.objects.filter(user=self.user)
+        token = ApiToken.objects.filter(user=self.user)
 
         # not authed
         self.do_request(reverse('api-token'), {}, 401)
