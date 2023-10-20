@@ -60,6 +60,17 @@ function ApiFormsPlayground() {
   );
 }
 
+// Show some example status labels
+function StatusLabelPlayground() {
+  return (
+    <>
+      <Group>
+        <Text>Dummy content</Text>
+      </Group>
+    </>
+  );
+}
+
 /** Construct a simple accordion group with title and content */
 function PlaygroundArea({
   title,
@@ -95,10 +106,11 @@ export default function Playground() {
         </Trans>
       </Text>
       <Accordion defaultValue="">
+        <PlaygroundArea title="API Forms" content={<ApiFormsPlayground />} />
         <PlaygroundArea
-          title="API Forms"
-          content={<ApiFormsPlayground />}
-        ></PlaygroundArea>
+          title="Status labels"
+          content={<StatusLabelPlayground />}
+        />
       </Accordion>
     </>
   );
