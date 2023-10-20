@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 138
+INVENTREE_API_VERSION = 139
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v139 -> 2023-10-20: https://github.com/inventree/InvenTree/pull/5759
+    - Adds generic API endpoints for looking up status models
 
 v138 -> 2023-10-11 : https://github.com/inventree/InvenTree/pull/5679
     - Settings keys are no longer case sensitive
