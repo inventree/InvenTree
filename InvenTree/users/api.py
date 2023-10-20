@@ -199,6 +199,11 @@ class GetAuthToken(APIView):
             user = request.user
             name = request.query_params.get('name', '')
 
+            name = str(name).strip()
+
+            # Limit to 100 characters
+            name = name[:100]
+
             # Delete any matching tokens
             ApiToken.objects.filter(user=user, name=name).delete()
 

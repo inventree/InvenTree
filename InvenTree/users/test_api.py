@@ -89,6 +89,12 @@ class UserTokenTests(InvenTreeAPITestCase):
         with self.assertRaises(ApiToken.DoesNotExist):
             token.refresh_from_db()
 
+        # Test with a really long name
+        data = self.get(url, data={'name': 'cat' * 100}, expected_code=200).data
+
+        # Name should be truncated
+        self.assertEqual(len(data['name']), 100)
+
     def test_token_auth(self):
         """Test user token authentication"""
 
