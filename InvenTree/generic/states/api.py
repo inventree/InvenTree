@@ -50,3 +50,23 @@ class StatusView(APIView):
         }
 
         return Response(data)
+
+
+class AllStatusViews(StatusView):
+    """Endpoint for listing all defined status models."""
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request, *args, **kwargs):
+        """Perform a GET request to learn information about status codes"""
+        data = {}
+
+        for status_class in StatusCode.__subclasses__():
+            data[status_class.__name__] = {
+                'class': status_class.__name__,
+                'values': status_class.dict(),
+            }
+
+        return Response(data)
