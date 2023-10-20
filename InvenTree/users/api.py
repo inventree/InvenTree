@@ -86,7 +86,7 @@ class RoleDetails(APIView):
 
         for ruleset in RuleSet.RULESET_CHOICES:
 
-            role, text = ruleset
+            role, _text = ruleset
 
             permissions = []
 
@@ -199,10 +199,7 @@ class GetAuthToken(APIView):
             user = request.user
             name = request.query_params.get('name', '')
 
-            name = str(name).strip()
-
-            # Limit to 100 characters
-            name = name[:100]
+            name = ApiToken.sanitize_name(name)
 
             # Delete any matching tokens
             ApiToken.objects.filter(user=user, name=name).delete()
