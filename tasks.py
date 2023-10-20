@@ -35,7 +35,7 @@ def content_excludes():
     excludes = [
         "contenttypes",
         "auth.permission",
-        "authtoken.token",
+        "users.api_token",
         "error_report.error",
         "admin.logentry",
         "django_q.schedule",
