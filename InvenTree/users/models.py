@@ -61,7 +61,11 @@ class ApiToken(AuthToken):
     @classmethod
     def generate_key(cls, prefix='inv-'):
         """Generate a new token key - with custom prefix"""
-        return prefix + str(AuthToken.generate_key())
+
+        # Suffix is the date of creation
+        suffix = '-' + str(datetime.datetime.now().date().isoformat().replace('-', ''))
+
+        return prefix + str(AuthToken.generate_key()) + suffix
 
     # Override the 'key' field - force it to be unique
     key = models.CharField(default=default_token, verbose_name=_('Key'), max_length=40, db_index=True, unique=True)
@@ -106,10 +110,9 @@ class ApiToken(AuthToken):
         if self.pk is None:
             return self.key
 
-        N = 8
-        M = len(self.key) - N
+        M = len(self.key) - 16
 
-        return self.key[:N] + '*' * M
+        return self.key[:6] + '*' * M + self.key[-10:]
 
     @property
     @admin.display(boolean=True, description=_('Expired'))

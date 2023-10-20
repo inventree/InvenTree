@@ -24,7 +24,7 @@ class ApiTokenAdmin(admin.ModelAdmin):
         """Some fields are read-only after creation"""
 
         if obj:
-            return ['token', 'user', 'expiry']
+            return ['token', 'user', 'expiry', 'name']
         else:
             return ['token']
 
