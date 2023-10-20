@@ -26,13 +26,23 @@ export default function PurchasingIndex() {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuildingStore />,
-        content: <CompanyTable params={{ is_supplier: true }} />
+        content: (
+          <CompanyTable
+            path="purchasing/supplier"
+            params={{ is_supplier: true }}
+          />
+        )
       },
       {
         name: 'manufacturer',
         label: t`Manufacturers`,
         icon: <IconBuildingFactory2 />,
-        content: <CompanyTable params={{ is_manufacturer: true }} />
+        content: (
+          <CompanyTable
+            path="purchasing/manufacturer"
+            params={{ is_manufacturer: true }}
+          />
+        )
       }
     ];
   }, []);

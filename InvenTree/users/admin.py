@@ -9,9 +9,24 @@ from django.contrib.auth.models import Group
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from users.models import Owner, RuleSet
+from users.models import ApiToken, Owner, RuleSet
 
 User = get_user_model()
+
+
+class ApiTokenAdmin(admin.ModelAdmin):
+    """Admin class for the ApiToken model."""
+
+    list_display = ('token', 'user', 'name', 'expiry', 'active')
+    fields = ('token', 'user', 'name', 'revoked', 'expiry')
+
+    def get_readonly_fields(self, request, obj=None):
+        """Some fields are read-only after creation"""
+
+        if obj:
+            return ['token', 'user', 'expiry', 'name']
+        else:
+            return ['token']
 
 
 class RuleSetInline(admin.TabularInline):
@@ -239,3 +254,5 @@ admin.site.unregister(User)
 admin.site.register(User, InvenTreeUserAdmin)
 
 admin.site.register(Owner, OwnerAdmin)
+
+admin.site.register(ApiToken, ApiTokenAdmin)

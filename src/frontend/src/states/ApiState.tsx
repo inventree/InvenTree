@@ -55,6 +55,7 @@ export enum ApiPaths {
 
   // Company URLs
   company_list = 'api-company-list',
+  company_attachment_list = 'api-company-attachment-list',
   supplier_part_list = 'api-supplier-part-list',
 
   // Stock Item URLs
@@ -137,6 +138,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'part/attachment/';
     case ApiPaths.company_list:
       return 'company/';
+    case ApiPaths.company_attachment_list:
+      return 'company/attachment/';
     case ApiPaths.supplier_part_list:
       return 'company/part/';
     case ApiPaths.stock_item_list:

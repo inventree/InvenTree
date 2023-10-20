@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-11 12:00+0000\n"
-"PO-Revision-Date: 2023-10-12 01:01\n"
+"POT-Creation-Date: 2023-10-19 12:30+0000\n"
+"PO-Revision-Date: 2023-10-19 16:27\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -17,48 +17,53 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#: InvenTree/api.py:66
+#: InvenTree/api.py:65
 msgid "API endpoint not found"
 msgstr "API-rajapintaa ei löydy"
 
-#: InvenTree/api.py:335
+#: InvenTree/api.py:330
 msgid "User does not have permission to view this model"
 msgstr "Käyttäjän oikeudet eivät riitä kohteen tarkastelemiseen"
 
-#: InvenTree/conversion.py:96
+#: InvenTree/conversion.py:92
 msgid "No value provided"
 msgstr "Arvoa ei annettu"
 
-#: InvenTree/conversion.py:129
+#: InvenTree/conversion.py:125
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
 msgstr ""
 
-#: InvenTree/conversion.py:131
+#: InvenTree/conversion.py:127
 msgid "Invalid quantity supplied"
 msgstr ""
 
-#: InvenTree/exceptions.py:90
+#: InvenTree/conversion.py:141
+#, python-brace-format
+msgid "Invalid quantity supplied ({exc})"
+msgstr ""
+
+#: InvenTree/exceptions.py:89
 msgid "Error details can be found in the admin panel"
 msgstr "Virheen tiedot löytyvät hallintapaneelista"
 
-#: InvenTree/fields.py:131
+#: InvenTree/fields.py:127
 msgid "Enter date"
 msgstr "Anna päivämäärä"
 
-#: InvenTree/fields.py:206 InvenTree/models.py:801 build/serializers.py:435
-#: build/serializers.py:514 build/templates/build/sidebar.html:21
-#: company/models.py:737 company/templates/company/sidebar.html:37
-#: order/models.py:1102 order/templates/order/po_sidebar.html:11
+#: InvenTree/fields.py:200 InvenTree/models.py:784 build/serializers.py:433
+#: build/serializers.py:511 build/templates/build/sidebar.html:21
+#: company/models.py:732 company/templates/company/sidebar.html:37
+#: order/models.py:1088 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:41
-#: part/models.py:3066 part/templates/part/part_sidebar.html:63
+#: part/models.py:3032 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:139 stock/models.py:2286 stock/models.py:2394
-#: stock/serializers.py:419 stock/serializers.py:553 stock/serializers.py:649
-#: stock/serializers.py:707 stock/serializers.py:1039 stock/serializers.py:1138
-#: stock/serializers.py:1299 stock/templates/stock/stock_sidebar.html:25
-#: templates/js/translated/barcode.js:143 templates/js/translated/bom.js:1254
+#: stock/admin.py:139 stock/models.py:2253 stock/models.py:2361
+#: stock/serializers.py:417 stock/serializers.py:551 stock/serializers.py:645
+#: stock/serializers.py:701 stock/serializers.py:1029 stock/serializers.py:1128
+#: stock/serializers.py:1289 stock/templates/stock/stock_sidebar.html:25
+#: templates/js/translated/barcode.js:143 templates/js/translated/bom.js:1259
 #: templates/js/translated/company.js:1674 templates/js/translated/order.js:347
 #: templates/js/translated/part.js:1077
 #: templates/js/translated/purchase_order.js:2179
@@ -69,12 +74,12 @@ msgstr "Anna päivämäärä"
 msgid "Notes"
 msgstr "Merkinnät"
 
-#: InvenTree/format.py:152
+#: InvenTree/format.py:148
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
 msgstr ""
 
-#: InvenTree/format.py:162
+#: InvenTree/format.py:158
 msgid "Provided value does not match required pattern: "
 msgstr ""
 
@@ -98,99 +103,99 @@ msgstr "Vahvista uusi salasana"
 msgid "Old password"
 msgstr "Vanha salasana"
 
-#: InvenTree/forms.py:200
+#: InvenTree/forms.py:199
 msgid "Email (again)"
 msgstr "Sähköposti (uudelleen)"
 
-#: InvenTree/forms.py:204
+#: InvenTree/forms.py:203
 msgid "Email address confirmation"
 msgstr "Sähköpostiosoitteen vahvistus"
 
-#: InvenTree/forms.py:225
+#: InvenTree/forms.py:224
 msgid "You must type the same email each time."
 msgstr "Sinun täytyy kirjoittaa sama sähköposti joka kerta."
 
-#: InvenTree/forms.py:256 InvenTree/forms.py:262
+#: InvenTree/forms.py:255 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
 msgstr "Annettu ensisijainen sähköpostiosoite ei kelpaa."
 
-#: InvenTree/forms.py:268
+#: InvenTree/forms.py:267
 msgid "The provided email domain is not approved."
 msgstr "Annetun sähköpostiosoitteen verkkotunnusta ei hyväksytä."
 
-#: InvenTree/forms.py:373
+#: InvenTree/forms.py:371
 msgid "Registration is disabled."
 msgstr ""
 
-#: InvenTree/helpers.py:462 order/models.py:455 order/models.py:624
+#: InvenTree/helpers.py:452 order/models.py:446 order/models.py:615
 msgid "Invalid quantity provided"
 msgstr "Annettu määrä on virheellinen"
 
-#: InvenTree/helpers.py:470
+#: InvenTree/helpers.py:460
 msgid "Empty serial number string"
 msgstr "Tyhjä sarjanumero"
 
-#: InvenTree/helpers.py:500
+#: InvenTree/helpers.py:490
 msgid "Duplicate serial"
 msgstr "Duplikaatti sarjanumero"
 
-#: InvenTree/helpers.py:533 InvenTree/helpers.py:568
+#: InvenTree/helpers.py:523 InvenTree/helpers.py:558
 #, python-brace-format
 msgid "Invalid group range: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:562
+#: InvenTree/helpers.py:552
 #, python-brace-format
 msgid "Group range {g} exceeds allowed quantity ({q})"
 msgstr ""
 
-#: InvenTree/helpers.py:586 InvenTree/helpers.py:593 InvenTree/helpers.py:608
+#: InvenTree/helpers.py:576 InvenTree/helpers.py:583 InvenTree/helpers.py:598
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:618
+#: InvenTree/helpers.py:608
 msgid "No serial numbers found"
 msgstr "Sarjanumeroita ei löytynyt"
 
-#: InvenTree/helpers.py:621
+#: InvenTree/helpers.py:611
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr "Yksilöllisten sarjanumeroiden määrän ({s}) on vastattava määrää ({q})"
 
-#: InvenTree/helpers.py:751
+#: InvenTree/helpers.py:740
 msgid "Remove HTML tags from this value"
 msgstr ""
 
-#: InvenTree/helpers_model.py:125
+#: InvenTree/helpers_model.py:123
 msgid "Connection error"
 msgstr "Yhteysvirhe"
 
-#: InvenTree/helpers_model.py:129 InvenTree/helpers_model.py:134
+#: InvenTree/helpers_model.py:127 InvenTree/helpers_model.py:132
 msgid "Server responded with invalid status code"
 msgstr "Palvelin vastasi virheellisellä tilakoodilla"
 
-#: InvenTree/helpers_model.py:131
+#: InvenTree/helpers_model.py:129
 msgid "Exception occurred"
 msgstr ""
 
-#: InvenTree/helpers_model.py:139
+#: InvenTree/helpers_model.py:137
 msgid "Server responded with invalid Content-Length value"
 msgstr ""
 
-#: InvenTree/helpers_model.py:142
+#: InvenTree/helpers_model.py:140
 msgid "Image size is too large"
 msgstr "Kuva on liian iso"
 
-#: InvenTree/helpers_model.py:154
+#: InvenTree/helpers_model.py:152
 msgid "Image download exceeded maximum size"
 msgstr "Kuvan lataus ylitti enimmäiskoon"
 
-#: InvenTree/helpers_model.py:159
+#: InvenTree/helpers_model.py:157
 msgid "Remote server returned empty response"
 msgstr "Etäpalvelin palautti tyhjän vastauksen"
 
-#: InvenTree/helpers_model.py:167
+#: InvenTree/helpers_model.py:165
 msgid "Supplied URL is not a valid image file"
 msgstr "Annettu URL ei ole kelvollinen kuvatiedosto"
 
@@ -206,64 +211,64 @@ msgstr ""
 msgid "Email"
 msgstr "Sähköposti"
 
-#: InvenTree/models.py:82
+#: InvenTree/models.py:81
 msgid "Metadata must be a python dict object"
 msgstr "Metatietojen tulee olla python dict objekti"
 
-#: InvenTree/models.py:86
+#: InvenTree/models.py:85
 msgid "Plugin Metadata"
 msgstr "Liitännäisen metadata"
 
-#: InvenTree/models.py:87
+#: InvenTree/models.py:86
 msgid "JSON metadata field, for use by external plugins"
 msgstr "JSON metadatakenttä, ulkoisten liitännäisten käyttöön"
 
-#: InvenTree/models.py:320
+#: InvenTree/models.py:312
 msgid "Improperly formatted pattern"
 msgstr "Virheellisesti muotoiltu malli"
 
-#: InvenTree/models.py:327
+#: InvenTree/models.py:319
 msgid "Unknown format key specified"
 msgstr ""
 
-#: InvenTree/models.py:333
+#: InvenTree/models.py:325
 msgid "Missing required format key"
 msgstr ""
 
-#: InvenTree/models.py:345
+#: InvenTree/models.py:336
 msgid "Reference field cannot be empty"
 msgstr "Viitekenttä ei voi olla tyhjä"
 
-#: InvenTree/models.py:352
+#: InvenTree/models.py:343
 msgid "Reference must match required pattern"
 msgstr ""
 
-#: InvenTree/models.py:383
+#: InvenTree/models.py:373
 msgid "Reference number is too large"
 msgstr "Viitenumero on liian suuri"
 
-#: InvenTree/models.py:466
+#: InvenTree/models.py:455
 msgid "Missing file"
 msgstr "Puuttuva tiedosto"
 
-#: InvenTree/models.py:467
+#: InvenTree/models.py:456
 msgid "Missing external link"
 msgstr "Puuttuva ulkoinen linkki"
 
-#: InvenTree/models.py:487 stock/models.py:2388
+#: InvenTree/models.py:475 stock/models.py:2355
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
 msgstr "Liite"
 
-#: InvenTree/models.py:488
+#: InvenTree/models.py:476
 msgid "Select file to attach"
 msgstr "Valitse liitettävä tiedosto"
 
-#: InvenTree/models.py:494 common/models.py:2866 company/models.py:128
-#: company/models.py:391 company/models.py:445 company/models.py:724
-#: order/models.py:240 order/models.py:1106 order/models.py:1466
-#: part/admin.py:39 part/models.py:905
+#: InvenTree/models.py:482 common/models.py:2853 company/models.py:128
+#: company/models.py:386 company/models.py:440 company/models.py:719
+#: order/models.py:234 order/models.py:1092 order/models.py:1450
+#: part/admin.py:39 part/models.py:897
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
 #: stock/admin.py:138 templates/js/translated/company.js:1309
@@ -277,71 +282,71 @@ msgstr "Valitse liitettävä tiedosto"
 msgid "Link"
 msgstr "Linkki"
 
-#: InvenTree/models.py:495 build/models.py:295 part/models.py:906
-#: stock/models.py:830
+#: InvenTree/models.py:483 build/models.py:295 part/models.py:898
+#: stock/models.py:800
 msgid "Link to external URL"
 msgstr "Linkki ulkoiseen URLiin"
 
-#: InvenTree/models.py:498 templates/js/translated/attachment.js:120
+#: InvenTree/models.py:486 templates/js/translated/attachment.js:120
 #: templates/js/translated/attachment.js:341
 msgid "Comment"
 msgstr "Kommentti"
 
-#: InvenTree/models.py:498
+#: InvenTree/models.py:486
 msgid "File comment"
 msgstr "Tiedoston kommentti"
 
-#: InvenTree/models.py:504 InvenTree/models.py:505 common/models.py:2325
-#: common/models.py:2326 common/models.py:2539 common/models.py:2540
-#: common/models.py:2796 common/models.py:2797 part/models.py:3074
-#: part/models.py:3162 part/models.py:3241 part/models.py:3261
-#: plugin/models.py:233 plugin/models.py:234
+#: InvenTree/models.py:492 InvenTree/models.py:493 common/models.py:2313
+#: common/models.py:2314 common/models.py:2526 common/models.py:2527
+#: common/models.py:2783 common/models.py:2784 part/models.py:3040
+#: part/models.py:3125 part/models.py:3204 part/models.py:3224
+#: plugin/models.py:229 plugin/models.py:230
 #: report/templates/report/inventree_test_report_base.html:105
 #: templates/js/translated/stock.js:3007
 msgid "User"
 msgstr "Käyttäjä"
 
-#: InvenTree/models.py:508
+#: InvenTree/models.py:496
 msgid "upload date"
 msgstr "latauspäivä"
 
-#: InvenTree/models.py:530
+#: InvenTree/models.py:517
 msgid "Filename must not be empty"
 msgstr "Tiedoston nimi ei saa olla tyhjä"
 
-#: InvenTree/models.py:539
+#: InvenTree/models.py:526
 msgid "Invalid attachment directory"
 msgstr "Virheellinen liitteen hakemisto"
 
-#: InvenTree/models.py:549
+#: InvenTree/models.py:536
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
 msgstr "Tiedostonimi sisältää kielletyn merkin '{c}'"
 
-#: InvenTree/models.py:552
+#: InvenTree/models.py:539
 msgid "Filename missing extension"
 msgstr "Tiedostonimen pääte puuttuu"
 
-#: InvenTree/models.py:559
+#: InvenTree/models.py:546
 msgid "Attachment with this filename already exists"
 msgstr "Samanniminen liite on jo olemassa"
 
-#: InvenTree/models.py:566
+#: InvenTree/models.py:553
 msgid "Error renaming file"
 msgstr "Virhe tiedoston uudelleennimeämisessä"
 
-#: InvenTree/models.py:621
+#: InvenTree/models.py:606
 msgid "Duplicate names cannot exist under the same parent"
 msgstr ""
 
-#: InvenTree/models.py:640
+#: InvenTree/models.py:624
 msgid "Invalid choice"
 msgstr "Virheellinen valinta"
 
-#: InvenTree/models.py:665 InvenTree/models.py:666 common/models.py:2525
-#: common/models.py:2973 company/models.py:529 label/models.py:119
-#: part/models.py:851 part/models.py:3461 plugin/models.py:42
-#: report/models.py:172 stock/models.py:71 stock/models.py:72
+#: InvenTree/models.py:649 InvenTree/models.py:650 common/models.py:2512
+#: common/models.py:2958 company/models.py:524 label/models.py:119
+#: part/models.py:843 part/models.py:3422 plugin/models.py:42
+#: report/models.py:170 stock/models.py:71 stock/models.py:72
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
 #: templates/InvenTree/settings/plugin.html:74
@@ -358,17 +363,17 @@ msgstr "Virheellinen valinta"
 msgid "Name"
 msgstr "Nimi"
 
-#: InvenTree/models.py:672 build/models.py:168
-#: build/templates/build/detail.html:24 common/models.py:126
-#: company/models.py:451 company/models.py:730
+#: InvenTree/models.py:656 build/models.py:168
+#: build/templates/build/detail.html:24 common/models.py:125
+#: company/models.py:446 company/models.py:725
 #: company/templates/company/company_base.html:72
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:108 label/models.py:126
-#: order/models.py:232 order/models.py:1130 part/admin.py:194 part/admin.py:276
-#: part/models.py:873 part/models.py:3477 part/templates/part/category.html:81
+#: order/models.py:226 order/models.py:1116 part/admin.py:191 part/admin.py:272
+#: part/models.py:865 part/models.py:3438 part/templates/part/category.html:81
 #: part/templates/part/part_base.html:172
-#: part/templates/part/part_scheduling.html:12 report/models.py:185
-#: report/models.py:617 report/models.py:661
+#: part/templates/part/part_scheduling.html:12 report/models.py:183
+#: report/models.py:611 report/models.py:654
 #: report/templates/report/inventree_build_order_base.html:117
 #: stock/admin.py:42 stock/models.py:78 stock/templates/stock/location.html:124
 #: templates/InvenTree/settings/notifications.html:19
@@ -395,126 +400,126 @@ msgstr "Nimi"
 msgid "Description"
 msgstr "Kuvaus"
 
-#: InvenTree/models.py:673 stock/models.py:79
+#: InvenTree/models.py:657 stock/models.py:79
 msgid "Description (optional)"
 msgstr "Kuvaus (valinnainen)"
 
-#: InvenTree/models.py:681
+#: InvenTree/models.py:665
 msgid "parent"
 msgstr ""
 
-#: InvenTree/models.py:688 InvenTree/models.py:689
+#: InvenTree/models.py:672 InvenTree/models.py:673
 #: templates/js/translated/part.js:2789 templates/js/translated/stock.js:2728
 msgid "Path"
 msgstr "Polku"
 
-#: InvenTree/models.py:802
+#: InvenTree/models.py:785
 msgid "Markdown notes (optional)"
 msgstr ""
 
-#: InvenTree/models.py:829
+#: InvenTree/models.py:812
 msgid "Barcode Data"
 msgstr "Viivakoodin Tiedot"
 
-#: InvenTree/models.py:830
+#: InvenTree/models.py:813
 msgid "Third party barcode data"
 msgstr ""
 
-#: InvenTree/models.py:835
+#: InvenTree/models.py:818
 msgid "Barcode Hash"
 msgstr ""
 
-#: InvenTree/models.py:836
+#: InvenTree/models.py:819
 msgid "Unique hash of barcode data"
 msgstr ""
 
-#: InvenTree/models.py:881
+#: InvenTree/models.py:859
 msgid "Existing barcode found"
 msgstr ""
 
-#: InvenTree/models.py:936
+#: InvenTree/models.py:912
 msgid "Server Error"
 msgstr "Palvelinvirhe"
 
-#: InvenTree/models.py:937
+#: InvenTree/models.py:913
 msgid "An error has been logged by the server."
 msgstr ""
 
-#: InvenTree/serializers.py:60 part/models.py:3980
+#: InvenTree/serializers.py:59 part/models.py:3935
 msgid "Must be a valid number"
 msgstr "Täytyy olla kelvollinen luku"
 
-#: InvenTree/serializers.py:90 company/models.py:150
-#: company/templates/company/company_base.html:107 part/models.py:2913
+#: InvenTree/serializers.py:88 company/models.py:150
+#: company/templates/company/company_base.html:107 part/models.py:2879
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
 msgstr "Valuutta"
 
-#: InvenTree/serializers.py:93
+#: InvenTree/serializers.py:91
 msgid "Select currency from available options"
 msgstr "Valitse valuutta käytettävissä olevista vaihtoehdoista"
 
-#: InvenTree/serializers.py:368
+#: InvenTree/serializers.py:364
 msgid "Filename"
 msgstr "Tiedostonimi"
 
-#: InvenTree/serializers.py:405
+#: InvenTree/serializers.py:401
 msgid "Invalid value"
 msgstr "Virheellinen arvo"
 
-#: InvenTree/serializers.py:427
+#: InvenTree/serializers.py:423
 msgid "Data File"
 msgstr "Datatiedosto"
 
-#: InvenTree/serializers.py:428
+#: InvenTree/serializers.py:424
 msgid "Select data file for upload"
 msgstr "Valitse lähetettävä datatiedosto"
 
-#: InvenTree/serializers.py:449
+#: InvenTree/serializers.py:445
 msgid "Unsupported file type"
 msgstr "Tiedostotyyppiä ei tueta"
 
-#: InvenTree/serializers.py:455
+#: InvenTree/serializers.py:451
 msgid "File is too large"
 msgstr "Tiedosto on liian suuri"
 
-#: InvenTree/serializers.py:476
+#: InvenTree/serializers.py:472
 msgid "No columns found in file"
 msgstr ""
 
-#: InvenTree/serializers.py:479
+#: InvenTree/serializers.py:475
 msgid "No data rows found in file"
 msgstr ""
 
-#: InvenTree/serializers.py:602
+#: InvenTree/serializers.py:598
 msgid "No data rows provided"
 msgstr "Datarivejä ei annettu"
 
-#: InvenTree/serializers.py:605
+#: InvenTree/serializers.py:601
 msgid "No data columns supplied"
 msgstr "Datasarakkeita ei annettu"
 
-#: InvenTree/serializers.py:682
+#: InvenTree/serializers.py:678
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Vaadittu sarake puuttuu: '{name}'"
 
-#: InvenTree/serializers.py:691
+#: InvenTree/serializers.py:687
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Duplikaatti sarake: '{col}'"
 
-#: InvenTree/serializers.py:717
+#: InvenTree/serializers.py:712
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
 msgstr "URL"
 
-#: InvenTree/serializers.py:718
+#: InvenTree/serializers.py:713
 msgid "URL of remote image file"
 msgstr "Kuvatiedoston URL"
 
-#: InvenTree/serializers.py:732
+#: InvenTree/serializers.py:726
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Kuvien lataaminen ei ole käytössä"
 
@@ -634,7 +639,7 @@ msgstr ""
 msgid "Chinese (Traditional)"
 msgstr ""
 
-#: InvenTree/status.py:68 part/serializers.py:1001
+#: InvenTree/status.py:68 part/serializers.py:993
 msgid "Background worker check failed"
 msgstr ""
 
@@ -683,7 +688,7 @@ msgstr "Palautettu"
 msgid "In Progress"
 msgstr "Kesken"
 
-#: InvenTree/status_codes.py:42 order/models.py:1345
+#: InvenTree/status_codes.py:42 order/models.py:1329
 #: templates/js/translated/sales_order.js:1520
 #: templates/js/translated/sales_order.js:1641
 #: templates/js/translated/sales_order.js:1954
@@ -842,62 +847,62 @@ msgstr ""
 msgid "Reject"
 msgstr ""
 
-#: InvenTree/validators.py:32 InvenTree/validators.py:34
+#: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
 msgstr ""
 
-#: InvenTree/validators.py:40
+#: InvenTree/validators.py:39
 msgid "Not a valid currency code"
 msgstr ""
 
-#: InvenTree/validators.py:109 InvenTree/validators.py:125
+#: InvenTree/validators.py:106 InvenTree/validators.py:122
 msgid "Overage value must not be negative"
 msgstr ""
 
-#: InvenTree/validators.py:127
+#: InvenTree/validators.py:124
 msgid "Overage must not exceed 100%"
 msgstr ""
 
-#: InvenTree/validators.py:134
+#: InvenTree/validators.py:131
 msgid "Invalid value for overage"
 msgstr ""
 
-#: InvenTree/views.py:405 templates/InvenTree/settings/user.html:23
+#: InvenTree/views.py:403 templates/InvenTree/settings/user.html:23
 msgid "Edit User Information"
 msgstr "Muokkaa käyttäjätietoja"
 
-#: InvenTree/views.py:417 templates/InvenTree/settings/user.html:20
+#: InvenTree/views.py:415 templates/InvenTree/settings/user.html:20
 msgid "Set Password"
 msgstr "Aseta salasana"
 
-#: InvenTree/views.py:439
+#: InvenTree/views.py:437
 msgid "Password fields must match"
 msgstr "Salasanat eivät täsmää"
 
-#: InvenTree/views.py:447
+#: InvenTree/views.py:445
 msgid "Wrong password provided"
 msgstr "Virheellinen salasana"
 
-#: InvenTree/views.py:644 templates/navbar.html:157
+#: InvenTree/views.py:642 templates/navbar.html:157
 msgid "System Information"
 msgstr "Järjestelmän tiedot"
 
-#: InvenTree/views.py:651 templates/navbar.html:168
+#: InvenTree/views.py:649 templates/navbar.html:168
 msgid "About InvenTree"
 msgstr "Tietoja InvenTree:stä"
 
-#: build/api.py:243
+#: build/api.py:237
 msgid "Build must be cancelled before it can be deleted"
 msgstr ""
 
-#: build/api.py:287 part/models.py:3872 templates/js/translated/bom.js:997
+#: build/api.py:281 part/models.py:3827 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2505
 #: templates/js/translated/table_filters.js:190
 #: templates/js/translated/table_filters.js:579
 msgid "Consumable"
 msgstr ""
 
-#: build/api.py:288 part/models.py:3866 part/templates/part/upload_bom.html:58
+#: build/api.py:282 part/models.py:3821 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:1001 templates/js/translated/bom.js:1028
 #: templates/js/translated/build.js:2514
 #: templates/js/translated/table_filters.js:186
@@ -906,23 +911,23 @@ msgstr ""
 msgid "Optional"
 msgstr ""
 
-#: build/api.py:289 templates/js/translated/table_filters.js:408
+#: build/api.py:283 templates/js/translated/table_filters.js:408
 #: templates/js/translated/table_filters.js:575
 msgid "Tracked"
 msgstr ""
 
-#: build/api.py:291 part/admin.py:64 templates/js/translated/build.js:1725
+#: build/api.py:285 part/admin.py:64 templates/js/translated/build.js:1725
 #: templates/js/translated/build.js:2605
 #: templates/js/translated/sales_order.js:1926
 #: templates/js/translated/table_filters.js:567
 msgid "Allocated"
 msgstr ""
 
-#: build/api.py:301 company/models.py:772
+#: build/api.py:293 company/models.py:766
 #: company/templates/company/supplier_part.html:115
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
-#: templates/js/translated/bom.js:1157 templates/js/translated/build.js:2546
+#: templates/js/translated/bom.js:1162 templates/js/translated/build.js:2546
 #: templates/js/translated/index.js:123
 #: templates/js/translated/model_renderers.js:226
 #: templates/js/translated/part.js:689 templates/js/translated/part.js:691
@@ -960,9 +965,9 @@ msgstr ""
 msgid "Build Order Reference"
 msgstr ""
 
-#: build/models.py:160 order/models.py:372 order/models.py:778
-#: order/models.py:1100 order/models.py:1739 part/admin.py:278
-#: part/models.py:3881 part/templates/part/upload_bom.html:54
+#: build/models.py:160 order/models.py:363 order/models.py:768
+#: order/models.py:1086 order/models.py:1722 part/admin.py:274
+#: part/models.py:3836 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:26
@@ -990,13 +995,13 @@ msgid "BuildOrder to which this build is allocated"
 msgstr ""
 
 #: build/models.py:185 build/templates/build/build_base.html:98
-#: build/templates/build/detail.html:29 company/models.py:915
-#: order/models.py:1208 order/models.py:1324 order/models.py:1325
-#: part/models.py:392 part/models.py:2926 part/models.py:3040
-#: part/models.py:3180 part/models.py:3199 part/models.py:3218
-#: part/models.py:3239 part/models.py:3331 part/models.py:3616
-#: part/models.py:3739 part/models.py:3846 part/models.py:4172
-#: part/serializers.py:959 part/serializers.py:1374
+#: build/templates/build/detail.html:29 company/models.py:907
+#: order/models.py:1193 order/models.py:1308 order/models.py:1309
+#: part/models.py:392 part/models.py:2892 part/models.py:3006
+#: part/models.py:3143 part/models.py:3162 part/models.py:3181
+#: part/models.py:3202 part/models.py:3294 part/models.py:3573
+#: part/models.py:3695 part/models.py:3801 part/models.py:4124
+#: part/serializers.py:952 part/serializers.py:1365
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1007,7 +1012,7 @@ msgstr ""
 #: report/templates/report/inventree_return_order_report_base.html:24
 #: report/templates/report/inventree_slr_report.html:102
 #: report/templates/report/inventree_so_report_base.html:27
-#: stock/serializers.py:206 stock/serializers.py:587
+#: stock/serializers.py:206 stock/serializers.py:585
 #: templates/InvenTree/search.html:82
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -1052,7 +1057,7 @@ msgstr ""
 msgid "SalesOrder to which this build is allocated"
 msgstr ""
 
-#: build/models.py:207 build/serializers.py:946
+#: build/models.py:207 build/serializers.py:942
 #: templates/js/translated/build.js:1712
 #: templates/js/translated/sales_order.js:1182
 msgid "Source Location"
@@ -1094,17 +1099,17 @@ msgstr ""
 msgid "Build status code"
 msgstr ""
 
-#: build/models.py:250 build/serializers.py:277 order/serializers.py:512
-#: stock/models.py:834 stock/serializers.py:1263
+#: build/models.py:250 build/serializers.py:275 order/serializers.py:508
+#: stock/models.py:804 stock/serializers.py:1253
 #: templates/js/translated/purchase_order.js:1114
 msgid "Batch Code"
 msgstr ""
 
-#: build/models.py:254 build/serializers.py:278
+#: build/models.py:254 build/serializers.py:276
 msgid "Batch code for this build output"
 msgstr ""
 
-#: build/models.py:257 order/models.py:248 part/models.py:1043
+#: build/models.py:257 order/models.py:242 part/models.py:1035
 #: part/templates/part/part_base.html:312
 #: templates/js/translated/return_order.js:336
 #: templates/js/translated/sales_order.js:824
@@ -1119,7 +1124,7 @@ msgstr ""
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr ""
 
-#: build/models.py:265 order/models.py:422 order/models.py:1782
+#: build/models.py:265 order/models.py:413 order/models.py:1765
 #: templates/js/translated/build.js:2229
 msgid "Completion Date"
 msgstr ""
@@ -1137,10 +1142,10 @@ msgid "User who issued this build order"
 msgstr ""
 
 #: build/models.py:288 build/templates/build/build_base.html:205
-#: build/templates/build/detail.html:122 order/models.py:262
+#: build/templates/build/detail.html:122 order/models.py:256
 #: order/templates/order/order_base.html:217
 #: order/templates/order/return_order_base.html:189
-#: order/templates/order/sales_order_base.html:229 part/models.py:1047
+#: order/templates/order/sales_order_base.html:229 part/models.py:1039
 #: part/templates/part/part_base.html:392
 #: report/templates/report/inventree_build_order_base.html:158
 #: templates/js/translated/build.js:2201
@@ -1160,7 +1165,7 @@ msgstr ""
 #: order/templates/order/order_base.html:167
 #: order/templates/order/return_order_base.html:146
 #: order/templates/order/sales_order_base.html:181
-#: part/templates/part/part_base.html:385 stock/models.py:828
+#: part/templates/part/part_base.html:385 stock/models.py:798
 #: stock/templates/stock/item_base.html:201
 #: templates/js/translated/company.js:1009
 msgid "External Link"
@@ -1174,8 +1179,8 @@ msgstr ""
 msgid "Priority of this build order"
 msgstr ""
 
-#: build/models.py:309 common/models.py:119 order/admin.py:17
-#: order/models.py:237 templates/InvenTree/settings/settings_staff_js.html:146
+#: build/models.py:309 common/models.py:118 order/admin.py:17
+#: order/models.py:231 templates/InvenTree/settings/settings_staff_js.html:146
 #: templates/js/translated/build.js:2126
 #: templates/js/translated/purchase_order.js:1689
 #: templates/js/translated/return_order.js:315
@@ -1189,48 +1194,48 @@ msgstr ""
 msgid "Project code for this build order"
 msgstr ""
 
-#: build/models.py:550
+#: build/models.py:545
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr ""
 
-#: build/models.py:556
+#: build/models.py:551
 msgid "A build order has been completed"
 msgstr ""
 
-#: build/models.py:766 build/models.py:844
+#: build/models.py:761 build/models.py:836
 msgid "No build output specified"
 msgstr ""
 
-#: build/models.py:769
+#: build/models.py:764
 msgid "Build output is already completed"
 msgstr ""
 
-#: build/models.py:772
+#: build/models.py:767
 msgid "Build output does not match Build Order"
 msgstr ""
 
-#: build/models.py:848 build/serializers.py:220 build/serializers.py:259
-#: build/serializers.py:819 order/models.py:453 order/serializers.py:385
-#: order/serializers.py:507 part/serializers.py:1216 part/serializers.py:1537
-#: stock/models.py:688 stock/models.py:1482 stock/serializers.py:392
+#: build/models.py:840 build/serializers.py:218 build/serializers.py:257
+#: build/serializers.py:815 order/models.py:444 order/serializers.py:381
+#: order/serializers.py:503 part/serializers.py:1207 part/serializers.py:1529
+#: stock/models.py:658 stock/models.py:1451 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:853 build/serializers.py:225
+#: build/models.py:845 build/serializers.py:223
 msgid "Quantity cannot be greater than the output quantity"
 msgstr ""
 
-#: build/models.py:1274
+#: build/models.py:1259
 msgid "Build object"
 msgstr ""
 
-#: build/models.py:1288 build/models.py:1548 build/serializers.py:206
-#: build/serializers.py:244 build/templates/build/build_base.html:103
-#: build/templates/build/detail.html:34 common/models.py:2347
-#: order/models.py:1086 order/models.py:1660 order/serializers.py:1261
-#: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:277
-#: part/forms.py:47 part/models.py:3053 part/models.py:3862
+#: build/models.py:1273 build/models.py:1531 build/serializers.py:205
+#: build/serializers.py:242 build/templates/build/build_base.html:103
+#: build/templates/build/detail.html:34 common/models.py:2335
+#: order/models.py:1073 order/models.py:1644 order/serializers.py:1254
+#: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:273
+#: part/forms.py:47 part/models.py:3019 part/models.py:3817
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1240,7 +1245,7 @@ msgstr ""
 #: report/templates/report/inventree_so_report_base.html:29
 #: report/templates/report/inventree_test_report_base.html:90
 #: report/templates/report/inventree_test_report_base.html:170
-#: stock/admin.py:121 stock/serializers.py:383
+#: stock/admin.py:121 stock/serializers.py:381
 #: stock/templates/stock/item_base.html:288
 #: stock/templates/stock/item_base.html:296
 #: stock/templates/stock/item_base.html:343
@@ -1272,38 +1277,38 @@ msgstr ""
 msgid "Quantity"
 msgstr "Määrä"
 
-#: build/models.py:1289
+#: build/models.py:1274
 msgid "Required quantity for build order"
 msgstr ""
 
-#: build/models.py:1371
+#: build/models.py:1354
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr ""
 
-#: build/models.py:1380
+#: build/models.py:1363
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr ""
 
-#: build/models.py:1390 order/models.py:1616
+#: build/models.py:1373 order/models.py:1600
 msgid "Stock item is over-allocated"
 msgstr ""
 
-#: build/models.py:1396 order/models.py:1619
+#: build/models.py:1379 order/models.py:1603
 msgid "Allocation quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:1402
+#: build/models.py:1385
 msgid "Quantity must be 1 for serialized stock"
 msgstr ""
 
-#: build/models.py:1463
+#: build/models.py:1446
 msgid "Selected stock item does not match BOM line"
 msgstr ""
 
-#: build/models.py:1535 build/serializers.py:799 order/serializers.py:1087
-#: order/serializers.py:1108 stock/serializers.py:490 stock/serializers.py:970
-#: stock/serializers.py:1096 stock/templates/stock/item_base.html:10
+#: build/models.py:1518 build/serializers.py:795 order/serializers.py:1082
+#: order/serializers.py:1103 stock/serializers.py:488 stock/serializers.py:960
+#: stock/serializers.py:1086 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:195
 #: templates/js/translated/build.js:1726
@@ -1318,85 +1323,85 @@ msgstr ""
 msgid "Stock Item"
 msgstr "Varastotuote"
 
-#: build/models.py:1536
+#: build/models.py:1519
 msgid "Source stock item"
 msgstr ""
 
-#: build/models.py:1549
+#: build/models.py:1532
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
-#: build/models.py:1557
+#: build/models.py:1540
 msgid "Install into"
 msgstr ""
 
-#: build/models.py:1558
+#: build/models.py:1541
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:156 build/serializers.py:828
+#: build/serializers.py:155 build/serializers.py:824
 #: templates/js/translated/build.js:1303
 msgid "Build Output"
 msgstr ""
 
-#: build/serializers.py:168
+#: build/serializers.py:167
 msgid "Build output does not match the parent build"
 msgstr ""
 
-#: build/serializers.py:172
+#: build/serializers.py:171
 msgid "Output part does not match BuildOrder part"
 msgstr ""
 
-#: build/serializers.py:176
+#: build/serializers.py:175
 msgid "This build output has already been completed"
 msgstr ""
 
-#: build/serializers.py:187
+#: build/serializers.py:186
 msgid "This build output is not fully allocated"
 msgstr ""
 
-#: build/serializers.py:207 build/serializers.py:245
+#: build/serializers.py:206 build/serializers.py:243
 msgid "Enter quantity for build output"
 msgstr ""
 
-#: build/serializers.py:266
+#: build/serializers.py:264
 msgid "Integer quantity required for trackable parts"
 msgstr ""
 
-#: build/serializers.py:269
+#: build/serializers.py:267
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr ""
 
-#: build/serializers.py:284 order/serializers.py:520 order/serializers.py:1265
-#: stock/serializers.py:401 templates/js/translated/purchase_order.js:1138
+#: build/serializers.py:282 order/serializers.py:516 order/serializers.py:1258
+#: stock/serializers.py:399 templates/js/translated/purchase_order.js:1138
 #: templates/js/translated/stock.js:367 templates/js/translated/stock.js:565
 msgid "Serial Numbers"
 msgstr "Sarjanumerot"
 
-#: build/serializers.py:285
+#: build/serializers.py:283
 msgid "Enter serial numbers for build outputs"
 msgstr ""
 
-#: build/serializers.py:298
+#: build/serializers.py:296
 msgid "Auto Allocate Serial Numbers"
 msgstr ""
 
-#: build/serializers.py:299
+#: build/serializers.py:297
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:334 stock/api.py:810
+#: build/serializers.py:332 stock/api.py:788
 msgid "The following serial numbers already exist or are invalid"
 msgstr ""
 
-#: build/serializers.py:385 build/serializers.py:447 build/serializers.py:526
+#: build/serializers.py:383 build/serializers.py:445 build/serializers.py:523
 msgid "A list of build outputs must be provided"
 msgstr ""
 
-#: build/serializers.py:423 build/serializers.py:496 order/serializers.py:493
-#: order/serializers.py:612 order/serializers.py:1616 part/serializers.py:971
-#: stock/serializers.py:412 stock/serializers.py:548 stock/serializers.py:644
-#: stock/serializers.py:1131 stock/serializers.py:1402
+#: build/serializers.py:421 build/serializers.py:493 order/serializers.py:489
+#: order/serializers.py:608 order/serializers.py:1606 part/serializers.py:964
+#: stock/serializers.py:410 stock/serializers.py:546 stock/serializers.py:640
+#: stock/serializers.py:1121 stock/serializers.py:1392
 #: stock/templates/stock/item_base.html:395
 #: templates/js/translated/barcode.js:530
 #: templates/js/translated/barcode.js:778 templates/js/translated/build.js:988
@@ -1413,30 +1418,30 @@ msgstr ""
 msgid "Location"
 msgstr "Sijainti"
 
-#: build/serializers.py:424
+#: build/serializers.py:422
 msgid "Stock location for scrapped outputs"
 msgstr ""
 
-#: build/serializers.py:430
+#: build/serializers.py:428
 msgid "Discard Allocations"
 msgstr ""
 
-#: build/serializers.py:431
+#: build/serializers.py:429
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr ""
 
-#: build/serializers.py:436
+#: build/serializers.py:434
 msgid "Reason for scrapping build output(s)"
 msgstr ""
 
-#: build/serializers.py:497
+#: build/serializers.py:494
 msgid "Location for completed build outputs"
 msgstr ""
 
-#: build/serializers.py:503 build/templates/build/build_base.html:152
-#: build/templates/build/detail.html:62 order/models.py:804
-#: order/models.py:1765 order/serializers.py:530 stock/admin.py:124
-#: stock/serializers.py:703 stock/serializers.py:1270
+#: build/serializers.py:500 build/templates/build/build_base.html:152
+#: build/templates/build/detail.html:62 order/models.py:794
+#: order/models.py:1748 order/serializers.py:526 stock/admin.py:124
+#: stock/serializers.py:697 stock/serializers.py:1260
 #: stock/templates/stock/item_base.html:428
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2173
 #: templates/js/translated/purchase_order.js:1293
@@ -1448,172 +1453,168 @@ msgstr ""
 msgid "Status"
 msgstr "Tila"
 
-#: build/serializers.py:509
+#: build/serializers.py:506
 msgid "Accept Incomplete Allocation"
 msgstr ""
 
-#: build/serializers.py:510
+#: build/serializers.py:507
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr ""
 
-#: build/serializers.py:579
+#: build/serializers.py:576
 msgid "Remove Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:580
+#: build/serializers.py:577
 msgid "Subtract any stock which has already been allocated to this build"
 msgstr ""
 
-#: build/serializers.py:586
+#: build/serializers.py:583
 msgid "Remove Incomplete Outputs"
 msgstr ""
 
-#: build/serializers.py:587
+#: build/serializers.py:584
 msgid "Delete any build outputs which have not been completed"
 msgstr ""
 
-#: build/serializers.py:614
+#: build/serializers.py:611
 msgid "Not permitted"
 msgstr "Ei sallittu"
 
-#: build/serializers.py:615
+#: build/serializers.py:612
 msgid "Accept as consumed by this build order"
 msgstr ""
 
-#: build/serializers.py:616
+#: build/serializers.py:613
 msgid "Deallocate before completing this build order"
 msgstr ""
 
-#: build/serializers.py:639
+#: build/serializers.py:635
 msgid "Overallocated Stock"
 msgstr ""
 
-#: build/serializers.py:641
+#: build/serializers.py:637
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr ""
 
-#: build/serializers.py:651
+#: build/serializers.py:647
 msgid "Some stock items have been overallocated"
 msgstr ""
 
-#: build/serializers.py:656
+#: build/serializers.py:652
 msgid "Accept Unallocated"
 msgstr ""
 
-#: build/serializers.py:657
+#: build/serializers.py:653
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr ""
 
-#: build/serializers.py:667 templates/js/translated/build.js:304
+#: build/serializers.py:663 templates/js/translated/build.js:304
 msgid "Required stock has not been fully allocated"
 msgstr ""
 
-#: build/serializers.py:672 order/serializers.py:267 order/serializers.py:1155
+#: build/serializers.py:668 order/serializers.py:264 order/serializers.py:1150
 msgid "Accept Incomplete"
 msgstr ""
 
-#: build/serializers.py:673
+#: build/serializers.py:669
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr ""
 
-#: build/serializers.py:683 templates/js/translated/build.js:308
+#: build/serializers.py:679 templates/js/translated/build.js:308
 msgid "Required build quantity has not been completed"
 msgstr ""
 
-#: build/serializers.py:692 templates/js/translated/build.js:292
+#: build/serializers.py:688 templates/js/translated/build.js:292
 msgid "Build order has incomplete outputs"
 msgstr ""
 
-#: build/serializers.py:722
+#: build/serializers.py:718
 msgid "Build Line"
 msgstr ""
 
-#: build/serializers.py:732
+#: build/serializers.py:728
 msgid "Build output"
 msgstr ""
 
-#: build/serializers.py:740
+#: build/serializers.py:736
 msgid "Build output must point to the same build"
 msgstr ""
 
-#: build/serializers.py:776
+#: build/serializers.py:772
 msgid "Build Line Item"
 msgstr ""
 
-#: build/serializers.py:790
+#: build/serializers.py:786
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:805 stock/serializers.py:983
+#: build/serializers.py:801 stock/serializers.py:973
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:853 order/serializers.py:1145
+#: build/serializers.py:849 order/serializers.py:1140
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
-#: build/serializers.py:859
+#: build/serializers.py:855
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:866
+#: build/serializers.py:862
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:871
-msgid "This stock item has already been allocated to this build output"
-msgstr ""
-
-#: build/serializers.py:894 order/serializers.py:1429
+#: build/serializers.py:886 order/serializers.py:1422
 msgid "Allocation items must be provided"
 msgstr ""
 
-#: build/serializers.py:947
+#: build/serializers.py:943
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr ""
 
-#: build/serializers.py:955
+#: build/serializers.py:951
 msgid "Exclude Location"
 msgstr ""
 
-#: build/serializers.py:956
+#: build/serializers.py:952
 msgid "Exclude stock items from this selected location"
 msgstr ""
 
-#: build/serializers.py:961
+#: build/serializers.py:957
 msgid "Interchangeable Stock"
 msgstr ""
 
-#: build/serializers.py:962
+#: build/serializers.py:958
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr ""
 
-#: build/serializers.py:967
+#: build/serializers.py:963
 msgid "Substitute Stock"
 msgstr ""
 
-#: build/serializers.py:968
+#: build/serializers.py:964
 msgid "Allow allocation of substitute parts"
 msgstr ""
 
-#: build/serializers.py:973
+#: build/serializers.py:969
 msgid "Optional Items"
 msgstr ""
 
-#: build/serializers.py:974
+#: build/serializers.py:970
 msgid "Allocate optional BOM items to build order"
 msgstr ""
 
-#: build/tasks.py:150
+#: build/tasks.py:149
 msgid "Stock required for build order"
 msgstr ""
 
-#: build/tasks.py:168
+#: build/tasks.py:166
 msgid "Overdue Build Order"
 msgstr ""
 
-#: build/tasks.py:173
+#: build/tasks.py:171
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr ""
@@ -1730,8 +1731,8 @@ msgid "Stock has not been fully allocated to this Build Order"
 msgstr ""
 
 #: build/templates/build/build_base.html:161
-#: build/templates/build/detail.html:138 order/models.py:244
-#: order/models.py:1112 order/templates/order/order_base.html:186
+#: build/templates/build/detail.html:138 order/models.py:238
+#: order/models.py:1098 order/templates/order/order_base.html:186
 #: order/templates/order/return_order_base.html:165
 #: order/templates/order/sales_order_base.html:193
 #: report/templates/report/inventree_build_order_base.html:125
@@ -1768,8 +1769,8 @@ msgid "Completed Outputs"
 msgstr ""
 
 #: build/templates/build/build_base.html:191
-#: build/templates/build/detail.html:101 order/api.py:1442 order/models.py:1317
-#: order/models.py:1416 order/models.py:1564
+#: build/templates/build/detail.html:101 order/api.py:1410 order/models.py:1301
+#: order/models.py:1400 order/models.py:1548
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
 #: report/templates/report/inventree_build_order_base.html:135
@@ -1819,7 +1820,7 @@ msgstr ""
 msgid "Stock can be taken from any available location."
 msgstr ""
 
-#: build/templates/build/detail.html:49 order/models.py:1235
+#: build/templates/build/detail.html:49 order/models.py:1220
 #: templates/js/translated/purchase_order.js:2168
 msgid "Destination"
 msgstr ""
@@ -2013,1372 +2014,1372 @@ msgstr "Päivitetty"
 msgid "Timestamp of last update"
 msgstr "Viimeisimmän päivityksen aikaleima"
 
-#: common/models.py:120
+#: common/models.py:119
 msgid "Unique project code"
 msgstr ""
 
-#: common/models.py:127
+#: common/models.py:126
 msgid "Project description"
 msgstr ""
 
-#: common/models.py:646
+#: common/models.py:640
 msgid "Settings key (must be unique - case insensitive)"
 msgstr ""
 
-#: common/models.py:648
+#: common/models.py:642
 msgid "Settings value"
 msgstr ""
 
-#: common/models.py:689
+#: common/models.py:683
 msgid "Chosen value is not a valid option"
 msgstr ""
 
-#: common/models.py:706
+#: common/models.py:700
 msgid "Value must be a boolean value"
 msgstr ""
 
-#: common/models.py:717
+#: common/models.py:711
 msgid "Value must be an integer value"
 msgstr ""
 
-#: common/models.py:756
+#: common/models.py:750
 msgid "Key string must be unique"
 msgstr ""
 
-#: common/models.py:963
+#: common/models.py:955
 msgid "No group"
 msgstr "Ei ryhmää"
 
-#: common/models.py:988
+#: common/models.py:980
 msgid "An empty domain is not allowed."
 msgstr "Verkkotunnus ei saa olla tyhjä."
 
-#: common/models.py:990
+#: common/models.py:982
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
 msgstr "Virheellinen verkkotunnus: {domain}"
 
-#: common/models.py:1003
+#: common/models.py:994
 msgid "No plugin"
 msgstr ""
 
-#: common/models.py:1071
+#: common/models.py:1060
 msgid "Restart required"
 msgstr "Uudelleenkäynnistys vaaditaan"
 
-#: common/models.py:1072
+#: common/models.py:1061
 msgid "A setting has been changed which requires a server restart"
 msgstr ""
 
-#: common/models.py:1079
+#: common/models.py:1068
 msgid "Pending migrations"
 msgstr ""
 
-#: common/models.py:1080
+#: common/models.py:1069
 msgid "Number of pending database migrations"
 msgstr ""
 
-#: common/models.py:1086
+#: common/models.py:1075
 msgid "Server Instance Name"
 msgstr ""
 
-#: common/models.py:1088
+#: common/models.py:1077
 msgid "String descriptor for the server instance"
 msgstr ""
 
-#: common/models.py:1093
+#: common/models.py:1082
 msgid "Use instance name"
 msgstr ""
 
-#: common/models.py:1094
+#: common/models.py:1083
 msgid "Use the instance name in the title-bar"
 msgstr ""
 
-#: common/models.py:1100
+#: common/models.py:1089
 msgid "Restrict showing `about`"
 msgstr ""
 
-#: common/models.py:1101
+#: common/models.py:1090
 msgid "Show the `about` modal only to superusers"
 msgstr ""
 
-#: common/models.py:1107 company/models.py:101 company/models.py:102
+#: common/models.py:1096 company/models.py:101 company/models.py:102
 msgid "Company name"
 msgstr "Yrityksen nimi"
 
-#: common/models.py:1108
+#: common/models.py:1097
 msgid "Internal company name"
 msgstr "Yrityksen sisäinen nimi"
 
-#: common/models.py:1113
+#: common/models.py:1102
 msgid "Base URL"
 msgstr ""
 
-#: common/models.py:1114
+#: common/models.py:1103
 msgid "Base URL for server instance"
 msgstr ""
 
-#: common/models.py:1121
+#: common/models.py:1110
 msgid "Default Currency"
 msgstr "Oletusvaluutta"
 
-#: common/models.py:1122
+#: common/models.py:1111
 msgid "Select base currency for pricing calculations"
 msgstr ""
 
-#: common/models.py:1129
+#: common/models.py:1118
 msgid "Currency Update Interval"
 msgstr ""
 
-#: common/models.py:1130
+#: common/models.py:1119
 msgid "How often to update exchange rates (set to zero to disable)"
 msgstr ""
 
-#: common/models.py:1132 common/models.py:1196 common/models.py:1214
-#: common/models.py:1221 common/models.py:1232 common/models.py:1243
-#: common/models.py:1474 common/models.py:1498 common/models.py:1617
-#: common/models.py:1873
+#: common/models.py:1121 common/models.py:1185 common/models.py:1203
+#: common/models.py:1210 common/models.py:1221 common/models.py:1232
+#: common/models.py:1463 common/models.py:1487 common/models.py:1606
+#: common/models.py:1862
 msgid "days"
 msgstr "päivää"
 
-#: common/models.py:1140
+#: common/models.py:1129
 msgid "Currency Update Plugin"
 msgstr ""
 
-#: common/models.py:1141
+#: common/models.py:1130
 msgid "Currency update plugin to use"
 msgstr ""
 
-#: common/models.py:1147
+#: common/models.py:1136
 msgid "Download from URL"
 msgstr ""
 
-#: common/models.py:1148
+#: common/models.py:1137
 msgid "Allow download of remote images and files from external URL"
 msgstr ""
 
-#: common/models.py:1154
+#: common/models.py:1143
 msgid "Download Size Limit"
 msgstr ""
 
-#: common/models.py:1155
+#: common/models.py:1144
 msgid "Maximum allowable download size for remote image"
 msgstr ""
 
-#: common/models.py:1166
+#: common/models.py:1155
 msgid "User-agent used to download from URL"
 msgstr ""
 
-#: common/models.py:1167
+#: common/models.py:1156
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
 msgstr ""
 
-#: common/models.py:1172
+#: common/models.py:1161
 msgid "Require confirm"
 msgstr ""
 
-#: common/models.py:1173
+#: common/models.py:1162
 msgid "Require explicit user confirmation for certain action."
 msgstr ""
 
-#: common/models.py:1179
+#: common/models.py:1168
 msgid "Tree Depth"
 msgstr ""
 
-#: common/models.py:1180
+#: common/models.py:1169
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
 msgstr ""
 
-#: common/models.py:1189
+#: common/models.py:1178
 msgid "Update Check Interval"
 msgstr ""
 
-#: common/models.py:1190
+#: common/models.py:1179
 msgid "How often to check for updates (set to zero to disable)"
 msgstr ""
 
-#: common/models.py:1200
+#: common/models.py:1189
 msgid "Automatic Backup"
 msgstr "Automaattinen varmuuskopionti"
 
-#: common/models.py:1201
+#: common/models.py:1190
 msgid "Enable automatic backup of database and media files"
 msgstr "Ota käyttöön tietokannan ja mediatiedostojen automaattinen varmuuskopiointi"
 
-#: common/models.py:1207
+#: common/models.py:1196
 msgid "Auto Backup Interval"
 msgstr "Automaattisen varmuuskopioinnin aikaväli"
 
-#: common/models.py:1208
+#: common/models.py:1197
 msgid "Specify number of days between automated backup events"
 msgstr ""
 
-#: common/models.py:1218
+#: common/models.py:1207
 msgid "Task Deletion Interval"
 msgstr ""
 
-#: common/models.py:1219
+#: common/models.py:1208
 msgid "Background task results will be deleted after specified number of days"
 msgstr ""
 
-#: common/models.py:1229
+#: common/models.py:1218
 msgid "Error Log Deletion Interval"
 msgstr ""
 
-#: common/models.py:1230
+#: common/models.py:1219
 msgid "Error logs will be deleted after specified number of days"
 msgstr ""
 
-#: common/models.py:1240
+#: common/models.py:1229
 msgid "Notification Deletion Interval"
 msgstr ""
 
-#: common/models.py:1241
+#: common/models.py:1230
 msgid "User notifications will be deleted after specified number of days"
 msgstr ""
 
-#: common/models.py:1251 templates/InvenTree/settings/sidebar.html:31
+#: common/models.py:1240 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
 msgstr "Viivakoodituki"
 
-#: common/models.py:1252
+#: common/models.py:1241
 msgid "Enable barcode scanner support in the web interface"
 msgstr ""
 
-#: common/models.py:1258
+#: common/models.py:1247
 msgid "Barcode Input Delay"
 msgstr ""
 
-#: common/models.py:1259
+#: common/models.py:1248
 msgid "Barcode input processing delay time"
 msgstr ""
 
-#: common/models.py:1269
+#: common/models.py:1258
 msgid "Barcode Webcam Support"
 msgstr ""
 
-#: common/models.py:1270
+#: common/models.py:1259
 msgid "Allow barcode scanning via webcam in browser"
 msgstr ""
 
-#: common/models.py:1276
+#: common/models.py:1265
 msgid "Part Revisions"
 msgstr ""
 
-#: common/models.py:1277
+#: common/models.py:1266
 msgid "Enable revision field for Part"
 msgstr ""
 
-#: common/models.py:1283
+#: common/models.py:1272
 msgid "IPN Regex"
 msgstr ""
 
-#: common/models.py:1284
+#: common/models.py:1273
 msgid "Regular expression pattern for matching Part IPN"
 msgstr ""
 
-#: common/models.py:1288
+#: common/models.py:1277
 msgid "Allow Duplicate IPN"
 msgstr ""
 
-#: common/models.py:1289
+#: common/models.py:1278
 msgid "Allow multiple parts to share the same IPN"
 msgstr ""
 
-#: common/models.py:1295
+#: common/models.py:1284
 msgid "Allow Editing IPN"
 msgstr ""
 
-#: common/models.py:1296
+#: common/models.py:1285
 msgid "Allow changing the IPN value while editing a part"
 msgstr ""
 
-#: common/models.py:1302
+#: common/models.py:1291
 msgid "Copy Part BOM Data"
 msgstr ""
 
-#: common/models.py:1303
+#: common/models.py:1292
 msgid "Copy BOM data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:1309
+#: common/models.py:1298
 msgid "Copy Part Parameter Data"
 msgstr ""
 
-#: common/models.py:1310
+#: common/models.py:1299
 msgid "Copy parameter data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:1316
+#: common/models.py:1305
 msgid "Copy Part Test Data"
 msgstr ""
 
-#: common/models.py:1317
+#: common/models.py:1306
 msgid "Copy test data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:1323
+#: common/models.py:1312
 msgid "Copy Category Parameter Templates"
 msgstr ""
 
-#: common/models.py:1324
+#: common/models.py:1313
 msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
-#: common/models.py:1330 part/admin.py:55 part/models.py:3621
-#: report/models.py:178 templates/js/translated/table_filters.js:139
+#: common/models.py:1319 part/admin.py:55 part/models.py:3578
+#: report/models.py:176 templates/js/translated/table_filters.js:139
 #: templates/js/translated/table_filters.js:763
 msgid "Template"
 msgstr ""
 
-#: common/models.py:1331
+#: common/models.py:1320
 msgid "Parts are templates by default"
 msgstr ""
 
-#: common/models.py:1337 part/admin.py:51 part/admin.py:283 part/models.py:1001
-#: templates/js/translated/bom.js:1628
+#: common/models.py:1326 part/admin.py:51 part/admin.py:279 part/models.py:993
+#: templates/js/translated/bom.js:1633
 #: templates/js/translated/table_filters.js:330
 #: templates/js/translated/table_filters.js:717
 msgid "Assembly"
 msgstr ""
 
-#: common/models.py:1338
+#: common/models.py:1327
 msgid "Parts can be assembled from other components by default"
 msgstr ""
 
-#: common/models.py:1344 part/admin.py:52 part/models.py:1007
+#: common/models.py:1333 part/admin.py:52 part/models.py:999
 #: templates/js/translated/table_filters.js:725
 msgid "Component"
 msgstr "Komponentti"
 
-#: common/models.py:1345
+#: common/models.py:1334
 msgid "Parts can be used as sub-components by default"
 msgstr ""
 
-#: common/models.py:1351 part/admin.py:53 part/models.py:1018
+#: common/models.py:1340 part/admin.py:53 part/models.py:1010
 msgid "Purchaseable"
 msgstr "Ostettavissa"
 
-#: common/models.py:1352
+#: common/models.py:1341
 msgid "Parts are purchaseable by default"
 msgstr ""
 
-#: common/models.py:1358 part/admin.py:54 part/models.py:1023
+#: common/models.py:1347 part/admin.py:54 part/models.py:1015
 #: templates/js/translated/table_filters.js:751
 msgid "Salable"
 msgstr ""
 
-#: common/models.py:1359
+#: common/models.py:1348
 msgid "Parts are salable by default"
 msgstr ""
 
-#: common/models.py:1365 part/admin.py:56 part/models.py:1013
+#: common/models.py:1354 part/admin.py:56 part/models.py:1005
 #: templates/js/translated/table_filters.js:147
 #: templates/js/translated/table_filters.js:223
 #: templates/js/translated/table_filters.js:767
 msgid "Trackable"
 msgstr "Seurattavissa"
 
-#: common/models.py:1366
+#: common/models.py:1355
 msgid "Parts are trackable by default"
 msgstr ""
 
-#: common/models.py:1372 part/admin.py:57 part/models.py:1033
+#: common/models.py:1361 part/admin.py:57 part/models.py:1025
 #: part/templates/part/part_base.html:156
 #: templates/js/translated/table_filters.js:143
 #: templates/js/translated/table_filters.js:771
 msgid "Virtual"
 msgstr ""
 
-#: common/models.py:1373
+#: common/models.py:1362
 msgid "Parts are virtual by default"
 msgstr ""
 
-#: common/models.py:1379
+#: common/models.py:1368
 msgid "Show Import in Views"
 msgstr ""
 
-#: common/models.py:1380
+#: common/models.py:1369
 msgid "Display the import wizard in some part views"
 msgstr ""
 
-#: common/models.py:1386
+#: common/models.py:1375
 msgid "Show related parts"
 msgstr ""
 
-#: common/models.py:1387
+#: common/models.py:1376
 msgid "Display related parts for a part"
 msgstr ""
 
-#: common/models.py:1393
+#: common/models.py:1382
 msgid "Initial Stock Data"
 msgstr ""
 
-#: common/models.py:1394
+#: common/models.py:1383
 msgid "Allow creation of initial stock when adding a new part"
 msgstr ""
 
-#: common/models.py:1400 templates/js/translated/part.js:107
+#: common/models.py:1389 templates/js/translated/part.js:107
 msgid "Initial Supplier Data"
 msgstr ""
 
-#: common/models.py:1401
+#: common/models.py:1390
 msgid "Allow creation of initial supplier data when adding a new part"
 msgstr ""
 
-#: common/models.py:1407
+#: common/models.py:1396
 msgid "Part Name Display Format"
 msgstr ""
 
-#: common/models.py:1408
+#: common/models.py:1397
 msgid "Format to display the part name"
 msgstr ""
 
-#: common/models.py:1415
+#: common/models.py:1404
 msgid "Part Category Default Icon"
 msgstr ""
 
-#: common/models.py:1416
+#: common/models.py:1405
 msgid "Part category default icon (empty means no icon)"
 msgstr ""
 
-#: common/models.py:1421
+#: common/models.py:1410
 msgid "Enforce Parameter Units"
 msgstr ""
 
-#: common/models.py:1422
+#: common/models.py:1411
 msgid "If units are provided, parameter values must match the specified units"
 msgstr ""
 
-#: common/models.py:1428
+#: common/models.py:1417
 msgid "Minimum Pricing Decimal Places"
 msgstr ""
 
-#: common/models.py:1429
+#: common/models.py:1418
 msgid "Minimum number of decimal places to display when rendering pricing data"
 msgstr ""
 
-#: common/models.py:1439
+#: common/models.py:1428
 msgid "Maximum Pricing Decimal Places"
 msgstr ""
 
-#: common/models.py:1440
+#: common/models.py:1429
 msgid "Maximum number of decimal places to display when rendering pricing data"
 msgstr ""
 
-#: common/models.py:1450
+#: common/models.py:1439
 msgid "Use Supplier Pricing"
 msgstr ""
 
-#: common/models.py:1451
+#: common/models.py:1440
 msgid "Include supplier price breaks in overall pricing calculations"
 msgstr ""
 
-#: common/models.py:1457
+#: common/models.py:1446
 msgid "Purchase History Override"
 msgstr ""
 
-#: common/models.py:1458
+#: common/models.py:1447
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr ""
 
-#: common/models.py:1464
+#: common/models.py:1453
 msgid "Use Stock Item Pricing"
 msgstr ""
 
-#: common/models.py:1465
+#: common/models.py:1454
 msgid "Use pricing from manually entered stock data for pricing calculations"
 msgstr ""
 
-#: common/models.py:1471
+#: common/models.py:1460
 msgid "Stock Item Pricing Age"
 msgstr ""
 
-#: common/models.py:1472
+#: common/models.py:1461
 msgid "Exclude stock items older than this number of days from pricing calculations"
 msgstr ""
 
-#: common/models.py:1482
+#: common/models.py:1471
 msgid "Use Variant Pricing"
 msgstr ""
 
-#: common/models.py:1483
+#: common/models.py:1472
 msgid "Include variant pricing in overall pricing calculations"
 msgstr ""
 
-#: common/models.py:1489
+#: common/models.py:1478
 msgid "Active Variants Only"
 msgstr ""
 
-#: common/models.py:1490
+#: common/models.py:1479
 msgid "Only use active variant parts for calculating variant pricing"
 msgstr ""
 
-#: common/models.py:1496
+#: common/models.py:1485
 msgid "Pricing Rebuild Interval"
 msgstr ""
 
-#: common/models.py:1497
+#: common/models.py:1486
 msgid "Number of days before part pricing is automatically updated"
 msgstr ""
 
-#: common/models.py:1507
+#: common/models.py:1496
 msgid "Internal Prices"
 msgstr "Sisäiset hinnat"
 
-#: common/models.py:1508
+#: common/models.py:1497
 msgid "Enable internal prices for parts"
 msgstr ""
 
-#: common/models.py:1514
+#: common/models.py:1503
 msgid "Internal Price Override"
 msgstr "Sisäisen hinnan ohitus"
 
-#: common/models.py:1515
+#: common/models.py:1504
 msgid "If available, internal prices override price range calculations"
 msgstr ""
 
-#: common/models.py:1521
+#: common/models.py:1510
 msgid "Enable label printing"
 msgstr ""
 
-#: common/models.py:1522
+#: common/models.py:1511
 msgid "Enable label printing from the web interface"
 msgstr ""
 
-#: common/models.py:1528
+#: common/models.py:1517
 msgid "Label Image DPI"
 msgstr ""
 
-#: common/models.py:1529
+#: common/models.py:1518
 msgid "DPI resolution when generating image files to supply to label printing plugins"
 msgstr ""
 
-#: common/models.py:1538
+#: common/models.py:1527
 msgid "Enable Reports"
 msgstr ""
 
-#: common/models.py:1539
+#: common/models.py:1528
 msgid "Enable generation of reports"
 msgstr ""
 
-#: common/models.py:1545 templates/stats.html:25
+#: common/models.py:1534 templates/stats.html:25
 msgid "Debug Mode"
 msgstr ""
 
-#: common/models.py:1546
+#: common/models.py:1535
 msgid "Generate reports in debug mode (HTML output)"
 msgstr ""
 
-#: common/models.py:1552 report/models.py:199
+#: common/models.py:1541 report/models.py:197
 msgid "Page Size"
 msgstr "Sivun koko"
 
-#: common/models.py:1553
+#: common/models.py:1542
 msgid "Default page size for PDF reports"
 msgstr ""
 
-#: common/models.py:1559
+#: common/models.py:1548
 msgid "Enable Test Reports"
 msgstr ""
 
-#: common/models.py:1560
+#: common/models.py:1549
 msgid "Enable generation of test reports"
 msgstr ""
 
-#: common/models.py:1566
+#: common/models.py:1555
 msgid "Attach Test Reports"
 msgstr ""
 
-#: common/models.py:1567
+#: common/models.py:1556
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
 msgstr ""
 
-#: common/models.py:1573
+#: common/models.py:1562
 msgid "Globally Unique Serials"
 msgstr ""
 
-#: common/models.py:1574
+#: common/models.py:1563
 msgid "Serial numbers for stock items must be globally unique"
 msgstr ""
 
-#: common/models.py:1580
+#: common/models.py:1569
 msgid "Autofill Serial Numbers"
 msgstr "Täytä sarjanumerot automaattisesti"
 
-#: common/models.py:1581
+#: common/models.py:1570
 msgid "Autofill serial numbers in forms"
 msgstr ""
 
-#: common/models.py:1587
+#: common/models.py:1576
 msgid "Delete Depleted Stock"
 msgstr ""
 
-#: common/models.py:1588
+#: common/models.py:1577
 msgid "Determines default behaviour when a stock item is depleted"
 msgstr ""
 
-#: common/models.py:1594
+#: common/models.py:1583
 msgid "Batch Code Template"
 msgstr ""
 
-#: common/models.py:1595
+#: common/models.py:1584
 msgid "Template for generating default batch codes for stock items"
 msgstr ""
 
-#: common/models.py:1600
+#: common/models.py:1589
 msgid "Stock Expiry"
 msgstr ""
 
-#: common/models.py:1601
+#: common/models.py:1590
 msgid "Enable stock expiry functionality"
 msgstr ""
 
-#: common/models.py:1607
+#: common/models.py:1596
 msgid "Sell Expired Stock"
 msgstr ""
 
-#: common/models.py:1608
+#: common/models.py:1597
 msgid "Allow sale of expired stock"
 msgstr ""
 
-#: common/models.py:1614
+#: common/models.py:1603
 msgid "Stock Stale Time"
 msgstr ""
 
-#: common/models.py:1615
+#: common/models.py:1604
 msgid "Number of days stock items are considered stale before expiring"
 msgstr ""
 
-#: common/models.py:1622
+#: common/models.py:1611
 msgid "Build Expired Stock"
 msgstr ""
 
-#: common/models.py:1623
+#: common/models.py:1612
 msgid "Allow building with expired stock"
 msgstr ""
 
-#: common/models.py:1629
+#: common/models.py:1618
 msgid "Stock Ownership Control"
 msgstr ""
 
-#: common/models.py:1630
+#: common/models.py:1619
 msgid "Enable ownership control over stock locations and items"
 msgstr ""
 
-#: common/models.py:1636
+#: common/models.py:1625
 msgid "Stock Location Default Icon"
 msgstr ""
 
-#: common/models.py:1637
+#: common/models.py:1626
 msgid "Stock location default icon (empty means no icon)"
 msgstr ""
 
-#: common/models.py:1642
+#: common/models.py:1631
 msgid "Show Installed Stock Items"
 msgstr ""
 
-#: common/models.py:1643
+#: common/models.py:1632
 msgid "Display installed stock items in stock tables"
 msgstr ""
 
-#: common/models.py:1649
+#: common/models.py:1638
 msgid "Build Order Reference Pattern"
 msgstr ""
 
-#: common/models.py:1650
+#: common/models.py:1639
 msgid "Required pattern for generating Build Order reference field"
 msgstr ""
 
-#: common/models.py:1656
+#: common/models.py:1645
 msgid "Enable Return Orders"
 msgstr ""
 
-#: common/models.py:1657
+#: common/models.py:1646
 msgid "Enable return order functionality in the user interface"
 msgstr ""
 
-#: common/models.py:1663
+#: common/models.py:1652
 msgid "Return Order Reference Pattern"
 msgstr ""
 
-#: common/models.py:1664
+#: common/models.py:1653
 msgid "Required pattern for generating Return Order reference field"
 msgstr ""
 
-#: common/models.py:1670
+#: common/models.py:1659
 msgid "Edit Completed Return Orders"
 msgstr ""
 
-#: common/models.py:1671
+#: common/models.py:1660
 msgid "Allow editing of return orders after they have been completed"
 msgstr ""
 
-#: common/models.py:1677
+#: common/models.py:1666
 msgid "Sales Order Reference Pattern"
 msgstr ""
 
-#: common/models.py:1678
+#: common/models.py:1667
 msgid "Required pattern for generating Sales Order reference field"
 msgstr ""
 
-#: common/models.py:1684
+#: common/models.py:1673
 msgid "Sales Order Default Shipment"
 msgstr ""
 
-#: common/models.py:1685
+#: common/models.py:1674
 msgid "Enable creation of default shipment with sales orders"
 msgstr ""
 
-#: common/models.py:1691
+#: common/models.py:1680
 msgid "Edit Completed Sales Orders"
 msgstr ""
 
-#: common/models.py:1692
+#: common/models.py:1681
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr ""
 
-#: common/models.py:1698
+#: common/models.py:1687
 msgid "Purchase Order Reference Pattern"
 msgstr ""
 
-#: common/models.py:1699
+#: common/models.py:1688
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr ""
 
-#: common/models.py:1705
+#: common/models.py:1694
 msgid "Edit Completed Purchase Orders"
 msgstr ""
 
-#: common/models.py:1706
+#: common/models.py:1695
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr ""
 
-#: common/models.py:1713
+#: common/models.py:1702
 msgid "Enable password forgot"
 msgstr "Salli salasananpalautus"
 
-#: common/models.py:1714
+#: common/models.py:1703
 msgid "Enable password forgot function on the login pages"
 msgstr ""
 
-#: common/models.py:1720
+#: common/models.py:1709
 msgid "Enable registration"
 msgstr "Salli rekisteröinti"
 
-#: common/models.py:1721
+#: common/models.py:1710
 msgid "Enable self-registration for users on the login pages"
 msgstr ""
 
-#: common/models.py:1727
+#: common/models.py:1716
 msgid "Enable SSO"
 msgstr "Salli SSO"
 
-#: common/models.py:1728
+#: common/models.py:1717
 msgid "Enable SSO on the login pages"
 msgstr "Salli SSO kirjautumissivuilla"
 
-#: common/models.py:1734
+#: common/models.py:1723
 msgid "Enable SSO registration"
 msgstr "Salli SSO rekisteröinti"
 
-#: common/models.py:1735
+#: common/models.py:1724
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr ""
 
-#: common/models.py:1741
+#: common/models.py:1730
 msgid "Email required"
 msgstr "Sähköposti vaaditaan"
 
-#: common/models.py:1742
+#: common/models.py:1731
 msgid "Require user to supply mail on signup"
 msgstr ""
 
-#: common/models.py:1748
+#: common/models.py:1737
 msgid "Auto-fill SSO users"
 msgstr ""
 
-#: common/models.py:1749
+#: common/models.py:1738
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr ""
 
-#: common/models.py:1755
+#: common/models.py:1744
 msgid "Mail twice"
 msgstr "Sähköpostiosoite kahdesti"
 
-#: common/models.py:1756
+#: common/models.py:1745
 msgid "On signup ask users twice for their mail"
 msgstr ""
 
-#: common/models.py:1762
+#: common/models.py:1751
 msgid "Password twice"
 msgstr "Salasana kahdesti"
 
-#: common/models.py:1763
+#: common/models.py:1752
 msgid "On signup ask users twice for their password"
 msgstr ""
 
-#: common/models.py:1769
+#: common/models.py:1758
 msgid "Allowed domains"
 msgstr "Sallitut verkkotunnukset"
 
-#: common/models.py:1770
+#: common/models.py:1759
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr ""
 
-#: common/models.py:1776
+#: common/models.py:1765
 msgid "Group on signup"
 msgstr ""
 
-#: common/models.py:1777
+#: common/models.py:1766
 msgid "Group to which new users are assigned on registration"
 msgstr ""
 
-#: common/models.py:1783
+#: common/models.py:1772
 msgid "Enforce MFA"
 msgstr "Pakota MFA"
 
-#: common/models.py:1784
+#: common/models.py:1773
 msgid "Users must use multifactor security."
 msgstr ""
 
-#: common/models.py:1790
+#: common/models.py:1779
 msgid "Check plugins on startup"
 msgstr ""
 
-#: common/models.py:1791
+#: common/models.py:1780
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr ""
 
-#: common/models.py:1799
+#: common/models.py:1788
 msgid "Enable URL integration"
 msgstr ""
 
-#: common/models.py:1800
+#: common/models.py:1789
 msgid "Enable plugins to add URL routes"
 msgstr ""
 
-#: common/models.py:1807
+#: common/models.py:1796
 msgid "Enable navigation integration"
 msgstr ""
 
-#: common/models.py:1808
+#: common/models.py:1797
 msgid "Enable plugins to integrate into navigation"
 msgstr ""
 
-#: common/models.py:1815
+#: common/models.py:1804
 msgid "Enable app integration"
 msgstr ""
 
-#: common/models.py:1816
+#: common/models.py:1805
 msgid "Enable plugins to add apps"
 msgstr ""
 
-#: common/models.py:1823
+#: common/models.py:1812
 msgid "Enable schedule integration"
 msgstr ""
 
-#: common/models.py:1824
+#: common/models.py:1813
 msgid "Enable plugins to run scheduled tasks"
 msgstr ""
 
-#: common/models.py:1831
+#: common/models.py:1820
 msgid "Enable event integration"
 msgstr ""
 
-#: common/models.py:1832
+#: common/models.py:1821
 msgid "Enable plugins to respond to internal events"
 msgstr ""
 
-#: common/models.py:1839
+#: common/models.py:1828
 msgid "Enable project codes"
 msgstr ""
 
-#: common/models.py:1840
+#: common/models.py:1829
 msgid "Enable project codes for tracking projects"
 msgstr ""
 
-#: common/models.py:1846
+#: common/models.py:1835
 msgid "Stocktake Functionality"
 msgstr ""
 
-#: common/models.py:1847
+#: common/models.py:1836
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
 msgstr ""
 
-#: common/models.py:1853
+#: common/models.py:1842
 msgid "Exclude External Locations"
 msgstr ""
 
-#: common/models.py:1854
+#: common/models.py:1843
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr ""
 
-#: common/models.py:1860
+#: common/models.py:1849
 msgid "Automatic Stocktake Period"
 msgstr ""
 
-#: common/models.py:1861
+#: common/models.py:1850
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
 msgstr ""
 
-#: common/models.py:1870
+#: common/models.py:1859
 msgid "Report Deletion Interval"
 msgstr ""
 
-#: common/models.py:1871
+#: common/models.py:1860
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr ""
 
-#: common/models.py:1888 common/models.py:2318
+#: common/models.py:1877 common/models.py:2306
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
-#: common/models.py:1929
+#: common/models.py:1917
 msgid "Hide inactive parts"
 msgstr ""
 
-#: common/models.py:1930
+#: common/models.py:1918
 msgid "Hide inactive parts in results displayed on the homepage"
 msgstr ""
 
-#: common/models.py:1936
+#: common/models.py:1924
 msgid "Show subscribed parts"
 msgstr ""
 
-#: common/models.py:1937
+#: common/models.py:1925
 msgid "Show subscribed parts on the homepage"
 msgstr ""
 
-#: common/models.py:1943
+#: common/models.py:1931
 msgid "Show subscribed categories"
 msgstr ""
 
-#: common/models.py:1944
+#: common/models.py:1932
 msgid "Show subscribed part categories on the homepage"
 msgstr ""
 
-#: common/models.py:1950
+#: common/models.py:1938
 msgid "Show latest parts"
 msgstr ""
 
-#: common/models.py:1951
+#: common/models.py:1939
 msgid "Show latest parts on the homepage"
 msgstr ""
 
-#: common/models.py:1957
+#: common/models.py:1945
 msgid "Show unvalidated BOMs"
 msgstr ""
 
-#: common/models.py:1958
+#: common/models.py:1946
 msgid "Show BOMs that await validation on the homepage"
 msgstr ""
 
-#: common/models.py:1964
+#: common/models.py:1952
 msgid "Show recent stock changes"
 msgstr ""
 
-#: common/models.py:1965
+#: common/models.py:1953
 msgid "Show recently changed stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1971
+#: common/models.py:1959
 msgid "Show low stock"
 msgstr ""
 
-#: common/models.py:1972
+#: common/models.py:1960
 msgid "Show low stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1978
+#: common/models.py:1966
 msgid "Show depleted stock"
 msgstr ""
 
-#: common/models.py:1979
+#: common/models.py:1967
 msgid "Show depleted stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1985
+#: common/models.py:1973
 msgid "Show needed stock"
 msgstr ""
 
-#: common/models.py:1986
+#: common/models.py:1974
 msgid "Show stock items needed for builds on the homepage"
 msgstr ""
 
-#: common/models.py:1992
+#: common/models.py:1980
 msgid "Show expired stock"
 msgstr ""
 
-#: common/models.py:1993
+#: common/models.py:1981
 msgid "Show expired stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1999
+#: common/models.py:1987
 msgid "Show stale stock"
 msgstr ""
 
-#: common/models.py:2000
+#: common/models.py:1988
 msgid "Show stale stock items on the homepage"
 msgstr ""
 
-#: common/models.py:2006
+#: common/models.py:1994
 msgid "Show pending builds"
 msgstr ""
 
-#: common/models.py:2007
+#: common/models.py:1995
 msgid "Show pending builds on the homepage"
 msgstr ""
 
-#: common/models.py:2013
+#: common/models.py:2001
 msgid "Show overdue builds"
 msgstr ""
 
-#: common/models.py:2014
+#: common/models.py:2002
 msgid "Show overdue builds on the homepage"
 msgstr ""
 
-#: common/models.py:2020
+#: common/models.py:2008
 msgid "Show outstanding POs"
 msgstr ""
 
-#: common/models.py:2021
+#: common/models.py:2009
 msgid "Show outstanding POs on the homepage"
 msgstr ""
 
-#: common/models.py:2027
+#: common/models.py:2015
 msgid "Show overdue POs"
 msgstr ""
 
-#: common/models.py:2028
+#: common/models.py:2016
 msgid "Show overdue POs on the homepage"
 msgstr ""
 
-#: common/models.py:2034
+#: common/models.py:2022
 msgid "Show outstanding SOs"
 msgstr ""
 
-#: common/models.py:2035
+#: common/models.py:2023
 msgid "Show outstanding SOs on the homepage"
 msgstr ""
 
-#: common/models.py:2041
+#: common/models.py:2029
 msgid "Show overdue SOs"
 msgstr ""
 
-#: common/models.py:2042
+#: common/models.py:2030
 msgid "Show overdue SOs on the homepage"
 msgstr ""
 
-#: common/models.py:2048
+#: common/models.py:2036
 msgid "Show pending SO shipments"
 msgstr ""
 
-#: common/models.py:2049
+#: common/models.py:2037
 msgid "Show pending SO shipments on the homepage"
 msgstr ""
 
-#: common/models.py:2055
+#: common/models.py:2043
 msgid "Show News"
 msgstr "Näytä uutiset"
 
-#: common/models.py:2056
+#: common/models.py:2044
 msgid "Show news on the homepage"
 msgstr "Näytä uutiset kotisivulla"
 
-#: common/models.py:2062
+#: common/models.py:2050
 msgid "Inline label display"
 msgstr ""
 
-#: common/models.py:2063
+#: common/models.py:2051
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:2069
+#: common/models.py:2057
 msgid "Default label printer"
 msgstr ""
 
-#: common/models.py:2070
+#: common/models.py:2058
 msgid "Configure which label printer should be selected by default"
 msgstr ""
 
-#: common/models.py:2076
+#: common/models.py:2064
 msgid "Inline report display"
 msgstr ""
 
-#: common/models.py:2077
+#: common/models.py:2065
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:2083
+#: common/models.py:2071
 msgid "Search Parts"
 msgstr ""
 
-#: common/models.py:2084
+#: common/models.py:2072
 msgid "Display parts in search preview window"
 msgstr ""
 
-#: common/models.py:2090
+#: common/models.py:2078
 msgid "Search Supplier Parts"
 msgstr ""
 
-#: common/models.py:2091
+#: common/models.py:2079
 msgid "Display supplier parts in search preview window"
 msgstr ""
 
-#: common/models.py:2097
+#: common/models.py:2085
 msgid "Search Manufacturer Parts"
 msgstr ""
 
-#: common/models.py:2098
+#: common/models.py:2086
 msgid "Display manufacturer parts in search preview window"
 msgstr ""
 
-#: common/models.py:2104
+#: common/models.py:2092
 msgid "Hide Inactive Parts"
 msgstr ""
 
-#: common/models.py:2105
+#: common/models.py:2093
 msgid "Excluded inactive parts from search preview window"
 msgstr ""
 
-#: common/models.py:2111
+#: common/models.py:2099
 msgid "Search Categories"
 msgstr ""
 
-#: common/models.py:2112
+#: common/models.py:2100
 msgid "Display part categories in search preview window"
 msgstr ""
 
-#: common/models.py:2118
+#: common/models.py:2106
 msgid "Search Stock"
 msgstr ""
 
-#: common/models.py:2119
+#: common/models.py:2107
 msgid "Display stock items in search preview window"
 msgstr ""
 
-#: common/models.py:2125
+#: common/models.py:2113
 msgid "Hide Unavailable Stock Items"
 msgstr ""
 
-#: common/models.py:2126
+#: common/models.py:2114
 msgid "Exclude stock items which are not available from the search preview window"
 msgstr ""
 
-#: common/models.py:2132
+#: common/models.py:2120
 msgid "Search Locations"
 msgstr ""
 
-#: common/models.py:2133
+#: common/models.py:2121
 msgid "Display stock locations in search preview window"
 msgstr ""
 
-#: common/models.py:2139
+#: common/models.py:2127
 msgid "Search Companies"
 msgstr ""
 
-#: common/models.py:2140
+#: common/models.py:2128
 msgid "Display companies in search preview window"
 msgstr ""
 
-#: common/models.py:2146
+#: common/models.py:2134
 msgid "Search Build Orders"
 msgstr ""
 
-#: common/models.py:2147
+#: common/models.py:2135
 msgid "Display build orders in search preview window"
 msgstr ""
 
-#: common/models.py:2153
+#: common/models.py:2141
 msgid "Search Purchase Orders"
 msgstr ""
 
-#: common/models.py:2154
+#: common/models.py:2142
 msgid "Display purchase orders in search preview window"
 msgstr ""
 
-#: common/models.py:2160
+#: common/models.py:2148
 msgid "Exclude Inactive Purchase Orders"
 msgstr ""
 
-#: common/models.py:2161
+#: common/models.py:2149
 msgid "Exclude inactive purchase orders from search preview window"
 msgstr ""
 
-#: common/models.py:2167
+#: common/models.py:2155
 msgid "Search Sales Orders"
 msgstr ""
 
-#: common/models.py:2168
+#: common/models.py:2156
 msgid "Display sales orders in search preview window"
 msgstr ""
 
-#: common/models.py:2174
+#: common/models.py:2162
 msgid "Exclude Inactive Sales Orders"
 msgstr ""
 
-#: common/models.py:2175
+#: common/models.py:2163
 msgid "Exclude inactive sales orders from search preview window"
 msgstr ""
 
-#: common/models.py:2181
+#: common/models.py:2169
 msgid "Search Return Orders"
 msgstr ""
 
-#: common/models.py:2182
+#: common/models.py:2170
 msgid "Display return orders in search preview window"
 msgstr ""
 
-#: common/models.py:2188
+#: common/models.py:2176
 msgid "Exclude Inactive Return Orders"
 msgstr ""
 
-#: common/models.py:2189
+#: common/models.py:2177
 msgid "Exclude inactive return orders from search preview window"
 msgstr ""
 
-#: common/models.py:2195
+#: common/models.py:2183
 msgid "Search Preview Results"
 msgstr ""
 
-#: common/models.py:2196
+#: common/models.py:2184
 msgid "Number of results to show in each section of the search preview window"
 msgstr ""
 
-#: common/models.py:2202
+#: common/models.py:2190
 msgid "Regex Search"
 msgstr ""
 
-#: common/models.py:2203
+#: common/models.py:2191
 msgid "Enable regular expressions in search queries"
 msgstr ""
 
-#: common/models.py:2209
+#: common/models.py:2197
 msgid "Whole Word Search"
 msgstr ""
 
-#: common/models.py:2210
+#: common/models.py:2198
 msgid "Search queries return results for whole word matches"
 msgstr ""
 
-#: common/models.py:2216
+#: common/models.py:2204
 msgid "Show Quantity in Forms"
 msgstr ""
 
-#: common/models.py:2217
+#: common/models.py:2205
 msgid "Display available part quantity in some forms"
 msgstr ""
 
-#: common/models.py:2223
+#: common/models.py:2211
 msgid "Escape Key Closes Forms"
 msgstr ""
 
-#: common/models.py:2224
+#: common/models.py:2212
 msgid "Use the escape key to close modal forms"
 msgstr ""
 
-#: common/models.py:2230
+#: common/models.py:2218
 msgid "Fixed Navbar"
 msgstr ""
 
-#: common/models.py:2231
+#: common/models.py:2219
 msgid "The navbar position is fixed to the top of the screen"
 msgstr ""
 
-#: common/models.py:2237
+#: common/models.py:2225
 msgid "Date Format"
 msgstr ""
 
-#: common/models.py:2238
+#: common/models.py:2226
 msgid "Preferred format for displaying dates"
 msgstr ""
 
-#: common/models.py:2252 part/templates/part/detail.html:41
+#: common/models.py:2240 part/templates/part/detail.html:41
 msgid "Part Scheduling"
 msgstr ""
 
-#: common/models.py:2253
+#: common/models.py:2241
 msgid "Display part scheduling information"
 msgstr ""
 
-#: common/models.py:2259 part/templates/part/detail.html:62
+#: common/models.py:2247 part/templates/part/detail.html:62
 msgid "Part Stocktake"
 msgstr ""
 
-#: common/models.py:2260
+#: common/models.py:2248
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
 msgstr ""
 
-#: common/models.py:2266
+#: common/models.py:2254
 msgid "Table String Length"
 msgstr ""
 
-#: common/models.py:2267
+#: common/models.py:2255
 msgid "Maximimum length limit for strings displayed in table views"
 msgstr ""
 
-#: common/models.py:2276
+#: common/models.py:2264
 msgid "Default part label template"
 msgstr ""
 
-#: common/models.py:2277
+#: common/models.py:2265
 msgid "The part label template to be automatically selected"
 msgstr ""
 
-#: common/models.py:2285
+#: common/models.py:2273
 msgid "Default stock item template"
 msgstr ""
 
-#: common/models.py:2286
+#: common/models.py:2274
 msgid "The stock item label template to be automatically selected"
 msgstr ""
 
-#: common/models.py:2294
+#: common/models.py:2282
 msgid "Default stock location label template"
 msgstr ""
 
-#: common/models.py:2295
+#: common/models.py:2283
 msgid "The stock location label template to be automatically selected"
 msgstr ""
 
-#: common/models.py:2303
+#: common/models.py:2291
 msgid "Receive error reports"
 msgstr ""
 
-#: common/models.py:2304
+#: common/models.py:2292
 msgid "Receive notifications for system errors"
 msgstr ""
 
-#: common/models.py:2348
+#: common/models.py:2336
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:2355 company/serializers.py:488 order/admin.py:43
-#: order/models.py:1145 order/models.py:1954
+#: common/models.py:2343 company/serializers.py:483 order/admin.py:41
+#: order/models.py:1131 order/models.py:1933
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1880
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:738
 msgid "Price"
 msgstr "Hinta"
 
-#: common/models.py:2356
+#: common/models.py:2344
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:2516 common/models.py:2694
+#: common/models.py:2503 common/models.py:2681
 msgid "Endpoint"
 msgstr ""
 
-#: common/models.py:2517
+#: common/models.py:2504
 msgid "Endpoint at which this webhook is received"
 msgstr ""
 
-#: common/models.py:2526
+#: common/models.py:2513
 msgid "Name for this webhook"
 msgstr ""
 
-#: common/models.py:2531 part/admin.py:50 part/models.py:1028
+#: common/models.py:2518 part/admin.py:50 part/models.py:1020
 #: plugin/models.py:48 templates/js/translated/table_filters.js:135
 #: templates/js/translated/table_filters.js:219
 #: templates/js/translated/table_filters.js:488
@@ -3387,101 +3388,101 @@ msgstr ""
 msgid "Active"
 msgstr "Aktiivinen"
 
-#: common/models.py:2532
+#: common/models.py:2519
 msgid "Is this webhook active"
 msgstr ""
 
-#: common/models.py:2546
+#: common/models.py:2533
 msgid "Token"
 msgstr ""
 
-#: common/models.py:2547
+#: common/models.py:2534
 msgid "Token for access"
 msgstr ""
 
-#: common/models.py:2554
+#: common/models.py:2541
 msgid "Secret"
 msgstr "Salaisuus"
 
-#: common/models.py:2555
+#: common/models.py:2542
 msgid "Shared secret for HMAC"
 msgstr ""
 
-#: common/models.py:2661
+#: common/models.py:2648
 msgid "Message ID"
 msgstr ""
 
-#: common/models.py:2662
+#: common/models.py:2649
 msgid "Unique identifier for this message"
 msgstr ""
 
-#: common/models.py:2670
+#: common/models.py:2657
 msgid "Host"
 msgstr "Isäntä"
 
-#: common/models.py:2671
+#: common/models.py:2658
 msgid "Host from which this message was received"
 msgstr ""
 
-#: common/models.py:2678
+#: common/models.py:2665
 msgid "Header"
 msgstr ""
 
-#: common/models.py:2679
+#: common/models.py:2666
 msgid "Header of this message"
 msgstr ""
 
-#: common/models.py:2685
+#: common/models.py:2672
 msgid "Body"
 msgstr ""
 
-#: common/models.py:2686
+#: common/models.py:2673
 msgid "Body of this message"
 msgstr ""
 
-#: common/models.py:2695
+#: common/models.py:2682
 msgid "Endpoint on which this message was received"
 msgstr ""
 
-#: common/models.py:2700
+#: common/models.py:2687
 msgid "Worked on"
 msgstr ""
 
-#: common/models.py:2701
+#: common/models.py:2688
 msgid "Was the work on this message finished?"
 msgstr ""
 
-#: common/models.py:2855
+#: common/models.py:2842
 msgid "Id"
 msgstr ""
 
-#: common/models.py:2861 templates/js/translated/company.js:955
+#: common/models.py:2848 templates/js/translated/company.js:955
 #: templates/js/translated/news.js:44
 msgid "Title"
 msgstr "Otsikko"
 
-#: common/models.py:2871 templates/js/translated/news.js:60
+#: common/models.py:2858 templates/js/translated/news.js:60
 msgid "Published"
 msgstr "Julkaistu"
 
-#: common/models.py:2876 templates/InvenTree/settings/plugin_settings.html:32
+#: common/models.py:2863 templates/InvenTree/settings/plugin_settings.html:32
 #: templates/js/translated/news.js:56 templates/js/translated/plugin.js:102
 msgid "Author"
 msgstr "Julkaisija"
 
-#: common/models.py:2881 templates/js/translated/news.js:52
+#: common/models.py:2868 templates/js/translated/news.js:52
 msgid "Summary"
 msgstr "Yhteenveto"
 
-#: common/models.py:2886
+#: common/models.py:2873
 msgid "Read"
 msgstr ""
 
-#: common/models.py:2887
+#: common/models.py:2874
 msgid "Was this news item read?"
 msgstr ""
 
-#: common/models.py:2907 company/models.py:139 part/models.py:918
+#: common/models.py:2893 company/models.py:139 part/models.py:910
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report_base.html:35
@@ -3491,56 +3492,56 @@ msgstr ""
 msgid "Image"
 msgstr "Kuva"
 
-#: common/models.py:2908
+#: common/models.py:2894
 msgid "Image file"
 msgstr "Kuvatiedosto"
 
-#: common/models.py:2952
+#: common/models.py:2937
 msgid "Unit name must be a valid identifier"
 msgstr ""
 
-#: common/models.py:2974
+#: common/models.py:2959
 msgid "Unit name"
 msgstr ""
 
-#: common/models.py:2980 templates/InvenTree/settings/settings_staff_js.html:75
+#: common/models.py:2965 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
 msgstr ""
 
-#: common/models.py:2981
+#: common/models.py:2966
 msgid "Optional unit symbol"
 msgstr ""
 
-#: common/models.py:2987 templates/InvenTree/settings/settings_staff_js.html:71
+#: common/models.py:2972 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
 msgstr ""
 
-#: common/models.py:2988
+#: common/models.py:2973
 msgid "Unit definition"
 msgstr ""
 
-#: common/notifications.py:291
+#: common/notifications.py:290
 #, python-brace-format
 msgid "New {verbose_name}"
 msgstr "Uusi {verbose_name}"
 
-#: common/notifications.py:293
+#: common/notifications.py:292
 msgid "A new order has been created and assigned to you"
 msgstr ""
 
-#: common/notifications.py:299 common/notifications.py:306
+#: common/notifications.py:298 common/notifications.py:305
 msgid "Items Received"
 msgstr ""
 
-#: common/notifications.py:301
+#: common/notifications.py:300
 msgid "Items have been received against a purchase order"
 msgstr ""
 
-#: common/notifications.py:308
+#: common/notifications.py:307
 msgid "Items have been received against a return order"
 msgstr ""
 
-#: common/notifications.py:420
+#: common/notifications.py:419
 msgid "Error raised by plugin"
 msgstr ""
 
@@ -3571,7 +3572,7 @@ msgstr ""
 msgid "Parts imported"
 msgstr ""
 
-#: common/views.py:509 order/templates/order/order_wizard/match_fields.html:27
+#: common/views.py:508 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
 #: order/templates/order/order_wizard/po_upload.html:49
 #: part/templates/part/import_wizard/match_fields.html:27
@@ -3613,7 +3614,7 @@ msgid "Contact email address"
 msgstr ""
 
 #: company/models.py:125 company/templates/company/company_base.html:140
-#: order/models.py:270 order/templates/order/order_base.html:203
+#: order/models.py:264 order/templates/order/order_base.html:203
 #: order/templates/order/return_order_base.html:175
 #: order/templates/order/sales_order_base.html:215
 msgid "Contact"
@@ -3655,113 +3656,113 @@ msgstr ""
 msgid "Default currency used for this company"
 msgstr ""
 
-#: company/models.py:235 company/models.py:338
+#: company/models.py:232 company/models.py:333
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12
 #: templates/InvenTree/search.html:178 templates/js/translated/company.js:495
 msgid "Company"
 msgstr "Yritys"
 
-#: company/models.py:339
+#: company/models.py:334
 msgid "Select company"
 msgstr ""
 
-#: company/models.py:342
+#: company/models.py:337
 msgid "Address title"
 msgstr ""
 
-#: company/models.py:343
+#: company/models.py:338
 msgid "Title describing the address entry"
 msgstr ""
 
-#: company/models.py:347
+#: company/models.py:342
 msgid "Primary address"
 msgstr ""
 
-#: company/models.py:348
+#: company/models.py:343
 msgid "Set as primary address"
 msgstr ""
 
-#: company/models.py:351 templates/js/translated/company.js:904
+#: company/models.py:346 templates/js/translated/company.js:904
 #: templates/js/translated/company.js:961
 msgid "Line 1"
 msgstr ""
 
-#: company/models.py:352
+#: company/models.py:347
 msgid "Address line 1"
 msgstr ""
 
-#: company/models.py:356 templates/js/translated/company.js:905
+#: company/models.py:351 templates/js/translated/company.js:905
 #: templates/js/translated/company.js:967
 msgid "Line 2"
 msgstr ""
 
-#: company/models.py:357
+#: company/models.py:352
 msgid "Address line 2"
 msgstr ""
 
-#: company/models.py:361 company/models.py:362
+#: company/models.py:356 company/models.py:357
 #: templates/js/translated/company.js:973
 msgid "Postal code"
 msgstr ""
 
-#: company/models.py:366
+#: company/models.py:361
 msgid "City/Region"
 msgstr ""
 
-#: company/models.py:367
+#: company/models.py:362
 msgid "Postal code city/region"
 msgstr ""
 
-#: company/models.py:371
+#: company/models.py:366
 msgid "State/Province"
 msgstr ""
 
-#: company/models.py:372
+#: company/models.py:367
 msgid "State or province"
 msgstr ""
 
-#: company/models.py:376 templates/js/translated/company.js:991
+#: company/models.py:371 templates/js/translated/company.js:991
 msgid "Country"
 msgstr ""
 
-#: company/models.py:377
+#: company/models.py:372
 msgid "Address country"
 msgstr ""
 
-#: company/models.py:381
+#: company/models.py:376
 msgid "Courier shipping notes"
 msgstr ""
 
-#: company/models.py:382
+#: company/models.py:377
 msgid "Notes for shipping courier"
 msgstr ""
 
-#: company/models.py:386
+#: company/models.py:381
 msgid "Internal shipping notes"
 msgstr ""
 
-#: company/models.py:387
+#: company/models.py:382
 msgid "Shipping notes for internal use"
 msgstr ""
 
-#: company/models.py:392
+#: company/models.py:387
 msgid "Link to address information (external)"
 msgstr ""
 
-#: company/models.py:417 company/models.py:693 stock/models.py:770
+#: company/models.py:412 company/models.py:688 stock/models.py:740
 #: stock/serializers.py:205 stock/templates/stock/item_base.html:143
 #: templates/js/translated/bom.js:622
 msgid "Base Part"
 msgstr ""
 
-#: company/models.py:421 company/models.py:697
+#: company/models.py:416 company/models.py:692
 msgid "Select part"
 msgstr ""
 
-#: company/models.py:432 company/templates/company/company_base.html:77
+#: company/models.py:427 company/templates/company/company_base.html:77
 #: company/templates/company/manufacturer_part.html:90
-#: company/templates/company/supplier_part.html:146 part/serializers.py:439
+#: company/templates/company/supplier_part.html:146 part/serializers.py:440
 #: stock/templates/stock/item_base.html:208
 #: templates/js/translated/company.js:506
 #: templates/js/translated/company.js:1108
@@ -3771,12 +3772,12 @@ msgstr ""
 msgid "Manufacturer"
 msgstr "Valmistaja"
 
-#: company/models.py:433
+#: company/models.py:428
 msgid "Select manufacturer"
 msgstr "Valitse valmistaja"
 
-#: company/models.py:439 company/templates/company/manufacturer_part.html:101
-#: company/templates/company/supplier_part.html:154 part/serializers.py:445
+#: company/models.py:434 company/templates/company/manufacturer_part.html:101
+#: company/templates/company/supplier_part.html:154 part/serializers.py:446
 #: templates/js/translated/company.js:351
 #: templates/js/translated/company.js:1107
 #: templates/js/translated/company.js:1302
@@ -3786,69 +3787,71 @@ msgstr "Valitse valmistaja"
 msgid "MPN"
 msgstr ""
 
-#: company/models.py:440
+#: company/models.py:435
 msgid "Manufacturer Part Number"
 msgstr "Valmistajan osanumero"
 
-#: company/models.py:446
+#: company/models.py:441
 msgid "URL for external manufacturer part link"
 msgstr ""
 
-#: company/models.py:452
+#: company/models.py:447
 msgid "Manufacturer part description"
 msgstr ""
 
-#: company/models.py:499 company/models.py:523 company/models.py:718
+#: company/models.py:494 company/models.py:518 company/models.py:713
 #: company/templates/company/manufacturer_part.html:7
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:218
 msgid "Manufacturer Part"
 msgstr ""
 
-#: company/models.py:530
+#: company/models.py:525
 msgid "Parameter name"
 msgstr ""
 
-#: company/models.py:536
+#: company/models.py:531
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2381 templates/js/translated/company.js:1156
+#: stock/models.py:2348 templates/js/translated/company.js:1156
 #: templates/js/translated/company.js:1409 templates/js/translated/part.js:1489
 #: templates/js/translated/stock.js:1502
 msgid "Value"
 msgstr "Arvo"
 
-#: company/models.py:537
+#: company/models.py:532
 msgid "Parameter value"
 msgstr ""
 
-#: company/models.py:543 company/templates/company/supplier_part.html:169
-#: part/admin.py:40 part/models.py:992 part/models.py:3468
+#: company/models.py:538 company/templates/company/supplier_part.html:169
+#: part/admin.py:40 part/models.py:984 part/models.py:3429
 #: part/templates/part/part_base.html:286
 #: templates/js/translated/company.js:1415 templates/js/translated/part.js:1508
 #: templates/js/translated/part.js:1612 templates/js/translated/part.js:2365
 msgid "Units"
 msgstr ""
 
-#: company/models.py:544
+#: company/models.py:539
 msgid "Parameter units"
 msgstr ""
 
-#: company/models.py:638
+#: company/models.py:633
 msgid "Pack units must be compatible with the base part units"
 msgstr ""
 
-#: company/models.py:644
+#: company/models.py:639
 msgid "Pack units must be greater than zero"
 msgstr ""
 
-#: company/models.py:660
+#: company/models.py:655
 msgid "Linked manufacturer part must reference the same base part"
 msgstr ""
 
-#: company/models.py:704 company/templates/company/company_base.html:82
-#: company/templates/company/supplier_part.html:130 order/models.py:395
-#: order/templates/order/order_base.html:136 part/bom.py:285 part/bom.py:313
-#: part/serializers.py:428 stock/templates/stock/item_base.html:225
+#: company/models.py:699 company/templates/company/company_base.html:82
+#: company/templates/company/supplier_part.html:130 order/models.py:386
+#: order/templates/order/order_base.html:136 part/bom.py:284 part/bom.py:312
+#: part/serializers.py:429 plugin/builtin/suppliers/digikey.py:29
+#: plugin/builtin/suppliers/lcsc.py:30 plugin/builtin/suppliers/mouser.py:29
+#: plugin/builtin/suppliers/tme.py:30 stock/templates/stock/item_base.html:225
 #: templates/email/overdue_purchase_order.html:16
 #: templates/js/translated/company.js:350
 #: templates/js/translated/company.js:510
@@ -3859,12 +3862,12 @@ msgstr ""
 msgid "Supplier"
 msgstr "Toimittaja"
 
-#: company/models.py:705
+#: company/models.py:700
 msgid "Select supplier"
 msgstr "Valitse toimittaja"
 
-#: company/models.py:710 company/templates/company/supplier_part.html:140
-#: part/bom.py:286 part/bom.py:314 part/serializers.py:434
+#: company/models.py:705 company/templates/company/supplier_part.html:140
+#: part/bom.py:285 part/bom.py:313 part/serializers.py:435
 #: templates/js/translated/company.js:349 templates/js/translated/part.js:1783
 #: templates/js/translated/pricing.js:510
 #: templates/js/translated/purchase_order.js:1829
@@ -3872,54 +3875,54 @@ msgstr "Valitse toimittaja"
 msgid "SKU"
 msgstr "SKU"
 
-#: company/models.py:711 part/serializers.py:434
+#: company/models.py:706 part/serializers.py:435
 msgid "Supplier stock keeping unit"
 msgstr "Toimittajan varastonimike"
 
-#: company/models.py:719
+#: company/models.py:714
 msgid "Select manufacturer part"
 msgstr "Valitse valmistajan osa"
 
-#: company/models.py:725
+#: company/models.py:720
 msgid "URL for external supplier part link"
 msgstr ""
 
-#: company/models.py:731
+#: company/models.py:726
 msgid "Supplier part description"
 msgstr ""
 
-#: company/models.py:736 company/templates/company/supplier_part.html:188
-#: part/admin.py:279 part/models.py:3884 part/templates/part/upload_bom.html:59
+#: company/models.py:731 company/templates/company/supplier_part.html:188
+#: part/admin.py:275 part/models.py:3839 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
 #: report/templates/report/inventree_return_order_report_base.html:27
 #: report/templates/report/inventree_slr_report.html:105
 #: report/templates/report/inventree_so_report_base.html:32
-#: stock/serializers.py:495
+#: stock/serializers.py:493
 msgid "Note"
 msgstr "Muistiinpano"
 
-#: company/models.py:740 part/models.py:1929
+#: company/models.py:735 part/models.py:1912
 msgid "base cost"
 msgstr ""
 
-#: company/models.py:740 part/models.py:1929
+#: company/models.py:735 part/models.py:1912
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
-#: company/models.py:742 company/templates/company/supplier_part.html:161
-#: stock/admin.py:137 stock/models.py:796 stock/serializers.py:1278
+#: company/models.py:737 company/templates/company/supplier_part.html:161
+#: stock/admin.py:137 stock/models.py:766 stock/serializers.py:1268
 #: stock/templates/stock/item_base.html:241
 #: templates/js/translated/company.js:1636
 #: templates/js/translated/stock.js:2394
 msgid "Packaging"
 msgstr ""
 
-#: company/models.py:742
+#: company/models.py:737
 msgid "Part packaging"
 msgstr ""
 
-#: company/models.py:746 templates/js/translated/company.js:1641
+#: company/models.py:741 templates/js/translated/company.js:1641
 #: templates/js/translated/part.js:1817 templates/js/translated/part.js:1872
 #: templates/js/translated/purchase_order.js:311
 #: templates/js/translated/purchase_order.js:842
@@ -3929,27 +3932,27 @@ msgstr ""
 msgid "Pack Quantity"
 msgstr ""
 
-#: company/models.py:747
+#: company/models.py:742
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr ""
 
-#: company/models.py:764 part/models.py:1931
+#: company/models.py:758 part/models.py:1914
 msgid "multiple"
 msgstr ""
 
-#: company/models.py:764
+#: company/models.py:758
 msgid "Order multiple"
 msgstr ""
 
-#: company/models.py:773
+#: company/models.py:767
 msgid "Quantity available from supplier"
 msgstr ""
 
-#: company/models.py:777
+#: company/models.py:771
 msgid "Availability Updated"
 msgstr ""
 
-#: company/models.py:778
+#: company/models.py:772
 msgid "Date of last update of availability data"
 msgstr ""
 
@@ -4011,10 +4014,10 @@ msgstr ""
 msgid "Delete image"
 msgstr ""
 
-#: company/templates/company/company_base.html:87 order/models.py:792
-#: order/models.py:1753 order/templates/order/return_order_base.html:132
-#: order/templates/order/sales_order_base.html:145 stock/models.py:815
-#: stock/models.py:816 stock/serializers.py:1025
+#: company/templates/company/company_base.html:87 order/models.py:782
+#: order/models.py:1736 order/templates/order/return_order_base.html:132
+#: order/templates/order/sales_order_base.html:145 stock/models.py:785
+#: stock/models.py:786 stock/serializers.py:1015
 #: stock/templates/stock/item_base.html:406
 #: templates/email/overdue_sales_order.html:16
 #: templates/js/translated/company.js:502
@@ -4029,7 +4032,7 @@ msgstr "Asiakas"
 msgid "Uses default currency"
 msgstr "Käyttää oletusvaluuttaa"
 
-#: company/templates/company/company_base.html:119 order/models.py:279
+#: company/templates/company/company_base.html:119 order/models.py:273
 #: order/templates/order/order_base.html:210
 #: order/templates/order/return_order_base.html:182
 #: order/templates/order/sales_order_base.html:222
@@ -4193,7 +4196,7 @@ msgstr ""
 msgid "Add Address"
 msgstr ""
 
-#: company/templates/company/manufacturer_part.html:15 company/views.py:38
+#: company/templates/company/manufacturer_part.html:15 company/views.py:37
 #: templates/InvenTree/search.html:180 templates/navbar.html:49
 msgid "Manufacturers"
 msgstr ""
@@ -4224,7 +4227,7 @@ msgid "No manufacturer information available"
 msgstr ""
 
 #: company/templates/company/manufacturer_part.html:119
-#: company/templates/company/supplier_part.html:15 company/views.py:32
+#: company/templates/company/supplier_part.html:15 company/views.py:31
 #: part/admin.py:60 part/templates/part/part_sidebar.html:33
 #: templates/InvenTree/search.html:190 templates/navbar.html:48
 msgid "Suppliers"
@@ -4274,7 +4277,7 @@ msgid "Addresses"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:7
-#: company/templates/company/supplier_part.html:24 stock/models.py:779
+#: company/templates/company/supplier_part.html:24 stock/models.py:749
 #: stock/templates/stock/item_base.html:234
 #: templates/js/translated/company.js:1590
 #: templates/js/translated/purchase_order.js:758
@@ -4364,10 +4367,10 @@ msgstr ""
 msgid "Update Part Availability"
 msgstr ""
 
-#: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:224
+#: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:222
 #: part/templates/part/category.html:182
 #: part/templates/part/category_sidebar.html:17 stock/admin.py:48
-#: stock/serializers.py:688 stock/templates/stock/location.html:169
+#: stock/serializers.py:683 stock/templates/stock/location.html:169
 #: stock/templates/stock/location.html:183
 #: stock/templates/stock/location.html:195
 #: stock/templates/stock/location_sidebar.html:7
@@ -4381,28 +4384,28 @@ msgstr ""
 msgid "Supplier Part Pricing"
 msgstr ""
 
-#: company/views.py:33
+#: company/views.py:32
 msgid "New Supplier"
 msgstr "Uusi toimittaja"
 
-#: company/views.py:39
+#: company/views.py:38
 msgid "New Manufacturer"
 msgstr "Uusi valmistaja"
 
-#: company/views.py:44 templates/InvenTree/search.html:210
+#: company/views.py:43 templates/InvenTree/search.html:210
 #: templates/navbar.html:60
 msgid "Customers"
 msgstr "Asiakkaat"
 
-#: company/views.py:45
+#: company/views.py:44
 msgid "New Customer"
 msgstr "Uusi asiakas"
 
-#: company/views.py:52 templates/js/translated/search.js:192
+#: company/views.py:51 templates/js/translated/search.js:192
 msgid "Companies"
 msgstr "Yritykset"
 
-#: company/views.py:53
+#: company/views.py:52
 msgid "New Company"
 msgstr "Uusi yritys"
 
@@ -4422,7 +4425,7 @@ msgstr ""
 msgid "Label template file"
 msgstr ""
 
-#: label/models.py:141 report/models.py:314
+#: label/models.py:141 report/models.py:311
 msgid "Enabled"
 msgstr "Käytössä"
 
@@ -4446,7 +4449,7 @@ msgstr "Korkeus [mm]"
 msgid "Label height, specified in mm"
 msgstr ""
 
-#: label/models.py:161 report/models.py:307
+#: label/models.py:161 report/models.py:304
 msgid "Filename Pattern"
 msgstr ""
 
@@ -4460,8 +4463,8 @@ msgid "Query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
 #: label/models.py:289 label/models.py:330 label/models.py:358
-#: label/models.py:394 report/models.py:335 report/models.py:482
-#: report/models.py:520 report/models.py:558 report/models.py:682
+#: label/models.py:394 report/models.py:332 report/models.py:478
+#: report/models.py:516 report/models.py:554 report/models.py:675
 msgid "Filters"
 msgstr "Suodattimet"
 
@@ -4478,7 +4481,7 @@ msgstr ""
 msgid "QR code"
 msgstr "QR-koodi"
 
-#: order/admin.py:30 order/models.py:73
+#: order/admin.py:29 order/models.py:72
 #: report/templates/report/inventree_po_report_base.html:31
 #: report/templates/report/inventree_so_report_base.html:31
 #: templates/js/translated/order.js:327
@@ -4487,11 +4490,11 @@ msgstr "QR-koodi"
 msgid "Total Price"
 msgstr "Hinta yhteensä"
 
-#: order/api.py:242
+#: order/api.py:231
 msgid "No matching purchase order found"
 msgstr ""
 
-#: order/api.py:1440 order/models.py:1191 order/models.py:1275
+#: order/api.py:1408 order/models.py:1177 order/models.py:1260
 #: order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:18
 #: report/templates/report/inventree_po_report_base.html:14
@@ -4505,7 +4508,7 @@ msgstr ""
 msgid "Purchase Order"
 msgstr ""
 
-#: order/api.py:1444 order/models.py:1924 order/models.py:1970
+#: order/api.py:1412 order/models.py:1903 order/models.py:1949
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4514,192 +4517,192 @@ msgstr ""
 msgid "Return Order"
 msgstr ""
 
-#: order/api.py:1446 templates/js/translated/sales_order.js:1039
+#: order/api.py:1414 templates/js/translated/sales_order.js:1039
 msgid "Unknown"
 msgstr ""
 
-#: order/models.py:74
+#: order/models.py:73
 msgid "Total price for this order"
 msgstr ""
 
-#: order/models.py:79 order/serializers.py:50
+#: order/models.py:78 order/serializers.py:50
 msgid "Order Currency"
 msgstr "Tilauksen valuutta"
 
-#: order/models.py:81 order/serializers.py:51
+#: order/models.py:80 order/serializers.py:51
 msgid "Currency for this order (leave blank to use company default)"
 msgstr ""
 
-#: order/models.py:210
+#: order/models.py:206
 msgid "Contact does not match selected company"
 msgstr ""
 
-#: order/models.py:232
+#: order/models.py:226
 msgid "Order description (optional)"
 msgstr ""
 
-#: order/models.py:237
+#: order/models.py:231
 msgid "Select project code for this order"
 msgstr ""
 
-#: order/models.py:240 order/models.py:1107 order/models.py:1467
+#: order/models.py:234 order/models.py:1093 order/models.py:1451
 msgid "Link to external page"
 msgstr ""
 
-#: order/models.py:245
+#: order/models.py:239
 msgid "Expected date for order delivery. Order will be overdue after this date."
 msgstr ""
 
-#: order/models.py:254
+#: order/models.py:248
 msgid "Created By"
 msgstr ""
 
-#: order/models.py:261
+#: order/models.py:255
 msgid "User or group responsible for this order"
 msgstr ""
 
-#: order/models.py:271
+#: order/models.py:265
 msgid "Point of contact for this order"
 msgstr ""
 
-#: order/models.py:280
+#: order/models.py:274
 msgid "Company address for this order"
 msgstr ""
 
-#: order/models.py:373 order/models.py:779
+#: order/models.py:364 order/models.py:769
 msgid "Order reference"
 msgstr "Tilauksen viite"
 
-#: order/models.py:381 order/models.py:804
+#: order/models.py:372 order/models.py:794
 msgid "Purchase order status"
 msgstr ""
 
-#: order/models.py:396
+#: order/models.py:387
 msgid "Company from which the items are being ordered"
 msgstr ""
 
-#: order/models.py:404 order/templates/order/order_base.html:148
+#: order/models.py:395 order/templates/order/order_base.html:148
 #: templates/js/translated/purchase_order.js:1681
 msgid "Supplier Reference"
 msgstr ""
 
-#: order/models.py:404
+#: order/models.py:395
 msgid "Supplier order reference code"
 msgstr ""
 
-#: order/models.py:411
+#: order/models.py:402
 msgid "received by"
 msgstr ""
 
-#: order/models.py:416 order/models.py:1776
+#: order/models.py:407 order/models.py:1759
 msgid "Issue Date"
 msgstr ""
 
-#: order/models.py:417 order/models.py:1777
+#: order/models.py:408 order/models.py:1760
 msgid "Date order was issued"
 msgstr ""
 
-#: order/models.py:423 order/models.py:1783
+#: order/models.py:414 order/models.py:1766
 msgid "Date order was completed"
 msgstr ""
 
-#: order/models.py:458
+#: order/models.py:449
 msgid "Part supplier must match PO supplier"
 msgstr ""
 
-#: order/models.py:619
+#: order/models.py:610
 msgid "Quantity must be a positive number"
 msgstr ""
 
-#: order/models.py:793
+#: order/models.py:783
 msgid "Company to which the items are being sold"
 msgstr ""
 
-#: order/models.py:812 order/models.py:1770
+#: order/models.py:802 order/models.py:1753
 msgid "Customer Reference "
 msgstr "Asiakkaan viite "
 
-#: order/models.py:812 order/models.py:1771
+#: order/models.py:802 order/models.py:1754
 msgid "Customer order reference code"
 msgstr ""
 
-#: order/models.py:814 order/models.py:1421
+#: order/models.py:804 order/models.py:1405
 #: templates/js/translated/sales_order.js:840
 #: templates/js/translated/sales_order.js:1021
 msgid "Shipment Date"
 msgstr ""
 
-#: order/models.py:821
+#: order/models.py:811
 msgid "shipped by"
 msgstr ""
 
-#: order/models.py:870
+#: order/models.py:860
 msgid "Order cannot be completed as no parts have been assigned"
 msgstr ""
 
-#: order/models.py:874
+#: order/models.py:864
 msgid "Only an open order can be marked as complete"
 msgstr ""
 
-#: order/models.py:877 templates/js/translated/sales_order.js:503
+#: order/models.py:867 templates/js/translated/sales_order.js:503
 msgid "Order cannot be completed as there are incomplete shipments"
 msgstr ""
 
-#: order/models.py:880
+#: order/models.py:870
 msgid "Order cannot be completed as there are incomplete line items"
 msgstr ""
 
-#: order/models.py:1087
+#: order/models.py:1074
 msgid "Item quantity"
 msgstr ""
 
-#: order/models.py:1100
+#: order/models.py:1086
 msgid "Line item reference"
 msgstr ""
 
-#: order/models.py:1102
+#: order/models.py:1088
 msgid "Line item notes"
 msgstr ""
 
-#: order/models.py:1113
+#: order/models.py:1099
 msgid "Target date for this line item (leave blank to use the target date from the order)"
 msgstr ""
 
-#: order/models.py:1131
+#: order/models.py:1117
 msgid "Line item description (optional)"
 msgstr ""
 
-#: order/models.py:1136
+#: order/models.py:1122
 msgid "Context"
 msgstr ""
 
-#: order/models.py:1137
+#: order/models.py:1123
 msgid "Additional context for this line"
 msgstr ""
 
-#: order/models.py:1146
+#: order/models.py:1132
 msgid "Unit price"
 msgstr ""
 
-#: order/models.py:1176
+#: order/models.py:1162
 msgid "Supplier part must match supplier"
 msgstr ""
 
-#: order/models.py:1184
+#: order/models.py:1170
 msgid "deleted"
 msgstr ""
 
-#: order/models.py:1190 order/models.py:1275 order/models.py:1316
-#: order/models.py:1415 order/models.py:1564 order/models.py:1923
-#: order/models.py:1970 templates/js/translated/sales_order.js:1485
+#: order/models.py:1176 order/models.py:1260 order/models.py:1300
+#: order/models.py:1399 order/models.py:1548 order/models.py:1902
+#: order/models.py:1949 templates/js/translated/sales_order.js:1485
 msgid "Order"
 msgstr ""
 
-#: order/models.py:1209
+#: order/models.py:1194
 msgid "Supplier part"
 msgstr ""
 
-#: order/models.py:1216 order/templates/order/order_base.html:196
+#: order/models.py:1201 order/templates/order/order_base.html:196
 #: templates/js/translated/part.js:1865 templates/js/translated/part.js:1896
 #: templates/js/translated/purchase_order.js:1291
 #: templates/js/translated/purchase_order.js:2148
@@ -4709,342 +4712,342 @@ msgstr ""
 msgid "Received"
 msgstr "Vastaanotettu"
 
-#: order/models.py:1217
+#: order/models.py:1202
 msgid "Number of items received"
 msgstr ""
 
-#: order/models.py:1224 stock/models.py:918 stock/serializers.py:321
+#: order/models.py:1209 stock/models.py:888 stock/serializers.py:319
 #: stock/templates/stock/item_base.html:184
 #: templates/js/translated/stock.js:2281
 msgid "Purchase Price"
 msgstr ""
 
-#: order/models.py:1225
+#: order/models.py:1210
 msgid "Unit purchase price"
 msgstr ""
 
-#: order/models.py:1238
+#: order/models.py:1223
 msgid "Where does the Purchaser want this item to be stored?"
 msgstr ""
 
-#: order/models.py:1304
+#: order/models.py:1288
 msgid "Virtual part cannot be assigned to a sales order"
 msgstr ""
 
-#: order/models.py:1309
+#: order/models.py:1293
 msgid "Only salable parts can be assigned to a sales order"
 msgstr ""
 
-#: order/models.py:1335 part/templates/part/part_pricing.html:107
+#: order/models.py:1319 part/templates/part/part_pricing.html:107
 #: part/templates/part/prices.html:128 templates/js/translated/pricing.js:957
 msgid "Sale Price"
 msgstr ""
 
-#: order/models.py:1336
+#: order/models.py:1320
 msgid "Unit sale price"
 msgstr ""
 
-#: order/models.py:1346
+#: order/models.py:1330
 msgid "Shipped quantity"
 msgstr ""
 
-#: order/models.py:1422
+#: order/models.py:1406
 msgid "Date of shipment"
 msgstr ""
 
-#: order/models.py:1427 templates/js/translated/sales_order.js:1033
+#: order/models.py:1411 templates/js/translated/sales_order.js:1033
 msgid "Delivery Date"
 msgstr ""
 
-#: order/models.py:1428
+#: order/models.py:1412
 msgid "Date of delivery of shipment"
 msgstr ""
 
-#: order/models.py:1435
+#: order/models.py:1419
 msgid "Checked By"
 msgstr ""
 
-#: order/models.py:1436
+#: order/models.py:1420
 msgid "User who checked this shipment"
 msgstr ""
 
-#: order/models.py:1443 order/models.py:1642 order/serializers.py:1276
-#: order/serializers.py:1404 templates/js/translated/model_renderers.js:446
+#: order/models.py:1427 order/models.py:1626 order/serializers.py:1269
+#: order/serializers.py:1397 templates/js/translated/model_renderers.js:446
 msgid "Shipment"
 msgstr ""
 
-#: order/models.py:1444
+#: order/models.py:1428
 msgid "Shipment number"
 msgstr ""
 
-#: order/models.py:1452
+#: order/models.py:1436
 msgid "Tracking Number"
 msgstr "Seurantakoodi"
 
-#: order/models.py:1453
+#: order/models.py:1437
 msgid "Shipment tracking information"
 msgstr ""
 
-#: order/models.py:1460
+#: order/models.py:1444
 msgid "Invoice Number"
 msgstr "Laskunumero"
 
-#: order/models.py:1461
+#: order/models.py:1445
 msgid "Reference number for associated invoice"
 msgstr ""
 
-#: order/models.py:1483
+#: order/models.py:1467
 msgid "Shipment has already been sent"
 msgstr ""
 
-#: order/models.py:1486
+#: order/models.py:1470
 msgid "Shipment has no allocated stock items"
 msgstr ""
 
-#: order/models.py:1599 order/models.py:1601
+#: order/models.py:1583 order/models.py:1585
 msgid "Stock item has not been assigned"
 msgstr ""
 
-#: order/models.py:1607
+#: order/models.py:1591
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr ""
 
-#: order/models.py:1609
+#: order/models.py:1593
 msgid "Cannot allocate stock to a line without a part"
 msgstr ""
 
-#: order/models.py:1612
+#: order/models.py:1596
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr ""
 
-#: order/models.py:1622 order/serializers.py:1138
+#: order/models.py:1606 order/serializers.py:1133
 msgid "Quantity must be 1 for serialized stock item"
 msgstr ""
 
-#: order/models.py:1625
+#: order/models.py:1609
 msgid "Sales order does not match shipment"
 msgstr ""
 
-#: order/models.py:1626
+#: order/models.py:1610
 msgid "Shipment does not match sales order"
 msgstr ""
 
-#: order/models.py:1634
+#: order/models.py:1618
 msgid "Line"
 msgstr ""
 
-#: order/models.py:1643
+#: order/models.py:1627
 msgid "Sales order shipment reference"
 msgstr ""
 
-#: order/models.py:1656 order/models.py:1931
+#: order/models.py:1640 order/models.py:1910
 #: templates/js/translated/return_order.js:719
 msgid "Item"
 msgstr ""
 
-#: order/models.py:1657
+#: order/models.py:1641
 msgid "Select stock item to allocate"
 msgstr ""
 
-#: order/models.py:1660
+#: order/models.py:1644
 msgid "Enter stock allocation quantity"
 msgstr ""
 
-#: order/models.py:1740
+#: order/models.py:1723
 msgid "Return Order reference"
 msgstr ""
 
-#: order/models.py:1754
+#: order/models.py:1737
 msgid "Company from which items are being returned"
 msgstr ""
 
-#: order/models.py:1765
+#: order/models.py:1748
 msgid "Return order status"
 msgstr ""
 
-#: order/models.py:1916
+#: order/models.py:1895
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr ""
 
-#: order/models.py:1932
+#: order/models.py:1911
 msgid "Select item to return from customer"
 msgstr ""
 
-#: order/models.py:1937
+#: order/models.py:1916
 msgid "Received Date"
 msgstr ""
 
-#: order/models.py:1938
+#: order/models.py:1917
 msgid "The date this this return item was received"
 msgstr ""
 
-#: order/models.py:1949 templates/js/translated/return_order.js:730
+#: order/models.py:1928 templates/js/translated/return_order.js:730
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr ""
 
-#: order/models.py:1949
+#: order/models.py:1928
 msgid "Outcome for this line item"
 msgstr ""
 
-#: order/models.py:1955
+#: order/models.py:1934
 msgid "Cost associated with return or repair for this line item"
 msgstr ""
 
-#: order/serializers.py:253
+#: order/serializers.py:250
 msgid "Order cannot be cancelled"
 msgstr ""
 
-#: order/serializers.py:268 order/serializers.py:1156
+#: order/serializers.py:265 order/serializers.py:1151
 msgid "Allow order to be closed with incomplete line items"
 msgstr ""
 
-#: order/serializers.py:279 order/serializers.py:1167
+#: order/serializers.py:275 order/serializers.py:1161
 msgid "Order has incomplete line items"
 msgstr ""
 
-#: order/serializers.py:392
+#: order/serializers.py:388
 msgid "Order is not open"
 msgstr ""
 
-#: order/serializers.py:410
+#: order/serializers.py:406
 msgid "Purchase price currency"
 msgstr ""
 
-#: order/serializers.py:428
+#: order/serializers.py:424
 msgid "Supplier part must be specified"
 msgstr ""
 
-#: order/serializers.py:433
+#: order/serializers.py:429
 msgid "Purchase order must be specified"
 msgstr ""
 
-#: order/serializers.py:439
+#: order/serializers.py:435
 msgid "Supplier must match purchase order"
 msgstr ""
 
-#: order/serializers.py:440
+#: order/serializers.py:436
 msgid "Purchase order must match supplier"
 msgstr ""
 
-#: order/serializers.py:478 order/serializers.py:1244
+#: order/serializers.py:474 order/serializers.py:1237
 msgid "Line Item"
 msgstr ""
 
-#: order/serializers.py:484
+#: order/serializers.py:480
 msgid "Line item does not match purchase order"
 msgstr ""
 
-#: order/serializers.py:494 order/serializers.py:613 order/serializers.py:1617
+#: order/serializers.py:490 order/serializers.py:609 order/serializers.py:1607
 msgid "Select destination location for received items"
 msgstr ""
 
-#: order/serializers.py:513 templates/js/translated/purchase_order.js:1115
+#: order/serializers.py:509 templates/js/translated/purchase_order.js:1115
 msgid "Enter batch code for incoming stock items"
 msgstr ""
 
-#: order/serializers.py:521 templates/js/translated/purchase_order.js:1139
+#: order/serializers.py:517 templates/js/translated/purchase_order.js:1139
 msgid "Enter serial numbers for incoming stock items"
 msgstr ""
 
-#: order/serializers.py:534 templates/js/translated/barcode.js:52
+#: order/serializers.py:530 templates/js/translated/barcode.js:52
 msgid "Barcode"
 msgstr "Viivakoodi"
 
-#: order/serializers.py:535
+#: order/serializers.py:531
 msgid "Scanned barcode"
 msgstr ""
 
-#: order/serializers.py:551
+#: order/serializers.py:547
 msgid "Barcode is already in use"
 msgstr ""
 
-#: order/serializers.py:575
+#: order/serializers.py:571
 msgid "An integer quantity must be provided for trackable parts"
 msgstr ""
 
-#: order/serializers.py:629 order/serializers.py:1632
+#: order/serializers.py:625 order/serializers.py:1621
 msgid "Line items must be provided"
 msgstr ""
 
-#: order/serializers.py:646
+#: order/serializers.py:642
 msgid "Destination location must be specified"
 msgstr ""
 
-#: order/serializers.py:657
+#: order/serializers.py:653
 msgid "Supplied barcode values must be unique"
 msgstr ""
 
-#: order/serializers.py:978
+#: order/serializers.py:973
 msgid "Sale price currency"
 msgstr ""
 
-#: order/serializers.py:1035
+#: order/serializers.py:1030
 msgid "No shipment details provided"
 msgstr ""
 
-#: order/serializers.py:1099 order/serializers.py:1253
+#: order/serializers.py:1094 order/serializers.py:1246
 msgid "Line item is not associated with this order"
 msgstr ""
 
-#: order/serializers.py:1121
+#: order/serializers.py:1116
 msgid "Quantity must be positive"
 msgstr ""
 
-#: order/serializers.py:1266
+#: order/serializers.py:1259
 msgid "Enter serial numbers to allocate"
 msgstr ""
 
-#: order/serializers.py:1288 order/serializers.py:1412
+#: order/serializers.py:1281 order/serializers.py:1405
 msgid "Shipment has already been shipped"
 msgstr ""
 
-#: order/serializers.py:1291 order/serializers.py:1415
+#: order/serializers.py:1284 order/serializers.py:1408
 msgid "Shipment is not associated with this order"
 msgstr ""
 
-#: order/serializers.py:1345
+#: order/serializers.py:1338
 msgid "No match found for the following serial numbers"
 msgstr ""
 
-#: order/serializers.py:1355
+#: order/serializers.py:1348
 msgid "The following serial numbers are already allocated"
 msgstr ""
 
-#: order/serializers.py:1583
+#: order/serializers.py:1574
 msgid "Return order line item"
 msgstr ""
 
-#: order/serializers.py:1590
+#: order/serializers.py:1580
 msgid "Line item does not match return order"
 msgstr ""
 
-#: order/serializers.py:1593
+#: order/serializers.py:1583
 msgid "Line item has already been received"
 msgstr ""
 
-#: order/serializers.py:1625
+#: order/serializers.py:1614
 msgid "Items can only be received against orders which are in progress"
 msgstr ""
 
-#: order/serializers.py:1706
+#: order/serializers.py:1693
 msgid "Line price currency"
 msgstr ""
 
-#: order/tasks.py:27
+#: order/tasks.py:26
 msgid "Overdue Purchase Order"
 msgstr ""
 
-#: order/tasks.py:32
+#: order/tasks.py:31
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
 msgstr ""
 
-#: order/tasks.py:90
+#: order/tasks.py:87
 msgid "Overdue Sales Order"
 msgstr ""
 
-#: order/tasks.py:95
+#: order/tasks.py:92
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
 msgstr ""
@@ -5401,7 +5404,7 @@ msgid "Pending Shipments"
 msgstr ""
 
 #: order/templates/order/sales_order_detail.html:71
-#: templates/js/translated/bom.js:1266 templates/js/translated/filters.js:296
+#: templates/js/translated/bom.js:1271 templates/js/translated/filters.js:296
 msgid "Actions"
 msgstr "Toiminnot"
 
@@ -5431,47 +5434,47 @@ msgstr ""
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
-#: part/admin.py:33 part/admin.py:273 part/models.py:3743 part/stocktake.py:219
+#: part/admin.py:33 part/admin.py:269 part/models.py:3699 part/stocktake.py:217
 #: stock/admin.py:119
 msgid "Part ID"
 msgstr ""
 
-#: part/admin.py:34 part/admin.py:275 part/models.py:3747 part/stocktake.py:220
+#: part/admin.py:34 part/admin.py:271 part/models.py:3703 part/stocktake.py:218
 #: stock/admin.py:120
 msgid "Part Name"
 msgstr ""
 
-#: part/admin.py:35 part/stocktake.py:221
+#: part/admin.py:35 part/stocktake.py:219
 msgid "Part Description"
 msgstr ""
 
-#: part/admin.py:36 part/models.py:893 part/templates/part/part_base.html:271
+#: part/admin.py:36 part/models.py:885 part/templates/part/part_base.html:271
 #: report/templates/report/inventree_slr_report.html:103
 #: templates/js/translated/part.js:1223 templates/js/translated/part.js:2336
 #: templates/js/translated/stock.js:2006
 msgid "IPN"
 msgstr ""
 
-#: part/admin.py:37 part/models.py:900 part/templates/part/part_base.html:279
-#: report/models.py:191 templates/js/translated/part.js:1228
+#: part/admin.py:37 part/models.py:892 part/templates/part/part_base.html:279
+#: report/models.py:189 templates/js/translated/part.js:1228
 #: templates/js/translated/part.js:2342
 msgid "Revision"
 msgstr ""
 
-#: part/admin.py:38 part/admin.py:198 part/models.py:879
+#: part/admin.py:38 part/admin.py:195 part/models.py:871
 #: part/templates/part/category.html:93 part/templates/part/part_base.html:300
 msgid "Keywords"
 msgstr "Avainsanat"
 
-#: part/admin.py:42 part/admin.py:192 part/stocktake.py:222
+#: part/admin.py:42 part/admin.py:189 part/stocktake.py:220
 msgid "Category ID"
 msgstr ""
 
-#: part/admin.py:43 part/admin.py:193 part/stocktake.py:223
+#: part/admin.py:43 part/admin.py:190 part/stocktake.py:221
 msgid "Category Name"
 msgstr ""
 
-#: part/admin.py:44 part/admin.py:197
+#: part/admin.py:44 part/admin.py:194
 msgid "Default Location ID"
 msgstr ""
 
@@ -5479,11 +5482,11 @@ msgstr ""
 msgid "Default Supplier ID"
 msgstr ""
 
-#: part/admin.py:46 part/models.py:868 part/templates/part/part_base.html:179
+#: part/admin.py:46 part/models.py:860 part/templates/part/part_base.html:179
 msgid "Variant Of"
 msgstr ""
 
-#: part/admin.py:47 part/models.py:985 part/templates/part/part_base.html:205
+#: part/admin.py:47 part/models.py:977 part/templates/part/part_base.html:205
 msgid "Minimum Stock"
 msgstr ""
 
@@ -5493,8 +5496,8 @@ msgstr ""
 msgid "In Stock"
 msgstr ""
 
-#: part/admin.py:62 part/bom.py:178 part/templates/part/part_base.html:212
-#: templates/js/translated/bom.js:1197 templates/js/translated/build.js:2597
+#: part/admin.py:62 part/bom.py:177 part/templates/part/part_base.html:212
+#: templates/js/translated/bom.js:1202 templates/js/translated/build.js:2597
 #: templates/js/translated/part.js:706 templates/js/translated/part.js:2143
 #: templates/js/translated/table_filters.js:170
 msgid "On Order"
@@ -5509,28 +5512,28 @@ msgstr ""
 msgid "Building"
 msgstr ""
 
-#: part/admin.py:66 part/models.py:2991 templates/js/translated/part.js:966
+#: part/admin.py:66 part/models.py:2957 templates/js/translated/part.js:966
 msgid "Minimum Cost"
 msgstr ""
 
-#: part/admin.py:67 part/models.py:2997 templates/js/translated/part.js:976
+#: part/admin.py:67 part/models.py:2963 templates/js/translated/part.js:976
 msgid "Maximum Cost"
 msgstr ""
 
-#: part/admin.py:195 part/admin.py:270 stock/admin.py:43 stock/admin.py:134
+#: part/admin.py:192 part/admin.py:266 stock/admin.py:43 stock/admin.py:134
 msgid "Parent ID"
 msgstr ""
 
-#: part/admin.py:196 part/admin.py:272 stock/admin.py:44
+#: part/admin.py:193 part/admin.py:268 stock/admin.py:44
 msgid "Parent Name"
 msgstr ""
 
-#: part/admin.py:199 part/templates/part/category.html:87
+#: part/admin.py:196 part/templates/part/category.html:87
 #: part/templates/part/category.html:100
 msgid "Category Path"
 msgstr ""
 
-#: part/admin.py:202 part/models.py:393 part/serializers.py:337
+#: part/admin.py:199 part/models.py:393 part/serializers.py:339
 #: part/templates/part/cat_link.html:3 part/templates/part/category.html:23
 #: part/templates/part/category.html:140 part/templates/part/category.html:160
 #: part/templates/part/category_sidebar.html:9
@@ -5541,70 +5544,70 @@ msgstr ""
 msgid "Parts"
 msgstr ""
 
-#: part/admin.py:265
+#: part/admin.py:261
 msgid "BOM Level"
 msgstr ""
 
-#: part/admin.py:267
+#: part/admin.py:263
 msgid "BOM Item ID"
 msgstr ""
 
-#: part/admin.py:271
+#: part/admin.py:267
 msgid "Parent IPN"
 msgstr ""
 
-#: part/admin.py:274 part/models.py:3751
+#: part/admin.py:270 part/models.py:3707
 msgid "Part IPN"
 msgstr ""
 
-#: part/admin.py:280 templates/js/translated/pricing.js:358
+#: part/admin.py:276 templates/js/translated/pricing.js:358
 #: templates/js/translated/pricing.js:1024
 msgid "Minimum Price"
 msgstr ""
 
-#: part/admin.py:281 templates/js/translated/pricing.js:353
+#: part/admin.py:277 templates/js/translated/pricing.js:353
 #: templates/js/translated/pricing.js:1032
 msgid "Maximum Price"
 msgstr ""
 
-#: part/api.py:509
+#: part/api.py:505
 msgid "Incoming Purchase Order"
 msgstr ""
 
-#: part/api.py:529
+#: part/api.py:525
 msgid "Outgoing Sales Order"
 msgstr ""
 
-#: part/api.py:547
+#: part/api.py:543
 msgid "Stock produced by Build Order"
 msgstr ""
 
-#: part/api.py:633
+#: part/api.py:629
 msgid "Stock required for Build Order"
 msgstr ""
 
-#: part/api.py:781
+#: part/api.py:774
 msgid "Valid"
 msgstr ""
 
-#: part/api.py:782
+#: part/api.py:775
 msgid "Validate entire Bill of Materials"
 msgstr ""
 
-#: part/api.py:788
+#: part/api.py:781
 msgid "This option must be selected"
 msgstr ""
 
-#: part/bom.py:175 part/models.py:128 part/models.py:927
+#: part/bom.py:174 part/models.py:128 part/models.py:919
 #: part/templates/part/category.html:115 part/templates/part/part_base.html:369
 msgid "Default Location"
 msgstr ""
 
-#: part/bom.py:176 templates/email/low_stock_notification.html:16
+#: part/bom.py:175 templates/email/low_stock_notification.html:16
 msgid "Total Stock"
 msgstr ""
 
-#: part/bom.py:177 part/templates/part/part_base.html:194
+#: part/bom.py:176 part/templates/part/part_base.html:194
 #: templates/js/translated/sales_order.js:1890
 msgid "Available Stock"
 msgstr ""
@@ -5613,7 +5616,7 @@ msgstr ""
 msgid "Input quantity for price calculation"
 msgstr ""
 
-#: part/models.py:76 part/models.py:3692 part/templates/part/category.html:16
+#: part/models.py:76 part/models.py:3648 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr ""
@@ -5659,62 +5662,62 @@ msgstr "Kuvake (valinnainen)"
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
 msgstr ""
 
-#: part/models.py:479
+#: part/models.py:478
 msgid "Invalid choice for parent part"
 msgstr ""
 
-#: part/models.py:521 part/models.py:533
+#: part/models.py:520 part/models.py:532
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
 msgstr ""
 
-#: part/models.py:605
+#: part/models.py:602
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
 msgstr ""
 
-#: part/models.py:676
+#: part/models.py:672
 msgid "Stock item with this serial number already exists"
 msgstr ""
 
-#: part/models.py:807
+#: part/models.py:799
 msgid "Duplicate IPN not allowed in part settings"
 msgstr ""
 
-#: part/models.py:812
+#: part/models.py:804
 msgid "Part with this Name, IPN and Revision already exists."
 msgstr ""
 
-#: part/models.py:826
+#: part/models.py:818
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr ""
 
-#: part/models.py:850 part/models.py:3748
+#: part/models.py:842 part/models.py:3704
 msgid "Part name"
 msgstr ""
 
-#: part/models.py:856
+#: part/models.py:848
 msgid "Is Template"
 msgstr ""
 
-#: part/models.py:857
+#: part/models.py:849
 msgid "Is this part a template part?"
 msgstr ""
 
-#: part/models.py:867
+#: part/models.py:859
 msgid "Is this part a variant of another part?"
 msgstr ""
 
-#: part/models.py:874
+#: part/models.py:866
 msgid "Part description (optional)"
 msgstr ""
 
-#: part/models.py:880
+#: part/models.py:872
 msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
-#: part/models.py:887 part/models.py:3259 part/models.py:3691
-#: part/serializers.py:350 part/serializers.py:965
+#: part/models.py:879 part/models.py:3222 part/models.py:3647
+#: part/serializers.py:352 part/serializers.py:958
 #: part/templates/part/part_base.html:262
 #: templates/InvenTree/settings/settings_staff_js.html:280
 #: templates/js/translated/notification.js:60
@@ -5722,249 +5725,249 @@ msgstr ""
 msgid "Category"
 msgstr "Kategoria"
 
-#: part/models.py:888
+#: part/models.py:880
 msgid "Part category"
 msgstr ""
 
-#: part/models.py:894
+#: part/models.py:886
 msgid "Internal Part Number"
 msgstr ""
 
-#: part/models.py:899
+#: part/models.py:891
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:925
+#: part/models.py:917
 msgid "Where is this item normally stored?"
 msgstr ""
 
-#: part/models.py:970 part/templates/part/part_base.html:378
+#: part/models.py:962 part/templates/part/part_base.html:378
 msgid "Default Supplier"
 msgstr ""
 
-#: part/models.py:971
+#: part/models.py:963
 msgid "Default supplier part"
 msgstr ""
 
-#: part/models.py:978
+#: part/models.py:970
 msgid "Default Expiry"
 msgstr ""
 
-#: part/models.py:979
+#: part/models.py:971
 msgid "Expiry time (in days) for stock items of this part"
 msgstr ""
 
-#: part/models.py:986
+#: part/models.py:978
 msgid "Minimum allowed stock level"
 msgstr ""
 
-#: part/models.py:993
+#: part/models.py:985
 msgid "Units of measure for this part"
 msgstr ""
 
-#: part/models.py:1002
+#: part/models.py:994
 msgid "Can this part be built from other parts?"
 msgstr ""
 
-#: part/models.py:1008
+#: part/models.py:1000
 msgid "Can this part be used to build other parts?"
 msgstr ""
 
-#: part/models.py:1014
+#: part/models.py:1006
 msgid "Does this part have tracking for unique items?"
 msgstr ""
 
-#: part/models.py:1019
+#: part/models.py:1011
 msgid "Can this part be purchased from external suppliers?"
 msgstr ""
 
-#: part/models.py:1024
+#: part/models.py:1016
 msgid "Can this part be sold to customers?"
 msgstr ""
 
-#: part/models.py:1029
+#: part/models.py:1021
 msgid "Is this part active?"
 msgstr ""
 
-#: part/models.py:1034
+#: part/models.py:1026
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr ""
 
-#: part/models.py:1036
+#: part/models.py:1028
 msgid "BOM checksum"
 msgstr ""
 
-#: part/models.py:1036
+#: part/models.py:1028
 msgid "Stored BOM checksum"
 msgstr ""
 
-#: part/models.py:1039
+#: part/models.py:1031
 msgid "BOM checked by"
 msgstr ""
 
-#: part/models.py:1041
+#: part/models.py:1033
 msgid "BOM checked date"
 msgstr ""
 
-#: part/models.py:1045
+#: part/models.py:1037
 msgid "Creation User"
 msgstr ""
 
-#: part/models.py:1047
+#: part/models.py:1039
 msgid "User responsible for this part"
 msgstr ""
 
-#: part/models.py:1051 part/templates/part/part_base.html:341
+#: part/models.py:1043 part/templates/part/part_base.html:341
 #: stock/templates/stock/item_base.html:452
 #: templates/js/translated/part.js:2466
 msgid "Last Stocktake"
 msgstr ""
 
-#: part/models.py:1931
+#: part/models.py:1914
 msgid "Sell multiple"
 msgstr ""
 
-#: part/models.py:2914
+#: part/models.py:2880
 msgid "Currency used to cache pricing calculations"
 msgstr ""
 
-#: part/models.py:2931
+#: part/models.py:2897
 msgid "Minimum BOM Cost"
 msgstr ""
 
-#: part/models.py:2932
+#: part/models.py:2898
 msgid "Minimum cost of component parts"
 msgstr ""
 
-#: part/models.py:2937
+#: part/models.py:2903
 msgid "Maximum BOM Cost"
 msgstr ""
 
-#: part/models.py:2938
+#: part/models.py:2904
 msgid "Maximum cost of component parts"
 msgstr ""
 
-#: part/models.py:2943
+#: part/models.py:2909
 msgid "Minimum Purchase Cost"
 msgstr ""
 
-#: part/models.py:2944
+#: part/models.py:2910
 msgid "Minimum historical purchase cost"
 msgstr ""
 
-#: part/models.py:2949
+#: part/models.py:2915
 msgid "Maximum Purchase Cost"
 msgstr ""
 
-#: part/models.py:2950
+#: part/models.py:2916
 msgid "Maximum historical purchase cost"
 msgstr ""
 
-#: part/models.py:2955
+#: part/models.py:2921
 msgid "Minimum Internal Price"
 msgstr ""
 
-#: part/models.py:2956
+#: part/models.py:2922
 msgid "Minimum cost based on internal price breaks"
 msgstr ""
 
-#: part/models.py:2961
+#: part/models.py:2927
 msgid "Maximum Internal Price"
 msgstr ""
 
-#: part/models.py:2962
+#: part/models.py:2928
 msgid "Maximum cost based on internal price breaks"
 msgstr ""
 
-#: part/models.py:2967
+#: part/models.py:2933
 msgid "Minimum Supplier Price"
 msgstr ""
 
-#: part/models.py:2968
+#: part/models.py:2934
 msgid "Minimum price of part from external suppliers"
 msgstr ""
 
-#: part/models.py:2973
+#: part/models.py:2939
 msgid "Maximum Supplier Price"
 msgstr ""
 
-#: part/models.py:2974
+#: part/models.py:2940
 msgid "Maximum price of part from external suppliers"
 msgstr ""
 
-#: part/models.py:2979
+#: part/models.py:2945
 msgid "Minimum Variant Cost"
 msgstr ""
 
-#: part/models.py:2980
+#: part/models.py:2946
 msgid "Calculated minimum cost of variant parts"
 msgstr ""
 
-#: part/models.py:2985
+#: part/models.py:2951
 msgid "Maximum Variant Cost"
 msgstr ""
 
-#: part/models.py:2986
+#: part/models.py:2952
 msgid "Calculated maximum cost of variant parts"
 msgstr ""
 
-#: part/models.py:2992
+#: part/models.py:2958
 msgid "Calculated overall minimum cost"
 msgstr ""
 
-#: part/models.py:2998
+#: part/models.py:2964
 msgid "Calculated overall maximum cost"
 msgstr ""
 
-#: part/models.py:3003
+#: part/models.py:2969
 msgid "Minimum Sale Price"
 msgstr ""
 
-#: part/models.py:3004
+#: part/models.py:2970
 msgid "Minimum sale price based on price breaks"
 msgstr ""
 
-#: part/models.py:3009
+#: part/models.py:2975
 msgid "Maximum Sale Price"
 msgstr ""
 
-#: part/models.py:3010
+#: part/models.py:2976
 msgid "Maximum sale price based on price breaks"
 msgstr ""
 
-#: part/models.py:3015
+#: part/models.py:2981
 msgid "Minimum Sale Cost"
 msgstr ""
 
-#: part/models.py:3016
+#: part/models.py:2982
 msgid "Minimum historical sale price"
 msgstr ""
 
-#: part/models.py:3021
+#: part/models.py:2987
 msgid "Maximum Sale Cost"
 msgstr ""
 
-#: part/models.py:3022
+#: part/models.py:2988
 msgid "Maximum historical sale price"
 msgstr ""
 
-#: part/models.py:3041
+#: part/models.py:3007
 msgid "Part for stocktake"
 msgstr ""
 
-#: part/models.py:3046
+#: part/models.py:3012
 msgid "Item Count"
 msgstr ""
 
-#: part/models.py:3047
+#: part/models.py:3013
 msgid "Number of individual stock entries at time of stocktake"
 msgstr ""
 
-#: part/models.py:3054
+#: part/models.py:3020
 msgid "Total available stock at time of stocktake"
 msgstr ""
 
-#: part/models.py:3058 part/models.py:3141
+#: part/models.py:3024 part/models.py:3104
 #: part/templates/part/part_scheduling.html:13
 #: report/templates/report/inventree_test_report_base.html:106
 #: templates/InvenTree/settings/plugin_settings.html:37
@@ -5976,398 +5979,398 @@ msgstr ""
 msgid "Date"
 msgstr "Päivämäärä"
 
-#: part/models.py:3059
+#: part/models.py:3025
 msgid "Date stocktake was performed"
 msgstr ""
 
-#: part/models.py:3067
+#: part/models.py:3033
 msgid "Additional notes"
 msgstr "Muut merkinnät"
 
-#: part/models.py:3075
+#: part/models.py:3041
 msgid "User who performed this stocktake"
 msgstr ""
 
-#: part/models.py:3080
+#: part/models.py:3046
 msgid "Minimum Stock Cost"
 msgstr ""
 
-#: part/models.py:3081
+#: part/models.py:3047
 msgid "Estimated minimum cost of stock on hand"
 msgstr ""
 
-#: part/models.py:3086
+#: part/models.py:3052
 msgid "Maximum Stock Cost"
 msgstr ""
 
-#: part/models.py:3087
+#: part/models.py:3053
 msgid "Estimated maximum cost of stock on hand"
 msgstr ""
 
-#: part/models.py:3148 templates/InvenTree/settings/settings_staff_js.html:509
+#: part/models.py:3111 templates/InvenTree/settings/settings_staff_js.html:509
 msgid "Report"
 msgstr "Raportti"
 
-#: part/models.py:3149
+#: part/models.py:3112
 msgid "Stocktake report file (generated internally)"
 msgstr ""
 
-#: part/models.py:3154 templates/InvenTree/settings/settings_staff_js.html:516
+#: part/models.py:3117 templates/InvenTree/settings/settings_staff_js.html:516
 msgid "Part Count"
 msgstr ""
 
-#: part/models.py:3155
+#: part/models.py:3118
 msgid "Number of parts covered by stocktake"
 msgstr ""
 
-#: part/models.py:3163
+#: part/models.py:3126
 msgid "User who requested this stocktake report"
 msgstr ""
 
-#: part/models.py:3299
+#: part/models.py:3262
 msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
-#: part/models.py:3316
+#: part/models.py:3279
 msgid "Test with this name already exists for this part"
 msgstr ""
 
-#: part/models.py:3336 templates/js/translated/part.js:2863
+#: part/models.py:3299 templates/js/translated/part.js:2863
 msgid "Test Name"
 msgstr ""
 
-#: part/models.py:3337
+#: part/models.py:3300
 msgid "Enter a name for the test"
 msgstr ""
 
-#: part/models.py:3342
+#: part/models.py:3305
 msgid "Test Description"
 msgstr ""
 
-#: part/models.py:3343
+#: part/models.py:3306
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:3348 templates/js/translated/part.js:2872
+#: part/models.py:3311 templates/js/translated/part.js:2872
 #: templates/js/translated/table_filters.js:477
 msgid "Required"
 msgstr ""
 
-#: part/models.py:3349
+#: part/models.py:3312
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:3354 templates/js/translated/part.js:2880
+#: part/models.py:3317 templates/js/translated/part.js:2880
 msgid "Requires Value"
 msgstr ""
 
-#: part/models.py:3355
+#: part/models.py:3318
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:3360 templates/js/translated/part.js:2887
+#: part/models.py:3323 templates/js/translated/part.js:2887
 msgid "Requires Attachment"
 msgstr ""
 
-#: part/models.py:3361
+#: part/models.py:3324
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
-#: part/models.py:3407
+#: part/models.py:3369
 msgid "Checkbox parameters cannot have units"
 msgstr ""
 
-#: part/models.py:3412
+#: part/models.py:3374
 msgid "Checkbox parameters cannot have choices"
 msgstr ""
 
-#: part/models.py:3430
+#: part/models.py:3392
 msgid "Choices must be unique"
 msgstr ""
 
-#: part/models.py:3446
+#: part/models.py:3408
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:3462
+#: part/models.py:3423
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:3468
+#: part/models.py:3429
 msgid "Physical units for this parameter"
 msgstr ""
 
-#: part/models.py:3478
+#: part/models.py:3439
 msgid "Parameter description"
 msgstr ""
 
-#: part/models.py:3484 templates/js/translated/part.js:1624
+#: part/models.py:3445 templates/js/translated/part.js:1624
 #: templates/js/translated/table_filters.js:817
 msgid "Checkbox"
 msgstr ""
 
-#: part/models.py:3485
+#: part/models.py:3446
 msgid "Is this parameter a checkbox?"
 msgstr ""
 
-#: part/models.py:3490 templates/js/translated/part.js:1633
+#: part/models.py:3451 templates/js/translated/part.js:1633
 msgid "Choices"
 msgstr ""
 
-#: part/models.py:3491
+#: part/models.py:3452
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr ""
 
-#: part/models.py:3573
+#: part/models.py:3531
 msgid "Invalid choice for parameter value"
 msgstr ""
 
-#: part/models.py:3616
+#: part/models.py:3573
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:3621 part/models.py:3697 part/models.py:3698
+#: part/models.py:3578 part/models.py:3653 part/models.py:3654
 #: templates/InvenTree/settings/settings_staff_js.html:275
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:3626
+#: part/models.py:3583
 msgid "Data"
 msgstr ""
 
-#: part/models.py:3626
+#: part/models.py:3583
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:3702 templates/InvenTree/settings/settings_staff_js.html:284
+#: part/models.py:3658 templates/InvenTree/settings/settings_staff_js.html:284
 msgid "Default Value"
 msgstr ""
 
-#: part/models.py:3703
+#: part/models.py:3659
 msgid "Default Parameter Value"
 msgstr ""
 
-#: part/models.py:3740
+#: part/models.py:3696
 msgid "Part ID or part name"
 msgstr ""
 
-#: part/models.py:3744
+#: part/models.py:3700
 msgid "Unique part ID value"
 msgstr ""
 
-#: part/models.py:3752
+#: part/models.py:3708
 msgid "Part IPN value"
 msgstr ""
 
-#: part/models.py:3755
+#: part/models.py:3711
 msgid "Level"
 msgstr ""
 
-#: part/models.py:3756
+#: part/models.py:3712
 msgid "BOM level"
 msgstr ""
 
-#: part/models.py:3762 part/models.py:4164
+#: part/models.py:3718 part/models.py:4116
 msgid "BOM Item"
 msgstr ""
 
-#: part/models.py:3847
+#: part/models.py:3802
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:3855
+#: part/models.py:3810
 msgid "Sub part"
 msgstr ""
 
-#: part/models.py:3856
+#: part/models.py:3811
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:3862
+#: part/models.py:3817
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:3867
+#: part/models.py:3822
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:3873
+#: part/models.py:3828
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr ""
 
-#: part/models.py:3877 part/templates/part/upload_bom.html:55
+#: part/models.py:3832 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr ""
 
-#: part/models.py:3878
+#: part/models.py:3833
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:3881
+#: part/models.py:3836
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:3884
+#: part/models.py:3839
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:3888
+#: part/models.py:3843
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:3888
+#: part/models.py:3843
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:3893 templates/js/translated/table_filters.js:174
+#: part/models.py:3848 templates/js/translated/table_filters.js:174
 msgid "Validated"
 msgstr ""
 
-#: part/models.py:3894
+#: part/models.py:3849
 msgid "This BOM item has been validated"
 msgstr ""
 
-#: part/models.py:3899 part/templates/part/upload_bom.html:57
+#: part/models.py:3854 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1054
 #: templates/js/translated/table_filters.js:178
 #: templates/js/translated/table_filters.js:211
 msgid "Gets inherited"
 msgstr ""
 
-#: part/models.py:3900
+#: part/models.py:3855
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:3905 part/templates/part/upload_bom.html:56
+#: part/models.py:3860 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1046
 msgid "Allow Variants"
 msgstr ""
 
-#: part/models.py:3906
+#: part/models.py:3861
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:3992 stock/models.py:672
+#: part/models.py:3947 stock/models.py:642
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:4001 part/models.py:4003
+#: part/models.py:3956 part/models.py:3958
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:4131
+#: part/models.py:4083
 msgid "BOM Item Substitute"
 msgstr ""
 
-#: part/models.py:4152
+#: part/models.py:4104
 msgid "Substitute part cannot be the same as the master part"
 msgstr ""
 
-#: part/models.py:4165
+#: part/models.py:4117
 msgid "Parent BOM item"
 msgstr ""
 
-#: part/models.py:4173
+#: part/models.py:4125
 msgid "Substitute part"
 msgstr ""
 
-#: part/models.py:4188
+#: part/models.py:4140
 msgid "Part 1"
 msgstr ""
 
-#: part/models.py:4192
+#: part/models.py:4144
 msgid "Part 2"
 msgstr ""
 
-#: part/models.py:4192
+#: part/models.py:4144
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:4210
+#: part/models.py:4161
 msgid "Part relationship cannot be created between a part and itself"
 msgstr ""
 
-#: part/models.py:4214
+#: part/models.py:4165
 msgid "Duplicate relationship already exists"
 msgstr ""
 
-#: part/serializers.py:171 part/serializers.py:194 stock/serializers.py:326
+#: part/serializers.py:169 part/serializers.py:192 stock/serializers.py:324
 msgid "Purchase currency of this stock item"
 msgstr ""
 
-#: part/serializers.py:343
+#: part/serializers.py:345
 msgid "No parts selected"
 msgstr ""
 
-#: part/serializers.py:351
+#: part/serializers.py:353
 msgid "Select category"
 msgstr ""
 
-#: part/serializers.py:382
+#: part/serializers.py:383
 msgid "Original Part"
 msgstr ""
 
-#: part/serializers.py:382
+#: part/serializers.py:383
 msgid "Select original part to duplicate"
 msgstr ""
 
-#: part/serializers.py:387
+#: part/serializers.py:388
 msgid "Copy Image"
 msgstr ""
 
-#: part/serializers.py:387
+#: part/serializers.py:388
 msgid "Copy image from original part"
 msgstr ""
 
-#: part/serializers.py:392 part/templates/part/detail.html:277
+#: part/serializers.py:393 part/templates/part/detail.html:277
 msgid "Copy BOM"
 msgstr ""
 
-#: part/serializers.py:392
+#: part/serializers.py:393
 msgid "Copy bill of materials from original part"
 msgstr ""
 
-#: part/serializers.py:397
+#: part/serializers.py:398
 msgid "Copy Parameters"
 msgstr ""
 
-#: part/serializers.py:397
+#: part/serializers.py:398
 msgid "Copy parameter data from original part"
 msgstr ""
 
-#: part/serializers.py:402
+#: part/serializers.py:403
 msgid "Copy Notes"
 msgstr ""
 
-#: part/serializers.py:402
+#: part/serializers.py:403
 msgid "Copy notes from original part"
 msgstr ""
 
-#: part/serializers.py:412
+#: part/serializers.py:413
 msgid "Initial Stock Quantity"
 msgstr ""
 
-#: part/serializers.py:412
+#: part/serializers.py:413
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
 msgstr ""
 
-#: part/serializers.py:418
+#: part/serializers.py:419
 msgid "Initial Stock Location"
 msgstr ""
 
-#: part/serializers.py:418
+#: part/serializers.py:419
 msgid "Specify initial stock location for this Part"
 msgstr ""
 
-#: part/serializers.py:428
+#: part/serializers.py:429
 msgid "Select supplier (or leave blank to skip)"
 msgstr ""
 
-#: part/serializers.py:439
+#: part/serializers.py:440
 msgid "Select manufacturer (or leave blank to skip)"
 msgstr ""
 
-#: part/serializers.py:445
+#: part/serializers.py:446
 msgid "Manufacturer part number"
 msgstr "Valmistajan osanumero"
 
@@ -6375,190 +6378,190 @@ msgstr "Valmistajan osanumero"
 msgid "Selected company is not a valid supplier"
 msgstr ""
 
-#: part/serializers.py:460
+#: part/serializers.py:459
 msgid "Selected company is not a valid manufacturer"
 msgstr ""
 
-#: part/serializers.py:472
+#: part/serializers.py:470
 msgid "Manufacturer part matching this MPN already exists"
 msgstr ""
 
-#: part/serializers.py:480
+#: part/serializers.py:478
 msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
-#: part/serializers.py:733 part/templates/part/copy_part.html:9
+#: part/serializers.py:729 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:468
 msgid "Duplicate Part"
 msgstr ""
 
-#: part/serializers.py:733
+#: part/serializers.py:729
 msgid "Copy initial data from another Part"
 msgstr ""
 
-#: part/serializers.py:738 templates/js/translated/part.js:102
+#: part/serializers.py:734 templates/js/translated/part.js:102
 msgid "Initial Stock"
 msgstr ""
 
-#: part/serializers.py:738
+#: part/serializers.py:734
 msgid "Create Part with initial stock quantity"
 msgstr ""
 
-#: part/serializers.py:743
+#: part/serializers.py:739
 msgid "Supplier Information"
 msgstr ""
 
-#: part/serializers.py:743
+#: part/serializers.py:739
 msgid "Add initial supplier information for this part"
 msgstr ""
 
-#: part/serializers.py:749
+#: part/serializers.py:745
 msgid "Copy Category Parameters"
 msgstr ""
 
-#: part/serializers.py:750
+#: part/serializers.py:746
 msgid "Copy parameter templates from selected part category"
 msgstr ""
 
-#: part/serializers.py:959
+#: part/serializers.py:952
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr ""
 
-#: part/serializers.py:965
+#: part/serializers.py:958
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr ""
 
-#: part/serializers.py:971
+#: part/serializers.py:964
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr ""
 
-#: part/serializers.py:976
+#: part/serializers.py:969
 msgid "Exclude External Stock"
 msgstr ""
 
-#: part/serializers.py:977
+#: part/serializers.py:970
 msgid "Exclude stock items in external locations"
 msgstr ""
 
-#: part/serializers.py:982
+#: part/serializers.py:975
 msgid "Generate Report"
 msgstr "Luo raportti"
 
-#: part/serializers.py:983
+#: part/serializers.py:976
 msgid "Generate report file containing calculated stocktake data"
 msgstr ""
 
-#: part/serializers.py:988
+#: part/serializers.py:981
 msgid "Update Parts"
 msgstr ""
 
-#: part/serializers.py:989
+#: part/serializers.py:982
 msgid "Update specified parts with calculated stocktake data"
 msgstr ""
 
-#: part/serializers.py:997
+#: part/serializers.py:989
 msgid "Stocktake functionality is not enabled"
 msgstr ""
 
-#: part/serializers.py:1087
+#: part/serializers.py:1078
 msgid "Update"
 msgstr ""
 
-#: part/serializers.py:1088
+#: part/serializers.py:1079
 msgid "Update pricing for this part"
 msgstr ""
 
-#: part/serializers.py:1375
+#: part/serializers.py:1366
 msgid "Select part to copy BOM from"
 msgstr ""
 
-#: part/serializers.py:1383
+#: part/serializers.py:1374
 msgid "Remove Existing Data"
 msgstr ""
 
-#: part/serializers.py:1384
+#: part/serializers.py:1375
 msgid "Remove existing BOM items before copying"
 msgstr ""
 
-#: part/serializers.py:1389
+#: part/serializers.py:1380
 msgid "Include Inherited"
 msgstr ""
 
-#: part/serializers.py:1390
+#: part/serializers.py:1381
 msgid "Include BOM items which are inherited from templated parts"
 msgstr ""
 
-#: part/serializers.py:1395
+#: part/serializers.py:1386
 msgid "Skip Invalid Rows"
 msgstr ""
 
-#: part/serializers.py:1396
+#: part/serializers.py:1387
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/serializers.py:1401
+#: part/serializers.py:1392
 msgid "Copy Substitute Parts"
 msgstr ""
 
-#: part/serializers.py:1402
+#: part/serializers.py:1393
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr ""
 
-#: part/serializers.py:1442
+#: part/serializers.py:1433
 msgid "Clear Existing BOM"
 msgstr ""
 
-#: part/serializers.py:1443
+#: part/serializers.py:1434
 msgid "Delete existing BOM items before uploading"
 msgstr ""
 
-#: part/serializers.py:1473
+#: part/serializers.py:1464
 msgid "No part column specified"
 msgstr ""
 
-#: part/serializers.py:1516
+#: part/serializers.py:1508
 msgid "Multiple matching parts found"
 msgstr ""
 
-#: part/serializers.py:1519
+#: part/serializers.py:1511
 msgid "No matching part found"
 msgstr ""
 
-#: part/serializers.py:1522
+#: part/serializers.py:1514
 msgid "Part is not designated as a component"
 msgstr ""
 
-#: part/serializers.py:1531
+#: part/serializers.py:1523
 msgid "Quantity not provided"
 msgstr ""
 
-#: part/serializers.py:1539
+#: part/serializers.py:1531
 msgid "Invalid quantity"
 msgstr ""
 
-#: part/serializers.py:1560
+#: part/serializers.py:1552
 msgid "At least one BOM item is required"
 msgstr ""
 
-#: part/stocktake.py:225 templates/js/translated/part.js:1063
+#: part/stocktake.py:223 templates/js/translated/part.js:1063
 #: templates/js/translated/part.js:1817 templates/js/translated/part.js:1872
 #: templates/js/translated/purchase_order.js:2063
 msgid "Total Quantity"
 msgstr ""
 
-#: part/stocktake.py:226
+#: part/stocktake.py:224
 msgid "Total Cost Min"
 msgstr ""
 
-#: part/stocktake.py:227
+#: part/stocktake.py:225
 msgid "Total Cost Max"
 msgstr ""
 
-#: part/stocktake.py:291
+#: part/stocktake.py:289
 msgid "Stocktake Report Available"
 msgstr ""
 
-#: part/stocktake.py:292
+#: part/stocktake.py:290
 msgid "A new stocktake report is available for download"
 msgstr ""
 
@@ -6774,7 +6777,7 @@ msgid "Validate BOM"
 msgstr ""
 
 #: part/templates/part/detail.html:283 part/templates/part/detail.html:284
-#: templates/js/translated/bom.js:1309 templates/js/translated/bom.js:1310
+#: templates/js/translated/bom.js:1314 templates/js/translated/bom.js:1315
 msgid "Add BOM Item"
 msgstr ""
 
@@ -6958,7 +6961,7 @@ msgstr ""
 msgid "Allocated to Sales Orders"
 msgstr ""
 
-#: part/templates/part/part_base.html:237 templates/js/translated/bom.js:1208
+#: part/templates/part/part_base.html:237 templates/js/translated/bom.js:1213
 msgid "Can Build"
 msgstr ""
 
@@ -7216,11 +7219,11 @@ msgstr ""
 msgid "Create a new variant part from this template"
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:189
+#: part/templatetags/inventree_extras.py:188
 msgid "Unknown database"
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:241
+#: part/templatetags/inventree_extras.py:238
 #, python-brace-format
 msgid "{title} v{version}"
 msgstr ""
@@ -7258,25 +7261,72 @@ msgstr ""
 msgid "No matching action found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:54 plugin/base/barcodes/api.py:110
+#: plugin/base/barcodes/api.py:56 plugin/base/barcodes/api.py:111
+#: plugin/base/barcodes/api.py:269
 msgid "Missing barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:80
+#: plugin/base/barcodes/api.py:82
 msgid "No match found for barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:84
+#: plugin/base/barcodes/api.py:86
 msgid "Match found for barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:120
+#: plugin/base/barcodes/api.py:121
 #: templates/js/translated/purchase_order.js:1391
 msgid "Barcode matches existing item"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:217
 msgid "No match found for provided value"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:275
+msgid "Invalid purchase order"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:281
+msgid "Invalid stock location"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:292
+msgid "Item has already been received"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:314
+msgid "Invalid supplier barcode"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:170
+msgid "Supplier barcode doesn't contain order number"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:183
+#, python-brace-format
+msgid "Found multiple placed purchase orders for '{order_number}'"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:185
+#, python-brace-format
+msgid "Failed to find placed purchase order for '{order_number}'"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:215
+msgid "Failed to find pending line item for supplier part"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:248
+msgid "Further information required to receive line item"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:259
+msgid "Received purchase order line item"
+msgstr ""
+
+#: plugin/base/barcodes/mixins.py:301 plugin/base/barcodes/mixins.py:324
+msgid "Found multiple matching supplier parts for barcode"
 msgstr ""
 
 #: plugin/base/label/label.py:40
@@ -7295,6 +7345,8 @@ msgstr ""
 #: plugin/builtin/integration/core_notifications.py:34
 #: plugin/builtin/integration/currency_exchange.py:22
 #: plugin/builtin/labels/inventree_label.py:23
+#: plugin/builtin/suppliers/digikey.py:24 plugin/builtin/suppliers/lcsc.py:25
+#: plugin/builtin/suppliers/mouser.py:24 plugin/builtin/suppliers/tme.py:25
 msgid "InvenTree contributors"
 msgstr ""
 
@@ -7332,7 +7384,7 @@ msgstr ""
 msgid "URL that is used to send messages to a slack channel"
 msgstr ""
 
-#: plugin/builtin/integration/core_notifications.py:163
+#: plugin/builtin/integration/core_notifications.py:162
 msgid "Open link"
 msgstr "Avaa linkki"
 
@@ -7360,20 +7412,68 @@ msgstr ""
 msgid "Enable debug mode - returns raw HTML instead of PDF"
 msgstr ""
 
-#: plugin/installer.py:145
+#: plugin/builtin/suppliers/digikey.py:21
+msgid "Supplier Integration - DigiKey"
+msgstr ""
+
+#: plugin/builtin/suppliers/digikey.py:22
+msgid "Provides support for scanning DigiKey barcodes"
+msgstr ""
+
+#: plugin/builtin/suppliers/digikey.py:30
+msgid "The Supplier which acts as 'DigiKey'"
+msgstr ""
+
+#: plugin/builtin/suppliers/lcsc.py:22
+msgid "Supplier Integration - LCSC"
+msgstr ""
+
+#: plugin/builtin/suppliers/lcsc.py:23
+msgid "Provides support for scanning LCSC barcodes"
+msgstr ""
+
+#: plugin/builtin/suppliers/lcsc.py:31
+msgid "The Supplier which acts as 'LCSC'"
+msgstr ""
+
+#: plugin/builtin/suppliers/mouser.py:21
+msgid "Supplier Integration - Mouser"
+msgstr ""
+
+#: plugin/builtin/suppliers/mouser.py:22
+msgid "Provides support for scanning Mouser barcodes"
+msgstr ""
+
+#: plugin/builtin/suppliers/mouser.py:30
+msgid "The Supplier which acts as 'Mouser'"
+msgstr ""
+
+#: plugin/builtin/suppliers/tme.py:22
+msgid "Supplier Integration - TME"
+msgstr ""
+
+#: plugin/builtin/suppliers/tme.py:23
+msgid "Provides support for scanning TME barcodes"
+msgstr ""
+
+#: plugin/builtin/suppliers/tme.py:31
+msgid "The Supplier which acts as 'TME'"
+msgstr ""
+
+#: plugin/installer.py:140
 msgid "Permission denied: only staff users can install plugins"
 msgstr ""
 
-#: plugin/installer.py:191
+#: plugin/installer.py:186
 msgid "Installed plugin successfully"
 msgstr ""
 
-#: plugin/installer.py:197
+#: plugin/installer.py:192
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr ""
 
-#: plugin/installer.py:206
+#: plugin/installer.py:201
 msgid "Plugin installation failed"
 msgstr ""
 
@@ -7401,43 +7501,43 @@ msgstr ""
 msgid "Is the plugin active"
 msgstr ""
 
-#: plugin/models.py:130 templates/js/translated/table_filters.js:370
+#: plugin/models.py:129 templates/js/translated/table_filters.js:370
 #: templates/js/translated/table_filters.js:500
 msgid "Installed"
 msgstr ""
 
-#: plugin/models.py:140
+#: plugin/models.py:138
 msgid "Sample plugin"
 msgstr ""
 
-#: plugin/models.py:149
+#: plugin/models.py:146
 msgid "Builtin Plugin"
 msgstr ""
 
-#: plugin/models.py:175 templates/InvenTree/settings/plugin_settings.html:9
+#: plugin/models.py:171 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:50
 msgid "Plugin"
 msgstr ""
 
-#: plugin/models.py:226
+#: plugin/models.py:222
 msgid "Method"
 msgstr ""
 
-#: plugin/plugin.py:267
+#: plugin/plugin.py:265
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:509
+#: plugin/registry.py:510
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:511
+#: plugin/registry.py:512
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:513
+#: plugin/registry.py:514
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
@@ -7514,29 +7614,33 @@ msgstr ""
 msgid "Either packagename of URL must be provided"
 msgstr ""
 
-#: plugin/serializers.py:142
+#: plugin/serializers.py:141
 msgid "Activate Plugin"
 msgstr ""
 
-#: plugin/serializers.py:143
+#: plugin/serializers.py:142
 msgid "Activate this plugin"
 msgstr ""
 
-#: report/api.py:174
+#: report/api.py:172
 msgid "No valid objects provided to template"
 msgstr ""
 
-#: report/api.py:211 report/api.py:247
+#: report/api.py:209 report/api.py:245
 #, python-brace-format
 msgid "Template file '{template}' is missing or does not exist"
 msgstr ""
 
-#: report/api.py:325
+#: report/api.py:322
 msgid "Test report"
 msgstr ""
 
-#: report/helpers.py:14
+#: report/helpers.py:13
 msgid "A4"
+msgstr ""
+
+#: report/helpers.py:14
+msgid "A3"
 msgstr ""
 
 #: report/helpers.py:15
@@ -7547,107 +7651,107 @@ msgstr ""
 msgid "Letter"
 msgstr ""
 
-#: report/models.py:173
+#: report/models.py:171
 msgid "Template name"
 msgstr ""
 
-#: report/models.py:179
+#: report/models.py:177
 msgid "Report template file"
 msgstr ""
 
-#: report/models.py:186
+#: report/models.py:184
 msgid "Report template description"
 msgstr ""
 
-#: report/models.py:192
+#: report/models.py:190
 msgid "Report revision number (auto-increments)"
 msgstr ""
 
-#: report/models.py:200
+#: report/models.py:198
 msgid "Page size for PDF reports"
 msgstr ""
 
-#: report/models.py:205
+#: report/models.py:203
 msgid "Landscape"
 msgstr ""
 
-#: report/models.py:206
+#: report/models.py:204
 msgid "Render report in landscape orientation"
 msgstr ""
 
-#: report/models.py:308
+#: report/models.py:305
 msgid "Pattern for generating report filenames"
 msgstr ""
 
-#: report/models.py:315
+#: report/models.py:312
 msgid "Report template is enabled"
 msgstr ""
 
-#: report/models.py:336
+#: report/models.py:333
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
-#: report/models.py:344
+#: report/models.py:341
 msgid "Include Installed Tests"
 msgstr ""
 
-#: report/models.py:345
+#: report/models.py:342
 msgid "Include test results for stock items installed inside assembled item"
 msgstr ""
 
-#: report/models.py:406
+#: report/models.py:402
 msgid "Build Filters"
 msgstr ""
 
-#: report/models.py:407
+#: report/models.py:403
 msgid "Build query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:448
+#: report/models.py:444
 msgid "Part Filters"
 msgstr ""
 
-#: report/models.py:449
+#: report/models.py:445
 msgid "Part query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:483
+#: report/models.py:479
 msgid "Purchase order query filters"
 msgstr ""
 
-#: report/models.py:521
+#: report/models.py:517
 msgid "Sales order query filters"
 msgstr ""
 
-#: report/models.py:559
+#: report/models.py:555
 msgid "Return order query filters"
 msgstr ""
 
-#: report/models.py:612
+#: report/models.py:606
 msgid "Snippet"
 msgstr ""
 
-#: report/models.py:613
+#: report/models.py:607
 msgid "Report snippet file"
 msgstr ""
 
-#: report/models.py:617
+#: report/models.py:611
 msgid "Snippet file description"
 msgstr ""
 
-#: report/models.py:654
+#: report/models.py:647
 msgid "Asset"
 msgstr ""
 
-#: report/models.py:655
+#: report/models.py:648
 msgid "Report asset file"
 msgstr ""
 
-#: report/models.py:662
+#: report/models.py:655
 msgid "Asset file description"
 msgstr ""
 
-#: report/models.py:683
+#: report/models.py:676
 msgid "stock location query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
@@ -7688,7 +7792,7 @@ msgstr ""
 
 #: report/templates/report/inventree_return_order_report_base.html:25
 #: report/templates/report/inventree_test_report_base.html:88
-#: stock/models.py:820 stock/templates/stock/item_base.html:312
+#: stock/models.py:790 stock/templates/stock/item_base.html:312
 #: templates/js/translated/build.js:508 templates/js/translated/build.js:1348
 #: templates/js/translated/build.js:2337
 #: templates/js/translated/model_renderers.js:222
@@ -7714,12 +7818,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2369 templates/js/translated/stock.js:1475
+#: stock/models.py:2336 templates/js/translated/stock.js:1475
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2375
+#: stock/models.py:2342
 msgid "Result"
 msgstr ""
 
@@ -7787,7 +7891,7 @@ msgstr ""
 msgid "Customer ID"
 msgstr ""
 
-#: stock/admin.py:132 stock/models.py:803
+#: stock/admin.py:132 stock/models.py:773
 #: stock/templates/stock/item_base.html:355
 msgid "Installed In"
 msgstr ""
@@ -7812,33 +7916,33 @@ msgstr ""
 msgid "Delete on Deplete"
 msgstr ""
 
-#: stock/admin.py:149 stock/models.py:884
+#: stock/admin.py:149 stock/models.py:854
 #: stock/templates/stock/item_base.html:434
 #: templates/js/translated/stock.js:2200
 msgid "Expiry Date"
 msgstr ""
 
-#: stock/api.py:508 templates/js/translated/table_filters.js:427
+#: stock/api.py:499 templates/js/translated/table_filters.js:427
 msgid "External Location"
 msgstr ""
 
-#: stock/api.py:715
+#: stock/api.py:693
 msgid "Quantity is required"
 msgstr ""
 
-#: stock/api.py:722
+#: stock/api.py:700
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:750
+#: stock/api.py:728
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:759
+#: stock/api.py:737
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:782
+#: stock/api.py:760
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -7854,7 +7958,7 @@ msgstr ""
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr ""
 
-#: stock/models.py:116 stock/models.py:787
+#: stock/models.py:116 stock/models.py:757
 #: stock/templates/stock/location.html:17
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
@@ -7866,12 +7970,12 @@ msgstr ""
 msgid "Stock Locations"
 msgstr ""
 
-#: stock/models.py:181 stock/models.py:923
+#: stock/models.py:181 stock/models.py:893
 #: stock/templates/stock/item_base.html:248
 msgid "Owner"
 msgstr ""
 
-#: stock/models.py:182 stock/models.py:924
+#: stock/models.py:182 stock/models.py:894
 msgid "Select Owner"
 msgstr ""
 
@@ -7901,221 +8005,221 @@ msgstr ""
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
 msgstr ""
 
-#: stock/models.py:652
+#: stock/models.py:622
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr ""
 
-#: stock/models.py:678 stock/serializers.py:230
+#: stock/models.py:648 stock/serializers.py:229
 msgid "Stock item cannot be created for virtual parts"
 msgstr ""
 
-#: stock/models.py:695
+#: stock/models.py:665
 #, python-brace-format
 msgid "Part type ('{pf}') must be {pe}"
 msgstr ""
 
-#: stock/models.py:705 stock/models.py:714
+#: stock/models.py:675 stock/models.py:684
 msgid "Quantity must be 1 for item with a serial number"
 msgstr ""
 
-#: stock/models.py:706
+#: stock/models.py:676
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr ""
 
-#: stock/models.py:728
+#: stock/models.py:698
 msgid "Item cannot belong to itself"
 msgstr ""
 
-#: stock/models.py:734
+#: stock/models.py:704
 msgid "Item must have a build reference if is_building=True"
 msgstr ""
 
-#: stock/models.py:748
+#: stock/models.py:718
 msgid "Build reference does not point to the same part object"
 msgstr ""
 
-#: stock/models.py:762
+#: stock/models.py:732
 msgid "Parent Stock Item"
 msgstr ""
 
-#: stock/models.py:772
+#: stock/models.py:742
 msgid "Base part"
 msgstr ""
 
-#: stock/models.py:780
+#: stock/models.py:750
 msgid "Select a matching supplier part for this stock item"
 msgstr ""
 
-#: stock/models.py:790
+#: stock/models.py:760
 msgid "Where is this stock item located?"
 msgstr ""
 
-#: stock/models.py:797 stock/serializers.py:1279
+#: stock/models.py:767 stock/serializers.py:1269
 msgid "Packaging this stock item is stored in"
 msgstr ""
 
-#: stock/models.py:806
+#: stock/models.py:776
 msgid "Is this item installed in another item?"
 msgstr ""
 
-#: stock/models.py:822
+#: stock/models.py:792
 msgid "Serial number for this item"
 msgstr ""
 
-#: stock/models.py:836 stock/serializers.py:1264
+#: stock/models.py:806 stock/serializers.py:1254
 msgid "Batch code for this stock item"
 msgstr ""
 
-#: stock/models.py:841
+#: stock/models.py:811
 msgid "Stock Quantity"
 msgstr ""
 
-#: stock/models.py:848
+#: stock/models.py:818
 msgid "Source Build"
 msgstr ""
 
-#: stock/models.py:850
+#: stock/models.py:820
 msgid "Build for this stock item"
 msgstr ""
 
-#: stock/models.py:856 stock/templates/stock/item_base.html:364
+#: stock/models.py:826 stock/templates/stock/item_base.html:364
 msgid "Consumed By"
 msgstr ""
 
-#: stock/models.py:858
+#: stock/models.py:828
 msgid "Build order which consumed this stock item"
 msgstr ""
 
-#: stock/models.py:869
+#: stock/models.py:839
 msgid "Source Purchase Order"
 msgstr ""
 
-#: stock/models.py:872
+#: stock/models.py:842
 msgid "Purchase order for this stock item"
 msgstr ""
 
-#: stock/models.py:878
+#: stock/models.py:848
 msgid "Destination Sales Order"
 msgstr ""
 
-#: stock/models.py:885
+#: stock/models.py:855
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr ""
 
-#: stock/models.py:900
+#: stock/models.py:870
 msgid "Delete on deplete"
 msgstr ""
 
-#: stock/models.py:900
+#: stock/models.py:870
 msgid "Delete this Stock Item when stock is depleted"
 msgstr ""
 
-#: stock/models.py:919
+#: stock/models.py:889
 msgid "Single unit purchase price at time of purchase"
 msgstr ""
 
-#: stock/models.py:947
+#: stock/models.py:917
 msgid "Converted to part"
 msgstr ""
 
-#: stock/models.py:1473
+#: stock/models.py:1442
 msgid "Part is not set as trackable"
 msgstr ""
 
-#: stock/models.py:1479
+#: stock/models.py:1448
 msgid "Quantity must be integer"
 msgstr ""
 
-#: stock/models.py:1485
+#: stock/models.py:1454
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({n})"
 msgstr ""
 
-#: stock/models.py:1488
+#: stock/models.py:1457
 msgid "Serial numbers must be a list of integers"
 msgstr ""
 
-#: stock/models.py:1491
+#: stock/models.py:1460
 msgid "Quantity does not match serial numbers"
 msgstr ""
 
-#: stock/models.py:1498 stock/serializers.py:451
+#: stock/models.py:1467 stock/serializers.py:449
 msgid "Serial numbers already exist"
 msgstr ""
 
-#: stock/models.py:1569
+#: stock/models.py:1538
 msgid "Stock item has been assigned to a sales order"
 msgstr ""
 
-#: stock/models.py:1572
+#: stock/models.py:1541
 msgid "Stock item is installed in another item"
 msgstr ""
 
-#: stock/models.py:1575
+#: stock/models.py:1544
 msgid "Stock item contains other items"
 msgstr ""
 
-#: stock/models.py:1578
+#: stock/models.py:1547
 msgid "Stock item has been assigned to a customer"
 msgstr ""
 
-#: stock/models.py:1581
+#: stock/models.py:1550
 msgid "Stock item is currently in production"
 msgstr ""
 
-#: stock/models.py:1584
+#: stock/models.py:1553
 msgid "Serialized stock cannot be merged"
 msgstr ""
 
-#: stock/models.py:1591 stock/serializers.py:1175
+#: stock/models.py:1560 stock/serializers.py:1165
 msgid "Duplicate stock items"
 msgstr ""
 
-#: stock/models.py:1595
+#: stock/models.py:1564
 msgid "Stock items must refer to the same part"
 msgstr ""
 
-#: stock/models.py:1599
+#: stock/models.py:1568
 msgid "Stock items must refer to the same supplier part"
 msgstr ""
 
-#: stock/models.py:1603
+#: stock/models.py:1572
 msgid "Stock status codes must match"
 msgstr ""
 
-#: stock/models.py:1797
+#: stock/models.py:1766
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:2287
+#: stock/models.py:2254
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:2345
+#: stock/models.py:2312
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:2351
+#: stock/models.py:2318
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:2370
+#: stock/models.py:2337
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:2376
+#: stock/models.py:2343
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:2382
+#: stock/models.py:2349
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:2389
+#: stock/models.py:2356
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:2395
+#: stock/models.py:2362
 msgid "Test notes"
 msgstr ""
 
@@ -8127,141 +8231,141 @@ msgstr ""
 msgid "Use pack size when adding: the quantity defined is the number of packs"
 msgstr ""
 
-#: stock/serializers.py:323
+#: stock/serializers.py:321
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr ""
 
-#: stock/serializers.py:384
+#: stock/serializers.py:382
 msgid "Enter number of stock items to serialize"
 msgstr ""
 
-#: stock/serializers.py:396
+#: stock/serializers.py:394
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr ""
 
-#: stock/serializers.py:402
+#: stock/serializers.py:400
 msgid "Enter serial numbers for new items"
 msgstr ""
 
-#: stock/serializers.py:413 stock/serializers.py:1132 stock/serializers.py:1403
+#: stock/serializers.py:411 stock/serializers.py:1122 stock/serializers.py:1393
 msgid "Destination stock location"
 msgstr ""
 
-#: stock/serializers.py:420
+#: stock/serializers.py:418
 msgid "Optional note field"
 msgstr ""
 
-#: stock/serializers.py:430
+#: stock/serializers.py:428
 msgid "Serial numbers cannot be assigned to this part"
 msgstr ""
 
-#: stock/serializers.py:491
+#: stock/serializers.py:489
 msgid "Select stock item to install"
 msgstr ""
 
-#: stock/serializers.py:496 stock/serializers.py:554 stock/serializers.py:650
-#: stock/serializers.py:708
+#: stock/serializers.py:494 stock/serializers.py:552 stock/serializers.py:646
+#: stock/serializers.py:702
 msgid "Add transaction note (optional)"
 msgstr ""
 
-#: stock/serializers.py:505
+#: stock/serializers.py:503
 msgid "Stock item is unavailable"
 msgstr ""
 
-#: stock/serializers.py:512
+#: stock/serializers.py:510
 msgid "Selected part is not in the Bill of Materials"
 msgstr ""
 
-#: stock/serializers.py:549
+#: stock/serializers.py:547
 msgid "Destination location for uninstalled item"
 msgstr ""
 
-#: stock/serializers.py:588
+#: stock/serializers.py:586
 msgid "Select part to convert stock item into"
 msgstr ""
 
-#: stock/serializers.py:599
+#: stock/serializers.py:596
 msgid "Selected part is not a valid option for conversion"
 msgstr ""
 
-#: stock/serializers.py:614
+#: stock/serializers.py:610
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr ""
 
-#: stock/serializers.py:645
+#: stock/serializers.py:641
 msgid "Destination location for returned item"
 msgstr ""
 
-#: stock/serializers.py:689
+#: stock/serializers.py:684
 msgid "Select stock items to change status"
 msgstr ""
 
-#: stock/serializers.py:696
+#: stock/serializers.py:690
 msgid "No stock items selected"
 msgstr ""
 
-#: stock/serializers.py:987
+#: stock/serializers.py:977
 msgid "Part must be salable"
 msgstr ""
 
-#: stock/serializers.py:991
+#: stock/serializers.py:981
 msgid "Item is allocated to a sales order"
 msgstr ""
 
-#: stock/serializers.py:995
+#: stock/serializers.py:985
 msgid "Item is allocated to a build order"
 msgstr ""
 
-#: stock/serializers.py:1026
+#: stock/serializers.py:1016
 msgid "Customer to assign stock items"
 msgstr ""
 
-#: stock/serializers.py:1032
+#: stock/serializers.py:1022
 msgid "Selected company is not a customer"
 msgstr ""
 
-#: stock/serializers.py:1040
+#: stock/serializers.py:1030
 msgid "Stock assignment notes"
 msgstr ""
 
-#: stock/serializers.py:1050 stock/serializers.py:1310
+#: stock/serializers.py:1040 stock/serializers.py:1300
 msgid "A list of stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:1139
+#: stock/serializers.py:1129
 msgid "Stock merging notes"
 msgstr ""
 
-#: stock/serializers.py:1144
+#: stock/serializers.py:1134
 msgid "Allow mismatched suppliers"
 msgstr ""
 
-#: stock/serializers.py:1145
+#: stock/serializers.py:1135
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr ""
 
-#: stock/serializers.py:1150
+#: stock/serializers.py:1140
 msgid "Allow mismatched status"
 msgstr ""
 
-#: stock/serializers.py:1151
+#: stock/serializers.py:1141
 msgid "Allow stock items with different status codes to be merged"
 msgstr ""
 
-#: stock/serializers.py:1161
+#: stock/serializers.py:1151
 msgid "At least two stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:1250
+#: stock/serializers.py:1240
 msgid "StockItem primary key value"
 msgstr ""
 
-#: stock/serializers.py:1271
+#: stock/serializers.py:1261
 msgid "Stock item status code"
 msgstr ""
 
-#: stock/serializers.py:1300
+#: stock/serializers.py:1290
 msgid "Stock transaction notes"
 msgstr ""
 
@@ -9801,7 +9905,7 @@ msgid "The following parts are low on required stock"
 msgstr ""
 
 #: templates/email/build_order_required_stock.html:18
-#: templates/js/translated/bom.js:1663 templates/js/translated/build.js:2541
+#: templates/js/translated/bom.js:1668 templates/js/translated/build.js:2541
 msgid "Required Quantity"
 msgstr ""
 
@@ -10178,74 +10282,74 @@ msgstr ""
 msgid "Substitutes"
 msgstr ""
 
-#: templates/js/translated/bom.js:1134
+#: templates/js/translated/bom.js:1139
 msgid "BOM pricing is complete"
 msgstr ""
 
-#: templates/js/translated/bom.js:1139
+#: templates/js/translated/bom.js:1144
 msgid "BOM pricing is incomplete"
 msgstr ""
 
-#: templates/js/translated/bom.js:1146
+#: templates/js/translated/bom.js:1151
 msgid "No pricing available"
 msgstr ""
 
-#: templates/js/translated/bom.js:1177 templates/js/translated/build.js:2579
+#: templates/js/translated/bom.js:1182 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1907
 msgid "No Stock Available"
 msgstr ""
 
-#: templates/js/translated/bom.js:1182 templates/js/translated/build.js:2583
+#: templates/js/translated/bom.js:1187 templates/js/translated/build.js:2583
 msgid "Includes variant and substitute stock"
 msgstr ""
 
-#: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2585
+#: templates/js/translated/bom.js:1189 templates/js/translated/build.js:2585
 #: templates/js/translated/part.js:1253
 #: templates/js/translated/sales_order.js:1904
 msgid "Includes variant stock"
 msgstr ""
 
-#: templates/js/translated/bom.js:1186 templates/js/translated/build.js:2587
+#: templates/js/translated/bom.js:1191 templates/js/translated/build.js:2587
 msgid "Includes substitute stock"
 msgstr ""
 
-#: templates/js/translated/bom.js:1214 templates/js/translated/build.js:2570
+#: templates/js/translated/bom.js:1219 templates/js/translated/build.js:2570
 msgid "Consumable item"
 msgstr ""
 
-#: templates/js/translated/bom.js:1274
+#: templates/js/translated/bom.js:1279
 msgid "Validate BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:1276
+#: templates/js/translated/bom.js:1281
 msgid "This line has been validated"
 msgstr ""
 
-#: templates/js/translated/bom.js:1278
+#: templates/js/translated/bom.js:1283
 msgid "Edit substitute parts"
 msgstr ""
 
-#: templates/js/translated/bom.js:1280 templates/js/translated/bom.js:1475
+#: templates/js/translated/bom.js:1285 templates/js/translated/bom.js:1480
 msgid "Edit BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:1282
+#: templates/js/translated/bom.js:1287
 msgid "Delete BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:1302
+#: templates/js/translated/bom.js:1307
 msgid "View BOM"
 msgstr ""
 
-#: templates/js/translated/bom.js:1386
+#: templates/js/translated/bom.js:1391
 msgid "No BOM items found"
 msgstr ""
 
-#: templates/js/translated/bom.js:1646 templates/js/translated/build.js:2470
+#: templates/js/translated/bom.js:1651 templates/js/translated/build.js:2470
 msgid "Required Part"
 msgstr ""
 
-#: templates/js/translated/bom.js:1672
+#: templates/js/translated/bom.js:1677
 msgid "Inherited from parent BOM"
 msgstr ""
 

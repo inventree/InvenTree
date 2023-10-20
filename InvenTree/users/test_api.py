@@ -1,9 +1,12 @@
 """API tests for various user / auth API endpoints"""
 
+import datetime
+
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeAPITestCase
+from users.models import ApiToken
 
 
 class UserAPITests(InvenTreeAPITestCase):
@@ -51,3 +54,88 @@ class UserAPITests(InvenTreeAPITestCase):
         )
 
         self.assertIn('name', response.data)
+
+
+class UserTokenTests(InvenTreeAPITestCase):
+    """Tests for user token functionality"""
+
+    def test_token_generation(self):
+        """Test user token generation"""
+
+        url = reverse('api-token')
+
+        self.assertEqual(ApiToken.objects.count(), 0)
+
+        # Generate multiple tokens with different names
+        for name in ['cat', 'dog', 'biscuit']:
+            data = self.get(url, data={'name': name}, expected_code=200).data
+
+            self.assertTrue(data['token'].startswith('inv-'))
+            self.assertEqual(data['name'], name)
+
+        # Check that the tokens were created
+        self.assertEqual(ApiToken.objects.count(), 3)
+
+        # If we re-generate a token, the value changes
+        token = ApiToken.objects.filter(name='cat').first()
+
+        # Request a *new* token with the same name
+        data = self.get(url, data={'name': 'cat'}, expected_code=200).data
+
+        self.assertNotEqual(data['token'], token.key)
+
+        # Check the old token is deleted
+        self.assertEqual(ApiToken.objects.count(), 3)
+        with self.assertRaises(ApiToken.DoesNotExist):
+            token.refresh_from_db()
+
+        # Test with a really long name
+        data = self.get(url, data={'name': 'cat' * 100}, expected_code=200).data
+
+        # Name should be truncated
+        self.assertEqual(len(data['name']), 100)
+
+    def test_token_auth(self):
+        """Test user token authentication"""
+
+        # Create a new token
+        token_key = self.get(url=reverse('api-token'), data={'name': 'test'}, expected_code=200).data['token']
+
+        # Check that we can use the token to authenticate
+        self.client.logout()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token_key)
+
+        me = reverse('api-user-me')
+
+        response = self.client.get(me, expected_code=200)
+
+        # Grab the token, and update
+        token = ApiToken.objects.first()
+        self.assertEqual(token.key, token_key)
+
+        # Revoke the token
+        token.revoked = True
+        token.save()
+
+        self.assertFalse(token.active)
+
+        response = self.client.get(me, expected_code=401)
+        self.assertIn('Token has been revoked', str(response.data))
+
+        # Expire the token
+        token.revoked = False
+        token.expiry = datetime.datetime.now().date() - datetime.timedelta(days=10)
+        token.save()
+
+        self.assertTrue(token.expired)
+        self.assertFalse(token.active)
+
+        response = self.client.get(me, expected_code=401)
+        self.assertIn('Token has expired', str(response.data))
+
+        # Re-enable the token
+        token.revoked = False
+        token.expiry = datetime.datetime.now().date() + datetime.timedelta(days=10)
+        token.save()
+
+        self.client.get(me, expected_code=200)
