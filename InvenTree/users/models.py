@@ -68,7 +68,7 @@ class ApiToken(AuthToken):
         return prefix + str(AuthToken.generate_key()) + suffix
 
     # Override the 'key' field - force it to be unique
-    key = models.CharField(default=default_token, verbose_name=_('Key'), max_length=40, db_index=True, unique=True)
+    key = models.CharField(default=default_token, verbose_name=_('Key'), max_length=100, db_index=True, unique=True)
 
     # Override the 'user' field, to allow multiple tokens per user
     user = models.ForeignKey(
@@ -110,9 +110,9 @@ class ApiToken(AuthToken):
         if self.pk is None:
             return self.key
 
-        M = len(self.key) - 16
+        M = len(self.key) - 20
 
-        return self.key[:6] + '*' * M + self.key[-10:]
+        return self.key[:8] + '*' * M + self.key[-12:]
 
     @property
     @admin.display(boolean=True, description=_('Expired'))
