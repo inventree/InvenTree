@@ -217,13 +217,6 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload Coverage to Deepsource
-        env:
-          DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
-        run: |
-          coverage xml -i
-          curl -sSL https://deepsource.io/cli | sh
-          ./bin/deepsource report --analyzer test-coverage --key python --value-file coverage.xml
 
   postgres:
     name: Tests - DB [PostgreSQL]
