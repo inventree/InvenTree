@@ -20,6 +20,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework.authtoken.models import Token as AuthToken
 
+import InvenTree.helpers
 from InvenTree.ready import canAppAccessDatabase
 
 logger = logging.getLogger("inventree")
@@ -97,6 +98,22 @@ class ApiToken(AuthToken):
         verbose_name=_('Revoked'),
         help_text=_('Token has been revoked'),
     )
+
+    @staticmethod
+    def sanitize_name(name: str):
+        """Sanitize the provide name value"""
+
+        name = str(name).strip()
+
+        # Remove any non-printable chars
+        name = InvenTree.helpers.remove_non_printable_characters(name, remove_newline=True)
+        name = InvenTree.helpers.strip_html_tags(name)
+
+        name = name.replace(' ', '-')
+        # Limit to 100 characters
+        name = name[:100]
+
+        return name
 
     @property
     @admin.display(description=_('Token'))
