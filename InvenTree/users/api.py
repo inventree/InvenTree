@@ -3,11 +3,10 @@
 import logging
 
 from django.contrib.auth.models import Group, User
-from django.core.exceptions import ObjectDoesNotExist
 from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import exceptions, permissions, status
+from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -218,16 +217,6 @@ class GetAuthToken(APIView):
 
         else:
             raise exceptions.NotAuthenticated()
-
-    def delete(self, request):
-        """User has requested deletion of API token"""
-        try:
-            request.user.auth_token.delete()
-            return Response({"success": "Successfully logged out."},
-                            status=status.HTTP_202_ACCEPTED)
-        except (AttributeError, ObjectDoesNotExist):
-            return Response({"error": "Bad request"},
-                            status=status.HTTP_400_BAD_REQUEST)
 
 
 user_urls = [

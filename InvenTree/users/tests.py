@@ -250,15 +250,6 @@ class OwnerModelTest(InvenTreeTestCase):
         response = self.do_request(reverse('api-token'), {})
         self.assertEqual(response['token'], token.first().key)
 
-        # token delete
-        response = self.client.delete(reverse('api-token'), {}, format='json')
-        self.assertEqual(response.status_code, 202)
-        self.assertEqual(len(token), 0)
-
-        # token second delete
-        response = self.client.delete(reverse('api-token'), {}, format='json')
-        self.assertEqual(response.status_code, 400)
-
         # test user is associated with token
-        response = self.do_request(reverse('api-user-me'), {}, 200)
+        response = self.do_request(reverse('api-user-me'), {'name': 'another-token'}, 200)
         self.assertEqual(response['username'], self.username)
