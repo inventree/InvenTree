@@ -44,13 +44,13 @@ msgid "Submit"
 msgstr "Küldés"
 
 #: src/components/forms/AuthenticationForm.tsx:44
-#: src/functions/auth.tsx:29
+#: src/functions/auth.tsx:32
 msgid "Login failed"
 msgstr "Belépés sikertelen"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
-#: src/functions/auth.tsx:104
+#: src/functions/auth.tsx:107
 msgid "Check your input and try again."
 msgstr "Ellenőrizd amit beírtál és próbáld újra."
 
@@ -73,7 +73,7 @@ msgstr "Üdv újra!"
 #~ msgstr "Login successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:64
-#: src/functions/auth.tsx:95
+#: src/functions/auth.tsx:98
 msgid "Mail delivery successful"
 msgstr "Levél kézbesítése sikeres"
 
@@ -1605,7 +1605,7 @@ msgstr "Nézet interaktív szkenneléshez és más műveletekhez."
 #~ msgid "Combusken battles with the intensely hot flames it spews"
 #~ msgstr "Combusken battles with the intensely hot flames it spews"
 
-#: src/functions/auth.tsx:30
+#: src/functions/auth.tsx:33
 msgid "Error fetching token from server."
 msgstr ""
 
@@ -1613,28 +1613,28 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:50
+#: src/functions/auth.tsx:53
 msgid "Logout successful"
 msgstr "Sikeres kijelentkezés"
 
-#: src/functions/auth.tsx:51
+#: src/functions/auth.tsx:54
 msgid "See you soon."
 msgstr "Hamarosan találkozunk."
 
-#: src/functions/auth.tsx:96
+#: src/functions/auth.tsx:99
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Nézd meg a beérkező levelek mappájában a visszaállítási linket. Ez csak akkor működik, ha van fiókod. Ellenőrizd a spameket is."
 
-#: src/functions/auth.tsx:103
+#: src/functions/auth.tsx:106
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
 msgstr "Visszaállítás sikertelen"
 
-#: src/functions/auth.tsx:124
+#: src/functions/auth.tsx:130
 msgid "Already logged in"
 msgstr "Már bejelentkeztél"
 
-#: src/functions/auth.tsx:125
+#: src/functions/auth.tsx:131
 msgid "Found an existing login - using it to log you in."
 msgstr "Van ilyen login - azt használom a belépéshez."
 
@@ -2494,4 +2494,3 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
-

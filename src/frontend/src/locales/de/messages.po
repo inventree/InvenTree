@@ -44,13 +44,13 @@ msgid "Submit"
 msgstr "Speichern"
 
 #: src/components/forms/AuthenticationForm.tsx:44
-#: src/functions/auth.tsx:29
+#: src/functions/auth.tsx:32
 msgid "Login failed"
 msgstr "Login fehlgeschlagen"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
-#: src/functions/auth.tsx:104
+#: src/functions/auth.tsx:107
 msgid "Check your input and try again."
 msgstr ""
 
@@ -73,7 +73,7 @@ msgstr "Willkommen zurück!"
 #~ msgstr "Login successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:64
-#: src/functions/auth.tsx:95
+#: src/functions/auth.tsx:98
 msgid "Mail delivery successful"
 msgstr ""
 
@@ -1605,7 +1605,7 @@ msgstr ""
 #~ msgid "Combusken battles with the intensely hot flames it spews"
 #~ msgstr "Combusken battles with the intensely hot flames it spews"
 
-#: src/functions/auth.tsx:30
+#: src/functions/auth.tsx:33
 msgid "Error fetching token from server."
 msgstr ""
 
@@ -1613,28 +1613,28 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:50
+#: src/functions/auth.tsx:53
 msgid "Logout successful"
 msgstr ""
 
-#: src/functions/auth.tsx:51
+#: src/functions/auth.tsx:54
 msgid "See you soon."
 msgstr "Auf Wiedersehen."
 
-#: src/functions/auth.tsx:96
+#: src/functions/auth.tsx:99
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Prüfen Sie Ihren Posteingang für einen Link zum Zurücksetzen. Dies funktioniert nur, wenn Sie ein Konto haben. Prüfen Sie auch den Spam-Ordner."
 
-#: src/functions/auth.tsx:103
+#: src/functions/auth.tsx:106
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
 msgstr "Zurücksetzen fehlgeschlagen"
 
-#: src/functions/auth.tsx:124
+#: src/functions/auth.tsx:130
 msgid "Already logged in"
 msgstr "Bereits angemeldet"
 
-#: src/functions/auth.tsx:125
+#: src/functions/auth.tsx:131
 msgid "Found an existing login - using it to log you in."
 msgstr "Es existiert ein Login - mit dem Sie angemeldet werden."
 
@@ -2494,4 +2494,3 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
-
