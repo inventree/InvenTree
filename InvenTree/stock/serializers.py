@@ -490,9 +490,9 @@ class InstallStockItemSerializer(serializers.Serializer):
         label=_('Stock Item'),
         help_text=_('Select stock item to install'),
     )
-    
+
     quantity = serializers.IntegerField(
-        min_value=1,  
+        min_value=1,
         required=True,
         label=_('Quantity to Install'),
         help_text=_('Enter the quantity to install'),
@@ -504,7 +504,7 @@ class InstallStockItemSerializer(serializers.Serializer):
         required=False,
         allow_blank=True,
     )
-    
+
     def validate_quantity(self, quantity):
         """Validate the quantity value."""
         stock_item = self.validated_data.get('stock_item')
@@ -549,7 +549,6 @@ class InstallStockItemSerializer(serializers.Serializer):
             request.user,
             note,
         )
-
 
 
 class UninstallStockItemSerializer(serializers.Serializer):
