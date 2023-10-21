@@ -286,7 +286,7 @@ remote_login_header: HTTP_REMOTE_USER
 # pui_settings:
 #   server_list:
 #     my_server1:
-#       host: https://demo.inventree.org/api/
+#       host: https://demo.inventree.org/
 #       name: InvenTree Demo
 #   default_server: my_server1
 #   show_server_selector: false
