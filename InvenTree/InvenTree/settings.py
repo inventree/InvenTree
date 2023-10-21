@@ -379,6 +379,12 @@ if DEBUG:
 
 # InvenTree URL configuration
 
+INVENTREE_ADMIN_ENABLED = get_boolean_setting(
+    'INVENTREE_ADMIN_ENABLED',
+    config_key='admin_enabled',
+    default_value=True
+)
+
 # Base URL for admin pages (default="admin")
 INVENTREE_ADMIN_URL = get_setting(
     'INVENTREE_ADMIN_URL',
