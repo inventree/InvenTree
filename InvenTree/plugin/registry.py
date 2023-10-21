@@ -17,7 +17,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
-from django.urls import clear_url_caches, re_path
+from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -620,13 +620,17 @@ class PluginsRegistry:
 
             app_name = getattr(url, 'app_name', None)
 
+            admin_url = settings.INVENTREE_ADMIN_URL
+
             if app_name == 'admin':
-                urlpatterns[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
+                urlpatterns[index] = path(f'{admin_url}/', admin.site.urls, name='inventree-admin')
+
             if app_name == 'plugin':
                 urlpatterns[index] = get_plugin_urls()
 
         # Refresh the URL cache
         clear_url_caches()
+
     # endregion
 
     # region plugin registry hash calculations
