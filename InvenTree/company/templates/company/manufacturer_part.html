@@ -27,7 +27,7 @@
 
 {% block actions %}
 
-{% admin_url user 'company_manufacturerpart' part.pk as url %}
+{% admin_url user 'company.manufacturerpart' part.pk as url %}
 {% include "admin_button.html" with url=url %}
 
 {% if roles.purchase_order.change %}
