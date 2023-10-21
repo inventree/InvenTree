@@ -626,3 +626,54 @@ else:  # pragma: no cover
         token.contents = ' '.join(bits)
 
         return I18nStaticNode.handle_token(parser, token)
+
+
+@register.simple_tag()
+def admin_index(user):
+    """Return a URL for the admin interface"""
+
+    if not djangosettings.INVENTREE_ADMIN_ENABLED:
+        return ''
+
+    if not user.is_staff:
+        return ''
+
+    return reverse('admin:index')
+
+
+@register.simple_tag()
+def admin_url(user, table, pk):
+    """Generate a link to the admin site for the given model instance.
+
+    - If the admin site is disabled, an empty URL is returned
+    - If the user is not a staff user, an empty URL is returned
+    - If the user does not have the correct permission, an empty URL is returned
+    """
+
+    app, model = table.strip().split('.')
+
+    print("admin_url:", app, model, pk)
+
+    from django.urls import reverse
+
+    if not djangosettings.INVENTREE_ADMIN_ENABLED:
+        print("admin not enabled!")
+        return ""
+
+    if not user.is_staff:
+        print("user is not staff!")
+        return ""
+
+    if not pk:
+        print("no pk provided")
+        return ""
+
+    # Check the user has the correct permission
+    perm_string = f"{app}.change_{model}"
+    if not user.has_perm(perm_string):
+        print("user does not have permission!")
+        return ''
+
+    url = reverse(f'admin:{app}_{model}_change', args=(pk,))
+
+    return url

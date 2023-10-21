@@ -197,7 +197,18 @@ if DBBACKUP_STORAGE_OPTIONS is None:
         'location': config.get_backup_dir(),
     }
 
-# Application definition
+INVENTREE_ADMIN_ENABLED = get_boolean_setting(
+    'INVENTREE_ADMIN_ENABLED',
+    config_key='admin_enabled',
+    default_value=True
+)
+
+# Base URL for admin pages (default="admin")
+INVENTREE_ADMIN_URL = get_setting(
+    'INVENTREE_ADMIN_URL',
+    config_key='admin_url',
+    default_value='admin'
+)
 
 INSTALLED_APPS = [
     # Admin site integration
@@ -378,20 +389,6 @@ if DEBUG:
     INSTALLED_APPS.append('sslserver')
 
 # InvenTree URL configuration
-
-INVENTREE_ADMIN_ENABLED = get_boolean_setting(
-    'INVENTREE_ADMIN_ENABLED',
-    config_key='admin_enabled',
-    default_value=True
-)
-
-# Base URL for admin pages (default="admin")
-INVENTREE_ADMIN_URL = get_setting(
-    'INVENTREE_ADMIN_URL',
-    config_key='admin_url',
-    default_value='admin'
-)
-
 ROOT_URLCONF = 'InvenTree.urls'
 
 TEMPLATES = [
