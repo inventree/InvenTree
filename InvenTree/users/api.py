@@ -207,6 +207,14 @@ class GetAuthToken(APIView):
             # User is authenticated, and requesting a token against the provided name.
             token = ApiToken.objects.create(user=request.user, name=name)
 
+            # Add some metadata about the request
+            token.set_metadata('user_agent', request.META.get('HTTP_USER_AGENT', ''))
+            token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
+            token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
+            token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
+            token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
+            token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
+
             data = {
                 'token': token.key,
                 'name': token.name,
