@@ -79,21 +79,37 @@ class UserTokenTests(InvenTreeAPITestCase):
         # If we re-generate a token, the value changes
         token = ApiToken.objects.filter(name='cat').first()
 
-        # Request a *new* token with the same name
+        # Request the token with the same name
+        data = self.get(url, data={'name': 'cat'}, expected_code=200).data
+
+        self.assertEqual(data['token'], token.key)
+
+        self.assertEqual(ApiToken.objects.count(), 3)
+
+        # Revoke the token, and then request again
+        token.revoked = True
+        token.save()
+
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
 
         self.assertNotEqual(data['token'], token.key)
 
-        # Check the old token is deleted
-        self.assertEqual(ApiToken.objects.count(), 3)
-        with self.assertRaises(ApiToken.DoesNotExist):
-            token.refresh_from_db()
+        # A new token has been generated
+        self.assertEqual(ApiToken.objects.count(), 4)
 
         # Test with a really long name
         data = self.get(url, data={'name': 'cat' * 100}, expected_code=200).data
 
         # Name should be truncated
         self.assertEqual(len(data['name']), 100)
+
+        token.refresh_from_db()
+
+        # Check that the metadata has been updated
+        keys = ['user_agent', 'remote_addr', 'remote_host', 'remote_user', 'server_name', 'server_port']
+
+        for k in keys:
+            self.assertIn(k, token.metadata)
 
     def test_token_auth(self):
         """Test user token authentication"""
@@ -112,6 +128,7 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Grab the token, and update
         token = ApiToken.objects.first()
         self.assertEqual(token.key, token_key)
+        self.assertIsNotNone(token.last_seen)
 
         # Revoke the token
         token.revoked = True
