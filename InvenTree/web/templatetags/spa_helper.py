@@ -8,7 +8,7 @@ from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
-logger = getLogger("inventree")
+logger = getLogger("InvenTree")
 register = template.Library()
 
 FRONTEND_SETTINGS = json.dumps(settings.FRONTEND_SETTINGS)
