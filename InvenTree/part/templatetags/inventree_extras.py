@@ -8,7 +8,7 @@ from datetime import date, datetime
 from django import template
 from django.conf import settings as djangosettings
 from django.templatetags.static import StaticNode
-from django.urls import reverse
+from django.urls import NoReverseMatch, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -660,14 +660,18 @@ def admin_url(user, table, pk):
     if not user.is_staff:
         return ""
 
-    if not pk:
-        return ""
-
     # Check the user has the correct permission
     perm_string = f"{app}.change_{model}"
     if not user.has_perm(perm_string):
         return ''
 
-    url = reverse(f'admin:{app}_{model}_change', args=(pk,))
+    # Fallback URL
+    url = reverse(f"admin:{app}_{model}_changelist")
+
+    if pk:
+        try:
+            url = reverse(f'admin:{app}_{model}_change', args=(pk,))
+        except NoReverseMatch:
+            pass
 
     return url
