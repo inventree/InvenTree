@@ -1,5 +1,7 @@
 """Custom token authentication class for InvenTree API"""
 
+import datetime
+
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import exceptions
@@ -22,6 +24,11 @@ class ApiTokenAuthentication(TokenAuthentication):
 
         # If this runs without error, then the token is valid (so far)
         (user, token) = super().authenticate_credentials(key)
+
+        if token.last_seen != datetime.date.today():
+            # Update the last-seen date
+            token.last_seen = datetime.date.today()
+            token.save()
 
         if token.revoked:
             raise exceptions.AuthenticationFailed(_("Token has been revoked"))
