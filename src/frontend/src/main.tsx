@@ -14,7 +14,7 @@ declare global {
       server_list: HostList;
       default_server: string;
       show_server_selector: boolean;
-      url_base: string;
+      base_url: string;
       sentry_dsn?: string;
       environment?: string;
     };
@@ -56,7 +56,7 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
   });
 }
 
-export const url_base = window.INVENTREE_SETTINGS.url_base || 'platform';
+export const base_url = window.INVENTREE_SETTINGS.base_url || 'platform';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -66,5 +66,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
 // Redirect to base url if on /
 if (window.location.pathname === '/') {
-  window.location.replace(`/${url_base}`);
+  window.location.replace(`/${base_url}`);
 }
