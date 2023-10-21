@@ -27,20 +27,20 @@ export const IS_DEV_OR_DEMO = IS_DEV || IS_DEMO;
 
 window.INVENTREE_SETTINGS = {
   server_list: {
-    'mantine-cqj63coxn': {
+    localhost: {
       host: `${window.location.origin}/`,
       name: 'Current Server'
     },
     ...(IS_DEV_OR_DEMO
       ? {
-          'mantine-u56l5jt85': {
+          demo: {
             host: 'https://demo.inventree.org/',
             name: 'InvenTree Demo'
           }
         }
       : {})
   },
-  default_server: IS_DEMO ? 'mantine-u56l5jt85' : 'mantine-cqj63coxn', // use demo server for demo mode
+  default_server: IS_DEMO ? 'demo' : 'localhost',
   show_server_selector: IS_DEV_OR_DEMO,
 
   // merge in settings that are already set via django's spa_view or for development
