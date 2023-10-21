@@ -18,6 +18,7 @@ class ApiTokenAdmin(admin.ModelAdmin):
     """Admin class for the ApiToken model."""
 
     list_display = ('token', 'user', 'name', 'expiry', 'active')
+    list_filter = ('user', 'revoked')
     fields = ('token', 'user', 'name', 'created', 'last_seen', 'revoked', 'expiry', 'metadata')
 
     def get_readonly_fields(self, request, obj=None):
