@@ -212,11 +212,11 @@ new_frontendpatterns = platform_urls
 urlpatterns = []
 
 if settings.INVENTREE_ADMIN_ENABLED:
+    admin_url = settings.INVENTREE_ADMIN_URL,
     urlpatterns += [
-        re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
-        re_path(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
+        path(f'{admin_url}/error_log/', include('error_report.urls')),
+        path(f'{admin_url}/', admin.site.urls, name='inventree-admin'),
     ]
-
 
 urlpatterns += backendpatterns
 
