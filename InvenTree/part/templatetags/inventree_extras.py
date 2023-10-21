@@ -652,26 +652,20 @@ def admin_url(user, table, pk):
 
     app, model = table.strip().split('.')
 
-    print("admin_url:", app, model, pk)
-
     from django.urls import reverse
 
     if not djangosettings.INVENTREE_ADMIN_ENABLED:
-        print("admin not enabled!")
         return ""
 
     if not user.is_staff:
-        print("user is not staff!")
         return ""
 
     if not pk:
-        print("no pk provided")
         return ""
 
     # Check the user has the correct permission
     perm_string = f"{app}.change_{model}"
     if not user.has_perm(perm_string):
-        print("user does not have permission!")
         return ''
 
     url = reverse(f'admin:{app}_{model}_change', args=(pk,))
