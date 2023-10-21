@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-19 16:27\n"
+"PO-Revision-Date: 2023-10-21 16:35\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -25,7 +25,7 @@ msgstr ""
 #: src/components/forms/ApiForm.tsx:189
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "Abgeschlossen"
 
 #: src/components/forms/ApiForm.tsx:263
 msgid "Form Errors Exist"
@@ -137,11 +137,11 @@ msgstr "Benutzername und Passwort verwenden"
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
-msgstr ""
+msgstr "Anmelden"
 
 #: src/components/forms/AuthenticationForm.tsx:147
 msgid "Send Email"
-msgstr ""
+msgstr "E-Mail senden"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
@@ -237,7 +237,7 @@ msgstr "Ein Fehler ist aufgetreten:"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "Mehr lesen"
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
@@ -261,11 +261,11 @@ msgstr "QR-Code scannen"
 
 #: src/components/items/YesNoButton.tsx:15
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: src/components/items/YesNoButton.tsx:15
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
 #: src/components/modals/QrCodeModal.tsx:71
 msgid "Unknown response"
@@ -274,7 +274,7 @@ msgstr "Unbekannte Antwort"
 #: src/components/modals/QrCodeModal.tsx:101
 #: src/pages/Index/Scan.tsx:592
 msgid "Error while getting camera"
-msgstr ""
+msgstr "Fehler beim Laden der Kamera"
 
 #: src/components/modals/QrCodeModal.tsx:124
 #: src/pages/Index/Scan.tsx:615
@@ -337,7 +337,7 @@ msgstr "Benutzereinstellungen"
 #: src/components/nav/MainMenu.tsx:54
 #: src/pages/Index/SystemSettings.tsx:256
 msgid "System Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 #: src/components/nav/MainMenu.tsx:63
 #: src/components/nav/NavigationDrawer.tsx:67
@@ -359,7 +359,7 @@ msgstr "Abmelden"
 
 #: src/components/nav/NavHoverMenu.tsx:52
 msgid "Open Navigation"
-msgstr ""
+msgstr "Navigation öffnen"
 
 #: src/components/nav/NavHoverMenu.tsx:70
 msgid "View all"
@@ -417,7 +417,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:370
 msgid "Search Options"
-msgstr ""
+msgstr "Suchoptionen"
 
 #: src/components/nav/SearchDrawer.tsx:373
 msgid "Regex search"
@@ -433,7 +433,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:431
 msgid "No results"
-msgstr ""
+msgstr "Keine Ergebnisse"
 
 #: src/components/nav/SearchDrawer.tsx:434
 msgid "No results available for search query"
@@ -2494,3 +2494,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
