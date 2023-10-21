@@ -1,5 +1,6 @@
 """DRF API definition for the 'users' app"""
 
+import datetime
 import logging
 
 from django.contrib.auth.models import Group, User
@@ -201,11 +202,14 @@ class GetAuthToken(APIView):
 
             name = ApiToken.sanitize_name(name)
 
-            # Delete any matching tokens
-            ApiToken.objects.filter(user=user, name=name).delete()
+            today = datetime.date.today()
 
-            # User is authenticated, and requesting a token against the provided name.
-            token = ApiToken.objects.create(user=request.user, name=name)
+            # Find existing token, which has not expired
+            token = ApiToken.objects.filter(user=user, name=name, revoked=False, expiry__gte=today).first()
+
+            if not token:
+                # User is authenticated, and requesting a token against the provided name.
+                token = ApiToken.objects.create(user=request.user, name=name)
 
             # Add some metadata about the request
             token.set_metadata('user_agent', request.META.get('HTTP_USER_AGENT', ''))

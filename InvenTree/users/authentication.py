@@ -25,15 +25,15 @@ class ApiTokenAuthentication(TokenAuthentication):
         # If this runs without error, then the token is valid (so far)
         (user, token) = super().authenticate_credentials(key)
 
-        if token.last_seen != datetime.date.today():
-            # Update the last-seen date
-            token.last_seen = datetime.date.today()
-            token.save()
-
         if token.revoked:
             raise exceptions.AuthenticationFailed(_("Token has been revoked"))
 
         if token.expired:
             raise exceptions.AuthenticationFailed(_("Token has expired"))
+
+        if token.last_seen != datetime.date.today():
+            # Update the last-seen date
+            token.last_seen = datetime.date.today()
+            token.save()
 
         return (user, token)
