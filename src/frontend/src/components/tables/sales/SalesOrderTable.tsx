@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { renderDate } from '../../../defaults/formatters';
+import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -83,9 +83,18 @@ export function SalesOrderTable({ params }: { params?: any }) {
         title: t`Shipment Date`,
         switchable: true,
         render: (record: any) => renderDate(record.shipment_date)
-      }
+      },
       // TODO: Line items
-      // TODO: Total price
+      {
+        accessor: 'total_price',
+        sortable: true,
+        title: t`Total Price`,
+        switchable: true,
+        render: (record: any) =>
+          formatCurrency(record.total_price, {
+            currency: record.order_currency
+          })
+      }
     ];
   }, []);
 

@@ -3,7 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { renderDate } from '../../../defaults/formatters';
+import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
@@ -86,10 +86,19 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Last Updated`,
       switchable: true,
       render: (record: any) => renderDate(record.updated)
-    }
+    },
     // TODO: purchase order
     // TODO: Supplier part
-    // TODO: purchase price
+    {
+      accessor: 'purchase_price',
+      sortable: true,
+      title: t`Purchase Price`,
+      switchable: true,
+      render: (record: any) =>
+        formatCurrency(record.purchase_price, {
+          currency: record.purchase_price_currency
+        })
+    }
     // TODO: stock value
     // TODO: packaging
     // TODO: notes
