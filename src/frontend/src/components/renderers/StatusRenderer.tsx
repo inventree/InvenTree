@@ -6,7 +6,7 @@ import { ModelType } from '../render/ModelType';
 
 interface StatusCodeInterface {
   key: string;
-  name: string;
+  label: string;
   color: string;
 }
 
@@ -36,7 +36,7 @@ function renderStatusLabel(
     let entry = codes[name];
 
     if (entry.key == key) {
-      text = entry.name;
+      text = entry.label;
       color = entry.color;
       break;
     }
