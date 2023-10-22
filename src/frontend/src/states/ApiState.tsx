@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 import { api } from '../App';
 import { ModelType } from '../components/render/ModelType';
@@ -14,27 +15,36 @@ interface ServerApiStateProps {
   status: StatusLookup | undefined;
 }
 
-export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
-  server: emptyServerAPI,
-  setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
-  fetchServerApiState: async () => {
-    // Fetch server data
-    await api.get(apiUrl(ApiPaths.api_server_info)).then((response) => {
-      set({ server: response.data });
-    });
-    // Fetch status data for rendering labels
-    await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
-      const newStatusLookup: StatusLookup = {} as StatusLookup;
-      for (const key in response.data) {
-        const modelType = key as ModelType;
-        const statusValues = response.data[modelType].values;
-        newStatusLookup[modelType] = statusValues;
-      }
-      set({ status: newStatusLookup });
-    });
-  },
-  status: undefined
-}));
+export const useServerApiState = create<ServerApiStateProps>()(
+  persist(
+    (set, get) => ({
+      server: emptyServerAPI,
+      setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
+      fetchServerApiState: async () => {
+        // Fetch server data
+        await api.get(apiUrl(ApiPaths.api_server_info)).then((response) => {
+          set({ server: response.data });
+        });
+        // Fetch status data for rendering labels
+        await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
+          const newStatusLookup: StatusLookup = {} as StatusLookup;
+          for (const key in response.data) {
+            const modelType = key as ModelType;
+            const statusValues = response.data[modelType].values;
+            newStatusLookup[modelType] = statusValues;
+          }
+          console.log('defining status', newStatusLookup);
+          set({ status: newStatusLookup });
+        });
+      },
+      status: undefined
+    }),
+    {
+      name: 'server-api-state',
+      getStorage: () => sessionStorage
+    }
+  )
+);
 
 export enum ApiPaths {
   api_server_info = 'api-server-info',
