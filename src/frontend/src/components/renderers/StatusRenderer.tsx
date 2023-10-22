@@ -14,8 +14,6 @@ export interface StatusCodeListInterface {
   [key: string]: StatusCodeInterface;
 }
 
-const stockCodes: StatusCodeListInterface = {};
-
 interface renderStatusLabelOptionsInterface {
   size?: MantineSize;
 }
