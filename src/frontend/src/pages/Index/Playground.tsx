@@ -8,6 +8,8 @@ import { ApiFormProps } from '../../components/forms/ApiForm';
 import { ApiFormChangeCallback } from '../../components/forms/fields/ApiFormField';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
+import { ModelType } from '../../components/render/ModelType';
+import { StatusRenderer } from '../../components/renderers/StatusRenderer';
 import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 import {
   createPart,
@@ -65,7 +67,7 @@ function StatusLabelPlayground() {
   return (
     <>
       <Group>
-        <Text>Dummy content</Text>
+        <StatusRenderer type={ModelType.stockitem} status={10} />
       </Group>
     </>
   );
