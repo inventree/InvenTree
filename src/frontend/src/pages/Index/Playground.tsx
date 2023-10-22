@@ -65,16 +65,14 @@ function ApiFormsPlayground() {
 // Show some example status labels
 function StatusLabelPlayground() {
   const [status, setStatus] = useState<string>('10');
-
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setStatus(event.currentTarget.value);
-  }
-
   return (
     <>
       <Group>
         <Text>Stock Status</Text>
-        <TextInput value={status} onChange={handleChange} />
+        <TextInput
+          value={status}
+          onChange={(event) => setStatus(event.currentTarget.value)}
+        />
         <StatusRenderer type={ModelType.stockitem} status={status} />
       </Group>
     </>
