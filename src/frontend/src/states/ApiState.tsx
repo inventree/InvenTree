@@ -33,7 +33,6 @@ export const useServerApiState = create<ServerApiStateProps>()(
             const statusValues = response.data[modelType].values;
             newStatusLookup[modelType] = statusValues;
           }
-          console.log('defining status', newStatusLookup);
           set({ status: newStatusLookup });
         });
       },
