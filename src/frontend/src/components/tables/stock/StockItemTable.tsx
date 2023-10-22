@@ -3,6 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { renderDate } from '../../../defaults/formatters';
 import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
@@ -70,10 +71,22 @@ function stockItemTableColumns(): TableColumn[] {
         // TODO: Custom renderer for location
         return record.location;
       }
-    }
+    },
     // TODO: stocktake column
-    // TODO: expiry date
-    // TODO: last updated
+    {
+      accessor: 'expiry_date',
+      sortable: true,
+      title: t`Expiry Date`,
+      switchable: true,
+      render: (record: any) => renderDate(record.expiry_date)
+    },
+    {
+      accessor: 'updated',
+      sortable: true,
+      title: t`Last Updated`,
+      switchable: true,
+      render: (record: any) => renderDate(record.updated)
+    }
     // TODO: purchase order
     // TODO: Supplier part
     // TODO: purchase price

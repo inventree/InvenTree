@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { renderDate } from '../../../defaults/formatters';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -61,11 +62,28 @@ export function SalesOrderTable({ params }: { params?: any }) {
         sortable: true,
         switchable: true
         // TODO: Custom formatter
+      },
+      {
+        accessor: 'creation_date',
+        sortable: true,
+        title: t`Created`,
+        switchable: true,
+        render: (record: any) => renderDate(record.creation_date)
+      },
+      {
+        accessor: 'target_date',
+        sortable: true,
+        title: t`Target Date`,
+        switchable: true,
+        render: (record: any) => renderDate(record.target_date)
+      },
+      {
+        accessor: 'shipment_date',
+        sortable: true,
+        title: t`Shipment Date`,
+        switchable: true,
+        render: (record: any) => renderDate(record.shipment_date)
       }
-
-      // TODO: Creation date
-      // TODO: Target date
-      // TODO: Shipment date
       // TODO: Line items
       // TODO: Total price
     ];

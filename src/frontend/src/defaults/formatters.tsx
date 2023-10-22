@@ -1,3 +1,4 @@
+import { Text } from '@mantine/core';
 import dayjs from 'dayjs';
 
 const global_settings = {
@@ -65,7 +66,7 @@ interface renderDateOptionsType {
  */
 export function renderDate(date: string, options: renderDateOptionsType = {}) {
   if (!date) {
-    return null;
+    return '-';
   }
 
   let fmt = user_settings.DATE_DISPLAY_FORMAT || 'YYYY-MM-DD';
