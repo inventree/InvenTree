@@ -3,6 +3,7 @@ import { Progress, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { renderDate } from '../../../defaults/formatters';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
@@ -95,19 +96,22 @@ function buildOrderTableColumns(): TableColumn[] {
       accessor: 'creation_date',
       sortable: true,
       title: t`Created`,
-      switchable: true
+      switchable: true,
+      render: (record: any) => renderDate(record.creation_date)
     },
     {
       accessor: 'target_date',
       sortable: true,
       title: t`Target Date`,
-      switchable: true
+      switchable: true,
+      render: (record: any) => renderDate(record.target_date)
     },
     {
       accessor: 'completion_date',
       sortable: true,
       title: t`Completed`,
-      switchable: true
+      switchable: true,
+      render: (record: any) => renderDate(record.completion_date)
     },
     {
       accessor: 'issued_by',
