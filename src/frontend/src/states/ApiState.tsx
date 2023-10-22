@@ -1,13 +1,17 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
+import { ModelType } from '../components/render/ModelType';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ServerAPIProps, UserProps } from './states';
+
+type StatusLookup = Record<ModelType, string[]>;
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
+  status: StatusLookup | undefined;
 }
 
 export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
@@ -18,7 +22,18 @@ export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
     await api.get(apiUrl(ApiPaths.api_server_info)).then((response) => {
       set({ server: response.data });
     });
-  }
+    // Fetch status data for rendering labels
+    await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
+      const newStatusLookup: StatusLookup = {} as StatusLookup;
+      for (const key in response.data) {
+        const modelType = key as ModelType;
+        const statusValues = response.data[modelType].values;
+        newStatusLookup[modelType] = statusValues;
+      }
+      set({ status: newStatusLookup });
+    });
+  },
+  status: undefined
 }));
 
 export enum ApiPaths {
@@ -40,6 +55,7 @@ export enum ApiPaths {
 
   barcode = 'api-barcode',
   news = 'news',
+  global_status = 'api-global-status',
 
   // Build order URLs
   build_order_list = 'api-build-list',
@@ -120,6 +136,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'barcode/';
     case ApiPaths.news:
       return 'news/';
+    case ApiPaths.global_status:
+      return 'generic/status/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:

@@ -14,56 +14,7 @@ interface CodeListInterface {
   [key: string]: CodeInterface;
 }
 
-const stockCodes: CodeListInterface = {
-  pending: {
-    key: 10,
-    value: t`Pending`,
-    label: 'gray',
-    help_text: t`Order is pending (not yet placed)`
-  },
-  pending_placing: {
-    key: 15,
-    value: t`Pending placing`,
-    label: 'gray',
-    help_text: t`Order is pending an action for being placed`
-  },
-  pending_approval: {
-    key: 16,
-    value: t`Pending approval`,
-    label: 'gray',
-    help_text: t`Order is pending approval`
-  },
-  placed: {
-    key: 20,
-    value: t`Placed`,
-    label: 'blue',
-    help_text: t`Order has been placed with supplier`
-  },
-  complete: {
-    key: 30,
-    value: t`Complete`,
-    label: 'green',
-    help_text: t`Order has been completed`
-  },
-  cancelled: {
-    key: 40,
-    value: t`Cancelled`,
-    label: 'red',
-    help_text: t`Order was cancelled`
-  },
-  lost: {
-    key: 50,
-    value: t`Lost`,
-    label: 'orange',
-    help_text: t`Order was lost`
-  },
-  returned: {
-    key: 60,
-    value: t`Returned`,
-    label: 'orange',
-    help_text: t`Order was returned`
-  }
-};
+const stockCodes: CodeListInterface = {};
 
 interface renderStatusLabelOptionsInterface {
   size?: MantineSize;
