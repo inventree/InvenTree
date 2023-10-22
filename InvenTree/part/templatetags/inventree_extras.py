@@ -347,7 +347,7 @@ def setting_object(key, *args, **kwargs):
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
         plg = kwargs['plugin']
-        if issubclass(plugin.__class__, InvenTreePlugin):
+        if issubclass(plg.__class__, InvenTreePlugin):
             plg = plg.plugin_config()
 
         return plugin.models.PluginSetting.get_setting_object(key, plugin=plg, cache=cache)
