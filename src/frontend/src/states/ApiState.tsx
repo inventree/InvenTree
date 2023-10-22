@@ -55,6 +55,7 @@ export enum ApiPaths {
 
   // Company URLs
   company_list = 'api-company-list',
+  company_attachment_list = 'api-company-attachment-list',
   supplier_part_list = 'api-supplier-part-list',
 
   // Stock Item URLs
@@ -67,6 +68,9 @@ export enum ApiPaths {
 
   // Sales Order URLs
   sales_order_list = 'api-sales-order-list',
+
+  // Return Order URLs
+  return_order_list = 'api-return-order-list',
 
   // Plugin URLs
   plugin_list = 'api-plugin-list',
@@ -134,6 +138,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'part/attachment/';
     case ApiPaths.company_list:
       return 'company/';
+    case ApiPaths.company_attachment_list:
+      return 'company/attachment/';
     case ApiPaths.supplier_part_list:
       return 'company/part/';
     case ApiPaths.stock_item_list:
@@ -146,6 +152,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'order/po/';
     case ApiPaths.sales_order_list:
       return 'order/so/';
+    case ApiPaths.return_order_list:
+      return 'order/ro/';
     case ApiPaths.plugin_list:
       return 'plugins/';
     case ApiPaths.project_code_list:

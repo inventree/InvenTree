@@ -139,7 +139,10 @@
         <ul class='dropdown-menu dropdown-menu-end inventree-navbar-menu'>
           {% if user.is_authenticated %}
           {% if user.is_staff and not hide_admin_link %}
-          <li><a class='dropdown-item' href="{% url 'admin:index' %}"><span class="fas fa-user-shield"></span> {% trans "Admin" %}</a></li>
+          {% admin_index user as admin_idx %}
+          {% if admin_idx %}
+          <li><a class='dropdown-item' href="{{ admin_idx }}"><span class="fas fa-user-shield"></span> {% trans "Admin" %}</a></li>
+          {% endif %}
           {% endif %}
           <li><a class='dropdown-item' href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
           <li><a class='dropdown-item' href="{% url 'account_logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>

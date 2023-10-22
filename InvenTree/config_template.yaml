@@ -58,6 +58,14 @@ database:
 # Use the environment variable INVENTREE_DEBUG
 debug: True
 
+# Set to False to disable the admin interface (default = True)
+# Or, use the environment variable INVENTREE_ADMIN_ENABLED
+#admin_enabled: True
+
+# Set the admin URL (default is 'admin')
+# Or, use the environment variable INVENTREE_ADMIN_URL
+#admin_url: 'admin'
+
 # Set enabled frontends
 # Use the environment variable INVENTREE_CLASSIC_FRONTEND
 # classic_frontend: True

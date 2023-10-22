@@ -7,6 +7,7 @@ import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 import { apiUrl } from '../states/ApiState';
+import { useModalState } from '../states/ModalState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
@@ -97,6 +98,10 @@ export function openModalApiForm(props: ApiFormProps) {
 
   let url = constructFormUrl(props);
 
+  // let modalState = useModalState();
+
+  useModalState.getState().lock();
+
   // Make OPTIONS request first
   api
     .options(url)
@@ -119,6 +124,7 @@ export function openModalApiForm(props: ApiFormProps) {
       modals.open({
         title: props.title,
         modalId: modalId,
+        size: 'xl',
         onClose: () => {
           props.onClose ? props.onClose() : null;
         },
@@ -126,8 +132,12 @@ export function openModalApiForm(props: ApiFormProps) {
           <ApiForm modalId={modalId} props={props} fieldDefinitions={fields} />
         )
       });
+
+      useModalState.getState().unlock();
     })
     .catch((error) => {
+      useModalState.getState().unlock();
+
       console.log('Error:', error);
       if (error.response) {
         invalidResponse(error.response.status);

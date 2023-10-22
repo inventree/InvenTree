@@ -197,7 +197,18 @@ if DBBACKUP_STORAGE_OPTIONS is None:
         'location': config.get_backup_dir(),
     }
 
-# Application definition
+INVENTREE_ADMIN_ENABLED = get_boolean_setting(
+    'INVENTREE_ADMIN_ENABLED',
+    config_key='admin_enabled',
+    default_value=True
+)
+
+# Base URL for admin pages (default="admin")
+INVENTREE_ADMIN_URL = get_setting(
+    'INVENTREE_ADMIN_URL',
+    config_key='admin_url',
+    default_value='admin'
+)
 
 INSTALLED_APPS = [
     # Admin site integration
@@ -232,7 +243,6 @@ INSTALLED_APPS = [
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
     'rest_framework',                       # DRF (Django Rest Framework)
-    'rest_framework.authtoken',             # Token authentication for API
     'corsheaders',                          # Cross-origin Resource Sharing for DRF
     'crispy_forms',                         # Improved form rendering
     'import_export',                        # Import / export tables to file
@@ -379,14 +389,6 @@ if DEBUG:
     INSTALLED_APPS.append('sslserver')
 
 # InvenTree URL configuration
-
-# Base URL for admin pages (default="admin")
-INVENTREE_ADMIN_URL = get_setting(
-    'INVENTREE_ADMIN_URL',
-    config_key='admin_url',
-    default_value='admin'
-)
-
 ROOT_URLCONF = 'InvenTree.urls'
 
 TEMPLATES = [
@@ -433,7 +435,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'users.authentication.ApiTokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -445,7 +447,8 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+    'TOKEN_MODEL': 'users.models.ApiToken',
 }
 
 if DEBUG:
