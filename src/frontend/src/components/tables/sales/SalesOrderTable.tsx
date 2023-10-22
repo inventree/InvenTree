@@ -6,7 +6,7 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { ModelType } from '../../render/ModelType';
-import { StatusRenderer } from '../../renderers/StatusRenderer';
+import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({ params }: { params?: any }) {
@@ -62,8 +62,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
         title: t`Status`,
         sortable: true,
         switchable: true,
-        render: (record: any) =>
-          StatusRenderer({ status: record.status, type: ModelType.salesorder })
+        render: TableStatusRenderer(ModelType.salesorder)
       }
 
       // TODO: Creation date

@@ -87,3 +87,12 @@ export const StatusRenderer = ({
 
   return renderStatusLabel(status, statusCodes, options);
 };
+
+/*
+ * Render the status badge in a table
+ */
+export function TableStatusRenderer(
+  type: ModelType
+): ((record: any) => any) | undefined {
+  return (record: any) => StatusRenderer({ status: record.status, type: type });
+}
