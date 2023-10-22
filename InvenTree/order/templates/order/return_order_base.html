@@ -29,10 +29,9 @@ src="{% static 'img/blank_image.png' %}"
 {% endblock heading %}
 
 {% block actions %}
-{% if user.is_staff and roles.return_order.change %}
-{% url 'admin:order_returnorder_change' order.pk as url %}
+{% admin_url user "order.returnorder" order.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
+
 {% if barcodes %}
 <!-- Barcode actions menu -->
 <div class='btn-group' role='group'>

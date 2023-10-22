@@ -1,7 +1,10 @@
 """Database model definitions for the 'users' app"""
 
+import datetime
 import logging
 
+from django.conf import settings
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -15,9 +18,134 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from rest_framework.authtoken.models import Token as AuthToken
+
+import InvenTree.helpers
+import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase
 
 logger = logging.getLogger("inventree")
+
+
+def default_token():
+    """Generate a default value for the token"""
+    return ApiToken.generate_key()
+
+
+def default_token_expiry():
+    """Generate an expiry date for a newly created token"""
+
+    # TODO: Custom value for default expiry timeout
+    # TODO: For now, tokens last for 1 year
+    return datetime.datetime.now().date() + datetime.timedelta(days=365)
+
+
+class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
+    """Extends the default token model provided by djangorestframework.authtoken, as follows:
+
+    - Adds an 'expiry' date - tokens can be set to expire after a certain date
+    - Adds a 'name' field - tokens can be given a custom name (in addition to the user information)
+    """
+
+    class Meta:
+        """Metaclass defines model properties"""
+        verbose_name = _('API Token')
+        verbose_name_plural = _('API Tokens')
+        abstract = False
+
+    def __str__(self):
+        """String representation uses the redacted token"""
+        return self.token
+
+    @classmethod
+    def generate_key(cls, prefix='inv-'):
+        """Generate a new token key - with custom prefix"""
+
+        # Suffix is the date of creation
+        suffix = '-' + str(datetime.datetime.now().date().isoformat().replace('-', ''))
+
+        return prefix + str(AuthToken.generate_key()) + suffix
+
+    # Override the 'key' field - force it to be unique
+    key = models.CharField(default=default_token, verbose_name=_('Key'), max_length=100, db_index=True, unique=True)
+
+    # Override the 'user' field, to allow multiple tokens per user
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name=_('User'),
+        related_name='api_tokens',
+    )
+
+    name = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_('Token Name'),
+        help_text=_('Custom token name'),
+    )
+
+    expiry = models.DateField(
+        default=default_token_expiry,
+        verbose_name=_('Expiry Date'),
+        help_text=_('Token expiry date'),
+        auto_now=False, auto_now_add=False,
+    )
+
+    last_seen = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Last Seen'),
+        help_text=_('Last time the token was used'),
+    )
+
+    revoked = models.BooleanField(
+        default=False,
+        verbose_name=_('Revoked'),
+        help_text=_('Token has been revoked'),
+    )
+
+    @staticmethod
+    def sanitize_name(name: str):
+        """Sanitize the provide name value"""
+
+        name = str(name).strip()
+
+        # Remove any non-printable chars
+        name = InvenTree.helpers.remove_non_printable_characters(name, remove_newline=True)
+        name = InvenTree.helpers.strip_html_tags(name)
+
+        name = name.replace(' ', '-')
+        # Limit to 100 characters
+        name = name[:100]
+
+        return name
+
+    @property
+    @admin.display(description=_('Token'))
+    def token(self):
+        """Provide a redacted version of the token.
+
+        The *raw* key value should never be displayed anywhere!
+        """
+
+        # If the token has not yet been saved, return the raw key
+        if self.pk is None:
+            return self.key
+
+        M = len(self.key) - 20
+
+        return self.key[:8] + '*' * M + self.key[-12:]
+
+    @property
+    @admin.display(boolean=True, description=_('Expired'))
+    def expired(self):
+        """Test if this token has expired"""
+        return self.expiry is not None and self.expiry < datetime.datetime.now().date()
+
+    @property
+    @admin.display(boolean=True, description=_('Active'))
+    def active(self):
+        """Test if this token is active"""
+        return not self.revoked and not self.expired
 
 
 class RuleSet(models.Model):
@@ -58,8 +186,7 @@ class RuleSet(models.Model):
             'auth_group',
             'auth_user',
             'auth_permission',
-            'authtoken_token',
-            'authtoken_tokenproxy',
+            'users_apitoken',
             'users_ruleset',
             'report_reportasset',
             'report_reportsnippet',
