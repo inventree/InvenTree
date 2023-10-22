@@ -21,6 +21,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import Token as AuthToken
 
 import InvenTree.helpers
+import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase
 
 logger = logging.getLogger("inventree")
@@ -39,7 +40,7 @@ def default_token_expiry():
     return datetime.datetime.now().date() + datetime.timedelta(days=365)
 
 
-class ApiToken(AuthToken):
+class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     """Extends the default token model provided by djangorestframework.authtoken, as follows:
 
     - Adds an 'expiry' date - tokens can be set to expire after a certain date
@@ -51,9 +52,6 @@ class ApiToken(AuthToken):
         verbose_name = _('API Token')
         verbose_name_plural = _('API Tokens')
         abstract = False
-        unique_together = [
-            ('user', 'name')
-        ]
 
     def __str__(self):
         """String representation uses the redacted token"""
@@ -91,6 +89,12 @@ class ApiToken(AuthToken):
         verbose_name=_('Expiry Date'),
         help_text=_('Token expiry date'),
         auto_now=False, auto_now_add=False,
+    )
+
+    last_seen = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Last Seen'),
+        help_text=_('Last time the token was used'),
     )
 
     revoked = models.BooleanField(
