@@ -7,6 +7,8 @@ import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import { ModelType } from '../../render/ModelType';
+import { StatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { RowAction } from '../RowActions';
@@ -52,8 +54,9 @@ function stockItemTableColumns(): TableColumn[] {
       sortable: true,
       switchable: true,
       filter: true,
-      title: t`Status`
-      // TODO: Custom renderer for stock status label
+      title: t`Status`,
+      render: (record: any) =>
+        StatusRenderer({ status: record.status, type: ModelType.stockitem })
     },
     {
       accessor: 'batch',
