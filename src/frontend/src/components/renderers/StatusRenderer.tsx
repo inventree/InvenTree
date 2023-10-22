@@ -1,20 +1,20 @@
-import { t } from '@lingui/macro';
 import { Badge, MantineSize } from '@mantine/core';
 
+import { colorMap } from '../../defaults/backendMappings';
+import { useServerApiState } from '../../states/ApiState';
 import { ModelType } from '../render/ModelType';
 
-interface CodeInterface {
-  key: number;
-  value: string;
-  label: string;
-  help_text: string;
+interface StatusCodeInterface {
+  key: string;
+  name: string;
+  color: string;
 }
 
-interface CodeListInterface {
-  [key: string]: CodeInterface;
+export interface StatusCodeListInterface {
+  [key: string]: StatusCodeInterface;
 }
 
-const stockCodes: CodeListInterface = {};
+const stockCodes: StatusCodeListInterface = {};
 
 interface renderStatusLabelOptionsInterface {
   size?: MantineSize;
@@ -24,20 +24,20 @@ interface renderStatusLabelOptionsInterface {
  * Generic function to render a status label
  */
 function renderStatusLabel(
-  key: number,
-  codes: CodeListInterface,
+  key: string,
+  codes: StatusCodeListInterface,
   options: renderStatusLabelOptionsInterface = {}
 ) {
   let text = null;
-  let label = null;
+  let color = null;
 
   // Find the entry which matches the provided key
   for (let name in codes) {
     let entry = codes[name];
 
     if (entry.key == key) {
-      text = entry.value;
-      label = entry.label;
+      text = entry.name;
+      color = entry.color;
       break;
     }
   }
@@ -47,7 +47,8 @@ function renderStatusLabel(
   }
 
   // Fallbacks
-  label = label || 'dark';
+  if (color == null) color = 'default';
+  color = colorMap[color] || colorMap['default'];
   const size = options.size || 'xs';
 
   if (!text) {
@@ -55,7 +56,7 @@ function renderStatusLabel(
   }
 
   return (
-    <Badge color={label} variant="filled" size={size}>
+    <Badge color={color} variant="filled" size={size}>
       {text}
     </Badge>
   );
@@ -69,10 +70,20 @@ export const StatusRenderer = ({
   type,
   options
 }: {
-  status: number;
+  status: string;
   type: ModelType;
   options?: renderStatusLabelOptionsInterface;
 }) => {
-  // TODO: use type to determine which codes to use
-  return renderStatusLabel(status, stockCodes, options);
+  const [statusCodeList] = useServerApiState((state) => [state.status]);
+  if (statusCodeList === undefined) {
+    console.log('StatusRenderer: statusCodeList is undefined');
+    return null;
+  }
+  const statusCodes = statusCodeList[type];
+  if (statusCodes === undefined) {
+    console.log('StatusRenderer: statusCodes is undefined');
+    return null;
+  }
+
+  return renderStatusLabel(status, statusCodes, options);
 };

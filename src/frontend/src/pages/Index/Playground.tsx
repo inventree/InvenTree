@@ -1,8 +1,8 @@
 import { Trans } from '@lingui/macro';
-import { Button } from '@mantine/core';
+import { Button, TextInput } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { Accordion } from '@mantine/core';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { ApiFormProps } from '../../components/forms/ApiForm';
 import { ApiFormChangeCallback } from '../../components/forms/fields/ApiFormField';
@@ -64,10 +64,17 @@ function ApiFormsPlayground() {
 
 // Show some example status labels
 function StatusLabelPlayground() {
+  const [status, setStatus] = useState<string>('10');
+
   return (
     <>
       <Group>
-        <StatusRenderer type={ModelType.stockitem} status={10} />
+        <Text>Stock Status</Text>
+        <TextInput
+          value={status}
+          onChange={(event) => setStatus(event.currentTarget.value)}
+        />
+        <StatusRenderer type={ModelType.stockitem} status={status} />
       </Group>
     </>
   );

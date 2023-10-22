@@ -3,10 +3,12 @@ import { persist } from 'zustand/middleware';
 
 import { api } from '../App';
 import { ModelType } from '../components/render/ModelType';
+import { StatusCodeListInterface } from '../components/renderers/StatusRenderer';
+import { statusCodeList } from '../defaults/backendMappings';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ServerAPIProps, UserProps } from './states';
 
-type StatusLookup = Record<ModelType, string[]>;
+type StatusLookup = Record<ModelType, StatusCodeListInterface>;
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
@@ -29,9 +31,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
         await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
           const newStatusLookup: StatusLookup = {} as StatusLookup;
           for (const key in response.data) {
-            const modelType = key as ModelType;
-            const statusValues = response.data[modelType].values;
-            newStatusLookup[modelType] = statusValues;
+            newStatusLookup[statusCodeList[key]] = response.data[key].values;
           }
           set({ status: newStatusLookup });
         });
