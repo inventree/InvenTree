@@ -96,7 +96,7 @@ for provider in providers.registry.get_list():
 social_auth_urlpatterns += provider_urlpatterns
 
 
-class SocialProvierListView(ListAPIView):
+class SocialProviderListView(ListAPIView):
     """List of available social providers."""
     permission_classes = (AllowAny,)
 
