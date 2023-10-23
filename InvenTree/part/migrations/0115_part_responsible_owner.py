@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='part',
             name='responsible_owner',
-            field=models.ForeignKey(blank=True, help_text='Owner responsible for this part', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='parts_responsible', to='users.owner', verbose_name='Resonsible'),
+            field=models.ForeignKey(blank=True, help_text='Owner responsible for this part', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='parts_responsible', to='users.owner', verbose_name='Responsible'),
         ),
     ]

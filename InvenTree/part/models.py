@@ -1040,7 +1040,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     responsible_owner = models.ForeignKey(
         users.models.Owner, on_delete=models.SET_NULL,
         blank=True, null=True,
-        verbose_name=_('Resonsible'),
+        verbose_name=_('Responsible'),
         help_text=_('Owner responsible for this part'),
         related_name='parts_responsible'
     )
