@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-21 16:36\n"
+"PO-Revision-Date: 2023-10-23 16:39\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -50,7 +50,7 @@ msgstr "Belépés sikertelen"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
-#: src/functions/auth.tsx:107
+#: src/functions/auth.tsx:110
 msgid "Check your input and try again."
 msgstr "Ellenőrizd amit beírtál és próbáld újra."
 
@@ -73,7 +73,7 @@ msgstr "Üdv újra!"
 #~ msgstr "Login successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:64
-#: src/functions/auth.tsx:98
+#: src/functions/auth.tsx:101
 msgid "Mail delivery successful"
 msgstr "Levél kézbesítése sikeres"
 
@@ -1613,28 +1613,28 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:53
+#: src/functions/auth.tsx:56
 msgid "Logout successful"
 msgstr "Sikeres kijelentkezés"
 
-#: src/functions/auth.tsx:54
+#: src/functions/auth.tsx:57
 msgid "See you soon."
 msgstr "Hamarosan találkozunk."
 
-#: src/functions/auth.tsx:99
+#: src/functions/auth.tsx:102
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Nézd meg a beérkező levelek mappájában a visszaállítási linket. Ez csak akkor működik, ha van fiókod. Ellenőrizd a spameket is."
 
-#: src/functions/auth.tsx:106
+#: src/functions/auth.tsx:109
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
 msgstr "Visszaállítás sikertelen"
 
-#: src/functions/auth.tsx:130
+#: src/functions/auth.tsx:133
 msgid "Already logged in"
 msgstr "Már bejelentkeztél"
 
-#: src/functions/auth.tsx:131
+#: src/functions/auth.tsx:134
 msgid "Found an existing login - using it to log you in."
 msgstr "Van ilyen login - azt használom a belépéshez."
 
