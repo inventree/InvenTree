@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-21 16:36\n"
+"PO-Revision-Date: 2023-10-23 16:40\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -50,7 +50,7 @@ msgstr "Đăng nhập thất bại"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
-#: src/functions/auth.tsx:107
+#: src/functions/auth.tsx:110
 msgid "Check your input and try again."
 msgstr "Kiểm tra đầu vào của bạn và thử lại."
 
@@ -73,7 +73,7 @@ msgstr "Chào mừng bạn đã trở lại!"
 #~ msgstr "Login successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:64
-#: src/functions/auth.tsx:98
+#: src/functions/auth.tsx:101
 msgid "Mail delivery successful"
 msgstr "Thư đã được gửi đi thành công"
 
@@ -1613,28 +1613,28 @@ msgstr "Lỗi gọi chữ ký số từ máy chủ."
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:53
+#: src/functions/auth.tsx:56
 msgid "Logout successful"
 msgstr "Đăng xuất thành công"
 
-#: src/functions/auth.tsx:54
+#: src/functions/auth.tsx:57
 msgid "See you soon."
 msgstr "Hẹn gặp lại."
 
-#: src/functions/auth.tsx:99
+#: src/functions/auth.tsx:102
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Kiểm tra hộp thư để lấy liên kết đặt lại. Việc này chỉ có tác dụng khi bạn có tài khoản. Cần kiểm tra thư mục Spam/Junk."
 
-#: src/functions/auth.tsx:106
+#: src/functions/auth.tsx:109
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
 msgstr "Thiết lập lại thất bại"
 
-#: src/functions/auth.tsx:130
+#: src/functions/auth.tsx:133
 msgid "Already logged in"
 msgstr "Đã đăng nhập"
 
-#: src/functions/auth.tsx:131
+#: src/functions/auth.tsx:134
 msgid "Found an existing login - using it to log you in."
 msgstr "Tìm thấy một tài khoản đã tồn tại - hãy sử dụng nó để đăng nhập."
 
