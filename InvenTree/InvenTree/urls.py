@@ -38,7 +38,7 @@ from web.urls import urlpatterns as platform_urls
 
 from .api import APISearchView, InfoView, NotFoundView
 from .magic_login import GetSimpleLoginView
-from .social_auth_urls import SocialProvierListView, social_auth_urlpatterns
+from .social_auth_urls import SocialProviderListView, social_auth_urlpatterns
 from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
                     CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
@@ -83,7 +83,7 @@ apipatterns = [
     path('auth/', include([
         re_path(r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$', ConfirmEmailView.as_view(), name='account_confirm_email'),
         path('registration/', include('dj_rest_auth.registration.urls')),
-        path('providers/', SocialProvierListView.as_view(), name='social_providers'),
+        path('providers/', SocialProviderListView.as_view(), name='social_providers'),
         path('social/', include(social_auth_urlpatterns)),
         path('social/', SocialAccountListView.as_view(), name='social_account_list'),
         path('social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),
