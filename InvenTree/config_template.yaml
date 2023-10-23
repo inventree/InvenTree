@@ -290,18 +290,17 @@ remote_login_header: HTTP_REMOTE_USER
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
 
-# Platform UI options
-# pui_settings:
+# Frontend UI settings
+# frontend_settings:
+#   base_url: 'frontend'
 #   server_list:
 #     my_server1:
-#       host: https://demo.inventree.org/api/
+#       host: https://demo.inventree.org/
 #       name: InvenTree Demo
 #   default_server: my_server1
 #   show_server_selector: false
 #   sentry_dsn: https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920
 #   environment: development
-# Base URL for serving Platform UI
-# pui_url_base: 'platform'
 
 # Custom flags
 # InvenTree uses django-flags; read more in their docs at https://cfpb.github.io/django-flags/conditions/

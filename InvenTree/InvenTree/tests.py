@@ -1216,6 +1216,6 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.url, '/index/')
         # Note: 2023-08-08 - This test has been changed because "platform UI" is not generally available yet
         # TODO: In the future, the URL comparison will need to be reverted
-        # self.assertEqual(resp.url, f'/{settings.PUI_URL_BASE}/logged-in/')
+        # self.assertEqual(resp.url, f'/{settings.FRONTEND_URL_BASE}/logged-in/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)
