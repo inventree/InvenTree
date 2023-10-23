@@ -41,6 +41,7 @@ import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
 import part.settings as part_settings
+import users.models
 from build import models as BuildModels
 from common.models import InvenTreeSetting
 from common.settings import currency_code_default
@@ -1037,6 +1038,14 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), help_text=_('User responsible for this part'), related_name='parts_responible')
+
+    responsible_owner = models.ForeignKey(
+        users.models.Owner, on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Resonsible'),
+        help_text=_('Owner responsible for this part'),
+        related_name='parts_responsible'
+    )
 
     last_stocktake = models.DateField(
         blank=True, null=True,
