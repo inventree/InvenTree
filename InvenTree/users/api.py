@@ -1,5 +1,6 @@
 """DRF API definition for the 'users' app"""
 
+import datetime
 import logging
 
 from django.contrib.auth.models import Group, User
@@ -86,7 +87,7 @@ class RoleDetails(APIView):
 
         for ruleset in RuleSet.RULESET_CHOICES:
 
-            role, text = ruleset
+            role, _text = ruleset
 
             permissions = []
 
@@ -199,11 +200,24 @@ class GetAuthToken(APIView):
             user = request.user
             name = request.query_params.get('name', '')
 
-            # Delete any matching tokens
-            ApiToken.objects.filter(user=user, name=name).delete()
+            name = ApiToken.sanitize_name(name)
 
-            # User is authenticated, and requesting a token against the provided name.
-            token = ApiToken.objects.create(user=request.user, name=name)
+            today = datetime.date.today()
+
+            # Find existing token, which has not expired
+            token = ApiToken.objects.filter(user=user, name=name, revoked=False, expiry__gte=today).first()
+
+            if not token:
+                # User is authenticated, and requesting a token against the provided name.
+                token = ApiToken.objects.create(user=request.user, name=name)
+
+            # Add some metadata about the request
+            token.set_metadata('user_agent', request.META.get('HTTP_USER_AGENT', ''))
+            token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
+            token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
+            token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
+            token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
+            token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
             data = {
                 'token': token.key,

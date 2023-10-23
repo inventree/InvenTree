@@ -20,6 +20,8 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework.authtoken.models import Token as AuthToken
 
+import InvenTree.helpers
+import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase
 
 logger = logging.getLogger("inventree")
@@ -38,7 +40,7 @@ def default_token_expiry():
     return datetime.datetime.now().date() + datetime.timedelta(days=365)
 
 
-class ApiToken(AuthToken):
+class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     """Extends the default token model provided by djangorestframework.authtoken, as follows:
 
     - Adds an 'expiry' date - tokens can be set to expire after a certain date
@@ -50,9 +52,6 @@ class ApiToken(AuthToken):
         verbose_name = _('API Token')
         verbose_name_plural = _('API Tokens')
         abstract = False
-        unique_together = [
-            ('user', 'name')
-        ]
 
     def __str__(self):
         """String representation uses the redacted token"""
@@ -92,11 +91,33 @@ class ApiToken(AuthToken):
         auto_now=False, auto_now_add=False,
     )
 
+    last_seen = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Last Seen'),
+        help_text=_('Last time the token was used'),
+    )
+
     revoked = models.BooleanField(
         default=False,
         verbose_name=_('Revoked'),
         help_text=_('Token has been revoked'),
     )
+
+    @staticmethod
+    def sanitize_name(name: str):
+        """Sanitize the provide name value"""
+
+        name = str(name).strip()
+
+        # Remove any non-printable chars
+        name = InvenTree.helpers.remove_non_printable_characters(name, remove_newline=True)
+        name = InvenTree.helpers.strip_html_tags(name)
+
+        name = name.replace(' ', '-')
+        # Limit to 100 characters
+        name = name[:100]
+
+        return name
 
     @property
     @admin.display(description=_('Token'))
@@ -401,11 +422,7 @@ class RuleSet(models.Model):
         """Construct the correctly formatted permission string, given the app_model name, and the permission type."""
         model, app = split_model(model)
 
-        return "{app}.{perm}_{model}".format(
-            app=app,
-            perm=permission,
-            model=model
-        )
+        return f"{app}.{permission}_{model}"
 
     def __str__(self, debug=False):  # pragma: no cover
         """Ruleset string representation."""
@@ -483,12 +500,7 @@ def update_group_roles(group, debug=False):
     # and create a simplified permission key string
     for p in group.permissions.all().prefetch_related('content_type'):
         (permission, app, model) = p.natural_key()
-
-        permission_string = '{app}.{perm}'.format(
-            app=app,
-            perm=permission
-        )
-
+        permission_string = f"{app}.{permission}"
         group_permissions.add(permission_string)
 
     # List of permissions which must be added to the group
@@ -506,7 +518,7 @@ def update_group_roles(group, debug=False):
             allowed: Whether or not the action is allowed
         """
         if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
-            raise ValueError("Action {a} is invalid".format(a=action))
+            raise ValueError(f"Action {action} is invalid")
 
         permission_string = RuleSet.get_model_permission_string(model, action)
 

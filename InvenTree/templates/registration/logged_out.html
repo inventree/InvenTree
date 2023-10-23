@@ -1,10 +1,11 @@
 {% extends "registration/logged_out.html" %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block content %}
 
 <p>{% translate "You were logged out successfully." %}</p>
 
-<p><a href="{% url 'admin:index' %}">{% translate 'Log in again' %}</a></p>
+<p><a href="{% url 'index' %}">{% translate 'Log in again' %}</a></p>
 
 {% endblock content %}
