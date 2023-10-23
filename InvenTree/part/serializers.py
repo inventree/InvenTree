@@ -698,6 +698,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
     responsible = serializers.PrimaryKeyRelatedField(
         queryset=users.models.Owner.objects.all(),
+        required=False, allow_null=True,
         source='responsible_owner',
     )
 
