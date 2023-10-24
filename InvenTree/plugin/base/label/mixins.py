@@ -3,6 +3,7 @@
 from django.http import JsonResponse
 
 import pdf2image
+from rest_framework.request import Request
 
 from common.models import InvenTreeSetting
 from InvenTree.tasks import offload_task
@@ -18,7 +19,7 @@ class LabelPrintingMixin:
 
     The plugin *must* also implement the print_label() function for rendering an individual label
 
-    Note that the print_labels() function can also be overridden to provide custom behaviour.
+    Note that the print_labels() function can also be overridden to provide custom behavior.
     """
 
     # If True, the print_label() method will block until the label is printed
@@ -70,13 +71,14 @@ class LabelPrintingMixin:
         png = pdf2image.convert_from_bytes(pdf_data, dpi=dpi)[0]
         return png
 
-    def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
+    def print_labels(self, label: LabelTemplate, items: list, request: Request, **kwargs):
         """Print one or more labels with the provided template and items.
 
         Arguments:
             label: The LabelTemplate object to use for printing
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
+            request.data: The printing options set for this print job defined in the PrintingOptionsSerializer
 
         Returns:
             A JSONResponse object which indicates outcome to the user
@@ -107,6 +109,7 @@ class LabelPrintingMixin:
                 'user': user,
                 'width': label.width,
                 'height': label.height,
+                'printing_options': request.data,
             }
 
             if self.BLOCKING_PRINT:
@@ -136,6 +139,7 @@ class LabelPrintingMixin:
             user: The user who triggered this print job
             width: The expected width of the label (in mm)
             height: The expected height of the label (in mm)
+            printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
 
         Note that the supplied kwargs may be different if the plugin overrides the print_labels() method.
         """
@@ -158,3 +162,21 @@ class LabelPrintingMixin:
             self.plugin_slug(),
             **kwargs
         )
+
+    def get_printing_options_serializer(self, request: Request, *args, **kwargs):
+        """Return a serializer class instance with dynamic printing options.
+
+        Arguments:
+            request: The request made to print a label or interfering the available serializer fields via an OPTIONS request
+            *args, **kwargs: need to be passed to the serializer instance
+
+        Returns:
+            A class instance of a DRF serializer class, by default this an instance of
+            self.PrintingOptionsSerializer using the *args, **kwargs if existing for this plugin
+        """
+        serializer = getattr(self, "PrintingOptionsSerializer", None)
+
+        if not serializer:
+            return None
+
+        return serializer(*args, **kwargs)
