@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-23 11:34+0000\n"
-"PO-Revision-Date: 2023-10-23 16:40\n"
+"PO-Revision-Date: 2023-10-24 16:50\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -1304,7 +1304,7 @@ msgstr "Số lượng phải là 1 cho kho sê ri"
 
 #: build/models.py:1446
 msgid "Selected stock item does not match BOM line"
-msgstr ""
+msgstr "Hàng trong kho đã chọn không phù hợp với đường BOM"
 
 #: build/models.py:1518 build/serializers.py:795 order/serializers.py:1082
 #: order/serializers.py:1103 stock/serializers.py:488 stock/serializers.py:960
@@ -1346,15 +1346,15 @@ msgstr "Đầu ra bản dựng"
 
 #: build/serializers.py:167
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Đầu ra xây dựng không hợp với bản dựng cha"
 
 #: build/serializers.py:171
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "Đầu ra sản phẩm không phù hợp với bản dựng đơn đặt hàng"
 
 #: build/serializers.py:175
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Đầu ra bản dựng này đã được hoàn thành"
 
 #: build/serializers.py:186
 msgid "This build output is not fully allocated"
@@ -1370,7 +1370,7 @@ msgstr "Số lượng nguyên dương cần phải điền cho sản phẩm có 
 
 #: build/serializers.py:267
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "Cần nhập số lượng nguyên dương, bởi vì hóa đơn vật liệu chứa sản phẩm có thể theo dõi"
 
 #: build/serializers.py:282 order/serializers.py:516 order/serializers.py:1258
 #: stock/serializers.py:399 templates/js/translated/purchase_order.js:1138
@@ -1380,11 +1380,11 @@ msgstr "Số sê-ri"
 
 #: build/serializers.py:283
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Nhập vào số sêri cho đầu ra bản dựng"
 
 #: build/serializers.py:296
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Số sêri tự cấp"
 
 #: build/serializers.py:297
 msgid "Automatically allocate required items with matching serial numbers"
@@ -3233,11 +3233,11 @@ msgstr ""
 
 #: common/models.py:2176
 msgid "Exclude Inactive Return Orders"
-msgstr ""
+msgstr "Loại trừ đơn hàng trả lại không hoạt động"
 
 #: common/models.py:2177
 msgid "Exclude inactive return orders from search preview window"
-msgstr ""
+msgstr "Không bao gồm đơn hàng trả lại không hoạt động trong cửa sổ xem trước tìm kiếm"
 
 #: common/models.py:2183
 msgid "Search Preview Results"
@@ -3261,7 +3261,7 @@ msgstr "Tìm phù hợp toàn bộ chữ"
 
 #: common/models.py:2198
 msgid "Search queries return results for whole word matches"
-msgstr ""
+msgstr "Truy vấn tìm trả về kết quả phù hợp toàn bộ chữ"
 
 #: common/models.py:2204
 msgid "Show Quantity in Forms"
@@ -3269,91 +3269,91 @@ msgstr "Hiện số lượng trong biểu mẫu"
 
 #: common/models.py:2205
 msgid "Display available part quantity in some forms"
-msgstr ""
+msgstr "Hiển thị số lượng sản phẩm có sẵn trong một số biểu mẫu"
 
 #: common/models.py:2211
 msgid "Escape Key Closes Forms"
-msgstr ""
+msgstr "Phím escape để đóng mẫu biểu"
 
 #: common/models.py:2212
 msgid "Use the escape key to close modal forms"
-msgstr ""
+msgstr "Sử dụng phím escape để đóng mẫu biểu hộp thoại"
 
 #: common/models.py:2218
 msgid "Fixed Navbar"
-msgstr ""
+msgstr "Cố định điều hướng"
 
 #: common/models.py:2219
 msgid "The navbar position is fixed to the top of the screen"
-msgstr ""
+msgstr "Vị trí thành điều hướng là cố định trên cùng màn hình"
 
 #: common/models.py:2225
 msgid "Date Format"
-msgstr ""
+msgstr "Định dạng ngày"
 
 #: common/models.py:2226
 msgid "Preferred format for displaying dates"
-msgstr ""
+msgstr "Định dạng ưa chuộng khi hiển thị ngày"
 
 #: common/models.py:2240 part/templates/part/detail.html:41
 msgid "Part Scheduling"
-msgstr ""
+msgstr "Lập lịch sản phẩm"
 
 #: common/models.py:2241
 msgid "Display part scheduling information"
-msgstr ""
+msgstr "Hiển thị thông tin lịch sản phẩm"
 
 #: common/models.py:2247 part/templates/part/detail.html:62
 msgid "Part Stocktake"
-msgstr ""
+msgstr "Kiểm kê sản phẩm"
 
 #: common/models.py:2248
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
-msgstr ""
+msgstr "Hiển thị thông tin kiểm kê sản phẩm (nếu chức năng kiểm kê được bật)"
 
 #: common/models.py:2254
 msgid "Table String Length"
-msgstr ""
+msgstr "Độ dài chuỗi trong bảng"
 
 #: common/models.py:2255
 msgid "Maximimum length limit for strings displayed in table views"
-msgstr ""
+msgstr "Giới hạn độ dài tối đa cho chuỗi hiển thị trong kiểu xem bảng biểu"
 
 #: common/models.py:2264
 msgid "Default part label template"
-msgstr ""
+msgstr "Mẫu nhãn sản phẩm mặc định"
 
 #: common/models.py:2265
 msgid "The part label template to be automatically selected"
-msgstr ""
+msgstr "Mẫu nhãn sản phẩm mặc định được chọn tự động"
 
 #: common/models.py:2273
 msgid "Default stock item template"
-msgstr ""
+msgstr "Mẫu hàng hóa trong khi mặc định"
 
 #: common/models.py:2274
 msgid "The stock item label template to be automatically selected"
-msgstr ""
+msgstr "Mẫu nhãn hàng hóa trong kho tự động được chọn"
 
 #: common/models.py:2282
 msgid "Default stock location label template"
-msgstr ""
+msgstr "Mẫu nhãn vị trí kho mặc định"
 
 #: common/models.py:2283
 msgid "The stock location label template to be automatically selected"
-msgstr ""
+msgstr "Mẫu nhãn vị trí kho được chọn tự động"
 
 #: common/models.py:2291
 msgid "Receive error reports"
-msgstr ""
+msgstr "Nhận báo cáo lỗi"
 
 #: common/models.py:2292
 msgid "Receive notifications for system errors"
-msgstr ""
+msgstr "Nhận thông báo khi có lỗi hệ thống"
 
 #: common/models.py:2336
 msgid "Price break quantity"
-msgstr ""
+msgstr "Số lượng giá phá vỡ"
 
 #: common/models.py:2343 company/serializers.py:483 order/admin.py:41
 #: order/models.py:1131 order/models.py:1933
@@ -3361,23 +3361,23 @@ msgstr ""
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:738
 msgid "Price"
-msgstr ""
+msgstr "Giá"
 
 #: common/models.py:2344
 msgid "Unit price at specified quantity"
-msgstr ""
+msgstr "Đơn vị giá theo số lượng cụ thể"
 
 #: common/models.py:2503 common/models.py:2681
 msgid "Endpoint"
-msgstr ""
+msgstr "Đầu mối"
 
 #: common/models.py:2504
 msgid "Endpoint at which this webhook is received"
-msgstr ""
+msgstr "Đầu mối tại điểm webhook được nhận"
 
 #: common/models.py:2513
 msgid "Name for this webhook"
-msgstr ""
+msgstr "Tên của webhook này"
 
 #: common/models.py:2518 part/admin.py:50 part/models.py:1021
 #: plugin/models.py:48 templates/js/translated/table_filters.js:135
@@ -3386,43 +3386,43 @@ msgstr ""
 #: templates/js/translated/table_filters.js:516
 #: templates/js/translated/table_filters.js:712 users/models.py:145
 msgid "Active"
-msgstr ""
+msgstr "Hoạt động"
 
 #: common/models.py:2519
 msgid "Is this webhook active"
-msgstr ""
+msgstr "Webhook có hoạt động không"
 
 #: common/models.py:2533 users/models.py:123
 msgid "Token"
-msgstr ""
+msgstr "Chữ ký số"
 
 #: common/models.py:2534
 msgid "Token for access"
-msgstr ""
+msgstr "Chữ ký số để truy cập"
 
 #: common/models.py:2541
 msgid "Secret"
-msgstr ""
+msgstr "Bí mật"
 
 #: common/models.py:2542
 msgid "Shared secret for HMAC"
-msgstr ""
+msgstr "Mã bí mật dùng chung cho HMAC"
 
 #: common/models.py:2648
 msgid "Message ID"
-msgstr ""
+msgstr "Mã Tin nhắn"
 
 #: common/models.py:2649
 msgid "Unique identifier for this message"
-msgstr ""
+msgstr "Định danh duy nhất cho tin nhắn này"
 
 #: common/models.py:2657
 msgid "Host"
-msgstr ""
+msgstr "Máy chủ"
 
 #: common/models.py:2658
 msgid "Host from which this message was received"
-msgstr ""
+msgstr "Mãy chủ từ tin nhắn này đã được nhận"
 
 #: common/models.py:2665
 msgid "Header"
@@ -3498,7 +3498,7 @@ msgstr "Tệp ảnh"
 
 #: common/models.py:2937
 msgid "Unit name must be a valid identifier"
-msgstr ""
+msgstr "Tên đơn vị phải là một định danh hợp lệ"
 
 #: common/models.py:2959
 msgid "Unit name"
@@ -3510,11 +3510,11 @@ msgstr "Biểu tượng"
 
 #: common/models.py:2966
 msgid "Optional unit symbol"
-msgstr ""
+msgstr "Biểu tượng đơn vị tùy chọn"
 
 #: common/models.py:2972 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
-msgstr ""
+msgstr "Định nghĩa"
 
 #: common/models.py:2973
 msgid "Unit definition"
@@ -3864,7 +3864,7 @@ msgstr "Nhà cung cấp"
 
 #: company/models.py:700
 msgid "Select supplier"
-msgstr ""
+msgstr "Chọn nhà cung cấp"
 
 #: company/models.py:705 company/templates/company/supplier_part.html:139
 #: part/bom.py:285 part/bom.py:313 part/serializers.py:436
@@ -3877,19 +3877,19 @@ msgstr "SKU"
 
 #: company/models.py:706 part/serializers.py:436
 msgid "Supplier stock keeping unit"
-msgstr ""
+msgstr "Đơn vị quản lý kho nhà cung cấp"
 
 #: company/models.py:714
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "Chọn sản phẩm của nhà sản xuất"
 
 #: company/models.py:720
 msgid "URL for external supplier part link"
-msgstr ""
+msgstr "URL cho liên kết sản phẩm của nhà cung cấp bên ngoài"
 
 #: company/models.py:726
 msgid "Supplier part description"
-msgstr ""
+msgstr "Mô tả sản phẩm nhà cung cấp"
 
 #: company/models.py:731 company/templates/company/supplier_part.html:187
 #: part/admin.py:275 part/models.py:3846 part/templates/part/upload_bom.html:59
@@ -3904,11 +3904,11 @@ msgstr "Ghi chú"
 
 #: company/models.py:735 part/models.py:1919
 msgid "base cost"
-msgstr ""
+msgstr "chi phí cơ sở"
 
 #: company/models.py:735 part/models.py:1919
 msgid "Minimum charge (e.g. stocking fee)"
-msgstr ""
+msgstr "Thu phí tối thiểu (vd: phí kho bãi)"
 
 #: company/models.py:737 company/templates/company/supplier_part.html:160
 #: stock/admin.py:137 stock/models.py:766 stock/serializers.py:1268
@@ -4466,20 +4466,20 @@ msgstr ""
 #: label/models.py:394 report/models.py:332 report/models.py:478
 #: report/models.py:516 report/models.py:554 report/models.py:675
 msgid "Filters"
-msgstr ""
+msgstr "Bộ lọc"
 
 #: label/templates/label/part/part_label.html:31
 #: label/templates/label/stockitem/qr.html:21
 #: label/templates/label/stocklocation/qr.html:21
 #: templates/allauth_2fa/setup.html:18
 msgid "QR Code"
-msgstr ""
+msgstr "Mã QR"
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
 #: templates/qr_code.html:7
 msgid "QR code"
-msgstr ""
+msgstr "Mã QR"
 
 #: order/admin.py:29 order/models.py:72
 #: report/templates/report/inventree_po_report_base.html:31
@@ -4488,11 +4488,11 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:2104
 #: templates/js/translated/sales_order.js:1844
 msgid "Total Price"
-msgstr ""
+msgstr "Tổng tiền"
 
 #: order/api.py:231
 msgid "No matching purchase order found"
-msgstr ""
+msgstr "Không tìm thấy đơn đặt mua phù hợp"
 
 #: order/api.py:1408 order/models.py:1177 order/models.py:1260
 #: order/templates/order/order_base.html:9
@@ -4515,188 +4515,188 @@ msgstr "Đơn hàng"
 #: templates/js/translated/return_order.js:278
 #: templates/js/translated/stock.js:2912
 msgid "Return Order"
-msgstr ""
+msgstr "Đơn hàng trả lại"
 
 #: order/api.py:1414 templates/js/translated/sales_order.js:1039
 msgid "Unknown"
-msgstr ""
+msgstr "Không rõ"
 
 #: order/models.py:73
 msgid "Total price for this order"
-msgstr ""
+msgstr "Tổng tiền cho đơn hàng hàng"
 
 #: order/models.py:78 order/serializers.py:50
 msgid "Order Currency"
-msgstr ""
+msgstr "Tiền tệ đơn đặt hàng"
 
 #: order/models.py:80 order/serializers.py:51
 msgid "Currency for this order (leave blank to use company default)"
-msgstr ""
+msgstr "Tiền tệ cho đơn đặt này (để trống để sử dụng tiền mặc định)"
 
 #: order/models.py:206
 msgid "Contact does not match selected company"
-msgstr ""
+msgstr "Liên hệ không phù hợp với doanh nghiệp đã chọn"
 
 #: order/models.py:226
 msgid "Order description (optional)"
-msgstr ""
+msgstr "Mô tả đơn đặt (tùy chọn)"
 
 #: order/models.py:231
 msgid "Select project code for this order"
-msgstr ""
+msgstr "Mã dự án đã chọn cho đơn đặt hàng này"
 
 #: order/models.py:234 order/models.py:1093 order/models.py:1451
 msgid "Link to external page"
-msgstr ""
+msgstr "Liên kết đến trang bên ngoài"
 
 #: order/models.py:239
 msgid "Expected date for order delivery. Order will be overdue after this date."
-msgstr ""
+msgstr "Ngày mong muốn giao được hàng. Đơn đặt sẽ quá hạn sau ngày này."
 
 #: order/models.py:248
 msgid "Created By"
-msgstr ""
+msgstr "Tạo bởi"
 
 #: order/models.py:255
 msgid "User or group responsible for this order"
-msgstr ""
+msgstr "Người dùng hoặc nhóm có trách nhiệm với đơn đặt này"
 
 #: order/models.py:265
 msgid "Point of contact for this order"
-msgstr ""
+msgstr "Đầu mối liên hệ của đơn đặt này"
 
 #: order/models.py:274
 msgid "Company address for this order"
-msgstr ""
+msgstr "Địa chỉ công ty cho đơn đặt này"
 
 #: order/models.py:364 order/models.py:769
 msgid "Order reference"
-msgstr ""
+msgstr "Mã đặt hàng"
 
 #: order/models.py:372 order/models.py:794
 msgid "Purchase order status"
-msgstr ""
+msgstr "Trạng thái đơn đặt mua"
 
 #: order/models.py:387
 msgid "Company from which the items are being ordered"
-msgstr ""
+msgstr "Doanh nghiệp từ những hàng hóa đang được đặt mua"
 
 #: order/models.py:395 order/templates/order/order_base.html:148
 #: templates/js/translated/purchase_order.js:1681
 msgid "Supplier Reference"
-msgstr ""
+msgstr "Tham chiếu nhà cung cấp"
 
 #: order/models.py:395
 msgid "Supplier order reference code"
-msgstr ""
+msgstr "Mã tham chiếu đơn đặt nhà cung cấp"
 
 #: order/models.py:402
 msgid "received by"
-msgstr ""
+msgstr "nhận bởi"
 
 #: order/models.py:407 order/models.py:1759
 msgid "Issue Date"
-msgstr ""
+msgstr "Ngày phát hành"
 
 #: order/models.py:408 order/models.py:1760
 msgid "Date order was issued"
-msgstr ""
+msgstr "Ngày đặt hàng đã phát hành"
 
 #: order/models.py:414 order/models.py:1766
 msgid "Date order was completed"
-msgstr ""
+msgstr "Ngày đặt hàng đã được hoàn thiện"
 
 #: order/models.py:449
 msgid "Part supplier must match PO supplier"
-msgstr ""
+msgstr "Nhà cung cấp sản phẩm phải trùng với nhà cung cấp PO"
 
 #: order/models.py:610
 msgid "Quantity must be a positive number"
-msgstr ""
+msgstr "Số lượng phải là số dương"
 
 #: order/models.py:783
 msgid "Company to which the items are being sold"
-msgstr ""
+msgstr "Doanh nghiệp từ những hàng hóa đang được bán"
 
 #: order/models.py:802 order/models.py:1753
 msgid "Customer Reference "
-msgstr ""
+msgstr "Tham chiếu khách hàng "
 
 #: order/models.py:802 order/models.py:1754
 msgid "Customer order reference code"
-msgstr ""
+msgstr "Mã tham chiếu đơn đặt của khách hàng"
 
 #: order/models.py:804 order/models.py:1405
 #: templates/js/translated/sales_order.js:840
 #: templates/js/translated/sales_order.js:1021
 msgid "Shipment Date"
-msgstr ""
+msgstr "Ngày giao hàng"
 
 #: order/models.py:811
 msgid "shipped by"
-msgstr ""
+msgstr "vận chuyển bằng"
 
 #: order/models.py:860
 msgid "Order cannot be completed as no parts have been assigned"
-msgstr ""
+msgstr "Đơn đặt hàng không thể hoàn thiện vì chưa có sản phẩm nào được chọn"
 
 #: order/models.py:864
 msgid "Only an open order can be marked as complete"
-msgstr ""
+msgstr "Những đơn hàng đang mở thì sẽ được đánh dấu là hoàn thành"
 
 #: order/models.py:867 templates/js/translated/sales_order.js:503
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr ""
+msgstr "Đơn hàng không thể hoàn thành được vì vận chuyển chưa xong"
 
 #: order/models.py:870
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr ""
+msgstr "Đơn hàng không thể hoàn thành được vì những khoản riêng chưa xong"
 
 #: order/models.py:1074
 msgid "Item quantity"
-msgstr ""
+msgstr "Số lượng mặt hàng"
 
 #: order/models.py:1086
 msgid "Line item reference"
-msgstr ""
+msgstr "Tham chiếu khoản riêng"
 
 #: order/models.py:1088
 msgid "Line item notes"
-msgstr ""
+msgstr "Ghi chú khoản riêng"
 
 #: order/models.py:1099
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr ""
+msgstr "Ngày mục tiêu cho khoản riêng này (để trống để sử dụng ngày mục tiêu từ đơn đặt)"
 
 #: order/models.py:1117
 msgid "Line item description (optional)"
-msgstr ""
+msgstr "Mô tả khoản riêng (tùy chọn)"
 
 #: order/models.py:1122
 msgid "Context"
-msgstr ""
+msgstr "Ngữ cảnh"
 
 #: order/models.py:1123
 msgid "Additional context for this line"
-msgstr ""
+msgstr "Ngữ cảnh bổ sung"
 
 #: order/models.py:1132
 msgid "Unit price"
-msgstr ""
+msgstr "Đơn giá"
 
 #: order/models.py:1162
 msgid "Supplier part must match supplier"
-msgstr ""
+msgstr "Sản phẩm nhà cung cấp phải phù hợp với nhà cung cung cấp"
 
 #: order/models.py:1170
 msgid "deleted"
-msgstr ""
+msgstr "đã bị xóa"
 
 #: order/models.py:1176 order/models.py:1260 order/models.py:1300
 #: order/models.py:1399 order/models.py:1548 order/models.py:1902
 #: order/models.py:1949 templates/js/translated/sales_order.js:1485
 msgid "Order"
-msgstr ""
+msgstr "Đặt hàng"
 
 #: order/models.py:1194
 msgid "Supplier part"
