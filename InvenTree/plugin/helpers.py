@@ -7,8 +7,8 @@ import pathlib
 import pkgutil
 import sysconfig
 import traceback
-from importlib.util import module_from_spec
 from importlib.metadata import entry_points
+from importlib.util import module_from_spec
 
 from django import template
 from django.conf import settings
