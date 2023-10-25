@@ -2206,7 +2206,7 @@ class StockItemTracking(models.Model):
     Note: 2021-05-11
     The legacy StockTrackingItem model contained very little information about the "history" of the item.
     In fact, only the "quantity" of the item was recorded at each interaction.
-    Also, the "title" was translated at time of generation, and thus was not really translatable.
+    Also, the "title" was translated at time of generation, and thus was not really translateable.
     The "new" system tracks all 'delta' changes to the model,
     and tracks change "type" which can then later be translated
 
@@ -2233,8 +2233,7 @@ class StockItemTracking(models.Model):
         """Return label."""
         if self.tracking_type in StockHistoryCode.keys():
             return StockHistoryCode.label(self.tracking_type)
-
-        return getattr(self, 'title', '')
+        return self.title
 
     tracking_type = models.IntegerField(
         default=StockHistoryCode.LEGACY,

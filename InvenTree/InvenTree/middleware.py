@@ -12,9 +12,9 @@ from django.urls import Resolver404, include, re_path, resolve, reverse_lazy
 from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
                                     BaseRequire2FAMiddleware)
 from error_report.middleware import ExceptionProcessor
+from rest_framework.authtoken.models import Token
 
 from InvenTree.urls import frontendpatterns
-from users.models import ApiToken
 
 logger = logging.getLogger("inventree")
 
@@ -75,15 +75,13 @@ class AuthRequiredMiddleware(object):
 
                     # Does the provided token match a valid user?
                     try:
-                        token = ApiToken.objects.get(key=token_key)
+                        token = Token.objects.get(key=token_key)
 
-                        if token.active and token.user:
+                        # Provide the user information to the request
+                        request.user = token.user
+                        authorized = True
 
-                            # Provide the user information to the request
-                            request.user = token.user
-                            authorized = True
-
-                    except ApiToken.DoesNotExist:
+                    except Token.DoesNotExist:
                         logger.warning("Access denied for unknown token %s", token_key)
 
             # No authorization was found for the request
