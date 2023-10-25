@@ -3062,8 +3062,10 @@ function loadInstalledInTable(table, options) {
                 formatter: function(value, row) {
                     var html = '';
 
-                    html += imageHoverIcon(row.part_detail.thumbnail);
-                    html += renderLink(row.part_detail.full_name, `/stock/item/${row.pk}/`);
+                    if (row.part_detail) {
+                        html += imageHoverIcon(row.part_detail.thumbnail);
+                        html += renderLink(row.part_detail.full_name, `/stock/item/${row.pk}/`);
+                    }
 
                     return html;
                 }

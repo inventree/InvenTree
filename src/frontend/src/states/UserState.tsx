@@ -32,7 +32,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     // Fetch user data
     await api
       .get(apiUrl(ApiPaths.user_me), {
-        timeout: 5000
+        timeout: 2000
       })
       .then((response) => {
         const user: UserProps = {

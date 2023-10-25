@@ -422,11 +422,7 @@ class RuleSet(models.Model):
         """Construct the correctly formatted permission string, given the app_model name, and the permission type."""
         model, app = split_model(model)
 
-        return "{app}.{perm}_{model}".format(
-            app=app,
-            perm=permission,
-            model=model
-        )
+        return f"{app}.{permission}_{model}"
 
     def __str__(self, debug=False):  # pragma: no cover
         """Ruleset string representation."""
@@ -504,12 +500,7 @@ def update_group_roles(group, debug=False):
     # and create a simplified permission key string
     for p in group.permissions.all().prefetch_related('content_type'):
         (permission, app, model) = p.natural_key()
-
-        permission_string = '{app}.{perm}'.format(
-            app=app,
-            perm=permission
-        )
-
+        permission_string = f"{app}.{permission}"
         group_permissions.add(permission_string)
 
     # List of permissions which must be added to the group
@@ -527,7 +518,7 @@ def update_group_roles(group, debug=False):
             allowed: Whether or not the action is allowed
         """
         if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
-            raise ValueError("Action {a} is invalid".format(a=action))
+            raise ValueError(f"Action {action} is invalid")
 
         permission_string = RuleSet.get_model_permission_string(model, action)
 

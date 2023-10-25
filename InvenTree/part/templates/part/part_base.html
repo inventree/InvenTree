@@ -384,11 +384,11 @@
                     <td>{% include 'clip_link.html' with link=part.link new_window=True %}</td>
                 </tr>
                 {% endif %}
-                {% if part.responsible %}
+                {% if part.responsible_owner %}
                 <tr>
                     <td><span class='fas fa-user'></span></td>
                     <td>{% trans "Responsible" %}</td>
-                    <td> <span class='badge badge-right rounded-pill bg-dark'>{{ part.responsible }}</span></td>
+                    <td> <span class='badge badge-right rounded-pill bg-dark'>{{ part.responsible_owner }}</span></td>
                 </tr>
                 {% endif %}
             </table>

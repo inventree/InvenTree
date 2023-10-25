@@ -649,7 +649,11 @@ class PluginsRegistry:
             try:
                 logger.debug("Updating plugin registry hash: %s", str(self.registry_hash))
                 InvenTreeSetting.set_setting("_PLUGIN_REGISTRY_HASH", self.registry_hash, change_user=None)
+            except (OperationalError, ProgrammingError):
+                # Exception if the database has not been migrated yet, or is not ready
+                pass
             except Exception as exc:
+                # Some other exception, we want to know about it
                 logger.exception("Failed to update plugin registry hash: %s", str(exc))
 
     def calculate_plugin_hash(self):

@@ -15,9 +15,12 @@ export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
   setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
   fetchServerApiState: async () => {
     // Fetch server data
-    await api.get(apiUrl(ApiPaths.api_server_info)).then((response) => {
-      set({ server: response.data });
-    });
+    await api
+      .get(apiUrl(ApiPaths.api_server_info))
+      .then((response) => {
+        set({ server: response.data });
+      })
+      .catch(() => {});
   }
 }));
 

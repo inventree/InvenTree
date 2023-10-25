@@ -16,10 +16,10 @@ from django.utils.translation import gettext_lazy as _
 import common.models
 import InvenTree.helpers
 import InvenTree.helpers_model
+import plugin.models
 from common.settings import currency_code_default
 from InvenTree import settings, version
 from plugin import registry
-from plugin.models import NotificationUserSetting, PluginSetting
 from plugin.plugin import InvenTreePlugin
 
 register = template.Library()
@@ -346,14 +346,14 @@ def setting_object(key, *args, **kwargs):
     if 'plugin' in kwargs:
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
-        plugin = kwargs['plugin']
-        if issubclass(plugin.__class__, InvenTreePlugin):
-            plugin = plugin.plugin_config()
+        plg = kwargs['plugin']
+        if issubclass(plg.__class__, InvenTreePlugin):
+            plg = plg.plugin_config()
 
-        return PluginSetting.get_setting_object(key, plugin=plugin, cache=cache)
+        return plugin.models.PluginSetting.get_setting_object(key, plugin=plg, cache=cache)
 
     elif 'method' in kwargs:
-        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
+        return plugin.models.NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
 
     elif 'user' in kwargs:
         return common.models.InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'], cache=cache)

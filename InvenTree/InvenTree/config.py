@@ -7,6 +7,7 @@ import os
 import random
 import shutil
 import string
+import warnings
 from pathlib import Path
 
 logger = logging.getLogger('inventree')
@@ -341,3 +342,58 @@ def get_custom_file(env_ref: str, conf_ref: str, log_ref: str, lookup_media: boo
         value = False
 
     return value
+
+
+def get_frontend_settings(debug=True):
+    """Return a dictionary of settings for the frontend interface.
+
+    Note that the new config settings use the 'FRONTEND' key,
+    whereas the legacy key was 'PUI' (platform UI) which is now deprecated
+    """
+
+    # Legacy settings
+    pui_settings = get_setting('INVENTREE_PUI_SETTINGS', 'pui_settings', {}, typecast=dict)
+
+    if len(pui_settings) > 0:
+        warnings.warn(
+            "The 'INVENTREE_PUI_SETTINGS' key is deprecated. Please use 'INVENTREE_FRONTEND_SETTINGS' instead",
+            DeprecationWarning, stacklevel=2
+        )
+
+    # New settings
+    frontend_settings = get_setting('INVENTREE_FRONTEND_SETTINGS', 'frontend_settings', {}, typecast=dict)
+
+    # Merge settings
+    settings = {**pui_settings, **frontend_settings}
+
+    # Set the base URL
+    if 'base_url' not in settings:
+        base_url = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', '')
+
+        if base_url:
+            warnings.warn(
+                "The 'INVENTREE_PUI_URL_BASE' key is deprecated. Please use 'INVENTREE_FRONTEND_URL_BASE' instead",
+                DeprecationWarning, stacklevel=2
+            )
+        else:
+            base_url = get_setting('INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform')
+
+        settings['base_url'] = base_url
+
+    # Set the server list
+    settings['server_list'] = settings.get('server_list', [])
+
+    # Set the debug flag
+    settings['debug'] = debug
+
+    if 'environment' not in settings:
+        settings['environment'] = 'development' if debug else 'production'
+
+    if debug and 'show_server_selector' not in settings:
+        # In debug mode, show server selector by default
+        settings['show_server_selector'] = True
+    elif len(settings['server_list']) == 0:
+        # If no servers are specified, show server selector
+        settings['show_server_selector'] = True
+
+    return settings
