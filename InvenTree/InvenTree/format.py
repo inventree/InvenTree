@@ -187,7 +187,7 @@ def format_money(money: Money, decimal_places: int = None, format: str = None) -
         pattern = parse_pattern(format)
     else:
         pattern = locale.currency_formats["standard"]
-        if decimal_places:
+        if decimal_places is not None:
             pattern.frac_prec = (decimal_places, decimal_places)
 
     return pattern.apply(
