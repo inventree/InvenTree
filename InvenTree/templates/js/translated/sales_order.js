@@ -1791,7 +1791,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             title: '{% trans "Part" %}',
             switchable: false,
             formatter: function(value, row, index, field) {
-                if (row.part) {
+                if (row.par_detail) {
                     return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${value}/`);
                 } else {
                     return '-';
