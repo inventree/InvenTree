@@ -27,10 +27,6 @@ export default function DesktopAppView() {
   ]);
 
   // Local state initialization
-  if (Object.keys(hostList).length === 0) {
-    console.log('Loading default host list');
-    useLocalState.setState({ hostList: defaultHostList });
-  }
   setApiDefaults();
 
   // Server Session
@@ -38,6 +34,11 @@ export default function DesktopAppView() {
   const sessionState = useSessionState.getState();
   const [token] = sessionState.token ? [sessionState.token] : [null];
   useEffect(() => {
+    if (Object.keys(hostList).length === 0) {
+      console.log('Loading default host list', defaultHostList);
+      useLocalState.setState({ hostList: defaultHostList });
+    }
+
     if (token && !fetchedServerSession) {
       setFetchedServerSession(true);
       fetchUserState();
