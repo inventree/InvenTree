@@ -24,9 +24,12 @@ export const useServerApiState = create<ServerApiStateProps>()(
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
       fetchServerApiState: async () => {
         // Fetch server data
-        await api.get(apiUrl(ApiPaths.api_server_info)).then((response) => {
-          set({ server: response.data });
-        });
+        await api
+          .get(apiUrl(ApiPaths.api_server_info))
+          .then((response) => {
+            set({ server: response.data });
+          })
+          .catch(() => {});
         // Fetch status data for rendering labels
         await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
           const newStatusLookup: StatusLookup = {} as StatusLookup;
