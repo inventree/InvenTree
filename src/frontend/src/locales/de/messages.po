@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: de\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #: src/components/DashboardItemProxy.tsx:33
 msgid "Title"
@@ -39,7 +45,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
-#: src/functions/auth.tsx:107
+#: src/functions/auth.tsx:110
 msgid "Check your input and try again."
 msgstr ""
 
@@ -52,7 +58,7 @@ msgid "Welcome back!"
 msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:64
-#: src/functions/auth.tsx:98
+#: src/functions/auth.tsx:101
 msgid "Mail delivery successful"
 msgstr ""
 
@@ -1607,28 +1613,28 @@ msgstr ""
 msgid "Error fetching token from server."
 msgstr ""
 
-#: src/functions/auth.tsx:53
+#: src/functions/auth.tsx:56
 msgid "Logout successful"
 msgstr ""
 
-#: src/functions/auth.tsx:54
+#: src/functions/auth.tsx:57
 msgid "See you soon."
 msgstr ""
 
-#: src/functions/auth.tsx:99
+#: src/functions/auth.tsx:102
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr ""
 
-#: src/functions/auth.tsx:106
+#: src/functions/auth.tsx:109
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
 msgstr ""
 
-#: src/functions/auth.tsx:130
+#: src/functions/auth.tsx:133
 msgid "Already logged in"
 msgstr ""
 
-#: src/functions/auth.tsx:131
+#: src/functions/auth.tsx:134
 msgid "Found an existing login - using it to log you in."
 msgstr ""
 
