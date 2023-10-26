@@ -1,4 +1,3 @@
-import { Text } from '@mantine/core';
 import dayjs from 'dayjs';
 
 const global_settings = {
