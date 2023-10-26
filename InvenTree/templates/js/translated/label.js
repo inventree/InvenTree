@@ -44,6 +44,7 @@ const defaultLabelTemplates = {
  * - url: The list URL for the particular template type
  * - items: The list of items to be printed
  * - key: The key to use in the query parameters
+ * - plural_name: The plural name of the item type
  */
 function printLabels(options) {
 
@@ -128,7 +129,7 @@ function printLabels(options) {
         if (Object.keys(printingOptions).length > 0) {
             formOptions.fields = {
                 ...formOptions.fields,
-                divider: { type: "candy", html: "<hr/><h5>Printing Options</h5>"},
+                divider: { type: "candy", html: `<hr/><h5>{% trans "Printing Options" %}</h5>`},
                 ...printingOptions,
             };
         }
@@ -138,14 +139,14 @@ function printLabels(options) {
     }
 
     const printingFormOptions = {
-        title: "Print label(s)",
-        submitText: "Print",
+        title: options.items.length === 1 ? `{% trans "Print label" %}` : `{% trans "Print labels" %}`,
+        submitText: `{% trans "Print" %}`,
         method: "POST",
         showSuccessMessage: false,
         header_html,
         fields: {
             label_template: {
-                label: "Select label template",
+                label: `{% trans "Select label template" %}`,
                 type: "choice",
                 value: defaultLabelTemplates[options.key],
                 choices: labelTemplates.map(t => ({
@@ -157,7 +158,7 @@ function printLabels(options) {
                 }
             },
             plugin: {
-                label: "Select plugin",
+                label: `{% trans "Select plugin" %}`,
                 type: "choice",
                 value: user_settings.LABEL_DEFAULT_PRINTER || plugins[0].key,
                 choices: plugins.map(p => ({
