@@ -184,6 +184,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
 
     return [
       <ActionDropdown
+        key="company"
         tooltip={t`Company Actions`}
         icon={<IconDots />}
         actions={[

@@ -36,7 +36,7 @@ export function useInstance({
     queryKey: ['instance', endpoint, pk, params],
     queryFn: async () => {
       if (hasPrimaryKey) {
-        if (pk == null || pk == undefined || pk.length == 0) {
+        if (pk == null || pk == undefined || pk.length == 0 || pk == '-1') {
           setInstance(defaultValue);
           return null;
         }

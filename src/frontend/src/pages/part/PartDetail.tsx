@@ -223,6 +223,7 @@ export default function PartDetail() {
     // TODO: Disable actions based on user permissions
     return [
       <ActionDropdown
+        key="barcode"
         tooltip={t`Barcode Actions`}
         icon={<IconQrcode />}
         actions={[
@@ -246,6 +247,7 @@ export default function PartDetail() {
         ]}
       />,
       <ActionDropdown
+        key="stock"
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
         actions={[
@@ -262,6 +264,7 @@ export default function PartDetail() {
         ]}
       />,
       <ActionDropdown
+        key="part"
         tooltip={t`Part Actions`}
         icon={<IconDots />}
         actions={[

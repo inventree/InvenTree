@@ -147,6 +147,7 @@ export default function BuildDetail() {
     // TODO: Disable certain actions based on user permissions
     return [
       <ActionDropdown
+        key="barcode"
         tooltip={t`Barcode Actions`}
         icon={<IconQrcode />}
         actions={[
@@ -170,6 +171,7 @@ export default function BuildDetail() {
         ]}
       />,
       <ActionDropdown
+        key="report"
         tooltip={t`Reporting Actions`}
         icon={<IconPrinter />}
         actions={[
@@ -181,6 +183,7 @@ export default function BuildDetail() {
         ]}
       />,
       <ActionDropdown
+        key="build"
         tooltip={t`Build Order Actions`}
         icon={<IconDots />}
         actions={[
