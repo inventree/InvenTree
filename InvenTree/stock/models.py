@@ -1948,21 +1948,15 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
     def __str__(self):
         """Human friendly name."""
         if self.part.trackable and self.serial:
-            s = '{part} #{sn}'.format(
-                part=self.part.full_name,
-                sn=self.serial)
+            s = f'{self.part.full_name} #{self.serial}'
         else:
-            s = '{n} x {part}'.format(
-                n=InvenTree.helpers.decimal2string(self.quantity),
-                part=self.part.full_name)
+            s = f'{InvenTree.helpers.decimal2string(self.quantity)} x {self.part.full_name}'
 
         if self.location:
-            s += ' @ {loc}'.format(loc=self.location.name)
+            s += f' @ {self.location.name}'
 
         if self.purchase_order:
-            s += " ({po})".format(
-                po=self.purchase_order,
-            )
+            s += f" ({self.purchase_order})"
 
         return s
 
@@ -2225,7 +2219,7 @@ class StockItemTracking(models.Model):
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return '/stock/track/{pk}'.format(pk=self.id)
+        return f'/stock/track/{self.id}'
 
     def label(self):
         """Return label."""
