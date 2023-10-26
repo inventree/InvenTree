@@ -32,6 +32,7 @@
     setFormGroupVisibility,
     showFormInput,
     selectImportFields,
+    updateForm,
 */
 
 /**
@@ -720,6 +721,21 @@ function constructFormBody(fields, options) {
     });
 }
 
+/**
+ * This Method updates an existing form by replacing all form fields with the new ones
+ * @param {*} options new form definition options
+ */
+function updateForm(options) {
+    // merge already entered values in the newly constructed form
+    options.data = extractFormData(options.fields, options);
+
+    // remove old submit handlers
+    $(options.modal).off('click', '#modal-form-submit');
+
+    // construct new form
+    constructFormBody(options.fields, options);
+}
+
 
 // Add a "confirm" checkbox to the modal
 // The "submit" button will be disabled unless "confirm" is checked
@@ -1189,8 +1205,11 @@ function handleFormSuccess(response, options) {
         msg_target = $(options.modal).find('#pre-form-content');
     }
 
+    // ability to suppress the success message if the response contains a success key by accident
+    const showSuccessMessage = options.showSuccessMessage ?? true;
+
     // Display any messages
-    if (response && (response.success || options.successMessage)) {
+    if (showSuccessMessage && response && (response.success || options.successMessage)) {
         showAlertOrCache(
             response.success || options.successMessage,
             cache,
