@@ -1,20 +1,23 @@
 """DRF API definition for the 'users' app"""
 
+import datetime
+import logging
+
 from django.contrib.auth.models import Group, User
-from django.core.exceptions import ObjectDoesNotExist
 from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions, status
-from rest_framework.authtoken.models import Token
+from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
 from InvenTree.serializers import UserSerializer
-from users.models import Owner, RuleSet, check_user_role
+from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
+
+logger = logging.getLogger('inventree')
 
 
 class OwnerList(ListAPI):
@@ -84,7 +87,7 @@ class RoleDetails(APIView):
 
         for ruleset in RuleSet.RULESET_CHOICES:
 
-            role, text = ruleset
+            role, _text = ruleset
 
             permissions = []
 
@@ -187,25 +190,47 @@ class GetAuthToken(APIView):
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated
 
-        - If the user already has a token, return it
-        - Otherwise, create a new token
+        - If the user already has a matching token, delete it and create a new one
+        - Existing tokens are *never* exposed again via the API
+        - Once the token is provided, it can be used for auth until it expires
         """
-        if request.user.is_authenticated:
-            # Get the user token (or create one if it does not exist)
-            token, created = Token.objects.get_or_create(user=request.user)
-            return Response({
-                'token': token.key,
-            })
 
-    def delete(self, request):
-        """User has requested deletion of API token"""
-        try:
-            request.user.auth_token.delete()
-            return Response({"success": "Successfully logged out."},
-                            status=status.HTTP_202_ACCEPTED)
-        except (AttributeError, ObjectDoesNotExist):
-            return Response({"error": "Bad request"},
-                            status=status.HTTP_400_BAD_REQUEST)
+        if request.user.is_authenticated:
+
+            user = request.user
+            name = request.query_params.get('name', '')
+
+            name = ApiToken.sanitize_name(name)
+
+            today = datetime.date.today()
+
+            # Find existing token, which has not expired
+            token = ApiToken.objects.filter(user=user, name=name, revoked=False, expiry__gte=today).first()
+
+            if not token:
+                # User is authenticated, and requesting a token against the provided name.
+                token = ApiToken.objects.create(user=request.user, name=name)
+
+            # Add some metadata about the request
+            token.set_metadata('user_agent', request.META.get('HTTP_USER_AGENT', ''))
+            token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
+            token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
+            token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
+            token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
+            token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
+
+            data = {
+                'token': token.key,
+                'name': token.name,
+                'expiry': token.expiry,
+            }
+
+            logger.info("Created new API token for user '%s' (name='%s')", user.username, name)
+
+            return Response(data)
+
+        else:
+            raise exceptions.NotAuthenticated()
 
 
 user_urls = [

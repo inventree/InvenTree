@@ -70,7 +70,7 @@ function PlaygroundArea({
 }) {
   return (
     <>
-      <Accordion.Item value={`accordion-playground-{title}`}>
+      <Accordion.Item value={`accordion-playground-${title}`}>
         <Accordion.Control>
           <Text>{title}</Text>
         </Accordion.Control>

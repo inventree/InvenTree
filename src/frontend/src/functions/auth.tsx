@@ -20,8 +20,11 @@ export const doClassicLogin = async (username: string, password: string) => {
   const token = await axios
     .get(apiUrl(ApiPaths.user_token), {
       auth: { username, password },
-      baseURL: host.toString(),
-      timeout: 5000
+      baseURL: host,
+      timeout: 2000,
+      params: {
+        name: 'inventree-web-app'
+      }
     })
     .then((response) => response.data.token)
     .catch((error) => {
@@ -117,7 +120,10 @@ export function handleReset(navigate: any, values: { email: string }) {
 export function checkLoginState(navigate: any, redirect?: string) {
   api
     .get(apiUrl(ApiPaths.user_token), {
-      timeout: 5000
+      timeout: 2000,
+      params: {
+        name: 'inventree-web-app'
+      }
     })
     .then((val) => {
       if (val.status === 200 && val.data.token) {
