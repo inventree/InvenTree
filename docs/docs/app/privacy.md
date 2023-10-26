@@ -10,13 +10,26 @@ The InvenTree mobile app requires some extra permissions for complete functional
 
 ### User Profiles
 
-The InvenTree app requires the user to enter profile data to connect with an InvenTree server:
+For each *profile* configured in the app, the following information is stored locally on the device:
 
-- Server address
-- Account username
-- Account password
+- Server name (e.g. "InvenTree Demo")
+- Server address (e.g. "https://demo.inventree.org)
+- *API token*
 
-Profile data is stored locally on the device, and can be deleted by the user if they wish. Profile data is only used for connection with an InvenTree server.
+#### User Authentication
+
+The InvenTree app uses an API token for user authentication. This token is requested once from the server, and then stored locally on the device.
+
+To initially request the token, the user will be required to enter their username and password.
+
+!!! info "Password Storage"
+    The user's username and password are not stored locally, or used for any purpose other than requesting an API token
+
+#### Token Handling
+
+A separate API token is stored locally for each profile. This token can be deleted at any time from within the app settings - this will force the user to enter their login credentials again to request a new token.
+
+Additionally, the stored token may be revoked by the server, or expire. Either situation will again require the user to re-enter their username and password.
 
 ### Camera Permissions
 

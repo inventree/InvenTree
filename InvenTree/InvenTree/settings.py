@@ -26,9 +26,11 @@ from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.version import inventreeApiVersion
+from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
 from . import config
+
+checkMinPythonVersion()
 
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
@@ -1044,9 +1046,9 @@ CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', '
 
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
 
-# Frontend settings
-PUI_URL_BASE = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', 'platform')
-PUI_SETTINGS = get_setting("INVENTREE_PUI_SETTINGS", "pui_settings", {})
+# Load settings for the frontend interface
+FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
+FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
 
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
@@ -1076,5 +1078,5 @@ if CUSTOM_FLAGS:
 
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
-# LOGIN_REDIRECT_URL = f"/{PUI_URL_BASE}/logged-in/"
+# LOGIN_REDIRECT_URL = f"/{FRONTEND_URL_BASE}/logged-in/"
 LOGIN_REDIRECT_URL = "/index/"

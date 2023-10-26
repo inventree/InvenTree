@@ -16,29 +16,29 @@ from dj_rest_auth.registration.views import (ConfirmEmailView,
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from sesame.views import LoginView
 
-from build.api import build_api_urls
+import build.api
+import common.api
+import company.api
+import label.api
+import order.api
+import part.api
+import plugin.api
+import report.api
+import stock.api
+import users.api
 from build.urls import build_urls
-from common.api import admin_api_urls, common_api_urls, settings_api_urls
 from common.urls import common_urls
-from company.api import company_api_urls
 from company.urls import (company_urls, manufacturer_part_urls,
                           supplier_part_urls)
-from label.api import label_api_urls
-from order.api import order_api_urls
 from order.urls import order_urls
-from part.api import bom_api_urls, part_api_urls
 from part.urls import part_urls
-from plugin.api import plugin_api_urls
 from plugin.urls import get_plugin_urls
-from report.api import report_api_urls
-from stock.api import stock_api_urls
 from stock.urls import stock_urls
-from users.api import user_urls
 from web.urls import urlpatterns as platform_urls
 
 from .api import APISearchView, InfoView, NotFoundView
 from .magic_login import GetSimpleLoginView
-from .social_auth_urls import SocialProvierListView, social_auth_urlpatterns
+from .social_auth_urls import SocialProviderListView, social_auth_urlpatterns
 from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
                     CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
@@ -55,23 +55,23 @@ apipatterns = [
     # Global search
     path('search/', APISearchView.as_view(), name='api-search'),
 
-    re_path(r'^settings/', include(settings_api_urls)),
-    re_path(r'^part/', include(part_api_urls)),
-    re_path(r'^bom/', include(bom_api_urls)),
-    re_path(r'^company/', include(company_api_urls)),
-    re_path(r'^stock/', include(stock_api_urls)),
-    re_path(r'^build/', include(build_api_urls)),
-    re_path(r'^order/', include(order_api_urls)),
-    re_path(r'^label/', include(label_api_urls)),
-    re_path(r'^report/', include(report_api_urls)),
-    re_path(r'^user/', include(user_urls)),
-    re_path(r'^admin/', include(admin_api_urls)),
+    re_path(r'^settings/', include(common.api.settings_api_urls)),
+    re_path(r'^part/', include(part.api.part_api_urls)),
+    re_path(r'^bom/', include(part.api.bom_api_urls)),
+    re_path(r'^company/', include(company.api.company_api_urls)),
+    re_path(r'^stock/', include(stock.api.stock_api_urls)),
+    re_path(r'^build/', include(build.api.build_api_urls)),
+    re_path(r'^order/', include(order.api.order_api_urls)),
+    re_path(r'^label/', include(label.api.label_api_urls)),
+    re_path(r'^report/', include(report.api.report_api_urls)),
+    re_path(r'^user/', include(users.api.user_urls)),
+    re_path(r'^admin/', include(common.api.admin_api_urls)),
 
     # Plugin endpoints
-    path('', include(plugin_api_urls)),
+    path('', include(plugin.api.plugin_api_urls)),
 
     # Common endpoints endpoint
-    path('', include(common_api_urls)),
+    path('', include(common.api.common_api_urls)),
 
     # OpenAPI Schema
     re_path('schema/', SpectacularAPIView.as_view(custom_settings={'SCHEMA_PATH_PREFIX': '/api/'}), name='schema'),
@@ -83,7 +83,7 @@ apipatterns = [
     path('auth/', include([
         re_path(r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$', ConfirmEmailView.as_view(), name='account_confirm_email'),
         path('registration/', include('dj_rest_auth.registration.urls')),
-        path('providers/', SocialProvierListView.as_view(), name='social_providers'),
+        path('providers/', SocialProviderListView.as_view(), name='social_providers'),
         path('social/', include(social_auth_urlpatterns)),
         path('social/', SocialAccountListView.as_view(), name='social_account_list'),
         path('social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),

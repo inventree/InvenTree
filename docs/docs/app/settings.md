@@ -55,7 +55,7 @@ Configure audible app notifications:
 
 ## Barcode Settings
 
-The *Barcode Settings* view allows you to configure options relating to barcode scanning:
+The *Barcode Settings* view allows you to configure options relating to [barcode scanning](./barcode.md):
 
 {% with id="barcode_settings", url="app/barcode_settings.png", maxheight="240px", description="Barcode Settings" %}
 {% include 'img.html' %}
@@ -63,6 +63,7 @@ The *Barcode Settings* view allows you to configure options relating to barcode 
 
 | Option | Description |
 | --- | --- |
+| Scanner Input | Select barcode capture mode |
 | Barcode Scan Delay | Delay between successive scans |
 
 ## Home Screen

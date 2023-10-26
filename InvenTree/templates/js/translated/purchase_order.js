@@ -1673,7 +1673,11 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 sortName: 'supplier__name',
                 formatter: function(value, row) {
-                    return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/?display=purchase-orders`);
+                    if (row.supplier_detail) {
+                        return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/?display=purchase-orders`);
+                    } else {
+                        return '-';
+                    }
                 }
             },
             {
@@ -1986,7 +1990,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "Part" %}',
                 switchable: false,
                 formatter: function(value, row, index, field) {
-                    if (row.part) {
+                    if (row.part_detail) {
                         return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
                     } else {
                         return '-';
