@@ -1,28 +1,52 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 import { api } from '../App';
+import { ModelType } from '../components/render/ModelType';
+import { StatusCodeListInterface } from '../components/renderers/StatusRenderer';
+import { statusCodeList } from '../defaults/backendMappings';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ServerAPIProps, UserProps } from './states';
+
+type StatusLookup = Record<ModelType, StatusCodeListInterface>;
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
+  status: StatusLookup | undefined;
 }
 
-export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
-  server: emptyServerAPI,
-  setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
-  fetchServerApiState: async () => {
-    // Fetch server data
-    await api
-      .get(apiUrl(ApiPaths.api_server_info))
-      .then((response) => {
-        set({ server: response.data });
-      })
-      .catch(() => {});
-  }
-}));
+export const useServerApiState = create<ServerApiStateProps>()(
+  persist(
+    (set) => ({
+      server: emptyServerAPI,
+      setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
+      fetchServerApiState: async () => {
+        // Fetch server data
+        await api
+          .get(apiUrl(ApiPaths.api_server_info))
+          .then((response) => {
+            set({ server: response.data });
+          })
+          .catch(() => {});
+        // Fetch status data for rendering labels
+        await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
+          const newStatusLookup: StatusLookup = {} as StatusLookup;
+          for (const key in response.data) {
+            newStatusLookup[statusCodeList[key]] = response.data[key].values;
+          }
+          set({ status: newStatusLookup });
+        });
+      },
+      status: undefined
+    }),
+    {
+      name: 'server-api-state',
+      getStorage: () => sessionStorage
+    }
+  )
+);
 
 export enum ApiPaths {
   api_server_info = 'api-server-info',
@@ -43,6 +67,7 @@ export enum ApiPaths {
 
   barcode = 'api-barcode',
   news = 'news',
+  global_status = 'api-global-status',
 
   // Build order URLs
   build_order_list = 'api-build-list',
@@ -123,6 +148,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'barcode/';
     case ApiPaths.news:
       return 'news/';
+    case ApiPaths.global_status:
+      return 'generic/status/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:

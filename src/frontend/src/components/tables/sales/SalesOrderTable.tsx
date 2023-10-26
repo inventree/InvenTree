@@ -5,6 +5,8 @@ import { useMemo } from 'react';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import { ModelType } from '../../render/ModelType';
+import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({ params }: { params?: any }) {
@@ -59,8 +61,8 @@ export function SalesOrderTable({ params }: { params?: any }) {
         accessor: 'status',
         title: t`Status`,
         sortable: true,
-        switchable: true
-        // TODO: Custom formatter
+        switchable: true,
+        render: TableStatusRenderer(ModelType.salesorder)
       }
 
       // TODO: Creation date
