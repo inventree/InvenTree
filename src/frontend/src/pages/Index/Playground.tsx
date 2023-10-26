@@ -1,13 +1,15 @@
 import { Trans } from '@lingui/macro';
-import { Button } from '@mantine/core';
+import { Button, TextInput } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { Accordion } from '@mantine/core';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { ApiFormProps } from '../../components/forms/ApiForm';
 import { ApiFormChangeCallback } from '../../components/forms/fields/ApiFormField';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
+import { ModelType } from '../../components/render/ModelType';
+import { StatusRenderer } from '../../components/renderers/StatusRenderer';
 import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 import {
   createPart,
@@ -60,6 +62,23 @@ function ApiFormsPlayground() {
   );
 }
 
+// Show some example status labels
+function StatusLabelPlayground() {
+  const [status, setStatus] = useState<string>('10');
+  return (
+    <>
+      <Group>
+        <Text>Stock Status</Text>
+        <TextInput
+          value={status}
+          onChange={(event) => setStatus(event.currentTarget.value)}
+        />
+        <StatusRenderer type={ModelType.stockitem} status={status} />
+      </Group>
+    </>
+  );
+}
+
 /** Construct a simple accordion group with title and content */
 function PlaygroundArea({
   title,
@@ -95,10 +114,11 @@ export default function Playground() {
         </Trans>
       </Text>
       <Accordion defaultValue="">
+        <PlaygroundArea title="API Forms" content={<ApiFormsPlayground />} />
         <PlaygroundArea
-          title="API Forms"
-          content={<ApiFormsPlayground />}
-        ></PlaygroundArea>
+          title="Status labels"
+          content={<StatusLabelPlayground />}
+        />
       </Accordion>
     </>
   );

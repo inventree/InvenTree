@@ -25,26 +25,37 @@ export const IS_DEV = import.meta.env.DEV;
 export const IS_DEMO = import.meta.env.VITE_DEMO === 'true';
 export const IS_DEV_OR_DEMO = IS_DEV || IS_DEMO;
 
+// Filter out any settings that are not defined
+let loaded_vals = (window.INVENTREE_SETTINGS || {}) as any;
+Object.keys(loaded_vals).forEach((key) => {
+  if (loaded_vals[key] === undefined) {
+    delete loaded_vals[key];
+    // check for empty server list
+  } else if (key === 'server_list' && loaded_vals[key].length === 0) {
+    delete loaded_vals[key];
+  }
+});
+
 window.INVENTREE_SETTINGS = {
   server_list: {
-    localhost: {
+    'mantine-cqj63coxn': {
       host: `${window.location.origin}/`,
       name: 'Current Server'
     },
     ...(IS_DEV_OR_DEMO
       ? {
-          demo: {
+          'mantine-u56l5jt85': {
             host: 'https://demo.inventree.org/',
             name: 'InvenTree Demo'
           }
         }
       : {})
   },
-  default_server: IS_DEMO ? 'demo' : 'localhost',
+  default_server: IS_DEMO ? 'mantine-u56l5jt85' : 'mantine-cqj63coxn',
   show_server_selector: IS_DEV_OR_DEMO,
 
   // merge in settings that are already set via django's spa_view or for development
-  ...((window.INVENTREE_SETTINGS || {}) as any)
+  ...loaded_vals
 };
 
 if (window.INVENTREE_SETTINGS.sentry_dsn) {
