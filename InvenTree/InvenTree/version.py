@@ -7,6 +7,7 @@ import os
 import pathlib
 import platform
 import re
+import sys
 from datetime import datetime as dt
 from datetime import timedelta as td
 
@@ -26,6 +27,22 @@ try:
     main_commit = main_repo[main_repo.head()]
 except (NotGitRepository, FileNotFoundError):
     main_commit = None
+
+
+def checkMinPythonVersion():
+    """Check that the Python version is at least 3.9"""
+
+    version = sys.version.split(" ")[0]
+
+    msg = f"InvenTree requires Python 3.9 or above - you are running version {version}.\nRefer to the InvenTree documentation for more information."
+
+    if sys.version_info.major < 3:
+        raise RuntimeError(msg)
+
+    if sys.version_info.major == 3 and sys.version_info.minor < 9:
+        raise RuntimeError(msg)
+
+    print(f"Python version {version} - {sys.executable}")
 
 
 def inventreeInstanceName():

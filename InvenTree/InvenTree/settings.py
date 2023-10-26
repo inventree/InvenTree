@@ -26,9 +26,11 @@ from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.version import inventreeApiVersion
+from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
 from . import config
+
+checkMinPythonVersion()
 
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
