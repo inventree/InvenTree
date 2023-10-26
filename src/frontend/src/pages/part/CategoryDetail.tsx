@@ -5,11 +5,9 @@ import {
   IconListDetails,
   IconSitemap
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { api } from '../../App';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';

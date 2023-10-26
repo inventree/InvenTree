@@ -6,7 +6,7 @@ import { ModelType } from '../components/render/ModelType';
 import { StatusCodeListInterface } from '../components/renderers/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
 import { emptyServerAPI } from '../defaults/defaults';
-import { ServerAPIProps, UserProps } from './states';
+import { ServerAPIProps } from './states';
 
 type StatusLookup = Record<ModelType, StatusCodeListInterface>;
 
