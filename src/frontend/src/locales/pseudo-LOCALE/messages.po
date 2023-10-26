@@ -13,6 +13,46 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: src/components/AuthenticationForm.tsx:37
+#~ msgid "login"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:37
+#~ msgid "register"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:56
+#~ msgid "Welcome {actionname} to"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:61
+#~ msgid "Placeholder"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:64
+#~ msgid "Or continue with email"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:74
+#~ msgid "Your name"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:90
+#~ msgid "Invalid email"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:101
+#~ msgid "Password should include at least 6 characters"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:114
+#~ msgid "Already have an account? Login"
+#~ msgstr ""
+
+#: src/components/AuthenticationForm.tsx:115
+#~ msgid "Don't have an account? Register"
+#~ msgstr ""
+
 #: src/components/DashboardItemProxy.tsx:33
 msgid "Title"
 msgstr ""
@@ -49,6 +89,12 @@ msgstr ""
 msgid "Check your input and try again."
 msgstr ""
 
+#: src/components/forms/AuthenticationForm.tsx:48
+#: src/components/forms/AuthenticationForm.tsx:74
+#: src/functions/auth.tsx:83
+#~ msgid "Check your your input and try again."
+#~ msgstr ""
+
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
 msgstr ""
@@ -56,6 +102,10 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
 msgstr ""
+
+#: src/components/forms/AuthenticationForm.tsx:53
+#~ msgid "Login successfull"
+#~ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:101
@@ -65,6 +115,11 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
 msgstr ""
+
+#: src/components/forms/AuthenticationForm.tsx:65
+#: src/functions/auth.tsx:74
+#~ msgid "Mail delivery successfull"
+#~ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:72
 msgid "Input error"
@@ -102,6 +157,10 @@ msgstr ""
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "We will send you a link to login - if you are registered"
 msgstr ""
+
+#: src/components/forms/AuthenticationForm.tsx:131
+#~ msgid "Log in"
+#~ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
@@ -1503,6 +1562,14 @@ msgstr ""
 msgid "Current News"
 msgstr ""
 
+#: src/defaults/defaultHostList.tsx:8
+#~ msgid "InvenTree Demo"
+#~ msgstr ""
+
+#: src/defaults/defaultHostList.tsx:16
+#~ msgid "Local Server"
+#~ msgstr ""
+
 #: src/defaults/links.tsx:14
 msgid "GitHub"
 msgstr ""
@@ -1609,9 +1676,53 @@ msgstr ""
 msgid "View for interactive scanning and multiple actions."
 msgstr ""
 
+#: src/defaults/menuItems.tsx:24
+#~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:32
+#~ msgid "abc"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:37
+#~ msgid "Random image"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:40
+#~ msgid "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore the feugait nulla facilisi. Name liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assume. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:105
+#~ msgid "Yanma is capable of seeing 360 degrees without"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:109
+#~ msgid "Security"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:111
+#~ msgid "The shell’s rounded shape and the grooves on its."
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:116
+#~ msgid "Analytics"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:118
+#~ msgid "This Pokémon uses its flying ability to quickly chase"
+#~ msgstr ""
+
+#: src/defaults/menuItems.tsx:125
+#~ msgid "Combusken battles with the intensely hot flames it spews"
+#~ msgstr ""
+
 #: src/functions/auth.tsx:33
 msgid "Error fetching token from server."
 msgstr ""
+
+#: src/functions/auth.tsx:36
+#~ msgid "Logout successfull"
+#~ msgstr ""
 
 #: src/functions/auth.tsx:56
 msgid "Logout successful"
@@ -1788,6 +1899,10 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:292
 msgid "No selection"
 msgstr ""
+
+#: src/pages/Auth/Login.tsx:121
+#~ msgid "Edit host options"
+#~ msgstr ""
 
 #: src/pages/Auth/Reset.tsx:41
 #: src/pages/Auth/Set-Password.tsx:111
@@ -2245,6 +2360,10 @@ msgstr ""
 msgid "Manufacturer"
 msgstr ""
 
+#: src/pages/part/CategoryDetail.tsx:52
+#~ msgid "Subcategories"
+#~ msgstr ""
+
 #: src/pages/part/CategoryDetail.tsx:71
 #: src/pages/part/PartDetail.tsx:79
 msgid "Parameters"
@@ -2315,6 +2434,10 @@ msgstr ""
 msgid "Delete part"
 msgstr ""
 
+#: src/pages/part/PartIndex.tsx:29
+#~ msgid "Categories"
+#~ msgstr ""
+
 #: src/pages/purchasing/PurchasingIndex.tsx:38
 msgid "Manufacturers"
 msgstr ""
@@ -2322,6 +2445,10 @@ msgstr ""
 #: src/pages/sales/SalesIndex.tsx:33
 msgid "Customers"
 msgstr ""
+
+#: src/pages/stock/LocationDetail.tsx:38
+#~ msgid "Sublocations"
+#~ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:50
 msgid "Stock Tracking"
