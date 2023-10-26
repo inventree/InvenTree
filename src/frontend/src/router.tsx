@@ -12,6 +12,22 @@ export const Playground = Loadable(
   lazy(() => import('./pages/Index/Playground'))
 );
 
+export const CompanyDetail = Loadable(
+  lazy(() => import('./pages/company/CompanyDetail'))
+);
+
+export const CustomerDetail = Loadable(
+  lazy(() => import('./pages/company/CustomerDetail'))
+);
+
+export const SupplierDetail = Loadable(
+  lazy(() => import('./pages/company/SupplierDetail'))
+);
+
+export const ManufacturerDetail = Loadable(
+  lazy(() => import('./pages/company/ManufacturerDetail'))
+);
+
 export const CategoryDetail = Loadable(
   lazy(() => import('./pages/part/CategoryDetail'))
 );
@@ -34,6 +50,14 @@ export const BuildDetail = Loadable(
   lazy(() => import('./pages/build/BuildDetail'))
 );
 
+export const PurchasingIndex = Loadable(
+  lazy(() => import('./pages/purchasing/PurchasingIndex'))
+);
+
+export const SalesIndex = Loadable(
+  lazy(() => import('./pages/sales/SalesIndex'))
+);
+
 export const Scan = Loadable(lazy(() => import('./pages/Index/Scan')));
 
 export const Dashboard = Loadable(
@@ -47,6 +71,18 @@ export const Notifications = Loadable(
 
 export const Profile = Loadable(
   lazy(() => import('./pages/Index/Profile/Profile'))
+);
+
+export const UserSettings = Loadable(
+  lazy(() => import('./pages/Index/UserSettings'))
+);
+
+export const SystemSettings = Loadable(
+  lazy(() => import('./pages/Index/SystemSettings'))
+);
+
+export const PluginSettings = Loadable(
+  lazy(() => import('./pages/Index/PluginSettings'))
 );
 
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
@@ -68,6 +104,11 @@ export const routes = (
       <Route path="notifications/" element={<Notifications />} />,
       <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
+      <Route path="settings/">
+        <Route index element={<SystemSettings />} />
+        <Route path="user/" element={<UserSettings />} />
+        <Route path="plugin/" element={<PluginSettings />} />
+      </Route>
       <Route path="part/">
         <Route index element={<CategoryDetail />} />
         <Route path="category/:id" element={<CategoryDetail />} />
@@ -81,6 +122,16 @@ export const routes = (
       <Route path="build/">
         <Route index element={<BuildIndex />} />
         <Route path=":id/" element={<BuildDetail />} />
+      </Route>
+      <Route path="purchasing/">
+        <Route index element={<PurchasingIndex />} />
+        <Route path="supplier/:id/" element={<SupplierDetail />} />
+        <Route path="manufacturer/:id/" element={<ManufacturerDetail />} />
+      </Route>
+      <Route path="company/:id/" element={<CompanyDetail />} />
+      <Route path="sales/">
+        <Route index element={<SalesIndex />} />
+        <Route path="customer/:id/" element={<CustomerDetail />} />
       </Route>
       <Route path="/profile/:tabValue" element={<Profile />} />
     </Route>

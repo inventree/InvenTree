@@ -276,13 +276,11 @@ export function SearchDrawer({
   };
 
   // Search query manager
-  const searchQuery = useQuery(
-    ['search', searchText, searchRegex, searchWhole],
-    performSearch,
-    {
-      refetchOnWindowFocus: false
-    }
-  );
+  const searchQuery = useQuery({
+    queryKey: ['search', searchText, searchRegex, searchWhole],
+    queryFn: performSearch,
+    refetchOnWindowFocus: false
+  });
 
   // A list of queries which return valid results
   const [queryResults, setQueryResults] = useState<SearchQuery[]>([]);
@@ -326,9 +324,9 @@ export function SearchDrawer({
   // Callback when one of the search results is clicked
   function onResultClick(query: ModelType, pk: number) {
     closeDrawer();
-    navigate(
-      ModelInformationDict[query].url_detail.replace(':pk', pk.toString())
-    );
+    const targetModel = ModelInformationDict[query];
+    if (targetModel.url_detail == undefined) return;
+    navigate(targetModel.url_detail.replace(':pk', pk.toString()));
   }
 
   return (

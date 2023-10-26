@@ -150,7 +150,6 @@ class StockItemResource(InvenTreeResource):
 
     def dehydrate_purchase_price(self, item):
         """Render purchase pric as float"""
-
         if item.purchase_price is not None:
             return float(item.purchase_price.amount)
 

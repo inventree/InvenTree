@@ -14,6 +14,7 @@ import {
 import { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
+import { PlaceholderPanel } from '../items/Placeholder';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -23,7 +24,7 @@ export type PanelType = {
   name: string;
   label: string;
   icon?: ReactNode;
-  content: ReactNode;
+  content?: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
 };
@@ -119,7 +120,7 @@ export function PanelGroup({
                 <Stack spacing="md">
                   <StylishText size="lg">{panel.label}</StylishText>
                   <Divider />
-                  {panel.content}
+                  {panel.content ?? <PlaceholderPanel />}
                 </Stack>
               </Tabs.Panel>
             )

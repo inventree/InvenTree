@@ -7,9 +7,10 @@ import { api } from '../App';
 import { ApiPaths, apiUrl } from './ApiState';
 import { Setting } from './states';
 
-interface SettingsStateProps {
+export interface SettingsStateProps {
   settings: Setting[];
   fetchSettings: () => void;
+  endpoint: ApiPaths;
 }
 
 /**
@@ -18,6 +19,7 @@ interface SettingsStateProps {
 export const useGlobalSettingsState = create<SettingsStateProps>(
   (set, get) => ({
     settings: [],
+    endpoint: ApiPaths.settings_global_list,
     fetchSettings: async () => {
       await api
         .get(apiUrl(ApiPaths.settings_global_list))
@@ -36,6 +38,7 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
  */
 export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   settings: [],
+  endpoint: ApiPaths.settings_user_list,
   fetchSettings: async () => {
     await api
       .get(apiUrl(ApiPaths.settings_user_list))

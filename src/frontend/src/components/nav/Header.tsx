@@ -68,17 +68,17 @@ export function Header() {
           closeNotificationDrawer();
         }}
       />
-      <Container className={classes.layoutHeaderSection} size={'xl'}>
+      <Container className={classes.layoutHeaderSection} size="100%">
         <Group position="apart">
           <Group>
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
           <Group>
-            <ScanButton />
             <ActionIcon onClick={openSearchDrawer}>
               <IconSearch />
             </ActionIcon>
+            <ScanButton />
             <ActionIcon onClick={openNotificationDrawer}>
               <Indicator
                 radius="lg"

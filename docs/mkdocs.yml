@@ -140,6 +140,7 @@ nav:
       - Sales Order: report/sales_order.md
       - Return Order: report/return_order.md
       - BOM: report/bom.md
+      - Stock Location: report/stock_location.md
     - Labels:
       - Custom Labels: report/labels.md
       - Part Labels: report/labels/part_labels.md

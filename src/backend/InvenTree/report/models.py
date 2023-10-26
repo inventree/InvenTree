@@ -103,7 +103,6 @@ class ReportBase(models.Model):
 
     def __init__(self, *args, **kwargs):
         """Initialize the particular report instance"""
-
         super().__init__(*args, **kwargs)
 
         self._meta.get_field('page_size').choices = report.helpers.report_page_size_options()
@@ -126,7 +125,6 @@ class ReportBase(models.Model):
 
     def rename_file(self, filename):
         """Function for renaming uploaded file"""
-
         filename = os.path.basename(filename)
 
         path = os.path.join('report', 'report_template', self.getSubdir(), filename)
@@ -226,7 +224,6 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
 
     def get_report_size(self):
         """Return the printable page size for this report"""
-
         try:
             page_size_default = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4')
         except Exception:
@@ -352,7 +349,6 @@ class TestReport(ReportTemplateBase):
         - Second, any 'non required' tests
         - Finally, any test results which do not match a test
         """
-
         keys = []
 
         for test in stock_item.part.getTestTemplates(required=True):
@@ -564,7 +560,6 @@ class ReturnOrderReport(ReportTemplateBase):
 
     def get_context_data(self, request):
         """Return custom context data for the ReturnOrderReport template"""
-
         order = self.object_to_print
 
         return {
@@ -580,7 +575,6 @@ class ReturnOrderReport(ReportTemplateBase):
 
 def rename_snippet(instance, filename):
     """Function to rename a report snippet once uploaded"""
-
     filename = os.path.basename(filename)
 
     path = os.path.join('report', 'snippets', filename)
@@ -619,7 +613,6 @@ class ReportSnippet(models.Model):
 
 def rename_asset(instance, filename):
     """Function to rename an asset file when uploaded"""
-
     filename = os.path.basename(filename)
 
     path = os.path.join('report', 'assets', filename)

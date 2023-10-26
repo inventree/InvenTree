@@ -73,7 +73,7 @@ export function UserInfo({ data }: { data: any }) {
     api.put(apiUrl(ApiPaths.user_me)).then((res) => {
       if (res.status === 200) {
         setEditing();
-        queryClient.invalidateQueries(['user-me']);
+        queryClient.invalidateQueries({ queryKey: ['user-me'] });
       }
     });
   }

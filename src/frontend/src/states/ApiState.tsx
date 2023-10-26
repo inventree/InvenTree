@@ -1,25 +1,52 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 import { api } from '../App';
+import { ModelType } from '../components/render/ModelType';
+import { StatusCodeListInterface } from '../components/renderers/StatusRenderer';
+import { statusCodeList } from '../defaults/backendMappings';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ServerAPIProps, UserProps } from './states';
+
+type StatusLookup = Record<ModelType, StatusCodeListInterface>;
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
+  status: StatusLookup | undefined;
 }
 
-export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
-  server: emptyServerAPI,
-  setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
-  fetchServerApiState: async () => {
-    // Fetch server data
-    await api.get(apiUrl(ApiPaths.api_server_info)).then((response) => {
-      set({ server: response.data });
-    });
-  }
-}));
+export const useServerApiState = create<ServerApiStateProps>()(
+  persist(
+    (set) => ({
+      server: emptyServerAPI,
+      setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
+      fetchServerApiState: async () => {
+        // Fetch server data
+        await api
+          .get(apiUrl(ApiPaths.api_server_info))
+          .then((response) => {
+            set({ server: response.data });
+          })
+          .catch(() => {});
+        // Fetch status data for rendering labels
+        await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
+          const newStatusLookup: StatusLookup = {} as StatusLookup;
+          for (const key in response.data) {
+            newStatusLookup[statusCodeList[key]] = response.data[key].values;
+          }
+          set({ status: newStatusLookup });
+        });
+      },
+      status: undefined
+    }),
+    {
+      name: 'server-api-state',
+      getStorage: () => sessionStorage
+    }
+  )
+);
 
 export enum ApiPaths {
   api_server_info = 'api-server-info',
@@ -39,6 +66,8 @@ export enum ApiPaths {
   notifications_list = 'api-notifications-list',
 
   barcode = 'api-barcode',
+  news = 'news',
+  global_status = 'api-global-status',
 
   // Build order URLs
   build_order_list = 'api-build-list',
@@ -54,6 +83,7 @@ export enum ApiPaths {
 
   // Company URLs
   company_list = 'api-company-list',
+  company_attachment_list = 'api-company-attachment-list',
   supplier_part_list = 'api-supplier-part-list',
 
   // Stock Item URLs
@@ -65,7 +95,16 @@ export enum ApiPaths {
   purchase_order_list = 'api-purchase-order-list',
 
   // Sales Order URLs
-  sales_order_list = 'api-sales-order-list'
+  sales_order_list = 'api-sales-order-list',
+
+  // Return Order URLs
+  return_order_list = 'api-return-order-list',
+
+  // Plugin URLs
+  plugin_list = 'api-plugin-list',
+
+  project_code_list = 'api-project-code-list',
+  custom_unit_list = 'api-custom-unit-list'
 }
 
 /**
@@ -107,6 +146,10 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'notifications/';
     case ApiPaths.barcode:
       return 'barcode/';
+    case ApiPaths.news:
+      return 'news/';
+    case ApiPaths.global_status:
+      return 'generic/status/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:
@@ -125,6 +168,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'part/attachment/';
     case ApiPaths.company_list:
       return 'company/';
+    case ApiPaths.company_attachment_list:
+      return 'company/attachment/';
     case ApiPaths.supplier_part_list:
       return 'company/part/';
     case ApiPaths.stock_item_list:
@@ -137,7 +182,14 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'order/po/';
     case ApiPaths.sales_order_list:
       return 'order/so/';
-
+    case ApiPaths.return_order_list:
+      return 'order/ro/';
+    case ApiPaths.plugin_list:
+      return 'plugins/';
+    case ApiPaths.project_code_list:
+      return 'project-code/';
+    case ApiPaths.custom_unit_list:
+      return 'units/';
     default:
       return '';
   }

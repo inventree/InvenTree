@@ -202,7 +202,6 @@ class BomItemTest(TestCase):
 
     def test_consumable(self):
         """Tests for the 'consumable' BomItem field"""
-
         # Create an assembly part
         assembly = Part.objects.create(name="An assembly", description="Made with parts", assembly=True)
 

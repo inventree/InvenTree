@@ -59,7 +59,6 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
-
         if len(part.description) < len(name):
             raise ValidationError("Part description cannot be shorter than the name")
 
@@ -74,7 +73,6 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
-
         if self.get_setting('IPN_MUST_CONTAIN_Q') and 'Q' not in ipn:
             raise ValidationError("IPN must contain 'Q'")
 
@@ -83,7 +81,6 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
-
         if parameter.template.name.lower() in ['length', 'width']:
             d = int(data)
             if d >= 100:
@@ -94,7 +91,6 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
-
         if self.get_setting('SERIAL_MUST_BE_PALINDROME'):
             if serial != serial[::-1]:
                 raise ValidationError("Serial must be a palindrome")
@@ -109,7 +105,6 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
-
         prefix = self.get_setting('BATCH_CODE_PREFIX')
 
         if len(batch_code) > 0:
@@ -118,6 +113,5 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
     def generate_batch_code(self):
         """Generate a new batch code."""
-
         now = datetime.now()
         return f"BATCH-{now.year}:{now.month}:{now.day}"

@@ -55,9 +55,21 @@ The following basic options are available:
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
-| ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
+| INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface](https://docs.djangoproject.com/en/4.2/ref/contrib/admin/) | True |
+| INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
 | INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
+
+### Admin Site
+
+Django provides a powerful [administrator interface](https://docs.djangoproject.com/en/4.2/ref/contrib/admin/) which can be used to manage the InvenTree database. This interface is enabled by default, but can be disabled by setting `INVENTREE_ADMIN_ENABLED` to `False`.
+
+#### Custom Admin URL
+
+By default, the admin interface is available at the `/admin/` URL. This can be changed by setting the `INVENTREE_ADMIN_URL` environment variable.
+
+!!! warning "Security"
+    Changing the admin URL is a simple way to improve security, but it is not a substitute for proper security practices.
 
 ### Base URL Configuration
 

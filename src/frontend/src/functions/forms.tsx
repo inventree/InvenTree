@@ -7,6 +7,7 @@ import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 import { apiUrl } from '../states/ApiState';
+import { useModalState } from '../states/ModalState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
@@ -69,8 +70,12 @@ export function extractAvailableFields(
       name: fieldName,
       field_type: field.type,
       description: field.help_text,
-      value: field.value ?? field.default
+      value: field.value ?? field.default,
+      disabled: field.read_only ?? false
     };
+
+    // Remove the 'read_only' field - plays havoc with react components
+    delete fields['read_only'];
   }
 
   return fields;
@@ -93,16 +98,24 @@ export function openModalApiForm(props: ApiFormProps) {
 
   let url = constructFormUrl(props);
 
+  // let modalState = useModalState();
+
+  useModalState.getState().lock();
+
   // Make OPTIONS request first
   api
     .options(url)
     .then((response) => {
       // Extract available fields from the OPTIONS response (and handle any errors)
-      let fields: Record<string, ApiFormFieldType> | null =
-        extractAvailableFields(response, props.method);
 
-      if (fields == null) {
-        return;
+      let fields: Record<string, ApiFormFieldType> | null = {};
+
+      if (!props.ignorePermissionCheck) {
+        fields = extractAvailableFields(response, props.method);
+
+        if (fields == null) {
+          return;
+        }
       }
 
       // Generate a random modal ID for controller
@@ -111,6 +124,7 @@ export function openModalApiForm(props: ApiFormProps) {
       modals.open({
         title: props.title,
         modalId: modalId,
+        size: 'xl',
         onClose: () => {
           props.onClose ? props.onClose() : null;
         },
@@ -118,8 +132,12 @@ export function openModalApiForm(props: ApiFormProps) {
           <ApiForm modalId={modalId} props={props} fieldDefinitions={fields} />
         )
       });
+
+      useModalState.getState().unlock();
     })
     .catch((error) => {
+      useModalState.getState().unlock();
+
       console.log('Error:', error);
       if (error.response) {
         invalidResponse(error.response.status);

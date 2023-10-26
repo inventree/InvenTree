@@ -17,7 +17,6 @@ class ReportConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the report app is loaded."""
-
         from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
                                      isPluginRegistryLoaded)
 
@@ -190,7 +189,6 @@ class ReportConfig(AppConfig):
 
     def create_default_return_order_reports(self):
         """Create database entries for the default ReturnOrderReport templates"""
-
         try:
             from report.models import ReturnOrderReport
         except Exception:  # pragma: no cover
@@ -210,7 +208,6 @@ class ReportConfig(AppConfig):
 
     def create_default_stock_location_reports(self):
         """Create database entries for the default StockLocationReport templates"""
-
         try:
             from report.models import StockLocationReport
         except Exception:  # pragma: no cover

@@ -7,6 +7,7 @@ import os
 import pathlib
 import platform
 import re
+import sys
 from datetime import datetime as dt
 from datetime import timedelta as td
 
@@ -28,6 +29,27 @@ except (NotGitRepository, FileNotFoundError):
     main_commit = None
 
 
+def checkMinPythonVersion():
+    """Check that the Python version is at least 3.9"""
+
+    version = sys.version.split(" ")[0]
+    docs = "https://docs.inventree.org/en/stable/start/intro/#python-requirements"
+
+    msg = f"""
+    InvenTree requires Python 3.9 or above - you are running version {version}.
+    - Refer to the InvenTree documentation for more information:
+    - {docs}
+    """
+
+    if sys.version_info.major < 3:
+        raise RuntimeError(msg)
+
+    if sys.version_info.major == 3 and sys.version_info.minor < 9:
+        raise RuntimeError(msg)
+
+    print(f"Python version {version} - {sys.executable}")
+
+
 def inventreeInstanceName():
     """Returns the InstanceName settings for the current database."""
     import common.models
@@ -41,8 +63,7 @@ def inventreeInstanceTitle():
 
     if common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE_TITLE", False):
         return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")
-    else:
-        return 'InvenTree'
+    return 'InvenTree'
 
 
 def inventreeVersion():
@@ -73,8 +94,7 @@ def inventreeDocsVersion():
     """
     if isInvenTreeDevelopmentVersion():
         return "latest"
-    else:
-        return INVENTREE_SW_VERSION  # pragma: no cover
+    return INVENTREE_SW_VERSION  # pragma: no cover
 
 
 def isInvenTreeUpToDate():
@@ -178,5 +198,4 @@ def inventreeTarget():
 
 def inventreePlatform():
     """Returns the platform for the instance."""
-
     return platform.platform(aliased=True)

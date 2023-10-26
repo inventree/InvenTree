@@ -43,7 +43,6 @@ class InvenTreeMoneySerializer(MoneyField):
 
     def get_value(self, data):
         """Test that the returned amount is a valid Decimal."""
-
         amount = super(DecimalField, self).get_value(data)
 
         # Convert an empty string to None
@@ -73,7 +72,6 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
 
     def __init__(self, *args, **kwargs):
         """Initialize the currency serializer"""
-
         choices = currency_code_mappings()
 
         allow_blank = kwargs.get('allow_blank', False) or kwargs.get('allow_null', False)
@@ -197,7 +195,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Custom create method which supports field adjustment"""
-
         initial_data = validated_data.copy()
 
         # Remove any fields which do not exist on the model
@@ -221,7 +218,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         In addition to running validators on the serializer fields,
         this class ensures that the underlying model is also validated.
         """
-
         # Run any native validation checks first (may raise a ValidationError)
         data = super().run_validation(data)
 
@@ -705,7 +701,6 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
     def skip_create_fields(self):
         """Ensure the 'remote_image' field is skipped when creating a new instance"""
-
         return [
             'remote_image',
         ]
@@ -724,7 +719,6 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         - Attempt to download the image and store it against this object instance
         - Catches and re-throws any errors
         """
-
         if not url:
             return
 

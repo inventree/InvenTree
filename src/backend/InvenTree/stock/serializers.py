@@ -225,7 +225,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
     def validate_part(self, part):
         """Ensure the provided Part instance is valid"""
-
         if part.virtual:
             raise ValidationError(_("Stock item cannot be created for virtual parts"))
 
@@ -240,7 +239,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
-
         queryset = queryset.prefetch_related(
             'location',
             'sales_order',
@@ -591,7 +589,6 @@ class ConvertStockItemSerializer(serializers.Serializer):
 
     def validate_part(self, part):
         """Ensure that the provided part is a valid option for the stock item"""
-
         stock_item = self.context['item']
         valid_options = stock_item.part.get_conversion_options()
 
@@ -605,7 +602,6 @@ class ConvertStockItemSerializer(serializers.Serializer):
 
         - If a SupplierPart is assigned, we cannot convert!
         """
-
         data = super().validate(data)
 
         stock_item = self.context['item']
@@ -653,7 +649,6 @@ class ReturnStockItemSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serialzier to return the item into stock"""
-
         item = self.context['item']
         request = self.context['request']
 
@@ -691,7 +686,6 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
     def validate_items(self, items):
         """Validate the selected stock items"""
-
         if len(items) == 0:
             raise ValidationError(_("No stock items selected"))
 
@@ -712,7 +706,6 @@ class StockChangeStatusSerializer(serializers.Serializer):
     @transaction.atomic
     def save(self):
         """Save the serializer to change the status of the selected stock items"""
-
         data = self.validated_data
 
         items = data['items']
@@ -787,7 +780,6 @@ class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer
     @staticmethod
     def annotate_queryset(queryset):
         """Add location count to each location type."""
-
         return queryset.annotate(
             location_count=Count("stock_locations")
         )
@@ -844,7 +836,6 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """Optionally add or remove extra fields"""
-
         path_detail = kwargs.pop('path_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -855,7 +846,6 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset"""
-
         # Annotate the number of stock items which exist in this category (including subcategories)
         queryset = queryset.annotate(
             items=stock.filters.annotate_location_items()
