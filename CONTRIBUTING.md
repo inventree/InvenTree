@@ -117,7 +117,7 @@ InvenTree/
 ├─ .pre-commit-config.yaml             # Code formatter/linter configuration
 ├─ CONTRIBUTING.md                     # Contirbution guidelines and overview
 ├─ Procfile                            # Process definition for Debian/Ubuntu packages
-├─ README.md                           # Generel project information and overview
+├─ README.md                           # General project information and overview
 ├─ runtime.txt                         # Python runtime settings for Debian/Ubuntu packages build
 ├─ SECURITY.md                         # Project security policy
 ├─ tasks.py                            # Action definitions for development, testing and deployment
