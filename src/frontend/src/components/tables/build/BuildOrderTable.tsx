@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Progress, Text } from '@mantine/core';
+import { Progress } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,6 +7,8 @@ import { renderDate } from '../../../defaults/formatters';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
+import { ModelType } from '../../render/ModelType';
+import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -83,8 +85,8 @@ function buildOrderTableColumns(): TableColumn[] {
       accessor: 'status',
       sortable: true,
       title: t`Status`,
-      switchable: true
-      // TODO: Custom render function here (status label)
+      switchable: true,
+      render: TableStatusRenderer(ModelType.build)
     },
     {
       accessor: 'priority',
