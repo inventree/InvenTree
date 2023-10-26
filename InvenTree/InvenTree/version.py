@@ -33,8 +33,13 @@ def checkMinPythonVersion():
     """Check that the Python version is at least 3.9"""
 
     version = sys.version.split(" ")[0]
+    docs = "https://docs.inventree.org/en/stable/start/intro/#python-requirements"
 
-    msg = f"InvenTree requires Python 3.9 or above - you are running version {version}.\nRefer to the InvenTree documentation for more information."
+    msg = f"""
+    InvenTree requires Python 3.9 or above - you are running version {version}.
+    - Refer to the InvenTree documentation for more information:
+    - {docs}
+    """
 
     if sys.version_info.major < 3:
         raise RuntimeError(msg)
