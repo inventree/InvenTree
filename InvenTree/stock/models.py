@@ -662,9 +662,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         try:
             if self.supplier_part is not None:
                 if self.supplier_part.part != self.part:
-                    raise ValidationError({'supplier_part': _("Part type ('{pf}') must be {pe}").format(
-                                           pf=str(self.supplier_part.part),
-                                           pe=str(self.part))
+                    raise ValidationError({'supplier_part': _(f"Part type ('{self.supplier_part.part}') must be {self.part}")
                                            })
 
             if self.part is not None:
@@ -1451,7 +1449,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             raise ValidationError({"quantity": _("Quantity must be greater than zero")})
 
         if quantity > self.quantity:
-            raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})").format(n=self.quantity)})
+            raise ValidationError({"quantity": _(f"Quantity must not exceed available stock quantity ({self.quantity})")})
 
         if type(serials) not in [list, tuple]:
             raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
@@ -1950,21 +1948,15 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
     def __str__(self):
         """Human friendly name."""
         if self.part.trackable and self.serial:
-            s = '{part} #{sn}'.format(
-                part=self.part.full_name,
-                sn=self.serial)
+            s = f'{self.part.full_name} #{self.serial}'
         else:
-            s = '{n} x {part}'.format(
-                n=InvenTree.helpers.decimal2string(self.quantity),
-                part=self.part.full_name)
+            s = f'{InvenTree.helpers.decimal2string(self.quantity)} x {self.part.full_name}'
 
         if self.location:
-            s += ' @ {loc}'.format(loc=self.location.name)
+            s += f' @ {self.location.name}'
 
         if self.purchase_order:
-            s += " ({po})".format(
-                po=self.purchase_order,
-            )
+            s += f" ({self.purchase_order})"
 
         return s
 
@@ -2227,7 +2219,7 @@ class StockItemTracking(models.Model):
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return '/stock/track/{pk}'.format(pk=self.id)
+        return f'/stock/track/{self.id}'
 
     def label(self):
         """Return label."""

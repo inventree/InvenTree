@@ -7,7 +7,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PluginListTable } from '../../components/tables/plugin/PluginListTable';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { ApiPaths } from '../../states/ApiState';
 
 /**
  * Plugins settings page

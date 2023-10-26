@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Anchor, Image } from '@mantine/core';
+import { Anchor } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';

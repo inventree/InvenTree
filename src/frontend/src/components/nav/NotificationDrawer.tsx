@@ -11,7 +11,6 @@ import {
 import { Group, Stack, Text } from '@mantine/core';
 import { IconBellCheck, IconBellPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
