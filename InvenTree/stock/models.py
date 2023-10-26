@@ -662,9 +662,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         try:
             if self.supplier_part is not None:
                 if self.supplier_part.part != self.part:
-                    raise ValidationError({'supplier_part': _("Part type ('{pf}') must be {pe}").format(
-                                           pf=str(self.supplier_part.part),
-                                           pe=str(self.part))
+                    raise ValidationError({'supplier_part': _(f"Part type ('{self.supplier_part.part}') must be {self.part}")
                                            })
 
             if self.part is not None:
@@ -1451,7 +1449,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             raise ValidationError({"quantity": _("Quantity must be greater than zero")})
 
         if quantity > self.quantity:
-            raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})").format(n=self.quantity)})
+            raise ValidationError({"quantity": _(f"Quantity must not exceed available stock quantity ({self.quantity})")})
 
         if type(serials) not in [list, tuple]:
             raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})

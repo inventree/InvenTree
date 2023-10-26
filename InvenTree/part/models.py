@@ -518,10 +518,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         try:
             if self.pk == parent.pk:
-                raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                    p1=str(self),
-                    p2=str(parent)
-                )})
+                raise ValidationError({'sub_part': _(f"Part '{str(self)}' is  used in BOM for '{str(parent)}' (recursive)")})
 
             bom_items = self.get_bom_items()
 
