@@ -15,6 +15,7 @@ jobs:
         with:
           token: ${{ secrets.INVENTREE_SPONSORS_TOKEN }}
           file: 'README.md'
+          organization: true
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@a1ea191d508feb8485aceba848389d49f80ca2dc
