@@ -2,9 +2,9 @@ version = 1
 exclude_patterns = [
   "docs/docs/javascripts/**",
   "docs/ci/**",
-  "InvenTree/InvenTree/static/**",
-  "ci/**",
-  "InvenTree/**/migrations/*.py"
+  "src/backend/InvenTree/InvenTree/static/**",
+  ".github/scripts/**",
+  "src/backend/InvenTree/**/migrations/*.py"
 ]
 test_patterns = [
   "test_.*.py",
