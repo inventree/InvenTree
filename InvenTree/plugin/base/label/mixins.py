@@ -1,8 +1,11 @@
 """Plugin mixin classes for label plugins."""
 
+from typing import Union
+
 from django.http import JsonResponse
 
 import pdf2image
+from rest_framework import serializers
 from rest_framework.request import Request
 
 from common.models import InvenTreeSetting
@@ -71,14 +74,16 @@ class LabelPrintingMixin:
         png = pdf2image.convert_from_bytes(pdf_data, dpi=dpi)[0]
         return png
 
-    def print_labels(self, label: LabelTemplate, items: list, request: Request, **kwargs):
+    def print_labels(self, label: LabelTemplate, items: list, request: Request, printing_options: dict, **kwargs):
         """Print one or more labels with the provided template and items.
 
         Arguments:
             label: The LabelTemplate object to use for printing
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
-            request.data: The printing options set for this print job defined in the PrintingOptionsSerializer
+
+        Keyword arguments:
+            printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
 
         Returns:
             A JSONResponse object which indicates outcome to the user
@@ -109,7 +114,7 @@ class LabelPrintingMixin:
                 'user': user,
                 'width': label.width,
                 'height': label.height,
-                'printing_options': request.data,
+                'printing_options': printing_options,
             }
 
             if self.BLOCKING_PRINT:
@@ -163,7 +168,7 @@ class LabelPrintingMixin:
             **kwargs
         )
 
-    def get_printing_options_serializer(self, request: Request, *args, **kwargs):
+    def get_printing_options_serializer(self, request: Request, *args, **kwargs) -> Union[serializers.Serializer, None]:
         """Return a serializer class instance with dynamic printing options.
 
         Arguments:

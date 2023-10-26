@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 
 import build.models
@@ -146,7 +147,13 @@ class LabelPrintMixin(LabelFilterMixin):
         # Check the request to determine if the user has selected a label printing plugin
         plugin = self.get_plugin(self.request)
 
-        return plugin.get_printing_options_serializer(self.request)
+        serializer = plugin.get_printing_options_serializer(self.request)
+
+        # if no serializer is defined, return an empty serializer
+        if not serializer:
+            return serializers.Serializer()
+
+        return serializer
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request against this endpoint to print labels"""
@@ -211,7 +218,7 @@ class LabelPrintMixin(LabelFilterMixin):
         # At this point, we offload the label(s) to the selected plugin.
         # The plugin is responsible for handling the request and returning a response.
 
-        result = plugin.print_labels(label, items_to_print, request)
+        result = plugin.print_labels(label, items_to_print, request, printing_options=request.data)
 
         if isinstance(result, JsonResponse):
             result['plugin'] = plugin.plugin_slug()
