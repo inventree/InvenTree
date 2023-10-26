@@ -1,17 +1,22 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2023-10-23 00:16+0200\n"
+"POT-Creation-Date: 2023-06-09 22:10+0200\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: de\n"
-"Project-Id-Version: \n"
+"Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-13 01:16\n"
+"PO-Revision-Date: 2023-10-19 16:27\n"
 "Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
+"Language-Team: German\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: inventree\n"
+"X-Crowdin-Project-ID: 452300\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
+"X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:33
 msgid "Title"
@@ -36,12 +41,12 @@ msgstr "Abbrechen"
 #: src/contexts/ThemeContext.tsx:62
 #: src/pages/Index/Profile/UserPanel.tsx:109
 msgid "Submit"
-msgstr ""
+msgstr "Speichern"
 
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:32
 msgid "Login failed"
-msgstr ""
+msgstr "Login fehlgeschlagen"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
@@ -91,26 +96,26 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:91
 msgid "Username"
-msgstr ""
+msgstr "Nutzername"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:105
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr ""
+msgstr "Dein Passwort"
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "Passwort zurücksetzen"
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/pages/Auth/Reset.tsx:31
 msgid "Email"
-msgstr ""
+msgstr "Mail"
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
@@ -120,15 +125,15 @@ msgstr "Wir werden Ihnen einen Link für die Anmeldung senden"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
-#~ msgstr "Einoggen"
+#~ msgstr "Log in"
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr ""
+msgstr "Mail erhalten"
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr ""
+msgstr "Benutzername und Passwort verwenden"
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
@@ -141,7 +146,7 @@ msgstr ""
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr ""
+msgstr "Adresse"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
@@ -149,20 +154,20 @@ msgstr ""
 #: src/components/tables/settings/CustomUnitsTable.tsx:27
 #: src/components/tables/stock/StockLocationTable.tsx:23
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr ""
+msgstr "Kein Eintrag..."
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "Adresse hinzufügen"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
@@ -219,16 +224,16 @@ msgstr ""
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr ""
+msgstr "Mehr lesen"
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/components/tables/InvenTreeTable.tsx:376
 msgid "Unknown error"
-msgstr ""
+msgstr "Unbekannter Fehler"
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr ""
+msgstr "Ein Fehler ist aufgetreten:"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
@@ -236,15 +241,15 @@ msgstr ""
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "InvenTree's Logo"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr ""
+msgstr "Diese Funktion/Schaltfläche/Seite ist ein Platzhalter für eine Funktion, die nicht, nur teilweise oder nur für Tests implementiert ist."
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr ""
+msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
@@ -252,7 +257,7 @@ msgstr ""
 
 #: src/components/items/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr ""
+msgstr "QR-Code scannen"
 
 #: src/components/items/YesNoButton.tsx:15
 msgid "Yes"
@@ -264,7 +269,7 @@ msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:71
 msgid "Unknown response"
-msgstr ""
+msgstr "Unbekannte Antwort"
 
 #: src/components/modals/QrCodeModal.tsx:101
 #: src/pages/Index/Scan.tsx:592
@@ -313,21 +318,21 @@ msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:200
 msgid "Close modal"
-msgstr ""
+msgstr "Dialog schließen"
 
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
 #: src/components/nav/MainMenu.tsx:44
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 #: src/components/nav/MainMenu.tsx:47
 #: src/components/nav/MainMenu.tsx:50
 msgid "Account settings"
-msgstr ""
+msgstr "Benutzereinstellungen"
 
 #: src/components/nav/MainMenu.tsx:54
 #: src/pages/Index/SystemSettings.tsx:256
@@ -340,9 +345,17 @@ msgstr ""
 msgid "Plugins"
 msgstr ""
 
+#: src/components/nav/MainMenu.tsx:68
+#~ msgid "Current language {locale}"
+#~ msgstr "Current language {locale}"
+
+#: src/components/nav/MainMenu.tsx:71
+#~ msgid "Switch to pseudo language"
+#~ msgstr "Switch to pseudo language"
+
 #: src/components/nav/MainMenu.tsx:74
 msgid "Logout"
-msgstr ""
+msgstr "Abmelden"
 
 #: src/components/nav/NavHoverMenu.tsx:52
 msgid "Open Navigation"
@@ -350,16 +363,16 @@ msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:70
 msgid "View all"
-msgstr ""
+msgstr "Alle anzeigen"
 
 #: src/components/nav/NavHoverMenu.tsx:84
 #: src/components/nav/NavHoverMenu.tsx:94
 msgid "Get started"
-msgstr ""
+msgstr "Loslegen"
 
 #: src/components/nav/NavHoverMenu.tsx:87
 msgid "Overview over high-level objects, functions and possible usecases."
-msgstr ""
+msgstr "Übersicht über die wichtigsten Objekte, Funktionen und mögliche Anwendungsfälle."
 
 #: src/components/nav/NavigationDrawer.tsx:59
 msgid "Navigation"
@@ -383,7 +396,7 @@ msgstr ""
 #: src/pages/Notifications.tsx:22
 #: src/pages/Notifications.tsx:90
 msgid "Notifications"
-msgstr ""
+msgstr "Benachrichtigungen"
 
 #: src/components/nav/NotificationDrawer.tsx:86
 msgid "You have no unread notifications."
@@ -596,7 +609,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:132
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
-msgstr ""
+msgstr "Nutzer"
 
 #: src/components/render/ModelType.tsx:133
 msgid "Users"
@@ -1087,7 +1100,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:211
 #~ msgid "Detail"
-#~ msgstr ""
+#~ msgstr "Detail"
 
 #: src/components/tables/part/RelatedPartTable.tsx:67
 msgid "Add Related Part"
@@ -1545,7 +1558,7 @@ msgstr ""
 #: src/defaults/links.tsx:24
 #: src/defaults/menuItems.tsx:10
 msgid "Home"
-msgstr ""
+msgstr "Startseite"
 
 #: src/defaults/links.tsx:25
 #: src/pages/Index/Dashboard.tsx:19
@@ -1626,15 +1639,43 @@ msgstr ""
 
 #: src/defaults/links.tsx:91
 msgid "Licenses for packages used by InvenTree"
-msgstr ""
+msgstr "Lizenzen für Pakete, die von InvenTree verwendet werden"
+
+#: src/defaults/menuItems.tsx:7
+#~ msgid "Open sourcea"
+#~ msgstr "Open sourcea"
+
+#: src/defaults/menuItems.tsx:9
+#~ msgid "Open source"
+#~ msgstr "Open source"
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "Start page of your instance."
+#~ msgstr "Start page of your instance."
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "This Pokémon’s cry is very loud and distracting"
+#~ msgstr "This Pokémon’s cry is very loud and distracting"
+
+#: src/defaults/menuItems.tsx:12
+#~ msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
+#~ msgstr "This Pokémon’s cry is very loud and distracting and more and more and more"
 
 #: src/defaults/menuItems.tsx:16
 msgid "Profile page"
-msgstr ""
+msgstr "Profilseite"
 
 #: src/defaults/menuItems.tsx:18
 msgid "User attributes and design settings."
-msgstr ""
+msgstr "Benutzerattribute und Designeinstellungen."
+
+#: src/defaults/menuItems.tsx:21
+#~ msgid "Free for everyone"
+#~ msgstr "Free for everyone"
+
+#: src/defaults/menuItems.tsx:22
+#~ msgid "The fluid of Smeargle’s tail secretions changes"
+#~ msgstr "The fluid of Smeargle’s tail secretions changes"
 
 #: src/defaults/menuItems.tsx:24
 msgid "View for interactive scanning and multiple actions."
@@ -1694,20 +1735,20 @@ msgstr ""
 
 #: src/functions/auth.tsx:57
 msgid "See you soon."
-msgstr ""
+msgstr "Auf Wiedersehen."
 
 #: src/functions/auth.tsx:102
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
-msgstr ""
+msgstr "Prüfen Sie Ihren Posteingang für einen Link zum Zurücksetzen. Dies funktioniert nur, wenn Sie ein Konto haben. Prüfen Sie auch den Spam-Ordner."
 
 #: src/functions/auth.tsx:109
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
-msgstr ""
+msgstr "Zurücksetzen fehlgeschlagen"
 
 #: src/functions/auth.tsx:133
 msgid "Already logged in"
-msgstr ""
+msgstr "Bereits angemeldet"
 
 #: src/functions/auth.tsx:134
 msgid "Found an existing login - using it to log you in."
@@ -1857,12 +1898,16 @@ msgstr ""
 
 #: src/pages/Auth/Logged-In.tsx:22
 msgid "Checking if you are already logged in"
-msgstr ""
+msgstr "Prüfe ob Sie bereits angemeldet sind"
 
 #: src/pages/Auth/Login.tsx:25
 #: src/pages/Index/Scan.tsx:292
 msgid "No selection"
-msgstr ""
+msgstr "Keine Auswahl"
+
+#: src/pages/Auth/Login.tsx:121
+#~ msgid "Edit host options"
+#~ msgstr "Edit host options"
 
 #: src/pages/Auth/Reset.tsx:41
 #: src/pages/Auth/Set-Password.tsx:111
@@ -1871,39 +1916,39 @@ msgstr "Mail senden"
 
 #: src/pages/Auth/Set-Password.tsx:29
 msgid "Token invalid"
-msgstr ""
+msgstr "Token ungültig"
 
 #: src/pages/Auth/Set-Password.tsx:30
 msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Sie müssen einen gültigen Token angeben, um ein neues Passwort festzulegen. Prüfen Sie Ihren Posteingang für einen Link zum Zurücksetzen."
 
 #: src/pages/Auth/Set-Password.tsx:48
 msgid "No token provided"
-msgstr ""
+msgstr "Kein Token angegeben"
 
 #: src/pages/Auth/Set-Password.tsx:49
 msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Sie müssen einen Token angeben, um ein neues Passwort festzulegen. Prüfen Sie Ihren Posteingang für einen Link zum Zurücksetzen."
 
 #: src/pages/Auth/Set-Password.tsx:72
 msgid "Password set"
-msgstr ""
+msgstr "Passwort festgelegt"
 
 #: src/pages/Auth/Set-Password.tsx:73
 msgid "The password was set successfully. You can now login with your new password"
-msgstr ""
+msgstr "Das Passwort wurde erfolgreich festgelegt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden"
 
 #: src/pages/Auth/Set-Password.tsx:100
 msgid "Set new password"
-msgstr ""
+msgstr "Passwort festlegen"
 
 #: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
-msgstr ""
+msgstr "Fehler: {0}"
 
 #: src/pages/ErrorPage.tsx:28
 msgid "Sorry, an unexpected error has occurred."
-msgstr ""
+msgstr "Es ist ein unerwarteter Fehler aufgetreten."
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
@@ -1923,7 +1968,7 @@ msgstr ""
 
 #: src/pages/Index/PluginSettings.tsx:47
 msgid "Plugin Settings"
-msgstr "Plugin Settings"
+msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
@@ -2051,19 +2096,19 @@ msgstr "Plugin Settings"
 
 #: src/pages/Index/Profile/UserPanel.tsx:85
 msgid "Userinfo"
-msgstr ""
+msgstr "Benutzerdetails"
 
 #: src/pages/Index/Profile/UserPanel.tsx:116
 msgid "First name: {0}"
-msgstr ""
+msgstr "Vorname: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:119
 msgid "Last name: {0}"
-msgstr ""
+msgstr "Nachname: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:122
 msgid "Username: {0}"
-msgstr ""
+msgstr "Benutzername: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:154
 msgid "Use pseudo language"
@@ -2278,7 +2323,7 @@ msgstr ""
 
 #: src/pages/Index/UserSettings.tsx:103
 msgid "User Settings"
-msgstr "User Settings"
+msgstr ""
 
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
@@ -2286,15 +2331,15 @@ msgstr "User Settings"
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr ""
+msgstr "Nicht gefunden"
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
-msgstr ""
+msgstr "Diese Seite ist nicht bekannt oder wurde verschoben."
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
-msgstr ""
+msgstr "Zur Startseite"
 
 #: src/pages/Notifications.tsx:56
 msgid "Mark as unread"
@@ -2448,9 +2493,9 @@ msgstr ""
 msgid "Manufacturer"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:59
+#: src/pages/part/CategoryDetail.tsx:52
 #~ msgid "Subcategories"
-#~ msgstr ""
+#~ msgstr "Subcategories"
 
 #: src/pages/part/CategoryDetail.tsx:71
 #: src/pages/part/PartDetail.tsx:79
@@ -2534,9 +2579,9 @@ msgstr ""
 msgid "Customers"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:45
+#: src/pages/stock/LocationDetail.tsx:38
 #~ msgid "Sublocations"
-#~ msgstr ""
+#~ msgstr "Sublocations"
 
 #: src/pages/stock/StockDetail.tsx:50
 msgid "Stock Tracking"

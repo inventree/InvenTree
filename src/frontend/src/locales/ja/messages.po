@@ -1,21 +1,26 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2023-10-23 00:16+0200\n"
+"POT-Creation-Date: 2023-06-09 22:10+0200\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: ja\n"
-"Project-Id-Version: \n"
+"Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-13 01:16\n"
+"PO-Revision-Date: 2023-10-19 16:27\n"
 "Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
+"Language-Team: Japanese\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: inventree\n"
+"X-Crowdin-Project-ID: 452300\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
+"X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:33
 msgid "Title"
-msgstr ""
+msgstr "タイトル"
 
 #: src/components/forms/ApiForm.tsx:189
 #: src/components/widgets/MarkdownEditor.tsx:146
@@ -91,12 +96,12 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:91
 msgid "Username"
-msgstr ""
+msgstr "ユーザー名"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:105
 msgid "Password"
-msgstr ""
+msgstr "パスワード"
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
@@ -105,12 +110,12 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "パスワードを再設定"
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/pages/Auth/Reset.tsx:31
 msgid "Email"
-msgstr ""
+msgstr "メールアドレス"
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
@@ -120,7 +125,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
-#~ msgstr "ログイン"
+#~ msgstr "Log in"
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
@@ -149,7 +154,7 @@ msgstr ""
 #: src/components/tables/settings/CustomUnitsTable.tsx:27
 #: src/components/tables/stock/StockLocationTable.tsx:23
 msgid "Name"
-msgstr ""
+msgstr "名前"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
@@ -157,12 +162,12 @@ msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "ホストを追加"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
@@ -215,11 +220,11 @@ msgstr ""
 #: src/components/images/Thumbnail.tsx:11
 #: src/components/images/Thumbnail.tsx:41
 msgid "Thumbnail"
-msgstr ""
+msgstr "サムネイル"
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr ""
+msgstr "続きを読む"
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/components/tables/InvenTreeTable.tsx:376
@@ -236,7 +241,7 @@ msgstr ""
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "InvenTree ロゴ"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -318,11 +323,11 @@ msgstr ""
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
-msgstr ""
+msgstr "プロフィール"
 
 #: src/components/nav/MainMenu.tsx:44
 msgid "Settings"
-msgstr ""
+msgstr "設定"
 
 #: src/components/nav/MainMenu.tsx:47
 #: src/components/nav/MainMenu.tsx:50
@@ -340,9 +345,17 @@ msgstr ""
 msgid "Plugins"
 msgstr ""
 
+#: src/components/nav/MainMenu.tsx:68
+#~ msgid "Current language {locale}"
+#~ msgstr "Current language {locale}"
+
+#: src/components/nav/MainMenu.tsx:71
+#~ msgid "Switch to pseudo language"
+#~ msgstr "Switch to pseudo language"
+
 #: src/components/nav/MainMenu.tsx:74
 msgid "Logout"
-msgstr ""
+msgstr "ログアウト"
 
 #: src/components/nav/NavHoverMenu.tsx:52
 msgid "Open Navigation"
@@ -392,7 +405,7 @@ msgstr ""
 #: src/components/nav/NotificationDrawer.tsx:110
 #: src/pages/Notifications.tsx:30
 msgid "Mark as read"
-msgstr ""
+msgstr "既読にする"
 
 #: src/components/nav/SearchDrawer.tsx:187
 msgid "results"
@@ -437,7 +450,7 @@ msgstr ""
 #: src/components/tables/part/RelatedPartTable.tsx:35
 #: src/components/tables/stock/StockItemTable.tsx:23
 msgid "Part"
-msgstr ""
+msgstr "パーツ"
 
 #: src/components/render/ModelType.tsx:37
 #: src/components/tables/part/PartCategoryTable.tsx:40
@@ -447,7 +460,7 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:81
 #: src/pages/part/PartDetail.tsx:194
 msgid "Parts"
-msgstr ""
+msgstr "パーツ"
 
 #: src/components/render/ModelType.tsx:42
 msgid "Part Parameter Template"
@@ -486,7 +499,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:66
 msgid "Stock Item"
-msgstr ""
+msgstr "在庫商品"
 
 #: src/components/render/ModelType.tsx:67
 #: src/components/tables/stock/StockLocationTable.tsx:39
@@ -495,16 +508,16 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:74
 #: src/pages/stock/StockDetail.tsx:114
 msgid "Stock Items"
-msgstr ""
+msgstr "在庫商品"
 
 #: src/components/render/ModelType.tsx:72
 msgid "Stock Location"
-msgstr ""
+msgstr "在庫場所"
 
 #: src/components/render/ModelType.tsx:73
 #: src/pages/stock/LocationDetail.tsx:45
 msgid "Stock Locations"
-msgstr ""
+msgstr "在庫場所"
 
 #: src/components/render/ModelType.tsx:78
 #: src/defaults/links.tsx:28
@@ -596,7 +609,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:132
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
-msgstr ""
+msgstr "ユーザー"
 
 #: src/components/render/ModelType.tsx:133
 msgid "Users"
@@ -647,56 +660,56 @@ msgstr ""
 
 #: src/components/tables/FilterBadge.tsx:44
 msgid "Remove filter"
-msgstr ""
+msgstr "フィルタを削除"
 
 #: src/components/tables/FilterGroup.tsx:29
 msgid "Add table filter"
-msgstr ""
+msgstr "表フィルタを追加"
 
 #: src/components/tables/FilterGroup.tsx:44
 msgid "Clear all filters"
-msgstr ""
+msgstr "すべてのフィルタを解除"
 
 #: src/components/tables/FilterGroup.tsx:51
 msgid "Add filter"
-msgstr ""
+msgstr "フィルタを追加"
 
 #: src/components/tables/FilterSelectModal.tsx:56
 msgid "True"
-msgstr ""
+msgstr "はい"
 
 #: src/components/tables/FilterSelectModal.tsx:57
 msgid "False"
-msgstr ""
+msgstr "いいえ"
 
 #: src/components/tables/FilterSelectModal.tsx:143
 msgid "Add Table Filter"
-msgstr ""
+msgstr "表フィルタを追加"
 
 #: src/components/tables/FilterSelectModal.tsx:145
 msgid "Select from the available filters"
-msgstr ""
+msgstr "有効なフィルタから選択"
 
 #: src/components/tables/FilterSelectModal.tsx:149
 msgid "Filter"
-msgstr ""
+msgstr "フィルタ"
 
 #: src/components/tables/FilterSelectModal.tsx:150
 msgid "Select filter"
-msgstr ""
+msgstr "フィルタを選択"
 
 #: src/components/tables/FilterSelectModal.tsx:159
 #: src/components/tables/part/PartParameterTable.tsx:66
 msgid "Value"
-msgstr ""
+msgstr "値"
 
 #: src/components/tables/FilterSelectModal.tsx:160
 msgid "Select filter value"
-msgstr ""
+msgstr "フィルタの値を選択"
 
 #: src/components/tables/FilterSelectModal.tsx:172
 msgid "Add Filter"
-msgstr ""
+msgstr "フィルタを追加"
 
 #: src/components/tables/InvenTreeTable.tsx:71
 #: src/components/tables/InvenTreeTable.tsx:327
@@ -740,7 +753,7 @@ msgstr ""
 
 #: src/components/tables/InvenTreeTable.tsx:478
 msgid "Table filters"
-msgstr ""
+msgstr "表フィルタ"
 
 #: src/components/tables/RowActions.tsx:33
 #: src/components/tables/RowActions.tsx:40
@@ -766,7 +779,7 @@ msgstr ""
 #: src/components/tables/stock/StockItemTable.tsx:42
 #: src/components/tables/stock/StockLocationTable.tsx:28
 msgid "Description"
-msgstr ""
+msgstr "説明"
 
 #: src/components/tables/build/BuildOrderTable.tsx:50
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:54
@@ -972,7 +985,7 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:60
 #: src/pages/stock/StockDetail.tsx:101
 msgid "Stock"
-msgstr ""
+msgstr "在庫"
 
 #: src/components/tables/part/PartTable.tsx:75
 msgid "Price Range"
@@ -989,7 +1002,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:99
 msgid "Filter by part active status"
-msgstr ""
+msgstr "有効なパーツでフィルタ"
 
 #: src/components/tables/part/PartTable.tsx:104
 msgid "Assembly"
@@ -1001,11 +1014,11 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:110
 msgid "Include Subcategories"
-msgstr ""
+msgstr "サブカテゴリを含む"
 
 #: src/components/tables/part/PartTable.tsx:111
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "サブカテゴリのパーツを含む"
 
 #: src/components/tables/part/PartTable.tsx:116
 msgid "Component"
@@ -1013,7 +1026,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:117
 msgid "Filter by component attribute"
-msgstr ""
+msgstr "コンポーネント属性でフィルタ"
 
 #: src/components/tables/part/PartTable.tsx:122
 msgid "Trackable"
@@ -1021,7 +1034,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:123
 msgid "Filter by trackable attribute"
-msgstr ""
+msgstr "追跡可能属性でフィルタ"
 
 #: src/components/tables/part/PartTable.tsx:128
 msgid "Has Units"
@@ -1029,7 +1042,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:129
 msgid "Filter by parts which have units"
-msgstr ""
+msgstr "単位のある部品でフィルタ"
 
 #: src/components/tables/part/PartTable.tsx:134
 msgid "Has IPN"
@@ -1045,7 +1058,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:141
 msgid "Filter by parts which have stock"
-msgstr ""
+msgstr "在庫がある部品でフィルタ"
 
 #: src/components/tables/part/PartTable.tsx:146
 #: src/defaults/dashboardItems.tsx:50
@@ -1062,7 +1075,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:153
 msgid "Filter by parts which are purchaseable"
-msgstr ""
+msgstr "購入可能な部品でフィルタ"
 
 #: src/components/tables/part/PartTable.tsx:158
 msgid "Salable"
@@ -1070,24 +1083,24 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:159
 msgid "Filter by parts which are salable"
-msgstr ""
+msgstr "販売可能な部品でフィルタ"
 
 #: src/components/tables/part/PartTable.tsx:164
 #: src/components/tables/part/PartTable.tsx:168
 msgid "Virtual"
-msgstr ""
+msgstr "仮想部品"
 
 #: src/components/tables/part/PartTable.tsx:165
 msgid "Filter by parts which are virtual"
-msgstr ""
+msgstr "仮想部品でフィルタ"
 
 #: src/components/tables/part/PartTable.tsx:169
 msgid "Not Virtual"
-msgstr ""
+msgstr "仮想部品ではない"
 
 #: src/components/tables/part/PartTable.tsx:211
 #~ msgid "Detail"
-#~ msgstr "詳細"
+#~ msgstr "Detail"
 
 #: src/components/tables/part/RelatedPartTable.tsx:67
 msgid "Add Related Part"
@@ -1257,15 +1270,15 @@ msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:68
 msgid "Location"
-msgstr ""
+msgstr "場所"
 
 #: src/components/tables/stock/StockItemTable.tsx:93
 msgid "Test Filter"
-msgstr ""
+msgstr "テストフィルタ"
 
 #: src/components/tables/stock/StockItemTable.tsx:94
 msgid "This is a test filter"
-msgstr ""
+msgstr "これはテストフィルタです"
 
 #: src/components/tables/stock/StockLocationTable.tsx:45
 msgid "Structural"
@@ -1277,7 +1290,7 @@ msgstr ""
 
 #: src/components/tables/stock/StockLocationTable.tsx:59
 msgid "Location Type"
-msgstr ""
+msgstr "場所タイプ"
 
 #: src/components/widgets/DisplayWidget.tsx:11
 #: src/pages/Index/Profile/UserPanel.tsx:139
@@ -1292,7 +1305,7 @@ msgstr ""
 #: src/components/widgets/DisplayWidget.tsx:21
 #: src/pages/Index/Profile/UserPanel.tsx:149
 msgid "Language"
-msgstr ""
+msgstr "言語"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
@@ -1316,7 +1329,7 @@ msgstr ""
 
 #: src/components/widgets/MarkdownEditor.tsx:147
 msgid "Notes saved"
-msgstr ""
+msgstr "メモを保存しました"
 
 #: src/components/widgets/MarkdownEditor.tsx:155
 msgid "Failed to save notes"
@@ -1598,7 +1611,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:66
 msgid "FAQ"
-msgstr ""
+msgstr "よくある質問"
 
 #: src/defaults/links.tsx:67
 msgid "Frequently asked questions"
@@ -1614,7 +1627,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:83
 msgid "InvenTree"
-msgstr ""
+msgstr "InvenTree"
 
 #: src/defaults/links.tsx:84
 msgid "About the InvenTree org"
@@ -1622,11 +1635,31 @@ msgstr ""
 
 #: src/defaults/links.tsx:90
 msgid "Licenses"
-msgstr ""
+msgstr "ライセンス"
 
 #: src/defaults/links.tsx:91
 msgid "Licenses for packages used by InvenTree"
 msgstr ""
+
+#: src/defaults/menuItems.tsx:7
+#~ msgid "Open sourcea"
+#~ msgstr "Open sourcea"
+
+#: src/defaults/menuItems.tsx:9
+#~ msgid "Open source"
+#~ msgstr "Open source"
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "Start page of your instance."
+#~ msgstr "Start page of your instance."
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "This Pokémon’s cry is very loud and distracting"
+#~ msgstr "This Pokémon’s cry is very loud and distracting"
+
+#: src/defaults/menuItems.tsx:12
+#~ msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
+#~ msgstr "This Pokémon’s cry is very loud and distracting and more and more and more"
 
 #: src/defaults/menuItems.tsx:16
 msgid "Profile page"
@@ -1635,6 +1668,14 @@ msgstr ""
 #: src/defaults/menuItems.tsx:18
 msgid "User attributes and design settings."
 msgstr ""
+
+#: src/defaults/menuItems.tsx:21
+#~ msgid "Free for everyone"
+#~ msgstr "Free for everyone"
+
+#: src/defaults/menuItems.tsx:22
+#~ msgid "The fluid of Smeargle’s tail secretions changes"
+#~ msgstr "The fluid of Smeargle’s tail secretions changes"
 
 #: src/defaults/menuItems.tsx:24
 msgid "View for interactive scanning and multiple actions."
@@ -1737,7 +1778,7 @@ msgstr ""
 
 #: src/functions/forms/AttachmentForms.tsx:58
 msgid "Add File"
-msgstr ""
+msgstr "ファイルを追加"
 
 #: src/functions/forms/AttachmentForms.tsx:58
 msgid "Add Link"
@@ -1813,7 +1854,7 @@ msgstr ""
 
 #: src/functions/forms/StockForms.tsx:54
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "この商品の初期数量を入力"
 
 #: src/functions/forms/StockForms.tsx:59
 msgid "Serial Numbers"
@@ -1825,11 +1866,11 @@ msgstr ""
 
 #: src/functions/forms/StockForms.tsx:105
 msgid "Create Stock Item"
-msgstr ""
+msgstr "在庫商品を追加"
 
 #: src/functions/forms/StockForms.tsx:119
 msgid "Edit Stock Item"
-msgstr ""
+msgstr "在庫商品を編集"
 
 #: src/functions/notifications.tsx:9
 msgid "Not implemented"
@@ -1899,11 +1940,11 @@ msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:100
 msgid "Set new password"
-msgstr ""
+msgstr "新しいパスワードを設定"
 
 #: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
-msgstr ""
+msgstr "エラー：{0}"
 
 #: src/pages/ErrorPage.tsx:28
 msgid "Sorry, an unexpected error has occurred."
@@ -1927,7 +1968,7 @@ msgstr ""
 
 #: src/pages/Index/PluginSettings.tsx:47
 msgid "Plugin Settings"
-msgstr "Plugin Settings"
+msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
@@ -2055,7 +2096,7 @@ msgstr "Plugin Settings"
 
 #: src/pages/Index/Profile/UserPanel.tsx:85
 msgid "Userinfo"
-msgstr ""
+msgstr "ユーザー情報"
 
 #: src/pages/Index/Profile/UserPanel.tsx:116
 msgid "First name: {0}"
@@ -2179,7 +2220,7 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:320
 msgid "Open Link"
-msgstr ""
+msgstr "リンクを開く"
 
 #: src/pages/Index/Scan.tsx:335
 msgid "History is locally kept in this browser."
@@ -2245,7 +2286,7 @@ msgstr ""
 #: src/pages/Index/SystemSettings.tsx:124
 #: src/pages/part/PartDetail.tsx:122
 msgid "Pricing"
-msgstr ""
+msgstr "価格"
 
 #: src/pages/Index/SystemSettings.tsx:129
 msgid "Labels"
@@ -2282,7 +2323,7 @@ msgstr ""
 
 #: src/pages/Index/UserSettings.tsx:103
 msgid "User Settings"
-msgstr "User Settings"
+msgstr ""
 
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
@@ -2290,7 +2331,7 @@ msgstr "User Settings"
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr ""
+msgstr "見つかりません"
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
@@ -2302,7 +2343,7 @@ msgstr ""
 
 #: src/pages/Notifications.tsx:56
 msgid "Mark as unread"
-msgstr ""
+msgstr "未読にする"
 
 #: src/pages/build/BuildDetail.tsx:64
 msgid "Build Details"
@@ -2340,7 +2381,7 @@ msgstr "添付ファイル"
 #: src/pages/part/PartDetail.tsx:179
 #: src/pages/stock/StockDetail.tsx:86
 msgid "Notes"
-msgstr ""
+msgstr "メモ"
 
 #: src/pages/build/BuildDetail.tsx:150
 #: src/pages/part/PartDetail.tsx:226
@@ -2452,9 +2493,9 @@ msgstr ""
 msgid "Manufacturer"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:59
+#: src/pages/part/CategoryDetail.tsx:52
 #~ msgid "Subcategories"
-#~ msgstr ""
+#~ msgstr "Subcategories"
 
 #: src/pages/part/CategoryDetail.tsx:71
 #: src/pages/part/PartDetail.tsx:79
@@ -2538,9 +2579,9 @@ msgstr ""
 msgid "Customers"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:45
+#: src/pages/stock/LocationDetail.tsx:38
 #~ msgid "Sublocations"
-#~ msgstr ""
+#~ msgstr "Sublocations"
 
 #: src/pages/stock/StockDetail.tsx:50
 msgid "Stock Tracking"

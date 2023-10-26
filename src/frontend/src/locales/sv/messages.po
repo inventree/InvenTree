@@ -1,21 +1,26 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2023-10-23 00:16+0200\n"
+"POT-Creation-Date: 2023-06-09 22:10+0200\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: sv\n"
-"Project-Id-Version: \n"
+"Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-13 01:16\n"
+"PO-Revision-Date: 2023-10-19 16:27\n"
 "Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
+"Language-Team: Swedish\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: inventree\n"
+"X-Crowdin-Project-ID: 452300\n"
+"X-Crowdin-Language: sv-SE\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
+"X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:33
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 #: src/components/forms/ApiForm.tsx:189
 #: src/components/widgets/MarkdownEditor.tsx:146
@@ -36,12 +41,12 @@ msgstr "Avbryt"
 #: src/contexts/ThemeContext.tsx:62
 #: src/pages/Index/Profile/UserPanel.tsx:109
 msgid "Submit"
-msgstr ""
+msgstr "Skicka"
 
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:32
 msgid "Login failed"
-msgstr ""
+msgstr "Inloggningen misslyckades"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
@@ -70,7 +75,7 @@ msgstr "Välkommen tillbaka!"
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:101
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "E-postleverans lyckad"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
@@ -87,30 +92,30 @@ msgstr "Inmatningsfel"
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr ""
+msgstr "Välkommen, logga in nedan"
 
 #: src/components/forms/AuthenticationForm.tsx:91
 msgid "Username"
-msgstr ""
+msgstr "Användarnamn"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:105
 msgid "Password"
-msgstr ""
+msgstr "Lösenord"
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr ""
+msgstr "Ditt lösenord"
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "Återställ lösenord"
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/pages/Auth/Reset.tsx:31
 msgid "Email"
-msgstr ""
+msgstr "E-post"
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
@@ -120,15 +125,15 @@ msgstr "Vi skickar en länk till dig för att logga in - om du är registrerad"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
-#~ msgstr "Logga in"
+#~ msgstr "Log in"
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr ""
+msgstr "Skicka ett e-postmeddelande"
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr ""
+msgstr "Jag kommer att använda användarnamn och lösenord"
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
@@ -141,7 +146,7 @@ msgstr ""
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr ""
+msgstr "Värd"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
@@ -149,40 +154,40 @@ msgstr ""
 #: src/components/tables/settings/CustomUnitsTable.tsx:27
 #: src/components/tables/stock/StockLocationTable.tsx:23
 msgid "Name"
-msgstr ""
+msgstr "Namn"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr ""
+msgstr "Ingen här..."
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "Lägg till värd"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr ""
+msgstr "Spara"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr ""
+msgstr "Välj destinationsinstans"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr ""
+msgstr "Redigera möjliga värdalternativ"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "Version {0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr ""
+msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr ""
+msgstr "Namn: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
@@ -210,41 +215,41 @@ msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:217
 msgid "No results found"
-msgstr ""
+msgstr "Inga resultat hittades"
 
 #: src/components/images/Thumbnail.tsx:11
 #: src/components/images/Thumbnail.tsx:41
 msgid "Thumbnail"
-msgstr ""
+msgstr "Miniatyrbild"
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr ""
+msgstr "Läs mer"
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/components/tables/InvenTreeTable.tsx:376
 msgid "Unknown error"
-msgstr ""
+msgstr "Okänt fel"
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr ""
+msgstr "Ett fel inträffade:"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "Läs mer"
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "InvenTree Logotyp"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr ""
+msgstr "Denna funktion/knapp/webbplats är en platshållare för en funktion som inte är implementerad, bara partiell eller avsedd för testning."
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr ""
+msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
@@ -252,7 +257,7 @@ msgstr ""
 
 #: src/components/items/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr ""
+msgstr "Skanna QR-kod"
 
 #: src/components/items/YesNoButton.tsx:15
 msgid "Yes"
@@ -264,70 +269,70 @@ msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:71
 msgid "Unknown response"
-msgstr ""
+msgstr "Okänt svar"
 
 #: src/components/modals/QrCodeModal.tsx:101
 #: src/pages/Index/Scan.tsx:592
 msgid "Error while getting camera"
-msgstr ""
+msgstr "Fel vid öppning av kamera"
 
 #: src/components/modals/QrCodeModal.tsx:124
 #: src/pages/Index/Scan.tsx:615
 msgid "Error while scanning"
-msgstr ""
+msgstr "Fel vid skanning"
 
 #: src/components/modals/QrCodeModal.tsx:138
 #: src/pages/Index/Scan.tsx:629
 msgid "Error while stopping"
-msgstr ""
+msgstr "Fel vid avbrott"
 
 #: src/components/modals/QrCodeModal.tsx:153
 #: src/defaults/menuItems.tsx:22
 #: src/pages/Index/Scan.tsx:698
 msgid "Scanning"
-msgstr ""
+msgstr "Scannar"
 
 #: src/components/modals/QrCodeModal.tsx:153
 #: src/pages/Index/Scan.tsx:698
 msgid "Not scanning"
-msgstr ""
+msgstr "Starta skanning"
 
 #: src/components/modals/QrCodeModal.tsx:158
 #: src/pages/Index/Scan.tsx:704
 msgid "Select Camera"
-msgstr ""
+msgstr "Välj kamera"
 
 #: src/components/modals/QrCodeModal.tsx:168
 #: src/pages/Index/Scan.tsx:690
 msgid "Start scanning"
-msgstr ""
+msgstr "Starta skanning"
 
 #: src/components/modals/QrCodeModal.tsx:175
 #: src/pages/Index/Scan.tsx:684
 msgid "Stop scanning"
-msgstr ""
+msgstr "Stoppa skanning"
 
 #: src/components/modals/QrCodeModal.tsx:180
 msgid "No scans yet!"
-msgstr ""
+msgstr "Inga skanningar ännu!"
 
 #: src/components/modals/QrCodeModal.tsx:200
 msgid "Close modal"
-msgstr ""
+msgstr "Stäng fönstret"
 
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
 #: src/components/nav/MainMenu.tsx:44
 msgid "Settings"
-msgstr ""
+msgstr "Inställningar"
 
 #: src/components/nav/MainMenu.tsx:47
 #: src/components/nav/MainMenu.tsx:50
 msgid "Account settings"
-msgstr ""
+msgstr "Kontoinställningar"
 
 #: src/components/nav/MainMenu.tsx:54
 #: src/pages/Index/SystemSettings.tsx:256
@@ -338,44 +343,52 @@ msgstr ""
 #: src/components/nav/NavigationDrawer.tsx:67
 #: src/pages/Index/PluginSettings.tsx:32
 msgid "Plugins"
-msgstr ""
+msgstr "Plugins"
+
+#: src/components/nav/MainMenu.tsx:68
+#~ msgid "Current language {locale}"
+#~ msgstr "Current language {locale}"
+
+#: src/components/nav/MainMenu.tsx:71
+#~ msgid "Switch to pseudo language"
+#~ msgstr "Switch to pseudo language"
 
 #: src/components/nav/MainMenu.tsx:74
 msgid "Logout"
-msgstr ""
+msgstr "Logga ut"
 
 #: src/components/nav/NavHoverMenu.tsx:52
 msgid "Open Navigation"
-msgstr ""
+msgstr "Öppna navigering"
 
 #: src/components/nav/NavHoverMenu.tsx:70
 msgid "View all"
-msgstr ""
+msgstr "Visa alla"
 
 #: src/components/nav/NavHoverMenu.tsx:84
 #: src/components/nav/NavHoverMenu.tsx:94
 msgid "Get started"
-msgstr ""
+msgstr "Kom igång"
 
 #: src/components/nav/NavHoverMenu.tsx:87
 msgid "Overview over high-level objects, functions and possible usecases."
-msgstr ""
+msgstr "Översikt över objekt, funktioner och möjliga användningsområden."
 
 #: src/components/nav/NavigationDrawer.tsx:59
 msgid "Navigation"
-msgstr ""
+msgstr "Navigering"
 
 #: src/components/nav/NavigationDrawer.tsx:62
 msgid "Pages"
-msgstr ""
+msgstr "Sidor"
 
 #: src/components/nav/NavigationDrawer.tsx:77
 msgid "Documentation"
-msgstr ""
+msgstr "Dokumentation"
 
 #: src/components/nav/NavigationDrawer.tsx:80
 msgid "About"
-msgstr ""
+msgstr "Om"
 
 #: src/components/nav/NotificationDrawer.tsx:69
 #: src/pages/Index/SystemSettings.tsx:119
@@ -383,7 +396,7 @@ msgstr ""
 #: src/pages/Notifications.tsx:22
 #: src/pages/Notifications.tsx:90
 msgid "Notifications"
-msgstr ""
+msgstr "Notifikationer"
 
 #: src/components/nav/NotificationDrawer.tsx:86
 msgid "You have no unread notifications."
@@ -396,15 +409,15 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:187
 msgid "results"
-msgstr ""
+msgstr "resultat"
 
 #: src/components/nav/SearchDrawer.tsx:343
 msgid "Enter search text"
-msgstr ""
+msgstr "Ange sökord"
 
 #: src/components/nav/SearchDrawer.tsx:370
 msgid "Search Options"
-msgstr ""
+msgstr "Sökalternativ"
 
 #: src/components/nav/SearchDrawer.tsx:373
 msgid "Regex search"
@@ -412,19 +425,19 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:383
 msgid "Whole word search"
-msgstr ""
+msgstr "Hela ordsökningen"
 
 #: src/components/nav/SearchDrawer.tsx:420
 msgid "An error occurred during search query"
-msgstr ""
+msgstr "Ett fel inträffade under sökfrågan"
 
 #: src/components/nav/SearchDrawer.tsx:431
 msgid "No results"
-msgstr ""
+msgstr "Inga resultat"
 
 #: src/components/nav/SearchDrawer.tsx:434
 msgid "No results available for search query"
-msgstr ""
+msgstr "Inga resultat tillgängliga för sökfrågan"
 
 #: src/components/render/Instance.tsx:130
 msgid "Unknown model: {model}"
@@ -437,7 +450,7 @@ msgstr ""
 #: src/components/tables/part/RelatedPartTable.tsx:35
 #: src/components/tables/stock/StockItemTable.tsx:23
 msgid "Part"
-msgstr ""
+msgstr "Artkel"
 
 #: src/components/render/ModelType.tsx:37
 #: src/components/tables/part/PartCategoryTable.tsx:40
@@ -447,7 +460,7 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:81
 #: src/pages/part/PartDetail.tsx:194
 msgid "Parts"
-msgstr ""
+msgstr "Artiklar"
 
 #: src/components/render/ModelType.tsx:42
 msgid "Part Parameter Template"
@@ -463,7 +476,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:49
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Leverantörsartikel"
 
 #: src/components/render/ModelType.tsx:54
 msgid "Manufacturer Part"
@@ -471,7 +484,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:55
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Tillverkarens artiklar"
 
 #: src/components/render/ModelType.tsx:60
 #: src/pages/part/CategoryDetail.tsx:94
@@ -482,7 +495,7 @@ msgstr ""
 #: src/pages/Index/SystemSettings.tsx:151
 #: src/pages/part/CategoryDetail.tsx:59
 msgid "Part Categories"
-msgstr ""
+msgstr "Artikelkategorier"
 
 #: src/components/render/ModelType.tsx:66
 msgid "Stock Item"
@@ -495,7 +508,7 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:74
 #: src/pages/stock/StockDetail.tsx:114
 msgid "Stock Items"
-msgstr ""
+msgstr "Artikel i lager"
 
 #: src/components/render/ModelType.tsx:72
 msgid "Stock Location"
@@ -504,12 +517,12 @@ msgstr ""
 #: src/components/render/ModelType.tsx:73
 #: src/pages/stock/LocationDetail.tsx:45
 msgid "Stock Locations"
-msgstr ""
+msgstr "Lagerplats"
 
 #: src/components/render/ModelType.tsx:78
 #: src/defaults/links.tsx:28
 msgid "Build"
-msgstr ""
+msgstr "Bygg"
 
 #: src/components/render/ModelType.tsx:79
 msgid "Builds"
@@ -521,7 +534,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:85
 msgid "Companies"
-msgstr ""
+msgstr "Företag"
 
 #: src/components/render/ModelType.tsx:90
 msgid "Purchase Order"
@@ -533,7 +546,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:133
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Inköpsorder"
 
 #: src/components/render/ModelType.tsx:96
 #: src/components/tables/sales/SalesOrderTable.tsx:23
@@ -546,7 +559,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:139
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
-msgstr ""
+msgstr "Försäljningsorder"
 
 #: src/components/render/ModelType.tsx:102
 msgid "Sales Order Shipment"
@@ -565,7 +578,7 @@ msgstr ""
 #: src/pages/company/CompanyDetail.tsx:112
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
-msgstr ""
+msgstr "Returorder"
 
 #: src/components/render/ModelType.tsx:114
 msgid "Address"
@@ -596,7 +609,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:132
 #: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
-msgstr ""
+msgstr "Användare"
 
 #: src/components/render/ModelType.tsx:133
 msgid "Users"
@@ -627,82 +640,82 @@ msgstr ""
 #: src/components/tables/ColumnSelect.tsx:17
 #: src/components/tables/ColumnSelect.tsx:24
 msgid "Select Columns"
-msgstr ""
+msgstr "Välj Kolumner"
 
 #: src/components/tables/DownloadAction.tsx:15
 msgid "CSV"
-msgstr ""
+msgstr "CSV"
 
 #: src/components/tables/DownloadAction.tsx:16
 msgid "TSV"
-msgstr ""
+msgstr "TSV"
 
 #: src/components/tables/DownloadAction.tsx:17
 msgid "Excel"
-msgstr ""
+msgstr "Excel"
 
 #: src/components/tables/DownloadAction.tsx:25
 msgid "Download selected data"
-msgstr ""
+msgstr "Ladda ner vald data"
 
 #: src/components/tables/FilterBadge.tsx:44
 msgid "Remove filter"
-msgstr ""
+msgstr "Ta bort filter"
 
 #: src/components/tables/FilterGroup.tsx:29
 msgid "Add table filter"
-msgstr ""
+msgstr "Lägg till tabellfilter"
 
 #: src/components/tables/FilterGroup.tsx:44
 msgid "Clear all filters"
-msgstr ""
+msgstr "Rensa alla filter"
 
 #: src/components/tables/FilterGroup.tsx:51
 msgid "Add filter"
-msgstr ""
+msgstr "Lägg till filter"
 
 #: src/components/tables/FilterSelectModal.tsx:56
 msgid "True"
-msgstr ""
+msgstr "Sant"
 
 #: src/components/tables/FilterSelectModal.tsx:57
 msgid "False"
-msgstr ""
+msgstr "Falskt"
 
 #: src/components/tables/FilterSelectModal.tsx:143
 msgid "Add Table Filter"
-msgstr ""
+msgstr "Lägg till tabellfilter"
 
 #: src/components/tables/FilterSelectModal.tsx:145
 msgid "Select from the available filters"
-msgstr ""
+msgstr "Välj från tillgängliga filter"
 
 #: src/components/tables/FilterSelectModal.tsx:149
 msgid "Filter"
-msgstr ""
+msgstr "Filter"
 
 #: src/components/tables/FilterSelectModal.tsx:150
 msgid "Select filter"
-msgstr ""
+msgstr "Välj filter"
 
 #: src/components/tables/FilterSelectModal.tsx:159
 #: src/components/tables/part/PartParameterTable.tsx:66
 msgid "Value"
-msgstr ""
+msgstr "Värde"
 
 #: src/components/tables/FilterSelectModal.tsx:160
 msgid "Select filter value"
-msgstr ""
+msgstr "Välj filtervärde"
 
 #: src/components/tables/FilterSelectModal.tsx:172
 msgid "Add Filter"
-msgstr ""
+msgstr "Lägg till filter"
 
 #: src/components/tables/InvenTreeTable.tsx:71
 #: src/components/tables/InvenTreeTable.tsx:327
 #: src/components/tables/InvenTreeTable.tsx:348
 msgid "No records found"
-msgstr ""
+msgstr "Inga resultat hittades"
 
 #: src/components/tables/InvenTreeTable.tsx:355
 msgid "Server returned incorrect data type"
@@ -710,15 +723,15 @@ msgstr ""
 
 #: src/components/tables/InvenTreeTable.tsx:363
 msgid "Bad request"
-msgstr ""
+msgstr "Felaktig begäran"
 
 #: src/components/tables/InvenTreeTable.tsx:366
 msgid "Unauthorized"
-msgstr ""
+msgstr "Ej behörig"
 
 #: src/components/tables/InvenTreeTable.tsx:369
 msgid "Forbidden"
-msgstr ""
+msgstr "Otillåten"
 
 #: src/components/tables/InvenTreeTable.tsx:372
 msgid "Not found"
@@ -727,30 +740,30 @@ msgstr "Hittades inte"
 #: src/components/tables/InvenTreeTable.tsx:433
 #: src/components/tables/InvenTreeTable.tsx:434
 msgid "Barcode actions"
-msgstr ""
+msgstr "Streckkods åtgärder"
 
 #: src/components/tables/InvenTreeTable.tsx:441
 #: src/components/tables/InvenTreeTable.tsx:442
 msgid "Print actions"
-msgstr ""
+msgstr "Skriv ut åtgärder"
 
 #: src/components/tables/InvenTreeTable.tsx:459
 msgid "Refresh data"
-msgstr ""
+msgstr "Uppdatera data"
 
 #: src/components/tables/InvenTreeTable.tsx:478
 msgid "Table filters"
-msgstr ""
+msgstr "Tabellfilter"
 
 #: src/components/tables/RowActions.tsx:33
 #: src/components/tables/RowActions.tsx:40
 msgid "Actions"
-msgstr ""
+msgstr "Åtgärder"
 
 #: src/components/tables/build/BuildOrderTable.tsx:21
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:23
 msgid "Reference"
-msgstr ""
+msgstr "Referens"
 
 #: src/components/tables/build/BuildOrderTable.tsx:45
 #: src/components/tables/general/CompanyTable.tsx:47
@@ -766,7 +779,7 @@ msgstr ""
 #: src/components/tables/stock/StockItemTable.tsx:42
 #: src/components/tables/stock/StockLocationTable.tsx:28
 msgid "Description"
-msgstr ""
+msgstr "Beskrivning"
 
 #: src/components/tables/build/BuildOrderTable.tsx:50
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:54
@@ -774,16 +787,16 @@ msgstr ""
 #: src/components/tables/sales/SalesOrderTable.tsx:54
 #: src/components/tables/settings/ProjectCodeTable.tsx:28
 msgid "Project Code"
-msgstr ""
+msgstr "Projektkod"
 
 #: src/components/tables/build/BuildOrderTable.tsx:60
 msgid "Quantity"
-msgstr ""
+msgstr "Antal"
 
 #: src/components/tables/build/BuildOrderTable.tsx:66
 #: src/components/tables/build/BuildOrderTable.tsx:109
 msgid "Completed"
-msgstr ""
+msgstr "Slutförd"
 
 #: src/components/tables/build/BuildOrderTable.tsx:84
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:60
@@ -791,16 +804,16 @@ msgstr ""
 #: src/components/tables/sales/SalesOrderTable.tsx:60
 #: src/components/tables/stock/StockItemTable.tsx:55
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: src/components/tables/build/BuildOrderTable.tsx:90
 msgid "Priority"
-msgstr ""
+msgstr "Prioritet"
 
 #: src/components/tables/build/BuildOrderTable.tsx:97
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:67
 msgid "Created"
-msgstr ""
+msgstr "Skapad"
 
 #: src/components/tables/build/BuildOrderTable.tsx:103
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:73
@@ -900,7 +913,7 @@ msgstr ""
 #: src/components/tables/notifications/NotificationsTable.tsx:27
 #: src/components/tables/part/PartTable.tsx:58
 msgid "Category"
-msgstr ""
+msgstr "Kategori"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:32
 msgid "Notification"
@@ -922,7 +935,7 @@ msgstr ""
 #: src/components/tables/part/PartParameterTable.tsx:87
 #: src/components/tables/part/PartTable.tsx:47
 msgid "Units"
-msgstr ""
+msgstr "Enheter"
 
 #: src/components/tables/part/PartParameterTable.tsx:113
 msgid "Edit Part Parameter"
@@ -962,7 +975,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:40
 msgid "IPN"
-msgstr ""
+msgstr "IAN"
 
 #: src/components/tables/part/PartTable.tsx:69
 #: src/components/tables/stock/StockItemTable.tsx:47
@@ -972,114 +985,114 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:60
 #: src/pages/stock/StockDetail.tsx:101
 msgid "Stock"
-msgstr ""
+msgstr "Lagersaldo"
 
 #: src/components/tables/part/PartTable.tsx:75
 msgid "Price Range"
-msgstr ""
+msgstr "Prisintervall"
 
 #: src/components/tables/part/PartTable.tsx:85
 msgid "Link"
-msgstr ""
+msgstr "Länk"
 
 #: src/components/tables/part/PartTable.tsx:98
 #: src/components/tables/plugin/PluginListTable.tsx:138
 msgid "Active"
-msgstr ""
+msgstr "Aktiv"
 
 #: src/components/tables/part/PartTable.tsx:99
 msgid "Filter by part active status"
-msgstr ""
+msgstr "Filtrera på aktiv artiklestatus"
 
 #: src/components/tables/part/PartTable.tsx:104
 msgid "Assembly"
-msgstr ""
+msgstr "Montering"
 
 #: src/components/tables/part/PartTable.tsx:105
 msgid "Filter by assembly attribute"
-msgstr ""
+msgstr "Filtrera efter monteringsattribut"
 
 #: src/components/tables/part/PartTable.tsx:110
 msgid "Include Subcategories"
-msgstr ""
+msgstr "Inkludera underkategorier"
 
 #: src/components/tables/part/PartTable.tsx:111
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Inkludera artiklar från underkategorier"
 
 #: src/components/tables/part/PartTable.tsx:116
 msgid "Component"
-msgstr ""
+msgstr "Komponent"
 
 #: src/components/tables/part/PartTable.tsx:117
 msgid "Filter by component attribute"
-msgstr ""
+msgstr "Filtrera efter komponentattribut"
 
 #: src/components/tables/part/PartTable.tsx:122
 msgid "Trackable"
-msgstr ""
+msgstr "Spårbart objekt"
 
 #: src/components/tables/part/PartTable.tsx:123
 msgid "Filter by trackable attribute"
-msgstr ""
+msgstr "Filtrera på spårbart attribut"
 
 #: src/components/tables/part/PartTable.tsx:128
 msgid "Has Units"
-msgstr ""
+msgstr "Har enheter"
 
 #: src/components/tables/part/PartTable.tsx:129
 msgid "Filter by parts which have units"
-msgstr ""
+msgstr "Filtrera efter artiklar som har enheter"
 
 #: src/components/tables/part/PartTable.tsx:134
 msgid "Has IPN"
-msgstr ""
+msgstr "Har IAN"
 
 #: src/components/tables/part/PartTable.tsx:135
 msgid "Filter by parts which have an internal part number"
-msgstr ""
+msgstr "Filtrera efter artiklar som har ett internt artikelnummer"
 
 #: src/components/tables/part/PartTable.tsx:140
 msgid "Has Stock"
-msgstr ""
+msgstr "I lager"
 
 #: src/components/tables/part/PartTable.tsx:141
 msgid "Filter by parts which have stock"
-msgstr ""
+msgstr "Filtrera efter artiklar som har enheter"
 
 #: src/components/tables/part/PartTable.tsx:146
 #: src/defaults/dashboardItems.tsx:50
 msgid "Low Stock"
-msgstr ""
+msgstr "Få i lager"
 
 #: src/components/tables/part/PartTable.tsx:147
 msgid "Filter by parts which have low stock"
-msgstr ""
+msgstr "Filtrera på ariklar som har lågt saldo"
 
 #: src/components/tables/part/PartTable.tsx:152
 msgid "Purchaseable"
-msgstr ""
+msgstr "Kan köpas"
 
 #: src/components/tables/part/PartTable.tsx:153
 msgid "Filter by parts which are purchaseable"
-msgstr ""
+msgstr "Filtrera på artiklar som kan köpas"
 
 #: src/components/tables/part/PartTable.tsx:158
 msgid "Salable"
-msgstr ""
+msgstr "Försäljningsbar"
 
 #: src/components/tables/part/PartTable.tsx:159
 msgid "Filter by parts which are salable"
-msgstr ""
+msgstr "Filtrera på artiklar som kan säljas"
 
 #: src/components/tables/part/PartTable.tsx:164
 #: src/components/tables/part/PartTable.tsx:168
 msgid "Virtual"
-msgstr ""
+msgstr "Virtuell"
 
 #: src/components/tables/part/PartTable.tsx:165
 msgid "Filter by parts which are virtual"
-msgstr ""
+msgstr "Filtrera efter artiklar som är virtuella"
 
 #: src/components/tables/part/PartTable.tsx:169
 msgid "Not Virtual"
@@ -1087,7 +1100,7 @@ msgstr "Inte virtuell"
 
 #: src/components/tables/part/PartTable.tsx:211
 #~ msgid "Detail"
-#~ msgstr ""
+#~ msgstr "Detail"
 
 #: src/components/tables/part/RelatedPartTable.tsx:67
 msgid "Add Related Part"
@@ -1253,19 +1266,19 @@ msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:62
 msgid "Batch"
-msgstr ""
+msgstr "Batch"
 
 #: src/components/tables/stock/StockItemTable.tsx:68
 msgid "Location"
-msgstr ""
+msgstr "Plats"
 
 #: src/components/tables/stock/StockItemTable.tsx:93
 msgid "Test Filter"
-msgstr ""
+msgstr "Testa filter"
 
 #: src/components/tables/stock/StockItemTable.tsx:94
 msgid "This is a test filter"
-msgstr ""
+msgstr "Detta är ett testfilter"
 
 #: src/components/tables/stock/StockLocationTable.tsx:45
 msgid "Structural"
@@ -1282,17 +1295,17 @@ msgstr ""
 #: src/components/widgets/DisplayWidget.tsx:11
 #: src/pages/Index/Profile/UserPanel.tsx:139
 msgid "Display Settings"
-msgstr ""
+msgstr "Visningsinställningar"
 
 #: src/components/widgets/DisplayWidget.tsx:15
 #: src/pages/Index/Profile/UserPanel.tsx:143
 msgid "Color Mode"
-msgstr ""
+msgstr "Färgläge"
 
 #: src/components/widgets/DisplayWidget.tsx:21
 #: src/pages/Index/Profile/UserPanel.tsx:149
 msgid "Language"
-msgstr ""
+msgstr "Språk"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
@@ -1464,7 +1477,7 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Prenumererade artiklar"
 
 #: src/defaults/dashboardItems.tsx:22
 msgid "Subscribed Categories"
@@ -1472,78 +1485,86 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:29
 msgid "Latest Parts"
-msgstr ""
+msgstr "Senaste artiklarna"
 
 #: src/defaults/dashboardItems.tsx:36
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "BOM Väntar på validering"
 
 #: src/defaults/dashboardItems.tsx:43
 msgid "Recently Updated"
-msgstr ""
+msgstr "Senast uppdaterade"
 
 #: src/defaults/dashboardItems.tsx:57
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Slut i lager"
 
 #: src/defaults/dashboardItems.tsx:64
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Krävs för byggorder"
 
 #: src/defaults/dashboardItems.tsx:71
 msgid "Expired Stock"
-msgstr ""
+msgstr "Förfallet lager"
 
 #: src/defaults/dashboardItems.tsx:78
 msgid "Stale Stock"
-msgstr ""
+msgstr "Trögatlager ariklar"
 
 #: src/defaults/dashboardItems.tsx:85
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Pågående byggorder"
 
 #: src/defaults/dashboardItems.tsx:92
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Försenade byggorder"
 
 #: src/defaults/dashboardItems.tsx:99
 msgid "Outstanding Purchase Orders"
-msgstr ""
+msgstr "Utestående inköpsorder"
 
 #: src/defaults/dashboardItems.tsx:106
 msgid "Overdue Purchase Orders"
-msgstr ""
+msgstr "Förfallna inköpsorder"
 
 #: src/defaults/dashboardItems.tsx:113
 msgid "Outstanding Sales Orders"
-msgstr ""
+msgstr "Utestående försäljningsorder"
 
 #: src/defaults/dashboardItems.tsx:120
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Försenade försäljningsorder"
 
 #: src/defaults/dashboardItems.tsx:127
 msgid "Current News"
-msgstr ""
+msgstr "Aktuella nyheter"
+
+#: src/defaults/defaultHostList.tsx:8
+#~ msgid "InvenTree Demo"
+#~ msgstr "InvenTree Demo"
+
+#: src/defaults/defaultHostList.tsx:16
+#~ msgid "Local Server"
+#~ msgstr "Local Server"
 
 #: src/defaults/links.tsx:14
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: src/defaults/links.tsx:19
 msgid "Demo"
-msgstr ""
+msgstr "Demo"
 
 #: src/defaults/links.tsx:24
 #: src/defaults/menuItems.tsx:10
 msgid "Home"
-msgstr ""
+msgstr "Hem"
 
 #: src/defaults/links.tsx:25
 #: src/pages/Index/Dashboard.tsx:19
 #: src/pages/Index/UserSettings.tsx:30
 msgid "Dashboard"
-msgstr ""
+msgstr "Kontrollpanel"
 
 #: src/defaults/links.tsx:29
 #: src/pages/company/ManufacturerDetail.tsx:9
@@ -1566,67 +1587,95 @@ msgstr ""
 
 #: src/defaults/links.tsx:47
 msgid "Getting Started"
-msgstr ""
+msgstr "Kom igång"
 
 #: src/defaults/links.tsx:48
 msgid "Getting started with InvenTree"
-msgstr ""
+msgstr "Komma igång med InvenTree"
 
 #: src/defaults/links.tsx:54
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/defaults/links.tsx:55
 msgid "InvenTree API documentation"
-msgstr ""
+msgstr "InvenTree API dokumentation"
 
 #: src/defaults/links.tsx:60
 msgid "Developer Manual"
-msgstr ""
+msgstr "Utvecklarmanual"
 
 #: src/defaults/links.tsx:61
 msgid "InvenTree developer manual"
-msgstr ""
+msgstr "InvenTree utvecklarmanual"
 
 #: src/defaults/links.tsx:66
 msgid "FAQ"
-msgstr ""
+msgstr "Frågor och svar"
 
 #: src/defaults/links.tsx:67
 msgid "Frequently asked questions"
-msgstr ""
+msgstr "Vanliga frågor (FAQ)"
 
 #: src/defaults/links.tsx:76
 msgid "Instance"
-msgstr ""
+msgstr "Instans"
 
 #: src/defaults/links.tsx:77
 msgid "About this Inventree instance"
-msgstr ""
+msgstr "Om denna Inventree instans"
 
 #: src/defaults/links.tsx:83
 msgid "InvenTree"
-msgstr ""
+msgstr "InvenTree"
 
 #: src/defaults/links.tsx:84
 msgid "About the InvenTree org"
-msgstr ""
+msgstr "Om InvenTree org"
 
 #: src/defaults/links.tsx:90
 msgid "Licenses"
-msgstr ""
+msgstr "Licenser"
 
 #: src/defaults/links.tsx:91
 msgid "Licenses for packages used by InvenTree"
-msgstr ""
+msgstr "Licenser för paket som används av InvenTree"
+
+#: src/defaults/menuItems.tsx:7
+#~ msgid "Open sourcea"
+#~ msgstr "Open sourcea"
+
+#: src/defaults/menuItems.tsx:9
+#~ msgid "Open source"
+#~ msgstr "Open source"
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "Start page of your instance."
+#~ msgstr "Start page of your instance."
+
+#: src/defaults/menuItems.tsx:10
+#~ msgid "This Pokémon’s cry is very loud and distracting"
+#~ msgstr "This Pokémon’s cry is very loud and distracting"
+
+#: src/defaults/menuItems.tsx:12
+#~ msgid "This Pokémon’s cry is very loud and distracting and more and more and more"
+#~ msgstr "This Pokémon’s cry is very loud and distracting and more and more and more"
 
 #: src/defaults/menuItems.tsx:16
 msgid "Profile page"
-msgstr ""
+msgstr "Profilsida"
 
 #: src/defaults/menuItems.tsx:18
 msgid "User attributes and design settings."
-msgstr ""
+msgstr "Användarattribut och designinställningar."
+
+#: src/defaults/menuItems.tsx:21
+#~ msgid "Free for everyone"
+#~ msgstr "Free for everyone"
+
+#: src/defaults/menuItems.tsx:22
+#~ msgid "The fluid of Smeargle’s tail secretions changes"
+#~ msgstr "The fluid of Smeargle’s tail secretions changes"
 
 #: src/defaults/menuItems.tsx:24
 msgid "View for interactive scanning and multiple actions."
@@ -1682,24 +1731,24 @@ msgstr ""
 
 #: src/functions/auth.tsx:56
 msgid "Logout successful"
-msgstr ""
+msgstr "Utloggningen lyckad"
 
 #: src/functions/auth.tsx:57
 msgid "See you soon."
-msgstr ""
+msgstr "Vi ses snart!"
 
 #: src/functions/auth.tsx:102
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
-msgstr ""
+msgstr "Kolla din inkorg för en återställningslänk. Detta fungerar bara om du har ett konto. Kontrollera även i skräppost."
 
 #: src/functions/auth.tsx:109
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
-msgstr ""
+msgstr "Återställningen misslyckades"
 
 #: src/functions/auth.tsx:133
 msgid "Already logged in"
-msgstr ""
+msgstr "Redan inloggad"
 
 #: src/functions/auth.tsx:134
 msgid "Found an existing login - using it to log you in."
@@ -1745,11 +1794,11 @@ msgstr ""
 
 #: src/functions/forms/AttachmentForms.tsx:101
 msgid "Edit File"
-msgstr ""
+msgstr "Redigera fil"
 
 #: src/functions/forms/AttachmentForms.tsx:101
 msgid "Edit Link"
-msgstr ""
+msgstr "Redigera länk"
 
 #: src/functions/forms/AttachmentForms.tsx:102
 msgid "File updated"
@@ -1761,7 +1810,7 @@ msgstr ""
 
 #: src/functions/forms/AttachmentForms.tsx:128
 msgid "Delete Attachment"
-msgstr ""
+msgstr "Radera bilaga"
 
 #: src/functions/forms/AttachmentForms.tsx:129
 msgid "Attachment deleted"
@@ -1809,7 +1858,7 @@ msgstr ""
 
 #: src/functions/forms/StockForms.tsx:59
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Serienummer"
 
 #: src/functions/forms/StockForms.tsx:60
 msgid "Enter serial numbers for new stock (or leave blank)"
@@ -1825,11 +1874,11 @@ msgstr ""
 
 #: src/functions/notifications.tsx:9
 msgid "Not implemented"
-msgstr ""
+msgstr "Inte implementerad"
 
 #: src/functions/notifications.tsx:10
 msgid "This feature is not yet implemented"
-msgstr ""
+msgstr "Denna funktionen har inte implementerats"
 
 #: src/functions/notifications.tsx:20
 msgid "Permission denied"
@@ -1849,12 +1898,16 @@ msgstr ""
 
 #: src/pages/Auth/Logged-In.tsx:22
 msgid "Checking if you are already logged in"
-msgstr ""
+msgstr "Kontrollerar om du redan är inloggad"
 
 #: src/pages/Auth/Login.tsx:25
 #: src/pages/Index/Scan.tsx:292
 msgid "No selection"
-msgstr ""
+msgstr "Inget val"
+
+#: src/pages/Auth/Login.tsx:121
+#~ msgid "Edit host options"
+#~ msgstr "Edit host options"
 
 #: src/pages/Auth/Reset.tsx:41
 #: src/pages/Auth/Set-Password.tsx:111
@@ -1863,47 +1916,47 @@ msgstr "Skicka e-post"
 
 #: src/pages/Auth/Set-Password.tsx:29
 msgid "Token invalid"
-msgstr ""
+msgstr "Ogiltig token"
 
 #: src/pages/Auth/Set-Password.tsx:30
 msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Du måste ange en giltig token för att ange ett nytt lösenord. Kontrollera din inkorg för en återställningslänk."
 
 #: src/pages/Auth/Set-Password.tsx:48
 msgid "No token provided"
-msgstr ""
+msgstr "Ingen token angiven"
 
 #: src/pages/Auth/Set-Password.tsx:49
 msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Du måste ange en giltig token för att ange ett nytt lösenord. Kontrollera din inkorg för en återställningslänk."
 
 #: src/pages/Auth/Set-Password.tsx:72
 msgid "Password set"
-msgstr ""
+msgstr "Lösenord sparat!"
 
 #: src/pages/Auth/Set-Password.tsx:73
 msgid "The password was set successfully. You can now login with your new password"
-msgstr ""
+msgstr "Ditt lösenord har sparats. Du kan nu logga in med ditt nya lösenord."
 
 #: src/pages/Auth/Set-Password.tsx:100
 msgid "Set new password"
-msgstr ""
+msgstr "Ange nytt lösenord"
 
 #: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
-msgstr ""
+msgstr "Fel: {0}"
 
 #: src/pages/ErrorPage.tsx:28
 msgid "Sorry, an unexpected error has occurred."
-msgstr ""
+msgstr "Tyvärr, ett oväntat fel har inträffat."
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
-msgstr ""
+msgstr "Autouppdatera"
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
-msgstr ""
+msgstr "Denna sida är en ersättning för den gamla startsidan med samma information. Denna sida kommer att försvinna och ersättas av startsidan."
 
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
@@ -1915,7 +1968,7 @@ msgstr ""
 
 #: src/pages/Index/PluginSettings.tsx:47
 msgid "Plugin Settings"
-msgstr "Plugin Settings"
+msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
@@ -2043,19 +2096,19 @@ msgstr "Plugin Settings"
 
 #: src/pages/Index/Profile/UserPanel.tsx:85
 msgid "Userinfo"
-msgstr ""
+msgstr "Användarinfo"
 
 #: src/pages/Index/Profile/UserPanel.tsx:116
 msgid "First name: {0}"
-msgstr ""
+msgstr "Förnamn: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:119
 msgid "Last name: {0}"
-msgstr ""
+msgstr "Efternamn: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:122
 msgid "Username: {0}"
-msgstr ""
+msgstr "Användarnamn: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:154
 msgid "Use pseudo language"
@@ -2067,35 +2120,35 @@ msgstr ""
 
 #: src/pages/Index/Profile/UserTheme.tsx:71
 msgid "oval"
-msgstr ""
+msgstr "oval"
 
 #: src/pages/Index/Profile/UserTheme.tsx:72
 msgid "dots"
-msgstr ""
+msgstr "punkt"
 
 #: src/pages/Index/Profile/UserTheme.tsx:83
 msgid "Design <0/>"
-msgstr ""
+msgstr "Design <0/>"
 
 #: src/pages/Index/Profile/UserTheme.tsx:91
 msgid "Primary color"
-msgstr ""
+msgstr "Primärfärg"
 
 #: src/pages/Index/Profile/UserTheme.tsx:104
 msgid "White color"
-msgstr ""
+msgstr "Vitfärg"
 
 #: src/pages/Index/Profile/UserTheme.tsx:112
 msgid "Black color"
-msgstr ""
+msgstr "Svart färg"
 
 #: src/pages/Index/Profile/UserTheme.tsx:120
 msgid "Border Radius"
-msgstr ""
+msgstr "Gränsradie"
 
 #: src/pages/Index/Profile/UserTheme.tsx:136
 msgid "Loader"
-msgstr ""
+msgstr "Lastare"
 
 #: src/pages/Index/Scan.tsx:188
 msgid "Manual input"
@@ -2258,7 +2311,7 @@ msgstr ""
 #: src/pages/build/BuildIndex.tsx:16
 #: src/pages/part/PartDetail.tsx:110
 msgid "Build Orders"
-msgstr ""
+msgstr "Byggordrar"
 
 #: src/pages/Index/UserSettings.tsx:25
 msgid "Account"
@@ -2270,7 +2323,7 @@ msgstr ""
 
 #: src/pages/Index/UserSettings.tsx:103
 msgid "User Settings"
-msgstr "User Settings"
+msgstr ""
 
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
@@ -2278,15 +2331,15 @@ msgstr "User Settings"
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr ""
+msgstr "Hittades inte"
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
-msgstr ""
+msgstr "Tyvärr, denna sida hittades inte eller flyttad."
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
-msgstr ""
+msgstr "Gå till startsidan"
 
 #: src/pages/Notifications.tsx:56
 msgid "Mark as unread"
@@ -2440,14 +2493,14 @@ msgstr ""
 msgid "Manufacturer"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:59
+#: src/pages/part/CategoryDetail.tsx:52
 #~ msgid "Subcategories"
-#~ msgstr "Underkategorier"
+#~ msgstr "Subcategories"
 
 #: src/pages/part/CategoryDetail.tsx:71
 #: src/pages/part/PartDetail.tsx:79
 msgid "Parameters"
-msgstr ""
+msgstr "Parametrar"
 
 #: src/pages/part/PartDetail.tsx:97
 msgid "Variants"
@@ -2526,9 +2579,9 @@ msgstr ""
 msgid "Customers"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:45
+#: src/pages/stock/LocationDetail.tsx:38
 #~ msgid "Sublocations"
-#~ msgstr ""
+#~ msgstr "Sublocations"
 
 #: src/pages/stock/StockDetail.tsx:50
 msgid "Stock Tracking"
@@ -2548,12 +2601,12 @@ msgstr ""
 
 #: src/views/MobileAppView.tsx:14
 msgid "Mobile viewport detected"
-msgstr ""
+msgstr "Mobil vy upptäckt"
 
 #: src/views/MobileAppView.tsx:17
 msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
-msgstr ""
+msgstr "Plattform UI är optimerad för surfplattor och stationära datorer, kan du använda den officiella appen för en mobil upplevelse."
 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
-msgstr ""
+msgstr "Läs dokumenten"
