@@ -15,7 +15,11 @@ export default function BuildIndex() {
         <PageDetail
           title={t`Build Orders`}
           actions={[
-            <Button color="green" onClick={() => notYetImplemented()}>
+            <Button
+              key="new-build"
+              color="green"
+              onClick={() => notYetImplemented()}
+            >
               <Text>{t`New Build Order`}</Text>
             </Button>
           ]}

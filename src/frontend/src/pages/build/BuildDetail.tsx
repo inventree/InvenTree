@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { Group, LoadingOverlay, Stack, Table } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
@@ -23,12 +23,10 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ActionDropdown } from '../../components/items/ActionDropdown';
-import {
-  PlaceholderPanel,
-  PlaceholderPill
-} from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { ModelType } from '../../components/render/ModelType';
+import { StatusRenderer } from '../../components/renderers/StatusRenderer';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
@@ -52,10 +50,35 @@ export default function BuildDetail() {
     pk: id,
     params: {
       part_detail: true
-    }
+    },
+    refetchOnMount: true
   });
 
   const user = useUserState();
+
+  const buildDetailsPanel = useMemo(() => {
+    return (
+      <Group position="apart" grow>
+        <Table striped>
+          <tr>
+            <td>{t`Base Part`}</td>
+            <td>{build.part_detail?.name}</td>
+          </tr>
+          <tr>
+            <td>{t`Quantity`}</td>
+            <td>{build.quantity}</td>
+          </tr>
+          <tr>
+            <td>{t`Build Status`}</td>
+            <td>
+              <StatusRenderer status={build.status} type={ModelType.build} />
+            </td>
+          </tr>
+        </Table>
+        <Table></Table>
+      </Group>
+    );
+  }, [build]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
@@ -63,20 +86,18 @@ export default function BuildDetail() {
         name: 'details',
         label: t`Build Details`,
         icon: <IconInfoCircle size="18" />,
-        content: <PlaceholderPanel />
+        content: buildDetailsPanel
       },
       {
         name: 'allocate-stock',
         label: t`Allocate Stock`,
-        icon: <IconListCheck size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconListCheck size="18" />
         // TODO: Hide if build is complete
       },
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
-        icon: <IconClipboardList size="18" />,
-        content: <PlaceholderPanel />
+        icon: <IconClipboardList size="18" />
         // TODO: Hide if build is complete
       },
       {
@@ -207,12 +228,21 @@ export default function BuildDetail() {
     ];
   }, [id, build, user]);
 
+  const buildDetail = useMemo(() => {
+    return StatusRenderer({
+      status: build.status,
+      type: ModelType.build
+    });
+  }, [build, id]);
+
   return (
     <>
       <Stack spacing="xs">
         <PageDetail
-          title={t`Build Order`}
-          subtitle={build.reference}
+          title={build.reference}
+          subtitle={build.title}
+          detail={buildDetail}
+          imageUrl={build.part_detail?.thumbnail}
           breadcrumbs={[
             { name: t`Build Orders`, url: '/build' },
             { name: build.reference, url: `/build/${build.pk}` }

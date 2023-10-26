@@ -203,17 +203,8 @@ export default function PartDetail() {
   const partDetail = useMemo(() => {
     return (
       <Group spacing="xs" noWrap={true}>
-        <ApiImage
-          src={String(part.image || '')}
-          radius="sm"
-          height={64}
-          width={64}
-        />
         <Stack spacing="xs">
-          <Text size="lg" weight={500}>
-            {part.full_name}
-          </Text>
-          <Text size="sm">{part.description}</Text>
+          <Text>Stock: {part.in_stock}</Text>
         </Stack>
       </Group>
     );
@@ -300,6 +291,9 @@ export default function PartDetail() {
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
+          title={t`Part` + ': ' + part.full_name}
+          subtitle={part.description}
+          imageUrl={part.image}
           detail={partDetail}
           breadcrumbs={breadcrumbs}
           actions={partActions}
