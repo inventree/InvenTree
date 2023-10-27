@@ -67,8 +67,10 @@ export function CompanyTable({
           ...params
         },
         onRowClick: (row: any) => {
-          let base = path ?? 'company';
-          navigate(`/${base}/${row.pk}`);
+          if (row.pk) {
+            let base = path ?? 'company';
+            navigate(`/${base}/${row.pk}`);
+          }
         }
       }}
     />

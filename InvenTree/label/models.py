@@ -25,7 +25,7 @@ from plugin.registry import registry
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
 except OSError as err:  # pragma: no cover
-    print("OSError: {e}".format(e=err))
+    print(f"OSError: {err}")
     print("You may require some further system packages to be installed.")
     sys.exit(1)
 
@@ -109,10 +109,7 @@ class LabelTemplate(MetadataMixin, models.Model):
 
     def __str__(self):
         """Format a string representation of a label instance"""
-        return "{n} - {d}".format(
-            n=self.name,
-            d=self.description
-        )
+        return f"{self.name} - {self.description}"
 
     name = models.CharField(
         blank=False, max_length=100,

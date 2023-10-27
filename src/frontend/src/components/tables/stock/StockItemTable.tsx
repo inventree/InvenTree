@@ -70,7 +70,8 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Location`,
       render: function (record: any) {
         // TODO: Custom renderer for location
-        return record.location;
+        // TODO: Note, if not "In stock" we don't want to display the actual location here
+        return record?.location_detail?.pathstring ?? record.location ?? '-';
       }
     }
     // TODO: stocktake column
@@ -142,7 +143,8 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         params: {
           ...params,
           part_detail: true,
-          location_detail: true
+          location_detail: true,
+          supplier_part_detail: true
         }
       }}
     />

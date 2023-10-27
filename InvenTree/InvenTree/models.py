@@ -762,7 +762,7 @@ class InvenTreeTree(MPTTModel):
 
     def __str__(self):
         """String representation of a category is the full path to that category."""
-        return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
+        return f"{self.pathstring} - {self.description}"
 
 
 class InvenTreeNotesMixin(models.Model):

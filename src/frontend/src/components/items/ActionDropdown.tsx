@@ -39,12 +39,12 @@ export function ActionDropdown({
         </Tooltip>
       </Menu.Target>
       <Menu.Dropdown>
-        {actions.map((action, index) =>
+        {actions.map((action) =>
           action.disabled ? null : (
-            <Tooltip label={action.tooltip}>
+            <Tooltip label={action.tooltip} key={`tooltip-${action.name}`}>
               <Menu.Item
                 icon={action.icon}
-                key={index}
+                key={action.name}
                 onClick={() => {
                   if (action.onClick != undefined) {
                     action.onClick();

@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-19 16:27\n"
+"PO-Revision-Date: 2023-10-26 17:17\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -137,7 +137,7 @@ msgstr "Jag kommer att använda användarnamn och lösenord"
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
-msgstr ""
+msgstr "Logga in"
 
 #: src/components/forms/AuthenticationForm.tsx:147
 msgid "Send Email"
@@ -261,11 +261,11 @@ msgstr "Skanna QR-kod"
 
 #: src/components/items/YesNoButton.tsx:15
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: src/components/items/YesNoButton.tsx:15
 msgid "No"
-msgstr ""
+msgstr "Nej"
 
 #: src/components/modals/QrCodeModal.tsx:71
 msgid "Unknown response"
@@ -629,7 +629,7 @@ msgstr "Användare"
 
 #: src/components/render/ModelType.tsx:143
 msgid "Users"
-msgstr ""
+msgstr "Användare"
 
 #: src/components/render/Order.tsx:71
 msgid "Shipment"

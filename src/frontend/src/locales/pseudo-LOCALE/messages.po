@@ -85,7 +85,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
-#: src/functions/auth.tsx:110
+#: src/functions/auth.tsx:107
 msgid "Check your input and try again."
 msgstr ""
 
@@ -108,7 +108,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:64
-#: src/functions/auth.tsx:101
+#: src/functions/auth.tsx:98
 msgid "Mail delivery successful"
 msgstr ""
 
@@ -595,6 +595,19 @@ msgstr ""
 msgid "Purchase Orders"
 msgstr ""
 
+#: src/components/render/ModelType.tsx:96
+#: src/components/tables/sales/SalesOrderTable.tsx:23
+msgid "Sales Order"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:97
+#: src/pages/Index/SystemSettings.tsx:238
+#: src/pages/company/CompanyDetail.tsx:103
+#: src/pages/part/PartDetail.tsx:139
+#: src/pages/sales/SalesIndex.tsx:21
+msgid "Sales Orders"
+msgstr ""
+
 #: src/components/render/ModelType.tsx:102
 msgid "Purchase Order Line"
 msgstr ""
@@ -624,12 +637,12 @@ msgstr ""
 msgid "Sales Order Shipments"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:118
-#: src/components/tables/sales/ReturnOrderTable.tsx:25
+#: src/components/render/ModelType.tsx:108
+#: src/components/tables/sales/ReturnOrderTable.tsx:23
 msgid "Return Order"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:119
+#: src/components/render/ModelType.tsx:109
 #: src/pages/company/CompanyDetail.tsx:112
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
@@ -639,7 +652,7 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:125
+#: src/components/render/ModelType.tsx:115
 #: src/pages/company/CompanyDetail.tsx:132
 msgid "Addresses"
 msgstr ""
@@ -648,7 +661,7 @@ msgstr ""
 msgid "Contact"
 msgstr ""
 
-#: src/components/render/ModelType.tsx:131
+#: src/components/render/ModelType.tsx:121
 #: src/pages/company/CompanyDetail.tsx:127
 msgid "Contacts"
 msgstr ""
@@ -815,31 +828,31 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:23
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:25
+#: src/components/tables/build/BuildOrderTable.tsx:21
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:23
 msgid "Reference"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:47
+#: src/components/tables/build/BuildOrderTable.tsx:45
 #: src/components/tables/general/CompanyTable.tsx:47
 #: src/components/tables/part/PartCategoryTable.tsx:28
 #: src/components/tables/part/PartParameterTable.tsx:59
 #: src/components/tables/part/PartTable.tsx:52
 #: src/components/tables/part/RelatedPartTable.tsx:55
 #: src/components/tables/plugin/PluginListTable.tsx:69
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:31
-#: src/components/tables/sales/ReturnOrderTable.tsx:30
-#: src/components/tables/sales/SalesOrderTable.tsx:31
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:29
+#: src/components/tables/sales/ReturnOrderTable.tsx:28
+#: src/components/tables/sales/SalesOrderTable.tsx:29
 #: src/components/tables/settings/ProjectCodeTable.tsx:33
-#: src/components/tables/stock/StockItemTable.tsx:44
+#: src/components/tables/stock/StockItemTable.tsx:42
 #: src/components/tables/stock/StockLocationTable.tsx:28
 msgid "Description"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:52
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:56
-#: src/components/tables/sales/ReturnOrderTable.tsx:55
-#: src/components/tables/sales/SalesOrderTable.tsx:56
+#: src/components/tables/build/BuildOrderTable.tsx:50
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:54
+#: src/components/tables/sales/ReturnOrderTable.tsx:53
+#: src/components/tables/sales/SalesOrderTable.tsx:54
 #: src/components/tables/settings/ProjectCodeTable.tsx:28
 msgid "Project Code"
 msgstr ""
@@ -853,11 +866,11 @@ msgstr ""
 msgid "Completed"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:86
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:62
-#: src/components/tables/sales/ReturnOrderTable.tsx:61
-#: src/components/tables/sales/SalesOrderTable.tsx:62
-#: src/components/tables/stock/StockItemTable.tsx:57
+#: src/components/tables/build/BuildOrderTable.tsx:84
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:60
+#: src/components/tables/sales/ReturnOrderTable.tsx:59
+#: src/components/tables/sales/SalesOrderTable.tsx:60
+#: src/components/tables/stock/StockItemTable.tsx:55
 msgid "Status"
 msgstr ""
 
@@ -865,13 +878,13 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:99
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:73
+#: src/components/tables/build/BuildOrderTable.tsx:97
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:67
 msgid "Created"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:105
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:79
+#: src/components/tables/build/BuildOrderTable.tsx:103
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:73
 msgid "Target Date"
 msgstr ""
 
@@ -899,7 +912,7 @@ msgstr ""
 #: src/components/tables/part/PartParameterTable.tsx:107
 #: src/components/tables/settings/CustomUnitsTable.tsx:49
 #: src/components/tables/settings/ProjectCodeTable.tsx:41
-#: src/components/tables/stock/StockItemTable.tsx:120
+#: src/components/tables/stock/StockItemTable.tsx:118
 #: src/pages/build/BuildDetail.tsx:189
 #: src/pages/company/CompanyDetail.tsx:192
 #: src/pages/part/PartDetail.tsx:270
@@ -1229,27 +1242,27 @@ msgstr ""
 msgid "Installed"
 msgstr ""
 
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:36
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:34
 #: src/pages/company/SupplierDetail.tsx:8
 msgid "Supplier"
 msgstr ""
 
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:51
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:49
 msgid "Supplier Reference"
 msgstr ""
 
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:85
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:79
 msgid "Line Items"
 msgstr ""
 
-#: src/components/tables/sales/ReturnOrderTable.tsx:35
-#: src/components/tables/sales/SalesOrderTable.tsx:36
+#: src/components/tables/sales/ReturnOrderTable.tsx:33
+#: src/components/tables/sales/SalesOrderTable.tsx:34
 #: src/pages/company/CustomerDetail.tsx:8
 msgid "Customer"
 msgstr ""
 
-#: src/components/tables/sales/ReturnOrderTable.tsx:50
-#: src/components/tables/sales/SalesOrderTable.tsx:51
+#: src/components/tables/sales/ReturnOrderTable.tsx:48
+#: src/components/tables/sales/SalesOrderTable.tsx:49
 msgid "Customer Reference"
 msgstr ""
 
@@ -1784,28 +1797,28 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr ""
 
-#: src/functions/auth.tsx:56
+#: src/functions/auth.tsx:53
 msgid "Logout successful"
 msgstr ""
 
-#: src/functions/auth.tsx:57
+#: src/functions/auth.tsx:54
 msgid "See you soon."
 msgstr ""
 
-#: src/functions/auth.tsx:102
+#: src/functions/auth.tsx:99
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr ""
 
-#: src/functions/auth.tsx:109
+#: src/functions/auth.tsx:106
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
 msgstr ""
 
-#: src/functions/auth.tsx:133
+#: src/functions/auth.tsx:130
 msgid "Already logged in"
 msgstr ""
 
-#: src/functions/auth.tsx:134
+#: src/functions/auth.tsx:131
 msgid "Found an existing login - using it to log you in."
 msgstr ""
 

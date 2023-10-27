@@ -520,7 +520,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
                 if a == b:
                     # Invalid group
-                    add_error(_("Invalid group range: {g}").format(g=group))
+                    add_error(_(f"Invalid group range: {group}"))
                     continue
 
                 group_items = []
@@ -549,13 +549,13 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                         break
 
                 if len(group_items) > remaining:
-                    add_error(_("Group range {g} exceeds allowed quantity ({q})".format(g=group, q=expected_quantity)))
+                    add_error(_(f"Group range {group} exceeds allowed quantity ({expected_quantity})"))
                 elif len(group_items) > 0 and group_items[0] == a and group_items[-1] == b:
                     # In this case, the range extraction looks like it has worked
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_error(_("Invalid group range: {g}").format(g=group))
+                    add_error(_(f"Invalid group range: {group}"))
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
@@ -573,14 +573,14 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             sequence_count = max(0, expected_quantity - len(serials))
 
             if len(items) > 2 or len(items) == 0:
-                add_error(_("Invalid group sequence: {g}").format(g=group))
+                add_error(_(f"Invalid group sequence: {group}"))
                 continue
             elif len(items) == 2:
                 try:
                     if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
-                    add_error(_("Invalid group sequence: {g}").format(g=group))
+                    add_error(_(f"Invalid group sequence: {group}"))
                     continue
 
             value = items[0]
@@ -595,7 +595,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 for item in sequence_items:
                     add_serial(item)
             else:
-                add_error(_("Invalid group sequence: {g}").format(g=group))
+                add_error(_(f"Invalid group sequence: {group}"))
 
         else:
             # At this point, we assume that the 'group' is just a single serial value
@@ -608,7 +608,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         raise ValidationError([_("No serial numbers found")])
 
     if len(errors) == 0 and len(serials) != expected_quantity:
-        raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(serials), q=expected_quantity)])
+        raise ValidationError([_(f"Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})")])
 
     return serials
 
@@ -646,7 +646,7 @@ def validateFilterString(value, model=None):
 
         if len(pair) != 2:
             raise ValidationError(
-                "Invalid group: {g}".format(g=group)
+                f"Invalid group: {group}"
             )
 
         k, v = pair
@@ -656,7 +656,7 @@ def validateFilterString(value, model=None):
 
         if not k or not v:
             raise ValidationError(
-                "Invalid group: {g}".format(g=group)
+                f"Invalid group: {group}"
             )
 
         results[k] = v

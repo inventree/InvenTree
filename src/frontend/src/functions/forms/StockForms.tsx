@@ -3,8 +3,7 @@ import { t } from '@lingui/macro';
 import {
   ApiFormChangeCallback,
   ApiFormData,
-  ApiFormFieldSet,
-  ApiFormFieldType
+  ApiFormFieldSet
 } from '../../components/forms/fields/ApiFormField';
 import { ApiPaths } from '../../states/ApiState';
 import { openCreateApiForm, openEditApiForm } from '../forms';

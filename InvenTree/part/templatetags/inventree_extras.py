@@ -235,10 +235,7 @@ def python_version(*args, **kwargs):
 def inventree_version(shortstring=False, *args, **kwargs):
     """Return InvenTree version string."""
     if shortstring:
-        return _("{title} v{version}".format(
-            title=version.inventreeInstanceTitle(),
-            version=version.inventreeVersion()
-        ))
+        return _(f"{version.inventreeInstanceTitle()} v{version.inventreeVersion()}")
     return version.inventreeVersion()
 
 

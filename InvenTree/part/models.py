@@ -518,10 +518,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         try:
             if self.pk == parent.pk:
-                raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                    p1=str(self),
-                    p2=str(parent)
-                )})
+                raise ValidationError({'sub_part': _(f"Part '{self}' is  used in BOM for '{parent}' (recursive)")})
 
             bom_items = self.get_bom_items()
 
@@ -530,10 +527,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
                 # Check for simple match
                 if item.sub_part == parent:
-                    raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                        p1=str(parent),
-                        p2=str(self)
-                    )})
+                    raise ValidationError({'sub_part': _(f"Part '{parent}' is  used in BOM for '{self}' (recursive)")})
 
                 # And recursively check too
                 if recursive:
@@ -600,7 +594,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             match = re.search(pattern, self.IPN)
 
             if match is None:
-                raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
+                raise ValidationError(_(f'IPN must match regex pattern {pattern}'))
 
     def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False, **kwargs):
         """Validate a serial number against this Part instance.
@@ -1799,7 +1793,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         min_price = normalize(min_price)
         max_price = normalize(max_price)
 
-        return "{a} - {b}".format(a=min_price, b=max_price)
+        return f"{min_price} - {max_price}"
 
     def get_supplier_price_range(self, quantity=1):
         """Return the supplier price range of this part:
@@ -3358,7 +3352,7 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         """Return a string representation of a PartParameterTemplate instance"""
         s = str(self.name)
         if self.units:
-            s += " ({units})".format(units=self.units)
+            s += f" ({self.units})"
         return s
 
     def clean(self):
@@ -3498,12 +3492,7 @@ class PartParameter(MetadataMixin, models.Model):
 
     def __str__(self):
         """String representation of a PartParameter (used in the admin interface)"""
-        return "{part} : {param} = {data} ({units})".format(
-            part=str(self.part.full_name),
-            param=str(self.template.name),
-            data=str(self.data),
-            units=str(self.template.units)
-        )
+        return f"{self.part.full_name} : {self.template.name} = {self.data} ({self.template.units})"
 
     def save(self, *args, **kwargs):
         """Custom save method for the PartParameter model."""
@@ -3726,10 +3715,7 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
 
     def __str__(self):
         """Return a string representation of this BomItem instance"""
-        return "{n} x {child} to make {parent}".format(
-            parent=self.part.full_name,
-            child=self.sub_part.full_name,
-            n=decimal2string(self.quantity))
+        return f"{decimal2string(self.quantity)} x {self.sub_part.full_name} to make {self.part.full_name}"
 
     @staticmethod
     def get_api_url():
@@ -4043,7 +4029,7 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         pmin = decimal2money(pmin)
         pmax = decimal2money(pmax)
 
-        return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+        return f"{pmin} to {pmax}"
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')

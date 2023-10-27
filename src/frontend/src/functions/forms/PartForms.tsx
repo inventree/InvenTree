@@ -1,9 +1,6 @@
 import { t } from '@lingui/macro';
 
-import {
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '../../components/forms/fields/ApiFormField';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiPaths } from '../../states/ApiState';
 import { openCreateApiForm, openEditApiForm } from '../forms';
 
