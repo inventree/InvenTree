@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 142
+INVENTREE_API_VERSION = 143
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v143 -> 2023-10-27: https://github.com/inventree/InvenTree/pull/5786
+    - Allow printing labels via POST including printing options in the body
 
 v142 -> 2023-10-20: https://github.com/inventree/InvenTree/pull/5759
     - Adds generic API endpoints for looking up status models
