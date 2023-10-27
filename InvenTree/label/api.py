@@ -142,6 +142,12 @@ class LabelPrintMixin(LabelFilterMixin):
         """Prevent caching when printing report templates"""
         return super().dispatch(*args, **kwargs)
 
+    def check_permissions(self, request):
+        """Override request method to GET so that also non superusers can print using a post request."""
+        if request.method == "POST":
+            request.method = "GET"
+        return super().check_permissions(request)
+
     def get_serializer(self, *args, **kwargs):
         """Define a get_serializer method to be discoverable by the OPTIONS request."""
         # Check the request to determine if the user has selected a label printing plugin
