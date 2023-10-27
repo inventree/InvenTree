@@ -193,13 +193,13 @@ class LabelMixinTests(InvenTreeAPITestCase):
         plugin_ref = 'samplelabelprinter'
         label = PartLabel.objects.first()
 
-        plg = registry.get_plugin(plugin_ref)
         self.do_activate_plugin()
 
         # test options response
         options = self.options(self.do_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200).json()
         self.assertTrue("amount" in options["actions"]["POST"])
 
+        plg = registry.get_plugin(plugin_ref)
         with mock.patch.object(plg, "print_label") as print_label:
             # wrong value type
             res = self.post(self.do_url(Part.objects.all()[:2], plugin_ref, label), data={"amount": "-no-valid-int-"}, expected_code=400).json()

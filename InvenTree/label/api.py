@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_page, never_cache
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
+from rest_framework.request import clone_request
 
 import build.models
 import common.models
@@ -141,6 +142,12 @@ class LabelPrintMixin(LabelFilterMixin):
         "GET": "view",
         "POST": "view",
     }
+
+    def check_permissions(self, request):
+        """Override request method to GET so that also non superusers can print using a post request."""
+        if request.method == "POST":
+            request = clone_request(request, "GET")
+        return super().check_permissions(request)
 
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
