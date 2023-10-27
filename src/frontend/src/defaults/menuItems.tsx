@@ -1,5 +1,4 @@
-import { Trans, t } from '@lingui/macro';
-import { Image, Text } from '@mantine/core';
+import { Trans } from '@lingui/macro';
 
 import { MenuLinkItem } from '../components/items/MenuLinks';
 import { IS_DEV_OR_DEMO } from '../main';

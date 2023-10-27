@@ -7,6 +7,8 @@ import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import { ModelType } from '../../render/ModelType';
+import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { RowAction } from '../RowActions';
@@ -52,8 +54,8 @@ function stockItemTableColumns(): TableColumn[] {
       sortable: true,
       switchable: true,
       filter: true,
-      title: t`Status`
-      // TODO: Custom renderer for stock status label
+      title: t`Status`,
+      render: TableStatusRenderer(ModelType.stockitem)
     },
     {
       accessor: 'batch',
@@ -68,7 +70,8 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Location`,
       render: function (record: any) {
         // TODO: Custom renderer for location
-        return record.location;
+        // TODO: Note, if not "In stock" we don't want to display the actual location here
+        return record?.location_detail?.pathstring ?? record.location ?? '-';
       }
     }
     // TODO: stocktake column
@@ -140,7 +143,8 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         params: {
           ...params,
           part_detail: true,
-          location_detail: true
+          location_detail: true,
+          supplier_part_detail: true
         }
       }}
     />

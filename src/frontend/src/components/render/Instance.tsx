@@ -46,11 +46,13 @@ const RendererLookup: EnumDictionary<
   [ModelType.partcategory]: RenderPartCategory,
   [ModelType.partparametertemplate]: RenderPartParameterTemplate,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
+  [ModelType.purchaseorderline]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
   [ModelType.stocklocation]: RenderStockLocation,
   [ModelType.stockitem]: RenderStockItem,
+  [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,
   [ModelType.user]: RenderUser,
   [ModelType.manufacturerpart]: RenderPart

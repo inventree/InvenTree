@@ -1,14 +1,19 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import { ModelType } from '../../render/ModelType';
+import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
   const { tableKey } = useTableRefresh('return-orders');
+
+  const navigate = useNavigate();
 
   // TODO: Custom filters
 
@@ -58,8 +63,8 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'status',
         title: t`Status`,
         sortable: true,
-        switchable: true
-        // TODO: Custom formatter
+        switchable: true,
+        render: TableStatusRenderer(ModelType.returnorder)
       }
       // TODO: Creation date
       // TODO: Target date
@@ -78,6 +83,11 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         params: {
           ...params,
           customer_detail: true
+        },
+        onRowClick: (row: any) => {
+          if (row.pk) {
+            navigate(`/sales/return-order/${row.pk}/`);
+          }
         }
       }}
     />

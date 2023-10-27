@@ -26,6 +26,7 @@ import part.filters
 import part.stocktake
 import part.tasks
 import stock.models
+import users.models
 from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 
@@ -693,6 +694,12 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         child=serializers.DictField(),
         source='category.get_path',
         read_only=True,
+    )
+
+    responsible = serializers.PrimaryKeyRelatedField(
+        queryset=users.models.Owner.objects.all(),
+        required=False, allow_null=True,
+        source='responsible_owner',
     )
 
     # Annotated fields

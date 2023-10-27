@@ -26,10 +26,10 @@
 {% endblock heading %}
 
 {% block actions %}
-{% if user.is_staff and perms.company.change_company %}
-{% url 'admin:company_manufacturerpart_change' part.pk as url %}
+
+{% admin_url user 'company.manufacturerpart' part.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
+
 {% if roles.purchase_order.change %}
 {% if roles.purchase_order.add and part.part.purchaseable %}
 <button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>

@@ -324,9 +324,9 @@ export function SearchDrawer({
   // Callback when one of the search results is clicked
   function onResultClick(query: ModelType, pk: number) {
     closeDrawer();
-    navigate(
-      ModelInformationDict[query].url_detail.replace(':pk', pk.toString())
-    );
+    const targetModel = ModelInformationDict[query];
+    if (targetModel.url_detail == undefined) return;
+    navigate(targetModel.url_detail.replace(':pk', pk.toString()));
   }
 
   return (

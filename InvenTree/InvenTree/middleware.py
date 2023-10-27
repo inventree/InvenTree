@@ -12,9 +12,9 @@ from django.urls import Resolver404, include, re_path, resolve, reverse_lazy
 from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
                                     BaseRequire2FAMiddleware)
 from error_report.middleware import ExceptionProcessor
-from rest_framework.authtoken.models import Token
 
 from InvenTree.urls import frontendpatterns
+from users.models import ApiToken
 
 logger = logging.getLogger("inventree")
 
@@ -64,7 +64,7 @@ class AuthRequiredMiddleware(object):
             elif request.path_info.startswith('/accounts/'):
                 authorized = True
 
-            elif request.path_info.startswith(f'/{settings.PUI_URL_BASE}/') or request.path_info.startswith('/assets/') or request.path_info == f'/{settings.PUI_URL_BASE}':
+            elif request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/') or request.path_info.startswith('/assets/') or request.path_info == f'/{settings.FRONTEND_URL_BASE}':
                 authorized = True
 
             elif 'Authorization' in request.headers.keys() or 'authorization' in request.headers.keys():
@@ -75,13 +75,15 @@ class AuthRequiredMiddleware(object):
 
                     # Does the provided token match a valid user?
                     try:
-                        token = Token.objects.get(key=token_key)
+                        token = ApiToken.objects.get(key=token_key)
 
-                        # Provide the user information to the request
-                        request.user = token.user
-                        authorized = True
+                        if token.active and token.user:
 
-                    except Token.DoesNotExist:
+                            # Provide the user information to the request
+                            request.user = token.user
+                            authorized = True
+
+                    except ApiToken.DoesNotExist:
                         logger.warning("Access denied for unknown token %s", token_key)
 
             # No authorization was found for the request

@@ -1,36 +1,39 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Button,
-  Group,
-  LoadingOverlay,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBuilding,
+  IconCalendarStats,
+  IconClipboardList,
+  IconCopy,
   IconCurrencyDollar,
+  IconDots,
+  IconEdit,
   IconInfoCircle,
   IconLayersLinked,
+  IconLink,
   IconList,
   IconListTree,
   IconNotes,
   IconPackages,
   IconPaperclip,
+  IconQrcode,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
   IconTools,
+  IconTransfer,
+  IconTrash,
   IconTruckDelivery,
+  IconUnlink,
   IconVersions
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ApiImage } from '../../components/images/ApiImage';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
 import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
@@ -40,12 +43,17 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 
 /**
  * Detail view for a single Part instance
  */
 export default function PartDetail() {
   const { id } = useParams();
+
+  const user = useUserState();
+
+  const [treeOpen, setTreeOpen] = useState(false);
 
   const {
     instance: part,
@@ -66,8 +74,7 @@ export default function PartDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle />,
-        content: <PlaceholderPanel />
+        icon: <IconInfoCircle />
       },
       {
         name: 'parameters',
@@ -98,55 +105,57 @@ export default function PartDetail() {
         name: 'bom',
         label: t`Bill of Materials`,
         icon: <IconListTree />,
-        hidden: !part.assembly,
-        content: <PlaceholderPanel />
+        hidden: !part.assembly
       },
       {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly && !part.component,
-        content: <PlaceholderPanel />
+        hidden: !part.assembly && !part.component
       },
       {
         name: 'used_in',
         label: t`Used In`,
         icon: <IconStack2 />,
-        hidden: !part.component,
-        content: <PlaceholderPanel />
+        hidden: !part.component
       },
       {
         name: 'pricing',
         label: t`Pricing`,
-        icon: <IconCurrencyDollar />,
-        content: <PlaceholderPanel />
+        icon: <IconCurrencyDollar />
       },
       {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding />,
-        hidden: !part.purchaseable,
-        content: <PlaceholderPanel />
+        hidden: !part.purchaseable
       },
       {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        content: <PlaceholderPanel />,
         hidden: !part.purchaseable
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        content: <PlaceholderPanel />,
         hidden: !part.salable
+      },
+      {
+        name: 'scheduling',
+        label: t`Scheduling`,
+        icon: <IconCalendarStats />
+      },
+      {
+        name: 'stocktake',
+        label: t`Stocktake`,
+        icon: <IconClipboardList />
       },
       {
         name: 'test_templates',
         label: t`Test Templates`,
         icon: <IconTestPipe />,
-        content: <PlaceholderPanel />,
         hidden: !part.trackable
       },
       {
@@ -196,44 +205,110 @@ export default function PartDetail() {
   const partDetail = useMemo(() => {
     return (
       <Group spacing="xs" noWrap={true}>
-        <ApiImage
-          src={String(part.image || '')}
-          radius="sm"
-          height={64}
-          width={64}
-        />
         <Stack spacing="xs">
-          <Text size="lg" weight={500}>
-            {part.full_name}
-          </Text>
-          <Text size="sm">{part.description}</Text>
+          <Text>Stock: {part.in_stock}</Text>
         </Stack>
       </Group>
     );
   }, [part, id]);
 
+  const partActions = useMemo(() => {
+    // TODO: Disable actions based on user permissions
+    return [
+      <ActionDropdown
+        key="barcode"
+        tooltip={t`Barcode Actions`}
+        icon={<IconQrcode />}
+        actions={[
+          {
+            icon: <IconQrcode />,
+            name: t`View`,
+            tooltip: t`View part barcode`
+          },
+          {
+            icon: <IconLink />,
+            name: t`Link Barcode`,
+            tooltip: t`Link custom barcode to part`,
+            disabled: part?.barcode_hash
+          },
+          {
+            icon: <IconUnlink />,
+            name: t`Unlink Barcode`,
+            tooltip: t`Unlink custom barcode from part`,
+            disabled: !part?.barcode_hash
+          }
+        ]}
+      />,
+      <ActionDropdown
+        key="stock"
+        tooltip={t`Stock Actions`}
+        icon={<IconPackages />}
+        actions={[
+          {
+            icon: <IconClipboardList color="blue" />,
+            name: t`Count Stock`,
+            tooltip: t`Count part stock`
+          },
+          {
+            icon: <IconTransfer color="blue" />,
+            name: t`Transfer Stock`,
+            tooltip: t`Transfer part stock`
+          }
+        ]}
+      />,
+      <ActionDropdown
+        key="part"
+        tooltip={t`Part Actions`}
+        icon={<IconDots />}
+        actions={[
+          {
+            icon: <IconEdit color="blue" />,
+            name: t`Edit`,
+            tooltip: t`Edit part`,
+            onClick: () => {
+              part.pk &&
+                editPart({
+                  part_id: part.pk,
+                  callback: refreshInstance
+                });
+            }
+          },
+          {
+            icon: <IconCopy color="green" />,
+            name: t`Duplicate`,
+            tooltip: t`Duplicate part`
+          },
+          {
+            icon: <IconTrash color="red" />,
+            name: t`Delete`,
+            tooltip: t`Delete part`
+          }
+        ]}
+      />
+    ];
+  }, [id, part, user]);
+
   return (
     <>
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
+        <PartCategoryTree
+          opened={treeOpen}
+          onClose={() => {
+            setTreeOpen(false);
+          }}
+          selectedCategory={part?.category}
+        />
         <PageDetail
+          title={t`Part` + ': ' + part.full_name}
+          subtitle={part.description}
+          imageUrl={part.image}
           detail={partDetail}
           breadcrumbs={breadcrumbs}
-          actions={[
-            <Button
-              variant="outline"
-              color="blue"
-              onClick={() =>
-                part.pk &&
-                editPart({
-                  part_id: part.pk,
-                  callback: refreshInstance
-                })
-              }
-            >
-              Edit Part
-            </Button>
-          ]}
+          breadcrumbAction={() => {
+            setTreeOpen(true);
+          }}
+          actions={partActions}
         />
         <PanelGroup pageKey="part" panels={partPanels} />
       </Stack>
