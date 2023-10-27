@@ -14,7 +14,7 @@ export function BreadcrumbList({ breadcrumbs }: { breadcrumbs: Breadcrumb[] }) {
 
   return (
     <Paper p="3" radius="xs">
-      <Breadcrumbs>
+      <Breadcrumbs separator=">">
         {breadcrumbs.map((breadcrumb, index) => {
           return (
             <Anchor

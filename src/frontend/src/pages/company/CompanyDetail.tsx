@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { LoadingOverlay, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -20,7 +20,6 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -159,24 +158,6 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     ];
   }, [id, company]);
 
-  const companyDetail = useMemo(() => {
-    return (
-      <Group spacing="xs" noWrap={true}>
-        <Thumbnail
-          src={String(company.image || '')}
-          size={128}
-          alt={company?.name}
-        />
-        <Stack spacing="xs">
-          <Text size="lg" weight={500}>
-            {company.name}
-          </Text>
-          <Text size="sm">{company.description}</Text>
-        </Stack>
-      </Group>
-    );
-  }, [id, company]);
-
   const companyActions = useMemo(() => {
     // TODO: Finer fidelity on these permissions, perhaps?
     let canEdit = user.checkUserRole('purchase_order', 'change');
@@ -184,6 +165,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
 
     return [
       <ActionDropdown
+        key="company"
         tooltip={t`Company Actions`}
         icon={<IconDots />}
         actions={[
@@ -216,8 +198,10 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isFetching} />
       <PageDetail
-        detail={companyDetail}
+        title={t`Company` + `: ${company.name}`}
+        subtitle={company.description}
         actions={companyActions}
+        imageUrl={company.image}
         breadcrumbs={props.breadcrumbs}
       />
       <PanelGroup pageKey="company" panels={companyPanels} />

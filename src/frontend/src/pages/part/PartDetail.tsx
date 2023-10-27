@@ -30,7 +30,6 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ApiImage } from '../../components/images/ApiImage';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -203,17 +202,8 @@ export default function PartDetail() {
   const partDetail = useMemo(() => {
     return (
       <Group spacing="xs" noWrap={true}>
-        <ApiImage
-          src={String(part.image || '')}
-          radius="sm"
-          height={64}
-          width={64}
-        />
         <Stack spacing="xs">
-          <Text size="lg" weight={500}>
-            {part.full_name}
-          </Text>
-          <Text size="sm">{part.description}</Text>
+          <Text>Stock: {part.in_stock}</Text>
         </Stack>
       </Group>
     );
@@ -223,6 +213,7 @@ export default function PartDetail() {
     // TODO: Disable actions based on user permissions
     return [
       <ActionDropdown
+        key="barcode"
         tooltip={t`Barcode Actions`}
         icon={<IconQrcode />}
         actions={[
@@ -246,6 +237,7 @@ export default function PartDetail() {
         ]}
       />,
       <ActionDropdown
+        key="stock"
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
         actions={[
@@ -262,6 +254,7 @@ export default function PartDetail() {
         ]}
       />,
       <ActionDropdown
+        key="part"
         tooltip={t`Part Actions`}
         icon={<IconDots />}
         actions={[
@@ -297,6 +290,9 @@ export default function PartDetail() {
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
+          title={t`Part` + ': ' + part.full_name}
+          subtitle={part.description}
+          imageUrl={part.image}
           detail={partDetail}
           breadcrumbs={breadcrumbs}
           actions={partActions}

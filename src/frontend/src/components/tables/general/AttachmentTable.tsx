@@ -181,7 +181,7 @@ export function AttachmentTable({
 
     if (allowEdit) {
       actions.push(
-        <Tooltip label={t`Add attachment`}>
+        <Tooltip label={t`Add attachment`} key="attachment-add">
           <ActionIcon
             radius="sm"
             onClick={() => {
@@ -200,7 +200,7 @@ export function AttachmentTable({
       );
 
       actions.push(
-        <Tooltip label={t`Add external link`}>
+        <Tooltip label={t`Add external link`} key="link-add">
           <ActionIcon
             radius="sm"
             onClick={() => {
@@ -226,6 +226,7 @@ export function AttachmentTable({
     <Stack spacing="xs">
       {pk && pk > 0 && (
         <InvenTreeTable
+          key="attachment-table"
           url={url}
           tableKey={tableKey}
           columns={tableColumns}
@@ -241,7 +242,7 @@ export function AttachmentTable({
         />
       )}
       {allowEdit && validPk && (
-        <Dropzone onDrop={uploadFiles}>
+        <Dropzone onDrop={uploadFiles} key="attachment-dropzone">
           <Dropzone.Idle>
             <Group position="center">
               <IconFileUpload size={24} />
