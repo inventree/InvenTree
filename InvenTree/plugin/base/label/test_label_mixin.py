@@ -2,6 +2,7 @@
 
 import json
 import os
+from unittest import mock
 
 from django.apps import apps
 from django.urls import reverse
@@ -182,6 +183,25 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # And that it is a valid image file
         Image.open('label.png')
+
+    @mock.patch("plugin.samples.integration.label_sample.SampleLabelPrinter.print_label")
+    def test_printing_options(self, print_label):
+        """Test printing options."""
+        # Ensure the labels were created
+        apps.get_app_config('label').create_labels()
+
+        # Lookup references
+        plugin_ref = 'samplelabelprinter'
+        label = PartLabel.objects.first()
+
+        # wrong value type
+        res = self.post(self.do_url(Part.objects.all()[:2], plugin_ref, label), data={"amount": "-no-valid-int-"}, expected_code=400).json()
+        self.assertTrue("amount" in res)
+        print_label.assert_not_called()
+
+        # correct value type
+        self.post(self.do_url(Part.objects.all()[:2], plugin_ref, label), data={"amount": 13}, expected_code=200).json()
+        self.assertEqual(print_label.call_args.kwargs["printing_options"], {"amount": 13})
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`."""
