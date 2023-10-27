@@ -27,12 +27,13 @@ import {
   IconUnlink,
   IconVersions
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
 import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
@@ -51,6 +52,8 @@ export default function PartDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const [treeOpen, setTreeOpen] = useState(false);
 
   const {
     instance: part,
@@ -289,12 +292,22 @@ export default function PartDetail() {
     <>
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
+        <PartCategoryTree
+          opened={treeOpen}
+          onClose={() => {
+            setTreeOpen(false);
+          }}
+          selectedCategory={part?.category}
+        />
         <PageDetail
           title={t`Part` + ': ' + part.full_name}
           subtitle={part.description}
           imageUrl={part.image}
           detail={partDetail}
           breadcrumbs={breadcrumbs}
+          breadcrumbAction={() => {
+            setTreeOpen(true);
+          }}
           actions={partActions}
         />
         <PanelGroup pageKey="part" panels={partPanels} />

@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { StylishText } from '../items/StylishText';
 
 /**
  * Construct a notification drawer.
@@ -65,7 +66,7 @@ export function NotificationDrawer({
       }}
       title={
         <Group position="apart" noWrap={true}>
-          <Text size="lg">{t`Notifications`}</Text>
+          <StylishText size="lg">{t`Notifications`}</StylishText>
           <ActionIcon
             onClick={() => {
               onClose();
