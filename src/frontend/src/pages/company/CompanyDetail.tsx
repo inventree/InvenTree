@@ -159,24 +159,6 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     ];
   }, [id, company]);
 
-  const companyDetail = useMemo(() => {
-    return (
-      <Group spacing="xs" noWrap={true}>
-        <Thumbnail
-          src={String(company.image || '')}
-          size={128}
-          alt={company?.name}
-        />
-        <Stack spacing="xs">
-          <Text size="lg" weight={500}>
-            {company.name}
-          </Text>
-          <Text size="sm">{company.description}</Text>
-        </Stack>
-      </Group>
-    );
-  }, [id, company]);
-
   const companyActions = useMemo(() => {
     // TODO: Finer fidelity on these permissions, perhaps?
     let canEdit = user.checkUserRole('purchase_order', 'change');
@@ -217,8 +199,10 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isFetching} />
       <PageDetail
-        detail={companyDetail}
+        title={t`Company` + `: ${company.name}`}
+        subtitle={company.description}
         actions={companyActions}
+        imageUrl={company.image}
         breadcrumbs={props.breadcrumbs}
       />
       <PanelGroup pageKey="company" panels={companyPanels} />

@@ -142,7 +142,8 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         params: {
           ...params,
           part_detail: true,
-          location_detail: true
+          location_detail: true,
+          supplier_part_detail: true
         }
       }}
     />

@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
+import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
@@ -49,7 +50,14 @@ export default function PurchaseOrderDetail() {
       {
         name: 'received-stock',
         label: t`Received Stock`,
-        icon: <IconPackages />
+        icon: <IconPackages />,
+        content: (
+          <StockItemTable
+            params={{
+              purchase_order: id
+            }}
+          />
+        )
       },
       {
         name: 'attachments',
