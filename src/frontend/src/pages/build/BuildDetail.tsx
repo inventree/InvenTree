@@ -41,6 +41,8 @@ import { useUserState } from '../../states/UserState';
 export default function BuildDetail() {
   const { id } = useParams();
 
+  const user = useUserState();
+
   const {
     instance: build,
     refreshInstance,
@@ -54,26 +56,31 @@ export default function BuildDetail() {
     refetchOnMount: true
   });
 
-  const user = useUserState();
-
   const buildDetailsPanel = useMemo(() => {
     return (
       <Group position="apart" grow>
         <Table striped>
-          <tr>
-            <td>{t`Base Part`}</td>
-            <td>{build.part_detail?.name}</td>
-          </tr>
-          <tr>
-            <td>{t`Quantity`}</td>
-            <td>{build.quantity}</td>
-          </tr>
-          <tr>
-            <td>{t`Build Status`}</td>
-            <td>
-              <StatusRenderer status={build.status} type={ModelType.build} />
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>{t`Base Part`}</td>
+              <td>{build.part_detail?.name}</td>
+            </tr>
+            <tr>
+              <td>{t`Quantity`}</td>
+              <td>{build.quantity}</td>
+            </tr>
+            <tr>
+              <td>{t`Build Status`}</td>
+              <td>
+                {build.status && (
+                  <StatusRenderer
+                    status={build.status}
+                    type={ModelType.build}
+                  />
+                )}
+              </td>
+            </tr>
+          </tbody>
         </Table>
         <Table></Table>
       </Group>
