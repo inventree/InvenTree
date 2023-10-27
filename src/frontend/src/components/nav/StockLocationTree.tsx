@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Drawer, Group, Text } from '@mantine/core';
+import { Drawer, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
@@ -25,7 +25,8 @@ export function StockLocationTree({
         .catch((error) => {
           console.error('Error fetching stock location tree:', error);
           return error;
-        })
+        }),
+    refetchOnMount: true
   });
 
   return (
@@ -49,11 +50,14 @@ export function StockLocationTree({
         </Group>
       }
     >
-      {treeQuery.data.map((location: any) => (
-        <Group position="apart" noWrap={true}>
-          <Text>{location.name}</Text>
-        </Group>
-      ))}
+      <Stack spacing="xs">
+        <LoadingOverlay visible={treeQuery.isFetching} />
+        {treeQuery?.data?.map((location: any) => (
+          <Group key={location.pk} position="apart" noWrap={true}>
+            <Text>{location.name}</Text>
+          </Group>
+        ))}
+      </Stack>
     </Drawer>
   );
 }

@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Drawer, Group, Stack, Text } from '@mantine/core';
+import { Drawer, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
@@ -51,7 +51,8 @@ export function PartCategoryTree({
       }
     >
       <Stack spacing="xs">
-        {treeQuery.data.map((category: any) => (
+        <LoadingOverlay visible={treeQuery.isFetching} />
+        {treeQuery.data?.map((category: any) => (
           <Group key={category.pk} position="apart" noWrap={true}>
             <Text>{category.name}</Text>
           </Group>
