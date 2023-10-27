@@ -4,7 +4,6 @@ import {
   IconInfoCircle,
   IconList,
   IconNotes,
-  IconPackages,
   IconPaperclip,
   IconTools,
   IconTruckDelivery,
