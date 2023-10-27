@@ -56,7 +56,7 @@ export function ApiImage(props: ImageProps) {
   return (
     <Stack>
       <LoadingOverlay visible={imgQuery.isLoading || imgQuery.isFetching} />
-      <Image {...props} src={image} />
+      <Image {...props} src={image} withPlaceholder fit="contain" />
       {imgQuery.isError && <Overlay color="#F00" />}
     </Stack>
   );
