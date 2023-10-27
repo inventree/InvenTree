@@ -85,7 +85,7 @@ class MyLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
         ...
 ```
 
-!!! tip "Custom Code"
+!!! tip "Dynamically return a serializer instance"
     If your plugin wants to dynamically expose options based on the request, you can implement the `get_printing_options_serializer` function which by default returns an instance
     of the `PrintingOptionsSerializer` class if defined.
 
