@@ -17,6 +17,7 @@ export function PageDetail({
   detail,
   imageUrl,
   breadcrumbs,
+  breadcrumbAction,
   actions
 }: {
   title?: string;
@@ -24,13 +25,17 @@ export function PageDetail({
   imageUrl?: string;
   detail?: ReactNode;
   breadcrumbs?: Breadcrumb[];
+  breadcrumbAction?: () => void;
   actions?: ReactNode[];
 }) {
   return (
     <Stack spacing="xs">
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Paper p="xs" radius="xs" shadow="xs">
-          <BreadcrumbList breadcrumbs={breadcrumbs} />
+          <BreadcrumbList
+            navCallback={breadcrumbAction}
+            breadcrumbs={breadcrumbs}
+          />
         </Paper>
       )}
       <Paper p="xs" radius="xs" shadow="xs">
