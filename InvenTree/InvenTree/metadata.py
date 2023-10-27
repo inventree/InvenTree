@@ -84,6 +84,10 @@ class InvenTreeMetadata(SimpleMetadata):
                 'DELETE': 'delete',
             }
 
+            # let the view define a custom rolemap
+            if hasattr(view, "rolemap"):
+                rolemap.update(view.rolemap)
+
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
 

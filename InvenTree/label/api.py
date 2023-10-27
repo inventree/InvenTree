@@ -137,16 +137,15 @@ class LabelListView(LabelFilterMixin, ListAPI):
 class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
 
+    rolemap = {
+        "GET": "view",
+        "POST": "view",
+    }
+
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
         """Prevent caching when printing report templates"""
         return super().dispatch(*args, **kwargs)
-
-    def check_permissions(self, request):
-        """Override request method to GET so that also non superusers can print using a post request."""
-        if request.method == "POST":
-            request.method = "GET"
-        return super().check_permissions(request)
 
     def get_serializer(self, *args, **kwargs):
         """Define a get_serializer method to be discoverable by the OPTIONS request."""

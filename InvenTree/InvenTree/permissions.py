@@ -61,6 +61,10 @@ class RolePermission(permissions.BasePermission):
             'DELETE': 'delete',
         }
 
+        # let the view define a custom rolemap
+        if hasattr(view, "rolemap"):
+            rolemap.update(view.rolemap)
+
         permission = rolemap[request.method]
 
         # The required role may be defined for the view class
