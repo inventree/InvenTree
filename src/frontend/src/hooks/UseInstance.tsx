@@ -19,7 +19,7 @@ export function useInstance({
   params = {},
   defaultValue = {},
   hasPrimaryKey = true,
-  refetchOnMount = false,
+  refetchOnMount = true,
   refetchOnWindowFocus = false
 }: {
   endpoint: ApiPaths;

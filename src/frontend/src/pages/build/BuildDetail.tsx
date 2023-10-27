@@ -92,25 +92,25 @@ export default function BuildDetail() {
       {
         name: 'details',
         label: t`Build Details`,
-        icon: <IconInfoCircle size="18" />,
+        icon: <IconInfoCircle />,
         content: buildDetailsPanel
       },
       {
         name: 'allocate-stock',
         label: t`Allocate Stock`,
-        icon: <IconListCheck size="18" />
+        icon: <IconListCheck />
         // TODO: Hide if build is complete
       },
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
-        icon: <IconClipboardList size="18" />
+        icon: <IconClipboardList />
         // TODO: Hide if build is complete
       },
       {
         name: 'complete-outputs',
         label: t`Completed Outputs`,
-        icon: <IconClipboardCheck size="18" />,
+        icon: <IconClipboardCheck />,
         content: (
           <StockItemTable
             params={{
@@ -123,7 +123,7 @@ export default function BuildDetail() {
       {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
-        icon: <IconList size="18" />,
+        icon: <IconList />,
         content: (
           <StockItemTable
             params={{
@@ -135,7 +135,7 @@ export default function BuildDetail() {
       {
         name: 'child-orders',
         label: t`Child Build Orders`,
-        icon: <IconSitemap size="18" />,
+        icon: <IconSitemap />,
         content: (
           <BuildOrderTable
             params={{
@@ -147,7 +147,7 @@ export default function BuildDetail() {
       {
         name: 'attachments',
         label: t`Attachments`,
-        icon: <IconPaperclip size="18" />,
+        icon: <IconPaperclip />,
         content: (
           <AttachmentTable
             endpoint={ApiPaths.build_order_attachment_list}
@@ -159,7 +159,7 @@ export default function BuildDetail() {
       {
         name: 'notes',
         label: t`Notes`,
-        icon: <IconNotes size="18" />,
+        icon: <IconNotes />,
         content: (
           <NotesEditor
             url={apiUrl(ApiPaths.build_order_list, build.pk)}
@@ -245,6 +245,7 @@ export default function BuildDetail() {
   return (
     <>
       <Stack spacing="xs">
+        <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={build.reference}
           subtitle={build.title}
@@ -256,7 +257,6 @@ export default function BuildDetail() {
           ]}
           actions={buildActions}
         />
-        <LoadingOverlay visible={instanceQuery.isFetching} />
         <PanelGroup pageKey="build" panels={buildPanels} />
       </Stack>
     </>

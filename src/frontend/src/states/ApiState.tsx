@@ -93,6 +93,7 @@ export enum ApiPaths {
 
   // Purchase Order URLs
   purchase_order_list = 'api-purchase-order-list',
+  purchase_order_attachment_list = 'api-purchase-order-attachment-list',
 
   // Sales Order URLs
   sales_order_list = 'api-sales-order-list',
@@ -180,6 +181,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'stock/attachment/';
     case ApiPaths.purchase_order_list:
       return 'order/po/';
+    case ApiPaths.purchase_order_attachment_list:
+      return 'order/po/attachment/';
     case ApiPaths.sales_order_list:
       return 'order/so/';
     case ApiPaths.return_order_list:
