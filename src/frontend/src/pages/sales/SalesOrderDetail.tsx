@@ -5,7 +5,10 @@ import {
   IconList,
   IconNotes,
   IconPackages,
-  IconPaperclip
+  IconPaperclip,
+  IconTools,
+  IconTruckDelivery,
+  IconTruckLoading
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -20,9 +23,9 @@ import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 
 /**
- * Detail page for a single PurchaseOrder
+ * Detail page for a single SalesOrder
  */
-export default function PurchaseOrderDetail() {
+export default function SalesOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
@@ -32,12 +35,11 @@ export default function PurchaseOrderDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.purchase_order_list,
+    endpoint: ApiPaths.sales_order_list,
     pk: id,
     params: {
-      supplier_detail: true
-    },
-    refetchOnMount: true
+      customer_detail: true
+    }
   });
 
   const orderPanels: PanelType[] = useMemo(() => {
@@ -53,16 +55,19 @@ export default function PurchaseOrderDetail() {
         icon: <IconList />
       },
       {
-        name: 'received-stock',
-        label: t`Received Stock`,
-        icon: <IconPackages />,
-        content: (
-          <StockItemTable
-            params={{
-              purchase_order: id
-            }}
-          />
-        )
+        name: 'pending-shipments',
+        label: t`Pending Shipments`,
+        icon: <IconTruckLoading />
+      },
+      {
+        name: 'completed-shipments',
+        label: t`Completed Shipments`,
+        icon: <IconTruckDelivery />
+      },
+      {
+        name: 'build-orders',
+        label: t`Build Orders`,
+        icon: <IconTools />
       },
       {
         name: 'attachments',
@@ -70,7 +75,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.purchase_order_attachment_list}
+            endpoint={ApiPaths.sales_order_attachment_list}
             model="order"
             pk={order.pk ?? -1}
           />
@@ -82,7 +87,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.purchase_order_list, order.pk)}
+            url={apiUrl(ApiPaths.sales_order_list, order.pk)}
             data={order.notes ?? ''}
             allowEdit={true}
           />
@@ -96,12 +101,12 @@ export default function PurchaseOrderDetail() {
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
-          title={t`Purchase Order` + `: ${order.reference}`}
+          title={t`Sales Order` + `: ${order.reference}`}
           subtitle={order.description}
           imageUrl={order.supplier_detail?.image}
-          breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
+          breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
         />
-        <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
+        <PanelGroup pageKey="salesorder" panels={orderPanels} />
       </Stack>
     </>
   );
