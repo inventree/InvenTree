@@ -1,6 +1,9 @@
 import { t } from '@lingui/macro';
 import { Drawer, Group, Text } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 
+import { api } from '../../App';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 
 export function StockLocationTree({
@@ -12,6 +15,19 @@ export function StockLocationTree({
   onClose: () => void;
   selectedLocation?: number | null;
 }) {
+  const treeQuery = useQuery({
+    enabled: opened,
+    queryKey: ['stock_location_tree', opened],
+    queryFn: async () =>
+      api
+        .get(apiUrl(ApiPaths.stock_location_tree), {})
+        .then((response) => response.data)
+        .catch((error) => {
+          console.error('Error fetching stock location tree:', error);
+          return error;
+        })
+  });
+
   return (
     <Drawer
       opened={opened}
@@ -33,7 +49,11 @@ export function StockLocationTree({
         </Group>
       }
     >
-      <Text>Hello world</Text>
+      {treeQuery.data.map((location: any) => (
+        <Group position="apart" noWrap={true}>
+          <Text>{location.name}</Text>
+        </Group>
+      ))}
     </Drawer>
   );
 }

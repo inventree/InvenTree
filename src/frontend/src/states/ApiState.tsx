@@ -76,6 +76,7 @@ export enum ApiPaths {
   // Part URLs
   part_list = 'api-part-list',
   category_list = 'api-category-list',
+  category_tree = 'api-category-tree',
   related_part_list = 'api-related-part-list',
   part_attachment_list = 'api-part-attachment-list',
   part_parameter_list = 'api-part-parameter-list',
@@ -89,6 +90,7 @@ export enum ApiPaths {
   // Stock Item URLs
   stock_item_list = 'api-stock-item-list',
   stock_location_list = 'api-stock-location-list',
+  stock_location_tree = 'api-stock-location-tree',
   stock_attachment_list = 'api-stock-attachment-list',
 
   // Purchase Order URLs
@@ -165,6 +167,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'part/parameter/template/';
     case ApiPaths.category_list:
       return 'part/category/';
+    case ApiPaths.category_tree:
+      return 'part/category/tree/';
     case ApiPaths.related_part_list:
       return 'part/related/';
     case ApiPaths.part_attachment_list:
@@ -179,6 +183,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'stock/';
     case ApiPaths.stock_location_list:
       return 'stock/location/';
+    case ApiPaths.stock_location_tree:
+      return 'stock/location/tree/';
     case ApiPaths.stock_attachment_list:
       return 'stock/attachment/';
     case ApiPaths.purchase_order_list:

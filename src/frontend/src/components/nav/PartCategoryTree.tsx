@@ -1,6 +1,9 @@
 import { t } from '@lingui/macro';
-import { Drawer, Group, Text } from '@mantine/core';
+import { Drawer, Group, Stack, Text } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 
+import { api } from '../../App';
+import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 
 export function PartCategoryTree({
@@ -12,6 +15,20 @@ export function PartCategoryTree({
   onClose: () => void;
   selectedCategory?: number | null;
 }) {
+  const treeQuery = useQuery({
+    enabled: opened,
+    queryKey: ['part_category_tree', opened],
+    queryFn: async () =>
+      api
+        .get(apiUrl(ApiPaths.category_tree), {})
+        .then((response) => response.data)
+        .catch((error) => {
+          console.error('Error fetching part categpry tree:', error);
+          return error;
+        }),
+    refetchOnMount: true
+  });
+
   return (
     <Drawer
       opened={opened}
@@ -33,7 +50,13 @@ export function PartCategoryTree({
         </Group>
       }
     >
-      <Text>Hello world</Text>
+      <Stack spacing="xs">
+        {treeQuery.data.map((category: any) => (
+          <Group key={category.pk} position="apart" noWrap={true}>
+            <Text>{category.name}</Text>
+          </Group>
+        ))}
+      </Stack>
     </Drawer>
   );
 }
