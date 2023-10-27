@@ -30,7 +30,6 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ApiImage } from '../../components/images/ApiImage';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';

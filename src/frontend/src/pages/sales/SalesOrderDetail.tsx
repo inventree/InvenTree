@@ -16,11 +16,9 @@ import { useParams } from 'react-router-dom';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
-import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 
 /**
  * Detail page for a single SalesOrder
@@ -28,13 +26,7 @@ import { useUserState } from '../../states/UserState';
 export default function SalesOrderDetail() {
   const { id } = useParams();
 
-  const user = useUserState();
-
-  const {
-    instance: order,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
+  const { instance: order, instanceQuery } = useInstance({
     endpoint: ApiPaths.sales_order_list,
     pk: id,
     params: {

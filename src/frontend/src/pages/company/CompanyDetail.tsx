@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { LoadingOverlay, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -20,7 +20,6 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';

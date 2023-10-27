@@ -10,7 +10,6 @@ import { AttachmentTable } from '../../components/tables/general/AttachmentTable
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 
 /**
  * Detail page for a single ReturnOrder
@@ -18,13 +17,7 @@ import { useUserState } from '../../states/UserState';
 export default function ReturnOrderDetail() {
   const { id } = useParams();
 
-  const user = useUserState();
-
-  const {
-    instance: order,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
+  const { instance: order, instanceQuery } = useInstance({
     endpoint: ApiPaths.return_order_list,
     pk: id,
     params: {
