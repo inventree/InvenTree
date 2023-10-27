@@ -100,8 +100,8 @@ function printLabels(options) {
     }
 
     const updateFormUrl = (formOptions) => {
-        const plugin = getFormFieldValue("plugin", formOptions.fields.plugin, formOptions);
-        const labelTemplate = getFormFieldValue("label_template", formOptions.fields.label_template, formOptions);
+        const plugin = getFormFieldValue("_plugin", formOptions.fields._plugin, formOptions);
+        const labelTemplate = getFormFieldValue("_label_template", formOptions.fields._label_template, formOptions);
         const params = $.param({ plugin, [options.key]: options.items})
         formOptions.url = `${options.url}${labelTemplate ?? "1"}/print/?${params}`;
     }
@@ -121,9 +121,10 @@ function printLabels(options) {
 
         const printingOptions = printingOptionsRes.actions.POST || {};
 
+        // clear all other options
         formOptions.fields = {
-            label_template: formOptions.fields.label_template,
-            plugin: formOptions.fields.plugin,
+            _label_template: formOptions.fields._label_template,
+            _plugin: formOptions.fields._plugin,
         }
 
         if (Object.keys(printingOptions).length > 0) {
@@ -145,9 +146,10 @@ function printLabels(options) {
         showSuccessMessage: false,
         header_html,
         fields: {
-            label_template: {
+            _label_template: {
                 label: `{% trans "Select label template" %}`,
                 type: "choice",
+                localOnly: true,
                 value: defaultLabelTemplates[options.key],
                 choices: labelTemplates.map(t => ({
                     value: t.pk,
@@ -157,9 +159,10 @@ function printLabels(options) {
                     updateFormUrl(formOptions);
                 }
             },
-            plugin: {
+            _plugin: {
                 label: `{% trans "Select plugin" %}`,
                 type: "choice",
+                localOnly: true,
                 value: user_settings.LABEL_DEFAULT_PRINTER || plugins[0].key,
                 choices: plugins.map(p => ({
                     value: p.key,
