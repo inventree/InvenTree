@@ -597,14 +597,6 @@ function constructFormBody(fields, options) {
 
         var field = fields[field_name];
 
-        switch (field.type) {
-        // Skip field types which are simply not supported
-        case 'nested object':
-            continue;
-        default:
-            break;
-        }
-
         html += constructField(field_name, field, options);
     }
 
@@ -1162,6 +1154,12 @@ function getFormFieldValue(name, field={}, options={}) {
     case 'email':
         value = sanitizeInputString(el.val());
         break;
+    case 'nested object':
+        value = {};
+        for (const [name, subField] of Object.entries(field.children)) {
+            value[name] = getFormFieldValue(subField.name, subField, options);
+        }
+        break;
     default:
         value = el.val();
         break;
@@ -1451,17 +1449,25 @@ function handleFormErrors(errors, fields={}, options={}) {
 
         if ((field.type == 'nested object') && ('children' in field)) {
             // Handle multi-level nested errors
+            const handleNestedError = (parent_name, sub_field_errors) => {
+                for (const sub_field in sub_field_errors) {
+                    const sub_sub_field_name = `${parent_name}__${sub_field}`;
+                    const sub_sub_field_errors = sub_field_errors[sub_field];
 
-            for (var sub_field in field_errors) {
-                var sub_field_name = `${field_name}__${sub_field}`;
-                var sub_field_errors = field_errors[sub_field];
+                    if (!first_error_field && sub_sub_field_errors && isFieldVisible(sub_sub_field_name, options)) {
+                        first_error_field = sub_sub_field_name;
+                    }
 
-                if (!first_error_field && sub_field_errors && isFieldVisible(sub_field_name, options)) {
-                    first_error_field = sub_field_name;
+                    // if the error is an object, its a nested object, recursively handle the errors
+                    if (typeof sub_sub_field_errors === "object" && !Array.isArray(sub_sub_field_errors)) {
+                        handleNestedError(sub_sub_field_name, sub_sub_field_errors)
+                    } else {
+                        addFieldErrorMessage(sub_sub_field_name, sub_sub_field_errors, options);
+                    }
                 }
-
-                addFieldErrorMessage(sub_field_name, sub_field_errors, options);
             }
+
+            handleNestedError(field_name, field_errors);
         } else if ((field.type == 'field') && ('child' in field)) {
             // This is a "nested" array field
             handleNestedArrayErrors(errors, field_name, options);
@@ -2346,7 +2352,7 @@ function constructField(name, parameters, options={}) {
     html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title} ${css}>`;
 
     // Add a label
-    if (!options.hideLabels) {
+    if (!options.hideLabels && parameters.type !== "nested object") {
         html += constructLabel(name, parameters);
     }
 
@@ -2500,6 +2506,9 @@ function constructInput(name, parameters, options={}) {
         break;
     case 'raw':
         func = constructRawInput;
+        break;
+    case 'nested object':
+        func = constructNestedObject;
         break;
     default:
         // Unsupported field type!
@@ -2778,6 +2787,36 @@ function constructRawInput(name, parameters) {
 
     return parameters.html;
 
+}
+
+/*
+ * Construct a nested object input
+ */
+function constructNestedObject(name, parameters, options) {
+    let html = `
+        <div id="div_id_${name}" class='panel form-panel'>
+            <div class='panel-heading form-panel-heading'>
+                <div>
+                    <h6 style='display: inline;'>${parameters.label}</h6>
+                </div>
+            </div>
+            <div class='panel-content form-panel-content' id="id_${name}">
+    `;
+
+    parameters.field_names = [];
+
+    for (const [key, field] of Object.entries(parameters.children)) {
+        const subFieldName = `${name}__${key}`;
+        field.name = subFieldName;
+        field.parent = options.name;
+        parameters.field_names.push(subFieldName);
+
+        html += constructField(subFieldName, field, options);
+    }
+
+    html += "</div></div>";
+
+    return html;
 }
 
 
