@@ -42,19 +42,7 @@ export function PartCategoryTree({
     refetchOnMount: true
   });
 
-  function renderNode({
-    node,
-    type,
-    selected = false,
-    open = false,
-    context
-  }: {
-    node: any;
-    type: string;
-    selected?: boolean;
-    open?: boolean;
-    context: any;
-  }) {
+  function renderNode({ node }: { node: any }) {
     return (
       <Group
         position="apart"
@@ -94,13 +82,12 @@ export function PartCategoryTree({
     >
       <Stack spacing="xs">
         <LoadingOverlay visible={treeQuery.isFetching} />
-        <ReactTree nodes={treeQuery.data ?? []} RenderNode={renderNode} />
-        {false &&
-          treeQuery.data?.map((category: any) => (
-            <Group key={category.pk} position="apart" noWrap={true}>
-              <Text>{category.name}</Text>
-            </Group>
-          ))}
+        <ReactTree
+          nodes={treeQuery.data ?? []}
+          RenderNode={renderNode}
+          defaultSelectedNodes={selectedCategory ? [selectedCategory] : []}
+          showEmptyItems={false}
+        />
       </Stack>
     </Drawer>
   );

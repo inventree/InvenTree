@@ -1,12 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Drawer,
-  Group,
-  LoadingOverlay,
-  Space,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Drawer, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { ReactTree } from '@naisutech/react-tree';
 import { IconSitemap } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -49,19 +42,7 @@ export function StockLocationTree({
     refetchOnMount: true
   });
 
-  function renderNode({
-    node,
-    type,
-    selected = false,
-    open = false,
-    context
-  }: {
-    node: any;
-    type: string;
-    selected?: boolean;
-    open?: boolean;
-    context: any;
-  }) {
+  function renderNode({ node }: { node: any }) {
     return (
       <Group
         position="apart"
@@ -105,13 +86,8 @@ export function StockLocationTree({
           nodes={treeQuery.data ?? []}
           showEmptyItems={false}
           RenderNode={renderNode}
+          defaultSelectedNodes={selectedLocation ? [selectedLocation] : []}
         />
-        {false &&
-          treeQuery?.data?.map((location: any) => (
-            <Group key={location.pk} position="apart" noWrap={true}>
-              <Text>{location.name}</Text>
-            </Group>
-          ))}
       </Stack>
     </Drawer>
   );

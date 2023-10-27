@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Drawer, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBuilding,
   IconCalendarStats,
