@@ -580,6 +580,8 @@ class InvenTreeTree(MPTTModel):
         parent: The item immediately above this one. An item with a null parent is a top-level item
     """
 
+    # How items (not nodes) are hooked into the tree
+    # e.g. for StockLocation, this value is 'location'
     ITEM_PARENT_KEY = None
 
     class Meta:
