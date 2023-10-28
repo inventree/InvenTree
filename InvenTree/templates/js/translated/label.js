@@ -83,7 +83,7 @@ function printLabels(options) {
     let plugins = [];
     inventreeGet(`/api/plugins/`, { mixin: 'labels' }, {
         async: false,
-        success: function(response) {
+        success: function (response) {
             plugins = response;
         }
     });
@@ -102,7 +102,7 @@ function printLabels(options) {
     const updateFormUrl = (formOptions) => {
         const plugin = getFormFieldValue("_plugin", formOptions.fields._plugin, formOptions);
         const labelTemplate = getFormFieldValue("_label_template", formOptions.fields._label_template, formOptions);
-        const params = $.param({ plugin, [options.key]: options.items})
+        const params = $.param({ plugin, [options.key]: options.items })
         formOptions.url = `${options.url}${labelTemplate ?? "1"}/print/?${params}`;
     }
 
@@ -130,7 +130,7 @@ function printLabels(options) {
         if (Object.keys(printingOptions).length > 0) {
             formOptions.fields = {
                 ...formOptions.fields,
-                divider: { type: "candy", html: `<hr/><h5>{% trans "Printing Options" %}</h5>`},
+                divider: { type: "candy", html: `<hr/><h5>{% trans "Printing Options" %}</h5>` },
                 ...printingOptions,
             };
         }
@@ -143,7 +143,7 @@ function printLabels(options) {
         title: options.items.length === 1 ? `{% trans "Print label" %}` : `{% trans "Print labels" %}`,
         submitText: `{% trans "Print" %}`,
         method: "POST",
-        showSuccessMessage: false,
+        disableSuccessMessage: true,
         header_html,
         fields: {
             _label_template: {

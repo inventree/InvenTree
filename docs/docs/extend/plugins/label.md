@@ -65,7 +65,7 @@ If the `print_labels` method is not changed, this will run the `print_label` met
 
 ### Printing options
 
-A printing plugin can define custom options that get shown on the printing screen and get passed to the `print_labels`/`print_label` function as a kwarg called `printing_options`. This can be used to e.g. let the user dynamically select the orientation of the label, the color mode, ... for each print job.
+A printing plugin can define custom options as a serializer class called `PrintingOptionsSerializer` that get shown on the printing screen and get passed to the `print_labels`/`print_label` function as a kwarg called `printing_options`. This can be used to e.g. let the user dynamically select the orientation of the label, the color mode, ... for each print job.
 The following simple example shows how to implement an orientation select. For more information about how to define fields, refer to the django rest framework (DRF) [documentation](https://www.django-rest-framework.org/api-guide/fields/).
 
 ```py

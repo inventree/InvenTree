@@ -317,7 +317,7 @@ function constructDeleteForm(fields, options) {
  * - reload: Set to true to reload the current page after form success
  * - confirm: Set to true to require a "confirm" button
  * - confirmText: Text for confirm button (default = "Confirm")
- * - showSuccessMessage: Set to true to suppress the success message if the response contains a success key by accident
+ * - disableSuccessMessage: Set to true to suppress the success message if the response contains a success key by accident
  *
  */
 function constructForm(url, options={}) {
@@ -1208,11 +1208,8 @@ function handleFormSuccess(response, options) {
         msg_target = $(options.modal).find('#pre-form-content');
     }
 
-    // ability to suppress the success message if the response contains a success key by accident
-    const showSuccessMessage = options.showSuccessMessage ?? true;
-
     // Display any messages
-    if (showSuccessMessage && response && (response.success || options.successMessage)) {
+    if (!options.disableSuccessMessage && response && (response.success || options.successMessage)) {
         showAlertOrCache(
             response.success || options.successMessage,
             cache,

@@ -175,9 +175,7 @@ class LabelPrintMixin(LabelFilterMixin):
 
     def post(self, request, *args, **kwargs):
         """Perform a GET request against this endpoint to print labels"""
-        common.models.InvenTreeUserSetting.set_setting('DEFAULT_' + self.ITEM_KEY.upper() + '_LABEL_TEMPLATE',
-                                                       self.get_object().pk, None, user=request.user)
-        return self.print(request, self.get_items())
+        return self.get(request, *args, **kwargs)
 
     def get_plugin(self, request):
         """Return the label printing plugin associated with this request.
