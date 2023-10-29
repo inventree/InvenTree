@@ -56,6 +56,11 @@ class DiffMixin:
 
         return deltas
 
+    def has_field_changed(self, field_name):
+        """Determine if a particular field has changed."""
+
+        return field_name in self.get_field_deltas()
+
 
 class CleanMixin():
     """Model mixin class which cleans inputs using the Mozilla bleach tools."""
