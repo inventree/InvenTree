@@ -28,6 +28,11 @@ export interface ServerAPIProps {
   worker_pending_tasks: null | number;
   plugins_enabled: null | boolean;
   active_plugins: PluginProps[];
+  email_configured: null | boolean;
+  debug_mode: null | boolean;
+  docker_mode: null | boolean;
+  database: null | string;
+  system_health: null | boolean;
 }
 
 // Type interface defining a single 'setting' object
