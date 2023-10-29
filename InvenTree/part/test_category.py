@@ -248,6 +248,18 @@ class CategoryTest(TestCase):
         C32 = PartCategory.objects.create(name='C32', parent=B3)
         C33 = PartCategory.objects.create(name='C33', parent=B3)
 
+        D31 = PartCategory.objects.create(name='D31', parent=C31)
+        D32 = PartCategory.objects.create(name='D32', parent=C32)
+        D33 = PartCategory.objects.create(name='D33', parent=C33)
+
+        E33 = PartCategory.objects.create(name='E33', parent=D33)
+
+        # Check that pathstrings have been generated correctly
+        self.assertEqual(B3.pathstring, 'A/B3')
+        self.assertEqual(C11.pathstring, 'A/B1/C11')
+        self.assertEqual(C22.pathstring, 'A/B2/C22')
+        self.assertEqual(C33.pathstring, 'A/B3/C33')
+
         # Check that the tree_id value is correct
         for cat in [B1, B2, B3, C11, C22, C33]:
             self.assertEqual(cat.tree_id, A.tree_id)
@@ -289,6 +301,8 @@ class CategoryTest(TestCase):
             self.assertEqual(cat.get_ancestors().count(), 1)
             self.assertEqual(cat.get_ancestors()[0], A)
 
+            self.assertEqual(cat.pathstring, f'A/{cat.name}')
+
         # Now, delete category A
         A.delete()
 
@@ -301,6 +315,13 @@ class CategoryTest(TestCase):
 
             self.assertEqual(loc.level, 0)
             self.assertEqual(loc.parent, None)
+
+            # Pathstring should be the same as the name
+            self.assertEqual(loc.pathstring, loc.name)
+
+            # Test pathstring for direct children
+            for child in loc.get_children():
+                self.assertEqual(child.pathstring, f'{loc.name}/{child.name}')
 
         # Check descendants for B1
         descendants = B1.get_descendants()
@@ -321,6 +342,8 @@ class CategoryTest(TestCase):
             self.assertEqual(ancestors[0], B1)
             self.assertEqual(ancestors[1], loc)
 
+            self.assertEqual(loc.pathstring, f'B1/{loc.name}')
+
         # Check category C2x, should be B2 -> C2x
         for loc in [C21, C22, C23]:
             loc.refresh_from_db()
@@ -332,3 +355,65 @@ class CategoryTest(TestCase):
             self.assertEqual(ancestors.count(), 2)
             self.assertEqual(ancestors[0], B2)
             self.assertEqual(ancestors[1], loc)
+
+            self.assertEqual(loc.pathstring, f'B2/{loc.name}')
+
+        # Check category D3x, should be C3x -> D3x
+        D31.refresh_from_db()
+        self.assertEqual(D31.pathstring, 'C31/D31')
+        D32.refresh_from_db()
+        self.assertEqual(D32.pathstring, 'C32/D32')
+        D33.refresh_from_db()
+        self.assertEqual(D33.pathstring, 'C33/D33')
+
+        # Check category E33
+        E33.refresh_from_db()
+        self.assertEqual(E33.pathstring, 'C33/D33/E33')
+
+        # Change the name of an upper level
+        C33.name = '-C33-'
+        C33.save()
+
+        D33.refresh_from_db()
+        self.assertEqual(D33.pathstring, '-C33-/D33')
+
+        E33.refresh_from_db()
+        self.assertEqual(E33.pathstring, '-C33-/D33/E33')
+
+        # Test the "delete child categories" functionality
+        C33.delete(delete_child_categories=True)
+
+        # Any child underneath C33 should have been deleted
+        for cat in [D33, E33]:
+            with self.assertRaises(PartCategory.DoesNotExist):
+                cat.refresh_from_db()
+
+        Part.objects.all().delete()
+
+        # Create some sample parts under D32
+        for ii in range(10):
+            Part.objects.create(
+                name=f'Part D32 {ii}',
+                description='A test part',
+                category=D32,
+            )
+
+        self.assertEqual(Part.objects.filter(category=D32).count(), 10)
+        self.assertEqual(Part.objects.filter(category=C32).count(), 0)
+
+        # Delete D32, should move the parts up to C32
+        D32.delete(delete_child_categories=False, delete_parts=False)
+
+        # All parts should have been deleted
+        self.assertEqual(Part.objects.filter(category=C32).count(), 10)
+
+        # Now, delete C32 and delete all parts underneath
+        C32.delete(delete_parts=True)
+
+        # 10 parts should have been deleted from the database
+        self.assertEqual(Part.objects.count(), 0)
+
+        # Finally, try deleting a category which has already been deleted
+        # should log an exception
+        with self.assertRaises(ValidationError):
+            B3.delete()
