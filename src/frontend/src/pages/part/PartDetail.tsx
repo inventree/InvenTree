@@ -34,6 +34,7 @@ import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
+import { UsedInTable } from '../../components/tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
@@ -126,7 +127,8 @@ export default function PartDetail() {
         name: 'used_in',
         label: t`Used In`,
         icon: <IconStack2 />,
-        hidden: !part.component
+        hidden: !part.component,
+        content: <UsedInTable partId={part.pk ?? -1} />
       },
       {
         name: 'pricing',
