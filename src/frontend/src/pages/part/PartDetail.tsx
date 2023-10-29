@@ -34,6 +34,7 @@ import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
+import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
 import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
@@ -111,7 +112,15 @@ export default function PartDetail() {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly && !part.component
+        hidden: !part.assembly && !part.component,
+        content: (
+          <BuildOrderTable
+            params={{
+              part_detail: true,
+              part: part.pk ?? -1
+            }}
+          />
+        )
       },
       {
         name: 'used_in',
