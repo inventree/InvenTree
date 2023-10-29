@@ -32,7 +32,7 @@ Rendering templated views is also supported. Templated HTML files should be plac
 Placed here, the template can be called using the file name (ex: `render(request, 'test.html', context)`)
 
 ### Implementing a Page Base
-Some plugins require a page with a navbar, sidebar, and content. 
+Some plugins require a page with a navbar, sidebar, and content.
 This can be done within a templated HTML file. Extend the file "page_base.html". This can be done by placing the following line at the top of the file.
 ``` HTML
 {% extends "page_base.html" %}
