@@ -21,9 +21,45 @@ from plugin.serializers import MetadataSerializer
 from .email import is_email_configured
 from .mixins import RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
-from .version import (inventreeApiVersion, inventreeDatabase,
-                      inventreeInstanceName, inventreeVersion)
+from .version import (inventreeApiVersion, inventreeAppUrl, inventreeBranch,
+                      inventreeCommitDate, inventreeCommitHash,
+                      inventreeCreditsUrl, inventreeDatabase,
+                      inventreeDjangoVersion, inventreeDocUrl,
+                      inventreeGithubUrl, inventreeInstanceName,
+                      inventreePythonVersion, inventreeVersion,
+                      isInvenTreeDevelopmentVersion, isInvenTreeUpToDate)
 from .views import AjaxView
+
+
+class VersionView(APIView):
+    """Simple JSON endpoint for InvenTree version information."""
+
+    permission_classes = [
+        permissions.IsAdminUser,
+    ]
+
+    def get(self, request, *args, **kwargs):
+        """Return information about the InvenTree server."""
+        return JsonResponse({
+            'dev': isInvenTreeDevelopmentVersion(),
+            'up_to_date': isInvenTreeUpToDate(),
+            'version': {
+                'server': inventreeVersion(),
+                'api': inventreeApiVersion(),
+                'commit_hash': inventreeCommitHash(),
+                'commit_date': inventreeCommitDate(),
+                'commit_branch': inventreeBranch(),
+                'python': inventreePythonVersion(),
+                'django': inventreeDjangoVersion()
+            },
+            'links': {
+                'doc': inventreeDocUrl(),
+                'code': inventreeGithubUrl(),
+                'credit': inventreeCreditsUrl(),
+                'app': inventreeAppUrl(),
+                'bug': f'{inventreeGithubUrl()}/issues'
+            }
+        })
 
 
 class InfoView(AjaxView):
