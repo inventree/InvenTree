@@ -199,3 +199,9 @@ def inventreeTarget():
 def inventreePlatform():
     """Returns the platform for the instance."""
     return platform.platform(aliased=True)
+
+
+def inventreeDatabase():
+    """Return the InvenTree database backend e.g. 'postgresql'."""
+    db = settings.DATABASES['default']
+    return db.get('ENGINE', None).replace('django.db.backends.', '')
