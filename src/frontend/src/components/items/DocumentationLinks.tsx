@@ -41,10 +41,12 @@ export function DocumentationLinks({
     );
 
     const Linker = ({ children }: { children: any }) => {
-      if (link.link) return;
-      <Anchor href={link.link} key={link.id}>
-        {children}
-      </Anchor>;
+      if (link.link)
+        return (
+          <Anchor href={link.link} key={link.id}>
+            {children}
+          </Anchor>
+        );
 
       if (link.action)
         return (
