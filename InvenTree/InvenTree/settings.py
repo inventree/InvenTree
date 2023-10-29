@@ -847,6 +847,7 @@ LANGUAGES = [
     ('zh-hant', _('Chinese (Traditional)')),
 ]
 
+
 # Testing interface translations
 if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no cover
     # Set default language
