@@ -606,8 +606,8 @@ class InvenTreeTree(MPTTModel):
         try:
             self.refresh_from_db()
         except self.__class__.DoesNotExist:
-            # If the object no longer exists, we can just return
-            logger.exception("Object %s of type %s no longer exists", str(self), str(self.__class__))
+            # If the object no longer exists, raise a ValidationError
+            raise ValidationError("Object %s of type %s no longer exists", str(self), str(self.__class__))
 
         # Cache node ID values for lower nodes, before we delete this one
         lower_nodes = list(self.get_descendants(include_self=False).values_list('pk', flat=True))
