@@ -678,7 +678,7 @@ class InvenTreeTree(MPTTModel):
 
         # Case C: Delete all child items, but keep all child nodes
         # - Remove all items directly associated with this node
-        # - Move any direct child notes up one level
+        # - Move any direct child nodes up one level
         elif not delete_children and delete_items:
             self.get_items(cascade=False).delete()
             self.get_children().update(parent=self.parent)
