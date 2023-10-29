@@ -7,9 +7,9 @@ exclude_patterns = [
   "InvenTree/**/migrations/*.py"
 ]
 test_patterns = [
-  "test_*.py",
-  "**/test.py",
-  "**/tests.py"
+  "test_.*.py",
+  "test.py",
+  "tests.py"
 ]
 
 
