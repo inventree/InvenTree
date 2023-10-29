@@ -144,7 +144,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | purchase_price | The unit purchase price for this [StockItem](./context_variables.md#stockitem) - this is the unit price at time of purchase (if this item was purchased from an external supplier) |
 | packaging | Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc) |
 
-#### Stock Location
+#### StockLocation
 
 | Variable | Description |
 |----------|-------------|
@@ -197,7 +197,7 @@ Each part object has access to a lot of context variables about the part. The fo
 |----------|-------------|
 | part | Link to the master Part (Obsolete) |
 | source_item | The sourcing [StockItem](./context_variables.md#stockitem) linked to this [SupplierPart](./context_variables.md#supplierpart) instance |
-| supplier | [Company](./context_variables.md#supplier) that supplies this part |
+| supplier | [Company](./context_variables.md#company) that supplies this part |
 | SKU | Stock keeping unit (supplier part number) |
 | link | Link to external website for this supplier part |
 | description | Descriptive notes field |
