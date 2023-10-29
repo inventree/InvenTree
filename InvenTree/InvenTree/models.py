@@ -741,9 +741,20 @@ class InvenTreeTree(MPTTModel):
             self.pathstring = pathstring
             super().save(*args, **kwargs)
 
-            # Ensure that the pathstring changes are propagated down the tree also
-            for child in self.get_children():
-                child.save(*args, **kwargs)
+            # Update the pathstring for any child nodes
+            lower_nodes = self.get_descendants(include_self=False)
+
+            nodes_to_update = []
+
+            for node in lower_nodes:
+                new_path = node.construct_pathstring()
+
+                if new_path != node.pathstring:
+                    node.pathstring = new_path
+                    nodes_to_update.append(node)
+
+            if len(nodes_to_update) > 0:
+                self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
 
     name = models.CharField(
         blank=False,
