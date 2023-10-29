@@ -9,12 +9,13 @@ import {
   IconPaperclip,
   IconSitemap
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
@@ -22,6 +23,8 @@ import { ApiPaths, apiUrl } from '../../states/ApiState';
 
 export default function StockDetail() {
   const { id } = useParams();
+
+  const [treeOpen, setTreeOpen] = useState(false);
 
   const {
     instance: stockitem,
@@ -110,6 +113,11 @@ export default function StockDetail() {
   return (
     <Stack>
       <LoadingOverlay visible={instanceQuery.isFetching} />
+      <StockLocationTree
+        opened={treeOpen}
+        onClose={() => setTreeOpen(false)}
+        selectedLocation={stockitem?.location}
+      />
       <PageDetail
         title={t`Stock Items`}
         subtitle={stockitem.part_detail?.full_name ?? 'name goes here'}
@@ -119,6 +127,9 @@ export default function StockDetail() {
           </Alert>
         }
         breadcrumbs={breadcrumbs}
+        breadcrumbAction={() => {
+          setTreeOpen(true);
+        }}
       />
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
     </Stack>
