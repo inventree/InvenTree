@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { openContextModal } from '@mantine/modals';
 
-import { DocumentationLinkCollection } from '../components/items/DocumentationLinks';
+import { DocumentationLinkItem } from '../components/items/DocumentationLinks';
 import { IS_DEV_OR_DEMO } from '../main';
 
 export const footerLinks = [
@@ -42,7 +42,7 @@ export const docLinks = {
   faq: 'https://docs.inventree.org/en/latest/faq/'
 };
 
-export const navDocLinks: DocumentationLinkCollection = [
+export const navDocLinks: DocumentationLinkItem[] = [
   {
     id: 'getting_started',
     title: <Trans>Getting Started</Trans>,
@@ -79,7 +79,7 @@ function serverInfo() {
 }
 
 // TODO @matmair: Add the following pages and adjust the links
-export const aboutLinks: DocumentationLinkCollection = [
+export const aboutLinks: DocumentationLinkItem[] = [
   {
     id: 'instance',
     title: <Trans>System Information</Trans>,
