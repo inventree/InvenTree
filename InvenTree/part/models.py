@@ -72,55 +72,23 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         default_keywords: Default keywords for parts created in this category
     """
 
+    ITEM_PARENT_KEY = 'category'
+
     class Meta:
         """Metaclass defines extra model properties"""
         verbose_name = _("Part Category")
         verbose_name_plural = _("Part Categories")
-
-    def delete_recursive(self, *args, **kwargs):
-        """This function handles the recursive deletion of subcategories depending on kwargs contents"""
-        delete_parts = kwargs.get('delete_parts', False)
-        parent_category = kwargs.get('parent_category', None)
-
-        if parent_category is None:
-            # First iteration, (no part_category kwargs passed)
-            parent_category = self.parent
-
-        for child_part in self.parts.all():
-            if delete_parts:
-                child_part.delete()
-            else:
-                child_part.category = parent_category
-                child_part.save()
-
-        for child_category in self.children.all():
-            if kwargs.get('delete_child_categories', False):
-                child_category.delete_recursive(**{
-                    "delete_child_categories": True,
-                    "delete_parts": delete_parts,
-                    "parent_category": parent_category})
-            else:
-                child_category.parent = parent_category
-                child_category.save()
-
-        super().delete(*args, **{})
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
 
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
-        with transaction.atomic():
-            self.delete_recursive(**{
-                "delete_parts": kwargs.get('delete_parts', False),
-                "delete_child_categories": kwargs.get('delete_child_categories', False),
-                "parent_category": self.parent})
 
-            if self.parent is not None:
-                # Partially rebuild the tree (cheaper than a complete rebuild)
-                PartCategory.objects.partial_rebuild(self.tree_id)
-            else:
-                PartCategory.objects.rebuild()
+        super().delete(
+            delete_children=kwargs.get('delete_child_categories', False),
+            delete_items=kwargs.get('delete_parts', False),
+        )
 
     default_location = TreeForeignKey(
         'stock.StockLocation', related_name="default_categories",
@@ -188,6 +156,10 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     def item_count(self):
         """Return the number of parts contained in this PartCategory"""
         return self.partcount()
+
+    def get_items(self, cascade=False):
+        """Return a queryset containing the parts which exist in this category"""
+        return self.get_parts(cascade=cascade)
 
     def partcount(self, cascade=True, active=False):
         """Return the total part count under this category (including children of child categories)."""
