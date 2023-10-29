@@ -2,7 +2,6 @@
 
 import logging
 import os
-import sys
 from datetime import date, datetime
 
 from django import template
@@ -222,7 +221,7 @@ def inventree_base_url(*args, **kwargs):
 @register.simple_tag()
 def python_version(*args, **kwargs):
     """Return the current python version."""
-    return sys.version.split(' ')[0]
+    return version.inventreePythonVersion()
 
 
 @register.simple_tag()

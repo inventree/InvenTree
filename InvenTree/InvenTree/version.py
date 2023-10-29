@@ -147,6 +147,11 @@ def inventreeDjangoVersion():
     return django.get_version()
 
 
+def inventreePythonVersion():
+    """Returns the version of python"""
+    return sys.version.split(' ')[0]
+
+
 def inventreeCommitHash():
     """Returns the git commit hash for the running codebase."""
     # First look in the environment variables, i.e. if running in docker
