@@ -600,8 +600,14 @@ class InvenTreeTree(MPTTModel):
         3. Rebuild the model tree
         4. Rebuild the path for any remaining lower nodes
         """
-
         tree_id = self.tree_id if self.parent else None
+
+        # Ensure that we have the latest version of the database object
+        try:
+            self.refresh_from_db()
+        except self.__class__.DoesNotExist:
+            # If the object no longer exists, we can just return
+            logger.exception("Object %s of type %s no longer exists", str(self), str(self.__class__))
 
         # Cache node ID values for lower nodes, before we delete this one
         lower_nodes = list(self.get_descendants(include_self=False).values_list('pk', flat=True))
@@ -614,7 +620,7 @@ class InvenTreeTree(MPTTModel):
 
         # 3. Update the tree structure
         if tree_id:
-            self.__class__.objects.partial_rebuild(self.tree_id)
+            self.__class__.objects.partial_rebuild(tree_id)
         else:
             self.__class__.objects.rebuild()
 
