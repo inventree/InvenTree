@@ -3,18 +3,32 @@ import { Anchor, Group, SimpleGrid, Text } from '@mantine/core';
 import { DocTooltip } from './DocTooltip';
 import { PlaceholderPill } from './Placeholder';
 
-export interface DocumentationLinkItem {
+interface DocumentationLinkItem {
   id: string;
   title: string | JSX.Element;
   description: string | JSX.Element;
-  link: string;
   placeholder?: boolean;
 }
+
+interface DocumentationLinkItemLink extends DocumentationLinkItem {
+  link: string;
+  action?: never;
+}
+
+interface DocumentationLinkItemAction extends DocumentationLinkItem {
+  link?: never;
+  action: () => void;
+}
+
+export type DocumentationLinkCollection = (
+  | DocumentationLinkItemLink
+  | DocumentationLinkItemAction
+)[];
 
 export function DocumentationLinks({
   links
 }: {
-  links: DocumentationLinkItem[];
+  links: DocumentationLinkCollection;
 }) {
   return (
     <SimpleGrid cols={2} spacing={0}>
