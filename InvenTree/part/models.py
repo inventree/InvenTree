@@ -157,7 +157,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         """Return the number of parts contained in this PartCategory"""
         return self.partcount()
 
-    def getItems(self, cascade=False):
+    def get_items(self, cascade=False):
         """Return a queryset containing the parts which exist in this category"""
         return self.get_parts(cascade=cascade)
 

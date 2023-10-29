@@ -775,7 +775,7 @@ class InvenTreeTree(MPTTModel):
         help_text=_('Path')
     )
 
-    def getItems(self, cascade=False):
+    def get_items(self, cascade=False):
         """Return a queryset of items which exist *under* this node in the tree.
 
         - For a StockLocation instance, this would be a queryset of StockItem objects
