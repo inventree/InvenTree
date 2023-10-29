@@ -183,13 +183,7 @@ def plugins_info(*args, **kwargs):
 @register.simple_tag()
 def inventree_db_engine(*args, **kwargs):
     """Return the InvenTree database backend e.g. 'postgresql'."""
-    db = djangosettings.DATABASES['default']
-
-    engine = db.get('ENGINE', _('Unknown database'))
-
-    engine = engine.replace('django.db.backends.', '')
-
-    return engine
+    return version.inventreeDatabase() or _('Unknown database')
 
 
 @register.simple_tag()

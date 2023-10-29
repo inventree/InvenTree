@@ -18,10 +18,11 @@ from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
 from plugin.serializers import MetadataSerializer
 
+from .email import is_email_configured
 from .mixins import RetrieveUpdateAPI
-from .status import is_worker_running
-from .version import (inventreeApiVersion, inventreeInstanceName,
-                      inventreeVersion)
+from .status import check_system_health, is_worker_running
+from .version import (inventreeApiVersion, inventreeDatabase,
+                      inventreeInstanceName, inventreeVersion)
 from .views import AjaxView
 
 
@@ -48,6 +49,11 @@ class InfoView(AjaxView):
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'active_plugins': plugins_info(),
+            'email_configured': is_email_configured(),
+            'debug_mode': settings.DEBUG,
+            'docker_mode': settings.DOCKER,
+            'system_health': check_system_health() if request.user.is_staff else None,
+            'database': inventreeDatabase()if request.user.is_staff else None
         }
 
         return JsonResponse(data)
