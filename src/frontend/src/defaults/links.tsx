@@ -74,6 +74,7 @@ function serverInfo() {
   return openContextModal({
     modal: 'info',
     title: <Trans>System Information</Trans>,
+    size: 'xl',
     innerProps: {}
   });
 }
