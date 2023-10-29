@@ -115,7 +115,7 @@ Each part object has access to a lot of context variables about the part. The fo
 
 ### Stock
 
-#### Stock Item
+#### StockItem
 
 | Variable | Description |
 |----------|-------------|
@@ -196,7 +196,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | Variable | Description |
 |----------|-------------|
 | part | Link to the master Part (Obsolete) |
-| source_item | The sourcing [Stock Item](./context_variables.md#stockitem) linked to this [SupplierPart](./context_variables.md#supplierpart) instance |
+| source_item | The sourcing [StockItem](./context_variables.md#stockitem) linked to this [SupplierPart](./context_variables.md#supplierpart) instance |
 | supplier | [Company](./context_variables.md#supplier) that supplies this part |
 | SKU | Stock keeping unit (supplier part number) |
 | link | Link to external website for this supplier part |
