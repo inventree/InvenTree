@@ -40,6 +40,7 @@ import { AttachmentTable } from '../../components/tables/general/AttachmentTable
 import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
 import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
+import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
@@ -151,7 +152,14 @@ export default function PartDetail() {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !part.salable
+        hidden: !part.salable,
+        content: part.pk && (
+          <SalesOrderTable
+            params={{
+              part: part.pk ?? -1
+            }}
+          />
+        )
       },
       {
         name: 'scheduling',
