@@ -522,6 +522,10 @@ export function InvenTreeTable({
           records={data}
           columns={dataColumns}
           onRowClick={tableProps.onRowClick}
+          defaultColumnProps={{
+            noWrap: true,
+            textAlignment: 'left'
+          }}
         />
       </Stack>
     </>

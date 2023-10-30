@@ -25,13 +25,13 @@ export function TableHoverCard({
       <HoverCard.Target>
         <Group spacing="xs" position="apart">
           {value}
-          <IconInfoCircle size="16" />
+          <IconInfoCircle size="16" color="blue" />
         </Group>
       </HoverCard.Target>
       <HoverCard.Dropdown>
         <Stack spacing="xs">
           <Group spacing="xs" position="left">
-            <IconInfoCircle size="16" />
+            <IconInfoCircle size="16" color="blue" />
             {title}
           </Group>
           <Divider />
