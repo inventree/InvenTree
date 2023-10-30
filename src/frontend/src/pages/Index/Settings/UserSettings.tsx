@@ -1,18 +1,21 @@
-import { t } from '@lingui/macro';
-import { Stack, Text } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import { Anchor, Group, Stack, Text, Title } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
   IconDeviceDesktopAnalytics,
   IconFileAnalytics,
+  IconLock,
   IconSearch,
+  IconSwitch,
   IconUserCircle
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PageDetail } from '../../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
+import { useUserState } from '../../../states/UserState';
+import { AccountContent } from './AccountSettings/UserPanel';
 
 /**
  * User settings page
@@ -23,7 +26,13 @@ export default function UserSettings() {
       {
         name: 'account',
         label: t`Account`,
-        icon: <IconUserCircle />
+        icon: <IconUserCircle />,
+        content: <AccountContent />
+      },
+      {
+        name: 'security',
+        label: t`Security`,
+        icon: <IconLock />
       },
       {
         name: 'dashboard',
@@ -95,14 +104,29 @@ export default function UserSettings() {
       }
     ];
   }, []);
+  const [user] = useUserState((state) => [state.user]);
 
   return (
     <>
       <Stack spacing="xs">
-        <PageDetail
-          title={t`User Settings`}
-          detail={<Text>TODO: Filler</Text>}
-        />
+        <Stack spacing="0" ml={'sm'}>
+          <Group>
+            <Title order={3}>
+              {user?.first_name} {user?.last_name}
+            </Title>
+            <Text c="dimmed">({user?.username})</Text>
+          </Group>
+          <Group>
+            <Text c="dimmed">
+              <Trans>Personal Account Settings</Trans>
+            </Text>
+            <Anchor>
+              <IconSwitch size={14} />
+              <Trans>Switch to server settings</Trans>
+            </Anchor>
+          </Group>
+        </Stack>
+
         <PanelGroup pageKey="user-settings" panels={userSettingsPanels} />
       </Stack>
     </>

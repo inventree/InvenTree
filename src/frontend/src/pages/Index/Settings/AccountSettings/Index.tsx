@@ -3,7 +3,7 @@ import { Tabs } from '@mantine/core';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { StylishText } from '../../../../components/items/StylishText';
-import { UserPanel } from './UserPanel';
+import { AccountContent } from './UserPanel';
 
 export default function AccountSettings() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function AccountSettings() {
         </Tabs.List>
 
         <Tabs.Panel value="user">
-          <UserPanel />
+          <AccountContent />
         </Tabs.Panel>
       </Tabs>
     </>
