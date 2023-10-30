@@ -81,20 +81,20 @@ export const Notifications = Loadable(
   lazy(() => import('./pages/Notifications'))
 );
 
-export const Profile = Loadable(
-  lazy(() => import('./pages/Index/Profile/Profile'))
+export const AccountSettings = Loadable(
+  lazy(() => import('./pages/Index/Settings/AccountSettings/Index'))
 );
 
 export const UserSettings = Loadable(
-  lazy(() => import('./pages/Index/UserSettings'))
+  lazy(() => import('./pages/Index/Settings/UserSettings'))
 );
 
 export const SystemSettings = Loadable(
-  lazy(() => import('./pages/Index/SystemSettings'))
+  lazy(() => import('./pages/Index/Settings/SystemSettings'))
 );
 
 export const PluginSettings = Loadable(
-  lazy(() => import('./pages/Index/PluginSettings'))
+  lazy(() => import('./pages/Index/Settings/PluginSettings'))
 );
 
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
@@ -117,7 +117,9 @@ export const routes = (
       <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
       <Route path="settings/">
+        <Route path="/account/:tabValue" element={<AccountSettings />} />
         <Route index element={<SystemSettings />} />
+        <Route path="system/" element={<SystemSettings />} />
         <Route path="user/" element={<UserSettings />} />
         <Route path="plugin/" element={<PluginSettings />} />
       </Route>
@@ -148,7 +150,6 @@ export const routes = (
         <Route path="return-order/:id/" element={<ReturnOrderDetail />} />
         <Route path="customer/:id/" element={<CustomerDetail />} />
       </Route>
-      <Route path="/profile/:tabValue" element={<Profile />} />
     </Route>
     <Route path="/" errorElement={<ErrorPage />}>
       <Route path="/login" element={<Login />} />,

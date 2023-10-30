@@ -15,10 +15,10 @@ import {
 import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { useState } from 'react';
 
-import { PlaceholderPill } from '../../../components/items/Placeholder';
-import { SizeMarks } from '../../../defaults/defaults';
-import { InvenTreeStyle } from '../../../globalStyle';
-import { useLocalState } from '../../../states/LocalState';
+import { PlaceholderPill } from '../../../../components/items/Placeholder';
+import { SizeMarks } from '../../../../defaults/defaults';
+import { InvenTreeStyle } from '../../../../globalStyle';
+import { useLocalState } from '../../../../states/LocalState';
 
 function getLkp(color: string) {
   return { [DEFAULT_THEME.colors[color][6]]: color };

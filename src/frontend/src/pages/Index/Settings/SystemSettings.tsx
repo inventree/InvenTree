@@ -21,11 +21,11 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { GlobalSettingList } from '../../components/settings/SettingList';
-import { CustomUnitsTable } from '../../components/tables/settings/CustomUnitsTable';
-import { ProjectCodeTable } from '../../components/tables/settings/ProjectCodeTable';
+import { PageDetail } from '../../../components/nav/PageDetail';
+import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import { GlobalSettingList } from '../../../components/settings/SettingList';
+import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
+import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
 
 /**
  * System settings page

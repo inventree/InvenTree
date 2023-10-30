@@ -15,12 +15,12 @@ import { useForm } from '@mantine/form';
 import { useToggle } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 
-import { api, queryClient } from '../../../App';
-import { ColorToggle } from '../../../components/items/ColorToggle';
-import { EditButton } from '../../../components/items/EditButton';
-import { LanguageSelect } from '../../../components/items/LanguageSelect';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
-import { useLocalState } from '../../../states/LocalState';
+import { api, queryClient } from '../../../../App';
+import { ColorToggle } from '../../../../components/items/ColorToggle';
+import { EditButton } from '../../../../components/items/EditButton';
+import { LanguageSelect } from '../../../../components/items/LanguageSelect';
+import { ApiPaths, apiUrl } from '../../../../states/ApiState';
+import { useLocalState } from '../../../../states/LocalState';
 import { UserTheme } from './UserTheme';
 
 export function UserPanel() {

@@ -2,10 +2,10 @@ import { Trans } from '@lingui/macro';
 import { Tabs } from '@mantine/core';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { StylishText } from '../../../components/items/StylishText';
+import { StylishText } from '../../../../components/items/StylishText';
 import { UserPanel } from './UserPanel';
 
-export default function Profile() {
+export default function AccountSettings() {
   const navigate = useNavigate();
   const { tabValue } = useParams();
 

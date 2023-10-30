@@ -10,9 +10,9 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { UserSettingList } from '../../components/settings/SettingList';
+import { PageDetail } from '../../../components/nav/PageDetail';
+import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import { UserSettingList } from '../../../components/settings/SettingList';
 
 /**
  * User settings page
