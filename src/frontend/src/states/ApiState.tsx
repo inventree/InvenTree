@@ -73,6 +73,9 @@ export enum ApiPaths {
   build_order_list = 'api-build-list',
   build_order_attachment_list = 'api-build-attachment-list',
 
+  // BOM URLs
+  bom_list = 'api-bom-list',
+
   // Part URLs
   part_list = 'api-part-list',
   category_list = 'api-category-list',
@@ -159,6 +162,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'build/';
     case ApiPaths.build_order_attachment_list:
       return 'build/attachment/';
+    case ApiPaths.bom_list:
+      return 'bom/';
     case ApiPaths.part_list:
       return 'part/';
     case ApiPaths.part_parameter_list:
