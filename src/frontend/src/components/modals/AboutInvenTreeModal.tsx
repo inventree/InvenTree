@@ -1,14 +1,5 @@
 import { Trans } from '@lingui/macro';
-import {
-  Anchor,
-  Badge,
-  Button,
-  Group,
-  Stack,
-  Table,
-  Text,
-  Title
-} from '@mantine/core';
+import { Anchor, Badge, Group, Stack, Table, Text, Title } from '@mantine/core';
 import { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 

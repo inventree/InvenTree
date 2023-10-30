@@ -1,5 +1,4 @@
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
-import { Component } from 'react';
 
 /**
  * A ButtonMenu is a button that opens a menu when clicked.
