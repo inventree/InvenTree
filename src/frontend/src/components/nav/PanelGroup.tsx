@@ -54,11 +54,16 @@ export function PanelGroup({
   });
 
   // Update the active panel when the selected panel changes
+  // If the selected panel is not available, default to the first available panel
   useEffect(() => {
-    if (selectedPanel) {
-      setActivePanel(selectedPanel);
+    let activePanelNames = panels
+      .filter((panel) => !panel.hidden && !panel.disabled)
+      .map((panel) => panel.name);
+
+    if (!activePanelNames.includes(activePanel)) {
+      setActivePanel(activePanelNames.length > 0 ? activePanelNames[0] : '');
     }
-  }, [selectedPanel]);
+  }, [panels]);
 
   // Callback when the active panel changes
   function handlePanelChange(panel: string) {
