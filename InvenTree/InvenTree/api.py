@@ -105,7 +105,7 @@ class InfoView(AjaxView):
             return False
 
         auth = headers.strip()
-        if not auth.lower().startswith('token') and len(auth.split()) == 2:
+        if not (auth.lower().startswith('token') and len(auth.split()) == 2):
             return False
 
         token_key = auth.split()[1]
