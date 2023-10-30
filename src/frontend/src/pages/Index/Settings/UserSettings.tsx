@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Anchor, Group, Stack, Text, Title } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
@@ -7,12 +7,12 @@ import {
   IconFileAnalytics,
   IconLock,
   IconSearch,
-  IconSwitch,
   IconUserCircle
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { UserSettingList } from '../../../components/settings/SettingList';
 import { useUserState } from '../../../states/UserState';
 import { AccountContent } from './AccountSettings/UserPanel';
@@ -109,24 +109,14 @@ export default function UserSettings() {
   return (
     <>
       <Stack spacing="xs">
-        <Stack spacing="0" ml={'sm'}>
-          <Group>
-            <Title order={3}>
-              {user?.first_name} {user?.last_name}
-            </Title>
-            <Text c="dimmed">({user?.username})</Text>
-          </Group>
-          <Group>
-            <Text c="dimmed">
-              <Trans>Personal Account Settings</Trans>
-            </Text>
-            <Anchor>
-              <IconSwitch size={14} />
-              <Trans>Switch to server settings</Trans>
-            </Anchor>
-          </Group>
-        </Stack>
-
+        <SettingsHeader
+          title={`${user?.first_name} ${user?.last_name}`}
+          shorthand={user?.username || ''}
+          subtitle={<Trans>Account Settings</Trans>}
+          switch_link="/settings/system"
+          switch_text={<Trans>Switch to System Setting</Trans>}
+          switch_condition={user?.is_staff || false}
+        />
         <PanelGroup pageKey="user-settings" panels={userSettingsPanels} />
       </Stack>
     </>

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { Divider, Stack } from '@mantine/core';
 import {
   IconBellCog,
@@ -21,11 +21,12 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PageDetail } from '../../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
 import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
+import { useServerApiState } from '../../../states/ApiState';
 
 /**
  * System settings page
@@ -249,11 +250,17 @@ export default function SystemSettings() {
       }
     ];
   }, []);
+  const [server] = useServerApiState((state) => [state.server]);
 
   return (
     <>
       <Stack spacing="xs">
-        <PageDetail title={t`System Settings`} />
+        <SettingsHeader
+          title={server.instance || ''}
+          subtitle={<Trans>System Settings</Trans>}
+          switch_link="/settings/user"
+          switch_text={<Trans>Switch to User Setting</Trans>}
+        />
         <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
       </Stack>
     </>
