@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
+import InvenTree.version
 import users.models
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
@@ -21,13 +22,6 @@ from plugin.serializers import MetadataSerializer
 from .email import is_email_configured
 from .mixins import RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
-from .version import (inventreeApiVersion, inventreeAppUrl, inventreeBranch,
-                      inventreeCommitDate, inventreeCommitHash,
-                      inventreeCreditsUrl, inventreeDatabase,
-                      inventreeDjangoVersion, inventreeDocUrl,
-                      inventreeGithubUrl, inventreeInstanceName,
-                      inventreePythonVersion, inventreeVersion,
-                      isInvenTreeDevelopmentVersion, isInvenTreeUpToDate)
 from .views import AjaxView
 
 
@@ -41,23 +35,23 @@ class VersionView(APIView):
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
         return JsonResponse({
-            'dev': isInvenTreeDevelopmentVersion(),
-            'up_to_date': isInvenTreeUpToDate(),
+            'dev': InvenTree.version.isInvenTreeDevelopmentVersion(),
+            'up_to_date': InvenTree.version.isInvenTreeUpToDate(),
             'version': {
-                'server': inventreeVersion(),
-                'api': inventreeApiVersion(),
-                'commit_hash': inventreeCommitHash(),
-                'commit_date': inventreeCommitDate(),
-                'commit_branch': inventreeBranch(),
-                'python': inventreePythonVersion(),
-                'django': inventreeDjangoVersion()
+                'server': InvenTree.version.inventreeVersion(),
+                'api': InvenTree.version.inventreeApiVersion(),
+                'commit_hash': InvenTree.version.inventreeCommitHash(),
+                'commit_date': InvenTree.version.inventreeCommitDate(),
+                'commit_branch': InvenTree.version.inventreeBranch(),
+                'python': InvenTree.version.inventreePythonVersion(),
+                'django': InvenTree.version.inventreeDjangoVersion()
             },
             'links': {
-                'doc': inventreeDocUrl(),
-                'code': inventreeGithubUrl(),
-                'credit': inventreeCreditsUrl(),
-                'app': inventreeAppUrl(),
-                'bug': f'{inventreeGithubUrl()}/issues'
+                'doc': InvenTree.version.inventreeDocUrl(),
+                'code': InvenTree.version.inventreeGithubUrl(),
+                'credit': InvenTree.version.inventreeCreditsUrl(),
+                'app': InvenTree.version.inventreeAppUrl(),
+                'bug': f'{InvenTree.version.inventreeGithubUrl()}/issues'
             }
         })
 
@@ -78,9 +72,9 @@ class InfoView(AjaxView):
         """Serve current server information."""
         data = {
             'server': 'InvenTree',
-            'version': inventreeVersion(),
-            'instance': inventreeInstanceName(),
-            'apiVersion': inventreeApiVersion(),
+            'version': InvenTree.version.inventreeVersion(),
+            'instance': InvenTree.version.inventreeInstanceName(),
+            'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
@@ -89,7 +83,7 @@ class InfoView(AjaxView):
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
             'system_health': check_system_health() if request.user.is_staff else None,
-            'database': inventreeDatabase()if request.user.is_staff else None
+            'database': InvenTree.version.inventreeDatabase()if request.user.is_staff else None
         }
 
         return JsonResponse(data)
