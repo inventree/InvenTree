@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { Group, Stack, Text } from '@mantine/core';
+import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { shortenString } from '../../../functions/tables';
@@ -10,6 +10,7 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the part table
@@ -57,6 +58,7 @@ function partTableColumns(): TableColumn[] {
       accessor: 'category',
       title: t`Category`,
       sortable: true,
+      switchable: true,
       render: function (record: any) {
         // TODO: Link to the category detail page
         return shortenString({
@@ -68,7 +70,76 @@ function partTableColumns(): TableColumn[] {
       accessor: 'total_in_stock',
       title: t`Stock`,
       sortable: true,
-      switchable: true
+      switchable: true,
+      render: (record) => {
+        let extra: ReactNode[] = [];
+
+        let stock = record?.total_in_stock ?? 0;
+
+        let text = String(stock);
+
+        let color: string | undefined = undefined;
+
+        if (record.minimum_stock > stock) {
+          extra.push(
+            <Text color="orange">
+              {t`Minimum stock` + `: ${record.minimum_stock}`}
+            </Text>
+          );
+
+          color = 'orange';
+        }
+
+        if (record.ordering > 0) {
+          extra.push(<Text>{t`On Order` + `: ${record.ordering}`}</Text>);
+        }
+
+        if (record.building) {
+          extra.push(<Text>{t`Building` + `: ${record.building}`}</Text>);
+        }
+
+        if (record.allocated_to_build_orders > 0) {
+          extra.push(
+            <Text>
+              {t`Build Order Allocations` +
+                `: ${record.allocated_to_build_orders}`}
+            </Text>
+          );
+        }
+
+        if (record.allocated_to_sales_orders > 0) {
+          extra.push(
+            <Text>
+              {t`Sales Order Allocations` +
+                `: ${record.allocated_to_sales_orders}`}
+            </Text>
+          );
+        }
+
+        // TODO: Add extra information on stock "deman"
+
+        if (stock == 0) {
+          color = 'red';
+          text = t`No stock`;
+        }
+
+        return (
+          <TableHoverCard
+            value={
+              <Group spacing="xs" position="left">
+                <Text color={color}>{text}</Text>
+                {record.units && (
+                  <Text size="xs" color="color">
+                    [{record.units}]
+                  </Text>
+                )}
+              </Group>
+            }
+            title={t`Stock Information`}
+            extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
+          />
+        );
+      }
     },
     {
       accessor: 'price_range',
