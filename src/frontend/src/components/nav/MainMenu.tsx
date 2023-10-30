@@ -41,7 +41,11 @@ export function MainMenu() {
           <Trans>Account settings</Trans>
         </Menu.Item>
         {userState.user?.is_staff && (
-          <Menu.Item icon={<IconSettings />} component={Link} to="/settings/">
+          <Menu.Item
+            icon={<IconSettings />}
+            component={Link}
+            to="/settings/system"
+          >
             <Trans>System Settings</Trans>
           </Menu.Item>
         )}
