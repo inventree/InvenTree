@@ -45,11 +45,6 @@ export function AccountDetailPanel() {
               placeholder="Last name"
               {...form.getInputProps('last_name')}
             />
-            <TextInput
-              label="Username"
-              placeholder="Username"
-              {...form.getInputProps('username')}
-            />
             <Group position="right" mt="md">
               <Button type="submit">
                 <Trans>Submit</Trans>
@@ -63,9 +58,6 @@ export function AccountDetailPanel() {
             </Text>
             <Text>
               <Trans>Last name: {form.values.last_name}</Trans>
-            </Text>
-            <Text>
-              <Trans>Username: {form.values.username}</Trans>
             </Text>
           </Stack>
         )}
