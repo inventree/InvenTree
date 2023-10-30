@@ -16,11 +16,13 @@ import { api } from '../../App';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
+import { CopyButton } from '../items/CopyButton';
 
 type AboutLookupRef = {
   ref: string;
   title: JSX.Element;
   link?: string;
+  copy?: boolean;
 };
 
 export function AboutInvenTreeModal({
@@ -51,17 +53,20 @@ export function AboutInvenTreeModal({
       <tr key={idx}>
         <td>{map.title}</td>
         <td>
-          {alwaysLink ? (
-            <Anchor href={data[map.ref]} target="_blank">
-              {data[map.ref]}
-            </Anchor>
-          ) : map.link ? (
-            <Anchor href={map.link} target="_blank">
-              {data[map.ref]}
-            </Anchor>
-          ) : (
-            data[map.ref]
-          )}
+          <Group position="apart" spacing="xs">
+            {alwaysLink ? (
+              <Anchor href={data[map.ref]} target="_blank">
+                {data[map.ref]}
+              </Anchor>
+            ) : map.link ? (
+              <Anchor href={map.link} target="_blank">
+                {data[map.ref]}
+              </Anchor>
+            ) : (
+              data[map.ref]
+            )}
+            {map.copy && <CopyButton value={data[map.ref]} />}
+          </Group>
         </td>
       </tr>
     ));
@@ -99,11 +104,24 @@ export function AboutInvenTreeModal({
               {
                 ref: 'server',
                 title: <Trans>InvenTree Version</Trans>,
-                link: 'https://github.com/inventree/InvenTree/releases'
+                link: 'https://github.com/inventree/InvenTree/releases',
+                copy: true
               },
-              { ref: 'commit_hash', title: <Trans>Commit Hash</Trans> },
-              { ref: 'commit_date', title: <Trans>Commit Date</Trans> },
-              { ref: 'commit_branch', title: <Trans>Commit Branch</Trans> },
+              {
+                ref: 'commit_hash',
+                title: <Trans>Commit Hash</Trans>,
+                copy: true
+              },
+              {
+                ref: 'commit_date',
+                title: <Trans>Commit Date</Trans>,
+                copy: true
+              },
+              {
+                ref: 'commit_branch',
+                title: <Trans>Commit Branch</Trans>,
+                copy: true
+              },
               {
                 ref: 'api',
                 title: <Trans>API Version</Trans>,
@@ -113,7 +131,8 @@ export function AboutInvenTreeModal({
               {
                 ref: 'django',
                 title: <Trans>Django Version</Trans>,
-                link: 'https://www.djangoproject.com/'
+                link: 'https://www.djangoproject.com/',
+                copy: true
               }
             ],
             data.version
