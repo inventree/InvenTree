@@ -22,7 +22,7 @@ export function AccountDetailPanel({ data }: { data: UserProps | undefined }) {
   const form = useForm({ initialValues: data });
   const [editing, setEditing] = useToggle([false, true] as const);
   function SaveData(values: any) {
-    api.put(apiUrl(ApiPaths.user_me)).then((res) => {
+    api.put(apiUrl(ApiPaths.user_me), values).then((res) => {
       if (res.status === 200) {
         setEditing();
         queryClient.invalidateQueries({ queryKey: ['user-me'] });
