@@ -1,14 +1,26 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import {
+  Group,
+  HoverCard,
+  Paper,
+  Stack,
+  Text,
+  extractSystemStyles
+} from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
+import { TableHoverCard } from '../TableHoverCard';
 
 export function BomTable({
   partId,
@@ -18,6 +30,8 @@ export function BomTable({
   params?: any;
 }) {
   const navigate = useNavigate();
+
+  const user = useUserState();
 
   const { tableKey, refreshTable } = useTableRefresh('bom');
 
@@ -45,10 +59,12 @@ export function BomTable({
       {
         accessor: 'description',
         title: t`Description`,
+        switchable: true,
         render: (row) => row?.sub_part_detail?.description
       },
       {
         accessor: 'reference',
+        switchable: true,
         title: t`Reference`
       },
       {
@@ -57,7 +73,17 @@ export function BomTable({
       },
       {
         accessor: 'substitutes',
-        title: t`Substitutes`
+        title: t`Substitutes`,
+        switchable: true,
+        render: (row) => {
+          let substitutes = row.substitutes ?? [];
+
+          return substitutes.length > 0 ? (
+            row.length
+          ) : (
+            <YesNoButton value={false} />
+          );
+        }
       },
       {
         accessor: 'optional',
@@ -98,19 +124,76 @@ export function BomTable({
       },
       {
         accessor: 'price_range',
-        title: t`Price Range`
+        title: t`Price Range`,
+        switchable: true,
+        sortable: false,
+        render: (row) => {
+          let min_price = row.pricing_min || row.pricing_max;
+          let max_price = row.pricing_max || row.pricing_min;
+
+          // TODO: Custom price range rendering component
+          return `${min_price} - ${max_price}`;
+        }
       },
       {
-        accessor: 'available',
-        title: t`Available`
+        accessor: 'available_stock',
+        title: t`Available`,
+        switchable: true,
+        render: (row) => {
+          let extra: ReactNode[] = [];
+
+          let available_stock: number = row?.available_stock ?? 0;
+          let substitute_stock: number = row?.substitute_stock ?? 0;
+          let variant_stock: number = row?.variant_stock ?? 0;
+          let on_order: number = row?.on_order ?? 0;
+
+          if (available_stock <= 0) {
+            return <Text color="red" italic>{t`No stock`}</Text>;
+          }
+
+          if (substitute_stock > 0) {
+            extra.push(
+              <Text key="substitute">{t`Includes substitute stock`}</Text>
+            );
+          }
+
+          if (variant_stock > 0) {
+            extra.push(<Text key="variant">{t`Includes variant stock`}</Text>);
+          }
+
+          if (on_order > 0) {
+            extra.push(
+              <Text key="on_order">
+                {t`On order`}: {on_order}
+              </Text>
+            );
+          }
+
+          return (
+            <TableHoverCard
+              value={available_stock}
+              extra={
+                extra.length > 0 ? <Stack spacing="xs">{extra}</Stack> : null
+              }
+              title={t`Available Stock`}
+            />
+          );
+        }
       },
       {
         accessor: 'can_build',
-        title: t`Can Build`
+        title: t`Can Build`,
+        switchable: true,
+        sortable: true, // TODO: Custom sorting via API
+        render: (row) => {
+          // TODO: Reference bom.js for canBuildQuantity method
+          return '-';
+        }
       },
       {
-        accessor: 'notes',
-        title: t`Notes`
+        accessor: 'note',
+        title: t`Notes`,
+        switchable: true
       }
     ];
   }, [partId, params]);
@@ -118,6 +201,33 @@ export function BomTable({
   const tableFilters: TableFilter[] = useMemo(() => {
     return [];
   }, [partId, params]);
+
+  const rowActions = useCallback(
+    (record: any) => {
+      // TODO: Check user permissions here,
+      // TODO: to determine which actions are allowed
+
+      let actions: RowAction[] = [];
+
+      if (!record.validated) {
+        actions.push({
+          title: t`Validate`
+        });
+      }
+
+      actions.push({
+        title: t`Edit`
+      });
+
+      actions.push({
+        title: t`Delete`,
+        color: 'red'
+      });
+
+      return actions;
+    },
+    [partId, user]
+  );
 
   return (
     <InvenTreeTable
@@ -132,7 +242,8 @@ export function BomTable({
           sub_part_detail: true
         },
         customFilters: tableFilters,
-        onRowClick: (row) => navigate(`/part/${row.sub_part}`)
+        onRowClick: (row) => navigate(`/part/${row.sub_part}`),
+        rowActions: rowActions
       }}
     />
   );
