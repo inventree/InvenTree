@@ -74,15 +74,7 @@ class InfoView(AjaxView):
         is_staff = request.user.is_staff
         if not is_staff and request.user.is_anonymous:
             # Might be Token auth - check if so
-            auth = request.headers.get('Authorization', request.headers.get('authorization')).strip()
-            if auth.lower().startswith('token') and len(auth.split()) == 2:
-                token_key = auth.split()[1]
-                try:
-                    token = ApiToken.objects.get(key=token_key)
-                    if token.active and token.user and token.user.is_staff:
-                        is_staff = True
-                except ApiToken.DoesNotExist:
-                    pass
+            is_staff = self.check_auth_header(request)
 
         data = {
             'server': 'InvenTree',
@@ -104,6 +96,26 @@ class InfoView(AjaxView):
         }
 
         return JsonResponse(data)
+
+    def check_auth_header(self, request):
+        """Check if user is authenticated via a token in the header."""
+        # TODO @matmair: remove after refacgtor of Token check is done
+        headers = request.headers.get('Authorization', request.headers.get('authorization'))
+        if not headers:
+            return False
+
+        auth = headers.strip()
+        if not auth.lower().startswith('token') and len(auth.split()) == 2:
+            return False
+
+        token_key = auth.split()[1]
+        try:
+            token = ApiToken.objects.get(key=token_key)
+            if token.active and token.user and token.user.is_staff:
+                return True
+        except ApiToken.DoesNotExist:
+            pass
+        return False
 
 
 class NotFoundView(AjaxView):
