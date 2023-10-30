@@ -25,10 +25,9 @@ type AboutLookupRef = {
   copy?: boolean;
 };
 
-export function AboutInvenTreeModal({
-  context,
-  id
-}: ContextModalProps<{ modalBody: string }>) {
+export function AboutInvenTreeModal({}: ContextModalProps<{
+  modalBody: string;
+}>) {
   const [user] = useUserState((state) => [state.user]);
   const { host } = useLocalState.getState();
   const [server] = useServerApiState((state) => [state.server]);
