@@ -1,25 +1,16 @@
 import { Trans } from '@lingui/macro';
-import {
-  Button,
-  Group,
-  Skeleton,
-  Stack,
-  Text,
-  TextInput,
-  Title
-} from '@mantine/core';
+import { Button, Group, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useToggle } from '@mantine/hooks';
 
 import { api, queryClient } from '../../../../App';
 import { EditButton } from '../../../../components/items/EditButton';
 import { ApiPaths, apiUrl } from '../../../../states/ApiState';
-import { UserProps } from '../../../../states/states';
+import { useUserState } from '../../../../states/UserState';
 
-export function AccountDetailPanel({ data }: { data: UserProps | undefined }) {
-  if (!data) return <Skeleton />;
-
-  const form = useForm({ initialValues: data });
+export function AccountDetailPanel() {
+  const [user] = useUserState((state) => [state.user]);
+  const form = useForm({ initialValues: user });
   const [editing, setEditing] = useToggle([false, true] as const);
   function SaveData(values: any) {
     api.put(apiUrl(ApiPaths.user_me), values).then((res) => {
