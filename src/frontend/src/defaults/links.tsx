@@ -78,6 +78,7 @@ function serverInfo() {
     innerProps: {}
   });
 }
+
 function aboutInvenTree() {
   return openContextModal({
     modal: 'about',
