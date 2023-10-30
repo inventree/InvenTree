@@ -8,7 +8,7 @@ msgstr ""
 "Language: pl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-26 17:17\n"
+"PO-Revision-Date: 2023-10-30 17:55\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
@@ -1816,11 +1816,11 @@ msgstr ""
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
-#~ msgstr ""
+#~ msgstr "Instance"
 
 #: src/defaults/links.tsx:83
 #~ msgid "InvenTree"
-#~ msgstr ""
+#~ msgstr "InvenTree"
 
 #: src/defaults/links.tsx:87
 msgid "About this Inventree instance"
@@ -2634,7 +2634,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:211
 #~ msgid "Build Order"
-#~ msgstr ""
+#~ msgstr "Build Order"
 
 #: src/pages/build/BuildDetail.tsx:215
 msgid "Build Order Actions"
@@ -2830,3 +2830,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
