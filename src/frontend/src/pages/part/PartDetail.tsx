@@ -34,6 +34,7 @@ import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
+import { BomTable } from '../../components/tables/bom/BomTable';
 import { UsedInTable } from '../../components/tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
@@ -108,7 +109,8 @@ export default function PartDetail() {
         name: 'bom',
         label: t`Bill of Materials`,
         icon: <IconListTree />,
-        hidden: !part.assembly
+        hidden: !part.assembly,
+        content: <BomTable partId={part.pk ?? -1} />
       },
       {
         name: 'builds',
