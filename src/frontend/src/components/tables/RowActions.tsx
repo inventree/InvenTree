@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { Menu, Text } from '@mantine/core';
 import { IconDots } from '@tabler/icons-react';
-import { MouseEventHandler, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
 

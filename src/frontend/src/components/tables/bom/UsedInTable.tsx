@@ -21,7 +21,7 @@ export function UsedInTable({
 }) {
   const navigate = useNavigate();
 
-  const { tableKey, refreshTable } = useTableRefresh('usedin');
+  const { tableKey } = useTableRefresh('usedin');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [

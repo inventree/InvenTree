@@ -1,13 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Group,
-  HoverCard,
-  Paper,
-  Stack,
-  Text,
-  extractSystemStyles
-} from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { Stack, Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,7 +25,7 @@ export function BomTable({
 
   const user = useUserState();
 
-  const { tableKey, refreshTable } = useTableRefresh('bom');
+  const { tableKey } = useTableRefresh('bom');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -184,11 +176,8 @@ export function BomTable({
         accessor: 'can_build',
         title: t`Can Build`,
         switchable: true,
-        sortable: true, // TODO: Custom sorting via API
-        render: (row) => {
-          // TODO: Reference bom.js for canBuildQuantity method
-          return '-';
-        }
+        sortable: true // TODO: Custom sorting via API
+        // TODO: Reference bom.js for canBuildQuantity method
       },
       {
         accessor: 'note',
