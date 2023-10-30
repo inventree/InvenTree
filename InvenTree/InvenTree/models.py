@@ -660,6 +660,12 @@ class InvenTreeTree(MPTTModel):
         D) delete_children = False and delete_items = False
         """
 
+        print("handle_tree_delete:", self.name, delete_children, delete_items)
+
+        print("descendants:")
+        for d in self.get_descendants(include_self=False):
+            print("-", d.pk, d.name, d.pathstring)
+
         # Case A: Delete all child items, and all child nodes.
         # - Delete all items at any lower level
         # - Delete all descendant nodes
