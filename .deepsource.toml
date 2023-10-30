@@ -8,9 +8,9 @@ exclude_patterns = [
   "src/frontend/src/locales/**"  # Frontend: Translations
 ]
 test_patterns = [
-  "test_.*.py",
-  "test.py",
-  "tests.py"
+  "**/test_*.py",
+  "**/test.py",
+  "**/tests.py"
 ]
 
 
@@ -31,3 +31,7 @@ name = "python"
 
 [[analyzers]]
 name = "docker"
+
+[[analyzers]]
+name = "test-coverage"
+enabled = true

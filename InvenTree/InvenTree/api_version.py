@@ -2,13 +2,16 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 143
+INVENTREE_API_VERSION = 144
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v143 -> 2023-10-27: https://github.com/inventree/InvenTree/pull/5786
+v144 -> 2023-10-27: https://github.com/inventree/InvenTree/pull/5786
     - Allow printing labels via POST including printing options in the body
+
+v143 -> 2023-10-29: https://github.com/inventree/InvenTree/pull/5810
+    - Extends the status endpoint to include information about system status and health
 
 v142 -> 2023-10-20: https://github.com/inventree/InvenTree/pull/5759
     - Adds generic API endpoints for looking up status models
@@ -103,7 +106,6 @@ v115 - > 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
 
 v114 -> 2023-05-16 : https://github.com/inventree/InvenTree/pull/4825
     - Adds "delivery_date" to shipments
->>>>>>> inventree/master
 
 v113 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
     - Adds API endpoints for scrapping a build output
