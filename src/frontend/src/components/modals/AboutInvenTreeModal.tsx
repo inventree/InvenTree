@@ -98,7 +98,7 @@ export function AboutInvenTreeModal({}: ContextModalProps<{
         )}
       </Group>
       <Title order={5}>
-        <Trans>Server Versions</Trans>
+        <Trans>Version Information</Trans>
       </Title>
       <Table>
         <tbody>
@@ -163,7 +163,7 @@ export function AboutInvenTreeModal({}: ContextModalProps<{
       <Group>
         <CopyButton
           value={copyval}
-          label={<Trans>copy version information</Trans>}
+          label={<Trans>Copy version information</Trans>}
         />
       </Group>
     </Stack>

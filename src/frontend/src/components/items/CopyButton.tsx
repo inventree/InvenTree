@@ -15,7 +15,7 @@ export function CopyButton({
         <Button
           color={copied ? 'teal' : 'gray'}
           onClick={copy}
-          title={t`copy to clipboard`}
+          title={t`Copy to clipboard`}
           variant="subtle"
           compact
         >
