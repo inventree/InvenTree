@@ -1,4 +1,4 @@
-import { Container, Flex, LoadingOverlay, Space } from '@mantine/core';
+import { Container, Flex, Space } from '@mantine/core';
 import { Navigate, Outlet } from 'react-router-dom';
 
 import { InvenTreeStyle } from '../../globalStyle';
