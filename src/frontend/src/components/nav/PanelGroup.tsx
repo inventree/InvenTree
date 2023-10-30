@@ -116,7 +116,15 @@ export function PanelGroup({
         {panels.map(
           (panel, idx) =>
             !panel.hidden && (
-              <Tabs.Panel key={idx} value={panel.name} p="sm">
+              <Tabs.Panel
+                key={idx}
+                value={panel.name}
+                p="sm"
+                style={{
+                  overflowX: 'scroll',
+                  width: '100%'
+                }}
+              >
                 <Stack spacing="md">
                   <StylishText size="lg">{panel.label}</StylishText>
                   <Divider />
