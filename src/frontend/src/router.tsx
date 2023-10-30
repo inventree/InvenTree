@@ -117,7 +117,7 @@ export const routes = (
       <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
       <Route path="settings/">
-        <Route path="/account/:tabValue" element={<AccountSettings />} />
+        <Route path="account/:tabValue" element={<AccountSettings />} />
         <Route index element={<SystemSettings />} />
         <Route path="system/" element={<SystemSettings />} />
         <Route path="user/" element={<UserSettings />} />
