@@ -14,8 +14,9 @@ import { useToggle } from '@mantine/hooks';
 import { api, queryClient } from '../../../../App';
 import { EditButton } from '../../../../components/items/EditButton';
 import { ApiPaths, apiUrl } from '../../../../states/ApiState';
+import { UserProps } from '../../../../states/states';
 
-export function AccountDetailPanel({ data }: { data: any }) {
+export function AccountDetailPanel({ data }: { data: UserProps | undefined }) {
   if (!data) return <Skeleton />;
 
   const form = useForm({ initialValues: data });
