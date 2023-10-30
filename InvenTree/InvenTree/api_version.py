@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 144
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v144 -> 2023-10-27: https://github.com/inventree/InvenTree/pull/5786
+v144 -> 2023-10-30: https://github.com/inventree/InvenTree/pull/5786
     - Allow printing labels via POST including printing options in the body
 
 v143 -> 2023-10-29: https://github.com/inventree/InvenTree/pull/5810
