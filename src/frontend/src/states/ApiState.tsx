@@ -68,6 +68,7 @@ export enum ApiPaths {
   barcode = 'api-barcode',
   news = 'news',
   global_status = 'api-global-status',
+  version = 'api-version',
 
   // Build order URLs
   build_order_list = 'api-build-list',
@@ -158,6 +159,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'news/';
     case ApiPaths.global_status:
       return 'generic/status/';
+    case ApiPaths.version:
+      return 'version/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:

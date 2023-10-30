@@ -36,7 +36,7 @@ from plugin.urls import get_plugin_urls
 from stock.urls import stock_urls
 from web.urls import urlpatterns as platform_urls
 
-from .api import APISearchView, InfoView, NotFoundView
+from .api import APISearchView, InfoView, NotFoundView, VersionView
 from .magic_login import GetSimpleLoginView
 from .social_auth_urls import SocialProviderListView, social_auth_urlpatterns
 from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
@@ -76,8 +76,9 @@ apipatterns = [
     # OpenAPI Schema
     re_path('schema/', SpectacularAPIView.as_view(custom_settings={'SCHEMA_PATH_PREFIX': '/api/'}), name='schema'),
 
-    # InvenTree information endpoint
-    path('', InfoView.as_view(), name='api-inventree-info'),
+    # InvenTree information endpoints
+    path('version/', VersionView.as_view(), name='api-version'),  # version info
+    path('', InfoView.as_view(), name='api-inventree-info'),  # server info
 
     # Auth API endpoints
     path('auth/', include([

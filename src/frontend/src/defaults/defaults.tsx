@@ -13,7 +13,10 @@ export const emptyServerAPI = {
   debug_mode: null,
   docker_mode: null,
   database: null,
-  system_health: null
+  system_health: null,
+  platform: null,
+  installer: null,
+  target: null
 };
 
 export interface SiteMarkProps {

@@ -4,7 +4,6 @@ import { IconBellCheck, IconBellExclamation } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { api } from '../App';
-import { StylishText } from '../components/items/StylishText';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/nav/PanelGroup';
 import { NotificationTable } from '../components/tables/notifications/NotificationsTable';

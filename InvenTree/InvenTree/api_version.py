@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 143
+INVENTREE_API_VERSION = 144
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v144 -> 2023-10-23: https://github.com/inventree/InvenTree/pull/5811
+    - Adds version information API endpoint
 
 v143 -> 2023-10-29: https://github.com/inventree/InvenTree/pull/5810
     - Extends the status endpoint to include information about system status and health
