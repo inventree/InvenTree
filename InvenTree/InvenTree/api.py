@@ -18,6 +18,7 @@ from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
 from plugin.serializers import MetadataSerializer
+from users.models import ApiToken
 
 from .email import is_email_configured
 from .mixins import RetrieveUpdateAPI
@@ -70,6 +71,19 @@ class InfoView(AjaxView):
 
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
+        is_staff = request.user.is_staff
+        if not is_staff and request.user.is_anonymous:
+            # Might be Token auth - check if so
+            auth = request.headers.get('Authorization', request.headers.get('authorization')).strip()
+            if auth.lower().startswith('token') and len(auth.split()) == 2:
+                token_key = auth.split()[1]
+                try:
+                    token = ApiToken.objects.get(key=token_key)
+                    if token.active and token.user and token.user.is_staff:
+                        is_staff = True
+                except ApiToken.DoesNotExist:
+                    pass
+
         data = {
             'server': 'InvenTree',
             'version': InvenTree.version.inventreeVersion(),
@@ -82,8 +96,11 @@ class InfoView(AjaxView):
             'email_configured': is_email_configured(),
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
-            'system_health': check_system_health() if request.user.is_staff else None,
-            'database': InvenTree.version.inventreeDatabase()if request.user.is_staff else None
+            'system_health': check_system_health() if is_staff else None,
+            'database': InvenTree.version.inventreeDatabase()if is_staff else None,
+            'platform': InvenTree.version.inventreePlatform() if is_staff else None,
+            'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
+            'target': InvenTree.version.inventreeTarget()if is_staff else None,
         }
 
         return JsonResponse(data)

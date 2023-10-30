@@ -13,7 +13,7 @@ import { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { ApiPaths, apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../items/CopyButton';
@@ -31,6 +31,7 @@ export function AboutInvenTreeModal({
 }: ContextModalProps<{ modalBody: string }>) {
   const [user] = useUserState((state) => [state.user]);
   const { host } = useLocalState.getState();
+  const [server] = useServerApiState((state) => [state.server]);
 
   if (user?.is_staff != true)
     return (
@@ -74,6 +75,18 @@ export function AboutInvenTreeModal({
   /* renderer */
   if (isLoading) return <Trans>Loading</Trans>;
 
+  const copyval = `InvenTree-Version: ${data.version.server}\nDjango Version: ${
+    data.version.django
+  }\n${
+    data.version.commit_hash &&
+    `Commit Hash: ${data.version.commit_hash}\nCommit Date: ${data.version.commit_date}\nCommit Branch: ${data.version.commit_branch}\n`
+  }Database: ${server.database}\nDebug-Mode: ${
+    server.debug_mode ? 'True' : 'False'
+  }\nDeployed using Docker: ${
+    server.docker_mode ? 'True' : 'False'
+  }\nPlatform: ${server.platform}\nInstaller: ${server.installer}\n${
+    server.target && `Target: ${server.target}\n`
+  }Active plugins: ${JSON.stringify(server.active_plugins)}`;
   return (
     <Stack>
       <Group>
@@ -157,11 +170,11 @@ export function AboutInvenTreeModal({
           )}
         </tbody>
       </Table>
-      Development Version
       <Group>
-        <Button color="gray" variant="outline">
-          <Trans>copy version information</Trans>
-        </Button>
+        <CopyButton
+          value={copyval}
+          label={<Trans>copy version information</Trans>}
+        />
       </Group>
     </Stack>
   );
