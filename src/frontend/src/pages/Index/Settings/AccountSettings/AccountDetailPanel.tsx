@@ -3,20 +3,23 @@ import { Button, Group, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useToggle } from '@mantine/hooks';
 
-import { api, queryClient } from '../../../../App';
+import { api } from '../../../../App';
 import { EditButton } from '../../../../components/items/EditButton';
 import { ApiPaths, apiUrl } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {
-  const [user] = useUserState((state) => [state.user]);
+  const [user, fetchUserState] = useUserState((state) => [
+    state.user,
+    state.fetchUserState
+  ]);
   const form = useForm({ initialValues: user });
   const [editing, setEditing] = useToggle([false, true] as const);
   function SaveData(values: any) {
     api.put(apiUrl(ApiPaths.user_me), values).then((res) => {
       if (res.status === 200) {
         setEditing();
-        queryClient.invalidateQueries({ queryKey: ['user-me'] });
+        fetchUserState();
       }
     });
   }
