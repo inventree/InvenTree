@@ -660,18 +660,14 @@ class InvenTreeTree(MPTTModel):
         D) delete_children = False and delete_items = False
         """
 
-        print("handle_tree_delete:", self.name, delete_children, delete_items)
-
-        print("descendants:")
-        for d in self.get_descendants(include_self=False):
-            print("-", d.pk, d.name, d.pathstring)
+        child_nodes = self.get_descendants(include_self=False)
 
         # Case A: Delete all child items, and all child nodes.
         # - Delete all items at any lower level
         # - Delete all descendant nodes
         if delete_children and delete_items:
             self.get_items(cascade=True).delete()
-            self.get_descendants(include_self=False).delete()
+            self.delete_nodes(child_nodes)
 
         # Case B: Delete all child nodes, but move all child items up to the parent
         # - Move all items at any lower level to the parent of this item
@@ -680,7 +676,8 @@ class InvenTreeTree(MPTTModel):
             self.get_items(cascade=True).update(**{
                 self.ITEM_PARENT_KEY: self.parent
             })
-            self.get_descendants(include_self=False).delete()
+
+            self.delete_nodes(child_nodes)
 
         # Case C: Delete all child items, but keep all child nodes
         # - Remove all items directly associated with this node
@@ -697,6 +694,21 @@ class InvenTreeTree(MPTTModel):
                 self.ITEM_PARENT_KEY: self.parent
             })
             self.get_children().update(parent=self.parent)
+
+    def delete_nodes(self, nodes):
+        """Delete  a set of nodes from the tree.
+
+        1. First, set the "parent" value for selected nodes to None
+        2. Then, perform bulk deletion of selected nodes
+
+        Step 1. is required because we cannot guarantee the order-of-operations in the db backend
+
+        Arguments:
+            nodes: A queryset of nodes to delete
+        """
+
+        nodes.update(parent=None)
+        nodes.delete()
 
     def validate_unique(self, exclude=None):
         """Validate that this tree instance satisfies our uniqueness requirements.
