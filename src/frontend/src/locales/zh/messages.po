@@ -8,51 +8,51 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-30 17:55\n"
+"PO-Revision-Date: 2023-10-31 18:07\n"
 "Last-Translator: \n"
-"Language-Team: Chinese Traditional\n"
+"Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: zh-TW\n"
+"X-Crowdin-Language: zh-CN\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:33
 msgid "Title"
-msgstr ""
+msgstr "标题"
 
 #: src/components/forms/ApiForm.tsx:189
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "操作成功"
 
 #: src/components/forms/ApiForm.tsx:263
 msgid "Form Errors Exist"
-msgstr ""
+msgstr "表单存在错误"
 
 #: src/components/forms/ApiForm.tsx:300
 #: src/components/tables/FilterSelectModal.tsx:166
-#: src/contexts/ThemeContext.tsx:63
+#: src/contexts/ThemeContext.tsx:64
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: src/components/forms/ApiForm.tsx:309
-#: src/contexts/ThemeContext.tsx:63
+#: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Profile/UserPanel.tsx:109
 msgid "Submit"
-msgstr ""
+msgstr "提交"
 
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:32
 msgid "Login failed"
-msgstr ""
+msgstr "登录失败"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
 #: src/functions/auth.tsx:110
 msgid "Check your input and try again."
-msgstr ""
+msgstr "请检查您的输入并重试。"
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -62,11 +62,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr ""
+msgstr "登录成功"
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr ""
+msgstr "欢迎回来！"
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -75,11 +75,11 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:101
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "邮件发送成功"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr ""
+msgstr "请检查您的收件箱以查看登录链接。如果您有帐户，您将收到登录链接。如未收到，请检查垃圾邮件夹。"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -88,40 +88,40 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:72
 msgid "Input error"
-msgstr ""
+msgstr "输入错误"
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr ""
+msgstr "欢迎，请在下方登录"
 
 #: src/components/forms/AuthenticationForm.tsx:91
 msgid "Username"
-msgstr ""
+msgstr "用户名"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:105
 msgid "Password"
-msgstr ""
+msgstr "密码"
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr ""
+msgstr "您的密码"
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "重置密码"
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/pages/Auth/Reset.tsx:31
 msgid "Email"
-msgstr ""
+msgstr "邮箱"
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "We will send you a link to login - if you are registered"
-msgstr ""
+msgstr "我们将向您发送登录链接 - 如果您已注册"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -129,24 +129,24 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr ""
+msgstr "给我发一封电子邮件"
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr ""
+msgstr "我将使用用户名和密码"
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
-msgstr ""
+msgstr "登录"
 
 #: src/components/forms/AuthenticationForm.tsx:147
 msgid "Send Email"
-msgstr ""
+msgstr "发送电子邮件"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr ""
+msgstr "主机"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
@@ -154,7 +154,7 @@ msgstr ""
 #: src/components/tables/settings/CustomUnitsTable.tsx:27
 #: src/components/tables/stock/StockLocationTable.tsx:23
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
@@ -162,32 +162,32 @@ msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "添加主机"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr ""
+msgstr "选择对象目标"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr ""
+msgstr "编辑可能的主机选项"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "版本：{0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr ""
+msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr ""
+msgstr "名称：{0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
@@ -201,49 +201,55 @@ msgstr ""
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 msgid "Error"
-msgstr ""
+msgstr "错误"
 
 #: src/components/forms/fields/RelatedModelField.tsx:214
 #: src/pages/Index/UserSettings.tsx:53
 msgid "Search"
-msgstr ""
+msgstr "搜索"
 
 #: src/components/forms/fields/RelatedModelField.tsx:215
+#: src/components/modals/AboutInvenTreeModal.tsx:66
 #: src/components/widgets/WidgetLayout.tsx:134
 msgid "Loading"
-msgstr ""
+msgstr "正在加载"
 
 #: src/components/forms/fields/RelatedModelField.tsx:217
 msgid "No results found"
-msgstr ""
+msgstr "未找到结果"
 
 #: src/components/images/Thumbnail.tsx:11
 #: src/components/images/Thumbnail.tsx:41
 msgid "Thumbnail"
+msgstr "缩略图"
+
+#: src/components/items/CopyButton.tsx:18
+msgid "Copy to clipboard"
 msgstr ""
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr ""
+msgstr "了解更多"
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/components/tables/InvenTreeTable.tsx:376
 msgid "Unknown error"
-msgstr ""
+msgstr "未知错误"
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr ""
+msgstr "出现了一个错误"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "了解更多"
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "InvenTree Logo"
 
 #: src/components/items/OnlyStaff.tsx:9
+#: src/components/modals/AboutInvenTreeModal.tsx:29
 msgid "This information is only available for staff users"
 msgstr ""
 
@@ -253,7 +259,7 @@ msgstr ""
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr ""
+msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
@@ -269,6 +275,83 @@ msgstr ""
 
 #: src/components/items/YesNoButton.tsx:15
 msgid "No"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:84
+msgid "Your InvenTree version status is"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:88
+msgid "Development Version"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:92
+msgid "Up to Date"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:96
+msgid "Update Available"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:101
+msgid "Version Information"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:109
+msgid "InvenTree Version"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:115
+msgid "Commit Hash"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:120
+msgid "Commit Date"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:125
+msgid "Commit Branch"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:130
+#: src/components/modals/ServerInfoModal.tsx:124
+msgid "API Version"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:133
+msgid "Python Version"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:136
+msgid "Django Version"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:146
+msgid "Links"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:152
+msgid "InvenTree Documentation"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:153
+msgid "View Code on GitHub"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:154
+msgid "Credits"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:155
+msgid "Mobile App"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:156
+msgid "Submit Bug Report"
+msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:166
+msgid "Copy version information"
 msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:71
@@ -403,10 +486,6 @@ msgstr ""
 msgid "Server Version"
 msgstr ""
 
-#: src/components/modals/ServerInfoModal.tsx:124
-msgid "API Version"
-msgstr ""
-
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
 msgid "Profile"
@@ -480,8 +559,8 @@ msgstr ""
 #: src/components/nav/NotificationDrawer.tsx:69
 #: src/pages/Index/SystemSettings.tsx:119
 #: src/pages/Index/UserSettings.tsx:83
-#: src/pages/Notifications.tsx:22
-#: src/pages/Notifications.tsx:90
+#: src/pages/Notifications.tsx:21
+#: src/pages/Notifications.tsx:89
 msgid "Notifications"
 msgstr ""
 
@@ -490,7 +569,7 @@ msgid "You have no unread notifications."
 msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:110
-#: src/pages/Notifications.tsx:30
+#: src/pages/Notifications.tsx:29
 msgid "Mark as read"
 msgstr ""
 
@@ -547,7 +626,7 @@ msgstr ""
 #: src/components/tables/bom/BomTable.tsx:35
 #: src/components/tables/build/BuildOrderTable.tsx:29
 #: src/components/tables/part/PartParameterTable.tsx:28
-#: src/components/tables/part/PartTable.tsx:23
+#: src/components/tables/part/PartTable.tsx:24
 #: src/components/tables/part/RelatedPartTable.tsx:35
 #: src/components/tables/stock/StockItemTable.tsx:25
 #: src/pages/part/PartDetail.tsx:324
@@ -876,7 +955,7 @@ msgstr ""
 #: src/components/tables/general/CompanyTable.tsx:47
 #: src/components/tables/part/PartCategoryTable.tsx:28
 #: src/components/tables/part/PartParameterTable.tsx:59
-#: src/components/tables/part/PartTable.tsx:52
+#: src/components/tables/part/PartTable.tsx:53
 #: src/components/tables/part/RelatedPartTable.tsx:55
 #: src/components/tables/plugin/PluginListTable.tsx:69
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:37
@@ -923,7 +1002,7 @@ msgid "Gets Inherited"
 msgstr ""
 
 #: src/components/tables/bom/BomTable.tsx:119
-#: src/components/tables/part/PartTable.tsx:75
+#: src/components/tables/part/PartTable.tsx:146
 msgid "Price Range"
 msgstr ""
 
@@ -932,6 +1011,7 @@ msgid "Available"
 msgstr ""
 
 #: src/components/tables/bom/BomTable.tsx:143
+#: src/components/tables/part/PartTable.tsx:123
 msgid "No stock"
 msgstr ""
 
@@ -990,7 +1070,7 @@ msgstr ""
 #: src/components/tables/settings/ProjectCodeTable.tsx:58
 #: src/functions/forms.tsx:178
 #: src/pages/Index/Scan.tsx:306
-#: src/pages/Notifications.tsx:70
+#: src/pages/Notifications.tsx:69
 #: src/pages/build/BuildDetail.tsx:230
 #: src/pages/company/CompanyDetail.tsx:188
 #: src/pages/part/PartDetail.tsx:304
@@ -1106,7 +1186,7 @@ msgid "Age"
 msgstr ""
 
 #: src/components/tables/notifications/NotificationsTable.tsx:27
-#: src/components/tables/part/PartTable.tsx:58
+#: src/components/tables/part/PartTable.tsx:59
 msgid "Category"
 msgstr ""
 
@@ -1128,7 +1208,7 @@ msgid "Parameter"
 msgstr ""
 
 #: src/components/tables/part/PartParameterTable.tsx:87
-#: src/components/tables/part/PartTable.tsx:47
+#: src/components/tables/part/PartTable.tsx:48
 msgid "Units"
 msgstr ""
 
@@ -1168,11 +1248,11 @@ msgstr ""
 msgid "Include Variants"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:40
+#: src/components/tables/part/PartTable.tsx:41
 msgid "IPN"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:69
+#: src/components/tables/part/PartTable.tsx:71
 #: src/components/tables/stock/StockItemTable.tsx:49
 #: src/defaults/links.tsx:28
 #: src/pages/Index/SystemSettings.tsx:192
@@ -1182,116 +1262,140 @@ msgstr ""
 msgid "Stock"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:85
-msgid "Link"
+#: src/components/tables/part/PartTable.tsx:86
+msgid "Minimum stock"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:94
+msgid "On Order"
 msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:98
+msgid "Building"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:104
+msgid "Build Order Allocations"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:113
+msgid "Sales Order Allocations"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:138
+msgid "Stock Information"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:156
+msgid "Link"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:169
 #: src/components/tables/plugin/PluginListTable.tsx:138
 msgid "Active"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:99
+#: src/components/tables/part/PartTable.tsx:170
 msgid "Filter by part active status"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:104
+#: src/components/tables/part/PartTable.tsx:175
 msgid "Assembly"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:105
+#: src/components/tables/part/PartTable.tsx:176
 msgid "Filter by assembly attribute"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:110
+#: src/components/tables/part/PartTable.tsx:181
 msgid "Include Subcategories"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:111
+#: src/components/tables/part/PartTable.tsx:182
 msgid "Include parts in subcategories"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:116
+#: src/components/tables/part/PartTable.tsx:187
 msgid "Component"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:117
+#: src/components/tables/part/PartTable.tsx:188
 msgid "Filter by component attribute"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:122
+#: src/components/tables/part/PartTable.tsx:193
 msgid "Trackable"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:123
+#: src/components/tables/part/PartTable.tsx:194
 msgid "Filter by trackable attribute"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:128
+#: src/components/tables/part/PartTable.tsx:199
 msgid "Has Units"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:129
+#: src/components/tables/part/PartTable.tsx:200
 msgid "Filter by parts which have units"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:134
+#: src/components/tables/part/PartTable.tsx:205
 msgid "Has IPN"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:135
+#: src/components/tables/part/PartTable.tsx:206
 msgid "Filter by parts which have an internal part number"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:140
+#: src/components/tables/part/PartTable.tsx:211
 msgid "Has Stock"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:141
-msgid "Filter by parts which have stock"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:146
-#: src/defaults/dashboardItems.tsx:50
-msgid "Low Stock"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:147
-msgid "Filter by parts which have low stock"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:152
-msgid "Purchaseable"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:153
-msgid "Filter by parts which are purchaseable"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:158
-msgid "Salable"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:159
-msgid "Filter by parts which are salable"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:164
-#: src/components/tables/part/PartTable.tsx:168
-msgid "Virtual"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:165
-msgid "Filter by parts which are virtual"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:169
-msgid "Not Virtual"
 msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:211
 #~ msgid "Detail"
 #~ msgstr "Detail"
+
+#: src/components/tables/part/PartTable.tsx:212
+msgid "Filter by parts which have stock"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:217
+#: src/defaults/dashboardItems.tsx:50
+msgid "Low Stock"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:218
+msgid "Filter by parts which have low stock"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:223
+msgid "Purchaseable"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:224
+msgid "Filter by parts which are purchaseable"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:229
+msgid "Salable"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:230
+msgid "Filter by parts which are salable"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:235
+#: src/components/tables/part/PartTable.tsx:239
+msgid "Virtual"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:236
+msgid "Filter by parts which are virtual"
+msgstr ""
+
+#: src/components/tables/part/PartTable.tsx:240
+msgid "Not Virtual"
+msgstr ""
 
 #: src/components/tables/part/RelatedPartTable.tsx:67
 msgid "Add Related Part"
@@ -1810,7 +1914,7 @@ msgid "Frequently asked questions"
 msgstr ""
 
 #: src/defaults/links.tsx:76
-#: src/defaults/links.tsx:86
+#: src/defaults/links.tsx:95
 msgid "System Information"
 msgstr ""
 
@@ -1822,23 +1926,24 @@ msgstr ""
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
-#: src/defaults/links.tsx:87
-msgid "About this Inventree instance"
-msgstr ""
-
-#: src/defaults/links.tsx:92
+#: src/defaults/links.tsx:85
+#: src/defaults/links.tsx:101
 msgid "About InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:93
+#: src/defaults/links.tsx:96
+msgid "About this Inventree instance"
+msgstr ""
+
+#: src/defaults/links.tsx:102
 msgid "About the InvenTree org"
 msgstr ""
 
-#: src/defaults/links.tsx:99
+#: src/defaults/links.tsx:107
 msgid "Licenses"
 msgstr ""
 
-#: src/defaults/links.tsx:100
+#: src/defaults/links.tsx:108
 msgid "Licenses for packages used by InvenTree"
 msgstr ""
 
@@ -2432,7 +2537,7 @@ msgid "The history is kept in this browser's local storage. So it won't be share
 msgstr ""
 
 #: src/pages/Index/Scan.tsx:338
-#: src/pages/Notifications.tsx:48
+#: src/pages/Notifications.tsx:47
 msgid "History"
 msgstr ""
 
@@ -2539,7 +2644,7 @@ msgstr ""
 msgid "Go to the start page"
 msgstr ""
 
-#: src/pages/Notifications.tsx:56
+#: src/pages/Notifications.tsx:55
 msgid "Mark as unread"
 msgstr ""
 
