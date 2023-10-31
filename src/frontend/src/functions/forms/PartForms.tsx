@@ -94,8 +94,8 @@ export function editPart({
     title: t`Edit Part`,
     url: ApiPaths.part_list,
     pk: part_id,
-    successMessage: t`Part updated`,
     fields: partFields({ editing: true }),
+    successMessage: t`Part updated`,
     onFormSuccess: callback
   });
 }
