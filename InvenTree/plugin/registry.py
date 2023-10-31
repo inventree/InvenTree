@@ -699,6 +699,10 @@ class PluginsRegistry:
             # Skip if running during unit testing
             return
 
+        if not canAppAccessDatabase(allow_shell=True):
+            # Skip check if database cannot be accessed
+            return
+
         logger.debug("Checking plugin registry hash")
 
         # If not already cached, calculate the hash
