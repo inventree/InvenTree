@@ -75,16 +75,19 @@ function partTableColumns(): TableColumn[] {
         let extra: ReactNode[] = [];
 
         let stock = record?.total_in_stock ?? 0;
+        let allocated =
+          (record?.allocated_to_build_orders ?? 0) +
+          (record?.allocated_to_sales_orders ?? 0);
+        let available = Math.max(0, stock - allocated);
+        let min_stock = record?.minimum_stock ?? 0;
 
         let text = String(stock);
 
         let color: string | undefined = undefined;
 
-        if (record.minimum_stock > stock) {
+        if (min_stock > stock) {
           extra.push(
-            <Text color="orange">
-              {t`Minimum stock` + `: ${record.minimum_stock}`}
-            </Text>
+            <Text color="orange">{t`Minimum stock` + `: ${min_stock}`}</Text>
           );
 
           color = 'orange';
@@ -116,11 +119,19 @@ function partTableColumns(): TableColumn[] {
           );
         }
 
-        // TODO: Add extra information on stock "deman"
+        if (available != stock) {
+          extra.push(<Text>{t`Available` + `: ${available}`}</Text>);
+        }
 
-        if (stock == 0) {
+        // TODO: Add extra information on stock "demand"
+
+        if (stock <= 0) {
           color = 'red';
           text = t`No stock`;
+        } else if (available <= 0) {
+          color = 'orange';
+        } else if (available < min_stock) {
+          color = 'yellow';
         }
 
         return (
