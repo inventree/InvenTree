@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { Group, Stack, Text } from '@mantine/core';
+import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { notYetImplemented } from '../../../functions/notifications';
@@ -11,7 +11,8 @@ import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
-import { RowAction } from '../RowActions';
+import { RowAction, RowActions } from '../RowActions';
+import { TableHoverCard } from '../TableHoverCard';
 import { InvenTreeTable } from './../InvenTreeTable';
 
 /**
@@ -46,8 +47,109 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'quantity',
       sortable: true,
-      title: t`Stock`
-      // TODO: Custom renderer for stock quantity
+      title: t`Stock`,
+      render: (record) => {
+        // TODO: Push this out into a custom renderer
+        let quantity = record?.quantity ?? 0;
+        let allocated = record?.allocated ?? 0;
+        let available = quantity - allocated;
+        let text = quantity;
+        let part = record?.part_detail ?? {};
+        let extra: ReactNode[] = [];
+        let color = undefined;
+
+        if (record.serial && quantity == 1) {
+          text = `# ${record.serial}`;
+        }
+
+        if (record.is_building) {
+          color = 'blue';
+          extra.push(
+            <Text size="sm">{t`This stock item is in production`}</Text>
+          );
+        }
+
+        if (record.sales_order) {
+          extra.push(
+            <Text size="sm">{t`This stock item has been assigned to a sales order`}</Text>
+          );
+        }
+
+        if (record.customer) {
+          extra.push(
+            <Text size="sm">{t`This stock item has been assigned to a customer`}</Text>
+          );
+        }
+
+        if (record.belongs_to) {
+          extra.push(
+            <Text size="sm">{t`This stock item is installed in another stock item`}</Text>
+          );
+        }
+
+        if (record.consumed_by) {
+          extra.push(
+            <Text size="sm">{t`This stock item has been consumed by a build order`}</Text>
+          );
+        }
+
+        if (record.expired) {
+          extra.push(<Text size="sm">{t`This stock item has expired`}</Text>);
+        } else if (record.stale) {
+          extra.push(<Text size="sm">{t`This stock item is stale`}</Text>);
+        }
+
+        if (allocated > 0) {
+          if (allocated >= quantity) {
+            color = 'orange';
+            extra.push(
+              <Text size="sm">{t`This stock item is fully allocated`}</Text>
+            );
+          } else {
+            extra.push(
+              <Text size="sm">{t`This stock item is partially allocated`}</Text>
+            );
+          }
+        }
+
+        if (available != quantity) {
+          if (available > 0) {
+            extra.push(
+              <Text size="sm" color="orange">
+                {t`Available` + `: ${available}`}
+              </Text>
+            );
+          } else {
+            extra.push(
+              <Text size="sm" color="red">{t`No stock available`}</Text>
+            );
+          }
+        }
+
+        if (quantity <= 0) {
+          color = 'red';
+          extra.push(
+            <Text size="sm">{t`This stock item has been depleted`}</Text>
+          );
+        }
+
+        return (
+          <TableHoverCard
+            value={
+              <Group spacing="xs" position="left">
+                <Text color={color}>{text}</Text>
+                {part.units && (
+                  <Text size="xs" color={color}>
+                    [{part.units}]
+                  </Text>
+                )}
+              </Group>
+            }
+            title={t`Stock Information`}
+            extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
+          />
+        );
+      }
     },
     {
       accessor: 'status',

@@ -129,7 +129,7 @@ function partTableColumns(): TableColumn[] {
               <Group spacing="xs" position="left">
                 <Text color={color}>{text}</Text>
                 {record.units && (
-                  <Text size="xs" color="color">
+                  <Text size="xs" color={color}>
                     [{record.units}]
                   </Text>
                 )}
