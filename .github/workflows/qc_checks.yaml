@@ -274,7 +274,6 @@ jobs:
     runs-on: ubuntu-20.04
 
     needs: [ 'pep_style', 'pre-commit' ]
-    if: github.event_name == 'push'
 
     env:
       # Database backend configuration
