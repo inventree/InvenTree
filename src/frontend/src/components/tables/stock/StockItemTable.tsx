@@ -11,7 +11,7 @@ import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
-import { RowAction, RowActions } from '../RowActions';
+import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 import { InvenTreeTable } from './../InvenTreeTable';
 
