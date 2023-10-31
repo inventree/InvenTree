@@ -108,6 +108,8 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     Stock locations can be hierarchical as required
     """
 
+    ITEM_PARENT_KEY = 'location'
+
     objects = StockLocationManager()
 
     class Meta:
@@ -118,51 +120,16 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
     tags = TaggableManager(blank=True)
 
-    def delete_recursive(self, *args, **kwargs):
-        """This function handles the recursive deletion of sub-locations depending on kwargs contents"""
-        delete_stock_items = kwargs.get('delete_stock_items', False)
-        parent_location = kwargs.get('parent_location', None)
-
-        if parent_location is None:
-            # First iteration, (no parent_location kwargs passed)
-            parent_location = self.parent
-
-        for child_item in self.get_stock_items(False):
-            if delete_stock_items:
-                child_item.delete()
-            else:
-                child_item.location = parent_location
-                child_item.save()
-
-        for child_location in self.children.all():
-            if kwargs.get('delete_sub_locations', False):
-                child_location.delete_recursive(**{
-                    "delete_sub_locations": True,
-                    "delete_stock_items": delete_stock_items,
-                    "parent_location": parent_location})
-            else:
-                child_location.parent = parent_location
-                child_location.save()
-
-        super().delete(*args, **{})
-
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child locations or items.
 
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
-        with transaction.atomic():
 
-            self.delete_recursive(**{
-                "delete_stock_items": kwargs.get('delete_stock_items', False),
-                "delete_sub_locations": kwargs.get('delete_sub_locations', False),
-                "parent_category": self.parent})
-
-            if self.parent is not None:
-                # Partially rebuild the tree (cheaper than a complete rebuild)
-                StockLocation.objects.partial_rebuild(self.tree_id)
-            else:
-                StockLocation.objects.rebuild()
+        super().delete(
+            delete_children=kwargs.get('delete_sub_locations', False),
+            delete_items=kwargs.get('delete_stock_items', False),
+        )
 
     @staticmethod
     def get_api_url():
@@ -299,6 +266,10 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         Required for tree view serializer.
         """
         return self.stock_item_count()
+
+    def get_items(self, cascade=False):
+        """Return a queryset for all stock items under this category"""
+        return self.get_stock_items(cascade=cascade)
 
 
 def generate_batch_code():

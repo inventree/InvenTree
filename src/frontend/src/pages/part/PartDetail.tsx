@@ -34,10 +34,14 @@ import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
+import { BomTable } from '../../components/tables/bom/BomTable';
+import { UsedInTable } from '../../components/tables/bom/UsedInTable';
+import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
 import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
+import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editPart } from '../../functions/forms/PartForms';
@@ -105,19 +109,29 @@ export default function PartDetail() {
         name: 'bom',
         label: t`Bill of Materials`,
         icon: <IconListTree />,
-        hidden: !part.assembly
+        hidden: !part.assembly,
+        content: <BomTable partId={part.pk ?? -1} />
       },
       {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly && !part.component
+        hidden: !part.assembly && !part.component,
+        content: (
+          <BuildOrderTable
+            params={{
+              part_detail: true,
+              part: part.pk ?? -1
+            }}
+          />
+        )
       },
       {
         name: 'used_in',
         label: t`Used In`,
         icon: <IconStack2 />,
-        hidden: !part.component
+        hidden: !part.component,
+        content: <UsedInTable partId={part.pk ?? -1} />
       },
       {
         name: 'pricing',
@@ -140,7 +154,14 @@ export default function PartDetail() {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !part.salable
+        hidden: !part.salable,
+        content: part.pk && (
+          <SalesOrderTable
+            params={{
+              part: part.pk ?? -1
+            }}
+          />
+        )
       },
       {
         name: 'scheduling',
