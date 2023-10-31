@@ -3,6 +3,7 @@ import { Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
+  IconChecklist,
   IconHistory,
   IconInfoCircle,
   IconNotes,
@@ -58,13 +59,22 @@ export default function StockDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        content: <PlaceholderPanel />
+        content: <PlaceholderPanel />,
+        hidden:
+          !stockitem?.part_detail?.salable && !stockitem?.part_detail?.component
+      },
+      {
+        name: 'testdata',
+        label: t`Test Data`,
+        icon: <IconChecklist />,
+        hidden: !stockitem?.part_detail?.trackable
       },
       {
         name: 'installed_items',
         label: t`Installed Items`,
         icon: <IconBoxPadding />,
-        content: <PlaceholderPanel />
+        content: <PlaceholderPanel />,
+        hidden: !stockitem?.part_detail?.assembly
       },
       {
         name: 'child_items',
