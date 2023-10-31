@@ -307,6 +307,7 @@ function constructDeleteForm(fields, options) {
  *      - hidden: Set to true to hide the field
  *      - icon: font-awesome icon to display before the field
  *      - prefix: Custom HTML prefix to display before the field
+ *      - localOnly: If true, this field will only be rendered, but not send to the server
  * - data: map of data to fill out field values with
  * - focus: Name of field to focus on when modal is displayed
  * - preventClose: Set to true to prevent form from closing on success
@@ -316,6 +317,7 @@ function constructDeleteForm(fields, options) {
  * - reload: Set to true to reload the current page after form success
  * - confirm: Set to true to require a "confirm" button
  * - confirmText: Text for confirm button (default = "Confirm")
+ * - disableSuccessMessage: Set to true to suppress the success message if the response contains a success key by accident
  *
  */
 function constructForm(url, options={}) {
@@ -849,6 +851,7 @@ function submitFormData(fields, options) {
 
         // Ignore visual fields
         if (field && field.type == 'candy') continue;
+        if (field && field.localOnly === true) continue;
 
         if (field) {
 
@@ -1203,11 +1206,8 @@ function handleFormSuccess(response, options) {
         msg_target = $(options.modal).find('#pre-form-content');
     }
 
-    // ability to suppress the success message if the response contains a success key by accident
-    const showSuccessMessage = options.showSuccessMessage ?? true;
-
     // Display any messages
-    if (showSuccessMessage && response && (response.success || options.successMessage)) {
+    if (!options.disableSuccessMessage && response && (response.success || options.successMessage)) {
         showAlertOrCache(
             response.success || options.successMessage,
             cache,

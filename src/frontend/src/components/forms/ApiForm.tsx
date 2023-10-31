@@ -1,11 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Divider,
-  LoadingOverlay,
-  ScrollArea,
-  Text
-} from '@mantine/core';
+import { Alert, Divider, LoadingOverlay, Text } from '@mantine/core';
 import { Button, Group, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
@@ -277,24 +271,22 @@ export function ApiForm({
           </Alert>
         )}
         {preFormElement}
-        <ScrollArea>
-          <Stack spacing="xs">
-            {Object.entries(props.fields ?? {}).map(
-              ([fieldName, field]) =>
-                !field.hidden && (
-                  <ApiFormField
-                    key={fieldName}
-                    field={field}
-                    fieldName={fieldName}
-                    formProps={props}
-                    form={form}
-                    error={form.errors[fieldName] ?? null}
-                    definitions={fieldDefinitions}
-                  />
-                )
-            )}
-          </Stack>
-        </ScrollArea>
+        <Stack spacing="xs">
+          {Object.entries(props.fields ?? {}).map(
+            ([fieldName, field]) =>
+              !field.hidden && (
+                <ApiFormField
+                  key={fieldName}
+                  field={field}
+                  fieldName={fieldName}
+                  formProps={props}
+                  form={form}
+                  error={form.errors[fieldName] ?? null}
+                  definitions={fieldDefinitions}
+                />
+              )
+          )}
+        </Stack>
         {postFormElement}
       </Stack>
       <Divider />

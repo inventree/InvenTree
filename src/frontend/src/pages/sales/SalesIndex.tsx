@@ -32,7 +32,9 @@ export default function PurchasingIndex() {
         name: 'suppliers',
         label: t`Customers`,
         icon: <IconBuildingStore />,
-        content: <CompanyTable params={{ is_customer: true }} />
+        content: (
+          <CompanyTable path="sales/customer" params={{ is_customer: true }} />
+        )
       }
     ];
   }, []);

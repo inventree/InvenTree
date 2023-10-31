@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_page, never_cache
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
+from rest_framework.request import clone_request
 
 import build.models
 import common.models
@@ -137,6 +138,17 @@ class LabelListView(LabelFilterMixin, ListAPI):
 class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
 
+    rolemap = {
+        "GET": "view",
+        "POST": "view",
+    }
+
+    def check_permissions(self, request):
+        """Override request method to GET so that also non superusers can print using a post request."""
+        if request.method == "POST":
+            request = clone_request(request, "GET")
+        return super().check_permissions(request)
+
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
         """Prevent caching when printing report templates"""
@@ -163,9 +175,7 @@ class LabelPrintMixin(LabelFilterMixin):
 
     def post(self, request, *args, **kwargs):
         """Perform a GET request against this endpoint to print labels"""
-        common.models.InvenTreeUserSetting.set_setting('DEFAULT_' + self.ITEM_KEY.upper() + '_LABEL_TEMPLATE',
-                                                       self.get_object().pk, None, user=request.user)
-        return self.print(request, self.get_items())
+        return self.get(request, *args, **kwargs)
 
     def get_plugin(self, request):
         """Return the label printing plugin associated with this request.

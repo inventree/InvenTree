@@ -83,7 +83,7 @@ function printLabels(options) {
     let plugins = [];
     inventreeGet(`/api/plugins/`, { mixin: 'labels' }, {
         async: false,
-        success: function(response) {
+        success: function (response) {
             plugins = response;
         }
     });
@@ -100,9 +100,9 @@ function printLabels(options) {
     }
 
     const updateFormUrl = (formOptions) => {
-        const plugin = getFormFieldValue("plugin", formOptions.fields.plugin, formOptions);
-        const labelTemplate = getFormFieldValue("label_template", formOptions.fields.label_template, formOptions);
-        const params = $.param({ plugin, [options.key]: options.items})
+        const plugin = getFormFieldValue("_plugin", formOptions.fields._plugin, formOptions);
+        const labelTemplate = getFormFieldValue("_label_template", formOptions.fields._label_template, formOptions);
+        const params = $.param({ plugin, [options.key]: options.items })
         formOptions.url = `${options.url}${labelTemplate ?? "1"}/print/?${params}`;
     }
 
@@ -121,15 +121,16 @@ function printLabels(options) {
 
         const printingOptions = printingOptionsRes.actions.POST || {};
 
+        // clear all other options
         formOptions.fields = {
-            label_template: formOptions.fields.label_template,
-            plugin: formOptions.fields.plugin,
+            _label_template: formOptions.fields._label_template,
+            _plugin: formOptions.fields._plugin,
         }
 
         if (Object.keys(printingOptions).length > 0) {
             formOptions.fields = {
                 ...formOptions.fields,
-                divider: { type: "candy", html: `<hr/><h5>{% trans "Printing Options" %}</h5>`},
+                divider: { type: "candy", html: `<hr/><h5>{% trans "Printing Options" %}</h5>` },
                 ...printingOptions,
             };
         }
@@ -142,12 +143,13 @@ function printLabels(options) {
         title: options.items.length === 1 ? `{% trans "Print label" %}` : `{% trans "Print labels" %}`,
         submitText: `{% trans "Print" %}`,
         method: "POST",
-        showSuccessMessage: false,
+        disableSuccessMessage: true,
         header_html,
         fields: {
-            label_template: {
+            _label_template: {
                 label: `{% trans "Select label template" %}`,
                 type: "choice",
+                localOnly: true,
                 value: defaultLabelTemplates[options.key],
                 choices: labelTemplates.map(t => ({
                     value: t.pk,
@@ -157,9 +159,10 @@ function printLabels(options) {
                     updateFormUrl(formOptions);
                 }
             },
-            plugin: {
+            _plugin: {
                 label: `{% trans "Select plugin" %}`,
                 type: "choice",
+                localOnly: true,
                 value: user_settings.LABEL_DEFAULT_PRINTER || plugins[0].key,
                 choices: plugins.map(p => ({
                     value: p.key,

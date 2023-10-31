@@ -18,6 +18,7 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
+from generic.states.api import AllStatusViews, StatusView
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
@@ -616,6 +617,14 @@ common_api_urls = [
     path('flags/', include([
         path('<str:key>/', FlagDetail.as_view(), name='api-flag-detail'),
         re_path(r'^.*$', FlagList.as_view(), name='api-flag-list'),
+    ])),
+
+    # Status
+    path('generic/status/', include([
+        path(f'<str:{StatusView.MODEL_REF}>/', include([
+            path('', StatusView.as_view(), name='api-status'),
+        ])),
+        path('', AllStatusViews.as_view(), name='api-status-all'),
     ])),
 ]
 

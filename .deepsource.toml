@@ -1,15 +1,16 @@
 version = 1
 exclude_patterns = [
-  "docs/docs/javascripts/**",
-  "docs/ci/**",
-  "InvenTree/InvenTree/static/**",
-  "ci/**",
-  "InvenTree/**/migrations/*.py"
+  "docs/docs/javascripts/**",  # Docs: Helpers
+  "docs/ci/**",  # Docs: CI
+  "InvenTree/InvenTree/static/**",  # Backend: CUI static files
+  "ci/**",  # Backend: CI
+  "InvenTree/**/migrations/*.py",  # Backend: Migration files
+  "src/frontend/src/locales/**"  # Frontend: Translations
 ]
 test_patterns = [
-  "test_.*.py",
-  "test.py",
-  "tests.py"
+  "**/test_*.py",
+  "**/test.py",
+  "**/tests.py"
 ]
 
 
@@ -30,3 +31,7 @@ name = "python"
 
 [[analyzers]]
 name = "docker"
+
+[[analyzers]]
+name = "test-coverage"
+enabled = true
