@@ -6,7 +6,10 @@ import {
   IconPhone
 } from '@tabler/icons-react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import {
+  ApiFormData,
+  ApiFormFieldSet
+} from '../components/forms/fields/ApiFormField';
 import { openEditApiForm } from '../functions/forms';
 import { ApiPaths } from '../states/ApiState';
 
@@ -24,6 +27,15 @@ export function supplierPartFields(): ApiFormFieldSet {
       filters: {
         part_detail: true,
         manufacturer_detail: true
+      },
+      adjustFilters: (filters: any, form: ApiFormData) => {
+        let part = form.values.part;
+
+        if (part) {
+          filters.part = part;
+        }
+
+        return filters;
       }
     },
     supplier: {},

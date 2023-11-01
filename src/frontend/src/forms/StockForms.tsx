@@ -30,7 +30,6 @@ export function stockFields({
     },
     supplier_part: {
       // TODO: icon
-      // TODO: implement adjustFilters
       filters: {
         part_detail: true,
         supplier_detail: true
