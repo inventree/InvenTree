@@ -1,10 +1,15 @@
 import { t } from '@lingui/macro';
-import { Stack, Text } from '@mantine/core';
+import { ActionIcon, Stack, Text, Tooltip } from '@mantine/core';
+import { IconCirclePlus } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { supplierPartFields } from '../../../forms/CompanyForms';
-import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
+import {
+  openCreateApiForm,
+  openDeleteApiForm,
+  openEditApiForm
+} from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -169,6 +174,35 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     ];
   }, [params]);
 
+  const addSupplierPart = useCallback(() => {
+    let fields = supplierPartFields();
+
+    fields.part.value = params?.part;
+    fields.supplier.value = params?.supplier;
+
+    openCreateApiForm({
+      url: ApiPaths.supplier_part_list,
+      title: t`Add Supplier Part`,
+      fields: fields,
+      onFormSuccess: refreshTable,
+      successMessage: t`Supplier part created`
+    });
+  }, [params]);
+
+  // Table actions
+  const tableActions = useMemo(() => {
+    // TODO: Hide actions based on user permissions
+
+    return [
+      // TODO: Refactor this component out to something reusable
+      <Tooltip label={t`Add supplier part`}>
+        <ActionIcon radius="sm" onClick={addSupplierPart}>
+          <IconCirclePlus color="green" />
+        </ActionIcon>
+      </Tooltip>
+    ];
+  }, [user]);
+
   // Row action callback
   const rowActions = useCallback(
     (record: any) => {
@@ -219,7 +253,8 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           supplier_detail: true,
           manufacturer_detail: true
         },
-        rowActions: rowActions
+        rowActions: rowActions,
+        customActionGroups: tableActions
       }}
     />
   );
