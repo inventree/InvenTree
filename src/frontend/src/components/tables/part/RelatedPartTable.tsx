@@ -33,7 +33,6 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
       {
         accessor: 'part',
         title: t`Part`,
-        noWrap: true,
         render: (record: any) => {
           let part = getPart(record);
           return (
