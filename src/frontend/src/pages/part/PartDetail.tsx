@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
+  IconBookmarks,
   IconBuilding,
   IconCalendarStats,
   IconClipboardList,
@@ -109,6 +110,12 @@ export default function PartDetail() {
         content: <PartVariantTable partId={String(id)} />
       },
       {
+        name: 'allocations',
+        label: t`Allocations`,
+        icon: <IconBookmarks />,
+        hidden: !part.component && !part.salable
+      },
+      {
         name: 'bom',
         label: t`Bill of Materials`,
         icon: <IconListTree />,
@@ -119,7 +126,7 @@ export default function PartDetail() {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly && !part.component,
+        hidden: !part.assembly,
         content: (
           <BuildOrderTable
             params={{
