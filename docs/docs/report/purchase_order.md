@@ -28,7 +28,7 @@ In addition to the default report context variables, the following variables are
 | order.target_date | The date when the order should arrive |
 | order.if_overdue | Boolean value that tells if the target date has passed |
 | order.currency | The currency code associated with this order, e.g. 'AUD' |
-| order.contact | The [contact](./context_variables.md#contacts)  object associated with this order |
+| order.contact | The [contact](./context_variables.md#contact)  object associated with this order |
 
 #### Lines
 
