@@ -3,6 +3,10 @@ import {
   IconAt,
   IconCurrencyDollar,
   IconGlobe,
+  IconHash,
+  IconLink,
+  IconNote,
+  IconPackage,
   IconPhone
 } from '@tabler/icons-react';
 
@@ -39,12 +43,20 @@ export function supplierPartFields(): ApiFormFieldSet {
       }
     },
     supplier: {},
-    SKU: {},
+    SKU: {
+      icon: <IconHash />
+    },
     description: {},
-    link: {},
-    note: {},
+    link: {
+      icon: <IconLink />
+    },
+    note: {
+      icon: <IconNote />
+    },
     pack_quantity: {},
-    packaging: {}
+    packaging: {
+      icon: <IconPackage />
+    }
   };
 }
 
