@@ -204,7 +204,10 @@ export function BomTable({
         });
       }
 
+      // TODO: Action on edit
       actions.push(RowEditAction({}));
+
+      // TODO: Action on delete
       actions.push(RowDeleteAction({}));
 
       return actions;
