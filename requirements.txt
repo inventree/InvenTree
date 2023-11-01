@@ -113,7 +113,7 @@ django-maintenance-mode==0.19.0
     # via -r requirements.in
 django-markdownify==0.9.3
     # via -r requirements.in
-django-money==3.3.0
+django-money==3.2.0
     # via -r requirements.in
 django-mptt==0.11.0
     # via -r requirements.in

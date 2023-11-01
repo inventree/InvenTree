@@ -61,7 +61,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         accessor: 'project_code',
         title: t`Project Code`,
         switchable: true
-        // TODO: Custom formatter
+        // TODO: Custom project code formatter
       },
       {
         accessor: 'status',
@@ -78,22 +78,34 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         accessor: 'creation_date',
         title: t`Created`,
         switchable: true
-        // TODO: Custom formatter
+        // TODO: Custom date formatter
       },
       {
         accessor: 'target_date',
         title: t`Target Date`,
         switchable: true
-        // TODO: Custom formatter
+        // TODO: Custom date formatter
       },
       {
         accessor: 'line_items',
         title: t`Line Items`,
         sortable: true,
         switchable: true
+      },
+      {
+        accessor: 'total_price',
+        title: t`Total Price`,
+        sortable: true,
+        switchable: true
+        // TODO: Custom money formatter
+      },
+      {
+        accessor: 'responsible',
+        title: t`Responsible`,
+        sortable: true,
+        switchable: true
+        // TODO: custom 'owner' formatter
       }
-      // TODO: total_price
-      // TODO: responsible
     ];
   }, []);
 

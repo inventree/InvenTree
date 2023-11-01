@@ -30,7 +30,10 @@ import {
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ActionDropdown } from '../../components/items/ActionDropdown';
+import {
+  ActionDropdown,
+  BarcodeActionDropdown
+} from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
@@ -236,10 +239,7 @@ export default function PartDetail() {
   const partActions = useMemo(() => {
     // TODO: Disable actions based on user permissions
     return [
-      <ActionDropdown
-        key="barcode"
-        tooltip={t`Barcode Actions`}
-        icon={<IconQrcode />}
+      <BarcodeActionDropdown
         actions={[
           {
             icon: <IconQrcode />,
