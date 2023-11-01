@@ -11,6 +11,32 @@ import { openEditApiForm } from '../functions/forms';
 import { ApiPaths } from '../states/ApiState';
 
 /**
+ * Field set for SupplierPart instance
+ */
+export function supplierPartFields(): ApiFormFieldSet {
+  return {
+    part: {
+      filters: {
+        purchaseable: true
+      }
+    },
+    manufacturer_part: {
+      filters: {
+        part_detail: true,
+        manufacturer_detail: true
+      }
+    },
+    supplier: {},
+    SKU: {},
+    description: {},
+    link: {},
+    note: {},
+    pack_quantity: {},
+    packaging: {}
+  };
+}
+
+/**
  * Field set for editing a company instance
  */
 export function companyFields(): ApiFormFieldSet {

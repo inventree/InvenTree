@@ -3,7 +3,8 @@ import { Stack, Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { openDeleteApiForm } from '../../../functions/forms';
+import { supplierPartFields } from '../../../forms/CompanyForms';
+import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -173,7 +174,19 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     (record: any) => {
       // TODO: Adjust actions based on user permissions
       return [
-        RowEditAction({}),
+        RowEditAction({
+          onClick: () => {
+            record.pk &&
+              openEditApiForm({
+                url: ApiPaths.supplier_part_list,
+                pk: record.pk,
+                title: t`Edit Supplier Part`,
+                fields: supplierPartFields(),
+                onFormSuccess: refreshTable,
+                successMessage: t`Supplier part updated`
+              });
+          }
+        }),
         RowDeleteAction({
           onClick: () => {
             record.pk &&

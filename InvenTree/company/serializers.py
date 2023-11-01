@@ -372,7 +372,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
 
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(read_only=True)
-    available = serializers.FloatField()
+    available = serializers.FloatField(required=False)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
