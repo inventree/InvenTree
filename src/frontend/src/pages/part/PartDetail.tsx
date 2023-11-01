@@ -45,6 +45,7 @@ import { AttachmentTable } from '../../components/tables/general/AttachmentTable
 import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
 import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
+import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
@@ -152,7 +153,14 @@ export default function PartDetail() {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding />,
-        hidden: !part.purchaseable
+        hidden: !part.purchaseable,
+        content: part.pk && (
+          <SupplierPartTable
+            params={{
+              part: part.pk ?? -1
+            }}
+          />
+        )
       },
       {
         name: 'purchase_orders',
