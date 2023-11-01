@@ -3,6 +3,7 @@ import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
+  IconBuildingFactory2,
   IconCalendarStats,
   IconClipboardList,
   IconCopy,
@@ -148,6 +149,12 @@ export default function PartDetail() {
         name: 'pricing',
         label: t`Pricing`,
         icon: <IconCurrencyDollar />
+      },
+      {
+        name: 'manufacturers',
+        label: t`Manufacturers`,
+        icon: <IconBuildingFactory2 />,
+        hidden: !part.purchaseable
       },
       {
         name: 'suppliers',
