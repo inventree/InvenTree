@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-31 12:00+0000\n"
-"PO-Revision-Date: 2023-10-31 18:07\n"
+"POT-Creation-Date: 2023-11-01 13:41+0000\n"
+"PO-Revision-Date: 2023-11-01 18:30\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -9230,7 +9230,7 @@ msgid "Edit"
 msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:81
-#: templates/js/translated/forms.js:508 templates/js/translated/helpers.js:105
+#: templates/js/translated/forms.js:511 templates/js/translated/helpers.js:105
 #: templates/js/translated/part.js:389 templates/js/translated/pricing.js:629
 #: templates/js/translated/stock.js:245 users/models.py:384
 msgid "Delete"
@@ -9336,7 +9336,7 @@ msgid "Home Page"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:15
-#: templates/js/translated/forms.js:2045 templates/js/translated/tables.js:543
+#: templates/js/translated/forms.js:2064 templates/js/translated/tables.js:543
 #: templates/navbar.html:107 templates/search.html:8
 #: templates/search_form.html:6 templates/search_form.html:7
 msgid "Search"
@@ -9684,7 +9684,7 @@ msgstr ""
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
-#: templates/account/email_confirm.html:21 templates/js/translated/forms.js:728
+#: templates/account/email_confirm.html:21 templates/js/translated/forms.js:746
 msgid "Confirm"
 msgstr "تایید"
 
@@ -10637,7 +10637,7 @@ msgid "No builds matching query"
 msgstr ""
 
 #: templates/js/translated/build.js:2102 templates/js/translated/build.js:2467
-#: templates/js/translated/forms.js:2041 templates/js/translated/forms.js:2057
+#: templates/js/translated/forms.js:2060 templates/js/translated/forms.js:2076
 #: templates/js/translated/part.js:2311 templates/js/translated/part.js:2737
 #: templates/js/translated/stock.js:1953 templates/js/translated/stock.js:2681
 msgid "Select"
@@ -11017,61 +11017,61 @@ msgstr ""
 msgid "Create filter"
 msgstr ""
 
-#: templates/js/translated/forms.js:371 templates/js/translated/forms.js:386
-#: templates/js/translated/forms.js:400 templates/js/translated/forms.js:414
+#: templates/js/translated/forms.js:374 templates/js/translated/forms.js:389
+#: templates/js/translated/forms.js:403 templates/js/translated/forms.js:417
 msgid "Action Prohibited"
 msgstr ""
 
-#: templates/js/translated/forms.js:373
+#: templates/js/translated/forms.js:376
 msgid "Create operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:388
+#: templates/js/translated/forms.js:391
 msgid "Update operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:402
+#: templates/js/translated/forms.js:405
 msgid "Delete operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:416
+#: templates/js/translated/forms.js:419
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:754
+#: templates/js/translated/forms.js:772
 msgid "Keep this form open"
 msgstr ""
 
-#: templates/js/translated/forms.js:855
+#: templates/js/translated/forms.js:874
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1403 templates/modals.html:19
+#: templates/js/translated/forms.js:1422 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1857
+#: templates/js/translated/forms.js:1876
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:2161 templates/js/translated/search.js:239
+#: templates/js/translated/forms.js:2180 templates/js/translated/search.js:239
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2375
+#: templates/js/translated/forms.js:2394
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:2832
+#: templates/js/translated/forms.js:2851
 msgid "File Column"
 msgstr ""
 
-#: templates/js/translated/forms.js:2832
+#: templates/js/translated/forms.js:2851
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:2844
+#: templates/js/translated/forms.js:2863
 msgid "Select Columns"
 msgstr ""
 
@@ -11099,35 +11099,51 @@ msgstr ""
 msgid "Allocated Stock"
 msgstr ""
 
-#: templates/js/translated/label.js:55
-msgid "Select Printer"
-msgstr ""
-
-#: templates/js/translated/label.js:110
-msgid "selected"
-msgstr ""
-
-#: templates/js/translated/label.js:118 templates/js/translated/label.js:135
-msgid "Select Label Template"
-msgstr ""
-
-#: templates/js/translated/label.js:174 templates/js/translated/report.js:123
+#: templates/js/translated/label.js:53 templates/js/translated/report.js:123
 msgid "Select Items"
 msgstr ""
 
-#: templates/js/translated/label.js:175
+#: templates/js/translated/label.js:54
 msgid "No items selected for printing"
 msgstr ""
 
-#: templates/js/translated/label.js:191
+#: templates/js/translated/label.js:72
 msgid "No Labels Found"
 msgstr ""
 
-#: templates/js/translated/label.js:192
+#: templates/js/translated/label.js:73
 msgid "No label templates found which match the selected items"
 msgstr ""
 
-#: templates/js/translated/label.js:214
+#: templates/js/translated/label.js:97
+msgid "selected"
+msgstr ""
+
+#: templates/js/translated/label.js:133
+msgid "Printing Options"
+msgstr ""
+
+#: templates/js/translated/label.js:143
+msgid "Print label"
+msgstr ""
+
+#: templates/js/translated/label.js:143
+msgid "Print labels"
+msgstr ""
+
+#: templates/js/translated/label.js:144
+msgid "Print"
+msgstr ""
+
+#: templates/js/translated/label.js:150
+msgid "Select label template"
+msgstr ""
+
+#: templates/js/translated/label.js:163
+msgid "Select plugin"
+msgstr ""
+
+#: templates/js/translated/label.js:182
 msgid "Labels sent to printer"
 msgstr ""
 
