@@ -526,8 +526,8 @@ export function InvenTreeTable({
             noWrap: true,
             textAlignment: 'left',
             cellsStyle: {
-              maxWidth: '500px',
-              overflow: 'scroll'
+              // TODO: Need a better way of handling "wide" cells,
+              overflow: 'hidden'
             }
           }}
         />
