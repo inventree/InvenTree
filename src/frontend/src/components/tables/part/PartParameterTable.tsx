@@ -14,6 +14,7 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction } from '../RowActions';
 
 /**
  * Construct a table listing parameters for a given part
@@ -103,42 +104,43 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
       let actions = [];
 
-      actions.push({
-        title: t`Edit`,
-        onClick: () => {
-          openEditApiForm({
-            url: ApiPaths.part_parameter_list,
-            pk: record.pk,
-            title: t`Edit Part Parameter`,
-            fields: {
-              part: {
-                hidden: true
+      actions.push(
+        RowEditAction({
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.part_parameter_list,
+              pk: record.pk,
+              title: t`Edit Part Parameter`,
+              fields: {
+                part: {
+                  hidden: true
+                },
+                template: {},
+                data: {}
               },
-              template: {},
-              data: {}
-            },
-            successMessage: t`Part parameter updated`,
-            onFormSuccess: refreshTable
-          });
-        }
-      });
+              successMessage: t`Part parameter updated`,
+              onFormSuccess: refreshTable
+            });
+          }
+        })
+      );
 
-      actions.push({
-        title: t`Delete`,
-        color: 'red',
-        onClick: () => {
-          openDeleteApiForm({
-            url: ApiPaths.part_parameter_list,
-            pk: record.pk,
-            title: t`Delete Part Parameter`,
-            successMessage: t`Part parameter deleted`,
-            onFormSuccess: refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to remove this parameter?`}</Text>
-            )
-          });
-        }
-      });
+      actions.push(
+        RowDeleteAction({
+          onClick: () => {
+            openDeleteApiForm({
+              url: ApiPaths.part_parameter_list,
+              pk: record.pk,
+              title: t`Delete Part Parameter`,
+              successMessage: t`Part parameter deleted`,
+              onFormSuccess: refreshTable,
+              preFormContent: (
+                <Text>{t`Are you sure you want to remove this parameter?`}</Text>
+              )
+            });
+          }
+        })
+      );
 
       return actions;
     },

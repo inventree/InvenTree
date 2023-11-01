@@ -11,7 +11,7 @@ import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export function BomTable({
@@ -204,14 +204,8 @@ export function BomTable({
         });
       }
 
-      actions.push({
-        title: t`Edit`
-      });
-
-      actions.push({
-        title: t`Delete`,
-        color: 'red'
-      });
+      actions.push(RowEditAction({}));
+      actions.push(RowDeleteAction({}));
 
       return actions;
     },

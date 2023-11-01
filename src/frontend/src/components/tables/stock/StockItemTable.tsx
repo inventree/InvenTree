@@ -219,13 +219,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   function stockItemRowActions(record: any): RowAction[] {
     let actions: RowAction[] = [];
 
-    actions.push({
-      title: t`Edit`,
-      onClick: () => {
-        notYetImplemented();
-      }
-    });
-
+    // TODO: Custom row actions for stock table
     return actions;
   }
 

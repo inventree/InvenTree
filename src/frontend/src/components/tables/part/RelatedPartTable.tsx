@@ -10,6 +10,7 @@ import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction } from '../RowActions';
 
 /**
  * Construct a table listing related parts for a given part
@@ -97,9 +98,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   // TODO: Hide if user does not have permission to edit parts
   const rowActions = useCallback((record: any) => {
     return [
-      {
-        title: t`Delete`,
-        color: 'red',
+      RowDeleteAction({
         onClick: () => {
           openDeleteApiForm({
             url: ApiPaths.related_part_list,
@@ -112,7 +111,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
             onFormSuccess: refreshTable
           });
         }
-      }
+      })
     ];
   }, []);
 

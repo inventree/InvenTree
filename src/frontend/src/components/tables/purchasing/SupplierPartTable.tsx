@@ -3,12 +3,14 @@ import { Stack, Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { openDeleteApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /*
@@ -170,7 +172,24 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
   const rowActions = useCallback(
     (record: any) => {
       // TODO: Adjust actions based on user permissions
-      return [];
+      return [
+        RowEditAction({}),
+        RowDeleteAction({
+          onClick: () => {
+            record.pk &&
+              openDeleteApiForm({
+                url: ApiPaths.supplier_part_list,
+                pk: record.pk,
+                title: t`Delete Supplier Part`,
+                successMessage: t`Supplier part deleted`,
+                onFormSuccess: refreshTable,
+                preFormContent: (
+                  <Text>{t`Are you sure you want to remove this supplier part?`}</Text>
+                )
+              });
+          }
+        })
+      ];
     },
     [user]
   );

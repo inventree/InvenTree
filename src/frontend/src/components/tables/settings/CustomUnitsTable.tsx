@@ -12,7 +12,7 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of custom physical units
@@ -45,8 +45,7 @@ export function CustomUnitsTable() {
 
   const rowActions = useCallback((record: any): RowAction[] => {
     return [
-      {
-        title: t`Edit`,
+      RowEditAction({
         onClick: () => {
           openEditApiForm({
             url: ApiPaths.custom_unit_list,
@@ -61,9 +60,8 @@ export function CustomUnitsTable() {
             successMessage: t`Custom unit updated`
           });
         }
-      },
-      {
-        title: t`Delete`,
+      }),
+      RowDeleteAction({
         onClick: () => {
           openDeleteApiForm({
             url: ApiPaths.custom_unit_list,
@@ -76,7 +74,7 @@ export function CustomUnitsTable() {
             )
           });
         }
-      }
+      })
     ];
   }, []);
 
