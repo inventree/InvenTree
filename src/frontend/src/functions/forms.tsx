@@ -115,7 +115,9 @@ export function openModalApiForm(props: ApiFormProps) {
       }
 
       // Generate a random modal ID for controller
-      let modalId: string = `modal-${props.title}-` + generateUniqueId();
+      let modalId: string =
+        `modal-${props.title}-${props.url}-${props.method}` +
+        generateUniqueId();
 
       modals.open({
         title: <StylishText>{props.title}</StylishText>,

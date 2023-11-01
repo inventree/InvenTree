@@ -73,8 +73,6 @@ export function ApiForm({
   // Form state
   const form = useForm({});
 
-  const formName = useId();
-
   // Cache URL
   const url = useMemo(() => constructFormUrl(props), [props]);
 
@@ -105,13 +103,7 @@ export function ApiForm({
   // Query manager for retrieiving initial data from the server
   const initialDataQuery = useQuery({
     enabled: false,
-    queryKey: [
-      'form-initial-data',
-      formName,
-      props.method,
-      props.url,
-      props.pk
-    ],
+    queryKey: ['form-initial-data', modalId, props.method, props.url, props.pk],
     queryFn: async () => {
       return api
         .get(url)
@@ -159,7 +151,7 @@ export function ApiForm({
       queryClient.removeQueries({
         queryKey: [
           'form-initial-data',
-          formName,
+          modalId,
           props.method,
           props.url,
           props.pk
@@ -172,7 +164,7 @@ export function ApiForm({
   // Query manager for submitting data
   const submitQuery = useQuery({
     enabled: false,
-    queryKey: ['form-submit', formName, props.method, props.url, props.pk],
+    queryKey: ['form-submit', modalId, props.method, props.url, props.pk],
     queryFn: async () => {
       let method = props.method?.toLowerCase() ?? 'get';
 
