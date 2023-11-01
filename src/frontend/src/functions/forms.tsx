@@ -120,7 +120,7 @@ export function openModalApiForm(props: ApiFormProps) {
         generateUniqueId();
 
       modals.open({
-        title: <StylishText>{props.title}</StylishText>,
+        title: <StylishText size="xl">{props.title}</StylishText>,
         modalId: modalId,
         size: 'xl',
         onClose: () => {
