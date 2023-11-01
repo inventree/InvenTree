@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-31 12:00+0000\n"
-"PO-Revision-Date: 2023-10-31 18:07\n"
+"POT-Creation-Date: 2023-11-01 13:41+0000\n"
+"PO-Revision-Date: 2023-11-01 18:30\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -6119,7 +6119,7 @@ msgstr "Ô lựa chọn"
 
 #: part/models.py:3419
 msgid "Is this parameter a checkbox?"
-msgstr ""
+msgstr "Tham số này có phải là hộp kiểm tra?"
 
 #: part/models.py:3424 templates/js/translated/part.js:1633
 msgid "Choices"
@@ -6364,39 +6364,39 @@ msgstr "Chỉ ra số lượng tồn kho ban đầu cho sản phẩm. Nếu đi�
 
 #: part/serializers.py:420
 msgid "Initial Stock Location"
-msgstr ""
+msgstr "Vị trí kho ban đầu"
 
 #: part/serializers.py:420
 msgid "Specify initial stock location for this Part"
-msgstr ""
+msgstr "Chỉ định vị trí kho ban đầu cho sản phẩm này"
 
 #: part/serializers.py:430
 msgid "Select supplier (or leave blank to skip)"
-msgstr ""
+msgstr "Chọn nhà cung cấp (hoặc để trống để bỏ qua)"
 
 #: part/serializers.py:441
 msgid "Select manufacturer (or leave blank to skip)"
-msgstr ""
+msgstr "Chọn nhà sản xuất (hoặc để trống để bỏ qua)"
 
 #: part/serializers.py:447
 msgid "Manufacturer part number"
-msgstr ""
+msgstr "Mã số nhà sản xuất"
 
 #: part/serializers.py:453
 msgid "Selected company is not a valid supplier"
-msgstr ""
+msgstr "Công ty đã chọn không phải là nhà cung ứng hợp lệ"
 
 #: part/serializers.py:460
 msgid "Selected company is not a valid manufacturer"
-msgstr ""
+msgstr "Công ty đã chọn không phải là nhà sản xuất hợp lệ"
 
 #: part/serializers.py:471
 msgid "Manufacturer part matching this MPN already exists"
-msgstr ""
+msgstr "Mã số nhà sản xuất khớp với MPN này đã tồn tại"
 
 #: part/serializers.py:479
 msgid "Supplier part matching this SKU already exists"
-msgstr ""
+msgstr "Mã số nhà cung cấp khớp với SKU này đã tồn tại"
 
 #: part/serializers.py:738 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:468
@@ -6405,23 +6405,23 @@ msgstr "Nhân bản sản phẩm"
 
 #: part/serializers.py:738
 msgid "Copy initial data from another Part"
-msgstr ""
+msgstr "Sao chép dữ liệu ban đầu từ sản phẩm khác"
 
 #: part/serializers.py:743 templates/js/translated/part.js:102
 msgid "Initial Stock"
-msgstr ""
+msgstr "Số liệu kho ban đầu"
 
 #: part/serializers.py:743
 msgid "Create Part with initial stock quantity"
-msgstr ""
+msgstr "Tạo sản phẩm với số lượng tồn kho ban đầu"
 
 #: part/serializers.py:748
 msgid "Supplier Information"
-msgstr ""
+msgstr "Thông tin nhà cung cấp"
 
 #: part/serializers.py:748
 msgid "Add initial supplier information for this part"
-msgstr ""
+msgstr "Thêm thông tin nhà cung cấp ban đầu cho sản phẩm này"
 
 #: part/serializers.py:754
 msgid "Copy Category Parameters"
@@ -6429,35 +6429,35 @@ msgstr "Sao chép thông số nhóm hàng"
 
 #: part/serializers.py:755
 msgid "Copy parameter templates from selected part category"
-msgstr ""
+msgstr "Sao chép mẫu tham số từ nhóm sản phẩm được chọn"
 
 #: part/serializers.py:961
 msgid "Limit stocktake report to a particular part, and any variant parts"
-msgstr ""
+msgstr "Hạn chế báo cáo kiểm kê với sản phẩm riêng biệt và sản phẩm biến thể bất kỳ"
 
 #: part/serializers.py:967
 msgid "Limit stocktake report to a particular part category, and any child categories"
-msgstr ""
+msgstr "Hạn chế báo cáo kiểm kê với danh mục sản phẩm riêng biệt và danh mục con bất kỳ"
 
 #: part/serializers.py:973
 msgid "Limit stocktake report to a particular stock location, and any child locations"
-msgstr ""
+msgstr "Hạn chế báo cáo kiểm kê với vị trí kho riêng biệt và vị trí con bất kỳ"
 
 #: part/serializers.py:978
 msgid "Exclude External Stock"
-msgstr ""
+msgstr "Ngoại trừ kho bên ngoài"
 
 #: part/serializers.py:979
 msgid "Exclude stock items in external locations"
-msgstr ""
+msgstr "Loại trừ hàng trong kho của vị trí bên ngoài"
 
 #: part/serializers.py:984
 msgid "Generate Report"
-msgstr ""
+msgstr "Tạo báo cáo"
 
 #: part/serializers.py:985
 msgid "Generate report file containing calculated stocktake data"
-msgstr ""
+msgstr "Tạo tệp báo cáo chứa dữ liệu kiểm kê đã tính toán"
 
 #: part/serializers.py:990
 msgid "Update Parts"
@@ -6465,15 +6465,15 @@ msgstr "Cập nhật sản phẩm"
 
 #: part/serializers.py:991
 msgid "Update specified parts with calculated stocktake data"
-msgstr ""
+msgstr "Cập nhật sản phẩm cụ thể với dữ liệu kiểm kê đã tính"
 
 #: part/serializers.py:998
 msgid "Stocktake functionality is not enabled"
-msgstr ""
+msgstr "Chức năng kiểm kê chưa được bật"
 
 #: part/serializers.py:1087
 msgid "Update"
-msgstr ""
+msgstr "Cập nhật"
 
 #: part/serializers.py:1088
 msgid "Update pricing for this part"
@@ -6485,71 +6485,71 @@ msgstr "Chọn sản phẩm để sao chép định mức nguyên vật liệu"
 
 #: part/serializers.py:1383
 msgid "Remove Existing Data"
-msgstr ""
+msgstr "Xóa dữ liệu đã tồn tại"
 
 #: part/serializers.py:1384
 msgid "Remove existing BOM items before copying"
-msgstr ""
+msgstr "Xóa mục BOM đã tồn tại trước khi sao chép"
 
 #: part/serializers.py:1389
 msgid "Include Inherited"
-msgstr ""
+msgstr "Bao gồm thừa hưởng"
 
 #: part/serializers.py:1390
 msgid "Include BOM items which are inherited from templated parts"
-msgstr ""
+msgstr "Bao gồm mục BOM được thừa hưởng từ sản phẩm mẫu"
 
 #: part/serializers.py:1395
 msgid "Skip Invalid Rows"
-msgstr ""
+msgstr "Bỏ qua dòng không hợp lệ"
 
 #: part/serializers.py:1396
 msgid "Enable this option to skip invalid rows"
-msgstr ""
+msgstr "Bật tùy chọn này để bỏ qua dòng không hợp lệ"
 
 #: part/serializers.py:1401
 msgid "Copy Substitute Parts"
-msgstr ""
+msgstr "Sao chép sản phẩm thay thế"
 
 #: part/serializers.py:1402
 msgid "Copy substitute parts when duplicate BOM items"
-msgstr ""
+msgstr "Sao chép sản phẩm thay thế khi nhân bản hàng hóa BOM"
 
 #: part/serializers.py:1442
 msgid "Clear Existing BOM"
-msgstr ""
+msgstr "Dọn dẹp BOM đang tồn tại"
 
 #: part/serializers.py:1443
 msgid "Delete existing BOM items before uploading"
-msgstr ""
+msgstr "Xóa mục BOM đang tồn tại trước khi tải lên"
 
 #: part/serializers.py:1473
 msgid "No part column specified"
-msgstr ""
+msgstr "Chưa chỉ ra cột sản phẩm"
 
 #: part/serializers.py:1517
 msgid "Multiple matching parts found"
-msgstr ""
+msgstr "Tìm thấy nhiều sản phẩm phù hợp"
 
 #: part/serializers.py:1520
 msgid "No matching part found"
-msgstr ""
+msgstr "Không tìm thấy sản phẩm nào"
 
 #: part/serializers.py:1523
 msgid "Part is not designated as a component"
-msgstr ""
+msgstr "Sản phẩm không được chỉ định như là một thành phần"
 
 #: part/serializers.py:1532
 msgid "Quantity not provided"
-msgstr ""
+msgstr "Chưa cung cấp số lượng"
 
 #: part/serializers.py:1540
 msgid "Invalid quantity"
-msgstr ""
+msgstr "Số lượng không hợp lệ"
 
 #: part/serializers.py:1561
 msgid "At least one BOM item is required"
-msgstr ""
+msgstr "Buộc phải nhập ít nhất một mục BOM"
 
 #: part/stocktake.py:223 templates/js/translated/part.js:1063
 #: templates/js/translated/part.js:1817 templates/js/translated/part.js:1872
@@ -6593,24 +6593,24 @@ msgstr "BOM sản phẩm này đã được thay đổi và phải được xác
 #: part/templates/part/bom.html:17
 #, python-format
 msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr ""
+msgstr "BOM cho <em>%(part)s</em> đã được kiểm tra lần cuối bởi %(checker)s vào %(check_date)s"
 
 #: part/templates/part/bom.html:21
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr ""
+msgstr "BOM cho <em>%(part)s</em> chưa được xác minh."
 
 #: part/templates/part/category.html:35
 msgid "Perform stocktake for this part category"
-msgstr ""
+msgstr "Thực hiện kiểm kê cho danh mục hàng hóa này"
 
 #: part/templates/part/category.html:41 part/templates/part/category.html:45
 msgid "You are subscribed to notifications for this category"
-msgstr ""
+msgstr "Bạn đã được đăng ký nhận thông báo cho danh mục này"
 
 #: part/templates/part/category.html:49
 msgid "Subscribe to notifications for this category"
-msgstr ""
+msgstr "Đăng ký nhận thông báo cho danh mục này"
 
 #: part/templates/part/category.html:55
 msgid "Category Actions"
@@ -6622,7 +6622,7 @@ msgstr "Sửa danh mục"
 
 #: part/templates/part/category.html:61
 msgid "Edit Category"
-msgstr ""
+msgstr "Sửa danh mục"
 
 #: part/templates/part/category.html:65
 msgid "Delete category"
@@ -6679,7 +6679,7 @@ msgstr "Tạo bản sao của sản phẩm '%(full_name)s'."
 #: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
 msgid "Possible Matching Parts"
-msgstr ""
+msgstr "Các sản phẩm có thể khớp"
 
 #: part/templates/part/copy_part.html:15
 #: part/templates/part/create_part.html:12
@@ -7217,23 +7217,23 @@ msgstr "Mẫu tải lên BOM"
 
 #: part/templates/part/upload_bom.html:40
 msgid "Each part must already exist in the database"
-msgstr ""
+msgstr "Mỗi sản phẩm phải tồn tại trong cơ sở dữ liệu"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
-msgstr ""
+msgstr "Tạo biến thể sản phẩm mới"
 
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
-msgstr ""
+msgstr "Tạo sản phẩm biến thể mới từ mẫu này"
 
 #: part/templatetags/inventree_extras.py:185
 msgid "Unknown database"
-msgstr ""
+msgstr "Không rõ cơ sở dữ liệu"
 
 #: part/templatetags/inventree_extras.py:231
 msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr ""
+msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: part/views.py:110
 msgid "Match References"
@@ -7246,79 +7246,79 @@ msgstr ""
 
 #: part/views.py:383
 msgid "Select Part Image"
-msgstr ""
+msgstr "Chọn ảnh sản phẩm"
 
 #: part/views.py:409
 msgid "Updated part image"
-msgstr ""
+msgstr "Cập nhật ảnh sản phẩm"
 
 #: part/views.py:412
 msgid "Part image not found"
-msgstr ""
+msgstr "Không tìm thấy ảnh sản phẩm"
 
 #: part/views.py:507
 msgid "Part Pricing"
-msgstr ""
+msgstr "Định giá sản phẩm"
 
 #: plugin/base/action/api.py:27
 msgid "No action specified"
-msgstr ""
+msgstr "Chưa chỉ ra hành động cụ thể"
 
 #: plugin/base/action/api.py:38
 msgid "No matching action found"
-msgstr ""
+msgstr "Không tìm thấy chức năng phù hợp"
 
 #: plugin/base/barcodes/api.py:56 plugin/base/barcodes/api.py:111
 #: plugin/base/barcodes/api.py:269
 msgid "Missing barcode data"
-msgstr ""
+msgstr "Sai dữ liệu mã vạch"
 
 #: plugin/base/barcodes/api.py:82
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Không tìm thấy dữ liệu mã vạch phù hợp"
 
 #: plugin/base/barcodes/api.py:86
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Đã tìm thấy dữ liệu mã vạch phù hợp"
 
 #: plugin/base/barcodes/api.py:121
 #: templates/js/translated/purchase_order.js:1391
 msgid "Barcode matches existing item"
-msgstr ""
+msgstr "Mã vạch phù hợp với hàng hóa hiện có"
 
 #: plugin/base/barcodes/api.py:217
 msgid "No match found for provided value"
-msgstr ""
+msgstr "Không tìm thấy dữ liệu phù hợp với dữ liệu được cung cấp"
 
 #: plugin/base/barcodes/api.py:275
 msgid "Invalid purchase order"
-msgstr ""
+msgstr "Đơn đặt mua không hợp lệ"
 
 #: plugin/base/barcodes/api.py:281
 msgid "Invalid stock location"
-msgstr ""
+msgstr "Vị trí kho không hợp lệ"
 
 #: plugin/base/barcodes/api.py:292
 msgid "Item has already been received"
-msgstr ""
+msgstr "Hàng hóa này đã được nhận"
 
 #: plugin/base/barcodes/api.py:314
 msgid "Invalid supplier barcode"
-msgstr ""
+msgstr "Mã vạch nhà cung cấp không hợp lệ"
 
 #: plugin/base/barcodes/mixins.py:170
 msgid "Supplier barcode doesn't contain order number"
-msgstr ""
+msgstr "Mã vạch nhà cung cấp không chứa mã đơn đặt"
 
 #: plugin/base/barcodes/mixins.py:183
 #, python-brace-format
 msgid "Found multiple placed purchase orders for '{order_number}'"
-msgstr ""
+msgstr "Phát hiện nhiều đơn đặt mua đã được đặt cho '{order_number}'"
 
 #: plugin/base/barcodes/mixins.py:185
 #, python-brace-format
 msgid "Failed to find placed purchase order for '{order_number}'"
-msgstr ""
+msgstr "Không tìm thấy đơn đặt mua cho '{order_number}'"
 
 #: plugin/base/barcodes/mixins.py:215
 msgid "Failed to find pending line item for supplier part"
@@ -7433,153 +7433,153 @@ msgstr "Nhà cung cấp hành động như 'DigiKey'"
 
 #: plugin/builtin/suppliers/lcsc.py:22
 msgid "Supplier Integration - LCSC"
-msgstr ""
+msgstr "Tích hợp nhà cung cấp - LCSC"
 
 #: plugin/builtin/suppliers/lcsc.py:23
 msgid "Provides support for scanning LCSC barcodes"
-msgstr ""
+msgstr "Cung cấp khả năng quét mã vạch LCSC"
 
 #: plugin/builtin/suppliers/lcsc.py:31
 msgid "The Supplier which acts as 'LCSC'"
-msgstr ""
+msgstr "Nhà cung cấp hoạt động như 'LCSC'"
 
 #: plugin/builtin/suppliers/mouser.py:21
 msgid "Supplier Integration - Mouser"
-msgstr ""
+msgstr "Tích hợp nhà cung cấp - Mouser"
 
 #: plugin/builtin/suppliers/mouser.py:22
 msgid "Provides support for scanning Mouser barcodes"
-msgstr ""
+msgstr "Cung cấp khả năng quét mã vạch Mouser"
 
 #: plugin/builtin/suppliers/mouser.py:30
 msgid "The Supplier which acts as 'Mouser'"
-msgstr ""
+msgstr "Nhà cung cấp hành động như 'Mouser'"
 
 #: plugin/builtin/suppliers/tme.py:22
 msgid "Supplier Integration - TME"
-msgstr ""
+msgstr "Tích hợp nhà cung cấp - TME"
 
 #: plugin/builtin/suppliers/tme.py:23
 msgid "Provides support for scanning TME barcodes"
-msgstr ""
+msgstr "Cung cấp khả năng quét mã vạch TME"
 
 #: plugin/builtin/suppliers/tme.py:31
 msgid "The Supplier which acts as 'TME'"
-msgstr ""
+msgstr "Nhà cung cấp hoạt động như 'TME'"
 
 #: plugin/installer.py:140
 msgid "Permission denied: only staff users can install plugins"
-msgstr ""
+msgstr "Quyền bị từ chối: chỉ người dùng là nhân viên mới có thể cài đặt phần mở rộng"
 
 #: plugin/installer.py:186
 msgid "Installed plugin successfully"
-msgstr ""
+msgstr "Cài đặt phần mở rộng thành công"
 
 #: plugin/installer.py:192
 #, python-brace-format
 msgid "Installed plugin into {path}"
-msgstr ""
+msgstr "Cài đặt phần mở rộng đến {path}"
 
 #: plugin/installer.py:201
 msgid "Plugin installation failed"
-msgstr ""
+msgstr "Cài đặt phần mở rộng thất bại"
 
 #: plugin/models.py:28
 msgid "Plugin Configuration"
-msgstr ""
+msgstr "Cấu hình plugin"
 
 #: plugin/models.py:29
 msgid "Plugin Configurations"
-msgstr ""
+msgstr "Cấu hình plugin"
 
 #: plugin/models.py:34 users/models.py:70
 msgid "Key"
-msgstr ""
+msgstr "Khóa"
 
 #: plugin/models.py:35
 msgid "Key of plugin"
-msgstr ""
+msgstr "Khóa của plugin"
 
 #: plugin/models.py:43
 msgid "PluginName of the plugin"
-msgstr ""
+msgstr "Tên của plugin"
 
 #: plugin/models.py:49
 msgid "Is the plugin active"
-msgstr ""
+msgstr "Là plugin hoạt động"
 
 #: plugin/models.py:129 templates/js/translated/table_filters.js:370
 #: templates/js/translated/table_filters.js:500
 msgid "Installed"
-msgstr ""
+msgstr "Đã cài đặt"
 
 #: plugin/models.py:138
 msgid "Sample plugin"
-msgstr ""
+msgstr "Plugin mẫu"
 
 #: plugin/models.py:146
 msgid "Builtin Plugin"
-msgstr ""
+msgstr "Plugin có sẵn"
 
 #: plugin/models.py:171 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:50
 msgid "Plugin"
-msgstr ""
+msgstr "Phần bổ sung"
 
 #: plugin/models.py:222
 msgid "Method"
-msgstr ""
+msgstr "Phương thức"
 
 #: plugin/plugin.py:265
 msgid "No author found"
-msgstr ""
+msgstr "Không tìm thấy tác giả"
 
 #: plugin/registry.py:510
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
-msgstr ""
+msgstr "Phần bổ sung '{p}' không tương thích với phiên bản InvenTree hiện tại {v}"
 
 #: plugin/registry.py:512
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
-msgstr ""
+msgstr "Phần bổ sung yêu cầu ít nhất phiên bản {v}"
 
 #: plugin/registry.py:514
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
-msgstr ""
+msgstr "Phần bổ sung yêu cầu tối đa phiên bản {v}"
 
 #: plugin/samples/integration/sample.py:50
 msgid "Enable PO"
-msgstr ""
+msgstr "Bật PO"
 
 #: plugin/samples/integration/sample.py:51
 msgid "Enable PO functionality in InvenTree interface"
-msgstr ""
+msgstr "Bật chức năng PO trong giao diện InvenTree"
 
 #: plugin/samples/integration/sample.py:56
 msgid "API Key"
-msgstr ""
+msgstr "Khóa API"
 
 #: plugin/samples/integration/sample.py:57
 msgid "Key required for accessing external API"
-msgstr ""
+msgstr "Khóa bắt buộc đê truy cập API bên ngoài"
 
 #: plugin/samples/integration/sample.py:61
 msgid "Numerical"
-msgstr ""
+msgstr "Kiểu số"
 
 #: plugin/samples/integration/sample.py:62
 msgid "A numerical setting"
-msgstr ""
+msgstr "Thiết lập con số"
 
 #: plugin/samples/integration/sample.py:67
 msgid "Choice Setting"
-msgstr ""
+msgstr "Thiết lập lựa chọn"
 
 #: plugin/samples/integration/sample.py:68
 msgid "A setting with multiple choices"
-msgstr ""
+msgstr "Một thiết lập với nhiều lựa chọn"
 
 #: plugin/samples/integration/sample_currency_exchange.py:15
 msgid "Sample currency exchange plugin"
@@ -7652,7 +7652,7 @@ msgstr ""
 
 #: report/helpers.py:15
 msgid "Legal"
-msgstr ""
+msgstr "Pháp lý"
 
 #: report/helpers.py:16
 msgid "Letter"
@@ -9230,7 +9230,7 @@ msgid "Edit"
 msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:81
-#: templates/js/translated/forms.js:508 templates/js/translated/helpers.js:105
+#: templates/js/translated/forms.js:511 templates/js/translated/helpers.js:105
 #: templates/js/translated/part.js:389 templates/js/translated/pricing.js:629
 #: templates/js/translated/stock.js:245 users/models.py:384
 msgid "Delete"
@@ -9336,7 +9336,7 @@ msgid "Home Page"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:15
-#: templates/js/translated/forms.js:2045 templates/js/translated/tables.js:543
+#: templates/js/translated/forms.js:2064 templates/js/translated/tables.js:543
 #: templates/navbar.html:107 templates/search.html:8
 #: templates/search_form.html:6 templates/search_form.html:7
 msgid "Search"
@@ -9684,7 +9684,7 @@ msgstr ""
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
-#: templates/account/email_confirm.html:21 templates/js/translated/forms.js:728
+#: templates/account/email_confirm.html:21 templates/js/translated/forms.js:746
 msgid "Confirm"
 msgstr ""
 
@@ -10637,7 +10637,7 @@ msgid "No builds matching query"
 msgstr ""
 
 #: templates/js/translated/build.js:2102 templates/js/translated/build.js:2467
-#: templates/js/translated/forms.js:2041 templates/js/translated/forms.js:2057
+#: templates/js/translated/forms.js:2060 templates/js/translated/forms.js:2076
 #: templates/js/translated/part.js:2311 templates/js/translated/part.js:2737
 #: templates/js/translated/stock.js:1953 templates/js/translated/stock.js:2681
 msgid "Select"
@@ -11017,61 +11017,61 @@ msgstr ""
 msgid "Create filter"
 msgstr ""
 
-#: templates/js/translated/forms.js:371 templates/js/translated/forms.js:386
-#: templates/js/translated/forms.js:400 templates/js/translated/forms.js:414
+#: templates/js/translated/forms.js:374 templates/js/translated/forms.js:389
+#: templates/js/translated/forms.js:403 templates/js/translated/forms.js:417
 msgid "Action Prohibited"
 msgstr ""
 
-#: templates/js/translated/forms.js:373
+#: templates/js/translated/forms.js:376
 msgid "Create operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:388
+#: templates/js/translated/forms.js:391
 msgid "Update operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:402
+#: templates/js/translated/forms.js:405
 msgid "Delete operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:416
+#: templates/js/translated/forms.js:419
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:754
+#: templates/js/translated/forms.js:772
 msgid "Keep this form open"
 msgstr ""
 
-#: templates/js/translated/forms.js:855
+#: templates/js/translated/forms.js:874
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1403 templates/modals.html:19
+#: templates/js/translated/forms.js:1422 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1857
+#: templates/js/translated/forms.js:1876
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:2161 templates/js/translated/search.js:239
+#: templates/js/translated/forms.js:2180 templates/js/translated/search.js:239
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2375
+#: templates/js/translated/forms.js:2394
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:2832
+#: templates/js/translated/forms.js:2851
 msgid "File Column"
 msgstr ""
 
-#: templates/js/translated/forms.js:2832
+#: templates/js/translated/forms.js:2851
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:2844
+#: templates/js/translated/forms.js:2863
 msgid "Select Columns"
 msgstr ""
 
@@ -11099,35 +11099,51 @@ msgstr ""
 msgid "Allocated Stock"
 msgstr ""
 
-#: templates/js/translated/label.js:55
-msgid "Select Printer"
-msgstr ""
-
-#: templates/js/translated/label.js:110
-msgid "selected"
-msgstr ""
-
-#: templates/js/translated/label.js:118 templates/js/translated/label.js:135
-msgid "Select Label Template"
-msgstr ""
-
-#: templates/js/translated/label.js:174 templates/js/translated/report.js:123
+#: templates/js/translated/label.js:53 templates/js/translated/report.js:123
 msgid "Select Items"
 msgstr ""
 
-#: templates/js/translated/label.js:175
+#: templates/js/translated/label.js:54
 msgid "No items selected for printing"
 msgstr ""
 
-#: templates/js/translated/label.js:191
+#: templates/js/translated/label.js:72
 msgid "No Labels Found"
 msgstr ""
 
-#: templates/js/translated/label.js:192
+#: templates/js/translated/label.js:73
 msgid "No label templates found which match the selected items"
 msgstr ""
 
-#: templates/js/translated/label.js:214
+#: templates/js/translated/label.js:97
+msgid "selected"
+msgstr ""
+
+#: templates/js/translated/label.js:133
+msgid "Printing Options"
+msgstr ""
+
+#: templates/js/translated/label.js:143
+msgid "Print label"
+msgstr ""
+
+#: templates/js/translated/label.js:143
+msgid "Print labels"
+msgstr ""
+
+#: templates/js/translated/label.js:144
+msgid "Print"
+msgstr ""
+
+#: templates/js/translated/label.js:150
+msgid "Select label template"
+msgstr ""
+
+#: templates/js/translated/label.js:163
+msgid "Select plugin"
+msgstr ""
+
+#: templates/js/translated/label.js:182
 msgid "Labels sent to printer"
 msgstr ""
 
