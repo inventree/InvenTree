@@ -1,13 +1,13 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../../states/ApiState';
+import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import {
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
-} from '../forms';
+} from '../functions/forms';
+import { ApiPaths } from '../states/ApiState';
 
 export function attachmentFields(editing: boolean): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {

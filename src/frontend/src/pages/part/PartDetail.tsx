@@ -49,7 +49,7 @@ import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPa
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { editPart } from '../../functions/forms/PartForms';
+import { editPart } from '../../forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';

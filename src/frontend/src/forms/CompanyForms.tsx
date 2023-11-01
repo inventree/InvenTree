@@ -6,9 +6,9 @@ import {
   IconPhone
 } from '@tabler/icons-react';
 
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../../states/ApiState';
-import { openEditApiForm } from '../forms';
+import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { openEditApiForm } from '../functions/forms';
+import { ApiPaths } from '../states/ApiState';
 
 /**
  * Field set for editing a company instance

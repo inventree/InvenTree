@@ -9,13 +9,13 @@ import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { ModelType } from '../../components/render/ModelType';
 import { StatusRenderer } from '../../components/renderers/StatusRenderer';
-import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 import {
   createPart,
   editPart,
   partCategoryFields
-} from '../../functions/forms/PartForms';
-import { createStockItem } from '../../functions/forms/StockForms';
+} from '../../forms/PartForms';
+import { createStockItem } from '../../forms/StockForms';
+import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 import { ApiPaths } from '../../states/ApiState';
 
 // Generate some example forms using the modal API forms interface

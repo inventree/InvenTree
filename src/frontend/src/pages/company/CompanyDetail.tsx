@@ -31,7 +31,7 @@ import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { editCompany } from '../../functions/forms/CompanyForms';
+import { editCompany } from '../../forms/CompanyForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';

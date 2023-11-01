@@ -35,7 +35,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { editStockItem } from '../../functions/forms/StockForms';
+import { editStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';

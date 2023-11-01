@@ -11,7 +11,7 @@ import {
   addAttachment,
   deleteAttachment,
   editAttachment
-} from '../../../functions/forms/AttachmentForms';
+} from '../../../forms/AttachmentForms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { AttachmentLink } from '../../items/AttachmentLink';

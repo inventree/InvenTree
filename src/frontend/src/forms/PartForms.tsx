@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
 
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../../states/ApiState';
-import { openCreateApiForm, openEditApiForm } from '../forms';
+import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { openCreateApiForm, openEditApiForm } from '../functions/forms';
+import { ApiPaths } from '../states/ApiState';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
