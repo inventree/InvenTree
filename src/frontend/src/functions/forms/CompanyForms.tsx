@@ -46,7 +46,6 @@ export function editCompany({
   callback?: () => void;
 }) {
   openEditApiForm({
-    name: 'company-edit',
     title: t`Edit Company`,
     url: ApiPaths.company_list,
     pk: pk,

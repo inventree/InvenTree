@@ -70,7 +70,6 @@ export function partFields({
  */
 export function createPart() {
   openCreateApiForm({
-    name: 'part-create',
     title: t`Create Part`,
     url: ApiPaths.part_list,
     successMessage: t`Part created`,
@@ -90,7 +89,6 @@ export function editPart({
   callback?: () => void;
 }) {
   openEditApiForm({
-    name: 'part-edit',
     title: t`Edit Part`,
     url: ApiPaths.part_list,
     pk: part_id,

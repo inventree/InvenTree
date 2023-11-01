@@ -107,7 +107,6 @@ export function stockFields({
  */
 export function createStockItem() {
   openCreateApiForm({
-    name: 'stockitem-create',
     url: ApiPaths.stock_item_list,
     fields: stockFields({ create: true }),
     title: t`Create Stock Item`
@@ -126,7 +125,6 @@ export function editStockItem({
   callback?: () => void;
 }) {
   openEditApiForm({
-    name: 'stockitem-edit',
     url: ApiPaths.stock_item_list,
     pk: item_id,
     fields: stockFields({ create: false }),

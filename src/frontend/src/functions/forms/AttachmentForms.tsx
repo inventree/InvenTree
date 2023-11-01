@@ -59,7 +59,6 @@ export function addAttachment({
   let message = attachmentType === 'file' ? t`File added` : t`Link added`;
 
   openCreateApiForm({
-    name: 'attachment-add',
     title: title,
     url: endpoint,
     successMessage: message,
@@ -102,7 +101,6 @@ export function editAttachment({
   let message = attachmentType === 'file' ? t`File updated` : t`Link updated`;
 
   openEditApiForm({
-    name: 'attachment-edit',
     title: title,
     url: endpoint,
     pk: pk,
@@ -124,7 +122,6 @@ export function deleteAttachment({
   openDeleteApiForm({
     url: endpoint,
     pk: pk,
-    name: 'attachment-edit',
     title: t`Delete Attachment`,
     successMessage: t`Attachment deleted`,
     onFormSuccess: callback,

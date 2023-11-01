@@ -49,7 +49,6 @@ export function CustomUnitsTable() {
         title: t`Edit`,
         onClick: () => {
           openEditApiForm({
-            name: 'edit-custom-unit',
             url: ApiPaths.custom_unit_list,
             pk: record.pk,
             title: t`Edit custom unit`,
@@ -67,7 +66,6 @@ export function CustomUnitsTable() {
         title: t`Delete`,
         onClick: () => {
           openDeleteApiForm({
-            name: 'delete-custom-unit',
             url: ApiPaths.custom_unit_list,
             pk: record.pk,
             title: t`Delete custom unit`,
@@ -84,7 +82,6 @@ export function CustomUnitsTable() {
 
   const addCustomUnit = useCallback(() => {
     openCreateApiForm({
-      name: 'add-custom-unit',
       url: ApiPaths.custom_unit_list,
       title: t`Add custom unit`,
       fields: {

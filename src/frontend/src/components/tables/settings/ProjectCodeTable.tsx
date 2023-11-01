@@ -41,7 +41,6 @@ export function ProjectCodeTable() {
         title: t`Edit`,
         onClick: () => {
           openEditApiForm({
-            name: 'edit-project-code',
             url: ApiPaths.project_code_list,
             pk: record.pk,
             title: t`Edit project code`,
@@ -59,7 +58,6 @@ export function ProjectCodeTable() {
         color: 'red',
         onClick: () => {
           openDeleteApiForm({
-            name: 'delete-project-code',
             url: ApiPaths.project_code_list,
             pk: record.pk,
             title: t`Delete project code`,
@@ -76,7 +74,6 @@ export function ProjectCodeTable() {
 
   const addProjectCode = useCallback(() => {
     openCreateApiForm({
-      name: 'add-project-code',
       url: ApiPaths.project_code_list,
       title: t`Add project code`,
       fields: {

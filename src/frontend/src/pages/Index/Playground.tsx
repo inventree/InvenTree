@@ -23,7 +23,6 @@ function ApiFormsPlayground() {
   let fields = partCategoryFields({});
 
   const editCategoryForm: ApiFormProps = {
-    name: 'partcategory',
     url: ApiPaths.category_list,
     pk: 2,
     title: 'Edit Category',
@@ -31,7 +30,6 @@ function ApiFormsPlayground() {
   };
 
   const createAttachmentForm: ApiFormProps = {
-    name: 'createattachment',
     url: ApiPaths.part_attachment_list,
     title: 'Create Attachment',
     successMessage: 'Attachment uploaded',

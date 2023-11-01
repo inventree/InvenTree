@@ -107,7 +107,6 @@ export function PartParameterTable({ partId }: { partId: any }) {
         title: t`Edit`,
         onClick: () => {
           openEditApiForm({
-            name: 'edit-part-parameter',
             url: ApiPaths.part_parameter_list,
             pk: record.pk,
             title: t`Edit Part Parameter`,
@@ -129,7 +128,6 @@ export function PartParameterTable({ partId }: { partId: any }) {
         color: 'red',
         onClick: () => {
           openDeleteApiForm({
-            name: 'delete-part-parameter',
             url: ApiPaths.part_parameter_list,
             pk: record.pk,
             title: t`Delete Part Parameter`,
@@ -153,7 +151,6 @@ export function PartParameterTable({ partId }: { partId: any }) {
     }
 
     openCreateApiForm({
-      name: 'add-part-parameter',
       url: ApiPaths.part_parameter_list,
       title: t`Add Part Parameter`,
       fields: {
