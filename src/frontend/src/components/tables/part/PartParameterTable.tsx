@@ -14,7 +14,7 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction } from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Construct a table listing parameters for a given part
