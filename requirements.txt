@@ -113,7 +113,7 @@ django-maintenance-mode==0.19.0
     # via -r requirements.in
 django-markdownify==0.9.3
     # via -r requirements.in
-django-money==2.1.1
+django-money==3.2.0
     # via -r requirements.in
 django-mptt==0.11.0
     # via -r requirements.in
@@ -211,10 +211,8 @@ pillow==9.5.0
     #   weasyprint
 pint==0.21
     # via -r requirements.in
-py-moneyed==1.2
-    # via
-    #   -r requirements.in
-    #   django-money
+py-moneyed==3.0
+    # via django-money
 pycparser==2.21
     # via cffi
 pydyf==0.8.0
@@ -302,6 +300,7 @@ tinycss2==1.2.1
 typing-extensions==4.8.0
     # via
     #   asgiref
+    #   py-moneyed
     #   qrcode
 uritemplate==4.1.1
     # via

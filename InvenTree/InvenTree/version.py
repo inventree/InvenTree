@@ -97,6 +97,27 @@ def inventreeDocsVersion():
     return INVENTREE_SW_VERSION  # pragma: no cover
 
 
+def inventreeDocUrl():
+    """Return URL for InvenTree documentation site."""
+    tag = inventreeDocsVersion()
+    return f"https://docs.inventree.org/en/{tag}"
+
+
+def inventreeAppUrl():
+    """Return URL for InvenTree app site."""
+    return f'{inventreeDocUrl()}/app/app',
+
+
+def inventreeCreditsUrl():
+    """Return URL for InvenTree credits site."""
+    return "https://docs.inventree.org/en/latest/credits/"
+
+
+def inventreeGithubUrl():
+    """Return URL for InvenTree github site."""
+    return "https://github.com/InvenTree/InvenTree/"
+
+
 def isInvenTreeUpToDate():
     """Test if the InvenTree instance is "up to date" with the latest version.
 
@@ -124,6 +145,11 @@ def inventreeApiVersion():
 def inventreeDjangoVersion():
     """Returns the version of Django library."""
     return django.get_version()
+
+
+def inventreePythonVersion():
+    """Returns the version of python"""
+    return sys.version.split(' ')[0]
 
 
 def inventreeCommitHash():

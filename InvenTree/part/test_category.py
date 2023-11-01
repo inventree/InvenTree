@@ -226,6 +226,8 @@ class CategoryTest(TestCase):
         # Clear out any existing parts
         Part.objects.all().delete()
 
+        PartCategory.objects.rebuild()
+
         # First, create a structured tree of part categories
         A = PartCategory.objects.create(
             name='A',

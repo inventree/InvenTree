@@ -11,7 +11,7 @@ export function TableColumnSelect({
   onToggleColumn: (columnName: string) => void;
 }) {
   return (
-    <Menu shadow="xs">
+    <Menu shadow="xs" closeOnItemClick={false}>
       <Menu.Target>
         <ActionIcon>
           <Tooltip label={t`Select Columns`}>
