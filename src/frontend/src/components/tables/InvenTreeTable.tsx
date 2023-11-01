@@ -524,7 +524,11 @@ export function InvenTreeTable({
           onRowClick={tableProps.onRowClick}
           defaultColumnProps={{
             noWrap: true,
-            textAlignment: 'left'
+            textAlignment: 'left',
+            cellsStyle: {
+              maxWidth: '500px',
+              overflow: 'scroll'
+            }
           }}
         />
       </Stack>
