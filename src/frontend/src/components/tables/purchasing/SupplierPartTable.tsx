@@ -26,8 +26,6 @@ import { TableHoverCard } from '../TableHoverCard';
 export function SupplierPartTable({ params }: { params: any }): ReactNode {
   const { tableKey, refreshTable } = useTableRefresh('supplierparts');
 
-  const navigate = useNavigate();
-
   const user = useUserState();
 
   // Construct table columns for this table

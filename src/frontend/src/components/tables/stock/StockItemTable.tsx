@@ -3,7 +3,6 @@ import { Group, Stack, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
