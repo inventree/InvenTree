@@ -62,6 +62,10 @@ export enum ApiPaths {
   user_reset_set = 'api-user-reset-set',
   user_sso = 'api-user-sso',
   user_sso_remove = 'api-user-sso-remove',
+  user_emails = 'api-user-emails',
+  user_email_verify = 'api-user-email-verify',
+  user_email_primary = 'api-user-email-primary',
+  user_email_remove = 'api-user-email-remove',
 
   settings_global_list = 'api-settings-global-list',
   settings_user_list = 'api-settings-user-list',
@@ -152,6 +156,14 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'auth/social/';
     case ApiPaths.user_sso_remove:
       return 'auth/social/$id/disconnect/';
+    case ApiPaths.user_emails:
+      return 'auth/emails/';
+    case ApiPaths.user_email_remove:
+      return 'auth/emails/$id/remove/';
+    case ApiPaths.user_email_verify:
+      return 'auth/emails/$id/verify/';
+    case ApiPaths.user_email_primary:
+      return 'auth/emails/$id/primary/';
     case ApiPaths.api_search:
       return 'search/';
     case ApiPaths.settings_global_list:

@@ -1,6 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import {
   Alert,
+  Badge,
   Button,
   Group,
   Loader,
@@ -89,11 +90,78 @@ export function SecurityContent() {
 }
 
 function EmailContent({}: {}) {
+  const [value, setValue] = useState<string>('');
+  const { isLoading, data, refetch } = useQuery({
+    queryKey: ['emails'],
+    queryFn: () => api.get(apiUrl(ApiPaths.user_emails)).then((res) => res.data)
+  });
+
+  function runServerAction(url: ApiPaths) {
+    api
+      .post(apiUrl(url).replace('$id', value), {})
+      .then(() => {
+        refetch();
+      })
+      .catch((res) => console.log(res.data));
+  }
+
+  if (isLoading) return <Loader />;
+
   return (
-    <>
-      Email Details
-      <PlaceholderPill />
-    </>
+    <Group>
+      <Stack>
+        <Radio.Group
+          value={value}
+          onChange={setValue}
+          name="email_accounts"
+          label={t`The following email addresses are associated with your account:`}
+        >
+          <Stack mt="xs">
+            {data.map((link: any) => (
+              <Radio
+                key={link.id}
+                value={String(link.id)}
+                label={
+                  <Group position="apart">
+                    {link.email}
+                    {link.primary && (
+                      <Badge color="blue">
+                        <Trans>Primary</Trans>
+                      </Badge>
+                    )}
+                    {link.verified ? (
+                      <Badge color="green">
+                        <Trans>Verified</Trans>
+                      </Badge>
+                    ) : (
+                      <Badge color="yellow">
+                        <Trans>Unverified</Trans>
+                      </Badge>
+                    )}
+                  </Group>
+                }
+              />
+            ))}
+          </Stack>
+        </Radio.Group>
+        <Group>
+          <Button onClick={() => runServerAction(ApiPaths.user_email_primary)}>
+            <Trans>Make Primary</Trans>
+          </Button>
+          <Button onClick={() => runServerAction(ApiPaths.user_email_verify)}>
+            <Trans>Re-send Verification</Trans>
+          </Button>
+          <Button onClick={() => runServerAction(ApiPaths.user_email_remove)}>
+            <Trans>Remove</Trans>
+          </Button>
+        </Group>
+      </Stack>
+      <Stack>
+        <Text>
+          <Trans>Add Email Address</Trans>
+        </Text>
+      </Stack>
+    </Group>
   );
 }
 
@@ -123,9 +191,8 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   }, [dataProvider, data]);
 
   function removeProvider() {
-    const url = apiUrl(ApiPaths.user_sso_remove).replace('$id', value);
     api
-      .post(url)
+      .post(apiUrl(ApiPaths.user_sso_remove).replace('$id', value))
       .then(() => {
         queryClient.removeQueries({
           queryKey: ['sso-list']

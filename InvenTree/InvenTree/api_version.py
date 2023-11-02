@@ -9,6 +9,7 @@ Increment this API version number whenever there is a significant change to the 
 
 v146 -> 2023-11-02: https://github.com/inventree/InvenTree/pull/5822
     - Extended SSO Provider endpoint to contain if a provider is configured
+    - Adds API endpoints for Email Address model
 
 v145 -> 2023-10-30: https://github.com/inventree/InvenTree/pull/5786
     - Allow printing labels via POST including printing options in the body

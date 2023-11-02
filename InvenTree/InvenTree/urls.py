@@ -38,7 +38,9 @@ from web.urls import urlpatterns as platform_urls
 
 from .api import APISearchView, InfoView, NotFoundView, VersionView
 from .magic_login import GetSimpleLoginView
-from .social_auth_urls import SocialProviderListView, social_auth_urlpatterns
+from .social_auth_urls import (EmailListView, EmailPrimaryView,
+                               EmailRemoveView, EmailVerifyView,
+                               SocialProviderListView, social_auth_urlpatterns)
 from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
                     CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
@@ -85,6 +87,12 @@ apipatterns = [
         re_path(r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$', ConfirmEmailView.as_view(), name='account_confirm_email'),
         path('registration/', include('dj_rest_auth.registration.urls')),
         path('providers/', SocialProviderListView.as_view(), name='social_providers'),
+        path('emails/', include([path('<int:pk>/', include([
+            path('primary/', EmailPrimaryView.as_view(), name='email-primary'),
+            path('verify/', EmailVerifyView.as_view(), name='email-verify'),
+            path('remove/', EmailRemoveView().as_view(), name='email-remove'),])),
+            path('', EmailListView.as_view(), name='email-list')
+        ])),
         path('social/', include(social_auth_urlpatterns)),
         path('social/', SocialAccountListView.as_view(), name='social_account_list'),
         path('social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),
