@@ -3,6 +3,7 @@ import {
   Alert,
   Badge,
   Button,
+  Grid,
   Group,
   Loader,
   Radio,
@@ -221,6 +222,8 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   }
 
   /* renderer */
+  if (isLoading) return <Loader />;
+
   function ProviderButton({ provider }: { provider: any }) {
     const button = (
       <Button
@@ -244,64 +247,55 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   }
 
   return (
-    <>
-      {isLoading ? (
-        <Loader />
+    <Group>
+      {data.length == 0 ? (
+        <Alert
+          icon={<IconAlertCircle size="1rem" />}
+          title={t`Not configured`}
+          color="yellow"
+        >
+          <Trans>
+            There are no social network accounts connected to this account.{' '}
+          </Trans>
+        </Alert>
       ) : (
-        <>
-          <Group>
-            {data.length == 0 ? (
-              <Alert
-                icon={<IconAlertCircle size="1rem" />}
-                title={t`Not configured`}
-                color="yellow"
-              >
-                <Trans>
-                  There are no social network accounts connected to this
-                  account.{' '}
-                </Trans>
-              </Alert>
-            ) : (
-              <Stack>
-                <Radio.Group
-                  value={value}
-                  onChange={setValue}
-                  name="sso_accounts"
-                  label={t`You can sign in to your account using any of the following third party accounts`}
-                >
-                  <Stack mt="xs">
-                    {data.map((link: any) => (
-                      <Radio
-                        key={link.id}
-                        value={String(link.id)}
-                        label={link.provider}
-                      />
-                    ))}
-                  </Stack>
-                </Radio.Group>
-                <Button onClick={removeProvider}>
-                  <Trans>Remove</Trans>
-                </Button>
-              </Stack>
-            )}
-            <Stack>
-              <Text>Add SSO Account</Text>
-              <Text>
-                {currentProviders === undefined ? (
-                  <Trans>Loading</Trans>
-                ) : (
-                  <Stack spacing="xs">
-                    {currentProviders.map((provider: any) => (
-                      <ProviderButton key={provider.id} provider={provider} />
-                    ))}
-                  </Stack>
-                )}
-              </Text>
+        <Stack>
+          <Radio.Group
+            value={value}
+            onChange={setValue}
+            name="sso_accounts"
+            label={t`You can sign in to your account using any of the following third party accounts`}
+          >
+            <Stack mt="xs">
+              {data.map((link: any) => (
+                <Radio
+                  key={link.id}
+                  value={String(link.id)}
+                  label={link.provider}
+                />
+              ))}
             </Stack>
-          </Group>
-        </>
+          </Radio.Group>
+          <Button onClick={removeProvider}>
+            <Trans>Remove</Trans>
+          </Button>
+        </Stack>
       )}
-    </>
+      <Stack>
+        <Text>Add SSO Account</Text>
+        <Text>
+          {currentProviders === undefined ? (
+            <Trans>Loading</Trans>
+          ) : (
+            <Stack spacing="xs">
+              {currentProviders.map((provider: any) => (
+                <ProviderButton key={provider.id} provider={provider} />
+              ))}
+            </Stack>
+          )}
+        </Text>
+      </Stack>
+    </Group>
   );
 }
 
