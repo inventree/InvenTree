@@ -33,6 +33,9 @@ export interface ServerAPIProps {
   docker_mode: null | boolean;
   database: null | string;
   system_health: null | boolean;
+  platform: null | string;
+  installer: null | string;
+  target: null | string;
 }
 
 // Type interface defining a single 'setting' object

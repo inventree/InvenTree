@@ -79,6 +79,15 @@ function serverInfo() {
   });
 }
 
+function aboutInvenTree() {
+  return openContextModal({
+    modal: 'about',
+    title: <Trans>About InvenTree</Trans>,
+    size: 'xl',
+    innerProps: {}
+  });
+}
+
 // TODO @matmair: Add the following pages and adjust the links
 export const aboutLinks: DocumentationLinkItem[] = [
   {
@@ -91,8 +100,7 @@ export const aboutLinks: DocumentationLinkItem[] = [
     id: 'about',
     title: <Trans>About InvenTree</Trans>,
     description: <Trans>About the InvenTree org</Trans>,
-    link: '/about',
-    placeholder: true
+    action: aboutInvenTree
   },
   {
     id: 'licenses',

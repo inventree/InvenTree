@@ -32,6 +32,7 @@
     setFormGroupVisibility,
     showFormInput,
     selectImportFields,
+    updateForm,
 */
 
 /**
@@ -306,6 +307,7 @@ function constructDeleteForm(fields, options) {
  *      - hidden: Set to true to hide the field
  *      - icon: font-awesome icon to display before the field
  *      - prefix: Custom HTML prefix to display before the field
+ *      - localOnly: If true, this field will only be rendered, but not send to the server
  * - data: map of data to fill out field values with
  * - focus: Name of field to focus on when modal is displayed
  * - preventClose: Set to true to prevent form from closing on success
@@ -315,6 +317,7 @@ function constructDeleteForm(fields, options) {
  * - reload: Set to true to reload the current page after form success
  * - confirm: Set to true to require a "confirm" button
  * - confirmText: Text for confirm button (default = "Confirm")
+ * - disableSuccessMessage: Set to true to suppress the success message if the response contains a success key by accident
  *
  */
 function constructForm(url, options={}) {
@@ -720,6 +723,21 @@ function constructFormBody(fields, options) {
     });
 }
 
+/**
+ * This Method updates an existing form by replacing all form fields with the new ones
+ * @param {*} options new form definition options
+ */
+function updateForm(options) {
+    // merge already entered values in the newly constructed form
+    options.data = extractFormData(options.fields, options);
+
+    // remove old submit handlers
+    $(options.modal).off('click', '#modal-form-submit');
+
+    // construct new form
+    constructFormBody(options.fields, options);
+}
+
 
 // Add a "confirm" checkbox to the modal
 // The "submit" button will be disabled unless "confirm" is checked
@@ -841,6 +859,7 @@ function submitFormData(fields, options) {
 
         // Ignore visual fields
         if (field && field.type == 'candy') continue;
+        if (field && field.localOnly === true) continue;
 
         if (field) {
 
@@ -1190,7 +1209,7 @@ function handleFormSuccess(response, options) {
     }
 
     // Display any messages
-    if (response && (response.success || options.successMessage)) {
+    if (!options.disableSuccessMessage && response && (response.success || options.successMessage)) {
         showAlertOrCache(
             response.success || options.successMessage,
             cache,
