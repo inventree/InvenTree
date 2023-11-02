@@ -60,6 +60,7 @@ export enum ApiPaths {
   user_simple_login = 'api-user-simple-login',
   user_reset = 'api-user-reset',
   user_reset_set = 'api-user-reset-set',
+  user_sso = 'api-user-sso',
 
   settings_global_list = 'api-settings-global-list',
   settings_user_list = 'api-settings-user-list',
@@ -69,6 +70,7 @@ export enum ApiPaths {
   news = 'news',
   global_status = 'api-global-status',
   version = 'api-version',
+  sso_providers = 'api-sso-providers',
 
   // Build order URLs
   build_order_list = 'api-build-list',
@@ -141,10 +143,12 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'email/generate/';
     case ApiPaths.user_reset:
       // Note leading prefix here
-      return '/auth/password/reset/';
+      return 'auth/password/reset/';
     case ApiPaths.user_reset_set:
       // Note leading prefix here
-      return '/auth/password/reset/confirm/';
+      return 'auth/password/reset/confirm/';
+    case ApiPaths.user_sso:
+      return 'auth/social/';
     case ApiPaths.api_search:
       return 'search/';
     case ApiPaths.settings_global_list:
@@ -161,6 +165,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'generic/status/';
     case ApiPaths.version:
       return 'version/';
+    case ApiPaths.sso_providers:
+      return 'auth/providers/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:

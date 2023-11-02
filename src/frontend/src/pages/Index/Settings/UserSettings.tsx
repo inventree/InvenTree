@@ -15,6 +15,7 @@ import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { UserSettingList } from '../../../components/settings/SettingList';
 import { useUserState } from '../../../states/UserState';
+import { SecurityContent } from './AccountSettings/SecurityContent';
 import { AccountContent } from './AccountSettings/UserPanel';
 
 /**
@@ -32,7 +33,8 @@ export default function UserSettings() {
       {
         name: 'security',
         label: t`Security`,
-        icon: <IconLock />
+        icon: <IconLock />,
+        content: <SecurityContent />
       },
       {
         name: 'dashboard',
