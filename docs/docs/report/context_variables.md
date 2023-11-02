@@ -191,6 +191,19 @@ Each part object has access to a lot of context variables about the part. The fo
 | postal_city | City name |
 | country | Country name |
 
+#### Contact
+
+Contacts are added to companies. Actually the company has no link to the contacts.
+You can search the company object of the contact.
+
+| Variable | Description |
+|----------|-------------|
+| company | Company object where the contact belongs to |
+| name | First and second name of the contact |
+| phone | Phone number |
+| email | Email address |
+| role | Role of the contact |
+
 #### SupplierPart
 
 | Variable | Description |
