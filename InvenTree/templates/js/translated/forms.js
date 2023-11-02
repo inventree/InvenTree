@@ -298,7 +298,7 @@ function constructDeleteForm(fields, options) {
  * - closeText: Text for the "close" button
  * - fields: list of fields to display, with the following options
  *      - filters: API query filters
- *      - onEdit: callback when field is edited
+ *      - onEdit: callback or array of callbacks which get fired when field is edited
  *      - secondary: Define a secondary modal form for this field
  *      - label: Specify custom label
  *      - help_text: Specify custom help_text
@@ -491,6 +491,30 @@ function constructFormBody(fields, options) {
     // add additional content as a header on top (provided as html by the caller)
     if (options.header_html) {
         html += options.header_html;
+    }
+
+    // process every field by recursively walking down nested fields
+    const processField = (name, field, optionsField) => {
+        if (field.type === "nested object") {
+            for (const [k, v] of Object.entries(field.children)) {
+                processField(`${name}__${k}`, v, optionsField.children[k]);
+            }
+        }
+
+        if (field.type === "dependent field") {
+            if(field.child) {
+                // copy child attribute from parameters to options
+                optionsField.child = field.child;
+
+                processField(name, field.child, optionsField.child);
+            } else {
+                delete optionsField.child;
+            }
+        }
+    }
+
+    for (const [k,v] of Object.entries(fields)) {
+        processField(k, v, options.fields[k]);
     }
 
     // Client must provide set of fields to be displayed,
@@ -802,7 +826,7 @@ function insertSecondaryButtons(options) {
 /*
  * Extract all specified form values as a single object
  */
-function extractFormData(fields, options) {
+function extractFormData(fields, options, includeLocal = true) {
 
     var data = {};
 
@@ -815,6 +839,7 @@ function extractFormData(fields, options) {
         if (!field) continue;
 
         if (field.type == 'candy') continue;
+        if (!includeLocal && field.localOnly) continue;
 
         data[name] = getFormFieldValue(name, field, options);
     }
@@ -1023,6 +1048,17 @@ function updateFieldValue(name, value, field, options) {
         }
         // TODO - Specify an actual value!
         break;
+    case 'nested object':
+        for (const [k, v] of Object.entries(value)) {
+            if (!(k in field.children)) continue;
+            updateFieldValue(`${name}__${k}`, v, field.children[k], options);
+        }
+        break;
+    case 'dependent field':
+        if (field.child) {
+            updateFieldValue(name, value, field.child, options);
+        }
+        break;
     case 'file upload':
     case 'image upload':
         break;
@@ -1162,6 +1198,11 @@ function getFormFieldValue(name, field={}, options={}) {
         for (const [name, subField] of Object.entries(field.children)) {
             value[name] = getFormFieldValue(subField.name, subField, options);
         }
+        break;
+    case 'dependent field':
+        if(!field.child) return undefined;
+
+        value = getFormFieldValue(name, field.child, options);
         break;
     default:
         value = el.val();
@@ -1447,7 +1488,8 @@ function handleFormErrors(errors, fields={}, options={}) {
         var field = fields[field_name] || {};
         var field_errors = errors[field_name];
 
-        if ((field.type == 'nested object') && ('children' in field)) {
+        // for nested objects with children and dependent fields with a child defined, extract nested errors
+        if (((field.type == 'nested object') && ('children' in field)) || ((field.type == 'dependent field') && ('child' in field))) {
             // Handle multi-level nested errors
             const handleNestedError = (parent_name, sub_field_errors) => {
                 for (const sub_field in sub_field_errors) {
@@ -1562,7 +1604,7 @@ function addFieldCallbacks(fields, options) {
 
         var field = fields[name];
 
-        if (!field || !field.onEdit) continue;
+        if (!field || field.type === "candy") continue;
 
         addFieldCallback(name, field, options);
     }
@@ -1570,15 +1612,34 @@ function addFieldCallbacks(fields, options) {
 
 
 function addFieldCallback(name, field, options) {
+    const el = getFormFieldElement(name, options);
 
-    var el = getFormFieldElement(name, options);
+    if (field.onEdit) {
+        el.change(function() {
 
-    el.change(function() {
+            var value = getFormFieldValue(name, field, options);
+            let onEditHandlers = field.onEdit;
 
-        var value = getFormFieldValue(name, field, options);
+            if (!Array.isArray(onEditHandlers)) {
+                onEditHandlers = [onEditHandlers];
+            }
 
-        field.onEdit(value, name, field, options);
-    });
+            for (const onEdit of onEditHandlers) {
+                onEdit(value, name, field, options);
+            }
+        });
+    }
+
+    // attach field callback for nested fields
+    if(field.type === "nested object") {
+        for (const [c_name, c_field] of Object.entries(field.children)) {
+            addFieldCallback(`${name}__${c_name}`, c_field, options);
+        }
+    }
+
+    if(field.type === "dependent field" && field.child) {
+        addFieldCallback(name, field.child, options);
+    }
 }
 
 
@@ -1733,16 +1794,32 @@ function initializeRelatedFields(fields, options={}) {
 
         if (!field || field.hidden) continue;
 
-        switch (field.type) {
+        initializeRelatedFieldsRecursively(field, fields, options);
+    }
+}
+
+function initializeRelatedFieldsRecursively(field, fields, options) {
+    switch (field.type) {
         case 'related field':
             initializeRelatedField(field, fields, options);
             break;
         case 'choice':
             initializeChoiceField(field, fields, options);
             break;
+        case 'nested object':
+            for (const [c_name, c_field] of Object.entries(field.children)) {
+                if(!c_field.name) c_field.name = `${field.name}__${c_name}`;
+                initializeRelatedFieldsRecursively(c_field, field.children, options);
+            }
+            break;
+        case 'dependent field':
+            if (field.child) {
+                if(!field.child.name) field.child.name = field.name;
+                initializeRelatedFieldsRecursively(field.child, fields, options);
+            }
+            break;
         default:
             break;
-        }
     }
 }
 
@@ -2352,7 +2429,7 @@ function constructField(name, parameters, options={}) {
     html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title} ${css}>`;
 
     // Add a label
-    if (!options.hideLabels && parameters.type !== "nested object") {
+    if (!options.hideLabels && parameters.type !== "nested object" && parameters.type !== "dependent field") {
         html += constructLabel(name, parameters);
     }
 
@@ -2510,6 +2587,8 @@ function constructInput(name, parameters, options={}) {
     case 'nested object':
         func = constructNestedObject;
         break;
+    case 'dependent field':
+        func = constructDependentField;
     default:
         // Unsupported field type!
         break;
@@ -2794,7 +2873,7 @@ function constructRawInput(name, parameters) {
  */
 function constructNestedObject(name, parameters, options) {
     let html = `
-        <div id="div_id_${name}" class='panel form-panel'>
+        <div id="div_id_${name}" class='panel form-panel' style="margin-bottom: 0; padding-bottom: 0;">
             <div class='panel-heading form-panel-heading'>
                 <div>
                     <h6 style='display: inline;'>${parameters.label}</h6>
@@ -2808,7 +2887,6 @@ function constructNestedObject(name, parameters, options) {
     for (const [key, field] of Object.entries(parameters.children)) {
         const subFieldName = `${name}__${key}`;
         field.name = subFieldName;
-        field.parent = options.name;
         parameters.field_names.push(subFieldName);
 
         html += constructField(subFieldName, field, options);
@@ -2819,6 +2897,100 @@ function constructNestedObject(name, parameters, options) {
     return html;
 }
 
+function getFieldByNestedPath(name, fields) {
+    if (typeof name === "string") {
+        name = name.split("__");
+    }
+
+    if (name.length === 0) return fields;
+
+    if (fields.type === "nested object") fields = fields.children;
+
+    if (!(name[0] in fields)) return null;
+    let field = fields[name[0]];
+
+    if (field.type === "dependent field" && field.child) {
+        field = field.child;
+    }
+
+    return getFieldByNestedPath(name.slice(1), field);
+}
+
+/*
+ * Construct a dependent field input
+ */
+function constructDependentField(name, parameters, options) {
+    // add onEdit handler to all fields this dependent field depends on
+    for (let d_field_name of parameters.depends_on) {
+        const d_field = getFieldByNestedPath([...name.split("__").slice(0, -1), d_field_name], options.fields);
+        if (!d_field) continue;
+
+        const onEdit = (value, name, field, options) => {
+            if(value === undefined) return;
+
+            // extract the current form data to include in OPTIONS request
+            const data = extractFormData(options.fields, options, false)
+
+            $.ajax({
+                url: options.url,
+                type: "OPTIONS",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: "json",
+                accepts: { json: "application/json" },
+                success: (res) => {
+                    const fields = res.actions[options.method];
+
+                    // merge already entered values in the newly constructed form
+                    options.data = extractFormData(options.fields, options);
+
+                    // remove old submit handlers
+                    $(options.modal).off('click', '#modal-form-submit');
+
+                    if (options.method === "POST") {
+                        constructCreateForm(fields, options);
+                    }
+
+                    if (options.method === "PUT" || options.method === "PATCH") {
+                        constructChangeForm(fields, options);
+                    }
+
+                    if (options.method === "DELETE") {
+                        constructDeleteForm(fields, options);
+                    }
+                },
+                error: (xhr) => showApiError(xhr, options.url)
+            });
+        }
+
+        // attach on edit handler
+        const originalOnEdit = d_field.onEdit;
+        d_field.onEdit = [onEdit];
+
+        if(typeof originalOnEdit === "function") {
+            d_field.onEdit.push(originalOnEdit);
+        } else if (Array.isArray(originalOnEdit)) {
+            // push old onEdit handlers, but omit the old
+            d_field.onEdit.push(...originalOnEdit.filter(h => h !== d_field._currentDependentFieldOnEdit));
+        }
+
+        // track current onEdit handler function
+        d_field._currentDependentFieldOnEdit = onEdit;
+    }
+
+    // child is not specified already, return a dummy div with id so no errors can happen
+    if (!parameters.child) {
+        return `<div id="id_${name}" hidden></div>`;
+    }
+
+    // copy label to child if not already provided
+    if(!parameters.child.label) {
+        parameters.child.label = parameters.label;
+    }
+
+    // construct the provided child field
+    return constructField(name, parameters.child, options);
+}
 
 /*
  * Construct a 'help text' div based on the field parameters

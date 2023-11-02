@@ -159,7 +159,8 @@ class LabelPrintMixin(LabelFilterMixin):
         # Check the request to determine if the user has selected a label printing plugin
         plugin = self.get_plugin(self.request)
 
-        serializer = plugin.get_printing_options_serializer(self.request)
+        kwargs.setdefault('context', self.get_serializer_context())
+        serializer = plugin.get_printing_options_serializer(self.request, *args, **kwargs)
 
         # if no serializer is defined, return an empty serializer
         if not serializer:
@@ -222,7 +223,7 @@ class LabelPrintMixin(LabelFilterMixin):
         label = self.get_object()
 
         # if the plugin returns a serializer, validate the data
-        if serializer := plugin.get_printing_options_serializer(request, data=request.data):
+        if serializer := plugin.get_printing_options_serializer(request, data=request.data, context=self.get_serializer_context()):
             serializer.is_valid(raise_exception=True)
 
         # At this point, we offload the label(s) to the selected plugin.
