@@ -126,7 +126,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
     const url = apiUrl(ApiPaths.user_sso_remove).replace('$id', value);
     api
       .post(url)
-      .then((res) => {
+      .then(() => {
         queryClient.removeQueries({
           queryKey: ['sso-list']
         });
