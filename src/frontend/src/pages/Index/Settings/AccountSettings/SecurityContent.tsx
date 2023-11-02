@@ -82,10 +82,6 @@ export function SecurityContent() {
           )}
         </>
       )}
-      <Title order={5}>
-        <Trans>Active Sessions</Trans>
-      </Title>
-      <ActiveSessionContent />
     </Stack>
   );
 }
@@ -313,15 +309,6 @@ function MfaContent({}: {}) {
   return (
     <>
       MFA Details
-      <PlaceholderPill />
-    </>
-  );
-}
-
-function ActiveSessionContent({}: {}) {
-  return (
-    <>
-      Active Session Details
       <PlaceholderPill />
     </>
   );
