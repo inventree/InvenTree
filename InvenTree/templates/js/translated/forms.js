@@ -1800,26 +1800,26 @@ function initializeRelatedFields(fields, options={}) {
 
 function initializeRelatedFieldsRecursively(field, fields, options) {
     switch (field.type) {
-        case 'related field':
-            initializeRelatedField(field, fields, options);
-            break;
-        case 'choice':
-            initializeChoiceField(field, fields, options);
-            break;
-        case 'nested object':
-            for (const [c_name, c_field] of Object.entries(field.children)) {
-                if(!c_field.name) c_field.name = `${field.name}__${c_name}`;
-                initializeRelatedFieldsRecursively(c_field, field.children, options);
-            }
-            break;
-        case 'dependent field':
-            if (field.child) {
-                if(!field.child.name) field.child.name = field.name;
-                initializeRelatedFieldsRecursively(field.child, fields, options);
-            }
-            break;
-        default:
-            break;
+    case 'related field':
+        initializeRelatedField(field, fields, options);
+        break;
+    case 'choice':
+        initializeChoiceField(field, fields, options);
+        break;
+    case 'nested object':
+        for (const [c_name, c_field] of Object.entries(field.children)) {
+            if(!c_field.name) c_field.name = `${field.name}__${c_name}`;
+            initializeRelatedFieldsRecursively(c_field, field.children, options);
+        }
+        break;
+    case 'dependent field':
+        if (field.child) {
+            if(!field.child.name) field.child.name = field.name;
+            initializeRelatedFieldsRecursively(field.child, fields, options);
+        }
+        break;
+    default:
+        break;
     }
 }
 
@@ -2589,6 +2589,7 @@ function constructInput(name, parameters, options={}) {
         break;
     case 'dependent field':
         func = constructDependentField;
+        break;
     default:
         // Unsupported field type!
         break;
