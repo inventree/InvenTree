@@ -99,10 +99,28 @@ function EmailContent({}: {}) {
 
 function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   const [value, setValue] = useState<string>('');
+  const [currentProviders, setcurrentProviders] = useState<[]>();
   const { isLoading, data } = useQuery({
     queryKey: ['sso-list'],
     queryFn: () => api.get(apiUrl(ApiPaths.user_sso)).then((res) => res.data)
   });
+
+  useEffect(() => {
+    if (dataProvider === undefined) return;
+    if (data === undefined) return;
+
+    const configuredProviders = data.map((item: any) => {
+      return item.provider;
+    });
+    function isAlreadyInUse(value: any) {
+      return !configuredProviders.includes(value.id);
+    }
+
+    // remove providers that are used currently
+    let newData = dataProvider.providers;
+    newData = newData.filter(isAlreadyInUse);
+    setcurrentProviders(newData);
+  }, [dataProvider, data]);
 
   function removeProvider() {
     const url = apiUrl(ApiPaths.user_sso_remove).replace('$id', value);
@@ -183,11 +201,11 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
             <Stack>
               <Text>Add SSO Account</Text>
               <Text>
-                {dataProvider === undefined ? (
+                {currentProviders === undefined ? (
                   <Trans>Loading</Trans>
                 ) : (
                   <Stack spacing="xs">
-                    {dataProvider.providers.map((provider: any) => (
+                    {currentProviders.map((provider: any) => (
                       <ProviderButton key={provider.id} provider={provider} />
                     ))}
                   </Stack>
