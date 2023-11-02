@@ -8,10 +8,11 @@ import {
   Radio,
   Stack,
   Text,
+  TextInput,
   Title,
   Tooltip
 } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { IconAlertCircle, IconAt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
@@ -91,6 +92,7 @@ export function SecurityContent() {
 
 function EmailContent({}: {}) {
   const [value, setValue] = useState<string>('');
+  const [newEmailValue, setNewEmailValue] = useState('');
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['emails'],
     queryFn: () => api.get(apiUrl(ApiPaths.user_emails)).then((res) => res.data)
@@ -99,6 +101,17 @@ function EmailContent({}: {}) {
   function runServerAction(url: ApiPaths) {
     api
       .post(apiUrl(url).replace('$id', value), {})
+      .then(() => {
+        refetch();
+      })
+      .catch((res) => console.log(res.data));
+  }
+
+  function addEmail() {
+    api
+      .post(apiUrl(ApiPaths.user_emails), {
+        email: newEmailValue
+      })
       .then(() => {
         refetch();
       })
@@ -160,6 +173,16 @@ function EmailContent({}: {}) {
         <Text>
           <Trans>Add Email Address</Trans>
         </Text>
+        <TextInput
+          label={t`E-Mail`}
+          placeholder={t`E-Mail address`}
+          icon={<IconAt />}
+          value={newEmailValue}
+          onChange={(event) => setNewEmailValue(event.currentTarget.value)}
+        />
+        <Button onClick={addEmail}>
+          <Trans>Add Email</Trans>
+        </Button>
       </Stack>
     </Group>
   );
