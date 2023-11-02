@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-02 06:42+0000\n"
-"PO-Revision-Date: 2023-10-26 17:17\n"
+"POT-Creation-Date: 2023-11-02 01:12+0000\n"
+"PO-Revision-Date: 2023-11-02 18:27\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
@@ -140,32 +140,27 @@ msgid "Duplicate serial"
 msgstr "Duplikeret serienummer"
 
 #: InvenTree/helpers.py:523 InvenTree/helpers.py:558
-#, fuzzy, python-brace-format
-#| msgid "Invalid group range: {g}"
+#, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr "Ugyldigt gruppe-interval: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:552
-#, fuzzy, python-brace-format
-#| msgid "Group range {g} exceeds allowed quantity ({q})"
+#, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr "Gruppeinterval {g} overstiger det tilladte antal ({q})"
+msgstr ""
 
 #: InvenTree/helpers.py:576 InvenTree/helpers.py:583 InvenTree/helpers.py:598
-#, fuzzy, python-brace-format
-#| msgid "Invalid group sequence: {g}"
+#, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr "Ugyldig gruppesekvens: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:608
 msgid "No serial numbers found"
 msgstr "Ingen serienumre fundet"
 
 #: InvenTree/helpers.py:611
-#, fuzzy
-#| msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "Antal unikke serienumre ({s}) skal matche antal ({q})"
+msgstr ""
 
 #: InvenTree/helpers.py:740
 msgid "Remove HTML tags from this value"
@@ -962,10 +957,8 @@ msgid "Build Orders"
 msgstr "Produktionsordrer"
 
 #: build/models.py:115
-#, fuzzy
-#| msgid "Build order output created"
 msgid "Build order part cannot be changed"
-msgstr "Byggeordre output genereret"
+msgstr ""
 
 #: build/models.py:122
 msgid "Invalid choice for parent build"
@@ -5687,10 +5680,9 @@ msgid "Part '{parent}' is  used in BOM for '{self}' (recursive)"
 msgstr ""
 
 #: part/models.py:569
-#, fuzzy, python-brace-format
-#| msgid "IPN must match regex pattern {pat}"
+#, python-brace-format
 msgid "IPN must match regex pattern {pattern}"
-msgstr "IPN skal matche regex mønster {pat}"
+msgstr ""
 
 #: part/models.py:639
 msgid "Stock item with this serial number already exists"
@@ -11144,16 +11136,12 @@ msgid "Print"
 msgstr ""
 
 #: templates/js/translated/label.js:150
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select label template"
-msgstr "Vælg fil, der skal vedhæftes"
+msgstr ""
 
 #: templates/js/translated/label.js:163
-#, fuzzy
-#| msgid "Select part to build"
 msgid "Select plugin"
-msgstr "Vælg dele til produktion"
+msgstr ""
 
 #: templates/js/translated/label.js:182
 msgid "Labels sent to printer"
@@ -13145,8 +13133,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13321,3 +13308,4 @@ msgstr ""
 #: users/models.py:384
 msgid "Permission to delete items"
 msgstr ""
+
