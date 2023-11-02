@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-26 17:17\n"
+"PO-Revision-Date: 2023-11-02 18:27\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: src/components/DashboardItemProxy.tsx:33
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 #: src/components/forms/ApiForm.tsx:193
 #: src/components/widgets/MarkdownEditor.tsx:146
@@ -2041,11 +2041,11 @@ msgstr ""
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
-#~ msgstr ""
+#~ msgstr "Instance"
 
 #: src/defaults/links.tsx:83
 #~ msgid "InvenTree"
-#~ msgstr ""
+#~ msgstr "InvenTree"
 
 #: src/defaults/links.tsx:85
 #: src/defaults/links.tsx:101
@@ -2864,7 +2864,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:211
 #~ msgid "Build Order"
-#~ msgstr ""
+#~ msgstr "Build Order"
 
 #: src/pages/build/BuildDetail.tsx:215
 msgid "Build Order Actions"
@@ -3115,3 +3115,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
