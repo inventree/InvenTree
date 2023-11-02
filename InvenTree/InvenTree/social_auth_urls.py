@@ -109,9 +109,12 @@ class SocialProviderListView(ListAPIView):
                 'name': provider.name,
                 'login': request.build_absolute_uri(reverse(f'{provider.id}_api_login')),
                 'connect': request.build_absolute_uri(reverse(f'{provider.id}_api_connect')),
+                'configured': False
             }
             try:
-                provider_data['display_name'] = provider.get_app(request).name
+                provider_app = provider.get_app(request)
+                provider_data['display_name'] = provider_app.name
+                provider_data['configured'] = True
             except SocialApp.DoesNotExist:
                 provider_data['display_name'] = provider.name
 
