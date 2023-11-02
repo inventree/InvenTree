@@ -4,15 +4,17 @@ import {
   Button,
   Group,
   Loader,
+  Radio,
   Stack,
   Text,
-  Title
+  Title,
+  Tooltip
 } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
-import { api } from '../../../../App';
+import { api, queryClient } from '../../../../App';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { ApiPaths, apiUrl } from '../../../../states/ApiState';
 
@@ -96,10 +98,46 @@ function EmailContent({}: {}) {
 }
 
 function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
+  const [value, setValue] = useState<string>('');
   const { isLoading, data } = useQuery({
     queryKey: ['sso-list'],
     queryFn: () => api.get(apiUrl(ApiPaths.user_sso)).then((res) => res.data)
   });
+
+  function removeProvider() {
+    const url = apiUrl(ApiPaths.user_sso_remove).replace('$id', value);
+    api
+      .post(url)
+      .then((res) => {
+        queryClient.removeQueries({
+          queryKey: ['sso-list']
+        });
+      })
+      .catch((res) => console.log(res.data));
+  }
+
+  /* renderer */
+  function ProviderButton({ provider }: { provider: any }) {
+    const button = (
+      <Button
+        key={provider.id}
+        component="a"
+        href={provider.connect}
+        variant="outline"
+        disabled={!provider.configured}
+      >
+        <Group position="apart">
+          {provider.display_name}
+          {provider.configured == false && <IconAlertCircle />}
+        </Group>
+      </Button>
+    );
+
+    if (provider.configured) return button;
+    return (
+      <Tooltip label={t`Provider has not been configured`}>{button}</Tooltip>
+    );
+  }
 
   return (
     <>
@@ -120,32 +158,39 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
                 </Trans>
               </Alert>
             ) : (
-              <Text>
-                Currently registered SSO providers
-                <br />
-                {JSON.stringify(data)}
-              </Text>
+              <Stack>
+                <Radio.Group
+                  value={value}
+                  onChange={setValue}
+                  name="sso_accounts"
+                  label={t`You can sign in to your account using any of the following third party accounts`}
+                >
+                  <Group mt="xs">
+                    {data.map((link: any) => (
+                      <Radio
+                        key={link.id}
+                        value={String(link.id)}
+                        label={link.provider}
+                      />
+                    ))}
+                  </Group>
+                </Radio.Group>
+                <Button onClick={removeProvider}>
+                  <Trans>Remove</Trans>
+                </Button>
+              </Stack>
             )}
             <Stack>
-              <Text>Possible SSO providers</Text>
+              <Text>Add SSO Account</Text>
               <Text>
                 {dataProvider === undefined ? (
                   <Trans>Loading</Trans>
                 ) : (
-                  <>
-                    {dataProvider.providers.map((provider: any) => {
-                      return (
-                        <Button
-                          key={provider.id}
-                          component="a"
-                          href={provider.connect}
-                          variant="outline"
-                        >
-                          {provider.display_name}
-                        </Button>
-                      );
-                    })}
-                  </>
+                  <Stack spacing="xs">
+                    {dataProvider.providers.map((provider: any) => (
+                      <ProviderButton key={provider.id} provider={provider} />
+                    ))}
+                  </Stack>
                 )}
               </Text>
             </Stack>
