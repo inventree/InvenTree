@@ -120,55 +120,40 @@ function EmailContent({}: {}) {
   return (
     <Grid>
       <Grid.Col span={6}>
-        <Stack>
-          <Radio.Group
-            value={value}
-            onChange={setValue}
-            name="email_accounts"
-            label={t`The following email addresses are associated with your account:`}
-          >
-            <Stack mt="xs">
-              {data.map((link: any) => (
-                <Radio
-                  key={link.id}
-                  value={String(link.id)}
-                  label={
-                    <Group position="apart">
-                      {link.email}
-                      {link.primary && (
-                        <Badge color="blue">
-                          <Trans>Primary</Trans>
-                        </Badge>
-                      )}
-                      {link.verified ? (
-                        <Badge color="green">
-                          <Trans>Verified</Trans>
-                        </Badge>
-                      ) : (
-                        <Badge color="yellow">
-                          <Trans>Unverified</Trans>
-                        </Badge>
-                      )}
-                    </Group>
-                  }
-                />
-              ))}
-            </Stack>
-          </Radio.Group>
-          <Group>
-            <Button
-              onClick={() => runServerAction(ApiPaths.user_email_primary)}
-            >
-              <Trans>Make Primary</Trans>
-            </Button>
-            <Button onClick={() => runServerAction(ApiPaths.user_email_verify)}>
-              <Trans>Re-send Verification</Trans>
-            </Button>
-            <Button onClick={() => runServerAction(ApiPaths.user_email_remove)}>
-              <Trans>Remove</Trans>
-            </Button>
-          </Group>
-        </Stack>
+        <Radio.Group
+          value={value}
+          onChange={setValue}
+          name="email_accounts"
+          label={t`The following email addresses are associated with your account:`}
+        >
+          <Stack mt="xs">
+            {data.map((link: any) => (
+              <Radio
+                key={link.id}
+                value={String(link.id)}
+                label={
+                  <Group position="apart">
+                    {link.email}
+                    {link.primary && (
+                      <Badge color="blue">
+                        <Trans>Primary</Trans>
+                      </Badge>
+                    )}
+                    {link.verified ? (
+                      <Badge color="green">
+                        <Trans>Verified</Trans>
+                      </Badge>
+                    ) : (
+                      <Badge color="yellow">
+                        <Trans>Unverified</Trans>
+                      </Badge>
+                    )}
+                  </Group>
+                }
+              />
+            ))}
+          </Stack>
+        </Radio.Group>
       </Grid.Col>
       <Grid.Col span={6}>
         <Stack>
@@ -182,10 +167,25 @@ function EmailContent({}: {}) {
             value={newEmailValue}
             onChange={(event) => setNewEmailValue(event.currentTarget.value)}
           />
-          <Button onClick={addEmail}>
-            <Trans>Add Email</Trans>
-          </Button>
         </Stack>
+      </Grid.Col>
+      <Grid.Col span={6}>
+        <Group>
+          <Button onClick={() => runServerAction(ApiPaths.user_email_primary)}>
+            <Trans>Make Primary</Trans>
+          </Button>
+          <Button onClick={() => runServerAction(ApiPaths.user_email_verify)}>
+            <Trans>Re-send Verification</Trans>
+          </Button>
+          <Button onClick={() => runServerAction(ApiPaths.user_email_remove)}>
+            <Trans>Remove</Trans>
+          </Button>
+        </Group>
+      </Grid.Col>
+      <Grid.Col span={6}>
+        <Button onClick={addEmail}>
+          <Trans>Add Email</Trans>
+        </Button>
       </Grid.Col>
     </Grid>
   );
