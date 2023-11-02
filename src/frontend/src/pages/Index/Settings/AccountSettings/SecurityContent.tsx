@@ -118,70 +118,76 @@ function EmailContent({}: {}) {
   if (isLoading) return <Loader />;
 
   return (
-    <Group>
-      <Stack>
-        <Radio.Group
-          value={value}
-          onChange={setValue}
-          name="email_accounts"
-          label={t`The following email addresses are associated with your account:`}
-        >
-          <Stack mt="xs">
-            {data.map((link: any) => (
-              <Radio
-                key={link.id}
-                value={String(link.id)}
-                label={
-                  <Group position="apart">
-                    {link.email}
-                    {link.primary && (
-                      <Badge color="blue">
-                        <Trans>Primary</Trans>
-                      </Badge>
-                    )}
-                    {link.verified ? (
-                      <Badge color="green">
-                        <Trans>Verified</Trans>
-                      </Badge>
-                    ) : (
-                      <Badge color="yellow">
-                        <Trans>Unverified</Trans>
-                      </Badge>
-                    )}
-                  </Group>
-                }
-              />
-            ))}
-          </Stack>
-        </Radio.Group>
-        <Group>
-          <Button onClick={() => runServerAction(ApiPaths.user_email_primary)}>
-            <Trans>Make Primary</Trans>
+    <Grid>
+      <Grid.Col span={6}>
+        <Stack>
+          <Radio.Group
+            value={value}
+            onChange={setValue}
+            name="email_accounts"
+            label={t`The following email addresses are associated with your account:`}
+          >
+            <Stack mt="xs">
+              {data.map((link: any) => (
+                <Radio
+                  key={link.id}
+                  value={String(link.id)}
+                  label={
+                    <Group position="apart">
+                      {link.email}
+                      {link.primary && (
+                        <Badge color="blue">
+                          <Trans>Primary</Trans>
+                        </Badge>
+                      )}
+                      {link.verified ? (
+                        <Badge color="green">
+                          <Trans>Verified</Trans>
+                        </Badge>
+                      ) : (
+                        <Badge color="yellow">
+                          <Trans>Unverified</Trans>
+                        </Badge>
+                      )}
+                    </Group>
+                  }
+                />
+              ))}
+            </Stack>
+          </Radio.Group>
+          <Group>
+            <Button
+              onClick={() => runServerAction(ApiPaths.user_email_primary)}
+            >
+              <Trans>Make Primary</Trans>
+            </Button>
+            <Button onClick={() => runServerAction(ApiPaths.user_email_verify)}>
+              <Trans>Re-send Verification</Trans>
+            </Button>
+            <Button onClick={() => runServerAction(ApiPaths.user_email_remove)}>
+              <Trans>Remove</Trans>
+            </Button>
+          </Group>
+        </Stack>
+      </Grid.Col>
+      <Grid.Col span={6}>
+        <Stack>
+          <Text>
+            <Trans>Add Email Address</Trans>
+          </Text>
+          <TextInput
+            label={t`E-Mail`}
+            placeholder={t`E-Mail address`}
+            icon={<IconAt />}
+            value={newEmailValue}
+            onChange={(event) => setNewEmailValue(event.currentTarget.value)}
+          />
+          <Button onClick={addEmail}>
+            <Trans>Add Email</Trans>
           </Button>
-          <Button onClick={() => runServerAction(ApiPaths.user_email_verify)}>
-            <Trans>Re-send Verification</Trans>
-          </Button>
-          <Button onClick={() => runServerAction(ApiPaths.user_email_remove)}>
-            <Trans>Remove</Trans>
-          </Button>
-        </Group>
-      </Stack>
-      <Stack>
-        <Text>
-          <Trans>Add Email Address</Trans>
-        </Text>
-        <TextInput
-          label={t`E-Mail`}
-          placeholder={t`E-Mail address`}
-          icon={<IconAt />}
-          value={newEmailValue}
-          onChange={(event) => setNewEmailValue(event.currentTarget.value)}
-        />
-        <Button onClick={addEmail}>
-          <Trans>Add Email</Trans>
-        </Button>
-      </Stack>
-    </Group>
+        </Stack>
+      </Grid.Col>
+    </Grid>
   );
 }
 
@@ -247,55 +253,59 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   }
 
   return (
-    <Group>
-      {data.length == 0 ? (
-        <Alert
-          icon={<IconAlertCircle size="1rem" />}
-          title={t`Not configured`}
-          color="yellow"
-        >
-          <Trans>
-            There are no social network accounts connected to this account.{' '}
-          </Trans>
-        </Alert>
-      ) : (
-        <Stack>
-          <Radio.Group
-            value={value}
-            onChange={setValue}
-            name="sso_accounts"
-            label={t`You can sign in to your account using any of the following third party accounts`}
+    <Grid>
+      <Grid.Col span={6}>
+        {data.length == 0 ? (
+          <Alert
+            icon={<IconAlertCircle size="1rem" />}
+            title={t`Not configured`}
+            color="yellow"
           >
-            <Stack mt="xs">
-              {data.map((link: any) => (
-                <Radio
-                  key={link.id}
-                  value={String(link.id)}
-                  label={link.provider}
-                />
-              ))}
-            </Stack>
-          </Radio.Group>
-          <Button onClick={removeProvider}>
-            <Trans>Remove</Trans>
-          </Button>
+            <Trans>
+              There are no social network accounts connected to this account.{' '}
+            </Trans>
+          </Alert>
+        ) : (
+          <Stack>
+            <Radio.Group
+              value={value}
+              onChange={setValue}
+              name="sso_accounts"
+              label={t`You can sign in to your account using any of the following third party accounts`}
+            >
+              <Stack mt="xs">
+                {data.map((link: any) => (
+                  <Radio
+                    key={link.id}
+                    value={String(link.id)}
+                    label={link.provider}
+                  />
+                ))}
+              </Stack>
+            </Radio.Group>
+            <Button onClick={removeProvider}>
+              <Trans>Remove</Trans>
+            </Button>
+          </Stack>
+        )}
+      </Grid.Col>
+      <Grid.Col span={6}>
+        <Stack>
+          <Text>Add SSO Account</Text>
+          <Text>
+            {currentProviders === undefined ? (
+              <Trans>Loading</Trans>
+            ) : (
+              <Stack spacing="xs">
+                {currentProviders.map((provider: any) => (
+                  <ProviderButton key={provider.id} provider={provider} />
+                ))}
+              </Stack>
+            )}
+          </Text>
         </Stack>
-      )}
-      <Stack>
-        <Text>Add SSO Account</Text>
-        <Text>
-          {currentProviders === undefined ? (
-            <Trans>Loading</Trans>
-          ) : (
-            <Stack spacing="xs">
-              {currentProviders.map((provider: any) => (
-                <ProviderButton key={provider.id} provider={provider} />
-              ))}
-            </Stack>
-          )}
-        </Text>
-      </Stack>
-    </Group>
+      </Grid.Col>
+    </Grid>
   );
 }
 
