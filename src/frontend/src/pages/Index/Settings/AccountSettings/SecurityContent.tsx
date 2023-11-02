@@ -250,7 +250,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
                   name="sso_accounts"
                   label={t`You can sign in to your account using any of the following third party accounts`}
                 >
-                  <Group mt="xs">
+                  <Stack mt="xs">
                     {data.map((link: any) => (
                       <Radio
                         key={link.id}
@@ -258,7 +258,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
                         label={link.provider}
                       />
                     ))}
-                  </Group>
+                  </Stack>
                 </Radio.Group>
                 <Button onClick={removeProvider}>
                   <Trans>Remove</Trans>
