@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -45,10 +44,11 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           let supplier = record.supplier_detail ?? {};
 
           return (
-            <Group spacing="xs" noWrap={true}>
-              <Thumbnail src={supplier?.image} alt={supplier.name} />
-              <Text>{supplier?.name}</Text>
-            </Group>
+            <Thumbnail
+              src={supplier?.image}
+              alt={supplier.name}
+              text={supplier.name}
+            />
           );
         }
       },

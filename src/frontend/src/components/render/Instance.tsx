@@ -9,6 +9,7 @@ import {
   RenderAddress,
   RenderCompany,
   RenderContact,
+  RenderManufacturerPart,
   RenderSupplierPart
 } from './Company';
 import { ModelType } from './ModelType';
@@ -41,6 +42,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.build]: RenderBuildOrder,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
+  [ModelType.manufacturerpart]: RenderManufacturerPart,
   [ModelType.owner]: RenderOwner,
   [ModelType.part]: RenderPart,
   [ModelType.partcategory]: RenderPartCategory,
@@ -54,8 +56,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.stockitem]: RenderStockItem,
   [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,
-  [ModelType.user]: RenderUser,
-  [ModelType.manufacturerpart]: RenderPart
+  [ModelType.user]: RenderUser
 };
 
 // import { ApiFormFieldType } from "../forms/fields/ApiFormField";

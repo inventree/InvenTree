@@ -4,9 +4,9 @@ import {
   ApiFormChangeCallback,
   ApiFormData,
   ApiFormFieldSet
-} from '../../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../../states/ApiState';
-import { openCreateApiForm, openEditApiForm } from '../forms';
+} from '../components/forms/fields/ApiFormField';
+import { openCreateApiForm, openEditApiForm } from '../functions/forms';
+import { ApiPaths } from '../states/ApiState';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
@@ -30,7 +30,6 @@ export function stockFields({
     },
     supplier_part: {
       // TODO: icon
-      // TODO: implement adjustFilters
       filters: {
         part_detail: true,
         supplier_detail: true
@@ -107,7 +106,6 @@ export function stockFields({
  */
 export function createStockItem() {
   openCreateApiForm({
-    name: 'stockitem-create',
     url: ApiPaths.stock_item_list,
     fields: stockFields({ create: true }),
     title: t`Create Stock Item`
@@ -126,7 +124,6 @@ export function editStockItem({
   callback?: () => void;
 }) {
   openEditApiForm({
-    name: 'stockitem-edit',
     url: ApiPaths.stock_item_list,
     pk: item_id,
     fields: stockFields({ create: false }),

@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
 
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../../states/ApiState';
-import { openCreateApiForm, openEditApiForm } from '../forms';
+import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { openCreateApiForm, openEditApiForm } from '../functions/forms';
+import { ApiPaths } from '../states/ApiState';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
@@ -70,7 +70,6 @@ export function partFields({
  */
 export function createPart() {
   openCreateApiForm({
-    name: 'part-create',
     title: t`Create Part`,
     url: ApiPaths.part_list,
     successMessage: t`Part created`,
@@ -90,7 +89,6 @@ export function editPart({
   callback?: () => void;
 }) {
   openEditApiForm({
-    name: 'part-edit',
     title: t`Edit Part`,
     url: ApiPaths.part_list,
     pk: part_id,

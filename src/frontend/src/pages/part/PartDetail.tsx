@@ -1,7 +1,9 @@
 import { t } from '@lingui/macro';
 import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
+  IconBookmarks,
   IconBuilding,
+  IconBuildingFactory2,
   IconCalendarStats,
   IconClipboardList,
   IconCopy,
@@ -44,10 +46,11 @@ import { AttachmentTable } from '../../components/tables/general/AttachmentTable
 import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
 import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
+import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { editPart } from '../../functions/forms/PartForms';
+import { editPart } from '../../forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -109,6 +112,12 @@ export default function PartDetail() {
         content: <PartVariantTable partId={String(id)} />
       },
       {
+        name: 'allocations',
+        label: t`Allocations`,
+        icon: <IconBookmarks />,
+        hidden: !part.component && !part.salable
+      },
+      {
         name: 'bom',
         label: t`Bill of Materials`,
         icon: <IconListTree />,
@@ -119,7 +128,7 @@ export default function PartDetail() {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly && !part.component,
+        hidden: !part.assembly,
         content: (
           <BuildOrderTable
             params={{
@@ -142,10 +151,23 @@ export default function PartDetail() {
         icon: <IconCurrencyDollar />
       },
       {
+        name: 'manufacturers',
+        label: t`Manufacturers`,
+        icon: <IconBuildingFactory2 />,
+        hidden: !part.purchaseable
+      },
+      {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding />,
-        hidden: !part.purchaseable
+        hidden: !part.purchaseable,
+        content: part.pk && (
+          <SupplierPartTable
+            params={{
+              part: part.pk ?? -1
+            }}
+          />
+        )
       },
       {
         name: 'purchase_orders',

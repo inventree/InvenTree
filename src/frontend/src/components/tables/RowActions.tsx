@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { Menu, Text } from '@mantine/core';
 import { IconDots } from '@tabler/icons-react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
 
@@ -12,8 +12,40 @@ export type RowAction = {
   color?: string;
   onClick?: () => void;
   tooltip?: string;
-  icon?: ReactNode;
+  hidden?: boolean;
 };
+
+// Component for ediitng a row in a table
+export function RowEditAction({
+  onClick,
+  hidden
+}: {
+  onClick?: () => void;
+  hidden?: boolean;
+}): RowAction {
+  return {
+    title: t`Edit`,
+    color: 'green',
+    onClick: onClick,
+    hidden: hidden
+  };
+}
+
+// Component for deleting a row in a table
+export function RowDeleteAction({
+  onClick,
+  hidden
+}: {
+  onClick?: () => void;
+  hidden?: boolean;
+}): RowAction {
+  return {
+    title: t`Delete`,
+    color: 'red',
+    onClick: onClick,
+    hidden: hidden
+  };
+}
 
 /**
  * Component for displaying actions for a row in a table.
@@ -39,8 +71,12 @@ export function RowActions({
 
   const [opened, setOpened] = useState(false);
 
+  const visibleActions = useMemo(() => {
+    return actions.filter((action) => !action.hidden);
+  }, [actions]);
+
   return (
-    actions.length > 0 && (
+    visibleActions.length > 0 && (
       <Menu
         withinPortal={true}
         disabled={disabled}
@@ -61,7 +97,7 @@ export function RowActions({
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Label>{title || t`Actions`}</Menu.Label>
-          {actions.map((action, idx) => (
+          {visibleActions.map((action, idx) => (
             <Menu.Item
               key={idx}
               onClick={(event) => {
@@ -75,7 +111,6 @@ export function RowActions({
                   notYetImplemented();
                 }
               }}
-              icon={action.icon}
               title={action.tooltip || action.title}
             >
               <Text size="xs" color={action.color}>

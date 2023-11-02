@@ -23,16 +23,12 @@ function partTableColumns(): TableColumn[] {
       noWrap: true,
       title: t`Part`,
       render: function (record: any) {
-        // TODO - Link to the part detail page
         return (
-          <Group spacing="xs" align="left" noWrap={true}>
-            <Thumbnail
-              src={record.thumbnail || record.image}
-              alt={record.name}
-              size={24}
-            />
-            <Text>{record.full_name}</Text>
-          </Group>
+          <Thumbnail
+            src={record.thumbnail || record.image}
+            alt={record.name}
+            text={record.full_name}
+          />
         );
       }
     },

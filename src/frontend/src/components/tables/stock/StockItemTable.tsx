@@ -3,7 +3,6 @@ import { Group, Stack, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -219,13 +218,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   function stockItemRowActions(record: any): RowAction[] {
     let actions: RowAction[] = [];
 
-    actions.push({
-      title: t`Edit`,
-      onClick: () => {
-        notYetImplemented();
-      }
-    });
-
+    // TODO: Custom row actions for stock table
     return actions;
   }
 
