@@ -421,7 +421,7 @@ export function InvenTreeTable({
         onCreateFilter={onFilterAdd}
         onClose={() => setFilterSelectOpen(false)}
       />
-      <Stack>
+      <Stack spacing="sm">
         <Group position="apart">
           <Group position="left" key="custom-actions" spacing={5}>
             {tableProps.customActionGroups?.map(
@@ -522,6 +522,14 @@ export function InvenTreeTable({
           records={data}
           columns={dataColumns}
           onRowClick={tableProps.onRowClick}
+          defaultColumnProps={{
+            noWrap: true,
+            textAlignment: 'left',
+            cellsStyle: {
+              // TODO: Need a better way of handling "wide" cells,
+              overflow: 'hidden'
+            }
+          }}
         />
       </Stack>
     </>

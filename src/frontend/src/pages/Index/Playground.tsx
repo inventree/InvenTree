@@ -9,13 +9,13 @@ import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { ModelType } from '../../components/render/ModelType';
 import { StatusRenderer } from '../../components/renderers/StatusRenderer';
-import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 import {
   createPart,
   editPart,
   partCategoryFields
-} from '../../functions/forms/PartForms';
-import { createStockItem } from '../../functions/forms/StockForms';
+} from '../../forms/PartForms';
+import { createStockItem } from '../../forms/StockForms';
+import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 import { ApiPaths } from '../../states/ApiState';
 
 // Generate some example forms using the modal API forms interface
@@ -23,7 +23,6 @@ function ApiFormsPlayground() {
   let fields = partCategoryFields({});
 
   const editCategoryForm: ApiFormProps = {
-    name: 'partcategory',
     url: ApiPaths.category_list,
     pk: 2,
     title: 'Edit Category',
@@ -31,7 +30,6 @@ function ApiFormsPlayground() {
   };
 
   const createAttachmentForm: ApiFormProps = {
-    name: 'createattachment',
     url: ApiPaths.part_attachment_list,
     title: 'Create Attachment',
     successMessage: 'Attachment uploaded',

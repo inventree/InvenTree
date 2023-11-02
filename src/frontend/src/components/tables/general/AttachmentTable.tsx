@@ -11,13 +11,13 @@ import {
   addAttachment,
   deleteAttachment,
   editAttachment
-} from '../../../functions/forms/AttachmentForms';
+} from '../../../forms/AttachmentForms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { AttachmentLink } from '../../items/AttachmentLink';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Define set of columns to display for the attachment table
@@ -113,32 +113,33 @@ export function AttachmentTable({
     let actions: RowAction[] = [];
 
     if (allowEdit) {
-      actions.push({
-        title: t`Edit`,
-        onClick: () => {
-          editAttachment({
-            endpoint: endpoint,
-            model: model,
-            pk: record.pk,
-            attachmentType: record.attachment ? 'file' : 'link',
-            callback: refreshTable
-          });
-        }
-      });
+      actions.push(
+        RowEditAction({
+          onClick: () => {
+            editAttachment({
+              endpoint: endpoint,
+              model: model,
+              pk: record.pk,
+              attachmentType: record.attachment ? 'file' : 'link',
+              callback: refreshTable
+            });
+          }
+        })
+      );
     }
 
     if (allowDelete) {
-      actions.push({
-        title: t`Delete`,
-        color: 'red',
-        onClick: () => {
-          deleteAttachment({
-            endpoint: endpoint,
-            pk: record.pk,
-            callback: refreshTable
-          });
-        }
-      });
+      actions.push(
+        RowDeleteAction({
+          onClick: () => {
+            deleteAttachment({
+              endpoint: endpoint,
+              pk: record.pk,
+              callback: refreshTable
+            });
+          }
+        })
+      );
     }
 
     return actions;

@@ -16,7 +16,6 @@ import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
 
 /**
  * Properties for the ApiForm component
- * @param name : The name (identifier) for this form
  * @param url : The API endpoint to fetch the form data from
  * @param pk : Optional primary-key value when editing an existing object
  * @param title : The title to display in the form header
@@ -35,7 +34,6 @@ import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
  * @param onFormError : A callback function to call when the form is submitted with errors.
  */
 export interface ApiFormProps {
-  name: string;
   url: ApiPaths;
   pk?: number | string | undefined;
   title: string;
@@ -104,7 +102,7 @@ export function ApiForm({
   // Query manager for retrieiving initial data from the server
   const initialDataQuery = useQuery({
     enabled: false,
-    queryKey: ['form-initial-data', props.name, props.url, props.pk],
+    queryKey: ['form-initial-data', modalId, props.method, props.url, props.pk],
     queryFn: async () => {
       return api
         .get(url)
@@ -150,7 +148,13 @@ export function ApiForm({
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
       queryClient.removeQueries({
-        queryKey: ['form-initial-data', props.name, props.url, props.pk]
+        queryKey: [
+          'form-initial-data',
+          modalId,
+          props.method,
+          props.url,
+          props.pk
+        ]
       });
       initialDataQuery.refetch();
     }
@@ -159,7 +163,7 @@ export function ApiForm({
   // Query manager for submitting data
   const submitQuery = useQuery({
     enabled: false,
-    queryKey: ['form-submit', props.name, props.url, props.pk],
+    queryKey: ['form-submit', modalId, props.method, props.url, props.pk],
     queryFn: async () => {
       let method = props.method?.toLowerCase() ?? 'get';
 

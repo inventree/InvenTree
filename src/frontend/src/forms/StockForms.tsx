@@ -4,19 +4,23 @@ import {
   ApiFormChangeCallback,
   ApiFormData,
   ApiFormFieldSet
-} from '../../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../../states/ApiState';
-import { openCreateApiForm, openEditApiForm } from '../forms';
+} from '../components/forms/fields/ApiFormField';
+import { openCreateApiForm, openEditApiForm } from '../functions/forms';
+import { ApiPaths } from '../states/ApiState';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
  */
-export function stockFields({}: {}): ApiFormFieldSet {
+export function stockFields({
+  create = false
+}: {
+  create: boolean;
+}): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {
     part: {
+      hidden: !create,
       onValueChange: (change: ApiFormChangeCallback) => {
         // TODO: implement remaining functionality from old stock.py
-        console.log('part changed: ', change.value);
 
         // Clear the 'supplier_part' field if the part is changed
         change.form.setValues({
@@ -26,7 +30,6 @@ export function stockFields({}: {}): ApiFormFieldSet {
     },
     supplier_part: {
       // TODO: icon
-      // TODO: implement adjustFilters
       filters: {
         part_detail: true,
         supplier_detail: true
@@ -41,15 +44,18 @@ export function stockFields({}: {}): ApiFormFieldSet {
       }
     },
     use_pack_size: {
+      hidden: !create,
       description: t`Add given quantity as packs instead of individual items`
     },
     location: {
+      hidden: !create,
       filters: {
         structural: false
       }
       // TODO: icon
     },
     quantity: {
+      hidden: !create,
       description: t`Enter initial quantity for this stock item`
     },
     serial_numbers: {
@@ -57,9 +63,11 @@ export function stockFields({}: {}): ApiFormFieldSet {
       field_type: 'string',
       label: t`Serial Numbers`,
       description: t`Enter serial numbers for new stock (or leave blank)`,
-      required: false
+      required: false,
+      hidden: !create
     },
     serial: {
+      hidden: create
       // TODO: icon
     },
     batch: {
@@ -98,9 +106,8 @@ export function stockFields({}: {}): ApiFormFieldSet {
  */
 export function createStockItem() {
   openCreateApiForm({
-    name: 'stockitem-create',
     url: ApiPaths.stock_item_list,
-    fields: stockFields({}),
+    fields: stockFields({ create: true }),
     title: t`Create Stock Item`
   });
 }
@@ -109,12 +116,19 @@ export function createStockItem() {
  * Launch a form to edit an existing StockItem instance
  * @param item : primary key of the StockItem to edit
  */
-export function editStockItem(item: number) {
+export function editStockItem({
+  item_id,
+  callback
+}: {
+  item_id: number;
+  callback?: () => void;
+}) {
   openEditApiForm({
-    name: 'stockitem-edit',
     url: ApiPaths.stock_item_list,
-    pk: item,
-    fields: stockFields({}),
-    title: t`Edit Stock Item`
+    pk: item_id,
+    fields: stockFields({ create: false }),
+    title: t`Edit Stock Item`,
+    successMessage: t`Stock item updated`,
+    onFormSuccess: callback
   });
 }

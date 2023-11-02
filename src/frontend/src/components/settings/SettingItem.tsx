@@ -51,7 +51,6 @@ function SettingValue({
     }
 
     openModalApiForm({
-      name: 'setting-edit',
       url: settingsState.endpoint,
       pk: setting.key,
       method: 'PATCH',
