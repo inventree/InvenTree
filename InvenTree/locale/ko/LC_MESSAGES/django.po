@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-02 06:42+0000\n"
-"PO-Revision-Date: 2023-10-26 17:17\n"
+"POT-Creation-Date: 2023-11-02 01:12+0000\n"
+"PO-Revision-Date: 2023-11-02 18:28\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -11136,16 +11136,12 @@ msgid "Print"
 msgstr ""
 
 #: templates/js/translated/label.js:150
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Select label template"
-msgstr "업로드할 파일을 선택하세요"
+msgstr ""
 
 #: templates/js/translated/label.js:163
-#, fuzzy
-#| msgid "Select"
 msgid "Select plugin"
-msgstr "선택"
+msgstr ""
 
 #: templates/js/translated/label.js:182
 msgid "Labels sent to printer"
@@ -13137,8 +13133,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13314,7 +13309,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#, fuzzy
-#~| msgid "Show QR Code"
-#~ msgid "QC Code"
-#~ msgstr "QR 코드 보기"
