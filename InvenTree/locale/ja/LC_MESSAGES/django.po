@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-02 06:42+0000\n"
-"PO-Revision-Date: 2023-10-26 17:17\n"
+"POT-Creation-Date: 2023-11-02 01:12+0000\n"
+"PO-Revision-Date: 2023-11-02 18:28\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -140,22 +140,19 @@ msgid "Duplicate serial"
 msgstr ""
 
 #: InvenTree/helpers.py:523 InvenTree/helpers.py:558
-#, fuzzy, python-brace-format
-#| msgid "Invalid group range: {g}"
+#, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr "グループ範囲が無効です: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:552
-#, fuzzy, python-brace-format
-#| msgid "Group range {g} exceeds allowed quantity ({q})"
+#, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr "グループ範囲 {g} が許可された数量を超えています ({q})"
+msgstr ""
 
 #: InvenTree/helpers.py:576 InvenTree/helpers.py:583 InvenTree/helpers.py:598
-#, fuzzy, python-brace-format
-#| msgid "Invalid group sequence: {g}"
+#, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr "無効なグループシーケンスです: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:608
 msgid "No serial numbers found"
@@ -960,10 +957,8 @@ msgid "Build Orders"
 msgstr "組立注文"
 
 #: build/models.py:115
-#, fuzzy
-#| msgid "Build order output created"
 msgid "Build order part cannot be changed"
-msgstr "組立注文の出力が作成されました"
+msgstr ""
 
 #: build/models.py:122
 msgid "Invalid choice for parent build"
@@ -11141,10 +11136,8 @@ msgid "Print"
 msgstr ""
 
 #: templates/js/translated/label.js:150
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select label template"
-msgstr "添付ファイルを選択"
+msgstr ""
 
 #: templates/js/translated/label.js:163
 msgid "Select plugin"
@@ -13140,8 +13133,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13316,3 +13308,4 @@ msgstr "項目を編集する権限"
 #: users/models.py:384
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
+
