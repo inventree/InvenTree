@@ -15,7 +15,9 @@ attrs==23.1.0
 babel==2.13.0
     # via py-moneyed
 bleach[css]==6.1.0
-    # via django-markdownify
+    # via
+    #   bleach
+    #   django-markdownify
 brotli==1.1.0
     # via fonttools
 certifi==2023.7.22
@@ -47,7 +49,7 @@ diff-match-patch==20230430
     # via django-import-export
 dj-rest-auth==5.0.1
     # via -r requirements.in
-django==3.2.22
+django==3.2.23
     # via
     #   -r requirements.in
     #   dj-rest-auth
@@ -162,7 +164,9 @@ et-xmlfile==1.1.0
 feedparser==6.0.10
     # via -r requirements.in
 fonttools[woff]==4.43.1
-    # via weasyprint
+    # via
+    #   fonttools
+    #   weasyprint
 gunicorn==21.2.0
     # via -r requirements.in
 html5lib==1.1
@@ -221,6 +225,7 @@ pyjwt[crypto]==2.8.0
     # via
     #   django-allauth
     #   djangorestframework-simplejwt
+    #   pyjwt
 pyphen==0.14.0
     # via weasyprint
 pypng==0.20220715.0
