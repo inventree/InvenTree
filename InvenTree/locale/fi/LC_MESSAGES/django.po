@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-02 06:42+0000\n"
-"PO-Revision-Date: 2023-10-26 17:17\n"
+"POT-Creation-Date: 2023-11-02 01:12+0000\n"
+"PO-Revision-Date: 2023-11-02 18:27\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -159,10 +159,8 @@ msgid "No serial numbers found"
 msgstr "Sarjanumeroita ei löytynyt"
 
 #: InvenTree/helpers.py:611
-#, fuzzy
-#| msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "Yksilöllisten sarjanumeroiden määrän ({s}) on vastattava määrää ({q})"
+msgstr ""
 
 #: InvenTree/helpers.py:740
 msgid "Remove HTML tags from this value"
@@ -11122,36 +11120,28 @@ msgid "selected"
 msgstr ""
 
 #: templates/js/translated/label.js:133
-#, fuzzy
-#| msgid "Print Reports"
 msgid "Printing Options"
-msgstr "Tulosta raportteja"
+msgstr ""
 
 #: templates/js/translated/label.js:143
 msgid "Print label"
 msgstr ""
 
 #: templates/js/translated/label.js:143
-#, fuzzy
-#| msgid "Print Reports"
 msgid "Print labels"
-msgstr "Tulosta raportteja"
+msgstr ""
 
 #: templates/js/translated/label.js:144
 msgid "Print"
 msgstr ""
 
 #: templates/js/translated/label.js:150
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Select label template"
-msgstr "Valitse lähetettävä tiedosto"
+msgstr ""
 
 #: templates/js/translated/label.js:163
-#, fuzzy
-#| msgid "Select supplier"
 msgid "Select plugin"
-msgstr "Valitse toimittaja"
+msgstr ""
 
 #: templates/js/translated/label.js:182
 msgid "Labels sent to printer"
@@ -13143,8 +13133,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13320,5 +13309,3 @@ msgstr "Oikeus muokata kohteita"
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
 
-#~ msgid "Select Printer"
-#~ msgstr "Valitse tulostin"
