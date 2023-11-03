@@ -22,12 +22,13 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'reference',
       sortable: true,
+      switchable: false,
       title: t`Reference`
-      // TODO: Link to the build order detail page
     },
     {
       accessor: 'part',
       sortable: true,
+      switchable: false,
       title: t`Part`,
       render: (record: any) => {
         let part = record.part_detail;
@@ -51,7 +52,8 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'quantity',
       sortable: true,
-      title: t`Quantity`
+      title: t`Quantity`,
+      switchable: false
     },
     {
       accessor: 'completed',

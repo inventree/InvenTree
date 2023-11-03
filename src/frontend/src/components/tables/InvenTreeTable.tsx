@@ -82,7 +82,6 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   customFilters: [],
   customActionGroups: [],
   idAccessor: 'pk',
-  rowActions: (record: any) => [],
   onRowClick: (record: any, index: number, event: any) => {}
 };
 
