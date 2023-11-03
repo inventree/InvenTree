@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Text } from '@mantine/core';
 import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
@@ -16,6 +17,7 @@ import {
   RowDuplicateAction,
   RowEditAction
 } from '../RowActions';
+import { TableHoverCard } from '../TableHoverCard';
 
 /*
  * Display a table of purchase order line items, for a specific order
@@ -37,7 +39,15 @@ export function PurchaseOrderLineItemTable({
     (record: any) => {
       // TODO: Hide certain actions if user does not have required permissions
 
+      let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
+
       return [
+        {
+          hidden: received,
+          title: t`Receive`,
+          tooltip: t`Receive line item`,
+          color: 'green'
+        },
         RowEditAction({
           onClick: () => {
             let supplier = record?.supplier_part_detail?.supplier;
@@ -100,8 +110,37 @@ export function PurchaseOrderLineItemTable({
         accessor: 'quantity',
         title: t`Quantity`,
         sortable: true,
-        switchable: false
-        // TODO: custom quantity renderer
+        switchable: false,
+        render: (record: any) => {
+          let part = record?.part_detail;
+          let supplier_part = record?.supplier_part_detail ?? {};
+          let extra = [];
+
+          if (supplier_part.pack_quantity_native != 1) {
+            let total = record.quantity * supplier_part.pack_quantity_native;
+
+            extra.push(
+              <Text key="pack-quantity">
+                {t`Pack Quantity`}: {supplier_part.pack_quantity}
+              </Text>
+            );
+
+            extra.push(
+              <Text key="total-quantity">
+                {t`Total Quantity`}: {total}
+                {part.units}
+              </Text>
+            );
+          }
+
+          return (
+            <TableHoverCard
+              value={record.quantity}
+              extra={extra}
+              title={t`Quantity`}
+            />
+          );
+        }
       },
       {
         accessor: 'recevied',

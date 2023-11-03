@@ -163,7 +163,9 @@ export function InvenTreeTable({
         cellsStyle: {
           position: 'sticky',
           right: 0,
+          // TODO: Use the theme color to set the background color
           backgroundColor: '#FFF',
+          // TODO: Use the scroll area callbacks to determine if we need to display a "shadow"
           borderLeft: '1px solid #DDD',
           padding: '3px'
         },
@@ -511,7 +513,7 @@ export function InvenTreeTable({
           highlightOnHover
           loaderVariant="dots"
           idAccessor={tableProps.idAccessor}
-          minHeight={200}
+          minHeight={300}
           totalRecords={recordCount}
           recordsPerPage={tableProps.pageSize ?? defaultPageSize}
           page={page}

@@ -164,9 +164,7 @@ export function BomTable({
           return (
             <TableHoverCard
               value={available_stock}
-              extra={
-                extra.length > 0 ? <Stack spacing="xs">{extra}</Stack> : null
-              }
+              extra={extra}
               title={t`Available Stock`}
             />
           );

@@ -143,7 +143,7 @@ function partTableColumns(): TableColumn[] {
               </Group>
             }
             title={t`Stock Information`}
-            extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
+            extra={extra}
           />
         );
       }

@@ -126,7 +126,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           return (
             <TableHoverCard
               value={record.pack_quantity}
-              extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
+              extra={extra}
               title={t`Pack Quantity`}
             />
           );
@@ -161,12 +161,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
             );
           }
 
-          return (
-            <TableHoverCard
-              value={record.available}
-              extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
-            />
-          );
+          return <TableHoverCard value={record.available} extra={extra} />;
         }
       }
     ];
