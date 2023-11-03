@@ -49,11 +49,6 @@ export const menuItems: MenuLinkItem[] = [
     link: '/purchasing/'
   },
   {
-    id: 'purchasing',
-    text: <Trans>Purchasing</Trans>,
-    link: '/purchasing/'
-  },
-  {
     id: 'sales',
     text: <Trans>Sales</Trans>,
     link: '/sales/'
