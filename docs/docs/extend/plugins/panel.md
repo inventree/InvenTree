@@ -159,7 +159,7 @@ Here are some examples of available colors:
 
 Please have a look at the css files for more options. The last line renders the value that was defined in the plugin.
 
-!!! Tip "Give it a try"
+!!! tip "Give it a try"
     Each time you press the button, the value will be increased.
 
 ### Handling user input
@@ -248,6 +248,6 @@ upon execution using replace. Watch out for the ticks around the 999999 and Size
 them from being interpreted by the django template engine and replaced by
 something else.
 
-!!! Tip "Give it a try"
+!!! tip "Give it a try"
     change the values in the fields and push Save. You will see the values
     in the InvenTree log.
