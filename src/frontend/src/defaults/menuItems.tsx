@@ -57,6 +57,11 @@ export const menuItems: MenuLinkItem[] = [
     id: 'sales',
     text: <Trans>Sales</Trans>,
     link: '/sales/'
+  },
+  {
+    id: 'settings-system',
+    text: <Trans>System Settings</Trans>,
+    link: '/settings/system'
   }
 ];
 
