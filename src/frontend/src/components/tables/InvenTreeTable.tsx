@@ -9,7 +9,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
-import { ButtonMenu } from '../items/ButtonMenu';
+import { ButtonMenu } from '../buttons/ButtonMenu';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
@@ -156,13 +156,16 @@ export function InvenTreeTable({
     if (tableProps.rowActions) {
       cols.push({
         accessor: 'actions',
-        title: '',
+        title: '   ',
         hidden: false,
         switchable: false,
         width: 50,
         cellsStyle: {
           position: 'sticky',
-          right: 0
+          right: 0,
+          backgroundColor: '#FFF',
+          borderLeft: '1px solid #DDD',
+          padding: '3px'
         },
         render: function (record: any) {
           return (
@@ -449,12 +452,6 @@ export function InvenTreeTable({
                 actions={tableProps.printingActions ?? []}
               />
             )}
-            {tableProps.enableDownload && (
-              <DownloadAction
-                key="download-action"
-                downloadCallback={downloadData}
-              />
-            )}
           </Group>
           <Space />
           <Group position="right" spacing={5}>
@@ -492,6 +489,12 @@ export function InvenTreeTable({
                   </ActionIcon>
                 </Indicator>
               )}
+            {tableProps.enableDownload && (
+              <DownloadAction
+                key="download-action"
+                downloadCallback={downloadData}
+              />
+            )}
           </Group>
         </Group>
         {filtersVisible && (
