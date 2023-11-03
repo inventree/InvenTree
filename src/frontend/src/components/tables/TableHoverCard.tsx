@@ -1,4 +1,4 @@
-import { Divider, Group, HoverCard, Stack } from '@mantine/core';
+import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 
 /*
@@ -32,7 +32,7 @@ export function TableHoverCard({
         <Stack spacing="xs">
           <Group spacing="xs" position="left">
             <IconInfoCircle size="16" color="blue" />
-            {title}
+            <Text weight="bold">{title}</Text>
           </Group>
           <Divider />
           {extra}

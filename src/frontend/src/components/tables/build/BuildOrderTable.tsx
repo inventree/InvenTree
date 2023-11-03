@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Progress } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the build order table
@@ -74,9 +75,21 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'project_code',
       title: t`Project Code`,
-      sortable: true
+      sortable: true,
       // TODO: Hide this if project code is not enabled
-      // TODO: Custom render function here
+      render: (record: any) => {
+        let project = record.project_code_detail;
+
+        return project ? (
+          <TableHoverCard
+            value={project.code}
+            title={t`Project Code`}
+            extra={<Text>{project.description}</Text>}
+          />
+        ) : (
+          '-'
+        );
+      }
     },
     {
       accessor: 'priority',

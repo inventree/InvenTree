@@ -40,7 +40,7 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'part_detail.description',
       sortable: false,
-      switchable: true,
+
       title: t`Description`
     },
     {
@@ -153,7 +153,7 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'status',
       sortable: true,
-      switchable: true,
+
       filter: true,
       title: t`Status`,
       render: TableStatusRenderer(ModelType.stockitem)
@@ -161,13 +161,13 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'batch',
       sortable: true,
-      switchable: true,
+
       title: t`Batch`
     },
     {
       accessor: 'location',
       sortable: true,
-      switchable: true,
+
       title: t`Location`,
       render: function (record: any) {
         // TODO: Custom renderer for location
