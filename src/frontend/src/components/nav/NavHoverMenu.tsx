@@ -16,7 +16,7 @@ import { menuItems } from '../../defaults/menuItems';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { InvenTreeLogo } from '../items/InvenTreeLogo';
+import { InvenTreeLogoHomeButton } from '../items/InvenTreeLogo';
 import { MenuLinks } from '../items/MenuLinks';
 
 export function NavHoverMenu({
@@ -41,7 +41,7 @@ export function NavHoverMenu({
   return (
     <HoverCard width={600} position="bottom" shadow="md" withinPortal>
       <HoverCard.Target>
-        <InvenTreeLogo />
+        <InvenTreeLogoHomeButton />
       </HoverCard.Target>
 
       <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
