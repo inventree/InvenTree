@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
+import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
@@ -66,19 +67,13 @@ function buildOrderTableColumns(): TableColumn[] {
       accessor: 'completed',
       sortable: true,
       title: t`Completed`,
-      render: (record: any) => {
-        let progress =
-          record.quantity <= 0 ? 0 : (100 * record.completed) / record.quantity;
-        return (
-          <Progress
-            value={progress}
-            label={record.completed}
-            color={progress < 100 ? 'blue' : 'green'}
-            size="xl"
-            radius="xl"
-          />
-        );
-      }
+      render: (record: any) => (
+        <ProgressBar
+          progressLabel={true}
+          value={record.completed}
+          maximum={record.quantity}
+        />
+      )
     },
     {
       accessor: 'status',

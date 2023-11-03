@@ -3,6 +3,7 @@ import { Text } from '@mantine/core';
 import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
+import { ProgressBar } from '../../../components/items/ProgressBar';
 import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
 import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
@@ -143,11 +144,17 @@ export function PurchaseOrderLineItemTable({
         }
       },
       {
-        accessor: 'recevied',
+        accessor: 'received',
         title: t`Received`,
         sortable: false,
-        switchable: true
-        // TODO: custom renderer
+        switchable: true,
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel={true}
+            value={record.received}
+            maximum={record.quantity}
+          />
+        )
       },
       {
         accessor: 'pack_quantity',
