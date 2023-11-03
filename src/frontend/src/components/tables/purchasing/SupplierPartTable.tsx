@@ -12,6 +12,7 @@ import {
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -191,12 +192,10 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     // TODO: Hide actions based on user permissions
 
     return [
-      // TODO: Refactor this component out to something reusable
-      <Tooltip label={t`Add supplier part`}>
-        <ActionIcon radius="sm" onClick={addSupplierPart}>
-          <IconCirclePlus color="green" />
-        </ActionIcon>
-      </Tooltip>
+      <AddItemButton
+        tooltip={t`Add supplier part`}
+        callback={addSupplierPart}
+      />
     ];
   }, [user]);
 

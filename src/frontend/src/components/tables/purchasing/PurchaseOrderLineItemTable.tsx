@@ -2,10 +2,11 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
 import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
-import { openEditApiForm } from '../../../functions/forms';
+import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
@@ -177,6 +178,31 @@ export function PurchaseOrderLineItemTable({
     ];
   }, [orderId, user]);
 
+  const addLine = useCallback(() => {
+    openCreateApiForm({
+      url: ApiPaths.purchase_order_line_list,
+      title: t`Add Line Item`,
+      fields: purchaseOrderLineItemFields({}),
+      onFormSuccess: refreshTable,
+      successMessage: t`Line item added`
+    });
+  }, []);
+
+  // Custom table actions
+  const tableActions = useMemo(() => {
+    let actions = [];
+
+    // TODO: Hide "add item" if order is not active
+
+    if (user?.checkUserRole('purchaseorder', 'add')) {
+      actions.push(
+        <AddItemButton tooltip={t`Add line item`} callback={addLine} />
+      );
+    }
+
+    return actions;
+  }, [orderId, user]);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.purchase_order_line_list)}
@@ -188,7 +214,8 @@ export function PurchaseOrderLineItemTable({
           order: orderId,
           part_detail: true
         },
-        rowActions: rowActions
+        rowActions: rowActions,
+        customActionGroups: tableActions
       }}
     />
   );

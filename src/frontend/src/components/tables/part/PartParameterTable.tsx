@@ -10,6 +10,7 @@ import {
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
@@ -174,11 +175,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
     // TODO: Hide if user does not have permission to edit parts
     actions.push(
-      <Tooltip label={t`Add parameter`}>
-        <ActionIcon radius="sm" onClick={addParameter}>
-          <IconTextPlus color="green" />
-        </ActionIcon>
-      </Tooltip>
+      <AddItemButton tooltip="Add parameter" callback={addParameter} />
     );
 
     return actions;
