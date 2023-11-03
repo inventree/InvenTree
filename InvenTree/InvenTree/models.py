@@ -1049,7 +1049,7 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                     instance,
                     'inventree.error_log',
                     context=context,
-                    targets=users,
+                    targets=target_users,
                     delivery_methods={common.notifications.UIMessageNotification, },
                 )
 
