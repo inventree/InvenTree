@@ -98,7 +98,7 @@ export function CustomUnitsTable() {
 
     actions.push(
       // TODO: Adjust actions based on user permissions
-      <AddItemButton tooltip={t`Add custom unit`} callback={addCustomUnit} />
+      <AddItemButton tooltip={t`Add custom unit`} onClick={addCustomUnit} />
     );
 
     return actions;

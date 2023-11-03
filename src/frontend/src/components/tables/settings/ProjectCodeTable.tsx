@@ -87,7 +87,7 @@ export function ProjectCodeTable() {
     let actions = [];
 
     actions.push(
-      <AddItemButton callback={addProjectCode} tooltip={t`Add project code`} />
+      <AddItemButton onClick={addProjectCode} tooltip={t`Add project code`} />
     );
 
     return actions;

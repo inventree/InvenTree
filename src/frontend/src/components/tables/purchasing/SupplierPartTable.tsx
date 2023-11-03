@@ -192,10 +192,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     // TODO: Hide actions based on user permissions
 
     return [
-      <AddItemButton
-        tooltip={t`Add supplier part`}
-        callback={addSupplierPart}
-      />
+      <AddItemButton tooltip={t`Add supplier part`} onClick={addSupplierPart} />
     ];
   }, [user]);
 

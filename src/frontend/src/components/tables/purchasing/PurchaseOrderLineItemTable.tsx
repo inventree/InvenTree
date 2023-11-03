@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
@@ -6,6 +7,7 @@ import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
+import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -190,17 +192,14 @@ export function PurchaseOrderLineItemTable({
 
   // Custom table actions
   const tableActions = useMemo(() => {
-    let actions = [];
-
-    // TODO: Hide "add item" if order is not active
-
-    if (user?.checkUserRole('purchaseorder', 'add')) {
-      actions.push(
-        <AddItemButton tooltip={t`Add line item`} callback={addLine} />
-      );
-    }
-
-    return actions;
+    return [
+      <AddItemButton
+        tooltip={t`Add line item`}
+        onClick={addLine}
+        hidden={!user?.checkUserRole('purchaseorder', 'add')}
+      />,
+      <ActionButton text={t`Receive items`} icon={<IconSquareArrowRight />} />
+    ];
   }, [orderId, user]);
 
   return (
@@ -209,6 +208,8 @@ export function PurchaseOrderLineItemTable({
       tableKey={tableKey}
       columns={tableColumns}
       props={{
+        enableSelection: true,
+        enableDownload: true,
         params: {
           ...params,
           order: orderId,
