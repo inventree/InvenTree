@@ -40,7 +40,13 @@ export function NavHoverMenu({
   }, [hostKey]);
 
   return (
-    <HoverCard width={600} position="bottom" shadow="md" withinPortal>
+    <HoverCard
+      width={600}
+      openDelay={300}
+      position="bottom"
+      shadow="md"
+      withinPortal
+    >
       <HoverCard.Target>
         <UnstyledButton onClick={() => openDrawer()}>
           <InvenTreeLogo />
