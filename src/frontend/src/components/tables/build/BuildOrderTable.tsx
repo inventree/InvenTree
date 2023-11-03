@@ -45,23 +45,12 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'title',
       sortable: false,
-      title: t`Description`,
-      switchable: true
-    },
-    {
-      accessor: 'project_code',
-      title: t`Project Code`,
-      sortable: true,
-      switchable: false,
-      hidden: true
-      // TODO: Hide this if project code is not enabled
-      // TODO: Custom render function here
+      title: t`Description`
     },
     {
       accessor: 'quantity',
       sortable: true,
-      title: t`Quantity`,
-      switchable: true
+      title: t`Quantity`
     },
     {
       accessor: 'completed',
@@ -79,45 +68,48 @@ function buildOrderTableColumns(): TableColumn[] {
       accessor: 'status',
       sortable: true,
       title: t`Status`,
-      switchable: true,
+
       render: TableStatusRenderer(ModelType.build)
+    },
+    {
+      accessor: 'project_code',
+      title: t`Project Code`,
+      sortable: true
+      // TODO: Hide this if project code is not enabled
+      // TODO: Custom render function here
     },
     {
       accessor: 'priority',
       title: t`Priority`,
-      sortable: true,
-      switchable: true
+      sortable: true
     },
     {
       accessor: 'creation_date',
       sortable: true,
-      title: t`Created`,
-      switchable: true
+      title: t`Created`
     },
     {
       accessor: 'target_date',
       sortable: true,
-      title: t`Target Date`,
-      switchable: true
+      title: t`Target Date`
     },
     {
       accessor: 'completion_date',
       sortable: true,
-      title: t`Completed`,
-      switchable: true
+      title: t`Completed`
     },
     {
       accessor: 'issued_by',
       sortable: true,
-      title: t`Issued By`,
-      switchable: true
+      title: t`Issued By`
+
       // TODO: custom render function
     },
     {
       accessor: 'responsible',
       sortable: true,
-      title: t`Responsible`,
-      switchable: true
+      title: t`Responsible`
+
       // TODO: custom render function
     }
   ];

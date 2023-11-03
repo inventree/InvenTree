@@ -28,7 +28,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
       {
         accessor: 'part',
         title: t`Part`,
-        switchable: true,
+
         sortable: true,
         render: function (record: any) {
           let part = record?.part_detail ?? {};
@@ -60,7 +60,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
         accessor: 'description',
         title: t`Description`,
         sortable: false,
-        switchable: true,
+
         render: (record) => record.template_detail?.description
       },
       {
@@ -87,7 +87,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
       {
         accessor: 'units',
         title: t`Units`,
-        switchable: true,
+
         sortable: true,
         render: (record) => record.template_detail?.units
       }

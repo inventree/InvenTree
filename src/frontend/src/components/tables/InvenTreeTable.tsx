@@ -115,7 +115,7 @@ export function InvenTreeTable({
 
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns = columns.some(
-    (col: TableColumn) => col.switchable
+    (col: TableColumn) => col.switchable ?? true
   );
 
   // A list of hidden columns, saved to local storage
@@ -142,7 +142,7 @@ export function InvenTreeTable({
     let cols = columns.map((col) => {
       let hidden: boolean = col.hidden ?? false;
 
-      if (col.switchable) {
+      if (col.switchable ?? true) {
         hidden = hiddenColumns.includes(col.accessor);
       }
 

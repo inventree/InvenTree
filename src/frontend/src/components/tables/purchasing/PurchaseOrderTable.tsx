@@ -33,8 +33,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'description',
-        title: t`Description`,
-        switchable: true
+        title: t`Description`
       },
       {
         accessor: 'supplier__name',
@@ -54,20 +53,19 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'supplier_reference',
-        title: t`Supplier Reference`,
-        switchable: true
+        title: t`Supplier Reference`
       },
       {
         accessor: 'project_code',
-        title: t`Project Code`,
-        switchable: true
+        title: t`Project Code`
+
         // TODO: Custom project code formatter
       },
       {
         accessor: 'status',
         title: t`Status`,
         sortable: true,
-        switchable: true,
+
         render: (record: any) =>
           StatusRenderer({
             status: record.status,
@@ -76,34 +74,33 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'creation_date',
-        title: t`Created`,
-        switchable: true
+        title: t`Created`
+
         // TODO: Custom date formatter
       },
       {
         accessor: 'target_date',
-        title: t`Target Date`,
-        switchable: true
+        title: t`Target Date`
+
         // TODO: Custom date formatter
       },
       {
         accessor: 'line_items',
         title: t`Line Items`,
-        sortable: true,
-        switchable: true
+        sortable: true
       },
       {
         accessor: 'total_price',
         title: t`Total Price`,
-        sortable: true,
-        switchable: true
+        sortable: true
+
         // TODO: Custom money formatter
       },
       {
         accessor: 'responsible',
         title: t`Responsible`,
-        sortable: true,
-        switchable: true
+        sortable: true
+
         // TODO: custom 'owner' formatter
       }
     ];

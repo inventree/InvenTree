@@ -67,12 +67,11 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       {
         accessor: 'description',
         title: t`Description`,
-        sortable: false,
-        switchable: true
+        sortable: false
       },
       {
         accessor: 'manufacturer',
-        switchable: true,
+
         sortable: true,
         title: t`Manufacturer`,
         render: (record: any) => {
@@ -88,7 +87,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       },
       {
         accessor: 'MPN',
-        switchable: true,
+
         sortable: true,
         title: t`MPN`,
         render: (record: any) => record?.manufacturer_part_detail?.MPN
@@ -96,20 +95,18 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       {
         accessor: 'in_stock',
         title: t`In Stock`,
-        sortable: true,
-        switchable: true
+        sortable: true
       },
       {
         accessor: 'packaging',
         title: t`Packaging`,
-        sortable: true,
-        switchable: true
+        sortable: true
       },
       {
         accessor: 'pack_quantity',
         title: t`Pack Quantity`,
         sortable: true,
-        switchable: true,
+
         render: (record: any) => {
           let part = record?.part_detail ?? {};
 
@@ -135,21 +132,20 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       {
         accessor: 'link',
         title: t`Link`,
-        sortable: false,
-        switchable: true
+        sortable: false
+
         // TODO: custom link renderer?
       },
       {
         accessor: 'note',
         title: t`Notes`,
-        sortable: false,
-        switchable: true
+        sortable: false
       },
       {
         accessor: 'available',
         title: t`Availability`,
         sortable: true,
-        switchable: true,
+
         render: (record: any) => {
           let extra = [];
 

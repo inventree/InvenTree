@@ -35,26 +35,23 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'IPN',
       title: t`IPN`,
-      sortable: true,
-      switchable: true
+      sortable: true
     },
     {
       accessor: 'units',
       sortable: true,
-      title: t`Units`,
-      switchable: true
+      title: t`Units`
     },
     {
       accessor: 'description',
       title: t`Description`,
-      sortable: true,
-      switchable: true
+      sortable: true
     },
     {
       accessor: 'category',
       title: t`Category`,
       sortable: true,
-      switchable: true,
+
       render: function (record: any) {
         // TODO: Link to the category detail page
         return shortenString({
@@ -66,7 +63,7 @@ function partTableColumns(): TableColumn[] {
       accessor: 'total_in_stock',
       title: t`Stock`,
       sortable: true,
-      switchable: true,
+
       render: (record) => {
         let extra: ReactNode[] = [];
 
@@ -152,7 +149,7 @@ function partTableColumns(): TableColumn[] {
       accessor: 'price_range',
       title: t`Price Range`,
       sortable: false,
-      switchable: true,
+
       render: function (record: any) {
         // TODO: Render price range
         return '-- price --';
@@ -160,8 +157,7 @@ function partTableColumns(): TableColumn[] {
     },
     {
       accessor: 'link',
-      title: t`Link`,
-      switchable: true
+      title: t`Link`
     }
   ];
 }

@@ -97,15 +97,14 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'description',
         title: t`Part Description`,
-        switchable: true,
+
         sortable: false,
         render: (record: any) => record?.part_detail?.description
       },
       {
         accessor: 'reference',
         title: t`Reference`,
-        sortable: true,
-        switchable: true
+        sortable: true
       },
       {
         accessor: 'quantity',
@@ -147,7 +146,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'received',
         title: t`Received`,
         sortable: false,
-        switchable: true,
+
         render: (record: any) => (
           <ProgressBar
             progressLabel={true}
@@ -159,7 +158,7 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'pack_quantity',
         sortable: false,
-        switchable: true,
+
         title: t`Pack Quantity`,
         render: (record: any) => record?.supplier_part_detail?.pack_quantity
       },
@@ -172,7 +171,7 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'supplier_link',
         title: t`Supplier Link`,
-        switchable: true,
+
         sortable: false,
         render: (record: any) => record?.supplier_part_detail?.link
       },
@@ -180,7 +179,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'MPN',
         title: t`Manufacturer Code`,
         sortable: true,
-        switchable: true,
+
         render: (record: any) =>
           record?.supplier_part_detail?.manufacturer_part_detail?.MPN
       },
@@ -188,39 +187,37 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'purchase_price',
         title: t`Unit Price`,
-        sortable: true,
-        switchable: true
+        sortable: true
+
         // TODO: custom renderer
       },
       {
         accessor: 'total_price',
         title: t`Total Price`,
-        sortable: true,
-        switchable: true
+        sortable: true
+
         // TODO: custom renderer
       },
       {
         accessor: 'target_date',
         title: t`Target Date`,
-        sortable: true,
-        switchable: true
+        sortable: true
       },
       {
         accessor: 'destination',
         title: t`Destination`,
-        sortable: false,
-        switchable: true
+        sortable: false
+
         // TODO: Custom renderer
       },
       {
         accessor: 'notes',
-        title: t`Notes`,
-        switchable: true
+        title: t`Notes`
       },
       {
         accessor: 'link',
-        title: t`Link`,
-        switchable: true
+        title: t`Link`
+
         // TODO: custom renderer
       }
     ];
