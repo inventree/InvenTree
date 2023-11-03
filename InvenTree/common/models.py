@@ -409,6 +409,14 @@ class BaseInvenTreeSetting(models.Model):
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
+        # Prevent saving to the database during data import
+        if InvenTree.ready.isImportingData():
+            create = False
+
+        # Prevent saving to the database during migrations
+        if InvenTree.ready.isRunningMigrations():
+            create = False
+
         # Perform cache lookup by default
         do_cache = kwargs.pop('cache', True)
 
