@@ -51,7 +51,8 @@ class InvenTreeExchange(SimpleExchangeBackend):
         rates = super().get_rates(**params)
 
         # Add the base currency to the rates
-        rates[params["base_currency"]] = Decimal("1.0")
+        base_currency = params.get('base', currency_code_default())
+        rates[base_currency] = Decimal("1.0")
 
         return rates
 
