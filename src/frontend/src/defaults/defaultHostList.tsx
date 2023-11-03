@@ -1,5 +1,3 @@
-import { t } from '@lingui/macro';
-
 import { HostList } from '../states/states';
 
 export const defaultHostList: HostList = window.INVENTREE_SETTINGS.server_list;

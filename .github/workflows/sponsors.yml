@@ -20,5 +20,5 @@ jobs:
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@a1ea191d508feb8485aceba848389d49f80ca2dc
         with:
-          branch: main
+          branch: master
           folder: '.'

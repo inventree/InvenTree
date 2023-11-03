@@ -12,7 +12,7 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of custom physical units
@@ -45,11 +45,9 @@ export function CustomUnitsTable() {
 
   const rowActions = useCallback((record: any): RowAction[] => {
     return [
-      {
-        title: t`Edit`,
+      RowEditAction({
         onClick: () => {
           openEditApiForm({
-            name: 'edit-custom-unit',
             url: ApiPaths.custom_unit_list,
             pk: record.pk,
             title: t`Edit custom unit`,
@@ -62,12 +60,10 @@ export function CustomUnitsTable() {
             successMessage: t`Custom unit updated`
           });
         }
-      },
-      {
-        title: t`Delete`,
+      }),
+      RowDeleteAction({
         onClick: () => {
           openDeleteApiForm({
-            name: 'delete-custom-unit',
             url: ApiPaths.custom_unit_list,
             pk: record.pk,
             title: t`Delete custom unit`,
@@ -78,13 +74,12 @@ export function CustomUnitsTable() {
             )
           });
         }
-      }
+      })
     ];
   }, []);
 
   const addCustomUnit = useCallback(() => {
     openCreateApiForm({
-      name: 'add-custom-unit',
       url: ApiPaths.custom_unit_list,
       title: t`Add custom unit`,
       fields: {

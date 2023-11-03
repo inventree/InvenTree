@@ -12,7 +12,7 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of project codes
@@ -37,11 +37,9 @@ export function ProjectCodeTable() {
 
   const rowActions = useCallback((record: any): RowAction[] => {
     return [
-      {
-        title: t`Edit`,
+      RowEditAction({
         onClick: () => {
           openEditApiForm({
-            name: 'edit-project-code',
             url: ApiPaths.project_code_list,
             pk: record.pk,
             title: t`Edit project code`,
@@ -53,13 +51,10 @@ export function ProjectCodeTable() {
             successMessage: t`Project code updated`
           });
         }
-      },
-      {
-        title: t`Delete`,
-        color: 'red',
+      }),
+      RowDeleteAction({
         onClick: () => {
           openDeleteApiForm({
-            name: 'delete-project-code',
             url: ApiPaths.project_code_list,
             pk: record.pk,
             title: t`Delete project code`,
@@ -70,13 +65,12 @@ export function ProjectCodeTable() {
             )
           });
         }
-      }
+      })
     ];
   }, []);
 
   const addProjectCode = useCallback(() => {
     openCreateApiForm({
-      name: 'add-project-code',
       url: ApiPaths.project_code_list,
       title: t`Add project code`,
       fields: {

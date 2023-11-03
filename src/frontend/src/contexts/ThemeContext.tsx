@@ -9,7 +9,9 @@ import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 
+import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
 import { QrCodeModal } from '../components/modals/QrCodeModal';
+import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
 
 export function ThemeContext({ children }: { children: JSX.Element }) {
@@ -60,7 +62,11 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
         <Notifications />
         <ModalsProvider
           labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
-          modals={{ qr: QrCodeModal }}
+          modals={{
+            qr: QrCodeModal,
+            info: ServerInfoModal,
+            about: AboutInvenTreeModal
+          }}
         >
           {children}
         </ModalsProvider>

@@ -70,15 +70,20 @@ export function RenderSupplierPart({ instance }: { instance: any }): ReactNode {
 /**
  * Inline rendering of a single ManufacturerPart instance
  */
-export function ManufacturerPart({ instance }: { instance: any }): ReactNode {
-  let supplier = instance.supplier_detail ?? {};
+export function RenderManufacturerPart({
+  instance
+}: {
+  instance: any;
+}): ReactNode {
   let part = instance.part_detail ?? {};
+  let manufacturer = instance.manufacturer_detail ?? {};
 
-  let text = instance.SKU;
-
-  if (supplier.name) {
-    text = `${supplier.name} | ${text}`;
-  }
-
-  return <RenderInlineModel primary={text} secondary={part.full_name} />;
+  return (
+    <RenderInlineModel
+      primary={manufacturer.name}
+      secondary={instance.MPN}
+      suffix={part.full_name}
+      image={manufacturer?.thumnbnail ?? manufacturer.image}
+    />
+  );
 }

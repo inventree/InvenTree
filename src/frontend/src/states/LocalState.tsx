@@ -42,7 +42,7 @@ export const useLocalState = create<LocalStateProps>()(
       primaryColor: 'indigo',
       whiteColor: '#fff',
       blackColor: '#000',
-      radius: 'md',
+      radius: 'xs',
       loader: 'oval'
     }),
     {

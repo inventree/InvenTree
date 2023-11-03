@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
@@ -10,7 +10,12 @@ import { ModelType } from '../../render/ModelType';
 import { StatusRenderer } from '../../renderers/StatusRenderer';
 import { InvenTreeTable } from '../InvenTreeTable';
 
+/**
+ * Display a table of purchase orders
+ */
 export function PurchaseOrderTable({ params }: { params?: any }) {
+  const navigate = useNavigate();
+
   const { tableKey } = useTableRefresh('purchase-order');
 
   // TODO: Custom filters
@@ -40,10 +45,11 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           let supplier = record.supplier_detail ?? {};
 
           return (
-            <Group spacing="xs" noWrap={true}>
-              <Thumbnail src={supplier?.image} alt={supplier.name} />
-              <Text>{supplier?.name}</Text>
-            </Group>
+            <Thumbnail
+              src={supplier?.image}
+              alt={supplier.name}
+              text={supplier.name}
+            />
           );
         }
       },
@@ -56,7 +62,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         accessor: 'project_code',
         title: t`Project Code`,
         switchable: true
-        // TODO: Custom formatter
+        // TODO: Custom project code formatter
       },
       {
         accessor: 'status',
@@ -96,8 +102,14 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           formatCurrency(record.total_price, {
             currency: record.order_currency
           })
+      },
+      {
+        accessor: 'responsible',
+        title: t`Responsible`,
+        sortable: true,
+        switchable: true
+        // TODO: custom 'owner' formatter
       }
-      // TODO: responsible
     ];
   }, []);
 
@@ -110,6 +122,11 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         params: {
           ...params,
           supplier_detail: true
+        },
+        onRowClick: (row: any) => {
+          if (row.pk) {
+            navigate(`/purchasing/purchase-order/${row.pk}`);
+          }
         }
       }}
     />

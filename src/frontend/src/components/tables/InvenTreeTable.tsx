@@ -421,14 +421,15 @@ export function InvenTreeTable({
         onCreateFilter={onFilterAdd}
         onClose={() => setFilterSelectOpen(false)}
       />
-      <Stack>
+      <Stack spacing="sm">
         <Group position="apart">
-          <Group position="left" spacing={5}>
+          <Group position="left" key="custom-actions" spacing={5}>
             {tableProps.customActionGroups?.map(
               (group: any, idx: number) => group
             )}
             {(tableProps.barcodeActions?.length ?? 0 > 0) && (
               <ButtonMenu
+                key="barcode-actions"
                 icon={<IconBarcode />}
                 label={t`Barcode actions`}
                 tooltip={t`Barcode actions`}
@@ -437,6 +438,7 @@ export function InvenTreeTable({
             )}
             {(tableProps.printingActions?.length ?? 0 > 0) && (
               <ButtonMenu
+                key="printing-actions"
                 icon={<IconPrinter />}
                 label={t`Print actions`}
                 tooltip={t`Print actions`}
@@ -444,7 +446,10 @@ export function InvenTreeTable({
               />
             )}
             {tableProps.enableDownload && (
-              <DownloadAction downloadCallback={downloadData} />
+              <DownloadAction
+                key="download-action"
+                downloadCallback={downloadData}
+              />
             )}
           </Group>
           <Space />
@@ -517,6 +522,14 @@ export function InvenTreeTable({
           records={data}
           columns={dataColumns}
           onRowClick={tableProps.onRowClick}
+          defaultColumnProps={{
+            noWrap: true,
+            textAlignment: 'left',
+            cellsStyle: {
+              // TODO: Need a better way of handling "wide" cells,
+              overflow: 'hidden'
+            }
+          }}
         />
       </Stack>
     </>

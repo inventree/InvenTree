@@ -3,6 +3,8 @@
 This does not function in real usage and is more to show the required components and for unit tests.
 """
 
+from rest_framework import serializers
+
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin
 
@@ -16,6 +18,10 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
     DESCRIPTION = "A sample plugin which provides a (fake) label printer interface"
     AUTHOR = "InvenTree contributors"
     VERSION = "0.3.0"
+
+    class PrintingOptionsSerializer(serializers.Serializer):
+        """Serializer to return printing options."""
+        amount = serializers.IntegerField(required=False, default=1)
 
     def print_label(self, **kwargs):
         """Sample printing step.

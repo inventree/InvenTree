@@ -28,6 +28,7 @@ from build.validators import generate_next_build_reference, validate_build_order
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.helpers_model
+import InvenTree.mixins
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
@@ -44,7 +45,7 @@ import users.models
 logger = logging.getLogger('inventree')
 
 
-class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
+class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -107,6 +108,12 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         """Custom save method for the BuildOrder model"""
         self.validate_reference_field(self.reference)
         self.reference_int = self.rebuild_reference_field(self.reference)
+
+        # Prevent changing target part after creation
+        if self.has_field_changed('part'):
+            raise ValidationError({
+                'part': _('Build order part cannot be changed')
+            })
 
         try:
             super().save(*args, **kwargs)

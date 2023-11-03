@@ -50,7 +50,7 @@ def rename_company_image(instance, filename):
     else:
         ext = ''
 
-    fn = 'company_{pk}_img'.format(pk=instance.pk)
+    fn = f'company_{instance.pk}_img'
 
     if ext:
         fn += '.' + ext
@@ -185,7 +185,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
     def __str__(self):
         """Get string representation of a Company."""
-        return "{n} - {d}".format(n=self.name, d=self.description)
+        return f"{self.name} - {self.description}"
 
     def get_absolute_url(self):
         """Get the web URL for the detail view for this Company."""

@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { renderDate } from '../../../defaults/formatters';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
@@ -12,6 +12,8 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
   const { tableKey } = useTableRefresh('return-orders');
+
+  const navigate = useNavigate();
 
   // TODO: Custom filters
 
@@ -39,10 +41,11 @@ export function ReturnOrderTable({ params }: { params?: any }) {
           let customer = record.customer_detail ?? {};
 
           return (
-            <Group spacing="xs" noWrap={true}>
-              <Thumbnail src={customer?.image} alt={customer.name} />
-              <Text>{customer?.name}</Text>
-            </Group>
+            <Thumbnail
+              src={customer?.image}
+              alt={customer.name}
+              text={customer.name}
+            />
           );
         }
       },
@@ -93,6 +96,11 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         params: {
           ...params,
           customer_detail: true
+        },
+        onRowClick: (row: any) => {
+          if (row.pk) {
+            navigate(`/sales/return-order/${row.pk}/`);
+          }
         }
       }}
     />

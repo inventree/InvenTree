@@ -1,4 +1,6 @@
+import { t } from '@lingui/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
+import { IconQrcode } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
@@ -32,19 +34,19 @@ export function ActionDropdown({
   return hasActions ? (
     <Menu position="bottom-end">
       <Menu.Target>
-        <Tooltip label={tooltip}>
+        <Tooltip label={tooltip} hidden={!tooltip}>
           <ActionIcon size="lg" radius="sm" variant="outline">
             {icon}
           </ActionIcon>
         </Tooltip>
       </Menu.Target>
       <Menu.Dropdown>
-        {actions.map((action, index) =>
+        {actions.map((action) =>
           action.disabled ? null : (
-            <Tooltip label={action.tooltip}>
+            <Tooltip label={action.tooltip} key={`tooltip-${action.name}`}>
               <Menu.Item
                 icon={action.icon}
-                key={index}
+                key={action.name}
                 onClick={() => {
                   if (action.onClick != undefined) {
                     action.onClick();
@@ -62,4 +64,20 @@ export function ActionDropdown({
       </Menu.Dropdown>
     </Menu>
   ) : null;
+}
+
+// Dropdown menu for barcode actions
+export function BarcodeActionDropdown({
+  actions
+}: {
+  actions: ActionDropdownItem[];
+}) {
+  return (
+    <ActionDropdown
+      key="barcode"
+      tooltip={t`Barcode Actions`}
+      icon={<IconQrcode />}
+      actions={actions}
+    />
+  );
 }
