@@ -159,7 +159,11 @@ export function InvenTreeTable({
         title: '',
         hidden: false,
         switchable: false,
-        width: 48,
+        width: 50,
+        cellsStyle: {
+          position: 'sticky',
+          right: 0
+        },
         render: function (record: any) {
           return (
             <RowActions
