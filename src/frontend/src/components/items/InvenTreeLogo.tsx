@@ -10,7 +10,9 @@ export const InvenTreeLogoHomeButton = forwardRef<HTMLDivElement>(
     return (
       <div ref={ref} {...props}>
         <NavLink to={'/'}>
-          <InvenTreeLogo />
+          <ActionIcon size={28}>
+            <InvenTreeLogo />
+          </ActionIcon>
         </NavLink>
       </div>
     );
@@ -18,9 +20,5 @@ export const InvenTreeLogoHomeButton = forwardRef<HTMLDivElement>(
 );
 
 export const InvenTreeLogo = () => {
-  return (
-    <ActionIcon size={28}>
-      <img src={InvenTreeIcon} alt={t`InvenTree Logo`} height={28} />
-    </ActionIcon>
-  );
+  return <img src={InvenTreeIcon} alt={t`InvenTree Logo`} height={28} />;
 };

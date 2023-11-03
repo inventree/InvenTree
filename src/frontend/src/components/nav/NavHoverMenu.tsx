@@ -7,7 +7,8 @@ import {
   Group,
   HoverCard,
   Skeleton,
-  Text
+  Text,
+  UnstyledButton
 } from '@mantine/core';
 import { IconLayoutSidebar } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -16,7 +17,7 @@ import { menuItems } from '../../defaults/menuItems';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { InvenTreeLogoHomeButton } from '../items/InvenTreeLogo';
+import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { MenuLinks } from '../items/MenuLinks';
 
 export function NavHoverMenu({
@@ -41,7 +42,9 @@ export function NavHoverMenu({
   return (
     <HoverCard width={600} position="bottom" shadow="md" withinPortal>
       <HoverCard.Target>
-        <InvenTreeLogoHomeButton />
+        <UnstyledButton onClick={() => openDrawer()}>
+          <InvenTreeLogo />
+        </UnstyledButton>
       </HoverCard.Target>
 
       <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
