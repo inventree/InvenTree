@@ -12,13 +12,11 @@ import {
   IconEdit,
   IconInfoCircle,
   IconLayersLinked,
-  IconLink,
   IconList,
   IconListTree,
   IconNotes,
   IconPackages,
   IconPaperclip,
-  IconQrcode,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
@@ -26,7 +24,6 @@ import {
   IconTransfer,
   IconTrash,
   IconTruckDelivery,
-  IconUnlink,
   IconVersions
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
@@ -34,7 +31,10 @@ import { useParams } from 'react-router-dom';
 
 import {
   ActionDropdown,
-  BarcodeActionDropdown
+  BarcodeActionDropdown,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -263,23 +263,13 @@ export default function PartDetail() {
     return [
       <BarcodeActionDropdown
         actions={[
-          {
-            icon: <IconQrcode />,
-            name: t`View`,
-            tooltip: t`View part barcode`
-          },
-          {
-            icon: <IconLink />,
-            name: t`Link Barcode`,
-            tooltip: t`Link custom barcode to part`,
+          ViewBarcodeAction({}),
+          LinkBarcodeAction({
             disabled: part?.barcode_hash
-          },
-          {
-            icon: <IconUnlink />,
-            name: t`Unlink Barcode`,
-            tooltip: t`Unlink custom barcode from part`,
+          }),
+          UnlinkBarcodeAction({
             disabled: !part?.barcode_hash
-          }
+          })
         ]}
       />,
       <ActionDropdown

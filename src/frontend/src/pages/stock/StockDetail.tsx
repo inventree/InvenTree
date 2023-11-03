@@ -12,22 +12,22 @@ import {
   IconEdit,
   IconHistory,
   IconInfoCircle,
-  IconLink,
   IconNotes,
   IconPackages,
   IconPaperclip,
-  IconQrcode,
   IconSitemap,
   IconTransfer,
-  IconTrash,
-  IconUnlink
+  IconTrash
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
   ActionDropdown,
-  BarcodeActionDropdown
+  BarcodeActionDropdown,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -144,23 +144,13 @@ export default function StockDetail() {
     () => /* TODO: Disable actions based on user permissions*/ [
       <BarcodeActionDropdown
         actions={[
-          {
-            icon: <IconQrcode />,
-            name: t`View`,
-            tooltip: t`View part barcode`
-          },
-          {
-            icon: <IconLink />,
-            name: t`Link Barcode`,
-            tooltip: t`Link custom barcode to stock item`,
+          ViewBarcodeAction({}),
+          LinkBarcodeAction({
             disabled: stockitem?.barcode_hash
-          },
-          {
-            icon: <IconUnlink />,
-            name: t`Unlink Barcode`,
-            tooltip: t`Unlink custom barcode from stock item`,
+          }),
+          UnlinkBarcodeAction({
             disabled: !stockitem?.barcode_hash
-          }
+          })
         ]}
       />,
       <ActionDropdown

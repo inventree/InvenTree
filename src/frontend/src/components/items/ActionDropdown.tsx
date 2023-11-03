@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
-import { IconQrcode } from '@tabler/icons-react';
+import { IconLink, IconQrcode, IconUnlink } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
@@ -80,4 +80,55 @@ export function BarcodeActionDropdown({
       actions={actions}
     />
   );
+}
+
+// Common action button for viewing a barcode
+export function ViewBarcodeAction({
+  disabled = false,
+  callback
+}: {
+  disabled?: boolean;
+  callback?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <IconQrcode />,
+    name: t`View`,
+    tooltip: t`View barcode`,
+    onClick: callback,
+    disabled: disabled
+  };
+}
+
+// Common action button for linking a custom barcode
+export function LinkBarcodeAction({
+  disabled = false,
+  callback
+}: {
+  disabled?: boolean;
+  callback?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <IconLink />,
+    name: t`Link Barcode`,
+    tooltip: t`Link custom barcode`,
+    onClick: callback,
+    disabled: disabled
+  };
+}
+
+// Common action button for un-linking a custom barcode
+export function UnlinkBarcodeAction({
+  disabled = false,
+  callback
+}: {
+  disabled?: boolean;
+  callback?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <IconUnlink />,
+    name: t`Unlink Barcode`,
+    tooltip: t`Unlink custom barcode`,
+    onClick: callback,
+    disabled: disabled
+  };
 }
