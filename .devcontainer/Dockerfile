@@ -37,11 +37,11 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
 # RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
 
 # Update pip
-RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --upgrade pip
 
 # Install required base-level python packages
 COPY ./docker/requirements.txt base_requirements.txt
-RUN pip install --disable-pip-version-check -U -r base_requirements.txt
+RUN pip install --disable-pip-version-check --no-cache-dir -U -r base_requirements.txt
 
 # preserve command history between container starts
 # Ref: https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
