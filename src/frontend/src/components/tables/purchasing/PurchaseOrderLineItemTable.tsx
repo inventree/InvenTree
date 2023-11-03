@@ -1,6 +1,8 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
+import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
+import { openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -22,7 +24,9 @@ export function PurchaseOrderLineItemTable({
   orderId: number;
   params?: any;
 }) {
-  const { tableKey } = useTableRefresh('purchase-order-line-item');
+  const { tableKey, refreshTable } = useTableRefresh(
+    'purchase-order-line-item'
+  );
 
   const user = useUserState();
 
@@ -30,7 +34,32 @@ export function PurchaseOrderLineItemTable({
     (record: any) => {
       // TODO: Hide certain actions if user does not have required permissions
 
-      return [RowEditAction({}), RowDuplicateAction({}), RowDeleteAction({})];
+      return [
+        RowEditAction({
+          onClick: () => {
+            let supplier = record?.supplier_part_detail?.supplier;
+
+            if (!supplier) {
+              return;
+            }
+
+            let fields = purchaseOrderLineItemFields({
+              supplierId: supplier
+            });
+
+            openEditApiForm({
+              url: ApiPaths.purchase_order_line_list,
+              pk: record.pk,
+              title: t`Edit Line Item`,
+              fields: fields,
+              onFormSuccess: refreshTable,
+              successMessage: t`Line item updated`
+            });
+          }
+        }),
+        RowDuplicateAction({}),
+        RowDeleteAction({})
+      ];
     },
     [orderId, user]
   );
