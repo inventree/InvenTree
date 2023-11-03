@@ -162,8 +162,11 @@ def inventreeBranch():
     if main_commit is None:
         return None
 
-    branch = main_repo.refs.follow(b'HEAD')[0][1].decode()
-    return branch.removeprefix('refs/heads/')
+    try:
+        branch = main_repo.refs.follow(b'HEAD')[0][1].decode()
+        return branch.removeprefix('refs/heads/')
+    except IndexError:
+        return None  # pragma: no cover
 
 
 def inventreeTarget():
