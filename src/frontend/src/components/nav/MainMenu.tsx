@@ -5,7 +5,6 @@ import {
   IconLogout,
   IconPlugConnected,
   IconSettings,
-  IconUserCircle,
   IconUserCog
 } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
@@ -13,7 +12,6 @@ import { Link } from 'react-router-dom';
 import { doClassicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useUserState } from '../../states/UserState';
-import { PlaceholderPill } from '../items/Placeholder';
 
 export function MainMenu() {
   const { classes, theme } = InvenTreeStyle();
@@ -36,21 +34,18 @@ export function MainMenu() {
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Item icon={<IconUserCircle />}>
-          <Trans>Profile</Trans> <PlaceholderPill />
-        </Menu.Item>
-
         <Menu.Label>
           <Trans>Settings</Trans>
         </Menu.Label>
-        <Menu.Item icon={<IconSettings />} component={Link} to="/profile/user">
-          <Trans>Account settings</Trans>
-        </Menu.Item>
         <Menu.Item icon={<IconUserCog />} component={Link} to="/settings/user">
           <Trans>Account settings</Trans>
         </Menu.Item>
         {userState.user?.is_staff && (
-          <Menu.Item icon={<IconSettings />} component={Link} to="/settings/">
+          <Menu.Item
+            icon={<IconSettings />}
+            component={Link}
+            to="/settings/system"
+          >
             <Trans>System Settings</Trans>
           </Menu.Item>
         )}
