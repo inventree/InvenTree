@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { LoadingOverlay, Stack } from '@mantine/core';
 import {
+  IconDots,
   IconInfoCircle,
   IconList,
   IconNotes,
@@ -10,19 +11,32 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import {
+  ActionDropdown,
+  BarcodeActionDropdown,
+  DeleteItemAction,
+  EditItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
+} from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
+import { PurchaseOrderLineItemTable } from '../../components/tables/purchasing/PurchaseOrderLineItemTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 
 /**
  * Detail page for a single PurchaseOrder
  */
 export default function PurchaseOrderDetail() {
   const { id } = useParams();
+
+  const user = useUserState();
 
   const { instance: order, instanceQuery } = useInstance({
     endpoint: ApiPaths.purchase_order_list,
@@ -43,7 +57,8 @@ export default function PurchaseOrderDetail() {
       {
         name: 'line-items',
         label: t`Line Items`,
-        icon: <IconList />
+        icon: <IconList />,
+        content: order?.pk && <PurchaseOrderLineItemTable orderId={order.pk} />
       },
       {
         name: 'received-stock',
@@ -84,6 +99,29 @@ export default function PurchaseOrderDetail() {
     ];
   }, [order, id]);
 
+  const poActions = useMemo(() => {
+    // TODO: Disable certain actions based on user permissions
+    return [
+      <BarcodeActionDropdown
+        actions={[
+          ViewBarcodeAction({}),
+          LinkBarcodeAction({
+            disabled: order?.barcode_hash
+          }),
+          UnlinkBarcodeAction({
+            disabled: !order?.barcode_hash
+          })
+        ]}
+      />,
+      <ActionDropdown
+        key="order"
+        tooltip={t`Order Actions`}
+        icon={<IconDots />}
+        actions={[EditItemAction({}), DeleteItemAction({})]}
+      />
+    ];
+  }, [id, order, user]);
+
   return (
     <>
       <Stack spacing="xs">
@@ -93,6 +131,7 @@ export default function PurchaseOrderDetail() {
           subtitle={order.description}
           imageUrl={order.supplier_detail?.image}
           breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
+          actions={poActions}
         />
         <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
       </Stack>
