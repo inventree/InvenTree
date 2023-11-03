@@ -25,6 +25,8 @@ import { useParams } from 'react-router-dom';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
+  DeleteItemAction,
+  EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
   ViewBarcodeAction
@@ -190,23 +192,16 @@ export default function StockDetail() {
             tooltip: t`Duplicate stock item`,
             icon: <IconCopy />
           },
-          {
-            name: t`Edit`,
-            tooltip: t`Edit stock item`,
-            icon: <IconEdit color="blue" />,
-            onClick: () => {
+          EditItemAction({
+            callback: () => {
               stockitem.pk &&
                 editStockItem({
                   item_id: stockitem.pk,
                   callback: () => refreshInstance
                 });
             }
-          },
-          {
-            name: t`Delete`,
-            tooltip: t`Delete stock item`,
-            icon: <IconTrash color="red" />
-          }
+          }),
+          DeleteItemAction({})
         ]}
       />
     ],

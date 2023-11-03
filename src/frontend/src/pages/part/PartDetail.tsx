@@ -32,6 +32,9 @@ import { useParams } from 'react-router-dom';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
+  DeleteItemAction,
+  DuplicateItemAction,
+  EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
   ViewBarcodeAction
@@ -294,28 +297,19 @@ export default function PartDetail() {
         tooltip={t`Part Actions`}
         icon={<IconDots />}
         actions={[
-          {
-            icon: <IconEdit color="blue" />,
-            name: t`Edit`,
-            tooltip: t`Edit part`,
-            onClick: () => {
+          DuplicateItemAction({}),
+          EditItemAction({
+            callback: () => {
               part.pk &&
                 editPart({
                   part_id: part.pk,
                   callback: refreshInstance
                 });
             }
-          },
-          {
-            icon: <IconCopy color="green" />,
-            name: t`Duplicate`,
-            tooltip: t`Duplicate part`
-          },
-          {
-            icon: <IconTrash color="red" />,
-            name: t`Delete`,
-            tooltip: t`Delete part`
-          }
+          }),
+          DeleteItemAction({
+            disabled: part?.active
+          })
         ]}
       />
     ];

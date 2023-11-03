@@ -1,6 +1,13 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
-import { IconLink, IconQrcode, IconUnlink } from '@tabler/icons-react';
+import {
+  IconCopy,
+  IconEdit,
+  IconLink,
+  IconQrcode,
+  IconTrash,
+  IconUnlink
+} from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
@@ -128,6 +135,63 @@ export function UnlinkBarcodeAction({
     icon: <IconUnlink />,
     name: t`Unlink Barcode`,
     tooltip: t`Unlink custom barcode`,
+    onClick: callback,
+    disabled: disabled
+  };
+}
+
+// Common action button for editing an item
+export function EditItemAction({
+  disabled = false,
+  tooltip,
+  callback
+}: {
+  disabled?: boolean;
+  tooltip?: string;
+  callback?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <IconEdit color="blue" />,
+    name: t`Edit`,
+    tooltip: tooltip ?? `Edit item`,
+    onClick: callback,
+    disabled: disabled
+  };
+}
+
+// Common action button for deleting an item
+export function DeleteItemAction({
+  disabled = false,
+  tooltip,
+  callback
+}: {
+  disabled?: boolean;
+  tooltip?: string;
+  callback?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <IconTrash color="red" />,
+    name: t`Delete`,
+    tooltip: tooltip ?? t`Delete item`,
+    onClick: callback,
+    disabled: disabled
+  };
+}
+
+// Common action button for duplicating an item
+export function DuplicateItemAction({
+  disabled = false,
+  tooltip,
+  callback
+}: {
+  disabled?: boolean;
+  tooltip?: string;
+  callback?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <IconCopy color="green" />,
+    name: t`Duplicate`,
+    tooltip: tooltip ?? t`Duplicate item`,
     onClick: callback,
     disabled: disabled
   };

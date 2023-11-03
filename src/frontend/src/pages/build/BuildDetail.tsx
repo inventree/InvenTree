@@ -22,6 +22,9 @@ import { useParams } from 'react-router-dom';
 
 import {
   ActionDropdown,
+  DeleteItemAction,
+  DuplicateItemAction,
+  EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
   ViewBarcodeAction
@@ -208,21 +211,9 @@ export default function BuildDetail() {
         tooltip={t`Build Order Actions`}
         icon={<IconDots />}
         actions={[
-          {
-            icon: <IconEdit color="blue" />,
-            name: t`Edit`,
-            tooltip: t`Edit build order`
-          },
-          {
-            icon: <IconCopy color="green" />,
-            name: t`Duplicate`,
-            tooltip: t`Duplicate build order`
-          },
-          {
-            icon: <IconTrash color="red" />,
-            name: t`Delete`,
-            tooltip: t`Delete build order`
-          }
+          EditItemAction({}),
+          DuplicateItemAction({}),
+          DeleteItemAction({})
         ]}
       />
     ];

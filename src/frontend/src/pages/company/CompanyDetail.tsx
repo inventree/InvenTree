@@ -20,7 +20,11 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ActionDropdown } from '../../components/items/ActionDropdown';
+import {
+  ActionDropdown,
+  DeleteItemAction,
+  EditItemAction
+} from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
@@ -169,12 +173,9 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         tooltip={t`Company Actions`}
         icon={<IconDots />}
         actions={[
-          {
-            icon: <IconEdit color="blue" />,
-            name: t`Edit`,
-            tooltip: t`Edit company`,
+          EditItemAction({
             disabled: !canEdit,
-            onClick: () => {
+            callback: () => {
               if (company?.pk) {
                 editCompany({
                   pk: company?.pk,
@@ -182,13 +183,10 @@ export default function CompanyDetail(props: CompanyDetailProps) {
                 });
               }
             }
-          },
-          {
-            icon: <IconTrash color="red" />,
-            name: t`Delete`,
-            tooltip: t`Delete company`,
+          }),
+          DeleteItemAction({
             disabled: !canDelete
-          }
+          })
         ]}
       />
     ];
