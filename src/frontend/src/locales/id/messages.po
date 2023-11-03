@@ -8,7 +8,7 @@ msgstr ""
 "Language: id\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-02 18:28\n"
+"PO-Revision-Date: 2023-11-03 18:39\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -39,7 +39,7 @@ msgstr ""
 
 #: src/components/forms/ApiForm.tsx:313
 #: src/contexts/ThemeContext.tsx:64
-#: src/pages/Index/Profile/UserPanel.tsx:109
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
 msgid "Submit"
 msgstr ""
 
@@ -114,6 +114,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/pages/Auth/Reset.tsx:31
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:47
 msgid "Email"
 msgstr ""
 
@@ -204,13 +205,14 @@ msgid "Error"
 msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:214
-#: src/pages/Index/UserSettings.tsx:53
+#: src/pages/Index/Settings/UserSettings.tsx:64
 msgid "Search"
 msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:215
 #: src/components/modals/AboutInvenTreeModal.tsx:66
 #: src/components/widgets/WidgetLayout.tsx:134
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:297
 msgid "Loading"
 msgstr ""
 
@@ -414,7 +416,7 @@ msgid "Close modal"
 msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:17
-#: src/pages/Index/SystemSettings.tsx:38
+#: src/pages/Index/Settings/SystemSettings.tsx:39
 msgid "Server"
 msgstr ""
 
@@ -491,28 +493,27 @@ msgstr ""
 msgid "Server Version"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:40
-#: src/pages/Index/Profile/Profile.tsx:15
-msgid "Profile"
-msgstr ""
-
-#: src/components/nav/MainMenu.tsx:44
+#: src/components/nav/MainMenu.tsx:38
 msgid "Settings"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:47
-#: src/components/nav/MainMenu.tsx:50
+#: src/components/nav/MainMenu.tsx:40
+#: src/pages/Index/Profile/Profile.tsx:15
+#~ msgid "Profile"
+#~ msgstr "Profile"
+
+#: src/components/nav/MainMenu.tsx:41
 msgid "Account settings"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:54
-#: src/pages/Index/SystemSettings.tsx:256
+#: src/components/nav/MainMenu.tsx:49
+#: src/pages/Index/Settings/SystemSettings.tsx:260
 msgid "System Settings"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:63
+#: src/components/nav/MainMenu.tsx:58
 #: src/components/nav/NavigationDrawer.tsx:67
-#: src/pages/Index/PluginSettings.tsx:32
+#: src/pages/Index/Settings/PluginSettings.tsx:32
 msgid "Plugins"
 msgstr ""
 
@@ -520,13 +521,13 @@ msgstr ""
 #~ msgid "Current language {locale}"
 #~ msgstr "Current language {locale}"
 
+#: src/components/nav/MainMenu.tsx:69
+msgid "Logout"
+msgstr ""
+
 #: src/components/nav/MainMenu.tsx:71
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
-
-#: src/components/nav/MainMenu.tsx:74
-msgid "Logout"
-msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:52
 msgid "Open Navigation"
@@ -562,8 +563,8 @@ msgid "About"
 msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:69
-#: src/pages/Index/SystemSettings.tsx:119
-#: src/pages/Index/UserSettings.tsx:83
+#: src/pages/Index/Settings/SystemSettings.tsx:120
+#: src/pages/Index/Settings/UserSettings.tsx:94
 #: src/pages/Notifications.tsx:21
 #: src/pages/Notifications.tsx:89
 msgid "Notifications"
@@ -580,7 +581,7 @@ msgstr ""
 
 #: src/components/nav/PartCategoryTree.tsx:79
 #: src/components/render/ModelType.tsx:63
-#: src/pages/Index/SystemSettings.tsx:151
+#: src/pages/Index/Settings/SystemSettings.tsx:152
 #: src/pages/part/CategoryDetail.tsx:60
 msgid "Part Categories"
 msgstr ""
@@ -642,7 +643,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:39
 #: src/components/tables/part/PartCategoryTable.tsx:40
 #: src/defaults/links.tsx:27
-#: src/pages/Index/SystemSettings.tsx:156
+#: src/pages/Index/Settings/SystemSettings.tsx:157
 #: src/pages/part/CategoryDetail.tsx:46
 #: src/pages/part/CategoryDetail.tsx:82
 #: src/pages/part/PartDetail.tsx:242
@@ -728,7 +729,7 @@ msgid "Purchase Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:97
-#: src/pages/Index/SystemSettings.tsx:225
+#: src/pages/Index/Settings/SystemSettings.tsx:226
 #: src/pages/company/CompanyDetail.tsx:84
 #: src/pages/part/PartDetail.tsx:174
 #: src/pages/purchasing/PurchasingIndex.tsx:20
@@ -750,7 +751,7 @@ msgid "Sales Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:107
-#: src/pages/Index/SystemSettings.tsx:238
+#: src/pages/Index/Settings/SystemSettings.tsx:239
 #: src/pages/company/CompanyDetail.tsx:102
 #: src/pages/part/PartDetail.tsx:180
 #: src/pages/sales/SalesIndex.tsx:21
@@ -804,7 +805,6 @@ msgid "Owners"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:142
-#: src/pages/Index/Profile/Profile.tsx:23
 msgid "User"
 msgstr ""
 
@@ -1259,7 +1259,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:67
 #: src/components/tables/stock/StockItemTable.tsx:49
 #: src/defaults/links.tsx:28
-#: src/pages/Index/SystemSettings.tsx:192
+#: src/pages/Index/Settings/SystemSettings.tsx:193
 #: src/pages/part/PartDetail.tsx:97
 #: src/pages/stock/LocationDetail.tsx:63
 #: src/pages/stock/StockDetail.tsx:134
@@ -1707,17 +1707,17 @@ msgid "Location Type"
 msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:11
-#: src/pages/Index/Profile/UserPanel.tsx:139
+#: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:16
 msgid "Display Settings"
 msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:15
-#: src/pages/Index/Profile/UserPanel.tsx:143
+#: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:22
 msgid "Color Mode"
 msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:21
-#: src/pages/Index/Profile/UserPanel.tsx:149
+#: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:32
 msgid "Language"
 msgstr ""
 
@@ -1976,7 +1976,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:26
 #: src/pages/Index/Dashboard.tsx:19
-#: src/pages/Index/UserSettings.tsx:30
+#: src/pages/Index/Settings/UserSettings.tsx:41
 msgid "Dashboard"
 msgstr ""
 
@@ -2127,10 +2127,6 @@ msgstr ""
 #: src/defaults/menuItems.tsx:105
 #~ msgid "Yanma is capable of seeing 360 degrees without"
 #~ msgstr "Yanma is capable of seeing 360 degrees without"
-
-#: src/defaults/menuItems.tsx:109
-#~ msgid "Security"
-#~ msgstr "Security"
 
 #: src/defaults/menuItems.tsx:111
 #~ msgid "The shell’s rounded shape and the grooves on its."
@@ -2397,10 +2393,6 @@ msgstr ""
 msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr ""
 
-#: src/pages/Index/PluginSettings.tsx:47
-msgid "Plugin Settings"
-msgstr ""
-
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
 #~ msgid "Notification Settings"
@@ -2526,60 +2518,16 @@ msgstr ""
 #~ msgstr "Method: {0}"
 
 #: src/pages/Index/Profile/UserPanel.tsx:85
-msgid "Userinfo"
-msgstr ""
-
-#: src/pages/Index/Profile/UserPanel.tsx:116
-msgid "First name: {0}"
-msgstr ""
-
-#: src/pages/Index/Profile/UserPanel.tsx:119
-msgid "Last name: {0}"
-msgstr ""
+#~ msgid "Userinfo"
+#~ msgstr "Userinfo"
 
 #: src/pages/Index/Profile/UserPanel.tsx:122
-msgid "Username: {0}"
-msgstr ""
-
-#: src/pages/Index/Profile/UserPanel.tsx:154
-msgid "Use pseudo language"
-msgstr ""
-
-#: src/pages/Index/Profile/UserTheme.tsx:70
-msgid "bars"
-msgstr ""
-
-#: src/pages/Index/Profile/UserTheme.tsx:71
-msgid "oval"
-msgstr ""
-
-#: src/pages/Index/Profile/UserTheme.tsx:72
-msgid "dots"
-msgstr ""
+#~ msgid "Username: {0}"
+#~ msgstr "Username: {0}"
 
 #: src/pages/Index/Profile/UserTheme.tsx:83
-msgid "Design <0/>"
-msgstr ""
-
-#: src/pages/Index/Profile/UserTheme.tsx:91
-msgid "Primary color"
-msgstr ""
-
-#: src/pages/Index/Profile/UserTheme.tsx:104
-msgid "White color"
-msgstr ""
-
-#: src/pages/Index/Profile/UserTheme.tsx:112
-msgid "Black color"
-msgstr ""
-
-#: src/pages/Index/Profile/UserTheme.tsx:120
-msgid "Border Radius"
-msgstr ""
-
-#: src/pages/Index/Profile/UserTheme.tsx:136
-msgid "Loader"
-msgstr ""
+#~ msgid "Design <0/>"
+#~ msgstr "Design <0/>"
 
 #: src/pages/Index/Scan.tsx:188
 msgid "Manual input"
@@ -2695,46 +2643,185 @@ msgstr ""
 msgid "Add dummy item"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:65
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:31
+msgid "Account Details"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:57
+msgid "First name: {0}"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:60
+msgid "Last name: {0}"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:39
+msgid "Use pseudo language"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:51
+msgid "Single Sign On Accounts"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:58
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:76
+msgid "Not enabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:61
+msgid "Single Sign On is not enabled for this server"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:65
+msgid "Multifactor"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:79
+msgid "Multifactor authentication is not configured for your account"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:127
+msgid "The following email addresses are associated with your account:"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:139
+msgid "Primary"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:144
+msgid "Verified"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:148
+msgid "Unverified"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:161
+msgid "Add Email Address"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:164
+msgid "E-Mail"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:165
+msgid "E-Mail address"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:175
+msgid "Make Primary"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:178
+msgid "Re-send Verification"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:181
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:287
+#: src/pages/stock/StockDetail.tsx:182
+msgid "Remove"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:187
+msgid "Add Email"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:251
+msgid "Provider has not been configured"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:261
+msgid "Not configured"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:264
+msgid "There are no social network accounts connected to this account."
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:274
+msgid "You can sign in to your account using any of the following third party accounts"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:68
+msgid "bars"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:69
+msgid "oval"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:70
+msgid "dots"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:81
+msgid "Theme"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:87
+msgid "Primary color"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:100
+msgid "White color"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:108
+msgid "Black color"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:116
+msgid "Border Radius"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:132
+msgid "Loader"
+msgstr ""
+
+#: src/pages/Index/Settings/PluginSettings.tsx:47
+msgid "Plugin Settings"
+msgstr ""
+
+#: src/pages/Index/Settings/SystemSettings.tsx:66
 msgid "Login"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:87
+#: src/pages/Index/Settings/SystemSettings.tsx:88
 msgid "Barcodes"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:101
+#: src/pages/Index/Settings/SystemSettings.tsx:102
 msgid "Project Codes"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:113
+#: src/pages/Index/Settings/SystemSettings.tsx:114
 msgid "Physical Units"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:124
+#: src/pages/Index/Settings/SystemSettings.tsx:125
 #: src/pages/part/PartDetail.tsx:150
 msgid "Pricing"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:129
+#: src/pages/Index/Settings/SystemSettings.tsx:130
 msgid "Labels"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:135
-#: src/pages/Index/UserSettings.tsx:88
+#: src/pages/Index/Settings/SystemSettings.tsx:136
+#: src/pages/Index/Settings/UserSettings.tsx:99
 msgid "Reporting"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:187
+#: src/pages/Index/Settings/SystemSettings.tsx:188
 msgid "Part Parameters"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:214
+#: src/pages/Index/Settings/SystemSettings.tsx:215
 #: src/pages/part/PartDetail.tsx:198
 msgid "Stocktake"
 msgstr ""
 
-#: src/pages/Index/SystemSettings.tsx:219
+#: src/pages/Index/Settings/SystemSettings.tsx:220
 #: src/pages/build/BuildDetail.tsx:255
 #: src/pages/build/BuildIndex.tsx:16
 #: src/pages/part/PartDetail.tsx:129
@@ -2742,17 +2829,33 @@ msgstr ""
 msgid "Build Orders"
 msgstr ""
 
-#: src/pages/Index/UserSettings.tsx:25
+#: src/pages/Index/Settings/SystemSettings.tsx:262
+msgid "Switch to User Setting"
+msgstr ""
+
+#: src/pages/Index/Settings/UserSettings.tsx:29
 msgid "Account"
 msgstr ""
 
-#: src/pages/Index/UserSettings.tsx:35
+#: src/pages/Index/Settings/UserSettings.tsx:35
+msgid "Security"
+msgstr ""
+
+#: src/pages/Index/Settings/UserSettings.tsx:46
 msgid "Display Options"
 msgstr ""
 
-#: src/pages/Index/UserSettings.tsx:103
-msgid "User Settings"
+#: src/pages/Index/Settings/UserSettings.tsx:117
+msgid "Account Settings"
 msgstr ""
+
+#: src/pages/Index/Settings/UserSettings.tsx:119
+msgid "Switch to System Setting"
+msgstr ""
+
+#: src/pages/Index/UserSettings.tsx:103
+#~ msgid "User Settings"
+#~ msgstr "User Settings"
 
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
@@ -3074,10 +3177,6 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:178
 msgid "Add stock"
-msgstr ""
-
-#: src/pages/stock/StockDetail.tsx:182
-msgid "Remove"
 msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:183
