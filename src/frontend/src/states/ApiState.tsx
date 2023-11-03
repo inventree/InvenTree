@@ -60,6 +60,12 @@ export enum ApiPaths {
   user_simple_login = 'api-user-simple-login',
   user_reset = 'api-user-reset',
   user_reset_set = 'api-user-reset-set',
+  user_sso = 'api-user-sso',
+  user_sso_remove = 'api-user-sso-remove',
+  user_emails = 'api-user-emails',
+  user_email_verify = 'api-user-email-verify',
+  user_email_primary = 'api-user-email-primary',
+  user_email_remove = 'api-user-email-remove',
 
   settings_global_list = 'api-settings-global-list',
   settings_user_list = 'api-settings-user-list',
@@ -69,6 +75,7 @@ export enum ApiPaths {
   news = 'news',
   global_status = 'api-global-status',
   version = 'api-version',
+  sso_providers = 'api-sso-providers',
 
   // Build order URLs
   build_order_list = 'api-build-list',
@@ -141,10 +148,22 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'email/generate/';
     case ApiPaths.user_reset:
       // Note leading prefix here
-      return '/auth/password/reset/';
+      return 'auth/password/reset/';
     case ApiPaths.user_reset_set:
       // Note leading prefix here
-      return '/auth/password/reset/confirm/';
+      return 'auth/password/reset/confirm/';
+    case ApiPaths.user_sso:
+      return 'auth/social/';
+    case ApiPaths.user_sso_remove:
+      return 'auth/social/$id/disconnect/';
+    case ApiPaths.user_emails:
+      return 'auth/emails/';
+    case ApiPaths.user_email_remove:
+      return 'auth/emails/$id/remove/';
+    case ApiPaths.user_email_verify:
+      return 'auth/emails/$id/verify/';
+    case ApiPaths.user_email_primary:
+      return 'auth/emails/$id/primary/';
     case ApiPaths.api_search:
       return 'search/';
     case ApiPaths.settings_global_list:
@@ -161,6 +180,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'generic/status/';
     case ApiPaths.version:
       return 'version/';
+    case ApiPaths.sso_providers:
+      return 'auth/providers/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:

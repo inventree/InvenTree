@@ -8,17 +8,15 @@ import {
   Loader,
   Select,
   Slider,
-  Space,
   Table,
   Title
 } from '@mantine/core';
 import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { useState } from 'react';
 
-import { PlaceholderPill } from '../../../components/items/Placeholder';
-import { SizeMarks } from '../../../defaults/defaults';
-import { InvenTreeStyle } from '../../../globalStyle';
-import { useLocalState } from '../../../states/LocalState';
+import { SizeMarks } from '../../../../defaults/defaults';
+import { InvenTreeStyle } from '../../../../globalStyle';
+import { useLocalState } from '../../../../states/LocalState';
 
 function getLkp(color: string) {
   return { [DEFAULT_THEME.colors[color][6]]: color };
@@ -80,9 +78,7 @@ export function UserTheme({ height }: { height: number }) {
   return (
     <Container w="100%" mih={height} p={0}>
       <Title order={3}>
-        <Trans>
-          Design <PlaceholderPill />
-        </Trans>
+        <Trans>Theme</Trans>
       </Title>
       <Table>
         <tbody>
@@ -137,13 +133,12 @@ export function UserTheme({ height }: { height: number }) {
             </td>
             <td>
               <Group align="center">
-                <Loader type={loader} mah={18} />
-                <Space w={10} />
                 <Select
                   data={loaderDate}
                   value={loader}
                   onChange={changeLoader}
                 />
+                <Loader type={loader} mah={18} />
               </Group>
             </td>
           </tr>

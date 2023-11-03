@@ -1,18 +1,22 @@
-import { t } from '@lingui/macro';
-import { Stack, Text } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import { Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
   IconDeviceDesktopAnalytics,
   IconFileAnalytics,
+  IconLock,
   IconSearch,
   IconUserCircle
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { UserSettingList } from '../../components/settings/SettingList';
+import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import { SettingsHeader } from '../../../components/nav/SettingsHeader';
+import { UserSettingList } from '../../../components/settings/SettingList';
+import { useUserState } from '../../../states/UserState';
+import { SecurityContent } from './AccountSettings/SecurityContent';
+import { AccountContent } from './AccountSettings/UserPanel';
 
 /**
  * User settings page
@@ -23,7 +27,14 @@ export default function UserSettings() {
       {
         name: 'account',
         label: t`Account`,
-        icon: <IconUserCircle />
+        icon: <IconUserCircle />,
+        content: <AccountContent />
+      },
+      {
+        name: 'security',
+        label: t`Security`,
+        icon: <IconLock />,
+        content: <SecurityContent />
       },
       {
         name: 'dashboard',
@@ -95,13 +106,18 @@ export default function UserSettings() {
       }
     ];
   }, []);
+  const [user] = useUserState((state) => [state.user]);
 
   return (
     <>
       <Stack spacing="xs">
-        <PageDetail
-          title={t`User Settings`}
-          detail={<Text>TODO: Filler</Text>}
+        <SettingsHeader
+          title={`${user?.first_name} ${user?.last_name}`}
+          shorthand={user?.username || ''}
+          subtitle={<Trans>Account Settings</Trans>}
+          switch_link="/settings/system"
+          switch_text={<Trans>Switch to System Setting</Trans>}
+          switch_condition={user?.is_staff || false}
         />
         <PanelGroup pageKey="user-settings" panels={userSettingsPanels} />
       </Stack>
