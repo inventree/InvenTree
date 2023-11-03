@@ -10,49 +10,49 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2023-11-03 18:39\n"
 "Last-Translator: \n"
-"Language-Team: Chinese Simplified\n"
+"Language-Team: Chinese Traditional\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-Language: zh-TW\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:33
 msgid "Title"
-msgstr "标题"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:193
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr "操作成功"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:267
 msgid "Form Errors Exist"
-msgstr "表单存在错误"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:304
 #: src/components/tables/FilterSelectModal.tsx:166
 #: src/contexts/ThemeContext.tsx:64
 msgid "Cancel"
-msgstr "取消"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:313
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
 msgid "Submit"
-msgstr "提交"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:32
 msgid "Login failed"
-msgstr "登录失败"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
 #: src/functions/auth.tsx:110
 msgid "Check your input and try again."
-msgstr "请检查您的输入并重试。"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -62,11 +62,11 @@ msgstr "请检查您的输入并重试。"
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr "登录成功"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr "欢迎回来！"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -75,11 +75,11 @@ msgstr "欢迎回来！"
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:101
 msgid "Mail delivery successful"
-msgstr "邮件发送成功"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr "请检查您的收件箱以查看登录链接。如果您有帐户，您将收到登录链接。如未收到，请检查垃圾邮件夹。"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -88,41 +88,41 @@ msgstr "请检查您的收件箱以查看登录链接。如果您有帐户，您
 
 #: src/components/forms/AuthenticationForm.tsx:72
 msgid "Input error"
-msgstr "输入错误"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr "欢迎，请在下方登录"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:91
 msgid "Username"
-msgstr "用户名"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:105
 msgid "Password"
-msgstr "密码"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr "您的密码"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr "重置密码"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:47
 msgid "Email"
-msgstr "邮箱"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "We will send you a link to login - if you are registered"
-msgstr "我们将向您发送登录链接 - 如果您已注册"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -130,24 +130,24 @@ msgstr "我们将向您发送登录链接 - 如果您已注册"
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr "给我发一封电子邮件"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr "我将使用用户名和密码"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
-msgstr "登录"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:147
 msgid "Send Email"
-msgstr "发送电子邮件"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr "主机"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
@@ -155,7 +155,7 @@ msgstr "主机"
 #: src/components/tables/settings/CustomUnitsTable.tsx:27
 #: src/components/tables/stock/StockLocationTable.tsx:23
 msgid "Name"
-msgstr "名称"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
@@ -163,32 +163,32 @@ msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr "添加主机"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr "保存"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr "选择对象目标"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr "编辑可能的主机选项"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr "版本：{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr "API:{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr "名称：{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
@@ -202,28 +202,28 @@ msgstr ""
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 msgid "Error"
-msgstr "错误"
+msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:214
 #: src/pages/Index/Settings/UserSettings.tsx:64
 msgid "Search"
-msgstr "搜索"
+msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:215
 #: src/components/modals/AboutInvenTreeModal.tsx:66
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:297
 msgid "Loading"
-msgstr "正在加载"
+msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:217
 msgid "No results found"
-msgstr "未找到结果"
+msgstr ""
 
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:49
 msgid "Thumbnail"
-msgstr "缩略图"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:78
 #: src/pages/build/BuildDetail.tsx:179
@@ -236,24 +236,24 @@ msgstr ""
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr "了解更多"
+msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/components/tables/InvenTreeTable.tsx:376
 msgid "Unknown error"
-msgstr "未知错误"
+msgstr ""
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr "出现了一个错误"
+msgstr ""
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr "了解更多"
+msgstr ""
 
 #: src/components/items/InvenTreeLogo.tsx:13
 msgid "InvenTree Logo"
-msgstr "InvenTree Logo"
+msgstr ""
 
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:29
@@ -266,7 +266,7 @@ msgstr ""
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr "PLH"
+msgstr ""
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
