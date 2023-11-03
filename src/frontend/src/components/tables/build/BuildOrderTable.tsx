@@ -8,6 +8,7 @@ import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
+import { RenderOwner, RenderUser } from '../../render/User';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
@@ -116,16 +117,18 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'issued_by',
       sortable: true,
-      title: t`Issued By`
-
-      // TODO: custom render function
+      title: t`Issued By`,
+      render: (record: any) => (
+        <RenderUser instance={record?.issued_by_detail} />
+      )
     },
     {
       accessor: 'responsible',
       sortable: true,
-      title: t`Responsible`
-
-      // TODO: custom render function
+      title: t`Responsible`,
+      render: (record: any) => (
+        <RenderOwner instance={record?.responsible_detail} />
+      )
     }
   ];
 }
