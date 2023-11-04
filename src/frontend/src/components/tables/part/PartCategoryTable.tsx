@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -23,11 +24,7 @@ export function PartCategoryTable({ params = {} }: { params?: any }) {
         sortable: true,
         switchable: false
       },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        sortable: false
-      },
+      DescriptionColumn(),
       {
         accessor: 'pathstring',
         title: t`Path`,

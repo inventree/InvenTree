@@ -8,7 +8,11 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
-import { ProjectCodeColumn, StatusColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  ProjectCodeColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
@@ -50,10 +54,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'customer_reference',
         title: t`Customer Reference`
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn(),
       {
         accessor: 'line_items',
         title: t`Line Items`,

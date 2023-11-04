@@ -8,6 +8,15 @@ import { TableStatusRenderer } from '../renderers/StatusRenderer';
 import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
+export function DescriptionColumn(): TableColumn {
+  return {
+    accessor: 'description',
+    title: t`Description`,
+    sortable: false,
+    switchable: true
+  };
+}
+
 export function ProjectCodeColumn(): TableColumn {
   return {
     accessor: 'project_code',

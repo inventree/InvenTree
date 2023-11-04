@@ -11,6 +11,7 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -27,11 +28,7 @@ export function ProjectCodeTable() {
         sortable: true,
         title: t`Project Code`
       },
-      {
-        accessor: 'description',
-        sortable: false,
-        title: t`Description`
-      }
+      DescriptionColumn()
     ];
   }, []);
 

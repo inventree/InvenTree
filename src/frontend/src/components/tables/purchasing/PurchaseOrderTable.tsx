@@ -8,7 +8,11 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { StatusRenderer } from '../../renderers/StatusRenderer';
-import { ProjectCodeColumn, StatusColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  ProjectCodeColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -34,10 +38,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         switchable: false
         // TODO: Display extra information if order is overdue
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn(),
       {
         accessor: 'supplier__name',
         title: t`Supplier`,

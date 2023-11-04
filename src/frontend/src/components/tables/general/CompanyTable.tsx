@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -42,11 +43,7 @@ export function CompanyTable({
           );
         }
       },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        sortable: false
-      },
+      DescriptionColumn(),
       {
         accessor: 'website',
         title: t`Website`,
