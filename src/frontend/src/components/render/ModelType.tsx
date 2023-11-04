@@ -6,6 +6,7 @@ export enum ModelType {
   manufacturerpart = 'manufacturerpart',
   partcategory = 'partcategory',
   partparametertemplate = 'partparametertemplate',
+  projectcode = 'projectcode',
   stockitem = 'stockitem',
   stocklocation = 'stocklocation',
   stockhistory = 'stockhistory',
