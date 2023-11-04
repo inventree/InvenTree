@@ -1,10 +1,13 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { buildOrderFields } from '../../../forms/BuildForms';
+import { openCreateApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
@@ -51,15 +54,10 @@ function buildOrderTableColumns(): TableColumn[] {
       title: t`Description`
     },
     {
-      accessor: 'quantity',
-      sortable: true,
-      title: t`Quantity`,
-      switchable: false
-    },
-    {
       accessor: 'completed',
       sortable: true,
-      title: t`Completed`,
+      switchable: false,
+      title: t`Progress`,
       render: (record: any) => (
         <ProgressBar
           progressLabel={true}
@@ -133,16 +131,36 @@ function buildOrderTableColumns(): TableColumn[] {
   ];
 }
 
-function buildOrderTableFilters(): TableFilter[] {
-  return [];
-}
-
 /*
  * Construct a table of build orders, according to the provided parameters
  */
 export function BuildOrderTable({ params = {} }: { params?: any }) {
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
-  const tableFilters = useMemo(() => buildOrderTableFilters(), []);
+
+  const tableFilters = useMemo(() => {
+    return [
+      {
+        // TODO: Filter by status code
+        name: 'active',
+        type: 'boolean',
+        label: t`Active`
+      },
+      {
+        name: 'overdue',
+        type: 'boolean',
+        label: t`Overdue`
+      },
+      {
+        name: 'assigned_to_me',
+        type: 'boolean',
+        label: t`Assigned to me`
+      }
+      // TODO: 'assigned to' filter
+      // TODO: 'issued by' filter
+      // TODO: 'has project code' filter (see table_filters.js)
+      // TODO: 'project code' filter (see table_filters.js)
+    ];
+  }, []);
 
   const navigate = useNavigate();
 

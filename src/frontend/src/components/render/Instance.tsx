@@ -12,6 +12,7 @@ import {
   RenderManufacturerPart,
   RenderSupplierPart
 } from './Company';
+import { RenderProjectCode } from './Generic';
 import { ModelType } from './ModelType';
 import {
   RenderPurchaseOrder,
@@ -47,6 +48,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.part]: RenderPart,
   [ModelType.partcategory]: RenderPartCategory,
   [ModelType.partparametertemplate]: RenderPartParameterTemplate,
+  [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
   [ModelType.purchaseorderline]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,

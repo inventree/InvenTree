@@ -6,6 +6,7 @@ export enum ModelType {
   manufacturerpart = 'manufacturerpart',
   partcategory = 'partcategory',
   partparametertemplate = 'partparametertemplate',
+  projectcode = 'projectcode',
   stockitem = 'stockitem',
   stocklocation = 'stocklocation',
   stockhistory = 'stockhistory',
@@ -91,6 +92,12 @@ export const ModelInformationDict: ModelDictory = {
     label_multiple: t`Companies`,
     url_overview: '/company',
     url_detail: '/company/:pk/'
+  },
+  projectcode: {
+    label: t`Project Code`,
+    label_multiple: t`Project Codes`,
+    url_overview: '/project-code',
+    url_detail: '/project-code/:pk/'
   },
   purchaseorder: {
     label: t`Purchase Order`,

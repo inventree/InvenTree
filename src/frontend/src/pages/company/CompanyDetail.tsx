@@ -173,7 +173,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         actions={[
           EditItemAction({
             disabled: !canEdit,
-            callback: () => {
+            onClick: () => {
               if (company?.pk) {
                 editCompany({
                   pk: company?.pk,

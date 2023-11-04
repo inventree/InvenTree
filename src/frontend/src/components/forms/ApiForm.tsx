@@ -49,7 +49,7 @@ export interface ApiFormProps {
   postFormContent?: JSX.Element | (() => JSX.Element);
   successMessage?: string;
   onClose?: () => void;
-  onFormSuccess?: () => void;
+  onFormSuccess?: (data: any) => void;
   onFormError?: () => void;
 }
 
@@ -184,7 +184,7 @@ export function ApiForm({
 
               // Optionally call the onFormSuccess callback
               if (props.onFormSuccess) {
-                props.onFormSuccess();
+                props.onFormSuccess(response.data);
               }
 
               // Optionally show a success message

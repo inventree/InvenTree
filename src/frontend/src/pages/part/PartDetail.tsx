@@ -296,7 +296,7 @@ export default function PartDetail() {
         actions={[
           DuplicateItemAction({}),
           EditItemAction({
-            callback: () => {
+            onClick: () => {
               part.pk &&
                 editPart({
                   part_id: part.pk,
