@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import {

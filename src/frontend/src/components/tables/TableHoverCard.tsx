@@ -1,5 +1,6 @@
 import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { ReactNode } from 'react';
 
 /*
  * A custom hovercard element for displaying extra information in a table cell.
@@ -12,7 +13,7 @@ export function TableHoverCard({
   title // The title of the hovercard
 }: {
   value: any;
-  extra?: any;
+  extra?: ReactNode;
   title?: string;
 }) {
   // If no extra information presented, just return the raw value

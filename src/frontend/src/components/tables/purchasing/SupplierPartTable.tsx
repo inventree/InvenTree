@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 
 import { supplierPartFields } from '../../../forms/CompanyForms';
