@@ -8,7 +8,7 @@ msgstr ""
 "Language: id\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-19 16:27\n"
+"PO-Revision-Date: 2023-10-23 16:40\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -44,13 +44,13 @@ msgid "Submit"
 msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:44
-#: src/functions/auth.tsx:29
+#: src/functions/auth.tsx:32
 msgid "Login failed"
 msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
-#: src/functions/auth.tsx:104
+#: src/functions/auth.tsx:110
 msgid "Check your input and try again."
 msgstr ""
 
@@ -73,7 +73,7 @@ msgstr ""
 #~ msgstr "Login successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:64
-#: src/functions/auth.tsx:95
+#: src/functions/auth.tsx:101
 msgid "Mail delivery successful"
 msgstr ""
 
@@ -1605,7 +1605,7 @@ msgstr ""
 #~ msgid "Combusken battles with the intensely hot flames it spews"
 #~ msgstr "Combusken battles with the intensely hot flames it spews"
 
-#: src/functions/auth.tsx:30
+#: src/functions/auth.tsx:33
 msgid "Error fetching token from server."
 msgstr ""
 
@@ -1613,28 +1613,28 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:50
+#: src/functions/auth.tsx:56
 msgid "Logout successful"
 msgstr ""
 
-#: src/functions/auth.tsx:51
+#: src/functions/auth.tsx:57
 msgid "See you soon."
 msgstr ""
 
-#: src/functions/auth.tsx:96
+#: src/functions/auth.tsx:102
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr ""
 
-#: src/functions/auth.tsx:103
+#: src/functions/auth.tsx:109
 #: src/pages/Auth/Set-Password.tsx:38
 msgid "Reset failed"
 msgstr ""
 
-#: src/functions/auth.tsx:124
+#: src/functions/auth.tsx:133
 msgid "Already logged in"
 msgstr ""
 
-#: src/functions/auth.tsx:125
+#: src/functions/auth.tsx:134
 msgid "Found an existing login - using it to log you in."
 msgstr ""
 

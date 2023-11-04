@@ -10,7 +10,6 @@ from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
-import moneyed.localization
 import requests
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -22,6 +21,7 @@ import InvenTree.helpers_model
 import InvenTree.version
 from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
+from InvenTree.format import format_money
 
 logger = logging.getLogger('inventree')
 
@@ -167,14 +167,13 @@ def download_image_from_url(remote_url, timeout=2.5):
     return img
 
 
-def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None, max_decimal_places=None):
+def render_currency(money, decimal_places=None, currency=None, min_decimal_places=None, max_decimal_places=None):
     """Render a currency / Money object to a formatted string (e.g. for reports)
 
     Arguments:
         money: The Money instance to be rendered
         decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         currency: Optionally convert to the specified currency
-        include_symbol: Render with the appropriate currency symbol
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
     """
@@ -216,11 +215,7 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
 
     decimal_places = max(decimal_places, max_decimal_places)
 
-    return moneyed.localization.format_money(
-        money,
-        decimal_places=decimal_places,
-        include_symbol=include_symbol,
-    )
+    return format_money(money, decimal_places=decimal_places)
 
 
 def getModelsWithMixin(mixin_class) -> list:

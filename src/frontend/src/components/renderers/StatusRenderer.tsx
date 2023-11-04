@@ -72,11 +72,18 @@ export const StatusRenderer = ({
   type: ModelType;
   options?: renderStatusLabelOptionsInterface;
 }) => {
-  const [statusCodeList] = useServerApiState((state) => [state.status]);
+  const statusCodeList = useServerApiState.getState().status;
+
+  if (status === undefined) {
+    console.log('StatusRenderer: status is undefined');
+    return null;
+  }
+
   if (statusCodeList === undefined) {
     console.log('StatusRenderer: statusCodeList is undefined');
     return null;
   }
+
   const statusCodes = statusCodeList[type];
   if (statusCodes === undefined) {
     console.log('StatusRenderer: statusCodes is undefined');

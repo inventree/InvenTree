@@ -1,4 +1,3 @@
-import { t } from '@lingui/macro';
 import { Select } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';

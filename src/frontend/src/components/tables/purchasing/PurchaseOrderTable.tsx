@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
@@ -9,7 +9,12 @@ import { ModelType } from '../../render/ModelType';
 import { StatusRenderer } from '../../renderers/StatusRenderer';
 import { InvenTreeTable } from '../InvenTreeTable';
 
+/**
+ * Display a table of purchase orders
+ */
 export function PurchaseOrderTable({ params }: { params?: any }) {
+  const navigate = useNavigate();
+
   const { tableKey } = useTableRefresh('purchase-order');
 
   // TODO: Custom filters
@@ -28,8 +33,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'description',
-        title: t`Description`,
-        switchable: true
+        title: t`Description`
       },
       {
         accessor: 'supplier__name',
@@ -39,29 +43,29 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           let supplier = record.supplier_detail ?? {};
 
           return (
-            <Group spacing="xs" noWrap={true}>
-              <Thumbnail src={supplier?.image} alt={supplier.name} />
-              <Text>{supplier?.name}</Text>
-            </Group>
+            <Thumbnail
+              src={supplier?.image}
+              alt={supplier.name}
+              text={supplier.name}
+            />
           );
         }
       },
       {
         accessor: 'supplier_reference',
-        title: t`Supplier Reference`,
-        switchable: true
+        title: t`Supplier Reference`
       },
       {
         accessor: 'project_code',
-        title: t`Project Code`,
-        switchable: true
-        // TODO: Custom formatter
+        title: t`Project Code`
+
+        // TODO: Custom project code formatter
       },
       {
         accessor: 'status',
         title: t`Status`,
         sortable: true,
-        switchable: true,
+
         render: (record: any) =>
           StatusRenderer({
             status: record.status,
@@ -70,24 +74,35 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'creation_date',
-        title: t`Created`,
-        switchable: true
-        // TODO: Custom formatter
+        title: t`Created`
+
+        // TODO: Custom date formatter
       },
       {
         accessor: 'target_date',
-        title: t`Target Date`,
-        switchable: true
-        // TODO: Custom formatter
+        title: t`Target Date`
+
+        // TODO: Custom date formatter
       },
       {
         accessor: 'line_items',
         title: t`Line Items`,
-        sortable: true,
-        switchable: true
+        sortable: true
+      },
+      {
+        accessor: 'total_price',
+        title: t`Total Price`,
+        sortable: true
+
+        // TODO: Custom money formatter
+      },
+      {
+        accessor: 'responsible',
+        title: t`Responsible`,
+        sortable: true
+
+        // TODO: custom 'owner' formatter
       }
-      // TODO: total_price
-      // TODO: responsible
     ];
   }, []);
 
@@ -100,6 +115,11 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         params: {
           ...params,
           supplier_detail: true
+        },
+        onRowClick: (row: any) => {
+          if (row.pk) {
+            navigate(`/purchasing/purchase-order/${row.pk}`);
+          }
         }
       }}
     />

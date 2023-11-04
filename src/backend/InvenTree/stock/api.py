@@ -847,10 +847,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         filedata = dataset.export(export_format)
 
-        filename = 'InvenTree_StockItems_{date}.{fmt}'.format(
-            date=datetime.now().strftime("%d-%b-%Y"),
-            fmt=export_format
-        )
+        filename = f'InvenTree_StockItems_{datetime.now().strftime("%d-%b-%Y")}.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -1421,13 +1418,19 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Stock location instance via the API"""
-        delete_stock_items = 'delete_stock_items' in request.data and request.data['delete_stock_items'] == '1'
-        delete_sub_locations = 'delete_sub_locations' in request.data and request.data['delete_sub_locations'] == '1'
-        return super().destroy(request,
-                               *args,
-                               **dict(kwargs,
-                                      delete_sub_locations=delete_sub_locations,
-                                      delete_stock_items=delete_stock_items))
+
+        delete_stock_items = str(request.data.get('delete_stock_items', 0)) == '1'
+        delete_sub_locations = str(request.data.get('delete_sub_locations', 0)) == '1'
+
+        return super().destroy(
+            request,
+            *args,
+            **dict(
+                kwargs,
+                delete_sub_locations=delete_sub_locations,
+                delete_stock_items=delete_stock_items
+            )
+        )
 
 
 stock_api_urls = [

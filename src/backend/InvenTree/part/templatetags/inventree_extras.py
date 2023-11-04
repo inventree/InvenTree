@@ -2,7 +2,6 @@
 
 import logging
 import os
-import sys
 from datetime import date, datetime
 
 from django import template
@@ -183,13 +182,7 @@ def plugins_info(*args, **kwargs):
 @register.simple_tag()
 def inventree_db_engine(*args, **kwargs):
     """Return the InvenTree database backend e.g. 'postgresql'."""
-    db = djangosettings.DATABASES['default']
-
-    engine = db.get('ENGINE', _('Unknown database'))
-
-    engine = engine.replace('django.db.backends.', '')
-
-    return engine
+    return version.inventreeDatabase() or _('Unknown database')
 
 
 @register.simple_tag()
@@ -228,17 +221,14 @@ def inventree_base_url(*args, **kwargs):
 @register.simple_tag()
 def python_version(*args, **kwargs):
     """Return the current python version."""
-    return sys.version.split(' ')[0]
+    return version.inventreePythonVersion()
 
 
 @register.simple_tag()
 def inventree_version(shortstring=False, *args, **kwargs):
     """Return InvenTree version string."""
     if shortstring:
-        return _("{title} v{version}".format(
-            title=version.inventreeInstanceTitle(),
-            version=version.inventreeVersion()
-        ))
+        return _(f"{version.inventreeInstanceTitle()} v{version.inventreeVersion()}")
     return version.inventreeVersion()
 
 
@@ -311,21 +301,25 @@ def inventree_platform(*args, **kwargs):
 @register.simple_tag()
 def inventree_github_url(*args, **kwargs):
     """Return URL for InvenTree github site."""
-    return "https://github.com/InvenTree/InvenTree/"
+    return version.inventreeGithubUrl()
 
 
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
     """Return URL for InvenTree documentation site."""
-    tag = version.inventreeDocsVersion()
+    return version.inventreeDocUrl()
 
-    return f"https://docs.inventree.org/en/{tag}"
+
+@register.simple_tag()
+def inventree_app_url(*args, **kwargs):
+    """Return URL for InvenTree app site."""
+    return version.inventreeAppUrl()
 
 
 @register.simple_tag()
 def inventree_credits_url(*args, **kwargs):
     """Return URL for InvenTree credits site."""
-    return "https://docs.inventree.org/en/latest/credits/"
+    return version.inventreeCreditsUrl()
 
 
 @register.simple_tag()

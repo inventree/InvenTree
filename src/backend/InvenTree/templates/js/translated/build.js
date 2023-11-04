@@ -130,6 +130,9 @@ function editBuildOrder(pk) {
 
     var fields = buildFormFields();
 
+    // Cannot edit "part" field after creation
+    delete fields['part'];
+
     constructForm(`{% url "api-build-list" %}${pk}/`, {
         fields: fields,
         reload: true,

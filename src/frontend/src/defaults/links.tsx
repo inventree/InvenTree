@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/macro';
+import { openContextModal } from '@mantine/modals';
 
 import { DocumentationLinkItem } from '../components/items/DocumentationLinks';
 import { IS_DEV_OR_DEMO } from '../main';
@@ -69,21 +70,37 @@ export const navDocLinks: DocumentationLinkItem[] = [
   }
 ];
 
+function serverInfo() {
+  return openContextModal({
+    modal: 'info',
+    title: <Trans>System Information</Trans>,
+    size: 'xl',
+    innerProps: {}
+  });
+}
+
+function aboutInvenTree() {
+  return openContextModal({
+    modal: 'about',
+    title: <Trans>About InvenTree</Trans>,
+    size: 'xl',
+    innerProps: {}
+  });
+}
+
 // TODO @matmair: Add the following pages and adjust the links
 export const aboutLinks: DocumentationLinkItem[] = [
   {
     id: 'instance',
-    title: <Trans>Instance</Trans>,
+    title: <Trans>System Information</Trans>,
     description: <Trans>About this Inventree instance</Trans>,
-    link: '/instance',
-    placeholder: true
+    action: serverInfo
   },
   {
     id: 'about',
-    title: <Trans>InvenTree</Trans>,
+    title: <Trans>About InvenTree</Trans>,
     description: <Trans>About the InvenTree org</Trans>,
-    link: '/about',
-    placeholder: true
+    action: aboutInvenTree
   },
   {
     id: 'licenses',
