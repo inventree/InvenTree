@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 145
+INVENTREE_API_VERSION = 147
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v147 -> 2023-11-04: https://github.com/inventree/InvenTree/pull/5860
+    - Adds "completed_lines" field to SalesOrder API endpoint
+    - Adds "completed_lines" field to PurchaseOrder API endpoint
 
 v146 -> 2023-11-02: https://github.com/inventree/InvenTree/pull/5822
     - Extended SSO Provider endpoint to contain if a provider is configured
