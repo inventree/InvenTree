@@ -35,18 +35,21 @@ export type PanelType = {
  * @param activePanel : string - The name of the currently active panel (defaults to the first panel)
  * @param setActivePanel : (panel: string) => void - Function to set the active panel
  * @param onPanelChange : (panel: string) => void - Callback when the active panel changes
+ * @param collabsible : boolean - If true, the panel group can be collapsed (defaults to true)
  * @returns
  */
 export function PanelGroup({
   pageKey,
   panels,
   selectedPanel,
-  onPanelChange
+  onPanelChange,
+  collabsible = true
 }: {
   pageKey: string;
   panels: PanelType[];
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
+  collabsible?: boolean;
 }): ReactNode {
   const [activePanel, setActivePanel] = useLocalStorage<string>({
     key: `panel-group-active-panel-${pageKey}`,
@@ -105,18 +108,20 @@ export function PanelGroup({
                 </Tooltip>
               )
           )}
-          <ActionIcon
-            style={{
-              paddingLeft: '10px'
-            }}
-            onClick={() => setExpanded(!expanded)}
-          >
-            {expanded ? (
-              <IconLayoutSidebarLeftCollapse opacity={0.5} />
-            ) : (
-              <IconLayoutSidebarRightCollapse opacity={0.5} />
-            )}
-          </ActionIcon>
+          {collabsible && (
+            <ActionIcon
+              style={{
+                paddingLeft: '10px'
+              }}
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? (
+                <IconLayoutSidebarLeftCollapse opacity={0.5} />
+              ) : (
+                <IconLayoutSidebarRightCollapse opacity={0.5} />
+              )}
+            </ActionIcon>
+          )}
         </Tabs.List>
         {panels.map(
           (panel, idx) =>
