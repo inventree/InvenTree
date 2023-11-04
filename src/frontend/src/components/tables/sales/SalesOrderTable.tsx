@@ -54,9 +54,11 @@ export function SalesOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'project_code',
-        title: t`Project Code`
-
-        // TODO: Custom formatter
+        title: t`Project Code`,
+        sortable: true,
+        render: (record: any) => (
+          <ProjectCodeHoverCard projectCode={record.project_code_detail} />
+        )
       },
       {
         accessor: 'status',

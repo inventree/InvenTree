@@ -16,7 +16,7 @@ import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
+import { ProjectCodeHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the build order table
@@ -77,20 +77,10 @@ function buildOrderTableColumns(): TableColumn[] {
       accessor: 'project_code',
       title: t`Project Code`,
       sortable: true,
-      // TODO: Hide this if project code is not enabled
-      render: (record: any) => {
-        let project = record.project_code_detail;
-
-        return project ? (
-          <TableHoverCard
-            value={project.code}
-            title={t`Project Code`}
-            extra={<Text>{project.description}</Text>}
-          />
-        ) : (
-          '-'
-        );
-      }
+      // TODO: Hide this if project codes are not enabled
+      render: (record: any) => (
+        <ProjectCodeHoverCard projectCode={record.project_code_detail} />
+      )
     },
     {
       accessor: 'priority',
