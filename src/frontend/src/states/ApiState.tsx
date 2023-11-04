@@ -71,6 +71,9 @@ export enum ApiPaths {
   settings_user_list = 'api-settings-user-list',
   notifications_list = 'api-notifications-list',
 
+  currency_list = 'api-currency-list',
+  currency_refresh = 'api-currency-refresh',
+
   barcode = 'api-barcode',
   news = 'news',
   global_status = 'api-global-status',
@@ -165,6 +168,10 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'auth/emails/$id/verify/';
     case ApiPaths.user_email_primary:
       return 'auth/emails/$id/primary/';
+    case ApiPaths.currency_list:
+      return 'currency/exchange/';
+    case ApiPaths.currency_refresh:
+      return 'currency/refresh/';
     case ApiPaths.api_search:
       return 'search/';
     case ApiPaths.settings_global_list:
