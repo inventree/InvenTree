@@ -113,8 +113,8 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          let part = record?.part_detail;
           let supplier_part = record?.supplier_part_detail ?? {};
+          let part = record?.part_detail ?? supplier_part?.part_detail ?? {};
           let extra = [];
 
           if (supplier_part.pack_quantity_native != 1) {
@@ -128,8 +128,7 @@ export function PurchaseOrderLineItemTable({
 
             extra.push(
               <Text key="total-quantity">
-                {t`Total Quantity`}: {total}
-                {part.units}
+                {t`Total Quantity`}: {total} {part?.units}
               </Text>
             );
           }
