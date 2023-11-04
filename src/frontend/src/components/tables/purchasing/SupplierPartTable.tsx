@@ -14,7 +14,7 @@ import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
-import { DescriptionColumn } from '../ColumnRenderers';
+import { DescriptionColumn, LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -125,13 +125,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           );
         }
       },
-      {
-        accessor: 'link',
-        title: t`Link`,
-        sortable: false
-
-        // TODO: custom link renderer?
-      },
+      LinkColumn(),
       {
         accessor: 'note',
         title: t`Notes`,

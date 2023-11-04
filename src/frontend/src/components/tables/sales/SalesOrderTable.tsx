@@ -11,6 +11,7 @@ import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import {
   CreationDateColumn,
   DescriptionColumn,
+  LineItemsProgressColumn,
   ProjectCodeColumn,
   ShipmentDateColumn,
   StatusColumn,
@@ -59,17 +60,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
         title: t`Customer Reference`
       },
       DescriptionColumn(),
-      {
-        accessor: 'line_items',
-        title: t`Line Items`,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel={true}
-            value={record.completed_lines}
-            maximum={record.line_items}
-          />
-        )
-      },
+      LineItemsProgressColumn(),
       StatusColumn(ModelType.salesorder),
       ProjectCodeColumn(),
       CreationDateColumn(),

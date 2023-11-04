@@ -3,6 +3,7 @@
  */
 import { t } from '@lingui/macro';
 
+import { ProgressBar } from '../items/ProgressBar';
 import { ModelType } from '../render/ModelType';
 import { RenderOwner } from '../render/User';
 import { TableStatusRenderer } from '../renderers/StatusRenderer';
@@ -15,6 +16,30 @@ export function DescriptionColumn(): TableColumn {
     title: t`Description`,
     sortable: false,
     switchable: true
+  };
+}
+
+export function LinkColumn(): TableColumn {
+  return {
+    accessor: 'link',
+    title: t`Link`,
+    sortable: false
+    // TODO: Custom URL hyperlink renderer?
+  };
+}
+
+export function LineItemsProgressColumn(): TableColumn {
+  return {
+    accessor: 'line_items',
+    title: t`Line Items`,
+    sortable: true,
+    render: (record: any) => (
+      <ProgressBar
+        progressLabel={true}
+        value={record.completed_lines}
+        maximum={record.line_items}
+      />
+    )
   };
 }
 

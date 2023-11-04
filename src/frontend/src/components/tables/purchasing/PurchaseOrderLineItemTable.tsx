@@ -12,7 +12,7 @@ import { useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
-import { TargetDateColumn } from '../ColumnRenderers';
+import { LinkColumn, TargetDateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowDeleteAction,
@@ -211,12 +211,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'notes',
         title: t`Notes`
       },
-      {
-        accessor: 'link',
-        title: t`Link`
-
-        // TODO: custom renderer
-      }
+      LinkColumn()
     ];
   }, [orderId, user]);
 

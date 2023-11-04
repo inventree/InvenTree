@@ -11,6 +11,7 @@ import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import {
   CreationDateColumn,
   DescriptionColumn,
+  LineItemsProgressColumn,
   ProjectCodeColumn,
   ResponsibleColumn,
   StatusColumn,
@@ -58,18 +59,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         title: t`Customer Reference`
       },
       DescriptionColumn(),
-      {
-        accessor: 'line_items',
-        title: t`Line Items`,
-        sortable: true,
-        render: (record: any) => (
-          <ProgressBar
-            value={record.completed_lines}
-            maximum={record.line_items}
-            progressLabel={true}
-          />
-        )
-      },
+      LineItemsProgressColumn(),
       StatusColumn(ModelType.returnorder),
       ProjectCodeColumn(),
       CreationDateColumn(),

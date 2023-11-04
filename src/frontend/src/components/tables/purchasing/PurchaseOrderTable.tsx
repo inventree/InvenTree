@@ -11,6 +11,7 @@ import { StatusRenderer } from '../../renderers/StatusRenderer';
 import {
   CreationDateColumn,
   DescriptionColumn,
+  LineItemsProgressColumn,
   ProjectCodeColumn,
   ResponsibleColumn,
   StatusColumn,
@@ -62,18 +63,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         accessor: 'supplier_reference',
         title: t`Supplier Reference`
       },
-      {
-        accessor: 'line_items',
-        title: t`Line Items`,
-        sortable: true,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel={true}
-            value={record.completed_lines}
-            maximum={record.line_items}
-          />
-        )
-      },
+      LineItemsProgressColumn(),
       StatusColumn(ModelType.purchaseorder),
       ProjectCodeColumn(),
       CreationDateColumn(),
