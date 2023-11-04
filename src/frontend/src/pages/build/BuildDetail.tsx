@@ -17,7 +17,7 @@ import {
   IconSitemap,
   IconTrash
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -37,6 +37,8 @@ import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { buildOrderFields } from '../../forms/BuildForms';
+import { openEditApiForm } from '../../functions/forms';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -177,6 +179,25 @@ export default function BuildDetail() {
     ];
   }, [build]);
 
+  const editBuildOrder = useCallback(() => {
+    let fields = buildOrderFields();
+
+    // Cannot edit part field after creation
+    fields['part'].hidden = true;
+
+    build.pk &&
+      openEditApiForm({
+        url: ApiPaths.build_order_list,
+        pk: build.pk,
+        title: t`Edit Build Order`,
+        fields: fields,
+        successMessage: t`Build Order updated`,
+        onFormSuccess: () => {
+          refreshInstance();
+        }
+      });
+  }, [build]);
+
   const buildActions = useMemo(() => {
     // TODO: Disable certain actions based on user permissions
     return [
@@ -211,7 +232,9 @@ export default function BuildDetail() {
         tooltip={t`Build Order Actions`}
         icon={<IconDots />}
         actions={[
-          EditItemAction({}),
+          EditItemAction({
+            onClick: editBuildOrder
+          }),
           DuplicateItemAction({}),
           DeleteItemAction({})
         ]}
