@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Stack, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -51,12 +51,11 @@ export function BomTable({
       {
         accessor: 'description',
         title: t`Description`,
-        switchable: true,
         render: (row) => row?.sub_part_detail?.description
       },
       {
         accessor: 'reference',
-        switchable: true,
+
         title: t`Reference`
       },
       {
@@ -66,7 +65,7 @@ export function BomTable({
       {
         accessor: 'substitutes',
         title: t`Substitutes`,
-        switchable: true,
+
         render: (row) => {
           let substitutes = row.substitutes ?? [];
 
@@ -80,7 +79,7 @@ export function BomTable({
       {
         accessor: 'optional',
         title: t`Optional`,
-        switchable: true,
+
         sortable: true,
         render: (row) => {
           return <YesNoButton value={row.optional} />;
@@ -89,7 +88,7 @@ export function BomTable({
       {
         accessor: 'consumable',
         title: t`Consumable`,
-        switchable: true,
+
         sortable: true,
         render: (row) => {
           return <YesNoButton value={row.consumable} />;
@@ -98,7 +97,7 @@ export function BomTable({
       {
         accessor: 'allow_variants',
         title: t`Allow Variants`,
-        switchable: true,
+
         sortable: true,
         render: (row) => {
           return <YesNoButton value={row.allow_variants} />;
@@ -107,7 +106,7 @@ export function BomTable({
       {
         accessor: 'inherited',
         title: t`Gets Inherited`,
-        switchable: true,
+
         sortable: true,
         render: (row) => {
           // TODO: Update complexity here
@@ -117,7 +116,7 @@ export function BomTable({
       {
         accessor: 'price_range',
         title: t`Price Range`,
-        switchable: true,
+
         sortable: false,
         render: (row) => {
           let min_price = row.pricing_min || row.pricing_max;
@@ -130,7 +129,7 @@ export function BomTable({
       {
         accessor: 'available_stock',
         title: t`Available`,
-        switchable: true,
+
         render: (row) => {
           let extra: ReactNode[] = [];
 
@@ -164,9 +163,7 @@ export function BomTable({
           return (
             <TableHoverCard
               value={available_stock}
-              extra={
-                extra.length > 0 ? <Stack spacing="xs">{extra}</Stack> : null
-              }
+              extra={extra}
               title={t`Available Stock`}
             />
           );
@@ -175,7 +172,7 @@ export function BomTable({
       {
         accessor: 'can_build',
         title: t`Can Build`,
-        switchable: true,
+
         sortable: true // TODO: Custom sorting via API
         // TODO: Reference bom.js for canBuildQuantity method
       },

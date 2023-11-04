@@ -73,8 +73,7 @@ export function UsedInTable({
       {
         accessor: 'reference',
         title: t`Reference`,
-        sortable: true,
-        switchable: true
+        sortable: true
       }
     ];
   }, [partId]);

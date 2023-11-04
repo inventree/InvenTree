@@ -9,25 +9,25 @@ import {
   IconCirclePlus,
   IconCopy,
   IconDots,
-  IconEdit,
   IconHistory,
   IconInfoCircle,
-  IconLink,
   IconNotes,
   IconPackages,
   IconPaperclip,
-  IconQrcode,
   IconSitemap,
-  IconTransfer,
-  IconTrash,
-  IconUnlink
+  IconTransfer
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
   ActionDropdown,
-  BarcodeActionDropdown
+  BarcodeActionDropdown,
+  DeleteItemAction,
+  EditItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -144,23 +144,13 @@ export default function StockDetail() {
     () => /* TODO: Disable actions based on user permissions*/ [
       <BarcodeActionDropdown
         actions={[
-          {
-            icon: <IconQrcode />,
-            name: t`View`,
-            tooltip: t`View part barcode`
-          },
-          {
-            icon: <IconLink />,
-            name: t`Link Barcode`,
-            tooltip: t`Link custom barcode to stock item`,
+          ViewBarcodeAction({}),
+          LinkBarcodeAction({
             disabled: stockitem?.barcode_hash
-          },
-          {
-            icon: <IconUnlink />,
-            name: t`Unlink Barcode`,
-            tooltip: t`Unlink custom barcode from stock item`,
+          }),
+          UnlinkBarcodeAction({
             disabled: !stockitem?.barcode_hash
-          }
+          })
         ]}
       />,
       <ActionDropdown
@@ -200,23 +190,16 @@ export default function StockDetail() {
             tooltip: t`Duplicate stock item`,
             icon: <IconCopy />
           },
-          {
-            name: t`Edit`,
-            tooltip: t`Edit stock item`,
-            icon: <IconEdit color="blue" />,
-            onClick: () => {
+          EditItemAction({
+            callback: () => {
               stockitem.pk &&
                 editStockItem({
                   item_id: stockitem.pk,
                   callback: () => refreshInstance
                 });
             }
-          },
-          {
-            name: t`Delete`,
-            tooltip: t`Delete stock item`,
-            icon: <IconTrash color="red" />
-          }
+          }),
+          DeleteItemAction({})
         ]}
       />
     ],

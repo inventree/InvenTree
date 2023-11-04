@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Text, Tooltip } from '@mantine/core';
-import { IconCirclePlus } from '@tabler/icons-react';
+import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import {
@@ -10,6 +9,7 @@ import {
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
@@ -86,11 +86,7 @@ export function ProjectCodeTable() {
     let actions = [];
 
     actions.push(
-      <Tooltip label={t`Add project code`}>
-        <ActionIcon radius="sm" onClick={addProjectCode}>
-          <IconCirclePlus color="green" />
-        </ActionIcon>
-      </Tooltip>
+      <AddItemButton onClick={addProjectCode} tooltip={t`Add project code`} />
     );
 
     return actions;

@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Stack, Text, Tooltip } from '@mantine/core';
-import { IconCirclePlus } from '@tabler/icons-react';
+import { Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 
 import { supplierPartFields } from '../../../forms/CompanyForms';
@@ -12,6 +11,7 @@ import {
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -66,12 +66,11 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       {
         accessor: 'description',
         title: t`Description`,
-        sortable: false,
-        switchable: true
+        sortable: false
       },
       {
         accessor: 'manufacturer',
-        switchable: true,
+
         sortable: true,
         title: t`Manufacturer`,
         render: (record: any) => {
@@ -87,7 +86,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       },
       {
         accessor: 'MPN',
-        switchable: true,
+
         sortable: true,
         title: t`MPN`,
         render: (record: any) => record?.manufacturer_part_detail?.MPN
@@ -95,20 +94,18 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       {
         accessor: 'in_stock',
         title: t`In Stock`,
-        sortable: true,
-        switchable: true
+        sortable: true
       },
       {
         accessor: 'packaging',
         title: t`Packaging`,
-        sortable: true,
-        switchable: true
+        sortable: true
       },
       {
         accessor: 'pack_quantity',
         title: t`Pack Quantity`,
         sortable: true,
-        switchable: true,
+
         render: (record: any) => {
           let part = record?.part_detail ?? {};
 
@@ -125,7 +122,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           return (
             <TableHoverCard
               value={record.pack_quantity}
-              extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
+              extra={extra}
               title={t`Pack Quantity`}
             />
           );
@@ -134,21 +131,20 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       {
         accessor: 'link',
         title: t`Link`,
-        sortable: false,
-        switchable: true
+        sortable: false
+
         // TODO: custom link renderer?
       },
       {
         accessor: 'note',
         title: t`Notes`,
-        sortable: false,
-        switchable: true
+        sortable: false
       },
       {
         accessor: 'available',
         title: t`Availability`,
         sortable: true,
-        switchable: true,
+
         render: (record: any) => {
           let extra = [];
 
@@ -160,12 +156,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
             );
           }
 
-          return (
-            <TableHoverCard
-              value={record.available}
-              extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
-            />
-          );
+          return <TableHoverCard value={record.available} extra={extra} />;
         }
       }
     ];
@@ -191,12 +182,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     // TODO: Hide actions based on user permissions
 
     return [
-      // TODO: Refactor this component out to something reusable
-      <Tooltip label={t`Add supplier part`}>
-        <ActionIcon radius="sm" onClick={addSupplierPart}>
-          <IconCirclePlus color="green" />
-        </ActionIcon>
-      </Tooltip>
+      <AddItemButton tooltip={t`Add supplier part`} onClick={addSupplierPart} />
     ];
   }, [user]);
 

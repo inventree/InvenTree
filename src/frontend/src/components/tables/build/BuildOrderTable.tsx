@@ -1,16 +1,19 @@
 import { t } from '@lingui/macro';
-import { Progress } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
+import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
+import { RenderOwner, RenderUser } from '../../render/User';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the build order table
@@ -20,12 +23,13 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'reference',
       sortable: true,
+      switchable: false,
       title: t`Reference`
-      // TODO: Link to the build order detail page
     },
     {
       accessor: 'part',
       sortable: true,
+      switchable: false,
       title: t`Part`,
       render: (record: any) => {
         let part = record.part_detail;
@@ -44,86 +48,87 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'title',
       sortable: false,
-      title: t`Description`,
-      switchable: true
-    },
-    {
-      accessor: 'project_code',
-      title: t`Project Code`,
-      sortable: true,
-      switchable: false,
-      hidden: true
-      // TODO: Hide this if project code is not enabled
-      // TODO: Custom render function here
+      title: t`Description`
     },
     {
       accessor: 'quantity',
       sortable: true,
       title: t`Quantity`,
-      switchable: true
+      switchable: false
     },
     {
       accessor: 'completed',
       sortable: true,
       title: t`Completed`,
-      render: (record: any) => {
-        let progress =
-          record.quantity <= 0 ? 0 : (100 * record.completed) / record.quantity;
-        return (
-          <Progress
-            value={progress}
-            label={record.completed}
-            color={progress < 100 ? 'blue' : 'green'}
-            size="xl"
-            radius="xl"
-          />
-        );
-      }
+      render: (record: any) => (
+        <ProgressBar
+          progressLabel={true}
+          value={record.completed}
+          maximum={record.quantity}
+        />
+      )
     },
     {
       accessor: 'status',
       sortable: true,
       title: t`Status`,
-      switchable: true,
+
       render: TableStatusRenderer(ModelType.build)
+    },
+    {
+      accessor: 'project_code',
+      title: t`Project Code`,
+      sortable: true,
+      // TODO: Hide this if project code is not enabled
+      render: (record: any) => {
+        let project = record.project_code_detail;
+
+        return project ? (
+          <TableHoverCard
+            value={project.code}
+            title={t`Project Code`}
+            extra={<Text>{project.description}</Text>}
+          />
+        ) : (
+          '-'
+        );
+      }
     },
     {
       accessor: 'priority',
       title: t`Priority`,
-      sortable: true,
-      switchable: true
+      sortable: true
     },
     {
       accessor: 'creation_date',
       sortable: true,
-      title: t`Created`,
-      switchable: true
+      title: t`Created`
     },
     {
       accessor: 'target_date',
       sortable: true,
-      title: t`Target Date`,
-      switchable: true
+      title: t`Target Date`
     },
     {
       accessor: 'completion_date',
       sortable: true,
-      title: t`Completed`,
-      switchable: true
+      title: t`Completed`
     },
     {
       accessor: 'issued_by',
       sortable: true,
       title: t`Issued By`,
-      switchable: true
-      // TODO: custom render function
+      render: (record: any) => (
+        <RenderUser instance={record?.issued_by_detail} />
+      )
     },
     {
       accessor: 'responsible',
       sortable: true,
       title: t`Responsible`,
-      switchable: true
-      // TODO: custom render function
+      render: (record: any) => (
+        <RenderOwner instance={record?.responsible_detail} />
+      )
     }
   ];
 }
