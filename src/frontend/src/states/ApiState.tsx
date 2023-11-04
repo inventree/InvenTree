@@ -71,6 +71,9 @@ export enum ApiPaths {
   settings_user_list = 'api-settings-user-list',
   notifications_list = 'api-notifications-list',
 
+  currency_list = 'api-currency-list',
+  currency_refresh = 'api-currency-refresh',
+
   barcode = 'api-barcode',
   news = 'news',
   global_status = 'api-global-status',
@@ -97,9 +100,11 @@ export enum ApiPaths {
   company_list = 'api-company-list',
   company_attachment_list = 'api-company-attachment-list',
   supplier_part_list = 'api-supplier-part-list',
+  manufacturer_part_list = 'api-manufacturer-part-list',
 
   // Stock Item URLs
   stock_item_list = 'api-stock-item-list',
+  stock_tracking_list = 'api-stock-tracking-list',
   stock_location_list = 'api-stock-location-list',
   stock_location_tree = 'api-stock-location-tree',
   stock_attachment_list = 'api-stock-attachment-list',
@@ -165,6 +170,10 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'auth/emails/$id/verify/';
     case ApiPaths.user_email_primary:
       return 'auth/emails/$id/primary/';
+    case ApiPaths.currency_list:
+      return 'currency/exchange/';
+    case ApiPaths.currency_refresh:
+      return 'currency/refresh/';
     case ApiPaths.api_search:
       return 'search/';
     case ApiPaths.settings_global_list:
@@ -209,8 +218,12 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'company/attachment/';
     case ApiPaths.supplier_part_list:
       return 'company/part/';
+    case ApiPaths.manufacturer_part_list:
+      return 'company/part/manufacturer/';
     case ApiPaths.stock_item_list:
       return 'stock/';
+    case ApiPaths.stock_tracking_list:
+      return 'stock/track/';
     case ApiPaths.stock_location_list:
       return 'stock/location/';
     case ApiPaths.stock_location_tree:

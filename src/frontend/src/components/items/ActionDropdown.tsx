@@ -92,16 +92,16 @@ export function BarcodeActionDropdown({
 // Common action button for viewing a barcode
 export function ViewBarcodeAction({
   disabled = false,
-  callback
+  onClick
 }: {
   disabled?: boolean;
-  callback?: () => void;
+  onClick?: () => void;
 }): ActionDropdownItem {
   return {
     icon: <IconQrcode />,
     name: t`View`,
     tooltip: t`View barcode`,
-    onClick: callback,
+    onClick: onClick,
     disabled: disabled
   };
 }
@@ -109,16 +109,16 @@ export function ViewBarcodeAction({
 // Common action button for linking a custom barcode
 export function LinkBarcodeAction({
   disabled = false,
-  callback
+  onClick
 }: {
   disabled?: boolean;
-  callback?: () => void;
+  onClick?: () => void;
 }): ActionDropdownItem {
   return {
     icon: <IconLink />,
     name: t`Link Barcode`,
     tooltip: t`Link custom barcode`,
-    onClick: callback,
+    onClick: onClick,
     disabled: disabled
   };
 }
@@ -126,16 +126,16 @@ export function LinkBarcodeAction({
 // Common action button for un-linking a custom barcode
 export function UnlinkBarcodeAction({
   disabled = false,
-  callback
+  onClick
 }: {
   disabled?: boolean;
-  callback?: () => void;
+  onClick?: () => void;
 }): ActionDropdownItem {
   return {
     icon: <IconUnlink />,
     name: t`Unlink Barcode`,
     tooltip: t`Unlink custom barcode`,
-    onClick: callback,
+    onClick: onClick,
     disabled: disabled
   };
 }
@@ -144,17 +144,17 @@ export function UnlinkBarcodeAction({
 export function EditItemAction({
   disabled = false,
   tooltip,
-  callback
+  onClick
 }: {
   disabled?: boolean;
   tooltip?: string;
-  callback?: () => void;
+  onClick?: () => void;
 }): ActionDropdownItem {
   return {
     icon: <IconEdit color="blue" />,
     name: t`Edit`,
     tooltip: tooltip ?? `Edit item`,
-    onClick: callback,
+    onClick: onClick,
     disabled: disabled
   };
 }
@@ -163,17 +163,17 @@ export function EditItemAction({
 export function DeleteItemAction({
   disabled = false,
   tooltip,
-  callback
+  onClick
 }: {
   disabled?: boolean;
   tooltip?: string;
-  callback?: () => void;
+  onClick?: () => void;
 }): ActionDropdownItem {
   return {
     icon: <IconTrash color="red" />,
     name: t`Delete`,
     tooltip: tooltip ?? t`Delete item`,
-    onClick: callback,
+    onClick: onClick,
     disabled: disabled
   };
 }
@@ -182,17 +182,17 @@ export function DeleteItemAction({
 export function DuplicateItemAction({
   disabled = false,
   tooltip,
-  callback
+  onClick
 }: {
   disabled?: boolean;
   tooltip?: string;
-  callback?: () => void;
+  onClick?: () => void;
 }): ActionDropdownItem {
   return {
     icon: <IconCopy color="green" />,
     name: t`Duplicate`,
     tooltip: tooltip ?? t`Duplicate item`,
-    onClick: callback,
+    onClick: onClick,
     disabled: disabled
   };
 }

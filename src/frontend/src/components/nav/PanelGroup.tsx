@@ -131,7 +131,7 @@ export function PanelGroup({
                 }}
               >
                 <Stack spacing="md">
-                  <StylishText size="lg">{panel.label}</StylishText>
+                  <StylishText size="xl">{panel.label}</StylishText>
                   <Divider />
                   {panel.content ?? <PlaceholderPanel />}
                 </Stack>
