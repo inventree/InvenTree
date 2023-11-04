@@ -1,8 +1,12 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { showNotification } from '@mantine/notifications';
+import { IconReload } from '@tabler/icons-react';
+import { useCallback, useMemo } from 'react';
 
+import { api } from '../../../App';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ActionButton } from '../../buttons/ActionButton';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -26,12 +30,42 @@ export function CurrencyTable() {
     ];
   }, []);
 
+  const refreshCurrencies = useCallback(() => {
+    api
+      .post(apiUrl(ApiPaths.currency_refresh), {})
+      .then(() => {
+        refreshTable();
+        showNotification({
+          message: t`Exchange rates updated`,
+          color: 'green'
+        });
+      })
+      .catch((error) => {
+        showNotification({
+          title: t`Exchange rate update error`,
+          message: error,
+          color: 'red'
+        });
+      });
+  }, []);
+
+  const tableActions = useMemo(() => {
+    return [
+      <ActionButton
+        onClick={refreshCurrencies}
+        tooltip={t`Refresh currency exchange rates`}
+        icon={<IconReload />}
+      />
+    ];
+  }, []);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.currency_list)}
       tableKey={tableKey}
       columns={columns}
       props={{
+        customActionGroups: tableActions,
         dataFormatter: (data) => {
           let rates = data?.exchange_rates ?? {};
 
