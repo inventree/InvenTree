@@ -8,8 +8,8 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
+import { ProjectCodeColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { ProjectCodeHoverCard } from '../TableHoverCard';
 
 export function SalesOrderTable({ params }: { params?: any }) {
   const { tableKey } = useTableRefresh('sales-order');
@@ -66,14 +66,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
           />
         )
       },
-      {
-        accessor: 'project_code',
-        title: t`Project Code`,
-        sortable: true,
-        render: (record: any) => (
-          <ProjectCodeHoverCard projectCode={record.project_code_detail} />
-        )
-      },
+      ProjectCodeColumn(),
       {
         accessor: 'status',
         title: t`Status`,
@@ -82,15 +75,18 @@ export function SalesOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'creation_date',
-        title: t`Creation Date`
+        title: t`Creation Date`,
+        sortable: true
       },
       {
         accessor: 'target_date',
-        title: t`Target Date`
+        title: t`Target Date`,
+        sortable: true
       },
       {
         accessor: 'shipment_date',
-        title: t`Shipment Date`
+        title: t`Shipment Date`,
+        sortable: true
       },
       {
         accessor: 'total_price',

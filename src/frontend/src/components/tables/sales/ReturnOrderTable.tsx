@@ -8,8 +8,8 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
+import { ProjectCodeColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { ProjectCodeHoverCard } from '../TableHoverCard';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
   const { tableKey } = useTableRefresh('return-orders');
@@ -66,14 +66,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
           />
         )
       },
-      {
-        accessor: 'project_code',
-        title: t`Project Code`,
-        sortable: true,
-        render: (record: any) => (
-          <ProjectCodeHoverCard projectCode={record.project_code_detail} />
-        )
-      },
+      ProjectCodeColumn(),
       {
         accessor: 'status',
         title: t`Status`,

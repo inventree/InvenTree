@@ -8,8 +8,8 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { StatusRenderer } from '../../renderers/StatusRenderer';
+import { ProjectCodeColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { ProjectCodeHoverCard } from '../TableHoverCard';
 
 /**
  * Display a table of purchase orders
@@ -70,14 +70,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           />
         )
       },
-      {
-        accessor: 'project_code',
-        title: t`Project Code`,
-        sortable: true,
-        render: (record: any) => (
-          <ProjectCodeHoverCard projectCode={record.project_code_detail} />
-        )
-      },
+      ProjectCodeColumn(),
       {
         accessor: 'status',
         title: t`Status`,
