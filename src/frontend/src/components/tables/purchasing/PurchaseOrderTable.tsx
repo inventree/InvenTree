@@ -13,7 +13,8 @@ import {
   ProjectCodeColumn,
   ResponsibleColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  TotalPriceColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -66,11 +67,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       ProjectCodeColumn(),
       CreationDateColumn(),
       TargetDateColumn(),
-      {
-        accessor: 'total_price',
-        title: t`Total Price`,
-        sortable: true
-      },
+      TotalPriceColumn(),
       ResponsibleColumn()
     ];
   }, []);

@@ -97,3 +97,11 @@ export function ShipmentDateColumn(): TableColumn {
     sortable: true
   };
 }
+
+export function TotalPriceColumn(): TableColumn {
+  return {
+    accessor: 'total_price',
+    title: t`Total Price`,
+    sortable: true
+  };
+}

@@ -13,7 +13,8 @@ import {
   ProjectCodeColumn,
   ShipmentDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  TotalPriceColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -64,11 +65,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
       CreationDateColumn(),
       TargetDateColumn(),
       ShipmentDateColumn(),
-      {
-        accessor: 'total_price',
-        title: t`Total Price`
-        // TODO: Custom renderer?
-      }
+      TotalPriceColumn()
     ];
   }, []);
 

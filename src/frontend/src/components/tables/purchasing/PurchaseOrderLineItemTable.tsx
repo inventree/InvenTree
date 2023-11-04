@@ -13,7 +13,11 @@ import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { RenderStockLocation } from '../../render/Stock';
-import { LinkColumn, TargetDateColumn } from '../ColumnRenderers';
+import {
+  LinkColumn,
+  TargetDateColumn,
+  TotalPriceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowDeleteAction,
@@ -192,13 +196,7 @@ export function PurchaseOrderLineItemTable({
 
         // TODO: custom renderer
       },
-      {
-        accessor: 'total_price',
-        title: t`Total Price`,
-        sortable: true
-
-        // TODO: custom renderer
-      },
+      TotalPriceColumn(),
       TargetDateColumn(),
       {
         accessor: 'destination',
