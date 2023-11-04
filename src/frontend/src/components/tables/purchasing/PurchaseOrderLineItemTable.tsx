@@ -12,6 +12,7 @@ import { useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
+import { TargetDateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowDeleteAction,
@@ -198,11 +199,7 @@ export function PurchaseOrderLineItemTable({
 
         // TODO: custom renderer
       },
-      {
-        accessor: 'target_date',
-        title: t`Target Date`,
-        sortable: true
-      },
+      TargetDateColumn(),
       {
         accessor: 'destination',
         title: t`Destination`,

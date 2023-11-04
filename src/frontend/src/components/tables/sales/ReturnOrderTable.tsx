@@ -9,9 +9,12 @@ import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import {
+  CreationDateColumn,
   DescriptionColumn,
   ProjectCodeColumn,
-  StatusColumn
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -69,19 +72,9 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       },
       StatusColumn(ModelType.returnorder),
       ProjectCodeColumn(),
-      {
-        accessor: 'creation_date',
-        title: t`Creation Date`
-      },
-      {
-        accessor: 'target_date',
-        title: t`Target Date`
-      },
-      {
-        accessor: 'responsible',
-        title: t`Responsible`,
-        render: TableStatusRenderer(ModelType.owner)
-      },
+      CreationDateColumn(),
+      TargetDateColumn(),
+      ResponsibleColumn(),
       {
         accessor: 'total_cost',
         title: t`Total Cost`

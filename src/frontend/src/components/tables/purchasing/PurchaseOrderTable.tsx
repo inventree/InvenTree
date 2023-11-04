@@ -9,9 +9,12 @@ import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { StatusRenderer } from '../../renderers/StatusRenderer';
 import {
+  CreationDateColumn,
   DescriptionColumn,
   ProjectCodeColumn,
-  StatusColumn
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -73,27 +76,14 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       },
       StatusColumn(ModelType.purchaseorder),
       ProjectCodeColumn(),
-      {
-        accessor: 'creation_date',
-        title: t`Created`,
-        sortable: true
-      },
-      {
-        accessor: 'target_date',
-        title: t`Target Date`,
-        sortable: true
-      },
-
+      CreationDateColumn(),
+      TargetDateColumn(),
       {
         accessor: 'total_price',
         title: t`Total Price`,
         sortable: true
       },
-      {
-        accessor: 'responsible',
-        title: t`Responsible`,
-        sortable: true
-      }
+      ResponsibleColumn()
     ];
   }, []);
 

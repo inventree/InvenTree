@@ -14,7 +14,13 @@ import { ModelType } from '../../render/ModelType';
 import { RenderOwner, RenderUser } from '../../render/User';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
-import { ProjectCodeColumn, StatusColumn } from '../ColumnRenderers';
+import {
+  CreationDateColumn,
+  ProjectCodeColumn,
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn
+} from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -73,16 +79,8 @@ function buildOrderTableColumns(): TableColumn[] {
       title: t`Priority`,
       sortable: true
     },
-    {
-      accessor: 'creation_date',
-      sortable: true,
-      title: t`Created`
-    },
-    {
-      accessor: 'target_date',
-      sortable: true,
-      title: t`Target Date`
-    },
+    CreationDateColumn(),
+    TargetDateColumn(),
     {
       accessor: 'completion_date',
       sortable: true,
@@ -96,14 +94,7 @@ function buildOrderTableColumns(): TableColumn[] {
         <RenderUser instance={record?.issued_by_detail} />
       )
     },
-    {
-      accessor: 'responsible',
-      sortable: true,
-      title: t`Responsible`,
-      render: (record: any) => (
-        <RenderOwner instance={record?.responsible_detail} />
-      )
-    }
+    ResponsibleColumn()
   ];
 }
 
