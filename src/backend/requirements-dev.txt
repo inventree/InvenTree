@@ -16,7 +16,7 @@ certifi==2023.7.22
     #   requests
 cfgv==3.4.0
     # via pre-commit
-charset-normalizer==3.3.2
+charset-normalizer==3.3.0
     # via
     #   -c src/backend/requirements.txt
     #   requests
@@ -30,7 +30,7 @@ coveralls==2.1.2
     # via -r src/backend/requirements-dev.in
 distlib==0.3.7
     # via virtualenv
-django==3.2.23
+django==3.2.22
     # via
     #   -c src/backend/requirements.txt
     #   django-debug-toolbar

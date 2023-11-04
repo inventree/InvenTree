@@ -305,6 +305,7 @@ tinycss2==1.1.1
 typing-extensions==4.8.0
     # via
     #   asgiref
+    #   py-moneyed
     #   qrcode
 uritemplate==4.1.1
     # via
