@@ -28,6 +28,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'reference',
         title: t`Return Order`,
         sortable: true
+        // TODO: Display extra information if order is overdue
       },
       {
         accessor: 'customer__name',
@@ -68,6 +69,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       {
         accessor: 'project_code',
         title: t`Project Code`,
+        sortable: true,
         render: (record: any) => (
           <ProjectCodeHoverCard projectCode={record.project_code_detail} />
         )

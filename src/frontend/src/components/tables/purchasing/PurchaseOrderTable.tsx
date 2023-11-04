@@ -32,6 +32,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         title: t`Reference`,
         sortable: true,
         switchable: false
+        // TODO: Display extra information if order is overdue
       },
       {
         accessor: 'description',
@@ -72,6 +73,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       {
         accessor: 'project_code',
         title: t`Project Code`,
+        sortable: true,
         render: (record: any) => (
           <ProjectCodeHoverCard projectCode={record.project_code_detail} />
         )
@@ -89,11 +91,13 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'creation_date',
-        title: t`Created`
+        title: t`Created`,
+        sortable: true
       },
       {
         accessor: 'target_date',
-        title: t`Target Date`
+        title: t`Target Date`,
+        sortable: true
       },
 
       {

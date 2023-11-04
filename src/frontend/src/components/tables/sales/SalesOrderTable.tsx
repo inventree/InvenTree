@@ -29,6 +29,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
         title: t`Sales Order`,
         sortable: true,
         switchable: false
+        // TODO: Display extra information if order is overdue
       },
       {
         accessor: 'customer__name',
