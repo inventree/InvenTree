@@ -12,6 +12,7 @@ import { useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
+import { RenderStockLocation } from '../../render/Stock';
 import { LinkColumn, TargetDateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
@@ -202,9 +203,11 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'destination',
         title: t`Destination`,
-        sortable: false
-
-        // TODO: Custom renderer
+        sortable: false,
+        render: (record: any) =>
+          record.destination
+            ? RenderStockLocation({ instance: record.destination_detail })
+            : '-'
       },
       {
         accessor: 'notes',
