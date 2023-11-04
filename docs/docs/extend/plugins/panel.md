@@ -201,11 +201,11 @@ class ExamplePanel(PanelMixin, InvenTreePlugin, UrlsMixin):
     def setup_urls(self):
         return [
                 path("example/<int:layer>/<path:size>/",
-                    self.SelectCompany, name = 'transfer'),
+                    self.do_something, name = 'transfer'),
         ]
 
 # Define the function that will be called.
-    def SelectCompany(self, request, layer, size):
+    def do_something(self, request, layer, size):
 
         print('Example panel received:', layer, size)
         return HttpResponse(f'OK')
@@ -215,38 +215,43 @@ The start is easy because it is the same as in the example above.
 Lets concentrate on the setup_urls. This time we use
 path (imported from django.urls) instead of url for definition. Using path makes it easier to
 define the data types. No regular expressions. The URL takes two parameters,
-layer and size, and passes them to the python function SelectCompany for further processing.
+layer and size, and passes them to the python function do_something for further processing.
 Now the html template:
 
 ```html
 {% raw %}
 <script>
 async function example_select(){
-    var layernumber = parseInt(document.getElementById("layer_number").value)
-    var size = document.getElementById("string").value
-    response = await fetch("{% url 'plugin:examplepanel:transfer' '999999' 'Size' %}"
-                              .replace("999999", layernumber)
-                              .replace("Size", size)
-                          );
+    const layernumber = parseInt(document.getElementById("layer_number").value)
+    const size = document.getElementById("string").value
+    response = inventreeFormDataUpload(url="{% url 'plugin:examplepanel:transfer' '9999' 'Size' %}"
+                                          .replace("9999", layernumber)
+                                          .replace("Size", size)
+                                      );
 }
 </script>
 
-Number of Layers
-<form> <input id="layer_number" type="number" value="2"> </form>
-Size of Board in mm
-<form> <input id="string" type="text" value="100x160"> </form>
+<form> 
+    Number of Layers<br> 
+    <input id="layer_number" type="number" value="2"><br>
+    Size of Board in mm<br>
+    <input id="string" type="text" value="100x160">
+</form>
 
 <input type="submit" value="Save" onclick="example_select()" title='Save Data'>
 {% endraw %}
 ```
 
-The HTML defines two forms for user input, one number and one string. Each
-form has an ID that is used in the java code to get the input of the form.
+The HTML defines the form for user input, one number and one string. Each
+form has an ID that is used in the javascript code to get the input of the form.
 The response URL must match the URL defined in the plugin. Here we have a number
 (999999) and a string (Size). These get replaced with the content of the fields
 upon execution using replace. Watch out for the ticks around the 999999 and Size. They prevent
 them from being interpreted by the django template engine and replaced by
 something else.
+
+The function inventreeFormDataUpload is a helper function defined by InvenTree
+that does the POST request, handles errors and the csrftoken.
 
 !!! tip "Give it a try"
     change the values in the fields and push Save. You will see the values
