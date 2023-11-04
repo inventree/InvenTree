@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { ProjectCodeHoverCard } from '../TableHoverCard';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
   const { tableKey } = useTableRefresh('return-orders');
@@ -26,10 +28,6 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'reference',
         title: t`Return Order`,
         sortable: true
-      },
-      {
-        accessor: 'description',
-        title: t`Description`
       },
       {
         accessor: 'customer__name',
@@ -52,23 +50,51 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         title: t`Customer Reference`
       },
       {
+        accessor: 'description',
+        title: t`Description`
+      },
+      {
+        accessor: 'line_items',
+        title: t`Line Items`,
+        sortable: true,
+        render: (record: any) => (
+          <ProgressBar
+            value={record.completed_lines}
+            maximum={record.line_items}
+            progressLabel={true}
+          />
+        )
+      },
+      {
         accessor: 'project_code',
-        title: t`Project Code`
-
-        // TODO: Custom formatter
+        title: t`Project Code`,
+        render: (record: any) => (
+          <ProjectCodeHoverCard projectCode={record.project_code_detail} />
+        )
       },
       {
         accessor: 'status',
         title: t`Status`,
         sortable: true,
-
         render: TableStatusRenderer(ModelType.returnorder)
+      },
+      {
+        accessor: 'creation_date',
+        title: t`Creation Date`
+      },
+      {
+        accessor: 'target_date',
+        title: t`Target Date`
+      },
+      {
+        accessor: 'responsible',
+        title: t`Responsible`,
+        render: TableStatusRenderer(ModelType.owner)
+      },
+      {
+        accessor: 'total_cost',
+        title: t`Total Cost`
       }
-      // TODO: Creation date
-      // TODO: Target date
-      // TODO: Line items
-      // TODO: Responsible
-      // TODO: Total cost
     ];
   }, []);
 

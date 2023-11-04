@@ -48,13 +48,13 @@ export function TableHoverCard({
  * Custom hovercard for displaying projectcode detail in a table
  */
 export function ProjectCodeHoverCard({ projectCode }: { projectCode: any }) {
-  return (
-    projectCode && (
-      <TableHoverCard
-        value={projectCode?.code}
-        title={t`Project Code`}
-        extra={projectCode?.description}
-      />
-    )
+  return projectCode ? (
+    <TableHoverCard
+      value={projectCode?.code}
+      title={t`Project Code`}
+      extra={projectCode?.description}
+    />
+  ) : (
+    '-'
   );
 }
