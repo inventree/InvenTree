@@ -8,7 +8,7 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { StatusRenderer } from '../../renderers/StatusRenderer';
-import { ProjectCodeColumn } from '../ColumnRenderers';
+import { ProjectCodeColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -70,18 +70,8 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           />
         )
       },
+      StatusColumn(ModelType.purchaseorder),
       ProjectCodeColumn(),
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-
-        render: (record: any) =>
-          StatusRenderer({
-            status: record.status,
-            type: ModelType.purchaseorder
-          })
-      },
       {
         accessor: 'creation_date',
         title: t`Created`,

@@ -8,7 +8,7 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
-import { ProjectCodeColumn } from '../ColumnRenderers';
+import { ProjectCodeColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
@@ -66,13 +66,8 @@ export function ReturnOrderTable({ params }: { params?: any }) {
           />
         )
       },
+      StatusColumn(ModelType.returnorder),
       ProjectCodeColumn(),
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-        render: TableStatusRenderer(ModelType.returnorder)
-      },
       {
         accessor: 'creation_date',
         title: t`Creation Date`

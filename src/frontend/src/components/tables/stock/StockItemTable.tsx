@@ -9,6 +9,7 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { ModelType } from '../../render/ModelType';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
+import { StatusColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -150,14 +151,7 @@ function stockItemTableColumns(): TableColumn[] {
         );
       }
     },
-    {
-      accessor: 'status',
-      sortable: true,
-
-      filter: true,
-      title: t`Status`,
-      render: TableStatusRenderer(ModelType.stockitem)
-    },
+    StatusColumn(ModelType.stockitem),
     {
       accessor: 'batch',
       sortable: true,

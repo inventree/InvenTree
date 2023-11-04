@@ -3,6 +3,8 @@
  */
 import { t } from '@lingui/macro';
 
+import { ModelType } from '../render/ModelType';
+import { TableStatusRenderer } from '../renderers/StatusRenderer';
 import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
@@ -14,5 +16,14 @@ export function ProjectCodeColumn(): TableColumn {
     render: (record: any) => (
       <ProjectCodeHoverCard projectCode={record.project_code_detail} />
     )
+  };
+}
+
+export function StatusColumn(model: ModelType) {
+  return {
+    accessor: 'status',
+    sortable: true,
+    title: t`Status`,
+    render: TableStatusRenderer(model)
   };
 }

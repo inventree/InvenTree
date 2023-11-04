@@ -14,7 +14,7 @@ import { ModelType } from '../../render/ModelType';
 import { RenderOwner, RenderUser } from '../../render/User';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
-import { ProjectCodeColumn } from '../ColumnRenderers';
+import { ProjectCodeColumn, StatusColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -66,13 +66,7 @@ function buildOrderTableColumns(): TableColumn[] {
         />
       )
     },
-    {
-      accessor: 'status',
-      sortable: true,
-      title: t`Status`,
-
-      render: TableStatusRenderer(ModelType.build)
-    },
+    StatusColumn(ModelType.build),
     ProjectCodeColumn(),
     {
       accessor: 'priority',
