@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
 import { StatusRenderer } from '../../renderers/StatusRenderer';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { ProjectCodeHoverCard } from '../TableHoverCard';
 
 /**
  * Display a table of purchase orders
@@ -56,10 +58,23 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         title: t`Supplier Reference`
       },
       {
+        accessor: 'line_items',
+        title: t`Line Items`,
+        sortable: true,
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel={true}
+            value={record.completed_lines}
+            maximum={record.line_items}
+          />
+        )
+      },
+      {
         accessor: 'project_code',
-        title: t`Project Code`
-
-        // TODO: Custom project code formatter
+        title: t`Project Code`,
+        render: (record: any) => (
+          <ProjectCodeHoverCard projectCode={record.project_code_detail} />
+        )
       },
       {
         accessor: 'status',
@@ -75,33 +90,21 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       {
         accessor: 'creation_date',
         title: t`Created`
-
-        // TODO: Custom date formatter
       },
       {
         accessor: 'target_date',
         title: t`Target Date`
+      },
 
-        // TODO: Custom date formatter
-      },
-      {
-        accessor: 'line_items',
-        title: t`Line Items`,
-        sortable: true
-      },
       {
         accessor: 'total_price',
         title: t`Total Price`,
         sortable: true
-
-        // TODO: Custom money formatter
       },
       {
         accessor: 'responsible',
         title: t`Responsible`,
         sortable: true
-
-        // TODO: custom 'owner' formatter
       }
     ];
   }, []);
