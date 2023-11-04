@@ -93,6 +93,12 @@ export const ModelInformationDict: ModelDictory = {
     url_overview: '/company',
     url_detail: '/company/:pk/'
   },
+  projectcode: {
+    label: t`Project Code`,
+    label_multiple: t`Project Codes`,
+    url_overview: '/project-code',
+    url_detail: '/project-code/:pk/'
+  },
   purchaseorder: {
     label: t`Purchase Order`,
     label_multiple: t`Purchase Orders`,
