@@ -21,10 +21,10 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PlaceholderPill } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
+import { CurrencyTable } from '../../../components/tables/settings/CurrencyTable';
 import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
 import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
 import { useServerApiState } from '../../../states/ApiState';
@@ -152,7 +152,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
             />
-            <PlaceholderPill />
+            <CurrencyTable />
           </>
         )
       },

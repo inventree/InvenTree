@@ -40,6 +40,7 @@ const defaultPageSize: number = 25;
  * @param customFilters : TableFilter[] - List of custom filters
  * @param customActionGroups : any[] - List of custom action groups
  * @param printingActions : any[] - List of printing actions
+ * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  */
@@ -59,6 +60,7 @@ export type InvenTreeTableProps = {
   customActionGroups?: any[];
   printingActions?: any[];
   idAccessor?: string;
+  dataFormatter?: (data: any) => any;
   rowActions?: (record: any) => RowAction[];
   onRowClick?: (record: any, index: number, event: any) => void;
 };
@@ -356,8 +358,15 @@ export function InvenTreeTable({
               tableProps.noRecordsText ?? t`No records found`
             );
 
-            // Extract returned data (accounting for pagination) and ensure it is a list
-            let results = response.data?.results ?? response.data ?? [];
+            let results = [];
+
+            if (props.dataFormatter) {
+              // Custom data formatter provided
+              results = props.dataFormatter(response.data);
+            } else {
+              // Extract returned data (accounting for pagination) and ensure it is a list
+              results = response.data?.results ?? response.data ?? [];
+            }
 
             if (!Array.isArray(results)) {
               setMissingRecordsText(t`Server returned incorrect data type`);
