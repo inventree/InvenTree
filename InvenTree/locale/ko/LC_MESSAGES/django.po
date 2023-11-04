@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-03 01:00+0000\n"
-"PO-Revision-Date: 2023-11-03 18:38\n"
+"PO-Revision-Date: 2023-11-04 18:34\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -32,7 +32,7 @@ msgstr ""
 #: InvenTree/conversion.py:125
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "{original} 을 {unit} 으로 전환할 수 없음."
 
 #: InvenTree/conversion.py:127
 msgid "Invalid quantity supplied"
@@ -168,7 +168,7 @@ msgstr ""
 
 #: InvenTree/helpers_model.py:123
 msgid "Connection error"
-msgstr ""
+msgstr "연결 오류"
 
 #: InvenTree/helpers_model.py:127 InvenTree/helpers_model.py:132
 msgid "Server responded with invalid status code"
@@ -184,11 +184,11 @@ msgstr ""
 
 #: InvenTree/helpers_model.py:140
 msgid "Image size is too large"
-msgstr ""
+msgstr "사진 크기 초과"
 
 #: InvenTree/helpers_model.py:152
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "사진 다운로드 수가 최대치를 초과함."
 
 #: InvenTree/helpers_model.py:157
 msgid "Remote server returned empty response"
@@ -248,11 +248,11 @@ msgstr ""
 
 #: InvenTree/models.py:455
 msgid "Missing file"
-msgstr ""
+msgstr "존재하지 않는 파일"
 
 #: InvenTree/models.py:456
 msgid "Missing external link"
-msgstr ""
+msgstr "존재하지 않는 외부 링크"
 
 #: InvenTree/models.py:475 stock/models.py:2319
 #: templates/js/translated/attachment.js:119
@@ -414,15 +414,15 @@ msgstr ""
 
 #: InvenTree/models.py:921
 msgid "Markdown notes (optional)"
-msgstr ""
+msgstr "마크다운 노트 (선택사항)"
 
 #: InvenTree/models.py:948
 msgid "Barcode Data"
-msgstr ""
+msgstr "바코드 데이터"
 
 #: InvenTree/models.py:949
 msgid "Third party barcode data"
-msgstr ""
+msgstr "제3 자 바코드 데이터"
 
 #: InvenTree/models.py:954
 msgid "Barcode Hash"
@@ -477,7 +477,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:445
 msgid "Unsupported file type"
-msgstr ""
+msgstr "지원하지 않는 파일 형식"
 
 #: InvenTree/serializers.py:451
 msgid "File is too large"
@@ -485,24 +485,24 @@ msgstr "파일이 너무 큽니다"
 
 #: InvenTree/serializers.py:472
 msgid "No columns found in file"
-msgstr ""
+msgstr "파일에서 발견된 세로열 없음."
 
 #: InvenTree/serializers.py:475
 msgid "No data rows found in file"
-msgstr ""
+msgstr "파일에서 발견된 가로열 없음"
 
 #: InvenTree/serializers.py:598
 msgid "No data rows provided"
-msgstr ""
+msgstr "데이터 가로열이 제공되지 않음"
 
 #: InvenTree/serializers.py:601
 msgid "No data columns supplied"
-msgstr ""
+msgstr "데이터 세로열이 제공되지 않음"
 
 #: InvenTree/serializers.py:678
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "사라진 필수 세로열: {name}"
 
 #: InvenTree/serializers.py:687
 #, python-brace-format
@@ -512,15 +512,15 @@ msgstr ""
 #: InvenTree/serializers.py:712
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL 주소"
 
 #: InvenTree/serializers.py:713
 msgid "URL of remote image file"
-msgstr ""
+msgstr "원격 이미지 파일의 URL"
 
 #: InvenTree/serializers.py:726
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "원격 URL 에서 이미지 다운로드가 활성화되지 않음"
 
 #: InvenTree/settings.py:819
 msgid "Czech"
@@ -528,7 +528,7 @@ msgstr "체코어"
 
 #: InvenTree/settings.py:820
 msgid "Danish"
-msgstr ""
+msgstr "덴마크어"
 
 #: InvenTree/settings.py:821
 msgid "German"
@@ -556,7 +556,7 @@ msgstr "파르시어/페르시아어"
 
 #: InvenTree/settings.py:827
 msgid "Finnish"
-msgstr ""
+msgstr "핀란드어"
 
 #: InvenTree/settings.py:828
 msgid "French"
@@ -568,7 +568,7 @@ msgstr "히브리어"
 
 #: InvenTree/settings.py:830
 msgid "Hindi"
-msgstr ""
+msgstr "힌디어"
 
 #: InvenTree/settings.py:831
 msgid "Hungarian"
@@ -600,11 +600,11 @@ msgstr "폴란드어"
 
 #: InvenTree/settings.py:838
 msgid "Portuguese"
-msgstr ""
+msgstr "포르투갈어"
 
 #: InvenTree/settings.py:839
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "포르투갈어 (브라질)"
 
 #: InvenTree/settings.py:840
 msgid "Russian"
@@ -612,7 +612,7 @@ msgstr "러시아어"
 
 #: InvenTree/settings.py:841
 msgid "Slovenian"
-msgstr ""
+msgstr "슬로베니아어"
 
 #: InvenTree/settings.py:842
 msgid "Swedish"
@@ -632,19 +632,19 @@ msgstr "베트남어"
 
 #: InvenTree/settings.py:846
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "중국어 (간체)"
 
 #: InvenTree/settings.py:847
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "중국어 (번체)"
 
 #: InvenTree/status.py:68 part/serializers.py:1002
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Background worker 확인 실패"
 
 #: InvenTree/status.py:72
 msgid "Email backend not configured"
-msgstr ""
+msgstr "이메일 백엔드가 구성되지 않음"
 
 #: InvenTree/status.py:75
 msgid "InvenTree system health checks failed"
@@ -655,7 +655,7 @@ msgstr ""
 #: InvenTree/status_codes.py:188 generic/states/tests.py:16
 #: templates/js/translated/table_filters.js:594
 msgid "Pending"
-msgstr ""
+msgstr "보류"
 
 #: InvenTree/status_codes.py:13 generic/states/tests.py:17
 msgid "Placed"
@@ -666,7 +666,7 @@ msgstr ""
 #: order/templates/order/order_base.html:158
 #: order/templates/order/sales_order_base.html:161
 msgid "Complete"
-msgstr ""
+msgstr "완료"
 
 #: InvenTree/status_codes.py:15 InvenTree/status_codes.py:43
 #: InvenTree/status_codes.py:150 InvenTree/status_codes.py:173
@@ -676,7 +676,7 @@ msgstr "취소됨"
 #: InvenTree/status_codes.py:16 InvenTree/status_codes.py:44
 #: InvenTree/status_codes.py:71
 msgid "Lost"
-msgstr ""
+msgstr "실패"
 
 #: InvenTree/status_codes.py:17 InvenTree/status_codes.py:45
 #: InvenTree/status_codes.py:73
@@ -685,7 +685,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:41 InvenTree/status_codes.py:170
 msgid "In Progress"
-msgstr ""
+msgstr "진행 중"
 
 #: InvenTree/status_codes.py:42 order/models.py:1329
 #: templates/js/translated/sales_order.js:1520
@@ -696,11 +696,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:66
 msgid "OK"
-msgstr ""
+msgstr "확인"
 
 #: InvenTree/status_codes.py:67
 msgid "Attention needed"
-msgstr ""
+msgstr "주의 요망"
 
 #: InvenTree/status_codes.py:68
 msgid "Damaged"
@@ -712,11 +712,11 @@ msgstr "파괴됨"
 
 #: InvenTree/status_codes.py:70
 msgid "Rejected"
-msgstr ""
+msgstr "거부됨"
 
 #: InvenTree/status_codes.py:72
 msgid "Quarantined"
-msgstr ""
+msgstr "격리된 파일"
 
 #: InvenTree/status_codes.py:91
 msgid "Legacy stock tracking entry"
@@ -724,19 +724,19 @@ msgstr ""
 
 #: InvenTree/status_codes.py:93 templates/js/translated/stock.js:544
 msgid "Stock item created"
-msgstr ""
+msgstr "재고 항목 생성됨"
 
 #: InvenTree/status_codes.py:96
 msgid "Edited stock item"
-msgstr ""
+msgstr "수정된 재고 항목"
 
 #: InvenTree/status_codes.py:97
 msgid "Assigned serial number"
-msgstr ""
+msgstr "일련 번호 지정됨"
 
 #: InvenTree/status_codes.py:100
 msgid "Stock counted"
-msgstr ""
+msgstr "재고 측정됨"
 
 #: InvenTree/status_codes.py:101
 msgid "Stock manually added"
@@ -748,11 +748,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:105
 msgid "Location changed"
-msgstr ""
+msgstr "위치 변경됨"
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr ""
+msgstr "재고 업데이트 완료"
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
