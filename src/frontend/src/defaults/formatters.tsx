@@ -31,8 +31,10 @@ export function formatCurrency(
   const global_settings = useGlobalSettingsState.getState().lookup;
 
   let maxDigits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
+  maxDigits = Number(maxDigits);
   let minDigits =
     options.minDigits || global_settings.PRICING_DECIMAL_PLACES_MIN || 0;
+  minDigits = Number(minDigits);
 
   // Extract default currency information
   let currency =
