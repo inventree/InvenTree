@@ -14,6 +14,7 @@ import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { RenderStockLocation } from '../../render/Stock';
 import {
+  CurrencyColumn,
   LinkColumn,
   TargetDateColumn,
   TotalPriceColumn
@@ -163,7 +164,6 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'pack_quantity',
         sortable: false,
-
         title: t`Pack Quantity`,
         render: (record: any) => record?.supplier_part_detail?.pack_quantity
       },
@@ -171,7 +171,8 @@ export function PurchaseOrderLineItemTable({
         accessor: 'SKU',
         title: t`Supplier Code`,
         switchable: false,
-        sortable: true
+        sortable: true,
+        render: (record: any) => record?.supplier_part_detail?.SKU
       },
       {
         accessor: 'supplier_link',
@@ -188,14 +189,10 @@ export function PurchaseOrderLineItemTable({
         render: (record: any) =>
           record?.supplier_part_detail?.manufacturer_part_detail?.MPN
       },
-
-      {
+      CurrencyColumn({
         accessor: 'purchase_price',
-        title: t`Unit Price`,
-        sortable: true
-
-        // TODO: custom renderer
-      },
+        title: t`Unit Price`
+      }),
       TotalPriceColumn(),
       TargetDateColumn(),
       {

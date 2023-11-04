@@ -98,10 +98,37 @@ export function ShipmentDateColumn(): TableColumn {
   };
 }
 
-export function TotalPriceColumn(): TableColumn {
+export function CurrencyColumn({
+  accessor,
+  title,
+  currency,
+  currency_accessor,
+  sortable
+}: {
+  accessor: string;
+  title?: string;
+  currency?: string;
+  currency_accessor?: string;
+  sortable?: boolean;
+}): TableColumn {
   return {
-    accessor: 'total_price',
-    title: t`Total Price`,
-    sortable: true
+    accessor: accessor,
+    title: title ?? t`Currency`,
+    sortable: sortable ?? true,
+    render: (record: any) => {
+      let value = record[accessor];
+      let currency_key = currency_accessor ?? `${accessor}_currency`;
+      currency = currency ?? record[currency_key];
+
+      // TODO: A better render which correctly formats money values
+      return `${value} ${currency}`;
+    }
   };
+}
+
+export function TotalPriceColumn(): TableColumn {
+  return CurrencyColumn({
+    accessor: 'total_price',
+    title: t`Total Price`
+  });
 }

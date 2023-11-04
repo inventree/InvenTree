@@ -22,6 +22,10 @@ export function TableHoverCard({
     return value;
   }
 
+  if (Array.isArray(extra) && extra.length == 0) {
+    return value;
+  }
+
   return (
     <HoverCard>
       <HoverCard.Target>
