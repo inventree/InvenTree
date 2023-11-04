@@ -32,7 +32,7 @@ export function purchaseOrderLineItemFields({
         supplier_detail: true,
         supplier: supplierId
       },
-      adjustFilters: (filters: any, form: ApiFormData) => {
+      adjustFilters: (filters: any, _form: ApiFormData) => {
         // TODO: Filter by the supplier associated with the order
         return filters;
       }

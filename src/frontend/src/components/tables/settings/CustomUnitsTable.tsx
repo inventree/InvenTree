@@ -1,6 +1,4 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Text, Tooltip } from '@mantine/core';
-import { IconCirclePlus } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import {

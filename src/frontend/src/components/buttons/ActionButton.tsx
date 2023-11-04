@@ -1,4 +1,4 @@
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Tooltip } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
@@ -36,7 +36,6 @@ export function ActionButton(props: ActionButtonProps) {
         >
           <Group spacing="xs" noWrap={true}>
             {props.icon}
-            {/* {props.text && <Text>{props.text}</Text>} */}
           </Group>
         </ActionIcon>
       </Tooltip>

@@ -9,15 +9,13 @@ import {
   IconCirclePlus,
   IconCopy,
   IconDots,
-  IconEdit,
   IconHistory,
   IconInfoCircle,
   IconNotes,
   IconPackages,
   IconPaperclip,
   IconSitemap,
-  IconTransfer,
-  IconTrash
+  IconTransfer
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';

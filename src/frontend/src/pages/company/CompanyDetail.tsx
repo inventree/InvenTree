@@ -4,7 +4,6 @@ import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
   IconDots,
-  IconEdit,
   IconInfoCircle,
   IconMap2,
   IconNotes,
@@ -12,7 +11,6 @@ import {
   IconPackages,
   IconPaperclip,
   IconShoppingCart,
-  IconTrash,
   IconTruckDelivery,
   IconTruckReturn,
   IconUsersGroup

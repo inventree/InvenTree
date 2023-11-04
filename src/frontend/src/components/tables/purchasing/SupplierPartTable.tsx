@@ -1,6 +1,4 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Stack, Text, Tooltip } from '@mantine/core';
-import { IconCirclePlus } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 
 import { supplierPartFields } from '../../../forms/CompanyForms';

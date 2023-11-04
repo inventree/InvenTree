@@ -6,10 +6,8 @@ import {
   IconBuildingFactory2,
   IconCalendarStats,
   IconClipboardList,
-  IconCopy,
   IconCurrencyDollar,
   IconDots,
-  IconEdit,
   IconInfoCircle,
   IconLayersLinked,
   IconList,
@@ -22,7 +20,6 @@ import {
   IconTestPipe,
   IconTools,
   IconTransfer,
-  IconTrash,
   IconTruckDelivery,
   IconVersions
 } from '@tabler/icons-react';

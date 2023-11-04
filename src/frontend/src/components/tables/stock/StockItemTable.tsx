@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, Stack, Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
