@@ -5,9 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
-import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
-import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import {
   CreationDateColumn,
   DescriptionColumn,
