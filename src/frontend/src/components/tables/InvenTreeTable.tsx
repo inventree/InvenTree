@@ -9,7 +9,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
-import { ButtonMenu } from '../items/ButtonMenu';
+import { ButtonMenu } from '../buttons/ButtonMenu';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
@@ -40,6 +40,7 @@ const defaultPageSize: number = 25;
  * @param customFilters : TableFilter[] - List of custom filters
  * @param customActionGroups : any[] - List of custom action groups
  * @param printingActions : any[] - List of printing actions
+ * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  */
@@ -59,6 +60,7 @@ export type InvenTreeTableProps = {
   customActionGroups?: any[];
   printingActions?: any[];
   idAccessor?: string;
+  dataFormatter?: (data: any) => any;
   rowActions?: (record: any) => RowAction[];
   onRowClick?: (record: any, index: number, event: any) => void;
 };
@@ -82,7 +84,6 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   customFilters: [],
   customActionGroups: [],
   idAccessor: 'pk',
-  rowActions: (record: any) => [],
   onRowClick: (record: any, index: number, event: any) => {}
 };
 
@@ -115,7 +116,7 @@ export function InvenTreeTable({
 
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns = columns.some(
-    (col: TableColumn) => col.switchable
+    (col: TableColumn) => col.switchable ?? true
   );
 
   // A list of hidden columns, saved to local storage
@@ -142,7 +143,7 @@ export function InvenTreeTable({
     let cols = columns.map((col) => {
       let hidden: boolean = col.hidden ?? false;
 
-      if (col.switchable) {
+      if (col.switchable ?? true) {
         hidden = hiddenColumns.includes(col.accessor);
       }
 
@@ -156,10 +157,19 @@ export function InvenTreeTable({
     if (tableProps.rowActions) {
       cols.push({
         accessor: 'actions',
-        title: '',
+        title: '   ',
         hidden: false,
         switchable: false,
-        width: 48,
+        width: 50,
+        cellsStyle: {
+          position: 'sticky',
+          right: 0,
+          // TODO: Use the theme color to set the background color
+          backgroundColor: '#FFF',
+          // TODO: Use the scroll area callbacks to determine if we need to display a "shadow"
+          borderLeft: '1px solid #DDD',
+          padding: '3px'
+        },
         render: function (record: any) {
           return (
             <RowActions
@@ -348,8 +358,15 @@ export function InvenTreeTable({
               tableProps.noRecordsText ?? t`No records found`
             );
 
-            // Extract returned data (accounting for pagination) and ensure it is a list
-            let results = response.data?.results ?? response.data ?? [];
+            let results = [];
+
+            if (props.dataFormatter) {
+              // Custom data formatter provided
+              results = props.dataFormatter(response.data);
+            } else {
+              // Extract returned data (accounting for pagination) and ensure it is a list
+              results = response.data?.results ?? response.data ?? [];
+            }
 
             if (!Array.isArray(results)) {
               setMissingRecordsText(t`Server returned incorrect data type`);
@@ -445,12 +462,6 @@ export function InvenTreeTable({
                 actions={tableProps.printingActions ?? []}
               />
             )}
-            {tableProps.enableDownload && (
-              <DownloadAction
-                key="download-action"
-                downloadCallback={downloadData}
-              />
-            )}
           </Group>
           <Space />
           <Group position="right" spacing={5}>
@@ -488,6 +499,12 @@ export function InvenTreeTable({
                   </ActionIcon>
                 </Indicator>
               )}
+            {tableProps.enableDownload && (
+              <DownloadAction
+                key="download-action"
+                downloadCallback={downloadData}
+              />
+            )}
           </Group>
         </Group>
         {filtersVisible && (
@@ -504,7 +521,7 @@ export function InvenTreeTable({
           highlightOnHover
           loaderVariant="dots"
           idAccessor={tableProps.idAccessor}
-          minHeight={200}
+          minHeight={300}
           totalRecords={recordCount}
           recordsPerPage={tableProps.pageSize ?? defaultPageSize}
           page={page}

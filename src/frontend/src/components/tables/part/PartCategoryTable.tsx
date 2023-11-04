@@ -26,20 +26,17 @@ export function PartCategoryTable({ params = {} }: { params?: any }) {
       {
         accessor: 'description',
         title: t`Description`,
-        sortable: false,
-        switchable: true
+        sortable: false
       },
       {
         accessor: 'pathstring',
         title: t`Path`,
-        sortable: false,
-        switchable: true
+        sortable: false
       },
       {
         accessor: 'part_count',
         title: t`Parts`,
-        sortable: true,
-        switchable: true
+        sortable: true
       }
     ];
   }, []);

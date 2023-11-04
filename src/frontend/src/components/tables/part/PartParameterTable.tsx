@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
-import { IconTextPlus } from '@tabler/icons-react';
+import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import {
@@ -10,6 +9,7 @@ import {
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
@@ -27,7 +27,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
       {
         accessor: 'part',
         title: t`Part`,
-        switchable: true,
+
         sortable: true,
         render: function (record: any) {
           let part = record?.part_detail ?? {};
@@ -59,7 +59,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
         accessor: 'description',
         title: t`Description`,
         sortable: false,
-        switchable: true,
+
         render: (record) => record.template_detail?.description
       },
       {
@@ -86,7 +86,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
       {
         accessor: 'units',
         title: t`Units`,
-        switchable: true,
+
         sortable: true,
         render: (record) => record.template_detail?.units
       }
@@ -174,11 +174,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
     // TODO: Hide if user does not have permission to edit parts
     actions.push(
-      <Tooltip label={t`Add parameter`}>
-        <ActionIcon radius="sm" onClick={addParameter}>
-          <IconTextPlus color="green" />
-        </ActionIcon>
-      </Tooltip>
+      <AddItemButton tooltip="Add parameter" onClick={addParameter} />
     );
 
     return actions;

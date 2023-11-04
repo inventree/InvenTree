@@ -34,8 +34,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'description',
-        title: t`Description`,
-        switchable: true
+        title: t`Description`
       },
       {
         accessor: 'supplier__name',
@@ -55,20 +54,19 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'supplier_reference',
-        title: t`Supplier Reference`,
-        switchable: true
+        title: t`Supplier Reference`
       },
       {
         accessor: 'project_code',
-        title: t`Project Code`,
-        switchable: true
+        title: t`Project Code`
+
         // TODO: Custom project code formatter
       },
       {
         accessor: 'status',
         title: t`Status`,
         sortable: true,
-        switchable: true,
+
         render: (record: any) =>
           StatusRenderer({
             status: record.status,
@@ -78,26 +76,22 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       {
         accessor: 'creation_date',
         title: t`Created`,
-        switchable: true,
         render: (record: any) => renderDate(record.creation_date)
       },
       {
         accessor: 'target_date',
         title: t`Target Date`,
-        switchable: true,
         render: (record: any) => renderDate(record.target_date)
       },
       {
         accessor: 'line_items',
         title: t`Line Items`,
-        sortable: true,
-        switchable: true
+        sortable: true
       },
       {
         accessor: 'total_price',
         sortable: true,
         title: t`Total Price`,
-        switchable: true,
         render: (record: any) =>
           formatCurrency(record.total_price, {
             currency: record.order_currency
@@ -106,8 +100,8 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       {
         accessor: 'responsible',
         title: t`Responsible`,
-        sortable: true,
-        switchable: true
+        sortable: true
+
         // TODO: custom 'owner' formatter
       }
     ];

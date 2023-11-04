@@ -25,39 +25,37 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
       },
       {
         accessor: 'description',
-        title: t`Description`,
-        switchable: true
+        title: t`Description`
       },
       {
         accessor: 'pathstring',
         title: t`Path`,
-        sortable: true,
-        switchable: true
+        sortable: true
       },
       {
         accessor: 'items',
         title: t`Stock Items`,
-        switchable: true,
+
         sortable: true
       },
       {
         accessor: 'structural',
         title: t`Structural`,
-        switchable: true,
+
         sortable: true,
         render: (record: any) => <YesNoButton value={record.structural} />
       },
       {
         accessor: 'external',
         title: t`External`,
-        switchable: true,
+
         sortable: true,
         render: (record: any) => <YesNoButton value={record.external} />
       },
       {
         accessor: 'location_type',
         title: t`Location Type`,
-        switchable: true,
+
         sortable: false,
         render: (record: any) => record.location_type_detail?.name
       }

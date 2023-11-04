@@ -21,9 +21,11 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { StylishText } from '../../../components/items/StylishText';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
+import { CurrencyTable } from '../../../components/tables/settings/CurrencyTable';
 import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
 import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
 import { useServerApiState } from '../../../states/ApiState';
@@ -123,7 +125,39 @@ export default function SystemSettings() {
       {
         name: 'pricing',
         label: t`Pricing`,
-        icon: <IconCurrencyDollar />
+        icon: <IconCurrencyDollar />,
+        content: (
+          <>
+            <GlobalSettingList
+              keys={[
+                'INVENTREE_DEFAULT_CURRENCY',
+                'PART_INTERNAL_PRICE',
+                'PART_BOM_USE_INTERNAL_PRICE',
+                'PRICING_DECIMAL_PLACES_MIN',
+                'PRICING_DECIMAL_PLACES',
+                'PRICING_UPDATE_DAYS'
+              ]}
+            />
+            <br />
+            <GlobalSettingList
+              keys={[
+                'PRICING_USE_SUPPLIER_PRICING',
+                'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER',
+                'PRICING_USE_STOCK_PRICING',
+                'PRICING_STOCK_ITEM_AGE_DAYS',
+                'PRICING_USE_VARIANT_PRICING',
+                'PRICING_ACTIVE_VARIANTS'
+              ]}
+            />
+            <br />
+            <GlobalSettingList
+              keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
+            />
+            <StylishText size="xl">{t`Exchange Rates`}</StylishText>
+            <Divider />
+            <CurrencyTable />
+          </>
+        )
       },
       {
         name: 'labels',

@@ -52,19 +52,19 @@ export function RenderContact({ instance }: { instance: any }): ReactNode {
  * Inline rendering of a single SupplierPart instance
  */
 export function RenderSupplierPart({ instance }: { instance: any }): ReactNode {
-  // TODO: Handle image
   // TODO: handle URL
 
   let supplier = instance.supplier_detail ?? {};
   let part = instance.part_detail ?? {};
 
-  let text = instance.SKU;
-
-  if (supplier.name) {
-    text = `${supplier.name} | ${text}`;
-  }
-
-  return <RenderInlineModel primary={text} secondary={part.full_name} />;
+  return (
+    <RenderInlineModel
+      primary={supplier?.name}
+      secondary={instance.SKU}
+      image={part?.thumbnail ?? part?.image}
+      suffix={part.full_name}
+    />
+  );
 }
 
 /**

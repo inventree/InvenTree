@@ -45,7 +45,7 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'comment',
       title: t`Comment`,
       sortable: false,
-      switchable: true,
+
       render: function (record: any) {
         return record.comment;
       }
@@ -54,7 +54,7 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'uploaded',
       title: t`Uploaded`,
       sortable: false,
-      switchable: true,
+
       render: function (record: any) {
         return (
           <Group position="apart">

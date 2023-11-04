@@ -31,8 +31,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'description',
-        title: t`Description`,
-        switchable: true
+        title: t`Description`
       },
       {
         accessor: 'customer__name',
@@ -52,20 +51,19 @@ export function SalesOrderTable({ params }: { params?: any }) {
       },
       {
         accessor: 'customer_reference',
-        title: t`Customer Reference`,
-        switchable: true
+        title: t`Customer Reference`
       },
       {
         accessor: 'project_code',
-        title: t`Project Code`,
-        switchable: true
+        title: t`Project Code`
+
         // TODO: Custom formatter
       },
       {
         accessor: 'status',
         title: t`Status`,
         sortable: true,
-        switchable: true,
+
         render: TableStatusRenderer(ModelType.salesorder)
       },
       {

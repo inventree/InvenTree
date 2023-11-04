@@ -8,7 +8,6 @@ import {
   IconEdit,
   IconFileTypePdf,
   IconInfoCircle,
-  IconLink,
   IconList,
   IconListCheck,
   IconNotes,
@@ -16,13 +15,20 @@ import {
   IconPrinter,
   IconQrcode,
   IconSitemap,
-  IconTrash,
-  IconUnlink
+  IconTrash
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ActionDropdown } from '../../components/items/ActionDropdown';
+import {
+  ActionDropdown,
+  DeleteItemAction,
+  DuplicateItemAction,
+  EditItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
+} from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ModelType } from '../../components/render/ModelType';
@@ -31,6 +37,8 @@ import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { buildOrderFields } from '../../forms/BuildForms';
+import { openEditApiForm } from '../../functions/forms';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -171,6 +179,25 @@ export default function BuildDetail() {
     ];
   }, [build]);
 
+  const editBuildOrder = useCallback(() => {
+    let fields = buildOrderFields();
+
+    // Cannot edit part field after creation
+    fields['part'].hidden = true;
+
+    build.pk &&
+      openEditApiForm({
+        url: ApiPaths.build_order_list,
+        pk: build.pk,
+        title: t`Edit Build Order`,
+        fields: fields,
+        successMessage: t`Build Order updated`,
+        onFormSuccess: () => {
+          refreshInstance();
+        }
+      });
+  }, [build]);
+
   const buildActions = useMemo(() => {
     // TODO: Disable certain actions based on user permissions
     return [
@@ -179,23 +206,13 @@ export default function BuildDetail() {
         tooltip={t`Barcode Actions`}
         icon={<IconQrcode />}
         actions={[
-          {
-            icon: <IconQrcode />,
-            name: t`View`,
-            tooltip: t`View part barcode`
-          },
-          {
-            icon: <IconLink />,
-            name: t`Link Barcode`,
-            tooltip: t`Link custom barcode to part`,
+          ViewBarcodeAction({}),
+          LinkBarcodeAction({
             disabled: build?.barcode_hash
-          },
-          {
-            icon: <IconUnlink />,
-            name: t`Unlink Barcode`,
-            tooltip: t`Unlink custom barcode from part`,
+          }),
+          UnlinkBarcodeAction({
             disabled: !build?.barcode_hash
-          }
+          })
         ]}
       />,
       <ActionDropdown
@@ -215,21 +232,11 @@ export default function BuildDetail() {
         tooltip={t`Build Order Actions`}
         icon={<IconDots />}
         actions={[
-          {
-            icon: <IconEdit color="blue" />,
-            name: t`Edit`,
-            tooltip: t`Edit build order`
-          },
-          {
-            icon: <IconCopy color="green" />,
-            name: t`Duplicate`,
-            tooltip: t`Duplicate build order`
-          },
-          {
-            icon: <IconTrash color="red" />,
-            name: t`Delete`,
-            tooltip: t`Delete build order`
-          }
+          EditItemAction({
+            onClick: editBuildOrder
+          }),
+          DuplicateItemAction({}),
+          DeleteItemAction({})
         ]}
       />
     ];

@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, Stack, Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -41,7 +41,7 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'part_detail.description',
       sortable: false,
-      switchable: true,
+
       title: t`Description`
     },
     {
@@ -146,7 +146,7 @@ function stockItemTableColumns(): TableColumn[] {
               </Group>
             }
             title={t`Stock Information`}
-            extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
+            extra={extra}
           />
         );
       }
@@ -154,7 +154,7 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'status',
       sortable: true,
-      switchable: true,
+
       filter: true,
       title: t`Status`,
       render: TableStatusRenderer(ModelType.stockitem)
@@ -162,13 +162,13 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'batch',
       sortable: true,
-      switchable: true,
+
       title: t`Batch`
     },
     {
       accessor: 'location',
       sortable: true,
-      switchable: true,
+
       title: t`Location`,
       render: function (record: any) {
         // TODO: Custom renderer for location
