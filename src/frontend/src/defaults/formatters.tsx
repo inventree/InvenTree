@@ -1,13 +1,9 @@
 import dayjs from 'dayjs';
 
-const global_settings = {
-  PRICING_DECIMAL_PLACES: 6,
-  PRICING_DECIMAL_PLACES_MIN: 0,
-  INVENTREE_DEFAULT_CURRENCY: 'USD'
-};
-const user_settings = {
-  DATE_DISPLAY_FORMAT: 'YYYY-MM-DD'
-};
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../states/SettingsState';
 
 interface formatCurrencyOptionsType {
   digits?: number;
@@ -31,6 +27,8 @@ export function formatCurrency(
   if (value == null) {
     return null;
   }
+
+  const global_settings = useGlobalSettingsState.getState().lookup;
 
   let maxDigits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
   let minDigits =
@@ -68,6 +66,7 @@ export function renderDate(date: string, options: renderDateOptionsType = {}) {
     return '-';
   }
 
+  const user_settings = useUserSettingsState.getState().lookup;
   let fmt = user_settings.DATE_DISPLAY_FORMAT || 'YYYY-MM-DD';
 
   if (options.showTime) {
