@@ -191,7 +191,7 @@ export default function StockDetail() {
             icon: <IconCopy />
           },
           EditItemAction({
-            callback: () => {
+            onClick: () => {
               stockitem.pk &&
                 editStockItem({
                   item_id: stockitem.pk,

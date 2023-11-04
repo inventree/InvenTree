@@ -121,7 +121,7 @@ export function AttachmentTable({
               model: model,
               pk: record.pk,
               attachmentType: record.attachment ? 'file' : 'link',
-              onClick: refreshTable
+              callback: refreshTable
             });
           }
         })
@@ -135,7 +135,7 @@ export function AttachmentTable({
             deleteAttachment({
               endpoint: endpoint,
               pk: record.pk,
-              onClick: refreshTable
+              callback: refreshTable
             });
           }
         })
