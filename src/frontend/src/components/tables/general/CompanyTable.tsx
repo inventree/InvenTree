@@ -45,14 +45,12 @@ export function CompanyTable({
       {
         accessor: 'description',
         title: t`Description`,
-        sortable: false,
-        switchable: true
+        sortable: false
       },
       {
         accessor: 'website',
         title: t`Website`,
-        sortable: false,
-        switchable: true
+        sortable: false
       }
     ];
   }, []);
@@ -67,8 +65,10 @@ export function CompanyTable({
           ...params
         },
         onRowClick: (row: any) => {
-          let base = path ?? 'company';
-          navigate(`/${base}/${row.pk}`);
+          if (row.pk) {
+            let base = path ?? 'company';
+            navigate(`/${base}/${row.pk}`);
+          }
         }
       }}
     />

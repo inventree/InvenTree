@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 
 import { api } from '../../App';
 import { openModalApiForm } from '../../functions/forms';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 import { SettingsStateProps } from '../../states/SettingsState';
 import { Setting } from '../../states/states';
 
@@ -51,7 +51,6 @@ function SettingValue({
     }
 
     openModalApiForm({
-      name: 'setting-edit',
       url: settingsState.endpoint,
       pk: setting.key,
       method: 'PATCH',

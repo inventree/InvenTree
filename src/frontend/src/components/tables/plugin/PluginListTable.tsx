@@ -68,7 +68,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         accessor: 'meta.description',
         title: t`Description`,
         sortable: false,
-        switchable: true,
+
         render: function (record: any) {
           if (record.active) {
             return record.meta.description;
@@ -80,15 +80,14 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
       {
         accessor: 'meta.version',
         title: t`Version`,
-        sortable: false,
-        switchable: true
+        sortable: false
+
         // TODO: Display date information if available
       },
       {
         accessor: 'meta.author',
         title: 'Author',
-        sortable: false,
-        switchable: true
+        sortable: false
       }
     ],
     []

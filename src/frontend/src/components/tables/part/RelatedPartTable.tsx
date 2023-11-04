@@ -10,6 +10,7 @@ import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction } from '../RowActions';
 
 /**
  * Construct a table listing related parts for a given part
@@ -33,7 +34,6 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
       {
         accessor: 'part',
         title: t`Part`,
-        noWrap: true,
         render: (record: any) => {
           let part = getPart(record);
           return (
@@ -63,7 +63,6 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
 
   const addRelatedPart = useCallback(() => {
     openCreateApiForm({
-      name: 'add-related-part',
       title: t`Add Related Part`,
       url: ApiPaths.related_part_list,
       fields: {
@@ -99,12 +98,9 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   // TODO: Hide if user does not have permission to edit parts
   const rowActions = useCallback((record: any) => {
     return [
-      {
-        title: t`Delete`,
-        color: 'red',
+      RowDeleteAction({
         onClick: () => {
           openDeleteApiForm({
-            name: 'delete-related-part',
             url: ApiPaths.related_part_list,
             pk: record.pk,
             title: t`Delete Related Part`,
@@ -115,7 +111,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
             onFormSuccess: refreshTable
           });
         }
-      }
+      })
     ];
   }, []);
 

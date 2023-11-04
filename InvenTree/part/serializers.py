@@ -715,6 +715,8 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
     unallocated_stock = serializers.FloatField(read_only=True)
     variant_stock = serializers.FloatField(read_only=True)
 
+    minimum_stock = serializers.FloatField()
+
     image = InvenTree.serializers.InvenTreeImageSerializerField(required=False, allow_null=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
     starred = serializers.SerializerMethodField()
