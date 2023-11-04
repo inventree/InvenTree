@@ -21,6 +21,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { StylishText } from '../../../components/items/StylishText';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
@@ -152,6 +153,8 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
             />
+            <StylishText size="xl">{t`Exchange Rates`}</StylishText>
+            <Divider />
             <CurrencyTable />
           </>
         )
