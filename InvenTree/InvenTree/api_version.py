@@ -3,9 +3,9 @@
 
 # InvenTree API version
 INVENTREE_API_VERSION = 147
-"""Increment this API version number whenever there is a significant change to the API that any clients need to know about"""
+"""Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
-INVENTREE_API_TEXT = """
+INVENTREE_API_TEXT = r"""
 v147 -> 2023-11-04: https://github.com/inventree/InvenTree/pull/5860
     - Adds "completed_lines" field to SalesOrder API endpoint
     - Adds "completed_lines" field to PurchaseOrder API endpoint
