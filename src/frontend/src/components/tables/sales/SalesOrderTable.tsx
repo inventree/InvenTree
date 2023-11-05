@@ -7,7 +7,16 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { ModelType } from '../../render/ModelType';
-import { TableStatusRenderer } from '../../renderers/StatusRenderer';
+import {
+  CreationDateColumn,
+  DescriptionColumn,
+  LineItemsProgressColumn,
+  ProjectCodeColumn,
+  ShipmentDateColumn,
+  StatusColumn,
+  TargetDateColumn,
+  TotalPriceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({ params }: { params?: any }) {
@@ -28,10 +37,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
         title: t`Sales Order`,
         sortable: true,
         switchable: false
-      },
-      {
-        accessor: 'description',
-        title: t`Description`
+        // TODO: Display extra information if order is overdue
       },
       {
         accessor: 'customer__name',
@@ -53,51 +59,14 @@ export function SalesOrderTable({ params }: { params?: any }) {
         accessor: 'customer_reference',
         title: t`Customer Reference`
       },
-      {
-        accessor: 'project_code',
-        title: t`Project Code`
-
-        // TODO: Custom formatter
-      },
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-
-        render: TableStatusRenderer(ModelType.salesorder)
-      },
-      {
-        accessor: 'creation_date',
-        sortable: true,
-        title: t`Created`,
-        switchable: true,
-        render: (record: any) => renderDate(record.creation_date)
-      },
-      {
-        accessor: 'target_date',
-        sortable: true,
-        title: t`Target Date`,
-        switchable: true,
-        render: (record: any) => renderDate(record.target_date)
-      },
-      {
-        accessor: 'shipment_date',
-        sortable: true,
-        title: t`Shipment Date`,
-        switchable: true,
-        render: (record: any) => renderDate(record.shipment_date)
-      },
-      // TODO: Line items
-      {
-        accessor: 'total_price',
-        sortable: true,
-        title: t`Total Price`,
-        switchable: true,
-        render: (record: any) =>
-          formatCurrency(record.total_price, {
-            currency: record.order_currency
-          })
-      }
+      DescriptionColumn(),
+      LineItemsProgressColumn(),
+      StatusColumn(ModelType.salesorder),
+      ProjectCodeColumn(),
+      CreationDateColumn(),
+      TargetDateColumn(),
+      ShipmentDateColumn(),
+      TotalPriceColumn()
     ];
   }, []);
 

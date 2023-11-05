@@ -10,6 +10,7 @@ import { useLocalState } from '../states/LocalState';
 export type Locales = keyof typeof languages | 'pseudo-LOCALE';
 
 export const languages: Record<string, string> = {
+  bg: t`Bulgarian`,
   cs: t`Czech`,
   da: t`Danish`,
   de: t`German`,

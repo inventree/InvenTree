@@ -92,6 +92,9 @@ export const SystemSettings = Loadable(
 export const PluginSettings = Loadable(
   lazy(() => import('./pages/Index/Settings/PluginSettings'))
 );
+export const AdminCenter = Loadable(
+  lazy(() => import('./pages/Index/Settings/AdminCenter'))
+);
 
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
@@ -113,7 +116,8 @@ export const routes = (
       <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
       <Route path="settings/">
-        <Route index element={<SystemSettings />} />
+        <Route index element={<AdminCenter />} />
+        <Route path="admin/" element={<AdminCenter />} />
         <Route path="system/" element={<SystemSettings />} />
         <Route path="user/" element={<UserSettings />} />
         <Route path="plugin/" element={<PluginSettings />} />

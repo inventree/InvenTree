@@ -7,7 +7,16 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { ModelType } from '../../render/ModelType';
-import { StatusRenderer } from '../../renderers/StatusRenderer';
+import {
+  CreationDateColumn,
+  DescriptionColumn,
+  LineItemsProgressColumn,
+  ProjectCodeColumn,
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn,
+  TotalPriceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -31,11 +40,9 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         title: t`Reference`,
         sortable: true,
         switchable: false
+        // TODO: Display extra information if order is overdue
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn(),
       {
         accessor: 'supplier__name',
         title: t`Supplier`,
@@ -56,54 +63,13 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         accessor: 'supplier_reference',
         title: t`Supplier Reference`
       },
-      {
-        accessor: 'project_code',
-        title: t`Project Code`
-
-        // TODO: Custom project code formatter
-      },
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-
-        render: (record: any) =>
-          StatusRenderer({
-            status: record.status,
-            type: ModelType.purchaseorder
-          })
-      },
-      {
-        accessor: 'creation_date',
-        title: t`Created`,
-        render: (record: any) => renderDate(record.creation_date)
-      },
-      {
-        accessor: 'target_date',
-        title: t`Target Date`,
-        render: (record: any) => renderDate(record.target_date)
-      },
-      {
-        accessor: 'line_items',
-        title: t`Line Items`,
-        sortable: true
-      },
-      {
-        accessor: 'total_price',
-        sortable: true,
-        title: t`Total Price`,
-        render: (record: any) =>
-          formatCurrency(record.total_price, {
-            currency: record.order_currency
-          })
-      },
-      {
-        accessor: 'responsible',
-        title: t`Responsible`,
-        sortable: true
-
-        // TODO: custom 'owner' formatter
-      }
+      LineItemsProgressColumn(),
+      StatusColumn(ModelType.purchaseorder),
+      ProjectCodeColumn(),
+      CreationDateColumn(),
+      TargetDateColumn(),
+      TotalPriceColumn(),
+      ResponsibleColumn()
     ];
   }, []);
 

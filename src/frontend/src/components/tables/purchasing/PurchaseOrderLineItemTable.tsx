@@ -12,6 +12,13 @@ import { useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
+import { RenderStockLocation } from '../../render/Stock';
+import {
+  CurrencyColumn,
+  LinkColumn,
+  TargetDateColumn,
+  TotalPriceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowDeleteAction,
@@ -112,8 +119,8 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          let part = record?.part_detail;
           let supplier_part = record?.supplier_part_detail ?? {};
+          let part = record?.part_detail ?? supplier_part?.part_detail ?? {};
           let extra = [];
 
           if (supplier_part.pack_quantity_native != 1) {
@@ -127,8 +134,7 @@ export function PurchaseOrderLineItemTable({
 
             extra.push(
               <Text key="total-quantity">
-                {t`Total Quantity`}: {total}
-                {part.units}
+                {t`Total Quantity`}: {total} {part?.units}
               </Text>
             );
           }
@@ -158,7 +164,6 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'pack_quantity',
         sortable: false,
-
         title: t`Pack Quantity`,
         render: (record: any) => record?.supplier_part_detail?.pack_quantity
       },
@@ -166,7 +171,8 @@ export function PurchaseOrderLineItemTable({
         accessor: 'SKU',
         title: t`Supplier Code`,
         switchable: false,
-        sortable: true
+        sortable: true,
+        render: (record: any) => record?.supplier_part_detail?.SKU
       },
       {
         accessor: 'supplier_link',
@@ -183,43 +189,26 @@ export function PurchaseOrderLineItemTable({
         render: (record: any) =>
           record?.supplier_part_detail?.manufacturer_part_detail?.MPN
       },
-
-      {
+      CurrencyColumn({
         accessor: 'purchase_price',
-        title: t`Unit Price`,
-        sortable: true
-
-        // TODO: custom renderer
-      },
-      {
-        accessor: 'total_price',
-        title: t`Total Price`,
-        sortable: true
-
-        // TODO: custom renderer
-      },
-      {
-        accessor: 'target_date',
-        title: t`Target Date`,
-        sortable: true
-      },
+        title: t`Unit Price`
+      }),
+      TotalPriceColumn(),
+      TargetDateColumn(),
       {
         accessor: 'destination',
         title: t`Destination`,
-        sortable: false
-
-        // TODO: Custom renderer
+        sortable: false,
+        render: (record: any) =>
+          record.destination
+            ? RenderStockLocation({ instance: record.destination_detail })
+            : '-'
       },
       {
         accessor: 'notes',
         title: t`Notes`
       },
-      {
-        accessor: 'link',
-        title: t`Link`
-
-        // TODO: custom renderer
-      }
+      LinkColumn()
     ];
   }, [orderId, user]);
 
