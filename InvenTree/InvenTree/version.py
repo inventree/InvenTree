@@ -16,7 +16,7 @@ from django.conf import settings
 
 from dulwich.repo import NotGitRepository, Repo
 
-from .api_version import INVENTREE_API_VERSION
+from .api_version import INVENTREE_API_TEXT_DATA, INVENTREE_API_VERSION
 
 # InvenTree software version
 INVENTREE_SW_VERSION = "0.13.0 dev"
@@ -140,6 +140,25 @@ def isInvenTreeUpToDate():
 def inventreeApiVersion():
     """Returns current API version of InvenTree."""
     return INVENTREE_API_VERSION
+
+
+def inventreeApiText(versions: int = 10, start_version: int = 0):
+    """Returns API version descriptors.
+
+    Args:
+        versions: Number of versions to return. Default: 10
+        start_version: first version to report. Defaults to return the latest {versions} versions.
+    """
+    version_data = INVENTREE_API_TEXT_DATA
+
+    # Define the range of versions to return
+    if start_version == 0:
+        start_version = INVENTREE_API_VERSION - versions
+
+    return {
+        f"v{a}": version_data.get(f"v{a}", None)
+        for a in range(start_version, start_version + versions)
+    }
 
 
 def inventreeDjangoVersion():

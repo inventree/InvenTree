@@ -23,6 +23,7 @@ from users.models import ApiToken
 from .email import is_email_configured
 from .mixins import RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
+from .version import inventreeApiText
 from .views import AjaxView
 
 
@@ -55,6 +56,18 @@ class VersionView(APIView):
                 'bug': f'{InvenTree.version.inventreeGithubUrl()}/issues'
             }
         })
+
+
+class VersionTextView(APIView):
+    """Simple JSON endpoint for InvenTree version text."""
+
+    permission_classes = [
+        permissions.IsAdminUser,
+    ]
+
+    def get(self, request, *args, **kwargs):
+        """Return information about the InvenTree server."""
+        return JsonResponse(inventreeApiText())
 
 
 class InfoView(AjaxView):

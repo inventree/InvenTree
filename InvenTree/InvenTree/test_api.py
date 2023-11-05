@@ -259,6 +259,15 @@ class APITests(InvenTreeAPITestCase):
         self.assertIn('PUT', actions.keys())
         self.assertIn('DELETE', actions.keys())
 
+    def test_api_text(self):
+        """Test that the API text is correct."""
+        self.basicAuth()
+        url = reverse('api-version-text')
+        response = self.client.get(url, format='json')
+        data = response.json()
+
+        self.assertEqual(len(data), 10)
+
 
 class BulkDeleteTests(InvenTreeAPITestCase):
     """Unit tests for the BulkDelete endpoints"""
