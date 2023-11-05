@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 
+from InvenTree.config import get_frontend_settings
 from InvenTree.unit_test import InvenTreeTestCase
 
 from .templatetags import spa_helper
@@ -35,3 +36,11 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertTrue('server_list' in settings_data)
         self.assertTrue('show_server_selector' in settings_data)
         self.assertTrue('environment' in settings_data)
+
+    def test_get_frontend_settings(self):
+        """Test frontend settings retrieval."""
+        settings = get_frontend_settings()
+        self.assertTrue('debug' in settings)
+        self.assertTrue('server_list' in settings)
+        self.assertTrue('show_server_selector' in settings)
+        self.assertTrue('environment' in settings)
