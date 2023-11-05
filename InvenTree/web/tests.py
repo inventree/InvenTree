@@ -1,5 +1,6 @@
 """Tests for PUI backend stuff."""
 import json
+from pathlib import Path
 
 from InvenTree.unit_test import InvenTreeTestCase
 
@@ -16,6 +17,13 @@ class TemplateTagTest(InvenTreeTestCase):
         shipped_js = resp.split('<script type="module" src="')[1:]
         self.assertTrue(len(shipped_js) > 0)
         self.assertTrue(len(shipped_js) == 3)
+
+        manifest_file = Path(__file__).parent.joinpath("static/web/manifest.json")
+        # Try with removed manifest file
+        manifest_file.rename(manifest_file.with_suffix('.json.bak'))  # Rename
+        resp = resp = spa_helper.spa_bundle()
+        self.assertIsNone(resp)
+        manifest_file.with_suffix('.json.bak').rename(manifest_file.with_suffix('.json'))  # Name back
 
     def test_spa_settings(self):
         """Test the 'spa_settings' template tag"""
