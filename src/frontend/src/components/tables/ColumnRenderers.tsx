@@ -3,6 +3,7 @@
  */
 import { t } from '@lingui/macro';
 
+import { formatCurrency, renderDate } from '../../defaults/formatters';
 import { ProgressBar } from '../items/ProgressBar';
 import { ModelType } from '../render/ModelType';
 import { RenderOwner } from '../render/User';
@@ -77,8 +78,9 @@ export function TargetDateColumn(): TableColumn {
   return {
     accessor: 'target_date',
     title: t`Target Date`,
-    sortable: true
+    sortable: true,
     // TODO: custom renderer which alerts user if target date is overdue
+    render: (record: any) => renderDate(record.target_date)
   };
 }
 
@@ -86,7 +88,8 @@ export function CreationDateColumn(): TableColumn {
   return {
     accessor: 'creation_date',
     title: t`Creation Date`,
-    sortable: true
+    sortable: true,
+    render: (record: any) => renderDate(record.creation_date)
   };
 }
 
@@ -94,7 +97,8 @@ export function ShipmentDateColumn(): TableColumn {
   return {
     accessor: 'shipment_date',
     title: t`Shipment Date`,
-    sortable: true
+    sortable: true,
+    render: (record: any) => renderDate(record.shipment_date)
   };
 }
 
@@ -116,12 +120,10 @@ export function CurrencyColumn({
     title: title ?? t`Currency`,
     sortable: sortable ?? true,
     render: (record: any) => {
-      let value = record[accessor];
       let currency_key = currency_accessor ?? `${accessor}_currency`;
-      currency = currency ?? record[currency_key];
-
-      // TODO: A better render which correctly formats money values
-      return `${value} ${currency}`;
+      return formatCurrency(record[accessor], {
+        currency: currency ?? record[currency_key]
+      });
     }
   };
 }
