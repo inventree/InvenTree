@@ -6,7 +6,15 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { ModelType } from '../../render/ModelType';
-import { TableStatusRenderer } from '../../renderers/StatusRenderer';
+import {
+  CreationDateColumn,
+  DescriptionColumn,
+  LineItemsProgressColumn,
+  ProjectCodeColumn,
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
@@ -26,10 +34,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'reference',
         title: t`Return Order`,
         sortable: true
-      },
-      {
-        accessor: 'description',
-        title: t`Description`
+        // TODO: Display extra information if order is overdue
       },
       {
         accessor: 'customer__name',
@@ -51,24 +56,17 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'customer_reference',
         title: t`Customer Reference`
       },
+      DescriptionColumn(),
+      LineItemsProgressColumn(),
+      StatusColumn(ModelType.returnorder),
+      ProjectCodeColumn(),
+      CreationDateColumn(),
+      TargetDateColumn(),
+      ResponsibleColumn(),
       {
-        accessor: 'project_code',
-        title: t`Project Code`
-
-        // TODO: Custom formatter
-      },
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-
-        render: TableStatusRenderer(ModelType.returnorder)
+        accessor: 'total_cost',
+        title: t`Total Cost`
       }
-      // TODO: Creation date
-      // TODO: Target date
-      // TODO: Line items
-      // TODO: Responsible
-      // TODO: Total cost
     ];
   }, []);
 
