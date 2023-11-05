@@ -816,6 +816,7 @@ LANGUAGE_COOKIE_AGE = 2592000
 # After adding a new language, run the following command:
 # python manage.py makemessages -l <language_code> -e html,js,py --nowrap
 LANGUAGES = [
+    ('bg', _('Bulgarian')),
     ('cs', _('Czech')),
     ('da', _('Danish')),
     ('de', _('German')),
