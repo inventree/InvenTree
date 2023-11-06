@@ -278,9 +278,9 @@ class BomItemTest(TestCase):
             )
 
         # Second test: A recursive BOM
-        part_a = Part.objects.create(name='Part A', assembly=True, component=True)
-        part_b = Part.objects.create(name='Part B', assembly=True, component=True)
-        part_c = Part.objects.create(name='Part C', assembly=True, component=True)
+        part_a = Part.objects.create(name='Part A', description="A part which is called A", assembly=True, component=True)
+        part_b = Part.objects.create(name='Part B', description="A part which is called B", assembly=True, component=True)
+        part_c = Part.objects.create(name='Part C', description="A part which is called C", assembly=True, component=True)
 
         BomItem.objects.create(part=part_a, sub_part=part_b, quantity=10)
         BomItem.objects.create(part=part_b, sub_part=part_c, quantity=10)
