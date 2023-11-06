@@ -3,6 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -167,13 +168,34 @@ function stockItemTableColumns(): TableColumn[] {
         // TODO: Note, if not "In stock" we don't want to display the actual location here
         return record?.location_detail?.pathstring ?? record.location ?? '-';
       }
-    }
+    },
     // TODO: stocktake column
-    // TODO: expiry date
-    // TODO: last updated
+    {
+      accessor: 'expiry_date',
+      sortable: true,
+      title: t`Expiry Date`,
+      switchable: true,
+      render: (record: any) => renderDate(record.expiry_date)
+    },
+    {
+      accessor: 'updated',
+      sortable: true,
+      title: t`Last Updated`,
+      switchable: true,
+      render: (record: any) => renderDate(record.updated)
+    },
     // TODO: purchase order
     // TODO: Supplier part
-    // TODO: purchase price
+    {
+      accessor: 'purchase_price',
+      sortable: true,
+      title: t`Purchase Price`,
+      switchable: true,
+      render: (record: any) =>
+        formatCurrency(record.purchase_price, {
+          currency: record.purchase_price_currency
+        })
+    }
     // TODO: stock value
     // TODO: packaging
     // TODO: notes

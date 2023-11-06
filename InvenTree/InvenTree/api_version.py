@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 147
+INVENTREE_API_VERSION = 148
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v148 -> 2023-11-06 : https://github.com/inventree/InvenTree/pull/5872
+    - Allow "quantity" to be specified when installing an item into another item
 
 v147 -> 2023-11-04: https://github.com/inventree/InvenTree/pull/5860
     - Adds "completed_lines" field to SalesOrder API endpoint
