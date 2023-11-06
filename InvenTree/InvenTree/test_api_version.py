@@ -3,9 +3,9 @@
 
 from django.urls import reverse
 
-from InvenTree.api_version import INVENTREE_API_VERSION, parse_version_text
+from InvenTree.api_version import INVENTREE_API_VERSION
 from InvenTree.unit_test import InvenTreeAPITestCase
-from InvenTree.version import inventreeApiText
+from InvenTree.version import inventreeApiText, parse_version_text
 
 
 class ApiVersionTests(InvenTreeAPITestCase):
