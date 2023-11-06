@@ -12,8 +12,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
-from InvenTree.serializers import UserSerializer
+from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from InvenTree.serializers import UserCreateSerializer, UserSerializer
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
@@ -112,7 +113,7 @@ class RoleDetails(APIView):
         return Response(data)
 
 
-class UserDetail(RetrieveAPI):
+class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
@@ -130,11 +131,11 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
         return self.request.user
 
 
-class UserList(ListAPI):
+class UserList(ListCreateAPI):
     """List endpoint for detail on all users."""
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
     permission_classes = [
         permissions.IsAuthenticated,
     ]
@@ -151,7 +152,7 @@ class UserList(ListAPI):
     ]
 
 
-class GroupDetail(RetrieveAPI):
+class GroupDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group"""
 
     queryset = Group.objects.all()
@@ -161,7 +162,7 @@ class GroupDetail(RetrieveAPI):
     ]
 
 
-class GroupList(ListAPI):
+class GroupList(ListCreateAPI):
     """List endpoint for all auth groups"""
 
     queryset = Group.objects.all()

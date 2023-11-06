@@ -16,6 +16,8 @@ import { PlaceholderPill } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
+import { GroupTable } from '../../../components/tables/settings/GroupTable';
+import { UserTable } from '../../../components/tables/settings/UserTable';
 
 /**
  * System settings page
@@ -28,7 +30,14 @@ export default function AdminCenter() {
         label: t`User Management`,
         content: (
           <Stack spacing="xs">
-            <PlaceholderPill />
+            <Title order={5}>
+              <Trans>Users</Trans>
+            </Title>
+            <UserTable />
+            <Title order={5}>
+              <Trans>Groups</Trans>
+            </Title>
+            <GroupTable />
             <Divider />
             <Stack spacing={0}>
               <Text>
