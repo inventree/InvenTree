@@ -491,6 +491,7 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     quantity = serializers.IntegerField(
         min_value=1,
+        default=1,
         required=False,
         label=_('Quantity to Install'),
         help_text=_('Enter the quantity of items to install'),
@@ -505,13 +506,9 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     def validate_quantity(self, quantity):
         """Validate the quantity value."""
-        stock_item = self.validated_data.get('stock_item')
 
         if quantity < 1:
             raise ValidationError(_("Quantity to install must be at least 1"))
-
-        if quantity > stock_item.quantity:
-            raise ValidationError(_("Quantity to install exceeds available stock quantity"))
 
         return quantity
 
@@ -529,6 +526,18 @@ class InstallStockItemSerializer(serializers.Serializer):
             raise ValidationError(_("Selected part is not in the Bill of Materials"))
 
         return stock_item
+
+    def validate(self, data):
+        """Ensure that the provided dataset is valid"""
+
+        stock_item = data['stock_item']
+
+        quantity = data.get('quantity', stock_item.quantity)
+
+        if quantity > stock_item.quantity:
+            raise ValidationError(_("Quantity to install must not exceed available quantity"))
+
+        return data
 
     def save(self):
         """Install the selected stock item into this one."""
