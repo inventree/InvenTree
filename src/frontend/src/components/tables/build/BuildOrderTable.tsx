@@ -1,22 +1,22 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { buildOrderFields } from '../../../forms/BuildForms';
-import { openCreateApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
-import { AddItemButton } from '../../buttons/AddItemButton';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { ModelType } from '../../render/ModelType';
-import { RenderOwner, RenderUser } from '../../render/User';
-import { TableStatusRenderer } from '../../renderers/StatusRenderer';
+import { RenderUser } from '../../render/User';
 import { TableColumn } from '../Column';
-import { TableFilter } from '../Filter';
+import {
+  CreationDateColumn,
+  ProjectCodeColumn,
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the build order table
@@ -66,47 +66,15 @@ function buildOrderTableColumns(): TableColumn[] {
         />
       )
     },
-    {
-      accessor: 'status',
-      sortable: true,
-      title: t`Status`,
-
-      render: TableStatusRenderer(ModelType.build)
-    },
-    {
-      accessor: 'project_code',
-      title: t`Project Code`,
-      sortable: true,
-      // TODO: Hide this if project code is not enabled
-      render: (record: any) => {
-        let project = record.project_code_detail;
-
-        return project ? (
-          <TableHoverCard
-            value={project.code}
-            title={t`Project Code`}
-            extra={<Text>{project.description}</Text>}
-          />
-        ) : (
-          '-'
-        );
-      }
-    },
+    StatusColumn(ModelType.build),
+    ProjectCodeColumn(),
     {
       accessor: 'priority',
       title: t`Priority`,
       sortable: true
     },
-    {
-      accessor: 'creation_date',
-      sortable: true,
-      title: t`Created`
-    },
-    {
-      accessor: 'target_date',
-      sortable: true,
-      title: t`Target Date`
-    },
+    CreationDateColumn(),
+    TargetDateColumn(),
     {
       accessor: 'completion_date',
       sortable: true,
@@ -120,14 +88,7 @@ function buildOrderTableColumns(): TableColumn[] {
         <RenderUser instance={record?.issued_by_detail} />
       )
     },
-    {
-      accessor: 'responsible',
-      sortable: true,
-      title: t`Responsible`,
-      render: (record: any) => (
-        <RenderOwner instance={record?.responsible_detail} />
-      )
-    }
+    ResponsibleColumn()
   ];
 }
 

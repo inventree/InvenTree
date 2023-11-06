@@ -8,6 +8,7 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
+import { DescriptionColumn, LinkColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -42,11 +43,7 @@ function partTableColumns(): TableColumn[] {
       sortable: true,
       title: t`Units`
     },
-    {
-      accessor: 'description',
-      title: t`Description`,
-      sortable: true
-    },
+    DescriptionColumn(),
     {
       accessor: 'category',
       title: t`Category`,
@@ -155,10 +152,7 @@ function partTableColumns(): TableColumn[] {
         return '-- price --';
       }
     },
-    {
-      accessor: 'link',
-      title: t`Link`
-    }
+    LinkColumn()
   ];
 }
 

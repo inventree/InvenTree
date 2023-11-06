@@ -1,0 +1,134 @@
+/**
+ * Common rendering functions for table column data.
+ */
+import { t } from '@lingui/macro';
+
+import { ProgressBar } from '../items/ProgressBar';
+import { ModelType } from '../render/ModelType';
+import { RenderOwner } from '../render/User';
+import { TableStatusRenderer } from '../renderers/StatusRenderer';
+import { TableColumn } from './Column';
+import { ProjectCodeHoverCard } from './TableHoverCard';
+
+export function DescriptionColumn(): TableColumn {
+  return {
+    accessor: 'description',
+    title: t`Description`,
+    sortable: false,
+    switchable: true
+  };
+}
+
+export function LinkColumn(): TableColumn {
+  return {
+    accessor: 'link',
+    title: t`Link`,
+    sortable: false
+    // TODO: Custom URL hyperlink renderer?
+  };
+}
+
+export function LineItemsProgressColumn(): TableColumn {
+  return {
+    accessor: 'line_items',
+    title: t`Line Items`,
+    sortable: true,
+    render: (record: any) => (
+      <ProgressBar
+        progressLabel={true}
+        value={record.completed_lines}
+        maximum={record.line_items}
+      />
+    )
+  };
+}
+
+export function ProjectCodeColumn(): TableColumn {
+  return {
+    accessor: 'project_code',
+    title: t`Project Code`,
+    sortable: true,
+    render: (record: any) => (
+      <ProjectCodeHoverCard projectCode={record.project_code_detail} />
+    )
+  };
+}
+
+export function StatusColumn(model: ModelType) {
+  return {
+    accessor: 'status',
+    sortable: true,
+    title: t`Status`,
+    render: TableStatusRenderer(model)
+  };
+}
+
+export function ResponsibleColumn(): TableColumn {
+  return {
+    accessor: 'responsible',
+    title: t`Responsible`,
+    sortable: true,
+    render: (record: any) =>
+      record.responsible && RenderOwner({ instance: record.responsible_detail })
+  };
+}
+
+export function TargetDateColumn(): TableColumn {
+  return {
+    accessor: 'target_date',
+    title: t`Target Date`,
+    sortable: true
+    // TODO: custom renderer which alerts user if target date is overdue
+  };
+}
+
+export function CreationDateColumn(): TableColumn {
+  return {
+    accessor: 'creation_date',
+    title: t`Creation Date`,
+    sortable: true
+  };
+}
+
+export function ShipmentDateColumn(): TableColumn {
+  return {
+    accessor: 'shipment_date',
+    title: t`Shipment Date`,
+    sortable: true
+  };
+}
+
+export function CurrencyColumn({
+  accessor,
+  title,
+  currency,
+  currency_accessor,
+  sortable
+}: {
+  accessor: string;
+  title?: string;
+  currency?: string;
+  currency_accessor?: string;
+  sortable?: boolean;
+}): TableColumn {
+  return {
+    accessor: accessor,
+    title: title ?? t`Currency`,
+    sortable: sortable ?? true,
+    render: (record: any) => {
+      let value = record[accessor];
+      let currency_key = currency_accessor ?? `${accessor}_currency`;
+      currency = currency ?? record[currency_key];
+
+      // TODO: A better render which correctly formats money values
+      return `${value} ${currency}`;
+    }
+  };
+}
+
+export function TotalPriceColumn(): TableColumn {
+  return CurrencyColumn({
+    accessor: 'total_price',
+    title: t`Total Price`
+  });
+}
