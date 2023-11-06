@@ -195,7 +195,6 @@ jobs:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_PLUGINS_ENABLED: true
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -217,14 +216,6 @@ jobs:
         uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload Coverage to Deepsource
-        if:  ${{ github.repository == 'inventree/InvenTree' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-        env:
-          DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
-        run: |
-          coverage xml -i
-          curl -sSL https://deepsource.io/cli | sh
-          ./bin/deepsource report --analyzer test-coverage --key python --value-file coverage.xml
 
   postgres:
     name: Tests - DB [PostgreSQL]
