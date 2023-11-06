@@ -6,7 +6,6 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -301,39 +300,6 @@ class UserSerializer(InvenTreeModelSerializer):
         read_only_fields = [
             'username',
         ]
-
-
-class UserCreateSerializer(UserSerializer):
-    """Serializer for creating a new User."""
-    class Meta(UserSerializer.Meta):
-        """Metaclass defines serializer fields."""
-        read_only_fields = []
-
-    def validate(self, attrs):
-        """Expanded valiadation for auth."""
-        # Check that the user trying to create a new user is a superuser
-        if not self.context['request'].user.is_superuser:
-            raise serializers.ValidationError(_("Only superusers can create new users"))
-
-        # Generate a random password
-        password = User.objects.make_random_password(length=14)
-        attrs.update({'password': password})
-        return super().validate(attrs)
-
-    def create(self, validated_data):
-        """Send an e email to the user after creation."""
-        instance = super().create(validated_data)
-
-        # Make sure the user cannot login until they have set a password
-        instance.set_unusable_password()
-        # Send the user an onboarding email (from current site)
-        current_site = Site.objects.get_current()
-        domain = current_site.domain
-        instance.email_user(
-            subject=_(f"Welcome to {current_site.name}"),
-            message=_(f"Your account has been created.\n\nPlease use the password reset function to get access (at https://{domain})."),
-        )
-        return instance
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
