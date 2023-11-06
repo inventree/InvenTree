@@ -87,3 +87,6 @@ export type ErrorResponse = {
   statusText: string;
   message?: string;
 };
+export type SettingsLookup = {
+  [key: string]: string;
+};
