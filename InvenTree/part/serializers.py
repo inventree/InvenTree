@@ -26,6 +26,7 @@ import part.filters
 import part.stocktake
 import part.tasks
 import stock.models
+import users.models
 from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 
@@ -695,6 +696,12 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         read_only=True,
     )
 
+    responsible = serializers.PrimaryKeyRelatedField(
+        queryset=users.models.Owner.objects.all(),
+        required=False, allow_null=True,
+        source='responsible_owner',
+    )
+
     # Annotated fields
     allocated_to_build_orders = serializers.FloatField(read_only=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
@@ -707,6 +714,8 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
     total_in_stock = serializers.FloatField(read_only=True)
     unallocated_stock = serializers.FloatField(read_only=True)
     variant_stock = serializers.FloatField(read_only=True)
+
+    minimum_stock = serializers.FloatField()
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(required=False, allow_null=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)

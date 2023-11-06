@@ -6,11 +6,14 @@ export enum ModelType {
   manufacturerpart = 'manufacturerpart',
   partcategory = 'partcategory',
   partparametertemplate = 'partparametertemplate',
+  projectcode = 'projectcode',
   stockitem = 'stockitem',
   stocklocation = 'stocklocation',
+  stockhistory = 'stockhistory',
   build = 'build',
   company = 'company',
   purchaseorder = 'purchaseorder',
+  purchaseorderline = 'purchaseorderline',
   salesorder = 'salesorder',
   salesordershipment = 'salesordershipment',
   returnorder = 'returnorder',
@@ -23,8 +26,8 @@ export enum ModelType {
 interface ModelInformatonInterface {
   label: string;
   label_multiple: string;
-  url_overview: string;
-  url_detail: string;
+  url_overview?: string;
+  url_detail?: string;
 }
 
 type ModelDictory = {
@@ -74,6 +77,10 @@ export const ModelInformationDict: ModelDictory = {
     url_overview: '/stocklocation',
     url_detail: '/stocklocation/:pk/'
   },
+  stockhistory: {
+    label: t`Stock History`,
+    label_multiple: t`Stock Histories`
+  },
   build: {
     label: t`Build`,
     label_multiple: t`Builds`,
@@ -86,11 +93,21 @@ export const ModelInformationDict: ModelDictory = {
     url_overview: '/company',
     url_detail: '/company/:pk/'
   },
+  projectcode: {
+    label: t`Project Code`,
+    label_multiple: t`Project Codes`,
+    url_overview: '/project-code',
+    url_detail: '/project-code/:pk/'
+  },
   purchaseorder: {
     label: t`Purchase Order`,
     label_multiple: t`Purchase Orders`,
     url_overview: '/purchaseorder',
     url_detail: '/purchaseorder/:pk/'
+  },
+  purchaseorderline: {
+    label: t`Purchase Order Line`,
+    label_multiple: t`Purchase Order Lines`
   },
   salesorder: {
     label: t`Sales Order`,

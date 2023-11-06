@@ -1,8 +1,12 @@
 import react from '@vitejs/plugin-react';
-import { platform } from 'node:os';
+import { platform, release } from 'node:os';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 
-const IS_IN_WSL = platform().includes('WSL');
+const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
+
+if (IS_IN_WSL) {
+  console.log('WSL detected: using polling for file system events');
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -21,6 +25,16 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: true
+      },
+      '/media': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: true
+      },
+      '/static': {
         target: 'http://localhost:8000',
         changeOrigin: true,
         secure: true

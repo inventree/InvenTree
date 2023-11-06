@@ -67,10 +67,10 @@ class HelperForm(forms.ModelForm):
 
             # Look for font-awesome icons
             if prefix and prefix.startswith('fa-'):
-                prefix = r"<i class='fas {fa}'/>".format(fa=prefix)
+                prefix = f"<i class='fas {prefix}'/>"
 
             if suffix and suffix.startswith('fa-'):
-                suffix = r"<i class='fas {fa}'/>".format(fa=suffix)
+                suffix = f"<i class='fas {suffix}'/>"
 
             if prefix and suffix:
                 layouts.append(

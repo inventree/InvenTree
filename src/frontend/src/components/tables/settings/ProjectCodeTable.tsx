@@ -1,7 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Text, Tooltip } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
-import { IconCirclePlus } from '@tabler/icons-react';
+import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import {
@@ -9,12 +7,13 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of project codes
@@ -29,21 +28,15 @@ export function ProjectCodeTable() {
         sortable: true,
         title: t`Project Code`
       },
-      {
-        accessor: 'description',
-        sortable: false,
-        title: t`Description`
-      }
+      DescriptionColumn()
     ];
   }, []);
 
   const rowActions = useCallback((record: any): RowAction[] => {
     return [
-      {
-        title: t`Edit`,
+      RowEditAction({
         onClick: () => {
           openEditApiForm({
-            name: 'edit-project-code',
             url: ApiPaths.project_code_list,
             pk: record.pk,
             title: t`Edit project code`,
@@ -55,13 +48,10 @@ export function ProjectCodeTable() {
             successMessage: t`Project code updated`
           });
         }
-      },
-      {
-        title: t`Delete`,
-        color: 'red',
+      }),
+      RowDeleteAction({
         onClick: () => {
           openDeleteApiForm({
-            name: 'delete-project-code',
             url: ApiPaths.project_code_list,
             pk: record.pk,
             title: t`Delete project code`,
@@ -72,13 +62,12 @@ export function ProjectCodeTable() {
             )
           });
         }
-      }
+      })
     ];
   }, []);
 
   const addProjectCode = useCallback(() => {
     openCreateApiForm({
-      name: 'add-project-code',
       url: ApiPaths.project_code_list,
       title: t`Add project code`,
       fields: {
@@ -94,11 +83,7 @@ export function ProjectCodeTable() {
     let actions = [];
 
     actions.push(
-      <Tooltip label={t`Add project code`}>
-        <ActionIcon radius="sm" onClick={addProjectCode}>
-          <IconCirclePlus color="green" />
-        </ActionIcon>
-      </Tooltip>
+      <AddItemButton onClick={addProjectCode} tooltip={t`Add project code`} />
     );
 
     return actions;

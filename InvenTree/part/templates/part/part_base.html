@@ -18,10 +18,8 @@
 
 {% block actions %}
 <!-- Admin View -->
-{% if user.is_staff and roles.part.change %}
-{% url 'admin:part_part_change' part.pk as url %}
+{% admin_url user "part.part" part.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
 
 {% if starred_directly %}
 <button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "You are subscribed to notifications for this part" %}'>
@@ -386,11 +384,11 @@
                     <td>{% include 'clip_link.html' with link=part.link new_window=True %}</td>
                 </tr>
                 {% endif %}
-                {% if part.responsible %}
+                {% if part.responsible_owner %}
                 <tr>
                     <td><span class='fas fa-user'></span></td>
                     <td>{% trans "Responsible" %}</td>
-                    <td> <span class='badge badge-right rounded-pill bg-dark'>{{ part.responsible }}</span></td>
+                    <td> <span class='badge badge-right rounded-pill bg-dark'>{{ part.responsible_owner }}</span></td>
                 </tr>
                 {% endif %}
             </table>

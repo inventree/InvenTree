@@ -17,7 +17,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
-from django.urls import clear_url_caches, re_path
+from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -620,13 +620,17 @@ class PluginsRegistry:
 
             app_name = getattr(url, 'app_name', None)
 
+            admin_url = settings.INVENTREE_ADMIN_URL
+
             if app_name == 'admin':
-                urlpatterns[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
+                urlpatterns[index] = path(f'{admin_url}/', admin.site.urls, name='inventree-admin')
+
             if app_name == 'plugin':
                 urlpatterns[index] = get_plugin_urls()
 
         # Refresh the URL cache
         clear_url_caches()
+
     # endregion
 
     # region plugin registry hash calculations
@@ -645,7 +649,11 @@ class PluginsRegistry:
             try:
                 logger.debug("Updating plugin registry hash: %s", str(self.registry_hash))
                 InvenTreeSetting.set_setting("_PLUGIN_REGISTRY_HASH", self.registry_hash, change_user=None)
+            except (OperationalError, ProgrammingError):
+                # Exception if the database has not been migrated yet, or is not ready
+                pass
             except Exception as exc:
+                # Some other exception, we want to know about it
                 logger.exception("Failed to update plugin registry hash: %s", str(exc))
 
     def calculate_plugin_hash(self):
@@ -689,6 +697,10 @@ class PluginsRegistry:
 
         if settings.TESTING:
             # Skip if running during unit testing
+            return
+
+        if not canAppAccessDatabase(allow_shell=True):
+            # Skip check if database cannot be accessed
             return
 
         logger.debug("Checking plugin registry hash")

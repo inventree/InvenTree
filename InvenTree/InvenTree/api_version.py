@@ -2,10 +2,42 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 138
+INVENTREE_API_VERSION = 148
+"""Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
-"""
-Increment this API version number whenever there is a significant change to the API that any clients need to know about
+INVENTREE_API_TEXT = """
+v148 -> 2023-11-06 : https://github.com/inventree/InvenTree/pull/5872
+    - Allow "quantity" to be specified when installing an item into another item
+
+v147 -> 2023-11-04: https://github.com/inventree/InvenTree/pull/5860
+    - Adds "completed_lines" field to SalesOrder API endpoint
+    - Adds "completed_lines" field to PurchaseOrder API endpoint
+
+v146 -> 2023-11-02: https://github.com/inventree/InvenTree/pull/5822
+    - Extended SSO Provider endpoint to contain if a provider is configured
+    - Adds API endpoints for Email Address model
+
+v145 -> 2023-10-30: https://github.com/inventree/InvenTree/pull/5786
+    - Allow printing labels via POST including printing options in the body
+
+v144 -> 2023-10-23: https://github.com/inventree/InvenTree/pull/5811
+    - Adds version information API endpoint
+
+v143 -> 2023-10-29: https://github.com/inventree/InvenTree/pull/5810
+    - Extends the status endpoint to include information about system status and health
+
+v142 -> 2023-10-20: https://github.com/inventree/InvenTree/pull/5759
+    - Adds generic API endpoints for looking up status models
+
+v141 -> 2023-10-23 : https://github.com/inventree/InvenTree/pull/5774
+    - Changed 'part.responsible' from User to Owner
+
+v140 -> 2023-10-20 : https://github.com/inventree/InvenTree/pull/5664
+    - Expand API token functionality
+    - Multiple API tokens can be generated per user
+
+v139 -> 2023-10-11 : https://github.com/inventree/InvenTree/pull/5509
+    - Add new BarcodePOReceive endpoint to receive line items by scanning supplier barcodes
 
 v138 -> 2023-10-11 : https://github.com/inventree/InvenTree/pull/5679
     - Settings keys are no longer case sensitive
@@ -82,12 +114,11 @@ v117 -> 2023-05-22 : https://github.com/inventree/InvenTree/pull/4854
 v116 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4823
     - Updates to part parameter implementation, to use physical units
 
-v115 - > 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
+v115 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
     - Adds ability to partially scrap a build output
 
 v114 -> 2023-05-16 : https://github.com/inventree/InvenTree/pull/4825
     - Adds "delivery_date" to shipments
->>>>>>> inventree/master
 
 v113 -> 2023-05-13 : https://github.com/inventree/InvenTree/pull/4800
     - Adds API endpoints for scrapping a build output

@@ -6,6 +6,7 @@ import { AxiosResponse } from 'axios';
 import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
+import { StylishText } from '../components/items/StylishText';
 import { apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
@@ -114,11 +115,14 @@ export function openModalApiForm(props: ApiFormProps) {
       }
 
       // Generate a random modal ID for controller
-      let modalId: string = `modal-${props.title}-` + generateUniqueId();
+      let modalId: string =
+        `modal-${props.title}-${props.url}-${props.method}` +
+        generateUniqueId();
 
       modals.open({
-        title: props.title,
+        title: <StylishText size="xl">{props.title}</StylishText>,
         modalId: modalId,
+        size: 'xl',
         onClose: () => {
           props.onClose ? props.onClose() : null;
         },
