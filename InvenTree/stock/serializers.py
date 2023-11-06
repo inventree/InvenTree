@@ -491,7 +491,6 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     quantity = serializers.IntegerField(
         min_value=1,
-        default=1,
         required=False,
         label=_('Quantity to Install'),
         help_text=_('Enter the quantity of items to install'),
@@ -536,7 +535,7 @@ class InstallStockItemSerializer(serializers.Serializer):
         data = self.validated_data
 
         stock_item = data['stock_item']
-        quantity_to_install = data['quantity']
+        quantity_to_install = data.get('quantity', stock_item.quantity)
         note = data.get('note', '')
 
         parent_item = self.context['item']
