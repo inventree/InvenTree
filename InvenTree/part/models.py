@@ -483,14 +483,18 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         This will fail if:
 
         a) The parent part is the same as this one
-        b) The parent part is used in the BOM for *this* part
-        c) The parent part is used in the BOM for any child parts under this one
+        b) The parent part exists in the same variant tree as this one
+        c) The parent part is used in the BOM for *this* part
+        d) The parent part is used in the BOM for any child parts under this one
         """
         result = True
 
         try:
             if self.pk == parent.pk:
-                raise ValidationError({'sub_part': _(f"Part '{self}' is  used in BOM for '{parent}' (recursive)")})
+                raise ValidationError({'sub_part': _(f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)")})
+
+            if self.tree_id == parent.tree_id:
+                raise ValidationError({'sub_part': _(f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)")})
 
             bom_items = self.get_bom_items()
 
