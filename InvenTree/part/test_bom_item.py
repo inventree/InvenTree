@@ -278,7 +278,7 @@ class BomItemTest(TestCase):
             )
 
         # Second test: A recursive BOM
-        part_a = Part.objects.create(name='Part A', description="A part which is called A", assembly=True, component=True)
+        part_a = Part.objects.create(name='Part A', description="A part which is called A", assembly=True, is_template=True, component=True)
         part_b = Part.objects.create(name='Part B', description="A part which is called B", assembly=True, component=True)
         part_c = Part.objects.create(name='Part C', description="A part which is called C", assembly=True, component=True)
 
@@ -292,7 +292,7 @@ class BomItemTest(TestCase):
             BomItem.objects.create(part=part_c, sub_part=part_b, quantity=10)
 
         # Third test: A recursive BOM with a variant part
-        part_v = Part.objects.create('Part V', variant_of='Part A', assembly=True, component=True)
+        part_v = Part.objects.create(name='Part V', description='A part which is called V', variant_of=part_a, assembly=True, component=True)
 
         with self.assertRaises(django_exceptions.ValidationError):
             BomItem.objects.create(part=part_a, sub_part=part_v, quantity=10)
