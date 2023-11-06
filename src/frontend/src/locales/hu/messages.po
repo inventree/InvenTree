@@ -302,7 +302,7 @@ msgstr "Hiba történt:"
 msgid "Read more"
 msgstr "Tovább"
 
-#: src/components/items/InvenTreeLogo.tsx:13
+#: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
 msgstr "InvenTree logó"
 
@@ -560,10 +560,12 @@ msgid "Settings"
 msgstr "Beállítások"
 
 #: src/components/nav/MainMenu.tsx:51
+#: src/defaults/menuItems.tsx:15
 msgid "Account settings"
 msgstr "Fiókbeállítások"
 
 #: src/components/nav/MainMenu.tsx:59
+#: src/defaults/menuItems.tsx:58
 #: src/pages/Index/Settings/SystemSettings.tsx:294
 msgid "System Settings"
 msgstr ""
@@ -586,20 +588,20 @@ msgstr "Pluginok"
 msgid "Logout"
 msgstr "Kijelentkezés"
 
-#: src/components/nav/NavHoverMenu.tsx:52
+#: src/components/nav/NavHoverMenu.tsx:61
 msgid "Open Navigation"
 msgstr "Navigáció megnyitása"
 
-#: src/components/nav/NavHoverMenu.tsx:70
+#: src/components/nav/NavHoverMenu.tsx:79
 msgid "View all"
 msgstr "Összes megtekintése"
 
-#: src/components/nav/NavHoverMenu.tsx:84
-#: src/components/nav/NavHoverMenu.tsx:94
+#: src/components/nav/NavHoverMenu.tsx:93
+#: src/components/nav/NavHoverMenu.tsx:103
 msgid "Get started"
 msgstr "Kezdés"
 
-#: src/components/nav/NavHoverMenu.tsx:87
+#: src/components/nav/NavHoverMenu.tsx:96
 msgid "Overview over high-level objects, functions and possible usecases."
 msgstr "Magas szintű objektumok, funkciók és lehetséges használati esetek áttekintése."
 
@@ -687,13 +689,13 @@ msgstr "Ismeretlen model: {model}"
 
 #: src/components/render/ModelType.tsx:39
 #: src/components/tables/bom/BomTable.tsx:35
-#: src/components/tables/build/BuildOrderTable.tsx:36
+#: src/components/tables/build/BuildOrderTable.tsx:37
 #: src/components/tables/part/PartParameterTable.tsx:29
 #: src/components/tables/part/PartTable.tsx:25
 #: src/components/tables/part/RelatedPartTable.tsx:36
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:92
 #: src/components/tables/purchasing/SupplierPartTable.tsx:36
-#: src/components/tables/stock/StockItemTable.tsx:25
+#: src/components/tables/stock/StockItemTable.tsx:26
 #: src/pages/part/PartDetail.tsx:327
 msgid "Part"
 msgstr "Alkatrész"
@@ -701,6 +703,7 @@ msgstr "Alkatrész"
 #: src/components/render/ModelType.tsx:40
 #: src/components/tables/part/PartCategoryTable.tsx:35
 #: src/defaults/links.tsx:27
+#: src/defaults/menuItems.tsx:33
 #: src/pages/Index/Settings/SystemSettings.tsx:191
 #: src/pages/part/CategoryDetail.tsx:46
 #: src/pages/part/CategoryDetail.tsx:82
@@ -765,6 +768,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:85
 #: src/defaults/links.tsx:29
+#: src/defaults/menuItems.tsx:43
 msgid "Build"
 msgstr "Gyártás"
 
@@ -782,7 +786,7 @@ msgid "Companies"
 msgstr "Cégek"
 
 #: src/components/render/ModelType.tsx:97
-#: src/components/tables/ColumnRenderers.tsx:49
+#: src/components/tables/ColumnRenderers.tsx:50
 #: src/components/tables/TableHoverCard.tsx:58
 #: src/components/tables/settings/ProjectCodeTable.tsx:29
 msgid "Project Code"
@@ -904,52 +908,52 @@ msgstr ""
 msgid "Edit Setting"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:16
+#: src/components/tables/ColumnRenderers.tsx:17
 #: src/components/tables/bom/BomTable.tsx:53
-#: src/components/tables/build/BuildOrderTable.tsx:54
+#: src/components/tables/build/BuildOrderTable.tsx:55
 #: src/components/tables/part/PartParameterTable.tsx:60
 #: src/components/tables/part/RelatedPartTable.tsx:55
 #: src/components/tables/plugin/PluginListTable.tsx:69
-#: src/components/tables/stock/StockItemTable.tsx:44
+#: src/components/tables/stock/StockItemTable.tsx:45
 msgid "Description"
 msgstr "Leírás"
 
-#: src/components/tables/ColumnRenderers.tsx:25
+#: src/components/tables/ColumnRenderers.tsx:26
 msgid "Link"
 msgstr "Link"
 
-#: src/components/tables/ColumnRenderers.tsx:34
+#: src/components/tables/ColumnRenderers.tsx:35
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:59
 #: src/pages/sales/SalesOrderDetail.tsx:45
 msgid "Line Items"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:61
+#: src/components/tables/ColumnRenderers.tsx:62
 msgid "Status"
 msgstr "Állapot"
 
-#: src/components/tables/ColumnRenderers.tsx:69
+#: src/components/tables/ColumnRenderers.tsx:70
 msgid "Responsible"
 msgstr "Felelős"
 
-#: src/components/tables/ColumnRenderers.tsx:79
+#: src/components/tables/ColumnRenderers.tsx:80
 msgid "Target Date"
 msgstr "Cél dátum"
 
-#: src/components/tables/ColumnRenderers.tsx:88
+#: src/components/tables/ColumnRenderers.tsx:90
 msgid "Creation Date"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:96
+#: src/components/tables/ColumnRenderers.tsx:99
 msgid "Shipment Date"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:116
+#: src/components/tables/ColumnRenderers.tsx:120
 #: src/components/tables/settings/CurrencyTable.tsx:22
 msgid "Currency"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:132
+#: src/components/tables/ColumnRenderers.tsx:134
 msgid "Total Price"
 msgstr ""
 
@@ -1078,7 +1082,7 @@ msgstr "Műveletek"
 
 #: src/components/tables/bom/BomTable.tsx:59
 #: src/components/tables/bom/UsedInTable.tsx:75
-#: src/components/tables/build/BuildOrderTable.tsx:30
+#: src/components/tables/build/BuildOrderTable.tsx:31
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:113
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:39
 msgid "Reference"
@@ -1119,7 +1123,7 @@ msgstr "Ártartomány"
 
 #: src/components/tables/bom/BomTable.tsx:131
 #: src/components/tables/part/PartTable.tsx:113
-#: src/components/tables/stock/StockItemTable.tsx:118
+#: src/components/tables/stock/StockItemTable.tsx:119
 msgid "Available"
 msgstr ""
 
@@ -1173,19 +1177,19 @@ msgstr ""
 msgid "Required Part"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:60
+#: src/components/tables/build/BuildOrderTable.tsx:61
 msgid "Progress"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:73
+#: src/components/tables/build/BuildOrderTable.tsx:74
 msgid "Priority"
 msgstr "Prioritás"
 
-#: src/components/tables/build/BuildOrderTable.tsx:81
+#: src/components/tables/build/BuildOrderTable.tsx:82
 msgid "Completed"
 msgstr "Kész"
 
-#: src/components/tables/build/BuildOrderTable.tsx:86
+#: src/components/tables/build/BuildOrderTable.tsx:88
 msgid "Issued By"
 msgstr "Kiállította"
 
@@ -1194,17 +1198,17 @@ msgstr "Kiállította"
 #~ msgid "Created"
 #~ msgstr "Created"
 
-#: src/components/tables/build/BuildOrderTable.tsx:107
+#: src/components/tables/build/BuildOrderTable.tsx:109
 #: src/components/tables/part/PartTable.tsx:166
 #: src/components/tables/plugin/PluginListTable.tsx:137
 msgid "Active"
 msgstr "Aktív"
 
-#: src/components/tables/build/BuildOrderTable.tsx:112
+#: src/components/tables/build/BuildOrderTable.tsx:114
 msgid "Overdue"
 msgstr ""
 
-#: src/components/tables/build/BuildOrderTable.tsx:117
+#: src/components/tables/build/BuildOrderTable.tsx:119
 msgid "Assigned to me"
 msgstr ""
 
@@ -1333,8 +1337,9 @@ msgid "IPN"
 msgstr "IPN"
 
 #: src/components/tables/part/PartTable.tsx:61
-#: src/components/tables/stock/StockItemTable.tsx:49
+#: src/components/tables/stock/StockItemTable.tsx:50
 #: src/defaults/links.tsx:28
+#: src/defaults/menuItems.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:227
 #: src/pages/part/PartDetail.tsx:97
 #: src/pages/stock/LocationDetail.tsx:63
@@ -1363,7 +1368,7 @@ msgid "Sales Order Allocations"
 msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:139
-#: src/components/tables/stock/StockItemTable.tsx:147
+#: src/components/tables/stock/StockItemTable.tsx:148
 msgid "Stock Information"
 msgstr ""
 
@@ -1776,63 +1781,75 @@ msgstr ""
 msgid "Added project code"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:67
+#: src/components/tables/stock/StockItemTable.tsx:68
 msgid "This stock item is in production"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:73
+#: src/components/tables/stock/StockItemTable.tsx:74
 msgid "This stock item has been assigned to a sales order"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:79
+#: src/components/tables/stock/StockItemTable.tsx:80
 msgid "This stock item has been assigned to a customer"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:85
+#: src/components/tables/stock/StockItemTable.tsx:86
 msgid "This stock item is installed in another stock item"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:91
+#: src/components/tables/stock/StockItemTable.tsx:92
 msgid "This stock item has been consumed by a build order"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:96
+#: src/components/tables/stock/StockItemTable.tsx:97
 msgid "This stock item has expired"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:98
+#: src/components/tables/stock/StockItemTable.tsx:99
 msgid "This stock item is stale"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:105
+#: src/components/tables/stock/StockItemTable.tsx:106
 msgid "This stock item is fully allocated"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:109
+#: src/components/tables/stock/StockItemTable.tsx:110
 msgid "This stock item is partially allocated"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:123
+#: src/components/tables/stock/StockItemTable.tsx:124
 msgid "No stock available"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:131
+#: src/components/tables/stock/StockItemTable.tsx:132
 msgid "This stock item has been depleted"
 msgstr ""
 
-#: src/components/tables/stock/StockItemTable.tsx:158
+#: src/components/tables/stock/StockItemTable.tsx:159
 msgid "Batch"
 msgstr "Batch"
 
-#: src/components/tables/stock/StockItemTable.tsx:164
+#: src/components/tables/stock/StockItemTable.tsx:165
 msgid "Location"
 msgstr "Hely"
 
-#: src/components/tables/stock/StockItemTable.tsx:190
+#: src/components/tables/stock/StockItemTable.tsx:176
+msgid "Expiry Date"
+msgstr ""
+
+#: src/components/tables/stock/StockItemTable.tsx:183
+msgid "Last Updated"
+msgstr ""
+
+#: src/components/tables/stock/StockItemTable.tsx:192
+msgid "Purchase Price"
+msgstr ""
+
+#: src/components/tables/stock/StockItemTable.tsx:212
 msgid "Test Filter"
 msgstr "Teszt szűrő"
 
-#: src/components/tables/stock/StockItemTable.tsx:191
+#: src/components/tables/stock/StockItemTable.tsx:213
 msgid "This is a test filter"
 msgstr "Ez egy teszt szűrő"
 
@@ -2121,12 +2138,14 @@ msgid "Home"
 msgstr "Főoldal"
 
 #: src/defaults/links.tsx:26
+#: src/defaults/menuItems.tsx:28
 #: src/pages/Index/Dashboard.tsx:19
 #: src/pages/Index/Settings/UserSettings.tsx:41
 msgid "Dashboard"
 msgstr "Irányítópult"
 
 #: src/defaults/links.tsx:30
+#: src/defaults/menuItems.tsx:48
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:133
@@ -2135,6 +2154,7 @@ msgid "Purchasing"
 msgstr ""
 
 #: src/defaults/links.tsx:31
+#: src/defaults/menuItems.tsx:53
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:70
 #: src/pages/sales/SalesIndex.tsx:45
@@ -2143,7 +2163,7 @@ msgid "Sales"
 msgstr ""
 
 #: src/defaults/links.tsx:34
-#: src/defaults/menuItems.tsx:31
+#: src/defaults/menuItems.tsx:66
 #: src/pages/Index/Playground.tsx:104
 msgid "Playground"
 msgstr "Játszótér"
@@ -2235,8 +2255,8 @@ msgstr "Az InvenTree által használt csomagok licencei"
 #~ msgstr "This Pokémon’s cry is very loud and distracting and more and more and more"
 
 #: src/defaults/menuItems.tsx:15
-msgid "Profile page"
-msgstr "Profil oldal"
+#~ msgid "Profile page"
+#~ msgstr "Profil oldal"
 
 #: src/defaults/menuItems.tsx:17
 msgid "User attributes and design settings."
@@ -3363,4 +3383,3 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
-
