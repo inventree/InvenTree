@@ -3,11 +3,11 @@ import { LoadingOverlay, Stack } from '@mantine/core';
 import { IconPlugConnected } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { PluginListTable } from '../../components/tables/plugin/PluginListTable';
-import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths } from '../../states/ApiState';
+import { PageDetail } from '../../../components/nav/PageDetail';
+import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import { PluginListTable } from '../../../components/tables/plugin/PluginListTable';
+import { useInstance } from '../../../hooks/UseInstance';
+import { ApiPaths } from '../../../states/ApiState';
 
 /**
  * Plugins settings page

@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Text, Tooltip } from '@mantine/core';
-import { IconCirclePlus } from '@tabler/icons-react';
+import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import {
@@ -10,6 +9,7 @@ import {
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
@@ -96,11 +96,8 @@ export function CustomUnitsTable() {
     let actions = [];
 
     actions.push(
-      <Tooltip label={t`Add custom unit`}>
-        <ActionIcon radius="sm" onClick={addCustomUnit}>
-          <IconCirclePlus color="green" />
-        </ActionIcon>
-      </Tooltip>
+      // TODO: Adjust actions based on user permissions
+      <AddItemButton tooltip={t`Add custom unit`} onClick={addCustomUnit} />
     );
 
     return actions;

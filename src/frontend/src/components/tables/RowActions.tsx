@@ -15,7 +15,23 @@ export type RowAction = {
   hidden?: boolean;
 };
 
-// Component for ediitng a row in a table
+// Component for duplicating a row in a table
+export function RowDuplicateAction({
+  onClick,
+  hidden
+}: {
+  onClick?: () => void;
+  hidden?: boolean;
+}): RowAction {
+  return {
+    title: t`Duplicate`,
+    color: 'green',
+    onClick: onClick,
+    hidden: hidden
+  };
+}
+
+// Component for editing a row in a table
 export function RowEditAction({
   onClick,
   hidden
@@ -25,7 +41,7 @@ export function RowEditAction({
 }): RowAction {
   return {
     title: t`Edit`,
-    color: 'green',
+    color: 'blue',
     onClick: onClick,
     hidden: hidden
   };

@@ -60,15 +60,25 @@ export enum ApiPaths {
   user_simple_login = 'api-user-simple-login',
   user_reset = 'api-user-reset',
   user_reset_set = 'api-user-reset-set',
+  user_sso = 'api-user-sso',
+  user_sso_remove = 'api-user-sso-remove',
+  user_emails = 'api-user-emails',
+  user_email_verify = 'api-user-email-verify',
+  user_email_primary = 'api-user-email-primary',
+  user_email_remove = 'api-user-email-remove',
 
   settings_global_list = 'api-settings-global-list',
   settings_user_list = 'api-settings-user-list',
   notifications_list = 'api-notifications-list',
 
+  currency_list = 'api-currency-list',
+  currency_refresh = 'api-currency-refresh',
+
   barcode = 'api-barcode',
   news = 'news',
   global_status = 'api-global-status',
   version = 'api-version',
+  sso_providers = 'api-sso-providers',
 
   // Build order URLs
   build_order_list = 'api-build-list',
@@ -90,15 +100,18 @@ export enum ApiPaths {
   company_list = 'api-company-list',
   company_attachment_list = 'api-company-attachment-list',
   supplier_part_list = 'api-supplier-part-list',
+  manufacturer_part_list = 'api-manufacturer-part-list',
 
   // Stock Item URLs
   stock_item_list = 'api-stock-item-list',
+  stock_tracking_list = 'api-stock-tracking-list',
   stock_location_list = 'api-stock-location-list',
   stock_location_tree = 'api-stock-location-tree',
   stock_attachment_list = 'api-stock-attachment-list',
 
   // Purchase Order URLs
   purchase_order_list = 'api-purchase-order-list',
+  purchase_order_line_list = 'api-purchase-order-line-list',
   purchase_order_attachment_list = 'api-purchase-order-attachment-list',
 
   // Sales Order URLs
@@ -141,10 +154,26 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'email/generate/';
     case ApiPaths.user_reset:
       // Note leading prefix here
-      return '/auth/password/reset/';
+      return 'auth/password/reset/';
     case ApiPaths.user_reset_set:
       // Note leading prefix here
-      return '/auth/password/reset/confirm/';
+      return 'auth/password/reset/confirm/';
+    case ApiPaths.user_sso:
+      return 'auth/social/';
+    case ApiPaths.user_sso_remove:
+      return 'auth/social/$id/disconnect/';
+    case ApiPaths.user_emails:
+      return 'auth/emails/';
+    case ApiPaths.user_email_remove:
+      return 'auth/emails/$id/remove/';
+    case ApiPaths.user_email_verify:
+      return 'auth/emails/$id/verify/';
+    case ApiPaths.user_email_primary:
+      return 'auth/emails/$id/primary/';
+    case ApiPaths.currency_list:
+      return 'currency/exchange/';
+    case ApiPaths.currency_refresh:
+      return 'currency/refresh/';
     case ApiPaths.api_search:
       return 'search/';
     case ApiPaths.settings_global_list:
@@ -161,6 +190,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'generic/status/';
     case ApiPaths.version:
       return 'version/';
+    case ApiPaths.sso_providers:
+      return 'auth/providers/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:
@@ -187,8 +218,12 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'company/attachment/';
     case ApiPaths.supplier_part_list:
       return 'company/part/';
+    case ApiPaths.manufacturer_part_list:
+      return 'company/part/manufacturer/';
     case ApiPaths.stock_item_list:
       return 'stock/';
+    case ApiPaths.stock_tracking_list:
+      return 'stock/track/';
     case ApiPaths.stock_location_list:
       return 'stock/location/';
     case ApiPaths.stock_location_tree:
@@ -197,6 +232,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'stock/attachment/';
     case ApiPaths.purchase_order_list:
       return 'order/po/';
+    case ApiPaths.purchase_order_line_list:
+      return 'order/po-line/';
     case ApiPaths.purchase_order_attachment_list:
       return 'order/po/attachment/';
     case ApiPaths.sales_order_list:

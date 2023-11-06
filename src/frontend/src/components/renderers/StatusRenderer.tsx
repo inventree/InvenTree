@@ -1,4 +1,4 @@
-import { Badge, MantineSize } from '@mantine/core';
+import { Badge, Center, MantineSize } from '@mantine/core';
 
 import { colorMap } from '../../defaults/backendMappings';
 import { useServerApiState } from '../../states/ApiState';
@@ -99,5 +99,8 @@ export const StatusRenderer = ({
 export function TableStatusRenderer(
   type: ModelType
 ): ((record: any) => any) | undefined {
-  return (record: any) => StatusRenderer({ status: record.status, type: type });
+  return (record: any) =>
+    record.status && (
+      <Center>{StatusRenderer({ status: record.status, type: type })}</Center>
+    );
 }

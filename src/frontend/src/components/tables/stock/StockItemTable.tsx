@@ -1,14 +1,15 @@
 import { t } from '@lingui/macro';
-import { Group, Stack, Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { ModelType } from '../../render/ModelType';
-import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { TableColumn } from '../Column';
+import { StatusColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -40,7 +41,7 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'part_detail.description',
       sortable: false,
-      switchable: true,
+
       title: t`Description`
     },
     {
@@ -145,42 +146,56 @@ function stockItemTableColumns(): TableColumn[] {
               </Group>
             }
             title={t`Stock Information`}
-            extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
+            extra={extra}
           />
         );
       }
     },
-    {
-      accessor: 'status',
-      sortable: true,
-      switchable: true,
-      filter: true,
-      title: t`Status`,
-      render: TableStatusRenderer(ModelType.stockitem)
-    },
+    StatusColumn(ModelType.stockitem),
     {
       accessor: 'batch',
       sortable: true,
-      switchable: true,
+
       title: t`Batch`
     },
     {
       accessor: 'location',
       sortable: true,
-      switchable: true,
+
       title: t`Location`,
       render: function (record: any) {
         // TODO: Custom renderer for location
         // TODO: Note, if not "In stock" we don't want to display the actual location here
         return record?.location_detail?.pathstring ?? record.location ?? '-';
       }
-    }
+    },
     // TODO: stocktake column
-    // TODO: expiry date
-    // TODO: last updated
+    {
+      accessor: 'expiry_date',
+      sortable: true,
+      title: t`Expiry Date`,
+      switchable: true,
+      render: (record: any) => renderDate(record.expiry_date)
+    },
+    {
+      accessor: 'updated',
+      sortable: true,
+      title: t`Last Updated`,
+      switchable: true,
+      render: (record: any) => renderDate(record.updated)
+    },
     // TODO: purchase order
     // TODO: Supplier part
-    // TODO: purchase price
+    {
+      accessor: 'purchase_price',
+      sortable: true,
+      title: t`Purchase Price`,
+      switchable: true,
+      render: (record: any) =>
+        formatCurrency(record.purchase_price, {
+          currency: record.purchase_price_currency
+        })
+    }
     // TODO: stock value
     // TODO: packaging
     // TODO: notes

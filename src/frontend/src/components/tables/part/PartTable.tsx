@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, Stack, Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
+import { DescriptionColumn, LinkColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -35,26 +36,19 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'IPN',
       title: t`IPN`,
-      sortable: true,
-      switchable: true
+      sortable: true
     },
     {
       accessor: 'units',
       sortable: true,
-      title: t`Units`,
-      switchable: true
+      title: t`Units`
     },
-    {
-      accessor: 'description',
-      title: t`Description`,
-      sortable: true,
-      switchable: true
-    },
+    DescriptionColumn(),
     {
       accessor: 'category',
       title: t`Category`,
       sortable: true,
-      switchable: true,
+
       render: function (record: any) {
         // TODO: Link to the category detail page
         return shortenString({
@@ -66,7 +60,7 @@ function partTableColumns(): TableColumn[] {
       accessor: 'total_in_stock',
       title: t`Stock`,
       sortable: true,
-      switchable: true,
+
       render: (record) => {
         let extra: ReactNode[] = [];
 
@@ -143,7 +137,7 @@ function partTableColumns(): TableColumn[] {
               </Group>
             }
             title={t`Stock Information`}
-            extra={extra.length > 0 && <Stack spacing="xs">{extra}</Stack>}
+            extra={extra}
           />
         );
       }
@@ -152,17 +146,13 @@ function partTableColumns(): TableColumn[] {
       accessor: 'price_range',
       title: t`Price Range`,
       sortable: false,
-      switchable: true,
+
       render: function (record: any) {
         // TODO: Render price range
         return '-- price --';
       }
     },
-    {
-      accessor: 'link',
-      title: t`Link`,
-      switchable: true
-    }
+    LinkColumn()
   ];
 }
 

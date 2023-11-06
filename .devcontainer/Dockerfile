@@ -31,17 +31,18 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
     default-libmysqlclient-dev mariadb-client \
     # LDAP support
     libldap2-dev libsasl2-dev && \
-    apt-get autoclean && apt-get autoremove
+    apt-get autoclean && apt-get autoremove && \
+    rm -rf /var/lib/apt/lists/*
 
 # [Optional] Uncomment this line to install global node packages.
 # RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
 
 # Update pip
-RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --upgrade pip
 
 # Install required base-level python packages
 COPY ./docker/requirements.txt base_requirements.txt
-RUN pip install --disable-pip-version-check -U -r base_requirements.txt
+RUN pip install --disable-pip-version-check --no-cache-dir -U -r base_requirements.txt
 
 # preserve command history between container starts
 # Ref: https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
