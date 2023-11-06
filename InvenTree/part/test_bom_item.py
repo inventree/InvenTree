@@ -261,3 +261,37 @@ class BomItemTest(TestCase):
                 p.set_metadata(k, k)
 
             self.assertEqual(len(p.metadata.keys()), 4)
+
+    def test_invalid_bom(self):
+        """Test that ValidationError is correctly raised for an invalid BOM item"""
+
+        # First test: A BOM item which points to itself
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(
+                part=self.bob,
+                sub_part=self.bob,
+                quantity=1
+            )
+
+        # Second test: A recursive BOM
+        part_a = Part.objects.create(name='Part A', assembly=True, component=True)
+        part_b = Part.objects.create(name='Part B', assembly=True, component=True)
+        part_c = Part.objects.create(name='Part C', assembly=True, component=True)
+
+        BomItem.objects.create(part=part_a, sub_part=part_b, quantity=10)
+        BomItem.objects.create(part=part_b, sub_part=part_c, quantity=10)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=part_c, sub_part=part_a, quantity=10)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=part_c, sub_part=part_b, quantity=10)
+
+        # Third test: A recursive BOM with a variant part
+        part_v = Part.objects.create('Part V', variant_of='Part A', assembly=True, component=True)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=part_a, sub_part=part_v, quantity=10)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=part_v, sub_part=part_a, quantity=10)
