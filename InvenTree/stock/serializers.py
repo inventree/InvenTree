@@ -491,9 +491,10 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     quantity = serializers.IntegerField(
         min_value=1,
-        required=True,
+        default=1,
+        required=False,
         label=_('Quantity to Install'),
-        help_text=_('Enter the quantity to install'),
+        help_text=_('Enter the quantity of items to install'),
     )
 
     note = serializers.CharField(
