@@ -175,7 +175,7 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
         from InvenTree.status import is_worker_running
     except AppRegistryNotReady:  # pragma: no cover
         logger.warning("Could not offload task '%s' - app registry not ready", taskname)
-        
+
         if force_async:
             # Cannot async the task, so return False
             return False
@@ -242,10 +242,9 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
         except Exception as exc:
             raise_warning(f"WARNING: '{taskname}' not started due to {str(exc)}")
             return False
-        
+
     # Finally, task either completed successfully or was offloaded
     return True
-
 
 
 @dataclass()
