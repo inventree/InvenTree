@@ -18,11 +18,9 @@ Each plugin which implements this mixin can return zero or more custom panels fo
 
 Panel content can be rendered by returning HTML directly, or by rendering from a template file.
 
-
 Each plugin can register templates simply by providing a 'templates' directory in its root path.
 
 The convention is that each 'templates' directory contains a subdirectory with the same name as the plugin (e.g. `templates/myplugin/my_template.html`)
-
 
 In this case, the template can then be loaded (from any plugin!) by loading `myplugin/my_template.html`.
 
@@ -231,8 +229,8 @@ async function example_select(){
 }
 </script>
 
-<form> 
-    Number of Layers<br> 
+<form>
+    Number of Layers<br>
     <input id="layer_number" type="number" value="2"><br>
     Size of Board in mm<br>
     <input id="string" type="text" value="100x160">

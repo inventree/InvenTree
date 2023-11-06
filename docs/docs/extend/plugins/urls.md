@@ -60,8 +60,8 @@ The current page base can be found [here](https://github.com/inventree/InvenTree
     {% block js_ready %}
     {{ block.super }}
         enableSidebar('stocklocation');
-    
-    
+
+
     {% endblock js_ready %}
     {% endraw %}
     ```
