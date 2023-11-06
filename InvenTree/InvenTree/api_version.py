@@ -519,29 +519,3 @@ v3  -> 2021-05-22:
     - The updated StockItem "history tracking" now uses a different interface
 
 """
-
-
-def parse_version_text():
-    """Parse the version text to structured data."""
-    patched_data = INVENTREE_API_TEXT.split("\n\n")
-    # Remove first newline on latest version
-    patched_data[0] = patched_data[0].replace("\n", "", 1)
-
-    version_data = {}
-    for version in patched_data:
-        data = version.split("\n")
-
-        version_split = data[0].split(' -> ')
-        version_detail = version_split[1].split(':', 1) if len(version_split) > 1 else ['', ]
-        new_data = {
-            "version": version_split[0].strip(),
-            "date": version_detail[0].strip(),
-            "gh": version_detail[1].strip() if len(version_detail) > 1 else None,
-            "text": data[1:],
-            "latest": False,
-        }
-        version_data[new_data["version"]] = new_data
-    return version_data
-
-
-INVENTREE_API_TEXT_DATA = parse_version_text()
