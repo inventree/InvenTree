@@ -11,10 +11,10 @@ from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeSearchFilter
 from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
-from InvenTree.serializers import UserCreateSerializer, UserSerializer
+from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
@@ -117,7 +117,7 @@ class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = ExendedUserSerializer
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -139,16 +139,21 @@ class UserList(ListCreateAPI):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
         'first_name',
         'last_name',
         'username',
+    ]
+
+    ordering_fields = [
+        'email',
+        'username',
+        'first_name',
+        'last_name',
+        'is_staff',
+        'is_superuser',
     ]
 
 

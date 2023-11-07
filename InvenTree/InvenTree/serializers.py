@@ -303,11 +303,30 @@ class UserSerializer(InvenTreeModelSerializer):
         ]
 
 
-class UserCreateSerializer(UserSerializer):
-    """Serializer for creating a new User."""
+class ExendedUserSerializer(UserSerializer):
+    """Serializer for a User with a bit more info."""
+
     class Meta(UserSerializer.Meta):
         """Metaclass defines serializer fields."""
-        read_only_fields = []
+        fields = UserSerializer.Meta.fields + [
+            'is_staff',
+            'is_superuser',
+        ]
+
+        read_only_fields = UserSerializer.Meta.read_only_fields + [
+            'is_staff',
+            'is_superuser',
+        ]
+
+
+class UserCreateSerializer(ExendedUserSerializer):
+    """Serializer for creating a new User."""
+    class Meta(ExendedUserSerializer.Meta):
+        """Metaclass defines serializer fields."""
+        read_only_fields = [
+            'is_staff',
+            'is_superuser'
+        ]
 
     def validate(self, attrs):
         """Expanded valiadation for auth."""

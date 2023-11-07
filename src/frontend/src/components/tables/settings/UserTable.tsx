@@ -9,10 +9,17 @@ import {
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+
+enum UserRole {
+  REGULAR = 'regular',
+  STAFF = 'staff',
+  ADMIN = 'admin'
+}
 
 /**
  * Table for displaying list of users
@@ -42,12 +49,61 @@ export function UserTable() {
         accessor: 'last_name',
         sortable: true,
         title: t`Last Name`
+      },
+      {
+        accessor: 'is_staff',
+        sortable: true,
+        switchable: true,
+        title: t`Staff`,
+        render: (value) => {
+          return value.is_staff ? `True` : `False`;
+        }
+      },
+      {
+        accessor: 'is_superuser',
+        sortable: true,
+        switchable: true,
+        title: t`Superuser`,
+        render: (value) => {
+          return value.is_superuser ? `True` : `False`;
+        }
       }
     ];
   }, []);
 
   const rowActions = useCallback((record: any): RowAction[] => {
+    const [user] = useUserState((state) => [state.user]);
+
+    function setPermission(pk: number, new_role: UserRole) {
+      /* TODO - implement */
+      console.log(new_role);
+    }
+
     return [
+      {
+        title: t`Make regular user`,
+        color: 'white',
+        onClick: () => {
+          setPermission(record.pk, UserRole.REGULAR);
+        },
+        hidden: !user?.is_staff
+      },
+      {
+        title: t`Make staff user`,
+        color: 'white',
+        onClick: () => {
+          setPermission(record.pk, UserRole.STAFF);
+        },
+        hidden: !user?.is_staff
+      },
+      {
+        title: t`Make admin`,
+        color: 'white',
+        onClick: () => {
+          setPermission(record.pk, UserRole.ADMIN);
+        },
+        hidden: !user?.is_superuser
+      },
       RowEditAction({
         onClick: () => {
           openEditApiForm({
