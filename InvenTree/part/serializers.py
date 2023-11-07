@@ -1184,6 +1184,9 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
             # Annotated field describing quantity on order
             'on_order',
+
+            # Annotated field describing quantity being built
+            'building',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1228,6 +1231,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
 
     on_order = serializers.FloatField(read_only=True)
+    building = serializers.FloatField(read_only=True)
 
     # Cached pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(source='sub_part.pricing.overall_min', allow_null=True, read_only=True)
@@ -1259,6 +1263,10 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'substitutes__part__stock_items',
         )
 
+        queryset = queryset.prefetch_related(
+            'sub_part__builds',
+        )
+
         return queryset
 
     @staticmethod
@@ -1278,6 +1286,18 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         # Annotate with the total "on order" amount for the sub-part
         queryset = queryset.annotate(
             on_order=part.filters.annotate_on_order_quantity(ref),
+        )
+
+        # Annotate with the total "building" amount for the sub-part
+        queryset = queryset.annotate(
+            building=Coalesce(
+                SubquerySum(
+                    'sub_part__builds__quantity',
+                    filter=Q(status__in=BuildStatusGroups.ACTIVE_CODES),
+                ),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
         )
 
         # Calculate "total stock" for the referenced sub_part
