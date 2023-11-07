@@ -135,7 +135,7 @@ django-sql-utils==0.7.0
     # via -r requirements.in
 django-sslserver==0.22
     # via -r requirements.in
-django-stdimage==5.3.0
+django-stdimage==6.0.2
     # via -r requirements.in
 django-taggit==4.0.0
     # via -r requirements.in
@@ -201,7 +201,7 @@ packaging==23.2
     # via gunicorn
 pdf2image==1.16.3
     # via -r requirements.in
-pillow==9.5.0
+pillow==10.1.0
     # via
     #   -r requirements.in
     #   django-stdimage

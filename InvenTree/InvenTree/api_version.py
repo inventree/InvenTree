@@ -2,10 +2,12 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 147
+INVENTREE_API_VERSION = 148
+"""Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
-"""
-Increment this API version number whenever there is a significant change to the API that any clients need to know about
+INVENTREE_API_TEXT = """
+v148 -> 2023-11-06 : https://github.com/inventree/InvenTree/pull/5872
+    - Allow "quantity" to be specified when installing an item into another item
 
 v147 -> 2023-11-04: https://github.com/inventree/InvenTree/pull/5860
     - Adds "completed_lines" field to SalesOrder API endpoint
@@ -112,7 +114,7 @@ v117 -> 2023-05-22 : https://github.com/inventree/InvenTree/pull/4854
 v116 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4823
     - Updates to part parameter implementation, to use physical units
 
-v115 - > 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
+v115 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
     - Adds ability to partially scrap a build output
 
 v114 -> 2023-05-16 : https://github.com/inventree/InvenTree/pull/4825

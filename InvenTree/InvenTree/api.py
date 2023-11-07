@@ -6,7 +6,8 @@ from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import OrmQ
-from rest_framework import permissions
+from drf_spectacular.utils import OpenApiResponse, extend_schema
+from rest_framework import permissions, serializers
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -21,8 +22,9 @@ from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
 from .email import is_email_configured
-from .mixins import RetrieveUpdateAPI
+from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
+from .version import inventreeApiText
 from .views import AjaxView
 
 
@@ -55,6 +57,34 @@ class VersionView(APIView):
                 'bug': f'{InvenTree.version.inventreeGithubUrl()}/issues'
             }
         })
+
+
+class VersionSerializer(serializers.Serializer):
+    """Serializer for a single version."""
+    version = serializers.CharField()
+    date = serializers.CharField()
+    gh = serializers.CharField()
+    text = serializers.CharField()
+    latest = serializers.BooleanField()
+
+    class Meta:
+        """Meta class for VersionSerializer."""
+        fields = ['version', 'date', 'gh', 'text', 'latest']
+
+
+class VersionApiSerializer(serializers.Serializer):
+    """Serializer for the version api endpoint."""
+    VersionSerializer(many=True)
+
+
+class VersionTextView(ListAPI):
+    """Simple JSON endpoint for InvenTree version text."""
+    permission_classes = [permissions.IsAdminUser]
+
+    @extend_schema(responses={200: OpenApiResponse(response=VersionApiSerializer)})
+    def list(self, request, *args, **kwargs):
+        """Return information about the InvenTree server."""
+        return JsonResponse(inventreeApiText())
 
 
 class InfoView(AjaxView):
