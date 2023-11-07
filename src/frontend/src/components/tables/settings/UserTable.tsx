@@ -1,12 +1,19 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
+import { api } from '../../../App';
 import {
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
+import {
+  invalidResponse,
+  permissionDenied
+} from '../../../functions/notifications';
 import { InvenTreeStyle } from '../../../globalStyle';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
@@ -72,8 +79,46 @@ export function UserTable() {
     const { theme } = InvenTreeStyle();
 
     function setPermission(pk: number, new_role: UserRole) {
-      /* TODO - implement */
-      console.log(new_role);
+      let data = {};
+      switch (new_role) {
+        case UserRole.REGULAR:
+          data = {
+            is_staff: false,
+            is_superuser: false
+          };
+          break;
+        case UserRole.STAFF:
+          data = {
+            is_staff: true,
+            is_superuser: false
+          };
+          break;
+        case UserRole.SUPERUSER:
+          data = {
+            is_staff: true,
+            is_superuser: true
+          };
+          break;
+      }
+      api
+        .patch(`${apiUrl(ApiPaths.user_list)}${pk}/`, data)
+        .then(() => {
+          notifications.show({
+            title: t`User permission changed successfully`,
+            message: t`Set to ${new_role}`,
+            color: 'green',
+            icon: <IconCheck size="1rem" />
+          });
+          refreshTable();
+        })
+        .catch((error) => {
+          if (error.response.status === 403) {
+            permissionDenied();
+          } else {
+            console.log(error);
+            invalidResponse(error.response.status);
+          }
+        });
     }
 
     return [
@@ -83,7 +128,7 @@ export function UserTable() {
         onClick: () => {
           setPermission(record.pk, UserRole.REGULAR);
         },
-        hidden: !user?.is_staff || !(record.is_superuser && record.is_staff)
+        hidden: !user?.is_staff || !(!record.is_superuser && record.is_staff)
       },
       {
         title: t`Make staff user`,

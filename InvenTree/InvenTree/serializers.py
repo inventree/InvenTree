@@ -16,7 +16,7 @@ from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
@@ -314,11 +314,22 @@ class ExendedUserSerializer(UserSerializer):
             'is_active'
         ]
 
-        read_only_fields = UserSerializer.Meta.read_only_fields + [
-            'is_staff',
-            'is_superuser',
-            'is_active'
-        ]
+    def validate(self, attrs):
+        """Expanded validation for changing user role."""
+        # Check if is_staff or is_superuser is in attrs
+        role_change = 'is_staff' in attrs or 'is_superuser' in attrs
+        request_user = self.context['request'].user
+
+        if role_change:
+            if request_user.is_superuser:
+                # Superusers can change any role
+                pass
+            elif request_user.is_staff and 'is_superuser' not in attrs:
+                # Staff can change any role except is_superuser
+                pass
+            else:
+                raise PermissionDenied(_("You do not have permission to change this user role."))
+        return super().validate(attrs)
 
 
 class UserCreateSerializer(ExendedUserSerializer):
