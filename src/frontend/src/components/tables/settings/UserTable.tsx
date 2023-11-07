@@ -155,7 +155,9 @@ export function UserTable() {
   const tableActions = useMemo(() => {
     let actions = [];
 
-    actions.push(<AddItemButton onClick={addUser} tooltip={t`Add user`} />);
+    actions.push(
+      <AddItemButton key="add-user" onClick={addUser} tooltip={t`Add user`} />
+    );
 
     return actions;
   }, []);

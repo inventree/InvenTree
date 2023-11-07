@@ -76,7 +76,13 @@ export function GroupTable() {
   const tableActions = useMemo(() => {
     let actions = [];
 
-    actions.push(<AddItemButton onClick={addGroup} tooltip={t`Add group`} />);
+    actions.push(
+      <AddItemButton
+        key={'add-group'}
+        onClick={addGroup}
+        tooltip={t`Add group`}
+      />
+    );
 
     return actions;
   }, []);
