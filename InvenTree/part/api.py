@@ -1810,6 +1810,10 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'quantity',
         'sub_part',
         'available_stock',
+        'allow_variants',
+        'inherited',
+        'optional',
+        'consumable',
     ]
 
     ordering_field_aliases = {
