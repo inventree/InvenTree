@@ -4,11 +4,11 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { bomItemFields } from '../../../forms/BomForms';
-import { openEditApiForm } from '../../../functions/forms';
+import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
-import { ThumbnailHoverCard } from '../../images/Thumbnail';
+import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
@@ -54,16 +54,26 @@ export function BomTable({
         title: t`Part`,
         switchable: false,
         sortable: true,
-        render: (row) => {
-          let part = row.sub_part_detail;
+        render: (record) => {
+          let part = record.sub_part_detail;
+          let extra = [];
+
+          if (record.part != partId) {
+            extra.push(t`This BOM item is defined for a different parent`);
+          }
 
           return (
             part && (
-              <ThumbnailHoverCard
-                src={part.thumbnail || part.image}
-                text={part.full_name}
-                alt={part.description}
-                link=""
+              <TableHoverCard
+                value={
+                  <Thumbnail
+                    src={part.thumbnail || part.image}
+                    alt={part.description}
+                    text={part.full_name}
+                  />
+                }
+                extra={extra}
+                title={t`Part Information`}
               />
             )
           );
@@ -220,23 +230,38 @@ export function BomTable({
 
   const rowActions = useCallback(
     (record: any) => {
+      // If this BOM item is defined for a *different* parent, then it cannot be edited
+      if (record.part && record.part != partId) {
+        return [
+          {
+            title: t`View BOM`,
+            onClick: () => navigate(`/part/${record.part}/`)
+          }
+        ];
+      }
+
       // TODO: Check user permissions here,
       // TODO: to determine which actions are allowed
 
       let actions: RowAction[] = [];
 
+      // TODO: Enable BomItem validation
       actions.push({
         title: t`Validate`,
-        hidden: record.validated
+        hidden: record.validated || !user.checkUserRole('part', 'change')
       });
 
+      // TODO: Enable editing of substitutes
       actions.push({
         title: t`Substitutes`,
-        color: 'blue'
+        color: 'blue',
+        hidden: !user.checkUserRole('part', 'change')
       });
 
+      // Action on edit
       actions.push(
         RowEditAction({
+          hidden: !user.checkUserRole('part', 'change'),
           onClick: () => {
             openEditApiForm({
               url: ApiPaths.bom_list,
@@ -250,8 +275,24 @@ export function BomTable({
         })
       );
 
-      // TODO: Action on delete
-      actions.push(RowDeleteAction({}));
+      // Action on delete
+      actions.push(
+        RowDeleteAction({
+          hidden: !user.checkUserRole('part', 'delete'),
+          onClick: () => {
+            openDeleteApiForm({
+              url: ApiPaths.bom_list,
+              pk: record.pk,
+              title: t`Delete Bom Item`,
+              successMessage: t`Bom item deleted`,
+              onFormSuccess: refreshTable,
+              preFormContent: (
+                <Text>{t`Are you sure you want to remove this BOM item?`}</Text>
+              )
+            });
+          }
+        })
+      );
 
       return actions;
     },
