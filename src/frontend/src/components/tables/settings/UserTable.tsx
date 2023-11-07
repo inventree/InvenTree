@@ -151,7 +151,7 @@ export function UserTable() {
         onClick: () => {
           setPermission(record.pk, UserRole.REGULAR);
         },
-        hidden: !user?.is_staff || !(!record.is_superuser && record.is_staff)
+        hidden: !user?.is_staff || !(record.is_superuser && record.is_staff)
       },
       {
         title: t`Make staff user`,
