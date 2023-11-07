@@ -120,6 +120,29 @@ export function UserTable() {
           }
         });
     }
+    function setActive(pk: number, active: boolean) {
+      api
+        .patch(`${apiUrl(ApiPaths.user_list)}${pk}/`, {
+          is_active: active
+        })
+        .then(() => {
+          notifications.show({
+            title: t`Changed user active status successfully`,
+            message: t`Set to ${active}`,
+            color: 'green',
+            icon: <IconCheck size="1rem" />
+          });
+          refreshTable();
+        })
+        .catch((error) => {
+          if (error.response.status === 403) {
+            permissionDenied();
+          } else {
+            console.log(error);
+            invalidResponse(error.response.status);
+          }
+        });
+    }
 
     return [
       {
@@ -145,6 +168,14 @@ export function UserTable() {
           setPermission(record.pk, UserRole.SUPERUSER);
         },
         hidden: !user?.is_superuser || record.is_superuser
+      },
+      {
+        title: record.is_active ? t`Deactivate user` : t`Activate user`,
+        color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+        onClick: () => {
+          setActive(record.pk, !record.is_active);
+        },
+        hidden: !user?.is_superuser
       },
       RowEditAction({
         onClick: () => {
