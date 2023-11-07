@@ -8,7 +8,7 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-05 19:53\n"
+"PO-Revision-Date: 2023-11-07 20:18\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -1324,7 +1324,7 @@ msgstr ""
 msgid "Part parameter added"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTable.tsx:178
+#: src/components/tables/part/PartParameterTable.tsx:177
 #~ msgid "Add parameter"
 #~ msgstr "Add parameter"
 
@@ -2256,7 +2256,7 @@ msgstr ""
 
 #: src/defaults/menuItems.tsx:15
 #~ msgid "Profile page"
-#~ msgstr ""
+#~ msgstr "Profile page"
 
 #: src/defaults/menuItems.tsx:17
 msgid "User attributes and design settings."
@@ -3110,12 +3110,13 @@ msgid "Attachments"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:185
-#: src/pages/part/PartDetail.tsx:223
+#: src/pages/part/PartDetail.tsx:269
+#: src/pages/stock/StockDetail.tsx:150
 #~ msgid "View part barcode"
 #~ msgstr "View part barcode"
 
 #: src/pages/build/BuildDetail.tsx:190
-#: src/pages/part/PartDetail.tsx:228
+#: src/pages/part/PartDetail.tsx:274
 #~ msgid "Link custom barcode to part"
 #~ msgstr "Link custom barcode to part"
 
@@ -3128,7 +3129,7 @@ msgid "Build Order updated"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:196
-#: src/pages/part/PartDetail.tsx:234
+#: src/pages/part/PartDetail.tsx:280
 #~ msgid "Unlink custom barcode from part"
 #~ msgstr "Unlink custom barcode from part"
 
@@ -3254,21 +3255,9 @@ msgstr ""
 msgid "Related Parts"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:264
-#~ msgid "Edit part"
-#~ msgstr "Edit part"
-
-#: src/pages/part/PartDetail.tsx:276
-#~ msgid "Duplicate part"
-#~ msgstr "Duplicate part"
-
 #: src/pages/part/PartDetail.tsx:277
 msgid "Stock Actions"
 msgstr ""
-
-#: src/pages/part/PartDetail.tsx:281
-#~ msgid "Delete part"
-#~ msgstr "Delete part"
 
 #: src/pages/part/PartDetail.tsx:282
 msgid "Count Stock"
@@ -3289,6 +3278,18 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:294
 msgid "Part Actions"
 msgstr ""
+
+#: src/pages/part/PartDetail.tsx:310
+#~ msgid "Edit part"
+#~ msgstr "Edit part"
+
+#: src/pages/part/PartDetail.tsx:322
+#~ msgid "Duplicate part"
+#~ msgstr "Duplicate part"
+
+#: src/pages/part/PartDetail.tsx:327
+#~ msgid "Delete part"
+#~ msgstr "Delete part"
 
 #: src/pages/part/PartIndex.tsx:29
 #~ msgid "Categories"
@@ -3340,9 +3341,17 @@ msgstr ""
 msgid "Child Items"
 msgstr ""
 
+#: src/pages/stock/StockDetail.tsx:155
+#~ msgid "Link custom barcode to stock item"
+#~ msgstr "Link custom barcode to stock item"
+
 #: src/pages/stock/StockDetail.tsx:158
 msgid "Stock Operations"
 msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:161
+#~ msgid "Unlink custom barcode from stock item"
+#~ msgstr "Unlink custom barcode from stock item"
 
 #: src/pages/stock/StockDetail.tsx:163
 msgid "Count stock"
@@ -3372,6 +3381,14 @@ msgstr ""
 msgid "Duplicate stock item"
 msgstr ""
 
+#: src/pages/stock/StockDetail.tsx:205
+#~ msgid "Edit stock item"
+#~ msgstr "Edit stock item"
+
+#: src/pages/stock/StockDetail.tsx:217
+#~ msgid "Delete stock item"
+#~ msgstr "Delete stock item"
+
 #: src/views/MobileAppView.tsx:14
 msgid "Mobile viewport detected"
 msgstr ""
@@ -3383,3 +3400,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
