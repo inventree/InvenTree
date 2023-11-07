@@ -7,6 +7,7 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
+import { InvenTreeStyle } from '../../../globalStyle';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -73,6 +74,7 @@ export function UserTable() {
 
   const rowActions = useCallback((record: any): RowAction[] => {
     const [user] = useUserState((state) => [state.user]);
+    const { theme } = InvenTreeStyle();
 
     function setPermission(pk: number, new_role: UserRole) {
       /* TODO - implement */
@@ -82,7 +84,7 @@ export function UserTable() {
     return [
       {
         title: t`Make regular user`,
-        color: 'white',
+        color: theme.colorScheme === 'dark' ? theme.white : theme.black,
         onClick: () => {
           setPermission(record.pk, UserRole.REGULAR);
         },
@@ -90,7 +92,7 @@ export function UserTable() {
       },
       {
         title: t`Make staff user`,
-        color: 'white',
+        color: theme.colorScheme === 'dark' ? theme.white : theme.black,
         onClick: () => {
           setPermission(record.pk, UserRole.STAFF);
         },
@@ -98,7 +100,7 @@ export function UserTable() {
       },
       {
         title: t`Make admin`,
-        color: 'white',
+        color: theme.colorScheme === 'dark' ? theme.white : theme.black,
         onClick: () => {
           setPermission(record.pk, UserRole.ADMIN);
         },
