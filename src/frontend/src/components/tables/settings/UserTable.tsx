@@ -13,6 +13,7 @@ import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
+import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -51,24 +52,14 @@ export function UserTable() {
         sortable: true,
         title: t`Last Name`
       },
-      {
+      BooleanColumn({
         accessor: 'is_staff',
-        sortable: true,
-        switchable: true,
-        title: t`Staff`,
-        render: (value) => {
-          return value.is_staff ? `True` : `False`;
-        }
-      },
-      {
+        title: t`Staff`
+      }),
+      BooleanColumn({
         accessor: 'is_superuser',
-        sortable: true,
-        switchable: true,
-        title: t`Superuser`,
-        render: (value) => {
-          return value.is_superuser ? `True` : `False`;
-        }
-      }
+        title: t`Superuser`
+      })
     ];
   }, []);
 
