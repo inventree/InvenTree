@@ -88,7 +88,7 @@ export function UserTable() {
         onClick: () => {
           setPermission(record.pk, UserRole.REGULAR);
         },
-        hidden: !user?.is_staff
+        hidden: !user?.is_staff || !(record.is_superuser && record.is_staff)
       },
       {
         title: t`Make staff user`,
@@ -96,7 +96,7 @@ export function UserTable() {
         onClick: () => {
           setPermission(record.pk, UserRole.STAFF);
         },
-        hidden: !user?.is_staff
+        hidden: !user?.is_staff || record.is_staff
       },
       {
         title: t`Make admin`,
@@ -104,7 +104,7 @@ export function UserTable() {
         onClick: () => {
           setPermission(record.pk, UserRole.ADMIN);
         },
-        hidden: !user?.is_superuser
+        hidden: !user?.is_superuser || record.is_superuser
       },
       RowEditAction({
         onClick: () => {
