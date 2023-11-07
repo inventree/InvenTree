@@ -6,12 +6,11 @@ import logging
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeSearchFilter
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
@@ -176,12 +175,13 @@ class GroupList(ListCreateAPI):
         permissions.IsAuthenticated,
     ]
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
+        'name',
+    ]
+
+    ordering_fields = [
         'name',
     ]
 
