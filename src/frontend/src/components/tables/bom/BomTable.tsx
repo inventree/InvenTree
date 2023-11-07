@@ -212,8 +212,11 @@ export function BomTable({
           }
 
           let can_build = availableStockQuantity(record) / record.quantity;
+          can_build = Math.trunc(can_build);
 
-          return Math.trunc(can_build);
+          return (
+            <Text color={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
+          );
         }
       },
       {
@@ -225,7 +228,14 @@ export function BomTable({
   }, [partId, params]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [];
+    return [
+      {
+        name: 'consumable',
+        label: t`Consumable`,
+        type: 'boolean'
+      }
+      // TODO: More BOM table filters here
+    ];
   }, [partId, params]);
 
   const rowActions = useCallback(
