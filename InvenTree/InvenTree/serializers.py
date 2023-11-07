@@ -311,23 +311,18 @@ class ExendedUserSerializer(UserSerializer):
         fields = UserSerializer.Meta.fields + [
             'is_staff',
             'is_superuser',
+            'is_active'
         ]
 
         read_only_fields = UserSerializer.Meta.read_only_fields + [
             'is_staff',
             'is_superuser',
+            'is_active'
         ]
 
 
 class UserCreateSerializer(ExendedUserSerializer):
     """Serializer for creating a new User."""
-    class Meta(ExendedUserSerializer.Meta):
-        """Metaclass defines serializer fields."""
-        read_only_fields = [
-            'is_staff',
-            'is_superuser'
-        ]
-
     def validate(self, attrs):
         """Expanded valiadation for auth."""
         # Check that the user trying to create a new user is a superuser

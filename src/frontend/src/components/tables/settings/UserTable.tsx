@@ -59,6 +59,10 @@ export function UserTable() {
       BooleanColumn({
         accessor: 'is_superuser',
         title: t`Superuser`
+      }),
+      BooleanColumn({
+        accessor: 'is_active',
+        title: t`Active`
       })
     ];
   }, []);

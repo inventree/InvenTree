@@ -153,6 +153,7 @@ class UserList(ListCreateAPI):
         'last_name',
         'is_staff',
         'is_superuser',
+        'is_active',
     ]
 
 
