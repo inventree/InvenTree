@@ -100,7 +100,7 @@ export function RowActions({
         onChange={setOpened}
       >
         <Menu.Target>
-          <Tooltip label={title || t`Actions`}>
+          <Tooltip withinPortal={true} label={title || t`Actions`}>
             <ActionIcon
               onClick={openMenu}
               disabled={disabled}

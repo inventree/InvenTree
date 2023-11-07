@@ -161,15 +161,6 @@ export function InvenTreeTable({
         hidden: false,
         switchable: false,
         width: 50,
-        cellsStyle: {
-          position: 'sticky',
-          right: 0,
-          // TODO: Use the theme color to set the background color
-          backgroundColor: '#FFF',
-          // TODO: Use the scroll area callbacks to determine if we need to display a "shadow"
-          borderLeft: '1px solid #DDD',
-          padding: '3px'
-        },
         render: function (record: any) {
           return (
             <RowActions
@@ -520,6 +511,7 @@ export function InvenTreeTable({
           striped
           highlightOnHover
           loaderVariant="dots"
+          pinLastColumn={tableProps.rowActions != undefined}
           idAccessor={tableProps.idAccessor}
           minHeight={300}
           totalRecords={recordCount}
