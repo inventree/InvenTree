@@ -17,6 +17,22 @@ import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
+// Calculate the total stock quantity available for a given BomItem
+function availableStockQuantity(record: any): number {
+  // Base availability
+  let available: number = record.available_stock;
+
+  // Add in available substitute stock
+  available += record?.available_substitute_stock ?? 0;
+
+  // Add in variant stock
+  if (record.allow_variants) {
+    available += record?.available_variant_stock ?? 0;
+  }
+
+  return available;
+}
+
 export function BomTable({
   partId,
   params = {}
@@ -112,6 +128,7 @@ export function BomTable({
           let max_price = row.pricing_max || row.pricing_min;
 
           // TODO: Custom price range rendering component
+          // TODO: Footer component for price range
           return `${min_price} - ${max_price}`;
         }
       },
@@ -119,14 +136,12 @@ export function BomTable({
         accessor: 'available_stock',
         title: t`Available`,
 
-        render: (row) => {
+        render: (record) => {
           let extra: ReactNode[] = [];
 
-          let available_stock: number = row?.available_stock ?? 0;
-          let substitute_stock: number = row?.substitute_stock ?? 0;
-          let variant_stock: number = row?.variant_stock ?? 0;
-          let on_order: number = row?.on_order ?? 0;
-          let building: number = row?.building ?? 0;
+          let available_stock: number = availableStockQuantity(record);
+          let on_order: number = record?.on_order ?? 0;
+          let building: number = record?.building ?? 0;
 
           let text =
             available_stock <= 0 ? (
@@ -135,14 +150,21 @@ export function BomTable({
               available_stock
             );
 
-          if (substitute_stock > 0) {
+          if (record.available_substitute_stock > 0) {
             extra.push(
-              <Text key="substitute">{t`Includes substitute stock`}</Text>
+              <Text key="substitute">
+                {t`Includes substitute stock`}:{' '}
+                {record.available_substitute_stock}
+              </Text>
             );
           }
 
-          if (variant_stock > 0) {
-            extra.push(<Text key="variant">{t`Includes variant stock`}</Text>);
+          if (record.allow_variants && record.available_variant_stock > 0) {
+            extra.push(
+              <Text key="variant">
+                {t`Includes variant stock`}: {record.available_variant_stock}
+              </Text>
+            );
           }
 
           if (on_order > 0) {
@@ -173,9 +195,16 @@ export function BomTable({
       {
         accessor: 'can_build',
         title: t`Can Build`,
+        sortable: false, // TODO: Custom sorting via API
+        render: (record: any) => {
+          if (record.consumable) {
+            return <Text italic>{t`Consumable item`}</Text>;
+          }
 
-        sortable: true // TODO: Custom sorting via API
-        // TODO: Reference bom.js for canBuildQuantity method
+          let can_build = availableStockQuantity(record) / record.quantity;
+
+          return Math.trunc(can_build);
+        }
       },
       {
         accessor: 'note',
