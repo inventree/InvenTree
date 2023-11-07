@@ -19,7 +19,7 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 enum UserRole {
   REGULAR = 'regular',
   STAFF = 'staff',
-  ADMIN = 'admin'
+  SUPERUSER = 'superuser'
 }
 
 /**
@@ -99,10 +99,10 @@ export function UserTable() {
         hidden: !user?.is_staff || record.is_staff
       },
       {
-        title: t`Make admin`,
+        title: t`Make superuser`,
         color: theme.colorScheme === 'dark' ? theme.white : theme.black,
         onClick: () => {
-          setPermission(record.pk, UserRole.ADMIN);
+          setPermission(record.pk, UserRole.SUPERUSER);
         },
         hidden: !user?.is_superuser || record.is_superuser
       },
