@@ -67,11 +67,13 @@ export function BomTable({
         title: t`Quantity`,
         switchable: false,
         sortable: true
+        // TODO: Custom quantity renderer
+        // TODO: see bom.js for existing implementation
       },
       {
         accessor: 'substitutes',
         title: t`Substitutes`,
-
+        // TODO: Show hovercard with list of substitutes
         render: (row) => {
           let substitutes = row.substitutes ?? [];
 
@@ -97,6 +99,8 @@ export function BomTable({
       BooleanColumn({
         accessor: 'inherited',
         title: t`Gets Inherited`
+        // TODO: Custom renderer for this column
+        // TODO: See bom.js for existing implementation
       }),
       {
         accessor: 'price_range',
@@ -122,10 +126,14 @@ export function BomTable({
           let substitute_stock: number = row?.substitute_stock ?? 0;
           let variant_stock: number = row?.variant_stock ?? 0;
           let on_order: number = row?.on_order ?? 0;
+          let building: number = row?.building ?? 0;
 
-          if (available_stock <= 0) {
-            return <Text color="red" italic>{t`No stock`}</Text>;
-          }
+          let text =
+            available_stock <= 0 ? (
+              <Text color="red" italic>{t`No stock`}</Text>
+            ) : (
+              available_stock
+            );
 
           if (substitute_stock > 0) {
             extra.push(
@@ -145,11 +153,19 @@ export function BomTable({
             );
           }
 
+          if (building > 0) {
+            extra.push(
+              <Text key="building">
+                {t`Building`}: {building}
+              </Text>
+            );
+          }
+
           return (
             <TableHoverCard
-              value={available_stock}
+              value={text}
               extra={extra}
-              title={t`Available Stock`}
+              title={t`Stock Information`}
             />
           );
         }
