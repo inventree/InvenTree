@@ -9,6 +9,7 @@ import { useUserState } from '../../../states/UserState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
+import { BooleanColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
@@ -76,43 +77,22 @@ export function BomTable({
           );
         }
       },
-      {
+      BooleanColumn({
         accessor: 'optional',
-        title: t`Optional`,
-
-        sortable: true,
-        render: (row) => {
-          return <YesNoButton value={row.optional} />;
-        }
-      },
-      {
+        title: t`Optional`
+      }),
+      BooleanColumn({
         accessor: 'consumable',
-        title: t`Consumable`,
-
-        sortable: true,
-        render: (row) => {
-          return <YesNoButton value={row.consumable} />;
-        }
-      },
-      {
+        title: t`Consumable`
+      }),
+      BooleanColumn({
         accessor: 'allow_variants',
-        title: t`Allow Variants`,
-
-        sortable: true,
-        render: (row) => {
-          return <YesNoButton value={row.allow_variants} />;
-        }
-      },
-      {
+        title: t`Allow Variants`
+      }),
+      BooleanColumn({
         accessor: 'inherited',
-        title: t`Gets Inherited`,
-
-        sortable: true,
-        render: (row) => {
-          // TODO: Update complexity here
-          return <YesNoButton value={row.inherited} />;
-        }
-      },
+        title: t`Gets Inherited`
+      }),
       {
         accessor: 'price_range',
         title: t`Price Range`,
