@@ -3,6 +3,8 @@ import { Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { bomItemFields } from '../../../forms/BomForms';
+import { openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -26,7 +28,7 @@ export function BomTable({
 
   const user = useUserState();
 
-  const { tableKey } = useTableRefresh('bom');
+  const { tableKey, refreshTable } = useTableRefresh('bom');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -34,6 +36,8 @@ export function BomTable({
       {
         accessor: 'part',
         title: t`Part`,
+        switchable: false,
+        sortable: true,
         render: (row) => {
           let part = row.sub_part_detail;
 
@@ -56,12 +60,13 @@ export function BomTable({
       },
       {
         accessor: 'reference',
-
         title: t`Reference`
       },
       {
         accessor: 'quantity',
-        title: t`Quantity`
+        title: t`Quantity`,
+        switchable: false,
+        sortable: true
       },
       {
         accessor: 'substitutes',
@@ -175,14 +180,30 @@ export function BomTable({
 
       let actions: RowAction[] = [];
 
-      if (!record.validated) {
-        actions.push({
-          title: t`Validate`
-        });
-      }
+      actions.push({
+        title: t`Validate`,
+        hidden: record.validated
+      });
 
-      // TODO: Action on edit
-      actions.push(RowEditAction({}));
+      actions.push({
+        title: t`Substitutes`,
+        color: 'blue'
+      });
+
+      actions.push(
+        RowEditAction({
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.bom_list,
+              pk: record.pk,
+              title: t`Edit Bom Item`,
+              fields: bomItemFields(),
+              successMessage: t`Bom item updated`,
+              onFormSuccess: refreshTable
+            });
+          }
+        })
+      );
 
       // TODO: Action on delete
       actions.push(RowDeleteAction({}));
