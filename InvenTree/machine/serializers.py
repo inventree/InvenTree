@@ -21,6 +21,7 @@ class MachineConfigSerializer(serializers.ModelSerializer):
             "initialized",
             "active",
             "status",
+            "status_model",
             "status_text",
             "machine_errors",
             "is_driver_available",
@@ -29,10 +30,13 @@ class MachineConfigSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "machine_type",
             "driver",
+            "status",
+            "status_model",
         ]
 
     initialized = serializers.SerializerMethodField("get_initialized")
     status = serializers.SerializerMethodField("get_status")
+    status_model = serializers.SerializerMethodField("get_status_model")
     status_text = serializers.SerializerMethodField("get_status_text")
     machine_errors = serializers.SerializerMethodField("get_errors")
     is_driver_available = serializers.SerializerMethodField("get_is_driver_available")
@@ -41,7 +45,15 @@ class MachineConfigSerializer(serializers.ModelSerializer):
         return getattr(obj.machine, "initialized", False)
 
     def get_status(self, obj: MachineConfig) -> int:
-        return getattr(obj.machine, "status", -1)
+        status = getattr(obj.machine, "status", None)
+        if status is not None:
+            return status.value
+        return -1
+
+    def get_status_model(self, obj: MachineConfig) -> Union[str, None]:
+        if obj.machine and obj.machine.MACHINE_STATUS:
+            return obj.machine.MACHINE_STATUS.__name__
+        return None
 
     def get_status_text(self, obj: MachineConfig) -> str:
         return getattr(obj.machine, "status_text", "")
@@ -58,7 +70,7 @@ class MachineConfigCreateSerializer(MachineConfigSerializer):
 
     class Meta(MachineConfigSerializer.Meta):
         """Meta for serializer."""
-        read_only_fields = []
+        read_only_fields = list(set(MachineConfigSerializer.Meta.read_only_fields) - set(["machine_type", "driver"]))
 
 
 class MachineSettingSerializer(GenericReferencedSettingSerializer):
