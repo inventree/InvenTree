@@ -62,12 +62,12 @@ function inventreeGet(url, filters={}, options={}) {
         url: url,
         type: 'GET',
         data: filters,
-        dataType: 'json',
-        contentType: 'application/json',
+        dataType: options.dataType || 'json',
+        contentType: options.contentType || 'application/json',
         async: (options.async == false) ? false : true,
-        success: function(response) {
+        success: function(response, status, xhr) {
             if (options.success) {
-                options.success(response);
+                options.success(response, status, xhr);
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
@@ -256,6 +256,10 @@ function showApiError(xhr, url) {
     case 408:
         title = '{% trans "Error 408: Timeout" %}';
         message = '{% trans "Connection timeout while requesting data from server" %}';
+        break;
+    case 503:
+        title = '{% trans "Error 503: Service Unavailable" %}';
+        message = '{% trans "The server is currently unavailable" %}';
         break;
     default:
         title = '{% trans "Unhandled Error Code" %}';

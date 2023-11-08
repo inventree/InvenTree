@@ -10,7 +10,18 @@ from django.templatetags.i18n import TranslateNode
 
 import bleach
 
+import InvenTree.translation
+
 register = template.Library()
+
+
+@register.simple_tag()
+def translation_stats(lang_code):
+    """Return the translation percentage for the given language code"""
+    if lang_code is None:
+        return None
+
+    return InvenTree.translation.get_translation_percent(lang_code)
 
 
 class CustomTranslateNode(TranslateNode):
@@ -18,7 +29,6 @@ class CustomTranslateNode(TranslateNode):
 
     def render(self, context):
         """Custom render function overrides / extends default behaviour"""
-
         result = super().render(context)
 
         result = bleach.clean(result)
@@ -46,7 +56,6 @@ def do_translate(parser, token):
 
     The only difference is that we pass this to our custom rendering node class
     """
-
     bits = token.split_contents()
     if len(bits) < 2:
         raise TemplateSyntaxError("'%s' takes at least one argument" % bits[0])

@@ -10,8 +10,8 @@ from report.models import PurchaseOrderReport
 class SampleReportPlugin(ReportMixin, InvenTreePlugin):
     """Sample plugin which provides extra context data to a report"""
 
-    NAME = "Report Plugin"
-    SLUG = "reportexample"
+    NAME = "Sample Report Plugin"
+    SLUG = "samplereport"
     TITLE = "Sample Report Plugin"
     DESCRIPTION = "A sample plugin which provides extra context data to a report"
     VERSION = "1.0"
@@ -22,9 +22,7 @@ class SampleReportPlugin(ReportMixin, InvenTreePlugin):
 
     def add_report_context(self, report_instance, model_instance, request, context):
         """Add example content to the report instance"""
-
         # We can add any extra context data we want to the report
-
         # Generate a random string of data
         context['random_text'] = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=20))
 

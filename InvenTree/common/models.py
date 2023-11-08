@@ -30,7 +30,9 @@ from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     URLValidator)
 from django.db import models, transaction
-from django.db.utils import IntegrityError, OperationalError
+from django.db.models.signals import post_delete, post_save
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
+from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -48,6 +50,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import report.helpers
 from plugin import registry
 
 logger = logging.getLogger('inventree')
@@ -72,8 +75,19 @@ class MetaMixin(models.Model):
     )
 
 
-class EmptyURLValidator(URLValidator):
-    """Validator for filed with url - that can be empty."""
+class BaseURLValidator(URLValidator):
+    """Validator for the InvenTree base URL:
+
+    - Allow empty value
+    - Allow value without specified TLD (top level domain)
+    """
+
+    def __init__(self, schemes=None, **kwargs):
+        """Custom init routine"""
+        super().__init__(schemes, **kwargs)
+
+        # Override default host_re value - allow optional tld regex
+        self.host_re = '(' + self.hostname_re + self.domain_re + f'({self.tld_re})?' + '|localhost)'
 
     def __call__(self, value):
         """Make sure empty values pass."""
@@ -168,7 +182,7 @@ class BaseInvenTreeSetting(models.Model):
 
         do_cache = kwargs.pop('cache', True)
 
-        self.clean(**kwargs)
+        self.clean()
         self.validate_unique()
 
         # Execute before_save action
@@ -183,6 +197,39 @@ class BaseInvenTreeSetting(models.Model):
         # Execute after_save action
         self._call_settings_function('after_save', args, kwargs)
 
+    @classmethod
+    def build_default_values(cls, **kwargs):
+        """Ensure that all values defined in SETTINGS are present in the database
+
+        If a particular setting is not present, create it with the default value
+        """
+        cache_key = f"BUILD_DEFAULT_VALUES:{str(cls.__name__)}"
+
+        if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
+            # Already built default values
+            return
+
+        try:
+            existing_keys = cls.objects.filter(**kwargs).values_list('key', flat=True)
+            settings_keys = cls.SETTINGS.keys()
+
+            missing_keys = set(settings_keys) - set(existing_keys)
+
+            if len(missing_keys) > 0:
+                logger.info("Building %s default values for %s", len(missing_keys), str(cls))
+                cls.objects.bulk_create([
+                    cls(
+                        key=key,
+                        value=cls.get_setting_default(key),
+                        **kwargs
+                    ) for key in missing_keys if not key.startswith('_')
+                ])
+        except Exception as exc:
+            logger.exception("Failed to build default values for %s (%s)", str(cls), str(type(exc)))
+            pass
+
+        cache.set(cache_key, True, timeout=3600)
+
     def _call_settings_function(self, reference: str, args, kwargs):
         """Call a function associated with a particular setting.
 
@@ -192,7 +239,7 @@ class BaseInvenTreeSetting(models.Model):
             kwargs: Keyword arguments to pass to the function
         """
         # Get action
-        setting = self.get_setting_definition(self.key, *args, **kwargs)
+        setting = self.get_setting_definition(self.key, *args, **{**self.get_filters_for_instance(), **kwargs})
         settings_fnc = setting.get(reference, None)
 
         # Execute if callable
@@ -206,14 +253,13 @@ class BaseInvenTreeSetting(models.Model):
 
     def save_to_cache(self):
         """Save this setting object to cache"""
-
         ckey = self.cache_key
 
         # skip saving to cache if no pk is set
         if self.pk is None:
             return
 
-        logger.debug(f"Saving setting '{ckey}' to cache")
+        logger.debug("Saving setting '%s' to cache", ckey)
 
         try:
             cache.set(
@@ -234,7 +280,6 @@ class BaseInvenTreeSetting(models.Model):
         - The unique KEY string
         - Any key:value kwargs associated with the particular setting type (e.g. user-id)
         """
-
         key = f"{str(cls.__name__)}:{setting_key}"
 
         for k, v in kwargs.items():
@@ -359,8 +404,7 @@ class BaseInvenTreeSetting(models.Model):
 
         if settings is not None and key in settings:
             return settings[key]
-        else:
-            return {}
+        return {}
 
     @classmethod
     def get_setting_name(cls, key, **kwargs):
@@ -413,8 +457,7 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(default):
             return default()
-        else:
-            return default
+        return default
 
     @classmethod
     def get_setting_choices(cls, key, **kwargs):
@@ -448,6 +491,17 @@ class BaseInvenTreeSetting(models.Model):
             **cls.get_filters(**kwargs),
         }
 
+        # Unless otherwise specified, attempt to create the setting
+        create = kwargs.pop('create', True)
+
+        # Prevent saving to the database during data import
+        if InvenTree.ready.isImportingData():
+            create = False
+
+        # Prevent saving to the database during migrations
+        if InvenTree.ready.isRunningMigrations():
+            create = False
+
         # Perform cache lookup by default
         do_cache = kwargs.pop('cache', True)
 
@@ -470,14 +524,11 @@ class BaseInvenTreeSetting(models.Model):
             setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
-        except (IntegrityError, OperationalError):
+        except (IntegrityError, OperationalError, ProgrammingError):
             setting = None
 
         # Setting does not exist! (Try to create it)
         if not setting:
-
-            # Unless otherwise specified, attempt to create the setting
-            create = kwargs.pop('create', True)
 
             # Prevent creation of new settings objects when importing data
             if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True, allow_shell=True):
@@ -498,7 +549,7 @@ class BaseInvenTreeSetting(models.Model):
                     # Wrap this statement in "atomic", so it can be rolled back if it fails
                     with transaction.atomic():
                         setting.save(**kwargs)
-                except (IntegrityError, OperationalError):
+                except (IntegrityError, OperationalError, ProgrammingError):
                     # It might be the case that the database isn't created yet
                     pass
                 except ValidationError:
@@ -555,6 +606,8 @@ class BaseInvenTreeSetting(models.Model):
         if change_user is not None and not change_user.is_staff:
             return
 
+        attempts = int(kwargs.get('attempts', 3))
+
         filters = {
             'key__iexact': key,
 
@@ -575,12 +628,26 @@ class BaseInvenTreeSetting(models.Model):
         if setting.is_bool():
             value = InvenTree.helpers.str2bool(value)
 
-        setting.value = str(value)
-        setting.save()
+        try:
+            setting.value = str(value)
+            setting.save()
+        except ValidationError as exc:
+            # We need to know about validation errors
+            raise exc
+        except IntegrityError:
+            # Likely a race condition has caused a duplicate entry to be created
+            if attempts > 0:
+                # Try again
+                logger.info("Duplicate setting key '%s' for %s - trying again", key, str(cls))
+                cls.set_setting(key, value, change_user, create=create, attempts=attempts - 1, **kwargs)
+        except Exception as exc:
+            # Some other error
+            logger.exception("Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc)))
+            pass
 
     key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive)'))
 
-    value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
+    value = models.CharField(max_length=2000, blank=True, unique=False, help_text=_('Settings value'))
 
     @property
     def name(self):
@@ -602,7 +669,7 @@ class BaseInvenTreeSetting(models.Model):
         """Return units for setting."""
         return self.__class__.get_setting_units(self.key, **self.get_filters_for_instance())
 
-    def clean(self, **kwargs):
+    def clean(self):
         """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
         super().clean()
 
@@ -613,7 +680,7 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+        validator = self.__class__.get_setting_validator(self.key, **self.get_filters_for_instance())
 
         if validator is not None:
             self.run_validator(validator)
@@ -755,19 +822,19 @@ class BaseInvenTreeSetting(models.Model):
         try:
             (app, mdl) = model_name.strip().split('.')
         except ValueError:
-            logger.error(f"Invalid 'model' parameter for setting {self.key} : '{model_name}'")
+            logger.exception("Invalid 'model' parameter for setting '%s': '%s'", self.key, model_name)
             return None
 
         app_models = apps.all_models.get(app, None)
 
         if app_models is None:
-            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no app named '{app}'")
+            logger.error("Error retrieving model class '%s' for setting '%s' - no app named '%s'", model_name, self.key, app)
             return None
 
         model = app_models.get(mdl, None)
 
         if model is None:
-            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no model named '{mdl}'")
+            logger.error("Error retrieving model class '%s' for setting '%s' - no model named '%s'", model_name, self.key, mdl)
             return None
 
         # Looks like we have found a model!
@@ -820,9 +887,7 @@ class BaseInvenTreeSetting(models.Model):
 
         elif self.is_model():
             return 'related field'
-
-        else:
-            return 'string'
+        return 'string'
 
     @classmethod
     def validator_is_bool(cls, validator):
@@ -925,16 +990,37 @@ def validate_email_domains(setting):
             raise ValidationError(_(f'Invalid domain name: {domain}'))
 
 
+def currency_exchange_plugins():
+    """Return a set of plugin choices which can be used for currency exchange"""
+    try:
+        from plugin import registry
+        plugs = registry.with_mixin('currencyexchange', active=True)
+    except Exception:
+        plugs = []
+
+    return [
+        ('', _('No plugin')),
+    ] + [(plug.slug, plug.human_name) for plug in plugs]
+
+
 def update_exchange_rates(setting):
     """Update exchange rates when base currency is changed"""
-
     if InvenTree.ready.isImportingData():
         return
 
     if not InvenTree.ready.canAppAccessDatabase():
         return
 
-    InvenTree.tasks.update_exchange_rates()
+    InvenTree.tasks.update_exchange_rates(force=True)
+
+
+def reload_plugin_registry(setting):
+    """When a core plugin setting is changed, reload the plugin registry"""
+    from plugin import registry
+
+    logger.info("Reloading plugin registry due to change in setting '%s'", setting.key)
+
+    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
 
 class InvenTreeSetting(BaseInvenTreeSetting):
@@ -986,6 +1072,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'hidden': True,
         },
 
+        '_PENDING_MIGRATIONS': {
+            'name': _('Pending migrations'),
+            'description': _('Number of pending database migrations'),
+            'default': 0,
+            'validator': int,
+        },
+
         'INVENTREE_INSTANCE': {
             'name': _('Server Instance Name'),
             'default': 'InvenTree',
@@ -1016,7 +1109,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_BASE_URL': {
             'name': _('Base URL'),
             'description': _('Base URL for server instance'),
-            'validator': EmptyURLValidator(),
+            'validator': BaseURLValidator(),
             'default': '',
             'after_save': update_instance_url,
         },
@@ -1027,6 +1120,24 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'USD',
             'choices': CURRENCY_CHOICES,
             'after_save': update_exchange_rates,
+        },
+
+        'CURRENCY_UPDATE_INTERVAL': {
+            'name': _('Currency Update Interval'),
+            'description': _('How often to update exchange rates (set to zero to disable)'),
+            'default': 1,
+            'units': _('days'),
+            'validator': [
+                int,
+                MinValueValidator(0),
+            ],
+        },
+
+        'CURRENCY_UPDATE_PLUGIN': {
+            'name': _('Currency Update Plugin'),
+            'description': _('Currency update plugin to use'),
+            'choices': currency_exchange_plugins,
+            'default': 'inventreecurrencyexchange'
         },
 
         'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -1135,7 +1246,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
-            'description': _('Enable barcode scanner support'),
+            'description': _('Enable barcode scanner support in the web interface'),
             'default': True,
             'validator': bool,
         },
@@ -1438,11 +1549,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Page Size'),
             'description': _('Default page size for PDF reports'),
             'default': 'A4',
-            'choices': [
-                ('A4', 'A4'),
-                ('Legal', 'Legal'),
-                ('Letter', 'Letter')
-            ],
+            'choices': report.helpers.report_page_size_options,
         },
 
         'REPORT_ENABLE_TEST_REPORT': {
@@ -1690,7 +1797,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to add URL routes'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         'ENABLE_PLUGINS_NAVIGATION': {
@@ -1698,7 +1805,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to integrate into navigation'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         'ENABLE_PLUGINS_APP': {
@@ -1706,7 +1813,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to add apps'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         'ENABLE_PLUGINS_SCHEDULE': {
@@ -1714,7 +1821,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to run scheduled tasks'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         'ENABLE_PLUGINS_EVENTS': {
@@ -1722,7 +1829,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to respond to internal events'),
             'default': False,
             'validator': bool,
-            'requires_restart': True,
+            'after_save': reload_plugin_registry,
         },
 
         "PROJECT_CODES_ENABLED": {
@@ -1788,13 +1895,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         if options:
             return options.get('requires_restart', False)
-        else:
-            return False
+        return False
 
 
 def label_printer_options():
     """Build a list of available label printer options."""
-    printers = [('', _('No Printer (Export to PDF)'))]
+    printers = []
     label_printer_plugins = registry.with_mixin('labels')
     if label_printer_plugins:
         printers.extend([(p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins])
@@ -2189,6 +2295,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'NOTIFICATION_ERROR_REPORT': {
+            'name': _('Receive error reports'),
+            'description': _('Receive notifications for system errors'),
+            'default': True,
+            'validator': bool,
+        }
+
     }
 
     typ = 'user'
@@ -2248,7 +2361,7 @@ class PriceBreak(MetaMixin):
         try:
             converted = convert_money(self.price, currency_code)
         except MissingRate:
-            logger.warning(f"No currency conversion rate available for {self.price_currency} -> {currency_code}")
+            logger.warning("No currency conversion rate available for %s -> %s", self.price_currency, currency_code)
             return self.price.amount
 
         return converted.amount
@@ -2320,8 +2433,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
     if pb_found:
         cost = pb_cost * quantity
         return InvenTree.helpers.normalize(cost + instance.base_cost)
-    else:
-        return None
+    return None
 
 
 class ColorTheme(models.Model):
@@ -2774,7 +2886,6 @@ class NewsFeedEntry(models.Model):
 
 def rename_notes_image(instance, filename):
     """Function for renaming uploading image file. Will store in the 'notes' directory."""
-
     fname = os.path.basename(filename)
     return os.path.join('notes', fname)
 
@@ -2794,3 +2905,88 @@ class NotesImage(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     date = models.DateTimeField(auto_now_add=True)
+
+
+class CustomUnit(models.Model):
+    """Model for storing custom physical unit definitions
+
+    Model Attributes:
+        name: Name of the unit
+        definition: Definition of the unit
+        symbol: Symbol for the unit (e.g. 'm' for 'metre') (optional)
+
+    Refer to the pint documentation for further information on unit definitions.
+    https://pint.readthedocs.io/en/stable/advanced/defining.html
+    """
+
+    def fmt_string(self):
+        """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'"""
+        fmt = f'{self.name} = {self.definition}'
+
+        if self.symbol:
+            fmt += f' = {self.symbol}'
+
+        return fmt
+
+    def clean(self):
+        """Validate that the provided custom unit is indeed valid"""
+        super().clean()
+
+        from InvenTree.conversion import get_unit_registry
+
+        registry = get_unit_registry()
+
+        # Check that the 'name' field is valid
+        self.name = self.name.strip()
+
+        # Cannot be zero length
+        if not self.name.isidentifier():
+            raise ValidationError({
+                'name': _('Unit name must be a valid identifier')
+            })
+
+        self.definition = self.definition.strip()
+
+        # Check that the 'definition' is valid, by itself
+        try:
+            registry.Quantity(self.definition)
+        except Exception as exc:
+            raise ValidationError({
+                'definition': str(exc)
+            })
+
+        # Finally, test that the entire custom unit definition is valid
+        try:
+            registry.define(self.fmt_string())
+        except Exception as exc:
+            raise ValidationError(str(exc))
+
+    name = models.CharField(
+        max_length=50,
+        verbose_name=_('Name'),
+        help_text=_('Unit name'),
+        unique=True, blank=False,
+    )
+
+    symbol = models.CharField(
+        max_length=10,
+        verbose_name=_('Symbol'),
+        help_text=_('Optional unit symbol'),
+        unique=True, blank=True,
+    )
+
+    definition = models.CharField(
+        max_length=50,
+        verbose_name=_('Definition'),
+        help_text=_('Unit definition'),
+        blank=False,
+    )
+
+
+@receiver(post_save, sender=CustomUnit, dispatch_uid='custom_unit_saved')
+@receiver(post_delete, sender=CustomUnit, dispatch_uid='custom_unit_deleted')
+def after_custom_unit_updated(sender, instance, **kwargs):
+    """Callback when a custom unit is updated or deleted"""
+    # Force reload of the unit registry
+    from InvenTree.conversion import reload_unit_registry
+    reload_unit_registry()

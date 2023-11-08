@@ -22,9 +22,7 @@
         {{ setting.description }}
     </td>
     <td>
-        {% if setting.protected %}
-        <span style='color: red;'>***</span> <span class='fas fa-lock icon-red'></span>
-        {% elif setting.is_bool %}
+        {% if setting.is_bool %}
         {% include "InvenTree/settings/setting_boolean.html" %}
         {% else %}
         <div id='setting-{{ setting.pk }}'>
@@ -32,7 +30,9 @@
                 {% if setting.value == '' %}
                 <em style='color: #855;'>{% trans "No value set" %}</em>
                 {% else %}
-                {% if setting.is_choice %}
+                {% if setting.protected %}
+                <strong><span style='color: red;'>***</span> <span class='fas fa-lock icon-red'></span></strong>
+                {% elif setting.is_choice %}
                 <strong>{{ setting.as_choice }}</strong>
                 {% else %}
                 <strong>{{ setting.value }}</strong>

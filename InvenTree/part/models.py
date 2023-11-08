@@ -41,6 +41,7 @@ import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
 import part.settings as part_settings
+import users.models
 from build import models as BuildModels
 from common.models import InvenTreeSetting
 from common.settings import currency_code_default
@@ -71,55 +72,23 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         default_keywords: Default keywords for parts created in this category
     """
 
+    ITEM_PARENT_KEY = 'category'
+
     class Meta:
         """Metaclass defines extra model properties"""
         verbose_name = _("Part Category")
         verbose_name_plural = _("Part Categories")
-
-    def delete_recursive(self, *args, **kwargs):
-        """This function handles the recursive deletion of subcategories depending on kwargs contents"""
-        delete_parts = kwargs.get('delete_parts', False)
-        parent_category = kwargs.get('parent_category', None)
-
-        if parent_category is None:
-            # First iteration, (no part_category kwargs passed)
-            parent_category = self.parent
-
-        for child_part in self.parts.all():
-            if delete_parts:
-                child_part.delete()
-            else:
-                child_part.category = parent_category
-                child_part.save()
-
-        for child_category in self.children.all():
-            if kwargs.get('delete_child_categories', False):
-                child_category.delete_recursive(**{
-                    "delete_child_categories": True,
-                    "delete_parts": delete_parts,
-                    "parent_category": parent_category})
-            else:
-                child_category.parent = parent_category
-                child_category.save()
-
-        super().delete(*args, **{})
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
 
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
-        with transaction.atomic():
-            self.delete_recursive(**{
-                "delete_parts": kwargs.get('delete_parts', False),
-                "delete_child_categories": kwargs.get('delete_child_categories', False),
-                "parent_category": self.parent})
 
-            if self.parent is not None:
-                # Partially rebuild the tree (cheaper than a complete rebuild)
-                PartCategory.objects.partial_rebuild(self.tree_id)
-            else:
-                PartCategory.objects.rebuild()
+        super().delete(
+            delete_children=kwargs.get('delete_child_categories', False),
+            delete_items=kwargs.get('delete_parts', False),
+        )
 
     default_location = TreeForeignKey(
         'stock.StockLocation', related_name="default_categories",
@@ -187,6 +156,10 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     def item_count(self):
         """Return the number of parts contained in this PartCategory"""
         return self.partcount()
+
+    def get_items(self, cascade=False):
+        """Return a queryset containing the parts which exist in this category"""
+        return self.get_parts(cascade=cascade)
 
     def partcount(self, cascade=True, active=False):
         """Return the total part count under this category (including children of child categories)."""
@@ -379,7 +352,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         notes: Additional notes field for this part
         creation_date: Date that this part was added to the database
         creation_user: User who added this part to the database
-        responsible: User who is responsible for this part (optional)
+        responsible_owner: Owner (either user or group) which is responsible for this part (optional)
         last_stocktake: Date at which last stocktake was performed for this Part
     """
 
@@ -453,7 +426,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         If the part image has been updated, then check if the "old" (previous) image is still used by another part.
         If not, it is considered "orphaned" and will be deleted.
         """
-
         if self.pk:
             try:
                 previous = Part.objects.get(pk=self.pk)
@@ -465,7 +437,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                     n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
 
                     if n_refs == 0:
-                        logger.info(f"Deleting unused image file '{previous.image}'")
+                        logger.info("Deleting unused image file '%s'", previous.image)
                         previous.image.delete(save=False)
             except Part.DoesNotExist:
                 pass
@@ -511,17 +483,18 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         This will fail if:
 
         a) The parent part is the same as this one
-        b) The parent part is used in the BOM for *this* part
-        c) The parent part is used in the BOM for any child parts under this one
+        b) The parent part exists in the same variant tree as this one
+        c) The parent part is used in the BOM for *this* part
+        d) The parent part is used in the BOM for any child parts under this one
         """
         result = True
 
         try:
             if self.pk == parent.pk:
-                raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                    p1=str(self),
-                    p2=str(parent)
-                )})
+                raise ValidationError({'sub_part': _(f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)")})
+
+            if self.tree_id == parent.tree_id:
+                raise ValidationError({'sub_part': _(f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)")})
 
             bom_items = self.get_bom_items()
 
@@ -530,10 +503,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
                 # Check for simple match
                 if item.sub_part == parent:
-                    raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                        p1=str(parent),
-                        p2=str(self)
-                    )})
+                    raise ValidationError({'sub_part': _(f"Part '{parent}' is  used in BOM for '{self}' (recursive)")})
 
                 # And recursively check too
                 if recursive:
@@ -556,7 +526,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         This function is exposed to any Validation plugins, and thus can be customized.
         """
-
         from plugin.registry import registry
 
         for plugin in registry.with_mixin('validation'):
@@ -579,7 +548,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         - Validation is handled by custom plugins
         - By default, no validation checks are performed
         """
-
         from plugin.registry import registry
 
         for plugin in registry.with_mixin('validation'):
@@ -602,7 +570,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             match = re.search(pattern, self.IPN)
 
             if match is None:
-                raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
+                raise ValidationError(_(f'IPN must match regex pattern {pattern}'))
 
     def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False, **kwargs):
         """Validate a serial number against this Part instance.
@@ -626,7 +594,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         Raises:
             ValidationError if serial number is invalid and raise_error = True
         """
-
         serial = str(serial).strip()
 
         # First, throw the serial number against each of the loaded validation plugins
@@ -682,7 +649,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     def find_conflicting_serial_numbers(self, serials: list):
         """For a provided list of serials, return a list of those which are conflicting."""
-
         conflicts = []
 
         for serial in serials:
@@ -704,7 +670,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         Returns:
             The latest serial number specified for this part, or None
         """
-
         stock = StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
 
         # Generate a query for any stock items for this part variant tree with non-empty serial numbers
@@ -748,7 +713,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         except Exception as attr_err:
 
-            logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
+            logger.warning("exception while trying to create full name for part %s: %s", self.name, attr_err)
 
             # Fallback to default format
             elements = []
@@ -771,15 +736,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """Return the URL of the image for this part."""
         if self.image:
             return helpers.getMediaUrl(self.image.url)
-        else:
-            return helpers.getBlankImage()
+        return helpers.getBlankImage()
 
     def get_thumbnail_url(self):
         """Return the URL of the image thumbnail for this part."""
         if self.image:
             return helpers.getMediaUrl(self.image.thumbnail.url)
-        else:
-            return helpers.getBlankThumbnail()
+        return helpers.getBlankThumbnail()
 
     def validate_unique(self, exclude=None):
         """Validate that this Part instance is 'unique'.
@@ -979,7 +942,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         help_text=_('Expiry time (in days) for stock items of this part'),
     )
 
-    minimum_stock = models.PositiveIntegerField(
+    minimum_stock = models.DecimalField(
+        max_digits=19, decimal_places=6,
         default=0, validators=[MinValueValidator(0)],
         verbose_name=_('Minimum Stock'),
         help_text=_('Minimum allowed stock level')
@@ -1043,7 +1007,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
-    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), help_text=_('User responsible for this part'), related_name='parts_responible')
+    responsible_owner = models.ForeignKey(
+        users.models.Owner, on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Responsible'),
+        help_text=_('Owner responsible for this part'),
+        related_name='parts_responsible'
+    )
 
     last_stocktake = models.DateField(
         blank=True, null=True,
@@ -1236,7 +1206,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     @property
     def can_build(self):
         """Return the number of units that can be build with available stock."""
-
         import part.filters
 
         # If this part does NOT have a BOM, result is simply the currently available stock
@@ -1435,7 +1404,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     def allocation_count(self, **kwargs):
         """Return the total quantity of stock allocated for this part, against both build orders and sales orders."""
-
         if self.id is None:
             # If this instance has not been saved, foreign-key lookups will fail
             return 0
@@ -1561,7 +1529,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         So we construct a query for each case, and combine them...
         """
-
         # Cache all *parent* parts
         try:
             parents = self.get_ancestors(include_self=False)
@@ -1598,7 +1565,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         Includes consideration of inherited BOMs
         """
-
         # Grab a queryset of all BomItem objects which "require" this part
         bom_items = BomItem.objects.filter(
             self.get_used_in_bom_item_filter(
@@ -1737,7 +1703,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     def update_pricing(self):
         """Recalculate cached pricing for this Part instance"""
-
         self.pricing.update_pricing()
 
     @property
@@ -1747,7 +1712,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         If there is no PartPricing database entry defined for this Part,
         it will first be created, and then returned.
         """
-
         try:
             pricing = PartPricing.objects.get(part=self)
         except PartPricing.DoesNotExist:
@@ -1767,7 +1731,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             create: Whether or not a new PartPricing object should be created if it does not already exist
             test: Whether or not the pricing update is allowed during unit tests
         """
-
         try:
             self.refresh_from_db()
         except Part.DoesNotExist:
@@ -1806,7 +1769,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         min_price = normalize(min_price)
         max_price = normalize(max_price)
 
-        return "{a} - {b}".format(a=min_price, b=max_price)
+        return f"{min_price} - {max_price}"
 
     def get_supplier_price_range(self, quantity=1):
         """Return the supplier price range of this part:
@@ -1857,7 +1820,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         for item in self.get_bom_items().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
-                logger.warning(f"WARNING: BomItem ID {item.pk} contains itself in BOM")
+                logger.warning("WARNING: BomItem ID %s contains itself in BOM", item.pk)
                 continue
 
             q = decimal.Decimal(quantity)
@@ -1918,12 +1881,10 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         elif bom_price_range is None:
             return buy_price_range
-
-        else:
-            return (
-                min(buy_price_range[0], bom_price_range[0]),
-                max(buy_price_range[1], bom_price_range[1])
-            )
+        return (
+            min(buy_price_range[0], bom_price_range[0]),
+            max(buy_price_range[1], bom_price_range[1])
+        )
 
     base_cost = models.DecimalField(max_digits=19, decimal_places=6, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
@@ -2035,10 +1996,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             if bom_item.part in my_ancestors and bom_item.inherited:
                 continue
 
-            # Skip if already exists
-            if BomItem.objects.filter(part=self, sub_part=bom_item.sub_part).exists():
-                continue
-
             # Skip (or throw error) if BomItem is not valid
             if not bom_item.sub_part.check_add_to_bom(self, raise_error=raise_error):
                 continue
@@ -2105,7 +2062,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     def getTestTemplateMap(self, **kwargs):
         """Return a map of all test templates associated with this Part"""
-
         templates = {}
 
         for template in self.getTestTemplates(**kwargs):
@@ -2163,7 +2119,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         Note that some supplier parts may have a different pack_quantity attribute,
         and this needs to be taken into account!
         """
-
         quantity = 0
 
         # Iterate through all supplier parts
@@ -2216,7 +2171,6 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     @property
     def latest_stocktake(self):
         """Return the latest PartStocktake object associated with this part (if one exists)"""
-
         return self.stocktakes.order_by('-pk').first()
 
     @property
@@ -2354,10 +2308,11 @@ class PartPricing(common.models.MetaMixin):
     - Detailed pricing information is very context specific in any case
     """
 
+    price_modified = False
+
     @property
     def is_valid(self):
         """Return True if the cached pricing is valid"""
-
         return self.updated is not None
 
     def convert(self, money):
@@ -2365,7 +2320,6 @@ class PartPricing(common.models.MetaMixin):
 
         If a MissingRate error is raised, ignore it and return None
         """
-
         if money is None:
             return None
 
@@ -2374,14 +2328,13 @@ class PartPricing(common.models.MetaMixin):
         try:
             result = convert_money(money, target_currency)
         except MissingRate:
-            logger.warning(f"No currency conversion rate available for {money.currency} -> {target_currency}")
+            logger.warning("No currency conversion rate available for %s -> %s", money.currency, target_currency)
             result = None
 
         return result
 
     def schedule_for_update(self, counter: int = 0, test: bool = False):
         """Schedule this pricing to be updated"""
-
         import InvenTree.ready
 
         # If we are running within CI, only schedule the update if the test flag is set
@@ -2405,7 +2358,7 @@ class PartPricing(common.models.MetaMixin):
                 self.refresh_from_db()
         except (PartPricing.DoesNotExist, IntegrityError):
             # Error thrown if this PartPricing instance has already been removed
-            logger.warning(f"Error refreshing PartPricing instance for part '{self.part}'")
+            logger.warning("Error refreshing PartPricing instance for part '%s'", self.part)
             return
 
         # Ensure that the referenced part still exists in the database
@@ -2413,12 +2366,12 @@ class PartPricing(common.models.MetaMixin):
             p = self.part
             p.refresh_from_db()
         except IntegrityError:
-            logger.error(f"Could not update PartPricing as Part '{self.part}' does not exist")
+            logger.exception("Could not update PartPricing as Part '%s' does not exist", self.part)
             return
 
         if self.scheduled_for_update:
             # Ignore if the pricing is already scheduled to be updated
-            logger.debug(f"Pricing for {p} already scheduled for update - skipping")
+            logger.debug("Pricing for %s already scheduled for update - skipping", p)
             return
 
         if counter > 25:
@@ -2431,7 +2384,7 @@ class PartPricing(common.models.MetaMixin):
             self.save()
         except IntegrityError:
             # An IntegrityError here likely indicates that the referenced part has already been deleted
-            logger.error(f"Could not save PartPricing for part '{self.part}' to the database")
+            logger.exception("Could not save PartPricing for part '%s' to the database", self.part)
             return
 
         import part.tasks as part_tasks
@@ -2447,7 +2400,6 @@ class PartPricing(common.models.MetaMixin):
 
     def update_pricing(self, counter: int = 0, cascade: bool = True):
         """Recalculate all cost data for the referenced Part instance"""
-
         # If importing data, skip pricing update
         if InvenTree.ready.isImportingData():
             return
@@ -2480,13 +2432,12 @@ class PartPricing(common.models.MetaMixin):
             pass
 
         # Update parent assemblies and templates
-        if cascade:
+        if cascade and self.price_modified:
             self.update_assemblies(counter)
             self.update_templates(counter)
 
     def update_assemblies(self, counter: int = 0):
         """Schedule updates for any assemblies which use this part"""
-
         # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
         used_in_parts = self.part.get_used_in()
 
@@ -2495,7 +2446,6 @@ class PartPricing(common.models.MetaMixin):
 
     def update_templates(self, counter: int = 0):
         """Schedule updates for any template parts above this part"""
-
         templates = self.part.get_ancestors(include_self=False)
 
         for p in templates:
@@ -2503,7 +2453,6 @@ class PartPricing(common.models.MetaMixin):
 
     def save(self, *args, **kwargs):
         """Whenever pricing model is saved, automatically update overall prices"""
-
         # Update the currency which was used to perform the calculation
         self.currency = currency_code_default()
 
@@ -2525,7 +2474,6 @@ class PartPricing(common.models.MetaMixin):
 
         Note: The cumulative costs are calculated based on the specified default currency
         """
-
         if not self.part.assembly:
             # Not an assembly - no BOM pricing
             self.bom_cost_min = None
@@ -2580,6 +2528,9 @@ class PartPricing(common.models.MetaMixin):
 
                 any_max_elements = True
 
+        old_bom_cost_min = self.bom_cost_min
+        old_bom_cost_max = self.bom_cost_max
+
         if any_min_elements:
             self.bom_cost_min = cumulative_min
         else:
@@ -2590,6 +2541,9 @@ class PartPricing(common.models.MetaMixin):
         else:
             self.bom_cost_max = None
 
+        if old_bom_cost_min != self.bom_cost_min or old_bom_cost_max != self.bom_cost_max:
+            self.price_modified = True
+
         if save:
             self.save()
 
@@ -2598,7 +2552,6 @@ class PartPricing(common.models.MetaMixin):
 
         Purchase history only takes into account "completed" purchase orders.
         """
-
         # Find all line items for completed orders which reference this part
         line_items = OrderModels.PurchaseOrderLineItem.objects.filter(
             order__status=PurchaseOrderStatus.COMPLETE.value,
@@ -2654,6 +2607,9 @@ class PartPricing(common.models.MetaMixin):
                 if purchase_max is None or cost > purchase_max:
                     purchase_max = cost
 
+        if self.purchase_cost_min != purchase_min or self.purchase_cost_max != purchase_max:
+            self.price_modified = True
+
         self.purchase_cost_min = purchase_min
         self.purchase_cost_max = purchase_max
 
@@ -2662,7 +2618,6 @@ class PartPricing(common.models.MetaMixin):
 
     def update_internal_cost(self, save=True):
         """Recalculate internal cost for the referenced Part instance"""
-
         min_int_cost = None
         max_int_cost = None
 
@@ -2681,6 +2636,9 @@ class PartPricing(common.models.MetaMixin):
                 if max_int_cost is None or cost > max_int_cost:
                     max_int_cost = cost
 
+        if self.internal_cost_min != min_int_cost or self.internal_cost_max != max_int_cost:
+            self.price_modified = True
+
         self.internal_cost_min = min_int_cost
         self.internal_cost_max = max_int_cost
 
@@ -2693,7 +2651,6 @@ class PartPricing(common.models.MetaMixin):
         - The limits are simply the lower and upper bounds of available SupplierPriceBreaks
         - We do not take "quantity" into account here
         """
-
         min_sup_cost = None
         max_sup_cost = None
 
@@ -2720,6 +2677,9 @@ class PartPricing(common.models.MetaMixin):
                     if max_sup_cost is None or cost > max_sup_cost:
                         max_sup_cost = cost
 
+        if self.supplier_price_min != min_sup_cost or self.supplier_price_max != max_sup_cost:
+            self.price_modified = True
+
         self.supplier_price_min = min_sup_cost
         self.supplier_price_max = max_sup_cost
 
@@ -2731,7 +2691,6 @@ class PartPricing(common.models.MetaMixin):
 
         Here we track the min/max costs of any variant parts.
         """
-
         variant_min = None
         variant_max = None
 
@@ -2757,6 +2716,9 @@ class PartPricing(common.models.MetaMixin):
                     if variant_max is None or v_max > variant_max:
                         variant_max = v_max
 
+        if self.variant_cost_min != variant_min or self.variant_cost_max != variant_max:
+            self.price_modified = True
+
         self.variant_cost_min = variant_min
         self.variant_cost_max = variant_max
 
@@ -2768,7 +2730,6 @@ class PartPricing(common.models.MetaMixin):
 
         Here we simply take the minimum / maximum values of the other calculated fields.
         """
-
         overall_min = None
         overall_max = None
 
@@ -2834,7 +2795,6 @@ class PartPricing(common.models.MetaMixin):
 
     def update_sale_cost(self, save=True):
         """Recalculate sale cost data"""
-
         # Iterate through the sell price breaks
         min_sell_price = None
         max_sell_price = None
@@ -2880,6 +2840,9 @@ class PartPricing(common.models.MetaMixin):
 
             if max_sell_history is None or cost > max_sell_history:
                 max_sell_history = cost
+
+        if self.sale_history_min != min_sell_history or self.sale_history_max != max_sell_history:
+            self.price_modified = True
 
         self.sale_history_min = min_sell_history
         self.sale_history_max = max_sell_history
@@ -3071,7 +3034,6 @@ class PartStocktake(models.Model):
 @receiver(post_save, sender=PartStocktake, dispatch_uid='post_save_stocktake')
 def update_last_stocktake(sender, instance, created, **kwargs):
     """Callback function when a PartStocktake instance is created / edited"""
-
     # When a new PartStocktake instance is create, update the last_stocktake date for the Part
     if created:
         try:
@@ -3084,7 +3046,6 @@ def update_last_stocktake(sender, instance, created, **kwargs):
 
 def save_stocktake_report(instance, filename):
     """Save stocktake reports to the correct subdirectory"""
-
     filename = os.path.basename(filename)
     return os.path.join('stocktake', 'report', filename)
 
@@ -3114,8 +3075,7 @@ class PartStocktakeReport(models.Model):
         """Return the URL for the associaed report file for download"""
         if self.report:
             return self.report.url
-        else:
-            return None
+        return None
 
     date = models.DateField(
         verbose_name=_('Date'),
@@ -3368,7 +3328,7 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         """Return a string representation of a PartParameterTemplate instance"""
         s = str(self.name)
         if self.units:
-            s += " ({units})".format(units=self.units)
+            s += f" ({self.units})"
         return s
 
     def clean(self):
@@ -3377,7 +3337,6 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         - A 'checkbox' field cannot have 'choices' set
         - A 'checkbox' field cannot have 'units' set
         """
-
         super().clean()
 
         # Check that checkbox parameters do not have units or choices
@@ -3430,7 +3389,6 @@ class PartParameterTemplate(MetadataMixin, models.Model):
 
     def get_choices(self):
         """Return a list of choices for this parameter template"""
-
         if not self.choices:
             return []
 
@@ -3476,7 +3434,6 @@ class PartParameterTemplate(MetadataMixin, models.Model):
 @receiver(post_save, sender=PartParameterTemplate, dispatch_uid='post_save_part_parameter_template')
 def post_save_part_parameter_template(sender, instance, created, **kwargs):
     """Callback function when a PartParameterTemplate is created or saved"""
-
     import part.tasks as part_tasks
 
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
@@ -3511,16 +3468,10 @@ class PartParameter(MetadataMixin, models.Model):
 
     def __str__(self):
         """String representation of a PartParameter (used in the admin interface)"""
-        return "{part} : {param} = {data} ({units})".format(
-            part=str(self.part.full_name),
-            param=str(self.template.name),
-            data=str(self.data),
-            units=str(self.template.units)
-        )
+        return f"{self.part.full_name} : {self.template.name} = {self.data} ({self.template.units})"
 
     def save(self, *args, **kwargs):
         """Custom save method for the PartParameter model."""
-
         # Validate the PartParameter before saving
         self.calculate_numeric_value()
 
@@ -3533,7 +3484,6 @@ class PartParameter(MetadataMixin, models.Model):
 
     def clean(self):
         """Validate the PartParameter before saving to the database."""
-
         super().clean()
 
         # Validate the parameter data against the template units
@@ -3577,11 +3527,9 @@ class PartParameter(MetadataMixin, models.Model):
         - If a 'units' field is provided, then the data will be converted to the base SI unit.
         - Otherwise, we'll try to do a simple float cast
         """
-
         if self.template.units:
             try:
-                converted = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
-                self.data_numeric = float(converted.magnitude)
+                self.data_numeric = InvenTree.conversion.convert_physical_value(self.data, self.template.units)
             except (ValidationError, ValueError):
                 self.data_numeric = None
 
@@ -3663,8 +3611,7 @@ class PartCategoryParameterTemplate(MetadataMixin, models.Model):
         """String representation of a PartCategoryParameterTemplate (admin interface)."""
         if self.default_value:
             return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
-        else:
-            return f'{self.category.name} | {self.parameter_template.name}'
+        return f'{self.category.name} | {self.parameter_template.name}'
 
     category = models.ForeignKey(PartCategory,
                                  on_delete=models.CASCADE,
@@ -3744,15 +3691,23 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
 
     def __str__(self):
         """Return a string representation of this BomItem instance"""
-        return "{n} x {child} to make {parent}".format(
-            parent=self.part.full_name,
-            child=self.sub_part.full_name,
-            n=decimal2string(self.quantity))
+        return f"{decimal2string(self.quantity)} x {self.sub_part.full_name} to make {self.part.full_name}"
 
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the BomItem model"""
         return reverse('api-bom-list')
+
+    def get_assemblies(self):
+        """Return a list of assemblies which use this BomItem"""
+        assemblies = [self.part]
+
+        if self.inherited:
+            assemblies += list(
+                self.part.get_descendants(include_self=False)
+            )
+
+        return assemblies
 
     def get_valid_parts_for_allocation(self, allow_variants=True, allow_substitutes=True):
         """Return a list of valid parts which can be allocated against this BomItem.
@@ -4050,7 +4005,18 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         pmin = decimal2money(pmin)
         pmax = decimal2money(pmax)
 
-        return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+        return f"{pmin} to {pmax}"
+
+
+@receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')
+def update_bom_build_lines(sender, instance, created, **kwargs):
+    """Update existing build orders when a BomItem is created or edited"""
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+        import build.tasks
+        InvenTree.tasks.offload_task(
+            build.tasks.update_build_order_lines,
+            instance.pk
+        )
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='post_save_bom_item')
@@ -4058,7 +4024,6 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
 @receiver(post_save, sender=PartInternalPriceBreak, dispatch_uid='post_save_internal_price_break')
 def update_pricing_after_edit(sender, instance, created, **kwargs):
     """Callback function when a part price break is created or updated"""
-
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
         instance.part.schedule_pricing_update(create=True)
@@ -4069,7 +4034,6 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=PartInternalPriceBreak, dispatch_uid='post_delete_internal_price_break')
 def update_pricing_after_delete(sender, instance, **kwargs):
     """Callback function when a part price break is deleted"""
-
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
         instance.part.schedule_pricing_update(create=False)
@@ -4160,7 +4124,6 @@ class PartRelated(MetadataMixin, models.Model):
 
     def clean(self):
         """Overwrite clean method to check that relation is unique."""
-
         super().clean()
 
         if self.part_1 == self.part_2:

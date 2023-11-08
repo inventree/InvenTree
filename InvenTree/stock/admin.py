@@ -1,6 +1,7 @@
 """Admin for stock app."""
 
 from django.contrib import admin
+from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
 
 from import_export import widgets
@@ -14,7 +15,7 @@ from order.models import PurchaseOrder, SalesOrder
 from part.models import Part
 
 from .models import (StockItem, StockItemAttachment, StockItemTestResult,
-                     StockItemTracking, StockLocation)
+                     StockItemTracking, StockLocation, StockLocationType)
 
 
 class LocationResource(InvenTreeResource):
@@ -77,6 +78,23 @@ class LocationAdmin(ImportExportModelAdmin):
     ]
 
 
+class LocationTypeAdmin(admin.ModelAdmin):
+    """Admin class for StockLocationType."""
+
+    list_display = ('name', 'description', 'icon', 'location_count')
+    readonly_fields = ('location_count', )
+
+    def get_queryset(self, request):
+        """Annotate queryset to fetch location count."""
+        return super().get_queryset(request).annotate(
+            location_count=Count("stock_locations"),
+        )
+
+    def location_count(self, obj):
+        """Returns the number of locations this location type is assigned to."""
+        return obj.location_count
+
+
 class StockItemResource(InvenTreeResource):
     """Class for managing StockItem data import/export."""
 
@@ -132,7 +150,6 @@ class StockItemResource(InvenTreeResource):
 
     def dehydrate_purchase_price(self, item):
         """Render purchase pric as float"""
-
         if item.purchase_price is not None:
             return float(item.purchase_price.amount)
 
@@ -204,6 +221,7 @@ class StockItemTestResultAdmin(admin.ModelAdmin):
 
 
 admin.site.register(StockLocation, LocationAdmin)
+admin.site.register(StockLocationType, LocationTypeAdmin)
 admin.site.register(StockItem, StockItemAdmin)
 admin.site.register(StockItemTracking, StockTrackingAdmin)
 admin.site.register(StockItemAttachment, StockAttachmentAdmin)

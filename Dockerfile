@@ -58,7 +58,7 @@ RUN apk add --no-cache \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
     # SQLite support
     sqlite \
     # PostgreSQL support
@@ -84,7 +84,7 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
     fi
 
 RUN apk add --no-cache --virtual .build-deps \
-    gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev \
+    gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev openldap-dev \
     # Image format dev libs
     jpeg-dev openjpeg-dev libwebp-dev zlib-dev \
     # DB specific dev libs
@@ -97,6 +97,16 @@ COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
 RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/sh", "./init.sh"]
+
+# Frontend builder image:
+FROM inventree_base as frontend
+
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN yarn config set network-timeout 600000 -g
+COPY InvenTree ${INVENTREE_HOME}/InvenTree
+COPY src ${INVENTREE_HOME}/src
+COPY tasks.py ${INVENTREE_HOME}/tasks.py
+RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
 
 # InvenTree production image:
 # - Copies required files from local directory
@@ -111,6 +121,7 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
 # Copy source code
 COPY InvenTree ./InvenTree
+COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ./InvenTree/web/static/web
 
 # Launch the production server
 # TODO: Work out why environment variables cannot be interpolated in this command
@@ -119,6 +130,11 @@ CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./Inve
 
 
 FROM inventree_base as dev
+
+# Install nodejs / npm / yarn
+
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management

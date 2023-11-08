@@ -82,10 +82,11 @@ The HEAD of the "stable" branch represents the latest stable release code.
 ## Environment
 ### Target version
 We are currently targeting:
-| Name | Minimum version |
-|---|---|
-| Python | 3.9 |
-| Django | 3.2 |
+| Name | Minimum version | Note |
+|---|---| --- |
+| Python | 3.9 | |
+| Django | 3.2 | |
+| Node | 18 | Only needed for frontend development |
 
 ### Auto creating updates
 The following tools can be used to auto-upgrade syntax that was depreciated in new versions:
@@ -210,8 +211,11 @@ HTML and javascript files are passed through the django templating engine. Trans
 ```
 
 ## Github use
+
 ### Tags
+
 The tags describe issues and PRs in multiple areas:
+
 | Area | Name | Description |
 | --- | --- | --- |
 | Triage Labels |  |  |

@@ -10,7 +10,7 @@ from django.apps import AppConfig
 
 from maintenance_mode.core import set_maintenance_mode
 
-from InvenTree.ready import canAppAccessDatabase
+from InvenTree.ready import canAppAccessDatabase, isInMainThread
 from plugin import registry
 
 logger = logging.getLogger('inventree')
@@ -23,6 +23,10 @@ class PluginAppConfig(AppConfig):
 
     def ready(self):
         """The ready method is extended to initialize plugins."""
+        # skip loading if we run in a background thread
+        if not isInMainThread():
+            return
+
         if not canAppAccessDatabase(allow_test=True, allow_plugins=True):
             logger.info("Skipping plugin loading sequence")  # pragma: no cover
         else:
@@ -38,9 +42,8 @@ class PluginAppConfig(AppConfig):
                 except Exception:  # pragma: no cover
                     pass
 
-                # get plugins and init them
-                registry.plugin_modules = registry.collect_plugins()
-                registry.load_plugins()
+                # Perform a full reload of the plugin registry
+                registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
                 # drop out of maintenance
                 # makes sure we did not have an error in reloading and maintenance is still active

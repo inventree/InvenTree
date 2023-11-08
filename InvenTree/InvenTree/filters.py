@@ -15,7 +15,6 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         The following query params are available to 'augment' the search (in decreasing order of priority)
         - search_regex: If True, search is performed on 'regex' comparison
         """
-
         regex = InvenTree.helpers.str2bool(request.query_params.get('search_regex', False))
 
         search_fields = super().get_search_fields(view, request)
@@ -36,7 +35,6 @@ class InvenTreeSearchFilter(filters.SearchFilter):
 
         Depending on the request parameters, we may "augment" these somewhat
         """
-
         whole = InvenTree.helpers.str2bool(request.query_params.get('search_whole', False))
 
         terms = []

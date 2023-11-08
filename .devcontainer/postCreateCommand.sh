@@ -14,8 +14,9 @@ python3 -m venv dev/venv
 
 # setup InvenTree server
 pip install invoke
-invoke update
+invoke update --no-frontend
 invoke setup-dev
+invoke frontend-install
 
 # remove existing gitconfig created by "Avoiding Dubious Ownership" step
 # so that it gets copied from host to the container to have your global

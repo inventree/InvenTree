@@ -33,11 +33,23 @@ class SalesOrderTest(TestCase):
         cls.customer = Company.objects.create(name="ABC Co", description="My customer", is_customer=True)
 
         # Create a Part to ship
-        cls.part = Part.objects.create(name='Spanner', salable=True, description='A spanner that I sell')
+        cls.part = Part.objects.create(
+            name='Spanner',
+            salable=True,
+            description='A spanner that I sell',
+            is_template=True,
+        )
+        cls.variant = Part.objects.create(
+            name='Blue Spanner',
+            salable=True,
+            description='A blue spanner that I sell',
+            variant_of=cls.part,
+        )
 
         # Create some stock!
         cls.Sa = StockItem.objects.create(part=cls.part, quantity=100)
         cls.Sb = StockItem.objects.create(part=cls.part, quantity=200)
+        cls.Sc = StockItem.objects.create(part=cls.variant, quantity=100)
 
         # Create a SalesOrder to ship against
         cls.order = SalesOrder.objects.create(
@@ -60,7 +72,6 @@ class SalesOrderTest(TestCase):
 
     def test_so_reference(self):
         """Unit tests for sales order generation"""
-
         # Test that a good reference is created when we have no existing orders
         SalesOrder.objects.all().delete()
 
@@ -68,7 +79,6 @@ class SalesOrderTest(TestCase):
 
     def test_rebuild_reference(self):
         """Test that the 'reference_int' field gets rebuilt when the model is saved"""
-
         self.assertEqual(self.order.reference_int, 1234)
 
         self.order.reference = '999'
@@ -109,7 +119,6 @@ class SalesOrderTest(TestCase):
 
     def test_add_duplicate_line_item(self):
         """Adding a duplicate line item to a SalesOrder is accepted"""
-
         for ii in range(1, 5):
             SalesOrderLineItem.objects.create(order=self.order, part=self.part, quantity=ii)
 
@@ -145,6 +154,16 @@ class SalesOrderTest(TestCase):
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.allocated_quantity(), 50)
 
+    def test_allocate_variant(self):
+        """Allocate a variant of the designated item"""
+        SalesOrderAllocation.objects.create(
+            line=self.line,
+            shipment=self.shipment,
+            item=StockItem.objects.get(pk=self.Sc.pk),
+            quantity=50
+        )
+        self.assertEqual(self.line.allocated_quantity(), 50)
+
     def test_order_cancel(self):
         """Allocate line items then cancel the order"""
         self.allocate_stock(True)
@@ -166,8 +185,8 @@ class SalesOrderTest(TestCase):
     def test_complete_order(self):
         """Allocate line items, then ship the order"""
         # Assert some stuff before we run the test
-        # Initially there are two stock items
-        self.assertEqual(StockItem.objects.count(), 2)
+        # Initially there are three stock items
+        self.assertEqual(StockItem.objects.count(), 3)
 
         # Take 25 units from each StockItem
         self.allocate_stock(True)
@@ -194,15 +213,17 @@ class SalesOrderTest(TestCase):
         self.assertEqual(self.order.status, status.SalesOrderStatus.SHIPPED)
         self.assertIsNotNone(self.order.shipment_date)
 
-        # There should now be 4 stock items
-        self.assertEqual(StockItem.objects.count(), 4)
+        # There should now be 5 stock items
+        self.assertEqual(StockItem.objects.count(), 5)
 
         sa = StockItem.objects.get(pk=self.Sa.pk)
         sb = StockItem.objects.get(pk=self.Sb.pk)
+        sc = StockItem.objects.get(pk=self.Sc.pk)
 
-        # 25 units subtracted from each of the original items
+        # 25 units subtracted from each of the original non-variant items
         self.assertEqual(sa.quantity, 75)
         self.assertEqual(sb.quantity, 175)
+        self.assertEqual(sc.quantity, 100)
 
         # And 2 items created which are associated with the order
         outputs = StockItem.objects.filter(sales_order=self.order)
@@ -259,14 +280,12 @@ class SalesOrderTest(TestCase):
 
     def test_shipment_delivery(self):
         """Test the shipment delivery settings"""
-
         # Shipment delivery date should be empty before setting date
         self.assertIsNone(self.shipment.delivery_date)
         self.assertFalse(self.shipment.is_delivered())
 
     def test_overdue_notification(self):
         """Test overdue sales order notification"""
-
         self.order.created_by = get_user_model().objects.get(pk=3)
         self.order.responsible = Owner.create(obj=Group.objects.get(pk=2))
         self.order.target_date = datetime.now().date() - timedelta(days=1)
@@ -287,7 +306,6 @@ class SalesOrderTest(TestCase):
         - The responsible user should receive a notification
         - The creating user should *not* receive a notification
         """
-
         SalesOrder.objects.create(
             customer=self.customer,
             reference='1234567',

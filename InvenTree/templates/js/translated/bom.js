@@ -905,6 +905,18 @@ function loadBomTable(table, options={}) {
             title: '{% trans "Part" %}',
             sortable: true,
             switchable: false,
+            sorter: function(_valA, _valB, rowA, rowB) {
+                let name_a = rowA.sub_part_detail.full_name;
+                let name_b = rowB.sub_part_detail.full_name;
+
+                if (name_a > name_b) {
+                    return 1;
+                } else if (name_a < name_b) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            },
             formatter: function(value, row) {
                 var url = `/part/${row.sub_part}/`;
                 var html = '';
@@ -1094,6 +1106,11 @@ function loadBomTable(table, options={}) {
             for (var idx = 0; idx < data.length; idx++) {
 
                 var row = data[idx];
+
+                // Do not include pricing for items which are associated with sub-assemblies
+                if (row.parentId != parent_id) {
+                    continue;
+                }
 
                 // No pricing data available for this row
                 if (row.pricing_min == null && row.pricing_max == null) {

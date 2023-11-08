@@ -12,7 +12,8 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError
 
-from InvenTree.ready import canAppAccessDatabase
+from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
+                             isPluginRegistryLoaded)
 
 logger = logging.getLogger("inventree")
 
@@ -35,6 +36,10 @@ class LabelConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the label app is loaded."""
+        # skip loading if plugin registry is not loaded or we run in a background thread
+        if not isPluginRegistryLoaded() or not isInMainThread():
+            return
+
         if canAppAccessDatabase(allow_test=False):
 
             try:
@@ -136,7 +141,7 @@ class LabelConfig(AppConfig):
         )
 
         if not dst_dir.exists():
-            logger.info(f"Creating required directory: '{dst_dir}'")
+            logger.info("Creating required directory: '%s'", dst_dir)
             dst_dir.mkdir(parents=True, exist_ok=True)
 
         # Create labels
@@ -161,15 +166,15 @@ class LabelConfig(AppConfig):
             # File already exists - let's see if it is the "same"
 
             if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
-                logger.info(f"Hash differs for '{filename}'")
+                logger.info("Hash differs for '%s'", filename)
                 to_copy = True
 
         else:
-            logger.info(f"Label template '{filename}' is not present")
+            logger.info("Label template '%s' is not present", filename)
             to_copy = True
 
         if to_copy:
-            logger.info(f"Copying label template '{dst_file}'")
+            logger.info("Copying label template '%s'", dst_file)
             # Ensure destination dir exists
             dst_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -177,10 +182,13 @@ class LabelConfig(AppConfig):
             shutil.copyfile(src_file, dst_file)
 
         # Check if a label matching the template already exists
-        if model.objects.filter(label=filename).exists():
-            return  # pragma: no cover
+        try:
+            if model.objects.filter(label=filename).exists():
+                return  # pragma: no cover
+        except Exception:
+            logger.exception("Failed to query label for '%s' - you should run 'invoke update' first!", filename)
 
-        logger.info(f"Creating entry for {model} '{label['name']}'")
+        logger.info("Creating entry for %s '%s'", model, label['name'])
 
         try:
             model.objects.create(
@@ -193,4 +201,4 @@ class LabelConfig(AppConfig):
                 height=label['height'],
             )
         except Exception:
-            logger.warning(f"Failed to create label '{label['name']}'")
+            logger.warning("Failed to create label '%s'", label['name'])

@@ -12,9 +12,9 @@ from django.urls import Resolver404, include, re_path, resolve, reverse_lazy
 from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
                                     BaseRequire2FAMiddleware)
 from error_report.middleware import ExceptionProcessor
-from rest_framework.authtoken.models import Token
 
 from InvenTree.urls import frontendpatterns
+from users.models import ApiToken
 
 logger = logging.getLogger("inventree")
 
@@ -64,7 +64,7 @@ class AuthRequiredMiddleware(object):
             elif request.path_info.startswith('/accounts/'):
                 authorized = True
 
-            elif request.path_info.startswith('/platform/') or request.path_info == '/platform':
+            elif request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/') or request.path_info.startswith('/assets/') or request.path_info == f'/{settings.FRONTEND_URL_BASE}':
                 authorized = True
 
             elif 'Authorization' in request.headers.keys() or 'authorization' in request.headers.keys():
@@ -75,14 +75,16 @@ class AuthRequiredMiddleware(object):
 
                     # Does the provided token match a valid user?
                     try:
-                        token = Token.objects.get(key=token_key)
+                        token = ApiToken.objects.get(key=token_key)
 
-                        # Provide the user information to the request
-                        request.user = token.user
-                        authorized = True
+                        if token.active and token.user:
 
-                    except Token.DoesNotExist:
-                        logger.warning(f"Access denied for unknown token {token_key}")
+                            # Provide the user information to the request
+                            request.user = token.user
+                            authorized = True
+
+                    except ApiToken.DoesNotExist:
+                        logger.warning("Access denied for unknown token %s", token_key)
 
             # No authorization was found for the request
             if not authorized:
@@ -108,10 +110,8 @@ class AuthRequiredMiddleware(object):
                     # Save the 'next' parameter to pass through to the login view
 
                     return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
-
-                else:
-                    # Return a 401 (Unauthorized) response code for this request
-                    return HttpResponse('Unauthorized', status=401)
+                # Return a 401 (Unauthorized) response code for this request
+                return HttpResponse('Unauthorized', status=401)
 
         response = self.get_response(request)
 
@@ -125,7 +125,6 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
     """Check if user is required to have MFA enabled."""
     def require_2fa(self, request):
         """Use setting to check if MFA should be enforced for frontend page."""
-
         from common.models import InvenTreeSetting
 
         try:

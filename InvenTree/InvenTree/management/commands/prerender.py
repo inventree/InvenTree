@@ -12,7 +12,6 @@ from django.utils.translation import override as lang_over
 
 def render_file(file_name, source, target, locales, ctx):
     """Renders a file into all provided locales."""
-
     for locale in locales:
 
         # Enforce lower-case for locale names

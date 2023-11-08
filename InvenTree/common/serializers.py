@@ -51,6 +51,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     value = SettingsValueField()
 
+    units = serializers.CharField(read_only=True)
+
     def get_choices(self, obj):
         """Returns the choices available for a given item."""
         results = []
@@ -81,6 +83,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'name',
             'description',
             'type',
+            'units',
             'choices',
             'model_name',
             'api_url',
@@ -103,6 +106,7 @@ class UserSettingsSerializer(SettingsSerializer):
             'description',
             'user',
             'type',
+            'units',
             'choices',
             'model_name',
             'api_url',
@@ -188,7 +192,6 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
     def get_target(self, obj):
         """Function to resolve generic object reference to target."""
-
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
         if target and 'link' not in target:
@@ -296,3 +299,18 @@ class FlagSerializer(serializers.Serializer):
             data['conditions'] = self.instance[instance]
 
         return data
+
+
+class CustomUnitSerializer(InvenTreeModelSerializer):
+    """DRF serializer for CustomUnit model."""
+
+    class Meta:
+        """Meta options for CustomUnitSerializer."""
+
+        model = common_models.CustomUnit
+        fields = [
+            'pk',
+            'name',
+            'symbol',
+            'definition',
+        ]

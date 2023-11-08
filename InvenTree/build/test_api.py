@@ -279,7 +279,6 @@ class BuildTest(BuildAPITest):
 
     def test_delete(self):
         """Test that we can delete a BuildOrder via the API"""
-
         bo = Build.objects.get(pk=1)
 
         url = reverse('api-build-detail', kwargs={'pk': bo.pk})
@@ -684,9 +683,7 @@ class BuildAllocationTest(BuildAPITest):
 
     def test_invalid_bom_item(self):
         """Test by passing an invalid BOM item."""
-
         # Find the right (in this case, wrong) BuildLine instance
-
         si = StockItem.objects.get(pk=11)
         lines = self.build.build_lines.all()
 
@@ -718,7 +715,6 @@ class BuildAllocationTest(BuildAPITest):
 
         This should result in creation of a new BuildItem object
         """
-
         # Find the correct BuildLine
         si = StockItem.objects.get(pk=2)
 
@@ -752,6 +748,79 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(allocation.quantity, 5000)
         self.assertEqual(allocation.bom_item.pk, 1)
         self.assertEqual(allocation.stock_item.pk, 2)
+
+    def test_reallocate(self):
+        """Test reallocating an existing built item with the same stock item.
+
+        This should increment the quantity of the existing BuildItem object
+        """
+        # Find the correct BuildLine
+        si = StockItem.objects.get(pk=2)
+
+        right_line = None
+        for line in self.build.build_lines.all():
+            if line.bom_item.sub_part.pk == si.part.pk:
+                right_line = line
+                break
+
+        self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "build_line": right_line.pk,
+                        "stock_item": 2,
+                        "quantity": 3000,
+                    }
+                ]
+            },
+            expected_code=201
+        )
+
+        # A new BuildItem should have been created
+        self.assertEqual(self.n + 1, BuildItem.objects.count())
+
+        allocation = BuildItem.objects.last()
+
+        self.assertEqual(allocation.quantity, 3000)
+        self.assertEqual(allocation.bom_item.pk, 1)
+        self.assertEqual(allocation.stock_item.pk, 2)
+
+        # Try to allocate more than the required quantity (this should fail)
+        self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "build_line": right_line.pk,
+                        "stock_item": 2,
+                        "quantity": 2001,
+                    }
+                ]
+            },
+            expected_code=400
+        )
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.quantity, 3000)
+
+        # Try to allocate the remaining items
+        self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "build_line": right_line.pk,
+                        "stock_item": 2,
+                        "quantity": 2000,
+                    }
+                ]
+            },
+            expected_code=201
+        )
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.quantity, 5000)
 
 
 class BuildOverallocationTest(BuildAPITest):
@@ -801,7 +870,6 @@ class BuildOverallocationTest(BuildAPITest):
 
     def test_setup(self):
         """Validate expected state after set-up."""
-
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
         self.assertEqual(self.build.complete_outputs.count(), 1)
         self.assertEqual(self.build.completed, self.build.quantity)
@@ -966,7 +1034,6 @@ class BuildOutputScrapTest(BuildAPITest):
 
     def scrap(self, build_id, data, expected_code=None):
         """Helper method to POST to the scrap API"""
-
         url = reverse('api-build-output-scrap', kwargs={'pk': build_id})
 
         response = self.post(url, data, expected_code=expected_code)
@@ -975,7 +1042,6 @@ class BuildOutputScrapTest(BuildAPITest):
 
     def test_invalid_scraps(self):
         """Test that invalid scrap attempts are rejected"""
-
         # Test with missing required fields
         response = self.scrap(1, {}, expected_code=400)
 
@@ -1039,7 +1105,6 @@ class BuildOutputScrapTest(BuildAPITest):
 
     def test_valid_scraps(self):
         """Test that valid scrap attempts succeed"""
-
         # Create a build output
         build = Build.objects.get(pk=1)
 

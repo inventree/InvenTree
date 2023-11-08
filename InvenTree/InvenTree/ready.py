@@ -20,15 +20,15 @@ def isRunningMigrations():
 
 
 def isInMainThread():
-    """Django starts two processes, one for the actual dev server and the other to reload the application.
+    """Django runserver starts two processes, one for the actual dev server and the other to reload the application.
 
-    The RUN_MAIN env is set in that case. However if --noreload is applied, this variable
+    - The RUN_MAIN env is set in that case. However if --noreload is applied, this variable
     is not set because there are no different threads.
     """
-    if '--noreload' in sys.argv:
-        return True
+    if "runserver" in sys.argv and "--noreload" not in sys.argv:
+        return os.environ.get('RUN_MAIN', None) == "true"
 
-    return os.environ.get('RUN_MAIN', None) == 'true'
+    return True
 
 
 def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False):
@@ -81,18 +81,16 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, 
 
 
 def isPluginRegistryLoaded():
-    """The plugin registry reloads all apps onetime after starting so that the discovered AppConfigs are added to Django.
+    """Ensures that the plugin registry is already loaded.
 
-    This triggers the ready function of AppConfig to execute twice. Add this check to prevent from running two times.
+    The plugin registry reloads all apps onetime after starting if there are AppMixin plugins,
+    so that the discovered AppConfigs are added to Django. This triggers the ready function of
+    AppConfig to execute twice. Add this check to prevent from running two times.
 
-    Returns: 'False' if the apps have not been reloaded already to prevent running the ready function twice
+    Note: All apps using this check need to be registered after the plugins app in settings.py
+
+    Returns: 'False' if the registry has not fully loaded the plugins yet.
     """
-    from django.conf import settings
-
-    # If plugins are not enabled, there won't be a second load
-    if not settings.PLUGINS_ENABLED:
-        return True
-
     from plugin import registry
 
-    return not registry.is_loading
+    return registry.plugins_loaded

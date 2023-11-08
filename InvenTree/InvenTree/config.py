@@ -7,6 +7,7 @@ import os
 import random
 import shutil
 import string
+import warnings
 from pathlib import Path
 
 logger = logging.getLogger('inventree')
@@ -23,7 +24,6 @@ def to_list(value, delimiter=','):
     However, the same setting may be specified via an environment variable,
     using a comma delimited string!
     """
-
     if type(value) in [list, tuple]:
         return value
 
@@ -45,13 +45,13 @@ def to_dict(value):
     if value is None:
         return {}
 
-    if type(value) == dict:
+    if isinstance(value, dict):
         return value
 
     try:
         return json.loads(value)
     except Exception as error:
-        logger.error(f"Failed to parse value '{value}' as JSON with error {error}. Ensure value is a valid JSON string.")
+        logger.exception("Failed to parse value '%s' as JSON with error %s. Ensure value is a valid JSON string.", value, error)
     return {}
 
 
@@ -70,7 +70,6 @@ def ensure_dir(path: Path) -> None:
 
     If it does not exist, create it.
     """
-
     if not path.exists():
         path.mkdir(parents=True, exist_ok=True)
 
@@ -143,7 +142,6 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
     """
     def try_typecasting(value, source: str):
         """Attempt to typecast the value"""
-
         # Force 'list' of strings
         if typecast is list:
             value = to_list(value)
@@ -159,7 +157,7 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
                 set_metadata(source)
                 return val
             except Exception as error:
-                logger.error(f"Failed to typecast '{env_var}' with value '{value}' to type '{typecast}' with error {error}")
+                logger.exception("Failed to typecast '%s' with value '%s' to type '%s' with error %s", env_var, value, typecast, error)
 
         set_metadata(source)
         return value
@@ -201,13 +199,11 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
 def get_boolean_setting(env_var=None, config_key=None, default_value=False):
     """Helper function for retrieving a boolean configuration setting"""
-
     return is_true(get_setting(env_var, config_key, default_value))
 
 
 def get_media_dir(create=True):
     """Return the absolute path for the 'media' directory (where uploaded files are stored)"""
-
     md = get_setting('INVENTREE_MEDIA_ROOT', 'media_root')
 
     if not md:
@@ -223,7 +219,6 @@ def get_media_dir(create=True):
 
 def get_static_dir(create=True):
     """Return the absolute path for the 'static' directory (where static files are stored)"""
-
     sd = get_setting('INVENTREE_STATIC_ROOT', 'static_root')
 
     if not sd:
@@ -239,7 +234,6 @@ def get_static_dir(create=True):
 
 def get_backup_dir(create=True):
     """Return the absolute path for the backup directory"""
-
     bd = get_setting('INVENTREE_BACKUP_DIR', 'backup_dir')
 
     if not bd:
@@ -258,7 +252,6 @@ def get_plugin_file():
 
     Note: It will be created if it does not already exist!
     """
-
     # Check if the plugin.txt file (specifying required plugins) is specified
     plugin_file = get_setting('INVENTREE_PLUGIN_FILE', 'plugin_file')
 
@@ -272,13 +265,18 @@ def get_plugin_file():
 
     if not plugin_file.exists():
         logger.warning("Plugin configuration file does not exist - creating default file")
-        logger.info(f"Creating plugin file at '{plugin_file}'")
+        logger.info("Creating plugin file at '%s'", plugin_file)
         ensure_dir(plugin_file.parent)
 
         # If opening the file fails (no write permission, for example), then this will throw an error
         plugin_file.write_text("# InvenTree Plugins (uses PIP framework to install)\n\n")
 
     return plugin_file
+
+
+def get_plugin_dir():
+    """Returns the path of the custom plugins directory"""
+    return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
 
 def get_secret_key():
@@ -291,7 +289,6 @@ def get_secret_key():
     C) Look for default key file "secret_key.txt"
     D) Create "secret_key.txt" if it does not exist
     """
-
     # Look for environment variable
     if secret_key := get_setting('INVENTREE_SECRET_KEY', 'secret_key'):
         logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
@@ -305,7 +302,7 @@ def get_secret_key():
         secret_key_file = get_base_dir().joinpath("secret_key.txt").resolve()
 
     if not secret_key_file.exists():
-        logger.info(f"Generating random key file at '{secret_key_file}'")
+        logger.info("Generating random key file at '%s'", secret_key_file)
         ensure_dir(secret_key_file.parent)
 
         # Create a random key file
@@ -313,7 +310,7 @@ def get_secret_key():
         key = ''.join([random.choice(options) for i in range(100)])
         secret_key_file.write_text(key)
 
-    logger.info(f"Loading SECRET_KEY from '{secret_key_file}'")
+    logger.debug("Loading SECRET_KEY from '%s'", secret_key_file)
 
     key_data = secret_key_file.read_text().strip()
 
@@ -336,12 +333,67 @@ def get_custom_file(env_ref: str, conf_ref: str, log_ref: str, lookup_media: boo
     static_storage = StaticFilesStorage()
 
     if static_storage.exists(value):
-        logger.info(f"Loading {log_ref} from static directory: {value}")
+        logger.info("Loading %s from %s directory: %s", log_ref, 'static', value)
     elif lookup_media and default_storage.exists(value):
-        logger.info(f"Loading {log_ref} from media directory: {value}")
+        logger.info("Loading %s from %s directory: %s", log_ref, 'media', value)
     else:
         add_dir_str = ' or media' if lookup_media else ''
-        logger.warning(f"The {log_ref} file '{value}' could not be found in the static{add_dir_str} directories")
+        logger.warning("The %s file '%s' could not be found in the static %s directories", log_ref, value, add_dir_str)
         value = False
 
     return value
+
+
+def get_frontend_settings(debug=True):
+    """Return a dictionary of settings for the frontend interface.
+
+    Note that the new config settings use the 'FRONTEND' key,
+    whereas the legacy key was 'PUI' (platform UI) which is now deprecated
+    """
+
+    # Legacy settings
+    pui_settings = get_setting('INVENTREE_PUI_SETTINGS', 'pui_settings', {}, typecast=dict)
+
+    if len(pui_settings) > 0:
+        warnings.warn(
+            "The 'INVENTREE_PUI_SETTINGS' key is deprecated. Please use 'INVENTREE_FRONTEND_SETTINGS' instead",
+            DeprecationWarning, stacklevel=2
+        )
+
+    # New settings
+    frontend_settings = get_setting('INVENTREE_FRONTEND_SETTINGS', 'frontend_settings', {}, typecast=dict)
+
+    # Merge settings
+    settings = {**pui_settings, **frontend_settings}
+
+    # Set the base URL
+    if 'base_url' not in settings:
+        base_url = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', '')
+
+        if base_url:
+            warnings.warn(
+                "The 'INVENTREE_PUI_URL_BASE' key is deprecated. Please use 'INVENTREE_FRONTEND_URL_BASE' instead",
+                DeprecationWarning, stacklevel=2
+            )
+        else:
+            base_url = get_setting('INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform')
+
+        settings['base_url'] = base_url
+
+    # Set the server list
+    settings['server_list'] = settings.get('server_list', [])
+
+    # Set the debug flag
+    settings['debug'] = debug
+
+    if 'environment' not in settings:
+        settings['environment'] = 'development' if debug else 'production'
+
+    if debug and 'show_server_selector' not in settings:
+        # In debug mode, show server selector by default
+        settings['show_server_selector'] = True
+    elif len(settings['server_list']) == 0:
+        # If no servers are specified, show server selector
+        settings['show_server_selector'] = True
+
+    return settings

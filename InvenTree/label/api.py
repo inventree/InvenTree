@@ -1,14 +1,15 @@
 """API functionality for the 'label' app"""
 
-from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import serializers
 from rest_framework.exceptions import NotFound
+from rest_framework.request import clone_request
 
 import build.models
 import common.models
@@ -18,9 +19,8 @@ import label.serializers
 from InvenTree.api import MetadataView
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
-from InvenTree.tasks import offload_task
 from part.models import Part
-from plugin.base.label import label as plugin_label
+from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
@@ -43,7 +43,6 @@ class LabelFilterMixin:
 
     def get_items(self):
         """Return a list of database objects from query parameter"""
-
         ids = []
 
         # Construct a list of possible query parameter value options
@@ -75,7 +74,6 @@ class LabelListView(LabelFilterMixin, ListAPI):
         As each 'label' instance may optionally define its own filters,
         the resulting queryset is the 'union' of the two.
         """
-
         queryset = super().filter_queryset(queryset)
 
         items = self.get_items()
@@ -140,16 +138,44 @@ class LabelListView(LabelFilterMixin, ListAPI):
 class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
 
+    rolemap = {
+        "GET": "view",
+        "POST": "view",
+    }
+
+    def check_permissions(self, request):
+        """Override request method to GET so that also non superusers can print using a post request."""
+        if request.method == "POST":
+            request = clone_request(request, "GET")
+        return super().check_permissions(request)
+
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
         """Prevent caching when printing report templates"""
         return super().dispatch(*args, **kwargs)
+
+    def get_serializer(self, *args, **kwargs):
+        """Define a get_serializer method to be discoverable by the OPTIONS request."""
+        # Check the request to determine if the user has selected a label printing plugin
+        plugin = self.get_plugin(self.request)
+
+        serializer = plugin.get_printing_options_serializer(self.request)
+
+        # if no serializer is defined, return an empty serializer
+        if not serializer:
+            return serializers.Serializer()
+
+        return serializer
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request against this endpoint to print labels"""
         common.models.InvenTreeUserSetting.set_setting('DEFAULT_' + self.ITEM_KEY.upper() + '_LABEL_TEMPLATE',
                                                        self.get_object().pk, None, user=request.user)
         return self.print(request, self.get_items())
+
+    def post(self, request, *args, **kwargs):
+        """Perform a GET request against this endpoint to print labels"""
+        return self.get(request, *args, **kwargs)
 
     def get_plugin(self, request):
         """Return the label printing plugin associated with this request.
@@ -162,25 +188,26 @@ class LabelPrintMixin(LabelFilterMixin):
         - matching plugin implements the 'labels' mixin
         - matching plugin is enabled
         """
-        if not settings.PLUGINS_ENABLED:
-            return None  # pragma: no cover
-
         plugin_key = request.query_params.get('plugin', None)
 
-        # No plugin provided, and that's OK
+        # No plugin provided!
         if plugin_key is None:
-            return None
+            # Default to the builtin label printing plugin
+            plugin_key = InvenTreeLabelPlugin.NAME.lower()
 
         plugin = registry.get_plugin(plugin_key)
 
-        if plugin:
-            if plugin.is_active():
-                # Only return the plugin if it is enabled!
-                return plugin
-            else:
-                raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
-        else:
+        if not plugin:
             raise NotFound(f"Plugin '{plugin_key}' not found")
+
+        if not plugin.is_active():
+            raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
+
+        if not plugin.mixin_enabled("labels"):
+            raise ValidationError(f"Plugin '{plugin_key}' is not a label printing plugin")
+
+        # Only return the plugin if it is enabled and has the label printing mixin
+        return plugin
 
     def print(self, request, items_to_print):
         """Print this label template against a number of pre-validated items."""
@@ -189,96 +216,24 @@ class LabelPrintMixin(LabelFilterMixin):
 
         if len(items_to_print) == 0:
             # No valid items provided, return an error message
-
             raise ValidationError('No valid objects provided to label template')
 
-        outputs = []
+        # Label template
+        label = self.get_object()
 
-        # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
+        # if the plugin returns a serializer, validate the data
+        if serializer := plugin.get_printing_options_serializer(request, data=request.data):
+            serializer.is_valid(raise_exception=True)
 
-        label_name = "label.pdf"
+        # At this point, we offload the label(s) to the selected plugin.
+        # The plugin is responsible for handling the request and returning a response.
 
-        label_names = []
-        label_instances = []
+        result = plugin.print_labels(label, items_to_print, request, printing_options=request.data)
 
-        # Merge one or more PDF files into a single download
-        for item in items_to_print:
-            label = self.get_object()
-            label.object_to_print = item
-
-            label_name = label.generate_filename(request)
-
-            label_names.append(label_name)
-            label_instances.append(label)
-
-            if debug_mode and plugin is None:
-                # Note that debug mode is only supported when not using a plugin
-                outputs.append(label.render_as_string(request))
-            else:
-                outputs.append(label.render(request))
-
-        if not label_name.endswith(".pdf"):
-            label_name += ".pdf"
-
-        if plugin is not None:
-            """Label printing is to be handled by a plugin, rather than being exported to PDF.
-
-            In this case, we do the following:
-
-            - Individually generate each label, exporting as an image file
-            - Pass all the images through to the label printing plugin
-            - Return a JSON response indicating that the printing has been offloaded
-            """
-
-            for idx, output in enumerate(outputs):
-                """For each output, we generate a temporary image file, which will then get sent to the printer."""
-
-                # Generate PDF data for the label
-                pdf = output.get_document().write_pdf()
-
-                # Offload a background task to print the provided label
-                offload_task(
-                    plugin_label.print_label,
-                    plugin.plugin_slug(),
-                    pdf,
-                    filename=label_names[idx],
-                    label_instance=label_instances[idx],
-                    user=request.user,
-                )
-
-            return JsonResponse({
-                'plugin': plugin.plugin_slug(),
-                'labels': label_names,
-            })
-
-        elif debug_mode:
-            """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
-
-            html = "\n".join(outputs)
-
-            return HttpResponse(html)
-
-        else:
-            """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
-
-            pages = []
-
-            for output in outputs:
-                doc = output.get_document()
-                for page in doc.pages:
-                    pages.append(page)
-
-            pdf = outputs[0].get_document().copy(pages).write_pdf()
-
-            inline = common.models.InvenTreeUserSetting.get_setting('LABEL_INLINE', user=request.user, cache=False)
-
-            return InvenTree.helpers.DownloadFile(
-                pdf,
-                label_name,
-                content_type='application/pdf',
-                inline=inline
-            )
+        if isinstance(result, JsonResponse):
+            result['plugin'] = plugin.plugin_slug()
+            return result
+        raise ValidationError(f"Plugin '{plugin.plugin_slug()}' returned invalid response type '{type(result)}'")
 
 
 class StockItemLabelMixin:

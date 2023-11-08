@@ -11,6 +11,7 @@ import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
 from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
+from InvenTree.helpers import str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI, UpdateAPI)
 from InvenTree.permissions import IsSuperuser
@@ -52,6 +53,44 @@ class PluginList(ListAPI):
 
             for result in queryset:
                 if mixin in result.mixins().keys():
+                    matches.append(result.pk)
+
+            queryset = queryset.filter(pk__in=matches)
+
+        # Filter queryset by 'builtin' flag
+        # We cannot do this using normal filters as it is not a database field
+        if 'builtin' in params:
+            builtin = str2bool(params['builtin'])
+
+            matches = []
+
+            for result in queryset:
+                if result.is_builtin() == builtin:
+                    matches.append(result.pk)
+
+            queryset = queryset.filter(pk__in=matches)
+
+        # Filter queryset by 'sample' flag
+        # We cannot do this using normal filters as it is not a database field
+        if 'sample' in params:
+            sample = str2bool(params['sample'])
+
+            matches = []
+
+            for result in queryset:
+                if result.is_sample() == sample:
+                    matches.append(result.pk)
+
+            queryset = queryset.filter(pk__in=matches)
+
+        # Filter queryset by 'installed' flag
+        if 'installed' in params:
+            installed = str2bool(params['installed'])
+
+            matches = []
+
+            for result in queryset:
+                if result.is_installed() == installed:
                     matches.append(result.pk)
 
             queryset = queryset.filter(pk__in=matches)
@@ -144,7 +183,6 @@ class PluginActivate(UpdateAPI):
 
     def perform_update(self, serializer):
         """Activate the plugin."""
-
         serializer.save()
 
 

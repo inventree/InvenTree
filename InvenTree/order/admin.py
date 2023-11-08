@@ -20,8 +20,7 @@ class ProjectCodeResourceMixin:
         """Return the project code value, not the pk"""
         if order.project_code:
             return order.project_code.code
-        else:
-            return ''
+        return ''
 
 
 class TotalPriceResourceMixin:
@@ -33,8 +32,7 @@ class TotalPriceResourceMixin:
         """Return the total price amount, not the object itself"""
         if order.total_price:
             return order.total_price.amount
-        else:
-            return ''
+        return ''
 
 
 class PriceResourceMixin:
@@ -46,8 +44,7 @@ class PriceResourceMixin:
         """Return the price amount, not the object itself"""
         if line.price:
             return line.price.amount
-        else:
-            return ''
+        return ''
 
 
 # region general classes
@@ -171,6 +168,12 @@ class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
 
     SKU = Field(attribute='part__SKU', readonly=True)
 
+    def dehydrate_purchase_price(self, line):
+        """Return a string value of the 'purchase_price' field, rather than the 'Money' object"""
+        if line.purchase_price:
+            return line.purchase_price.amount
+        return ''
+
 
 class PurchaseOrderExtraLineResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of PurchaseOrderExtraLine data."""
@@ -225,8 +228,7 @@ class SalesOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
         """
         if item.sale_price:
             return str(item.sale_price)
-        else:
-            return ''
+        return ''
 
 
 class SalesOrderExtraLineResource(PriceResourceMixin, InvenTreeResource):

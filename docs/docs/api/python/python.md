@@ -78,7 +78,7 @@ If the primary-key of an object is already known, retrieving it from the databas
 ```python
 from inventree.part import PartCategory
 
-category = PartCatgory(api, 10)
+category = PartCategory(api, 10)
 ```
 
 #### Multiple Items
