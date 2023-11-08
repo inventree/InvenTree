@@ -125,8 +125,11 @@ class LabelMixinTests(InvenTreeAPITestCase):
         )
 
         self.assertEqual(len(response.data), 3)
-        data = response.data[1]
-        self.assertEqual(data['key'], 'samplelabelprinter')
+
+        labels = [item['key'] for item in response.data]
+
+        self.assertIn('samplelabelprinter', labels)
+        self.assertIn('inventreelabelsheet', labels)
 
     def test_printing_process(self):
         """Test that a label can be printed."""
