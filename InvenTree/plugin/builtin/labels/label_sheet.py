@@ -1,5 +1,6 @@
 """Label printing plugin which supports printing multiple labels on a single page"""
 
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -43,4 +44,9 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
     def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
         """Handle printing of the provided labels"""
 
-        print("printing label sheet:", len(items), "labels -", label)
+        for item in items:
+            output = label.render_as_string(request, target_object=item)
+
+            print("output:", output)
+
+        raise ValidationError("oh no we don't")

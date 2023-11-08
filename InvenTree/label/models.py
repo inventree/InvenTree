@@ -213,18 +213,26 @@ class LabelTemplate(MetadataMixin, models.Model):
 
         return context
 
-    def render_as_string(self, request, **kwargs):
+    def render_as_string(self, request, target_object=None, **kwargs):
         """Render the label to a HTML string.
 
         Useful for debug mode (viewing generated code)
         """
+
+        if target_object:
+            self.object_to_print = target_object
+
         return render_to_string(self.template_name, self.context(request), request)
 
-    def render(self, request, **kwargs):
+    def render(self, request, target_object=None, **kwargs):
         """Render the label template to a PDF file.
 
         Uses django-weasyprint plugin to render HTML template
         """
+
+        if target_object:
+            self.object_to_print = target_object
+
         wp = WeasyprintLabelMixin(
             request,
             self.template_name,
