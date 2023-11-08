@@ -191,9 +191,37 @@ class LabelTemplate(MetadataMixin, models.Model):
 
         return template_string.render(context)
 
-    def context(self, request):
-        """Provides context data to the template."""
+    def generate_page_style(self, **kwargs):
+        """Generate @page style for the label template.
+
+        This is inserted at the top of the style block for a given label
+        """
+
+        width = kwargs.get('width', self.width)
+        height = kwargs.get('height', self.height)
+        margin = kwargs.get('margin', 0)
+
+        return f"""
+        @page {{
+            size: {width}mm {height}mm;
+            margin: {margin}mm;
+        }}
+        """
+
+    def context(self, request, **kwargs):
+        """Provides context data to the template.
+
+        Arguments:
+            request: The HTTP request object
+            kwargs: Additional keyword arguments
+        """
+
         context = self.get_context_data(request)
+
+        # By default, each label is supplied with '@page' data
+        # However, it can be excluded, e.g. when rendering a label sheet
+        if kwargs.get('insert_page_style', True):
+            context['page_style'] = self.generate_page_style()
 
         # Add "basic" context data which gets passed to every label
         context['base_url'] = get_base_url(request=request)
@@ -213,18 +241,31 @@ class LabelTemplate(MetadataMixin, models.Model):
 
         return context
 
-    def render_as_string(self, request, **kwargs):
-        """Render the label to a HTML string.
+    def render_as_string(self, request, target_object=None, **kwargs):
+        """Render the label to a HTML string"""
 
-        Useful for debug mode (viewing generated code)
-        """
-        return render_to_string(self.template_name, self.context(request), request)
+        if target_object:
+            self.object_to_print = target_object
 
-    def render(self, request, **kwargs):
+        context = self.context(request, **kwargs)
+
+        return render_to_string(
+            self.template_name,
+            context,
+            request
+        )
+
+    def render(self, request, target_object=None, **kwargs):
         """Render the label template to a PDF file.
 
         Uses django-weasyprint plugin to render HTML template
         """
+
+        if target_object:
+            self.object_to_print = target_object
+
+        context = self.context(request, **kwargs)
+
         wp = WeasyprintLabelMixin(
             request,
             self.template_name,
@@ -235,7 +276,7 @@ class LabelTemplate(MetadataMixin, models.Model):
         )
 
         return wp.render_to_response(
-            self.context(request),
+            context,
             **kwargs
         )
 

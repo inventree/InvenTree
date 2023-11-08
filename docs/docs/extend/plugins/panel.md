@@ -12,6 +12,7 @@ Most pages in the web interface support multiple panels, which are selected via 
 {% include 'img.html' %}
 {% endwith %}
 
+
 Each plugin which implements this mixin can return zero or more custom panels for a particular page. The plugin can decide (at runtime) which panels it wishes to render. This determination can be made based on the page routing, the item being viewed, the particular user, or other considerations.
 
 ### Panel Content
@@ -311,4 +312,3 @@ import json
 The URL and the called function have no parameter names any longer. All data is in the
 request message and can be extracted from this using json.loads. If more data is needed
 just add it to the json container. No further changes are needed. It's really simple :-)
-
