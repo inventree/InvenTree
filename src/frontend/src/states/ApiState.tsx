@@ -34,7 +34,8 @@ export const useServerApiState = create<ServerApiStateProps>()(
         await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
           const newStatusLookup: StatusLookup = {} as StatusLookup;
           for (const key in response.data) {
-            newStatusLookup[statusCodeList[key]] = response.data[key].values;
+            newStatusLookup[statusCodeList[key] || key] =
+              response.data[key].values;
           }
           set({ status: newStatusLookup });
         });
@@ -124,6 +125,10 @@ export enum ApiPaths {
 
   // Plugin URLs
   plugin_list = 'api-plugin-list',
+
+  // Machine URLs
+  machine_list = 'api-machine-list',
+  machine_setting_list = 'api-machine-settings',
 
   project_code_list = 'api-project-code-list',
   custom_unit_list = 'api-custom-unit-list'
@@ -246,6 +251,10 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'order/ro/attachment/';
     case ApiPaths.plugin_list:
       return 'plugins/';
+    case ApiPaths.machine_list:
+      return 'machine/';
+    case ApiPaths.machine_setting_list:
+      return 'machine/$id/settings/';
     case ApiPaths.project_code_list:
       return 'project-code/';
     case ApiPaths.custom_unit_list:

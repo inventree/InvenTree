@@ -16,6 +16,7 @@ import { PlaceholderPill } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
+import { MachineListTable } from '../../../components/tables/machine/MachineListTable';
 
 /**
  * System settings page
@@ -53,6 +54,15 @@ export default function AdminCenter() {
                 'LOGIN_ENABLE_SSO_REG'
               ]}
             />
+          </Stack>
+        )
+      },
+      {
+        name: 'machine',
+        label: t`Machine Management`,
+        content: (
+          <Stack spacing="xs">
+            <MachineListTable props={{}} />
           </Stack>
         )
       }
