@@ -81,6 +81,9 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         n_rows = math.floor(page_height / label.height)
         n_cells = n_cols * n_rows
 
+        if n_cells == 0:
+            raise ValidationError(_("Label is too large for page size"))
+
         n_labels = len(items)
 
         # Data to pass through to each page
