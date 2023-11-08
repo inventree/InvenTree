@@ -231,10 +231,6 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
                     border-spacing: 0mm 0mm;
                 }}
 
-                .label-sheet-row {{
-
-                }}
-
                 .label-sheet-cell-error {{
                     background-color: #F00;
                 }}
