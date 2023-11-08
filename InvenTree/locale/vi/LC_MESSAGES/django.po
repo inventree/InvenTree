@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-06 22:49+0000\n"
-"PO-Revision-Date: 2023-11-07 20:19\n"
+"POT-Creation-Date: 2023-11-07 20:38+0000\n"
+"PO-Revision-Date: 2023-11-08 20:36\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -1008,7 +1008,7 @@ msgstr "Đơn đặt bản dựng với bản dựng này đã được phân b�
 #: part/models.py:3120 part/models.py:3139 part/models.py:3158
 #: part/models.py:3179 part/models.py:3271 part/models.py:3545
 #: part/models.py:3667 part/models.py:3770 part/models.py:4093
-#: part/serializers.py:961 part/serializers.py:1374
+#: part/serializers.py:961 part/serializers.py:1394
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1224,7 +1224,7 @@ msgstr "Đầu ra bản dựng không phù hợp với đơn đặt bản dựng
 
 #: build/models.py:847 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:444 order/serializers.py:389
-#: order/serializers.py:511 part/serializers.py:1216 part/serializers.py:1538
+#: order/serializers.py:511 part/serializers.py:1219 part/serializers.py:1558
 #: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "Số lượng phải lớn hơn 0"
@@ -6483,75 +6483,75 @@ msgstr "Cập nhật"
 msgid "Update pricing for this part"
 msgstr "Cập nhật giá cho sản phẩm này"
 
-#: part/serializers.py:1375
+#: part/serializers.py:1395
 msgid "Select part to copy BOM from"
 msgstr "Chọn sản phẩm để sao chép định mức nguyên vật liệu"
 
-#: part/serializers.py:1383
+#: part/serializers.py:1403
 msgid "Remove Existing Data"
 msgstr "Xóa dữ liệu đã tồn tại"
 
-#: part/serializers.py:1384
+#: part/serializers.py:1404
 msgid "Remove existing BOM items before copying"
 msgstr "Xóa mục BOM đã tồn tại trước khi sao chép"
 
-#: part/serializers.py:1389
+#: part/serializers.py:1409
 msgid "Include Inherited"
 msgstr "Bao gồm thừa hưởng"
 
-#: part/serializers.py:1390
+#: part/serializers.py:1410
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Bao gồm mục BOM được thừa hưởng từ sản phẩm mẫu"
 
-#: part/serializers.py:1395
+#: part/serializers.py:1415
 msgid "Skip Invalid Rows"
 msgstr "Bỏ qua dòng không hợp lệ"
 
-#: part/serializers.py:1396
+#: part/serializers.py:1416
 msgid "Enable this option to skip invalid rows"
 msgstr "Bật tùy chọn này để bỏ qua dòng không hợp lệ"
 
-#: part/serializers.py:1401
+#: part/serializers.py:1421
 msgid "Copy Substitute Parts"
 msgstr "Sao chép sản phẩm thay thế"
 
-#: part/serializers.py:1402
+#: part/serializers.py:1422
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Sao chép sản phẩm thay thế khi nhân bản hàng hóa BOM"
 
-#: part/serializers.py:1442
+#: part/serializers.py:1462
 msgid "Clear Existing BOM"
 msgstr "Dọn dẹp BOM đang tồn tại"
 
-#: part/serializers.py:1443
+#: part/serializers.py:1463
 msgid "Delete existing BOM items before uploading"
 msgstr "Xóa mục BOM đang tồn tại trước khi tải lên"
 
-#: part/serializers.py:1473
+#: part/serializers.py:1493
 msgid "No part column specified"
 msgstr "Chưa chỉ ra cột sản phẩm"
 
-#: part/serializers.py:1517
+#: part/serializers.py:1537
 msgid "Multiple matching parts found"
 msgstr "Tìm thấy nhiều sản phẩm phù hợp"
 
-#: part/serializers.py:1520
+#: part/serializers.py:1540
 msgid "No matching part found"
 msgstr "Không tìm thấy sản phẩm nào"
 
-#: part/serializers.py:1523
+#: part/serializers.py:1543
 msgid "Part is not designated as a component"
 msgstr "Sản phẩm không được chỉ định như là một thành phần"
 
-#: part/serializers.py:1532
+#: part/serializers.py:1552
 msgid "Quantity not provided"
 msgstr "Chưa cung cấp số lượng"
 
-#: part/serializers.py:1540
+#: part/serializers.py:1560
 msgid "Invalid quantity"
 msgstr "Số lượng không hợp lệ"
 
-#: part/serializers.py:1561
+#: part/serializers.py:1581
 msgid "At least one BOM item is required"
 msgstr "Buộc phải nhập ít nhất một mục BOM"
 
@@ -8811,11 +8811,11 @@ msgstr "Lỗi nội bộ máy chủ"
 #: templates/500.html:15
 #, python-format
 msgid "The %(inventree_title)s server raised an internal error"
-msgstr ""
+msgstr "Máy chủ %(inventree_title)s thông báo lỗi nội bộ"
 
 #: templates/500.html:16
 msgid "Refer to the error log in the admin interface for further details"
-msgstr ""
+msgstr "Tham khảo nhật ký lỗi trong giao diện quản trị để biết thêm chi tiết"
 
 #: templates/503.html:11 templates/503.html:33
 msgid "Site is in Maintenance"
@@ -8823,7 +8823,7 @@ msgstr "Site đang được bảo trì"
 
 #: templates/503.html:39
 msgid "The site is currently in maintenance and should be up again soon!"
-msgstr ""
+msgstr "Khu vực đang được bảo trì và sẽ mở lại sớm thôi!"
 
 #: templates/InvenTree/index.html:7
 msgid "Index"
@@ -8843,7 +8843,7 @@ msgstr "Nguyên liệu mới nhất"
 
 #: templates/InvenTree/index.html:77
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "BOM đợi phê chuẩn"
 
 #: templates/InvenTree/index.html:106
 msgid "Recently Updated"
@@ -9002,7 +9002,7 @@ msgstr "URL"
 #: templates/InvenTree/settings/mixins/urls.html:8
 #, python-format
 msgid "The Base-URL for this plugin is <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
-msgstr ""
+msgstr "Base-URL cho phần bổ sung này là <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -9496,27 +9496,27 @@ msgstr "Các phiên hoạt động"
 
 #: templates/InvenTree/settings/user.html:174
 msgid "Log out active sessions (except this one)"
-msgstr ""
+msgstr "Đăng xuất phiên đang hoạt động (trừ phiên này)"
 
 #: templates/InvenTree/settings/user.html:175
 msgid "Log Out Active Sessions"
-msgstr ""
+msgstr "Đăng xuất phiên đang hoạt động"
 
 #: templates/InvenTree/settings/user.html:184
 msgid "<em>unknown on unknown</em>"
-msgstr ""
+msgstr "<em>không rõ trên không rõ</em>"
 
 #: templates/InvenTree/settings/user.html:185
 msgid "<em>unknown</em>"
-msgstr ""
+msgstr "<em>không rõ</em>"
 
 #: templates/InvenTree/settings/user.html:189
 msgid "IP Address"
-msgstr ""
+msgstr "Địa chỉ IP"
 
 #: templates/InvenTree/settings/user.html:190
 msgid "Device"
-msgstr ""
+msgstr "Thiết bị"
 
 #: templates/InvenTree/settings/user.html:191
 msgid "Last Activity"
@@ -9591,15 +9591,15 @@ msgstr "Cũng hiện chúng"
 
 #: templates/InvenTree/settings/user_display.html:106
 msgid "Help the translation efforts!"
-msgstr ""
+msgstr "Giúp đỡ nguồn lực dịch thuật!"
 
 #: templates/InvenTree/settings/user_display.html:107
 msgid "Native language translation of the web application is community contributed via crowdin. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "Dịch ngôn ngữ bạn địa của ứng dụng web được cộng đồng đóng góp qua crowdin. Mọi đóng góp đều được chào đón và khuyến khích."
 
 #: templates/InvenTree/settings/user_display.html:108
 msgid "InvenTree Translation Project"
-msgstr ""
+msgstr "Dự án dịch InvenTree"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -9611,98 +9611,98 @@ msgstr "Cài đặt tìm kiếm"
 
 #: templates/InvenTree/settings/user_sso.html:9
 msgid "Single Sign On Accounts"
-msgstr ""
+msgstr "Tài khoản đăng nhập một lần"
 
 #: templates/InvenTree/settings/user_sso.html:16
 msgid "You can sign in to your account using any of the following third party accounts:"
-msgstr ""
+msgstr "Bạn có thể đăng nhập vào tài khoản của bạn bằng cách sử dụng bất kỳ tài khoản bên thứ ba:"
 
 #: templates/InvenTree/settings/user_sso.html:52
 msgid "There are no social network accounts connected to this account."
-msgstr ""
+msgstr "Không có tài khoản mạng xã hội nào được kết nối đến tài khoản này."
 
 #: templates/InvenTree/settings/user_sso.html:58
 msgid "Add SSO Account"
-msgstr ""
+msgstr "Thêm tài khoản SSO"
 
 #: templates/InvenTree/settings/user_sso.html:67
 msgid "Single Sign On is not enabled for this server"
-msgstr ""
+msgstr "Máy chủ này chưa bật chức năng đăng nhập một lần"
 
 #: templates/about.html:9
 msgid "InvenTree Version"
-msgstr ""
+msgstr "Phiên bản InvenTree"
 
 #: templates/about.html:14
 msgid "Development Version"
-msgstr ""
+msgstr "Phiên bản phát triển"
 
 #: templates/about.html:17
 msgid "Up to Date"
-msgstr ""
+msgstr "Mới nhất"
 
 #: templates/about.html:19
 msgid "Update Available"
-msgstr ""
+msgstr "Có bản cập nhật mới"
 
 #: templates/about.html:43
 msgid "Commit Branch"
-msgstr ""
+msgstr "Commit Branch"
 
 #: templates/about.html:49
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "Tài liệu InvenTree"
 
 #: templates/about.html:54
 msgid "API Version"
-msgstr ""
+msgstr "Phiên bản API"
 
 #: templates/about.html:59
 msgid "Python Version"
-msgstr ""
+msgstr "Phiên bản Python"
 
 #: templates/about.html:64
 msgid "Django Version"
-msgstr ""
+msgstr "Phiên bản Django"
 
 #: templates/about.html:69
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "Xem mã trên Github"
 
 #: templates/about.html:74
 msgid "Credits"
-msgstr ""
+msgstr "Đóng góp"
 
 #: templates/about.html:79
 msgid "Mobile App"
-msgstr ""
+msgstr "Ứng dụng di động"
 
 #: templates/about.html:84
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "Gửi báo cáo lỗi"
 
 #: templates/about.html:91 templates/clip.html:4
 #: templates/js/translated/helpers.js:585
 msgid "copy to clipboard"
-msgstr ""
+msgstr "sao chép đến bảng tạm"
 
 #: templates/about.html:91
 msgid "copy version information"
-msgstr ""
+msgstr "sao chép thông tin phiên bản"
 
 #: templates/account/base.html:66 templates/navbar.html:17
 msgid "InvenTree logo"
-msgstr ""
+msgstr "Logo InvenTree"
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:9
 msgid "Confirm Email Address"
-msgstr ""
+msgstr "Xác nhận địa chỉ email"
 
 #: templates/account/email_confirm.html:15
 #, python-format
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
-msgstr ""
+msgstr "Xin hãy xác nhận rằng <a href=\"mailto:%(email)s\">%(email)s</a> là địa chỉ email cho người dùng %(user_display)s."
 
 #: templates/account/email_confirm.html:21 templates/js/translated/forms.js:746
 msgid "Confirm"
@@ -9711,30 +9711,30 @@ msgstr "Xác nhận"
 #: templates/account/email_confirm.html:29
 #, python-format
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
-msgstr ""
+msgstr "Liên kết xác nhận email đã hết hạn hoặc không hợp lệ. Xin hãy <a href=\"%(email_url)s\">tạo yêu cầu xác nhận email mới</a>."
 
 #: templates/account/login.html:6 templates/account/login.html:17
 #: templates/account/login.html:38 templates/socialaccount/login.html:5
 msgid "Sign In"
-msgstr ""
+msgstr "Đăng nhập"
 
 #: templates/account/login.html:21
 msgid "Not a member?"
-msgstr ""
+msgstr "Chưa có tài khoản?"
 
 #: templates/account/login.html:23 templates/account/signup.html:11
 #: templates/account/signup.html:22 templates/socialaccount/signup.html:8
 #: templates/socialaccount/signup.html:20
 msgid "Sign Up"
-msgstr ""
+msgstr "Đăng ký"
 
 #: templates/account/login.html:45
 msgid "Forgot Password?"
-msgstr ""
+msgstr "Quân mật khẩu?"
 
 #: templates/account/login.html:53
 msgid "or log in with"
-msgstr ""
+msgstr "hoặc đăng nhập bằng"
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
@@ -9748,33 +9748,33 @@ msgstr "Bạn có chắc bạn muốn đăng xuất không?"
 #: templates/account/logout.html:27 templates/allauth_2fa/backup_tokens.html:35
 #: templates/allauth_2fa/remove.html:24 templates/allauth_2fa/setup.html:44
 msgid "Return to Site"
-msgstr ""
+msgstr "Quay lại site"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
 msgid "Password Reset"
-msgstr ""
+msgstr "Khôi phục mật khẩu"
 
 #: templates/account/password_reset.html:18
 msgid "Forgotten your password? Enter your email address below, and we'll send you an email allowing you to reset it."
-msgstr ""
+msgstr "Quên mật khẩu của bạn? Nhập địa chỉ email của bạn bên dưới, và chúng tôi sẽ gửi cho bạn một email cho phép bạn khởi tại lại nó."
 
 #: templates/account/password_reset.html:23
 msgid "Reset My Password"
-msgstr ""
+msgstr "Đặt lại mật khẩu của tôi"
 
 #: templates/account/password_reset.html:27 templates/account/signup.html:37
 msgid "This function is currently disabled. Please contact an administrator."
-msgstr ""
+msgstr "Chức năng này đã bị cấm. Xin hãy liên hệ với một người quản trị."
 
 #: templates/account/password_reset_from_key.html:7
 msgid "Bad Token"
-msgstr ""
+msgstr "Sai mã thông báo"
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
 msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
-msgstr ""
+msgstr "Liên kết tạo lại mật khẩu không hợp lệ, có thể nó đã được sử dụng rồi. Xin hãy gửi yêu cầu <a href=\"%(passwd_reset_url)s\">tạo lại mật khẩu mới</a>."
 
 #: templates/account/password_reset_from_key.html:18
 msgid "Change password"
@@ -10154,11 +10154,11 @@ msgstr "Quét bộ chứa kho vào trong vị trí"
 
 #: templates/js/translated/barcode.js:711
 msgid "Scan stock container barcode to check in to this location"
-msgstr ""
+msgstr "Quét mã vạch bộ chứa kho để nhập vào vị trí này"
 
 #: templates/js/translated/barcode.js:745
 msgid "Barcode does not match valid stock location"
-msgstr ""
+msgstr "Mã vạch không khớp với vị trí kho hợp lệ"
 
 #: templates/js/translated/barcode.js:789
 msgid "Check Into Location"
@@ -10203,19 +10203,19 @@ msgstr "Bao gồm dữ liệuBOM cho phụ kiện nhỏ"
 
 #: templates/js/translated/bom.js:357
 msgid "Levels"
-msgstr ""
+msgstr "Cấp độ"
 
 #: templates/js/translated/bom.js:358
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
-msgstr ""
+msgstr "Chọn số tối đa của cấp độ BOM để xuất (0 = mọi cấp)"
 
 #: templates/js/translated/bom.js:365
 msgid "Include Alternative Parts"
-msgstr ""
+msgstr "Bao gồm sản phẩm khác"
 
 #: templates/js/translated/bom.js:366
 msgid "Include alternative parts in exported BOM"
-msgstr ""
+msgstr "Bao gồm sản phẩm khác trong BOM đã xuất"
 
 #: templates/js/translated/bom.js:371
 msgid "Include Parameter Data"
@@ -10440,188 +10440,188 @@ msgstr "Dựng đầu ra phải được tạo một cách độc lập"
 
 #: templates/js/translated/build.js:380
 msgid "Trackable parts can have serial numbers specified"
-msgstr ""
+msgstr "Sản phẩm được theo dõi có thể có số sêri được chỉ định"
 
 #: templates/js/translated/build.js:381
 msgid "Enter serial numbers to generate multiple single build outputs"
-msgstr ""
+msgstr "Điền số sêri để tạo nhiều đầu ra bản dựng đơn lẻ"
 
 #: templates/js/translated/build.js:388
 msgid "Create Build Output"
-msgstr ""
+msgstr "Tạo đầu ra bản dựng"
 
 #: templates/js/translated/build.js:419
 msgid "Allocate stock items to this build output"
-msgstr ""
+msgstr "Chỉ định mặt hàng cho đầu ra bản dựng này"
 
 #: templates/js/translated/build.js:427
 msgid "Deallocate stock from build output"
-msgstr ""
+msgstr "Phân bổ kho từ đầu ra bản dựng"
 
 #: templates/js/translated/build.js:436
 msgid "Complete build output"
-msgstr ""
+msgstr "Hoàn thiện đầu ra bản dựng"
 
 #: templates/js/translated/build.js:444
 msgid "Scrap build output"
-msgstr ""
+msgstr "Loại bỏ đầu ra bản dựng"
 
 #: templates/js/translated/build.js:451
 msgid "Delete build output"
-msgstr ""
+msgstr "Xóa đầu ra bản dựng"
 
 #: templates/js/translated/build.js:471
 msgid "Are you sure you wish to deallocate the selected stock items from this build?"
-msgstr ""
+msgstr "Bạn có chắc chắn muốn phân bổ mặt hàng đã chọn từ bản dựng này?"
 
 #: templates/js/translated/build.js:489
 msgid "Deallocate Stock Items"
-msgstr ""
+msgstr "Phân bổ mặt hàng"
 
 #: templates/js/translated/build.js:575 templates/js/translated/build.js:703
 #: templates/js/translated/build.js:829
 msgid "Select Build Outputs"
-msgstr ""
+msgstr "Chọn đầu ra bản dựng"
 
 #: templates/js/translated/build.js:576 templates/js/translated/build.js:704
 #: templates/js/translated/build.js:830
 msgid "At least one build output must be selected"
-msgstr ""
+msgstr "Ít nhất một đầu ra bản dựng phải được chọn"
 
 #: templates/js/translated/build.js:590
 msgid "Selected build outputs will be marked as complete"
-msgstr ""
+msgstr "Đầu ra bản dựng được chọn sẽ được đánh dấu là hoàn thành"
 
 #: templates/js/translated/build.js:594 templates/js/translated/build.js:728
 #: templates/js/translated/build.js:852
 msgid "Output"
-msgstr ""
+msgstr "Đầu ra"
 
 #: templates/js/translated/build.js:622
 msgid "Complete Build Outputs"
-msgstr ""
+msgstr "Hoàn thành đầu ra bản dựng"
 
 #: templates/js/translated/build.js:719
 msgid "Selected build outputs will be marked as scrapped"
-msgstr ""
+msgstr "Đầu ra bản dựng đx chọn sẽ được đánh dấu là bị loại bỏ"
 
 #: templates/js/translated/build.js:721
 msgid "Scrapped output are marked as rejected"
-msgstr ""
+msgstr "Đầu ra bị loại bỏ được đánh dấu là bị từ chối"
 
 #: templates/js/translated/build.js:722
 msgid "Allocated stock items will no longer be available"
-msgstr ""
+msgstr "Mặt hàng được chỉ định không còn hàng nữa"
 
 #: templates/js/translated/build.js:723
 msgid "The completion status of the build order will not be adjusted"
-msgstr ""
+msgstr "Trạng thái hoàn thành của đơn đặt bản dựng sẽ không được điều chỉnh"
 
 #: templates/js/translated/build.js:754
 msgid "Scrap Build Outputs"
-msgstr ""
+msgstr "Loại bỏ đầu ra bản dựng"
 
 #: templates/js/translated/build.js:844
 msgid "Selected build outputs will be deleted"
-msgstr ""
+msgstr "Sẽ xóa đầu ra bản dựng được chọn"
 
 #: templates/js/translated/build.js:846
 msgid "Build output data will be permanently deleted"
-msgstr ""
+msgstr "Sẽ xóa vĩnh viễn dữ liệu đầu ra bản dựng"
 
 #: templates/js/translated/build.js:847
 msgid "Allocated stock items will be returned to stock"
-msgstr ""
+msgstr "Sẽ trả về kho mặt hàng được chỉ định"
 
 #: templates/js/translated/build.js:865
 msgid "Delete Build Outputs"
-msgstr ""
+msgstr "Xóa đầu ra bản dựng"
 
 #: templates/js/translated/build.js:952
 msgid "No build order allocations found"
-msgstr ""
+msgstr "No build order allocations found"
 
 #: templates/js/translated/build.js:981 templates/js/translated/build.js:2329
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Số lượng đã phân bổ"
 
 #: templates/js/translated/build.js:995
 msgid "Location not specified"
-msgstr ""
+msgstr "Vị trí chưa được chỉ định"
 
 #: templates/js/translated/build.js:1017
 msgid "Complete outputs"
-msgstr ""
+msgstr "Hoàn thiện đầu ra"
 
 #: templates/js/translated/build.js:1035
 msgid "Scrap outputs"
-msgstr ""
+msgstr "Loại bỏ đầu ra"
 
 #: templates/js/translated/build.js:1053
 msgid "Delete outputs"
-msgstr ""
+msgstr "Xóa đầu ra"
 
 #: templates/js/translated/build.js:1107
 msgid "build output"
-msgstr ""
+msgstr "đầu ra bản dựng"
 
 #: templates/js/translated/build.js:1108
 msgid "build outputs"
-msgstr ""
+msgstr "đầu ra bản dựng"
 
 #: templates/js/translated/build.js:1112
 msgid "Build output actions"
-msgstr ""
+msgstr "Chức năng đầu ra bản dựng"
 
 #: templates/js/translated/build.js:1281
 msgid "No active build outputs found"
-msgstr ""
+msgstr "Không tìm thấy đầu ra bản dựng hoạt động"
 
 #: templates/js/translated/build.js:1374
 msgid "Allocated Lines"
-msgstr ""
+msgstr "Dòng đã phân bổ"
 
 #: templates/js/translated/build.js:1388
 msgid "Required Tests"
-msgstr ""
+msgstr "Kiểm thử bắt buộc"
 
 #: templates/js/translated/build.js:1560
 #: templates/js/translated/purchase_order.js:627
 #: templates/js/translated/sales_order.js:1168
 msgid "Select Parts"
-msgstr ""
+msgstr "Chọn sản phẩm"
 
 #: templates/js/translated/build.js:1561
 #: templates/js/translated/sales_order.js:1169
 msgid "You must select at least one part to allocate"
-msgstr ""
+msgstr "Bạn phải chọn ít nhất một sản phẩm để phân bổ"
 
 #: templates/js/translated/build.js:1624
 #: templates/js/translated/sales_order.js:1118
 msgid "Specify stock allocation quantity"
-msgstr ""
+msgstr "Xác định số lượng phân bổ kho"
 
 #: templates/js/translated/build.js:1701
 msgid "All Parts Allocated"
-msgstr ""
+msgstr "Toàn bộ sản phẩm đã phân bổ"
 
 #: templates/js/translated/build.js:1702
 msgid "All selected parts have been fully allocated"
-msgstr ""
+msgstr "Đã phân bổ tất cả sản phẩm đã chọn đầy đủ"
 
 #: templates/js/translated/build.js:1716
 #: templates/js/translated/sales_order.js:1183
 msgid "Select source location (leave blank to take from all locations)"
-msgstr ""
+msgstr "Chọn vị trí nguồn (để trống để lấy từ tất cả vị trí)"
 
 #: templates/js/translated/build.js:1744
 msgid "Allocate Stock Items to Build Order"
-msgstr ""
+msgstr "Phân bổ mặt hàng đến đơn đặt bản dựng"
 
 #: templates/js/translated/build.js:1755
 #: templates/js/translated/sales_order.js:1280
 msgid "No matching stock locations"
-msgstr ""
+msgstr "Không có vị trí kho trùng khớp"
 
 #: templates/js/translated/build.js:1828
 #: templates/js/translated/sales_order.js:1359
@@ -10634,19 +10634,19 @@ msgstr "Phân kho tự động"
 
 #: templates/js/translated/build.js:1926
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
-msgstr ""
+msgstr "Mặt hàng sẽ được tự động phân bổ đến đơn đặt bản dựng này, theo chỉ dẫn đã được cung cấp"
 
 #: templates/js/translated/build.js:1928
 msgid "If a location is specified, stock will only be allocated from that location"
-msgstr ""
+msgstr "Nếu một vị trí đã được chỉ định, kho sẽ chỉ phân bổ được từ vị trí đó"
 
 #: templates/js/translated/build.js:1929
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
-msgstr ""
+msgstr "Nếu kho được xem xét nhắc có thể thay đổi, nó sẽ tự động được phân bổ từ vị trí đầu tiên nó tìm thấy"
 
 #: templates/js/translated/build.js:1930
 msgid "If substitute stock is allowed, it will be used where stock of the primary part cannot be found"
-msgstr ""
+msgstr "Nếu kho thay thế được phép, nó sẽ được dùng nơi kho của sản phẩm chính không thể tìm thấy được"
 
 #: templates/js/translated/build.js:1961
 msgid "Allocate Stock Items"
@@ -10743,122 +10743,122 @@ msgstr "Xây kho"
 
 #: templates/js/translated/build.js:2642 templates/js/translated/stock.js:1836
 msgid "Order stock"
-msgstr ""
+msgstr "Kho đặt hàng"
 
 #: templates/js/translated/build.js:2646
 #: templates/js/translated/sales_order.js:2007
 msgid "Allocate stock"
-msgstr ""
+msgstr "Phân kho"
 
 #: templates/js/translated/build.js:2650
 msgid "Remove stock allocation"
-msgstr ""
+msgstr "Xóa phân bổ kho"
 
 #: templates/js/translated/company.js:98
 msgid "Add Manufacturer"
-msgstr ""
+msgstr "Thêm nhà sản xuất"
 
 #: templates/js/translated/company.js:111
 #: templates/js/translated/company.js:213
 msgid "Add Manufacturer Part"
-msgstr ""
+msgstr "Sản phẩm nhà sản xuất"
 
 #: templates/js/translated/company.js:132
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "Sửa sản phẩm nhà sản xuất"
 
 #: templates/js/translated/company.js:201
 #: templates/js/translated/purchase_order.js:93
 msgid "Add Supplier"
-msgstr ""
+msgstr "Thêm nhà cung cấp"
 
 #: templates/js/translated/company.js:243
 #: templates/js/translated/purchase_order.js:349
 msgid "Add Supplier Part"
-msgstr ""
+msgstr "Thêm sản phẩm nhà cung cấp"
 
 #: templates/js/translated/company.js:344
 msgid "All selected supplier parts will be deleted"
-msgstr ""
+msgstr "Sẽ xóa toàn bộ sản phẩm nhà cung cấp đã chọn"
 
 #: templates/js/translated/company.js:360
 msgid "Delete Supplier Parts"
-msgstr ""
+msgstr "Xóa sản phẩm nhà cung cấp"
 
 #: templates/js/translated/company.js:465
 msgid "Add new Company"
-msgstr ""
+msgstr "Thêm công ty mới"
 
 #: templates/js/translated/company.js:536
 msgid "Parts Supplied"
-msgstr ""
+msgstr "Sản phẩm đã cung cấp"
 
 #: templates/js/translated/company.js:545
 msgid "Parts Manufactured"
-msgstr ""
+msgstr "Sản phẩm đã sản xuất"
 
 #: templates/js/translated/company.js:560
 msgid "No company information found"
-msgstr ""
+msgstr "Không tìm thấy thông tin công ty"
 
 #: templates/js/translated/company.js:609
 msgid "Create New Contact"
-msgstr ""
+msgstr "Tạo liên lạc mới"
 
 #: templates/js/translated/company.js:625
 #: templates/js/translated/company.js:748
 msgid "Edit Contact"
-msgstr ""
+msgstr "Chỉnh sửa liên hệ"
 
 #: templates/js/translated/company.js:662
 msgid "All selected contacts will be deleted"
-msgstr ""
+msgstr "Tất cả liên hệ được chọn sẽ bị xóa"
 
 #: templates/js/translated/company.js:668
 #: templates/js/translated/company.js:732
 msgid "Role"
-msgstr ""
+msgstr "Vai trò"
 
 #: templates/js/translated/company.js:676
 msgid "Delete Contacts"
-msgstr ""
+msgstr "Xoá liên hệ"
 
 #: templates/js/translated/company.js:707
 msgid "No contacts found"
-msgstr ""
+msgstr "Không tìm thấy liên hệ"
 
 #: templates/js/translated/company.js:720
 msgid "Phone Number"
-msgstr ""
+msgstr "Số điện thoại"
 
 #: templates/js/translated/company.js:726
 msgid "Email Address"
-msgstr ""
+msgstr "Địa chỉ email"
 
 #: templates/js/translated/company.js:752
 msgid "Delete Contact"
-msgstr ""
+msgstr "Xoá liên hệ"
 
 #: templates/js/translated/company.js:849
 msgid "Create New Address"
-msgstr ""
+msgstr "Tạo địa chỉ mới"
 
 #: templates/js/translated/company.js:864
 #: templates/js/translated/company.js:1025
 msgid "Edit Address"
-msgstr ""
+msgstr "Sửa địa chỉ"
 
 #: templates/js/translated/company.js:899
 msgid "All selected addresses will be deleted"
-msgstr ""
+msgstr "Tất cả địa chỉ đã được chọn sẽ bị xoá"
 
 #: templates/js/translated/company.js:913
 msgid "Delete Addresses"
-msgstr ""
+msgstr "Xoá địa chỉ"
 
 #: templates/js/translated/company.js:940
 msgid "No addresses found"
-msgstr ""
+msgstr "Không tìm thấy địa chỉ"
 
 #: templates/js/translated/company.js:979
 msgid "Postal city"
@@ -10866,11 +10866,11 @@ msgstr "Thành phố bưu chính"
 
 #: templates/js/translated/company.js:985
 msgid "State/province"
-msgstr ""
+msgstr "Bang/Tỉnh"
 
 #: templates/js/translated/company.js:997
 msgid "Courier notes"
-msgstr ""
+msgstr "Ghi chú chuyển phát nhanh"
 
 #: templates/js/translated/company.js:1003
 msgid "Internal notes"
@@ -10947,27 +10947,27 @@ msgstr "Xóa tham số"
 
 #: templates/js/translated/company.js:1486
 msgid "Delete supplier parts"
-msgstr ""
+msgstr "Xóa sản phẩm nhà cung cấp"
 
 #: templates/js/translated/company.js:1536
 msgid "No supplier parts found"
-msgstr ""
+msgstr "Không tìm thấy sản phẩm nhà cung cấp"
 
 #: templates/js/translated/company.js:1654
 msgid "Base Units"
-msgstr ""
+msgstr "Đơn vị cơ sở"
 
 #: templates/js/translated/company.js:1684
 msgid "Availability"
-msgstr ""
+msgstr "Sẵn sàng"
 
 #: templates/js/translated/company.js:1715
 msgid "Edit supplier part"
-msgstr ""
+msgstr "Sửa sản phẩm nhà cung cấp"
 
 #: templates/js/translated/company.js:1716
 msgid "Delete supplier part"
-msgstr ""
+msgstr "Xóa sản phẩm nhà cung cấp"
 
 #: templates/js/translated/company.js:1769
 #: templates/js/translated/pricing.js:694
@@ -11387,68 +11387,68 @@ msgstr "Sản phẩm kích hoạt"
 
 #: templates/js/translated/part.js:529
 msgid "Part cannot be deleted as it is currently active"
-msgstr ""
+msgstr "Không thể xóa sản phẩm vì nó đang hoạt động"
 
 #: templates/js/translated/part.js:543
 msgid "Deleting this part cannot be reversed"
-msgstr ""
+msgstr "Không thể khôi phục việc xóa sản phẩm này"
 
 #: templates/js/translated/part.js:545
 msgid "Any stock items for this part will be deleted"
-msgstr ""
+msgstr "Sẽ xóa bất kỳ mặt hàng nào của sản phẩm này"
 
 #: templates/js/translated/part.js:546
 msgid "This part will be removed from any Bills of Material"
-msgstr ""
+msgstr "Sẽ xóa sản phẩm này khỏi hóa đơn vật liệu"
 
 #: templates/js/translated/part.js:547
 msgid "All manufacturer and supplier information for this part will be deleted"
-msgstr ""
+msgstr "Sẽ xóa toàn bộ thông tin nhà sản xuất và nhà cung cấp cho sản phẩm này"
 
 #: templates/js/translated/part.js:554
 msgid "Delete Part"
-msgstr ""
+msgstr "Xóa sản phẩm"
 
 #: templates/js/translated/part.js:590
 msgid "You are subscribed to notifications for this item"
-msgstr ""
+msgstr "Bạn đã đăng ký nhận thông báo cho hàng hóa này"
 
 #: templates/js/translated/part.js:592
 msgid "You have subscribed to notifications for this item"
-msgstr ""
+msgstr "Bạn đã đăng ký nhận thông báo cho hàng hóa này"
 
 #: templates/js/translated/part.js:597
 msgid "Subscribe to notifications for this item"
-msgstr ""
+msgstr "Đăng ký nhận thông báo cho hàng hóa này"
 
 #: templates/js/translated/part.js:599
 msgid "You have unsubscribed to notifications for this item"
-msgstr ""
+msgstr "Bạn đã hủy đăng ký nhận thông báo cho hàng hóa này"
 
 #: templates/js/translated/part.js:616
 msgid "Validating the BOM will mark each line item as valid"
-msgstr ""
+msgstr "Phê chuẩn BOM sẽ đánh dấu từng hạng mục là hợp lệ"
 
 #: templates/js/translated/part.js:626
 msgid "Validate Bill of Materials"
-msgstr ""
+msgstr "Phê chuẩn hóa đơn vật liệu"
 
 #: templates/js/translated/part.js:629
 msgid "Validated Bill of Materials"
-msgstr ""
+msgstr "Hóa đơn vật liệu đã phê chuẩn"
 
 #: templates/js/translated/part.js:654
 msgid "Copy Bill of Materials"
-msgstr ""
+msgstr "Sao chép hóa đơn vật liệu"
 
 #: templates/js/translated/part.js:682
 #: templates/js/translated/table_filters.js:743
 msgid "Low stock"
-msgstr ""
+msgstr "Còn ít hàng"
 
 #: templates/js/translated/part.js:685
 msgid "No stock available"
-msgstr ""
+msgstr "Không có sẵn kho"
 
 #: templates/js/translated/part.js:745
 msgid "Demand"
@@ -11472,43 +11472,43 @@ msgstr "Sản phẩm dùng để bán"
 
 #: templates/js/translated/part.js:886
 msgid "Schedule generation of a new stocktake report."
-msgstr ""
+msgstr "Lập lịch tạo báo cáo kiểm kê mới."
 
 #: templates/js/translated/part.js:886
 msgid "Once complete, the stocktake report will be available for download."
-msgstr ""
+msgstr "Một khi đã hoàn thiện, báo cáo kiểm kê sẽ có thể tải về."
 
 #: templates/js/translated/part.js:894
 msgid "Generate Stocktake Report"
-msgstr ""
+msgstr "Tạo báo cáo kiểm kê"
 
 #: templates/js/translated/part.js:898
 msgid "Stocktake report scheduled"
-msgstr ""
+msgstr "Báo cáo kiểm kê đã lên lịch"
 
 #: templates/js/translated/part.js:1047
 msgid "No stocktake information available"
-msgstr ""
+msgstr "Không có sẵn thông tin kiểm kê"
 
 #: templates/js/translated/part.js:1105 templates/js/translated/part.js:1141
 msgid "Edit Stocktake Entry"
-msgstr ""
+msgstr "Sửa mục kiểm kê"
 
 #: templates/js/translated/part.js:1109 templates/js/translated/part.js:1151
 msgid "Delete Stocktake Entry"
-msgstr ""
+msgstr "Xóa mục kiểm kê"
 
 #: templates/js/translated/part.js:1278
 msgid "No variants found"
-msgstr ""
+msgstr "Không tìm thấy biến thể"
 
 #: templates/js/translated/part.js:1596
 msgid "No part parameter templates found"
-msgstr ""
+msgstr "Không tìm thấy mẫu tham số sản phẩm"
 
 #: templates/js/translated/part.js:1659
 msgid "Edit Part Parameter Template"
-msgstr ""
+msgstr "Sửa mẫu tham số sản phẩm"
 
 #: templates/js/translated/part.js:1671
 msgid "Any parameters which reference this template will also be deleted"
@@ -11516,65 +11516,65 @@ msgstr "Những thông số thuộc mẫu này cũng sẽ bị xóa"
 
 #: templates/js/translated/part.js:1679
 msgid "Delete Part Parameter Template"
-msgstr ""
+msgstr "Xóa mẫu tham số sản phẩm"
 
 #: templates/js/translated/part.js:1713
 #: templates/js/translated/purchase_order.js:1645
 msgid "No purchase orders found"
-msgstr ""
+msgstr "Không tìm thấy đơn đặt mua"
 
 #: templates/js/translated/part.js:1856
 #: templates/js/translated/purchase_order.js:2144
 #: templates/js/translated/return_order.js:753
 #: templates/js/translated/sales_order.js:1872
 msgid "This line item is overdue"
-msgstr ""
+msgstr "Hạng mục này quá hạn"
 
 #: templates/js/translated/part.js:1901
 #: templates/js/translated/purchase_order.js:2211
 msgid "Receive line item"
-msgstr ""
+msgstr "Nhận hạng mục"
 
 #: templates/js/translated/part.js:1964
 msgid "Delete part relationship"
-msgstr ""
+msgstr "Xóa mối quan hệ sản phẩm"
 
 #: templates/js/translated/part.js:1986
 msgid "Delete Part Relationship"
-msgstr ""
+msgstr "Xóa mối quan hệ sản phẩm"
 
 #: templates/js/translated/part.js:2074 templates/js/translated/part.js:2501
 msgid "No parts found"
-msgstr ""
+msgstr "Không tìm thấy sản phẩm"
 
 #: templates/js/translated/part.js:2195
 msgid "Set the part category for the selected parts"
-msgstr ""
+msgstr "Phân nhóm sản phẩm cho sản phẩm đã chọn"
 
 #: templates/js/translated/part.js:2200
 msgid "Set Part Category"
-msgstr ""
+msgstr "Đặt nhóm sản phẩm"
 
 #: templates/js/translated/part.js:2230
 msgid "Set category"
-msgstr ""
+msgstr "Phân nhóm"
 
 #: templates/js/translated/part.js:2283
 msgid "parts"
-msgstr ""
+msgstr "sản phẩm"
 
 #: templates/js/translated/part.js:2379
 msgid "No category"
-msgstr ""
+msgstr "Không có danh mục"
 
 #: templates/js/translated/part.js:2526 templates/js/translated/part.js:2656
 #: templates/js/translated/stock.js:2640
 msgid "Display as list"
-msgstr ""
+msgstr "Hiển thị dạng danh sách"
 
 #: templates/js/translated/part.js:2542
 msgid "Display as grid"
-msgstr ""
+msgstr "Hiển thị dạng lưới"
 
 #: templates/js/translated/part.js:2640
 msgid "No subcategories found"
@@ -11594,7 +11594,7 @@ msgstr "Danh mục đã đăng ký"
 
 #: templates/js/translated/part.js:2849
 msgid "No test templates matching query"
-msgstr ""
+msgstr "Không có mẫu kiểm thử phù hợp với truy vấn"
 
 #: templates/js/translated/part.js:2900 templates/js/translated/stock.js:1436
 msgid "Edit test result"
@@ -11631,15 +11631,15 @@ msgstr "Đầu cơ"
 
 #: templates/js/translated/part.js:3073
 msgid "No scheduling information available for this part"
-msgstr ""
+msgstr "Không có sẵn thông tin lập lịch cho sản phẩm này"
 
 #: templates/js/translated/part.js:3079
 msgid "Error fetching scheduling information for this part"
-msgstr ""
+msgstr "Lỗi gọi thông tin lập lịch cho sản phẩm này"
 
 #: templates/js/translated/part.js:3175
 msgid "Scheduled Stock Quantities"
-msgstr ""
+msgstr "Số lượng kho đã lập lịch"
 
 #: templates/js/translated/part.js:3191
 msgid "Maximum Quantity"
@@ -11699,634 +11699,634 @@ msgstr "Đã cập nhật phần bổ sung"
 
 #: templates/js/translated/pricing.js:159
 msgid "Error fetching currency data"
-msgstr ""
+msgstr "Lỗi khi tải thông tin tiền tệ"
 
 #: templates/js/translated/pricing.js:321
 msgid "No BOM data available"
-msgstr ""
+msgstr "Không có sẵn thông tin BOM"
 
 #: templates/js/translated/pricing.js:463
 msgid "No supplier pricing data available"
-msgstr ""
+msgstr "Không có sẵn thông tin định giá nhà cung cấp"
 
 #: templates/js/translated/pricing.js:572
 msgid "No price break data available"
-msgstr ""
+msgstr "Không có sẵn dữ liệu phá giá"
 
 #: templates/js/translated/pricing.js:755
 msgid "No purchase history data available"
-msgstr ""
+msgstr "Không có sẵn dữ liệu lịch sử mua hàng"
 
 #: templates/js/translated/pricing.js:791
 msgid "Purchase Price History"
-msgstr ""
+msgstr "Lịch sử giá mua hàng"
 
 #: templates/js/translated/pricing.js:894
 msgid "No sales history data available"
-msgstr ""
+msgstr "Không có sẵn lịch sử bán hàng"
 
 #: templates/js/translated/pricing.js:916
 msgid "Sale Price History"
-msgstr ""
+msgstr "Lịch sử giá bán"
 
 #: templates/js/translated/pricing.js:1005
 msgid "No variant data available"
-msgstr ""
+msgstr "Không có sẵn dữ liệu biến thể"
 
 #: templates/js/translated/pricing.js:1045
 msgid "Variant Part"
-msgstr ""
+msgstr "Sản phẩm biến thể"
 
 #: templates/js/translated/purchase_order.js:166
 msgid "Select purchase order to duplicate"
-msgstr ""
+msgstr "Chọn đơn đặt mua để nhân bản"
 
 #: templates/js/translated/purchase_order.js:173
 msgid "Duplicate Line Items"
-msgstr ""
+msgstr "Nhân bản hạng mục"
 
 #: templates/js/translated/purchase_order.js:174
 msgid "Duplicate all line items from the selected order"
-msgstr ""
+msgstr "Nhân bản toàn bộ hạng mục từ đơn đặt đã chọn"
 
 #: templates/js/translated/purchase_order.js:181
 msgid "Duplicate Extra Lines"
-msgstr ""
+msgstr "Nhân bản dòng mở rộng"
 
 #: templates/js/translated/purchase_order.js:182
 msgid "Duplicate extra line items from the selected order"
-msgstr ""
+msgstr "Nhân bản hạng mục mở rộng từ đơn đặt đã chọn"
 
 #: templates/js/translated/purchase_order.js:203
 msgid "Edit Purchase Order"
-msgstr ""
+msgstr "Chỉnh sửa đơn đặt mua"
 
 #: templates/js/translated/purchase_order.js:220
 msgid "Duplication Options"
-msgstr ""
+msgstr "Tùy chọn nhân bản"
 
 #: templates/js/translated/purchase_order.js:447
 msgid "Complete Purchase Order"
-msgstr ""
+msgstr "Hoàn thành đơn đặt mua"
 
 #: templates/js/translated/purchase_order.js:464
 #: templates/js/translated/return_order.js:207
 #: templates/js/translated/sales_order.js:497
 msgid "Mark this order as complete?"
-msgstr ""
+msgstr "Đánh dấu đơn đặt đã hoàn thành?"
 
 #: templates/js/translated/purchase_order.js:470
 msgid "All line items have been received"
-msgstr ""
+msgstr "Tất cả mục dòng đã nhận được"
 
 #: templates/js/translated/purchase_order.js:475
 msgid "This order has line items which have not been marked as received."
-msgstr ""
+msgstr "Đơn đặt này có mục dòng chưa được đánh dấu là đã nhận được."
 
 #: templates/js/translated/purchase_order.js:476
 #: templates/js/translated/sales_order.js:511
 msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr ""
+msgstr "Hoàn thành đơn đặt này nghĩa là đơn đặt và mục dòng sẽ không thể sửa được nữa."
 
 #: templates/js/translated/purchase_order.js:499
 msgid "Cancel Purchase Order"
-msgstr ""
+msgstr "Hủy đơn đặt mua"
 
 #: templates/js/translated/purchase_order.js:504
 msgid "Are you sure you wish to cancel this purchase order?"
-msgstr ""
+msgstr "Bạn có muốn hủy đơn đặt mua này?"
 
 #: templates/js/translated/purchase_order.js:510
 msgid "This purchase order can not be cancelled"
-msgstr ""
+msgstr "Không thể hủy đơn đặt mua này"
 
 #: templates/js/translated/purchase_order.js:531
 #: templates/js/translated/return_order.js:161
 msgid "After placing this order, line items will no longer be editable."
-msgstr ""
+msgstr "Sau khi đặt đơn này, sẽ không thể sửa mục dòng được nữa."
 
 #: templates/js/translated/purchase_order.js:536
 msgid "Issue Purchase Order"
-msgstr ""
+msgstr "Phát hành đơn đặt mua"
 
 #: templates/js/translated/purchase_order.js:628
 msgid "At least one purchaseable part must be selected"
-msgstr ""
+msgstr "Phải chọn ít nhất 1 sản phẩm có thể mua được"
 
 #: templates/js/translated/purchase_order.js:653
 msgid "Quantity to order"
-msgstr ""
+msgstr "Số lượng cần đặt"
 
 #: templates/js/translated/purchase_order.js:662
 msgid "New supplier part"
-msgstr ""
+msgstr "Sản phẩm nhà cung cấp mới"
 
 #: templates/js/translated/purchase_order.js:680
 msgid "New purchase order"
-msgstr ""
+msgstr "Đơn đặt mua mới"
 
 #: templates/js/translated/purchase_order.js:712
 msgid "Add to purchase order"
-msgstr ""
+msgstr "Thêm vào đơn đặt mua"
 
 #: templates/js/translated/purchase_order.js:860
 msgid "No matching supplier parts"
-msgstr ""
+msgstr "Không thấy sản phẩm nhà cung cấp trùng khớp"
 
 #: templates/js/translated/purchase_order.js:879
 msgid "No matching purchase orders"
-msgstr ""
+msgstr "Không thấy đơn đặt mua trùng khớp"
 
 #: templates/js/translated/purchase_order.js:1066
 msgid "Select Line Items"
-msgstr ""
+msgstr "Chọn mục dòng"
 
 #: templates/js/translated/purchase_order.js:1067
 #: templates/js/translated/return_order.js:489
 msgid "At least one line item must be selected"
-msgstr ""
+msgstr "Phải chọn ít nhất một mục dòng"
 
 #: templates/js/translated/purchase_order.js:1097
 msgid "Received Quantity"
-msgstr ""
+msgstr "Số lượng đã nhận"
 
 #: templates/js/translated/purchase_order.js:1108
 msgid "Quantity to receive"
-msgstr ""
+msgstr "Số lượng cần nhận"
 
 #: templates/js/translated/purchase_order.js:1184
 msgid "Stock Status"
-msgstr ""
+msgstr "Trạng thái kho"
 
 #: templates/js/translated/purchase_order.js:1198
 msgid "Add barcode"
-msgstr ""
+msgstr "Thêm mã vạch"
 
 #: templates/js/translated/purchase_order.js:1199
 msgid "Remove barcode"
-msgstr ""
+msgstr "Xóa mã vạch"
 
 #: templates/js/translated/purchase_order.js:1202
 msgid "Specify location"
-msgstr ""
+msgstr "Chỉ định địa điểm"
 
 #: templates/js/translated/purchase_order.js:1210
 msgid "Add batch code"
-msgstr ""
+msgstr "Thêm hàng loạt mã"
 
 #: templates/js/translated/purchase_order.js:1221
 msgid "Add serial numbers"
-msgstr ""
+msgstr "Thêm số sêri"
 
 #: templates/js/translated/purchase_order.js:1273
 msgid "Serials"
-msgstr ""
+msgstr "Sêri"
 
 #: templates/js/translated/purchase_order.js:1298
 msgid "Order Code"
-msgstr ""
+msgstr "Mã đơn đặt"
 
 #: templates/js/translated/purchase_order.js:1300
 msgid "Quantity to Receive"
-msgstr ""
+msgstr "Số lượng cần nhận"
 
 #: templates/js/translated/purchase_order.js:1326
 #: templates/js/translated/return_order.js:558
 msgid "Confirm receipt of items"
-msgstr ""
+msgstr "Xác nhận đơn nhận hàng hóa"
 
 #: templates/js/translated/purchase_order.js:1327
 msgid "Receive Purchase Order Items"
-msgstr ""
+msgstr "Nhận hàng hóa đặt mua"
 
 #: templates/js/translated/purchase_order.js:1395
 msgid "Scan Item Barcode"
-msgstr ""
+msgstr "Quét mã vạch hàng hóa"
 
 #: templates/js/translated/purchase_order.js:1396
 msgid "Scan barcode on incoming item (must not match any existing stock items)"
-msgstr ""
+msgstr "Quét mã vạch trên hàng hóa đầu vào (phải không khớp với bất kỳ hàng hóa nào đang tồn tại)"
 
 #: templates/js/translated/purchase_order.js:1410
 msgid "Invalid barcode data"
-msgstr ""
+msgstr "Dữ liệu mã vạch không hợp lệ"
 
 #: templates/js/translated/purchase_order.js:1672
 #: templates/js/translated/return_order.js:283
 #: templates/js/translated/sales_order.js:771
 #: templates/js/translated/sales_order.js:995
 msgid "Order is overdue"
-msgstr ""
+msgstr "Đơn đặt đã quá hạn"
 
 #: templates/js/translated/purchase_order.js:1738
 #: templates/js/translated/return_order.js:351
 #: templates/js/translated/sales_order.js:848
 #: templates/js/translated/sales_order.js:1008
 msgid "Items"
-msgstr ""
+msgstr "Hàng hóa"
 
 #: templates/js/translated/purchase_order.js:1834
 msgid "All selected Line items will be deleted"
-msgstr ""
+msgstr "Đã xóa toàn bộ mục dòng được chọn"
 
 #: templates/js/translated/purchase_order.js:1852
 msgid "Delete selected Line items?"
-msgstr ""
+msgstr "Xóa mục dòng đã chọn?"
 
 #: templates/js/translated/purchase_order.js:1907
 #: templates/js/translated/sales_order.js:2067
 msgid "Duplicate Line Item"
-msgstr ""
+msgstr "Nhân bản mục dòng"
 
 #: templates/js/translated/purchase_order.js:1922
 #: templates/js/translated/return_order.js:473
 #: templates/js/translated/return_order.js:666
 #: templates/js/translated/sales_order.js:2080
 msgid "Edit Line Item"
-msgstr ""
+msgstr "Sửa mục dòng"
 
 #: templates/js/translated/purchase_order.js:1933
 #: templates/js/translated/return_order.js:679
 #: templates/js/translated/sales_order.js:2091
 msgid "Delete Line Item"
-msgstr ""
+msgstr "Xóa mục dòng"
 
 #: templates/js/translated/purchase_order.js:2215
 #: templates/js/translated/sales_order.js:2021
 msgid "Duplicate line item"
-msgstr ""
+msgstr "Nhân bản mục dòng"
 
 #: templates/js/translated/purchase_order.js:2216
 #: templates/js/translated/return_order.js:798
 #: templates/js/translated/sales_order.js:2022
 msgid "Edit line item"
-msgstr ""
+msgstr "Sửa mục dòng"
 
 #: templates/js/translated/purchase_order.js:2217
 #: templates/js/translated/return_order.js:802
 #: templates/js/translated/sales_order.js:2028
 msgid "Delete line item"
-msgstr ""
+msgstr "Xóa mục dòng"
 
 #: templates/js/translated/report.js:63
 msgid "items selected"
-msgstr ""
+msgstr "hàng hóa đã chọn"
 
 #: templates/js/translated/report.js:71
 msgid "Select Report Template"
-msgstr ""
+msgstr "Chọn mẫu báo cáo"
 
 #: templates/js/translated/report.js:86
 msgid "Select Test Report Template"
-msgstr ""
+msgstr "Chọn mẫu báo cáo kiểm thử"
 
 #: templates/js/translated/report.js:140
 msgid "No Reports Found"
-msgstr ""
+msgstr "Không tìm thấy báo cáo"
 
 #: templates/js/translated/report.js:141
 msgid "No report templates found which match the selected items"
-msgstr ""
+msgstr "Không tìm thấy mẫu báo cáo phù hợp với hàng hóa đã chọn"
 
 #: templates/js/translated/return_order.js:60
 #: templates/js/translated/sales_order.js:86
 msgid "Add Customer"
-msgstr ""
+msgstr "Thêm khách hàng"
 
 #: templates/js/translated/return_order.js:131
 msgid "Create Return Order"
-msgstr ""
+msgstr "Tạo đơn hàng trả lại"
 
 #: templates/js/translated/return_order.js:146
 msgid "Edit Return Order"
-msgstr ""
+msgstr "Sửa đơn hàng trả lại"
 
 #: templates/js/translated/return_order.js:166
 msgid "Issue Return Order"
-msgstr ""
+msgstr "Phát hành đơn hàng trả lại"
 
 #: templates/js/translated/return_order.js:183
 msgid "Are you sure you wish to cancel this Return Order?"
-msgstr ""
+msgstr "Bạn có muốn hủy đơn hàng trả lại này?"
 
 #: templates/js/translated/return_order.js:190
 msgid "Cancel Return Order"
-msgstr ""
+msgstr "Hủy đơn hàng trả lại"
 
 #: templates/js/translated/return_order.js:215
 msgid "Complete Return Order"
-msgstr ""
+msgstr "Hoàn thành đơn hàng trả lại"
 
 #: templates/js/translated/return_order.js:263
 msgid "No return orders found"
-msgstr ""
+msgstr "Không tìm thấy đơn hàng trả lại"
 
 #: templates/js/translated/return_order.js:297
 #: templates/js/translated/sales_order.js:785
 msgid "Invalid Customer"
-msgstr ""
+msgstr "Sai khách hàng"
 
 #: templates/js/translated/return_order.js:559
 msgid "Receive Return Order Items"
-msgstr ""
+msgstr "Nhận hàng hóa trả lại"
 
 #: templates/js/translated/return_order.js:690
 #: templates/js/translated/sales_order.js:2227
 msgid "No matching line items"
-msgstr ""
+msgstr "Không thấy hàng hóa phù hợp"
 
 #: templates/js/translated/return_order.js:795
 msgid "Mark item as received"
-msgstr ""
+msgstr "Đánh dấu hàng hóa đã được nhận"
 
 #: templates/js/translated/sales_order.js:158
 msgid "Create Sales Order"
-msgstr ""
+msgstr "Tạo đơn hàng bán"
 
 #: templates/js/translated/sales_order.js:173
 msgid "Edit Sales Order"
-msgstr ""
+msgstr "Sửa đơn hàng bán"
 
 #: templates/js/translated/sales_order.js:288
 msgid "No stock items have been allocated to this shipment"
-msgstr ""
+msgstr "Chưa phân bổ mặt hàng vào chuyển hàng này"
 
 #: templates/js/translated/sales_order.js:293
 msgid "The following stock items will be shipped"
-msgstr ""
+msgstr "Mặt hàng dưới đây sẽ được vận chuyển"
 
 #: templates/js/translated/sales_order.js:333
 msgid "Complete Shipment"
-msgstr ""
+msgstr "Hoàn thành chuyến hàng"
 
 #: templates/js/translated/sales_order.js:357
 msgid "Confirm Shipment"
-msgstr ""
+msgstr "Xác nhận chuyến hàng"
 
 #: templates/js/translated/sales_order.js:413
 msgid "No pending shipments found"
-msgstr ""
+msgstr "Không tìm thấy chuyển hàng chờ duyệt"
 
 #: templates/js/translated/sales_order.js:417
 msgid "No stock items have been allocated to pending shipments"
-msgstr ""
+msgstr "Không có mặt hàng được phân bổ vào chuyến hàng đang chờ xử lý"
 
 #: templates/js/translated/sales_order.js:427
 msgid "Complete Shipments"
-msgstr ""
+msgstr "Hoàn thiện chuyến hàng"
 
 #: templates/js/translated/sales_order.js:449
 msgid "Skip"
-msgstr ""
+msgstr "Bỏ qua"
 
 #: templates/js/translated/sales_order.js:510
 msgid "This order has line items which have not been completed."
-msgstr ""
+msgstr "Đơn hàng này có hạng mục chưa được hoàn thiện."
 
 #: templates/js/translated/sales_order.js:532
 msgid "Issue this Sales Order?"
-msgstr ""
+msgstr "Phát hành đơn hàng bán này?"
 
 #: templates/js/translated/sales_order.js:537
 msgid "Issue Sales Order"
-msgstr ""
+msgstr "Phát hành đơn hàng bán"
 
 #: templates/js/translated/sales_order.js:556
 msgid "Cancel Sales Order"
-msgstr ""
+msgstr "Hủy đơn hàng bán"
 
 #: templates/js/translated/sales_order.js:561
 msgid "Cancelling this order means that the order will no longer be editable."
-msgstr ""
+msgstr "Hủy bỏ đơn hàng này nghĩa là đơn hàng không thể sửa được nữa."
 
 #: templates/js/translated/sales_order.js:615
 msgid "Create New Shipment"
-msgstr ""
+msgstr "Tạo chuyến hàng mới"
 
 #: templates/js/translated/sales_order.js:725
 msgid "No sales orders found"
-msgstr ""
+msgstr "Không tìm thấy đơn hàng bán"
 
 #: templates/js/translated/sales_order.js:905
 msgid "Edit shipment"
-msgstr ""
+msgstr "Sửa chuyến hàng"
 
 #: templates/js/translated/sales_order.js:908
 msgid "Complete shipment"
-msgstr ""
+msgstr "Hoàn thành chuyến hàng"
 
 #: templates/js/translated/sales_order.js:913
 msgid "Delete shipment"
-msgstr ""
+msgstr "Xóa chuyến hàng"
 
 #: templates/js/translated/sales_order.js:930
 msgid "Edit Shipment"
-msgstr ""
+msgstr "Sửa chuyến hàng"
 
 #: templates/js/translated/sales_order.js:945
 msgid "Delete Shipment"
-msgstr ""
+msgstr "Xóa chuyến hàng"
 
 #: templates/js/translated/sales_order.js:978
 msgid "No matching shipments found"
-msgstr ""
+msgstr "Không tìm thấy chuyển hàng phù hợp"
 
 #: templates/js/translated/sales_order.js:1003
 msgid "Shipment Reference"
-msgstr ""
+msgstr "Tham chiếu chuyến hàng"
 
 #: templates/js/translated/sales_order.js:1027
 #: templates/js/translated/sales_order.js:1526
 msgid "Not shipped"
-msgstr ""
+msgstr "Chưa giao hàng"
 
 #: templates/js/translated/sales_order.js:1045
 msgid "Tracking"
-msgstr ""
+msgstr "Đang theo dõi"
 
 #: templates/js/translated/sales_order.js:1049
 msgid "Invoice"
-msgstr ""
+msgstr "Hoá đơn"
 
 #: templates/js/translated/sales_order.js:1216
 msgid "Add Shipment"
-msgstr ""
+msgstr "Thêm chuyến hàng"
 
 #: templates/js/translated/sales_order.js:1267
 msgid "Confirm stock allocation"
-msgstr ""
+msgstr "Xác nhận phân bổ kho"
 
 #: templates/js/translated/sales_order.js:1268
 msgid "Allocate Stock Items to Sales Order"
-msgstr ""
+msgstr "Phân bổ mặt hàng vào đơn hàng bán"
 
 #: templates/js/translated/sales_order.js:1474
 msgid "No sales order allocations found"
-msgstr ""
+msgstr "Phân bổ đơn hàng bán không tồn tại"
 
 #: templates/js/translated/sales_order.js:1566
 msgid "Edit Stock Allocation"
-msgstr ""
+msgstr "Sửa phân bổ kho"
 
 #: templates/js/translated/sales_order.js:1580
 msgid "Confirm Delete Operation"
-msgstr ""
+msgstr "Xác nhận hoạt động xóa"
 
 #: templates/js/translated/sales_order.js:1581
 msgid "Delete Stock Allocation"
-msgstr ""
+msgstr "Xóa phân bổ kho"
 
 #: templates/js/translated/sales_order.js:1620
 #: templates/js/translated/sales_order.js:1707
 #: templates/js/translated/stock.js:1744
 msgid "Shipped to customer"
-msgstr ""
+msgstr "Đã vận chuyển đến khách hàng"
 
 #: templates/js/translated/sales_order.js:1628
 #: templates/js/translated/sales_order.js:1716
 msgid "Stock location not specified"
-msgstr ""
+msgstr "Vị trí kho không được chỉ định"
 
 #: templates/js/translated/sales_order.js:2005
 msgid "Allocate serial numbers"
-msgstr ""
+msgstr "Phân bổ số sêri"
 
 #: templates/js/translated/sales_order.js:2009
 msgid "Purchase stock"
-msgstr ""
+msgstr "Kho mua"
 
 #: templates/js/translated/sales_order.js:2018
 #: templates/js/translated/sales_order.js:2205
 msgid "Calculate price"
-msgstr ""
+msgstr "Tính giá"
 
 #: templates/js/translated/sales_order.js:2032
 msgid "Cannot be deleted as items have been shipped"
-msgstr ""
+msgstr "Không thể xóa hàng hóa đã được vận chuyển"
 
 #: templates/js/translated/sales_order.js:2035
 msgid "Cannot be deleted as items have been allocated"
-msgstr ""
+msgstr "Không thể xóa hàng hóa đã được phân bổ"
 
 #: templates/js/translated/sales_order.js:2106
 msgid "Allocate Serial Numbers"
-msgstr ""
+msgstr "Phân bổ số sêri"
 
 #: templates/js/translated/sales_order.js:2213
 msgid "Update Unit Price"
-msgstr ""
+msgstr "Cập nhật đơn giá"
 
 #: templates/js/translated/search.js:270
 msgid "No results"
-msgstr ""
+msgstr "Không có kết quả"
 
 #: templates/js/translated/search.js:292 templates/search.html:25
 msgid "Enter search query"
-msgstr ""
+msgstr "Nhập truy vấn tìm kiếm"
 
 #: templates/js/translated/search.js:342
 msgid "result"
-msgstr ""
+msgstr "kết quả"
 
 #: templates/js/translated/search.js:342
 msgid "results"
-msgstr ""
+msgstr "kết quả"
 
 #: templates/js/translated/search.js:352
 msgid "Minimize results"
-msgstr ""
+msgstr "Thu nhỏ kết quả"
 
 #: templates/js/translated/search.js:355
 msgid "Remove results"
-msgstr ""
+msgstr "Xóa kết quả"
 
 #: templates/js/translated/stock.js:98
 msgid "Serialize Stock Item"
-msgstr ""
+msgstr "Sắp xếp hàng hóa trong kho"
 
 #: templates/js/translated/stock.js:129
 msgid "Confirm Stock Serialization"
-msgstr ""
+msgstr "Xác nhận trình tự kho"
 
 #: templates/js/translated/stock.js:139
 msgid "Default icon for all locations that have no icon set (optional) - Explore all available icons on"
-msgstr ""
+msgstr "Biểu tượng mặc định cho vị trí không được thiết lập biểu tượng (tùy chọn) - Xem toàn bộ biểu tượng trên"
 
 #: templates/js/translated/stock.js:152
 msgid "Parent stock location"
-msgstr ""
+msgstr "Vị trí kho cha"
 
 #: templates/js/translated/stock.js:166
 msgid "Add Location type"
-msgstr ""
+msgstr "Thêm loại địa điểm"
 
 #: templates/js/translated/stock.js:202
 msgid "Edit Stock Location"
-msgstr ""
+msgstr "Sửa vị trí kho"
 
 #: templates/js/translated/stock.js:217
 msgid "New Stock Location"
-msgstr ""
+msgstr "Vị trí kho mới"
 
 #: templates/js/translated/stock.js:219
 msgid "Create another location after this one"
-msgstr ""
+msgstr "Tạo vị trí khác sau cái này"
 
 #: templates/js/translated/stock.js:220
 msgid "Stock location created"
-msgstr ""
+msgstr "Vị trí kho đã được tạo"
 
 #: templates/js/translated/stock.js:234
 msgid "Are you sure you want to delete this stock location?"
-msgstr ""
+msgstr "Bạn có muốn xóa vị trí kho này?"
 
 #: templates/js/translated/stock.js:241
 msgid "Move to parent stock location"
-msgstr ""
+msgstr "Di chuyển đến vị trí kho cha"
 
 #: templates/js/translated/stock.js:250
 msgid "Delete Stock Location"
-msgstr ""
+msgstr "Xóa vị trí kho"
 
 #: templates/js/translated/stock.js:254
 msgid "Action for stock items in this stock location"
-msgstr ""
+msgstr "Chức năng cho mặt hàng trong vị trí kho này"
 
 #: templates/js/translated/stock.js:259
 msgid "Action for sub-locations"
-msgstr ""
+msgstr "Chức năng cho vị trí con"
 
 #: templates/js/translated/stock.js:313
 msgid "This part cannot be serialized"
-msgstr ""
+msgstr "Không thể trình tự hóa sản phẩm này"
 
 #: templates/js/translated/stock.js:349
 msgid "Add given quantity as packs instead of individual items"
-msgstr ""
+msgstr "Thêm số lượng đã có theo gói thay vì mặt hàng đơn lẻ"
 
 #: templates/js/translated/stock.js:362
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "Nhập số lượng ban đầu cho mặt hàng này"
 
 #: templates/js/translated/stock.js:368
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr ""
+msgstr "Nhập số sêri cho kho mới (hoặc bỏ trống)"
 
 #: templates/js/translated/stock.js:439
 msgid "Stock item duplicated"
-msgstr ""
+msgstr "Mặt hàng đã được nhân bản"
 
 #: templates/js/translated/stock.js:459
 msgid "Duplicate Stock Item"
-msgstr ""
+msgstr "Nhân bản mặt hàng"
 
 #: templates/js/translated/stock.js:475
 msgid "Are you sure you want to delete this stock item?"
-msgstr ""
+msgstr "Bạn có muốn xóa mặt hàng này?"
 
 #: templates/js/translated/stock.js:480
 msgid "Delete Stock Item"
-msgstr ""
+msgstr "Xóa mặt hàng"
 
 #: templates/js/translated/stock.js:501
 msgid "Edit Stock Item"
@@ -12334,7 +12334,7 @@ msgstr "Sửa mặt hàng"
 
 #: templates/js/translated/stock.js:543
 msgid "Create another item after this one"
-msgstr ""
+msgstr "Tạo mặt hàng khác sau cái này"
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
@@ -12346,175 +12346,175 @@ msgstr "Nhiều mặt hàng đã tạo"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
-msgstr ""
+msgstr "Tìm số sêri"
 
 #: templates/js/translated/stock.js:597 templates/js/translated/stock.js:598
 msgid "Enter serial number"
-msgstr ""
+msgstr "Điền số sêri"
 
 #: templates/js/translated/stock.js:614
 msgid "Enter a serial number"
-msgstr ""
+msgstr "Điền một số sêri"
 
 #: templates/js/translated/stock.js:634
 msgid "No matching serial number"
-msgstr ""
+msgstr "Số sêri không trùng khớp"
 
 #: templates/js/translated/stock.js:643
 msgid "More than one matching result found"
-msgstr ""
+msgstr "Tìm thấy nhiều hơn một kết quả phù hợp"
 
 #: templates/js/translated/stock.js:751
 msgid "Confirm stock assignment"
-msgstr ""
+msgstr "Xác nhận phân kho"
 
 #: templates/js/translated/stock.js:752
 msgid "Assign Stock to Customer"
-msgstr ""
+msgstr "Phân kho đến khách hàng"
 
 #: templates/js/translated/stock.js:829
 msgid "Warning: Merge operation cannot be reversed"
-msgstr ""
+msgstr "Cảnh báo: Hoạt động gộp không thể phục hồi"
 
 #: templates/js/translated/stock.js:830
 msgid "Some information will be lost when merging stock items"
-msgstr ""
+msgstr "Một số thông tin sẽ mất khi gộp mặt hàng"
 
 #: templates/js/translated/stock.js:832
 msgid "Stock transaction history will be deleted for merged items"
-msgstr ""
+msgstr "Sẽ xóa lịch sử giao dịch kho cho việc gộp hàng hóa"
 
 #: templates/js/translated/stock.js:833
 msgid "Supplier part information will be deleted for merged items"
-msgstr ""
+msgstr "Sẽ xóa thông tin sản phẩm nhà cung cấp khi gộp hàng hóa"
 
 #: templates/js/translated/stock.js:928
 msgid "Confirm stock item merge"
-msgstr ""
+msgstr "Xác nhận gộp mặt hàng"
 
 #: templates/js/translated/stock.js:929
 msgid "Merge Stock Items"
-msgstr ""
+msgstr "Gộp mặt hàng"
 
 #: templates/js/translated/stock.js:1024
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Chuyển kho"
 
 #: templates/js/translated/stock.js:1025
 msgid "Move"
-msgstr ""
+msgstr "Di chuyển"
 
 #: templates/js/translated/stock.js:1031
 msgid "Count Stock"
-msgstr ""
+msgstr "Đếm hàng"
 
 #: templates/js/translated/stock.js:1032
 msgid "Count"
-msgstr ""
+msgstr "Đếm"
 
 #: templates/js/translated/stock.js:1036
 msgid "Remove Stock"
-msgstr ""
+msgstr "Xóa hàng hóa"
 
 #: templates/js/translated/stock.js:1037
 msgid "Take"
-msgstr ""
+msgstr "Lấy"
 
 #: templates/js/translated/stock.js:1041
 msgid "Add Stock"
-msgstr ""
+msgstr "Thêm kho"
 
 #: templates/js/translated/stock.js:1042 users/models.py:380
 msgid "Add"
-msgstr ""
+msgstr "Thêm"
 
 #: templates/js/translated/stock.js:1046
 msgid "Delete Stock"
-msgstr ""
+msgstr "Xóa kho"
 
 #: templates/js/translated/stock.js:1143
 msgid "Quantity cannot be adjusted for serialized stock"
-msgstr ""
+msgstr "Không thể điều chỉnh số lượng cho kho tuần tự"
 
 #: templates/js/translated/stock.js:1143
 msgid "Specify stock quantity"
-msgstr ""
+msgstr "Chỉ ra số lượng kho"
 
 #: templates/js/translated/stock.js:1177 templates/js/translated/stock.js:3267
 msgid "Select Stock Items"
-msgstr ""
+msgstr "Chọn mặt hàng"
 
 #: templates/js/translated/stock.js:1178
 msgid "Select at least one available stock item"
-msgstr ""
+msgstr "Chọn ít nhất một mặt hàng có sẵn"
 
 #: templates/js/translated/stock.js:1224
 msgid "Confirm stock adjustment"
-msgstr ""
+msgstr "Xác nhận điều chỉnh kho"
 
 #: templates/js/translated/stock.js:1360
 msgid "PASS"
-msgstr ""
+msgstr "QUA"
 
 #: templates/js/translated/stock.js:1362
 msgid "FAIL"
-msgstr ""
+msgstr "HỎNG"
 
 #: templates/js/translated/stock.js:1367
 msgid "NO RESULT"
-msgstr ""
+msgstr "KHÔNG KẾT QUẢ"
 
 #: templates/js/translated/stock.js:1429
 msgid "Pass test"
-msgstr ""
+msgstr "Qua kiểm thử"
 
 #: templates/js/translated/stock.js:1432
 msgid "Add test result"
-msgstr ""
+msgstr "Thêm kết quả kiểm thử"
 
 #: templates/js/translated/stock.js:1456
 msgid "No test results found"
-msgstr ""
+msgstr "Không tìm thấy kết quả kiểm thử"
 
 #: templates/js/translated/stock.js:1520
 msgid "Test Date"
-msgstr ""
+msgstr "Ngày kiểm thử"
 
 #: templates/js/translated/stock.js:1682
 msgid "Edit Test Result"
-msgstr ""
+msgstr "Sửa kết quả kiểm thử"
 
 #: templates/js/translated/stock.js:1704
 msgid "Delete Test Result"
-msgstr ""
+msgstr "Xóa kết quả kiểm thử"
 
 #: templates/js/translated/stock.js:1736
 msgid "In production"
-msgstr ""
+msgstr "Đang sản xuất"
 
 #: templates/js/translated/stock.js:1740
 msgid "Installed in Stock Item"
-msgstr ""
+msgstr "Đã cài đặt trong mặt hàng"
 
 #: templates/js/translated/stock.js:1748
 msgid "Assigned to Sales Order"
-msgstr ""
+msgstr "Được chỉ định đơn hàng bán"
 
 #: templates/js/translated/stock.js:1754
 msgid "No stock location set"
-msgstr ""
+msgstr "Chưa đặt vị trí kho"
 
 #: templates/js/translated/stock.js:1810
 msgid "Change stock status"
-msgstr ""
+msgstr "Đổi vị trí kho"
 
 #: templates/js/translated/stock.js:1819
 msgid "Merge stock"
-msgstr ""
+msgstr "Gộp kho"
 
 #: templates/js/translated/stock.js:1868
 msgid "Delete stock"
-msgstr ""
+msgstr "Xóa kho"
 
 #: templates/js/translated/stock.js:1923
 msgid "stock items"
@@ -12522,47 +12522,47 @@ msgstr "mặt hàng"
 
 #: templates/js/translated/stock.js:1928
 msgid "Scan to location"
-msgstr ""
+msgstr "Quét đến vị trí"
 
 #: templates/js/translated/stock.js:1939
 msgid "Stock Actions"
-msgstr ""
+msgstr "Chức năng kho"
 
 #: templates/js/translated/stock.js:1983
 msgid "Load installed items"
-msgstr ""
+msgstr "Tải mặt hàng đã cài đặt"
 
 #: templates/js/translated/stock.js:2061
 msgid "Stock item is in production"
-msgstr ""
+msgstr "Mặt hàng đang được sản xuất"
 
 #: templates/js/translated/stock.js:2066
 msgid "Stock item assigned to sales order"
-msgstr ""
+msgstr "Mặt hàng đã được chỉ định vào đơn hàng bán"
 
 #: templates/js/translated/stock.js:2069
 msgid "Stock item assigned to customer"
-msgstr ""
+msgstr "Mặt hàng được chỉ định cho khách hàng"
 
 #: templates/js/translated/stock.js:2072
 msgid "Serialized stock item has been allocated"
-msgstr ""
+msgstr "Mặt hàng tuần tự đã được phân bổ"
 
 #: templates/js/translated/stock.js:2074
 msgid "Stock item has been fully allocated"
-msgstr ""
+msgstr "Mặt hàng đã được phân bổ toàn phần"
 
 #: templates/js/translated/stock.js:2076
 msgid "Stock item has been partially allocated"
-msgstr ""
+msgstr "Mặt hàng đã được phân bổ từng phần"
 
 #: templates/js/translated/stock.js:2079
 msgid "Stock item has been installed in another item"
-msgstr ""
+msgstr "Mặt hàng đã được cài đặt trong hàng hóa khác"
 
 #: templates/js/translated/stock.js:2081
 msgid "Stock item has been consumed by a build order"
-msgstr ""
+msgstr "Mặt hàng đã bị lấy đi bởi đơn đặt bản dựng"
 
 #: templates/js/translated/stock.js:2085
 msgid "Stock item has expired"
@@ -12582,470 +12582,470 @@ msgstr "Mặt hàng đã mất"
 
 #: templates/js/translated/stock.js:2096
 msgid "Stock item is destroyed"
-msgstr ""
+msgstr "Mặt hàng đã bị phá hủy"
 
 #: templates/js/translated/stock.js:2100
 #: templates/js/translated/table_filters.js:350
 msgid "Depleted"
-msgstr ""
+msgstr "Cạn kiệt"
 
 #: templates/js/translated/stock.js:2265
 msgid "Supplier part not specified"
-msgstr ""
+msgstr "Sản phẩm nhà cung cấp chưa được chỉ định"
 
 #: templates/js/translated/stock.js:2312
 msgid "Stock Value"
-msgstr ""
+msgstr "Giá trị kho"
 
 #: templates/js/translated/stock.js:2440
 msgid "No stock items matching query"
-msgstr ""
+msgstr "Không tìm thấy mặt hàng theo truy vấn tìm kiếm"
 
 #: templates/js/translated/stock.js:2544
 msgid "stock locations"
-msgstr ""
+msgstr "vị trí kho hàng"
 
 #: templates/js/translated/stock.js:2699
 msgid "Load Sublocations"
-msgstr ""
+msgstr "Tải vị trí phụ"
 
 #: templates/js/translated/stock.js:2817
 msgid "Details"
-msgstr ""
+msgstr "Chi tiết"
 
 #: templates/js/translated/stock.js:2821
 msgid "No changes"
-msgstr ""
+msgstr "Không thay đổi"
 
 #: templates/js/translated/stock.js:2833
 msgid "Part information unavailable"
-msgstr ""
+msgstr "Thông tin sản phẩm không có sẵn"
 
 #: templates/js/translated/stock.js:2855
 msgid "Location no longer exists"
-msgstr ""
+msgstr "Vị trí không còn tồn tại"
 
 #: templates/js/translated/stock.js:2872
 msgid "Build order no longer exists"
-msgstr ""
+msgstr "Đơn đặt bản dựng không tồn tại"
 
 #: templates/js/translated/stock.js:2887
 msgid "Purchase order no longer exists"
-msgstr ""
+msgstr "Đơn đặt mua không còn tồn tại"
 
 #: templates/js/translated/stock.js:2904
 msgid "Sales Order no longer exists"
-msgstr ""
+msgstr "Đơn hàng bán không còn tồn tại"
 
 #: templates/js/translated/stock.js:2921
 msgid "Return Order no longer exists"
-msgstr ""
+msgstr "Đơn hàng trả lại không còn tồn tại"
 
 #: templates/js/translated/stock.js:2940
 msgid "Customer no longer exists"
-msgstr ""
+msgstr "Khách hàng không còn tồn tại"
 
 #: templates/js/translated/stock.js:2958
 msgid "Stock item no longer exists"
-msgstr ""
+msgstr "Mặt hàng không còn tồn tại nữa"
 
 #: templates/js/translated/stock.js:2976
 msgid "Added"
-msgstr ""
+msgstr "Đã thêm"
 
 #: templates/js/translated/stock.js:2984
 msgid "Removed"
-msgstr ""
+msgstr "Đã xóa"
 
 #: templates/js/translated/stock.js:3056
 msgid "No installed items"
-msgstr ""
+msgstr "Chưa có hàng hóa được cài đặt"
 
 #: templates/js/translated/stock.js:3108 templates/js/translated/stock.js:3143
 msgid "Uninstall Stock Item"
-msgstr ""
+msgstr "Gỡ bỏ mặt hàng"
 
 #: templates/js/translated/stock.js:3165
 msgid "Select stock item to uninstall"
-msgstr ""
+msgstr "Chọn mặt hàng để gỡ bỏ"
 
 #: templates/js/translated/stock.js:3186
 msgid "Install another stock item into this item"
-msgstr ""
+msgstr "Cài đặt mặt hàng khác vào trong hàng hóa này"
 
 #: templates/js/translated/stock.js:3187
 msgid "Stock items can only be installed if they meet the following criteria"
-msgstr ""
+msgstr "Chỉ có thể cài đặt hàng hóa nếu chúng phù hợp điều kiện sau"
 
 #: templates/js/translated/stock.js:3189
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
-msgstr ""
+msgstr "Liên kết mặt hàng đến một sản phẩm là BOM cho mặt hàng này"
 
 #: templates/js/translated/stock.js:3190
 msgid "The Stock Item is currently available in stock"
-msgstr ""
+msgstr "Mặt hàng hiện có trong kho"
 
 #: templates/js/translated/stock.js:3191
 msgid "The Stock Item is not already installed in another item"
-msgstr ""
+msgstr "Mặt hàng hiện chưa được cài đặt trong hàng hóa khác"
 
 #: templates/js/translated/stock.js:3192
 msgid "The Stock Item is tracked by either a batch code or serial number"
-msgstr ""
+msgstr "Mặt hàng được theo dõi bởi hoặc là mã lô hoặc là số sêri"
 
 #: templates/js/translated/stock.js:3205
 msgid "Select part to install"
-msgstr ""
+msgstr "Chọn sản phẩm để cài đặt"
 
 #: templates/js/translated/stock.js:3268
 msgid "Select one or more stock items"
-msgstr ""
+msgstr "Chọn một hoặc nhiều hơn mặt hàng"
 
 #: templates/js/translated/stock.js:3281
 msgid "Selected stock items"
-msgstr ""
+msgstr "Mặt hàng đã chọn"
 
 #: templates/js/translated/stock.js:3285
 msgid "Change Stock Status"
-msgstr ""
+msgstr "Đổi trạng thái kho"
 
 #: templates/js/translated/table_filters.js:74
 msgid "Has project code"
-msgstr ""
+msgstr "Có mã dự án"
 
 #: templates/js/translated/table_filters.js:89
 #: templates/js/translated/table_filters.js:601
 #: templates/js/translated/table_filters.js:613
 #: templates/js/translated/table_filters.js:654
 msgid "Order status"
-msgstr ""
+msgstr "Trạng thái đơn"
 
 #: templates/js/translated/table_filters.js:94
 #: templates/js/translated/table_filters.js:618
 #: templates/js/translated/table_filters.js:644
 #: templates/js/translated/table_filters.js:659
 msgid "Outstanding"
-msgstr ""
+msgstr "Nổi bật"
 
 #: templates/js/translated/table_filters.js:102
 #: templates/js/translated/table_filters.js:524
 #: templates/js/translated/table_filters.js:626
 #: templates/js/translated/table_filters.js:667
 msgid "Assigned to me"
-msgstr ""
+msgstr "Được phân công cho tôi"
 
 #: templates/js/translated/table_filters.js:158
 msgid "Trackable Part"
-msgstr ""
+msgstr "Sản phẩm theo dõi được"
 
 #: templates/js/translated/table_filters.js:162
 msgid "Assembled Part"
-msgstr ""
+msgstr "Sản phẩm đã lắp ráp"
 
 #: templates/js/translated/table_filters.js:166
 msgid "Has Available Stock"
-msgstr ""
+msgstr "Số hàng tồn"
 
 #: templates/js/translated/table_filters.js:182
 msgid "Allow Variant Stock"
-msgstr ""
+msgstr "Cho phép hàng tồn biển thể"
 
 #: templates/js/translated/table_filters.js:194
 #: templates/js/translated/table_filters.js:775
 msgid "Has Pricing"
-msgstr ""
+msgstr "Có định giá"
 
 #: templates/js/translated/table_filters.js:234
 #: templates/js/translated/table_filters.js:345
 msgid "Include sublocations"
-msgstr ""
+msgstr "Bao gồm vị trí phụ"
 
 #: templates/js/translated/table_filters.js:235
 msgid "Include locations"
-msgstr ""
+msgstr "Bao gồm vị trí phụ"
 
 #: templates/js/translated/table_filters.js:267
 msgid "Has location type"
-msgstr ""
+msgstr "Có loại vị trí"
 
 #: templates/js/translated/table_filters.js:278
 #: templates/js/translated/table_filters.js:279
 #: templates/js/translated/table_filters.js:707
 msgid "Include subcategories"
-msgstr ""
+msgstr "Bao gồm danh mục con"
 
 #: templates/js/translated/table_filters.js:287
 #: templates/js/translated/table_filters.js:755
 msgid "Subscribed"
-msgstr ""
+msgstr "Đã đăng ký"
 
 #: templates/js/translated/table_filters.js:298
 #: templates/js/translated/table_filters.js:380
 msgid "Is Serialized"
-msgstr ""
+msgstr "Được tuần tự hóa"
 
 #: templates/js/translated/table_filters.js:301
 #: templates/js/translated/table_filters.js:387
 msgid "Serial number GTE"
-msgstr ""
+msgstr "Số sêri GTE"
 
 #: templates/js/translated/table_filters.js:302
 #: templates/js/translated/table_filters.js:388
 msgid "Serial number greater than or equal to"
-msgstr ""
+msgstr "Số sêri lớn hơn hoặc bằng"
 
 #: templates/js/translated/table_filters.js:305
 #: templates/js/translated/table_filters.js:391
 msgid "Serial number LTE"
-msgstr ""
+msgstr "Số sêri LTE"
 
 #: templates/js/translated/table_filters.js:306
 #: templates/js/translated/table_filters.js:392
 msgid "Serial number less than or equal to"
-msgstr ""
+msgstr "Số sêri nhỏ hơn hoặc bằng"
 
 #: templates/js/translated/table_filters.js:309
 #: templates/js/translated/table_filters.js:310
 #: templates/js/translated/table_filters.js:383
 #: templates/js/translated/table_filters.js:384
 msgid "Serial number"
-msgstr ""
+msgstr "Số sê-ri"
 
 #: templates/js/translated/table_filters.js:314
 #: templates/js/translated/table_filters.js:405
 msgid "Batch code"
-msgstr ""
+msgstr "Mã lô hàng"
 
 #: templates/js/translated/table_filters.js:325
 #: templates/js/translated/table_filters.js:696
 msgid "Active parts"
-msgstr ""
+msgstr "Sản phẩm hoạt động"
 
 #: templates/js/translated/table_filters.js:326
 msgid "Show stock for active parts"
-msgstr ""
+msgstr "Hiển thị kho cho sản phẩm hoạt động"
 
 #: templates/js/translated/table_filters.js:331
 msgid "Part is an assembly"
-msgstr ""
+msgstr "Sản phẩm là một phần lắp lắp"
 
 #: templates/js/translated/table_filters.js:335
 msgid "Is allocated"
-msgstr ""
+msgstr "Đã được phân bổ"
 
 #: templates/js/translated/table_filters.js:336
 msgid "Item has been allocated"
-msgstr ""
+msgstr "Hàng hóa đã được phân bổ"
 
 #: templates/js/translated/table_filters.js:341
 msgid "Stock is available for use"
-msgstr ""
+msgstr "Kho có sẵn để sử dụng"
 
 #: templates/js/translated/table_filters.js:346
 msgid "Include stock in sublocations"
-msgstr ""
+msgstr "Bao gồm kho trong vị trí phụ"
 
 #: templates/js/translated/table_filters.js:351
 msgid "Show stock items which are depleted"
-msgstr ""
+msgstr "Hiển thị mặt hàng đã bị xóa"
 
 #: templates/js/translated/table_filters.js:356
 msgid "Show items which are in stock"
-msgstr ""
+msgstr "Hiện hàng hóa còn trong kho"
 
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr ""
+msgstr "Đang sản xuất"
 
 #: templates/js/translated/table_filters.js:361
 msgid "Show items which are in production"
-msgstr ""
+msgstr "Hiện hàng hóa đang được sản xuất"
 
 #: templates/js/translated/table_filters.js:365
 msgid "Include Variants"
-msgstr ""
+msgstr "Bao gồm các biến thể"
 
 #: templates/js/translated/table_filters.js:366
 msgid "Include stock items for variant parts"
-msgstr ""
+msgstr "Bao gồm mặt hàng cho sản phẩm biến thể"
 
 #: templates/js/translated/table_filters.js:371
 msgid "Show stock items which are installed in another item"
-msgstr ""
+msgstr "Hiển thị mặt hàng được cài đặt trong hàng hóa khác"
 
 #: templates/js/translated/table_filters.js:376
 msgid "Show items which have been assigned to a customer"
-msgstr ""
+msgstr "Hiển thị hàng hóa đã được chỉ định cho 1 khách hàng"
 
 #: templates/js/translated/table_filters.js:396
 #: templates/js/translated/table_filters.js:397
 msgid "Stock status"
-msgstr ""
+msgstr "Tình trạng kho hàng"
 
 #: templates/js/translated/table_filters.js:400
 msgid "Has batch code"
-msgstr ""
+msgstr "Có mã lô"
 
 #: templates/js/translated/table_filters.js:409
 msgid "Stock item is tracked by either batch code or serial number"
-msgstr ""
+msgstr "Theo dõi mặt hàng hoặc là theo mã lô hoặc là theo số sêri"
 
 #: templates/js/translated/table_filters.js:414
 msgid "Has purchase price"
-msgstr ""
+msgstr "Có giá mua"
 
 #: templates/js/translated/table_filters.js:415
 msgid "Show stock items which have a purchase price set"
-msgstr ""
+msgstr "Hiển thị mặt hàng có giá mua được đặt"
 
 #: templates/js/translated/table_filters.js:419
 msgid "Expiry Date before"
-msgstr ""
+msgstr "Ngày hết hạn trước đó"
 
 #: templates/js/translated/table_filters.js:423
 msgid "Expiry Date after"
-msgstr ""
+msgstr "Ngày hết hạn sau đó"
 
 #: templates/js/translated/table_filters.js:436
 msgid "Show stock items which have expired"
-msgstr ""
+msgstr "Hiển thị mặt hàng đã hết hạn"
 
 #: templates/js/translated/table_filters.js:442
 msgid "Show stock which is close to expiring"
-msgstr ""
+msgstr "Hiển thị mặt hàng sắp hết hạn"
 
 #: templates/js/translated/table_filters.js:456
 msgid "Test Passed"
-msgstr ""
+msgstr "Đã qua kiểm thử"
 
 #: templates/js/translated/table_filters.js:460
 msgid "Include Installed Items"
-msgstr ""
+msgstr "Bao gồm hàng hóa đã được cài đặt"
 
 #: templates/js/translated/table_filters.js:511
 msgid "Build status"
-msgstr ""
+msgstr "Trạng thái bản dựng"
 
 #: templates/js/translated/table_filters.js:708
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Bao gồm sản phẩm trong danh mục con"
 
 #: templates/js/translated/table_filters.js:713
 msgid "Show active parts"
-msgstr ""
+msgstr "Hiển thị sản phẩm hoạt động"
 
 #: templates/js/translated/table_filters.js:721
 msgid "Available stock"
-msgstr ""
+msgstr "Kho có sẵn"
 
 #: templates/js/translated/table_filters.js:729
 #: templates/js/translated/table_filters.js:825
 msgid "Has Units"
-msgstr ""
+msgstr "Có đơn vị"
 
 #: templates/js/translated/table_filters.js:730
 msgid "Part has defined units"
-msgstr ""
+msgstr "Sản phẩm có đơn vị được định nghĩa"
 
 #: templates/js/translated/table_filters.js:734
 msgid "Has IPN"
-msgstr ""
+msgstr "Có IPN"
 
 #: templates/js/translated/table_filters.js:735
 msgid "Part has internal part number"
-msgstr ""
+msgstr "Sản phẩm có số sản phẩm nội bộ"
 
 #: templates/js/translated/table_filters.js:739
 msgid "In stock"
-msgstr ""
+msgstr "Trong kho"
 
 #: templates/js/translated/table_filters.js:747
 msgid "Purchasable"
-msgstr ""
+msgstr "Có thể mua"
 
 #: templates/js/translated/table_filters.js:759
 msgid "Has stocktake entries"
-msgstr ""
+msgstr "Có mục kiểm kê"
 
 #: templates/js/translated/table_filters.js:821
 msgid "Has Choices"
-msgstr ""
+msgstr "Có lựa chọn"
 
 #: templates/js/translated/tables.js:92
 msgid "Display calendar view"
-msgstr ""
+msgstr "Hiện khung lịch"
 
 #: templates/js/translated/tables.js:102
 msgid "Display list view"
-msgstr ""
+msgstr "Hiển thị danh sách"
 
 #: templates/js/translated/tables.js:112
 msgid "Display tree view"
-msgstr ""
+msgstr "Hiển thị dạng cây"
 
 #: templates/js/translated/tables.js:130
 msgid "Expand all rows"
-msgstr ""
+msgstr "Mở rộng tất cả dòng"
 
 #: templates/js/translated/tables.js:136
 msgid "Collapse all rows"
-msgstr ""
+msgstr "Thu gọn tất cả dòng"
 
 #: templates/js/translated/tables.js:186
 msgid "Export Table Data"
-msgstr ""
+msgstr "Xuất dữ liệu bảng"
 
 #: templates/js/translated/tables.js:190
 msgid "Select File Format"
-msgstr ""
+msgstr "Chọn định dạng tệp"
 
 #: templates/js/translated/tables.js:529
 msgid "Loading data"
-msgstr ""
+msgstr "Đang nạp dữ liệu"
 
 #: templates/js/translated/tables.js:532
 msgid "rows per page"
-msgstr ""
+msgstr "dòng trên trang"
 
 #: templates/js/translated/tables.js:537
 msgid "Showing all rows"
-msgstr ""
+msgstr "Hiển thị toàn bộ dòng"
 
 #: templates/js/translated/tables.js:539
 msgid "Showing"
-msgstr ""
+msgstr "Đang hiển thị"
 
 #: templates/js/translated/tables.js:539
 msgid "to"
-msgstr ""
+msgstr "đến"
 
 #: templates/js/translated/tables.js:539
 msgid "of"
-msgstr ""
+msgstr "của"
 
 #: templates/js/translated/tables.js:539
 msgid "rows"
-msgstr ""
+msgstr "dòng"
 
 #: templates/js/translated/tables.js:546
 msgid "No matching results"
-msgstr ""
+msgstr "Không tìm thấy kết quả phù hợp"
 
 #: templates/js/translated/tables.js:549
 msgid "Hide/Show pagination"
-msgstr ""
+msgstr "Ẩn/hiện phân trang"
 
 #: templates/js/translated/tables.js:555
 msgid "Toggle"
-msgstr ""
+msgstr "Đảo chiều"
 
 #: templates/js/translated/tables.js:558
 msgid "Columns"
-msgstr ""
+msgstr "Cột"
 
 #: templates/js/translated/tables.js:561
 msgid "All"
-msgstr ""
+msgstr "Tất cả"
 
 #: templates/navbar.html:45
 msgid "Buy"
@@ -13057,11 +13057,11 @@ msgstr "Bán"
 
 #: templates/navbar.html:121
 msgid "Show Notifications"
-msgstr ""
+msgstr "Hiển thị thông báo"
 
 #: templates/navbar.html:124
 msgid "New Notifications"
-msgstr ""
+msgstr "Thông báo mới"
 
 #: templates/navbar.html:144 users/models.py:164
 msgid "Admin"
@@ -13073,117 +13073,117 @@ msgstr "Đăng xuất"
 
 #: templates/notes_buttons.html:6 templates/notes_buttons.html:7
 msgid "Save"
-msgstr ""
+msgstr "Lưu lại"
 
 #: templates/notifications.html:9
 msgid "Show all notifications and history"
-msgstr ""
+msgstr "Hiện toàn bộ thông báo và lịch sử"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
-msgstr ""
+msgstr "Chưa cung cấp dữ liệu QR"
 
 #: templates/registration/logged_out.html:7
 msgid "You were logged out successfully."
-msgstr ""
+msgstr "Bạn đã đăng xuất thành công."
 
 #: templates/registration/logged_out.html:9
 msgid "Log in again"
-msgstr ""
+msgstr "Đăng nhập lại"
 
 #: templates/search.html:9
 msgid "Show full search results"
-msgstr ""
+msgstr "Hiện kết quả tìm đầy đủ"
 
 #: templates/search.html:12
 msgid "Clear search"
-msgstr ""
+msgstr "Xóa tìm kiếm"
 
 #: templates/search.html:15
 msgid "Close search menu"
-msgstr ""
+msgstr "Đóng trình đơn tìm kiếm"
 
 #: templates/socialaccount/authentication_error.html:5
 msgid "Social Network Login Failure"
-msgstr ""
+msgstr "Đăng nhập mạng xã hội thất bại"
 
 #: templates/socialaccount/authentication_error.html:8
 msgid "Account Login Failure"
-msgstr ""
+msgstr "Đăng nhập tài khoản thất bại"
 
 #: templates/socialaccount/authentication_error.html:11
 msgid "An error occurred while attempting to login via your social network account."
-msgstr ""
+msgstr "Có lỗi trong khi cố gắng đăng nhập thông qua tài khoản mạng xã hội của bạn."
 
 #: templates/socialaccount/authentication_error.html:13
 msgid "Contact your system administrator for further information."
-msgstr ""
+msgstr "Liên lạc với quản trị hệ thống của bạn để biết thêm thông tin."
 
 #: templates/socialaccount/login.html:13
 #, python-format
 msgid "Connect %(provider)s"
-msgstr ""
+msgstr "Kết nối %(provider)s"
 
 #: templates/socialaccount/login.html:15
 #, python-format
 msgid "You are about to connect a new third party account from %(provider)s."
-msgstr ""
+msgstr "Bạn chuẩn bị kết nối đến tài khoản của bên thứ ba từ %(provider)s."
 
 #: templates/socialaccount/login.html:17
 #, python-format
 msgid "Sign In Via %(provider)s"
-msgstr ""
+msgstr "Đăng nhập qua%(provider)s"
 
 #: templates/socialaccount/login.html:19
 #, python-format
 msgid "You are about to sign in using a third party account from %(provider)s."
-msgstr ""
+msgstr "Bạn chuẩn bị đăng nhập qua tài khoản của bên thứ ba từ %(provider)s."
 
 #: templates/socialaccount/login.html:24
 msgid "Continue"
-msgstr ""
+msgstr "Tiếp tục"
 
 #: templates/socialaccount/login.html:29
 msgid "Invalid SSO Provider"
-msgstr ""
+msgstr "Nhà cung cấp SSO không hợp lệ"
 
 #: templates/socialaccount/login.html:31
 msgid "The selected SSO provider is invalid, or has not been correctly configured"
-msgstr ""
+msgstr "Nhà cung cấp SSO đã chọn không hợp lệ hoặc đã không được cấu hình chính xác"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
 msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
+msgstr "Bạn chuân bị sử dụng tài khoản %(provider_name)s của bạn để đăng nhập%(site_name)s<br>Vì là bước cuối cùng, xin hãy hoàn thiện biểu mẫu dưới đây:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
 msgid "Provider has not been configured"
-msgstr ""
+msgstr "Nhà cung cấp chưa được cấu hình"
 
 #: templates/socialaccount/snippets/provider_list.html:35
 msgid "No SSO providers have been configured"
-msgstr ""
+msgstr "Chưa cấu hình nhà cung cấp SSO"
 
 #: templates/stats.html:13
 msgid "Instance Name"
-msgstr ""
+msgstr "Tên thực thể"
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr ""
+msgstr "Cơ sở dữ liệu"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Máy chủ đang hoạt động dưới chế độ gỡ lỗi"
 
 #: templates/stats.html:33
 msgid "Docker Mode"
-msgstr ""
+msgstr "Chế độ Docker"
 
 #: templates/stats.html:34
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Máy chủ được triển khai bởi docker"
 
 #: templates/stats.html:39
 msgid "Plugin Support"
@@ -13199,133 +13199,133 @@ msgstr "Hỗ trợ phần bổ sung đã tắt"
 
 #: templates/stats.html:52
 msgid "Server status"
-msgstr ""
+msgstr "Tình trạng máy chủ"
 
 #: templates/stats.html:55
 msgid "Healthy"
-msgstr ""
+msgstr "Sức khỏe"
 
 #: templates/stats.html:57
 msgid "Issues detected"
-msgstr ""
+msgstr "Đã phát hiện vấn đề"
 
 #: templates/stats.html:64
 msgid "Background Worker"
-msgstr ""
+msgstr "Nhân công chạy ngầm"
 
 #: templates/stats.html:67
 msgid "Background worker not running"
-msgstr ""
+msgstr "Nhân công chạy ngầm không hoạt động"
 
 #: templates/stats.html:75
 msgid "Email Settings"
-msgstr ""
+msgstr "Thiết lập email"
 
 #: templates/stats.html:78
 msgid "Email settings not configured"
-msgstr ""
+msgstr "Chưa cấu hình thiết lập email"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr ""
+msgstr "Có"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr ""
+msgstr "Không"
 
 #: users/admin.py:78
 msgid "Users"
-msgstr ""
+msgstr "Người dùng"
 
 #: users/admin.py:79
 msgid "Select which users are assigned to this group"
-msgstr ""
+msgstr "Chọn người dùng được chỉ định cho nhóm này"
 
 #: users/admin.py:214
 msgid "The following users are members of multiple groups"
-msgstr ""
+msgstr "Người dùng sau là thành viên của nhiều nhóm"
 
 #: users/admin.py:241
 msgid "Personal info"
-msgstr ""
+msgstr "Thông tin cá nhân"
 
 #: users/admin.py:242
 msgid "Permissions"
-msgstr ""
+msgstr "Quyền"
 
 #: users/admin.py:245
 msgid "Important dates"
-msgstr ""
+msgstr "Ngày quan trọng"
 
 #: users/authentication.py:29 users/models.py:103
 msgid "Token has been revoked"
-msgstr ""
+msgstr "Mã thông báo đã bị thu hồi"
 
 #: users/authentication.py:32
 msgid "Token has expired"
-msgstr ""
+msgstr "Mã thông báo đã hết hạn"
 
 #: users/models.py:52
 msgid "API Token"
-msgstr ""
+msgstr "Mã thông báo API"
 
 #: users/models.py:53
 msgid "API Tokens"
-msgstr ""
+msgstr "Mã thông báo API"
 
 #: users/models.py:83
 msgid "Token Name"
-msgstr ""
+msgstr "Tên mã thông báo"
 
 #: users/models.py:84
 msgid "Custom token name"
-msgstr ""
+msgstr "Tên tùy chỉnh mã thông báo"
 
 #: users/models.py:90
 msgid "Token expiry date"
-msgstr ""
+msgstr "Ngày hết hạn mã thông báo"
 
 #: users/models.py:96
 msgid "Last Seen"
-msgstr ""
+msgstr "Xem lần cuối"
 
 #: users/models.py:97
 msgid "Last time the token was used"
-msgstr ""
+msgstr "Lần cuối mã thông báo được sử dụng"
 
 #: users/models.py:102
 msgid "Revoked"
-msgstr ""
+msgstr "Đã thu hồi"
 
 #: users/models.py:367
 msgid "Permission set"
-msgstr ""
+msgstr "Quyền hạn đã đặt"
 
 #: users/models.py:375
 msgid "Group"
-msgstr ""
+msgstr "Nhóm"
 
 #: users/models.py:378
 msgid "View"
-msgstr ""
+msgstr "Xem"
 
 #: users/models.py:378
 msgid "Permission to view items"
-msgstr ""
+msgstr "Quyền để xem mục"
 
 #: users/models.py:380
 msgid "Permission to add items"
-msgstr ""
+msgstr "Quyền để thêm mục"
 
 #: users/models.py:382
 msgid "Change"
-msgstr ""
+msgstr "Đổi"
 
 #: users/models.py:382
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "Quyển để sửa mục"
 
 #: users/models.py:384
 msgid "Permission to delete items"
-msgstr ""
+msgstr "Quyền để xóa mục"
 
