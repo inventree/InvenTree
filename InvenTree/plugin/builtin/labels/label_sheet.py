@@ -157,13 +157,18 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
                 idx = row * n_cols + col
 
                 if idx < len(items):
-                    # Render the label
                     try:
-                        cell = label.render_as_string(request, target_object=items[idx])
+                        # Render the individual label template
+                        # Note that we disable @page styling for this
+                        cell = label.render_as_string(
+                            request,
+                            target_object=items[idx],
+                            insert_page_style=False
+                        )
                         html += cell
                     except Exception as exc:
                         logger.exception("Error rendering label: %s", str(exc))
-                        return """
+                        html += """
                         <div class='label-sheet-cell-error'></div>
                         """
 
