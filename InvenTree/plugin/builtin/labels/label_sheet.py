@@ -4,13 +4,15 @@ import logging
 import math
 
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 import weasyprint
 from rest_framework import serializers
 
 import report.helpers
-from label.models import LabelTemplate
+from label.models import LabelOutput, LabelTemplate
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
 
@@ -110,23 +112,28 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
             idx += n_cells
 
-        FILENAME = "/workspaces/inventree/dev/out.html"
-        PDF_FILENAME = "/workspaces/inventree/dev/out.pdf"
+        if len(pages) == 0:
+            raise ValidationError(_("No labels were generated"))
 
+        # Render to a single HTML document
         html_data = self.wrap_pages(pages, **document_data)
 
-        with open(FILENAME, 'w') as file_out:
-            file_out.write(html_data)
-
-        # Render resulting outputs
+        # Render HTML to PDF
         html = weasyprint.HTML(string=html_data)
+        document = html.render().write_pdf()
 
-        pdf = html.render().write_pdf()
+        output_file = ContentFile(document, 'labels.pdf')
 
-        with open(PDF_FILENAME, 'wb') as file_out:
-            file_out.write(pdf)
+        output = LabelOutput.objects.create(
+            label=output_file,
+            user=request.user
+        )
 
-        raise ValidationError("oh no we don't")
+        return JsonResponse({
+            'file': output.label.url,
+            'success': True,
+            'message': f'{len(items)} labels generated'
+        })
 
     def print_page(self, label: LabelTemplate, items: list, request, **kwargs):
         """Generate a single page of labels:
