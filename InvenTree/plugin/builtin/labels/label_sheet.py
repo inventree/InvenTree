@@ -69,12 +69,24 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         n_rows = math.floor(page_height / label.height)
         n_cells = n_cols * n_rows
 
-        print("printing:", n_cols, n_rows, '->', n_cells)
+        n_labels = len(items)
 
-        for item in items:
-            output = label.render_as_string(request, target_object=item)
+        pages = []
 
-            print("output:", output)
+        idx = 0
+
+        while idx < n_labels:
+
+            # Data to pass through to each page
+            page_data = {
+                "n_cols": n_cols,
+                "n_rows": n_rows,
+            }
+
+            if page := self.print_page(label, items[idx:idx + n_cells], request, **page_data):
+                pages.append(page)
+
+            idx += n_cells
 
         raise ValidationError("oh no we don't")
 
