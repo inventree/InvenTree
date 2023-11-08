@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-06 22:49+0000\n"
-"PO-Revision-Date: 2023-11-07 20:18\n"
+"POT-Creation-Date: 2023-11-07 20:38+0000\n"
+"PO-Revision-Date: 2023-11-08 20:35\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1008,7 +1008,7 @@ msgstr "BuildOrder associé a cette fabrication"
 #: part/models.py:3120 part/models.py:3139 part/models.py:3158
 #: part/models.py:3179 part/models.py:3271 part/models.py:3545
 #: part/models.py:3667 part/models.py:3770 part/models.py:4093
-#: part/serializers.py:961 part/serializers.py:1374
+#: part/serializers.py:961 part/serializers.py:1394
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1224,7 +1224,7 @@ msgstr "L'ordre de production de correspond pas à l'ordre de commande"
 
 #: build/models.py:847 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:444 order/serializers.py:389
-#: order/serializers.py:511 part/serializers.py:1216 part/serializers.py:1538
+#: order/serializers.py:511 part/serializers.py:1219 part/serializers.py:1558
 #: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "La quantité doit être supérieure à zéro"
@@ -6483,75 +6483,75 @@ msgstr ""
 msgid "Update pricing for this part"
 msgstr ""
 
-#: part/serializers.py:1375
+#: part/serializers.py:1395
 msgid "Select part to copy BOM from"
 msgstr ""
 
-#: part/serializers.py:1383
+#: part/serializers.py:1403
 msgid "Remove Existing Data"
 msgstr ""
 
-#: part/serializers.py:1384
+#: part/serializers.py:1404
 msgid "Remove existing BOM items before copying"
 msgstr ""
 
-#: part/serializers.py:1389
+#: part/serializers.py:1409
 msgid "Include Inherited"
 msgstr ""
 
-#: part/serializers.py:1390
+#: part/serializers.py:1410
 msgid "Include BOM items which are inherited from templated parts"
 msgstr ""
 
-#: part/serializers.py:1395
+#: part/serializers.py:1415
 msgid "Skip Invalid Rows"
 msgstr ""
 
-#: part/serializers.py:1396
+#: part/serializers.py:1416
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/serializers.py:1401
+#: part/serializers.py:1421
 msgid "Copy Substitute Parts"
 msgstr ""
 
-#: part/serializers.py:1402
+#: part/serializers.py:1422
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr ""
 
-#: part/serializers.py:1442
+#: part/serializers.py:1462
 msgid "Clear Existing BOM"
 msgstr ""
 
-#: part/serializers.py:1443
+#: part/serializers.py:1463
 msgid "Delete existing BOM items before uploading"
 msgstr ""
 
-#: part/serializers.py:1473
+#: part/serializers.py:1493
 msgid "No part column specified"
 msgstr ""
 
-#: part/serializers.py:1517
+#: part/serializers.py:1537
 msgid "Multiple matching parts found"
 msgstr ""
 
-#: part/serializers.py:1520
+#: part/serializers.py:1540
 msgid "No matching part found"
 msgstr ""
 
-#: part/serializers.py:1523
+#: part/serializers.py:1543
 msgid "Part is not designated as a component"
 msgstr ""
 
-#: part/serializers.py:1532
+#: part/serializers.py:1552
 msgid "Quantity not provided"
 msgstr ""
 
-#: part/serializers.py:1540
+#: part/serializers.py:1560
 msgid "Invalid quantity"
 msgstr ""
 
-#: part/serializers.py:1561
+#: part/serializers.py:1581
 msgid "At least one BOM item is required"
 msgstr ""
 
