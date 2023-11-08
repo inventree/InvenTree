@@ -5,16 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: es_MX\n"
+"Language: es\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-07 20:19\n"
+"PO-Revision-Date: 2023-11-08 20:35\n"
 "Last-Translator: \n"
-"Language-Team: Spanish, Mexico\n"
+"Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: es-MX\n"
+"X-Crowdin-Language: es-ES\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
@@ -46,7 +46,7 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:32
 msgid "Login failed"
-msgstr "Error al iniciar sesión"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
@@ -62,11 +62,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr "Inicio de sesión exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr "¡Bienvenido de vuelta!"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -75,11 +75,11 @@ msgstr "¡Bienvenido de vuelta!"
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:101
 msgid "Mail delivery successful"
-msgstr "Envío de correo exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr "Revisa tu bandeja de entrada para el enlace de inicio de sesión. Si tienes una cuenta, recibirás un enlace de inicio de sesión. Revisa también el correo no deseado."
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -88,41 +88,41 @@ msgstr "Revisa tu bandeja de entrada para el enlace de inicio de sesión. Si tie
 
 #: src/components/forms/AuthenticationForm.tsx:72
 msgid "Input error"
-msgstr "Error de entrada"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr "Bienvenido, inicia sesión a continuación"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:91
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:105
 msgid "Password"
-msgstr "Contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr "Tu contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr "Restablecer contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:47
 msgid "Email"
-msgstr "Correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "We will send you a link to login - if you are registered"
-msgstr "Te enviaremos un enlace para iniciar sesión - si estás registrado"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -130,11 +130,11 @@ msgstr "Te enviaremos un enlace para iniciar sesión - si estás registrado"
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr "Envíame un correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr "Usaré nombre de usuario y contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
@@ -155,11 +155,11 @@ msgstr ""
 #: src/components/tables/settings/CustomUnitsTable.tsx:27
 #: src/components/tables/stock/StockLocationTable.tsx:24
 msgid "Name"
-msgstr "Nombre"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr "Nadie aquí..."
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
@@ -168,11 +168,11 @@ msgstr ""
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr "Guardar"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr "Seleccionar instancia de destino"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
@@ -180,23 +180,23 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr "Versión: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr "API:{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr "Nombre: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
-#: src/components/forms/fields/ApiFormField.tsx:316
+#: src/components/forms/fields/ApiFormField.tsx:326
 #: src/components/nav/SearchDrawer.tsx:417
-#: src/components/tables/InvenTreeTable.tsx:401
+#: src/components/tables/InvenTreeTable.tsx:392
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
@@ -290,7 +290,7 @@ msgid "Read More"
 msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:393
+#: src/components/tables/InvenTreeTable.tsx:384
 msgid "Unknown error"
 msgstr ""
 
@@ -327,11 +327,11 @@ msgstr ""
 msgid "Scan QR code"
 msgstr ""
 
-#: src/components/items/YesNoButton.tsx:15
+#: src/components/items/YesNoButton.tsx:12
 msgid "Yes"
 msgstr ""
 
-#: src/components/items/YesNoButton.tsx:15
+#: src/components/items/YesNoButton.tsx:12
 msgid "No"
 msgstr ""
 
@@ -688,7 +688,7 @@ msgid "Unknown model: {model}"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:39
-#: src/components/tables/bom/BomTable.tsx:35
+#: src/components/tables/bom/BomTable.tsx:54
 #: src/components/tables/build/BuildOrderTable.tsx:37
 #: src/components/tables/part/PartParameterTable.tsx:29
 #: src/components/tables/part/PartTable.tsx:25
@@ -786,7 +786,7 @@ msgid "Companies"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:97
-#: src/components/tables/ColumnRenderers.tsx:50
+#: src/components/tables/ColumnRenderers.tsx:66
 #: src/components/tables/TableHoverCard.tsx:58
 #: src/components/tables/settings/ProjectCodeTable.tsx:29
 msgid "Project Code"
@@ -808,7 +808,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:174
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
-msgstr "Órdenes de compra"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:109
 msgid "Purchase Order Line"
@@ -850,7 +850,7 @@ msgstr ""
 #: src/pages/company/CompanyDetail.tsx:113
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
-msgstr "Ordenes de devolución"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:131
 msgid "Address"
@@ -908,8 +908,8 @@ msgstr ""
 msgid "Edit Setting"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:17
-#: src/components/tables/bom/BomTable.tsx:53
+#: src/components/tables/ColumnRenderers.tsx:33
+#: src/components/tables/bom/BomTable.tsx:84
 #: src/components/tables/build/BuildOrderTable.tsx:55
 #: src/components/tables/part/PartParameterTable.tsx:60
 #: src/components/tables/part/RelatedPartTable.tsx:55
@@ -918,42 +918,42 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:26
+#: src/components/tables/ColumnRenderers.tsx:42
 msgid "Link"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:35
+#: src/components/tables/ColumnRenderers.tsx:51
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:59
 #: src/pages/sales/SalesOrderDetail.tsx:45
 msgid "Line Items"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:62
+#: src/components/tables/ColumnRenderers.tsx:78
 msgid "Status"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:70
+#: src/components/tables/ColumnRenderers.tsx:86
 msgid "Responsible"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:80
+#: src/components/tables/ColumnRenderers.tsx:96
 msgid "Target Date"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:90
+#: src/components/tables/ColumnRenderers.tsx:106
 msgid "Creation Date"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:99
+#: src/components/tables/ColumnRenderers.tsx:115
 msgid "Shipment Date"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:120
+#: src/components/tables/ColumnRenderers.tsx:136
 #: src/components/tables/settings/CurrencyTable.tsx:22
 msgid "Currency"
 msgstr ""
 
-#: src/components/tables/ColumnRenderers.tsx:134
+#: src/components/tables/ColumnRenderers.tsx:150
 msgid "Total Price"
 msgstr ""
 
@@ -1032,46 +1032,46 @@ msgid "Add Filter"
 msgstr ""
 
 #: src/components/tables/InvenTreeTable.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:337
-#: src/components/tables/InvenTreeTable.tsx:358
+#: src/components/tables/InvenTreeTable.tsx:328
+#: src/components/tables/InvenTreeTable.tsx:349
 msgid "No records found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:372
+#: src/components/tables/InvenTreeTable.tsx:363
 msgid "Server returned incorrect data type"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:380
+#: src/components/tables/InvenTreeTable.tsx:371
 msgid "Bad request"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:383
+#: src/components/tables/InvenTreeTable.tsx:374
 msgid "Unauthorized"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:386
+#: src/components/tables/InvenTreeTable.tsx:377
 msgid "Forbidden"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:389
+#: src/components/tables/InvenTreeTable.tsx:380
 msgid "Not found"
+msgstr ""
+
+#: src/components/tables/InvenTreeTable.tsx:442
+#: src/components/tables/InvenTreeTable.tsx:443
+msgid "Barcode actions"
 msgstr ""
 
 #: src/components/tables/InvenTreeTable.tsx:451
 #: src/components/tables/InvenTreeTable.tsx:452
-msgid "Barcode actions"
-msgstr ""
-
-#: src/components/tables/InvenTreeTable.tsx:460
-#: src/components/tables/InvenTreeTable.tsx:461
 msgid "Print actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:475
+#: src/components/tables/InvenTreeTable.tsx:466
 msgid "Refresh data"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:494
+#: src/components/tables/InvenTreeTable.tsx:485
 msgid "Table filters"
 msgstr ""
 
@@ -1080,7 +1080,15 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:59
+#: src/components/tables/bom/BomTable.tsx:62
+msgid "This BOM item is defined for a different parent"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:76
+msgid "Part Information"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:89
 #: src/components/tables/bom/UsedInTable.tsx:75
 #: src/components/tables/build/BuildOrderTable.tsx:31
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:113
@@ -1088,7 +1096,7 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:63
+#: src/components/tables/bom/BomTable.tsx:93
 #: src/components/tables/bom/UsedInTable.tsx:67
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:118
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:146
@@ -1096,63 +1104,80 @@ msgstr ""
 msgid "Quantity"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:67
+#: src/components/tables/bom/BomTable.tsx:101
+#: src/components/tables/bom/BomTable.tsx:266
 msgid "Substitutes"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:81
+#: src/components/tables/bom/BomTable.tsx:115
 msgid "Optional"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:90
+#: src/components/tables/bom/BomTable.tsx:119
+#: src/components/tables/bom/BomTable.tsx:234
 msgid "Consumable"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:99
+#: src/components/tables/bom/BomTable.tsx:123
 msgid "Allow Variants"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:108
+#: src/components/tables/bom/BomTable.tsx:127
 msgid "Gets Inherited"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:118
+#: src/components/tables/bom/BomTable.tsx:133
 #: src/components/tables/part/PartTable.tsx:147
 msgid "Price Range"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:131
+#: src/components/tables/bom/BomTable.tsx:147
 #: src/components/tables/part/PartTable.tsx:113
 #: src/components/tables/stock/StockItemTable.tsx:119
 msgid "Available"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:142
+#: src/components/tables/bom/BomTable.tsx:158
 #: src/components/tables/part/PartTable.tsx:120
 msgid "No stock"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:147
+#: src/components/tables/bom/BomTable.tsx:166
 msgid "Includes substitute stock"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:152
+#: src/components/tables/bom/BomTable.tsx:170
+#~ msgid "Available Stock"
+#~ msgstr "Available Stock"
+
+#: src/components/tables/bom/BomTable.tsx:175
 msgid "Includes variant stock"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:158
+#: src/components/tables/bom/BomTable.tsx:183
 msgid "On order"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:167
-msgid "Available Stock"
+#: src/components/tables/bom/BomTable.tsx:191
+#: src/components/tables/part/PartTable.tsx:91
+msgid "Building"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:174
+#: src/components/tables/bom/BomTable.tsx:200
+#: src/components/tables/part/PartTable.tsx:139
+#: src/components/tables/stock/StockItemTable.tsx:148
+msgid "Stock Information"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:207
 msgid "Can Build"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:181
+#: src/components/tables/bom/BomTable.tsx:211
+msgid "Consumable item"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:224
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:209
 #: src/components/tables/purchasing/SupplierPartTable.tsx:131
 #: src/pages/build/BuildDetail.tsx:169
@@ -1165,8 +1190,32 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:200
+#: src/components/tables/bom/BomTable.tsx:247
+msgid "View BOM"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:260
 msgid "Validate"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:279
+msgid "Edit Bom Item"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:281
+msgid "Bom item updated"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:296
+msgid "Delete Bom Item"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:297
+msgid "Bom item deleted"
+msgstr ""
+
+#: src/components/tables/bom/BomTable.tsx:300
+msgid "Are you sure you want to remove this BOM item?"
 msgstr ""
 
 #: src/components/tables/bom/UsedInTable.tsx:30
@@ -1355,21 +1404,12 @@ msgstr ""
 msgid "On Order"
 msgstr ""
 
-#: src/components/tables/part/PartTable.tsx:91
-msgid "Building"
-msgstr ""
-
 #: src/components/tables/part/PartTable.tsx:97
 msgid "Build Order Allocations"
 msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:106
 msgid "Sales Order Allocations"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:139
-#: src/components/tables/stock/StockItemTable.tsx:148
-msgid "Stock Information"
 msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:167
