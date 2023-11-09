@@ -7,8 +7,8 @@ import { formatCurrency, renderDate } from '../../defaults/formatters';
 import { ProgressBar } from '../items/ProgressBar';
 import { YesNoButton } from '../items/YesNoButton';
 import { ModelType } from '../render/ModelType';
+import { TableStatusRenderer } from '../render/StatusRenderer';
 import { RenderOwner } from '../render/User';
-import { TableStatusRenderer } from '../renderers/StatusRenderer';
 import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 

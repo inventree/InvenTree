@@ -32,7 +32,7 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ModelType } from '../../components/render/ModelType';
-import { StatusRenderer } from '../../components/renderers/StatusRenderer';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';

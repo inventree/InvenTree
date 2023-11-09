@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 
 import { api } from '../App';
 import { ModelType } from '../components/render/ModelType';
-import { StatusCodeListInterface } from '../components/renderers/StatusRenderer';
+import { StatusCodeListInterface } from '../components/render/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ServerAPIProps } from './states';
