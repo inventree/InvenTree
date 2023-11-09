@@ -95,6 +95,7 @@ export function PanelGroup({
                 <Tooltip
                   label={panel.label}
                   key={`panel-tab-tooltip-${panel.name}`}
+                  disabled={expanded}
                 >
                   <Tabs.Tab
                     key={`panel-tab-${panel.name}`}
