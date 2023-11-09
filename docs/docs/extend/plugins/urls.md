@@ -35,17 +35,15 @@ Placed here, the template can be called using the file name (ex: `render(request
 Some plugins require a page with a navbar, sidebar, and content.
 This can be done within a templated HTML file. Extend the file "page_base.html". This can be done by placing the following line at the top of the file.
 ``` HTML
-{% raw %}{% extends "page_base.html" %}{% endraw %}
+{% extends "page_base.html" %}
 ```
 
 Additionally, you should add the following imports after the extended line.
 ``` HTML
-{% raw %}
 {% load static %}
 {% load inventree_extras %}
 {% load plugin_extras %}
 {% load i18n %}
-{% endraw %}
 ```
 
 #### Blocks
@@ -55,13 +53,11 @@ The current page base can be found [here](https://github.com/inventree/InvenTree
 
 !!! warning "Sidebar Block"
     You may notice that implementing the `sidebar` block does not work. The most likely issue is that you are not enabling the sidebar using JavaScript. To fix this, append the following code to the end of your template file.
-    ``` HTML
-    {% raw %}
-    {% block js_ready %}
-    {{ block.super }}
-        enableSidebar('stocklocation');
+``` HTML
+{% block js_ready %}
+{{ block.super }}
+    enableSidebar('stocklocation');
 
 
-    {% endblock js_ready %}
-    {% endraw %}
-    ```
+{% endblock js_ready %}
+```
