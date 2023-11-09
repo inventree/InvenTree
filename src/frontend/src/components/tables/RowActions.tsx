@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Tooltip } from '@mantine/core';
-import { Menu, Text } from '@mantine/core';
+import { Menu } from '@mantine/core';
 import { IconCopy, IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
@@ -150,7 +150,7 @@ export function RowActions({
         </Menu.Target>
         <Menu.Dropdown>
           <Group position="right" spacing="xs" p={8}>
-            {visibleActions.map((action, idx) => (
+            {visibleActions.map((action, _idx) => (
               <RowActionIcon {...action} />
             ))}
           </Group>

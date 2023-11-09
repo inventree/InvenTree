@@ -7,7 +7,6 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';

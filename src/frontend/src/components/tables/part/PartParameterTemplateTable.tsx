@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { partParameterTemplateFields } from '../../../forms/PartForms';
@@ -12,8 +12,6 @@ import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { UserRoles, useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
-import { Thumbnail } from '../../images/Thumbnail';
-import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
