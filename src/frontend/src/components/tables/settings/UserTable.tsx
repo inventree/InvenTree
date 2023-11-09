@@ -59,6 +59,15 @@ export function UserTable() {
         sortable: true,
         title: t`Last Name`
       },
+      {
+        accessor: 'groups',
+        sortable: true,
+        switchable: true,
+        title: t`Groups`,
+        render: (record: any) => {
+          return record.groups.length;
+        }
+      },
       BooleanColumn({
         accessor: 'is_staff',
         title: t`Staff`
