@@ -102,16 +102,13 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         actions.push({
           title: t`Deactivate`,
           color: 'red',
-          onClick: () => {
-            notYetImplemented();
-          }
+          icon: <IconCircleX />
         });
       } else {
         actions.push({
           title: t`Activate`,
-          onClick: () => {
-            notYetImplemented();
-          }
+          color: 'green',
+          icon: <IconCircleCheck />
         });
       }
     }

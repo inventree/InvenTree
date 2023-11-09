@@ -94,6 +94,39 @@ export function RowActions({
     return actions.filter((action) => !action.hidden);
   }, [actions]);
 
+  // Render a single action icon
+  function RowActionIcon(action: RowAction) {
+    return (
+      <Tooltip withinPortal={true} label={action.title} key={action.title}>
+        <ActionIcon
+          color={action.color}
+          size={20}
+          onClick={(event) => {
+            // Prevent clicking on the action from selecting the row itself
+            event?.preventDefault();
+            event?.stopPropagation();
+            event?.nativeEvent?.stopImmediatePropagation();
+
+            if (action.onClick) {
+              action.onClick();
+            } else {
+              notYetImplemented();
+            }
+
+            setOpened(false);
+          }}
+        >
+          {action.icon}
+        </ActionIcon>
+      </Tooltip>
+    );
+  }
+
+  // If only a single action is available, display that
+  if (visibleActions.length == 1) {
+    return <RowActionIcon {...visibleActions[0]} />;
+  }
+
   return (
     visibleActions.length > 0 && (
       <Menu
@@ -118,27 +151,7 @@ export function RowActions({
         <Menu.Dropdown>
           <Group position="right" spacing="xs" p={8}>
             {visibleActions.map((action, idx) => (
-              <Tooltip label={action.title} key={action.title}>
-                <ActionIcon
-                  color={action.color}
-                  size={20}
-                  onClick={(event) => {
-                    // Prevent clicking on the action from selecting the row itself
-                    event?.preventDefault();
-                    event?.stopPropagation();
-                    event?.nativeEvent?.stopImmediatePropagation();
-                    if (action.onClick) {
-                      action.onClick();
-                    } else {
-                      notYetImplemented();
-                    }
-
-                    setOpened(false);
-                  }}
-                >
-                  {action.icon}
-                </ActionIcon>
-              </Tooltip>
+              <RowActionIcon {...action} />
             ))}
           </Group>
         </Menu.Dropdown>

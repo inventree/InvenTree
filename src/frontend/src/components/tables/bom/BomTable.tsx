@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import { IconCircleCheck, IconSwitch3 } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -250,22 +251,22 @@ export function BomTable({
         ];
       }
 
-      // TODO: Check user permissions here,
-      // TODO: to determine which actions are allowed
-
       let actions: RowAction[] = [];
 
       // TODO: Enable BomItem validation
       actions.push({
-        title: t`Validate`,
-        hidden: record.validated || !user.hasChangeRole(UserRoles.part)
+        title: t`Validate BOM line`,
+        color: 'green',
+        hidden: record.validated || !user.hasChangeRole(UserRoles.part),
+        icon: <IconCircleCheck />
       });
 
       // TODO: Enable editing of substitutes
       actions.push({
-        title: t`Substitutes`,
+        title: t`Edit Substitutes`,
         color: 'blue',
-        hidden: !user.hasChangeRole(UserRoles.part)
+        hidden: !user.hasChangeRole(UserRoles.part),
+        icon: <IconSwitch3 />
       });
 
       // Action on edit

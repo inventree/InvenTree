@@ -1,6 +1,12 @@
 import { t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
-import { IconBellCheck, IconBellExclamation } from '@tabler/icons-react';
+import {
+  IconBellCheck,
+  IconBellExclamation,
+  IconCircleCheck,
+  IconCircleX,
+  IconTrash
+} from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { api } from '../App';
@@ -27,6 +33,8 @@ export default function NotificationsPage() {
             actions={(record) => [
               {
                 title: t`Mark as read`,
+                color: 'green',
+                icon: <IconCircleCheck />,
                 onClick: () => {
                   let url = apiUrl(ApiPaths.notifications_list, record.pk);
                   api
@@ -53,6 +61,7 @@ export default function NotificationsPage() {
             actions={(record) => [
               {
                 title: t`Mark as unread`,
+                icon: <IconCircleX />,
                 onClick: () => {
                   let url = apiUrl(ApiPaths.notifications_list, record.pk);
 
@@ -68,6 +77,7 @@ export default function NotificationsPage() {
               {
                 title: t`Delete`,
                 color: 'red',
+                icon: <IconTrash />,
                 onClick: () => {
                   api
                     .delete(`/notifications/${record.pk}/`)

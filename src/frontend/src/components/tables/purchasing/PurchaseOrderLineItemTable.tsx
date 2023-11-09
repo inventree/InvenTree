@@ -50,8 +50,8 @@ export function PurchaseOrderLineItemTable({
       return [
         {
           hidden: received,
-          title: t`Receive`,
-          tooltip: t`Receive line item`,
+          title: t`Receive line item`,
+          icon: <IconSquareArrowRight />,
           color: 'green'
         },
         RowEditAction({
