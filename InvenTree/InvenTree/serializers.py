@@ -305,13 +305,21 @@ class UserSerializer(InvenTreeModelSerializer):
 
 class ExendedUserSerializer(UserSerializer):
     """Serializer for a User with a bit more info."""
+    from users.serializers import GroupSerializer
+
+    groups = GroupSerializer(read_only=True, many=True)
 
     class Meta(UserSerializer.Meta):
         """Metaclass defines serializer fields."""
         fields = UserSerializer.Meta.fields + [
+            'groups',
             'is_staff',
             'is_superuser',
             'is_active'
+        ]
+
+        read_only_fields = UserSerializer.Meta.read_only_fields + [
+            'groups',
         ]
 
     def validate(self, attrs):
