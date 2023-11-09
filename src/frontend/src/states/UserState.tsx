@@ -5,16 +5,42 @@ import { doClassicLogout } from '../functions/auth';
 import { ApiPaths, apiUrl } from './ApiState';
 import { UserProps } from './states';
 
+/*
+ * Enumeration of available user role groups
+ */
+export enum UserRoles {
+  admin = 'admin',
+  build = 'build',
+  part = 'part',
+  part_category = 'part_category',
+  purchase_order = 'purchase_order',
+  return_order = 'return_order',
+  sales_order = 'sales_order',
+  stock = 'stock',
+  stock_location = 'stocklocation',
+  stocktake = 'stocktake'
+}
+
+/*
+ * Enumeration of available user permissions within each role group
+ */
+export enum UserPermissions {
+  view = 'view',
+  add = 'add',
+  change = 'change',
+  delete = 'delete'
+}
+
 interface UserStateProps {
   user: UserProps | undefined;
   username: () => string;
   setUser: (newUser: UserProps) => void;
   fetchUserState: () => void;
-  checkUserRole: (role: string, permission: string) => boolean;
-  hasDeleteRole: (role: string) => boolean;
-  hasChangeRole: (role: string) => boolean;
-  hasAddRole: (role: string) => boolean;
-  hasViewRole: (role: string) => boolean;
+  checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
+  hasDeleteRole: (role: UserRoles) => boolean;
+  hasChangeRole: (role: UserRoles) => boolean;
+  hasAddRole: (role: UserRoles) => boolean;
+  hasViewRole: (role: UserRoles) => boolean;
 }
 
 /**
@@ -69,7 +95,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         console.error('Error fetching user roles:', error);
       });
   },
-  checkUserRole: (role: string, permission: string) => {
+  checkUserRole: (role: UserRoles, permission: UserPermissions) => {
     // Check if the user has the specified permission for the specified role
     const user: UserProps = get().user as UserProps;
 
@@ -79,16 +105,16 @@ export const useUserState = create<UserStateProps>((set, get) => ({
 
     return user.roles[role].includes(permission);
   },
-  hasDeleteRole: (role: string) => {
-    return get().checkUserRole(role, 'delete');
+  hasDeleteRole: (role: UserRoles) => {
+    return get().checkUserRole(role, UserPermissions.delete);
   },
-  hasChangeRole: (role: string) => {
-    return get().checkUserRole(role, 'change');
+  hasChangeRole: (role: UserRoles) => {
+    return get().checkUserRole(role, UserPermissions.change);
   },
-  hasAddRole: (role: string) => {
-    return get().checkUserRole(role, 'add');
+  hasAddRole: (role: UserRoles) => {
+    return get().checkUserRole(role, UserPermissions.add);
   },
-  hasViewRole: (role: string) => {
-    return get().checkUserRole(role, 'view');
+  hasViewRole: (role: UserRoles) => {
+    return get().checkUserRole(role, UserPermissions.view);
   }
 }));
