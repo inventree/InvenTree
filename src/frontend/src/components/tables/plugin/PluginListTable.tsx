@@ -7,7 +7,6 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { notYetImplemented } from '../../../functions/notifications';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -102,16 +101,13 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         actions.push({
           title: t`Deactivate`,
           color: 'red',
-          onClick: () => {
-            notYetImplemented();
-          }
+          icon: <IconCircleX />
         });
       } else {
         actions.push({
           title: t`Activate`,
-          onClick: () => {
-            notYetImplemented();
-          }
+          color: 'green',
+          icon: <IconCircleCheck />
         });
       }
     }

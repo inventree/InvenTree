@@ -9,6 +9,7 @@ import {
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { UserRoles, useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
@@ -21,6 +22,8 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 export function ProjectCodeTable() {
   const { tableKey, refreshTable } = useTableRefresh('project-code');
 
+  const user = useUserState();
+
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
@@ -32,39 +35,44 @@ export function ProjectCodeTable() {
     ];
   }, []);
 
-  const rowActions = useCallback((record: any): RowAction[] => {
-    return [
-      RowEditAction({
-        onClick: () => {
-          openEditApiForm({
-            url: ApiPaths.project_code_list,
-            pk: record.pk,
-            title: t`Edit project code`,
-            fields: {
-              code: {},
-              description: {}
-            },
-            onFormSuccess: refreshTable,
-            successMessage: t`Project code updated`
-          });
-        }
-      }),
-      RowDeleteAction({
-        onClick: () => {
-          openDeleteApiForm({
-            url: ApiPaths.project_code_list,
-            pk: record.pk,
-            title: t`Delete project code`,
-            successMessage: t`Project code deleted`,
-            onFormSuccess: refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to remove this project code?`}</Text>
-            )
-          });
-        }
-      })
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.admin),
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.project_code_list,
+              pk: record.pk,
+              title: t`Edit project code`,
+              fields: {
+                code: {},
+                description: {}
+              },
+              onFormSuccess: refreshTable,
+              successMessage: t`Project code updated`
+            });
+          }
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.admin),
+          onClick: () => {
+            openDeleteApiForm({
+              url: ApiPaths.project_code_list,
+              pk: record.pk,
+              title: t`Delete project code`,
+              successMessage: t`Project code deleted`,
+              onFormSuccess: refreshTable,
+              preFormContent: (
+                <Text>{t`Are you sure you want to remove this project code?`}</Text>
+              )
+            });
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   const addProjectCode = useCallback(() => {
     openCreateApiForm({

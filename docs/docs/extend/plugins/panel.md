@@ -12,6 +12,7 @@ Most pages in the web interface support multiple panels, which are selected via 
 {% include 'img.html' %}
 {% endwith %}
 
+
 Each plugin which implements this mixin can return zero or more custom panels for a particular page. The plugin can decide (at runtime) which panels it wishes to render. This determination can be made based on the page routing, the item being viewed, the particular user, or other considerations.
 
 ### Panel Content
@@ -254,3 +255,60 @@ that does the POST request, handles errors and the csrftoken.
 !!! tip "Give it a try"
     change the values in the fields and push Save. You will see the values
     in the InvenTree log.
+
+#### If things are getting more complicated
+
+In the example above we code all parameters into the URL. This is easy and OK
+if you transfer just a few values. But the method has at least two disadvantages:
+
+* When you have more parameters, things will get messy.
+* When you have free text input fields, the user might enter characters that are not allowed in URL.
+
+For those cases it is better to pack the data into a json container and transfer
+this in the body of the request message. The changes are simple. Lets start with
+the javascript:
+
+```html
+{% raw %}
+<script>
+async function example_select(){
+    const layernumber = parseInt(document.getElementById("layer_number").value)
+    const size = document.getElementById("string").value
+    const cmd_url="{% url 'plugin:examplepanel:transfer' %}";
+    data = {
+        layer_number: layer_number,
+        size: size
+    }
+    response = inventreeFormDataUpload(url=cmd_url, data=JSON.stringify(data))
+}
+</script>
+{% endraw %}
+```
+
+Here we create a json container (data). The function stringify converts this to the
+proper string format for transfer. That's all. The function inventreeFormDataUpload
+does the rest of the work.
+
+The python code in the plugin also needs minor changes:
+
+```python
+from django.conf.urls import url
+import json
+
+...
+
+    def setup_urls(self):
+        return [
+                url(r'example(?:\.(?P<format>json))?$', self.do_something, name='transfer'),
+        ]
+
+# Define the function that will be called.
+    def do_something(self, request):
+
+        data=json.loads(request.body)
+        print('Data received:', data)
+```
+
+The URL and the called function have no parameter names any longer. All data is in the
+request message and can be extracted from this using json.loads. If more data is needed
+just add it to the json container. No further changes are needed. It's really simple :-)

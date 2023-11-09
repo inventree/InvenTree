@@ -1,5 +1,10 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import {
+  IconArrowRight,
+  IconCircleCheck,
+  IconSwitch3
+} from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,7 +12,7 @@ import { bomItemFields } from '../../../forms/BomForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
-import { useUserState } from '../../../states/UserState';
+import { UserRoles, useUserState } from '../../../states/UserState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
@@ -245,33 +250,34 @@ export function BomTable({
         return [
           {
             title: t`View BOM`,
-            onClick: () => navigate(`/part/${record.part}/`)
+            onClick: () => navigate(`/part/${record.part}/`),
+            icon: <IconArrowRight />
           }
         ];
       }
-
-      // TODO: Check user permissions here,
-      // TODO: to determine which actions are allowed
 
       let actions: RowAction[] = [];
 
       // TODO: Enable BomItem validation
       actions.push({
-        title: t`Validate`,
-        hidden: record.validated || !user.checkUserRole('part', 'change')
+        title: t`Validate BOM line`,
+        color: 'green',
+        hidden: record.validated || !user.hasChangeRole(UserRoles.part),
+        icon: <IconCircleCheck />
       });
 
       // TODO: Enable editing of substitutes
       actions.push({
-        title: t`Substitutes`,
+        title: t`Edit Substitutes`,
         color: 'blue',
-        hidden: !user.checkUserRole('part', 'change')
+        hidden: !user.hasChangeRole(UserRoles.part),
+        icon: <IconSwitch3 />
       });
 
       // Action on edit
       actions.push(
         RowEditAction({
-          hidden: !user.checkUserRole('part', 'change'),
+          hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
               url: ApiPaths.bom_list,
@@ -288,7 +294,7 @@ export function BomTable({
       // Action on delete
       actions.push(
         RowDeleteAction({
-          hidden: !user.checkUserRole('part', 'delete'),
+          hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({
               url: ApiPaths.bom_list,

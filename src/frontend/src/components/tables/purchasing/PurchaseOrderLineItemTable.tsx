@@ -8,7 +8,7 @@ import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
 import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
-import { useUserState } from '../../../states/UserState';
+import { UserRoles, useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -45,18 +45,17 @@ export function PurchaseOrderLineItemTable({
 
   const rowActions = useCallback(
     (record: any) => {
-      // TODO: Hide certain actions if user does not have required permissions
-
       let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
       return [
         {
           hidden: received,
-          title: t`Receive`,
-          tooltip: t`Receive line item`,
+          title: t`Receive line item`,
+          icon: <IconSquareArrowRight />,
           color: 'green'
         },
         RowEditAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
           onClick: () => {
             let supplier = record?.supplier_part_detail?.supplier;
 
@@ -78,8 +77,12 @@ export function PurchaseOrderLineItemTable({
             });
           }
         }),
-        RowDuplicateAction({}),
-        RowDeleteAction({})
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+        })
       ];
     },
     [orderId, user]
@@ -228,7 +231,7 @@ export function PurchaseOrderLineItemTable({
       <AddItemButton
         tooltip={t`Add line item`}
         onClick={addLine}
-        hidden={!user?.checkUserRole('purchaseorder', 'add')}
+        hidden={!user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton text={t`Receive items`} icon={<IconSquareArrowRight />} />
     ];

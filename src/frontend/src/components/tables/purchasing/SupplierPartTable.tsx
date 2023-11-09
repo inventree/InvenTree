@@ -10,7 +10,7 @@ import {
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
-import { useUserState } from '../../../states/UserState';
+import { UserRoles, useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
@@ -180,9 +180,9 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
   // Row action callback
   const rowActions = useCallback(
     (record: any) => {
-      // TODO: Adjust actions based on user permissions
       return [
         RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
             record.pk &&
               openEditApiForm({
@@ -196,6 +196,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           }
         }),
         RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
             record.pk &&
               openDeleteApiForm({

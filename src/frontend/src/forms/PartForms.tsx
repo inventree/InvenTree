@@ -121,3 +121,13 @@ export function partCategoryFields({}: {}): ApiFormFieldSet {
 
   return fields;
 }
+
+export function partParameterTemplateFields(): ApiFormFieldSet {
+  return {
+    name: {},
+    description: {},
+    units: {},
+    choices: {},
+    checkbox: {}
+  };
+}

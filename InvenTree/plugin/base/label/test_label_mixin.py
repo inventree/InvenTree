@@ -78,11 +78,11 @@ class LabelMixinTests(InvenTreeAPITestCase):
         """Test that the sample printing plugin is installed."""
         # Get all label plugins
         plugins = registry.with_mixin('labels')
-        self.assertEqual(len(plugins), 2)
+        self.assertEqual(len(plugins), 3)
 
         # But, it is not 'active'
         plugins = registry.with_mixin('labels', active=True)
-        self.assertEqual(len(plugins), 1)
+        self.assertEqual(len(plugins), 2)
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
@@ -124,9 +124,12 @@ class LabelMixinTests(InvenTreeAPITestCase):
             }
         )
 
-        self.assertEqual(len(response.data), 2)
-        data = response.data[1]
-        self.assertEqual(data['key'], 'samplelabelprinter')
+        self.assertEqual(len(response.data), 3)
+
+        labels = [item['key'] for item in response.data]
+
+        self.assertIn('samplelabelprinter', labels)
+        self.assertIn('inventreelabelsheet', labels)
 
     def test_printing_process(self):
         """Test that a label can be printed."""
