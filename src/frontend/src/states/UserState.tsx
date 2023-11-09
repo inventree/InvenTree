@@ -86,9 +86,9 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         const user: UserProps = get().user as UserProps;
 
         // Update user with role data
-        user.roles = response.data.roles;
-        user.is_staff = response.data.is_staff ?? false;
-        user.is_superuser = response.data.is_superuser ?? false;
+        user.roles = response.data?.roles ?? {};
+        user.is_staff = response.data?.is_staff ?? false;
+        user.is_superuser = response.data?.is_superuser ?? false;
         set({ user: user });
       })
       .catch((error) => {

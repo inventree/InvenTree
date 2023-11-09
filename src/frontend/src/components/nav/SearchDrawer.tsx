@@ -63,8 +63,8 @@ function QueryResultGroup({
   const model = ModelInformationDict[query.model];
 
   return (
-    <Paper shadow="sm" radius="xs" p="md">
-      <Stack key={query.model}>
+    <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
+      <Stack key={`stack-${query.model}`}>
         <Group position="apart" noWrap={true}>
           <Group position="left" spacing={5} noWrap={true}>
             <Text size="lg">{model.label_multiple}</Text>
