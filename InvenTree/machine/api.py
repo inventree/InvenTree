@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import machine.serializers as MachineSerializers
-from generic.states.api import StatusView
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (ListCreateAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI)
@@ -155,21 +154,6 @@ class MachineTypesList(APIView):
         return Response(results)
 
 
-class MachineTypeStatusView(StatusView):
-    """List all status codes for a machine type.
-
-    - GET: List all status codes for this machine type
-    """
-
-    def get_status_model(self, *args, **kwargs):
-        # dynamically inject the StatusCode model from the machine type url param
-        machine_type = registry.machine_types.get(self.kwargs["machine_type"], None)
-        if machine_type is None:
-            raise NotFound(detail=f"Machine type '{self.kwargs['machine_type']}' not found")
-        self.kwargs[self.MODEL_REF] = machine_type.MACHINE_STATUS
-        return super().get_status_model(*args, **kwargs)
-
-
 class MachineDriverList(APIView):
     """List API Endpoint for all discovered machine drivers.
 
@@ -198,6 +182,7 @@ class RegistryStatusView(APIView):
 
     serializer_class = MachineSerializers.MachineRegistryStatusSerializer
 
+    @extend_schema(responses={200: MachineSerializers.MachineRegistryStatusSerializer()})
     def get(self, request):
         result = MachineSerializers.MachineRegistryStatusSerializer({
             "registry_errors": list(map(str, registry.errors))
@@ -208,12 +193,7 @@ class RegistryStatusView(APIView):
 
 machine_api_urls = [
     # machine types
-    re_path(r"^types/", include([
-        path(r"<slug:machine_type>/", include([
-            re_path(r"^status/", MachineTypeStatusView.as_view(), name="api-machine-type-status"),
-        ])),
-        re_path(r"^.*$", MachineTypesList.as_view(), name="api-machine-types"),
-    ])),
+    re_path(r"^types/", MachineTypesList.as_view(), name="api-machine-types"),
 
     # machine drivers
     re_path(r"^drivers/", MachineDriverList.as_view(), name="api-machine-drivers"),

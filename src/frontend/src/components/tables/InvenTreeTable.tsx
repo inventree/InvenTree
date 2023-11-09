@@ -44,7 +44,7 @@ const defaultPageSize: number = 25;
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  */
-export type InvenTreeTableProps = {
+export type InvenTreeTableProps<T = any> = {
   params?: any;
   defaultSortColumn?: string;
   noRecordsText?: string;
@@ -60,9 +60,9 @@ export type InvenTreeTableProps = {
   customActionGroups?: any[];
   printingActions?: any[];
   idAccessor?: string;
-  dataFormatter?: (data: any) => any;
-  rowActions?: (record: any) => RowAction[];
-  onRowClick?: (record: any, index: number, event: any) => void;
+  dataFormatter?: (data: T) => any;
+  rowActions?: (record: T) => RowAction[];
+  onRowClick?: (record: T, index: number, event: any) => void;
 };
 
 /**
@@ -90,7 +90,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
-export function InvenTreeTable({
+export function InvenTreeTable<T = any>({
   url,
   tableKey,
   columns,
@@ -98,8 +98,8 @@ export function InvenTreeTable({
 }: {
   url: string;
   tableKey: string;
-  columns: TableColumn[];
-  props: InvenTreeTableProps;
+  columns: TableColumn<T>[];
+  props: InvenTreeTableProps<T>;
 }) {
   // Use the first part of the table key as the table name
   const tableName: string = useMemo(() => {

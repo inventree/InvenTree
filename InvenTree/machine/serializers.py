@@ -30,8 +30,6 @@ class MachineConfigSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "machine_type",
             "driver",
-            "status",
-            "status_model",
         ]
 
     initialized = serializers.SerializerMethodField("get_initialized")

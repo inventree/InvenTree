@@ -1,4 +1,9 @@
-import { Stack, Text } from '@mantine/core';
+import {
+  Stack,
+  Text,
+  useMantineColorScheme,
+  useMantineTheme
+} from '@mantine/core';
 import { useEffect, useMemo, useRef } from 'react';
 import { useStore } from 'zustand';
 
@@ -29,15 +34,25 @@ export function SettingList({
     [settingsState?.settings]
   );
 
+  const theme = useMantineTheme();
+
   return (
     <>
       <Stack spacing="xs">
-        {(keys || allKeys).map((key) => {
+        {(keys || allKeys).map((key, i) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key
           );
+
+          const style: Record<string, string> = { paddingLeft: '8px' };
+          if (i % 2 === 0)
+            style['backgroundColor'] =
+              theme.colorScheme === 'light'
+                ? theme.colors.gray[1]
+                : theme.colors.gray[9];
+
           return (
-            <div key={key}>
+            <div key={key} style={style}>
               {setting ? (
                 <SettingItem settingsState={settingsState} setting={setting} />
               ) : (
