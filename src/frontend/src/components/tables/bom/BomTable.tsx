@@ -258,20 +258,20 @@ export function BomTable({
       // TODO: Enable BomItem validation
       actions.push({
         title: t`Validate`,
-        hidden: record.validated || !user.hasChangeRole('part')
+        hidden: record.validated || !user.hasChangeRole(UserRoles.part)
       });
 
       // TODO: Enable editing of substitutes
       actions.push({
         title: t`Substitutes`,
         color: 'blue',
-        hidden: !user.hasChangeRole('part')
+        hidden: !user.hasChangeRole(UserRoles.part)
       });
 
       // Action on edit
       actions.push(
         RowEditAction({
-          hidden: !user.hasChangeRole('part'),
+          hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
               url: ApiPaths.bom_list,
