@@ -11,6 +11,10 @@ interface UserStateProps {
   setUser: (newUser: UserProps) => void;
   fetchUserState: () => void;
   checkUserRole: (role: string, permission: string) => boolean;
+  hasDeleteRole: (role: string) => boolean;
+  hasChangeRole: (role: string) => boolean;
+  hasAddRole: (role: string) => boolean;
+  hasViewRole: (role: string) => boolean;
 }
 
 /**
@@ -74,5 +78,17 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     if (user.roles[role] === undefined) return false;
 
     return user.roles[role].includes(permission);
+  },
+  hasDeleteRole: (role: string) => {
+    return get().checkUserRole(role, 'delete');
+  },
+  hasChangeRole: (role: string) => {
+    return get().checkUserRole(role, 'change');
+  },
+  hasAddRole: (role: string) => {
+    return get().checkUserRole(role, 'add');
+  },
+  hasViewRole: (role: string) => {
+    return get().checkUserRole(role, 'view');
   }
 }));
