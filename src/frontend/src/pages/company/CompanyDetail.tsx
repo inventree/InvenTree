@@ -36,7 +36,7 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { editCompany } from '../../forms/CompanyForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
+import { UserRoles, useUserState } from '../../states/UserState';
 
 export type CompanyDetailProps = {
   title: string;
@@ -161,10 +161,6 @@ export default function CompanyDetail(props: CompanyDetailProps) {
   }, [id, company]);
 
   const companyActions = useMemo(() => {
-    // TODO: Finer fidelity on these permissions, perhaps?
-    let canEdit = user.checkUserRole('purchase_order', 'change');
-    let canDelete = user.checkUserRole('purchase_order', 'delete');
-
     return [
       <ActionDropdown
         key="company"
@@ -172,7 +168,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon={<IconDots />}
         actions={[
           EditItemAction({
-            disabled: !canEdit,
+            disabled: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => {
               if (company?.pk) {
                 editCompany({
@@ -183,7 +179,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
             }
           }),
           DeleteItemAction({
-            disabled: !canDelete
+            disabled: !user.hasDeleteRole(UserRoles.purchase_order)
           })
         ]}
       />

@@ -7,7 +7,7 @@ import { bomItemFields } from '../../../forms/BomForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
-import { useUserState } from '../../../states/UserState';
+import { UserRoles, useUserState } from '../../../states/UserState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
@@ -258,20 +258,20 @@ export function BomTable({
       // TODO: Enable BomItem validation
       actions.push({
         title: t`Validate`,
-        hidden: record.validated || !user.checkUserRole('part', 'change')
+        hidden: record.validated || !user.hasChangeRole('part')
       });
 
       // TODO: Enable editing of substitutes
       actions.push({
         title: t`Substitutes`,
         color: 'blue',
-        hidden: !user.checkUserRole('part', 'change')
+        hidden: !user.hasChangeRole('part')
       });
 
       // Action on edit
       actions.push(
         RowEditAction({
-          hidden: !user.checkUserRole('part', 'change'),
+          hidden: !user.hasChangeRole('part'),
           onClick: () => {
             openEditApiForm({
               url: ApiPaths.bom_list,
@@ -288,7 +288,7 @@ export function BomTable({
       // Action on delete
       actions.push(
         RowDeleteAction({
-          hidden: !user.checkUserRole('part', 'delete'),
+          hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({
               url: ApiPaths.bom_list,
