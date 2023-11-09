@@ -4,6 +4,7 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
+import { isTrue } from '../functions/conversion';
 import { ApiPaths, apiUrl } from './ApiState';
 import { Setting, SettingsLookup } from './states';
 
@@ -12,6 +13,8 @@ export interface SettingsStateProps {
   lookup: SettingsLookup;
   fetchSettings: () => void;
   endpoint: ApiPaths;
+  getSetting: (key: string, default_value?: string) => string; // Return a raw setting value
+  isSet: (key: string, default_value?: boolean) => boolean; // Check a "boolean" setting
 }
 
 /**
@@ -34,6 +37,13 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
         .catch((error) => {
           console.error('Error fetching global settings:', error);
         });
+    },
+    getSetting: (key: string, default_value?: string) => {
+      return get().lookup[key] ?? default_value ?? '';
+    },
+    isSet: (key: string, default_value?: boolean) => {
+      let value = get().lookup[key] ?? default_value ?? 'false';
+      return isTrue(value);
     }
   })
 );
@@ -57,6 +67,13 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
       .catch((error) => {
         console.error('Error fetching user settings:', error);
       });
+  },
+  getSetting: (key: string, default_value?: string) => {
+    return get().lookup[key] ?? default_value ?? '';
+  },
+  isSet: (key: string, default_value?: boolean) => {
+    let value = get().lookup[key] ?? default_value ?? 'false';
+    return isTrue(value);
   }
 }));
 

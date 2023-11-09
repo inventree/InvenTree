@@ -31,6 +31,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { useUserSettingsState } from '../../states/SettingsState';
 import { UserRoles, useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
 import { ModelInformationDict, ModelType } from '../render/ModelType';
@@ -42,11 +43,6 @@ type SearchQuery = {
   parameters: any;
   results?: any;
 };
-
-// Placeholder function for settings checks (will be replaced with a proper implementation)
-function settingsCheck(setting: string) {
-  return true;
-}
 
 /*
  * Render the results for a single search query
@@ -124,6 +120,7 @@ export function SearchDrawer({
   const [searchWhole, setSearchWhole] = useState<boolean>(false);
 
   const user = useUserState();
+  const userSettings = useUserSettingsState();
 
   // Build out search queries based on user permissions and preferences
   const searchQueryList: SearchQuery[] = useMemo(() => {
@@ -133,7 +130,7 @@ export function SearchDrawer({
         parameters: {},
         enabled:
           user.hasViewRole(UserRoles.part) &&
-          settingsCheck('SEARCH_PREVIEW_SHOW_PARTS')
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_PARTS')
       },
       {
         model: ModelType.supplierpart,
@@ -145,7 +142,7 @@ export function SearchDrawer({
         enabled:
           user.hasViewRole(UserRoles.part) &&
           user.hasViewRole(UserRoles.purchase_order) &&
-          settingsCheck('SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS')
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS')
       },
       {
         model: ModelType.manufacturerpart,
@@ -157,14 +154,14 @@ export function SearchDrawer({
         enabled:
           user.hasViewRole(UserRoles.part) &&
           user.hasViewRole(UserRoles.purchase_order) &&
-          settingsCheck('SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS')
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS')
       },
       {
         model: ModelType.partcategory,
         parameters: {},
         enabled:
           user.hasViewRole(UserRoles.part_category) &&
-          settingsCheck('SEARCH_PREVIEW_SHOW_CATEGORIES')
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_CATEGORIES')
       },
       {
         model: ModelType.stockitem,
@@ -174,14 +171,14 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.stock) &&
-          settingsCheck('SEARCH_PREVIEW_SHOW_STOCK')
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_STOCK')
       },
       {
         model: ModelType.stocklocation,
         parameters: {},
         enabled:
           user.hasViewRole(UserRoles.stock_location) &&
-          settingsCheck('SEARCH_PREVIEW_SHOW_LOCATIONS')
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_LOCATIONS')
       },
       {
         model: ModelType.build,
@@ -190,7 +187,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.build) &&
-          settingsCheck('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
       },
       {
         model: ModelType.company,
@@ -198,7 +195,7 @@ export function SearchDrawer({
         enabled:
           (user.hasViewRole(UserRoles.sales_order) ||
             user.hasViewRole(UserRoles.purchase_order)) &&
-          settingsCheck('SEARCH_PREVIEW_SHOW_COMPANIES')
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
         model: ModelType.purchaseorder,
@@ -207,7 +204,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.purchase_order) &&
-          settingsCheck(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
+          userSettings.isSet(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
       },
       {
         model: ModelType.salesorder,
@@ -216,7 +213,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.sales_order) &&
-          settingsCheck(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
+          userSettings.isSet(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
       },
       {
         model: ModelType.returnorder,
@@ -225,10 +222,10 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.return_order) &&
-          settingsCheck(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
+          userSettings.isSet(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
       }
     ];
-  }, [user]);
+  }, [user, userSettings]);
 
   // Construct a list of search queries based on user permissions
   const searchQueries: SearchQuery[] = searchQueryList.filter((q) => q.enabled);
