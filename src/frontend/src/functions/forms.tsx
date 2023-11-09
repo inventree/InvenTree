@@ -15,7 +15,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(props: ApiFormProps): string {
-  return apiUrl(props.url, props.pk);
+  return apiUrl(props.url, props.pk, props.pathParams);
 }
 
 /**

@@ -1,10 +1,5 @@
 import { t } from '@lingui/macro';
-import { Button, Container, Group, Text, Tooltip } from '@mantine/core';
-import {
-  IconCircleCheck,
-  IconCircleX,
-  IconHelpCircle
-} from '@tabler/icons-react';
+import { Button, Container, Divider, Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { notYetImplemented } from '../../../functions/notifications';
@@ -13,7 +8,7 @@ import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { TableStatusRenderer } from '../../renderers/StatusRenderer';
 import { MachineSettingList } from '../../settings/SettingList';
 import { TableColumn } from '../Column';
-import { BooleanColumn, StatusColumn } from '../ColumnRenderers';
+import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
 
@@ -43,7 +38,11 @@ function MachineDetail({
       <Button onClick={goBack}>Back</Button>
       <Text>{machine.name}</Text>
 
-      <MachineSettingList pk={machine.pk} />
+      <Text>Machine Settings</Text>
+      <MachineSettingList machinePk={machine.pk} configType="M" />
+      <Divider />
+      <Text>Driver Settings</Text>
+      <MachineSettingList machinePk={machine.pk} configType="D" />
     </Container>
   );
 }

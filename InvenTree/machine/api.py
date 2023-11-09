@@ -121,6 +121,7 @@ class MachineSettingDetail(RetrieveUpdateAPI):
     (Note that these cannot be created or deleted via API)
     """
 
+    lookup_field = 'key'
     queryset = MachineSetting.objects.all()
     serializer_class = MachineSerializers.MachineSettingSerializer
 

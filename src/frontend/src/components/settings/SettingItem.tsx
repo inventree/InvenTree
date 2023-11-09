@@ -23,7 +23,10 @@ function SettingValue({
   // Callback function when a boolean value is changed
   function onToggle(value: boolean) {
     api
-      .patch(apiUrl(settingsState.endpoint, setting.key), { value: value })
+      .patch(
+        apiUrl(settingsState.endpoint, setting.key, settingsState.pathParams),
+        { value: value }
+      )
       .then(() => {
         showNotification({
           title: t`Setting updated`,
@@ -53,6 +56,7 @@ function SettingValue({
     openModalApiForm({
       url: settingsState.endpoint,
       pk: setting.key,
+      pathParams: settingsState.pathParams,
       method: 'PATCH',
       title: t`Edit Setting`,
       ignorePermissionCheck: true,

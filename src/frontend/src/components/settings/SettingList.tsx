@@ -1,11 +1,10 @@
 import { Stack, Text } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { useStore } from 'zustand';
 
-import { api } from '../../App';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
 import {
   SettingsStateProps,
+  createMachineSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
@@ -19,16 +18,21 @@ export function SettingList({
   keys
 }: {
   settingsState: SettingsStateProps;
-  keys: string[];
+  keys?: string[];
 }) {
   useEffect(() => {
     settingsState.fetchSettings();
   }, []);
 
+  const allKeys = useMemo(
+    () => settingsState?.settings?.map((s) => s.key),
+    [settingsState?.settings]
+  );
+
   return (
     <>
       <Stack spacing="xs">
-        {keys.map((key) => {
+        {(keys || allKeys).map((key) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key
           );
@@ -61,28 +65,20 @@ export function GlobalSettingList({ keys }: { keys: string[] }) {
   return <SettingList settingsState={globalSettings} keys={keys} />;
 }
 
-export function MachineSettingList({ pk }: { pk: string }) {
-  const { isLoading, isLoadingError, data } = useQuery({
-    enabled: true,
-    queryKey: ['machine-detail', pk],
-    queryFn: () => {
-      console.log(
-        'FETCH',
-        apiUrl(ApiPaths.machine_setting_list).replace('$id', pk)
-      );
-      return api.get(apiUrl(ApiPaths.machine_setting_list).replace('$id', pk));
-    },
-    refetchOnMount: false,
-    refetchOnWindowFocus: false
-  });
-  console.log(data);
-  if (isLoading) {
-    return <h1>Loading</h1>;
-  }
+export function MachineSettingList({
+  machinePk,
+  configType
+}: {
+  machinePk: string;
+  configType: 'M' | 'D';
+}) {
+  const machineSettingsStore = useRef(
+    createMachineSettingsState({
+      machine: machinePk,
+      configType: configType
+    })
+  ).current;
+  const machineSettings = useStore(machineSettingsStore);
 
-  if (isLoadingError) {
-    return <h1>Error</h1>;
-  }
-
-  return <h1>Loaded</h1>;
+  return <SettingList settingsState={machineSettings} />;
 }

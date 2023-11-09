@@ -97,7 +97,7 @@ function EmailContent({}: {}) {
 
   function runServerAction(url: ApiPaths) {
     api
-      .post(apiUrl(url).replace('$id', value), {})
+      .post(apiUrl(url, undefined, { id: value }), {})
       .then(() => {
         refetch();
       })
@@ -218,7 +218,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
 
   function removeProvider() {
     api
-      .post(apiUrl(ApiPaths.user_sso_remove).replace('$id', value))
+      .post(apiUrl(ApiPaths.user_sso_remove, undefined, { id: value }))
       .then(() => {
         queryClient.removeQueries({
           queryKey: ['sso-list']

@@ -127,8 +127,12 @@ export enum ApiPaths {
   plugin_list = 'api-plugin-list',
 
   // Machine URLs
+  machine_types_list = 'api-machine-types',
+  machine_driver_list = 'api-machine-drivers',
+  machine_registry_status = 'api-machine-registry-status',
   machine_list = 'api-machine-list',
   machine_setting_list = 'api-machine-settings',
+  machine_setting_detail = 'api-machine-settings-detail',
 
   project_code_list = 'api-project-code-list',
   custom_unit_list = 'api-custom-unit-list'
@@ -166,15 +170,15 @@ export function apiEndpoint(path: ApiPaths): string {
     case ApiPaths.user_sso:
       return 'auth/social/';
     case ApiPaths.user_sso_remove:
-      return 'auth/social/$id/disconnect/';
+      return 'auth/social/:id/disconnect/';
     case ApiPaths.user_emails:
       return 'auth/emails/';
     case ApiPaths.user_email_remove:
-      return 'auth/emails/$id/remove/';
+      return 'auth/emails/:id/remove/';
     case ApiPaths.user_email_verify:
-      return 'auth/emails/$id/verify/';
+      return 'auth/emails/:id/verify/';
     case ApiPaths.user_email_primary:
-      return 'auth/emails/$id/primary/';
+      return 'auth/emails/:id/primary/';
     case ApiPaths.currency_list:
       return 'currency/exchange/';
     case ApiPaths.currency_refresh:
@@ -251,10 +255,18 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'order/ro/attachment/';
     case ApiPaths.plugin_list:
       return 'plugins/';
+    case ApiPaths.machine_types_list:
+      return 'machine/types/';
+    case ApiPaths.machine_driver_list:
+      return 'machine/drivers/';
+    case ApiPaths.machine_registry_status:
+      return 'machine/status/';
     case ApiPaths.machine_list:
       return 'machine/';
     case ApiPaths.machine_setting_list:
-      return 'machine/$id/settings/';
+      return 'machine/:machine/settings/';
+    case ApiPaths.machine_setting_detail:
+      return 'machine/:machine/settings/:config_type/';
     case ApiPaths.project_code_list:
       return 'project-code/';
     case ApiPaths.custom_unit_list:
@@ -264,10 +276,16 @@ export function apiEndpoint(path: ApiPaths): string {
   }
 }
 
+export type PathParams = Record<string, string | number>;
+
 /**
  * Construct an API URL with an endpoint and (optional) pk value
  */
-export function apiUrl(path: ApiPaths, pk?: any): string {
+export function apiUrl(
+  path: ApiPaths,
+  pk?: any,
+  pathParams?: PathParams
+): string {
   let _url = apiEndpoint(path);
 
   // If the URL does not start with a '/', add the API prefix
@@ -277,6 +295,12 @@ export function apiUrl(path: ApiPaths, pk?: any): string {
 
   if (_url && pk) {
     _url += `${pk}/`;
+  }
+
+  if (pathParams) {
+    for (const [key, value] of Object.entries(pathParams)) {
+      _url = _url.replace(`:${key}`, `${value}`);
+    }
   }
 
   return _url;

@@ -1,10 +1,10 @@
 /**
  * State management for remote (server side) settings
  */
-import { create } from 'zustand';
+import { create, createStore } from 'zustand';
 
 import { api } from '../App';
-import { ApiPaths, apiUrl } from './ApiState';
+import { ApiPaths, PathParams, apiUrl } from './ApiState';
 import { Setting, SettingsLookup } from './states';
 
 export interface SettingsStateProps {
@@ -12,6 +12,7 @@ export interface SettingsStateProps {
   lookup: SettingsLookup;
   fetchSettings: () => void;
   endpoint: ApiPaths;
+  pathParams?: PathParams;
 }
 
 /**
@@ -59,6 +60,47 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
       });
   }
 }));
+
+/**
+ * State management for machine settings
+ */
+interface CreateMachineSettingStateProps {
+  machine: string;
+  configType: 'M' | 'D';
+}
+
+export const createMachineSettingsState = ({
+  machine,
+  configType
+}: CreateMachineSettingStateProps) => {
+  const pathParams: PathParams = { machine, config_type: configType };
+
+  return createStore<SettingsStateProps>()((set, get) => ({
+    settings: [],
+    lookup: {},
+    endpoint: ApiPaths.machine_setting_detail,
+    pathParams,
+    fetchSettings: async () => {
+      await api
+        .get(apiUrl(ApiPaths.machine_setting_list, undefined, { machine }))
+        .then((response) => {
+          const settings = response.data.filter(
+            (s: any) => s.config_type === configType
+          );
+          set({
+            settings,
+            lookup: generate_lookup(settings)
+          });
+        })
+        .catch((error) => {
+          console.error(
+            `Error fetching machine settings for machine ${machine} with type ${configType}:`,
+            error
+          );
+        });
+    }
+  }));
+};
 
 /*
   return a lookup dictionary for the value of the provided Setting list
