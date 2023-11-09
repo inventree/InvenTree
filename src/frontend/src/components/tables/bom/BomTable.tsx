@@ -1,6 +1,10 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { IconCircleCheck, IconSwitch3 } from '@tabler/icons-react';
+import {
+  IconArrowRight,
+  IconCircleCheck,
+  IconSwitch3
+} from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -246,7 +250,8 @@ export function BomTable({
         return [
           {
             title: t`View BOM`,
-            onClick: () => navigate(`/part/${record.part}/`)
+            onClick: () => navigate(`/part/${record.part}/`),
+            icon: <IconArrowRight />
           }
         ];
       }
