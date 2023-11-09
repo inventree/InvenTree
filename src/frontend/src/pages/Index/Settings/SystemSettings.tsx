@@ -292,8 +292,8 @@ export default function SystemSettings() {
     <>
       <Stack spacing="xs">
         <SettingsHeader
-          title={server.instance || ''}
-          subtitle={<Trans>System Settings</Trans>}
+          title={t`System Settings`}
+          subtitle={server.instance || ''}
           switch_link="/settings/user"
           switch_text={<Trans>Switch to User Setting</Trans>}
         />
