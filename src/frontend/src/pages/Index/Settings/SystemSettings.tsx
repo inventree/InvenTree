@@ -25,6 +25,7 @@ import { StylishText } from '../../../components/items/StylishText';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
+import { PartParameterTemplateTable } from '../../../components/tables/part/PartParameterTemplateTable';
 import { CurrencyTable } from '../../../components/tables/settings/CurrencyTable';
 import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
 import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
@@ -220,7 +221,8 @@ export default function SystemSettings() {
       {
         name: 'parameters',
         label: t`Part Parameters`,
-        icon: <IconList />
+        icon: <IconList />,
+        content: <PartParameterTemplateTable />
       },
       {
         name: 'stock',

@@ -97,7 +97,6 @@ export function PartParameterTable({ partId }: { partId: any }) {
   }, [partId]);
 
   // Callback for row actions
-  // TODO: Adjust based on user permissions
   const rowActions = useCallback(
     (record: any) => {
       // Actions not allowed for "variant" rows
