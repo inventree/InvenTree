@@ -80,7 +80,7 @@ export default function NotificationsPage() {
                 icon: <IconTrash />,
                 onClick: () => {
                   api
-                    .delete(`/notifications/${record.pk}/`)
+                    .delete(apiUrl(ApiPaths.notifications_list, record.pk))
                     .then((response) => {
                       historyRefresh.refreshTable();
                     });
