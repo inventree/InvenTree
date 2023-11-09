@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
+import { partParameterTemplateFields } from '../../../forms/PartForms';
 import {
   openCreateApiForm,
   openDeleteApiForm,
@@ -58,10 +59,30 @@ export function PartParameterTemplateTable() {
     (record: any) => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.part)
+          hidden: !user.hasChangeRole(UserRoles.part),
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.part_parameter_template_list,
+              pk: record.pk,
+              title: t`Edit Parameter Template`,
+              fields: partParameterTemplateFields(),
+              successMessage: t`Parameter template updated`,
+              onFormSuccess: refreshTable
+            });
+          }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.part)
+          hidden: !user.hasDeleteRole(UserRoles.part),
+          onClick: () => {
+            openDeleteApiForm({
+              url: ApiPaths.part_parameter_template_list,
+              pk: record.pk,
+              title: t`Delete Parameter Template`,
+              successMessage: t`Parameter template deleted`,
+              onFormSuccess: refreshTable,
+              preFormContent: <Text>{t`Remove parameter template`}</Text>
+            });
+          }
         })
       ];
     },
