@@ -89,13 +89,34 @@ export function PartParameterTemplateTable() {
     [user]
   );
 
+  const addParameterTemplate = useCallback(() => {
+    openCreateApiForm({
+      url: ApiPaths.part_parameter_template_list,
+      title: t`Create Parameter Template`,
+      fields: partParameterTemplateFields(),
+      successMessage: t`Parameter template created`,
+      onFormSuccess: refreshTable
+    });
+  }, []);
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add parameter template`}
+        onClick={addParameterTemplate}
+        disabled={!user.hasAddRole(UserRoles.part)}
+      />
+    ];
+  }, [user]);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.part_parameter_template_list)}
       tableKey={tableKey}
       columns={tableColumns}
       props={{
-        rowActions: rowActions
+        rowActions: rowActions,
+        customActionGroups: tableActions
       }}
     />
   );
