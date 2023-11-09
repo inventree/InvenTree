@@ -54,14 +54,41 @@ The page_base file is split into multiple sections called blocks. This allows yo
 The current page base can be found [here](https://github.com/inventree/InvenTree/blob/master/InvenTree/templates/page_base.html). This will provide you with what blocks you can override. The [stock app](https://github.com/inventree/InvenTree/tree/master/InvenTree/stock) offers a great example of implementing these blocks.
 
 !!! warning "Sidebar Block"
-    You may notice that implementing the `sidebar` block does not work. The most likely issue is that you are not enabling the sidebar using JavaScript. To fix this, append the following code to the end of your template file.
+    You may notice that implementing the `sidebar` block does not work. The most likely issue is that you are not enabling the sidebar using JavaScript. To fix this, append the following code, replacing `label` with a label of your choosing,  to the end of your template file.
     ``` HTML
     {% raw %}
     {% block js_ready %}
     {{ block.super }}
-        enableSidebar('stocklocation');
+        enableSidebar('label');
     
     
     {% endblock js_ready %}
     {% endraw %}
     ```
+
+#### Panels
+InvenTree uses bootstrap panels to display content on a page. These panels are locate inside the block `page_content`.
+
+Example:
+```html
+<div class='panel panel-hidden' id='panel-loans'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Loaning Information" %}</h4>
+        </div>
+    </div>
+    <div class='panel-content'>
+        ...
+    </div>
+</div>
+```
+Notice that this example has the panel hidden, by adding the class `panel-hidden`, by default.
+This is where the `enableSidebar('...');'` function comes back into play. Each sidebar item has a label. An example of this with the label `sublocations` is below.
+
+```html
+{% trans "Sublocations" as text %}
+{% include "sidebar_item.html" with label='sublocations' text=text icon="fa-sitemap" %}
+```
+
+The `enableSidebar('...');'` function will show the panel with the label `panel-...` (for this example, `panel-sublocations`) and hide all other panels. This allows you to have multiple panels on a page, but only show one at a time.
+Whenever you click a sidebar item, it will enable the panel with the corresponding label and hide all other panels.
