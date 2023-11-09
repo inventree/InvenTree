@@ -20,13 +20,25 @@ class ApiTokenAdmin(admin.ModelAdmin):
     list_filter = ('user', 'revoked')
     fields = ('token', 'user', 'name', 'created', 'last_seen', 'revoked', 'expiry', 'metadata')
 
+    def get_fields(self, request, obj=None):
+        """Return list of fields to display."""
+
+        if obj:
+            fields = ['token',]
+        else:
+            fields = ['key',]
+
+        fields += ['user', 'name', 'created', 'last_seen', 'revoked', 'expiry', 'metadata']
+
+        return fields
+
     def get_readonly_fields(self, request, obj=None):
         """Some fields are read-only after creation"""
 
-        ro = ['token', 'created', 'last_seen']
+        ro = ['created', 'last_seen']
 
         if obj:
-            ro += ['user', 'expiry', 'name']
+            ro += ['token', 'user', 'expiry', 'name']
 
         return ro
 
