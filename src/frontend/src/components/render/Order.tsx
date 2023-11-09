@@ -2,6 +2,8 @@ import { t } from '@lingui/macro';
 import { ReactNode } from 'react';
 
 import { RenderInlineModel } from './Instance';
+import { ModelType } from './ModelType';
+import { StatusRenderer } from './StatusRenderer';
 
 /**
  * Inline rendering of a single PurchaseOrder instance
@@ -18,6 +20,10 @@ export function RenderPurchaseOrder({
     <RenderInlineModel
       primary={instance.reference}
       secondary={instance.description}
+      suffix={StatusRenderer({
+        status: instance.status,
+        type: ModelType.purchaseorder
+      })}
       image={supplier.thumnbnail || supplier.image}
     />
   );
@@ -33,6 +39,10 @@ export function RenderReturnOrder({ instance }: { instance: any }): ReactNode {
     <RenderInlineModel
       primary={instance.reference}
       secondary={instance.description}
+      suffix={StatusRenderer({
+        status: instance.status,
+        type: ModelType.returnorder
+      })}
       image={customer.thumnbnail || customer.image}
     />
   );
@@ -50,6 +60,10 @@ export function RenderSalesOrder({ instance }: { instance: any }): ReactNode {
     <RenderInlineModel
       primary={instance.reference}
       secondary={instance.description}
+      suffix={StatusRenderer({
+        status: instance.status,
+        type: ModelType.salesorder
+      })}
       image={customer.thumnbnail || customer.image}
     />
   );

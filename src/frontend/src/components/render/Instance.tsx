@@ -101,7 +101,7 @@ export function RenderInlineModel({
 }: {
   primary: string;
   secondary?: string;
-  suffix?: string;
+  suffix?: ReactNode;
   image?: string;
   labels?: string[];
   url?: string;
