@@ -314,15 +314,18 @@ The URL and the called function have no parameter names any longer. All data is 
 request message and can be extracted from this using json.loads. If more data is needed
 just add it to the json container. No further changes are needed. It's really simple :-)
 
-#### Populate a drop down field 
+#### Populate a drop down field
 
 Now we add a dropdown menu and fill it with values from the InvenTree database.
 
-{% with id="panel_with_dropwdown", url="plugin/panel_with_dropwdown.png", description="Panel with dropdown menu" %} {% include "img.html" %} {% endwith %}
+{% with id="panel_with_dropwdown", url="plugin/panel_with_dropdown.png", description="Panel with dropdown menu" %}
+{% include "img.html" %}
+{% endwith %}
+
 
 ```python
 from company.models import Company
-    
+
 ...
 
     def get_custom_panels(self, view, request):
@@ -348,4 +351,4 @@ by looping.
 ```
 
 The value of the select is the pk of the company. It can simply be added to the
-json container and transferred to the plugin. 
+json container and transferred to the plugin.
