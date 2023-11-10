@@ -16,15 +16,18 @@ import {
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
 export function purchaseOrderLineItemFields({
-  supplierId
+  supplierId,
+  create = false
 }: {
   supplierId?: number;
+  create?: boolean;
 }) {
   let fields: ApiFormFieldSet = {
     order: {
       filters: {
         supplier_detail: true
-      }
+      },
+      hidden: !create
     },
     part: {
       filters: {

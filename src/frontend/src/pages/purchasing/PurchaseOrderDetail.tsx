@@ -115,7 +115,7 @@ export default function PurchaseOrderDetail() {
         ]}
       />,
       <ActionDropdown
-        key="order"
+        key="order-actions"
         tooltip={t`Order Actions`}
         icon={<IconDots />}
         actions={[EditItemAction({}), DeleteItemAction({})]}

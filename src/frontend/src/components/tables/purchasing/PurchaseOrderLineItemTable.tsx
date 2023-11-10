@@ -66,7 +66,8 @@ export function PurchaseOrderLineItemTable({
             }
 
             let fields = purchaseOrderLineItemFields({
-              supplierId: supplier
+              supplierId: supplier,
+              create: false
             });
 
             openEditApiForm({
@@ -221,7 +222,9 @@ export function PurchaseOrderLineItemTable({
     openCreateApiForm({
       url: ApiPaths.purchase_order_line_list,
       title: t`Add Line Item`,
-      fields: purchaseOrderLineItemFields({}),
+      fields: purchaseOrderLineItemFields({
+        create: true
+      }),
       onFormSuccess: refreshTable,
       successMessage: t`Line item added`
     });
@@ -231,11 +234,16 @@ export function PurchaseOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-line-item"
         tooltip={t`Add line item`}
         onClick={addLine}
         hidden={!user?.hasAddRole(UserRoles.purchase_order)}
       />,
-      <ActionButton text={t`Receive items`} icon={<IconSquareArrowRight />} />
+      <ActionButton
+        key="receive-items"
+        text={t`Receive items`}
+        icon={<IconSquareArrowRight />}
+      />
     ];
   }, [orderId, user]);
 

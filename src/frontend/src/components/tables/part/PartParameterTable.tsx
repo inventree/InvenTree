@@ -180,7 +180,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
     // TODO: Hide if user does not have permission to edit parts
     actions.push(
-      <AddItemButton tooltip="Add parameter" onClick={addParameter} />
+      <AddItemButton tooltip={t`Add parameter`} onClick={addParameter} />
     );
 
     return actions;
