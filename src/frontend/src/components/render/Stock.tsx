@@ -20,10 +20,12 @@ export function RenderStockLocation({
 }
 
 export function RenderStockItem({ instance }: { instance: any }): ReactNode {
-  let quantity_string = t`Quantity` + `: ${instance.quantity}`;
+  let quantity_string = '';
 
-  if (instance.serial) {
+  if (instance?.serial !== null && instance?.serial !== undefined) {
     quantity_string += t`Serial Number` + `: ${instance.serial}`;
+  } else if (instance?.quantity) {
+    quantity_string = t`Quantity` + `: ${instance.quantity}`;
   }
 
   return (
