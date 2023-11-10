@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, Loader, Stack, Text, Tooltip } from '@mantine/core';
+import { Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import {
