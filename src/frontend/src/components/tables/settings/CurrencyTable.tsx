@@ -4,8 +4,9 @@ import { IconReload } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { api } from '../../../App';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { InvenTreeTable } from '../InvenTreeTable';
 

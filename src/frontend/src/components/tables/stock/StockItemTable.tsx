@@ -4,10 +4,11 @@ import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
-import { ModelType } from '../../render/ModelType';
 import { TableColumn } from '../Column';
 import { StatusColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';

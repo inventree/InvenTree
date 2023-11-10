@@ -30,11 +30,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
-import { UserRoles, useUserState } from '../../states/UserState';
+import { useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict, ModelType } from '../render/ModelType';
+import { ModelInformationDict } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {

@@ -7,8 +7,8 @@ import { ReactNode, useState } from 'react';
 import { ApiFormProps } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
-import { ModelType } from '../../components/render/ModelType';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { ModelType } from '../../enums/ModelType';
 import {
   createPart,
   editPart,

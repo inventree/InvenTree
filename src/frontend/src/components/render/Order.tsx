@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
 import { ReactNode } from 'react';
 
+import { ModelType } from '../../enums/ModelType';
 import { RenderInlineModel } from './Instance';
-import { ModelType } from './ModelType';
 import { StatusRenderer } from './StatusRenderer';
 
 /**

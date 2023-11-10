@@ -1,35 +1,11 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { UserPermissions, UserRoles } from '../enums/Roles';
 import { doClassicLogout } from '../functions/auth';
-import { ApiPaths, apiUrl } from './ApiState';
+import { apiUrl } from './ApiState';
 import { UserProps } from './states';
-
-/*
- * Enumeration of available user role groups
- */
-export enum UserRoles {
-  admin = 'admin',
-  build = 'build',
-  part = 'part',
-  part_category = 'part_category',
-  purchase_order = 'purchase_order',
-  return_order = 'return_order',
-  sales_order = 'sales_order',
-  stock = 'stock',
-  stock_location = 'stocklocation',
-  stocktake = 'stocktake'
-}
-
-/*
- * Enumeration of available user permissions within each role group
- */
-export enum UserPermissions {
-  view = 'view',
-  add = 'add',
-  change = 'change',
-  delete = 'delete'
-}
 
 interface UserStateProps {
   user: UserProps | undefined;

@@ -3,6 +3,7 @@ import { Alert, Space } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
+import { ModelType } from '../../enums/ModelType';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildOrder } from './Build';
 import {
@@ -13,7 +14,6 @@ import {
   RenderSupplierPart
 } from './Company';
 import { RenderProjectCode } from './Generic';
-import { ModelType } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,

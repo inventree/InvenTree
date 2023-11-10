@@ -1,8 +1,8 @@
 import { Badge, Center, MantineSize } from '@mantine/core';
 
 import { colorMap } from '../../defaults/backendMappings';
+import { ModelType } from '../../enums/ModelType';
 import { useServerApiState } from '../../states/ApiState';
-import { ModelType } from './ModelType';
 
 interface StatusCodeInterface {
   key: string;

@@ -48,15 +48,18 @@ import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
 import { RenderInstance } from '../../components/render/Instance';
-import { ModelType } from '../../components/render/ModelType';
+import { ModelInformationDict } from '../../components/render/ModelType';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 
 interface ScanItem {
   id: string;
   ref: string;
   data: any;
+  instance: any;
   timestamp: Date;
   source: string;
   link?: string;
@@ -153,6 +156,25 @@ export default function Scan() {
         const rsp = matchObject(response.data);
         item.model = rsp[0];
         item.pk = rsp[1];
+
+        // Fetch instance data
+        if (item.model && item.pk) {
+          let model_info = ModelInformationDict[item.model];
+
+          if (model_info && model_info.api_endpoint) {
+            let url = apiUrl(model_info.api_endpoint, item.pk);
+
+            api
+              .get(url)
+              .then((response) => {
+                item.instance = response.data;
+              })
+              .catch((err) => {
+                console.error('error while fetching instance data at', url);
+                console.info(err);
+              });
+          }
+        }
 
         historyHandlers.setState(history);
       })
@@ -388,8 +410,8 @@ function HistoryTable({
           />
         </td>
         <td>
-          {item.pk && item.model ? (
-            <RenderInstance model={item.model} instance={item} />
+          {item.pk && item.model && item.instance ? (
+            <RenderInstance model={item.model} instance={item.instance} />
           ) : (
             item.ref
           )}

@@ -4,9 +4,9 @@
 import { t } from '@lingui/macro';
 
 import { formatCurrency, renderDate } from '../../defaults/formatters';
+import { ModelType } from '../../enums/ModelType';
 import { ProgressBar } from '../items/ProgressBar';
 import { YesNoButton } from '../items/YesNoButton';
-import { ModelType } from '../render/ModelType';
 import { TableStatusRenderer } from '../render/StatusRenderer';
 import { RenderOwner } from '../render/User';
 import { TableColumn } from './Column';

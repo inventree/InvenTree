@@ -4,8 +4,9 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
+import { ApiPaths } from '../enums/ApiEndpoints';
 import { isTrue } from '../functions/conversion';
-import { ApiPaths, apiUrl } from './ApiState';
+import { apiUrl } from './ApiState';
 import { Setting, SettingsLookup } from './states';
 
 export interface SettingsStateProps {

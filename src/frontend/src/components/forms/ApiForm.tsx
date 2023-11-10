@@ -9,9 +9,9 @@ import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
 import { api, queryClient } from '../../App';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
-import { ApiPaths } from '../../states/ApiState';
 import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
 
 /**
