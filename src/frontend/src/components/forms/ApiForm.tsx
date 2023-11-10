@@ -109,7 +109,7 @@ export function OptionsApiForm({
 
         return fields;
       }),
-    throwOnError: (error: any, query) => {
+    throwOnError: (error: any) => {
       console.log('Error:', error);
       if (error.response) {
         invalidResponse(error.response.status);
