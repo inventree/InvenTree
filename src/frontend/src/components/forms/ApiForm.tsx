@@ -9,10 +9,9 @@ import {
 import { Button, Group, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
 import { api, queryClient } from '../../App';
@@ -22,7 +21,18 @@ import {
   extractAvailableFields
 } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
-import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
+import {
+  ApiFormField,
+  ApiFormFieldSet,
+  ApiFormFieldType
+} from './fields/ApiFormField';
+
+export interface ApiFormAction {
+  text: string;
+  variant?: 'outline';
+  color?: DefaultMantineColor;
+  onClick: () => void;
+}
 
 /**
  * Properties for the ApiForm component

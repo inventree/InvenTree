@@ -7,7 +7,8 @@ import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 import { StylishText } from '../components/items/StylishText';
-import { ApiPaths, apiUrl } from '../states/ApiState';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
