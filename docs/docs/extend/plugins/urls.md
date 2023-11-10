@@ -97,7 +97,7 @@ Example:
 {% endraw %}
 ```
 Notice that this example has the panel initially hidden.
-This is where the `enableSidebar('...');'` function comes back into play. Panels are enabled according to the labels of items in the sidebar. Each sidebar item must declare a label corresponding to a panel. An example of a sidebar item within with the label `sublocations` is below.
+This is where the `enableSidebar('...');'` function comes back into play. Panels are enabled according to the labels of items in the sidebar. Each sidebar item must declare a label corresponding to a panel. An example of a sidebar item within with the label `loans` is below.
 
 ```html
 {% raw %}
