@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-09 10:51+0000\n"
-"PO-Revision-Date: 2023-11-08 20:36\n"
+"POT-Creation-Date: 2023-11-09 03:01+0000\n"
+"PO-Revision-Date: 2023-11-10 20:54\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -7430,10 +7430,8 @@ msgid "Page size for the label sheet"
 msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:34
-#, fuzzy
-#| msgid "Order"
 msgid "Border"
-msgstr "Ordine"
+msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Print a border around each label"
@@ -7448,10 +7446,8 @@ msgid "Print the label sheet in landscape mode"
 msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:53
-#, fuzzy
-#| msgid "InvenTree Version"
 msgid "InvenTree Label Sheet Printer"
-msgstr "Versione di InvenTree"
+msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:54
 msgid "Arrays multiple labels onto a single sheet"
@@ -13191,11 +13187,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13369,3 +13363,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:393
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
