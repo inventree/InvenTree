@@ -9,8 +9,8 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { StockLocationTable } from '../../components/tables/stock/StockLocationTable';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths } from '../../states/ApiState';
 
 export default function Stock() {
   const { id } = useParams();
