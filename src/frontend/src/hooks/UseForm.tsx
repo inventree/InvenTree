@@ -5,6 +5,13 @@ import { useEffect, useMemo, useRef } from 'react';
 import { ApiFormProps, OptionsApiForm } from '../components/forms/ApiForm';
 import { useModal } from './UseModal';
 
+/**
+ * @param title : The title to display in the modal header
+ * @param cancelText : Optional custom text to display on the cancel button (default: Cancel)
+ * @param cancelColor : Optional custom color for the cancel button (default: blue)
+ * @param onClose : A callback function to call when the modal is closed.
+ * @param onOpen : A callback function to call when the modal is opened.
+ */
 export interface ApiFormModalProps extends ApiFormProps {
   title: string;
   cancelText?: string;

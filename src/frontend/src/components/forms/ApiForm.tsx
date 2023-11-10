@@ -39,12 +39,9 @@ export interface ApiFormAction {
  * @param url : The API endpoint to fetch the form data from
  * @param pk : Optional primary-key value when editing an existing object
  * @param method : Optional HTTP method to use when submitting the form (default: GET)
- * @param title : The title to display in the form header
  * @param fields : The fields to render in the form
  * @param submitText : Optional custom text to display on the submit button (default: Submit)4
  * @param submitColor : Optional custom color for the submit button (default: green)
- * @param cancelText : Optional custom text to display on the cancel button (default: Cancel)
- * @param cancelColor : Optional custom color for the cancel button (default: blue)
  * @param fetchInitialData : Optional flag to fetch initial data from the server (default: true)
  * @param preFormContent : Optional content to render before the form fields
  * @param postFormContent : Optional content to render after the form fields
@@ -101,11 +98,6 @@ export function OptionsApiForm({
         if (!props.ignorePermissionCheck) {
           fields = extractAvailableFields(res, props.method);
         }
-        console.log('OPTIONS FETCHED');
-        // TODO: figure out how that case should be handled
-        // if (fields === null) {
-        // return;
-        // }
 
         return fields;
       }),
