@@ -1,15 +1,19 @@
 import { t } from '@lingui/macro';
-import { Group, Text, Tooltip } from '@mantine/core';
+import { Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconCircleX,
   IconHelpCircle
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import { api } from '../../../App';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { apiUrl } from '../../../states/ApiState';
+import { StylishText } from '../../items/StylishText';
 import { TableColumn } from '../Column';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
@@ -93,6 +97,80 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
     []
   );
 
+  const activatePlugin = useCallback(
+    (plugin_id: number, plugin_name: string, active: boolean) => {
+      modals.openConfirmModal({
+        title: (
+          <StylishText>
+            {active ? t`Activate Plugin` : t`Deactivate Plugin`}
+          </StylishText>
+        ),
+        children: (
+          <Alert
+            color="green"
+            icon={<IconCircleCheck />}
+            title={
+              active
+                ? t`Confirm plugin activation`
+                : t`Confirm plugin deactivation`
+            }
+          >
+            <Stack spacing="xs">
+              <Text>
+                {active
+                  ? t`The following plugin will be activated`
+                  : t`The following plugin will be deactivated`}
+                :
+              </Text>
+              <Text size="lg" italic>
+                {plugin_name}
+              </Text>
+            </Stack>
+          </Alert>
+        ),
+        labels: {
+          cancel: t`Cancel`,
+          confirm: t`Confirm`
+        },
+        onConfirm: () => {
+          let url = apiUrl(ApiPaths.plugin_list, plugin_id) + 'activate/';
+
+          const id = 'plugin-activate';
+
+          // Show a progress notification
+          notifications.show({
+            id: id,
+            message: active ? t`Activating plugin` : t`Deactivating plugin`,
+            loading: true
+          });
+
+          api
+            .patch(url, { active: active })
+            .then(() => {
+              refreshTable();
+              notifications.hide(id);
+              notifications.show({
+                title: t`Plugin updated`,
+                message: active
+                  ? t`The plugin was activated`
+                  : t`The plugin was deactivated`,
+                color: 'green'
+              });
+            })
+            .catch((_err) => {
+              notifications.hide(id);
+              notifications.show({
+                title: t`Error`,
+                message: t`Error updating plugin`,
+                color: 'red'
+              });
+            });
+        }
+      });
+    },
+    []
+  );
+
   // Determine available actions for a given plugin
   function rowActions(record: any): RowAction[] {
     let actions: RowAction[] = [];
@@ -102,13 +180,19 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         actions.push({
           title: t`Deactivate`,
           color: 'red',
-          icon: <IconCircleX />
+          icon: <IconCircleX />,
+          onClick: () => {
+            activatePlugin(record.pk, record.name, false);
+          }
         });
       } else {
         actions.push({
           title: t`Activate`,
           color: 'green',
-          icon: <IconCircleCheck />
+          icon: <IconCircleCheck />,
+          onClick: () => {
+            activatePlugin(record.pk, record.name, true);
+          }
         });
       }
     }

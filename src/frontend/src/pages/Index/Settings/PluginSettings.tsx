@@ -1,13 +1,13 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Paper, Stack } from '@mantine/core';
+import { LoadingOverlay, Stack } from '@mantine/core';
 import { IconPlugConnected } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { PluginListTable } from '../../../components/tables/plugin/PluginListTable';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useInstance } from '../../../hooks/UseInstance';
-import { ApiPaths } from '../../../states/ApiState';
 
 /**
  * Plugins settings page

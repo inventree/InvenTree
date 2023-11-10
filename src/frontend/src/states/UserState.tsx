@@ -75,11 +75,15 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     // Check if the user has the specified permission for the specified role
     const user: UserProps = get().user as UserProps;
 
-    if (user.is_superuser) return true;
-    if (user.roles === undefined) return false;
-    if (user.roles[role] === undefined) return false;
+    if (!user) {
+      return false;
+    }
 
-    return user.roles[role].includes(permission);
+    if (user?.is_superuser) return true;
+    if (user?.roles === undefined) return false;
+    if (user?.roles[role] === undefined) return false;
+
+    return user?.roles[role].includes(permission);
   },
   hasDeleteRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.delete);
