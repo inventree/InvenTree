@@ -18,6 +18,7 @@ class MyUrlsPlugin(UrlsMixin, InvenTreePlugin):
     ]
 ```
 
+
 The URLs get exposed under `/plugin/{plugin.slug}/*` and get exposed to the template engine with the prefix `plugin:{plugin.slug}:` (for usage with the [url tag](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#url)).
 
 !!! info "Note"
