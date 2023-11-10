@@ -7,8 +7,9 @@ import { ReactNode, useMemo, useState } from 'react';
 import { OptionsApiForm } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
-import { ModelType } from '../../components/render/ModelType';
-import { StatusRenderer } from '../../components/renderers/StatusRenderer';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   createPart,
   editPart,
@@ -22,7 +23,6 @@ import {
   openEditApiForm
 } from '../../functions/forms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { ApiPaths } from '../../states/ApiState';
 
 // Generate some example forms using the modal API forms interface
 const fields = partCategoryFields({});

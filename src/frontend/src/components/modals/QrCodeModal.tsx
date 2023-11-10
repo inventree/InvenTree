@@ -23,7 +23,8 @@ import { Html5QrcodeResult } from 'html5-qrcode/core';
 import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { apiUrl } from '../../states/ApiState';
 
 export function QrCodeModal({
   context,

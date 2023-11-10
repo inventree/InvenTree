@@ -16,24 +16,13 @@ import React, { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
 import { api, queryClient } from '../../App';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import {
   constructFormUrl,
   extractAvailableFields
 } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
-import { ApiPaths } from '../../states/ApiState';
-import {
-  ApiFormField,
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from './fields/ApiFormField';
-
-interface ApiFormAction {
-  text: string | React.ReactElement;
-  color: DefaultMantineColor;
-  variant?: 'outline';
-  onClick: () => void;
-}
+import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
 
 /**
  * Properties for the ApiForm component

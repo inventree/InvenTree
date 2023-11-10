@@ -3,11 +3,11 @@ import { LoadingOverlay, Stack } from '@mantine/core';
 import { IconPlugConnected } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PageDetail } from '../../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { PluginListTable } from '../../../components/tables/plugin/PluginListTable';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useInstance } from '../../../hooks/UseInstance';
-import { ApiPaths } from '../../../states/ApiState';
 
 /**
  * Plugins settings page
@@ -44,7 +44,7 @@ export default function PluginSettings() {
     <>
       <Stack spacing="xs">
         <LoadingOverlay visible={settingsQuery.isFetching} />
-        <PageDetail title={t`Plugin Settings`} />
+        <SettingsHeader title={t`Plugin Settings`} switch_condition={false} />
         <PanelGroup pageKey="plugin-settings" panels={pluginPanels} />
       </Stack>
     </>

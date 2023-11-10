@@ -14,7 +14,7 @@ import { IconX } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { useMemo } from 'react';
 
-import { ModelType } from '../../render/ModelType';
+import { ModelType } from '../../../enums/ModelType';
 import { ApiFormProps } from '../ApiForm';
 import { ChoiceField } from './ChoiceField';
 import { RelatedModelField } from './RelatedModelField';
