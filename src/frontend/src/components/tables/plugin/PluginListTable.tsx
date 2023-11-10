@@ -10,8 +10,9 @@ import {
 import { useCallback, useMemo } from 'react';
 
 import { api } from '../../../App';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { StylishText } from '../../items/StylishText';
 import { TableColumn } from '../Column';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';

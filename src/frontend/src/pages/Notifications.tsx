@@ -13,8 +13,9 @@ import { api } from '../App';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/nav/PanelGroup';
 import { NotificationTable } from '../components/tables/notifications/NotificationsTable';
+import { ApiPaths } from '../enums/ApiEndpoints';
 import { useTableRefresh } from '../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../states/ApiState';
+import { apiUrl } from '../states/ApiState';
 
 export default function NotificationsPage() {
   const unreadRefresh = useTableRefresh('unreadnotifications');

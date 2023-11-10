@@ -5,8 +5,8 @@ import {
   ApiFormData,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../enums/ApiEndpoints';
 import { openCreateApiForm, openEditApiForm } from '../functions/forms';
-import { ApiPaths } from '../states/ApiState';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
