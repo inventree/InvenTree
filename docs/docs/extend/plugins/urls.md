@@ -31,18 +31,16 @@ A good place to start is the [django documentation](https://docs.djangoproject.c
 Rendering templated views is also supported. Templated HTML files should be placed inside your plugin folder in a sub folder called `templates`.
 Placed here, the template can be called using the file name and the render command.
 
-Example in context (inside the main plugin python file): 
+Example in context (inside the main plugin python file):
 ``` py
-{% raw %}
-def test_view(self, request):
+def view_test(self, request):
     return render(request, 'test.html', context)
 
 def setup_urls(self):
     return [
-        re_path(r'^hi/', self.view_test, name='hi')
+        re_path(r'^test/', self.view_test, name='test')
     ]
-{% endraw %}
-````
+```
 
 ### Implementing the Page Base
 Some plugins require a page with a navbar, sidebar, and content similar to other InvenTree pages.
