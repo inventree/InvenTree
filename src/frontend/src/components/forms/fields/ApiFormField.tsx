@@ -164,7 +164,7 @@ export function ApiFormField({
     } else {
       return field.preFieldContent;
     }
-  }, [field]);
+  }, [field.preFieldContent]);
 
   const postFieldElement: JSX.Element | null = useMemo(() => {
     if (field.postFieldContent === undefined) {
@@ -174,7 +174,7 @@ export function ApiFormField({
     } else {
       return field.postFieldContent;
     }
-  }, [field]);
+  }, [field.postFieldContent]);
 
   // Callback helper when form value changes
   function onChange(value: any) {

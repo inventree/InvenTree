@@ -7,15 +7,15 @@ import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 import { StylishText } from '../components/items/StylishText';
-import { apiUrl } from '../states/ApiState';
+import { ApiPaths, apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
 /**
  * Construct an API url from the provided ApiFormProps object
  */
-export function constructFormUrl(props: ApiFormProps): string {
-  return apiUrl(props.url, props.pk);
+export function constructFormUrl(url: ApiPaths, pk?: string | number): string {
+  return apiUrl(url, pk);
 }
 
 /**
@@ -81,11 +81,18 @@ export function extractAvailableFields(
   return fields;
 }
 
+export interface OpenApiFormProps extends ApiFormProps {
+  title: string;
+  cancelText?: string;
+  cancelColor?: string;
+  onClose?: () => void;
+}
+
 /*
  * Construct and open a modal form
  * @param title :
  */
-export function openModalApiForm(props: ApiFormProps) {
+export function openModalApiForm(props: OpenApiFormProps) {
   // method property *must* be supplied
   if (!props.method) {
     notifications.show({
@@ -96,7 +103,22 @@ export function openModalApiForm(props: ApiFormProps) {
     return;
   }
 
-  let url = constructFormUrl(props);
+  // Generate a random modal ID for controller
+  let modalId: string =
+    `modal-${props.title}-${props.url}-${props.method}` + generateUniqueId();
+
+  props.actions = [
+    ...(props.actions || []),
+    {
+      text: props.cancelText ?? t`Cancel`,
+      color: props.cancelColor ?? 'blue',
+      onClick: () => {
+        modals.close(modalId);
+      }
+    }
+  ];
+
+  let url = constructFormUrl(props.url, props.pk);
 
   // Make OPTIONS request first
   api
@@ -114,11 +136,6 @@ export function openModalApiForm(props: ApiFormProps) {
         }
       }
 
-      // Generate a random modal ID for controller
-      let modalId: string =
-        `modal-${props.title}-${props.url}-${props.method}` +
-        generateUniqueId();
-
       modals.open({
         title: <StylishText size="xl">{props.title}</StylishText>,
         modalId: modalId,
@@ -127,7 +144,7 @@ export function openModalApiForm(props: ApiFormProps) {
           props.onClose ? props.onClose() : null;
         },
         children: (
-          <ApiForm modalId={modalId} props={props} fieldDefinitions={fields} />
+          <ApiForm id={modalId} props={props} fieldDefinitions={fields} />
         )
       });
     })
@@ -148,8 +165,8 @@ export function openModalApiForm(props: ApiFormProps) {
 /**
  * Opens a modal form to create a new model instance
  */
-export function openCreateApiForm(props: ApiFormProps) {
-  let createProps: ApiFormProps = {
+export function openCreateApiForm(props: OpenApiFormProps) {
+  let createProps: OpenApiFormProps = {
     ...props,
     method: 'POST'
   };
@@ -160,8 +177,8 @@ export function openCreateApiForm(props: ApiFormProps) {
 /**
  * Open a modal form to edit a model instance
  */
-export function openEditApiForm(props: ApiFormProps) {
-  let editProps: ApiFormProps = {
+export function openEditApiForm(props: OpenApiFormProps) {
+  let editProps: OpenApiFormProps = {
     ...props,
     fetchInitialData: props.fetchInitialData ?? true,
     method: 'PUT'
@@ -173,8 +190,8 @@ export function openEditApiForm(props: ApiFormProps) {
 /**
  * Open a modal form to delete a model instancel
  */
-export function openDeleteApiForm(props: ApiFormProps) {
-  let deleteProps: ApiFormProps = {
+export function openDeleteApiForm(props: OpenApiFormProps) {
+  let deleteProps: OpenApiFormProps = {
     ...props,
     method: 'DELETE',
     submitText: t`Delete`,

@@ -1,10 +1,10 @@
 import { Trans } from '@lingui/macro';
-import { Button, TextInput } from '@mantine/core';
+import { Button, Card, Stack, TextInput } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { Accordion } from '@mantine/core';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 
-import { ApiFormProps } from '../../components/forms/ApiForm';
+import { OptionsApiForm } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { ModelType } from '../../components/render/ModelType';
@@ -12,24 +12,29 @@ import { StatusRenderer } from '../../components/renderers/StatusRenderer';
 import {
   createPart,
   editPart,
-  partCategoryFields
+  partCategoryFields,
+  partFields
 } from '../../forms/PartForms';
 import { createStockItem } from '../../forms/StockForms';
-import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
+import {
+  OpenApiFormProps,
+  openCreateApiForm,
+  openEditApiForm
+} from '../../functions/forms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { ApiPaths } from '../../states/ApiState';
 
 // Generate some example forms using the modal API forms interface
+const fields = partCategoryFields({});
 function ApiFormsPlayground() {
-  let fields = partCategoryFields({});
-
-  const editCategoryForm: ApiFormProps = {
+  const editCategoryForm: OpenApiFormProps = {
     url: ApiPaths.category_list,
     pk: 2,
     title: 'Edit Category',
     fields: fields
   };
 
-  const createAttachmentForm: ApiFormProps = {
+  const createAttachmentForm: OpenApiFormProps = {
     url: ApiPaths.part_attachment_list,
     title: 'Create Attachment',
     successMessage: 'Attachment uploaded',
@@ -42,8 +47,18 @@ function ApiFormsPlayground() {
     }
   };
 
+  const partFieldsState: any = useMemo<any>(() => partFields({}), []);
+
+  const { open, modal } = useCreateApiFormModal({
+    url: ApiPaths.part_list,
+    title: 'Create part',
+    fields: partFieldsState
+  });
+
+  const [active, setActive] = useState(true);
+
   return (
-    <>
+    <Stack>
       <Group>
         <Button onClick={() => createPart()}>Create New Part</Button>
         <Button onClick={() => editPart({ part_id: 1 })}>Edit Part</Button>
@@ -54,8 +69,29 @@ function ApiFormsPlayground() {
         <Button onClick={() => openCreateApiForm(createAttachmentForm)}>
           Create Attachment
         </Button>
+        <Button onClick={() => open()}>Create Part new Modal</Button>
+        {modal}
       </Group>
-    </>
+      <Card sx={{ padding: '30px' }}>
+        <OptionsApiForm
+          props={{
+            url: ApiPaths.part_list,
+            method: 'POST',
+            fields: {
+              active: {
+                onValueChange: ({ value }) => {
+                  setActive(value);
+                }
+              },
+              keywords: {
+                disabled: active
+              }
+            }
+          }}
+          id={'this is very unique'}
+        />
+      </Card>
+    </Stack>
   );
 }
 

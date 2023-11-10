@@ -1,23 +1,45 @@
 import { t } from '@lingui/macro';
-import { Alert, Divider, LoadingOverlay, Text } from '@mantine/core';
+import {
+  Alert,
+  DefaultMantineColor,
+  Divider,
+  LoadingOverlay,
+  Text
+} from '@mantine/core';
 import { Button, Group, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useId } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
 import { api, queryClient } from '../../App';
-import { constructFormUrl } from '../../functions/forms';
+import {
+  constructFormUrl,
+  extractAvailableFields
+} from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
 import { ApiPaths } from '../../states/ApiState';
-import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
+import {
+  ApiFormField,
+  ApiFormFieldSet,
+  ApiFormFieldType
+} from './fields/ApiFormField';
+
+interface ApiFormAction {
+  text: string | React.ReactElement;
+  color: DefaultMantineColor;
+  variant?: 'outline';
+  onClick: () => void;
+}
 
 /**
  * Properties for the ApiForm component
  * @param url : The API endpoint to fetch the form data from
  * @param pk : Optional primary-key value when editing an existing object
+ * @param method : Optional HTTP method to use when submitting the form (default: GET)
  * @param title : The title to display in the form header
  * @param fields : The fields to render in the form
  * @param submitText : Optional custom text to display on the submit button (default: Submit)4
@@ -25,32 +47,90 @@ import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
  * @param cancelText : Optional custom text to display on the cancel button (default: Cancel)
  * @param cancelColor : Optional custom color for the cancel button (default: blue)
  * @param fetchInitialData : Optional flag to fetch initial data from the server (default: true)
- * @param method : Optional HTTP method to use when submitting the form (default: GET)
  * @param preFormContent : Optional content to render before the form fields
  * @param postFormContent : Optional content to render after the form fields
  * @param successMessage : Optional message to display on successful form submission
- * @param onClose : A callback function to call when the form is closed.
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
  */
 export interface ApiFormProps {
   url: ApiPaths;
   pk?: number | string | undefined;
-  title: string;
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   fields?: ApiFormFieldSet;
-  cancelText?: string;
   submitText?: string;
   submitColor?: string;
-  cancelColor?: string;
   fetchInitialData?: boolean;
   ignorePermissionCheck?: boolean;
-  method?: string;
   preFormContent?: JSX.Element | (() => JSX.Element);
   postFormContent?: JSX.Element | (() => JSX.Element);
   successMessage?: string;
-  onClose?: () => void;
   onFormSuccess?: (data: any) => void;
   onFormError?: () => void;
+  actions?: ApiFormAction[];
+}
+
+export function OptionsApiForm({
+  props: _props,
+  id: pId
+}: {
+  props: ApiFormProps;
+  id?: string;
+}) {
+  const props = useMemo(
+    () => ({
+      ..._props,
+      method: _props.method || 'GET'
+    }),
+    [_props]
+  );
+
+  const id = useId(pId);
+
+  const url = useMemo(
+    () => constructFormUrl(props.url, props.pk),
+    [props.url, props.pk]
+  );
+
+  const { data } = useQuery({
+    enabled: true,
+    queryKey: ['form-options-data', id, props.method, props.url, props.pk],
+    queryFn: () =>
+      api.options(url).then((res) => {
+        let fields: Record<string, ApiFormFieldType> | null = {};
+
+        if (!props.ignorePermissionCheck) {
+          fields = extractAvailableFields(res, props.method);
+        }
+        console.log('OPTIONS FETCHED');
+        // TODO: figure out how that case should be handled
+        // if (fields === null) {
+        // return;
+        // }
+
+        return fields;
+      }),
+    throwOnError: (error: any, query) => {
+      console.log('Error:', error);
+      if (error.response) {
+        invalidResponse(error.response.status);
+      } else {
+        notifications.show({
+          title: t`Form Error`,
+          message: error.message,
+          color: 'red'
+        });
+      }
+
+      return false;
+    }
+  });
+
+  if (!data) {
+    return <LoadingOverlay visible={true} />;
+  }
+
+  return <ApiForm id={id} props={props} fieldDefinitions={data} />;
 }
 
 /**
@@ -58,11 +138,11 @@ export interface ApiFormProps {
  * based on an API endpoint.
  */
 export function ApiForm({
-  modalId,
+  id,
   props,
   fieldDefinitions
 }: {
-  modalId: string;
+  id: string;
   props: ApiFormProps;
   fieldDefinitions: ApiFormFieldSet;
 }) {
@@ -73,7 +153,10 @@ export function ApiForm({
   const form = useForm({});
 
   // Cache URL
-  const url = useMemo(() => constructFormUrl(props), [props]);
+  const url = useMemo(
+    () => constructFormUrl(props.url, props.pk),
+    [props.url, props.pk]
+  );
 
   // Render pre-form content
   // TODO: Future work will allow this content to be updated dynamically based on the form data
@@ -85,7 +168,7 @@ export function ApiForm({
     } else {
       return props.preFormContent;
     }
-  }, [props]);
+  }, [props.preFormContent]);
 
   // Render post-form content
   // TODO: Future work will allow this content to be updated dynamically based on the form data
@@ -97,12 +180,12 @@ export function ApiForm({
     } else {
       return props.postFormContent;
     }
-  }, [props]);
+  }, [props.postFormContent]);
 
-  // Query manager for retrieiving initial data from the server
+  // Query manager for retrieving initial data from the server
   const initialDataQuery = useQuery({
     enabled: false,
-    queryKey: ['form-initial-data', modalId, props.method, props.url, props.pk],
+    queryKey: ['form-initial-data', id, props.method, props.url, props.pk],
     queryFn: async () => {
       return api
         .get(url)
@@ -148,13 +231,7 @@ export function ApiForm({
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
       queryClient.removeQueries({
-        queryKey: [
-          'form-initial-data',
-          modalId,
-          props.method,
-          props.url,
-          props.pk
-        ]
+        queryKey: ['form-initial-data', id, props.method, props.url, props.pk]
       });
       initialDataQuery.refetch();
     }
@@ -163,7 +240,7 @@ export function ApiForm({
   // Query manager for submitting data
   const submitQuery = useQuery({
     enabled: false,
-    queryKey: ['form-submit', modalId, props.method, props.url, props.pk],
+    queryKey: ['form-submit', id, props.method, props.url, props.pk],
     queryFn: async () => {
       let method = props.method?.toLowerCase() ?? 'get';
 
@@ -196,12 +273,11 @@ export function ApiForm({
                 });
               }
 
-              closeForm();
               break;
             default:
               // Unexpected state on form success
               invalidResponse(response.status);
-              closeForm();
+              props.onFormError?.();
               break;
           }
 
@@ -219,12 +295,12 @@ export function ApiForm({
               default:
                 // Unexpected state on form error
                 invalidResponse(error.response.status);
-                closeForm();
+                props.onFormError?.();
                 break;
             }
           } else {
             invalidResponse(0);
-            closeForm();
+            props.onFormError?.();
           }
 
           return error;
@@ -247,15 +323,6 @@ export function ApiForm({
   function submitForm() {
     setIsLoading(true);
     submitQuery.refetch();
-  }
-
-  /**
-   * Callback to close the form
-   * Note that the calling function might implement an onClose() callback,
-   * which will be automatically called
-   */
-  function closeForm() {
-    modals.close(modalId);
   }
 
   return (
@@ -295,14 +362,17 @@ export function ApiForm({
       </Stack>
       <Divider />
       <Group position="right">
-        <Button
-          onClick={closeForm}
-          variant="outline"
-          radius="sm"
-          color={props.cancelColor ?? 'blue'}
-        >
-          {props.cancelText ?? t`Cancel`}
-        </Button>
+        {props.actions?.map((action, i) => (
+          <Button
+            key={i}
+            onClick={action.onClick}
+            variant={action.variant ?? 'outline'}
+            radius="sm"
+            color={action.color}
+          >
+            {action.text}
+          </Button>
+        ))}
         <Button
           onClick={submitForm}
           variant="outline"
