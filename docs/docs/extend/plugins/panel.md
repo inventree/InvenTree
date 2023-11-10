@@ -187,14 +187,15 @@ class ExamplePanel(PanelMixin, InvenTreePlugin, UrlsMixin):
     AUTHOR = "Michael"
     DESCRIPTION = "This plugin passes user input from the panel to the plugin"
 
-# Create the panel that will display on every view
+# Create the panel that will display on build detail view
     def get_custom_panels(self, view, request):
         panels = []
-        panels.append({
-            'title': 'Example Info',
-            'icon': 'fa-industry',
-            'content_template': 'example_panel/example.html',
-        })
+        if isinstance(view, BuildDetail):
+		panels.append({
+		    'title': 'Example Info',
+		    'icon': 'fa-industry',
+		    'content_template': 'example_panel/example.html',
+		})
         return panels
 
     def setup_urls(self):
@@ -221,10 +222,10 @@ Now the html template:
 {% raw %}
 <script>
 async function example_select(){
-    const layernumber = parseInt(document.getElementById("layer_number").value)
+    const layer_number = parseInt(document.getElementById("layer_number").value)
     const size = document.getElementById("string").value
     response = inventreeFormDataUpload(url="{% url 'plugin:examplepanel:transfer' '9999' 'Size' %}"
-                                          .replace("9999", layernumber)
+                                          .replace("9999", layer_number)
                                           .replace("Size", size)
                                       );
 }
@@ -272,7 +273,7 @@ the javascript:
 {% raw %}
 <script>
 async function example_select(){
-    const layernumber = parseInt(document.getElementById("layer_number").value)
+    const layer_number = parseInt(document.getElementById("layer_number").value)
     const size = document.getElementById("string").value
     const cmd_url="{% url 'plugin:examplepanel:transfer' %}";
     data = {
