@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-09 10:51+0000\n"
-"PO-Revision-Date: 2023-11-08 20:36\n"
+"POT-Creation-Date: 2023-11-09 03:01+0000\n"
+"PO-Revision-Date: 2023-11-10 20:55\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -7426,16 +7426,12 @@ msgid "Enable debug mode - returns raw HTML instead of PDF"
 msgstr "Bật chế độ gỡ lỗi - trả về mã HTML thuần thay vì PDF"
 
 #: plugin/builtin/labels/label_sheet.py:29
-#, fuzzy
-#| msgid "Page size for PDF reports"
 msgid "Page size for the label sheet"
-msgstr "Khổ giấy cho báo cáo PDF"
+msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:34
-#, fuzzy
-#| msgid "Order"
 msgid "Border"
-msgstr "Đặt hàng"
+msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Print a border around each label"
@@ -7450,10 +7446,8 @@ msgid "Print the label sheet in landscape mode"
 msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:53
-#, fuzzy
-#| msgid "InvenTree PDF label printer"
 msgid "InvenTree Label Sheet Printer"
-msgstr "Máy in nhãn InvenTree PDF"
+msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:54
 msgid "Arrays multiple labels onto a single sheet"
@@ -13193,8 +13187,7 @@ msgstr "Nhà cung cấp SSO đã chọn không hợp lệ hoặc đã không đ�
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "Bạn chuân bị sử dụng tài khoản %(provider_name)s của bạn để đăng nhập%(site_name)s<br>Vì là bước cuối cùng, xin hãy hoàn thiện biểu mẫu dưới đây:"
 
@@ -13369,3 +13362,4 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:393
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
+
