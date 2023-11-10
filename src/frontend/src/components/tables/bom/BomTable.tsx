@@ -66,7 +66,9 @@ export function BomTable({
           let extra = [];
 
           if (record.part != partId) {
-            extra.push(t`This BOM item is defined for a different parent`);
+            extra.push(
+              <Text key="different-parent">{t`This BOM item is defined for a different parent`}</Text>
+            );
           }
 
           return (

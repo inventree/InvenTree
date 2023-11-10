@@ -112,7 +112,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
 
           if (part.units) {
             extra.push(
-              <Text>
+              <Text key="base">
                 {t`Base units`} : {part.units}
               </Text>
             );

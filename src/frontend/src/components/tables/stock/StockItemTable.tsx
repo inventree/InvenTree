@@ -66,49 +66,77 @@ function stockItemTableColumns(): TableColumn[] {
         if (record.is_building) {
           color = 'blue';
           extra.push(
-            <Text size="sm">{t`This stock item is in production`}</Text>
+            <Text
+              key="production"
+              size="sm"
+            >{t`This stock item is in production`}</Text>
           );
         }
 
         if (record.sales_order) {
           extra.push(
-            <Text size="sm">{t`This stock item has been assigned to a sales order`}</Text>
+            <Text
+              key="sales-order"
+              size="sm"
+            >{t`This stock item has been assigned to a sales order`}</Text>
           );
         }
 
         if (record.customer) {
           extra.push(
-            <Text size="sm">{t`This stock item has been assigned to a customer`}</Text>
+            <Text
+              key="customer"
+              size="sm"
+            >{t`This stock item has been assigned to a customer`}</Text>
           );
         }
 
         if (record.belongs_to) {
           extra.push(
-            <Text size="sm">{t`This stock item is installed in another stock item`}</Text>
+            <Text
+              key="belongs-to"
+              size="sm"
+            >{t`This stock item is installed in another stock item`}</Text>
           );
         }
 
         if (record.consumed_by) {
           extra.push(
-            <Text size="sm">{t`This stock item has been consumed by a build order`}</Text>
+            <Text
+              key="consumed-by"
+              size="sm"
+            >{t`This stock item has been consumed by a build order`}</Text>
           );
         }
 
         if (record.expired) {
-          extra.push(<Text size="sm">{t`This stock item has expired`}</Text>);
+          extra.push(
+            <Text
+              key="expired"
+              size="sm"
+            >{t`This stock item has expired`}</Text>
+          );
         } else if (record.stale) {
-          extra.push(<Text size="sm">{t`This stock item is stale`}</Text>);
+          extra.push(
+            <Text key="stale" size="sm">{t`This stock item is stale`}</Text>
+          );
         }
 
         if (allocated > 0) {
           if (allocated >= quantity) {
             color = 'orange';
             extra.push(
-              <Text size="sm">{t`This stock item is fully allocated`}</Text>
+              <Text
+                key="fully-allocated"
+                size="sm"
+              >{t`This stock item is fully allocated`}</Text>
             );
           } else {
             extra.push(
-              <Text size="sm">{t`This stock item is partially allocated`}</Text>
+              <Text
+                key="partially-allocated"
+                size="sm"
+              >{t`This stock item is partially allocated`}</Text>
             );
           }
         }
@@ -116,13 +144,17 @@ function stockItemTableColumns(): TableColumn[] {
         if (available != quantity) {
           if (available > 0) {
             extra.push(
-              <Text size="sm" color="orange">
+              <Text key="available" size="sm" color="orange">
                 {t`Available` + `: ${available}`}
               </Text>
             );
           } else {
             extra.push(
-              <Text size="sm" color="red">{t`No stock available`}</Text>
+              <Text
+                key="no-stock"
+                size="sm"
+                color="red"
+              >{t`No stock available`}</Text>
             );
           }
         }
@@ -130,7 +162,10 @@ function stockItemTableColumns(): TableColumn[] {
         if (quantity <= 0) {
           color = 'red';
           extra.push(
-            <Text size="sm">{t`This stock item has been depleted`}</Text>
+            <Text
+              key="depleted"
+              size="sm"
+            >{t`This stock item has been depleted`}</Text>
           );
         }
 
