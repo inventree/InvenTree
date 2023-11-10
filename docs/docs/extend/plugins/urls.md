@@ -71,6 +71,7 @@ InvenTree uses bootstrap panels to display content on a page. These panels are l
 
 Example:
 ```html
+{% raw %}
 <div class='panel panel-hidden' id='panel-loans'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -81,14 +82,18 @@ Example:
         ...
     </div>
 </div>
+{% endraw %}
 ```
 Notice that this example has the panel hidden, by adding the class `panel-hidden`, by default.
-This is where the `enableSidebar('...');'` function comes back into play. Each sidebar item has a label. An example of this with the label `sublocations` is below.
+This is where the `enableSidebar('...');'` function comes back into play. Each sidebar item has a label. An example of a sidebar item within with the label `sublocations` is below.
 
 ```html
+{% raw %}
 {% trans "Sublocations" as text %}
 {% include "sidebar_item.html" with label='sublocations' text=text icon="fa-sitemap" %}
+{% endraw %}
 ```
+Note: This should be placed within the `sidebar` block.
 
 The `enableSidebar('...');'` function will show the panel with the label `panel-...` (for this example, `panel-sublocations`) and hide all other panels. This allows you to have multiple panels on a page, but only show one at a time.
-Whenever you click a sidebar item, it will enable the panel with the corresponding label and hide all other panels.
+Whenever you click a sidebar item, it will automatically enable the panel with the corresponding label and hide all other panels.
