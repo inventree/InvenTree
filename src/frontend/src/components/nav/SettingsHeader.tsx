@@ -5,8 +5,7 @@ import {
   Paper,
   Space,
   Stack,
-  Text,
-  Title
+  Text
 } from '@mantine/core';
 import { IconSwitch } from '@tabler/icons-react';
 import { ReactNode } from 'react';

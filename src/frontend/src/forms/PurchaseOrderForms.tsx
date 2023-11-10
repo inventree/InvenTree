@@ -17,9 +17,11 @@ import {
  */
 export function purchaseOrderLineItemFields({
   supplierId,
+  orderId,
   create = false
 }: {
   supplierId?: number;
+  orderId?: number;
   create?: boolean;
 }) {
   let fields: ApiFormFieldSet = {
@@ -27,7 +29,8 @@ export function purchaseOrderLineItemFields({
       filters: {
         supplier_detail: true
       },
-      hidden: !create
+      value: orderId,
+      hidden: create != true || orderId != undefined
     },
     part: {
       filters: {

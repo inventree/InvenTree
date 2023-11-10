@@ -223,12 +223,13 @@ export function PurchaseOrderLineItemTable({
       url: ApiPaths.purchase_order_line_list,
       title: t`Add Line Item`,
       fields: purchaseOrderLineItemFields({
-        create: true
+        create: true,
+        orderId: orderId
       }),
       onFormSuccess: refreshTable,
       successMessage: t`Line item added`
     });
-  }, []);
+  }, [orderId]);
 
   // Custom table actions
   const tableActions = useMemo(() => {
