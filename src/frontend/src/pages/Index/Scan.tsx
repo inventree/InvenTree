@@ -59,7 +59,7 @@ interface ScanItem {
   id: string;
   ref: string;
   data: any;
-  instance: any;
+  instance?: any;
   timestamp: Date;
   source: string;
   link?: string;
