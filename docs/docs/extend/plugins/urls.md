@@ -111,7 +111,7 @@ The `enableSidebar('...');'` function will un-hide the panel with the label `pan
 Whenever you click a sidebar item, it will automatically enable the panel with the corresponding label and hide all other panels.
 
 Additionally, when a panel is loaded, the function `onPanelLoad(...)` will be called for the associated panel.
-If you would like to add javascript functionality to a panel, add the function within the `{% raw %}{% block js_ready %}{% endraw %}` block of your template file.
+If you would like to add javascript functionality to a panel after it loads, add the function within the `{% raw %}{% block js_ready %}{% endraw %}` block of your template file.
 
 Example:
 ```js
