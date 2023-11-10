@@ -313,3 +313,39 @@ import json
 The URL and the called function have no parameter names any longer. All data is in the
 request message and can be extracted from this using json.loads. If more data is needed
 just add it to the json container. No further changes are needed. It's really simple :-)
+
+#### Populate a drop down field 
+
+Now we add a dropdown menu and fill it with values from the InvenTree database.
+
+{% with id="panel_with_dropwdown", url="plugin/panel_with_dropwdown.png", description="Panel with dropdown menu" %} {% include "img.html" %} {% endwith %}
+
+```python
+from company.models import Company
+    
+...
+
+    def get_custom_panels(self, view, request):
+        panels = []
+        if isinstance(view, BuildDetail):
+            self.companies=Company.objects.filter(is_supplier=True)
+            panels.append({
+            ...
+```
+Here we create self.companies and fill it with all companies that have the is_supplier flag
+set to true. This is available in the context of the template. A drop down menu can be created
+by looping.
+
+
+```html
+{% raw %}
+<select id="ems">
+    {% for company in plugin.companies %}
+	<option value="{{ company.id }}"> {{ company.name }} </option>
+    {% endfor %}
+</select>
+{% endraw %}
+```
+
+The value of the select is the pk of the company. It can simply be added to the 
+json container and transferred to the plugin. 
