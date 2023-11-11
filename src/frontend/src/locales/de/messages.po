@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-10 20:54\n"
+"PO-Revision-Date: 2023-11-11 21:26\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -63,7 +63,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr ""
+msgstr "Anmeldung erfolgreich"
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
@@ -76,7 +76,7 @@ msgstr "Willkommen zurück!"
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:102
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "Mail erfolgreich gesendet"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
@@ -93,7 +93,7 @@ msgstr "Eingabefehler"
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr ""
+msgstr "Willkommen, unten anmelden"
 
 #: src/components/forms/AuthenticationForm.tsx:91
 msgid "Username"
@@ -174,7 +174,7 @@ msgstr "Speichern"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr ""
+msgstr "Zielinstanz auswählen"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
@@ -182,15 +182,15 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "Version: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr ""
+msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr ""
+msgstr "Name: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
@@ -217,16 +217,16 @@ msgstr ""
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:298
 msgid "Loading"
-msgstr ""
+msgstr "Wird geladen"
 
 #: src/components/forms/fields/RelatedModelField.tsx:217
 msgid "No results found"
-msgstr ""
+msgstr "Keine Ergebnisse gefunden"
 
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:49
 msgid "Thumbnail"
-msgstr ""
+msgstr "Vorschaubild"
 
 #: src/components/items/ActionDropdown.tsx:85
 #: src/pages/build/BuildDetail.tsx:206
@@ -239,7 +239,7 @@ msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:103
 msgid "View barcode"
-msgstr ""
+msgstr "Barcode anzeigen"
 
 #: src/components/items/ActionDropdown.tsx:119
 msgid "Link Barcode"
@@ -260,7 +260,7 @@ msgstr ""
 #: src/components/items/ActionDropdown.tsx:155
 #: src/components/tables/RowActions.tsx:44
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: src/components/items/ActionDropdown.tsx:174
 #: src/components/tables/RowActions.tsx:61
@@ -268,17 +268,17 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:332
 #: src/pages/Notifications.tsx:79
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
 #: src/components/items/ActionDropdown.tsx:175
 msgid "Delete item"
-msgstr ""
+msgstr "Element löschen"
 
 #: src/components/items/ActionDropdown.tsx:193
 #: src/components/tables/RowActions.tsx:27
 #: src/pages/stock/StockDetail.tsx:190
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplizieren"
 
 #: src/components/items/ActionDropdown.tsx:194
 msgid "Duplicate item"
@@ -286,7 +286,7 @@ msgstr ""
 
 #: src/components/items/CopyButton.tsx:18
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "In die Zwischenablage kopieren"
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
@@ -324,7 +324,7 @@ msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
-msgstr ""
+msgstr "Dieses Panel ist ein Platzhalter."
 
 #: src/components/items/ScanButton.tsx:15
 msgid "Scan QR code"
@@ -340,35 +340,35 @@ msgstr "Nein"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:85
 msgid "Your InvenTree version status is"
-msgstr ""
+msgstr "Ihr InvenTree Versionsstatus ist"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:89
 msgid "Development Version"
-msgstr ""
+msgstr "Entwicklungsversion"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:93
 msgid "Up to Date"
-msgstr ""
+msgstr "Aktuell"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:97
 msgid "Update Available"
-msgstr ""
+msgstr "Aktualisierung verfügbar"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:102
 msgid "Version Information"
-msgstr ""
+msgstr "Versionsinformationen"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:110
 msgid "InvenTree Version"
-msgstr ""
+msgstr "InvenTree-Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:116
 msgid "Commit Hash"
-msgstr ""
+msgstr "Commit-Hash"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:121
 msgid "Commit Date"
-msgstr ""
+msgstr "Commit-Datum"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:126
 msgid "Commit Branch"
@@ -377,15 +377,15 @@ msgstr ""
 #: src/components/modals/AboutInvenTreeModal.tsx:131
 #: src/components/modals/ServerInfoModal.tsx:124
 msgid "API Version"
-msgstr ""
+msgstr "API-Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:134
 msgid "Python Version"
-msgstr ""
+msgstr "Python-Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:137
 msgid "Django Version"
-msgstr ""
+msgstr "Django-Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:147
 msgid "Links"
@@ -393,11 +393,11 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:153
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "InvenTree-Dokumentation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:154
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "Code auf GitHub ansehen"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:155
 msgid "Credits"
@@ -409,11 +409,11 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:157
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "Fehlerbericht senden"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:167
 msgid "Copy version information"
-msgstr ""
+msgstr "Versionsinformationen kopieren"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
@@ -427,7 +427,7 @@ msgstr "Fehler beim Laden der Kamera"
 #: src/components/modals/QrCodeModal.tsx:125
 #: src/pages/Index/Scan.tsx:641
 msgid "Error while scanning"
-msgstr ""
+msgstr "Fehler beim Scannen"
 
 #: src/components/modals/QrCodeModal.tsx:139
 #: src/pages/Index/Scan.tsx:655
@@ -639,7 +639,7 @@ msgstr ""
 #: src/components/nav/NotificationDrawer.tsx:111
 #: src/pages/Notifications.tsx:36
 msgid "Mark as read"
-msgstr ""
+msgstr "Als gelesen markieren"
 
 #: src/components/nav/PartCategoryTree.tsx:80
 #: src/components/render/ModelType.tsx:49
@@ -654,7 +654,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:338
 msgid "Enter search text"
-msgstr ""
+msgstr "Suchtext eingeben"
 
 #: src/components/nav/SearchDrawer.tsx:365
 msgid "Search Options"
@@ -662,7 +662,7 @@ msgstr "Suchoptionen"
 
 #: src/components/nav/SearchDrawer.tsx:368
 msgid "Regex search"
-msgstr ""
+msgstr "Regex Suche"
 
 #: src/components/nav/SearchDrawer.tsx:378
 msgid "Whole word search"
@@ -857,21 +857,21 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:128
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: src/components/render/ModelType.tsx:129
 #: src/pages/company/CompanyDetail.tsx:135
 msgid "Addresses"
-msgstr ""
+msgstr "Adressen"
 
 #: src/components/render/ModelType.tsx:135
 msgid "Contact"
-msgstr ""
+msgstr "Kontakt"
 
 #: src/components/render/ModelType.tsx:136
 #: src/pages/company/CompanyDetail.tsx:130
 msgid "Contacts"
-msgstr ""
+msgstr "Kontakte"
 
 #: src/components/render/ModelType.tsx:142
 msgid "Owner"
@@ -887,7 +887,7 @@ msgstr "Nutzer"
 
 #: src/components/render/ModelType.tsx:150
 msgid "Users"
-msgstr ""
+msgstr "Benutzer"
 
 #: src/components/render/Order.tsx:85
 msgid "Shipment"
@@ -895,7 +895,7 @@ msgstr ""
 
 #: src/components/render/Stock.tsx:26
 msgid "Serial Number"
-msgstr ""
+msgstr "Seriennummer"
 
 #: src/components/render/Stock.tsx:28
 #: src/components/tables/bom/BomTable.tsx:102
@@ -904,7 +904,7 @@ msgstr ""
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:152
 #: src/pages/build/BuildDetail.tsx:77
 msgid "Quantity"
-msgstr ""
+msgstr "Anzahl"
 
 #: src/components/settings/SettingItem.tsx:29
 #: src/components/settings/SettingItem.tsx:70
@@ -959,16 +959,16 @@ msgstr ""
 
 #: src/components/tables/ColumnRenderers.tsx:106
 msgid "Creation Date"
-msgstr ""
+msgstr "Erstelldatum"
 
 #: src/components/tables/ColumnRenderers.tsx:115
 msgid "Shipment Date"
-msgstr ""
+msgstr "Versanddatum"
 
 #: src/components/tables/ColumnRenderers.tsx:136
 #: src/components/tables/settings/CurrencyTable.tsx:23
 msgid "Currency"
-msgstr ""
+msgstr "Währung"
 
 #: src/components/tables/ColumnRenderers.tsx:150
 msgid "Total Price"
@@ -981,15 +981,15 @@ msgstr ""
 
 #: src/components/tables/DownloadAction.tsx:12
 msgid "CSV"
-msgstr ""
+msgstr "CSV"
 
 #: src/components/tables/DownloadAction.tsx:13
 msgid "TSV"
-msgstr ""
+msgstr "TSV"
 
 #: src/components/tables/DownloadAction.tsx:14
 msgid "Excel"
-msgstr ""
+msgstr "Excel"
 
 #: src/components/tables/DownloadAction.tsx:22
 msgid "Download selected data"
@@ -997,11 +997,11 @@ msgstr ""
 
 #: src/components/tables/FilterBadge.tsx:44
 msgid "Remove filter"
-msgstr ""
+msgstr "Filter entfernen"
 
 #: src/components/tables/FilterGroup.tsx:29
 msgid "Add table filter"
-msgstr ""
+msgstr "Tabellen-Filter hinzufügen"
 
 #: src/components/tables/FilterGroup.tsx:44
 msgid "Clear all filters"
@@ -1009,15 +1009,15 @@ msgstr ""
 
 #: src/components/tables/FilterGroup.tsx:51
 msgid "Add filter"
-msgstr ""
+msgstr "Filter hinzufügen"
 
 #: src/components/tables/FilterSelectModal.tsx:56
 msgid "True"
-msgstr ""
+msgstr "Wahr"
 
 #: src/components/tables/FilterSelectModal.tsx:57
 msgid "False"
-msgstr ""
+msgstr "Falsch"
 
 #: src/components/tables/FilterSelectModal.tsx:143
 msgid "Add Table Filter"
@@ -1029,16 +1029,16 @@ msgstr ""
 
 #: src/components/tables/FilterSelectModal.tsx:149
 msgid "Filter"
-msgstr ""
+msgstr "Filter"
 
 #: src/components/tables/FilterSelectModal.tsx:150
 msgid "Select filter"
-msgstr ""
+msgstr "Filter auswählen"
 
 #: src/components/tables/FilterSelectModal.tsx:159
 #: src/components/tables/part/PartParameterTable.tsx:72
 msgid "Value"
-msgstr ""
+msgstr "Wert"
 
 #: src/components/tables/FilterSelectModal.tsx:160
 msgid "Select filter value"
@@ -1068,11 +1068,11 @@ msgstr ""
 
 #: src/components/tables/InvenTreeTable.tsx:377
 msgid "Forbidden"
-msgstr ""
+msgstr "Verweigert"
 
 #: src/components/tables/InvenTreeTable.tsx:380
 msgid "Not found"
-msgstr ""
+msgstr "Nicht gefunden"
 
 #: src/components/tables/InvenTreeTable.tsx:442
 #: src/components/tables/InvenTreeTable.tsx:443
@@ -1086,7 +1086,7 @@ msgstr ""
 
 #: src/components/tables/InvenTreeTable.tsx:466
 msgid "Refresh data"
-msgstr ""
+msgstr "Daten aktualisieren"
 
 #: src/components/tables/InvenTreeTable.tsx:485
 msgid "Table filters"
@@ -1142,7 +1142,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:121
 #: src/components/tables/stock/StockItemTable.tsx:148
 msgid "Available"
-msgstr ""
+msgstr "Verfügbar"
 
 #: src/components/tables/bom/BomTable.tsx:167
 #: src/components/tables/part/PartTable.tsx:129
@@ -1278,31 +1278,31 @@ msgstr ""
 
 #: src/components/tables/general/AttachmentTable.tsx:30
 msgid "Attachment"
-msgstr ""
+msgstr "Anhang"
 
 #: src/components/tables/general/AttachmentTable.tsx:47
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 #: src/components/tables/general/AttachmentTable.tsx:56
 msgid "Uploaded"
-msgstr ""
+msgstr "Hochgeladen"
 
 #: src/components/tables/general/AttachmentTable.tsx:160
 msgid "File uploaded"
-msgstr ""
+msgstr "Datei hochgeladen"
 
 #: src/components/tables/general/AttachmentTable.tsx:161
 msgid "File {0} uploaded successfully"
-msgstr ""
+msgstr "Datei {0} erfolgreich hochgeladen"
 
 #: src/components/tables/general/AttachmentTable.tsx:172
 msgid "Upload Error"
-msgstr ""
+msgstr "Upload fehlgeschlagen"
 
 #: src/components/tables/general/AttachmentTable.tsx:173
 msgid "File could not be uploaded"
-msgstr ""
+msgstr "Datei konnte nicht hochgeladen werden"
 
 #: src/components/tables/general/AttachmentTable.tsx:186
 msgid "Add attachment"
@@ -1322,7 +1322,7 @@ msgstr ""
 
 #: src/components/tables/general/CompanyTable.tsx:32
 msgid "Company Name"
-msgstr ""
+msgstr "Firmenname"
 
 #: src/components/tables/general/CompanyTable.tsx:50
 #: src/defaults/links.tsx:10
@@ -1331,16 +1331,16 @@ msgstr "Webseite"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:23
 msgid "Age"
-msgstr ""
+msgstr "Alter"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:28
 #: src/components/tables/part/PartTable.tsx:50
 msgid "Category"
-msgstr ""
+msgstr "Kategorie"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:33
 msgid "Notification"
-msgstr ""
+msgstr "Benachrichtigung"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:37
 msgid "Message"
