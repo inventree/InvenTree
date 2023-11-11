@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-09 03:01+0000\n"
-"PO-Revision-Date: 2023-11-10 20:54\n"
+"PO-Revision-Date: 2023-11-11 21:26\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -3514,7 +3514,7 @@ msgstr ""
 
 #: common/models.py:2973 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
-msgstr ""
+msgstr "Symbol"
 
 #: common/models.py:2974
 msgid "Optional unit symbol"
@@ -3522,11 +3522,11 @@ msgstr ""
 
 #: common/models.py:2980 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
-msgstr ""
+msgstr "Definisjon"
 
 #: common/models.py:2981
 msgid "Unit definition"
-msgstr ""
+msgstr "Enhets definisjon"
 
 #: common/notifications.py:290
 #, python-brace-format
