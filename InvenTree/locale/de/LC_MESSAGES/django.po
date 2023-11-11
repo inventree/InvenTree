@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-09 03:01+0000\n"
-"PO-Revision-Date: 2023-11-10 20:54\n"
+"PO-Revision-Date: 2023-11-11 21:26\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -5099,7 +5099,7 @@ msgstr "Bestellung duplizieren"
 #: order/templates/order/sales_order_base.html:83
 #: order/templates/order/sales_order_base.html:84
 msgid "Issue Order"
-msgstr ""
+msgstr "Bestellung aufgeben"
 
 #: order/templates/order/order_base.html:83
 #: order/templates/order/return_order_base.html:86
@@ -6099,7 +6099,7 @@ msgstr ""
 
 #: part/models.py:3369
 msgid "Choices must be unique"
-msgstr ""
+msgstr "Auswahl muss einzigartig sein"
 
 #: part/models.py:3385
 msgid "Parameter template name must be unique"
@@ -6317,7 +6317,7 @@ msgstr ""
 
 #: part/serializers.py:354
 msgid "Select category"
-msgstr ""
+msgstr "Kategorie auswählen"
 
 #: part/serializers.py:384
 msgid "Original Part"
@@ -6353,7 +6353,7 @@ msgstr "Parameterdaten vom Originalteil kopieren"
 
 #: part/serializers.py:404
 msgid "Copy Notes"
-msgstr ""
+msgstr "Anmerkungen kopieren"
 
 #: part/serializers.py:404
 msgid "Copy notes from original part"
@@ -7238,7 +7238,7 @@ msgstr "Unbekannte Datenbank"
 
 #: part/templatetags/inventree_extras.py:231
 msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr ""
+msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: part/views.py:110
 msgid "Match References"
@@ -7247,7 +7247,7 @@ msgstr "Referenzen zuteilen"
 #: part/views.py:242
 #, python-brace-format
 msgid "Can't import part {new_part.name} because there is no category assigned"
-msgstr ""
+msgstr "Teil {new_part.name} kann nicht importiert werden, da keine Kategorie zugewiesen ist"
 
 #: part/views.py:383
 msgid "Select Part Image"
@@ -7301,11 +7301,11 @@ msgstr ""
 
 #: plugin/base/barcodes/api.py:281
 msgid "Invalid stock location"
-msgstr ""
+msgstr "Ungültiger Lagerort"
 
 #: plugin/base/barcodes/api.py:292
 msgid "Item has already been received"
-msgstr ""
+msgstr "Artikel wurde bereits erhalten"
 
 #: plugin/base/barcodes/api.py:314
 msgid "Invalid supplier barcode"
@@ -7411,7 +7411,7 @@ msgstr ""
 
 #: plugin/builtin/labels/inventree_label.py:20
 msgid "InvenTree PDF label printer"
-msgstr ""
+msgstr "InvenTree PDF-Etikettendrucker"
 
 #: plugin/builtin/labels/inventree_label.py:21
 msgid "Provides native support for printing PDF labels"
@@ -7427,7 +7427,7 @@ msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:29
 msgid "Page size for the label sheet"
-msgstr ""
+msgstr "Seitengröße für das Labelblatt"
 
 #: plugin/builtin/labels/label_sheet.py:34
 msgid "Border"
@@ -7435,7 +7435,7 @@ msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Print a border around each label"
-msgstr ""
+msgstr "Einen Rahmen um jedes Label drucken"
 
 #: plugin/builtin/labels/label_sheet.py:40 report/models.py:203
 msgid "Landscape"
@@ -7443,11 +7443,11 @@ msgstr "Querformat"
 
 #: plugin/builtin/labels/label_sheet.py:41
 msgid "Print the label sheet in landscape mode"
-msgstr ""
+msgstr "Labelblatt im Querformat drucken"
 
 #: plugin/builtin/labels/label_sheet.py:53
 msgid "InvenTree Label Sheet Printer"
-msgstr ""
+msgstr "InvenTree Etikettendrucker"
 
 #: plugin/builtin/labels/label_sheet.py:54
 msgid "Arrays multiple labels onto a single sheet"
@@ -7455,11 +7455,11 @@ msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:87
 msgid "Label is too large for page size"
-msgstr ""
+msgstr "Label ist zu groß für Seitengröße"
 
 #: plugin/builtin/labels/label_sheet.py:116
 msgid "No labels were generated"
-msgstr ""
+msgstr "Es wurden keine Etiketten generiert"
 
 #: plugin/builtin/suppliers/digikey.py:21
 msgid "Supplier Integration - DigiKey"
@@ -7467,7 +7467,7 @@ msgstr ""
 
 #: plugin/builtin/suppliers/digikey.py:22
 msgid "Provides support for scanning DigiKey barcodes"
-msgstr ""
+msgstr "Unterstützt das Scannen von DigiKey-Barcodes"
 
 #: plugin/builtin/suppliers/digikey.py:30
 msgid "The Supplier which acts as 'DigiKey'"
@@ -7479,7 +7479,7 @@ msgstr ""
 
 #: plugin/builtin/suppliers/lcsc.py:23
 msgid "Provides support for scanning LCSC barcodes"
-msgstr ""
+msgstr "Unterstützt das Scannen von LCSC-Barcodes"
 
 #: plugin/builtin/suppliers/lcsc.py:31
 msgid "The Supplier which acts as 'LCSC'"
@@ -7487,11 +7487,11 @@ msgstr ""
 
 #: plugin/builtin/suppliers/mouser.py:21
 msgid "Supplier Integration - Mouser"
-msgstr ""
+msgstr "Lieferantenintegration - Mouser"
 
 #: plugin/builtin/suppliers/mouser.py:22
 msgid "Provides support for scanning Mouser barcodes"
-msgstr ""
+msgstr "Unterstützt das Scannen von Mouser-Barcodes"
 
 #: plugin/builtin/suppliers/mouser.py:30
 msgid "The Supplier which acts as 'Mouser'"
@@ -7499,11 +7499,11 @@ msgstr ""
 
 #: plugin/builtin/suppliers/tme.py:22
 msgid "Supplier Integration - TME"
-msgstr ""
+msgstr "Lieferantenintegration - TME"
 
 #: plugin/builtin/suppliers/tme.py:23
 msgid "Provides support for scanning TME barcodes"
-msgstr ""
+msgstr "Unterstützt das Scannen von TME-Barcodes"
 
 #: plugin/builtin/suppliers/tme.py:31
 msgid "The Supplier which acts as 'TME'"
@@ -9657,11 +9657,11 @@ msgstr "Es sind keine sozialen Netzwerke mit diesem Konto verbunden."
 
 #: templates/InvenTree/settings/user_sso.html:58
 msgid "Add SSO Account"
-msgstr ""
+msgstr "SSO-Konto hinzufügen"
 
 #: templates/InvenTree/settings/user_sso.html:67
 msgid "Single Sign On is not enabled for this server"
-msgstr ""
+msgstr "Single-Sign-On ist für diesen Server nicht aktiviert"
 
 #: templates/about.html:9
 msgid "InvenTree Version"
@@ -9932,7 +9932,7 @@ msgstr "Bitte kontaktieren Sie Ihren Administrator für mehr Informationen"
 
 #: templates/base.html:113
 msgid "Pending Database Migrations"
-msgstr ""
+msgstr "Ausstehende Datenbankmigrationen"
 
 #: templates/base.html:116
 msgid "There are pending database migrations which require attention"
@@ -10042,11 +10042,11 @@ msgstr "Verbindungszeitüberschreitung bei der Datenanforderung"
 
 #: templates/js/translated/api.js:261
 msgid "Error 503: Service Unavailable"
-msgstr ""
+msgstr "Fehler 503: Service nicht erreichbar"
 
 #: templates/js/translated/api.js:262
 msgid "The server is currently unavailable"
-msgstr ""
+msgstr "Der Server ist derzeit nicht erreichbar"
 
 #: templates/js/translated/api.js:265
 msgid "Unhandled Error Code"
@@ -10066,7 +10066,7 @@ msgstr "Anhänge entfernen"
 
 #: templates/js/translated/attachment.js:205
 msgid "Delete attachments"
-msgstr ""
+msgstr "Anhänge löschen"
 
 #: templates/js/translated/attachment.js:253
 msgid "Attachment actions"
@@ -10837,62 +10837,62 @@ msgstr "Keine Firmeninformation gefunden"
 
 #: templates/js/translated/company.js:609
 msgid "Create New Contact"
-msgstr ""
+msgstr "Neuen Kontakt erstellen"
 
 #: templates/js/translated/company.js:625
 #: templates/js/translated/company.js:748
 msgid "Edit Contact"
-msgstr ""
+msgstr "Kontakt bearbeiten"
 
 #: templates/js/translated/company.js:662
 msgid "All selected contacts will be deleted"
-msgstr ""
+msgstr "Alle ausgewählten Kontakte werden gelöscht"
 
 #: templates/js/translated/company.js:668
 #: templates/js/translated/company.js:732
 msgid "Role"
-msgstr ""
+msgstr "Rolle"
 
 #: templates/js/translated/company.js:676
 msgid "Delete Contacts"
-msgstr ""
+msgstr "Kontakte löschen"
 
 #: templates/js/translated/company.js:707
 msgid "No contacts found"
-msgstr ""
+msgstr "Keine Kontakte gefunden"
 
 #: templates/js/translated/company.js:720
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonnummer"
 
 #: templates/js/translated/company.js:726
 msgid "Email Address"
-msgstr ""
+msgstr "E-Mail-Adresse"
 
 #: templates/js/translated/company.js:752
 msgid "Delete Contact"
-msgstr ""
+msgstr "Kontakt löschen"
 
 #: templates/js/translated/company.js:849
 msgid "Create New Address"
-msgstr ""
+msgstr "Neue Adresse erstellen"
 
 #: templates/js/translated/company.js:864
 #: templates/js/translated/company.js:1025
 msgid "Edit Address"
-msgstr ""
+msgstr "Adresse bearbeiten"
 
 #: templates/js/translated/company.js:899
 msgid "All selected addresses will be deleted"
-msgstr ""
+msgstr "Alle ausgewählten Adressen werden gelöscht"
 
 #: templates/js/translated/company.js:913
 msgid "Delete Addresses"
-msgstr ""
+msgstr "Adressen löschen"
 
 #: templates/js/translated/company.js:940
 msgid "No addresses found"
-msgstr ""
+msgstr "Keine Addressen gefunden"
 
 #: templates/js/translated/company.js:979
 msgid "Postal city"
@@ -10900,19 +10900,19 @@ msgstr ""
 
 #: templates/js/translated/company.js:985
 msgid "State/province"
-msgstr ""
+msgstr "Bundesland"
 
 #: templates/js/translated/company.js:997
 msgid "Courier notes"
-msgstr ""
+msgstr "Kurierhinweise"
 
 #: templates/js/translated/company.js:1003
 msgid "Internal notes"
-msgstr ""
+msgstr "Interne Hinweise"
 
 #: templates/js/translated/company.js:1029
 msgid "Delete Address"
-msgstr ""
+msgstr "Adresse löschen"
 
 #: templates/js/translated/company.js:1102
 msgid "All selected manufacturer parts will be deleted"
@@ -11045,11 +11045,11 @@ msgstr "Filter auswählen"
 
 #: templates/js/translated/filters.js:437
 msgid "Print Labels"
-msgstr ""
+msgstr "Etiketten drucken"
 
 #: templates/js/translated/filters.js:441
 msgid "Print Reports"
-msgstr ""
+msgstr "Berichte drucken"
 
 #: templates/js/translated/filters.js:453
 msgid "Download table data"
@@ -11139,11 +11139,11 @@ msgstr "NEIN"
 
 #: templates/js/translated/helpers.js:93
 msgid "True"
-msgstr ""
+msgstr "Wahr"
 
 #: templates/js/translated/helpers.js:94
 msgid "False"
-msgstr ""
+msgstr "Falsch"
 
 #: templates/js/translated/index.js:104
 msgid "No parts required for builds"
@@ -11721,15 +11721,15 @@ msgstr ""
 
 #: templates/js/translated/plugin.js:188
 msgid "Enable"
-msgstr ""
+msgstr "Aktivieren"
 
 #: templates/js/translated/plugin.js:188
 msgid "Disable"
-msgstr ""
+msgstr "Deaktivieren"
 
 #: templates/js/translated/plugin.js:202
 msgid "Plugin updated"
-msgstr ""
+msgstr "Plugin aktualisiert"
 
 #: templates/js/translated/pricing.js:159
 msgid "Error fetching currency data"
@@ -11898,7 +11898,7 @@ msgstr "Barcode hinzufügen"
 
 #: templates/js/translated/purchase_order.js:1199
 msgid "Remove barcode"
-msgstr ""
+msgstr "Barcode entfernen"
 
 #: templates/js/translated/purchase_order.js:1202
 msgid "Specify location"
