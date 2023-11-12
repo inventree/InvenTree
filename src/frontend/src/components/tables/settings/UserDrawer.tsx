@@ -60,7 +60,6 @@ export function UserDrawer({
     }
     setRightsValue(new_rights);
 
-    // roles
     setLocked(false);
   }, [userDetail]);
 
@@ -212,9 +211,6 @@ export function UserDrawer({
             </List>
           )}
         </Text>
-        <Title order={5}>
-          <Trans>Roles</Trans>
-        </Title>
       </Stack>
     </Drawer>
   );
