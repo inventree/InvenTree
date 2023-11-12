@@ -16,11 +16,12 @@ import { IconCheck } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
 import { api } from '../../../App';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import {
   invalidResponse,
   permissionDenied
 } from '../../../functions/notifications';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { EditButton } from '../../items/EditButton';
 import { UserDetailI } from './UserTable';

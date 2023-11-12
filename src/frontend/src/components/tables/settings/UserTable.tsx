@@ -3,13 +3,14 @@ import { Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import {
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
@@ -165,7 +166,6 @@ export function UserTable() {
           rowActions: rowActions,
           customActionGroups: tableActions,
           onRowClick: (record: any) => {
-            console.log(record);
             setUserDetail(record);
             open();
           }
