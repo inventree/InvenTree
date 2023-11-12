@@ -54,7 +54,7 @@ export function UserDrawer({
       opened={opened}
       onClose={close}
       position="right"
-      title={t`User details for ${userDetail.username}`}
+      title={userDetail ? t`User details for ${userDetail.username}` : ''}
       overlayProps={{ opacity: 0.5, blur: 4 }}
     >
       <Stack spacing={'xs'}>
@@ -91,7 +91,10 @@ export function UserDrawer({
                 <Chip value="is_staff" disabled={!user?.is_staff}>
                   <Trans>Staff</Trans>
                 </Chip>
-                <Chip value="is_superuser" disabled={!user?.is_staff}>
+                <Chip
+                  value="is_superuser"
+                  disabled={!(user?.is_staff && user?.is_superuser)}
+                >
                   <Trans>Superuser</Trans>
                 </Chip>
               </Group>
