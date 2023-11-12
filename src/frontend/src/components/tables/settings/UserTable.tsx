@@ -1,8 +1,9 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../../App';
 import {
@@ -23,6 +24,7 @@ import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { UserDrawer } from './UserDrawer';
 
 enum UserRole {
   REGULAR = 'regular',
@@ -35,6 +37,8 @@ enum UserRole {
  */
 export function UserTable() {
   const { tableKey, refreshTable } = useTableRefresh('users');
+  const [opened, { open, close }] = useDisclosure(false);
+  const [userDetail, setUserDetail] = useState<{}>();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -245,14 +249,22 @@ export function UserTable() {
   }, []);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiPaths.user_list)}
-      tableKey={tableKey}
-      columns={columns}
-      props={{
-        rowActions: rowActions,
-        customActionGroups: tableActions
-      }}
-    />
+    <>
+      <UserDrawer opened={opened} close={close} userDetail={userDetail} />
+      <InvenTreeTable
+        url={apiUrl(ApiPaths.user_list)}
+        tableKey={tableKey}
+        columns={columns}
+        props={{
+          rowActions: rowActions,
+          customActionGroups: tableActions,
+          onRowClick: (record: any) => {
+            console.log(record);
+            setUserDetail(record);
+            open();
+          }
+        }}
+      />
+    </>
   );
 }
