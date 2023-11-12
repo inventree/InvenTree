@@ -58,7 +58,7 @@ export function PageDetail({
             {detail}
             <Space />
             {actions && (
-              <Group spacing={5} position="right">
+              <Group key="page-actions" spacing={5} position="right">
                 {actions}
               </Group>
             )}

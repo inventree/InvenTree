@@ -81,7 +81,7 @@ export function BarcodeActionDropdown({
 }) {
   return (
     <ActionDropdown
-      key="barcode"
+      key="barcode-actions"
       tooltip={t`Barcode Actions`}
       icon={<IconQrcode />}
       actions={actions}

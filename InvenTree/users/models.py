@@ -10,6 +10,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Q, UniqueConstraint
 from django.db.models.signals import post_delete, post_save
@@ -67,7 +68,15 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         return prefix + str(AuthToken.generate_key()) + suffix
 
     # Override the 'key' field - force it to be unique
-    key = models.CharField(default=default_token, verbose_name=_('Key'), max_length=100, db_index=True, unique=True)
+    key = models.CharField(
+        default=default_token,
+        verbose_name=_('Key'),
+        db_index=True, unique=True,
+        max_length=100,
+        validators=[
+            MinLengthValidator(50),
+        ]
+    )
 
     # Override the 'user' field, to allow multiple tokens per user
     user = models.ForeignKey(

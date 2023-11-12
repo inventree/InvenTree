@@ -112,9 +112,9 @@ export default function UserSettings() {
     <>
       <Stack spacing="xs">
         <SettingsHeader
-          title={`${user?.first_name} ${user?.last_name}`}
+          title={t`Account Settings`}
+          subtitle={`${user?.first_name} ${user?.last_name}`}
           shorthand={user?.username || ''}
-          subtitle={<Trans>Account Settings</Trans>}
           switch_link="/settings/system"
           switch_text={<Trans>Switch to System Setting</Trans>}
           switch_condition={user?.is_staff || false}

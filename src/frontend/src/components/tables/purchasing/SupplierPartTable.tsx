@@ -2,6 +2,8 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import { supplierPartFields } from '../../../forms/CompanyForms';
 import {
   openCreateApiForm,
@@ -9,7 +11,7 @@ import {
   openEditApiForm
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -110,7 +112,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
 
           if (part.units) {
             extra.push(
-              <Text>
+              <Text key="base">
                 {t`Base units`} : {part.units}
               </Text>
             );
@@ -180,9 +182,9 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
   // Row action callback
   const rowActions = useCallback(
     (record: any) => {
-      // TODO: Adjust actions based on user permissions
       return [
         RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
             record.pk &&
               openEditApiForm({
@@ -196,6 +198,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           }
         }),
         RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
             record.pk &&
               openDeleteApiForm({

@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { buildOrderFields } from '../../forms/BuildForms';
 import { openCreateApiForm } from '../../functions/forms';
-import { ApiPaths } from '../../states/ApiState';
 
 /**
  * Build Order index page
