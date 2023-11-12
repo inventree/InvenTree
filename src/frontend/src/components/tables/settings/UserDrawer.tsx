@@ -10,18 +10,29 @@ import {
   TextInput,
   Title
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
+import { api } from '../../../App';
+import {
+  invalidResponse,
+  permissionDenied
+} from '../../../functions/notifications';
+import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
+import { UserDetailI } from './UserTable';
 
 export function UserDrawer({
   opened,
   close,
+  refreshTable,
   userDetail
 }: {
   opened: boolean;
   close: () => void;
-  userDetail: {} | undefined;
+  refreshTable: () => void;
+  userDetail: UserDetailI | undefined;
 }) {
   const [value, setValue] = useState(['']);
   const [user] = useUserState((state) => [state.user]);
@@ -43,10 +54,71 @@ export function UserDrawer({
   }, [userDetail]);
 
   // actions on role change
-  function changeRole(roles) {
-    // Todo submit to backend
-    console.log('would change roles to ', roles);
+  function changeRole(roles: []) {
+    if (!userDetail) return;
+
+    let data = {
+      is_staff: roles.includes('is_staff'),
+      is_superuser: roles.includes('is_superuser')
+    };
+    if (
+      data.is_staff != userDetail.is_staff ||
+      data.is_superuser != userDetail.is_superuser
+    ) {
+      console.log('changing role state for user');
+      setPermission(userDetail.pk, data);
+    }
+    if (userDetail.is_active != roles.includes('is_active')) {
+      console.log('changing active state for user');
+      setActive(userDetail.pk, roles.includes('is_active'));
+    }
     setValue(roles);
+  }
+
+  function setPermission(pk: number, data: any) {
+    api
+      .patch(`${apiUrl(ApiPaths.user_list)}${pk}/`, data)
+      .then(() => {
+        notifications.show({
+          title: t`User permission changed successfully`,
+          message: t`Some changes might only take effect after the user refreshes their login.`,
+          color: 'green',
+          icon: <IconCheck size="1rem" />
+        });
+        refreshTable();
+      })
+      .catch((error) => {
+        if (error.response.status === 403) {
+          permissionDenied();
+        } else {
+          console.log(error);
+          invalidResponse(error.response.status);
+        }
+      });
+  }
+
+  function setActive(pk: number, active: boolean) {
+    api
+      .patch(`${apiUrl(ApiPaths.user_list)}${pk}/`, {
+        is_active: active
+      })
+      .then(() => {
+        notifications.show({
+          title: t`Changed user active status successfully`,
+          message: t`Set to ${active}`,
+          color: 'green',
+          icon: <IconCheck size="1rem" />
+        });
+        refreshTable();
+      })
+      .catch((error) => {
+        if (error.response.status === 403) {
+          permissionDenied();
+        } else {
+          console.log(error);
+          invalidResponse(error.response.status);
+        }
+      });
   }
 
   return (
@@ -114,7 +186,7 @@ export function UserDrawer({
             <List>
               {userDetail &&
                 userDetail.groups.map((message) => (
-                  <List.Item key={message}>{message.name}</List.Item>
+                  <List.Item key={message.name}>{message.name}</List.Item>
                 ))}
             </List>
           )}

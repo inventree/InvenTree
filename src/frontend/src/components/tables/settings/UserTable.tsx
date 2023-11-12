@@ -17,10 +17,21 @@ import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { UserDrawer } from './UserDrawer';
 
-enum UserRole {
-  REGULAR = 'regular',
-  STAFF = 'staff',
-  SUPERUSER = 'superuser'
+interface GroupDetailI {
+  pk: number;
+  name: string;
+}
+
+export interface UserDetailI {
+  pk: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  groups: GroupDetailI[];
+  is_active: boolean;
+  is_staff: boolean;
+  is_superuser: boolean;
 }
 
 /**
@@ -29,7 +40,7 @@ enum UserRole {
 export function UserTable() {
   const { tableKey, refreshTable } = useTableRefresh('users');
   const [opened, { open, close }] = useDisclosure(false);
-  const [userDetail, setUserDetail] = useState<{}>();
+  const [userDetail, setUserDetail] = useState<UserDetailI>();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -78,7 +89,7 @@ export function UserTable() {
     ];
   }, []);
 
-  const rowActions = useCallback((record: any): RowAction[] => {
+  const rowActions = useCallback((record: UserDetailI): RowAction[] => {
     return [
       RowEditAction({
         onClick: () => {
@@ -140,7 +151,12 @@ export function UserTable() {
 
   return (
     <>
-      <UserDrawer opened={opened} close={close} userDetail={userDetail} />
+      <UserDrawer
+        opened={opened}
+        close={close}
+        refreshTable={refreshTable}
+        userDetail={userDetail}
+      />
       <InvenTreeTable
         url={apiUrl(ApiPaths.user_list)}
         tableKey={tableKey}
