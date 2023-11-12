@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-09 03:01+0000\n"
-"PO-Revision-Date: 2023-11-10 20:54\n"
+"PO-Revision-Date: 2023-11-12 21:25\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -77,11 +77,11 @@ msgstr "Бележки"
 #: InvenTree/format.py:154
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "Значението '{name}' не отговаря на шаблона"
 
 #: InvenTree/format.py:164
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "Въведеното значение не отговаря на задължителния шаблон: "
 
 #: InvenTree/forms.py:147
 msgid "Enter password"
@@ -109,40 +109,40 @@ msgstr "Е-поща отново"
 
 #: InvenTree/forms.py:203
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Потвърждение на електронната поща"
 
 #: InvenTree/forms.py:224
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Трябва ла въведете една и съща електронна поща."
 
 #: InvenTree/forms.py:255 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "Въведената основна електронна поща е невалидна."
 
 #: InvenTree/forms.py:267
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "Въведеният домейн на електронната поща не е утвърден."
 
 #: InvenTree/forms.py:371
 msgid "Registration is disabled."
-msgstr ""
+msgstr "Регистрацията е деактивирана."
 
 #: InvenTree/helpers.py:452 order/models.py:446 order/models.py:615
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Въведена е недопустима стойност"
 
 #: InvenTree/helpers.py:460
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Липсва сериен номер"
 
 #: InvenTree/helpers.py:490
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Повтарящ се сериен номер"
 
 #: InvenTree/helpers.py:523 InvenTree/helpers.py:558
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr ""
+msgstr "Невалиден диапазон от групи: {group}"
 
 #: InvenTree/helpers.py:552
 #, python-brace-format
@@ -156,7 +156,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:608
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Не са открити серийни номера"
 
 #: InvenTree/helpers.py:611
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
@@ -164,35 +164,35 @@ msgstr ""
 
 #: InvenTree/helpers.py:740
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Премахнете HTML маркерите от тази стойност"
 
 #: InvenTree/helpers_model.py:123
 msgid "Connection error"
-msgstr ""
+msgstr "Грешка при съединението"
 
 #: InvenTree/helpers_model.py:127 InvenTree/helpers_model.py:132
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "Сървърът отговари с невалиден статусен код"
 
 #: InvenTree/helpers_model.py:129
 msgid "Exception occurred"
-msgstr ""
+msgstr "Възникна изключение"
 
 #: InvenTree/helpers_model.py:137
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "Сървърът отговори с невалидна стойност за дължината на съдържанието (Content-Length)"
 
 #: InvenTree/helpers_model.py:140
 msgid "Image size is too large"
-msgstr ""
+msgstr "Размерът на изображението е твърде голям"
 
 #: InvenTree/helpers_model.py:152
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Сваляното на изображение превиши максималния размер"
 
 #: InvenTree/helpers_model.py:157
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Отдалеченият сървър върна празен отговор"
 
 #: InvenTree/helpers_model.py:165
 msgid "Supplied URL is not a valid image file"
