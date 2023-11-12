@@ -35,11 +35,14 @@ export function UserDrawer({
   userDetail: UserDetailI | undefined;
 }) {
   const [value, setValue] = useState(['']);
+  const [locked, setLocked] = useState<boolean>(false);
   const [user] = useUserState((state) => [state.user]);
 
   // Set initial values
   useEffect(() => {
     if (!userDetail) return;
+
+    setLocked(true);
     let new_roles = [];
     if (userDetail.is_staff) {
       new_roles.push('is_staff');
@@ -51,10 +54,11 @@ export function UserDrawer({
       new_roles.push('is_superuser');
     }
     setValue(new_roles);
+    setLocked(false);
   }, [userDetail]);
 
   // actions on role change
-  function changeRole(roles: []) {
+  function changeRole(roles: [string]) {
     if (!userDetail) return;
 
     let data = {
@@ -65,17 +69,16 @@ export function UserDrawer({
       data.is_staff != userDetail.is_staff ||
       data.is_superuser != userDetail.is_superuser
     ) {
-      console.log('changing role state for user');
       setPermission(userDetail.pk, data);
     }
     if (userDetail.is_active != roles.includes('is_active')) {
-      console.log('changing active state for user');
       setActive(userDetail.pk, roles.includes('is_active'));
     }
     setValue(roles);
   }
 
   function setPermission(pk: number, data: any) {
+    setLocked(true);
     api
       .patch(`${apiUrl(ApiPaths.user_list)}${pk}/`, data)
       .then(() => {
@@ -94,10 +97,12 @@ export function UserDrawer({
           console.log(error);
           invalidResponse(error.response.status);
         }
-      });
+      })
+      .finally(() => setLocked(false));
   }
 
   function setActive(pk: number, active: boolean) {
+    setLocked(true);
     api
       .patch(`${apiUrl(ApiPaths.user_list)}${pk}/`, {
         is_active: active
@@ -118,7 +123,8 @@ export function UserDrawer({
           console.log(error);
           invalidResponse(error.response.status);
         }
-      });
+      })
+      .finally(() => setLocked(false));
   }
 
   return (
@@ -138,18 +144,18 @@ export function UserDrawer({
             <TextInput
               label={t`Username`}
               value={userDetail.username}
-              disabled
+              disabled={locked}
             />
             <TextInput label={t`Email`} value={userDetail.email} disabled />
             <TextInput
               label={t`First Name`}
               value={userDetail.first_name}
-              disabled
+              disabled={locked}
             />
             <TextInput
               label={t`Last Name`}
               value={userDetail.last_name}
-              disabled
+              disabled={locked}
             />
 
             <Text>
@@ -157,15 +163,15 @@ export function UserDrawer({
             </Text>
             <Chip.Group multiple value={value} onChange={changeRole}>
               <Group spacing={0}>
-                <Chip value="is_active" disabled={!user?.is_staff}>
+                <Chip value="is_active" disabled={locked || !user?.is_staff}>
                   <Trans>Active</Trans>
                 </Chip>
-                <Chip value="is_staff" disabled={!user?.is_staff}>
+                <Chip value="is_staff" disabled={locked || !user?.is_staff}>
                   <Trans>Staff</Trans>
                 </Chip>
                 <Chip
                   value="is_superuser"
-                  disabled={!(user?.is_staff && user?.is_superuser)}
+                  disabled={locked || !(user?.is_staff && user?.is_superuser)}
                 >
                   <Trans>Superuser</Trans>
                 </Chip>
