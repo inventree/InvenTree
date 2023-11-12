@@ -10,6 +10,7 @@ import {
   TextInput,
   Title
 } from '@mantine/core';
+import { useToggle } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -21,6 +22,7 @@ import {
 } from '../../../functions/notifications';
 import { ApiPaths, apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
+import { EditButton } from '../../items/EditButton';
 import { UserDetailI } from './UserTable';
 
 export function UserDrawer({
@@ -34,9 +36,10 @@ export function UserDrawer({
   refreshTable: () => void;
   userDetail: UserDetailI | undefined;
 }) {
-  const [value, setValue] = useState(['']);
-  const [locked, setLocked] = useState<boolean>(false);
   const [user] = useUserState((state) => [state.user]);
+  const [roleValue, setRoleValue] = useState(['']);
+  const [locked, setLocked] = useState<boolean>(false);
+  const [userEditing, setUserEditing] = useToggle([false, true] as const);
 
   // Set initial values
   useEffect(() => {
@@ -53,12 +56,12 @@ export function UserDrawer({
     if (userDetail.is_superuser) {
       new_roles.push('is_superuser');
     }
-    setValue(new_roles);
+    setRoleValue(new_roles);
     setLocked(false);
   }, [userDetail]);
 
   // actions on role change
-  function changeRole(roles: [string]) {
+  function changeRoleValue(roles: [string]) {
     if (!userDetail) return;
 
     let data = {
@@ -74,7 +77,7 @@ export function UserDrawer({
     if (userDetail.is_active != roles.includes('is_active')) {
       setActive(userDetail.pk, roles.includes('is_active'));
     }
-    setValue(roles);
+    setRoleValue(roles);
   }
 
   function setPermission(pk: number, data: any) {
@@ -127,6 +130,7 @@ export function UserDrawer({
       .finally(() => setLocked(false));
   }
 
+  const userEditable = locked || !userEditing;
   return (
     <Drawer
       opened={opened}
@@ -136,32 +140,39 @@ export function UserDrawer({
       overlayProps={{ opacity: 0.5, blur: 4 }}
     >
       <Stack spacing={'xs'}>
-        <Title order={5}>
-          <Trans>Details</Trans>
-        </Title>
+        <Group>
+          <Title order={5}>
+            <Trans>Details</Trans>
+          </Title>
+          <EditButton
+            editing={userEditing}
+            setEditing={setUserEditing}
+            disabled
+          />
+        </Group>
         {userDetail ? (
           <Stack spacing={0} ml={'md'}>
             <TextInput
               label={t`Username`}
               value={userDetail.username}
-              disabled={locked}
+              disabled={userEditable}
             />
             <TextInput label={t`Email`} value={userDetail.email} disabled />
             <TextInput
               label={t`First Name`}
               value={userDetail.first_name}
-              disabled={locked}
+              disabled={userEditable}
             />
             <TextInput
               label={t`Last Name`}
               value={userDetail.last_name}
-              disabled={locked}
+              disabled={userEditable}
             />
 
             <Text>
               <Trans>Roles</Trans>
             </Text>
-            <Chip.Group multiple value={value} onChange={changeRole}>
+            <Chip.Group multiple value={roleValue} onChange={changeRoleValue}>
               <Group spacing={0}>
                 <Chip value="is_active" disabled={locked || !user?.is_staff}>
                   <Trans>Active</Trans>
