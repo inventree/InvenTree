@@ -19,7 +19,8 @@ import { useEffect, useState } from 'react';
 
 import { api, queryClient } from '../../../../App';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
-import { ApiPaths, apiUrl } from '../../../../states/ApiState';
+import { ApiPaths } from '../../../../enums/ApiEndpoints';
+import { apiUrl } from '../../../../states/ApiState';
 
 export function SecurityContent() {
   const [isSsoEnabled, setIsSsoEnabled] = useState<boolean>(false);

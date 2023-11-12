@@ -4,11 +4,13 @@ import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { ProgressBar } from '../../../components/items/ProgressBar';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
 import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
-import { UserRoles, useUserState } from '../../../states/UserState';
+import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -64,7 +66,8 @@ export function PurchaseOrderLineItemTable({
             }
 
             let fields = purchaseOrderLineItemFields({
-              supplierId: supplier
+              supplierId: supplier,
+              create: false
             });
 
             openEditApiForm({
@@ -219,21 +222,29 @@ export function PurchaseOrderLineItemTable({
     openCreateApiForm({
       url: ApiPaths.purchase_order_line_list,
       title: t`Add Line Item`,
-      fields: purchaseOrderLineItemFields({}),
+      fields: purchaseOrderLineItemFields({
+        create: true,
+        orderId: orderId
+      }),
       onFormSuccess: refreshTable,
       successMessage: t`Line item added`
     });
-  }, []);
+  }, [orderId]);
 
   // Custom table actions
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-line-item"
         tooltip={t`Add line item`}
         onClick={addLine}
         hidden={!user?.hasAddRole(UserRoles.purchase_order)}
       />,
-      <ActionButton text={t`Receive items`} icon={<IconSquareArrowRight />} />
+      <ActionButton
+        key="receive-items"
+        text={t`Receive items`}
+        icon={<IconSquareArrowRight />}
+      />
     ];
   }, [orderId, user]);
 

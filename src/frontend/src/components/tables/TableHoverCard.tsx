@@ -56,7 +56,11 @@ export function ProjectCodeHoverCard({ projectCode }: { projectCode: any }) {
     <TableHoverCard
       value={projectCode?.code}
       title={t`Project Code`}
-      extra={projectCode?.description}
+      extra={
+        projectCode && (
+          <Text key="project-code">{projectCode?.description}</Text>
+        )
+      }
     />
   ) : (
     '-'

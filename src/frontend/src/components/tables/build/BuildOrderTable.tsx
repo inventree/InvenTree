@@ -3,11 +3,12 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { renderDate } from '../../../defaults/formatters';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
-import { ModelType } from '../../render/ModelType';
 import { RenderUser } from '../../render/User';
 import { TableColumn } from '../Column';
 import {

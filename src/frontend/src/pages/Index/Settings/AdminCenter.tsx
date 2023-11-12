@@ -95,10 +95,8 @@ export default function AdminCenter() {
     <>
       <Stack spacing="xs">
         <SettingsHeader
-          title={<Trans>Admin Center</Trans>}
-          subtitle={
-            <Trans>Advanced Amininistrative Options for InvenTree</Trans>
-          }
+          title={t`Admin Center`}
+          subtitle={t`Advanced Amininistrative Options for InvenTree`}
           switch_link="/settings/system"
           switch_text="System Settings"
         />
