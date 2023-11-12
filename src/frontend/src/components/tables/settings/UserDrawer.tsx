@@ -38,7 +38,7 @@ export function UserDrawer({
   userDetail: UserDetailI | undefined;
 }) {
   const [user] = useUserState((state) => [state.user]);
-  const [roleValue, setRoleValue] = useState(['']);
+  const [rightsValue, setRightsValue] = useState(['']);
   const [locked, setLocked] = useState<boolean>(false);
   const [userEditing, setUserEditing] = useToggle([false, true] as const);
 
@@ -47,22 +47,25 @@ export function UserDrawer({
     if (!userDetail) return;
 
     setLocked(true);
-    let new_roles = [];
+    // rights
+    let new_rights = [];
     if (userDetail.is_staff) {
-      new_roles.push('is_staff');
+      new_rights.push('is_staff');
     }
     if (userDetail.is_active) {
-      new_roles.push('is_active');
+      new_rights.push('is_active');
     }
     if (userDetail.is_superuser) {
-      new_roles.push('is_superuser');
+      new_rights.push('is_superuser');
     }
-    setRoleValue(new_roles);
+    setRightsValue(new_rights);
+
+    // roles
     setLocked(false);
   }, [userDetail]);
 
   // actions on role change
-  function changeRoleValue(roles: [string]) {
+  function changeRights(roles: [string]) {
     if (!userDetail) return;
 
     let data = {
@@ -78,7 +81,7 @@ export function UserDrawer({
     if (userDetail.is_active != roles.includes('is_active')) {
       setActive(userDetail.pk, roles.includes('is_active'));
     }
-    setRoleValue(roles);
+    setRightsValue(roles);
   }
 
   function setPermission(pk: number, data: any) {
@@ -171,9 +174,9 @@ export function UserDrawer({
             />
 
             <Text>
-              <Trans>Roles</Trans>
+              <Trans>Rights</Trans>
             </Text>
-            <Chip.Group multiple value={roleValue} onChange={changeRoleValue}>
+            <Chip.Group multiple value={rightsValue} onChange={changeRights}>
               <Group spacing={0}>
                 <Chip value="is_active" disabled={locked || !user?.is_staff}>
                   <Trans>Active</Trans>
