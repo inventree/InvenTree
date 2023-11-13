@@ -48,9 +48,6 @@ v140 -> 2023-10-20 : https://github.com/inventree/InvenTree/pull/5664
 v139 -> 2023-10-11 : https://github.com/inventree/InvenTree/pull/5509
     - Add new BarcodePOReceive endpoint to receive line items by scanning supplier barcodes
 
-v139 -> 2023-10-11 : https://github.com/inventree/InvenTree/pull/5509
-    - Add new BarcodePOReceive endpoint to receive line items by scanning supplier barcodes
-
 v138 -> 2023-10-11 : https://github.com/inventree/InvenTree/pull/5679
     - Settings keys are no longer case sensitive
     - Include settings units in API serializer
