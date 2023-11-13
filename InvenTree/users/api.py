@@ -10,6 +10,7 @@ from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import InvenTree.helpers
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
@@ -42,19 +43,39 @@ class OwnerList(ListAPI):
         but until we determine a better way, this is what we have...
         """
         search_term = str(self.request.query_params.get('search', '')).lower()
+        is_active = self.request.query_params.get('is_active', None)
 
         queryset = super().filter_queryset(queryset)
 
-        if not search_term:
-            return queryset
-
         results = []
 
-        # Extract search term f
+        # Get a list of all matching users, depending on the *is_active* flag
+        if is_active is not None:
+            is_active = InvenTree.helpers.str2bool(is_active)
+            matching_user_ids = User.objects.filter(is_active=is_active).values_list('pk', flat=True)
 
         for result in queryset.all():
-            if search_term in result.name().lower():
-                results.append(result)
+
+            name = str(result.name()).lower().strip()
+            search_match = True
+
+            # Extract search term f
+            if search_term:
+                for entry in search_term.strip().split(' '):
+                    if entry not in name:
+                        search_match = False
+                        break
+
+            if not search_match:
+                continue
+
+            if is_active is not None:
+                # Skip any users which do not match the required *is_active* value
+                if result.owner_type.name == 'user' and result.owner_id not in matching_user_ids:
+                    continue
+
+            # If we get here, there is no reason *not* to include this result
+            results.append(result)
 
         return results
 
@@ -154,6 +175,12 @@ class UserList(ListCreateAPI):
         'is_staff',
         'is_superuser',
         'is_active',
+    ]
+
+    filterset_fields = [
+        'is_staff',
+        'is_active',
+        'is_superuser',
     ]
 
 
