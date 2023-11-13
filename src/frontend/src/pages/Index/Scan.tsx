@@ -231,7 +231,7 @@ export default function Scan() {
       ...new Set(
         selection
           .map((id) => {
-            return history.find((item) => item.id === id)?.model;
+            return history.find((item) => item.id === id);
           })
           .filter((item) => item != undefined)
       )
@@ -257,10 +257,10 @@ export default function Scan() {
     return (
       <>
         <Text fz="sm" c="dimmed">
-          <Trans>Actions for {selectedItems[0].objectType} </Trans>
+          <Trans>Actions for {selectedItems[0].model} </Trans>
         </Text>
         <ActionControls
-          type={selectedItems[0].objectType}
+          type={selectedItems[0].model}
           barcode={selectedItems[0].ref}
           data={selectedItems[0]}
         />
