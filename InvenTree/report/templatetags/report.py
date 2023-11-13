@@ -96,7 +96,7 @@ def asset(filename):
 
 
 @register.simple_tag()
-def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png', validate=True):
+def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png', validate=True, **kwargs):
     """Return a fully-qualified path for an 'uploaded' image.
 
     Arguments:
@@ -104,8 +104,14 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         replace_missing: Optionally return a placeholder image if the provided filename does not exist
         validate: Optionally validate that the file is a valid image file (default = True)
 
+    kwargs:
+        Extra keyword arguments which can augment the image rendering (e.g. width, height) : Not yet implemented
+
     Returns:
         A fully qualified path to the image
+
+    Raises:
+        FileNotFoundError if the file does not exist
     """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
