@@ -116,8 +116,23 @@ function salesOrderFields(options={}) {
                 return filters;
             }
         },
+        address: {
+            icon: 'fa-map',
+            adjustFilters: function(filters) {
+                let customer = getFormFieldValue('customer', {}, {modal: options.modal});
+
+                if (customer) {
+                    filters.company = customer;
+                }
+
+                return filters;
+            }
+        },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         }
     };
 
@@ -723,9 +738,6 @@ function loadSalesOrderTable(table, options) {
         customView: function(data) {
             return `<div id='purchase-order-calendar'></div>`;
         },
-        onRefresh: function() {
-            loadSalesOrderTable(table, options);
-        },
         onLoadSuccess: function() {
 
             if (display_mode == 'calendar') {
@@ -1299,6 +1311,8 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                             part_detail: true,
                             location_detail: true,
                             available: true,
+                            salable: true,
+                            active: true,
                         },
                         model: 'stockitem',
                         required: true,
@@ -1782,7 +1796,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             title: '{% trans "Part" %}',
             switchable: false,
             formatter: function(value, row, index, field) {
-                if (row.part) {
+                if (row.part_detail) {
                     return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${value}/`);
                 } else {
                     return '-';
@@ -1791,6 +1805,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
             footerFormatter: function() {
                 return '{% trans "Total" %}';
             },
+        },
+        {
+            sortable: false,
+            field: 'part_detail.description',
+            title: '{% trans "Description" %}',
+            switchable: true,
         },
         {
             sortable: true,
@@ -1872,17 +1892,20 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 field: 'stock',
                 title: '{% trans "Available Stock" %}',
                 formatter: function(value, row) {
-                    var available = row.available_stock;
-                    var required = Math.max(row.quantity - row.allocated - row.shipped, 0);
 
-                    var html = '';
+                    let available = row.available_stock + row.available_variant_stock;
+                    let required = Math.max(row.quantity - row.allocated - row.shipped, 0);
+
+                    let html = '';
 
                     if (available > 0) {
-                        var url = `/part/${row.part}/?display=part-stock`;
+                        let url = `/part/${row.part}/?display=part-stock`;
 
-                        var text = available;
+                        html = renderLink(available, url);
 
-                        html = renderLink(text, url);
+                        if (row.available_variant_stock && row.available_variant_stock > 0) {
+                            html += makeIconBadge('fa-info-circle icon-blue', '{% trans "Includes variant stock" %}');
+                        }
                     } else {
                         html += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                     }

@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         while not connected:
 
-            time.sleep(5)
+            time.sleep(2)
 
             try:
                 connection.ensure_connection()

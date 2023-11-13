@@ -5,7 +5,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import BooleanField, Case, Q, Value, When
+from django.db.models import BooleanField, Case, Count, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
@@ -18,6 +18,7 @@ import common.models
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
+import InvenTree.status_codes
 import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
@@ -27,7 +28,7 @@ from InvenTree.serializers import (InvenTreeCurrencySerializer,
 from part.serializers import PartBriefSerializer
 
 from .models import (StockItem, StockItemAttachment, StockItemTestResult,
-                     StockItemTracking, StockLocation)
+                     StockItemTracking, StockLocation, StockLocationType)
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -144,6 +145,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'link',
             'location',
             'location_detail',
+            'location_path',
             'notes',
             'owner',
             'packaging',
@@ -204,6 +206,12 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         label=_("Part"),
     )
 
+    location_path = serializers.ListField(
+        child=serializers.DictField(),
+        source='location.get_path',
+        read_only=True,
+    )
+
     """
     Field used when creating a stock item
     """
@@ -217,7 +225,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
     def validate_part(self, part):
         """Ensure the provided Part instance is valid"""
-
         if part.virtual:
             raise ValidationError(_("Stock item cannot be created for virtual parts"))
 
@@ -232,7 +239,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
-
         queryset = queryset.prefetch_related(
             'location',
             'sales_order',
@@ -328,6 +334,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         location_detail = kwargs.pop('location_detail', False)
         supplier_part_detail = kwargs.pop('supplier_part_detail', False)
         tests = kwargs.pop('tests', False)
+        path_detail = kwargs.pop('path_detail', False)
 
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
@@ -342,6 +349,9 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
         if not tests:
             self.fields.pop('tests')
+
+        if not path_detail:
+            self.fields.pop('location_path')
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
@@ -479,11 +489,28 @@ class InstallStockItemSerializer(serializers.Serializer):
         help_text=_('Select stock item to install'),
     )
 
+    quantity = serializers.IntegerField(
+        min_value=1,
+        default=1,
+        required=False,
+        label=_('Quantity to Install'),
+        help_text=_('Enter the quantity of items to install'),
+    )
+
     note = serializers.CharField(
         label=_('Note'),
+        help_text=_('Add transaction note (optional)'),
         required=False,
         allow_blank=True,
     )
+
+    def validate_quantity(self, quantity):
+        """Validate the quantity value."""
+
+        if quantity < 1:
+            raise ValidationError(_("Quantity to install must be at least 1"))
+
+        return quantity
 
     def validate_stock_item(self, stock_item):
         """Validate the selected stock item."""
@@ -491,20 +518,33 @@ class InstallStockItemSerializer(serializers.Serializer):
             # StockItem must be in stock to be "installed"
             raise ValidationError(_("Stock item is unavailable"))
 
-        # Extract the "parent" item - the item into which the stock item will be installed
         parent_item = self.context['item']
         parent_part = parent_item.part
 
+        # Check if the selected part is in the Bill of Materials of the parent item
         if not parent_part.check_if_part_in_bom(stock_item.part):
             raise ValidationError(_("Selected part is not in the Bill of Materials"))
 
         return stock_item
+
+    def validate(self, data):
+        """Ensure that the provided dataset is valid"""
+
+        stock_item = data['stock_item']
+
+        quantity = data.get('quantity', stock_item.quantity)
+
+        if quantity > stock_item.quantity:
+            raise ValidationError(_("Quantity to install must not exceed available quantity"))
+
+        return data
 
     def save(self):
         """Install the selected stock item into this one."""
         data = self.validated_data
 
         stock_item = data['stock_item']
+        quantity_to_install = data.get('quantity', stock_item.quantity)
         note = data.get('note', '')
 
         parent_item = self.context['item']
@@ -512,7 +552,7 @@ class InstallStockItemSerializer(serializers.Serializer):
 
         parent_item.installStockItem(
             stock_item,
-            stock_item.quantity,
+            quantity_to_install,
             request.user,
             note,
         )
@@ -578,7 +618,6 @@ class ConvertStockItemSerializer(serializers.Serializer):
 
     def validate_part(self, part):
         """Ensure that the provided part is a valid option for the stock item"""
-
         stock_item = self.context['item']
         valid_options = stock_item.part.get_conversion_options()
 
@@ -586,6 +625,20 @@ class ConvertStockItemSerializer(serializers.Serializer):
             raise ValidationError(_("Selected part is not a valid option for conversion"))
 
         return part
+
+    def validate(self, data):
+        """Ensure that the stock item is valid for conversion:
+
+        - If a SupplierPart is assigned, we cannot convert!
+        """
+        data = super().validate(data)
+
+        stock_item = self.context['item']
+
+        if stock_item.supplier_part is not None:
+            raise ValidationError(_("Cannot convert stock item with assigned SupplierPart"))
+
+        return data
 
     def save(self):
         """Save the serializer to convert the StockItem to the selected Part"""
@@ -625,7 +678,6 @@ class ReturnStockItemSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serialzier to return the item into stock"""
-
         item = self.context['item']
         request = self.context['request']
 
@@ -641,6 +693,127 @@ class ReturnStockItemSerializer(serializers.Serializer):
         )
 
 
+class StockChangeStatusSerializer(serializers.Serializer):
+    """Serializer for changing status of multiple StockItem objects"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = [
+            'items',
+            'status',
+            'note',
+        ]
+
+    items = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=True,
+        required=True,
+        allow_null=False,
+        label=_('Stock Items'),
+        help_text=_('Select stock items to change status'),
+    )
+
+    def validate_items(self, items):
+        """Validate the selected stock items"""
+        if len(items) == 0:
+            raise ValidationError(_("No stock items selected"))
+
+        return items
+
+    status = serializers.ChoiceField(
+        choices=InvenTree.status_codes.StockStatus.items(),
+        default=InvenTree.status_codes.StockStatus.OK.value,
+        label=_('Status'),
+    )
+
+    note = serializers.CharField(
+        label=_('Notes'),
+        help_text=_('Add transaction note (optional)'),
+        required=False, allow_blank=True,
+    )
+
+    @transaction.atomic
+    def save(self):
+        """Save the serializer to change the status of the selected stock items"""
+        data = self.validated_data
+
+        items = data['items']
+        status = data['status']
+
+        request = self.context['request']
+        user = getattr(request, 'user', None)
+
+        note = data.get('note', '')
+
+        items_to_update = []
+        transaction_notes = []
+
+        deltas = {
+            'status': status,
+        }
+
+        now = datetime.now()
+
+        # Instead of performing database updates for each item,
+        # perform bulk database updates (much more efficient)
+
+        for item in items:
+            # Ignore items which are already in the desired status
+            if item.status == status:
+                continue
+
+            item.updated = now
+            item.status = status
+            items_to_update.append(item)
+
+            # Create a new transaction note for each item
+            transaction_notes.append(
+                StockItemTracking(
+                    item=item,
+                    tracking_type=InvenTree.status_codes.StockHistoryCode.EDITED.value,
+                    date=now,
+                    deltas=deltas,
+                    user=user,
+                    notes=note,
+                )
+            )
+
+        # Update status
+        StockItem.objects.bulk_update(items_to_update, ['status', 'updated'])
+
+        # Create entries
+        StockItemTracking.objects.bulk_create(transaction_notes)
+
+
+class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for StockLocationType model."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        model = StockLocationType
+        fields = [
+            "pk",
+            "name",
+            "description",
+            "icon",
+            "location_count",
+        ]
+
+        read_only_fields = [
+            "location_count",
+        ]
+
+    location_count = serializers.IntegerField(read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add location count to each location type."""
+        return queryset.annotate(
+            location_count=Count("stock_locations")
+        )
+
+
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a simple tree view."""
 
@@ -653,6 +826,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'name',
             'parent',
             'icon',
+            'structural',
         ]
 
 
@@ -672,23 +846,35 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'description',
             'parent',
             'pathstring',
+            'path',
             'items',
             'owner',
             'icon',
+            'custom_icon',
             'structural',
             'external',
-
+            'location_type',
+            'location_type_detail',
             'tags',
         ]
 
         read_only_fields = [
             'barcode_hash',
+            'icon',
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Optionally add or remove extra fields"""
+        path_detail = kwargs.pop('path_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not path_detail:
+            self.fields.pop('path')
 
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset"""
-
         # Annotate the number of stock items which exist in this category (including subcategories)
         queryset = queryset.annotate(
             items=stock.filters.annotate_location_items()
@@ -703,6 +889,18 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     level = serializers.IntegerField(read_only=True)
 
     tags = TagListSerializerField(required=False)
+
+    path = serializers.ListField(
+        child=serializers.DictField(),
+        source='get_path',
+        read_only=True,
+    )
+
+    # explicitly set this field, so it gets included for AutoSchema
+    icon = serializers.CharField(read_only=True)
+
+    # Detail for location type
+    location_type_detail = StockLocationTypeSerializer(source="location_type", read_only=True, many=False)
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
@@ -1042,9 +1240,16 @@ class StockMergeSerializer(serializers.Serializer):
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjument request.
 
-    Fields:
+    Required Fields:
         - item: StockItem object
         - quantity: Numerical quantity
+
+    Optional Fields (may be used by external tools)
+        - status: Change StockItem status code
+        - packaging: Change StockItem packaging
+        - batch: Change StockItem batch code
+
+    The optional fields can be used to adjust values for individual stock items
     """
 
     class Meta:
@@ -1069,6 +1274,28 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         decimal_places=5,
         min_value=0,
         required=True
+    )
+
+    batch = serializers.CharField(
+        max_length=100,
+        required=False, allow_blank=True,
+        label=_('Batch Code'),
+        help_text=_('Batch code for this stock item'),
+    )
+
+    status = serializers.ChoiceField(
+        choices=InvenTree.status_codes.StockStatus.items(),
+        default=InvenTree.status_codes.StockStatus.OK.value,
+        label=_('Status'),
+        help_text=_('Stock item status code'),
+        required=False, allow_blank=True,
+    )
+
+    packaging = serializers.CharField(
+        max_length=50,
+        required=False, allow_blank=True,
+        label=_('Packaging'),
+        help_text=_('Packaging this stock item is stored in'),
     )
 
 
@@ -1208,12 +1435,21 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         with transaction.atomic():
             for item in items:
 
+                # Required fields
                 stock_item = item['pk']
                 quantity = item['quantity']
+
+                # Optional fields
+                kwargs = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_name in item:
+                        kwargs[field_name] = item[field_name]
 
                 stock_item.move(
                     location,
                     notes,
                     request.user,
-                    quantity=quantity
+                    quantity=quantity,
+                    **kwargs
                 )

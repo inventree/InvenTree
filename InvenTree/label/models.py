@@ -6,6 +6,7 @@ import os
 import sys
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
@@ -24,7 +25,7 @@ from plugin.registry import registry
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
 except OSError as err:  # pragma: no cover
-    print("OSError: {e}".format(e=err))
+    print(f"OSError: {err}")
     print("You may require some further system packages to be installed.")
     sys.exit(1)
 
@@ -37,6 +38,13 @@ def rename_label(instance, filename):
     filename = os.path.basename(filename)
 
     return os.path.join('label', 'template', instance.SUBDIR, filename)
+
+
+def rename_label_output(instance, filename):
+    """Place the label output file into the correct subdirectory."""
+    filename = os.path.basename(filename)
+
+    return os.path.join('label', 'output', filename)
 
 
 def validate_stock_item_filters(filters):
@@ -101,10 +109,7 @@ class LabelTemplate(MetadataMixin, models.Model):
 
     def __str__(self):
         """Format a string representation of a label instance"""
-        return "{n} - {d}".format(
-            n=self.name,
-            d=self.description
-        )
+        return f"{self.name} - {self.description}"
 
     name = models.CharField(
         blank=False, max_length=100,
@@ -186,9 +191,37 @@ class LabelTemplate(MetadataMixin, models.Model):
 
         return template_string.render(context)
 
-    def context(self, request):
-        """Provides context data to the template."""
+    def generate_page_style(self, **kwargs):
+        """Generate @page style for the label template.
+
+        This is inserted at the top of the style block for a given label
+        """
+
+        width = kwargs.get('width', self.width)
+        height = kwargs.get('height', self.height)
+        margin = kwargs.get('margin', 0)
+
+        return f"""
+        @page {{
+            size: {width}mm {height}mm;
+            margin: {margin}mm;
+        }}
+        """
+
+    def context(self, request, **kwargs):
+        """Provides context data to the template.
+
+        Arguments:
+            request: The HTTP request object
+            kwargs: Additional keyword arguments
+        """
+
         context = self.get_context_data(request)
+
+        # By default, each label is supplied with '@page' data
+        # However, it can be excluded, e.g. when rendering a label sheet
+        if kwargs.get('insert_page_style', True):
+            context['page_style'] = self.generate_page_style()
 
         # Add "basic" context data which gets passed to every label
         context['base_url'] = get_base_url(request=request)
@@ -208,18 +241,31 @@ class LabelTemplate(MetadataMixin, models.Model):
 
         return context
 
-    def render_as_string(self, request, **kwargs):
-        """Render the label to a HTML string.
+    def render_as_string(self, request, target_object=None, **kwargs):
+        """Render the label to a HTML string"""
 
-        Useful for debug mode (viewing generated code)
-        """
-        return render_to_string(self.template_name, self.context(request), request)
+        if target_object:
+            self.object_to_print = target_object
 
-    def render(self, request, **kwargs):
+        context = self.context(request, **kwargs)
+
+        return render_to_string(
+            self.template_name,
+            context,
+            request
+        )
+
+    def render(self, request, target_object=None, **kwargs):
         """Render the label template to a PDF file.
 
         Uses django-weasyprint plugin to render HTML template
         """
+
+        if target_object:
+            self.object_to_print = target_object
+
+        context = self.context(request, **kwargs)
+
         wp = WeasyprintLabelMixin(
             request,
             self.template_name,
@@ -230,9 +276,39 @@ class LabelTemplate(MetadataMixin, models.Model):
         )
 
         return wp.render_to_response(
-            self.context(request),
+            context,
             **kwargs
         )
+
+
+class LabelOutput(models.Model):
+    """Class representing a label output file
+
+    'Printing' a label may generate a file object (such as PDF)
+    which is made available for download.
+
+    Future work will offload this task to the background worker,
+    and provide a 'progress' bar for the user.
+    """
+
+    # File will be stored in a subdirectory
+    label = models.FileField(
+        upload_to=rename_label_output,
+        unique=True, blank=False, null=False,
+    )
+
+    # Creation date of label output
+    created = models.DateField(
+        auto_now_add=True,
+        editable=False,
+    )
+
+    # User who generated the label
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+    )
 
 
 class StockItemLabel(LabelTemplate):
@@ -247,7 +323,7 @@ class StockItemLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs),'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_stock_item_filters
@@ -288,7 +364,7 @@ class StockLocationLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_stock_location_filters]
@@ -316,7 +392,7 @@ class PartLabel(LabelTemplate):
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Part query filters (comma-separated value of key=value pairs)'),
+        help_text=_('Query filters (comma-separated list of key=value pairs)'),
         verbose_name=_('Filters'),
         validators=[
             validate_part_filters
@@ -361,7 +437,6 @@ class BuildLineLabel(LabelTemplate):
 
     def get_context_data(self, request):
         """Generate context data for each provided BuildLine object."""
-
         build_line = self.object_to_print
 
         return {

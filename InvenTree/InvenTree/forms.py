@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.forms import SignupForm, set_form_field_order
+from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
@@ -21,6 +21,8 @@ from crispy_forms.bootstrap import (AppendedText, PrependedAppendedText,
                                     PrependedText)
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from rest_framework import serializers
 
 from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
@@ -65,10 +67,10 @@ class HelperForm(forms.ModelForm):
 
             # Look for font-awesome icons
             if prefix and prefix.startswith('fa-'):
-                prefix = r"<i class='fas {fa}'/>".format(fa=prefix)
+                prefix = f"<i class='fas {prefix}'/>"
 
             if suffix and suffix.startswith('fa-'):
-                suffix = r"<i class='fas {fa}'/>".format(fa=suffix)
+                suffix = f"<i class='fas {suffix}'/>"
 
             if prefix and suffix:
                 layouts.append(
@@ -159,11 +161,29 @@ class SetPasswordForm(HelperForm):
     old_password = forms.CharField(
         label=_("Old password"),
         strip=False,
+        required=False,
         widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'autofocus': True}),
     )
 
 
 # override allauth
+class CustomLoginForm(LoginForm):
+    """Custom login form to override default allauth behaviour"""
+
+    def login(self, request, redirect_url=None):
+        """Perform login action.
+
+        First check that:
+        - A valid user has been supplied
+        """
+        if not self.user:
+            # No user supplied - redirect to the login page
+            return HttpResponseRedirect(reverse('account_login'))
+
+        # Now perform default login action
+        return super().login(request, redirect_url)
+
+
 class CustomSignupForm(SignupForm):
     """Override to use dynamic settings."""
 
@@ -193,7 +213,7 @@ class CustomSignupForm(SignupForm):
         set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
 
     def clean(self):
-        """Make sure the supllied emails match if enabled in settings."""
+        """Make sure the supplied emails match if enabled in settings."""
         cleaned_data = super().clean()
 
         # check for two mail fields
@@ -206,6 +226,11 @@ class CustomSignupForm(SignupForm):
         return cleaned_data
 
 
+def registration_enabled():
+    """Determine whether user registration is enabled."""
+    return settings.EMAIL_HOST and (InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'))
+
+
 class RegistratonMixin:
     """Mixin to check if registration should be enabled."""
 
@@ -214,7 +239,7 @@ class RegistratonMixin:
 
         Configure the class variable `REGISTRATION_SETTING` to set which setting should be used, default: `LOGIN_ENABLE_REG`.
         """
-        if settings.EMAIL_HOST and (InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG')):
+        if registration_enabled():
             return super().is_open_for_signup(request, *args, **kwargs)
         return False
 
@@ -226,7 +251,7 @@ class RegistratonMixin:
 
         split_email = email.split('@')
         if len(split_email) != 2:
-            logger.error(f'The user {email} has an invalid email address')
+            logger.error('The user %s has an invalid email address', email)
             raise forms.ValidationError(_('The provided primary email address is not valid.'))
 
         mailoptions = mail_restriction.split(',')
@@ -238,7 +263,7 @@ class RegistratonMixin:
                 if split_email[1] == option[1:]:
                     return super().clean_email(email)
 
-        logger.info(f'The provided email domain for {email} is not approved')
+        logger.info('The provided email domain for %s is not approved', email)
         raise forms.ValidationError(_('The provided email domain is not approved.'))
 
     def save_user(self, request, user, form, commit=True):
@@ -253,7 +278,7 @@ class RegistratonMixin:
                 group = Group.objects.get(id=start_group)
                 user.groups.add(group)
             except Group.DoesNotExist:
-                logger.error('The setting `SIGNUP_GROUP` contains an non existent group', start_group)
+                logger.exception('The setting `SIGNUP_GROUP` contains an non existent group', start_group)
         user.save()
         return user
 
@@ -284,6 +309,14 @@ class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, OTPAdapter, Default
             return result
 
         return False
+
+    def get_email_confirmation_url(self, request, emailconfirmation):
+        """Construct the email confirmation url"""
+        from InvenTree.helpers_model import construct_absolute_url
+
+        url = super().get_email_confirmation_url(request, emailconfirmation)
+        url = construct_absolute_url(url)
+        return url
 
 
 class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter):
@@ -319,3 +352,20 @@ class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocial
 
         # Otherwise defer to the original allauth adapter.
         return super().login(request, user)
+
+
+# override dj-rest-auth
+class CustomRegisterSerializer(RegisterSerializer):
+    """Override of serializer to use dynamic settings."""
+    email = serializers.EmailField()
+
+    def __init__(self, instance=None, data=..., **kwargs):
+        """Check settings to influence which fields are needed."""
+        kwargs['email_required'] = InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED')
+        super().__init__(instance, data, **kwargs)
+
+    def save(self, request):
+        """Override to check if registration is open."""
+        if registration_enabled():
+            return super().save(request)
+        raise forms.ValidationError(_('Registration is disabled.'))

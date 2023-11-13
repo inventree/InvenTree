@@ -17,6 +17,7 @@ def is_email_configured():
     NOTE: This does not check if the configuration is valid!
     """
     configured = True
+    testing = settings.TESTING
 
     if InvenTree.ready.isInTestMode():
         return False
@@ -28,24 +29,30 @@ def is_email_configured():
         configured = False
 
         # Display warning unless in test mode
-        if not settings.TESTING:  # pragma: no cover
+        if not testing:  # pragma: no cover
             logger.debug("EMAIL_HOST is not configured")
 
     # Display warning unless in test mode
-    if not settings.EMAIL_HOST_USER and not settings.TESTING:  # pragma: no cover
+    if not settings.EMAIL_HOST_USER and not testing:  # pragma: no cover
         logger.debug("EMAIL_HOST_USER is not configured")
 
     # Display warning unless in test mode
-    if not settings.EMAIL_HOST_PASSWORD and not settings.TESTING:  # pragma: no cover
+    if not settings.EMAIL_HOST_PASSWORD and testing:  # pragma: no cover
         logger.debug("EMAIL_HOST_PASSWORD is not configured")
+
+    # Email sender must be configured
+    if not settings.DEFAULT_FROM_EMAIL:
+        configured = False
+
+        if not testing:  # pragma: no cover
+            logger.debug("DEFAULT_FROM_EMAIL is not configured")
 
     return configured
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
     """Send an email with the specified subject and body, to the specified recipients list."""
-
-    if type(recipients) == str:
+    if isinstance(recipients, str):
         recipients = [recipients]
 
     import InvenTree.ready

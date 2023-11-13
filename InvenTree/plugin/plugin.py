@@ -106,7 +106,6 @@ class MetaBase:
 
     def is_active(self):
         """Return True if this plugin is currently active."""
-
         # Builtin plugins are always considered "active"
         if self.is_builtin:
             return True
@@ -115,8 +114,7 @@ class MetaBase:
 
         if config:
             return config.active
-        else:
-            return False  # pragma: no cover
+        return False  # pragma: no cover
 
 
 class MixinBase:
@@ -360,7 +358,6 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @classmethod
     def _get_package_metadata(cls):
         """Get package metadata for plugin."""
-
         # Try simple metadata lookup
         try:
             meta = metadata(cls.__name__)
@@ -388,7 +385,10 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
     def define_package(self):
         """Add package info of the plugin into plugins context."""
-        package = self._get_package_metadata() if self._is_package else self._get_package_commit()
+        try:
+            package = self._get_package_metadata() if self._is_package else self._get_package_commit()
+        except TypeError:
+            package = {}
 
         # process date
         if package.get('date'):

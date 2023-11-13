@@ -4,9 +4,6 @@ In particular these views provide base functionality for rendering Django forms
 as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 
-import json
-
-from django.conf import settings
 from django.contrib.auth import password_validation
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
@@ -27,7 +24,6 @@ from allauth.account.views import (EmailView, LoginView,
                                    PasswordResetFromKeyView)
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
-from allauth_2fa.views import TwoFactorRemove
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
@@ -47,8 +43,7 @@ def auth_request(request):
     """
     if request.user.is_authenticated:
         return HttpResponse(status=200)
-    else:
-        return HttpResponse(status=403)
+    return HttpResponse(status=403)
 
 
 class InvenTreeRoleMixin(PermissionRequiredMixin):
@@ -226,8 +221,7 @@ class AjaxMixin(InvenTreeRoleMixin):
         """
         if method == 'POST':
             return self.request.POST.get(name, None)
-        else:
-            return self.request.GET.get(name, None)
+        return self.request.GET.get(name, None)
 
     def get_data(self):
         """Get extra context data (default implementation is empty dict).
@@ -447,8 +441,7 @@ class SetPasswordView(AjaxUpdateView):
 
         if valid:
             # Old password must be correct
-
-            if not user.check_password(old_password):
+            if user.has_usable_password() and not user.check_password(old_password):
                 form.add_error('old_password', _('Wrong password provided'))
                 valid = False
 
@@ -531,14 +524,6 @@ class SettingsView(TemplateView):
                 ctx["rates_updated"] = backend.last_update
         except Exception:
             ctx["rates_updated"] = None
-
-        # load locale stats
-        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
-
-        try:
-            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
-        except Exception:
-            ctx["locale_stats"] = {}
 
         # Forms and context for allauth
         ctx['add_email_form'] = AddEmailForm
@@ -640,8 +625,12 @@ class AppearanceSelectView(RedirectView):
             user_theme = common_models.ColorTheme()
             user_theme.user = request.user
 
-        user_theme.name = theme
-        user_theme.save()
+        if theme:
+            try:
+                user_theme.name = theme
+                user_theme.save()
+            except Exception:
+                pass
 
         return redirect(reverse_lazy('settings'))
 
@@ -664,9 +653,3 @@ class NotificationsView(TemplateView):
     """View for showing notifications."""
 
     template_name = "InvenTree/notifications/notifications.html"
-
-
-# Custom 2FA removal form to allow custom redirect URL
-class CustomTwoFactorRemove(TwoFactorRemove):
-    """Specify custom URL redirect."""
-    success_url = reverse_lazy("settings")

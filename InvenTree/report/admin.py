@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
                      ReportAsset, ReportSnippet, ReturnOrderReport,
-                     SalesOrderReport, TestReport)
+                     SalesOrderReport, StockLocationReport, TestReport)
 
 
 class ReportTemplateAdmin(admin.ModelAdmin):
@@ -25,6 +25,7 @@ class ReportAssetAdmin(admin.ModelAdmin):
 admin.site.register(ReportSnippet, ReportSnippetAdmin)
 admin.site.register(ReportAsset, ReportAssetAdmin)
 
+admin.site.register(StockLocationReport, ReportTemplateAdmin)
 admin.site.register(TestReport, ReportTemplateAdmin)
 admin.site.register(BuildReport, ReportTemplateAdmin)
 admin.site.register(BillOfMaterialsReport, ReportTemplateAdmin)

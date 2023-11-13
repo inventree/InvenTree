@@ -17,13 +17,13 @@ class BaseEnum(enum.IntEnum):
 
     def __eq__(self, obj):
         """Override equality operator to allow comparison with int."""
-        if type(self) == type(obj):
+        if type(self) is type(obj):
             return super().__eq__(obj)
         return self.value == obj
 
     def __ne__(self, obj):
         """Override inequality operator to allow comparison with int."""
-        if type(self) == type(obj):
+        if type(self) is type(obj):
             return super().__ne__(obj)
         return self.value != obj
 
@@ -70,7 +70,7 @@ class StatusCode(BaseEnum):
             return False
         if callable(value):
             return False
-        if type(value.value) != int:
+        if not isinstance(value.value, int):
             return False
         return True
 
@@ -163,7 +163,6 @@ class StatusCode(BaseEnum):
     @classmethod
     def template_context(cls):
         """Return a dict representation containing all required information for templates."""
-
         ret = {x.name: x.value for x in cls.values()}
         ret['list'] = cls.list()
 

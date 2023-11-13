@@ -4,7 +4,8 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
                                    InvenTreeModelSerializer)
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     ReturnOrderReport, SalesOrderReport, TestReport)
+                     ReturnOrderReport, SalesOrderReport, StockLocationReport,
+                     TestReport)
 
 
 class ReportSerializerBase(InvenTreeModelSerializer):
@@ -15,7 +16,6 @@ class ReportSerializerBase(InvenTreeModelSerializer):
     @staticmethod
     def report_fields():
         """Generic serializer fields for a report template"""
-
         return [
             'pk',
             'name',
@@ -83,4 +83,14 @@ class ReturnOrderReportSerializer(ReportSerializerBase):
         """Metaclass options"""
 
         model = ReturnOrderReport
+        fields = ReportSerializerBase.report_fields()
+
+
+class StockLocationReportSerializer(ReportSerializerBase):
+    """Serializer class for the StockLocationReport model"""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = StockLocationReport
         fields = ReportSerializerBase.report_fields()

@@ -26,14 +26,16 @@ from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.version import inventreeApiVersion
+from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
 from . import config
+
+checkMinPythonVersion()
 
 INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv
+TESTING = 'test' in sys.argv or 'TESTING' in os.environ
 
 if TESTING:
 
@@ -76,6 +78,9 @@ if version_file.exists():
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 
+ENABLE_CLASSIC_FRONTEND = get_boolean_setting('INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True)
+ENABLE_PLATFORM_FRONTEND = get_boolean_setting('INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True)
+
 # Configure logging settings
 log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 
@@ -106,6 +111,14 @@ LOGGING = {
     },
 }
 
+# Optionally add database-level logging
+if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):
+    LOGGING['loggers'] = {
+        'django.db.backends': {
+            'level': log_level or 'DEBUG',
+        },
+    }
+
 # Get a logger instance for this setup file
 logger = logging.getLogger("inventree")
 
@@ -128,8 +141,8 @@ ALLOWED_HOSTS = get_setting(
 
 # Cross Origin Resource Sharing (CORS) options
 
-# Only allow CORS access to API
-CORS_URLS_REGEX = r'^/api/.*$'
+# Only allow CORS access to API and media endpoints
+CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
 
 # Extract CORS options from configuration file
 CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
@@ -186,7 +199,18 @@ if DBBACKUP_STORAGE_OPTIONS is None:
         'location': config.get_backup_dir(),
     }
 
-# Application definition
+INVENTREE_ADMIN_ENABLED = get_boolean_setting(
+    'INVENTREE_ADMIN_ENABLED',
+    config_key='admin_enabled',
+    default_value=True
+)
+
+# Base URL for admin pages (default="admin")
+INVENTREE_ADMIN_URL = get_setting(
+    'INVENTREE_ADMIN_URL',
+    config_key='admin_url',
+    default_value='admin'
+)
 
 INSTALLED_APPS = [
     # Admin site integration
@@ -196,13 +220,14 @@ INSTALLED_APPS = [
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
+    'plugin.apps.PluginAppConfig',          # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
     'label.apps.LabelConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
-    'plugin.apps.PluginAppConfig',
+    'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
@@ -220,7 +245,6 @@ INSTALLED_APPS = [
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
     'rest_framework',                       # DRF (Django Rest Framework)
-    'rest_framework.authtoken',             # Token authentication for API
     'corsheaders',                          # Cross-origin Resource Sharing for DRF
     'crispy_forms',                         # Improved form rendering
     'import_export',                        # Import / export tables to file
@@ -245,6 +269,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',        # Backup codes
 
     'allauth_2fa',                          # MFA flow for allauth
+    'dj_rest_auth',                         # Authentication APIs - dj-rest-auth
+    'dj_rest_auth.registration',            # Registration APIs - dj-rest-auth'
     'drf_spectacular',                      # API documentation
 
     'django_ical',                          # For exporting calendars
@@ -274,7 +300,65 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
+    "sesame.backends.ModelBackend",                             # Magic link login django-sesame
 ])
+
+# LDAP support
+LDAP_AUTH = get_boolean_setting("INVENTREE_LDAP_ENABLED", "ldap.enabled", False)
+if LDAP_AUTH:
+    import ldap
+    from django_auth_ldap.config import LDAPSearch
+
+    AUTHENTICATION_BACKENDS.append("django_auth_ldap.backend.LDAPBackend")
+
+    # debug mode to troubleshoot configuration
+    LDAP_DEBUG = get_boolean_setting("INVENTREE_LDAP_DEBUG", "ldap.debug", False)
+    if LDAP_DEBUG:
+        if "loggers" not in LOGGING:
+            LOGGING["loggers"] = {}
+        LOGGING["loggers"]["django_auth_ldap"] = {"level": "DEBUG", "handlers": ["console"]}
+
+    # get global options from dict and use ldap.OPT_* as keys and values
+    global_options_dict = get_setting("INVENTREE_LDAP_GLOBAL_OPTIONS", "ldap.global_options", {}, dict)
+    global_options = {}
+    for k, v in global_options_dict.items():
+        # keys are always ldap.OPT_* constants
+        k_attr = getattr(ldap, k, None)
+        if not k.startswith("OPT_") or k_attr is None:
+            print(f"[LDAP] ldap.global_options, key '{k}' not found, skipping...")
+            continue
+
+        # values can also be other strings, e.g. paths
+        v_attr = v
+        if v.startswith("OPT_"):
+            v_attr = getattr(ldap, v, None)
+
+        if v_attr is None:
+            print(f"[LDAP] ldap.global_options, value key '{v}' not found, skipping...")
+            continue
+
+        global_options[k_attr] = v_attr
+    AUTH_LDAP_GLOBAL_OPTIONS = global_options
+    if LDAP_DEBUG:
+        print("[LDAP] ldap.global_options =", global_options)
+
+    AUTH_LDAP_SERVER_URI = get_setting("INVENTREE_LDAP_SERVER_URI", "ldap.server_uri")
+    AUTH_LDAP_START_TLS = get_boolean_setting("INVENTREE_LDAP_START_TLS", "ldap.start_tls", False)
+    AUTH_LDAP_BIND_DN = get_setting("INVENTREE_LDAP_BIND_DN", "ldap.bind_dn")
+    AUTH_LDAP_BIND_PASSWORD = get_setting("INVENTREE_LDAP_BIND_PASSWORD", "ldap.bind_password")
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        get_setting("INVENTREE_LDAP_SEARCH_BASE_DN", "ldap.search_base_dn"),
+        ldap.SCOPE_SUBTREE,
+        str(get_setting("INVENTREE_LDAP_SEARCH_FILTER_STR", "ldap.search_filter_str", "(uid= %(user)s)"))
+    )
+    AUTH_LDAP_USER_DN_TEMPLATE = get_setting("INVENTREE_LDAP_USER_DN_TEMPLATE", "ldap.user_dn_template")
+    AUTH_LDAP_USER_ATTR_MAP = get_setting("INVENTREE_LDAP_USER_ATTR_MAP", "ldap.user_attr_map", {
+        'first_name': 'givenName',
+        'last_name': 'sn',
+        'email': 'mail',
+    }, dict)
+    AUTH_LDAP_ALWAYS_UPDATE_USER = get_boolean_setting("INVENTREE_LDAP_ALWAYS_UPDATE_USER", "ldap.always_update_user", True)
+    AUTH_LDAP_CACHE_TIMEOUT = get_setting("INVENTREE_LDAP_CACHE_TIMEOUT", "ldap.cache_timeout", 3600, int)
 
 DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
 
@@ -307,14 +391,6 @@ if DEBUG:
     INSTALLED_APPS.append('sslserver')
 
 # InvenTree URL configuration
-
-# Base URL for admin pages (default="admin")
-INVENTREE_ADMIN_URL = get_setting(
-    'INVENTREE_ADMIN_URL',
-    config_key='admin_url',
-    default_value='admin'
-)
-
 ROOT_URLCONF = 'InvenTree.urls'
 
 TEMPLATES = [
@@ -361,7 +437,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'users.authentication.ApiTokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -373,13 +449,31 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+    'TOKEN_MODEL': 'users.models.ApiToken',
 }
 
 if DEBUG:
     # Enable browsable API if in DEBUG mode
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
+# dj-rest-auth
+# JWT switch
+USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
+REST_USE_JWT = USE_JWT
+OLD_PASSWORD_FIELD_ENABLED = True
+REST_AUTH_REGISTER_SERIALIZERS = {'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'}
+
+# JWT settings - rest_framework_simplejwt
+if USE_JWT:
+    JWT_AUTH_COOKIE = 'inventree-auth'
+    JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] + (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    )
+    INSTALLED_APPS.append('rest_framework_simplejwt')
+
+# WSGI default setting
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
@@ -422,7 +516,7 @@ for key in db_keys:
             try:
                 env_var = int(env_var)
             except ValueError:
-                logger.error(f"Invalid number for {env_key}: {env_var}")
+                logger.exception("Invalid number for %s: %s", env_key, env_var)
         # Override configuration value
         db_config[key] = env_var
 
@@ -463,9 +557,9 @@ if 'sqlite' in db_engine:
     db_name = str(Path(db_name).resolve())
     db_config['NAME'] = db_name
 
-logger.info(f"DB_ENGINE: {db_engine}")
-logger.info(f"DB_NAME: {db_name}")
-logger.info(f"DB_HOST: {db_host}")
+logger.info("DB_ENGINE: %s", db_engine)
+logger.info("DB_NAME: %s", db_name)
+logger.info("DB_HOST: %s", db_host)
 
 """
 In addition to base-level database configuration, we may wish to specify specific options to the database backend
@@ -662,6 +756,7 @@ Q_CLUSTER = {
     'orm': 'default',
     'cache': 'default',
     'sync': False,
+    'poll': 1.5,
 }
 
 # Configure django-q sentry integration
@@ -718,7 +813,10 @@ LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
 LANGUAGE_COOKIE_AGE = 2592000
 
 # If a new language translation is supported, it must be added here
+# After adding a new language, run the following command:
+# python manage.py makemessages -l <language_code> -e html,js,py --no-wrap
 LANGUAGES = [
+    ('bg', _('Bulgarian')),
     ('cs', _('Czech')),
     ('da', _('Danish')),
     ('de', _('German')),
@@ -730,6 +828,7 @@ LANGUAGES = [
     ('fi', _('Finnish')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
+    ('hi', _('Hindi')),
     ('hu', _('Hungarian')),
     ('it', _('Italian')),
     ('ja', _('Japanese')),
@@ -738,15 +837,17 @@ LANGUAGES = [
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
     ('pt', _('Portuguese')),
-    ('pt-BR', _('Portuguese (Brazilian)')),
+    ('pt-br', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
     ('sl', _('Slovenian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh-hans', _('Chinese')),
+    ('zh-hans', _('Chinese (Simplified)')),
+    ('zh-hant', _('Chinese (Traditional)')),
 ]
+
 
 # Testing interface translations
 if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no cover
@@ -785,7 +886,7 @@ CURRENCY_DECIMAL_PLACES = 6
 # Check that each provided currency is supported
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:  # pragma: no cover
-        logger.error(f"Currency code '{currency}' is not supported")
+        logger.error("Currency code '%s' is not supported", currency)
         sys.exit(1)
 
 # Custom currency exchange backend
@@ -802,6 +903,10 @@ EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
 EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
 
 DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
+
+# If "from" email not specified, default to the username
+if not DEFAULT_FROM_EMAIL:
+    DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
 
 EMAIL_USE_LOCALTIME = False
 EMAIL_TIMEOUT = 60
@@ -849,10 +954,12 @@ ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_at
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting('INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http')
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
+# 2FA
+REMOVE_SUCCESS_URL = 'settings'
 
 # override forms / adapters
 ACCOUNT_FORMS = {
-    'login': 'allauth.account.forms.LoginForm',
+    'login': 'InvenTree.forms.CustomLoginForm',
     'signup': 'InvenTree.forms.CustomSignupForm',
     'add_email': 'allauth.account.forms.AddEmailForm',
     'change_password': 'allauth.account.forms.ChangePasswordForm',
@@ -929,7 +1036,7 @@ PLUGIN_FILE_CHECKED = False                                                     
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
 if SITE_URL:
-    logger.info(f"Site URL: {SITE_URL}")
+    logger.info("Site URL: %s", SITE_URL)
 
     # Check that the site URL is valid
     validator = URLValidator()
@@ -940,11 +1047,16 @@ CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom
 CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
 
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
+
+# Load settings for the frontend interface
+FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
+FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
+
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 
-logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
+logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
 
 # Flags
 FLAGS = {
@@ -961,7 +1073,12 @@ FLAGS = {
 CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
 if CUSTOM_FLAGS:
     if not isinstance(CUSTOM_FLAGS, dict):
-        logger.error(f"Invalid custom flags, must be valid dict: {CUSTOM_FLAGS}")
+        logger.error("Invalid custom flags, must be valid dict: %s", str(CUSTOM_FLAGS))
     else:
-        logger.info(f"Custom flags: {CUSTOM_FLAGS}")
+        logger.info("Custom flags: %s", str(CUSTOM_FLAGS))
         FLAGS.update(CUSTOM_FLAGS)
+
+# Magic login django-sesame
+SESAME_MAX_AGE = 300
+# LOGIN_REDIRECT_URL = f"/{FRONTEND_URL_BASE}/logged-in/"
+LOGIN_REDIRECT_URL = "/index/"

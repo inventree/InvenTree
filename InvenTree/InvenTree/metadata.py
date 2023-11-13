@@ -10,6 +10,7 @@ from rest_framework.utils import model_meta
 import InvenTree.permissions
 import users.models
 from InvenTree.helpers import str2bool
+from InvenTree.serializers import DependentField
 
 logger = logging.getLogger('inventree')
 
@@ -83,6 +84,10 @@ class InvenTreeMetadata(SimpleMetadata):
                 'PATCH': 'change',
                 'DELETE': 'delete',
             }
+
+            # let the view define a custom rolemap
+            if hasattr(view, "rolemap"):
+                rolemap.update(view.rolemap)
 
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
@@ -238,6 +243,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
         We take the regular DRF metadata and add our own unique flavor
         """
+        # Try to add the child property to the dependent field to be used by the super call
+        if self.label_lookup[field] == 'dependent field':
+            field.get_child(raise_exception=True)
+
         # Run super method first
         field_info = super().get_field_info(field)
 
@@ -271,4 +280,11 @@ class InvenTreeMetadata(SimpleMetadata):
                 else:
                     field_info['api_url'] = model.get_api_url()
 
+        # Add more metadata about dependent fields
+        if field_info['type'] == 'dependent field':
+            field_info['depends_on'] = field.depends_on
+
         return field_info
+
+
+InvenTreeMetadata.label_lookup[DependentField] = "dependent field"

@@ -1,11 +1,22 @@
 """Sample implementations for IntegrationPlugin."""
 
+import json
+
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.urls import include, re_path
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
 from plugin.mixins import AppMixin, NavigationMixin, SettingsMixin, UrlsMixin
+
+
+def validate_json(value):
+    """Example validator for json input."""
+    try:
+        json.loads(value)
+    except Exception as e:
+        raise ValidationError(str(e))
 
 
 class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin):
@@ -44,6 +55,7 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
         'API_KEY': {
             'name': _('API Key'),
             'description': _('Key required for accessing external API'),
+            'required': True,
         },
         'NUMERICAL_SETTING': {
             'name': _('Numerical'),
@@ -72,6 +84,17 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             'description': 'Select a part object from the database',
             'model': 'part.part',
         },
+        'PROTECTED_SETTING': {
+            'name': 'Protected Setting',
+            'description': 'A protected setting, hidden from the UI',
+            'default': 'ABC-123',
+            'protected': True,
+        },
+        'VALIDATOR_SETTING': {
+            'name': 'JSON validator Setting',
+            'description': 'A setting using a JSON validator',
+            'validator': validate_json,
+        }
     }
 
     NAVIGATION = [

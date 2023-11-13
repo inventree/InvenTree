@@ -50,7 +50,7 @@ def rename_company_image(instance, filename):
     else:
         ext = ''
 
-    fn = 'company_{pk}_img'.format(pk=instance.pk)
+    fn = f'company_{instance.pk}_img'
 
     if ext:
         fn += '.' + ext
@@ -72,7 +72,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         name: Brief name of the company
         description: Longer form description
         website: URL for the company website
-        address: Postal address
+        address: One-line string representation of primary address
         phone: contact phone number
         email: contact email address
         link: Secondary URL e.g. for link to internal Wiki page
@@ -113,10 +113,6 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         verbose_name=_('Website'),
         help_text=_('Company website URL')
     )
-
-    address = models.CharField(max_length=200,
-                               verbose_name=_('Address'),
-                               blank=True, help_text=_('Company address'))
 
     phone = models.CharField(max_length=50,
                              verbose_name=_('Phone number'),
@@ -159,6 +155,21 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     )
 
     @property
+    def address(self):
+        """Return the string representation for the primary address
+
+        This property exists for backwards compatibility
+        """
+        addr = self.primary_address
+
+        return str(addr) if addr is not None else None
+
+    @property
+    def primary_address(self):
+        """Returns address object of primary address. Parsed by serializer"""
+        return Address.objects.filter(company=self.id).filter(primary=True).first()
+
+    @property
     def currency_code(self):
         """Return the currency code associated with this company.
 
@@ -174,7 +185,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
     def __str__(self):
         """Get string representation of a Company."""
-        return "{n} - {d}".format(n=self.name, d=self.description)
+        return f"{self.name} - {self.description}"
 
     def get_absolute_url(self):
         """Get the web URL for the detail view for this Company."""
@@ -184,15 +195,13 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         """Return the URL of the image for this company."""
         if self.image:
             return InvenTree.helpers.getMediaUrl(self.image.url)
-        else:
-            return InvenTree.helpers.getBlankImage()
+        return InvenTree.helpers.getBlankImage()
 
     def get_thumbnail_url(self):
         """Return the URL for the thumbnail image for this Company."""
         if self.image:
             return InvenTree.helpers.getMediaUrl(self.image.thumbnail.url)
-        else:
-            return InvenTree.helpers.getBlankThumbnail()
+        return InvenTree.helpers.getBlankThumbnail()
 
     @property
     def parts(self):
@@ -251,6 +260,131 @@ class Contact(MetadataMixin, models.Model):
     email = models.EmailField(blank=True)
 
     role = models.CharField(max_length=100, blank=True)
+
+
+class Address(models.Model):
+    """An address represents a physical location where the company is located. It is possible for a company to have multiple locations
+
+    Attributes:
+        company: Company link for this address
+        title: Human-readable name for the address
+        primary: True if this is the company's primary address
+        line1: First line of address
+        line2: Optional line two for address
+        postal_code: Postal code, city and state
+        country: Location country
+        shipping_notes: Notes for couriers transporting shipments to this address
+        internal_shipping_notes: Internal notes regarding shipping to this address
+        link: External link to additional address information
+    """
+
+    class Meta:
+        """Metaclass defines extra model options"""
+        verbose_name_plural = "Addresses"
+
+    def __init__(self, *args, **kwargs):
+        """Custom init function"""
+        super().__init__(*args, **kwargs)
+
+    def __str__(self):
+        """Defines string representation of address to supple a one-line to API calls"""
+        available_lines = [self.line1,
+                           self.line2,
+                           self.postal_code,
+                           self.postal_city,
+                           self.province,
+                           self.country
+                           ]
+
+        populated_lines = []
+        for line in available_lines:
+            if len(line) > 0:
+                populated_lines.append(line)
+
+        return ", ".join(populated_lines)
+
+    def save(self, *args, **kwargs):
+        """Run checks when saving an address:
+
+        - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
+        """
+        others = list(Address.objects.filter(company=self.company).exclude(pk=self.pk).all())
+
+        # If this is the *only* address for this company, make it the primary one
+        if len(others) == 0:
+            self.primary = True
+
+        super().save(*args, **kwargs)
+
+        # Once this address is saved, check others
+        if self.primary:
+            for addr in others:
+                if addr.primary:
+                    addr.primary = False
+                    addr.save()
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the Contcat model"""
+        return reverse('api-address-list')
+
+    company = models.ForeignKey(Company, related_name='addresses',
+                                on_delete=models.CASCADE,
+                                verbose_name=_('Company'),
+                                help_text=_('Select company'))
+
+    title = models.CharField(max_length=100,
+                             verbose_name=_('Address title'),
+                             help_text=_('Title describing the address entry'),
+                             blank=False)
+
+    primary = models.BooleanField(default=False,
+                                  verbose_name=_('Primary address'),
+                                  help_text=_('Set as primary address'))
+
+    line1 = models.CharField(max_length=50,
+                             verbose_name=_('Line 1'),
+                             help_text=_('Address line 1'),
+                             blank=True)
+
+    line2 = models.CharField(max_length=50,
+                             verbose_name=_('Line 2'),
+                             help_text=_('Address line 2'),
+                             blank=True)
+
+    postal_code = models.CharField(max_length=10,
+                                   verbose_name=_('Postal code'),
+                                   help_text=_('Postal code'),
+                                   blank=True)
+
+    postal_city = models.CharField(max_length=50,
+                                   verbose_name=_('City/Region'),
+                                   help_text=_('Postal code city/region'),
+                                   blank=True)
+
+    province = models.CharField(max_length=50,
+                                verbose_name=_('State/Province'),
+                                help_text=_('State or province'),
+                                blank=True)
+
+    country = models.CharField(max_length=50,
+                               verbose_name=_('Country'),
+                               help_text=_('Address country'),
+                               blank=True)
+
+    shipping_notes = models.CharField(max_length=100,
+                                      verbose_name=_('Courier shipping notes'),
+                                      help_text=_('Notes for shipping courier'),
+                                      blank=True)
+
+    internal_shipping_notes = models.CharField(max_length=100,
+                                               verbose_name=_('Internal shipping notes'),
+                                               help_text=_('Shipping notes for internal use'),
+                                               blank=True)
+
+    link = InvenTreeURLField(blank=True,
+                             verbose_name=_('Link'),
+                             help_text=_('Link to address information (external)'))
 
 
 class ManufacturerPart(MetadataMixin, models.Model):
@@ -489,11 +623,12 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
             try:
                 # Attempt conversion to specified unit
                 native_value = InvenTree.conversion.convert_physical_value(
-                    self.pack_quantity, self.part.units
+                    self.pack_quantity, self.part.units,
+                    strip_units=False
                 )
 
                 # If part units are not provided, value must be dimensionless
-                if not self.part.units and native_value.units not in ['', 'dimensionless']:
+                if not self.part.units and not InvenTree.conversion.is_dimensionless(native_value):
                     raise ValidationError({
                         'pack_quantity': _("Pack units must be compatible with the base part units")
                     })
@@ -615,7 +750,6 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     def base_quantity(self, quantity=1) -> Decimal:
         """Calculate the base unit quantiy for a given quantity."""
-
         q = Decimal(quantity) * Decimal(self.pack_quantity_native)
         q = round(q, 10).normalize()
 
@@ -640,7 +774,6 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     def update_available_quantity(self, quantity):
         """Update the available quantity for this SupplierPart"""
-
         self.available = quantity
         self.availability_updated = datetime.now()
         self.save()
@@ -714,8 +847,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
         if q is None or r is None:
             return 0
-        else:
-            return max(q - r, 0)
+        return max(q - r, 0)
 
     def purchase_orders(self):
         """Returns a list of purchase orders relating to this supplier part."""
@@ -778,7 +910,6 @@ class SupplierPriceBreak(common.models.PriceBreak):
 @receiver(post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break')
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated"""
-
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:
@@ -788,7 +919,6 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=SupplierPriceBreak, dispatch_uid='post_delete_supplier_price_break')
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted"""
-
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:

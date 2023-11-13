@@ -25,56 +25,6 @@
 
 {{ block.super }}
 
-function addHeaderTitle(title) {
-
-    addSidebarHeader({
-        text: title,
-    });
-}
-
-function addHeaderAction(label, title, icon, options) {
-
-    // Construct a "badge" to add to the sidebar item
-    var badge = `
-    <span id='sidebar-badge-${label}' class='sidebar-item-badge badge rounded-pill badge-right bg-dark'>
-        <span class='fas fa-spin fa-spinner'></span>
-    </span>
-    `;
-
-    addSidebarItem({
-        label: label,
-        text: title,
-        icon: icon,
-        content_after: badge
-    });
-
-    // Add a detail item to the detail item-panel
-    $("#detail-panels").append(
-        `<div class='panel panel-inventree panel-hidden' id='panel-${label}'>
-            <div class='panel-heading'>
-                <h4>${title}</h4>
-            </div>
-            <div class='panel-content'>
-                <table class='table table-condensed table-striped' id='table-${label}'></table>
-            </div>
-        </div>`
-    );
-
-    // Connect a callback to the table
-    $(`#table-${label}`).on('load-success.bs.table', function() {
-        var count = $(`#table-${label}`).bootstrapTable('getData').length;
-
-        var badge = $(`#sidebar-badge-${label}`);
-
-        badge.html(count);
-
-        if (count > 0) {
-            badge.removeClass('bg-dark');
-            badge.addClass('bg-primary');
-        }
-    });
-}
-
 {% settings_value 'HOMEPAGE_HIDE_INACTIVE' user=request.user as hide_inactive %}
 {% settings_value 'HOMEPAGE_PART_STARRED' user=request.user as setting_part_starred %}
 {% settings_value 'HOMEPAGE_CATEGORY_STARRED' user=request.user as setting_category_starred %}
@@ -88,13 +38,13 @@ addHeaderTitle('{% trans "Parts" %}');
 {% if setting_part_starred %}
 addHeaderAction('starred-parts', '{% trans "Subscribed Parts" %}', 'fa-bell');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
+    name: 'starred-parts',
     params: {
         starred: true,
         {% if hide_inactive %}
         active: true,
         {% endif %}
     },
-    name: 'starred_parts',
 });
 {% endif %}
 
@@ -111,9 +61,10 @@ loadPartCategoryTable($('#table-starred-categories'), {
 {% if setting_part_latest %}
 addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
+    name: 'latest-parts',
     params: {
         ordering: "-creation_date",
-        limit: {% settings_value "PART_RECENT_COUNT" user=request.user %},
+        created_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),
         {% if hide_inactive %}
         active: true,
         {% endif %}
@@ -125,6 +76,7 @@ loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
 {% if setting_bom_validation %}
 addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-times-circle');
 loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
+    name: 'parts-invalid-bom',
     params: {
         "bom_valid": false,
         {% if hide_inactive %}
@@ -150,14 +102,15 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 {% endif %}
 
 {% if roles.stock.view %}
-
 {% if setting_stock_recent %}
 addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
 loadStockTable($('#table-recently-updated-stock'), {
+    disableFilters: true,
     params: {
+        in_stock: true,
         part_detail: true,
         ordering: "-updated",
-        limit: {% settings_value "STOCK_RECENT_COUNT" user=request.user %},
+        updated_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),
     },
     name: 'recently-updated-stock',
 });
@@ -166,6 +119,7 @@ loadStockTable($('#table-recently-updated-stock'), {
 {% if setting_stock_low %}
 addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-flag');
 loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
+    name: 'parts-low-stock',
     params: {
         low_stock: true,
         {% if hide_inactive %}
@@ -179,6 +133,7 @@ loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
 {% if setting_stock_depleted %}
 addHeaderAction('depleted-stock', '{% trans "Depleted Stock" %}', 'fa-times');
 loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
+    name: 'parts-depleted-stock',
     params: {
         depleted_stock: true,
         {% if hide_inactive %}
@@ -191,15 +146,8 @@ loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
 
 {% if setting_stock_needed %}
 addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
-loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
-    params: {
-        stock_to_build: true,
-        {% if hide_inactive %}
-        active: true,
-        {% endif %}
-    },
-    name: "to_build_parts",
-});
+
+loadRequiredForBuildsPartsTable("#table-stock-to-build", {});
 {% endif %}
 
 {% if expiry %}
@@ -207,6 +155,7 @@ loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
 {% if setting_stock_expired %}
 addHeaderAction('expired-stock', '{% trans "Expired Stock" %}', 'fa-calendar-times');
 loadStockTable($("#table-expired-stock"), {
+    disableFilters: true,
     params: {
         expired: true,
         location_detail: true,
@@ -215,12 +164,14 @@ loadStockTable($("#table-expired-stock"), {
         active: true,
         {% endif %}
     },
+    name: 'expired-stock',
 });
 {% endif %}
 
 {% if setting_stock_stale %}
 addHeaderAction('stale-stock', '{% trans "Stale Stock" %}', 'fa-stopwatch');
 loadStockTable($("#table-stale-stock"), {
+    disableFilters: true,
     params: {
         stale: true,
         expired: false,
@@ -230,6 +181,7 @@ loadStockTable($("#table-stale-stock"), {
         active: true,
         {% endif %}
     },
+    name: 'stale-stock',
 });
 {% endif %}
 

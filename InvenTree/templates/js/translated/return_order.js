@@ -90,8 +90,23 @@ function returnOrderFields(options={}) {
                 return filters;
             }
         },
+        address: {
+            icon: 'fa-map',
+            adjustFilters: function(filters) {
+                let customer = getFormFieldValue('customer', {}, {modal: options.modal});
+
+                if (customer) {
+                    filters.company = customer;
+                }
+
+                return filters;
+            }
+        },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         }
     };
 
@@ -249,9 +264,6 @@ function loadReturnOrderTable(table, options={}) {
         disablePagination: is_calendar,
         formatNoMatches: function() {
             return '{% trans "No return orders found" %}';
-        },
-        onRefresh: function() {
-            loadReturnOrderTable(table, options);
         },
         onLoadSuccess: function() {
             // TODO
@@ -537,8 +549,12 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
         fields: {
             location: {
                 filters: {
-                    strucutral: false,
-                }
+                    structural: false,
+                },
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
             }
         },
         confirm: true,

@@ -8,6 +8,7 @@
 {% settings_value 'RETURNORDER_ENABLED' as return_order_enabled %}
 {% settings_value "REPORT_ENABLE" as report_enabled %}
 {% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
+{% settings_value "_PENDING_MIGRATIONS" as pending_migrations %}
 {% settings_value "LABEL_ENABLE" as labels_enabled %}
 {% inventree_show_about user as show_about %}
 
@@ -106,6 +107,16 @@
                     </small>
                 </div>
                 {% endif %}
+                {% if pending_migrations > 0 %}
+                <div id='alert-pending-migrations' class='alert alert-danger' role='alert'>
+                    <span class='fas fa-database'></span>
+                    <strong>{% trans "Pending Database Migrations" %}</strong>
+                    <small>
+                        <br>
+                        {% trans "There are pending database migrations which require attention" %}. {% trans "Contact your system administrator for further information" %}
+                    </small>
+                </div>
+                {% endif %}
             </div>
             {% endblock alerts %}
 
@@ -147,6 +158,7 @@
 <!-- dynamic javascript templates -->
 <script defer type='text/javascript' src="{% url 'calendar.js' %}"></script>
 <script defer type='text/javascript' src="{% url 'nav.js' %}"></script>
+<script defer type='text/javascript' src="{% url 'permissions.js' %}"></script>
 <script defer type='text/javascript' src="{% url 'settings.js' %}"></script>
 
 <!-- translated javascript templates-->
@@ -160,6 +172,7 @@
 <script defer type='text/javascript' src="{% i18n_static 'filters.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'forms.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'helpers.js' %}"></script>
+<script defer type='text/javascript' src="{% i18n_static 'index.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'label.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'modals.js' %}"></script>
 <script defer type='text/javascript' src="{% i18n_static 'model_renderers.js' %}"></script>

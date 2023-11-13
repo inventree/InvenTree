@@ -19,10 +19,10 @@
 {% endblock heading %}
 
 {% block actions %}
-{% if user.is_staff and roles.purchase_order.change %}
-{% url 'admin:order_purchaseorder_change' order.pk as url %}
+
+{% admin_url user "order.purchaseorder" order.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
+
 {% if barcodes %}
 <!-- Barcode actions menu -->
 <div class='btn-group' role='group'>
@@ -80,10 +80,6 @@
     <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
 </button>
 {% elif order.is_open %}
-<button type='button' class='btn btn-primary' id='receive-order' title='{% trans "Receive items" %}'>
-    <span class='fas fa-sign-in-alt'></span>
-    {% trans "Receive Items" %}
-</button>
 <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
     <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
@@ -169,7 +165,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-link'></span></td>
         <td>{% trans "External Link" %}</td>
-        <td>{% include 'clip_link.html' with link=order.link %}</td>
+        <td>{% include 'clip_link.html' with link=order.link new_window=True %}</td>
     </tr>
     {% endif %}
     <tr>
@@ -206,6 +202,13 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-user-tie'></span></td>
         <td>{% trans "Contact" %}</td>
         <td>{{ order.contact.name }}</td>
+    </tr>
+    {% endif %}
+    {% if order.address %}
+    <tr>
+        <td><span class='fas fa-map'></span></td>
+        <td>{% trans "Address" %}</td>
+        <td><b>{{ order.address.title }}</b>: {{ order.address }}</td>
     </tr>
     {% endif %}
     {% if order.responsible %}
@@ -268,22 +271,6 @@ $("#edit-order").click(function() {
         {% endif %}
         reload: true,
     });
-});
-
-$("#receive-order").click(function() {
-
-    // Auto select items which have not been fully allocated
-    var items = getTableData('#po-line-table');
-
-    receivePurchaseOrderItems(
-        {{ order.id }},
-        items,
-        {
-            success: function() {
-                $("#po-line-table").bootstrapTable('refresh');
-            }
-        }
-    );
 });
 
 $("#complete-order").click(function() {

@@ -5,7 +5,7 @@
 {% block style %}
 
 .qr {
-    position: fixed;
+    position: absolute;
     left: 0mm;
     top: 0mm;
     {% localize off %}
@@ -18,5 +18,5 @@
 
 {% block content %}
 
-<img class='qr' alt="{% trans 'QC Code' %}" src='{% qrcode qr_data %}'>
+<img class='qr' alt="{% trans 'QR Code' %}" src='{% qrcode qr_data %}'>
 {% endblock content %}

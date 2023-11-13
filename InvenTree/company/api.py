@@ -4,7 +4,6 @@ from django.db.models import Q
 from django.urls import include, path, re_path
 
 from django_filters import rest_framework as rest_filters
-from django_filters.rest_framework import DjangoFilterBackend
 
 import part.models
 from InvenTree.api import (AttachmentMixin, ListCreateDestroyAPIView,
@@ -14,11 +13,12 @@ from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
-from .models import (Company, CompanyAttachment, Contact, ManufacturerPart,
-                     ManufacturerPartAttachment, ManufacturerPartParameter,
-                     SupplierPart, SupplierPriceBreak)
-from .serializers import (CompanyAttachmentSerializer, CompanySerializer,
-                          ContactSerializer,
+from .models import (Address, Company, CompanyAttachment, Contact,
+                     ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
+from .serializers import (AddressSerializer, CompanyAttachmentSerializer,
+                          CompanySerializer, ContactSerializer,
                           ManufacturerPartAttachmentSerializer,
                           ManufacturerPartParameterSerializer,
                           ManufacturerPartSerializer, SupplierPartSerializer,
@@ -88,10 +88,6 @@ class CompanyAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = CompanyAttachment.objects.all()
     serializer_class = CompanyAttachmentSerializer
 
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-
     filterset_fields = [
         'company',
     ]
@@ -133,6 +129,32 @@ class ContactDetail(RetrieveUpdateDestroyAPI):
 
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+
+
+class AddressList(ListCreateDestroyAPIView):
+    """API endpoint for list view of Address model"""
+
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    filterset_fields = [
+        'company',
+    ]
+
+    ordering_fields = [
+        'title',
+    ]
+
+    ordering = 'title'
+
+
+class AddressDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single Address object"""
+
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
 
 
 class ManufacturerPartFilter(rest_filters.FilterSet):
@@ -218,10 +240,6 @@ class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
 
     queryset = ManufacturerPartAttachment.objects.all()
     serializer_class = ManufacturerPartAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
 
     filterset_fields = [
         'manufacturer_part',
@@ -364,7 +382,6 @@ class SupplierPartList(ListCreateDestroyAPIView):
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint"""
-
         # Do we wish to include extra detail?
         try:
             params = self.request.query_params
@@ -471,7 +488,6 @@ class SupplierPriceBreakList(ListCreateAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint"""
-
         try:
             params = self.request.query_params
 
@@ -566,6 +582,11 @@ company_api_urls = [
             re_path('^.*$', ContactDetail.as_view(), name='api-contact-detail'),
         ])),
         re_path(r'^.*$', ContactList.as_view(), name='api-contact-list'),
+    ])),
+
+    re_path(r'^address/', include([
+        path('<int:pk>/', AddressDetail.as_view(), name='api-address-detail'),
+        re_path(r'^.*$', AddressList.as_view(), name='api-address-list'),
     ])),
 
     re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),

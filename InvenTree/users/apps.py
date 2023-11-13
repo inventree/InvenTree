@@ -5,7 +5,8 @@ import logging
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 
-from InvenTree.ready import canAppAccessDatabase
+from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
+                             isPluginRegistryLoaded)
 
 logger = logging.getLogger('inventree')
 
@@ -17,6 +18,10 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         """Called when the 'users' app is loaded at runtime"""
+        # skip loading if plugin registry is not loaded or we run in a background thread
+        if not isPluginRegistryLoaded() or not isInMainThread():
+            return
+
         if canAppAccessDatabase(allow_test=True):
 
             try:
@@ -38,7 +43,7 @@ class UsersConfig(AppConfig):
         # First, delete any rule_set objects which have become outdated!
         for rule in RuleSet.objects.all():
             if rule.name not in RuleSet.RULESET_NAMES:  # pragma: no cover  # can not change ORM without the app being loaded
-                logger.info(f"Deleting outdated ruleset: {rule.name}")
+                logger.info("Deleting outdated ruleset: %s", rule.name)
                 rule.delete()
 
         # Update group permission assignments for all groups

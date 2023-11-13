@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import Success
-from django_q.monitor import Stat
+from django_q.status import Stat
 
 import InvenTree.email
 import InvenTree.ready
@@ -17,7 +17,7 @@ logger = logging.getLogger("inventree")
 
 
 def is_worker_running(**kwargs):
-    """Return True if the background worker process is oprational."""
+    """Return True if the background worker process is operational."""
     clusters = Stat.get_all()
 
     if len(clusters) > 0:

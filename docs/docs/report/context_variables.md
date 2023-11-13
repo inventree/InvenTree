@@ -15,7 +15,8 @@ Each report has access to a number of context variables by default. The followin
 | --- | --- |
 | date | Current date, represented as a Python datetime.date object |
 | datetime | Current datetime, represented as a Python datetime object |
-| default_page_size | InvenTree default page size variable |
+| page_size | The specified page size for this report, e.g. `A4` or `Letter landscape` |
+| report_template | The report template model instance |
 | report_name | Name of the report template |
 | report_description | Description of the report template |
 | report_revision | Revision of the report template |
@@ -114,7 +115,7 @@ Each part object has access to a lot of context variables about the part. The fo
 
 ### Stock
 
-#### Stock Item
+#### StockItem
 
 | Variable | Description |
 |----------|-------------|
@@ -143,7 +144,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | purchase_price | The unit purchase price for this [StockItem](./context_variables.md#stockitem) - this is the unit price at time of purchase (if this item was purchased from an external supplier) |
 | packaging | Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc) |
 
-#### Stock Location
+#### StockLocation
 
 | Variable | Description |
 |----------|-------------|
@@ -155,23 +156,24 @@ Each part object has access to a lot of context variables about the part. The fo
 | owner | The owner of the location if it has one. The owner can only be assigned in the admin interface |
 | parent | The parent location. Returns None if it is already the top most one |
 | path | A queryset of locations that contains the hierarchy starting from the top most parent |
-| path_string | A string that contains all names of the path separated by slashes e.g. A/B/C |
+| pathstring | A string that contains all names of the path separated by slashes e.g. A/B/C |
 | structural | True if the location is structural |
 
 ### Suppliers
 
-#### Supplier
+#### Company
 
 | Variable | Description |
 |----------|-------------|
 | name | Name of the company |
 | description | Longer form description |
 | website | URL for the company website |
-| address | Postal address |
-| contact | Contace Name |
+| primary_address | [Address](./context_variables.md#address) object that is marked as primary address |
+| address | String format of the primary address |
+| contact | Contact Name |
 | phone | Contact phone number |
 | email | Contact email address |
-| link | A second econdary URL to the company (Actually only accessible in the admin interface) |
+| link | A second URL to the company (Actually only accessible in the admin interface) |
 | notes | Extra notes about the company (Actually only accessible in the admin interface) |
 | is_customer | Boolean value, is this company a customer |
 | is_supplier | Boolean value, is this company a supplier |
@@ -179,13 +181,36 @@ Each part object has access to a lot of context variables about the part. The fo
 | currency_code | Default currency for the company |
 | parts | Query set with all parts that the company supplies |
 
+#### Address
+
+| Variable | Description |
+|----------|-------------|
+| line1 | First line of the postal address |
+| line2 | Second line of the postal address |
+| postal_code | ZIP code of the city |
+| postal_city | City name |
+| country | Country name |
+
+#### Contact
+
+Contacts are added to companies. Actually the company has no link to the contacts.
+You can search the company object of the contact.
+
+| Variable | Description |
+|----------|-------------|
+| company | Company object where the contact belongs to |
+| name | First and second name of the contact |
+| phone | Phone number |
+| email | Email address |
+| role | Role of the contact |
+
 #### SupplierPart
 
 | Variable | Description |
 |----------|-------------|
 | part | Link to the master Part (Obsolete) |
 | source_item | The sourcing [StockItem](./context_variables.md#stockitem) linked to this [SupplierPart](./context_variables.md#supplierpart) instance |
-| supplier | [Supplier](./context_variables.md#supplier) that supplies this part |
+| supplier | [Company](./context_variables.md#company) that supplies this part |
 | SKU | Stock keeping unit (supplier part number) |
 | link | Link to external website for this supplier part |
 | description | Descriptive notes field |

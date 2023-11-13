@@ -64,7 +64,13 @@ case "$OS" in
         fi
         ;;
     "Debian GNU/Linux" | "debian gnu/linux" | Raspbian)
-        if [[ $VER != "11" ]]; then
+        if [[ $VER == "12" ]]; then
+            SUPPORTED=true
+        elif [[ $VER == "11" ]]; then
+            SUPPORTED=true
+        elif [[ $VER == "10" ]]; then
+            SUPPORTED=true
+        else
             SUPPORTED=false
         fi
         DIST_OS=debian
@@ -104,10 +110,10 @@ if [[ $NEEDS_LIBSSL1_1 == "true" ]]; then
 fi
 
 echo "### Getting and adding key"
-wget -qO- https://dl.packager.io/srv/$publisher/InvenTree/key | sudo apt-key add -
+curl -fsSL https://dl.packager.io/srv/$publisher/InvenTree/key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/pkgr-inventree.gpg> /dev/null
 echo "### Adding package source"
-do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/$DIST_OS/$DIST_VER.repo"
-
+SOURCE_URL="deb [signed-by=/etc/apt/trusted.gpg.d/pkgr-inventree.gpg] https://dl.packager.io/srv/deb/$publisher/InvenTree/$source_url/$DIST_OS $DIST_VER main"
+echo "$SOURCE_URL" | tee /etc/apt/sources.list.d/inventree.list > /dev/null
 echo "### Updating package lists"
 do_call "sudo apt-get update"
 

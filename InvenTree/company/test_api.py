@@ -6,7 +6,7 @@ from rest_framework import status
 
 from InvenTree.unit_test import InvenTreeAPITestCase
 
-from .models import Company, Contact, ManufacturerPart, SupplierPart
+from .models import Address, Company, Contact, ManufacturerPart, SupplierPart
 
 
 class CompanyTest(InvenTreeAPITestCase):
@@ -20,7 +20,6 @@ class CompanyTest(InvenTreeAPITestCase):
     @classmethod
     def setUpTestData(cls):
         """Perform initialization for the unit test class"""
-
         super().setUpTestData()
 
         # Create some company objects to work with
@@ -148,7 +147,6 @@ class ContactTest(InvenTreeAPITestCase):
     @classmethod
     def setUpTestData(cls):
         """Perform init for this test class"""
-
         super().setUpTestData()
 
         # Create some companies
@@ -178,7 +176,6 @@ class ContactTest(InvenTreeAPITestCase):
 
     def test_list(self):
         """Test company list API endpoint"""
-
         # List all results
         response = self.get(self.url, {}, expected_code=200)
 
@@ -202,7 +199,6 @@ class ContactTest(InvenTreeAPITestCase):
 
     def test_create(self):
         """Test that we can create a new Contact object via the API"""
-
         n = Contact.objects.count()
 
         company = Company.objects.first()
@@ -232,7 +228,6 @@ class ContactTest(InvenTreeAPITestCase):
 
     def test_edit(self):
         """Test that we can edit a Contact via the API"""
-
         # Get the first contact
         contact = Contact.objects.first()
         # Use this contact in the tests
@@ -268,7 +263,6 @@ class ContactTest(InvenTreeAPITestCase):
 
     def test_delete(self):
         """Tests that we can delete a Contact via the API"""
-
         # Get the last contact
         contact = Contact.objects.first()
         url = reverse('api-contact-detail', kwargs={'pk': contact.pk})
@@ -281,6 +275,131 @@ class ContactTest(InvenTreeAPITestCase):
         self.delete(url, expected_code=204)
 
         # Try to access again (gone!)
+        self.get(url, expected_code=404)
+
+
+class AddressTest(InvenTreeAPITestCase):
+    """Test cases for Address API endpoints"""
+
+    roles = []
+
+    @classmethod
+    def setUpTestData(cls):
+        """Perform initialization for this test class"""
+        super().setUpTestData()
+        cls.num_companies = 3
+        cls.num_addr = 3
+        # Create some companies
+        companies = [
+            Company(
+                name=f"Company {idx}",
+                description="Some company"
+            ) for idx in range(cls.num_companies)
+        ]
+
+        Company.objects.bulk_create(companies)
+
+        addresses = []
+
+        # Create some contacts
+        for cmp in Company.objects.all():
+            addresses += [
+                Address(
+                    company=cmp,
+                    title=f"Address no. {idx}",
+                ) for idx in range(cls.num_addr)
+            ]
+
+        cls.url = reverse('api-address-list')
+
+        Address.objects.bulk_create(addresses)
+
+    def test_list(self):
+        """Test listing all addresses without filtering"""
+        response = self.get(self.url, expected_code=200)
+
+        self.assertEqual(len(response.data), self.num_companies * self.num_addr)
+
+    def test_filter_list(self):
+        """Test listing addresses filtered on company"""
+        company = Company.objects.first()
+
+        response = self.get(self.url, {'company': company.pk}, expected_code=200)
+
+        self.assertEqual(len(response.data), self.num_addr)
+
+    def test_create(self):
+        """Test creating a new address"""
+        company = Company.objects.first()
+
+        self.post(self.url,
+                  {
+                      'company': company.pk,
+                      'title': 'HQ'
+                  },
+                  expected_code=403)
+
+        self.assignRole('purchase_order.add')
+
+        self.post(self.url,
+                  {
+                      'company': company.pk,
+                      'title': 'HQ'
+                  },
+                  expected_code=201)
+
+    def test_get(self):
+        """Test that objects are properly returned from a get"""
+        addr = Address.objects.first()
+
+        url = reverse('api-address-detail', kwargs={'pk': addr.pk})
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['pk'], addr.pk)
+
+        for key in ['title', 'line1', 'line2', 'postal_code', 'postal_city', 'province', 'country']:
+            self.assertIn(key, response.data)
+
+    def test_edit(self):
+        """Test editing an object"""
+        addr = Address.objects.first()
+
+        url = reverse('api-address-detail', kwargs={'pk': addr.pk})
+
+        self.patch(
+            url,
+            {
+                'title': 'Hello'
+            },
+            expected_code=403
+        )
+
+        self.assignRole('purchase_order.change')
+
+        self.patch(
+            url,
+            {
+                'title': 'World'
+            },
+            expected_code=200
+        )
+
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['title'], 'World')
+
+    def test_delete(self):
+        """Test deleting an object"""
+        addr = Address.objects.first()
+
+        url = reverse('api-address-detail', kwargs={'pk': addr.pk})
+
+        self.delete(url, expected_code=403)
+
+        self.assignRole('purchase_order.delete')
+
+        self.delete(url, expected_code=204)
+
         self.get(url, expected_code=404)
 
 
@@ -435,7 +554,6 @@ class SupplierPartTest(InvenTreeAPITestCase):
 
     def test_available(self):
         """Tests for updating the 'available' field"""
-
         url = reverse('api-supplier-part-list')
 
         # Should fail when sending an invalid 'available' field
@@ -519,7 +637,6 @@ class CompanyMetadataAPITest(InvenTreeAPITestCase):
 
     def metatester(self, apikey, model):
         """Generic tester"""
-
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
@@ -548,7 +665,6 @@ class CompanyMetadataAPITest(InvenTreeAPITestCase):
 
     def test_metadata(self):
         """Test all endpoints"""
-
         for apikey, model in {
             'api-manufacturer-part-metadata': ManufacturerPart,
             'api-supplier-part-metadata': SupplierPart,

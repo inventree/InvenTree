@@ -17,7 +17,7 @@ In addition to providing the ability for end-users to provide their own reportin
 InvenTree report templates utilize the powerful [WeasyPrint](https://weasyprint.org/) PDF generation engine.
 
 !!! info "WeasyPrint"
-    WeasyPrint is an extremely powerful and flexible reporting library. Refer to the [WeasyPrint docs](https://weasyprint.readthedocs.io/en/stable/) for further information.
+    WeasyPrint is an extremely powerful and flexible reporting library. Refer to the [WeasyPrint docs](https://doc.courtbouillon.org/weasyprint/stable/) for further information.
 
 ### Stylesheets
 
@@ -148,6 +148,7 @@ InvenTree supports the following reporting functionality:
 | [Purchase Order Report](./purchase_order.md) | Format a purchase order report |
 | [Sales Order Report](./sales_order.md) | Format a sales order report |
 | [Return Order Report](./return_order.md) | Format a return order report |
+| [Stock Location Report](./stock_location.md) | Format a stock location report |
 
 ### Default Reports
 

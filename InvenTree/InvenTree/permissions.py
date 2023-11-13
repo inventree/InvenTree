@@ -9,7 +9,6 @@ import users.models
 
 def get_model_for_view(view, raise_error=True):
     """Attempt to introspect the 'model' type for an API view"""
-
     if hasattr(view, 'get_permission_model'):
         return view.get_permission_model()
 
@@ -61,6 +60,10 @@ class RolePermission(permissions.BasePermission):
             'PATCH': 'change',
             'DELETE': 'delete',
         }
+
+        # let the view define a custom rolemap
+        if hasattr(view, "rolemap"):
+            rolemap.update(view.rolemap)
 
         permission = rolemap[request.method]
 

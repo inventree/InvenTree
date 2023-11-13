@@ -449,7 +449,7 @@ function barcodeScanDialog(options={}) {
 
 
 /*
- * Dialog for linking a particular barcode to a database model instsance
+ * Dialog for linking a particular barcode to a database model instance
  */
 function linkBarcodeDialog(data, options={}) {
 
@@ -763,7 +763,7 @@ function scanItemsIntoLocation(item_list, options={}) {
     // Extra form fields
     var extra = makeNotesField();
 
-    // Header contentfor
+    // Header content
     var header = `
     <div id='header-div'>
     </div>

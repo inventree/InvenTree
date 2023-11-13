@@ -1,8 +1,8 @@
 """Helpers for plugin app."""
 
-import datetime
 import inspect
 import logging
+import os
 import pathlib
 import pkgutil
 import sysconfig
@@ -13,8 +13,6 @@ from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError
-
-from dulwich.repo import NotGitRepository, Repo
 
 logger = logging.getLogger('inventree')
 
@@ -111,26 +109,35 @@ def get_entrypoints():
 # region git-helpers
 def get_git_log(path):
     """Get dict with info of the last commit to file named in path."""
+    import datetime
+
+    from dulwich.repo import NotGitRepository, Repo
+
+    from InvenTree.ready import isInTestMode
 
     output = None
-    path = path.replace(str(settings.BASE_DIR.parent), '')[1:]
+    path = os.path.abspath(path)
 
-    try:
-        walker = Repo.discover(path).get_walker(paths=[path.encode()], max_entries=1)
+    if os.path.exists(path) and os.path.isfile(path):
+        path = os.path.dirname(path)
+
+    # only do this if we are not in test mode
+    if not isInTestMode():  # pragma: no cover
+
         try:
-            commit = next(iter(walker)).commit
-        except StopIteration:
-            pass
-        else:
+            repo = Repo(path)
+            head = repo.head()
+            commit = repo[head]
+
             output = [
-                commit.sha().hexdigest(),
+                head.decode(),
                 commit.author.decode().split('<')[0][:-1],
                 commit.author.decode().split('<')[1][:-1],
                 datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
                 commit.message.decode().split('\n')[0],
             ]
-    except NotGitRepository:
-        pass
+        except NotGitRepository:
+            pass
 
     if not output:
         output = 5 * ['']  # pragma: no cover
@@ -201,7 +208,7 @@ def render_template(plugin, template_file, context=None):
     try:
         tmp = template.loader.get_template(template_file)
     except template.TemplateDoesNotExist:
-        logger.error(f"Plugin {plugin.slug} could not locate template '{template_file}'")
+        logger.exception("Plugin %s could not locate template '%s'", plugin.slug, template_file)
 
         return f"""
         <div class='alert alert-block alert-danger'>
