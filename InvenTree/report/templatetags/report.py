@@ -220,7 +220,7 @@ def part_parameter(part: Part, parameter_name: str):
 
 
 @register.simple_tag()
-def company_image(company, **kwargs):
+def company_image(company, preview=False, thumbnail=False, **kwargs):
     """Return a fully-qualified path for a company image.
 
     Arguments:
@@ -229,10 +229,15 @@ def company_image(company, **kwargs):
     Raises:
         TypeError if provided company is not a Company instance
     """
-    if type(company) is Company:
-        img = company.image.name
-    else:
+    if type(company) is not Company:
         raise TypeError("company_image tag requires a Company instance")
+
+    if preview:
+        img = company.image.preview.name
+    elif thumbnail:
+        img = company.image.thumbnail.name
+    else:
+        img = company.image.name
 
     return uploaded_image(img, **kwargs)
 
