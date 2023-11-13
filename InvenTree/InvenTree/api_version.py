@@ -2,10 +2,15 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 149
+INVENTREE_API_VERSION = 150
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v150 -> 2023-11-07: https://github.com/inventree/InvenTree/pull/5875
+    - Extended user API endpoints to enable ordering
+    - Extended user API endpoints to enable user role changes
+    - Added endpoint to create a new user
+
 v149 -> 2023-11-07 : https://github.com/inventree/InvenTree/pull/5876
     - Add 'building' quantity to BomItem serializer
     - Add extra ordering options for the BomItem list API
