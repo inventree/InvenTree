@@ -152,7 +152,11 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         full_path = settings.STATIC_ROOT.joinpath('img', replacement_file).resolve()
 
     # Load the image, check that it is valid
-    img = Image.open(full_path)
+    if full_path.exists() and full_path.is_file():
+        img = Image.open(full_path)
+    else:
+        # A placeholder image showing that the image is missing
+        img = Image.new('RGB', (64, 64), color='red')
 
     width = kwargs.get('width', None)
     height = kwargs.get('height', None)
