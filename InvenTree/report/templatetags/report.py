@@ -7,6 +7,7 @@ import os
 from django import template
 from django.conf import settings
 from django.utils.safestring import SafeString, mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from PIL import Image
 
@@ -91,7 +92,7 @@ def asset(filename):
     full_path = settings.MEDIA_ROOT.joinpath('report', 'assets', filename).resolve()
 
     if not full_path.exists() or not full_path.is_file():
-        raise FileNotFoundError(f"Asset file '{filename}' does not exist")
+        raise FileNotFoundError(_("Asset file does not exist") + f": '{filename}'")
 
     if debug_mode:
         return os.path.join(settings.MEDIA_URL, 'report', 'assets', filename)
@@ -140,7 +141,7 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         exists = False
 
     if not exists and not replace_missing:
-        raise FileNotFoundError(f"Image file '{filename}' not found")
+        raise FileNotFoundError(_("Image file not found") + f": '{filename}'")
 
     if debug_mode:
         # In debug mode, return a web path (rather than an encoded image blob)
@@ -205,7 +206,7 @@ def encode_svg_image(filename):
             exists = False
 
     if not exists:
-        raise FileNotFoundError(f"Image file '{filename}' not found")
+        raise FileNotFoundError(_("Image file not found") + f": '{filename}'")
 
     # Read the file data
     with open(full_path, 'rb') as f:
@@ -226,7 +227,7 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
         TypeError if provided part is not a Part instance
     """
     if type(part) is not Part:
-        raise TypeError("part_image tag requires a Part instance")
+        raise TypeError(_("part_image tag requires a Part instance"))
 
     if preview:
         img = part.image.preview.name
@@ -265,7 +266,7 @@ def company_image(company, preview=False, thumbnail=False, **kwargs):
         TypeError if provided company is not a Company instance
     """
     if type(company) is not Company:
-        raise TypeError("company_image tag requires a Company instance")
+        raise TypeError(_("company_image tag requires a Company instance"))
 
     if preview:
         img = company.image.preview.name
