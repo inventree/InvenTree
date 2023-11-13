@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-13 12:13+0000\n"
-"PO-Revision-Date: 2023-11-10 20:54\n"
+"POT-Creation-Date: 2023-11-13 11:50+0000\n"
+"PO-Revision-Date: 2023-11-13 21:28\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -460,10 +460,8 @@ msgid "Select currency from available options"
 msgstr "Selecteer valuta uit beschikbare opties"
 
 #: InvenTree/serializers.py:427
-#, fuzzy
-#| msgid "You do not have permission to view this page."
 msgid "You do not have permission to change this user role."
-msgstr "U heeft geen rechten om deze pagina te bekijken."
+msgstr ""
 
 #: InvenTree/serializers.py:437
 msgid "Only superusers can create new users"
@@ -476,9 +474,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -13210,8 +13206,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13386,3 +13381,4 @@ msgstr ""
 #: users/models.py:393
 msgid "Permission to delete items"
 msgstr ""
+
