@@ -50,11 +50,23 @@ class OwnerList(ListAPI):
 
         results = []
 
-        # Extract search term f
-
         for result in queryset.all():
-            if search_term in result.name().lower():
-                results.append(result)
+
+            name = str(result.name()).lower().strip()
+            search_match = True
+
+            # Extract search term f
+            if search_term:
+                for entry in search_term.strip().split(' '):
+                    if entry not in name:
+                        search_match = False
+                        break
+
+            if not search_match:
+                continue
+
+            # If we get here, there is no reason *not* to include this result
+            results.append(result)
 
         return results
 
