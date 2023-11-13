@@ -6,6 +6,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -15,7 +16,7 @@ from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
@@ -300,6 +301,72 @@ class UserSerializer(InvenTreeModelSerializer):
         read_only_fields = [
             'username',
         ]
+
+
+class ExendedUserSerializer(UserSerializer):
+    """Serializer for a User with a bit more info."""
+    from users.serializers import GroupSerializer
+
+    groups = GroupSerializer(read_only=True, many=True)
+
+    class Meta(UserSerializer.Meta):
+        """Metaclass defines serializer fields."""
+        fields = UserSerializer.Meta.fields + [
+            'groups',
+            'is_staff',
+            'is_superuser',
+            'is_active'
+        ]
+
+        read_only_fields = UserSerializer.Meta.read_only_fields + [
+            'groups',
+        ]
+
+    def validate(self, attrs):
+        """Expanded validation for changing user role."""
+        # Check if is_staff or is_superuser is in attrs
+        role_change = 'is_staff' in attrs or 'is_superuser' in attrs
+        request_user = self.context['request'].user
+
+        if role_change:
+            if request_user.is_superuser:
+                # Superusers can change any role
+                pass
+            elif request_user.is_staff and 'is_superuser' not in attrs:
+                # Staff can change any role except is_superuser
+                pass
+            else:
+                raise PermissionDenied(_("You do not have permission to change this user role."))
+        return super().validate(attrs)
+
+
+class UserCreateSerializer(ExendedUserSerializer):
+    """Serializer for creating a new User."""
+    def validate(self, attrs):
+        """Expanded valiadation for auth."""
+        # Check that the user trying to create a new user is a superuser
+        if not self.context['request'].user.is_superuser:
+            raise serializers.ValidationError(_("Only superusers can create new users"))
+
+        # Generate a random password
+        password = User.objects.make_random_password(length=14)
+        attrs.update({'password': password})
+        return super().validate(attrs)
+
+    def create(self, validated_data):
+        """Send an e email to the user after creation."""
+        instance = super().create(validated_data)
+
+        # Make sure the user cannot login until they have set a password
+        instance.set_unusable_password()
+        # Send the user an onboarding email (from current site)
+        current_site = Site.objects.get_current()
+        domain = current_site.domain
+        instance.email_user(
+            subject=_(f"Welcome to {current_site.name}"),
+            message=_(f"Your account has been created.\n\nPlease use the password reset function to get access (at https://{domain})."),
+        )
+        return instance
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):

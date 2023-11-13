@@ -6,14 +6,14 @@ import logging
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
-from InvenTree.serializers import UserSerializer
+from InvenTree.filters import SEARCH_ORDER_FILTER
+from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
@@ -112,11 +112,11 @@ class RoleDetails(APIView):
         return Response(data)
 
 
-class UserDetail(RetrieveAPI):
+class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = ExendedUserSerializer
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -130,19 +130,15 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
         return self.request.user
 
 
-class UserList(ListAPI):
+class UserList(ListCreateAPI):
     """List endpoint for detail on all users."""
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
         'first_name',
@@ -150,8 +146,18 @@ class UserList(ListAPI):
         'username',
     ]
 
+    ordering_fields = [
+        'email',
+        'username',
+        'first_name',
+        'last_name',
+        'is_staff',
+        'is_superuser',
+        'is_active',
+    ]
 
-class GroupDetail(RetrieveAPI):
+
+class GroupDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group"""
 
     queryset = Group.objects.all()
@@ -161,7 +167,7 @@ class GroupDetail(RetrieveAPI):
     ]
 
 
-class GroupList(ListAPI):
+class GroupList(ListCreateAPI):
     """List endpoint for all auth groups"""
 
     queryset = Group.objects.all()
@@ -170,12 +176,13 @@ class GroupList(ListAPI):
         permissions.IsAuthenticated,
     ]
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
+        'name',
+    ]
+
+    ordering_fields = [
         'name',
     ]
 
