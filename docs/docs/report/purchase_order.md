@@ -37,8 +37,7 @@ Each line item have sub variables, as follows:
 | Variable | Description |
 | --- | --- |
 | quantity | The quantity of the part to be ordered |
-| part | The supplier part to be ordered |
-| part | The [supplierpart ](./context_variables.md#supplierpart) object that the build references |
+| part | The [supplierpart ](./context_variables.md#supplierpart) object to be ordered |
 | reference | The reference given in the part of the order |
 | notes | The notes given in the part of the order |
 | target_date | The date when the part should arrive. Each part can have an individual date |
