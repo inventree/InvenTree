@@ -41,6 +41,7 @@ import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
 import part.settings as part_settings
+import users.models
 from build import models as BuildModels
 from common.models import InvenTreeSetting
 from common.settings import currency_code_default
@@ -71,55 +72,23 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         default_keywords: Default keywords for parts created in this category
     """
 
+    ITEM_PARENT_KEY = 'category'
+
     class Meta:
         """Metaclass defines extra model properties"""
         verbose_name = _("Part Category")
         verbose_name_plural = _("Part Categories")
-
-    def delete_recursive(self, *args, **kwargs):
-        """This function handles the recursive deletion of subcategories depending on kwargs contents"""
-        delete_parts = kwargs.get('delete_parts', False)
-        parent_category = kwargs.get('parent_category', None)
-
-        if parent_category is None:
-            # First iteration, (no part_category kwargs passed)
-            parent_category = self.parent
-
-        for child_part in self.parts.all():
-            if delete_parts:
-                child_part.delete()
-            else:
-                child_part.category = parent_category
-                child_part.save()
-
-        for child_category in self.children.all():
-            if kwargs.get('delete_child_categories', False):
-                child_category.delete_recursive(**{
-                    "delete_child_categories": True,
-                    "delete_parts": delete_parts,
-                    "parent_category": parent_category})
-            else:
-                child_category.parent = parent_category
-                child_category.save()
-
-        super().delete(*args, **{})
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
 
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
-        with transaction.atomic():
-            self.delete_recursive(**{
-                "delete_parts": kwargs.get('delete_parts', False),
-                "delete_child_categories": kwargs.get('delete_child_categories', False),
-                "parent_category": self.parent})
 
-            if self.parent is not None:
-                # Partially rebuild the tree (cheaper than a complete rebuild)
-                PartCategory.objects.partial_rebuild(self.tree_id)
-            else:
-                PartCategory.objects.rebuild()
+        super().delete(
+            delete_children=kwargs.get('delete_child_categories', False),
+            delete_items=kwargs.get('delete_parts', False),
+        )
 
     default_location = TreeForeignKey(
         'stock.StockLocation', related_name="default_categories",
@@ -187,6 +156,10 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     def item_count(self):
         """Return the number of parts contained in this PartCategory"""
         return self.partcount()
+
+    def get_items(self, cascade=False):
+        """Return a queryset containing the parts which exist in this category"""
+        return self.get_parts(cascade=cascade)
 
     def partcount(self, cascade=True, active=False):
         """Return the total part count under this category (including children of child categories)."""
@@ -379,7 +352,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         notes: Additional notes field for this part
         creation_date: Date that this part was added to the database
         creation_user: User who added this part to the database
-        responsible: User who is responsible for this part (optional)
+        responsible_owner: Owner (either user or group) which is responsible for this part (optional)
         last_stocktake: Date at which last stocktake was performed for this Part
     """
 
@@ -510,17 +483,18 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         This will fail if:
 
         a) The parent part is the same as this one
-        b) The parent part is used in the BOM for *this* part
-        c) The parent part is used in the BOM for any child parts under this one
+        b) The parent part exists in the same variant tree as this one
+        c) The parent part is used in the BOM for *this* part
+        d) The parent part is used in the BOM for any child parts under this one
         """
         result = True
 
         try:
             if self.pk == parent.pk:
-                raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                    p1=str(self),
-                    p2=str(parent)
-                )})
+                raise ValidationError({'sub_part': _(f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)")})
+
+            if self.tree_id == parent.tree_id:
+                raise ValidationError({'sub_part': _(f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)")})
 
             bom_items = self.get_bom_items()
 
@@ -529,10 +503,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
                 # Check for simple match
                 if item.sub_part == parent:
-                    raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                        p1=str(parent),
-                        p2=str(self)
-                    )})
+                    raise ValidationError({'sub_part': _(f"Part '{parent}' is  used in BOM for '{self}' (recursive)")})
 
                 # And recursively check too
                 if recursive:
@@ -599,7 +570,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             match = re.search(pattern, self.IPN)
 
             if match is None:
-                raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
+                raise ValidationError(_(f'IPN must match regex pattern {pattern}'))
 
     def validate_serial_number(self, serial: str, stock_item=None, check_duplicates=True, raise_error=False, **kwargs):
         """Validate a serial number against this Part instance.
@@ -1036,7 +1007,13 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
-    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), help_text=_('User responsible for this part'), related_name='parts_responible')
+    responsible_owner = models.ForeignKey(
+        users.models.Owner, on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Responsible'),
+        help_text=_('Owner responsible for this part'),
+        related_name='parts_responsible'
+    )
 
     last_stocktake = models.DateField(
         blank=True, null=True,
@@ -1792,7 +1769,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         min_price = normalize(min_price)
         max_price = normalize(max_price)
 
-        return "{a} - {b}".format(a=min_price, b=max_price)
+        return f"{min_price} - {max_price}"
 
     def get_supplier_price_range(self, quantity=1):
         """Return the supplier price range of this part:
@@ -3351,7 +3328,7 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         """Return a string representation of a PartParameterTemplate instance"""
         s = str(self.name)
         if self.units:
-            s += " ({units})".format(units=self.units)
+            s += f" ({self.units})"
         return s
 
     def clean(self):
@@ -3491,12 +3468,7 @@ class PartParameter(MetadataMixin, models.Model):
 
     def __str__(self):
         """String representation of a PartParameter (used in the admin interface)"""
-        return "{part} : {param} = {data} ({units})".format(
-            part=str(self.part.full_name),
-            param=str(self.template.name),
-            data=str(self.data),
-            units=str(self.template.units)
-        )
+        return f"{self.part.full_name} : {self.template.name} = {self.data} ({self.template.units})"
 
     def save(self, *args, **kwargs):
         """Custom save method for the PartParameter model."""
@@ -3719,10 +3691,7 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
 
     def __str__(self):
         """Return a string representation of this BomItem instance"""
-        return "{n} x {child} to make {parent}".format(
-            parent=self.part.full_name,
-            child=self.sub_part.full_name,
-            n=decimal2string(self.quantity))
+        return f"{decimal2string(self.quantity)} x {self.sub_part.full_name} to make {self.part.full_name}"
 
     @staticmethod
     def get_api_url():
@@ -4036,7 +4005,7 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         pmin = decimal2money(pmin)
         pmax = decimal2money(pmax)
 
-        return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+        return f"{pmin} to {pmax}"
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')

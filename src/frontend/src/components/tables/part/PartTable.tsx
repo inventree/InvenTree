@@ -1,15 +1,18 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { shortenString } from '../../../functions/tables';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
+import { DescriptionColumn, LinkColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the part table
@@ -22,41 +25,31 @@ function partTableColumns(): TableColumn[] {
       noWrap: true,
       title: t`Part`,
       render: function (record: any) {
-        // TODO - Link to the part detail page
         return (
-          <Group spacing="xs" align="left" noWrap={true}>
-            <Thumbnail
-              src={record.thumbnail || record.image}
-              alt={record.name}
-              size={24}
-            />
-            <Text>{record.full_name}</Text>
-          </Group>
+          <Thumbnail
+            src={record.thumbnail || record.image}
+            alt={record.name}
+            text={record.full_name}
+          />
         );
       }
     },
     {
       accessor: 'IPN',
       title: t`IPN`,
-      sortable: true,
-      switchable: true
+      sortable: true
     },
     {
       accessor: 'units',
       sortable: true,
-      title: t`Units`,
-      switchable: true
+      title: t`Units`
     },
-    {
-      accessor: 'description',
-      title: t`Description`,
-      sortable: true,
-      switchable: true
-    },
+    DescriptionColumn(),
     {
       accessor: 'category',
       title: t`Category`,
       sortable: true,
+
       render: function (record: any) {
         // TODO: Link to the category detail page
         return shortenString({
@@ -68,23 +61,107 @@ function partTableColumns(): TableColumn[] {
       accessor: 'total_in_stock',
       title: t`Stock`,
       sortable: true,
-      switchable: true
+
+      render: (record) => {
+        let extra: ReactNode[] = [];
+
+        let stock = record?.total_in_stock ?? 0;
+        let allocated =
+          (record?.allocated_to_build_orders ?? 0) +
+          (record?.allocated_to_sales_orders ?? 0);
+        let available = Math.max(0, stock - allocated);
+        let min_stock = record?.minimum_stock ?? 0;
+
+        let text = String(stock);
+
+        let color: string | undefined = undefined;
+
+        if (min_stock > stock) {
+          extra.push(
+            <Text key="min-stock" color="orange">
+              {t`Minimum stock` + `: ${min_stock}`}
+            </Text>
+          );
+
+          color = 'orange';
+        }
+
+        if (record.ordering > 0) {
+          extra.push(
+            <Text key="on-order">{t`On Order` + `: ${record.ordering}`}</Text>
+          );
+        }
+
+        if (record.building) {
+          extra.push(
+            <Text key="building">{t`Building` + `: ${record.building}`}</Text>
+          );
+        }
+
+        if (record.allocated_to_build_orders > 0) {
+          extra.push(
+            <Text key="bo-allocations">
+              {t`Build Order Allocations` +
+                `: ${record.allocated_to_build_orders}`}
+            </Text>
+          );
+        }
+
+        if (record.allocated_to_sales_orders > 0) {
+          extra.push(
+            <Text key="so-allocations">
+              {t`Sales Order Allocations` +
+                `: ${record.allocated_to_sales_orders}`}
+            </Text>
+          );
+        }
+
+        if (available != stock) {
+          extra.push(
+            <Text key="available">{t`Available` + `: ${available}`}</Text>
+          );
+        }
+
+        // TODO: Add extra information on stock "demand"
+
+        if (stock <= 0) {
+          color = 'red';
+          text = t`No stock`;
+        } else if (available <= 0) {
+          color = 'orange';
+        } else if (available < min_stock) {
+          color = 'yellow';
+        }
+
+        return (
+          <TableHoverCard
+            value={
+              <Group spacing="xs" position="left">
+                <Text color={color}>{text}</Text>
+                {record.units && (
+                  <Text size="xs" color={color}>
+                    [{record.units}]
+                  </Text>
+                )}
+              </Group>
+            }
+            title={t`Stock Information`}
+            extra={extra}
+          />
+        );
+      }
     },
     {
       accessor: 'price_range',
       title: t`Price Range`,
       sortable: false,
-      switchable: true,
+
       render: function (record: any) {
         // TODO: Render price range
         return '-- price --';
       }
     },
-    {
-      accessor: 'link',
-      title: t`Link`,
-      switchable: true
-    }
+    LinkColumn()
   ];
 }
 

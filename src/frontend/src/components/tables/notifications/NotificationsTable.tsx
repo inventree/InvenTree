@@ -1,7 +1,8 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';

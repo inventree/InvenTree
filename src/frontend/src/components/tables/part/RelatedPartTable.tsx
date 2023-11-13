@@ -4,12 +4,16 @@ import { IconLayersLinked } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction } from '../RowActions';
 
 /**
  * Construct a table listing related parts for a given part
@@ -18,6 +22,8 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   const { tableKey, refreshTable } = useTableRefresh('relatedparts');
 
   const navigate = useNavigate();
+
+  const user = useUserState();
 
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -33,7 +39,6 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
       {
         accessor: 'part',
         title: t`Part`,
-        noWrap: true,
         render: (record: any) => {
           let part = getPart(record);
           return (
@@ -63,7 +68,6 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
 
   const addRelatedPart = useCallback(() => {
     openCreateApiForm({
-      name: 'add-related-part',
       title: t`Add Related Part`,
       url: ApiPaths.related_part_list,
       fields: {
@@ -97,27 +101,28 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
 
   // Generate row actions
   // TODO: Hide if user does not have permission to edit parts
-  const rowActions = useCallback((record: any) => {
-    return [
-      {
-        title: t`Delete`,
-        color: 'red',
-        onClick: () => {
-          openDeleteApiForm({
-            name: 'delete-related-part',
-            url: ApiPaths.related_part_list,
-            pk: record.pk,
-            title: t`Delete Related Part`,
-            successMessage: t`Related part deleted`,
-            preFormContent: (
-              <Text>{t`Are you sure you want to remove this relationship?`}</Text>
-            ),
-            onFormSuccess: refreshTable
-          });
-        }
-      }
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: any) => {
+      return [
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.part),
+          onClick: () => {
+            openDeleteApiForm({
+              url: ApiPaths.related_part_list,
+              pk: record.pk,
+              title: t`Delete Related Part`,
+              successMessage: t`Related part deleted`,
+              preFormContent: (
+                <Text>{t`Are you sure you want to remove this relationship?`}</Text>
+              ),
+              onFormSuccess: refreshTable
+            });
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   return (
     <InvenTreeTable

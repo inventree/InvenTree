@@ -1,0 +1,106 @@
+import { t } from '@lingui/macro';
+import {
+  IconAt,
+  IconCurrencyDollar,
+  IconGlobe,
+  IconHash,
+  IconLink,
+  IconNote,
+  IconPackage,
+  IconPhone
+} from '@tabler/icons-react';
+
+import {
+  ApiFormData,
+  ApiFormFieldSet
+} from '../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { openEditApiForm } from '../functions/forms';
+
+/**
+ * Field set for SupplierPart instance
+ */
+export function supplierPartFields(): ApiFormFieldSet {
+  return {
+    part: {
+      filters: {
+        purchaseable: true
+      }
+    },
+    manufacturer_part: {
+      filters: {
+        part_detail: true,
+        manufacturer_detail: true
+      },
+      adjustFilters: (filters: any, form: ApiFormData) => {
+        let part = form.values.part;
+
+        if (part) {
+          filters.part = part;
+        }
+
+        return filters;
+      }
+    },
+    supplier: {},
+    SKU: {
+      icon: <IconHash />
+    },
+    description: {},
+    link: {
+      icon: <IconLink />
+    },
+    note: {
+      icon: <IconNote />
+    },
+    pack_quantity: {},
+    packaging: {
+      icon: <IconPackage />
+    }
+  };
+}
+
+/**
+ * Field set for editing a company instance
+ */
+export function companyFields(): ApiFormFieldSet {
+  return {
+    name: {},
+    description: {},
+    website: {
+      icon: <IconGlobe />
+    },
+    currency: {
+      icon: <IconCurrencyDollar />
+    },
+    phone: {
+      icon: <IconPhone />
+    },
+    email: {
+      icon: <IconAt />
+    },
+    is_supplier: {},
+    is_manufacturer: {},
+    is_customer: {}
+  };
+}
+
+/**
+ * Edit a company instance
+ */
+export function editCompany({
+  pk,
+  callback
+}: {
+  pk: number;
+  callback?: () => void;
+}) {
+  openEditApiForm({
+    title: t`Edit Company`,
+    url: ApiPaths.company_list,
+    pk: pk,
+    fields: companyFields(),
+    successMessage: t`Company updated`,
+    onFormSuccess: callback
+  });
+}

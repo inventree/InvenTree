@@ -20,12 +20,12 @@ spa_view = ensure_csrf_cookie(TemplateView.as_view(template_name="web/index.html
 
 
 urlpatterns = [
-    path(f'{settings.PUI_URL_BASE}/', include([
+    path(f'{settings.FRONTEND_URL_BASE}/', include([
         path("assets/<path:path>", RedirectAssetView.as_view()),
         re_path(r"^(?P<path>.*)/$", spa_view),
         path("set-password?uid=<uid>&token=<token>", spa_view, name="password_reset_confirm"),
         path("", spa_view),]
     )),
-    path(settings.PUI_URL_BASE, spa_view, name='platform'),
+    path(settings.FRONTEND_URL_BASE, spa_view, name='platform'),
     path("assets/<path:path>", RedirectAssetView.as_view()),
 ]

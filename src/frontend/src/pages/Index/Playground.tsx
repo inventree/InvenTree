@@ -1,28 +1,28 @@
 import { Trans } from '@lingui/macro';
-import { Button } from '@mantine/core';
+import { Button, TextInput } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { Accordion } from '@mantine/core';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { ApiFormProps } from '../../components/forms/ApiForm';
-import { ApiFormChangeCallback } from '../../components/forms/fields/ApiFormField';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
-import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   createPart,
   editPart,
   partCategoryFields
-} from '../../functions/forms/PartForms';
-import { createStockItem } from '../../functions/forms/StockForms';
-import { ApiPaths } from '../../states/ApiState';
+} from '../../forms/PartForms';
+import { createStockItem } from '../../forms/StockForms';
+import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 
 // Generate some example forms using the modal API forms interface
 function ApiFormsPlayground() {
   let fields = partCategoryFields({});
 
   const editCategoryForm: ApiFormProps = {
-    name: 'partcategory',
     url: ApiPaths.category_list,
     pk: 2,
     title: 'Edit Category',
@@ -30,7 +30,6 @@ function ApiFormsPlayground() {
   };
 
   const createAttachmentForm: ApiFormProps = {
-    name: 'createattachment',
     url: ApiPaths.part_attachment_list,
     title: 'Create Attachment',
     successMessage: 'Attachment uploaded',
@@ -60,6 +59,23 @@ function ApiFormsPlayground() {
   );
 }
 
+// Show some example status labels
+function StatusLabelPlayground() {
+  const [status, setStatus] = useState<string>('10');
+  return (
+    <>
+      <Group>
+        <Text>Stock Status</Text>
+        <TextInput
+          value={status}
+          onChange={(event) => setStatus(event.currentTarget.value)}
+        />
+        <StatusRenderer type={ModelType.stockitem} status={status} />
+      </Group>
+    </>
+  );
+}
+
 /** Construct a simple accordion group with title and content */
 function PlaygroundArea({
   title,
@@ -70,7 +86,7 @@ function PlaygroundArea({
 }) {
   return (
     <>
-      <Accordion.Item value={`accordion-playground-{title}`}>
+      <Accordion.Item value={`accordion-playground-${title}`}>
         <Accordion.Control>
           <Text>{title}</Text>
         </Accordion.Control>
@@ -95,10 +111,11 @@ export default function Playground() {
         </Trans>
       </Text>
       <Accordion defaultValue="">
+        <PlaygroundArea title="API Forms" content={<ApiFormsPlayground />} />
         <PlaygroundArea
-          title="API Forms"
-          content={<ApiFormsPlayground />}
-        ></PlaygroundArea>
+          title="Status labels"
+          content={<StatusLabelPlayground />}
+        />
       </Accordion>
     </>
   );

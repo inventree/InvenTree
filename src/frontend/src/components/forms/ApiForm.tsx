@@ -1,11 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Divider,
-  LoadingOverlay,
-  ScrollArea,
-  Text
-} from '@mantine/core';
+import { Alert, Divider, LoadingOverlay, Text } from '@mantine/core';
 import { Button, Group, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
@@ -15,14 +9,13 @@ import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 
 import { api, queryClient } from '../../App';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { constructFormUrl } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
-import { ApiPaths } from '../../states/ApiState';
 import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
 
 /**
  * Properties for the ApiForm component
- * @param name : The name (identifier) for this form
  * @param url : The API endpoint to fetch the form data from
  * @param pk : Optional primary-key value when editing an existing object
  * @param title : The title to display in the form header
@@ -41,7 +34,6 @@ import { ApiFormField, ApiFormFieldSet } from './fields/ApiFormField';
  * @param onFormError : A callback function to call when the form is submitted with errors.
  */
 export interface ApiFormProps {
-  name: string;
   url: ApiPaths;
   pk?: number | string | undefined;
   title: string;
@@ -57,7 +49,7 @@ export interface ApiFormProps {
   postFormContent?: JSX.Element | (() => JSX.Element);
   successMessage?: string;
   onClose?: () => void;
-  onFormSuccess?: () => void;
+  onFormSuccess?: (data: any) => void;
   onFormError?: () => void;
 }
 
@@ -110,7 +102,7 @@ export function ApiForm({
   // Query manager for retrieiving initial data from the server
   const initialDataQuery = useQuery({
     enabled: false,
-    queryKey: ['form-initial-data', props.name, props.url, props.pk],
+    queryKey: ['form-initial-data', modalId, props.method, props.url, props.pk],
     queryFn: async () => {
       return api
         .get(url)
@@ -156,7 +148,13 @@ export function ApiForm({
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
       queryClient.removeQueries({
-        queryKey: ['form-initial-data', props.name, props.url, props.pk]
+        queryKey: [
+          'form-initial-data',
+          modalId,
+          props.method,
+          props.url,
+          props.pk
+        ]
       });
       initialDataQuery.refetch();
     }
@@ -165,7 +163,7 @@ export function ApiForm({
   // Query manager for submitting data
   const submitQuery = useQuery({
     enabled: false,
-    queryKey: ['form-submit', props.name, props.url, props.pk],
+    queryKey: ['form-submit', modalId, props.method, props.url, props.pk],
     queryFn: async () => {
       let method = props.method?.toLowerCase() ?? 'get';
 
@@ -186,7 +184,7 @@ export function ApiForm({
 
               // Optionally call the onFormSuccess callback
               if (props.onFormSuccess) {
-                props.onFormSuccess();
+                props.onFormSuccess(response.data);
               }
 
               // Optionally show a success message
@@ -277,24 +275,22 @@ export function ApiForm({
           </Alert>
         )}
         {preFormElement}
-        <ScrollArea>
-          <Stack spacing="xs">
-            {Object.entries(props.fields ?? {}).map(
-              ([fieldName, field]) =>
-                !field.hidden && (
-                  <ApiFormField
-                    key={fieldName}
-                    field={field}
-                    fieldName={fieldName}
-                    formProps={props}
-                    form={form}
-                    error={form.errors[fieldName] ?? null}
-                    definitions={fieldDefinitions}
-                  />
-                )
-            )}
-          </Stack>
-        </ScrollArea>
+        <Stack spacing="xs">
+          {Object.entries(props.fields ?? {}).map(
+            ([fieldName, field]) =>
+              !field.hidden && (
+                <ApiFormField
+                  key={fieldName}
+                  field={field}
+                  fieldName={fieldName}
+                  formProps={props}
+                  form={form}
+                  error={form.errors[fieldName] ?? null}
+                  definitions={fieldDefinitions}
+                />
+              )
+          )}
+        </Stack>
         {postFormElement}
       </Stack>
       <Divider />

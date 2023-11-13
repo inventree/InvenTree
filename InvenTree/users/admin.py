@@ -6,12 +6,41 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from users.models import Owner, RuleSet
+from users.models import ApiToken, Owner, RuleSet
 
 User = get_user_model()
+
+
+class ApiTokenAdmin(admin.ModelAdmin):
+    """Admin class for the ApiToken model."""
+
+    list_display = ('token', 'user', 'name', 'expiry', 'active')
+    list_filter = ('user', 'revoked')
+    fields = ('token', 'user', 'name', 'created', 'last_seen', 'revoked', 'expiry', 'metadata')
+
+    def get_fields(self, request, obj=None):
+        """Return list of fields to display."""
+
+        if obj:
+            fields = ['token',]
+        else:
+            fields = ['key',]
+
+        fields += ['user', 'name', 'created', 'last_seen', 'revoked', 'expiry', 'metadata']
+
+        return fields
+
+    def get_readonly_fields(self, request, obj=None):
+        """Some fields are read-only after creation"""
+
+        ro = ['created', 'last_seen']
+
+        if obj:
+            ro += ['token', 'user', 'expiry', 'name']
+
+        return ro
 
 
 class RuleSetInline(admin.TabularInline):
@@ -185,20 +214,22 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
         users = form.cleaned_data['users']
 
         # Check for users who are members of multiple groups
-        warning_message = ''
+        multiple_group_users = []
+
         for user in users:
             if user.groups.all().count() > 1:
-                warning_message += f'<br>- <b>{user.username}</b> is member of: '
-                for idx, group in enumerate(user.groups.all()):
-                    warning_message += f'<b>{group.name}</b>'
-                    if idx < len(user.groups.all()) - 1:
-                        warning_message += ', '
+                multiple_group_users.append(user.username)
 
         # If any, display warning message when group is saved
-        if warning_message:
-            warning_message = mark_safe(_(f'The following users are members of multiple groups:'
-                                          f'{warning_message}'))
-            messages.add_message(request, messages.WARNING, warning_message)
+        if len(multiple_group_users) > 0:
+
+            msg = _("The following users are members of multiple groups") + ": " + ", ".join(multiple_group_users)
+
+            messages.add_message(
+                request,
+                messages.WARNING,
+                msg
+            )
 
     def save_formset(self, request, form, formset, change):
         """Save the inline formset"""
@@ -239,3 +270,5 @@ admin.site.unregister(User)
 admin.site.register(User, InvenTreeUserAdmin)
 
 admin.site.register(Owner, OwnerAdmin)
+
+admin.site.register(ApiToken, ApiTokenAdmin)

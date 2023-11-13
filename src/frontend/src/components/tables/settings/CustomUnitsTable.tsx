@@ -1,24 +1,29 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Text, Tooltip } from '@mantine/core';
-import { IconCirclePlus } from '@tabler/icons-react';
+import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import {
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of custom physical units
  */
 export function CustomUnitsTable() {
   const { tableKey, refreshTable } = useTableRefresh('custom-units');
+
+  const user = useUserState();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -43,48 +48,48 @@ export function CustomUnitsTable() {
     ];
   }, []);
 
-  const rowActions = useCallback((record: any): RowAction[] => {
-    return [
-      {
-        title: t`Edit`,
-        onClick: () => {
-          openEditApiForm({
-            name: 'edit-custom-unit',
-            url: ApiPaths.custom_unit_list,
-            pk: record.pk,
-            title: t`Edit custom unit`,
-            fields: {
-              name: {},
-              definition: {},
-              symbol: {}
-            },
-            onFormSuccess: refreshTable,
-            successMessage: t`Custom unit updated`
-          });
-        }
-      },
-      {
-        title: t`Delete`,
-        onClick: () => {
-          openDeleteApiForm({
-            name: 'delete-custom-unit',
-            url: ApiPaths.custom_unit_list,
-            pk: record.pk,
-            title: t`Delete custom unit`,
-            successMessage: t`Custom unit deleted`,
-            onFormSuccess: refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to remove this custom unit?`}</Text>
-            )
-          });
-        }
-      }
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.admin),
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.custom_unit_list,
+              pk: record.pk,
+              title: t`Edit custom unit`,
+              fields: {
+                name: {},
+                definition: {},
+                symbol: {}
+              },
+              onFormSuccess: refreshTable,
+              successMessage: t`Custom unit updated`
+            });
+          }
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.admin),
+          onClick: () => {
+            openDeleteApiForm({
+              url: ApiPaths.custom_unit_list,
+              pk: record.pk,
+              title: t`Delete custom unit`,
+              successMessage: t`Custom unit deleted`,
+              onFormSuccess: refreshTable,
+              preFormContent: (
+                <Text>{t`Are you sure you want to remove this custom unit?`}</Text>
+              )
+            });
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   const addCustomUnit = useCallback(() => {
     openCreateApiForm({
-      name: 'add-custom-unit',
       url: ApiPaths.custom_unit_list,
       title: t`Add custom unit`,
       fields: {
@@ -101,11 +106,8 @@ export function CustomUnitsTable() {
     let actions = [];
 
     actions.push(
-      <Tooltip label={t`Add custom unit`}>
-        <ActionIcon radius="sm" onClick={addCustomUnit}>
-          <IconCirclePlus color="green" />
-        </ActionIcon>
-      </Tooltip>
+      // TODO: Adjust actions based on user permissions
+      <AddItemButton tooltip={t`Add custom unit`} onClick={addCustomUnit} />
     );
 
     return actions;

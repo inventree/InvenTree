@@ -2,9 +2,11 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -23,23 +25,16 @@ export function PartCategoryTable({ params = {} }: { params?: any }) {
         sortable: true,
         switchable: false
       },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        sortable: false,
-        switchable: true
-      },
+      DescriptionColumn(),
       {
         accessor: 'pathstring',
         title: t`Path`,
-        sortable: false,
-        switchable: true
+        sortable: false
       },
       {
         accessor: 'part_count',
         title: t`Parts`,
-        sortable: true,
-        switchable: true
+        sortable: true
       }
     ];
   }, []);

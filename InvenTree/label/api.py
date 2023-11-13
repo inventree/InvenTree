@@ -7,7 +7,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import serializers
 from rest_framework.exceptions import NotFound
+from rest_framework.request import clone_request
 
 import build.models
 import common.models
@@ -136,16 +138,45 @@ class LabelListView(LabelFilterMixin, ListAPI):
 class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
 
+    rolemap = {
+        "GET": "view",
+        "POST": "view",
+    }
+
+    def check_permissions(self, request):
+        """Override request method to GET so that also non superusers can print using a post request."""
+        if request.method == "POST":
+            request = clone_request(request, "GET")
+        return super().check_permissions(request)
+
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
         """Prevent caching when printing report templates"""
         return super().dispatch(*args, **kwargs)
+
+    def get_serializer(self, *args, **kwargs):
+        """Define a get_serializer method to be discoverable by the OPTIONS request."""
+        # Check the request to determine if the user has selected a label printing plugin
+        plugin = self.get_plugin(self.request)
+
+        kwargs.setdefault('context', self.get_serializer_context())
+        serializer = plugin.get_printing_options_serializer(self.request, *args, **kwargs)
+
+        # if no serializer is defined, return an empty serializer
+        if not serializer:
+            return serializers.Serializer()
+
+        return serializer
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request against this endpoint to print labels"""
         common.models.InvenTreeUserSetting.set_setting('DEFAULT_' + self.ITEM_KEY.upper() + '_LABEL_TEMPLATE',
                                                        self.get_object().pk, None, user=request.user)
         return self.print(request, self.get_items())
+
+    def post(self, request, *args, **kwargs):
+        """Perform a GET request against this endpoint to print labels"""
+        return self.get(request, *args, **kwargs)
 
     def get_plugin(self, request):
         """Return the label printing plugin associated with this request.
@@ -167,13 +198,17 @@ class LabelPrintMixin(LabelFilterMixin):
 
         plugin = registry.get_plugin(plugin_key)
 
-        if plugin:
-            if plugin.is_active():
-                # Only return the plugin if it is enabled!
-                return plugin
-            raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
-        else:
+        if not plugin:
             raise NotFound(f"Plugin '{plugin_key}' not found")
+
+        if not plugin.is_active():
+            raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
+
+        if not plugin.mixin_enabled("labels"):
+            raise ValidationError(f"Plugin '{plugin_key}' is not a label printing plugin")
+
+        # Only return the plugin if it is enabled and has the label printing mixin
+        return plugin
 
     def print(self, request, items_to_print):
         """Print this label template against a number of pre-validated items."""
@@ -187,10 +222,18 @@ class LabelPrintMixin(LabelFilterMixin):
         # Label template
         label = self.get_object()
 
+        # Check the label dimensions
+        if label.width <= 0 or label.height <= 0:
+            raise ValidationError('Label has invalid dimensions')
+
+        # if the plugin returns a serializer, validate the data
+        if serializer := plugin.get_printing_options_serializer(request, data=request.data, context=self.get_serializer_context()):
+            serializer.is_valid(raise_exception=True)
+
         # At this point, we offload the label(s) to the selected plugin.
         # The plugin is responsible for handling the request and returning a response.
 
-        result = plugin.print_labels(label, items_to_print, request)
+        result = plugin.print_labels(label, items_to_print, request, printing_options=request.data)
 
         if isinstance(result, JsonResponse):
             result['plugin'] = plugin.plugin_slug()

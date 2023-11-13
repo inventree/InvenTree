@@ -4,7 +4,8 @@ import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
 import { api } from '../App';
-import { ApiPaths, apiUrl, useServerApiState } from '../states/ApiState';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
 import {
@@ -20,7 +21,11 @@ export const doClassicLogin = async (username: string, password: string) => {
   const token = await axios
     .get(apiUrl(ApiPaths.user_token), {
       auth: { username, password },
-      baseURL: host.toString()
+      baseURL: host,
+      timeout: 2000,
+      params: {
+        name: 'inventree-web-app'
+      }
     })
     .then((response) => response.data.token)
     .catch((error) => {
@@ -39,6 +44,9 @@ export const doClassicLogin = async (username: string, password: string) => {
   return true;
 };
 
+/**
+ * Logout the user (invalidate auth token)
+ */
 export const doClassicLogout = async () => {
   // TODO @matmair - logout from the server session
   // Set token in context
@@ -62,7 +70,7 @@ export const doSimpleLogin = async (email: string) => {
       email: email
     })
     .then((response) => response.data)
-    .catch((error) => {
+    .catch((_error) => {
       return false;
     });
   return mail;
@@ -107,9 +115,17 @@ export function handleReset(navigate: any, values: { email: string }) {
     });
 }
 
-export function checkLoginState(navigate: any) {
+/**
+ * Check login state, and redirect the user as required
+ */
+export function checkLoginState(navigate: any, redirect?: string) {
   api
-    .get(apiUrl(ApiPaths.user_token))
+    .get(apiUrl(ApiPaths.user_token), {
+      timeout: 2000,
+      params: {
+        name: 'inventree-web-app'
+      }
+    })
     .then((val) => {
       if (val.status === 200 && val.data.token) {
         doTokenLogin(val.data.token);
@@ -120,8 +136,7 @@ export function checkLoginState(navigate: any) {
           color: 'green',
           icon: <IconCheck size="1rem" />
         });
-
-        navigate('/home');
+        navigate(redirect ?? '/home');
       } else {
         navigate('/login');
       }

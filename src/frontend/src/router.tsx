@@ -12,6 +12,22 @@ export const Playground = Loadable(
   lazy(() => import('./pages/Index/Playground'))
 );
 
+export const CompanyDetail = Loadable(
+  lazy(() => import('./pages/company/CompanyDetail'))
+);
+
+export const CustomerDetail = Loadable(
+  lazy(() => import('./pages/company/CustomerDetail'))
+);
+
+export const SupplierDetail = Loadable(
+  lazy(() => import('./pages/company/SupplierDetail'))
+);
+
+export const ManufacturerDetail = Loadable(
+  lazy(() => import('./pages/company/ManufacturerDetail'))
+);
+
 export const CategoryDetail = Loadable(
   lazy(() => import('./pages/part/CategoryDetail'))
 );
@@ -34,6 +50,26 @@ export const BuildDetail = Loadable(
   lazy(() => import('./pages/build/BuildDetail'))
 );
 
+export const PurchasingIndex = Loadable(
+  lazy(() => import('./pages/purchasing/PurchasingIndex'))
+);
+
+export const PurchaseOrderDetail = Loadable(
+  lazy(() => import('./pages/purchasing/PurchaseOrderDetail'))
+);
+
+export const SalesIndex = Loadable(
+  lazy(() => import('./pages/sales/SalesIndex'))
+);
+
+export const SalesOrderDetail = Loadable(
+  lazy(() => import('./pages/sales/SalesOrderDetail'))
+);
+
+export const ReturnOrderDetail = Loadable(
+  lazy(() => import('./pages/sales/ReturnOrderDetail'))
+);
+
 export const Scan = Loadable(lazy(() => import('./pages/Index/Scan')));
 
 export const Dashboard = Loadable(
@@ -45,20 +81,19 @@ export const Notifications = Loadable(
   lazy(() => import('./pages/Notifications'))
 );
 
-export const Profile = Loadable(
-  lazy(() => import('./pages/Index/Profile/Profile'))
-);
-
 export const UserSettings = Loadable(
-  lazy(() => import('./pages/Index/UserSettings'))
+  lazy(() => import('./pages/Index/Settings/UserSettings'))
 );
 
 export const SystemSettings = Loadable(
-  lazy(() => import('./pages/Index/SystemSettings'))
+  lazy(() => import('./pages/Index/Settings/SystemSettings'))
 );
 
 export const PluginSettings = Loadable(
-  lazy(() => import('./pages/Index/PluginSettings'))
+  lazy(() => import('./pages/Index/Settings/PluginSettings'))
+);
+export const AdminCenter = Loadable(
+  lazy(() => import('./pages/Index/Settings/AdminCenter'))
 );
 
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
@@ -81,7 +116,9 @@ export const routes = (
       <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
       <Route path="settings/">
-        <Route index element={<SystemSettings />} />
+        <Route index element={<AdminCenter />} />
+        <Route path="admin/" element={<AdminCenter />} />
+        <Route path="system/" element={<SystemSettings />} />
         <Route path="user/" element={<UserSettings />} />
         <Route path="plugin/" element={<PluginSettings />} />
       </Route>
@@ -99,7 +136,19 @@ export const routes = (
         <Route index element={<BuildIndex />} />
         <Route path=":id/" element={<BuildDetail />} />
       </Route>
-      <Route path="/profile/:tabValue" element={<Profile />} />
+      <Route path="purchasing/">
+        <Route index element={<PurchasingIndex />} />
+        <Route path="purchase-order/:id/" element={<PurchaseOrderDetail />} />
+        <Route path="supplier/:id/" element={<SupplierDetail />} />
+        <Route path="manufacturer/:id/" element={<ManufacturerDetail />} />
+      </Route>
+      <Route path="company/:id/" element={<CompanyDetail />} />
+      <Route path="sales/">
+        <Route index element={<SalesIndex />} />
+        <Route path="sales-order/:id/" element={<SalesOrderDetail />} />
+        <Route path="return-order/:id/" element={<ReturnOrderDetail />} />
+        <Route path="customer/:id/" element={<CustomerDetail />} />
+      </Route>
     </Route>
     <Route path="/" errorElement={<ErrorPage />}>
       <Route path="/login" element={<Login />} />,

@@ -154,12 +154,22 @@ We would like to acknowledge a few special projects:
 
 Find a full list of used third-party libraries in [our documentation](https://docs.inventree.org/en/latest/credits/).
 
-<p>This project is supported by:</p>
-<p>
+## :heart: Support
+
+<p>This project is supported by the following sponsors:</p>
+
+<p align="center">
+<!-- sponsors --><a href="https://github.com/MartinLoeper"><img src="https://github.com/MartinLoeper.png" width="60px" alt="Martin Löper" /></a><a href="https://github.com/lippoliv"><img src="https://github.com/lippoliv.png" width="60px" alt="Oliver Lippert" /></a><a href="https://github.com/lfg-seth"><img src="https://github.com/lfg-seth.png" width="60px" alt="Seth Smith" /></a><a href="https://github.com/snorkrat"><img src="https://github.com/snorkrat.png" width="60px" alt="" /></a><!-- sponsors -->
+</p>
+
+<p>With ongoing resources provided by:</p>
+
+<p align="center">
   <a href="https://inventree.org/digitalocean">
     <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px">
   </a>
   <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-bg.svg" alt="Deploys by Netlify" /> </a>
+  <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Crowdin" /> </a>
 </p>
 
 

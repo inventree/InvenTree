@@ -14,7 +14,7 @@ import { IconX } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { useMemo } from 'react';
 
-import { ModelType } from '../../render/ModelType';
+import { ModelType } from '../../../enums/ModelType';
 import { ApiFormProps } from '../ApiForm';
 import { ChoiceField } from './ChoiceField';
 import { RelatedModelField } from './RelatedModelField';
@@ -287,6 +287,16 @@ export function ApiFormField({
             id={fieldId}
             value={numericalValue}
             error={error}
+            formatter={(value) => {
+              let v: any = parseFloat(value);
+
+              if (Number.isNaN(v) || !Number.isFinite(v)) {
+                return value;
+              }
+
+              return `${1 * v.toFixed()}`;
+            }}
+            precision={definition.field_type == 'integer' ? 0 : 10}
             onChange={(value: number) => onChange(value)}
           />
         );

@@ -3062,8 +3062,10 @@ function loadInstalledInTable(table, options) {
                 formatter: function(value, row) {
                     var html = '';
 
-                    html += imageHoverIcon(row.part_detail.thumbnail);
-                    html += renderLink(row.part_detail.full_name, `/stock/item/${row.pk}/`);
+                    if (row.part_detail) {
+                        html += imageHoverIcon(row.part_detail.thumbnail);
+                        html += renderLink(row.part_detail.full_name, `/stock/item/${row.pk}/`);
+                    }
 
                     return html;
                 }
@@ -3215,6 +3217,12 @@ function installStockItem(stock_item_id, part_id, options={}) {
                         in_stock: true,
                         tracked: true,
                     },
+                    onSelect: function(data, field, opts) {
+                        // Adjust the 'quantity' field
+                        if ('quantity' in data) {
+                            updateFieldValue('quantity', data.quantity, opts);
+                        }
+                    },
                     adjustFilters: function(filters, opts) {
                         var part = getFormFieldValue('part', {}, opts);
 
@@ -3224,7 +3232,8 @@ function installStockItem(stock_item_id, part_id, options={}) {
 
                         return filters;
                     }
-                }
+                },
+                quantity: {},
             },
             confirm: true,
             title: '{% trans "Install Stock Item" %}',
