@@ -81,7 +81,7 @@ content: "{% trans 'Stock Item Test Report' %}";
         <p><em>Stock Item ID: {{ stock_item.pk }}</em></p>
     </div>
     <div class='img-right'>
-        <img class='part-img' alt='{% trans "Part image" %}' src="{% part_image part preview=True %}">
+        <img class='part-img' alt='{% trans "Part image" %}' src="{% part_image part height=256 %}">
         <hr>
         <h4>
             {% if stock_item.is_serialized %}

@@ -8,8 +8,11 @@ from django import template
 from django.conf import settings
 from django.utils.safestring import SafeString, mark_safe
 
+from PIL import Image
+
 import InvenTree.helpers
 import InvenTree.helpers_model
+import report.helpers
 from common.models import InvenTreeSetting
 from company.models import Company
 from part.models import Part
@@ -105,7 +108,9 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         validate: Optionally validate that the file is a valid image file (default = True)
 
     kwargs:
-        Extra keyword arguments which can augment the image rendering (e.g. width, height) : Not yet implemented
+        width: Optional width of the image (default = None)
+        height: Optional height of the image (default = None)
+        rotate: Optional rotation to apply to the image
 
     Returns:
         A fully qualified path to the image
@@ -138,18 +143,42 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         raise FileNotFoundError(f"Image file '{filename}' not found")
 
     if debug_mode:
-        # In debug mode, return a web path
+        # In debug mode, return a web path (rather than an encoded image blob)
         if exists:
             return os.path.join(settings.MEDIA_URL, filename)
-        return os.path.join(settings.STATIC_URL, 'img', replacement_file)
-    else:
-        # Return file path
-        if exists:
-            path = settings.MEDIA_ROOT.joinpath(filename).resolve()
-        else:
-            path = settings.STATIC_ROOT.joinpath('img', replacement_file).resolve()
 
-        return f"file://{path}"
+        return os.path.join(settings.STATIC_URL, 'img', replacement_file)
+
+    # Load the image, check that it is valid
+    img = Image.open(full_path)
+
+    width = kwargs.get('width', None)
+    height = kwargs.get('height', None)
+
+    if width is not None and height is not None:
+        # Resize the image, width *and* height are provided
+        img = img.resize((width, height), Image.ANTIALIAS)
+    elif width is not None:
+        # Resize the image, width only
+        wpercent = (width / float(img.size[0]))
+        hsize = int((float(img.size[1]) * float(wpercent)))
+        img = img.resize((width, hsize), Image.ANTIALIAS)
+    elif height is not None:
+        # Resize the image, height only
+        hpercent = (height / float(img.size[1]))
+        wsize = int((float(img.size[0]) * float(hpercent)))
+        img = img.resize((wsize, height), Image.ANTIALIAS)
+
+    # Optionally rotate the image
+    rotate = kwargs.get('rotate', None)
+
+    if rotate is not None:
+        img = img.rotate(rotate)
+
+    # Return a base-64 encoded image
+    img_data = report.helpers.encode_image_base64(img)
+
+    return img_data
 
 
 @register.simple_tag()
