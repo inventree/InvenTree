@@ -168,6 +168,12 @@ class UserList(ListCreateAPI):
         'is_active',
     ]
 
+    filterset_fields = [
+        'is_staff',
+        'is_active',
+        'is_superuser',
+    ]
+
 
 class GroupDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group"""
