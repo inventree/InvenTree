@@ -163,17 +163,17 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
 
     if width is not None and height is not None:
         # Resize the image, width *and* height are provided
-        img = img.resize((width, height), Image.ANTIALIAS)
+        img = img.resize((width, height))
     elif width is not None:
         # Resize the image, width only
         wpercent = (width / float(img.size[0]))
         hsize = int((float(img.size[1]) * float(wpercent)))
-        img = img.resize((width, hsize), Image.ANTIALIAS)
+        img = img.resize((width, hsize))
     elif height is not None:
         # Resize the image, height only
         hpercent = (height / float(img.size[1]))
         wsize = int((float(img.size[0]) * float(hpercent)))
-        img = img.resize((wsize, height), Image.ANTIALIAS)
+        img = img.resize((wsize, height))
 
     # Optionally rotate the image
     rotate = kwargs.get('rotate', None)

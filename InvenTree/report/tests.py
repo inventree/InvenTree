@@ -337,12 +337,7 @@ class TestReportTest(ReportTest):
         # Now print with a valid StockItem
         item = StockItem.objects.first()
 
-        response = self.get(url, {'item': item.pk})
-        print("============= RESPONSE =============")
-        print(response.data)
-        print(response.status_code)
-
-        raise ValueError("Exception!")
+        response = self.get(url, {'item': item.pk}, expected_code=200)
 
         # Response should be a StreamingHttpResponse (PDF file)
         self.assertEqual(type(response), StreamingHttpResponse)
