@@ -8,7 +8,7 @@ msgstr ""
 "Language: fi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-10 20:54\n"
+"PO-Revision-Date: 2023-11-13 21:28\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3240,9 +3240,9 @@ msgstr ""
 msgid "Add a new user"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:90
+#: src/pages/Index/Settings/AdminCenter.tsx:91
 #~ msgid "Advanced Amininistrative Options for InvenTree"
-#~ msgstr ""
+#~ msgstr "Advanced Amininistrative Options for InvenTree"
 
 #: src/pages/Index/Settings/AdminCenter.tsx:99
 msgid "Advanced Options"
@@ -3674,3 +3674,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
