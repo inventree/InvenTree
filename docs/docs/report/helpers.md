@@ -173,6 +173,22 @@ A shortcut function is provided for rendering an image associated with a Part in
 {% endraw %}
 ```
 
+#### Image Variations
+
+The *Part* model supports *preview* (256 x 256) and *thumbnail* (128 x 128) versions of the uploaded image. These variations can be used in the generated reports (e.g. to reduce generated file size):
+
+```html
+{% raw %}
+{% load report %}
+<!-- Render the "preview" image variation -->
+<img src='{% part_image part preview=True %}'>
+
+<!-- Render the "thumbnail" image variation -->
+<img src='{% part_image part thumbnail=True %}'>
+{% endraw %}
+```
+
+
 ### Company Images
 
 A shortcut function is provided for rendering an image associated with a Company instance. You can render the image of the company using the `{% raw %}{% company_image ... %}{% endraw %}` template tag:
@@ -184,6 +200,10 @@ A shortcut function is provided for rendering an image associated with a Company
 <img src='{% company_image company %}'/>
 {% endraw %}
 ```
+
+#### Image Variations
+
+*Preview* and *thumbnail* image variations can be rendered for the `company_image` tag, in a similar manner to [part image variations](#image-variations)
 
 ## InvenTree Logo
 
