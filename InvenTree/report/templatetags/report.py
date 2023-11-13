@@ -175,7 +175,7 @@ def encode_svg_image(filename):
 
 
 @register.simple_tag()
-def part_image(part: Part):
+def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
     """Return a fully-qualified path for a part image.
 
     Arguments:
@@ -184,13 +184,17 @@ def part_image(part: Part):
     Raises:
         TypeError if provided part is not a Part instance
     """
-    if type(part) is Part:
-        img = part.image.name
-
-    else:
+    if type(part) is not Part:
         raise TypeError("part_image tag requires a Part instance")
 
-    return uploaded_image(img)
+    if preview:
+        img = part.image.preview.name
+    elif thumbnail:
+        img = part.image.thumbnail.name
+    else:
+        img = part.image.name
+
+    return uploaded_image(img, **kwargs)
 
 
 @register.simple_tag()
@@ -210,7 +214,7 @@ def part_parameter(part: Part, parameter_name: str):
 
 
 @register.simple_tag()
-def company_image(company):
+def company_image(company, **kwargs):
     """Return a fully-qualified path for a company image.
 
     Arguments:
@@ -224,7 +228,7 @@ def company_image(company):
     else:
         raise TypeError("company_image tag requires a Company instance")
 
-    return uploaded_image(img)
+    return uploaded_image(img, **kwargs)
 
 
 @register.simple_tag()
