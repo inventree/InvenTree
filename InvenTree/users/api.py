@@ -10,6 +10,7 @@ from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import InvenTree.helpers
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
@@ -42,6 +43,10 @@ class OwnerList(ListAPI):
         but until we determine a better way, this is what we have...
         """
         search_term = str(self.request.query_params.get('search', '')).lower()
+        is_active = self.request.query_params.get('is_active', None)
+
+        if is_active is not None:
+            is_active = InvenTree.helpers.str2bool(is_active)
 
         queryset = super().filter_queryset(queryset)
 
@@ -64,6 +69,10 @@ class OwnerList(ListAPI):
 
             if not search_match:
                 continue
+
+            if is_active is not None:
+                if hasattr(result, 'is_active') and result.is_active != is_active:
+                    continue
 
             # If we get here, there is no reason *not* to include this result
             results.append(result)
