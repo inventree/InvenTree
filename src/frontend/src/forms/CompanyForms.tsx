@@ -14,8 +14,8 @@ import {
   ApiFormData,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../enums/ApiEndpoints';
 import { openEditApiForm } from '../functions/forms';
-import { ApiPaths } from '../states/ApiState';
 
 /**
  * Field set for SupplierPart instance

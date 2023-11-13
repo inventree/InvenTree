@@ -2,10 +2,11 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { api } from '../App';
-import { ModelType } from '../components/render/ModelType';
-import { StatusCodeListInterface } from '../components/renderers/StatusRenderer';
+import { StatusCodeListInterface } from '../components/render/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
 import { emptyServerAPI } from '../defaults/defaults';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
 import { ServerAPIProps } from './states';
 
 type StatusLookup = Record<ModelType, StatusCodeListInterface>;
@@ -48,87 +49,6 @@ export const useServerApiState = create<ServerApiStateProps>()(
   )
 );
 
-export enum ApiPaths {
-  api_server_info = 'api-server-info',
-
-  api_search = 'api-search',
-
-  // User information
-  user_me = 'api-user-me',
-  user_roles = 'api-user-roles',
-  user_token = 'api-user-token',
-  user_simple_login = 'api-user-simple-login',
-  user_reset = 'api-user-reset',
-  user_reset_set = 'api-user-reset-set',
-  user_sso = 'api-user-sso',
-  user_sso_remove = 'api-user-sso-remove',
-  user_emails = 'api-user-emails',
-  user_email_verify = 'api-user-email-verify',
-  user_email_primary = 'api-user-email-primary',
-  user_email_remove = 'api-user-email-remove',
-
-  settings_global_list = 'api-settings-global-list',
-  settings_user_list = 'api-settings-user-list',
-  notifications_list = 'api-notifications-list',
-
-  currency_list = 'api-currency-list',
-  currency_refresh = 'api-currency-refresh',
-
-  barcode = 'api-barcode',
-  news = 'news',
-  global_status = 'api-global-status',
-  version = 'api-version',
-  sso_providers = 'api-sso-providers',
-
-  // Build order URLs
-  build_order_list = 'api-build-list',
-  build_order_attachment_list = 'api-build-attachment-list',
-
-  // BOM URLs
-  bom_list = 'api-bom-list',
-
-  // Part URLs
-  part_list = 'api-part-list',
-  category_list = 'api-category-list',
-  category_tree = 'api-category-tree',
-  related_part_list = 'api-related-part-list',
-  part_attachment_list = 'api-part-attachment-list',
-  part_parameter_list = 'api-part-parameter-list',
-  part_parameter_template_list = 'api-part-parameter-template-list',
-
-  // Company URLs
-  company_list = 'api-company-list',
-  company_attachment_list = 'api-company-attachment-list',
-  supplier_part_list = 'api-supplier-part-list',
-  manufacturer_part_list = 'api-manufacturer-part-list',
-
-  // Stock Item URLs
-  stock_item_list = 'api-stock-item-list',
-  stock_tracking_list = 'api-stock-tracking-list',
-  stock_location_list = 'api-stock-location-list',
-  stock_location_tree = 'api-stock-location-tree',
-  stock_attachment_list = 'api-stock-attachment-list',
-
-  // Purchase Order URLs
-  purchase_order_list = 'api-purchase-order-list',
-  purchase_order_line_list = 'api-purchase-order-line-list',
-  purchase_order_attachment_list = 'api-purchase-order-attachment-list',
-
-  // Sales Order URLs
-  sales_order_list = 'api-sales-order-list',
-  sales_order_attachment_list = 'api-sales-order-attachment-list',
-
-  // Return Order URLs
-  return_order_list = 'api-return-order-list',
-  return_order_attachment_list = 'api-return-order-attachment-list',
-
-  // Plugin URLs
-  plugin_list = 'api-plugin-list',
-
-  project_code_list = 'api-project-code-list',
-  custom_unit_list = 'api-custom-unit-list'
-}
-
 /**
  * Function to return the API prefix.
  * For now it is fixed, but may be configurable in the future.
@@ -144,6 +64,10 @@ export function apiEndpoint(path: ApiPaths): string {
   switch (path) {
     case ApiPaths.api_server_info:
       return '';
+    case ApiPaths.user_list:
+      return 'user/';
+    case ApiPaths.owner_list:
+      return 'user/owner/';
     case ApiPaths.user_me:
       return 'user/me/';
     case ApiPaths.user_roles:
@@ -192,6 +116,12 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'version/';
     case ApiPaths.sso_providers:
       return 'auth/providers/';
+    case ApiPaths.user_list:
+      return 'user/';
+    case ApiPaths.group_list:
+      return 'user/group/';
+    case ApiPaths.owner_list:
+      return 'user/owner/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:
@@ -214,6 +144,10 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'part/attachment/';
     case ApiPaths.company_list:
       return 'company/';
+    case ApiPaths.contact_list:
+      return 'company/contact/';
+    case ApiPaths.address_list:
+      return 'company/address/';
     case ApiPaths.company_attachment_list:
       return 'company/attachment/';
     case ApiPaths.supplier_part_list:
@@ -240,6 +174,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'order/so/';
     case ApiPaths.sales_order_attachment_list:
       return 'order/so/attachment/';
+    case ApiPaths.sales_order_shipment_list:
+      return 'order/so/shipment/';
     case ApiPaths.return_order_list:
       return 'order/ro/';
     case ApiPaths.return_order_attachment_list:

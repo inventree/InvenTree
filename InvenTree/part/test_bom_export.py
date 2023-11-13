@@ -4,6 +4,7 @@ import csv
 
 from django.urls import reverse
 
+import part.models
 from InvenTree.unit_test import InvenTreeTestCase
 
 
@@ -22,6 +23,8 @@ class BomExportTest(InvenTreeTestCase):
     def setUp(self):
         """Perform test setup functions"""
         super().setUp()
+
+        part.models.Part.objects.rebuild()
 
         self.url = reverse('api-bom-download', kwargs={'pk': 100})
 

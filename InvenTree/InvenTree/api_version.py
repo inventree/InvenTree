@@ -2,10 +2,21 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 147
+INVENTREE_API_VERSION = 150
+"""Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
-"""
-Increment this API version number whenever there is a significant change to the API that any clients need to know about
+INVENTREE_API_TEXT = """
+v150 -> 2023-11-07: https://github.com/inventree/InvenTree/pull/5875
+    - Extended user API endpoints to enable ordering
+    - Extended user API endpoints to enable user role changes
+    - Added endpoint to create a new user
+
+v149 -> 2023-11-07 : https://github.com/inventree/InvenTree/pull/5876
+    - Add 'building' quantity to BomItem serializer
+    - Add extra ordering options for the BomItem list API
+
+v148 -> 2023-11-06 : https://github.com/inventree/InvenTree/pull/5872
+    - Allow "quantity" to be specified when installing an item into another item
 
 v147 -> 2023-11-04: https://github.com/inventree/InvenTree/pull/5860
     - Adds "completed_lines" field to SalesOrder API endpoint
@@ -112,7 +123,7 @@ v117 -> 2023-05-22 : https://github.com/inventree/InvenTree/pull/4854
 v116 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4823
     - Updates to part parameter implementation, to use physical units
 
-v115 - > 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
+v115 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
     - Adds ability to partially scrap a build output
 
 v114 -> 2023-05-16 : https://github.com/inventree/InvenTree/pull/4825

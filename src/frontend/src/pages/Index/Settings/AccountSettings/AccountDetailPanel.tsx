@@ -5,7 +5,8 @@ import { useToggle } from '@mantine/hooks';
 
 import { api } from '../../../../App';
 import { EditButton } from '../../../../components/items/EditButton';
-import { ApiPaths, apiUrl } from '../../../../states/ApiState';
+import { ApiPaths } from '../../../../enums/ApiEndpoints';
+import { apiUrl } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {

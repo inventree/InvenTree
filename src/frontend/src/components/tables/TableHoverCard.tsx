@@ -27,7 +27,7 @@ export function TableHoverCard({
   }
 
   return (
-    <HoverCard>
+    <HoverCard withinPortal={true}>
       <HoverCard.Target>
         <Group spacing="xs" position="apart" noWrap={true}>
           {value}
@@ -56,7 +56,11 @@ export function ProjectCodeHoverCard({ projectCode }: { projectCode: any }) {
     <TableHoverCard
       value={projectCode?.code}
       title={t`Project Code`}
-      extra={projectCode?.description}
+      extra={
+        projectCode && (
+          <Text key="project-code">{projectCode?.description}</Text>
+        )
+      }
     />
   ) : (
     '-'

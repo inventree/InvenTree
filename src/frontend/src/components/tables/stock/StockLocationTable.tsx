@@ -2,8 +2,9 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';

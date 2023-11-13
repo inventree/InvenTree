@@ -16,7 +16,7 @@ export function SettingsHeader({
 }: {
   title: string | ReactNode;
   shorthand?: string;
-  subtitle: string | ReactNode;
+  subtitle?: string | ReactNode;
   switch_condition?: boolean;
   switch_text?: string | ReactNode;
   switch_link?: string;

@@ -2,13 +2,16 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import {
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
@@ -21,6 +24,8 @@ import { RowDeleteAction, RowEditAction } from '../RowActions';
  */
 export function PartParameterTable({ partId }: { partId: any }) {
   const { tableKey, refreshTable } = useTableRefresh('part-parameters');
+
+  const user = useUserState();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -94,7 +99,6 @@ export function PartParameterTable({ partId }: { partId: any }) {
   }, [partId]);
 
   // Callback for row actions
-  // TODO: Adjust based on user permissions
   const rowActions = useCallback(
     (record: any) => {
       // Actions not allowed for "variant" rows
@@ -106,6 +110,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
       actions.push(
         RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
               url: ApiPaths.part_parameter_list,
@@ -127,6 +132,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
       actions.push(
         RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({
               url: ApiPaths.part_parameter_list,
@@ -144,7 +150,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
       return actions;
     },
-    [partId]
+    [partId, user]
   );
 
   const addParameter = useCallback(() => {
@@ -174,7 +180,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
     // TODO: Hide if user does not have permission to edit parts
     actions.push(
-      <AddItemButton tooltip="Add parameter" onClick={addParameter} />
+      <AddItemButton tooltip={t`Add parameter`} onClick={addParameter} />
     );
 
     return actions;

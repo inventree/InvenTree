@@ -22,6 +22,8 @@ class BomUploadTest(InvenTreeAPITestCase):
         """Create BOM data as part of setup routine"""
         super().setUpTestData()
 
+        Part.objects.rebuild()
+
         cls.part = Part.objects.create(
             name='Assembly',
             description='An assembled part',
