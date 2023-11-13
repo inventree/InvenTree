@@ -91,8 +91,12 @@ class ReportTagTest(TestCase):
             with self.assertRaises(FileNotFoundError):
                 report_tags.uploaded_image('/part/something/test.png', replace_missing=False)
 
-            img = report_tags.uploaded_image('/part/something/other.png')
-            self.assertTrue('blank_image.png' in img)
+            img = str(report_tags.uploaded_image('/part/something/other.png'))
+
+            if b:
+                self.assertIn('blank_image.png', img)
+            else:
+                self.assertIn('data:image/png;charset=utf-8;base64,', img)
 
         # Create a dummy image
         img_path = 'part/images/'

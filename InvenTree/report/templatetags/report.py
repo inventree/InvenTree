@@ -146,8 +146,10 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         # In debug mode, return a web path (rather than an encoded image blob)
         if exists:
             return os.path.join(settings.MEDIA_URL, filename)
-
         return os.path.join(settings.STATIC_URL, 'img', replacement_file)
+
+    elif not exists:
+        full_path = settings.STATIC_ROOT.joinpath('img', replacement_file).resolve()
 
     # Load the image, check that it is valid
     img = Image.open(full_path)

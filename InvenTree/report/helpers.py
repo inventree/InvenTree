@@ -63,9 +63,11 @@ def encode_image_base64(image, format: str = 'PNG'):
         str -- Base64 encoded image data e.g. 'data:image/png;base64,xxxxxxxxx'
     """
 
+    fmt = format.lower()
+
     buffered = io.BytesIO()
-    image.save(buffered, format.lower())
+    image.save(buffered, fmt)
 
     img_str = base64.b64encode(buffered.getvalue())
 
-    return f"data:image/{format};charset=utf-8;base64," + img_str.decode()
+    return f"data:image/{fmt};charset=utf-8;base64," + img_str.decode()
