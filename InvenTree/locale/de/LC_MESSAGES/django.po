@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-07 20:38+0000\n"
-"PO-Revision-Date: 2023-11-08 20:36\n"
+"POT-Creation-Date: 2023-11-09 03:01+0000\n"
+"PO-Revision-Date: 2023-11-11 21:26\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -301,7 +301,7 @@ msgstr "Datei-Kommentar"
 #: part/models.py:3102 part/models.py:3181 part/models.py:3201
 #: plugin/models.py:229 plugin/models.py:230
 #: report/templates/report/inventree_test_report_base.html:105
-#: templates/js/translated/stock.js:3007 users/models.py:76
+#: templates/js/translated/stock.js:3007 users/models.py:85
 msgid "User"
 msgstr "Benutzer"
 
@@ -956,7 +956,7 @@ msgstr "Bauauftrag"
 #: part/templates/part/part_sidebar.html:22 templates/InvenTree/index.html:196
 #: templates/InvenTree/search.html:141
 #: templates/InvenTree/settings/sidebar.html:55
-#: templates/js/translated/search.js:186 users/models.py:170
+#: templates/js/translated/search.js:186 users/models.py:179
 msgid "Build Orders"
 msgstr "Bauaufträge"
 
@@ -2578,7 +2578,8 @@ msgstr "Entwickler-Modus"
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "Berichte im Entwickler-Modus generieren (als HTML)"
 
-#: common/models.py:1549 report/models.py:197
+#: common/models.py:1549 plugin/builtin/labels/label_sheet.py:28
+#: report/models.py:197
 msgid "Page Size"
 msgstr "Seitengröße"
 
@@ -3391,7 +3392,7 @@ msgstr "Name für diesen Webhook"
 #: templates/js/translated/table_filters.js:219
 #: templates/js/translated/table_filters.js:488
 #: templates/js/translated/table_filters.js:516
-#: templates/js/translated/table_filters.js:712 users/models.py:145
+#: templates/js/translated/table_filters.js:712 users/models.py:154
 msgid "Active"
 msgstr "Aktiv"
 
@@ -3399,7 +3400,7 @@ msgstr "Aktiv"
 msgid "Is this webhook active"
 msgstr "Ist dieser Webhook aktiv"
 
-#: common/models.py:2541 users/models.py:123
+#: common/models.py:2541 users/models.py:132
 msgid "Token"
 msgstr "Token"
 
@@ -4119,7 +4120,7 @@ msgstr "Zulieferer-Bestand"
 #: templates/InvenTree/index.html:227 templates/InvenTree/search.html:199
 #: templates/InvenTree/settings/sidebar.html:57
 #: templates/js/translated/search.js:205 templates/navbar.html:50
-#: users/models.py:171
+#: users/models.py:180
 msgid "Purchase Orders"
 msgstr "Bestellungen"
 
@@ -4142,7 +4143,7 @@ msgstr "Neue Bestellung"
 #: templates/InvenTree/index.html:259 templates/InvenTree/search.html:219
 #: templates/InvenTree/settings/sidebar.html:59
 #: templates/js/translated/search.js:219 templates/navbar.html:62
-#: users/models.py:172
+#: users/models.py:181
 msgid "Sales Orders"
 msgstr "Aufträge"
 
@@ -4167,7 +4168,7 @@ msgstr "Zugeordneter Bestand"
 #: order/templates/order/return_orders.html:15
 #: templates/InvenTree/settings/sidebar.html:61
 #: templates/js/translated/search.js:232 templates/navbar.html:65
-#: users/models.py:173
+#: users/models.py:182
 msgid "Return Orders"
 msgstr "Rücksendeaufträge"
 
@@ -4383,7 +4384,7 @@ msgstr "Teilverfügbarkeit aktualisieren"
 #: stock/templates/stock/location_sidebar.html:7
 #: templates/InvenTree/search.html:155 templates/js/translated/part.js:1057
 #: templates/js/translated/search.js:172 templates/js/translated/stock.js:2737
-#: users/models.py:169
+#: users/models.py:178
 msgid "Stock Items"
 msgstr "Lagerartikel"
 
@@ -4464,20 +4465,20 @@ msgstr "Dateinamen-Muster"
 msgid "Pattern for generating label filenames"
 msgstr "Muster für die Erstellung von Label-Dateinamen"
 
-#: label/models.py:285 label/models.py:326 label/models.py:354
-#: label/models.py:390
+#: label/models.py:326 label/models.py:367 label/models.py:395
+#: label/models.py:431
 msgid "Query filters (comma-separated list of key=value pairs)"
 msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
-#: label/models.py:286 label/models.py:327 label/models.py:355
-#: label/models.py:391 report/models.py:332 report/models.py:478
+#: label/models.py:327 label/models.py:368 label/models.py:396
+#: label/models.py:432 report/models.py:332 report/models.py:478
 #: report/models.py:516 report/models.py:554 report/models.py:675
 msgid "Filters"
 msgstr "Filter"
 
 #: label/templates/label/part/part_label.html:31
 #: label/templates/label/stockitem/qr.html:21
-#: label/templates/label/stocklocation/qr.html:21
+#: label/templates/label/stocklocation/qr.html:20
 #: templates/allauth_2fa/setup.html:18
 msgid "QR Code"
 msgstr "QR-Code"
@@ -5098,7 +5099,7 @@ msgstr "Bestellung duplizieren"
 #: order/templates/order/sales_order_base.html:83
 #: order/templates/order/sales_order_base.html:84
 msgid "Issue Order"
-msgstr ""
+msgstr "Bestellung aufgeben"
 
 #: order/templates/order/order_base.html:83
 #: order/templates/order/return_order_base.html:86
@@ -5547,7 +5548,7 @@ msgstr "Pfad zur Kategorie"
 #: templates/InvenTree/index.html:36 templates/InvenTree/search.html:84
 #: templates/InvenTree/settings/sidebar.html:47
 #: templates/js/translated/part.js:2799 templates/js/translated/search.js:130
-#: templates/navbar.html:24 users/models.py:166
+#: templates/navbar.html:24 users/models.py:175
 msgid "Parts"
 msgstr "Teile"
 
@@ -5630,7 +5631,7 @@ msgstr "Teil-Kategorie"
 
 #: part/models.py:80 part/templates/part/category.html:136
 #: templates/InvenTree/search.html:97 templates/js/translated/search.js:158
-#: users/models.py:165
+#: users/models.py:174
 msgid "Part Categories"
 msgstr "Teil-Kategorien"
 
@@ -6098,7 +6099,7 @@ msgstr ""
 
 #: part/models.py:3369
 msgid "Choices must be unique"
-msgstr ""
+msgstr "Auswahl muss einzigartig sein"
 
 #: part/models.py:3385
 msgid "Parameter template name must be unique"
@@ -6316,7 +6317,7 @@ msgstr ""
 
 #: part/serializers.py:354
 msgid "Select category"
-msgstr ""
+msgstr "Kategorie auswählen"
 
 #: part/serializers.py:384
 msgid "Original Part"
@@ -6352,7 +6353,7 @@ msgstr "Parameterdaten vom Originalteil kopieren"
 
 #: part/serializers.py:404
 msgid "Copy Notes"
-msgstr ""
+msgstr "Anmerkungen kopieren"
 
 #: part/serializers.py:404
 msgid "Copy notes from original part"
@@ -6715,7 +6716,7 @@ msgstr "Inventurinformationen hinzufügen"
 #: part/templates/part/detail.html:67 part/templates/part/part_sidebar.html:50
 #: stock/admin.py:148 templates/InvenTree/settings/part_stocktake.html:30
 #: templates/InvenTree/settings/sidebar.html:53
-#: templates/js/translated/stock.js:2186 users/models.py:167
+#: templates/js/translated/stock.js:2186 users/models.py:176
 msgid "Stocktake"
 msgstr "Inventur"
 
@@ -7237,7 +7238,7 @@ msgstr "Unbekannte Datenbank"
 
 #: part/templatetags/inventree_extras.py:231
 msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr ""
+msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: part/views.py:110
 msgid "Match References"
@@ -7246,7 +7247,7 @@ msgstr "Referenzen zuteilen"
 #: part/views.py:242
 #, python-brace-format
 msgid "Can't import part {new_part.name} because there is no category assigned"
-msgstr ""
+msgstr "Teil {new_part.name} kann nicht importiert werden, da keine Kategorie zugewiesen ist"
 
 #: part/views.py:383
 msgid "Select Part Image"
@@ -7300,11 +7301,11 @@ msgstr ""
 
 #: plugin/base/barcodes/api.py:281
 msgid "Invalid stock location"
-msgstr ""
+msgstr "Ungültiger Lagerort"
 
 #: plugin/base/barcodes/api.py:292
 msgid "Item has already been received"
-msgstr ""
+msgstr "Artikel wurde bereits erhalten"
 
 #: plugin/base/barcodes/api.py:314
 msgid "Invalid supplier barcode"
@@ -7356,6 +7357,7 @@ msgstr "Bietet native Unterstützung für Barcodes"
 #: plugin/builtin/integration/core_notifications.py:34
 #: plugin/builtin/integration/currency_exchange.py:22
 #: plugin/builtin/labels/inventree_label.py:23
+#: plugin/builtin/labels/label_sheet.py:56
 #: plugin/builtin/suppliers/digikey.py:24 plugin/builtin/suppliers/lcsc.py:25
 #: plugin/builtin/suppliers/mouser.py:24 plugin/builtin/suppliers/tme.py:25
 msgid "InvenTree contributors"
@@ -7409,7 +7411,7 @@ msgstr ""
 
 #: plugin/builtin/labels/inventree_label.py:20
 msgid "InvenTree PDF label printer"
-msgstr ""
+msgstr "InvenTree PDF-Etikettendrucker"
 
 #: plugin/builtin/labels/inventree_label.py:21
 msgid "Provides native support for printing PDF labels"
@@ -7423,13 +7425,49 @@ msgstr "Debug-Modus"
 msgid "Enable debug mode - returns raw HTML instead of PDF"
 msgstr ""
 
+#: plugin/builtin/labels/label_sheet.py:29
+msgid "Page size for the label sheet"
+msgstr "Seitengröße für das Labelblatt"
+
+#: plugin/builtin/labels/label_sheet.py:34
+msgid "Border"
+msgstr ""
+
+#: plugin/builtin/labels/label_sheet.py:35
+msgid "Print a border around each label"
+msgstr "Einen Rahmen um jedes Label drucken"
+
+#: plugin/builtin/labels/label_sheet.py:40 report/models.py:203
+msgid "Landscape"
+msgstr "Querformat"
+
+#: plugin/builtin/labels/label_sheet.py:41
+msgid "Print the label sheet in landscape mode"
+msgstr "Labelblatt im Querformat drucken"
+
+#: plugin/builtin/labels/label_sheet.py:53
+msgid "InvenTree Label Sheet Printer"
+msgstr "InvenTree Etikettendrucker"
+
+#: plugin/builtin/labels/label_sheet.py:54
+msgid "Arrays multiple labels onto a single sheet"
+msgstr ""
+
+#: plugin/builtin/labels/label_sheet.py:87
+msgid "Label is too large for page size"
+msgstr "Label ist zu groß für Seitengröße"
+
+#: plugin/builtin/labels/label_sheet.py:116
+msgid "No labels were generated"
+msgstr "Es wurden keine Etiketten generiert"
+
 #: plugin/builtin/suppliers/digikey.py:21
 msgid "Supplier Integration - DigiKey"
 msgstr ""
 
 #: plugin/builtin/suppliers/digikey.py:22
 msgid "Provides support for scanning DigiKey barcodes"
-msgstr ""
+msgstr "Unterstützt das Scannen von DigiKey-Barcodes"
 
 #: plugin/builtin/suppliers/digikey.py:30
 msgid "The Supplier which acts as 'DigiKey'"
@@ -7441,7 +7479,7 @@ msgstr ""
 
 #: plugin/builtin/suppliers/lcsc.py:23
 msgid "Provides support for scanning LCSC barcodes"
-msgstr ""
+msgstr "Unterstützt das Scannen von LCSC-Barcodes"
 
 #: plugin/builtin/suppliers/lcsc.py:31
 msgid "The Supplier which acts as 'LCSC'"
@@ -7449,11 +7487,11 @@ msgstr ""
 
 #: plugin/builtin/suppliers/mouser.py:21
 msgid "Supplier Integration - Mouser"
-msgstr ""
+msgstr "Lieferantenintegration - Mouser"
 
 #: plugin/builtin/suppliers/mouser.py:22
 msgid "Provides support for scanning Mouser barcodes"
-msgstr ""
+msgstr "Unterstützt das Scannen von Mouser-Barcodes"
 
 #: plugin/builtin/suppliers/mouser.py:30
 msgid "The Supplier which acts as 'Mouser'"
@@ -7461,11 +7499,11 @@ msgstr ""
 
 #: plugin/builtin/suppliers/tme.py:22
 msgid "Supplier Integration - TME"
-msgstr ""
+msgstr "Lieferantenintegration - TME"
 
 #: plugin/builtin/suppliers/tme.py:23
 msgid "Provides support for scanning TME barcodes"
-msgstr ""
+msgstr "Unterstützt das Scannen von TME-Barcodes"
 
 #: plugin/builtin/suppliers/tme.py:31
 msgid "The Supplier which acts as 'TME'"
@@ -7496,7 +7534,7 @@ msgstr "Plugin-Konfiguration"
 msgid "Plugin Configurations"
 msgstr "Plugin-Konfigurationen"
 
-#: plugin/models.py:34 users/models.py:70
+#: plugin/models.py:34 users/models.py:73
 msgid "Key"
 msgstr "Schlüssel"
 
@@ -7681,10 +7719,6 @@ msgstr "Bericht Revisionsnummer (autom. erhöht)"
 #: report/models.py:198
 msgid "Page size for PDF reports"
 msgstr "Seitengröße für PDF-Berichte"
-
-#: report/models.py:203
-msgid "Landscape"
-msgstr "Querformat"
 
 #: report/models.py:204
 msgid "Render report in landscape orientation"
@@ -7929,7 +7963,7 @@ msgstr "Löschen wenn leer"
 
 #: stock/admin.py:149 stock/models.py:823
 #: stock/templates/stock/item_base.html:433
-#: templates/js/translated/stock.js:2200 users/models.py:89
+#: templates/js/translated/stock.js:2200 users/models.py:98
 msgid "Expiry Date"
 msgstr "Ablaufdatum"
 
@@ -7977,7 +8011,7 @@ msgstr "Bestand-Lagerort"
 
 #: stock/models.py:119 stock/templates/stock/location.html:179
 #: templates/InvenTree/search.html:166 templates/js/translated/search.js:178
-#: users/models.py:168
+#: users/models.py:177
 msgid "Stock Locations"
 msgstr "Bestand-Lagerorte"
 
@@ -8613,7 +8647,7 @@ msgid "This StockItem expired on %(item.expiry_date)s"
 msgstr "Dieser Lagerartikel lief am %(item.expiry_date)s ab"
 
 #: stock/templates/stock/item_base.html:437
-#: templates/js/translated/table_filters.js:435 users/models.py:139
+#: templates/js/translated/table_filters.js:435 users/models.py:148
 msgid "Expired"
 msgstr "abgelaufen"
 
@@ -9252,7 +9286,7 @@ msgstr "Bearbeiten"
 #: templates/InvenTree/settings/settings_staff_js.html:81
 #: templates/js/translated/forms.js:511 templates/js/translated/helpers.js:105
 #: templates/js/translated/part.js:389 templates/js/translated/pricing.js:629
-#: templates/js/translated/stock.js:245 users/models.py:384
+#: templates/js/translated/stock.js:245 users/models.py:393
 msgid "Delete"
 msgstr "Löschen"
 
@@ -9623,11 +9657,11 @@ msgstr "Es sind keine sozialen Netzwerke mit diesem Konto verbunden."
 
 #: templates/InvenTree/settings/user_sso.html:58
 msgid "Add SSO Account"
-msgstr ""
+msgstr "SSO-Konto hinzufügen"
 
 #: templates/InvenTree/settings/user_sso.html:67
 msgid "Single Sign On is not enabled for this server"
-msgstr ""
+msgstr "Single-Sign-On ist für diesen Server nicht aktiviert"
 
 #: templates/about.html:9
 msgid "InvenTree Version"
@@ -9898,7 +9932,7 @@ msgstr "Bitte kontaktieren Sie Ihren Administrator für mehr Informationen"
 
 #: templates/base.html:113
 msgid "Pending Database Migrations"
-msgstr ""
+msgstr "Ausstehende Datenbankmigrationen"
 
 #: templates/base.html:116
 msgid "There are pending database migrations which require attention"
@@ -10008,11 +10042,11 @@ msgstr "Verbindungszeitüberschreitung bei der Datenanforderung"
 
 #: templates/js/translated/api.js:261
 msgid "Error 503: Service Unavailable"
-msgstr ""
+msgstr "Fehler 503: Service nicht erreichbar"
 
 #: templates/js/translated/api.js:262
 msgid "The server is currently unavailable"
-msgstr ""
+msgstr "Der Server ist derzeit nicht erreichbar"
 
 #: templates/js/translated/api.js:265
 msgid "Unhandled Error Code"
@@ -10032,7 +10066,7 @@ msgstr "Anhänge entfernen"
 
 #: templates/js/translated/attachment.js:205
 msgid "Delete attachments"
-msgstr ""
+msgstr "Anhänge löschen"
 
 #: templates/js/translated/attachment.js:253
 msgid "Attachment actions"
@@ -10803,62 +10837,62 @@ msgstr "Keine Firmeninformation gefunden"
 
 #: templates/js/translated/company.js:609
 msgid "Create New Contact"
-msgstr ""
+msgstr "Neuen Kontakt erstellen"
 
 #: templates/js/translated/company.js:625
 #: templates/js/translated/company.js:748
 msgid "Edit Contact"
-msgstr ""
+msgstr "Kontakt bearbeiten"
 
 #: templates/js/translated/company.js:662
 msgid "All selected contacts will be deleted"
-msgstr ""
+msgstr "Alle ausgewählten Kontakte werden gelöscht"
 
 #: templates/js/translated/company.js:668
 #: templates/js/translated/company.js:732
 msgid "Role"
-msgstr ""
+msgstr "Rolle"
 
 #: templates/js/translated/company.js:676
 msgid "Delete Contacts"
-msgstr ""
+msgstr "Kontakte löschen"
 
 #: templates/js/translated/company.js:707
 msgid "No contacts found"
-msgstr ""
+msgstr "Keine Kontakte gefunden"
 
 #: templates/js/translated/company.js:720
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonnummer"
 
 #: templates/js/translated/company.js:726
 msgid "Email Address"
-msgstr ""
+msgstr "E-Mail-Adresse"
 
 #: templates/js/translated/company.js:752
 msgid "Delete Contact"
-msgstr ""
+msgstr "Kontakt löschen"
 
 #: templates/js/translated/company.js:849
 msgid "Create New Address"
-msgstr ""
+msgstr "Neue Adresse erstellen"
 
 #: templates/js/translated/company.js:864
 #: templates/js/translated/company.js:1025
 msgid "Edit Address"
-msgstr ""
+msgstr "Adresse bearbeiten"
 
 #: templates/js/translated/company.js:899
 msgid "All selected addresses will be deleted"
-msgstr ""
+msgstr "Alle ausgewählten Adressen werden gelöscht"
 
 #: templates/js/translated/company.js:913
 msgid "Delete Addresses"
-msgstr ""
+msgstr "Adressen löschen"
 
 #: templates/js/translated/company.js:940
 msgid "No addresses found"
-msgstr ""
+msgstr "Keine Addressen gefunden"
 
 #: templates/js/translated/company.js:979
 msgid "Postal city"
@@ -10866,19 +10900,19 @@ msgstr ""
 
 #: templates/js/translated/company.js:985
 msgid "State/province"
-msgstr ""
+msgstr "Bundesland"
 
 #: templates/js/translated/company.js:997
 msgid "Courier notes"
-msgstr ""
+msgstr "Kurierhinweise"
 
 #: templates/js/translated/company.js:1003
 msgid "Internal notes"
-msgstr ""
+msgstr "Interne Hinweise"
 
 #: templates/js/translated/company.js:1029
 msgid "Delete Address"
-msgstr ""
+msgstr "Adresse löschen"
 
 #: templates/js/translated/company.js:1102
 msgid "All selected manufacturer parts will be deleted"
@@ -11011,11 +11045,11 @@ msgstr "Filter auswählen"
 
 #: templates/js/translated/filters.js:437
 msgid "Print Labels"
-msgstr ""
+msgstr "Etiketten drucken"
 
 #: templates/js/translated/filters.js:441
 msgid "Print Reports"
-msgstr ""
+msgstr "Berichte drucken"
 
 #: templates/js/translated/filters.js:453
 msgid "Download table data"
@@ -11105,11 +11139,11 @@ msgstr "NEIN"
 
 #: templates/js/translated/helpers.js:93
 msgid "True"
-msgstr ""
+msgstr "Wahr"
 
 #: templates/js/translated/helpers.js:94
 msgid "False"
-msgstr ""
+msgstr "Falsch"
 
 #: templates/js/translated/index.js:104
 msgid "No parts required for builds"
@@ -11687,15 +11721,15 @@ msgstr ""
 
 #: templates/js/translated/plugin.js:188
 msgid "Enable"
-msgstr ""
+msgstr "Aktivieren"
 
 #: templates/js/translated/plugin.js:188
 msgid "Disable"
-msgstr ""
+msgstr "Deaktivieren"
 
 #: templates/js/translated/plugin.js:202
 msgid "Plugin updated"
-msgstr ""
+msgstr "Plugin aktualisiert"
 
 #: templates/js/translated/pricing.js:159
 msgid "Error fetching currency data"
@@ -11864,7 +11898,7 @@ msgstr "Barcode hinzufügen"
 
 #: templates/js/translated/purchase_order.js:1199
 msgid "Remove barcode"
-msgstr ""
+msgstr "Barcode entfernen"
 
 #: templates/js/translated/purchase_order.js:1202
 msgid "Specify location"
@@ -12424,7 +12458,7 @@ msgstr "Entfernen"
 msgid "Add Stock"
 msgstr "Bestand hinzufügen"
 
-#: templates/js/translated/stock.js:1042 users/models.py:380
+#: templates/js/translated/stock.js:1042 users/models.py:389
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -13063,7 +13097,7 @@ msgstr "Benachrichtigungen anzeigen"
 msgid "New Notifications"
 msgstr "Neue Benachrichtigungen"
 
-#: templates/navbar.html:144 users/models.py:164
+#: templates/navbar.html:144 users/models.py:173
 msgid "Admin"
 msgstr "Admin"
 
@@ -13234,31 +13268,31 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: users/admin.py:78
+#: users/admin.py:90
 msgid "Users"
 msgstr "Benutzer"
 
-#: users/admin.py:79
+#: users/admin.py:91
 msgid "Select which users are assigned to this group"
 msgstr "Welche Benutzer gehören zu dieser Gruppe"
 
-#: users/admin.py:214
+#: users/admin.py:226
 msgid "The following users are members of multiple groups"
 msgstr ""
 
-#: users/admin.py:241
+#: users/admin.py:253
 msgid "Personal info"
 msgstr "Persöhnliche Informationen"
 
-#: users/admin.py:242
+#: users/admin.py:254
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: users/admin.py:245
+#: users/admin.py:257
 msgid "Important dates"
 msgstr "wichtige Daten"
 
-#: users/authentication.py:29 users/models.py:103
+#: users/authentication.py:29 users/models.py:112
 msgid "Token has been revoked"
 msgstr ""
 
@@ -13266,67 +13300,67 @@ msgstr ""
 msgid "Token has expired"
 msgstr ""
 
-#: users/models.py:52
+#: users/models.py:53
 msgid "API Token"
 msgstr ""
 
-#: users/models.py:53
+#: users/models.py:54
 msgid "API Tokens"
 msgstr ""
 
-#: users/models.py:83
+#: users/models.py:92
 msgid "Token Name"
 msgstr ""
 
-#: users/models.py:84
+#: users/models.py:93
 msgid "Custom token name"
 msgstr ""
 
-#: users/models.py:90
+#: users/models.py:99
 msgid "Token expiry date"
 msgstr ""
 
-#: users/models.py:96
+#: users/models.py:105
 msgid "Last Seen"
 msgstr ""
 
-#: users/models.py:97
+#: users/models.py:106
 msgid "Last time the token was used"
 msgstr ""
 
-#: users/models.py:102
+#: users/models.py:111
 msgid "Revoked"
 msgstr ""
 
-#: users/models.py:367
+#: users/models.py:376
 msgid "Permission set"
 msgstr "Berechtigung geändert"
 
-#: users/models.py:375
+#: users/models.py:384
 msgid "Group"
 msgstr "Gruppe"
 
-#: users/models.py:378
+#: users/models.py:387
 msgid "View"
 msgstr "Ansicht"
 
-#: users/models.py:378
+#: users/models.py:387
 msgid "Permission to view items"
 msgstr "Berechtigung Einträge anzuzeigen"
 
-#: users/models.py:380
+#: users/models.py:389
 msgid "Permission to add items"
 msgstr "Berechtigung Einträge zu erstellen"
 
-#: users/models.py:382
+#: users/models.py:391
 msgid "Change"
 msgstr "Ändern"
 
-#: users/models.py:382
+#: users/models.py:391
 msgid "Permissions to edit items"
 msgstr "Berechtigungen Einträge zu ändern"
 
-#: users/models.py:384
+#: users/models.py:393
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
