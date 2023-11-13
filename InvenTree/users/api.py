@@ -45,15 +45,14 @@ class OwnerList(ListAPI):
         search_term = str(self.request.query_params.get('search', '')).lower()
         is_active = self.request.query_params.get('is_active', None)
 
-        if is_active is not None:
-            is_active = InvenTree.helpers.str2bool(is_active)
-
         queryset = super().filter_queryset(queryset)
 
-        if not search_term:
-            return queryset
-
         results = []
+
+        # Get a list of all matching users, depending on the *is_active* flag
+        if is_active is not None:
+            is_active = InvenTree.helpers.str2bool(is_active)
+            matching_user_ids = User.objects.filter(is_active=is_active).values_list('pk', flat=True)
 
         for result in queryset.all():
 
@@ -71,7 +70,8 @@ class OwnerList(ListAPI):
                 continue
 
             if is_active is not None:
-                if hasattr(result, 'is_active') and result.is_active != is_active:
+                # Skip any users which do not match the required *is_active* value
+                if result.owner_type.name == 'user' and result.owner_id not in matching_user_ids:
                     continue
 
             # If we get here, there is no reason *not* to include this result
