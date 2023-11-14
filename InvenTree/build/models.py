@@ -15,6 +15,7 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from common.notifications import InvenTreeNotificationBodies
 
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
@@ -604,6 +605,14 @@ class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBar
 
         self.status = BuildStatus.CANCELLED.value
         self.save()
+
+        # Notify users that the order has been canceled
+        InvenTree.helpers_model.notify_responsible(
+            self,
+            Build,
+            exclude=self.issued_by,
+            content=InvenTreeNotificationBodies.OrderCanceled
+        )
 
         trigger_event('build.cancelled', id=self.pk)
 
