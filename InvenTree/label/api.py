@@ -159,8 +159,7 @@ class LabelPrintMixin(LabelFilterMixin):
         # Check the request to determine if the user has selected a label printing plugin
         plugin = self.get_plugin(self.request)
 
-        kwargs.setdefault('context', self.get_serializer_context())
-        serializer = plugin.get_printing_options_serializer(self.request, *args, **kwargs)
+        serializer = plugin.get_printing_options_serializer(self.request)
 
         # if no serializer is defined, return an empty serializer
         if not serializer:
@@ -227,7 +226,7 @@ class LabelPrintMixin(LabelFilterMixin):
             raise ValidationError('Label has invalid dimensions')
 
         # if the plugin returns a serializer, validate the data
-        if serializer := plugin.get_printing_options_serializer(request, data=request.data, context=self.get_serializer_context()):
+        if serializer := plugin.get_printing_options_serializer(request, data=request.data):
             serializer.is_valid(raise_exception=True)
 
         # At this point, we offload the label(s) to the selected plugin.
