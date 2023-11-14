@@ -311,7 +311,7 @@ class BarcodePOReceive(APIView):
 
         # A plugin has not been found!
         if plugin is None:
-            response["error"] = _("Invalid supplier barcode")
+            response["error"] = _("No match for supplier barcode")
             raise ValidationError(response)
         elif "error" in response:
             raise ValidationError(response)
