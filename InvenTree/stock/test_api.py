@@ -13,6 +13,7 @@ import tablib
 from djmoney.money import Money
 from rest_framework import status
 
+import build.models
 import company.models
 import part.models
 from common.models import InvenTreeSetting
@@ -556,6 +557,100 @@ class StockItemListTest(StockAPITestCase):
         dataset = self.export_data({'part': 25})
 
         self.assertEqual(len(dataset), 17)
+
+    def test_filter_by_allocated(self):
+        """Test that we can filter by "allocated" status:
+
+        - Only return stock items which are 'allocated'
+        - Either to a build order or sales order
+        - Test that the results are "distinct" (no duplicated results)
+        - Ref: https://github.com/inventree/InvenTree/pull/5916
+        """
+
+        # Create a build order to allocate to
+        assembly = part.models.Part.objects.create(name='F Assembly', description='Assembly for filter test', assembly=True)
+        component = part.models.Part.objects.create(name='F Component', description='Component for filter test', component=True)
+        bom_item = part.models.BomItem.objects.create(part=assembly, sub_part=component, quantity=10)
+
+        # Create two build orders
+        bo_1 = build.models.Build.objects.create(part=assembly, quantity=10)
+        bo_2 = build.models.Build.objects.create(part=assembly, quantity=20)
+
+        # Test that two distinct build line items are created automatically
+        self.assertEqual(bo_1.build_lines.count(), 1)
+        self.assertEqual(bo_2.build_lines.count(), 1)
+        self.assertEqual(build.models.BuildLine.objects.filter(bom_item=bom_item).count(), 2)
+
+        build_line_1 = bo_1.build_lines.first()
+        build_line_2 = bo_2.build_lines.first()
+
+        # Allocate stock
+        location = StockLocation.objects.first()
+        stock_1 = StockItem.objects.create(part=component, quantity=100, location=location)
+        stock_2 = StockItem.objects.create(part=component, quantity=100, location=location)
+        stock_3 = StockItem.objects.create(part=component, quantity=100, location=location)
+
+        # Allocate stock_1 to two build orders
+        build.models.BuildItem.objects.create(
+            stock_item=stock_1,
+            build_line=build_line_1,
+            quantity=5
+        )
+
+        build.models.BuildItem.objects.create(
+            stock_item=stock_1,
+            build_line=build_line_2,
+            quantity=5
+        )
+
+        # Allocate stock_2 to 1 build orders
+        build.models.BuildItem.objects.create(
+            stock_item=stock_2,
+            build_line=build_line_1,
+            quantity=5
+        )
+
+        url = reverse('api-stock-list')
+
+        # 3 items when just filtering by part
+        response = self.get(
+            url,
+            {
+                "part": component.pk,
+                "in_stock": True
+            },
+            expected_code=200
+        )
+        self.assertEqual(len(response.data), 3)
+
+        # 1 item when filtering by "not allocated"
+        response = self.get(
+            url,
+            {
+                "part": component.pk,
+                "in_stock": True,
+                "allocated": False,
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["pk"], stock_3.pk)
+
+        # 2 items when filtering by "allocated"
+        response = self.get(
+            url,
+            {
+                "part": component.pk,
+                "in_stock": True,
+                "allocated": True,
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["pk"], stock_1.pk)
+        self.assertEqual(response.data[1]["pk"], stock_2.pk)
 
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""

@@ -1006,7 +1006,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             )
 
             # Filter out "serialized" stock items, these cannot be auto-allocated
-            available_stock = available_stock.filter(Q(serial=None) | Q(serial=''))
+            available_stock = available_stock.filter(Q(serial=None) | Q(serial='')).distinct()
 
             if location:
                 # Filter only stock items located "below" the specified location

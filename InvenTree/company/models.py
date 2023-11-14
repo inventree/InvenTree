@@ -209,13 +209,13 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     @property
     def parts(self):
         """Return SupplierPart objects which are supplied or manufactured by this company."""
-        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id))
+        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id)).distinct()
 
     @property
     def stock_items(self):
         """Return a list of all stock items supplied or manufactured by this company."""
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
+        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).distinct()
 
 
 class CompanyAttachment(InvenTreeAttachment):
