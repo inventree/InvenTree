@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
@@ -54,42 +53,186 @@ class BarcodeMixin:
         """
         return None
 
-    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
-        """Scan a barcode to receive a purchase order item.
 
-        It's recommended to use the receive_purchase_order_item method to return from this function.
+class SupplierBarcodeMixin(BarcodeMixin):
+    """Mixin that provides default implementations for scan functions for supplier barcodes.
 
-        Returns:
-            None if the barcode_data could not be parsed.
+    Custom supplier barcode plugins should use this mixin and implement the
+    parse_supplier_barcode_data function.
+    """
 
-            A dict object containing:
-                - on success:
-                    a "success" message and the received "lineitem"
-                - on partial success (if there's missing information):
-                    an "action_required" message and the matched, but not yet received "lineitem"
-                - on failure:
-                    an "error" message
+    # Following are the "standard" field names for supplier barcodes
+    # Note that some manufacturers use different codes,
+    # and there are other fields which can be included in the barcode
+    CUSTOMER_ORDER_NUMBER = "K"
+    SUPPLIER_ORDER_NUMBER = "1K"
+    QUANTITY = "Q"
+    SUPPLIER_PART_NUMBER = "P"
+    MANUFACTURER_PART_NUMBER = "1P"
+
+    def __init__(self):
+        """Register this mixin"""
+        super().__init__()
+        self.add_mixin('supplier_barcode', True, __class__)
+
+    def parse_supplier_barcode_data(self, barcode_data) -> None:
+        """Parse the supplied barcode data.
+
+        It is expected that the resulting fields are extracted,
+        and stored (as a list of strings) in the 'barcode_fields' attribute.
         """
+
+        if not isinstance(barcode_data, str):
+            return
+
+        return self.parse_isoiec_15434_barcode2d(barcode_data)
+
+    def scan(self, barcode_data):
+        """Try to match a supplier barcode to a supplier part."""
+
+        self.barcode_fields = self.parse_supplier_barcode_data(barcode_data)
+
+        if self.SKU is None and self.MPN is None:
+            return None
+
+        supplier_parts = self.get_supplier_parts(self.SKU, self.get_supplier(), self.MPN)
+
+        if len(supplier_parts) > 1:
+            return {"error": _("Found multiple matching supplier parts for barcode")}
+        elif not supplier_parts:
+            return None
+        supplier_part = supplier_parts[0]
+
+        data = {
+            "pk": supplier_part.pk,
+            "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
+            "web_url": supplier_part.get_absolute_url(),
+        }
+
+        return {
+            SupplierPart.barcode_model_type(): data
+        }
+
+    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
+        """Try to scan a supplier barcode to receive a purchase order item.
+
+        - Decode the barcode data into "native" format
+        - Map the decoded data to a "standard" format
+        """
+        self.barcode_fields = self.parse_supplier_barcode_data(barcode_data)
+
+        if self.SKU is None and self.MPN is None:
+            return None
+
+        # Find matching purchase order
+        po = self.get_purchase_order(
+            purchase_order=purchase_order,
+            customer_order_number=self.customer_order_number,
+            supplier_order_number=self.supplier_order_number,
+            supplier=self.get_supplier(),
+        )
+
+        if not po:
+            return None
+
+        # Find matching supplier part(s)
+        supplier_parts = self.get_supplier_parts(self.SKU, self.get_supplier(), self.MPN)
+        if len(supplier_parts) > 1:
+            return {
+                "error": _("Found multiple matching supplier parts for barcode")
+            }
+
+        if len(supplier_parts) == 0:
+            return None
+
+        # Extract the first supplier part
+        supplier_part = supplier_parts[0]
+
+        if self.quantity is not None and self.quantity <= 0:
+            return {
+                "error": _("Quantity must be greater than zero")
+            }
+
+        return self.receive_purchase_order_item(
+            supplier_part,
+            po,
+            user,
+            quantity=self.quantity,
+            location=location,
+            barcode=barcode_data,
+        )
+
+    @property
+    def SKU(self):
+        """Return the SKU field data."""
+        return self.get_field_data(self.SUPPLIER_PART_NUMBER)
+
+    @property
+    def MPN(self):
+        """Return the MPN field data"""
+        return self.get_field_data(self.MANUFACTURER_PART_NUMBER)
+
+    @property
+    def quantity(self):
+        """Return the quantity field data."""
+        q = self.get_field_data(self.QUANTITY)
+
+        if q is not None:
+            try:
+                return Decimal(q)
+            except InvalidOperation:
+                pass
+
+    @property
+    def customer_order_number(self):
+        """Return the customer (internal) order number"""
+        return self.get_field_data(self.CUSTOMER_ORDER_NUMBER)
+
+    @property
+    def supplier_order_number(self):
+        """Return the supplier's order number"""
+        return self.get_field_data(self.SUPPLIER_ORDER_NUMBER)
+
+    def get_field_data(self, code):
+        """Return the field data for a given field code."""
+
+        fields = getattr(self, 'barcode_fields') or []
+
+        # Return the first "match" for the given code
+        for field in fields:
+            if field.startswith(code):
+                return field[len(code):]
 
         return None
 
-    @staticmethod
-    def parse_ecia_barcode2d(barcode_data: str | list[str]) -> dict[str, str]:
-        """Parse a standard ECIA 2D barcode, according to https://www.ecianow.org/assets/docs/ECIA_Specifications.pdf"""
+    def get_supplier(self) -> Company | None:
+        """Get the supplier for the SUPPLIER_ID set in the plugin settings.
 
-        if not isinstance(barcode_data, str):
-            data_split = barcode_data
-        elif not (data_split := BarcodeMixin.parse_isoiec_15434_barcode2d(barcode_data)):
+        If it's not defined, try to guess it and set it if possible.
+        """
+
+        if not isinstance(self, SettingsMixin):
             return None
 
-        barcode_fields = {}
-        for entry in data_split:
-            for identifier, field_name in ECIA_DATA_IDENTIFIER_MAP.items():
-                if entry.startswith(identifier):
-                    barcode_fields[field_name] = entry[len(identifier):]
-                    break
+        if supplier_pk := self.get_setting("SUPPLIER_ID"):
+            if (supplier := Company.objects.get(pk=supplier_pk)):
+                return supplier
+            else:
+                logger.error(
+                    "No company with pk %d (set \"SUPPLIER_ID\" setting to a valid value)",
+                    supplier_pk
+                )
+                return None
 
-        return barcode_fields
+        if not (supplier_name := getattr(self, "DEFAULT_SUPPLIER_NAME", None)):
+            return None
+
+        suppliers = Company.objects.filter(name__icontains=supplier_name, is_supplier=True)
+        if len(suppliers) != 1:
+            return None
+        self.set_setting("SUPPLIER_ID", suppliers.first().pk)
+
+        return suppliers.first()
 
     @staticmethod
     def parse_isoiec_15434_barcode2d(barcode_data: str) -> list[str]:
@@ -97,17 +240,19 @@ class BarcodeMixin:
         HEADER = "[)>\x1E06\x1D"
         TRAILER = "\x1E\x04"
 
+        barcode = str(barcode_data).strip()
+
         # some old mouser barcodes start with this messed up header
         OLD_MOUSER_HEADER = ">[)>06\x1D"
         if barcode_data.startswith(OLD_MOUSER_HEADER):
-            barcode_data = barcode_data.replace(OLD_MOUSER_HEADER, HEADER, 1)
+            barcode = barcode.replace(OLD_MOUSER_HEADER, HEADER, 1)
 
         # most barcodes don't include the trailer, because "why would you stick to
         # the standard, right?" so we only check for the header here
-        if not barcode_data.startswith(HEADER):
+        if not barcode.startswith(HEADER):
             return
 
-        actual_data = barcode_data.split(HEADER, 1)[1].rsplit(TRAILER, 1)[0]
+        actual_data = barcode.split(HEADER, 1)[1].rsplit(TRAILER, 1)[0]
 
         return actual_data.split("\x1D")
 
@@ -145,12 +290,56 @@ class BarcodeMixin:
         return supplier_parts
 
     @staticmethod
+    def get_purchase_order(
+        purchase_order: PurchaseOrder = None,
+        customer_order_number: str = None,
+        supplier_order_number: str = None,
+        supplier: Company = None,
+    ):
+        """Determine the associated purchase order.
+
+        Arguments:
+            purchase_order: A purchase order object (supplied by the client)
+            customer_order_number: A customer order number (extracted from the barcode)
+            supplier_order_number: A supplier order number (extracted from the barcode)
+            supplier: A supplier object (supplied by the plugin)
+        """
+
+        # If a purchase order is supplied, use that
+        if purchase_order is not None:
+            return purchase_order
+
+        orders = PurchaseOrder.objects.filter(
+            status=PurchaseOrderStatus.PLACED.value,
+        )
+
+        if supplier:
+            orders = orders.filter(supplier=supplier)
+
+        if customer_order_number:
+            orders = orders.filter(reference__iexact=customer_order_number)
+        elif supplier_order_number:
+            orders = orders.filter(supplier_reference__iexact=supplier_order_number)
+
+        if orders.count() == 1:
+            return orders.first()
+
+        if orders.count() > 1:
+            logger.warning(
+                "Found multiple purchase orders for supplier '%s', customer order '%s', supplier order '%s'",
+                supplier.name if supplier else None,
+                customer_order_number,
+                supplier_order_number,
+            )
+
+        return None
+
+    @staticmethod
     def receive_purchase_order_item(
             supplier_part: SupplierPart,
+            purchase_order: PurchaseOrder,
             user: User,
             quantity: Decimal | str = None,
-            order_number: str = None,
-            purchase_order: PurchaseOrder = None,
             location: StockLocation = None,
             barcode: str = None,
     ) -> dict:
@@ -162,27 +351,6 @@ class BarcodeMixin:
                 - on partial success: the "lineitem" with quantity and location (both can be None)
                 - on failure: an "error" message
         """
-
-        if not purchase_order:
-            # try to find a purchase order with either reference or name matching
-            # the provided order_number
-            if not order_number:
-                return {"error": _("Supplier barcode doesn't contain order number")}
-
-            purchase_orders = (
-                PurchaseOrder.objects.filter(
-                    supplier_reference__iexact=order_number,
-                    status=PurchaseOrderStatus.PLACED.value,
-                ) | PurchaseOrder.objects.filter(
-                    reference__iexact=order_number,
-                    status=PurchaseOrderStatus.PLACED.value,
-                )
-            )
-
-            if len(purchase_orders) > 1:
-                return {"error": _(f"Found multiple placed purchase orders for '{order_number}'")}
-            elif not (purchase_order := purchase_orders.first()):
-                return {"error": _(f"Failed to find placed purchase order for '{order_number}'")}
 
         if quantity:
             try:
@@ -258,129 +426,3 @@ class BarcodeMixin:
 
         response["success"] = _("Received purchase order line item")
         return response
-
-
-@dataclass
-class SupplierBarcodeData:
-    """Data parsed from a supplier barcode."""
-    SKU: str = None
-    MPN: str = None
-    quantity: Decimal | str = None
-    order_number: str = None
-
-
-class SupplierBarcodeMixin(BarcodeMixin):
-    """Mixin that provides default implementations for scan functions for supplier barcodes.
-
-    Custom supplier barcode plugins should use this mixin and implement the
-    parse_supplier_barcode_data function.
-    """
-
-    def parse_supplier_barcode_data(self, barcode_data) -> SupplierBarcodeData | None:
-        """Get supplier_part and other barcode_fields from barcode data.
-
-        Returns:
-            None if the barcode_data is not from a valid barcode of the supplier.
-
-            A SupplierBarcodeData object containing the SKU, MPN, quantity and order number
-            if available.
-        """
-
-        return None
-
-    def scan(self, barcode_data):
-        """Try to match a supplier barcode to a supplier part."""
-
-        if not (parsed := self.parse_supplier_barcode_data(barcode_data)):
-            return None
-        if parsed.SKU is None and parsed.MPN is None:
-            return None
-
-        supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
-        if len(supplier_parts) > 1:
-            return {"error": _("Found multiple matching supplier parts for barcode")}
-        elif not supplier_parts:
-            return None
-        supplier_part = supplier_parts[0]
-
-        data = {
-            "pk": supplier_part.pk,
-            "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
-            "web_url": supplier_part.get_absolute_url(),
-        }
-
-        return {SupplierPart.barcode_model_type(): data}
-
-    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
-        """Try to scan a supplier barcode to receive a purchase order item."""
-
-        if not (parsed := self.parse_supplier_barcode_data(barcode_data)):
-            return None
-        if parsed.SKU is None and parsed.MPN is None:
-            return None
-
-        supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
-        if len(supplier_parts) > 1:
-            return {"error": _("Found multiple matching supplier parts for barcode")}
-        elif not supplier_parts:
-            return None
-        supplier_part = supplier_parts[0]
-
-        return self.receive_purchase_order_item(
-            supplier_part,
-            user,
-            quantity=parsed.quantity,
-            order_number=parsed.order_number,
-            purchase_order=purchase_order,
-            location=location,
-            barcode=barcode_data,
-        )
-
-    def get_supplier(self) -> Company | None:
-        """Get the supplier for the SUPPLIER_ID set in the plugin settings.
-
-        If it's not defined, try to guess it and set it if possible.
-        """
-
-        if not isinstance(self, SettingsMixin):
-            return None
-
-        if supplier_pk := self.get_setting("SUPPLIER_ID"):
-            if (supplier := Company.objects.get(pk=supplier_pk)):
-                return supplier
-            else:
-                logger.error(
-                    "No company with pk %d (set \"SUPPLIER_ID\" setting to a valid value)",
-                    supplier_pk
-                )
-                return None
-
-        if not (supplier_name := getattr(self, "DEFAULT_SUPPLIER_NAME", None)):
-            return None
-
-        suppliers = Company.objects.filter(name__icontains=supplier_name, is_supplier=True)
-        if len(suppliers) != 1:
-            return None
-        self.set_setting("SUPPLIER_ID", suppliers.first().pk)
-
-        return suppliers.first()
-
-
-# Map ECIA Data Identifier to human readable identifier
-# The following identifiers haven't been implemented: 3S, 4S, 5S, S
-ECIA_DATA_IDENTIFIER_MAP = {
-    "K":   "purchase_order_number",     # noqa: E241
-    "1K":  "purchase_order_number",     # noqa: E241  DigiKey uses 1K instead of K
-    "11K": "packing_list_number",       # noqa: E241
-    "6D":  "ship_date",                 # noqa: E241
-    "P":   "supplier_part_number",      # noqa: E241  "Customer Part Number"
-    "1P":  "manufacturer_part_number",  # noqa: E241  "Supplier Part Number"
-    "4K":  "purchase_order_line",       # noqa: E241
-    "14K": "purchase_order_line",       # noqa: E241  Mouser uses 14K instead of 4K
-    "Q":   "quantity",                  # noqa: E241
-    "9D":  "date_yyww",                 # noqa: E241
-    "10D": "date_yyww",                 # noqa: E241
-    "1T":  "lot_code",                  # noqa: E241
-    "4L":  "country_of_origin",         # noqa: E241
-    "1V":  "manufacturer"               # noqa: E241
-}

@@ -8,7 +8,6 @@ import logging
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
-from plugin.base.barcodes.mixins import SupplierBarcodeData
 from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 
 logger = logging.getLogger('inventree')
@@ -31,19 +30,3 @@ class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             "model": "company.company",
         }
     }
-
-    def parse_supplier_barcode_data(self, barcode_data):
-        """Get supplier_part and barcode_fields from Mouser DataMatrix-Code."""
-
-        if not isinstance(barcode_data, str):
-            return None
-
-        if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
-            return None
-
-        return SupplierBarcodeData(
-            SKU=barcode_fields.get("supplier_part_number"),
-            MPN=barcode_fields.get("manufacturer_part_number"),
-            quantity=barcode_fields.get("quantity"),
-            order_number=barcode_fields.get("purchase_order_number"),
-        )

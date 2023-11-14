@@ -292,6 +292,9 @@ class BarcodePOReceive(APIView):
             response["error"] = _("Item has already been received")
             raise ValidationError(response)
 
+        # Now, find all plugins which are specific to supplier barcodes
+        plugins = registry.with_mixin("supplier_barcode")
+
         for current_plugin in plugins:
             result = current_plugin.scan_receive_item(
                 barcode_data,
