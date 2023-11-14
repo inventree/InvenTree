@@ -33,3 +33,9 @@ class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
     # Custom field identifiers for DigiKey
     SUPPLIER_PART_NUMBER = "30P"
+
+    @property
+    def SKU(self):
+        """Return the SKU field data"""
+
+        return self.get_field_data(self.SUPPLIER_PART_NUMBER) or self.get_field_data(SupplierBarcodeMixin.SUPPLIER_PART_NUMBER)

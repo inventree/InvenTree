@@ -124,19 +124,9 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if self.SKU is None and self.MPN is None:
             return None
 
-        # Find matching purchase order
-        po = self.get_purchase_order(
-            purchase_order=purchase_order,
-            customer_order_number=self.customer_order_number,
-            supplier_order_number=self.supplier_order_number,
-            supplier=self.get_supplier(),
-        )
-
-        if not po:
-            return None
-
         # Find matching supplier part(s)
         supplier_parts = self.get_supplier_parts(self.SKU, self.get_supplier(), self.MPN)
+
         if len(supplier_parts) > 1:
             return {
                 "error": _("Found multiple matching supplier parts for barcode")
@@ -153,9 +143,31 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 "error": _("Quantity must be greater than zero")
             }
 
+        # Find matching purchase order (if not supplied)
+        if not purchase_order:
+            matching_orders = self.get_purchase_orders(
+                purchase_order=purchase_order,
+                customer_order_number=self.customer_order_number,
+                supplier_order_number=self.supplier_order_number,
+                supplier=self.get_supplier(),
+            )
+
+            if len(matching_orders) == 1:
+                purchase_order = matching_orders[0]
+
+            elif len(matching_orders) > 1:
+                return {
+                    "error": _("Found multiple matching purchase orders for barcode")
+                }
+
+            elif len(matching_orders) == 0:
+                return {
+                    "error": _("No matching purchase orders found for barcode")
+                }
+
         return self.receive_purchase_order_item(
             supplier_part,
-            po,
+            purchase_order,
             user,
             quantity=self.quantity,
             location=location,
@@ -290,7 +302,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         return supplier_parts
 
     @staticmethod
-    def get_purchase_order(
+    def get_purchase_orders(
         purchase_order: PurchaseOrder = None,
         customer_order_number: str = None,
         supplier_order_number: str = None,
@@ -321,18 +333,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
         elif supplier_order_number:
             orders = orders.filter(supplier_reference__iexact=supplier_order_number)
 
-        if orders.count() == 1:
-            return orders.first()
-
-        if orders.count() > 1:
-            logger.warning(
-                "Found multiple purchase orders for supplier '%s', customer order '%s', supplier order '%s'",
-                supplier.name if supplier else None,
-                customer_order_number,
-                supplier_order_number,
-            )
-
-        return None
+        # Return the queryset of orders
+        return orders
 
     @staticmethod
     def receive_purchase_order_item(
