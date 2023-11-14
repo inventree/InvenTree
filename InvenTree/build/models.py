@@ -34,7 +34,7 @@ import InvenTree.ready
 import InvenTree.tasks
 
 import common.models
-from common.notifications import trigger_notification
+from common.notifications import trigger_notification, InvenTreeNotificationBodies
 from plugin.events import trigger_event
 
 import part.models
@@ -604,6 +604,14 @@ class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBar
 
         self.status = BuildStatus.CANCELLED.value
         self.save()
+
+        # Notify users that the order has been canceled
+        InvenTree.helpers_model.notify_responsible(
+            self,
+            Build,
+            exclude=self.issued_by,
+            content=InvenTreeNotificationBodies.OrderCanceled
+        )
 
         trigger_event('build.cancelled', id=self.pk)
 

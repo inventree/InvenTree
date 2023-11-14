@@ -294,6 +294,14 @@ class InvenTreeNotificationBodies:
     )
     """Send when a new order (build, sale or purchase) was created."""
 
+    OrderCanceled = NotificationBody(
+        name=_("{verbose_name} canceled"),
+        slug='{app_label}.canceled_{model_name}',
+        message=_("A order that is assigned to you was canceled"),
+        template='email/canceled_order_assigned.html',
+    )
+    """Send when a order (sale, return or purchase) was canceled."""
+
     ItemsReceived = NotificationBody(
         name=_("Items Received"),
         slug='purchase_order.items_received',
