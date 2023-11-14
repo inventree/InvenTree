@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-13 11:50+0000\n"
-"PO-Revision-Date: 2023-11-13 21:28\n"
+"POT-Creation-Date: 2023-11-14 03:50+0000\n"
+"PO-Revision-Date: 2023-11-14 22:28\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -444,100 +444,100 @@ msgstr ""
 msgid "An error has been logged by the server."
 msgstr ""
 
-#: InvenTree/serializers.py:61 part/models.py:3904
+#: InvenTree/serializers.py:60 part/models.py:3904
 msgid "Must be a valid number"
 msgstr "有効な数字でなければなりません"
 
-#: InvenTree/serializers.py:90 company/models.py:150
+#: InvenTree/serializers.py:89 company/models.py:150
 #: company/templates/company/company_base.html:106 part/models.py:2856
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
 msgstr ""
 
-#: InvenTree/serializers.py:93
+#: InvenTree/serializers.py:92
 msgid "Select currency from available options"
 msgstr ""
 
-#: InvenTree/serializers.py:427
+#: InvenTree/serializers.py:339
 msgid "You do not have permission to change this user role."
 msgstr ""
 
-#: InvenTree/serializers.py:437
+#: InvenTree/serializers.py:349
 msgid "Only superusers can create new users"
 msgstr ""
 
-#: InvenTree/serializers.py:454
+#: InvenTree/serializers.py:366
 #, python-brace-format
 msgid "Welcome to {current_site.name}"
 msgstr ""
 
-#: InvenTree/serializers.py:455
+#: InvenTree/serializers.py:367
 #, python-brace-format
 msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
-#: InvenTree/serializers.py:519
+#: InvenTree/serializers.py:431
 msgid "Filename"
 msgstr "ファイル名"
 
-#: InvenTree/serializers.py:556
+#: InvenTree/serializers.py:468
 msgid "Invalid value"
 msgstr "無効な値です。"
 
-#: InvenTree/serializers.py:578
+#: InvenTree/serializers.py:490
 msgid "Data File"
 msgstr "データファイル"
 
-#: InvenTree/serializers.py:579
+#: InvenTree/serializers.py:491
 msgid "Select data file for upload"
 msgstr "アップロードするファイルを選択"
 
-#: InvenTree/serializers.py:600
+#: InvenTree/serializers.py:512
 msgid "Unsupported file type"
 msgstr "サポートされていないファイル形式"
 
-#: InvenTree/serializers.py:606
+#: InvenTree/serializers.py:518
 msgid "File is too large"
 msgstr "ファイルサイズが大きすぎます"
 
-#: InvenTree/serializers.py:627
+#: InvenTree/serializers.py:539
 msgid "No columns found in file"
 msgstr "ファイルに列が見つかりません"
 
-#: InvenTree/serializers.py:630
+#: InvenTree/serializers.py:542
 msgid "No data rows found in file"
 msgstr "ファイルにデータ行がみつかりません"
 
-#: InvenTree/serializers.py:753
+#: InvenTree/serializers.py:665
 msgid "No data rows provided"
 msgstr "データが入力されていません"
 
-#: InvenTree/serializers.py:756
+#: InvenTree/serializers.py:668
 msgid "No data columns supplied"
 msgstr "データ列が指定されていません"
 
-#: InvenTree/serializers.py:833
+#: InvenTree/serializers.py:745
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "必須の列がありません: {name}"
 
-#: InvenTree/serializers.py:842
+#: InvenTree/serializers.py:754
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "{col} 列が重複しています。"
 
-#: InvenTree/serializers.py:867
+#: InvenTree/serializers.py:779
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
 msgstr "URL"
 
-#: InvenTree/serializers.py:868
+#: InvenTree/serializers.py:780
 msgid "URL of remote image file"
 msgstr "外部画像ファイルのURL"
 
-#: InvenTree/serializers.py:881
+#: InvenTree/serializers.py:793
 msgid "Downloading images from remote URL is not enabled"
 msgstr "外部URLからの画像ダウンロードは許可されていません"
 
@@ -7703,19 +7703,19 @@ msgstr ""
 msgid "Test report"
 msgstr ""
 
-#: report/helpers.py:13
+#: report/helpers.py:15
 msgid "A4"
 msgstr ""
 
-#: report/helpers.py:14
+#: report/helpers.py:16
 msgid "A3"
 msgstr ""
 
-#: report/helpers.py:15
+#: report/helpers.py:17
 msgid "Legal"
 msgstr ""
 
-#: report/helpers.py:16
+#: report/helpers.py:18
 msgid "Letter"
 msgstr ""
 
@@ -7916,6 +7916,22 @@ msgstr ""
 #: stock/admin.py:122 templates/js/translated/stock.js:700
 #: templates/js/translated/stock.js:871 templates/js/translated/stock.js:3081
 msgid "Serial"
+msgstr ""
+
+#: report/templatetags/report.py:95
+msgid "Asset file does not exist"
+msgstr ""
+
+#: report/templatetags/report.py:144 report/templatetags/report.py:209
+msgid "Image file not found"
+msgstr ""
+
+#: report/templatetags/report.py:230
+msgid "part_image tag requires a Part instance"
+msgstr ""
+
+#: report/templatetags/report.py:269
+msgid "company_image tag requires a Company instance"
 msgstr ""
 
 #: stock/admin.py:40 stock/admin.py:126
@@ -9303,7 +9319,7 @@ msgid "Edit"
 msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:81
-#: templates/js/translated/forms.js:535 templates/js/translated/helpers.js:105
+#: templates/js/translated/forms.js:511 templates/js/translated/helpers.js:105
 #: templates/js/translated/part.js:392 templates/js/translated/pricing.js:629
 #: templates/js/translated/stock.js:245 users/models.py:393
 msgid "Delete"
@@ -9409,7 +9425,7 @@ msgid "Home Page"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:15
-#: templates/js/translated/forms.js:2147 templates/js/translated/tables.js:543
+#: templates/js/translated/forms.js:2064 templates/js/translated/tables.js:543
 #: templates/navbar.html:107 templates/search.html:8
 #: templates/search_form.html:6 templates/search_form.html:7
 msgid "Search"
@@ -9757,7 +9773,7 @@ msgstr ""
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
-#: templates/account/email_confirm.html:21 templates/js/translated/forms.js:762
+#: templates/account/email_confirm.html:21 templates/js/translated/forms.js:746
 msgid "Confirm"
 msgstr "確認"
 
@@ -10710,7 +10726,7 @@ msgid "No builds matching query"
 msgstr ""
 
 #: templates/js/translated/build.js:2105 templates/js/translated/build.js:2470
-#: templates/js/translated/forms.js:2143 templates/js/translated/forms.js:2159
+#: templates/js/translated/forms.js:2060 templates/js/translated/forms.js:2076
 #: templates/js/translated/part.js:2314 templates/js/translated/part.js:2740
 #: templates/js/translated/stock.js:1953 templates/js/translated/stock.js:2681
 msgid "Select"
@@ -11111,40 +11127,40 @@ msgstr ""
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:788
+#: templates/js/translated/forms.js:772
 msgid "Keep this form open"
 msgstr ""
 
-#: templates/js/translated/forms.js:891
+#: templates/js/translated/forms.js:874
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1461 templates/modals.html:19
+#: templates/js/translated/forms.js:1422 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1959
+#: templates/js/translated/forms.js:1876
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:2263 templates/js/translated/search.js:239
+#: templates/js/translated/forms.js:2180 templates/js/translated/search.js:239
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2477
+#: templates/js/translated/forms.js:2394
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:3063
+#: templates/js/translated/forms.js:2851
 msgid "File Column"
 msgstr ""
 
-#: templates/js/translated/forms.js:3063
+#: templates/js/translated/forms.js:2851
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:3075
+#: templates/js/translated/forms.js:2863
 msgid "Select Columns"
 msgstr ""
 
@@ -11196,27 +11212,27 @@ msgstr ""
 msgid "Printing Options"
 msgstr ""
 
-#: templates/js/translated/label.js:148
+#: templates/js/translated/label.js:143
 msgid "Print label"
 msgstr ""
 
-#: templates/js/translated/label.js:148
+#: templates/js/translated/label.js:143
 msgid "Print labels"
 msgstr ""
 
-#: templates/js/translated/label.js:149
+#: templates/js/translated/label.js:144
 msgid "Print"
 msgstr ""
 
-#: templates/js/translated/label.js:155
+#: templates/js/translated/label.js:150
 msgid "Select label template"
 msgstr ""
 
-#: templates/js/translated/label.js:168
+#: templates/js/translated/label.js:163
 msgid "Select plugin"
 msgstr ""
 
-#: templates/js/translated/label.js:187
+#: templates/js/translated/label.js:182
 msgid "Labels sent to printer"
 msgstr ""
 
