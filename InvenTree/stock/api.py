@@ -481,7 +481,7 @@ class StockFilter(rest_filters.FilterSet):
         """Filter by whether or not the stock item is 'allocated'"""
         if str2bool(value):
             # Filter StockItem with either build allocations or sales order allocations
-            return queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
+            return queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False)).distinct()
         # Filter StockItem without build allocations or sales order allocations
         return queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
 
