@@ -15,7 +15,6 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from common.notifications import InvenTreeNotificationBodies
 
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
@@ -35,7 +34,7 @@ import InvenTree.ready
 import InvenTree.tasks
 
 import common.models
-from common.notifications import trigger_notification
+from common.notifications import trigger_notification, InvenTreeNotificationBodies
 from plugin.events import trigger_event
 
 import part.models
