@@ -6,7 +6,7 @@ import logging
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
@@ -21,11 +21,28 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework.authtoken.models import Token as AuthToken
 
+import common.models as common_models
 import InvenTree.helpers
 import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase
 
 logger = logging.getLogger("inventree")
+
+
+#  OVERRIDE START
+# Overrides Django User model __str__ with a custom function to be able to change
+# string representation of a user
+def user_model_str(self):
+    """Function to override the default Django User __str__"""
+
+    if common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+        if self.first_name or self.last_name:
+            return f'{self.first_name} {self.last_name}'
+    return self.username
+
+
+User.add_to_class("__str__", user_model_str)  # Overriding User.__str__
+#  OVERRIDE END
 
 
 def default_token():
@@ -785,10 +802,17 @@ class Owner(models.Model):
 
     def __str__(self):
         """Defines the owner string representation."""
-        return f'{self.owner} ({self.owner_type.name})'
+        print("Setting is:", common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'))
+        if self.owner_type.name == 'user' and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+            display_name = self.owner.get_full_name()
+        else:
+            display_name = str(self.owner)
+        return f'{display_name} ({self.owner_type.name})'
 
     def name(self):
         """Return the 'name' of this owner."""
+        if self.owner_type.name == 'user' and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+            return self.owner.get_full_name()
         return str(self.owner)
 
     def label(self):
