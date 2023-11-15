@@ -275,9 +275,10 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
         url = reverse("api-barcode-po-receive")
         barcode = MOUSER_BARCODE.replace("\x1dQ3", "")
-        result = self.post(url, data={"barcode": barcode})
-        assert "lineitem" in result.data
-        assert "quantity" not in result.data["lineitem"]
+        response = self.post(url, data={"barcode": barcode}, expected_code=200)
+
+        assert "lineitem" in response.data
+        assert "quantity" not in response.data["lineitem"]
 
 
 DIGIKEY_BARCODE = (

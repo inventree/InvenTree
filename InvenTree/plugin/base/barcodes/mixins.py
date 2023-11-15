@@ -190,7 +190,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
             order = self.customer_order_number or self.supplier_order_number
 
-            if len(matching_orders) > 0:
+            if len(matching_orders) > 1:
                 return {"error": _(f"Found multiple placed purchase orders for '{order}'")}
 
             if len(matching_orders) == 0:
