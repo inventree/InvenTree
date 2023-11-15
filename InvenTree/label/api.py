@@ -222,6 +222,10 @@ class LabelPrintMixin(LabelFilterMixin):
         # Label template
         label = self.get_object()
 
+        # Check the label dimensions
+        if label.width <= 0 or label.height <= 0:
+            raise ValidationError('Label has invalid dimensions')
+
         # if the plugin returns a serializer, validate the data
         if serializer := plugin.get_printing_options_serializer(request, data=request.data, context=self.get_serializer_context()):
             serializer.is_valid(raise_exception=True)

@@ -4,12 +4,28 @@
 import { t } from '@lingui/macro';
 
 import { formatCurrency, renderDate } from '../../defaults/formatters';
+import { ModelType } from '../../enums/ModelType';
 import { ProgressBar } from '../items/ProgressBar';
-import { ModelType } from '../render/ModelType';
+import { YesNoButton } from '../items/YesNoButton';
+import { TableStatusRenderer } from '../render/StatusRenderer';
 import { RenderOwner } from '../render/User';
-import { TableStatusRenderer } from '../renderers/StatusRenderer';
 import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
+
+export function BooleanColumn({
+  accessor,
+  title
+}: {
+  accessor: string;
+  title: string;
+}): TableColumn {
+  return {
+    accessor: accessor,
+    title: title,
+    sortable: true,
+    render: (record: any) => <YesNoButton value={record[accessor]} />
+  };
+}
 
 export function DescriptionColumn(): TableColumn {
   return {

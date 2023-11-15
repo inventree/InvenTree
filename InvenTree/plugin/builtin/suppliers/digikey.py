@@ -3,15 +3,11 @@
 This plugin can currently only match DigiKey barcodes to supplier parts.
 """
 
-import logging
-
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
 from plugin.base.barcodes.mixins import SupplierBarcodeData
 from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
-
-logger = logging.getLogger('inventree')
 
 
 class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
@@ -39,6 +35,10 @@ class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             return None
 
         if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
+            return None
+
+        # digikey barcodes should always contain a SKU
+        if "supplier_part_number" not in barcode_fields:
             return None
 
         return SupplierBarcodeData(

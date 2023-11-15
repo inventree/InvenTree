@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
 import { api } from '../App';
-import { ApiPaths, apiUrl } from '../states/ApiState';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { apiUrl } from '../states/ApiState';
 
 /**
  * Custom hook for loading a single instance of an instance from the API

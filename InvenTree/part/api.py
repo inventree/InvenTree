@@ -921,7 +921,8 @@ class PartFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q_a | q_b)
-        return queryset.filter(q_a | q_b)
+
+        return queryset.filter(q_a | q_b).distinct()
 
     stocktake = rest_filters.BooleanFilter(label="Has stocktake", method='filter_has_stocktake')
 
@@ -1132,7 +1133,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
                 # Return any relationship which points to the part in question
                 relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
 
-                for relation in PartRelated.objects.filter(relation_filter):
+                for relation in PartRelated.objects.filter(relation_filter).distinct():
 
                     if relation.part_1.pk != pk:
                         part_ids.add(relation.part_1.pk)
@@ -1310,8 +1311,7 @@ class PartRelatedList(ListCreateAPI):
         if part is not None:
             try:
                 part = Part.objects.get(pk=part)
-
-                queryset = queryset.filter(Q(part_1=part) | Q(part_2=part))
+                queryset = queryset.filter(Q(part_1=part) | Q(part_2=part)).distinct()
 
             except (ValueError, Part.DoesNotExist):
                 pass
@@ -1349,7 +1349,8 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         """Filter queryset to include only PartParameterTemplates with choices."""
         if str2bool(value):
             return queryset.exclude(Q(choices=None) | Q(choices=''))
-        return queryset.filter(Q(choices=None) | Q(choices=''))
+
+        return queryset.filter(Q(choices=None) | Q(choices='')).distinct()
 
     has_units = rest_filters.BooleanFilter(
         method='filter_has_units',
@@ -1360,7 +1361,8 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         """Filter queryset to include only PartParameterTemplates with units."""
         if str2bool(value):
             return queryset.exclude(Q(units=None) | Q(units=''))
-        return queryset.filter(Q(units=None) | Q(units=''))
+
+        return queryset.filter(Q(units=None) | Q(units='')).distinct()
 
 
 class PartParameterTemplateList(ListCreateAPI):
@@ -1662,7 +1664,8 @@ class BomFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q_a | q_b)
-        return queryset.filter(q_a | q_b)
+
+        return queryset.filter(q_a | q_b).distinct()
 
 
 class BomMixin:
@@ -1810,6 +1813,10 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'quantity',
         'sub_part',
         'available_stock',
+        'allow_variants',
+        'inherited',
+        'optional',
+        'consumable',
     ]
 
     ordering_field_aliases = {

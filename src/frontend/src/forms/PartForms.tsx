@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../enums/ApiEndpoints';
 import { openCreateApiForm, openEditApiForm } from '../functions/forms';
-import { ApiPaths } from '../states/ApiState';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
@@ -35,7 +35,11 @@ export function partFields({
     },
     default_expiry: {},
     minimum_stock: {},
-    responsible: {},
+    responsible: {
+      filters: {
+        is_active: true
+      }
+    },
     component: {},
     assembly: {},
     is_template: {},
@@ -120,4 +124,14 @@ export function partCategoryFields({}: {}): ApiFormFieldSet {
   };
 
   return fields;
+}
+
+export function partParameterTemplateFields(): ApiFormFieldSet {
+  return {
+    name: {},
+    description: {},
+    units: {},
+    choices: {},
+    checkbox: {}
+  };
 }

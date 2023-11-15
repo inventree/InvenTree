@@ -3,15 +3,11 @@
 This plugin currently only match Mouser barcodes to supplier parts.
 """
 
-import logging
-
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
 from plugin.base.barcodes.mixins import SupplierBarcodeData
 from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
-
-logger = logging.getLogger('inventree')
 
 
 class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):

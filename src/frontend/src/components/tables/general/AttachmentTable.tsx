@@ -7,13 +7,14 @@ import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../../App';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import {
   addAttachment,
   deleteAttachment,
   editAttachment
 } from '../../../forms/AttachmentForms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { AttachmentLink } from '../../items/AttachmentLink';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';

@@ -16,6 +16,8 @@ import { PlaceholderPill } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
+import { GroupTable } from '../../../components/tables/settings/GroupTable';
+import { UserTable } from '../../../components/tables/settings/UserTable';
 
 /**
  * System settings page
@@ -28,7 +30,14 @@ export default function AdminCenter() {
         label: t`User Management`,
         content: (
           <Stack spacing="xs">
-            <PlaceholderPill />
+            <Title order={5}>
+              <Trans>Users</Trans>
+            </Title>
+            <UserTable />
+            <Title order={5}>
+              <Trans>Groups</Trans>
+            </Title>
+            <GroupTable />
             <Divider />
             <Stack spacing={0}>
               <Text>
@@ -86,10 +95,8 @@ export default function AdminCenter() {
     <>
       <Stack spacing="xs">
         <SettingsHeader
-          title={<Trans>Admin Center</Trans>}
-          subtitle={
-            <Trans>Advanced Amininistrative Options for InvenTree</Trans>
-          }
+          title={t`Admin Center`}
+          subtitle={t`Advanced Options`}
           switch_link="/settings/system"
           switch_text="System Settings"
         />

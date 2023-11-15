@@ -7,8 +7,9 @@ import { ReactNode, useState } from 'react';
 import { ApiFormProps } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
-import { ModelType } from '../../components/render/ModelType';
-import { StatusRenderer } from '../../components/renderers/StatusRenderer';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   createPart,
   editPart,
@@ -16,7 +17,6 @@ import {
 } from '../../forms/PartForms';
 import { createStockItem } from '../../forms/StockForms';
 import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
-import { ApiPaths } from '../../states/ApiState';
 
 // Generate some example forms using the modal API forms interface
 function ApiFormsPlayground() {

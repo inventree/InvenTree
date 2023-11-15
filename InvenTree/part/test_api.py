@@ -2196,6 +2196,13 @@ class BomItemTest(InvenTreeAPITestCase):
         'part.delete',
     ]
 
+    def setUp(self):
+        """Set up the test case"""
+        super().setUp()
+
+        # Rebuild part tree so BOM items validate correctly
+        Part.objects.rebuild()
+
     def test_bom_list(self):
         """Tests for the BomItem list endpoint."""
         # How many BOM items currently exist in the database?
@@ -2357,6 +2364,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_get_bom_detail(self):
         """Get the detail view for a single BomItem object."""
+
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
 
         response = self.get(url, expected_code=200)
@@ -3031,6 +3039,11 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
         'part.change',
         'part_category.change',
     ]
+
+    def setUp(self):
+        """Setup unit tets"""
+        super().setUp()
+        Part.objects.rebuild()
 
     def metatester(self, apikey, model):
         """Generic tester"""

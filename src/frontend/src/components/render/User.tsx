@@ -1,11 +1,17 @@
+import { IconUser, IconUsersGroup } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
 import { RenderInlineModel } from './Instance';
 
 export function RenderOwner({ instance }: { instance: any }): ReactNode {
-  // TODO: Icon based on user / group status?
-
-  return instance && <RenderInlineModel primary={instance.name} />;
+  return (
+    instance && (
+      <RenderInlineModel
+        primary={instance.name}
+        suffix={instance.label == 'group' ? <IconUsersGroup /> : <IconUser />}
+      />
+    )
+  );
 }
 
 export function RenderUser({ instance }: { instance: any }): ReactNode {

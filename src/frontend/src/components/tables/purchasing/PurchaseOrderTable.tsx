@@ -2,10 +2,11 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
-import { ModelType } from '../../render/ModelType';
 import {
   CreationDateColumn,
   DescriptionColumn,
