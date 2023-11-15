@@ -76,7 +76,7 @@ class BarcodeScan(APIView):
 
             if "error" in result:
                 logger.info("%s.scan(...) returned an error: %s",
-                            current_plugin.__name__, result["error"])
+                            current_plugin.__class__.__name__, result["error"])
                 if not response:
                     plugin = current_plugin
                     response = result
@@ -317,7 +317,7 @@ class BarcodePOReceive(APIView):
 
             if "error" in result:
                 logger.info("%s.scan_receive_item(...) returned an error: %s",
-                            current_plugin.__name__, result["error"])
+                            current_plugin.__class__.__name__, result["error"])
                 if not response:
                     plugin = current_plugin
                     response = result
