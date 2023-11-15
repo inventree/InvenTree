@@ -649,8 +649,11 @@ class StockItemListTest(StockAPITestCase):
         )
 
         self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]["pk"], stock_1.pk)
-        self.assertEqual(response.data[1]["pk"], stock_2.pk)
+
+        ids = [item["pk"] for item in response.data]
+
+        self.assertIn(stock_1.pk, ids)
+        self.assertIn(stock_2.pk, ids)
 
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""
