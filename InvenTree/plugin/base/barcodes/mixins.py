@@ -54,24 +54,116 @@ class BarcodeMixin:
         """
         return None
 
-    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
-        """Scan a barcode to receive a purchase order item.
 
-        It's recommended to use the receive_purchase_order_item method to return from this function.
+@dataclass
+class SupplierBarcodeData:
+    """Data parsed from a supplier barcode."""
+    SKU: str = None
+    MPN: str = None
+    quantity: Decimal | str = None
+    order_number: str = None
+
+
+class SupplierBarcodeMixin(BarcodeMixin):
+    """Mixin that provides default implementations for scan functions for supplier barcodes.
+
+    Custom supplier barcode plugins should use this mixin and implement the
+    parse_supplier_barcode_data function.
+    """
+
+    def __init__(self):
+        """Register mixin."""
+        super().__init__()
+        self.add_mixin('supplier-barcode', True, __class__)
+
+    def parse_supplier_barcode_data(self, barcode_data) -> SupplierBarcodeData | None:
+        """Get supplier_part and other barcode_fields from barcode data.
 
         Returns:
-            None if the barcode_data could not be parsed.
+            None if the barcode_data is not from a valid barcode of the supplier.
 
-            A dict object containing:
-                - on success:
-                    a "success" message and the received "lineitem"
-                - on partial success (if there's missing information):
-                    an "action_required" message and the matched, but not yet received "lineitem"
-                - on failure:
-                    an "error" message
+            A SupplierBarcodeData object containing the SKU, MPN, quantity and order number
+            if available.
         """
 
         return None
+
+    def scan(self, barcode_data):
+        """Try to match a supplier barcode to a supplier part."""
+
+        if not (parsed := self.parse_supplier_barcode_data(barcode_data)):
+            return None
+        if parsed.SKU is None and parsed.MPN is None:
+            return None
+
+        supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
+        if len(supplier_parts) > 1:
+            return {"error": _("Found multiple matching supplier parts for barcode")}
+        elif not supplier_parts:
+            return None
+        supplier_part = supplier_parts[0]
+
+        data = {
+            "pk": supplier_part.pk,
+            "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
+            "web_url": supplier_part.get_absolute_url(),
+        }
+
+        return {SupplierPart.barcode_model_type(): data}
+
+    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
+        """Try to scan a supplier barcode to receive a purchase order item."""
+
+        if not (parsed := self.parse_supplier_barcode_data(barcode_data)):
+            return None
+        if parsed.SKU is None and parsed.MPN is None:
+            return None
+
+        supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
+        if len(supplier_parts) > 1:
+            return {"error": _("Found multiple matching supplier parts for barcode")}
+        elif not supplier_parts:
+            return None
+        supplier_part = supplier_parts[0]
+
+        return self.receive_purchase_order_item(
+            supplier_part,
+            user,
+            quantity=parsed.quantity,
+            order_number=parsed.order_number,
+            purchase_order=purchase_order,
+            location=location,
+            barcode=barcode_data,
+        )
+
+    def get_supplier(self) -> Company | None:
+        """Get the supplier for the SUPPLIER_ID set in the plugin settings.
+
+        If it's not defined, try to guess it and set it if possible.
+        """
+
+        if not isinstance(self, SettingsMixin):
+            return None
+
+        if supplier_pk := self.get_setting("SUPPLIER_ID"):
+            if (supplier := Company.objects.get(pk=supplier_pk)):
+                return supplier
+            else:
+                logger.error(
+                    "No company with pk %d (set \"SUPPLIER_ID\" setting to a valid value)",
+                    supplier_pk
+                )
+                return None
+
+        if not (supplier_name := getattr(self, "DEFAULT_SUPPLIER_NAME", None)):
+            return None
+
+        suppliers = Company.objects.filter(name__icontains=supplier_name, is_supplier=True)
+        if len(suppliers) != 1:
+            return None
+        self.set_setting("SUPPLIER_ID", suppliers.first().pk)
+
+        return suppliers.first()
 
     @staticmethod
     def parse_ecia_barcode2d(barcode_data: str | list[str]) -> dict[str, str]:
@@ -79,7 +171,7 @@ class BarcodeMixin:
 
         if not isinstance(barcode_data, str):
             data_split = barcode_data
-        elif not (data_split := BarcodeMixin.parse_isoiec_15434_barcode2d(barcode_data)):
+        elif not (data_split := SupplierBarcodeMixin.parse_isoiec_15434_barcode2d(barcode_data)):
             return None
 
         barcode_fields = {}
@@ -258,112 +350,6 @@ class BarcodeMixin:
 
         response["success"] = _("Received purchase order line item")
         return response
-
-
-@dataclass
-class SupplierBarcodeData:
-    """Data parsed from a supplier barcode."""
-    SKU: str = None
-    MPN: str = None
-    quantity: Decimal | str = None
-    order_number: str = None
-
-
-class SupplierBarcodeMixin(BarcodeMixin):
-    """Mixin that provides default implementations for scan functions for supplier barcodes.
-
-    Custom supplier barcode plugins should use this mixin and implement the
-    parse_supplier_barcode_data function.
-    """
-
-    def parse_supplier_barcode_data(self, barcode_data) -> SupplierBarcodeData | None:
-        """Get supplier_part and other barcode_fields from barcode data.
-
-        Returns:
-            None if the barcode_data is not from a valid barcode of the supplier.
-
-            A SupplierBarcodeData object containing the SKU, MPN, quantity and order number
-            if available.
-        """
-
-        return None
-
-    def scan(self, barcode_data):
-        """Try to match a supplier barcode to a supplier part."""
-
-        if not (parsed := self.parse_supplier_barcode_data(barcode_data)):
-            return None
-        if parsed.SKU is None and parsed.MPN is None:
-            return None
-
-        supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
-        if len(supplier_parts) > 1:
-            return {"error": _("Found multiple matching supplier parts for barcode")}
-        elif not supplier_parts:
-            return None
-        supplier_part = supplier_parts[0]
-
-        data = {
-            "pk": supplier_part.pk,
-            "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
-            "web_url": supplier_part.get_absolute_url(),
-        }
-
-        return {SupplierPart.barcode_model_type(): data}
-
-    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
-        """Try to scan a supplier barcode to receive a purchase order item."""
-
-        if not (parsed := self.parse_supplier_barcode_data(barcode_data)):
-            return None
-        if parsed.SKU is None and parsed.MPN is None:
-            return None
-
-        supplier_parts = self.get_supplier_parts(parsed.SKU, self.get_supplier(), parsed.MPN)
-        if len(supplier_parts) > 1:
-            return {"error": _("Found multiple matching supplier parts for barcode")}
-        elif not supplier_parts:
-            return None
-        supplier_part = supplier_parts[0]
-
-        return self.receive_purchase_order_item(
-            supplier_part,
-            user,
-            quantity=parsed.quantity,
-            order_number=parsed.order_number,
-            purchase_order=purchase_order,
-            location=location,
-            barcode=barcode_data,
-        )
-
-    def get_supplier(self) -> Company | None:
-        """Get the supplier for the SUPPLIER_ID set in the plugin settings.
-
-        If it's not defined, try to guess it and set it if possible.
-        """
-
-        if not isinstance(self, SettingsMixin):
-            return None
-
-        if supplier_pk := self.get_setting("SUPPLIER_ID"):
-            if (supplier := Company.objects.get(pk=supplier_pk)):
-                return supplier
-            else:
-                logger.error(
-                    "No company with pk %d (set \"SUPPLIER_ID\" setting to a valid value)",
-                    supplier_pk
-                )
-                return None
-
-        if not (supplier_name := getattr(self, "DEFAULT_SUPPLIER_NAME", None)):
-            return None
-
-        suppliers = Company.objects.filter(name__icontains=supplier_name, is_supplier=True)
-        if len(suppliers) != 1:
-            return None
-        self.set_setting("SUPPLIER_ID", suppliers.first().pk)
-
-        return suppliers.first()
 
 
 # Map ECIA Data Identifier to human readable identifier

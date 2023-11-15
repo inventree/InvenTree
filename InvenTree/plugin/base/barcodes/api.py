@@ -277,10 +277,14 @@ class BarcodePOReceive(APIView):
         """Respond to a barcode POST request."""
 
         data = request.data
+
         if not (barcode_data := data.get("barcode")):
             raise ValidationError({"barcode": _("Missing barcode data")})
 
+        logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode_data)
+
         purchase_order = None
+
         if purchase_order_pk := data.get("purchase_order"):
             purchase_order = PurchaseOrder.objects.filter(pk=purchase_order_pk).first()
             if not purchase_order:
@@ -304,7 +308,11 @@ class BarcodePOReceive(APIView):
             response["error"] = _("Item has already been received")
             raise ValidationError(response)
 
+        # Now, look just for "supplier-barcode" plugins
+        plugins = registry.with_mixin("supplier-barcode")
+
         for current_plugin in plugins:
+
             result = current_plugin.scan_receive_item(
                 barcode_data,
                 request.user,
