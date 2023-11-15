@@ -3,15 +3,11 @@
 This plugin can currently only match DigiKey barcodes to supplier parts.
 """
 
-import logging
-
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
 from plugin.base.barcodes.mixins import SupplierBarcodeData
 from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
-
-logger = logging.getLogger('inventree')
 
 
 class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
