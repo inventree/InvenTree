@@ -5,7 +5,10 @@ import { AxiosResponse } from 'axios';
 
 import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
-import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
+import {
+  ApiFormFieldType,
+  constructField
+} from '../components/forms/fields/ApiFormField';
 import { StylishText } from '../components/items/StylishText';
 import { ApiPaths } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
@@ -137,6 +140,17 @@ export function openModalApiForm(props: OpenApiFormProps) {
         }
       }
 
+      const _props = { ...props };
+
+      if (_props.fields) {
+        for (const [k, v] of Object.entries(_props.fields ?? {})) {
+          _props.fields[k] = constructField({
+            field: v,
+            definition: fields?.[k]
+          });
+        }
+      }
+
       modals.open({
         title: <StylishText size="xl">{props.title}</StylishText>,
         modalId: modalId,
@@ -144,9 +158,7 @@ export function openModalApiForm(props: OpenApiFormProps) {
         onClose: () => {
           props.onClose ? props.onClose() : null;
         },
-        children: (
-          <ApiForm id={modalId} props={props} fieldDefinitions={fields} />
-        )
+        children: <ApiForm id={modalId} props={props} />
       });
     })
     .catch((error) => {

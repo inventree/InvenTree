@@ -1,8 +1,8 @@
 import { Select } from '@mantine/core';
-import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { ReactNode } from 'react';
+import { useCallback } from 'react';
 import { useMemo } from 'react';
+import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { ApiFormFieldType } from './ApiFormField';
 
@@ -10,25 +10,24 @@ import { ApiFormFieldType } from './ApiFormField';
  * Render a 'select' field for selecting from a list of choices
  */
 export function ChoiceField({
-  error,
-  form,
+  controller,
   fieldName,
-  field,
-  onChange
+  definition
 }: {
-  error: ReactNode;
-  form: UseFormReturnType<Record<string, unknown>>;
-  field: ApiFormFieldType;
+  controller: UseControllerReturn<FieldValues, any>;
+  definition: ApiFormFieldType;
   fieldName: string;
-  onChange: (value: string | null) => void;
 }) {
-  const fieldId = useId(fieldName);
+  const fieldId = useId();
 
-  const value: any = useMemo(() => form.values[fieldName], [form.values]);
+  const {
+    field,
+    fieldState: { error }
+  } = controller;
 
   // Build a set of choices for the field
   const choices: any[] = useMemo(() => {
-    let choices = field.choices ?? [];
+    let choices = definition.choices ?? [];
 
     // TODO: Allow provision of custom render function also
 
@@ -38,16 +37,32 @@ export function ChoiceField({
         label: choice.display_name
       };
     });
-  }, [field.choices]);
+  }, [definition.choices]);
+
+  // Update form values when the selected value changes
+  const onChange = useCallback(
+    (value: any) => {
+      field.onChange(value);
+
+      // Run custom callback for this field (if provided)
+      definition.onValueChange?.({
+        name: fieldName,
+        value: value,
+        field: definition
+      });
+    },
+    [field.onChange, definition]
+  );
 
   return (
     <Select
       id={fieldId}
+      error={error?.message}
       radius="sm"
       {...field}
       onChange={onChange}
       data={choices}
-      value={value}
+      value={field.value}
       withinPortal={true}
     />
   );

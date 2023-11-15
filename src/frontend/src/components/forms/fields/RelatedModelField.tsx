@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
 import { Input } from '@mantine/core';
-import { UseFormReturnType } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FieldValues, UseControllerReturn } from 'react-hook-form';
 import Select from 'react-select';
 
 import { api } from '../../../App';
@@ -15,29 +15,22 @@ import { ApiFormFieldType } from './ApiFormField';
  * Render a 'select' field for searching the database against a particular model type
  */
 export function RelatedModelField({
-  error,
-  form,
+  controller,
   fieldName,
-  field,
+  definition,
   limit = 10
 }: {
-  error: ReactNode;
-  form: UseFormReturnType<Record<string, unknown>>;
-  field: ApiFormFieldType;
+  controller: UseControllerReturn<FieldValues, any>;
+  definition: ApiFormFieldType;
   fieldName: string;
   limit?: number;
 }) {
-  const fieldId = useId(fieldName);
+  const fieldId = useId();
 
-  // Extract field definition from provided data
-  // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(() => {
-    const def = { ...field };
-
-    // Remove the 'read_only' attribute (causes issues with Mantine)
-    delete def['read_only'];
-    return def;
-  }, [field]);
+  const {
+    field,
+    fieldState: { error }
+  } = controller;
 
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
@@ -45,16 +38,16 @@ export function RelatedModelField({
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If a value is provided, load the related object
-    if (form.values) {
-      let formPk = form.values[fieldName] ?? null;
+    if (fieldDefinition.value) {
+      let formPk = fieldDefinition.value ?? null;
 
       // If the value is unchanged, do nothing
-      if (formPk == pk) {
+      if (formPk === pk) {
         return;
       }
 
       if (formPk != null) {
-        let url = (definition.api_url || '') + formPk + '/';
+        let url = (fieldDefinition.api_url || '') + formPk + '/';
 
         api.get(url).then((response) => {
           let data = response.data;
@@ -73,7 +66,7 @@ export function RelatedModelField({
         setPk(null);
       }
     }
-  }, [form.values[fieldName]]);
+  }, [definition.api_url, definition.value]);
 
   const [offset, setOffset] = useState<number>(0);
 
@@ -94,7 +87,7 @@ export function RelatedModelField({
       let filters = definition.filters ?? {};
 
       if (definition.adjustFilters) {
-        filters = definition.adjustFilters(filters, form);
+        filters = definition.adjustFilters(filters);
       }
 
       let params = {
@@ -133,33 +126,38 @@ export function RelatedModelField({
   /**
    * Format an option for display in the select field
    */
-  function formatOption(option: any) {
-    let data = option.data ?? option;
+  const formatOption = useCallback(
+    (option: any) => {
+      const data = option.data ?? option;
 
-    // TODO: If a custom render function is provided, use that
+      if (definition.modelRenderer) {
+        return <definition.modelRenderer instance={data} />;
+      }
 
-    return (
-      <RenderInstance instance={data} model={definition.model ?? undefined} />
-    );
-  }
+      return (
+        <RenderInstance instance={data} model={definition.model ?? undefined} />
+      );
+    },
+    [definition.model, definition.modelRenderer]
+  );
 
   // Update form values when the selected value changes
-  function onChange(value: any) {
-    let _pk = value?.value ?? null;
-    form.setValues({ [fieldName]: _pk });
+  const onChange = useCallback(
+    (value: any) => {
+      let _pk = value?.value ?? null;
+      field.onChange(_pk);
 
-    setPk(_pk);
+      setPk(_pk);
 
-    // Run custom callback for this field (if provided)
-    if (definition.onValueChange) {
-      definition.onValueChange({
+      // Run custom callback for this field (if provided)
+      definition.onValueChange?.({
         name: fieldName,
         value: _pk,
-        field: definition,
-        form: form
+        field: definition
       });
-    }
-  }
+    },
+    [field.onChange, definition]
+  );
 
   /* Construct a "cut-down" version of the definition,
    * which does not include any attributes that the lower components do not recognize
@@ -174,7 +172,7 @@ export function RelatedModelField({
   }, [definition]);
 
   return (
-    <Input.Wrapper {...fieldDefinition} error={error}>
+    <Input.Wrapper {...fieldDefinition} error={error?.message}>
       <Select
         id={fieldId}
         value={pk != null && data.find((item) => item.value == pk)}
