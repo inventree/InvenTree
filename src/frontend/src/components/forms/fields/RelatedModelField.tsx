@@ -9,28 +9,22 @@ import Select from 'react-select';
 
 import { api } from '../../../App';
 import { RenderInstance } from '../../render/Instance';
-import { ApiFormProps } from '../ApiForm';
-import { ApiFormFieldSet, ApiFormFieldType } from './ApiFormField';
-import { constructField } from './ApiFormField';
+import { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for searching the database against a particular model type
  */
 export function RelatedModelField({
   error,
-  formProps,
   form,
   fieldName,
   field,
-  definitions,
   limit = 10
 }: {
   error: ReactNode;
-  formProps: ApiFormProps;
   form: UseFormReturnType<Record<string, unknown>>;
   field: ApiFormFieldType;
   fieldName: string;
-  definitions: ApiFormFieldSet;
   limit?: number;
 }) {
   const fieldId = useId(fieldName);
@@ -38,17 +32,12 @@ export function RelatedModelField({
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
   const definition: ApiFormFieldType = useMemo(() => {
-    let def = constructField({
-      form: form,
-      field: field,
-      fieldName: fieldName,
-      definitions: definitions
-    });
+    const def = { ...field };
 
     // Remove the 'read_only' attribute (causes issues with Mantine)
     delete def['read_only'];
     return def;
-  }, [form.values, field, definitions]);
+  }, [field]);
 
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);

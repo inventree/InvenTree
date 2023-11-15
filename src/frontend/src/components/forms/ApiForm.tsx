@@ -341,10 +341,9 @@ export function ApiForm({
                   key={fieldName}
                   field={field}
                   fieldName={fieldName}
-                  formProps={props}
                   form={form}
                   error={form.errors[fieldName] ?? null}
-                  definitions={fieldDefinitions}
+                  definition={fieldDefinitions[fieldName]}
                 />
               )
           )}

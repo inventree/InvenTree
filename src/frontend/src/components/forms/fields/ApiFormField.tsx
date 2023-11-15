@@ -11,11 +11,10 @@ import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import { ReactNode, useCallback } from 'react';
 import { useMemo } from 'react';
 
 import { ModelType } from '../../../enums/ModelType';
-import { ApiFormProps } from '../ApiForm';
 import { ChoiceField } from './ChoiceField';
 import { RelatedModelField } from './RelatedModelField';
 
@@ -84,14 +83,14 @@ export function constructField({
   form,
   fieldName,
   field,
-  definitions
+  definition
 }: {
   form: UseFormReturnType<Record<string, unknown>>;
   fieldName: string;
   field: ApiFormFieldType;
-  definitions: Record<string, ApiFormFieldType>;
+  definition?: ApiFormFieldType;
 }) {
-  let def = definitions[fieldName] || field;
+  let def = definition || field;
 
   def = {
     ...def,
@@ -127,33 +126,33 @@ export function constructField({
  * Render an individual form field
  */
 export function ApiFormField({
-  formProps,
   form,
   fieldName,
   field,
   error,
-  definitions
+  definition: _definition
 }: {
-  formProps: ApiFormProps;
   form: UseFormReturnType<Record<string, unknown>>;
   fieldName: string;
   field: ApiFormFieldType;
   error: ReactNode;
-  definitions: Record<string, ApiFormFieldType>;
+  definition?: ApiFormFieldType;
 }) {
   const fieldId = useId(fieldName);
 
   // Extract field definition from provided data
   // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(
+  // pull out onValueChange as this can cause strange errors when passing the
+  // definition to the input components via spread syntax
+  const { onValueChange, ...definition }: ApiFormFieldType = useMemo(
     () =>
       constructField({
         form: form,
         fieldName: fieldName,
         field: field,
-        definitions: definitions
+        definition: _definition
       }),
-    [fieldName, field, definitions]
+    [fieldName, field, _definition]
   );
 
   const preFieldElement: JSX.Element | null = useMemo(() => {
@@ -177,19 +176,22 @@ export function ApiFormField({
   }, [field.postFieldContent]);
 
   // Callback helper when form value changes
-  function onChange(value: any) {
-    form.setValues({ [fieldName]: value });
+  const onChange = useCallback(
+    (value: any) => {
+      form.setFieldValue(fieldName, value);
 
-    // Run custom callback for this field
-    if (definition.onValueChange) {
-      definition.onValueChange({
-        name: fieldName,
-        value: value,
-        field: definition,
-        form: form
-      });
-    }
-  }
+      // Run custom callback for this field
+      if (onValueChange) {
+        onValueChange({
+          name: fieldName,
+          value: value,
+          field: definition,
+          form: form
+        });
+      }
+    },
+    [fieldName, definition]
+  );
 
   const value: any = useMemo(() => form.values[fieldName], [form.values]);
 
@@ -224,11 +226,9 @@ export function ApiFormField({
         return (
           <RelatedModelField
             error={error}
-            formProps={formProps}
             form={form}
             field={definition}
             fieldName={fieldName}
-            definitions={definitions}
           />
         );
       case 'email':
@@ -307,7 +307,7 @@ export function ApiFormField({
             form={form}
             fieldName={fieldName}
             field={definition}
-            definitions={definitions}
+            onChange={onChange}
           />
         );
       case 'file upload':
