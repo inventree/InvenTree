@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/macro';
 import { I18nProvider } from '@lingui/react';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { api } from '../App';
 import { useLocalState } from '../states/LocalState';
@@ -45,11 +45,25 @@ export const languages: Record<string, string> = {
 export function LanguageContext({ children }: { children: JSX.Element }) {
   const [language] = useLocalState((state) => [state.language]);
 
+  // workaround to initially set a locale with empty messages to not end up with an error
+  const [loaded, setLoaded] = useState(false);
+  const isMounted = useRef(true);
+
   useEffect(() => {
-    activateLocale(language);
+    isMounted.current = true;
+
+    activateLocale(language).then(() => {
+      if (isMounted.current) {
+        setLoaded(true);
+      }
+    });
+
+    return () => {
+      isMounted.current = false;
+    };
   }, [language]);
 
-  return <I18nProvider i18n={i18n}>{children}</I18nProvider>;
+  return loaded && <I18nProvider i18n={i18n}>{children}</I18nProvider>;
 }
 
 export async function activateLocale(locale: Locales) {
