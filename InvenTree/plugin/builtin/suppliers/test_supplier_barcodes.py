@@ -43,10 +43,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         SupplierPart.objects.bulk_create(supplier_parts)
 
     def test_digikey_barcode(self):
-        """Test digikey barcode."""
+        """Test digikey barcode"""
 
         result = self.post(self.SCAN_URL, data={"barcode": DIGIKEY_BARCODE}, expected_code=200)
-
         self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
@@ -54,6 +53,21 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
         self.assertEqual(supplier_part.SKU, "296-LM358BIDDFRCT-ND")
+
+    def test_digikey_2_barcode(self):
+        """Test digikey barcode which uses 30P instead of P"""
+        result = self.post(self.SCAN_URL, data={"barcode": DIGIKEY_BARCODE_2}, expected_code=200)
+        self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
+
+        supplier_part_data = result.data.get("supplierpart")
+        self.assertIn('pk', supplier_part_data)
+
+        supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
+        self.assertEqual(supplier_part.SKU, "296-LM358BIDDFRCT-ND")
+
+    def test_digikey_3_barcode(self):
+        """Test digikey barcode which is invalid"""
+        self.post(self.SCAN_URL, data={"barcode": DIGIKEY_BARCODE_3}, expected_code=400)
 
     def test_mouser_barcode(self):
         """Test mouser barcode with custom order number."""
@@ -287,6 +301,25 @@ DIGIKEY_BARCODE = (
     "\x1d20Z0000000000000000000000000000000000000000000000000000000000000000000"
     "00000000000000000000000000000000000000000000000000000000000000000000000000"
     "0000000000000000000000000000000000"
+)
+
+# Uses 30P instead of P
+DIGIKEY_BARCODE_2 = (
+    "[)>\x1e06\x1d30P296-LM358BIDDFRCT-ND\x1dK\x1d1K72991337\x1d"
+    "10K85781337\x1d11K1\x1d4LPH\x1dQ10\x1d11ZPICK\x1d12Z15221337\x1d13Z361337"
+    "\x1d20Z0000000000000000000000000000000000000000000000000000000000000000000"
+    "00000000000000000000000000000000000000000000000000000000000000000000000000"
+    "0000000000000000000000000000000000"
+)
+
+# Invalid code
+DIGIKEY_BARCODE_3 = (
+    "[)>\x1e06\x1dPnonsense\x1d30Pnonsense\x1d1Pnonsense\x1dK\x1d1K72991337\x1d"
+    "10K85781337\x1d11K1\x1d4LPH\x1dQ10\x1d11ZPICK\x1d12Z15221337\x1d13Z361337"
+    "\x1d20Z0000000000000000000000000000000000000000000000000000000000000000000"
+    "00000000000000000000000000000000000000000000000000000000000000000000000000"
+    "0000000000000000000000000000000000"
+
 )
 
 MOUSER_BARCODE = (
