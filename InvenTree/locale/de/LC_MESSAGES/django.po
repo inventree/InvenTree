@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-15 12:36+0000\n"
-"PO-Revision-Date: 2023-11-14 22:28\n"
+"PO-Revision-Date: 2023-11-15 22:59\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -474,9 +474,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:367
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -3559,16 +3557,13 @@ msgid "A new order has been created and assigned to you"
 msgstr "Eine neue Bestellung wurde erstellt und Ihnen zugewiesen"
 
 #: common/notifications.py:298
-#, fuzzy, python-brace-format
-#| msgid "New {verbose_name}"
+#, python-brace-format
 msgid "{verbose_name} canceled"
-msgstr "Neue {verbose_name}"
+msgstr ""
 
 #: common/notifications.py:300
-#, fuzzy
-#| msgid "A new order has been created and assigned to you"
 msgid "A order that is assigned to you was canceled"
-msgstr "Eine neue Bestellung wurde erstellt und Ihnen zugewiesen"
+msgstr ""
 
 #: common/notifications.py:306 common/notifications.py:313
 msgid "Items Received"
@@ -7341,10 +7336,8 @@ msgid "Item has already been received"
 msgstr "Artikel wurde bereits erhalten"
 
 #: plugin/base/barcodes/api.py:343
-#, fuzzy
-#| msgid "No matching supplier parts"
 msgid "No match for supplier barcode"
-msgstr "Keine passenden Lieferantenteile"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7356,16 +7349,13 @@ msgid "Found multiple purchase orders matching '{order}'"
 msgstr ""
 
 #: plugin/base/barcodes/mixins.py:201
-#, fuzzy, python-brace-format
-#| msgid "No matching purchase order found"
+#, python-brace-format
 msgid "No matching purchase order for '{order}'"
-msgstr "Keine passende Bestellung gefunden"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:207
-#, fuzzy
-#| msgid "Purchase order must match supplier"
 msgid "Purchase order does not match supplier"
-msgstr "Die Bestellung muss mit dem Lieferant übereinstimmen"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:436
 msgid "Failed to find pending line item for supplier part"
@@ -13242,11 +13232,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
+msgstr "Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
 "%(site_name)s anzumelden.<br>Als letzten Schritt füllen Sie bitte folgendes Formular aus:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13420,3 +13408,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:393
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
