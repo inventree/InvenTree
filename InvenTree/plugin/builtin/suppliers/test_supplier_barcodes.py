@@ -177,7 +177,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
         result1 = self.post(url, data={"barcode": DIGIKEY_BARCODE})
         assert result1.status_code == 400
-        assert result1.data["error"].startswith("Failed to find placed purchase order")
+        assert result1.data["error"].startswith("No matching purchase order")
 
         self.purchase_order1.place_order()
 

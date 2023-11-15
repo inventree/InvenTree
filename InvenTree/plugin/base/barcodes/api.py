@@ -340,7 +340,7 @@ class BarcodePOReceive(APIView):
 
         # A plugin has not been found!
         if plugin is None:
-            response["error"] = _("Invalid supplier barcode")
+            response["error"] = _("No match for supplier barcode")
             raise ValidationError(response)
         elif "error" in response:
             raise ValidationError(response)
@@ -352,7 +352,7 @@ barcode_api_urls = [
     # Link a third-party barcode to an item (e.g. Part / StockItem / etc)
     path('link/', BarcodeAssign.as_view(), name='api-barcode-link'),
 
-    # Unlink a third-pary barcode from an item
+    # Unlink a third-party barcode from an item
     path('unlink/', BarcodeUnassign.as_view(), name='api-barcode-unlink'),
 
     # Receive a purchase order item by scanning its barcode

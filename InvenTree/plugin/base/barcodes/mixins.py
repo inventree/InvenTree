@@ -129,6 +129,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def scan(self, barcode_data):
         """Try to match a supplier barcode to a supplier part."""
 
+        barcode_data = str(barcode_data).strip()
+
         self.barcode_fields = self.extract_barcode_fields(barcode_data)
 
         if self.supplier_part_number is None and self.manufacturer_part_number is None:
@@ -159,6 +161,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Try to scan a supplier barcode to receive a purchase order item."""
+
+        barcode_data = str(barcode_data).strip()
 
         self.barcode_fields = self.extract_barcode_fields(barcode_data)
 
@@ -191,10 +195,10 @@ class SupplierBarcodeMixin(BarcodeMixin):
             order = self.customer_order_number or self.supplier_order_number
 
             if len(matching_orders) > 1:
-                return {"error": _(f"Found multiple placed purchase orders for '{order}'")}
+                return {"error": _(f"Found multiple purchase orders matching '{order}'")}
 
             if len(matching_orders) == 0:
-                return {"error": _(f"Failed to find placed purchase order for '{order}'")}
+                return {"error": _(f"No matching purchase order for '{order}'")}
 
             purchase_order = matching_orders.first()
 
