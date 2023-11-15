@@ -495,7 +495,9 @@ function constructFormBody(fields, options) {
 
     // process every field by recursively walking down nested fields
     const processField = (name, field, optionsField) => {
-        if (field.type === "nested object") {
+        if (typeof optionsField !== "object") return;
+
+        if (field.type === "nested object" && optionsField.children) {
             for (const [k, v] of Object.entries(field.children)) {
                 processField(`${name}__${k}`, v, optionsField.children[k]);
             }
