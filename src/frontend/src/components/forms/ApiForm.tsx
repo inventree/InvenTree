@@ -186,7 +186,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     criteriaMode: 'all',
     defaultValues
   });
-  const { isValid, errors } = form.formState;
+  const { isValid } = form.formState;
 
   // Cache URL
   const url = useMemo(
