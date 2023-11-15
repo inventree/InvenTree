@@ -37,6 +37,10 @@ class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
         if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
             return None
 
+        # digikey barcodes should always contain a SKU
+        if "supplier_part_number" not in barcode_fields:
+            return None
+
         return SupplierBarcodeData(
             SKU=barcode_fields.get("supplier_part_number"),
             MPN=barcode_fields.get("manufacturer_part_number"),
