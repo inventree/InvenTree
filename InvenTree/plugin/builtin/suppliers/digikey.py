@@ -6,7 +6,6 @@ This plugin can currently only match DigiKey barcodes to supplier parts.
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
-from plugin.base.barcodes.mixins import SupplierBarcodeData
 from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 
 
@@ -20,6 +19,7 @@ class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     AUTHOR = _("InvenTree contributors")
 
     DEFAULT_SUPPLIER_NAME = "DigiKey"
+
     SETTINGS = {
         "SUPPLIER_ID": {
             "name": _("Supplier"),
@@ -28,22 +28,7 @@ class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
         }
     }
 
-    def parse_supplier_barcode_data(self, barcode_data):
-        """Get supplier_part and barcode_fields from DigiKey DataMatrix-Code."""
+    def extract_barcode_fields(self, barcode_data) -> dict[str, str]:
+        """Extract barcode fields from a DigiKey plugin"""
 
-        if not isinstance(barcode_data, str):
-            return None
-
-        if not (barcode_fields := self.parse_ecia_barcode2d(barcode_data)):
-            return None
-
-        # digikey barcodes should always contain a SKU
-        if "supplier_part_number" not in barcode_fields:
-            return None
-
-        return SupplierBarcodeData(
-            SKU=barcode_fields.get("supplier_part_number"),
-            MPN=barcode_fields.get("manufacturer_part_number"),
-            quantity=barcode_fields.get("quantity"),
-            order_number=barcode_fields.get("purchase_order_number"),
-        )
+        return self.parse_ecia_barcode2d(barcode_data)

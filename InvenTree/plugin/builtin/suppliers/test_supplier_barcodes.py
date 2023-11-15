@@ -12,6 +12,8 @@ from stock.models import StockItem, StockLocation
 class SupplierBarcodeTests(InvenTreeAPITestCase):
     """Tests barcode parsing for all suppliers."""
 
+    SCAN_URL = reverse("api-barcode-scan")
+
     @classmethod
     def setUpTestData(cls):
         """Create supplier parts for barcodes."""
@@ -43,74 +45,79 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     def test_digikey_barcode(self):
         """Test digikey barcode."""
 
-        url = reverse("api-barcode-scan")
-        result = self.post(url, data={"barcode": DIGIKEY_BARCODE})
+        result = self.post(self.SCAN_URL, data={"barcode": DIGIKEY_BARCODE}, expected_code=200)
+
+        self.assertEqual(result['plugin'], 'DigiKeyPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
-        assert "pk" in supplier_part_data
+        self.assertIn('pk', supplier_part_data)
+
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
-        assert supplier_part.SKU == "296-LM358BIDDFRCT-ND"
+        self.assertEqual(supplier_part.SKU, "296-LM358BIDDFRCT-ND")
 
     def test_mouser_barcode(self):
         """Test mouser barcode with custom order number."""
 
-        url = reverse("api-barcode-scan")
-        result = self.post(url, data={"barcode": MOUSER_BARCODE})
+        result = self.post(self.SCAN_URL, data={"barcode": MOUSER_BARCODE}, expected_code=200)
+
+        self.assertEqual(result['plugin'], 'MouserPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
-        assert "pk" in supplier_part_data
+        self.assertIn('pk', supplier_part_data)
+
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
-        assert supplier_part.SKU == "1"
+        self.assertEqual(supplier_part.SKU, '1')
 
     def test_old_mouser_barcode(self):
         """Test old mouser barcode with messed up header."""
 
-        url = reverse("api-barcode-scan")
-        result = self.post(url, data={"barcode": MOUSER_BARCODE_OLD})
+        result = self.post(self.SCAN_URL, data={"barcode": MOUSER_BARCODE_OLD}, expected_code=200)
+
+        self.assertEqual(result['plugin'], 'MouserPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
-        assert "pk" in supplier_part_data
+        self.assertIn('pk', supplier_part_data)
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
-        assert supplier_part.SKU == "2"
+        self.assertEqual(supplier_part.SKU, '2')
 
     def test_lcsc_barcode(self):
         """Test LCSC barcode."""
 
-        url = reverse("api-barcode-scan")
-        result = self.post(url, data={"barcode": LCSC_BARCODE})
+        result = self.post(self.SCAN_URL, data={"barcode": LCSC_BARCODE}, expected_code=200)
+        print("result:", result.data)
+
+        self.assertEqual(result['plugin'], 'LCSCPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
-        assert supplier_part_data is not None
+        self.assertIn('pk', supplier_part_data)
 
-        assert "pk" in supplier_part_data
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
-        assert supplier_part.SKU == "C312270"
+        self.assertEqual(supplier_part.SKU, 'C312270')
 
     def test_tme_qrcode(self):
         """Test TME QR-Code."""
 
-        url = reverse("api-barcode-scan")
-        result = self.post(url, data={"barcode": TME_QRCODE})
+        result = self.post(self.SCAN_URL, data={"barcode": TME_QRCODE}, expected_code=200)
+
+        self.assertEqual(result['plugin'], 'TMEPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
-        assert supplier_part_data is not None
-
-        assert "pk" in supplier_part_data
+        self.assertIn('pk', supplier_part_data)
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
-        assert supplier_part.SKU == "WBP-302"
+        self.assertEqual(supplier_part.SKU, 'WBP-302')
 
     def test_tme_barcode2d(self):
         """Test TME DataMatrix-Code."""
 
-        url = reverse("api-barcode-scan")
-        result = self.post(url, data={"barcode": TME_DATAMATRIX_CODE})
+        result = self.post(self.SCAN_URL, data={"barcode": TME_DATAMATRIX_CODE}, expected_code=200)
+
+        self.assertEqual(result['plugin'], 'TMEPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
-        assert supplier_part_data is not None
+        self.assertIn('pk', supplier_part_data)
 
-        assert "pk" in supplier_part_data
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
-        assert supplier_part.SKU == "WBP-302"
+        self.assertEqual(supplier_part.SKU, 'WBP-302')
 
 
 class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
@@ -305,4 +312,5 @@ TME_QRCODE = (
     "QTY:1 PN:WBP-302 PO:19361337/1 CPO:PO-2023-06-08-001337 MFR:WISHERENTERPRI"
     "SE MPN:WBP-302 RoHS https://www.tme.eu/details/WBP-302"
 )
+
 TME_DATAMATRIX_CODE = "PWBP-302 1PMPNWBP-302 Q1 K19361337/1"
