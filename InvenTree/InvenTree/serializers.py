@@ -2,7 +2,6 @@
 
 import os
 from collections import OrderedDict
-from copy import deepcopy
 from decimal import Decimal
 
 from django.conf import settings
@@ -93,93 +92,6 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
             kwargs['help_text'] = _('Select currency from available options')
 
         super().__init__(*args, **kwargs)
-
-
-class DependentField(serializers.Field):
-    """A dependent field can be used to dynamically return child fields based on the value of other fields."""
-    child = None
-
-    def __init__(self, *args, depends_on, field_serializer, **kwargs):
-        """A dependent field can be used to dynamically return child fields based on the value of other fields.
-
-        Example:
-        This example adds two fields. If the client selects integer, an integer field will be shown, but if he
-        selects char, an char field will be shown. For any other value, nothing will be shown.
-
-        class TestSerializer(serializers.Serializer):
-            select_type = serializers.ChoiceField(choices=[
-                ("integer", "Integer"),
-                ("char", "Char"),
-            ])
-            my_field = DependentField(depends_on=["select_type"], field_serializer="get_my_field")
-
-            def get_my_field(self, fields):
-                if fields["select_type"] == "integer":
-                    return serializers.IntegerField()
-                if fields["select_type"] == "char":
-                    return serializers.CharField()
-        """
-        super().__init__(*args, **kwargs)
-
-        self.depends_on = depends_on
-        self.field_serializer = field_serializer
-
-    def get_child(self, raise_exception=False):
-        """This method tries to extract the child based on the provided data in the request by the client."""
-        data = deepcopy(self.context["request"].data)
-
-        def visit_parent(node):
-            """Recursively extract the data for the parent field/serializer in reverse."""
-            nonlocal data
-
-            if node.parent:
-                visit_parent(node.parent)
-
-            # only do for composite fields and stop right before the current field
-            if hasattr(node, "child") and node is not self and isinstance(data, dict):
-                data = data.get(node.field_name, None)
-        visit_parent(self)
-
-        # ensure that data is a dictionary and that a parent exists
-        if not isinstance(data, dict) or self.parent is None:
-            return
-
-        # check if the request data contains the dependent fields, otherwise skip getting the child
-        for f in self.depends_on:
-            if not data.get(f, None):
-                return
-
-        # partially validate the data for options requests that set raise_exception while calling .get_child(...)
-        if raise_exception:
-            validation_data = {k: v for k, v in data.items() if k in self.depends_on}
-            serializer = self.parent.__class__(context=self.context, data=validation_data, partial=True)
-            serializer.is_valid(raise_exception=raise_exception)
-
-        # try to get the field serializer
-        field_serializer = getattr(self.parent, self.field_serializer)
-        child = field_serializer(data)
-
-        if not child:
-            return
-
-        self.child = child
-        self.child.bind(field_name='', parent=self)
-
-    def to_internal_value(self, data):
-        """This method tries to convert the data to an internal representation based on the defined to_internal_value method on the child."""
-        self.get_child()
-        if self.child:
-            return self.child.to_internal_value(data)
-
-        return None
-
-    def to_representation(self, value):
-        """This method tries to convert the data to representation based on the defined to_representation method on the child."""
-        self.get_child()
-        if self.child:
-            return self.child.to_representation(value)
-
-        return None
 
 
 class InvenTreeModelSerializer(serializers.ModelSerializer):

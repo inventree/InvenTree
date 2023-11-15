@@ -1,5 +1,7 @@
 """Helper functions for report generation."""
 
+import base64
+import io
 import logging
 
 from django.utils.translation import gettext_lazy as _
@@ -48,3 +50,24 @@ def report_page_size_default():
         page_size = 'A4'
 
     return page_size
+
+
+def encode_image_base64(image, format: str = 'PNG'):
+    """Return a base-64 encoded image which can be rendered in an <img> tag
+
+    Arguments:
+        image {Image} -- Image object
+        format {str} -- Image format (e.g. 'PNG')
+
+    Returns:
+        str -- Base64 encoded image data e.g. 'data:image/png;base64,xxxxxxxxx'
+    """
+
+    fmt = format.lower()
+
+    buffered = io.BytesIO()
+    image.save(buffered, fmt)
+
+    img_str = base64.b64encode(buffered.getvalue())
+
+    return f"data:image/{fmt};charset=utf-8;base64," + img_str.decode()
