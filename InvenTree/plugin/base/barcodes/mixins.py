@@ -130,7 +130,7 @@ class BarcodeMixin:
                 return supplier_parts
 
         if mpn:
-            supplier_parts = SupplierPart.objects.filter(manufacturer_part__MPN__iexact=mpn)
+            supplier_parts = supplier_parts.filter(manufacturer_part__MPN__iexact=mpn)
             if len(supplier_parts) == 1:
                 return supplier_parts
 
