@@ -1,5 +1,6 @@
 """API endpoints for barcode plugins."""
 
+import logging
 
 from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
@@ -16,6 +17,8 @@ from plugin.builtin.barcodes.inventree_barcode import \
     InvenTreeInternalBarcodePlugin
 from stock.models import StockLocation
 from users.models import RuleSet
+
+logger = logging.getLogger('inventree')
 
 
 class BarcodeScan(APIView):
@@ -68,7 +71,15 @@ class BarcodeScan(APIView):
 
             result = current_plugin.scan(barcode_data)
 
-            if result is not None:
+            if result is None:
+                continue
+
+            if "error" in result:
+                logger.info("%s.scan(...) returned an error: %s", plugin.__name__, result["error"])
+                if not response:
+                    plugin = current_plugin
+                    response = result
+            else:
                 plugin = current_plugin
                 response = result
                 break
@@ -300,7 +311,15 @@ class BarcodePOReceive(APIView):
                 location=location,
             )
 
-            if result is not None:
+            if result is None:
+                continue
+
+            if "error" in result:
+                logger.info("%s.scan_receive_item(...) returned an error: %s", plugin.__name__, result["error"])
+                if not response:
+                    plugin = current_plugin
+                    response = result
+            else:
                 plugin = current_plugin
                 response = result
                 break
