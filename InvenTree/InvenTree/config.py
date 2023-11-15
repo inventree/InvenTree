@@ -127,7 +127,7 @@ def load_config_data(set_cache: bool = False) -> map:
     return data
 
 
-def typecast(value, type, var_name=None):
+def do_typecast(value, type, var_name=None):
     """Attempt to typecast a value.
 
     Arguments:
@@ -168,7 +168,7 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
         env_var: Name of the environment variable e.g. 'INVENTREE_STATIC_ROOT'
         config_key: Key to lookup in the configuration file
         default_value: Value to return if first two options are not provided
-        typecast: Function to use for typecasting the value
+        typecast: Function to use for typecasting the value e.g. int, float, str, list, dict
     """
 
     def set_metadata(source: str):
@@ -182,7 +182,7 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
         if val is not None:
             set_metadata('env')
-            return typecast(val, typecast, var_name=env_var)
+            return do_typecast(val, typecast, var_name=env_var)
 
     # Next, try to load from configuration file
     if config_key is not None:
@@ -202,11 +202,11 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
         if result is not None:
             set_metadata('yaml')
-            return typecast(result, typecast, var_name=env_var)
+            return do_typecast(result, typecast, var_name=env_var)
 
     # Finally, return the default value
     set_metadata('default')
-    return typecast(default_value, typecast, var_name=env_var)
+    return do_typecast(default_value, typecast, var_name=env_var)
 
 
 def get_boolean_setting(env_var=None, config_key=None, default_value=False):
