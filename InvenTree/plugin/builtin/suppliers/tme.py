@@ -56,8 +56,11 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             return barcode_fields
 
         elif self.TME_IS_BARCODE2D_REGEX.fullmatch(barcode_data):
-            # Scan as a standard ECIA barcode
-            barcode_fields = self.parse_ecia_barcode2d(barcode_data)
+            # 2D Barcode format e.g. "PWBP-302 1PMPNWBP-302 Q1 K19361337/1"
+            for item in barcode_data.split(" "):
+                for k, v in self.ecia_field_map().items():
+                    if item.startswith(k):
+                        barcode_fields[v] = item[len(k):]
         else:
             return {}
 

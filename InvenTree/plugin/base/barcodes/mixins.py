@@ -153,14 +153,14 @@ class SupplierBarcodeMixin(BarcodeMixin):
             "web_url": supplier_part.get_absolute_url(),
         }
 
-        return {SupplierPart.barcode_model_type(): data}
+        return {
+            SupplierPart.barcode_model_type(): data
+        }
 
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Try to scan a supplier barcode to receive a purchase order item."""
 
         self.barcode_fields = self.extract_barcode_fields(barcode_data)
-
-        print(self, self.barcode_fields)
 
         if self.supplier_part_number is None and self.manufacturer_part_number is None:
             return None
@@ -198,6 +198,10 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
             purchase_order = matching_orders.first()
 
+        if supplier and purchase_order:
+            if purchase_order.supplier != supplier:
+                return {"error": _("Purchase order does not match supplier")}
+
         return self.receive_purchase_order_item(
             supplier_part,
             user,
@@ -230,8 +234,10 @@ class SupplierBarcodeMixin(BarcodeMixin):
             return None
 
         suppliers = Company.objects.filter(name__icontains=supplier_name, is_supplier=True)
+
         if len(suppliers) != 1:
             return None
+
         self.set_setting("SUPPLIER_ID", suppliers.first().pk)
 
         return suppliers.first()
@@ -264,7 +270,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         }
 
     @classmethod
-    def parse_ecia_barcode2d(cls, barcode_data: str | list[str]) -> dict[str, str]:
+    def parse_ecia_barcode2d(cls, barcode_data: str) -> dict[str, str]:
         """Parse a standard ECIA 2D barcode
 
         Ref: https://www.ecianow.org/assets/docs/ECIA_Specifications.pdf
@@ -278,8 +284,6 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         # Split data into separate fields
         fields = cls.parse_isoiec_15434_barcode2d(barcode_data)
-
-        print("ecia fields:", fields)
 
         barcode_fields = {}
 

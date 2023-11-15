@@ -33,8 +33,8 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
     # Custom field mapping for LCSC barcodes
     LCSC_FIELDS = {
-        "pm": SupplierBarcodeMixin.SUPPLIER_PART_NUMBER,
-        "pc": SupplierBarcodeMixin.MANUFACTURER_PART_NUMBER,
+        "pm": SupplierBarcodeMixin.MANUFACTURER_PART_NUMBER,
+        "pc": SupplierBarcodeMixin.SUPPLIER_PART_NUMBER,
         "qty": SupplierBarcodeMixin.QUANTITY,
         "on": SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER,
     }
@@ -44,10 +44,8 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
         Example LCSC QR-Code: {pbn:PICK2009291337,on:SO2009291337,pc:C312270}
         """
-        print("LCSC data:", barcode_data)
 
         if not self.LCSC_BARCODE_REGEX.fullmatch(barcode_data):
-            print("NO MATCH FOR LCSC")
             return {}
 
         # Extract fields
@@ -59,8 +57,6 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
         )
 
         fields = dict(pair.split(":") for pair in fields)
-
-        print("LCSC fields:", fields)
 
         barcode_fields = {}
 

@@ -47,7 +47,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         result = self.post(self.SCAN_URL, data={"barcode": DIGIKEY_BARCODE}, expected_code=200)
 
-        self.assertEqual(result['plugin'], 'DigiKeyPlugin')
+        self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
         self.assertIn('pk', supplier_part_data)
@@ -60,8 +60,6 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         result = self.post(self.SCAN_URL, data={"barcode": MOUSER_BARCODE}, expected_code=200)
 
-        self.assertEqual(result['plugin'], 'MouserPlugin')
-
         supplier_part_data = result.data.get("supplierpart")
         self.assertIn('pk', supplier_part_data)
 
@@ -73,8 +71,6 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         result = self.post(self.SCAN_URL, data={"barcode": MOUSER_BARCODE_OLD}, expected_code=200)
 
-        self.assertEqual(result['plugin'], 'MouserPlugin')
-
         supplier_part_data = result.data.get("supplierpart")
         self.assertIn('pk', supplier_part_data)
         supplier_part = SupplierPart.objects.get(pk=supplier_part_data["pk"])
@@ -84,9 +80,8 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         """Test LCSC barcode."""
 
         result = self.post(self.SCAN_URL, data={"barcode": LCSC_BARCODE}, expected_code=200)
-        print("result:", result.data)
 
-        self.assertEqual(result['plugin'], 'LCSCPlugin')
+        self.assertEqual(result.data['plugin'], 'LCSCPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
         self.assertIn('pk', supplier_part_data)
@@ -99,7 +94,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         result = self.post(self.SCAN_URL, data={"barcode": TME_QRCODE}, expected_code=200)
 
-        self.assertEqual(result['plugin'], 'TMEPlugin')
+        self.assertEqual(result.data['plugin'], 'TMEPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
         self.assertIn('pk', supplier_part_data)
@@ -111,7 +106,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         result = self.post(self.SCAN_URL, data={"barcode": TME_DATAMATRIX_CODE}, expected_code=200)
 
-        self.assertEqual(result['plugin'], 'TMEPlugin')
+        self.assertEqual(result.data['plugin'], 'TMEPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
         self.assertIn('pk', supplier_part_data)

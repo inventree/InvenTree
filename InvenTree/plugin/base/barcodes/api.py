@@ -69,8 +69,6 @@ class BarcodeScan(APIView):
 
         for current_plugin in plugins:
 
-            print("scanning:", current_plugin)
-
             result = current_plugin.scan(barcode_data)
 
             if result is None:
@@ -314,8 +312,6 @@ class BarcodePOReceive(APIView):
         plugins = registry.with_mixin("supplier-barcode")
 
         for current_plugin in plugins:
-
-            print("checking plugin:", current_plugin)
 
             result = current_plugin.scan_receive_item(
                 barcode_data,
