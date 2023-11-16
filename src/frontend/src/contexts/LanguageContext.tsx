@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/macro';
 import { I18nProvider } from '@lingui/react';
-import { Box, LoadingOverlay, Text } from '@mantine/core';
+import { LoadingOverlay, Text } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 
 import { api } from '../App';
