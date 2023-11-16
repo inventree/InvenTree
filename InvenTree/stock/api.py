@@ -481,7 +481,7 @@ class StockFilter(rest_filters.FilterSet):
         """Filter by whether or not the stock item is 'allocated'"""
         if str2bool(value):
             # Filter StockItem with either build allocations or sales order allocations
-            return queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
+            return queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False)).distinct()
         # Filter StockItem without build allocations or sales order allocations
         return queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
 
@@ -546,7 +546,8 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q)
-        return queryset.filter(q)
+
+        return queryset.filter(q).distinct()
 
     has_batch = rest_filters.BooleanFilter(label='Has batch code', method='filter_has_batch')
 
@@ -556,7 +557,8 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q)
-        return queryset.filter(q)
+
+        return queryset.filter(q).distinct()
 
     tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
 
@@ -572,7 +574,8 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q_batch & q_serial)
-        return queryset.filter(q_batch & q_serial)
+
+        return queryset.filter(q_batch).filter(q_serial).distinct()
 
     installed = rest_filters.BooleanFilter(label='Installed in other stock item', method='filter_installed')
 
@@ -1056,7 +1059,9 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         company = params.get('company', None)
 
         if company is not None:
-            queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company))
+            queryset = queryset.filter(
+                Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company).distinct()
+            )
 
         return queryset
 

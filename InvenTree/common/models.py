@@ -1874,6 +1874,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'DISPLAY_FULL_NAMES': {
+            'name': _('Display Users full names'),
+            'description': _('Display Users full names instead of usernames'),
+            'default': False,
+            'validator': bool
+        }
     }
 
     typ = 'inventree'

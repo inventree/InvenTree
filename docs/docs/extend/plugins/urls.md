@@ -97,7 +97,7 @@ Example:
 {% endraw %}
 ```
 Notice that this example has the panel initially hidden.
-This is where the `enableSidebar('...');'` function comes back into play. Panels are enabled according to the labels of items in the sidebar. Each sidebar item must declare a label corresponding to a panel. An example of a sidebar item within with the label `sublocations` is below.
+This is where the `enableSidebar('...');'` function comes back into play. Panels are enabled according to the labels of items in the sidebar. Each sidebar item must declare a label corresponding to a panel. An example of a sidebar item within with the label `loans` is below.
 
 ```html
 {% raw %}
@@ -111,7 +111,7 @@ The `enableSidebar('...');'` function will un-hide the panel with the label `pan
 Whenever you click a sidebar item, it will automatically enable the panel with the corresponding label and hide all other panels.
 
 Additionally, when a panel is loaded, the function `onPanelLoad(...)` will be called for the associated panel.
-If you would like to add javascript functionality to a panel, add the function within the `{% raw %}{% block js_ready %}{% endraw %}` block of your template file.
+If you would like to add javascript functionality to a panel after it loads, add the function within the `{% raw %}{% block js_ready %}{% endraw %}` block of your template file.
 
 Example:
 ```js

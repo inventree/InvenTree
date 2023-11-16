@@ -1,5 +1,6 @@
 """API endpoints for barcode plugins."""
 
+import logging
 
 from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
@@ -16,6 +17,8 @@ from plugin.builtin.barcodes.inventree_barcode import \
     InvenTreeInternalBarcodePlugin
 from stock.models import StockLocation
 from users.models import RuleSet
+
+logger = logging.getLogger('inventree')
 
 
 class BarcodeScan(APIView):
@@ -68,7 +71,16 @@ class BarcodeScan(APIView):
 
             result = current_plugin.scan(barcode_data)
 
-            if result is not None:
+            if result is None:
+                continue
+
+            if "error" in result:
+                logger.info("%s.scan(...) returned an error: %s",
+                            current_plugin.__class__.__name__, result["error"])
+                if not response:
+                    plugin = current_plugin
+                    response = result
+            else:
                 plugin = current_plugin
                 response = result
                 break
@@ -265,10 +277,14 @@ class BarcodePOReceive(APIView):
         """Respond to a barcode POST request."""
 
         data = request.data
+
         if not (barcode_data := data.get("barcode")):
             raise ValidationError({"barcode": _("Missing barcode data")})
 
+        logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode_data)
+
         purchase_order = None
+
         if purchase_order_pk := data.get("purchase_order"):
             purchase_order = PurchaseOrder.objects.filter(pk=purchase_order_pk).first()
             if not purchase_order:
@@ -292,7 +308,11 @@ class BarcodePOReceive(APIView):
             response["error"] = _("Item has already been received")
             raise ValidationError(response)
 
+        # Now, look just for "supplier-barcode" plugins
+        plugins = registry.with_mixin("supplier-barcode")
+
         for current_plugin in plugins:
+
             result = current_plugin.scan_receive_item(
                 barcode_data,
                 request.user,
@@ -300,7 +320,16 @@ class BarcodePOReceive(APIView):
                 location=location,
             )
 
-            if result is not None:
+            if result is None:
+                continue
+
+            if "error" in result:
+                logger.info("%s.scan_receive_item(...) returned an error: %s",
+                            current_plugin.__class__.__name__, result["error"])
+                if not response:
+                    plugin = current_plugin
+                    response = result
+            else:
                 plugin = current_plugin
                 response = result
                 break
@@ -311,7 +340,7 @@ class BarcodePOReceive(APIView):
 
         # A plugin has not been found!
         if plugin is None:
-            response["error"] = _("Invalid supplier barcode")
+            response["error"] = _("No match for supplier barcode")
             raise ValidationError(response)
         elif "error" in response:
             raise ValidationError(response)
@@ -323,7 +352,7 @@ barcode_api_urls = [
     # Link a third-party barcode to an item (e.g. Part / StockItem / etc)
     path('link/', BarcodeAssign.as_view(), name='api-barcode-link'),
 
-    # Unlink a third-pary barcode from an item
+    # Unlink a third-party barcode from an item
     path('unlink/', BarcodeUnassign.as_view(), name='api-barcode-unlink'),
 
     # Receive a purchase order item by scanning its barcode

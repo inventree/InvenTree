@@ -116,6 +116,12 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'version/';
     case ApiPaths.sso_providers:
       return 'auth/providers/';
+    case ApiPaths.user_list:
+      return 'user/';
+    case ApiPaths.group_list:
+      return 'user/group/';
+    case ApiPaths.owner_list:
+      return 'user/owner/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:
