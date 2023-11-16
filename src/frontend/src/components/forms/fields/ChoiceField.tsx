@@ -11,7 +11,6 @@ import { ApiFormFieldType } from './ApiFormField';
  */
 export function ChoiceField({
   controller,
-  fieldName,
   definition
 }: {
   controller: UseControllerReturn<FieldValues, any>;

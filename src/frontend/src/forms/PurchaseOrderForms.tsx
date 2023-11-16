@@ -7,10 +7,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 
-import {
-  ApiFormData,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
