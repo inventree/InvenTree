@@ -72,6 +72,8 @@ packaging==23.2
     # via
     #   -c requirements.txt
     #   build
+pdftotext==2.2.2
+    # via -r requirements-dev.in
 pep8-naming==0.13.3
     # via -r requirements-dev.in
 pip-tools==7.3.0
