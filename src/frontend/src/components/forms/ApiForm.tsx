@@ -172,10 +172,15 @@ export function OptionsApiForm({
  * based on an API endpoint.
  */
 export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
-  const defaultValues: FieldValues = useMemo(() => {
-    return mapFields(props.fields ?? {}, (fieldName, field) => {
-      return field.value ?? field.default ?? undefined;
+  const [defaultValues, values]: [FieldValues, FieldValues] = useMemo(() => {
+    const defaultValues = mapFields(props.fields ?? {}, (_path, field) => {
+      return field.default ?? undefined;
     });
+    const values = mapFields(props.fields ?? {}, (_path, field) => {
+      return field.value ?? undefined;
+    });
+
+    return [defaultValues, values];
   }, [props.fields]);
 
   // Form errors which are not associated with a specific field
@@ -184,7 +189,8 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
   // Form state
   const form = useForm({
     criteriaMode: 'all',
-    defaultValues
+    defaultValues,
+    values
   });
   const { isValid, isDirty } = form.formState;
 
@@ -392,7 +398,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
           variant="outline"
           radius="sm"
           color={props.submitColor ?? 'green'}
-          disabled={isLoading || !isDirty}
+          disabled={isLoading || (props.fetchInitialData && !isDirty)}
         >
           {props.submitText ?? t`Submit`}
         </Button>

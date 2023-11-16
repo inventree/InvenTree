@@ -45,11 +45,7 @@ export function ChoiceField({
       field.onChange(value);
 
       // Run custom callback for this field (if provided)
-      definition.onValueChange?.({
-        name: fieldName,
-        value: value,
-        field: definition
-      });
+      definition.onValueChange?.(value);
     },
     [field.onChange, definition]
   );

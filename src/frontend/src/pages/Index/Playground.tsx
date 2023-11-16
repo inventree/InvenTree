@@ -46,16 +46,38 @@ function ApiFormsPlayground() {
       comment: {}
     }
   };
+  const [active, setActive] = useState(true);
+  const [name, setName] = useState('Hello');
 
-  const partFieldsState: any = useMemo<any>(() => partFields({}), []);
+  const partFieldsState: any = useMemo<any>(() => {
+    const fields = partFields({});
+    fields.name = {
+      ...fields.name,
+      value: name,
+      onValueChange: setName
+    };
+    fields.active = {
+      ...fields.active,
+      value: active,
+      onValueChange: setActive
+    };
+    fields.responsible = {
+      ...fields.responsible,
+      disabled: !active
+    };
+    return fields;
+  }, [name, active]);
 
   const { open, modal } = useCreateApiFormModal({
     url: ApiPaths.part_list,
     title: 'Create part',
-    fields: partFieldsState
+    fields: partFieldsState,
+    preFormContent: (
+      <Button onClick={() => setName('Hello world')}>
+        Set name="Hello world"
+      </Button>
+    )
   });
-
-  const [active, setActive] = useState(true);
 
   return (
     <Stack>
@@ -79,12 +101,12 @@ function ApiFormsPlayground() {
             method: 'POST',
             fields: {
               active: {
-                onValueChange: ({ value }) => {
-                  setActive(value);
-                }
+                value: active,
+                onValueChange: setActive
               },
               keywords: {
-                disabled: active
+                disabled: !active,
+                value: 'default,test,placeholder'
               }
             }
           }}

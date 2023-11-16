@@ -21,15 +21,6 @@ import { RelatedModelField } from './RelatedModelField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
 
-/**
- * Callback function type when a form field value changes
- */
-export type ApiFormChangeCallback = {
-  name: string;
-  value: any;
-  field: ApiFormFieldType;
-};
-
 /** Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
  * - All other attributes are optional, and may be provided by the API
@@ -85,7 +76,7 @@ export type ApiFormFieldType = {
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
-  onValueChange?: (change: ApiFormChangeCallback) => void;
+  onValueChange?: (value: any) => void;
   adjustFilters?: (filters: any) => any;
 };
 
@@ -162,11 +153,7 @@ export function ApiFormField({
       field.onChange(value);
 
       // Run custom callback for this field
-      definition.onValueChange?.({
-        name: fieldName,
-        value: value,
-        field: definition
-      });
+      definition.onValueChange?.(value);
     },
     [fieldName, definition]
   );

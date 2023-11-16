@@ -150,11 +150,7 @@ export function RelatedModelField({
       setPk(_pk);
 
       // Run custom callback for this field (if provided)
-      definition.onValueChange?.({
-        name: fieldName,
-        value: _pk,
-        field: definition
-      });
+      definition.onValueChange?.(_pk);
     },
     [field.onChange, definition]
   );
