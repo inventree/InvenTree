@@ -122,6 +122,12 @@ export function openModalApiForm(props: OpenApiFormProps) {
     }
   ];
 
+  const oldFormSuccess = props.onFormSuccess;
+  props.onFormSuccess = (data) => {
+    oldFormSuccess?.(data);
+    modals.close(modalId);
+  };
+
   let url = constructFormUrl(props.url, props.pk);
 
   // Make OPTIONS request first

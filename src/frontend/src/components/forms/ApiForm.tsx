@@ -186,7 +186,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     criteriaMode: 'all',
     defaultValues
   });
-  const { isValid } = form.formState;
+  const { isValid, isDirty } = form.formState;
 
   // Cache URL
   const url = useMemo(
@@ -205,6 +205,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
           // Update form values, but only for the fields specified for the form
           // TODO: update only the fields that are defined (also nested fields)
           form.reset(response.data);
+          console.log('RESET', response.data);
           // Object.keys(props.fields ?? {}).forEach((fieldName) => {
           //   if (fieldName in response.data) {
           //     form.setValue(fieldName, response.data[fieldName]);
@@ -391,7 +392,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
           variant="outline"
           radius="sm"
           color={props.submitColor ?? 'green'}
-          disabled={isLoading}
+          disabled={isLoading || !isDirty}
         >
           {props.submitText ?? t`Submit`}
         </Button>

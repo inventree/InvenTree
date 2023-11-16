@@ -38,22 +38,18 @@ export function RelatedModelField({
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If a value is provided, load the related object
-    if (fieldDefinition.value) {
-      let formPk = fieldDefinition.value ?? null;
-
+    if (field.value) {
       // If the value is unchanged, do nothing
-      if (formPk === pk) {
-        return;
-      }
+      if (field.value === pk) return;
 
-      if (formPk != null) {
-        let url = (fieldDefinition.api_url || '') + formPk + '/';
+      if (field.value !== null) {
+        const url = `${definition.api_url}${field.value}/`;
 
         api.get(url).then((response) => {
-          let data = response.data;
+          const data = response.data;
 
           if (data && data.pk) {
-            let value = {
+            const value = {
               value: data.pk,
               data: data
             };
@@ -66,7 +62,7 @@ export function RelatedModelField({
         setPk(null);
       }
     }
-  }, [definition.api_url, definition.value]);
+  }, [definition.api_url, field.value]);
 
   const [offset, setOffset] = useState<number>(0);
 
@@ -78,7 +74,7 @@ export function RelatedModelField({
 
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
-    queryKey: [`related-field-${fieldName}`, offset, searchText],
+    queryKey: [`related-field-${fieldName}`, fieldId, offset, searchText],
     queryFn: async () => {
       if (!definition.api_url) {
         return null;
@@ -102,11 +98,15 @@ export function RelatedModelField({
           params: params
         })
         .then((response) => {
-          let values: any[] = [...data];
+          const values: any[] = [...data];
+          const alreadyPresentPks = values.map((x) => x.value);
 
-          let results = response.data?.results ?? response.data ?? [];
+          const results = response.data?.results ?? response.data ?? [];
 
           results.forEach((item: any) => {
+            // do not push already existing items into the values array
+            if (alreadyPresentPks.includes(item.pk)) return;
+
             values.push({
               value: item.pk ?? -1,
               data: item
@@ -171,11 +171,16 @@ export function RelatedModelField({
     };
   }, [definition]);
 
+  const currentValue = useMemo(
+    () => pk !== null && data.find((item) => item.value === pk),
+    [pk, data]
+  );
+
   return (
     <Input.Wrapper {...fieldDefinition} error={error?.message}>
       <Select
         id={fieldId}
-        value={pk != null && data.find((item) => item.value == pk)}
+        value={currentValue}
         options={data}
         filterOption={null}
         onInputChange={(value: any) => {
