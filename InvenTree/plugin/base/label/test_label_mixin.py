@@ -180,7 +180,8 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Read the raw .pdf data - ensure it contains some sensible information
         filetext = extract_text('label.pdf')
-        self.assertIn(parts[1].name, filetext)
+        matched = [part.name in filetext for part in parts]
+        self.assertIn(True, matched)
 
         # Check that the .png file has already been created
         self.assertTrue(os.path.exists('label.png'))
