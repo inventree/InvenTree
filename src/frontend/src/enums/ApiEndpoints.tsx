@@ -21,6 +21,7 @@ export enum ApiPaths {
   user_email_remove = 'api-user-email-remove',
 
   user_list = 'api-user-list',
+  group_list = 'api-group-list',
   owner_list = 'api-owner-list',
 
   settings_global_list = 'api-settings-global-list',

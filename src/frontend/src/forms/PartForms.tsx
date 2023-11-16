@@ -35,7 +35,11 @@ export function partFields({
     },
     default_expiry: {},
     minimum_stock: {},
-    responsible: {},
+    responsible: {
+      filters: {
+        is_active: true
+      }
+    },
     component: {},
     assembly: {},
     is_template: {},

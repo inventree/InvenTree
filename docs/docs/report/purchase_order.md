@@ -32,13 +32,12 @@ In addition to the default report context variables, the following variables are
 
 #### Lines
 
-Each line item have sub variables, as follows:
+Each line item (available within the `lines` list) has sub variables, as follows:
 
 | Variable | Description |
 | --- | --- |
 | quantity | The quantity of the part to be ordered |
-| part | The supplier part to be ordered |
-| part | The [supplierpart ](./context_variables.md#supplierpart) object that the build references |
+| part | The [supplierpart ](./context_variables.md#supplierpart) object to be ordered |
 | reference | The reference given in the part of the order |
 | notes | The notes given in the part of the order |
 | target_date | The date when the part should arrive. Each part can have an individual date |
@@ -46,11 +45,13 @@ Each line item have sub variables, as follows:
 | total_line_price | The total price for this line item, calculated from the unit price and quantity |
 | destination | The stock location where the part will be stored |
 
-A simple example below shows how to use the context variables for line items:
+A simple example below shows how to use the context variables for each line item:
 
 ```html
 {% raw %}
-{% for line in order.lines %}
+{% for line in lines %}
+Internal Part: {{ line.part.part.name }} - <i>{{ line.part.part.description }}</i>
+SKU: {{ line.part.SKU }}
 Price: {% render_currency line.total_line_price %}
 {% endfor %}
 {% endraw %}
