@@ -6,8 +6,8 @@ import { AxiosResponse } from 'axios';
 import { api } from '../App';
 import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import {
-  ApiFormFieldType,
-  constructField
+  ApiFormFieldSet,
+  ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
 import { StylishText } from '../components/items/StylishText';
 import { ApiPaths } from '../enums/ApiEndpoints';
@@ -32,7 +32,7 @@ export function extractAvailableFields(
   method?: string
 ): Record<string, ApiFormFieldType> | null {
   // OPTIONS request *must* return 200 status
-  if (response.status != 200) {
+  if (response.status !== 200) {
     invalidResponse(response.status);
     return null;
   }
@@ -65,24 +65,104 @@ export function extractAvailableFields(
     return null;
   }
 
-  let fields: Record<string, ApiFormFieldType> = {};
+  const processFields = (fields: any, _path?: string) => {
+    const _fields: ApiFormFieldSet = {};
 
-  for (const fieldName in actions[method]) {
-    const field = actions[method][fieldName];
-    fields[fieldName] = {
-      ...field,
-      name: fieldName,
-      field_type: field.type,
-      description: field.help_text,
-      value: field.value ?? field.default,
-      disabled: field.read_only ?? false
-    };
+    for (const [fieldName, field] of Object.entries(fields) as any) {
+      const path = _path ? `${_path}.${fieldName}` : fieldName;
+      _fields[fieldName] = {
+        ...field,
+        name: path,
+        field_type: field.type,
+        description: field.help_text,
+        value: field.value ?? field.default,
+        disabled: field.read_only ?? false
+      };
 
-    // Remove the 'read_only' field - plays havoc with react components
-    delete fields['read_only'];
+      // Remove the 'read_only' field - plays havoc with react components
+      delete _fields[fieldName].read_only;
+
+      if (
+        _fields[fieldName].field_type === 'nested object' &&
+        _fields[fieldName].children
+      ) {
+        _fields[fieldName].children = processFields(
+          _fields[fieldName].children,
+          path
+        );
+      }
+    }
+
+    return _fields;
+  };
+
+  return processFields(actions[method]);
+}
+
+export type NestedDict = { [key: string]: string | number | NestedDict };
+export function mapFields(
+  fields: ApiFormFieldSet,
+  fieldFunction: (path: string, value: ApiFormFieldType, key: string) => any,
+  _path?: string
+): NestedDict {
+  const res: NestedDict = {};
+
+  for (const [k, v] of Object.entries(fields)) {
+    const path = _path ? `${_path}.${k}` : k;
+    let value;
+
+    if (v.field_type === 'nested object' && v.children) {
+      value = mapFields(v.children, fieldFunction, path);
+    } else {
+      value = fieldFunction(path, v, k);
+    }
+
+    if (value !== undefined) res[k] = value;
   }
 
-  return fields;
+  return res;
+}
+
+/*
+ * Build a complete field definition based on the provided data
+ */
+export function constructField({
+  field,
+  definition
+}: {
+  field: ApiFormFieldType;
+  definition?: ApiFormFieldType;
+}) {
+  const def = {
+    ...definition,
+    ...field
+  };
+
+  switch (def.field_type) {
+    case 'date':
+      // Change value to a date object if required
+      if (def.value) {
+        def.value = new Date(def.value);
+      }
+      break;
+    case 'nested object':
+      def.children = {};
+      for (const k of Object.keys(field.children ?? {})) {
+        def.children[k] = constructField({
+          field: field.children?.[k] ?? {},
+          definition: definition?.children?.[k] ?? {}
+        });
+      }
+      break;
+    default:
+      break;
+  }
+
+  // Clear out the 'read_only' attribute
+  def.disabled = def.disabled ?? def.read_only ?? false;
+  delete def['read_only'];
+
+  return def;
 }
 
 export interface OpenApiFormProps extends ApiFormProps {
@@ -149,7 +229,7 @@ export function openModalApiForm(props: OpenApiFormProps) {
       const _props = { ...props };
 
       if (_props.fields) {
-        for (const [k, v] of Object.entries(_props.fields ?? {})) {
+        for (const [k, v] of Object.entries(_props.fields)) {
           _props.fields[k] = constructField({
             field: v,
             definition: fields?.[k]

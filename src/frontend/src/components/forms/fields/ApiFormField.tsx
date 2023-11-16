@@ -11,12 +11,13 @@ import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
-import { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback, useEffect } from 'react';
 import { useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 
 import { ModelType } from '../../../enums/ModelType';
 import { ChoiceField } from './ChoiceField';
+import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
@@ -62,11 +63,13 @@ export type ApiFormFieldType = {
     | 'float'
     | 'number'
     | 'choice'
-    | 'file upload';
+    | 'file upload'
+    | 'nested object';
   api_url?: string;
   model?: ModelType;
   modelRenderer?: (instance: any) => ReactNode;
   filters?: any;
+  children?: { [key: string]: ApiFormFieldType };
   required?: boolean;
   choices?: any[];
   hidden?: boolean;
@@ -79,39 +82,6 @@ export type ApiFormFieldType = {
   onValueChange?: (value: any) => void;
   adjustFilters?: (filters: any) => any;
 };
-
-/*
- * Build a complete field definition based on the provided data
- */
-export function constructField({
-  field,
-  definition
-}: {
-  field: ApiFormFieldType;
-  definition?: ApiFormFieldType;
-}) {
-  const def = {
-    ...definition,
-    ...field
-  };
-
-  // Change value to a date object if required
-  switch (def.field_type) {
-    case 'date':
-      if (def.value) {
-        def.value = new Date(def.value);
-      }
-      break;
-    default:
-      break;
-  }
-
-  // Clear out the 'read_only' attribute
-  def.disabled = def.disabled ?? def.read_only ?? false;
-  delete def['read_only'];
-
-  return def;
-}
 
 /**
  * Render an individual form field
@@ -136,6 +106,15 @@ export function ApiFormField({
   } = controller;
   const { value, ref } = field;
 
+  useEffect(() => {
+    if (definition.field_type === 'nested object') return;
+
+    // hook up the value state to the input field
+    if (definition.value !== undefined) {
+      field.onChange(definition.value);
+    }
+  }, [definition.value]);
+
   // pull out onValueChange as this can cause strange errors when passing the
   // definition to the input components via spread syntax
   const reducedDefinition = useMemo(() => {
@@ -143,7 +122,8 @@ export function ApiFormField({
       ...definition,
       onValueChange: undefined,
       adjustFilters: undefined,
-      read_only: undefined
+      read_only: undefined,
+      children: undefined
     };
   }, [definition]);
 
@@ -277,13 +257,21 @@ export function ApiFormField({
       case 'file upload':
         return (
           <FileInput
-            {...definition}
+            {...reducedDefinition}
             id={fieldId}
             ref={ref}
             radius="sm"
             value={value}
             error={error?.message}
             onChange={(payload: File | null) => onChange(payload)}
+          />
+        );
+      case 'nested object':
+        return (
+          <NestedObjectField
+            definition={definition}
+            fieldName={fieldName}
+            control={control}
           />
         );
       default:

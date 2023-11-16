@@ -819,7 +819,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         # Create initial stock entry
         if initial_stock:
             quantity = initial_stock['quantity']
-            location = initial_stock['location'] or instance.default_location
+            location = initial_stock.get('location', None) or instance.default_location
 
             if quantity > 0:
                 stockitem = stock.models.StockItem(
