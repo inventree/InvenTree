@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { IconPackages } from '@tabler/icons-react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ApiPaths } from '../enums/ApiEndpoints';
@@ -61,6 +62,7 @@ export function partFields({
     fields.copy_category_parameters = {};
 
     fields.initial_stock = {
+      icon: <IconPackages />,
       children: {
         quantity: {},
         location: {}

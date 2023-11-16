@@ -16,7 +16,7 @@ import {
   partCategoryFields,
   partFields
 } from '../../forms/PartForms';
-import { createStockItem } from '../../forms/StockForms';
+import { useCreateStockItem } from '../../forms/StockForms';
 import {
   OpenApiFormProps,
   openCreateApiForm,
@@ -68,31 +68,40 @@ function ApiFormsPlayground() {
     return fields;
   }, [name, active]);
 
-  const { open, modal } = useCreateApiFormModal({
-    url: ApiPaths.part_list,
-    title: 'Create part',
-    fields: partFieldsState,
-    preFormContent: (
-      <Button onClick={() => setName('Hello world')}>
-        Set name="Hello world"
-      </Button>
-    )
-  });
+  const { modal: createPartModal, open: openCreatePart } =
+    useCreateApiFormModal({
+      url: ApiPaths.part_list,
+      title: 'Create part',
+      fields: partFieldsState,
+      preFormContent: (
+        <Button onClick={() => setName('Hello world')}>
+          Set name="Hello world"
+        </Button>
+      )
+    });
+
+  const { modal: createStockItemModal, open: openCreateStockItem } =
+    useCreateStockItem();
 
   return (
     <Stack>
       <Group>
         <Button onClick={() => createPart()}>Create New Part</Button>
         <Button onClick={() => editPart({ part_id: 1 })}>Edit Part</Button>
-        <Button onClick={() => createStockItem()}>Create Stock Item</Button>
+
+        <Button onClick={() => openCreateStockItem()}>Create Stock Item</Button>
+        {createStockItemModal}
+
         <Button onClick={() => openEditApiForm(editCategoryForm)}>
           Edit Category
         </Button>
+
         <Button onClick={() => openCreateApiForm(createAttachmentForm)}>
           Create Attachment
         </Button>
-        <Button onClick={() => open()}>Create Part new Modal</Button>
-        {modal}
+
+        <Button onClick={() => openCreatePart()}>Create Part new Modal</Button>
+        {createPartModal}
       </Group>
       <Card sx={{ padding: '30px' }}>
         <OptionsApiForm

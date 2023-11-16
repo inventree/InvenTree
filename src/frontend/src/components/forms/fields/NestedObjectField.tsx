@@ -13,13 +13,9 @@ export function NestedObjectField({
   fieldName: string;
 }) {
   return (
-    <Accordion
-      defaultValue={'OpenByDefault'}
-      variant="contained"
-      chevronPosition="left"
-    >
+    <Accordion defaultValue={'OpenByDefault'} variant="contained">
       <Accordion.Item value={'OpenByDefault'}>
-        <Accordion.Control>
+        <Accordion.Control icon={definition.icon}>
           <Text>{definition.label}</Text>
         </Accordion.Control>
         <Accordion.Panel>

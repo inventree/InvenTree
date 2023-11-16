@@ -37,30 +37,27 @@ export function RelatedModelField({
 
   // If an initial value is provided, load from the API
   useEffect(() => {
-    // If a value is provided, load the related object
-    if (field.value) {
-      // If the value is unchanged, do nothing
-      if (field.value === pk) return;
+    // If the value is unchanged, do nothing
+    if (field.value === pk) return;
 
-      if (field.value !== null) {
-        const url = `${definition.api_url}${field.value}/`;
+    if (field.value !== null) {
+      const url = `${definition.api_url}${field.value}/`;
 
-        api.get(url).then((response) => {
-          const data = response.data;
+      api.get(url).then((response) => {
+        const data = response.data;
 
-          if (data && data.pk) {
-            const value = {
-              value: data.pk,
-              data: data
-            };
+        if (data && data.pk) {
+          const value = {
+            value: data.pk,
+            data: data
+          };
 
-            setData([value]);
-            setPk(data.pk);
-          }
-        });
-      } else {
-        setPk(null);
-      }
+          setData([value]);
+          setPk(data.pk);
+        }
+      });
+    } else {
+      setPk(null);
     }
   }, [definition.api_url, field.value]);
 
