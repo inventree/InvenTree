@@ -284,6 +284,10 @@ export function ApiFormField({
     }
   }
 
+  if (definition.hidden) {
+    return null;
+  }
+
   return (
     <Stack>
       {definition.preFieldContent}

@@ -22,15 +22,14 @@ export function NestedObjectField({
           <Divider sx={{ marginTop: '-10px', marginBottom: '10px' }} />
           <Stack spacing="xs">
             {Object.entries(definition.children ?? {}).map(
-              ([childFieldName, field]) =>
-                !field.hidden && (
-                  <ApiFormField
-                    key={childFieldName}
-                    fieldName={`${fieldName}.${childFieldName}`}
-                    definition={field}
-                    control={control}
-                  />
-                )
+              ([childFieldName, field]) => (
+                <ApiFormField
+                  key={childFieldName}
+                  fieldName={`${fieldName}.${childFieldName}`}
+                  definition={field}
+                  control={control}
+                />
+              )
             )}
           </Stack>
         </Accordion.Panel>

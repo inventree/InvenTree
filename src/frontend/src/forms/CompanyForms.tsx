@@ -37,7 +37,7 @@ export function useSupplierPartFields({
     const fields: ApiFormFieldSet = {
       part: {
         hidden: hidePart,
-        ...(hidePart ? { default: part } : { value: part }),
+        value: part,
         onValueChange: setPart,
         filters: {
           purchaseable: true

@@ -348,17 +348,14 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
         )}
         {props.preFormContent}
         <Stack spacing="xs">
-          {Object.entries(props.fields ?? {}).map(
-            ([fieldName, field]) =>
-              !field.hidden && (
-                <ApiFormField
-                  key={fieldName}
-                  fieldName={fieldName}
-                  definition={field}
-                  control={form.control}
-                />
-              )
-          )}
+          {Object.entries(props.fields ?? {}).map(([fieldName, field]) => (
+            <ApiFormField
+              key={fieldName}
+              fieldName={fieldName}
+              definition={field}
+              control={form.control}
+            />
+          ))}
         </Stack>
         {props.postFormContent}
       </Stack>
