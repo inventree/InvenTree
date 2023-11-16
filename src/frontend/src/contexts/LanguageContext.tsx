@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/macro';
 import { I18nProvider } from '@lingui/react';
+import { Box, LoadingOverlay, Text } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 
 import { api } from '../App';
@@ -45,25 +46,44 @@ export const languages: Record<string, string> = {
 export function LanguageContext({ children }: { children: JSX.Element }) {
   const [language] = useLocalState((state) => [state.language]);
 
-  // workaround to initially set a locale with empty messages to not end up with an error
-  const [loaded, setLoaded] = useState(false);
+  const [loadedState, setLoadedState] = useState<
+    'loading' | 'loaded' | 'error'
+  >('loading');
   const isMounted = useRef(true);
 
   useEffect(() => {
     isMounted.current = true;
 
-    activateLocale(language).then(() => {
-      if (isMounted.current) {
-        setLoaded(true);
-      }
-    });
+    activateLocale(language)
+      .then(() => {
+        if (isMounted.current) setLoadedState('loaded');
+      })
+      .catch((err) => {
+        console.error('Failed loading translations', err);
+        if (isMounted.current) setLoadedState('error');
+      });
 
     return () => {
       isMounted.current = false;
     };
   }, [language]);
 
-  return loaded && <I18nProvider i18n={i18n}>{children}</I18nProvider>;
+  if (loadedState === 'loading') {
+    return <LoadingOverlay visible={true} />;
+  }
+
+  if (loadedState === 'error') {
+    return (
+      <Text>
+        An error occurred while loading translations, see browser console for
+        details.
+      </Text>
+    );
+  }
+
+  // only render the i18n Provider if the locales are fully activated, otherwise we end
+  // up with an error in the browser console
+  return <I18nProvider i18n={i18n}>{children}</I18nProvider>;
 }
 
 export async function activateLocale(locale: Locales) {
