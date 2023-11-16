@@ -7,7 +7,7 @@ from unittest import mock
 from django.apps import apps
 from django.urls import reverse
 
-import pdftotext
+from pdfminer.high_level import extract_text
 from PIL import Image
 
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -179,9 +179,8 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.assertTrue(os.path.exists('label.pdf'))
 
         # Read the raw .pdf data - ensure it contains some sensible information
-        with open('label.pdf', 'rb') as f:
-            filetext = " ".join(pdftotext.PDF(f))
-            self.assertIn(parts[1].name, filetext)
+        filetext = extract_text('label.pdf')
+        self.assertIn(parts[1].name, filetext)
 
         # Check that the .png file has already been created
         self.assertTrue(os.path.exists('label.png'))

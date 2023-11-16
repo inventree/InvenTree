@@ -12,4 +12,4 @@ pep8-naming                             # PEP naming convention extension
 pip-tools                               # Compile pip requirements
 pre-commit                              # Git pre-commit
 setuptools                              # Standard dependency
-pdftotext                               # PDF validation
+pdfminer.six                            # PDF validation
