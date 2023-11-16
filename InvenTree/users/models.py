@@ -802,7 +802,6 @@ class Owner(models.Model):
 
     def __str__(self):
         """Defines the owner string representation."""
-        print("Setting is:", common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'))
         if self.owner_type.name == 'user' and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
             display_name = self.owner.get_full_name()
         else:
