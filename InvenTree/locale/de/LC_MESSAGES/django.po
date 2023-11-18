@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-16 02:19+0000\n"
-"PO-Revision-Date: 2023-11-16 23:15\n"
+"PO-Revision-Date: 2023-11-18 23:07\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -461,22 +461,23 @@ msgstr "Währung aus verfügbaren Optionen auswählen"
 
 #: InvenTree/serializers.py:427
 msgid "You do not have permission to change this user role."
-msgstr ""
+msgstr "Sie haben keine Berechtigung, diese Benutzerrolle zu ändern."
 
 #: InvenTree/serializers.py:437
 msgid "Only superusers can create new users"
-msgstr ""
+msgstr "Nur Superuser können neue Benutzer erstellen"
 
 #: InvenTree/serializers.py:454
 #, python-brace-format
 msgid "Welcome to {current_site.name}"
-msgstr ""
+msgstr "Willkommen bei {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
 msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
+msgstr "Ihr Konto wurde erstellt.\n\n"
+"Bitte verwenden Sie die Passwort-Zurücksetzen-Funktion, um Zugriff zu erhalten (https://{domain})."
 
 #: InvenTree/serializers.py:519
 msgid "Filename"
@@ -543,7 +544,7 @@ msgstr "Das Herunterladen von Bildern von Remote-URLs ist nicht aktiviert"
 
 #: InvenTree/settings.py:819
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgarisch"
 
 #: InvenTree/settings.py:820
 msgid "Czech"
@@ -1557,7 +1558,7 @@ msgstr "Bauauftrag hat unvollständige Aufbauten"
 
 #: build/serializers.py:718
 msgid "Build Line"
-msgstr ""
+msgstr "Bauauftragsposition"
 
 #: build/serializers.py:728
 msgid "Build output"
@@ -1569,7 +1570,7 @@ msgstr "Endprodukt muss auf den gleichen Bauauftrag verweisen"
 
 #: build/serializers.py:772
 msgid "Build Line Item"
-msgstr ""
+msgstr "Bauauftragspositionsartikel"
 
 #: build/serializers.py:786
 msgid "bom_item.part must point to the same part as the build order"
@@ -1980,7 +1981,7 @@ msgstr "Zuordnung abgeschlossen"
 
 #: build/templates/build/detail.html:423
 msgid "All lines have been fully allocated"
-msgstr ""
+msgstr "Alle Zeilen wurden vollständig zugewiesen"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
@@ -2099,11 +2100,11 @@ msgstr "Eine Einstellung wurde geändert, die einen Neustart des Servers erforde
 
 #: common/models.py:1076
 msgid "Pending migrations"
-msgstr ""
+msgstr "Ausstehende Migrationen"
 
 #: common/models.py:1077
 msgid "Number of pending database migrations"
-msgstr ""
+msgstr "Anzahl der ausstehenden Datenbankmigrationen"
 
 #: common/models.py:1083
 msgid "Server Instance Name"
@@ -2159,7 +2160,7 @@ msgstr "Währungsaktualisierungsintervall"
 
 #: common/models.py:1127
 msgid "How often to update exchange rates (set to zero to disable)"
-msgstr ""
+msgstr "Wie oft Wechselkurse aktualisiert werden sollen (auf Null zum Deaktivieren setzen)"
 
 #: common/models.py:1129 common/models.py:1193 common/models.py:1211
 #: common/models.py:1218 common/models.py:1229 common/models.py:1240
@@ -2170,11 +2171,11 @@ msgstr "Tage"
 
 #: common/models.py:1137
 msgid "Currency Update Plugin"
-msgstr ""
+msgstr "Währungs-Aktualisierungs-Plugin"
 
 #: common/models.py:1138
 msgid "Currency update plugin to use"
-msgstr ""
+msgstr "Zu verwendendes Währungs-Aktualisierungs-Plugin"
 
 #: common/models.py:1144
 msgid "Download from URL"
@@ -2270,7 +2271,7 @@ msgstr "Bacode-Feature verwenden"
 
 #: common/models.py:1249
 msgid "Enable barcode scanner support in the web interface"
-msgstr ""
+msgstr "Barcode-Scanner Unterstützung im Webinterface aktivieren"
 
 #: common/models.py:1255
 msgid "Barcode Input Delay"
@@ -2960,11 +2961,11 @@ msgstr "Inventurberichte werden nach der angegebenen Anzahl von Tagen gelöscht"
 
 #: common/models.py:1878
 msgid "Display Users full names"
-msgstr ""
+msgstr "Vollständige Namen von Benutzern anzeigen"
 
 #: common/models.py:1879
 msgid "Display Users full names instead of usernames"
-msgstr ""
+msgstr "Vollständigen Namen von Benutzern anstatt Benutzername anzeigen"
 
 #: common/models.py:1891 common/models.py:2320
 msgid "Settings key (must be unique - case insensitive"
@@ -3360,7 +3361,7 @@ msgstr "Standardvorlage für Teilebeschriftung"
 
 #: common/models.py:2279
 msgid "The part label template to be automatically selected"
-msgstr ""
+msgstr "Die Teil-Etikettenvorlage, die automatisch ausgewählt werden soll"
 
 #: common/models.py:2287
 msgid "Default stock item template"
@@ -3372,19 +3373,19 @@ msgstr "Die Lagerartikel-Etikettenvorlage soll automatisch ausgewählt werden"
 
 #: common/models.py:2296
 msgid "Default stock location label template"
-msgstr ""
+msgstr "Standardetikettenvorlage für Lagerstandort"
 
 #: common/models.py:2297
 msgid "The stock location label template to be automatically selected"
-msgstr ""
+msgstr "Die Lagerstandort-Etikettenvorlage, die automatisch ausgewählt werden soll"
 
 #: common/models.py:2305
 msgid "Receive error reports"
-msgstr ""
+msgstr "Fehlerberichte empfangen"
 
 #: common/models.py:2306
 msgid "Receive notifications for system errors"
-msgstr ""
+msgstr "Benachrichtigungen bei Systemfehlern erhalten"
 
 #: common/models.py:2350
 msgid "Price break quantity"
@@ -3567,11 +3568,11 @@ msgstr "Eine neue Bestellung wurde erstellt und Ihnen zugewiesen"
 #: common/notifications.py:298
 #, python-brace-format
 msgid "{verbose_name} canceled"
-msgstr ""
+msgstr "{verbose_name} storniert"
 
 #: common/notifications.py:300
 msgid "A order that is assigned to you was canceled"
-msgstr ""
+msgstr "Eine Bestellung, die Ihnen zugewiesen war, wurde storniert"
 
 #: common/notifications.py:306 common/notifications.py:313
 msgid "Items Received"
@@ -4714,7 +4715,7 @@ msgstr "Zieldatum für diesen Einzelposten (leer lassen, um das Zieldatum des Au
 
 #: order/models.py:1133
 msgid "Line item description (optional)"
-msgstr ""
+msgstr "Positionsbeschreibung (optional)"
 
 #: order/models.py:1138
 msgid "Context"
@@ -4899,23 +4900,23 @@ msgstr "Anzahl für Bestandszuordnung eingeben"
 
 #: order/models.py:1739
 msgid "Return Order reference"
-msgstr ""
+msgstr "Rücksendungsreferenz"
 
 #: order/models.py:1753
 msgid "Company from which items are being returned"
-msgstr ""
+msgstr "Firma von der die Artikel zurückgeschickt werden"
 
 #: order/models.py:1764
 msgid "Return order status"
-msgstr ""
+msgstr "Status der Rücksendung"
 
 #: order/models.py:1919
 msgid "Only serialized items can be assigned to a Return Order"
-msgstr ""
+msgstr "Nur serialisierte Artikel können einer Rücksendung zugeordnet werden"
 
 #: order/models.py:1935
 msgid "Select item to return from customer"
-msgstr ""
+msgstr "Artikel zur Rücksendung auswählen"
 
 #: order/models.py:1940
 msgid "Received Date"
@@ -4923,7 +4924,7 @@ msgstr "Empfangsdatum"
 
 #: order/models.py:1941
 msgid "The date this this return item was received"
-msgstr ""
+msgstr "Das Datum des Empfangs dieses Rücksendeartikels"
 
 #: order/models.py:1952 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
@@ -5000,7 +5001,7 @@ msgstr "Barcode"
 
 #: order/serializers.py:539
 msgid "Scanned barcode"
-msgstr ""
+msgstr "Gescannter Barcode"
 
 #: order/serializers.py:555
 msgid "Barcode is already in use"
@@ -5203,7 +5204,7 @@ msgstr "Gesamtkosten konnten nicht berechnet werden"
 
 #: order/templates/order/order_base.html:318
 msgid "Purchase Order QR Code"
-msgstr ""
+msgstr "Bestellung QR Code"
 
 #: order/templates/order/order_base.html:330
 msgid "Link Barcode to Purchase Order"
@@ -5336,7 +5337,7 @@ msgstr "Position hinzufügen"
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
 msgid "Receive Line Items"
-msgstr ""
+msgstr "Erhaltene Positionen"
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/return_order_detail.html:45
@@ -5363,11 +5364,11 @@ msgstr "Notizen zur Bestellung"
 #: order/templates/order/return_order_base.html:18
 #: order/templates/order/sales_order_base.html:18
 msgid "Customer logo thumbnail"
-msgstr ""
+msgstr "Kundenlogo Miniaturansicht"
 
 #: order/templates/order/return_order_base.html:60
 msgid "Print return order report"
-msgstr ""
+msgstr "Rücksendungsbericht drucken"
 
 #: order/templates/order/return_order_base.html:64
 #: order/templates/order/sales_order_base.html:64
@@ -5396,15 +5397,15 @@ msgstr "Gesamtkosten"
 
 #: order/templates/order/return_order_base.html:263
 msgid "Return Order QR Code"
-msgstr ""
+msgstr "Rücksendung QR-Code"
 
 #: order/templates/order/return_order_base.html:275
 msgid "Link Barcode to Return Order"
-msgstr ""
+msgstr "Barcode mit Rücksendung verknüpfen"
 
 #: order/templates/order/return_order_sidebar.html:5
 msgid "Order Details"
-msgstr ""
+msgstr "Bestelldetails"
 
 #: order/templates/order/sales_order_base.html:60
 msgid "Print sales order report"
@@ -5413,7 +5414,7 @@ msgstr "Verkaufsauftragsbericht drucken"
 #: order/templates/order/sales_order_base.html:88
 #: order/templates/order/sales_order_base.html:89
 msgid "Ship Items"
-msgstr ""
+msgstr "Versandartikel"
 
 #: order/templates/order/sales_order_base.html:92
 #: templates/js/translated/sales_order.js:484
@@ -5432,11 +5433,11 @@ msgstr "Abgeschlossene Sendungen"
 
 #: order/templates/order/sales_order_base.html:312
 msgid "Sales Order QR Code"
-msgstr ""
+msgstr "Verkaufsauftrag QR-Code"
 
 #: order/templates/order/sales_order_base.html:324
 msgid "Link Barcode to Sales Order"
-msgstr ""
+msgstr "Barcode mit Bestellung verknüpfen"
 
 #: order/templates/order/sales_order_detail.html:18
 msgid "Sales Order Items"
@@ -6349,7 +6350,7 @@ msgstr "Kaufwährung dieses Lagerartikels"
 
 #: part/serializers.py:346
 msgid "No parts selected"
-msgstr ""
+msgstr "Keine Teile ausgewählt"
 
 #: part/serializers.py:354
 msgid "Select category"
@@ -6486,11 +6487,11 @@ msgstr "Inventurbericht auf einen bestimmten Lagerort und alle untergeordneten L
 
 #: part/serializers.py:978
 msgid "Exclude External Stock"
-msgstr ""
+msgstr "Externen Bestand ausschließen"
 
 #: part/serializers.py:979
 msgid "Exclude stock items in external locations"
-msgstr ""
+msgstr "Lagerartikel an externen Orten ausschließen"
 
 #: part/serializers.py:984
 msgid "Generate Report"
@@ -6981,7 +6982,7 @@ msgstr "Teil kann an Kunden verkauft werden"
 
 #: part/templates/part/part_base.html:145
 msgid "Part is not active"
-msgstr ""
+msgstr "Teil ist nicht aktiv"
 
 #: part/templates/part/part_base.html:146
 #: templates/js/translated/company.js:1277
@@ -7044,7 +7045,7 @@ msgstr "Barcode mit Teil verknüpfen"
 
 #: part/templates/part/part_base.html:472 templates/js/translated/part.js:2285
 msgid "part"
-msgstr ""
+msgstr "Teil"
 
 #: part/templates/part/part_base.html:512
 msgid "Calculate"
@@ -7266,7 +7267,7 @@ msgstr "Neue Teilevariante anlegen"
 
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
-msgstr ""
+msgstr "Ein neues Variantenteil aus dieser Vorlage erstellen"
 
 #: part/templatetags/inventree_extras.py:185
 msgid "Unknown database"
@@ -7333,7 +7334,7 @@ msgstr "Kein Treffer für angegebenen Wert gefunden"
 
 #: plugin/base/barcodes/api.py:291
 msgid "Invalid purchase order"
-msgstr ""
+msgstr "Ungültige Bestellung"
 
 #: plugin/base/barcodes/api.py:297
 msgid "Invalid stock location"
@@ -10666,7 +10667,7 @@ msgstr "Keine aktiven Endprodukte gefunden"
 
 #: templates/js/translated/build.js:1377
 msgid "Allocated Lines"
-msgstr ""
+msgstr "Zugewiesene Positionen"
 
 #: templates/js/translated/build.js:1391
 msgid "Required Tests"
@@ -10786,15 +10787,15 @@ msgstr "Zuordnung entfernen"
 
 #: templates/js/translated/build.js:2446
 msgid "build line"
-msgstr ""
+msgstr "Bauauftragsposition"
 
 #: templates/js/translated/build.js:2447
 msgid "build lines"
-msgstr ""
+msgstr "Bauauftragspositionen"
 
 #: templates/js/translated/build.js:2465
 msgid "No build lines found"
-msgstr ""
+msgstr "Keine Bauauftragspositionen gefunden"
 
 #: templates/js/translated/build.js:2495 templates/js/translated/part.js:790
 #: templates/js/translated/part.js:1202
@@ -11349,7 +11350,7 @@ msgstr "Benachrichtigungen erscheinen hier"
 
 #: templates/js/translated/order.js:89
 msgid "Add Extra Line Item"
-msgstr ""
+msgstr "Zusatzposition hinzufügen"
 
 #: templates/js/translated/order.js:126
 msgid "Export Order"
@@ -13363,11 +13364,11 @@ msgstr ""
 
 #: users/models.py:109
 msgid "Token Name"
-msgstr ""
+msgstr "Tokenname"
 
 #: users/models.py:110
 msgid "Custom token name"
-msgstr ""
+msgstr "Benutzerdefinierter Tokenname"
 
 #: users/models.py:116
 msgid "Token expiry date"
