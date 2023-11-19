@@ -192,7 +192,11 @@ export function apiEndpoint(path: ApiPaths): string {
 /**
  * Construct an API URL with an endpoint and (optional) pk value
  */
-export function apiUrl(path: ApiPaths, pk?: any, data?: Record<string, string | number>): string {
+export function apiUrl(
+  path: ApiPaths,
+  pk?: any,
+  data?: Record<string, string | number>
+): string {
   let _url = apiEndpoint(path);
 
   // If the URL does not start with a '/', add the API prefix
@@ -206,7 +210,7 @@ export function apiUrl(path: ApiPaths, pk?: any, data?: Record<string, string | 
 
   if (_url && data) {
     for (const key in data) {
-      _url = _url.replace(`:${key}`, data[key]);
+      _url = _url.replace(`:${key}`, `${data[key]}`);
     }
   }
 
