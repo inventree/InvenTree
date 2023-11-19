@@ -963,11 +963,13 @@ class InvenTreeBarcodeMixin(models.Model):
 
     def format_barcode(self, **kwargs):
         """Return a JSON string for formatting a QR code for this model instance."""
-        return InvenTree.helpers.MakeBarcode(
+        barcode = InvenTree.helpers.MakeBarcode(
             self.__class__.barcode_model_type(),
             self.pk,
             **kwargs
         )
+
+        return str(barcode)
 
     @property
     def barcode(self):
