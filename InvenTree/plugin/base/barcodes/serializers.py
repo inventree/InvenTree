@@ -69,6 +69,27 @@ class BarcodeUnassignSerializer(BarcodeAssignMixin):
         fields = BarcodeAssignMixin.get_model_fields()
 
 
+class BarcodePOAllocateSerializer(BarcodeSerializer):
+    """Serializer for allocating items against a purchase order.
+
+    The scanned barcode could be a Part, ManufacturerPart or SupplierPart object
+    """
+
+    purchase_order = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.PurchaseOrder.objects.all(),
+        required=True,
+        help_text=_('PurchaseOrder to allocate items against'),
+    )
+
+    def validate_purchase_order(self, order: order.models.PurchaseOrder):
+        """Validate the provided order"""
+
+        if order.status != PurchaseOrderStatus.PENDING.value:
+            raise ValidationError(_("Purchase order is not pending"))
+
+        return order
+
+
 class BarcodePOReceiveSerializer(BarcodeSerializer):
     """Serializer for receiving items against a purchase order.
 
