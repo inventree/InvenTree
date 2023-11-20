@@ -314,6 +314,8 @@ class BarcodePOAllocate(BarcodeView):
         # Override the 'supplierpart' value with the single matching result
         result['supplierpart'] = supplier_parts.first().pk
 
+        # TODO: Determine the 'quantity to order' for the supplier part
+
         return result
 
 
