@@ -273,14 +273,33 @@ class BarcodePOAllocate(BarcodeView):
 
     serializer_class = barcode_serializers.BarcodePOAllocateSerializer
 
-    def get_supplier_parts(self, purchase_order, part=None, supplier_part=None, manufacturer_part=None):
-        """Return a queryset of potential supplier parts"""
+    def get_supplier_part(self, purchase_order, part=None, supplier_part=None, manufacturer_part=None):
+        """Return a single matching SupplierPart (or else raise an exception)
+
+        Arguments:
+            purchase_order: PurchaseOrder object
+            part: Part object (optional)
+            supplier_part: SupplierPart object (optional)
+            manufacturer_part: ManufacturerPart object (optional)
+
+        Returns:
+            SupplierPart object
+
+        Raises:
+            ValidationError if no matching SupplierPart is found
+
+        """
 
         import company.models
 
         supplier = purchase_order.supplier
 
         supplier_parts = company.models.SupplierPart.objects.filter(supplier=supplier)
+
+        if not part and not supplier_part and not manufacturer_part:
+            raise ValidationError({
+                'error': _('No matching part data found'),
+            })
 
         if part:
             if part_id := part.get('pk', None):
@@ -294,7 +313,18 @@ class BarcodePOAllocate(BarcodeView):
             if manufacturer_part_id := manufacturer_part.get('pk', None):
                 supplier_parts = supplier_parts.filter(manufacturer_part__pk=manufacturer_part_id)
 
-        return supplier_parts
+        if supplier_parts.count() == 0:
+            raise ValidationError({
+                "error": _("No matching supplier parts found")
+            })
+
+        if supplier_parts.count() > 1:
+            raise ValidationError({
+                "error": _("Multiple matching supplier parts found")
+            })
+
+        # At this stage, we have a single matching supplier part
+        return supplier_parts.first()
 
     def handle_barcode(self, barcode: str, request, **kwargs):
         """Scan the provided barcode data"""
@@ -304,29 +334,21 @@ class BarcodePOAllocate(BarcodeView):
 
         result = self.scan_barcode(barcode, request, **kwargs)
 
+        if result['plugin'] is None:
+            result['error'] = _('No match found for barcode data')
+            raise ValidationError(result)
+
         print("scan result:", result)
 
-        supplier_parts = self.get_supplier_parts(
+        supplier_part = self.get_supplier_part(
             purchase_order,
             part=result.get('part', None),
             supplier_part=result.get('supplierpart', None),
             manufacturer_part=result.get('manufacturerpart', None),
         )
 
-        if supplier_parts.count() == 0:
-            result['error'] = _("No matching supplier parts found")
-            raise ValidationError(result)
-
-        if supplier_parts.count() > 1:
-            result['error'] = _("Multiple matching supplier parts found")
-            raise ValidationError(result)
-
-        # Override the 'supplierpart' value with the single matching result
-        supplier_part = supplier_parts.first()
-
-        result['supplierpart'] = supplier_part.format_matched_response()
-
         result['success'] = _("Matched supplier part")
+        result['supplierpart'] = supplier_part.format_matched_response()
 
         # TODO: Determine the 'quantity to order' for the supplier part
 
