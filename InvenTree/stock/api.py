@@ -629,7 +629,18 @@ class StockFilter(rest_filters.FilterSet):
             parent__in=ancestor.get_descendants(include_self=True)
         )
 
-    # Filter by 'company' (either manufacturer or supplier)
+    part_tree = rest_filters.ModelChoiceFilter(
+        label='Part tree',
+        queryset=Part.objects.all(),
+        method='filter_part_tree'
+    )
+
+    def filter_part_tree(self, queryset, name, part_tree):
+        """Filter based on part tree"""
+        return queryset.filter(
+            part__tree_id=part_tree.tree_id
+        )
+
     company = rest_filters.ModelChoiceFilter(
         label=_('Company'),
         queryset=Company.objects.all(),
@@ -645,6 +656,38 @@ class StockFilter(rest_filters.FilterSet):
     # Update date filters
     updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
     updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
+
+    # Stock "expiry" filters
+    expiry_date_lte = rest_filters.DateFilter(
+        label=_("Expiry date before"),
+        field_name='expiry_date',
+        lookup_expr='lte',
+    )
+
+    expiry_date_gte = rest_filters.DateFilter(
+        label=_('Expiry date after'),
+        field_name='expiry_date',
+        lookup_expr='gte',
+    )
+
+    stale = rest_filters.BooleanFilter(label=_('Stale'), method='filter_stale')
+
+    def filter_stale(self, queryset, name, value):
+        """Filter by stale stock items."""
+
+        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+
+        if stale_days <= 0:
+            # No filtering, does not make sense
+            return queryset
+
+        stale_date = datetime.now().date() + timedelta(days=stale_days)
+        stale_filter = StockItem.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
+
+        if str2bool(value):
+            return queryset.filter(stale_filter)
+        else:
+            return queryset.exclude(stale_filter)
 
 
 class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
@@ -911,44 +954,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         queryset = super().filter_queryset(queryset)
 
-        if common.settings.stock_expiry_enabled():
-
-            # Filter by 'expiry date'
-            expired_date_lte = params.get('expiry_date_lte', None)
-            if expired_date_lte is not None:
-                try:
-                    date_lte = datetime.fromisoformat(expired_date_lte)
-                    queryset = queryset.filter(expiry_date__lte=date_lte)
-                except (ValueError, TypeError):
-                    pass
-
-            expiry_date_gte = params.get('expiry_date_gte', None)
-            if expiry_date_gte is not None:
-                try:
-                    date_gte = datetime.fromisoformat(expiry_date_gte)
-                    queryset = queryset.filter(expiry_date__gte=date_gte)
-                except (ValueError, TypeError):
-                    pass
-
-            # Filter by 'stale' status
-            stale = params.get('stale', None)
-
-            if stale is not None:
-                stale = str2bool(stale)
-
-                # How many days to account for "staleness"?
-                stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
-
-                if stale_days > 0:
-                    stale_date = datetime.now().date() + timedelta(days=stale_days)
-
-                    stale_filter = StockItem.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
-
-                    if stale:
-                        queryset = queryset.filter(stale_filter)
-                    else:
-                        queryset = queryset.exclude(stale_filter)
-
         # Exclude stock item tree
         exclude_tree = params.get('exclude_tree', None)
 
@@ -961,18 +966,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                 )
 
             except (ValueError, StockItem.DoesNotExist):
-                pass
-
-        # Filter by "part tree" - only allow parts within a given variant tree
-        part_tree = params.get('part_tree', None)
-
-        if part_tree is not None:
-            try:
-                part = Part.objects.get(pk=part_tree)
-
-                if part.tree_id is not None:
-                    queryset = queryset.filter(part__tree_id=part.tree_id)
-            except Exception:
                 pass
 
         # Exclude StockItems which are already allocated to a particular SalesOrder
