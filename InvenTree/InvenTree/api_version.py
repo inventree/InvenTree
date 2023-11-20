@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 153
 
 INVENTREE_API_TEXT = """
 
-v153 -> 2023-11-20 :
+v153 -> 2023-11-20 : https://github.com/inventree/InvenTree/pull/5949
     - Adds barcode support for manufacturerpart model
     - Adds API endpoint for adding parts to purchase order using barcode scan
 
