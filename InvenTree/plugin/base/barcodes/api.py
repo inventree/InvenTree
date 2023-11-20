@@ -338,8 +338,6 @@ class BarcodePOAllocate(BarcodeView):
             result['error'] = _('No match found for barcode data')
             raise ValidationError(result)
 
-        print("scan result:", result)
-
         supplier_part = self.get_supplier_part(
             purchase_order,
             part=result.get('part', None),
