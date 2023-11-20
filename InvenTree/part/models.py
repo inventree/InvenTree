@@ -27,7 +27,6 @@ from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from jinja2 import Template
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
@@ -40,6 +39,7 @@ import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
+import part.helpers as part_helpers
 import part.settings as part_settings
 import users.models
 from build import models as BuildModels
@@ -692,41 +692,9 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     @property
     def full_name(self):
-        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings.
+        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings"""
 
-        As a failsafe option, the following is done:
-
-        - IPN (if not null)
-        - Part name
-        - Part variant (if not null)
-
-        Elements are joined by the | character
-        """
-        full_name_pattern = InvenTreeSetting.get_setting('PART_NAME_FORMAT')
-
-        try:
-            context = {'part': self}
-            template_string = Template(full_name_pattern)
-            full_name = template_string.render(context)
-
-            return full_name
-
-        except Exception as attr_err:
-
-            logger.warning("exception while trying to create full name for part %s: %s", self.name, attr_err)
-
-            # Fallback to default format
-            elements = []
-
-            if self.IPN:
-                elements.append(self.IPN)
-
-            elements.append(self.name)
-
-            if self.revision:
-                elements.append(self.revision)
-
-            return ' | '.join(elements)
+        return part_helpers.render_part_full_name(self)
 
     def get_absolute_url(self):
         """Return the web URL for viewing this part."""
