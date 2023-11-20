@@ -32,7 +32,7 @@ class BarcodeAssignMixin(serializers.Serializer):
         super().__init__(*args, **kwargs)
 
         for model in InvenTreeInternalBarcodePlugin.get_supported_barcode_models():
-            self.fields[model._meta.model_name] = serializers.PrimaryKeyRelatedField(
+            self.fields[model.barcode_model_type()] = serializers.PrimaryKeyRelatedField(
                 queryset=model.objects.all(),
                 required=False, allow_null=True,
                 label=model._meta.verbose_name,
@@ -42,7 +42,7 @@ class BarcodeAssignMixin(serializers.Serializer):
     def get_model_fields():
         """Return a list of model fields"""
         fields = [
-            model._meta.model_name for model in InvenTreeInternalBarcodePlugin.get_supported_barcode_models()
+            model.barcode_model_type() for model in InvenTreeInternalBarcodePlugin.get_supported_barcode_models()
         ]
 
         return fields
