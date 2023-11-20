@@ -8,7 +8,7 @@ import { api } from '../../App';
 import { openModalApiForm } from '../../functions/forms';
 import { apiUrl } from '../../states/ApiState';
 import { SettingsStateProps } from '../../states/SettingsState';
-import { Setting } from '../../states/states';
+import { Setting, SettingType } from '../../states/states';
 
 /**
  * Render a single setting value
@@ -44,10 +44,10 @@ function SettingValue({
 
   // Callback function to open the edit dialog (for non-boolean settings)
   function onEditButton() {
-    let field_type: string = setting?.type ?? 'string';
+    let field_type = setting?.type ?? 'string';
 
     if (setting?.choices && setting?.choices?.length > 0) {
-      field_type = 'choice';
+      field_type = SettingType.Choice;
     }
 
     openModalApiForm({
