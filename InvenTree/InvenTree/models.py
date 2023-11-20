@@ -977,7 +977,8 @@ class InvenTreeBarcodeMixin(models.Model):
         }
 
         if hasattr(self, 'get_api_url'):
-            data['api_url'] = self.get_api_url()
+            api_url = self.get_api_url()
+            data['api_url'] = f"{api_url}{self.pk}/"
 
         if hasattr(self, 'get_absolute_url'):
             data['web_url'] = self.get_absolute_url()

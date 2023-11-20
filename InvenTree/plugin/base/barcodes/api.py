@@ -121,9 +121,10 @@ class BarcodeScan(BarcodeView):
 
         if result['plugin'] is None:
             result['error'] = _('No match found for barcode data')
-        else:
-            result['success'] = _('Match found for barcode data')
 
+            raise ValidationError(result)
+
+        result['success'] = _('Match found for barcode data')
         return Response(result)
 
 
