@@ -117,7 +117,14 @@ class BarcodeScan(BarcodeView):
             Any custom fields passed by the specific serializer
         """
 
-        return self.scan_barcode(barcode, request, **kwargs)
+        result = self.scan_barcode(barcode, request, **kwargs)
+
+        if result['plugin'] is None:
+            result['error'] = _('No match found for barcode data')
+        else:
+            result['success'] = _('Match found for barcode data')
+
+        return Response(result)
 
 
 class BarcodeAssign(BarcodeView):
@@ -276,13 +283,16 @@ class BarcodePOAllocate(BarcodeView):
         supplier_parts = company.models.SupplierPart.objects.filter(supplier=supplier)
 
         if part:
-            supplier_parts = supplier_parts.filter(part__pk=part)
+            if part_id := part.get('pk', None):
+                supplier_parts = supplier_parts.filter(part__pk=part_id)
 
         if supplier_part:
-            supplier_parts = supplier_parts.filter(pk=supplier_part)
+            if supplier_part_id := supplier_part.get('pk', None):
+                supplier_parts = supplier_parts.filter(pk=supplier_part_id)
 
         if manufacturer_part:
-            supplier_parts = supplier_parts.filter(manufacturer_part__pk=manufacturer_part)
+            if manufacturer_part_id := manufacturer_part.get('pk', None):
+                supplier_parts = supplier_parts.filter(manufacturer_part__pk=manufacturer_part_id)
 
         return supplier_parts
 
@@ -312,11 +322,15 @@ class BarcodePOAllocate(BarcodeView):
             raise ValidationError(result)
 
         # Override the 'supplierpart' value with the single matching result
-        result['supplierpart'] = supplier_parts.first().pk
+        supplier_part = supplier_parts.first()
+
+        result['supplierpart'] = supplier_part.format_matched_response()
+
+        result['success'] = _("Matched supplier part")
 
         # TODO: Determine the 'quantity to order' for the supplier part
 
-        return result
+        return Response(result)
 
 
 class BarcodePOReceive(BarcodeView):
