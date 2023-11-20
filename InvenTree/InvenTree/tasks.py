@@ -553,7 +553,7 @@ def update_exchange_rates(force: bool = False):
         # Record successful task execution
         record_task_success('update_exchange_rates')
 
-    except OperationalError:
+    except (AppRegistryNotReady, OperationalError, ProgrammingError):
         logger.warning("Could not update exchange rates - database not ready")
     except Exception as e:  # pragma: no cover
         logger.exception("Error updating exchange rates: %s", str(type(e)))
