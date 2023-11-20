@@ -629,6 +629,19 @@ class StockFilter(rest_filters.FilterSet):
             parent__in=ancestor.get_descendants(include_self=True)
         )
 
+    # Filter by 'company' (either manufacturer or supplier)
+    company = rest_filters.ModelChoiceFilter(
+        label=_('Company'),
+        queryset=Company.objects.all(),
+        method='filter_company'
+    )
+
+    def filter_company(self, queryset, name, company):
+        """Filter by company (either manufacturer or supplier)"""
+        return queryset.filter(
+            Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company)
+        ).distinct()
+
     # Update date filters
     updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
     updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
@@ -1054,14 +1067,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
             except (ValueError, BomItem.DoesNotExist):
                 pass
-
-        # Filter by company (either manufacturer or supplier)
-        company = params.get('company', None)
-
-        if company is not None:
-            queryset = queryset.filter(
-                Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company).distinct()
-            )
 
         return queryset
 
