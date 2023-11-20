@@ -29,6 +29,7 @@ import {
   mapFields
 } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
+import { PathParams } from '../../states/ApiState';
 import {
   ApiFormField,
   ApiFormFieldSet,
@@ -46,6 +47,7 @@ export interface ApiFormAction {
  * Properties for the ApiForm component
  * @param url : The API endpoint to fetch the form data from
  * @param pk : Optional primary-key value when editing an existing object
+ * @param pathParams : Optional path params for the url
  * @param method : Optional HTTP method to use when submitting the form (default: GET)
  * @param fields : The fields to render in the form
  * @param submitText : Optional custom text to display on the submit button (default: Submit)4
@@ -60,6 +62,7 @@ export interface ApiFormAction {
 export interface ApiFormProps {
   url: ApiPaths;
   pk?: number | string | undefined;
+  pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   fields?: ApiFormFieldSet;
   submitText?: string;
@@ -92,13 +95,20 @@ export function OptionsApiForm({
   const id = useId(pId);
 
   const url = useMemo(
-    () => constructFormUrl(props.url, props.pk),
-    [props.url, props.pk]
+    () => constructFormUrl(props.url, props.pk, props.pathParams),
+    [props.url, props.pk, props.pathParams]
   );
 
   const { data } = useQuery({
     enabled: true,
-    queryKey: ['form-options-data', id, props.method, props.url, props.pk],
+    queryKey: [
+      'form-options-data',
+      id,
+      props.method,
+      props.url,
+      props.pk,
+      props.pathParams
+    ],
     queryFn: () =>
       api.options(url).then((res) => {
         let fields: Record<string, ApiFormFieldType> | null = {};
@@ -171,14 +181,21 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
 
   // Cache URL
   const url = useMemo(
-    () => constructFormUrl(props.url, props.pk),
-    [props.url, props.pk]
+    () => constructFormUrl(props.url, props.pk, props.pathParams),
+    [props.url, props.pk, props.pathParams]
   );
 
   // Query manager for retrieving initial data from the server
   const initialDataQuery = useQuery({
     enabled: false,
-    queryKey: ['form-initial-data', id, props.method, props.url, props.pk],
+    queryKey: [
+      'form-initial-data',
+      id,
+      props.method,
+      props.url,
+      props.pk,
+      props.pathParams
+    ],
     queryFn: async () => {
       return api
         .get(url)
@@ -223,7 +240,14 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
       queryClient.removeQueries({
-        queryKey: ['form-initial-data', id, props.method, props.url, props.pk]
+        queryKey: [
+          'form-initial-data',
+          id,
+          props.method,
+          props.url,
+          props.pk,
+          props.pathParams
+        ]
       });
       initialDataQuery.refetch();
     }

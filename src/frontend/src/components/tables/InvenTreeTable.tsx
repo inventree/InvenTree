@@ -6,7 +6,7 @@ import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ButtonMenu } from '../buttons/ButtonMenu';
@@ -44,7 +44,7 @@ const defaultPageSize: number = 25;
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  */
-export type InvenTreeTableProps = {
+export type InvenTreeTableProps<T = any> = {
   params?: any;
   defaultSortColumn?: string;
   noRecordsText?: string;
@@ -57,12 +57,12 @@ export type InvenTreeTableProps = {
   pageSize?: number;
   barcodeActions?: any[];
   customFilters?: TableFilter[];
-  customActionGroups?: any[];
+  customActionGroups?: React.ReactNode[];
   printingActions?: any[];
   idAccessor?: string;
-  dataFormatter?: (data: any) => any;
-  rowActions?: (record: any) => RowAction[];
-  onRowClick?: (record: any, index: number, event: any) => void;
+  dataFormatter?: (data: T) => any;
+  rowActions?: (record: T) => RowAction[];
+  onRowClick?: (record: T, index: number, event: any) => void;
 };
 
 /**
@@ -90,7 +90,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
-export function InvenTreeTable({
+export function InvenTreeTable<T = any>({
   url,
   tableKey,
   columns,
@@ -98,8 +98,8 @@ export function InvenTreeTable({
 }: {
   url: string;
   tableKey: string;
-  columns: TableColumn[];
-  props: InvenTreeTableProps;
+  columns: TableColumn<T>[];
+  props: InvenTreeTableProps<T>;
 }) {
   // Use the first part of the table key as the table name
   const tableName: string = useMemo(() => {
@@ -107,7 +107,7 @@ export function InvenTreeTable({
   }, []);
 
   // Build table properties based on provided props (and default props)
-  const tableProps: InvenTreeTableProps = useMemo(() => {
+  const tableProps: InvenTreeTableProps<T> = useMemo(() => {
     return {
       ...defaultInvenTreeTableProps,
       ...props
@@ -432,9 +432,9 @@ export function InvenTreeTable({
       <Stack spacing="sm">
         <Group position="apart">
           <Group position="left" key="custom-actions" spacing={5}>
-            {tableProps.customActionGroups?.map(
-              (group: any, idx: number) => group
-            )}
+            {tableProps.customActionGroups?.map((group, idx) => (
+              <Fragment key={idx}>{group}</Fragment>
+            ))}
             {(tableProps.barcodeActions?.length ?? 0 > 0) && (
               <ButtonMenu
                 key="barcode-actions"
