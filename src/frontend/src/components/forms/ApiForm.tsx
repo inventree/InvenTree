@@ -29,6 +29,7 @@ import {
   mapFields
 } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
+import { PathParams } from '../../states/ApiState';
 import {
   ApiFormField,
   ApiFormFieldSet,
@@ -46,6 +47,7 @@ export interface ApiFormAction {
  * Properties for the ApiForm component
  * @param url : The API endpoint to fetch the form data from
  * @param pk : Optional primary-key value when editing an existing object
+ * @param pathParams : Optional path params for the url
  * @param method : Optional HTTP method to use when submitting the form (default: GET)
  * @param fields : The fields to render in the form
  * @param submitText : Optional custom text to display on the submit button (default: Submit)4
@@ -60,6 +62,7 @@ export interface ApiFormAction {
 export interface ApiFormProps {
   url: ApiPaths;
   pk?: number | string | undefined;
+  pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   fields?: ApiFormFieldSet;
   submitText?: string;

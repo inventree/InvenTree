@@ -189,13 +189,15 @@ export function apiEndpoint(path: ApiPaths): string {
   }
 }
 
+export type PathParams = Record<string, string | number>;
+
 /**
  * Construct an API URL with an endpoint and (optional) pk value
  */
 export function apiUrl(
   path: ApiPaths,
   pk?: any,
-  data?: Record<string, string | number>
+  pathParams?: PathParams
 ): string {
   let _url = apiEndpoint(path);
 
@@ -208,9 +210,9 @@ export function apiUrl(
     _url += `${pk}/`;
   }
 
-  if (_url && data) {
-    for (const key in data) {
-      _url = _url.replace(`:${key}`, `${data[key]}`);
+  if (_url && pathParams) {
+    for (const key in pathParams) {
+      _url = _url.replace(`:${key}`, `${pathParams[key]}`);
     }
   }
 

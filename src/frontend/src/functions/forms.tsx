@@ -11,15 +11,19 @@ import {
 } from '../components/forms/fields/ApiFormField';
 import { StylishText } from '../components/items/StylishText';
 import { ApiPaths } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
+import { PathParams, apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
 
 /**
  * Construct an API url from the provided ApiFormProps object
  */
-export function constructFormUrl(url: ApiPaths, pk?: string | number): string {
-  return apiUrl(url, pk);
+export function constructFormUrl(
+  url: ApiPaths,
+  pk?: string | number,
+  pathParams?: PathParams
+): string {
+  return apiUrl(url, pk, pathParams);
 }
 
 /**

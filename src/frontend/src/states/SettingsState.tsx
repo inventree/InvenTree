@@ -6,7 +6,7 @@ import { create } from 'zustand';
 import { api } from '../App';
 import { ApiPaths } from '../enums/ApiEndpoints';
 import { isTrue } from '../functions/conversion';
-import { apiUrl } from './ApiState';
+import { PathParams, apiUrl } from './ApiState';
 import { Setting, SettingsLookup } from './states';
 
 export interface SettingsStateProps {
@@ -14,6 +14,7 @@ export interface SettingsStateProps {
   lookup: SettingsLookup;
   fetchSettings: () => void;
   endpoint: ApiPaths;
+  pathParams?: PathParams;
   getSetting: (key: string, default_value?: string) => string; // Return a raw setting value
   isSet: (key: string, default_value?: boolean) => boolean; // Check a "boolean" setting
 }
