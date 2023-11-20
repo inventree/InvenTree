@@ -90,15 +90,14 @@ export function PanelGroup({
       >
         <Tabs.List position="left">
           {panels.map(
-            (panel, idx) =>
+            (panel) =>
               !panel.hidden && (
                 <Tooltip
                   label={panel.label}
-                  key={`panel-tab-tooltip-${panel.name}`}
+                  key={panel.name}
                   disabled={expanded}
                 >
                   <Tabs.Tab
-                    key={`panel-tab-${panel.name}`}
                     p="xs"
                     value={panel.name}
                     icon={panel.icon}
@@ -125,10 +124,10 @@ export function PanelGroup({
           )}
         </Tabs.List>
         {panels.map(
-          (panel, idx) =>
+          (panel) =>
             !panel.hidden && (
               <Tabs.Panel
-                key={idx}
+                key={panel.name}
                 value={panel.name}
                 p="sm"
                 style={{

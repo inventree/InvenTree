@@ -69,6 +69,27 @@ class BarcodeUnassignSerializer(BarcodeAssignMixin):
         fields = BarcodeAssignMixin.get_model_fields()
 
 
+class BarcodePOAllocateSerializer(BarcodeSerializer):
+    """Serializer for allocating items against a purchase order.
+
+    The scanned barcode could be a Part, ManufacturerPart or SupplierPart object
+    """
+
+    purchase_order = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.PurchaseOrder.objects.all(),
+        required=True,
+        help_text=_('PurchaseOrder to allocate items against'),
+    )
+
+    def validate_purchase_order(self, order: order.models.PurchaseOrder):
+        """Validate the provided order"""
+
+        if order.status != PurchaseOrderStatus.PENDING.value:
+            raise ValidationError(_("Purchase order is not pending"))
+
+        return order
+
+
 class BarcodePOReceiveSerializer(BarcodeSerializer):
     """Serializer for receiving items against a purchase order.
 
@@ -80,28 +101,28 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
 
     purchase_order = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrder.objects.all(),
-        required=False,
+        required=False, allow_null=True,
         help_text=_('PurchaseOrder to receive items against'),
     )
 
     def validate_purchase_order(self, order: order.models.PurchaseOrder):
         """Validate the provided order"""
 
-        if order.status != PurchaseOrderStatus.PLACED.value:
+        if order and order.status != PurchaseOrderStatus.PLACED.value:
             raise ValidationError(_("Purchase order has not been placed"))
 
         return order
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
-        required=False,
+        required=False, allow_null=True,
         help_text=_('Location to receive items into'),
     )
 
     def validate_location(self, location: stock.models.StockLocation):
         """Validate the provided location"""
 
-        if location.structural:
+        if location and location.structural:
             raise ValidationError(_("Cannot select a structural location"))
 
         return location
