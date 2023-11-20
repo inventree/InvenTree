@@ -90,12 +90,11 @@ function QueryResultGroup({
         <Divider />
         <Stack>
           {query.results.results.map((result: any) => (
-            <Anchor onClick={() => onResultClick(query.model, result.pk)}>
-              <RenderInstance
-                key={`${query.model}-${result.pk}`}
-                instance={result}
-                model={query.model}
-              />
+            <Anchor
+              onClick={() => onResultClick(query.model, result.pk)}
+              key={result.pk}
+            >
+              <RenderInstance instance={result} model={query.model} />
             </Anchor>
           ))}
         </Stack>
@@ -395,8 +394,9 @@ export function SearchDrawer({
       )}
       {!searchQuery.isFetching && !searchQuery.isError && (
         <Stack spacing="md">
-          {queryResults.map((query) => (
+          {queryResults.map((query, idx) => (
             <QueryResultGroup
+              key={idx}
               query={query}
               onRemove={(query) => removeResults(query)}
               onResultClick={(query, pk) => onResultClick(query, pk)}

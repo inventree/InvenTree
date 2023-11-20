@@ -6,7 +6,7 @@ import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ButtonMenu } from '../buttons/ButtonMenu';
@@ -57,7 +57,7 @@ export type InvenTreeTableProps<T = any> = {
   pageSize?: number;
   barcodeActions?: any[];
   customFilters?: TableFilter[];
-  customActionGroups?: any[];
+  customActionGroups?: React.ReactNode[];
   printingActions?: any[];
   idAccessor?: string;
   dataFormatter?: (data: T) => any;
@@ -432,9 +432,9 @@ export function InvenTreeTable<T = any>({
       <Stack spacing="sm">
         <Group position="apart">
           <Group position="left" key="custom-actions" spacing={5}>
-            {tableProps.customActionGroups?.map(
-              (group: any, idx: number) => group
-            )}
+            {tableProps.customActionGroups?.map((group, idx) => (
+              <Fragment key={idx}>{group}</Fragment>
+            ))}
             {(tableProps.barcodeActions?.length ?? 0 > 0) && (
               <ButtonMenu
                 key="barcode-actions"
