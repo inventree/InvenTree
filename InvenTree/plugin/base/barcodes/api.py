@@ -410,6 +410,9 @@ barcode_api_urls = [
     # Receive a purchase order item by scanning its barcode
     path("po-receive/", BarcodePOReceive.as_view(), name="api-barcode-po-receive"),
 
+    # Allocate parts to a purchase order by scanning their barcode
+    path("po-allocate/", BarcodePOAllocate.as_view(), name="api-barcode-po-allocate"),
+
     # Catch-all performs barcode 'scan'
     re_path(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),
 ]
