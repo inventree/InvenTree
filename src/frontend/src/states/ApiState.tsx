@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { api } from '../App';
 import { StatusCodeListInterface } from '../components/render/StatusRenderer';
@@ -15,7 +15,7 @@ interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
-  status: StatusLookup | undefined;
+  status?: StatusLookup;
 }
 
 export const useServerApiState = create<ServerApiStateProps>()(
@@ -44,7 +44,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
     }),
     {
       name: 'server-api-state',
-      getStorage: () => sessionStorage
+      storage: createJSONStorage(() => sessionStorage)
     }
   )
 );
