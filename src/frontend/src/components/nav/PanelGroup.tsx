@@ -6,14 +6,21 @@ import {
   Tabs,
   Tooltip
 } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useEffect, useState } from 'react';
+import {
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+  useParams
+} from 'react-router-dom';
 
+import { useLocalState } from '../../states/LocalState';
 import { PlaceholderPanel } from '../items/Placeholder';
 import { StylishText } from '../items/StylishText';
 
@@ -29,48 +36,48 @@ export type PanelType = {
   disabled?: boolean;
 };
 
-/**
- *
- * @param panels : PanelDefinition[] - The list of panels to display
- * @param activePanel : string - The name of the currently active panel (defaults to the first panel)
- * @param setActivePanel : (panel: string) => void - Function to set the active panel
- * @param onPanelChange : (panel: string) => void - Callback when the active panel changes
- * @param collabsible : boolean - If true, the panel group can be collapsed (defaults to true)
- * @returns
- */
-export function PanelGroup({
-  pageKey,
-  panels,
-  selectedPanel,
-  onPanelChange,
-  collabsible = true
-}: {
+export type PanelProps = {
   pageKey: string;
   panels: PanelType[];
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
-  collabsible?: boolean;
-}): ReactNode {
-  const [activePanel, setActivePanel] = useLocalStorage<string>({
-    key: `panel-group-active-panel-${pageKey}`,
-    defaultValue: selectedPanel || panels.length > 0 ? panels[0].name : ''
-  });
+  collapsible?: boolean;
+};
 
-  // Update the active panel when the selected panel changes
-  // If the selected panel is not available, default to the first available panel
+function BasePanelGroup({
+  pageKey,
+  panels,
+  onPanelChange,
+  selectedPanel,
+  collapsible = true
+}: PanelProps): ReactNode {
+  const navigate = useNavigate();
+  const { panel } = useParams();
+
+  const activePanels = useMemo(
+    () => panels.filter((panel) => !panel.hidden && !panel.disabled),
+    [panels]
+  );
+
+  const setLastUsedPanel = useLocalState((state) =>
+    state.setLastUsedPanel(pageKey)
+  );
+
   useEffect(() => {
-    let activePanelNames = panels
-      .filter((panel) => !panel.hidden && !panel.disabled)
-      .map((panel) => panel.name);
-
-    if (!activePanelNames.includes(activePanel)) {
-      setActivePanel(activePanelNames.length > 0 ? activePanelNames[0] : '');
+    if (panel) {
+      setLastUsedPanel(panel);
     }
-  }, [panels]);
+    // panel is intentionally no dependency as this should only run on initial render
+  }, [setLastUsedPanel]);
 
   // Callback when the active panel changes
   function handlePanelChange(panel: string) {
-    setActivePanel(panel);
+    if (activePanels.findIndex((p) => p.name === panel) === -1) {
+      setLastUsedPanel('');
+      return navigate('../');
+    }
+
+    navigate(`../${panel}`);
 
     // Optionally call external callback hook
     if (onPanelChange) {
@@ -78,12 +85,27 @@ export function PanelGroup({
     }
   }
 
+  // if the selected panel state changes update the current panel
+  useEffect(() => {
+    if (selectedPanel && selectedPanel !== panel) {
+      handlePanelChange(selectedPanel);
+    }
+  }, [selectedPanel, panel]);
+
+  // Update the active panel when panels changes and the active is no longer available
+  useEffect(() => {
+    if (activePanels.findIndex((p) => p.name === panel) === -1) {
+      setLastUsedPanel('');
+      return navigate('../');
+    }
+  }, [activePanels, panel]);
+
   const [expanded, setExpanded] = useState<boolean>(true);
 
   return (
     <Paper p="sm" radius="xs" shadow="xs">
       <Tabs
-        value={activePanel}
+        value={panel}
         orientation="vertical"
         onTabChange={handlePanelChange}
         keepMounted={false}
@@ -108,7 +130,7 @@ export function PanelGroup({
                 </Tooltip>
               )
           )}
-          {collabsible && (
+          {collapsible && (
             <ActionIcon
               style={{
                 paddingLeft: '10px'
@@ -145,5 +167,40 @@ export function PanelGroup({
         )}
       </Tabs>
     </Paper>
+  );
+}
+
+function IndexPanelComponent({ pageKey, selectedPanel, panels }: PanelProps) {
+  const lastUsedPanel = useLocalState((state) => {
+    const panelName =
+      selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
+
+    if (
+      panels.findIndex(
+        (p) => p.name === panelName && !p.disabled && !p.hidden
+      ) === -1
+    ) {
+      return panels[0]?.name;
+    }
+
+    return panelName;
+  });
+
+  return <Navigate to={lastUsedPanel} replace />;
+}
+
+/**
+ * Render a panel group. The current panel will be appended to the current url.
+ * The last opened panel will be stored in local storage and opened if no panel is provided via url param
+ * @param panels - The list of panels to display
+ * @param onPanelChange - Callback when the active panel changes
+ * @param collapsible - If true, the panel group can be collapsed (defaults to true)
+ */
+export function PanelGroup(props: PanelProps) {
+  return (
+    <Routes>
+      <Route index element={<IndexPanelComponent {...props} />} />
+      <Route path="/:panel/*" element={<BasePanelGroup {...props} />} />
+    </Routes>
   );
 }
