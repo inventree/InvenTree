@@ -516,7 +516,7 @@ function constructFormBody(fields, options) {
     }
 
     for (const [k,v] of Object.entries(fields)) {
-        processField(k, v, options.fields[k]);
+        processField(k, v, fields[k]);
     }
 
     // Client must provide set of fields to be displayed,
