@@ -63,8 +63,6 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
         Here we are looking for a dict object which contains a reference to a particular InvenTree database object
         """
-        # Create hash from raw barcode data
-        barcode_hash = hash_barcode(barcode_data)
 
         # Attempt to coerce the barcode data into a dict object
         # This is the internal barcode representation that InvenTree uses
@@ -78,9 +76,11 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             except json.JSONDecodeError:
                 pass
 
+        supported_models = self.get_supported_barcode_models()
+
         if barcode_dict is not None and type(barcode_dict) is dict:
             # Look for various matches. First good match will be returned
-            for model in self.get_supported_barcode_models():
+            for model in supported_models:
                 label = model.barcode_model_type()
 
                 if label in barcode_dict:
@@ -91,8 +91,11 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
                     except (ValueError, model.DoesNotExist):
                         pass
 
+        # Create hash from raw barcode data
+        barcode_hash = hash_barcode(barcode_data)
+
         # If no "direct" hits are found, look for assigned third-party barcodes
-        for model in self.get_supported_barcode_models():
+        for model in supported_models:
             label = model.barcode_model_type()
 
             instance = model.lookup_barcode(barcode_hash)

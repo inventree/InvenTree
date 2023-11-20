@@ -7,21 +7,60 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import permissions
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from InvenTree.helpers import hash_barcode
-from order.models import PurchaseOrder
 from plugin import registry
 from plugin.builtin.barcodes.inventree_barcode import \
     InvenTreeInternalBarcodePlugin
-from stock.models import StockLocation
 from users.models import RuleSet
+
+from . import serializers as barcode_serializers
 
 logger = logging.getLogger('inventree')
 
 
-class BarcodeScan(APIView):
+class BarcodeView(CreateAPIView):
+    """Custom view class for handling a barcode scan"""
+
+    # Default serializer class (can be overridden)
+    serializer_class = barcode_serializers.BarcodeSerializer
+
+    def queryset(self):
+        """This API view does not have a queryset"""
+        return None
+
+    # Default permission classes (can be overridden)
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def create(self, request, *args, **kwargs):
+        """Handle create method - override default create"""
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        barcode = str(data.pop('barcode')).strip()
+
+        return self.handle_barcode(barcode, request, **data)
+
+    def handle_barcode(self, barcode: str, request, **kwargs):
+        """Handle barcode scan.
+
+        Arguments:
+            barcode: Raw barcode value
+            request: HTTP request object
+
+        kwargs:
+            Any custom fields passed by the specific serializer
+        """
+        raise NotImplementedError(f"handle_barcode not implemented for {self.__class__}")
+
+
+class BarcodeScan(BarcodeView):
     """Endpoint for handling generic barcode scan requests.
 
     Barcode data are decoded by the client application,
@@ -29,39 +68,21 @@ class BarcodeScan(APIView):
 
     A barcode could follow the internal InvenTree barcode format,
     or it could match to a third-party barcode format (e.g. Digikey).
-
-    When a barcode is sent to the server, the following parameters must be provided:
-
-    - barcode: The raw barcode data
-
-    plugins:
-    Third-party barcode formats may be supported using 'plugins'
-    (more information to follow)
-
-    hashing:
-    Barcode hashes are calculated using MD5
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    def handle_barcode(self, barcode: str, request, **kwargs):
+        """Perform barcode scan action
 
-    def post(self, request, *args, **kwargs):
-        """Respond to a barcode POST request.
+        Arguments:
+            barcode: Raw barcode value
+            request: HTTP request object
 
-        Check if required info was provided and then run though the plugin steps or try to match up-
+        kwargs:
+            Any custom fields passed by the specific serializer
         """
-        data = request.data
-
-        barcode_data = data.get('barcode', None)
-
-        if not barcode_data:
-            raise ValidationError({'barcode': _('Missing barcode data')})
 
         # Note: the default barcode handlers are loaded (and thus run) first
         plugins = registry.with_mixin('barcode')
-
-        barcode_hash = hash_barcode(barcode_data)
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
@@ -69,7 +90,7 @@ class BarcodeScan(APIView):
 
         for current_plugin in plugins:
 
-            result = current_plugin.scan(barcode_data)
+            result = current_plugin.scan(barcode)
 
             if result is None:
                 continue
@@ -86,8 +107,8 @@ class BarcodeScan(APIView):
                 break
 
         response['plugin'] = plugin.name if plugin else None
-        response['barcode_data'] = barcode_data
-        response['barcode_hash'] = barcode_hash
+        response['barcode_data'] = barcode
+        response['barcode_hash'] = hash_barcode(barcode)
 
         # A plugin has not been found!
         if plugin is None:
@@ -99,44 +120,36 @@ class BarcodeScan(APIView):
             return Response(response)
 
 
-class BarcodeAssign(APIView):
+class BarcodeAssign(BarcodeView):
     """Endpoint for assigning a barcode to a stock item.
 
     - This only works if the barcode is not already associated with an object in the database
     - If the barcode does not match an object, then the barcode hash is assigned to the StockItem
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
+    serializer_class = barcode_serializers.BarcodeAssignSerializer
 
-    def post(self, request, *args, **kwargs):
-        """Respond to a barcode assign POST request.
+    def handle_barcode(self, barcode: str, request, **kwargs):
+        """Respond to a barcode assign request.
 
         Checks inputs and assign barcode (hash) to StockItem.
         """
-        data = request.data
-
-        barcode_data = data.get('barcode', None)
-
-        if not barcode_data:
-            raise ValidationError({'barcode': _('Missing barcode data')})
 
         # Here we only check against 'InvenTree' plugins
         plugins = registry.with_mixin('barcode', builtin=True)
 
         # First check if the provided barcode matches an existing database entry
         for plugin in plugins:
-            result = plugin.scan(barcode_data)
+            result = plugin.scan(barcode)
 
             if result is not None:
                 result["error"] = _("Barcode matches existing item")
                 result["plugin"] = plugin.name
-                result["barcode_data"] = barcode_data
+                result["barcode_data"] = barcode
 
                 raise ValidationError(result)
 
-        barcode_hash = hash_barcode(barcode_data)
+        barcode_hash = hash_barcode(barcode)
 
         valid_labels = []
 
@@ -144,39 +157,32 @@ class BarcodeAssign(APIView):
             label = model.barcode_model_type()
             valid_labels.append(label)
 
-            if label in data:
-                try:
-                    instance = model.objects.get(pk=data[label])
+            if instance := kwargs.get(label, None):
 
-                    # Check that the user has the required permission
-                    app_label = model._meta.app_label
-                    model_name = model._meta.model_name
+                # Check that the user has the required permission
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
 
-                    table = f"{app_label}_{model_name}"
+                table = f"{app_label}_{model_name}"
 
-                    if not RuleSet.check_table_permission(request.user, table, "change"):
-                        raise PermissionDenied({
-                            "error": f"You do not have the required permissions for {table}"
-                        })
-
-                    instance.assign_barcode(
-                        barcode_data=barcode_data,
-                        barcode_hash=barcode_hash,
-                    )
-
-                    return Response({
-                        'success': f"Assigned barcode to {label} instance",
-                        label: {
-                            'pk': instance.pk,
-                        },
-                        "barcode_data": barcode_data,
-                        "barcode_hash": barcode_hash,
+                if not RuleSet.check_table_permission(request.user, table, "change"):
+                    raise PermissionDenied({
+                        "error": f"You do not have the required permissions for {table}"
                     })
 
-                except (ValueError, model.DoesNotExist):
-                    raise ValidationError({
-                        'error': f"No matching {label} instance found in database",
-                    })
+                instance.assign_barcode(
+                    barcode_data=barcode,
+                    barcode_hash=barcode_hash,
+                )
+
+                return Response({
+                    'success': f"Assigned barcode to {label} instance",
+                    label: {
+                        'pk': instance.pk,
+                    },
+                    "barcode_data": barcode,
+                    "barcode_hash": barcode_hash,
+                })
 
         # If we got here, it means that no valid model types were provided
         raise ValidationError({
@@ -184,22 +190,22 @@ class BarcodeAssign(APIView):
         })
 
 
-class BarcodeUnassign(APIView):
+class BarcodeUnassign(BarcodeView):
     """Endpoint for unlinking / unassigning a custom barcode from a database object"""
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    serializer_class = barcode_serializers.BarcodeUnassignSerializer
 
-    def post(self, request, *args, **kwargs):
-        """Respond to a barcode unassign POST request"""
-        # The following database models support assignment of third-party barcodes
+    def create(self, request, *args, **kwargs):
+        """Respond to a barcode unassign request."""
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
         supported_models = InvenTreeInternalBarcodePlugin.get_supported_barcode_models()
 
         supported_labels = [model.barcode_model_type() for model in supported_models]
         model_names = ', '.join(supported_labels)
-
-        data = request.data
 
         matched_labels = []
 
@@ -219,15 +225,10 @@ class BarcodeUnassign(APIView):
 
         # At this stage, we know that we have received a single valid field
         for model in supported_models:
+
             label = model.barcode_model_type()
 
-            if label in data:
-                try:
-                    instance = model.objects.get(pk=data[label])
-                except (ValueError, model.DoesNotExist):
-                    raise ValidationError({
-                        label: _('No match found for provided value')
-                    })
+            if instance := data.get(label, None):
 
                 # Check that the user has the required permission
                 app_label = model._meta.app_label
@@ -253,7 +254,7 @@ class BarcodeUnassign(APIView):
         })
 
 
-class BarcodePOReceive(APIView):
+class BarcodePOReceive(BarcodeView):
     """Endpoint for handling receiving parts by scanning their barcode.
 
     Barcode data are decoded by the client application,
@@ -269,32 +270,16 @@ class BarcodePOReceive(APIView):
     - location: The destination location for the received item (optional)
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    serializer_class = barcode_serializers.BarcodePOReceiveSerializer
 
-    def post(self, request, *args, **kwargs):
-        """Respond to a barcode POST request."""
+    def handle_barcode(self, barcode: str, request, **kwargs):
+        """Handle a barcode scan for a purchase order item."""
 
-        data = request.data
+        logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode)
 
-        if not (barcode_data := data.get("barcode")):
-            raise ValidationError({"barcode": _("Missing barcode data")})
-
-        logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode_data)
-
-        purchase_order = None
-
-        if purchase_order_pk := data.get("purchase_order"):
-            purchase_order = PurchaseOrder.objects.filter(pk=purchase_order_pk).first()
-            if not purchase_order:
-                raise ValidationError({"purchase_order": _("Invalid purchase order")})
-
-        location = None
-        if (location_pk := data.get("location")):
-            location = StockLocation.objects.get(pk=location_pk)
-            if not location:
-                raise ValidationError({"location": _("Invalid stock location")})
+        # Extract optional fields from the dataset
+        purchase_order = kwargs.get('purchase_order', None)
+        location = kwargs.get('location', None)
 
         plugins = registry.with_mixin("barcode")
 
@@ -303,8 +288,10 @@ class BarcodePOReceive(APIView):
         response = {}
 
         internal_barcode_plugin = next(filter(
-            lambda plugin: plugin.name == "InvenTreeBarcode", plugins))
-        if internal_barcode_plugin.scan(barcode_data):
+            lambda plugin: plugin.name == "InvenTreeBarcode", plugins
+        ))
+
+        if internal_barcode_plugin.scan(barcode):
             response["error"] = _("Item has already been received")
             raise ValidationError(response)
 
@@ -314,7 +301,7 @@ class BarcodePOReceive(APIView):
         for current_plugin in plugins:
 
             result = current_plugin.scan_receive_item(
-                barcode_data,
+                barcode,
                 request.user,
                 purchase_order=purchase_order,
                 location=location,
@@ -335,8 +322,8 @@ class BarcodePOReceive(APIView):
                 break
 
         response["plugin"] = plugin.name if plugin else None
-        response["barcode_data"] = barcode_data
-        response["barcode_hash"] = hash_barcode(barcode_data)
+        response["barcode_data"] = barcode
+        response["barcode_hash"] = hash_barcode(barcode)
 
         # A plugin has not been found!
         if plugin is None:

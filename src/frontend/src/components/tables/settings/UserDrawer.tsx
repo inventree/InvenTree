@@ -86,7 +86,7 @@ export function UserDrawer({
   function setPermission(pk: number, data: any) {
     setLocked(true);
     api
-      .patch(`${apiUrl(ApiPaths.user_list)}${pk}/`, data)
+      .patch(apiUrl(ApiPaths.user_list, pk), data)
       .then(() => {
         notifications.show({
           title: t`User permission changed successfully`,
@@ -110,7 +110,7 @@ export function UserDrawer({
   function setActive(pk: number, active: boolean) {
     setLocked(true);
     api
-      .patch(`${apiUrl(ApiPaths.user_list)}${pk}/`, {
+      .patch(apiUrl(ApiPaths.user_list, pk), {
         is_active: active
       })
       .then(() => {
