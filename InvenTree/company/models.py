@@ -387,7 +387,7 @@ class Address(models.Model):
                              help_text=_('Link to address information (external)'))
 
 
-class ManufacturerPart(MetadataMixin, models.Model):
+class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
     Attributes:

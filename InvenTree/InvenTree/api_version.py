@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 151
+INVENTREE_API_VERSION = 152
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v152 -> 2023-11-20 : https://github.com/inventree/InvenTree/pull/5949
+    - Adds barcode support for manufacturerpart model
+    - Adds API endpoint for adding parts to purchase order using barcode scan
 
 v151 -> 2023-11-13 : https://github.com/inventree/InvenTree/pull/5906
     - Allow user list API to be filtered by user active status
