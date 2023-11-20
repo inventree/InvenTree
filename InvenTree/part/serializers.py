@@ -1042,6 +1042,10 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'supplier_price_max',
             'variant_cost_min',
             'variant_cost_max',
+            'override_min',
+            'override_min_currency',
+            'override_max',
+            'override_max_currency',
             'overall_min',
             'overall_max',
             'sale_price_min',
@@ -1072,6 +1076,9 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     variant_cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True)
     variant_cost_max = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    override_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=False)
+    override_max = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=False)
 
     overall_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True)
     overall_max = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True)
