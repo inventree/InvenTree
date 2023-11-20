@@ -31,7 +31,11 @@ def compile_full_name_template(*args, **kwargs):
 
     _part_full_name_template_string = template_string
 
-    env = Environment(variable_start_string='{{', variable_end_string='}}')
+    env = Environment(
+        autoescape=True,
+        variable_start_string='{{',
+        variable_end_string='}}'
+    )
 
     # Compile the template
     try:
