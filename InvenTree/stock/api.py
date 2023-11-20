@@ -629,8 +629,34 @@ class StockFilter(rest_filters.FilterSet):
             parent__in=ancestor.get_descendants(include_self=True)
         )
 
+    category = rest_filters.ModelChoiceFilter(
+        label=_('Category'),
+        queryset=PartCategory.objects.all(),
+        method='filter_category'
+    )
+
+    def filter_category(self, queryset, name, category):
+        """Filter based on part category"""
+
+        child_categories = category.get_descendants(include_self=True)
+
+        return queryset.filter(
+            part__category__in=child_categories,
+        )
+
+    bom_item = rest_filters.ModelChoiceFilter(
+        label=_('BOM Item'),
+        queryset=BomItem.objects.all(),
+        method='filter_bom_item'
+    )
+
+    def filter_bom_item(self, queryset, name, bom_item):
+        """Filter based on BOM item"""
+
+        return queryset.filter(bom_item.get_stock_filter())
+
     part_tree = rest_filters.ModelChoiceFilter(
-        label='Part tree',
+        label=_('Part Tree'),
         queryset=Part.objects.all(),
         method='filter_part_tree'
     )
@@ -1037,29 +1063,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
                 except (ValueError, StockLocation.DoesNotExist):
                     pass
-
-        # Does the client wish to filter by part category?
-        cat_id = params.get('category', None)
-
-        if cat_id:
-            try:
-                category = PartCategory.objects.get(pk=cat_id)
-                queryset = queryset.filter(part__category__in=category.getUniqueChildren())
-
-            except (ValueError, PartCategory.DoesNotExist):
-                raise ValidationError({"category": "Invalid category id specified"})
-
-        # Does the client wish to filter by BomItem
-        bom_item_id = params.get('bom_item', None)
-
-        if bom_item_id is not None:
-            try:
-                bom_item = BomItem.objects.get(pk=bom_item_id)
-
-                queryset = queryset.filter(bom_item.get_stock_filter())
-
-            except (ValueError, BomItem.DoesNotExist):
-                pass
 
         return queryset
 
