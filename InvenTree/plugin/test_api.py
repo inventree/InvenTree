@@ -24,7 +24,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.MSG_NO_PKG = 'Either packagename of URL must be provided'
 
         self.PKG_NAME = 'inventree-brother-plugin'
-        self.PKG_URL = 'git@github.com:inventree/inventree-brother-plugin.git'
+        self.PKG_URL = 'git+https://github.com:inventree/inventree-brother-plugin'
         super().setUp()
 
     def test_plugin_install(self):
