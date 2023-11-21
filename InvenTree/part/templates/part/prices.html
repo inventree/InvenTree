@@ -14,6 +14,9 @@
             <button type='button' class='btn btn-success' id='part-pricing-refresh' title='{% trans "Refresh Part Pricing" %}'>
                 <span class='fas fa-redo-alt'></span> {% trans "Refresh" %}
             </button>
+            <button type='button' class='btn btn-success' id='part-pricing-edit' title='{% trans "Override Part Pricing" %}'>
+                <span class='fas fa-edit'></span> {% trans "Edit" %}
+            </button>
         </div>
     </div>
 </div>
@@ -95,6 +98,14 @@
                         <th>{% trans "Variant Pricing" %}</th>
                         <td>{% render_currency pricing.variant_cost_min %}</td>
                         <td>{% render_currency pricing.variant_cost_max %}</td>
+                    </tr>
+                    {% endif %}
+                    {% if pricing.override_min or pricing.override_max %}
+                    <tr>
+                        <td><a href='#pricing-overrides'><span class='fas fa-exclamation-circle'></span></a></td>
+                        <th>{% trans "Pricing Overrides" %}</th>
+                        <td>{% render_currency pricing.override_min currency=pricing.override_min_currency %}</td>
+                        <td>{% render_currency pricing.override_max currency=pricing.override_max_currency %}</td>
                     </tr>
                     {% endif %}
                     <tr>
