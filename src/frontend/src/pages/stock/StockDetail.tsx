@@ -36,7 +36,7 @@ import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiPaths } from '../../enums/ApiEndpoints';
-import { editStockItem } from '../../forms/StockForms';
+import { useEditStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -141,6 +141,11 @@ export default function StockDetail() {
     [stockitem]
   );
 
+  const editStockItem = useEditStockItem({
+    item_id: stockitem.pk,
+    callback: () => refreshInstance()
+  });
+
   const stockActions = useMemo(
     () => /* TODO: Disable actions based on user permissions*/ [
       <BarcodeActionDropdown
@@ -193,11 +198,7 @@ export default function StockDetail() {
           },
           EditItemAction({
             onClick: () => {
-              stockitem.pk &&
-                editStockItem({
-                  item_id: stockitem.pk,
-                  callback: () => refreshInstance
-                });
+              stockitem.pk && editStockItem.open();
             }
           }),
           DeleteItemAction({})
@@ -231,6 +232,7 @@ export default function StockDetail() {
         actions={stockActions}
       />
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
+      {editStockItem.modal}
     </Stack>
   );
 }

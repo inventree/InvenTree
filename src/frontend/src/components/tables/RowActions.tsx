@@ -150,8 +150,8 @@ export function RowActions({
         </Menu.Target>
         <Menu.Dropdown>
           <Group position="right" spacing="xs" p={8}>
-            {visibleActions.map((action, _idx) => (
-              <RowActionIcon {...action} />
+            {visibleActions.map((action) => (
+              <RowActionIcon key={action.title} {...action} />
             ))}
           </Group>
         </Menu.Dropdown>

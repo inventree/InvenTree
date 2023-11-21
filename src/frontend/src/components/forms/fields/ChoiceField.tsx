@@ -1,47 +1,30 @@
 import { Select } from '@mantine/core';
-import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { ReactNode } from 'react';
+import { useCallback } from 'react';
 import { useMemo } from 'react';
+import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
-import { constructField } from './ApiFormField';
-import { ApiFormFieldSet, ApiFormFieldType } from './ApiFormField';
+import { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for selecting from a list of choices
  */
 export function ChoiceField({
-  error,
-  form,
-  fieldName,
-  field,
-  definitions
+  controller,
+  definition
 }: {
-  error: ReactNode;
-  form: UseFormReturnType<Record<string, unknown>>;
-  field: ApiFormFieldType;
+  controller: UseControllerReturn<FieldValues, any>;
+  definition: ApiFormFieldType;
   fieldName: string;
-  definitions: ApiFormFieldSet;
 }) {
-  // Extract field definition from provided data
-  // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(() => {
-    let def = constructField({
-      form: form,
-      field: field,
-      fieldName: fieldName,
-      definitions: definitions
-    });
+  const fieldId = useId();
 
-    return def;
-  }, [fieldName, field, definitions]);
-
-  const fieldId = useId(fieldName);
-
-  const value: any = useMemo(() => form.values[fieldName], [form.values]);
+  const {
+    field,
+    fieldState: { error }
+  } = controller;
 
   // Build a set of choices for the field
-  // TODO: In future, allow this to be created dynamically?
   const choices: any[] = useMemo(() => {
     let choices = definition.choices ?? [];
 
@@ -53,30 +36,28 @@ export function ChoiceField({
         label: choice.display_name
       };
     });
-  }, [definition]);
+  }, [definition.choices]);
 
-  // Callback when an option is selected
-  function onChange(value: any) {
-    form.setFieldValue(fieldName, value);
+  // Update form values when the selected value changes
+  const onChange = useCallback(
+    (value: any) => {
+      field.onChange(value);
 
-    if (definition.onValueChange) {
-      definition.onValueChange({
-        name: fieldName,
-        value: value,
-        field: definition,
-        form: form
-      });
-    }
-  }
+      // Run custom callback for this field (if provided)
+      definition.onValueChange?.(value);
+    },
+    [field.onChange, definition]
+  );
 
   return (
     <Select
       id={fieldId}
+      error={error?.message}
       radius="sm"
-      {...definition}
+      {...field}
+      onChange={onChange}
       data={choices}
-      value={value}
-      onChange={(value) => onChange(value)}
+      value={field.value}
       withinPortal={true}
     />
   );
