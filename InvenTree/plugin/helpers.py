@@ -103,7 +103,14 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 def get_entrypoints():
     """Returns list for entrypoints for InvenTree plugins."""
-    return entry_points().select(group='inventree_plugins')
+
+    eps = entry_points()
+
+    if type(eps) is dict:
+        return eps.get('inventree_plugins', [])
+
+    # Account for newer python versions (3.12 and up)
+    return eps.select(group='inventree_plugins')
 # endregion
 
 
