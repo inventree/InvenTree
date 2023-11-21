@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-20 21:27+0000\n"
-"PO-Revision-Date: 2023-11-16 23:15\n"
+"PO-Revision-Date: 2023-11-21 00:07\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -474,9 +474,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -7325,28 +7323,20 @@ msgid "Barcode matches existing item"
 msgstr "Strekkode samsvarer med ekisterende element"
 
 #: plugin/base/barcodes/api.py:302
-#, fuzzy
-#| msgid "No matching part found"
 msgid "No matching part data found"
-msgstr "Ingen matchende delere funnet"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:319
-#, fuzzy
-#| msgid "No supplier parts found"
 msgid "No matching supplier parts found"
-msgstr "Ingen leverandørdeler funnet"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:324
-#, fuzzy
-#| msgid "Multiple matching parts found"
 msgid "Multiple matching supplier parts found"
-msgstr "Flere matchende deler funnet"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:349
-#, fuzzy
-#| msgid "Match Supplier Parts"
 msgid "Matched supplier part"
-msgstr "Match Leverandørdeler"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:395
 msgid "Item has already been received"
@@ -7387,46 +7377,32 @@ msgid "Received purchase order line item"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:21
-#, fuzzy
-#| msgid "Scan barcode data"
 msgid "Scanned barcode data"
-msgstr "Skann strekkodedata"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "Purchase Order Settings"
 msgid "PurchaseOrder to allocate items against"
-msgstr "Innstillinger for Innkjøpsordre"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:88
-#, fuzzy
-#| msgid "Purchase order {po} is now overdue"
 msgid "Purchase order is not pending"
-msgstr "Innkjøpsordre {po} er nå forfalt"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:105
-#, fuzzy
-#| msgid "Purchase Order Reference Pattern"
 msgid "PurchaseOrder to receive items against"
-msgstr "Referansemønster for innkjøpsordre"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:112
-#, fuzzy
-#| msgid "Purchase order must be specified"
 msgid "Purchase order has not been placed"
-msgstr "Innkjøpsordre må angis"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:119
-#, fuzzy
-#| msgid "Location not specified"
 msgid "Location to receive items into"
-msgstr "Plassering ikke angitt"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:126
-#, fuzzy
-#| msgid "Delete stock allocation"
 msgid "Cannot select a structural location"
-msgstr "Slett lagertildeling"
+msgstr ""
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -8075,22 +8051,16 @@ msgid "External Location"
 msgstr ""
 
 #: stock/api.py:659
-#, fuzzy
-#| msgid "Part edited"
 msgid "Part Tree"
-msgstr "Del redigert"
+msgstr ""
 
 #: stock/api.py:688
-#, fuzzy
-#| msgid "Expiry Date"
 msgid "Expiry date before"
-msgstr "Utløpsdato"
+msgstr ""
 
 #: stock/api.py:694
-#, fuzzy
-#| msgid "Expiry Date"
 msgid "Expiry date after"
-msgstr "Utløpsdato"
+msgstr ""
 
 #: stock/api.py:699 stock/templates/stock/item_base.html:439
 #: templates/js/translated/table_filters.js:441
@@ -13309,8 +13279,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13486,8 +13455,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Missing barcode data"
-#~ msgstr "Mangler strekkodedata"
-
-#~ msgid "No match found for provided value"
-#~ msgstr "Ingen samsvar funnet for angitt verdi"
