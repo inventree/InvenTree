@@ -1118,8 +1118,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         write_only=True,
         label=_('Update'),
         help_text=_('Update pricing for this part'),
-        default=False,
-        required=False,
+        default=False, required=False, allow_null=True,
     )
 
     def validate(self, data):
