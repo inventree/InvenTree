@@ -29,7 +29,7 @@ import { openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useInstance } from '../../../hooks/UseInstance';
-import { apiUrl } from '../../../states/ApiState';
+import { apiUrl, useServerApiState } from '../../../states/ApiState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { ActionDropdown, EditItemAction } from '../../items/ActionDropdown';
 import { InfoItem } from '../../items/InfoItem';
@@ -247,6 +247,10 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
   const { tableKey, refreshTable } = useTableRefresh('plugin');
   const navigate = useNavigate();
 
+  const pluginsEnabled = useServerApiState(
+    (state) => state.server.plugins_enabled
+  );
+
   const pluginTableColumns: TableColumn[] = useMemo(
     () => [
       {
@@ -423,15 +427,16 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
   const tableActions = useMemo(() => {
     let actions = [];
 
-    // TODO: Hide if user does not have permission to install plugin
-    actions.push(
-      <ActionButton
-        color="green"
-        icon={<IconPlaylistAdd />}
-        tooltip={t`Install Plugin`}
-        onClick={() => installPluginModal.open()}
-      />
-    );
+    if (pluginsEnabled) {
+      actions.push(
+        <ActionButton
+          color="green"
+          icon={<IconPlaylistAdd />}
+          tooltip={t`Install Plugin`}
+          onClick={() => installPluginModal.open()}
+        />
+      );
+    }
 
     return actions;
   }, []);
