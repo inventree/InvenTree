@@ -4,8 +4,9 @@
 - Manages setup and teardown of plugin class instances
 """
 
-import imp
 import importlib
+import importlib.machinery
+import importlib.util
 import logging
 import os
 import time
@@ -354,7 +355,7 @@ class PluginsRegistry:
 
             # Gather Modules
             if parent_path:
-                raw_module = imp.load_source(plugin, str(parent_obj.joinpath('__init__.py')))
+                raw_module = _load_source(plugin, str(parent_obj.joinpath('__init__.py')))
             else:
                 raw_module = importlib.import_module(plugin)
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
@@ -728,3 +729,18 @@ registry: PluginsRegistry = PluginsRegistry()
 def call_function(plugin_name, function_name, *args, **kwargs):
     """Global helper function to call a specific member function of a plugin."""
     return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)
+
+
+def _load_source(modname, filename):
+    """Helper function to replace deprecated & removed imp.load_source.
+
+    See https://docs.python.org/3/whatsnew/3.12.html#imp
+    """
+    loader = importlib.machinery.SourceFileLoader(modname, filename)
+    spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
+    module = importlib.util.module_from_spec(spec)
+    # The module is always executed and not cached in sys.modules.
+    # Uncomment the following line to cache the module.
+    # sys.modules[module.__name__] = module
+    loader.exec_module(module)
+    return module

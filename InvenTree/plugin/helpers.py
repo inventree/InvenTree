@@ -8,6 +8,7 @@ import pkgutil
 import sysconfig
 import traceback
 from importlib.metadata import entry_points
+from importlib.util import module_from_spec
 
 from django import template
 from django.conf import settings
@@ -102,7 +103,7 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 def get_entrypoints():
     """Returns list for entrypoints for InvenTree plugins."""
-    return entry_points().get('inventree_plugins', [])
+    return entry_points(group='inventree_plugins')
 # endregion
 
 
@@ -156,9 +157,9 @@ def get_modules(pkg, path=None):
     elif type(path) is not list:
         path = [path]
 
-    for loader, name, _ in pkgutil.walk_packages(path):
+    for finder, name, _ in pkgutil.walk_packages(path):
         try:
-            module = loader.find_module(name).load_module(name)
+            module = module_from_spec(finder.find_spec(name))
             pkg_names = getattr(module, '__all__', None)
             for k, v in vars(module).items():
                 if not k.startswith('_') and (pkg_names is None or k in pkg_names):
