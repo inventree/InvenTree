@@ -66,17 +66,16 @@ class GeneralExtraLineList(APIDownloadMixin):
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
-        'title',
         'quantity',
         'note',
         'reference',
     ]
 
     search_fields = [
-        'title',
         'quantity',
         'note',
-        'reference'
+        'reference',
+        'description',
     ]
 
     filterset_fields = [

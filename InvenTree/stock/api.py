@@ -996,8 +996,8 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         if company is not None:
             queryset = queryset.filter(
-                Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company).distinct()
-            )
+                Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company)
+            ).distinct()
 
         return queryset
 
