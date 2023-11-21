@@ -522,7 +522,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @property
     def is_pending(self):
         """Return True if the PurchaseOrder is 'pending'"""
-        return self.status == PurchaseOrderStatus.PENDING
+        return self.status == PurchaseOrderStatus.PENDING.value
 
     @property
     def is_open(self):
@@ -536,8 +536,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
         - Status is PENDING
         """
         return self.status in [
-            PurchaseOrderStatus.PLACED,
-            PurchaseOrderStatus.PENDING
+            PurchaseOrderStatus.PLACED.value,
+            PurchaseOrderStatus.PENDING.value
         ]
 
     @transaction.atomic

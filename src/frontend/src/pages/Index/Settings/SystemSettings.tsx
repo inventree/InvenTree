@@ -49,6 +49,7 @@ export default function SystemSettings() {
               'INVENTREE_INSTANCE',
               'INVENTREE_INSTANCE_TITLE',
               'INVENTREE_RESTRICT_ABOUT',
+              'DISPLAY_FULL_NAMES',
               'INVENTREE_UPDATE_CHECK_INTERVAL',
               'INVENTREE_DOWNLOAD_FROM_URL',
               'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',

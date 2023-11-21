@@ -80,8 +80,8 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         # Fail with too many fields provided
         response = self.unassign(
             {
-                'stockitem': 'abcde',
-                'part': 'abcde',
+                'stockitem': stock.models.StockItem.objects.first().pk,
+                'part': part.models.Part.objects.first().pk,
             },
             expected_code=400,
         )
@@ -96,17 +96,17 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn('No match found', str(response.data['stockitem']))
+        self.assertIn('Incorrect type', str(response.data['stockitem']))
 
         # Fail with an invalid Part instance
         response = self.unassign(
             {
-                'part': 'invalid',
+                'part': 99999999999,
             },
             expected_code=400,
         )
 
-        self.assertIn('No match found', str(response.data['part']))
+        self.assertIn('object does not exist', str(response.data['part']))
 
     def test_assign_to_stock_item(self):
         """Test that we can assign a unique barcode to a StockItem object"""
@@ -216,7 +216,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn('No matching part instance found in database', str(response.data))
+        self.assertIn('object does not exist', str(response.data['part']))
 
         # Test assigning to a valid part (should pass)
         response = self.assign(
