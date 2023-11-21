@@ -28,6 +28,17 @@ Pricing information can be determined from multiple sources:
 | Supplier Price | The price to theoretically purchase a part from a given supplier (with price-breaks) | [Supplier](../order/company.md#suppliers) |
 | Purchase Cost | Historical cost information for parts purchased | [Purchase Order](../order/purchase_order.md) |
 | BOM Price | Total price for an assembly (total price of all component items) | [Part](../part/part.md) |
+
+#### Override Pricing
+
+In addition to caching pricing data as documented in the above table, manual pricing overrides can be specified for a particular part. Both the *minimum price* and *maximum price* can be specified manually, independent of the calculated values. If an manual price is specified for a part, it overrides any calculated value.
+
+### Sale Pricing
+
+Additionally, the following information is stored for each part, in relation to sale pricing:
+
+| Pricing Source | Description | Linked to |
+| --- | --- | --- |
 | Sale Price | How much a salable item is sold for (with price-breaks) | [Part](../part/part.md) |
 | Sale Cost | How much an item was sold for | [Sales Order](../order/sales_order.md) |
 
