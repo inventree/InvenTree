@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-20 21:27+0000\n"
-"PO-Revision-Date: 2023-11-16 23:16\n"
+"PO-Revision-Date: 2023-11-21 00:07\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -474,9 +474,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -7325,28 +7323,20 @@ msgid "Barcode matches existing item"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:302
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching part data found"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:319
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching supplier parts found"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:324
-#, fuzzy
-#| msgid "More than one matching result found"
 msgid "Multiple matching supplier parts found"
-msgstr "Plus d'un résultat correspondant trouvé"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:349
-#, fuzzy
-#| msgid "Delete supplier parts"
 msgid "Matched supplier part"
-msgstr "Supprimer les pièces du fournisseur"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:395
 msgid "Item has already been received"
@@ -7387,34 +7377,24 @@ msgid "Received purchase order line item"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:21
-#, fuzzy
-#| msgid "Enter barcode data"
 msgid "Scanned barcode data"
-msgstr "Saisir les données du code-barres"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "Purchase order no longer exists"
 msgid "PurchaseOrder to allocate items against"
-msgstr "Le bon de commande n'existe plus"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:88
-#, fuzzy
-#| msgid "Purchase order status"
 msgid "Purchase order is not pending"
-msgstr "Statut de la commande d'achat"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:105
-#, fuzzy
-#| msgid "Purchase Order Reference Pattern"
 msgid "PurchaseOrder to receive items against"
-msgstr "Modèle de référence de commande d'achat"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:112
-#, fuzzy
-#| msgid "Purchase order status"
 msgid "Purchase order has not been placed"
-msgstr "Statut de la commande d'achat"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:119
 msgid "Location to receive items into"
@@ -8071,10 +8051,8 @@ msgid "External Location"
 msgstr ""
 
 #: stock/api.py:659
-#, fuzzy
-#| msgid "Part edited"
 msgid "Part Tree"
-msgstr "Pièce modifiée"
+msgstr ""
 
 #: stock/api.py:688
 msgid "Expiry date before"
@@ -13301,8 +13279,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13477,3 +13454,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
