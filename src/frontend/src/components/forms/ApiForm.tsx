@@ -409,3 +409,62 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     </Stack>
   );
 }
+
+export function CreateApiForm({
+  id,
+  props
+}: {
+  id?: string;
+  props: ApiFormProps;
+}) {
+  const createProps = useMemo<ApiFormProps>(
+    () => ({
+      ...props,
+      method: 'POST'
+    }),
+    [props]
+  );
+
+  return <OptionsApiForm props={createProps} id={id} />;
+}
+
+export function EditApiForm({
+  id,
+  props
+}: {
+  id?: string;
+  props: ApiFormProps;
+}) {
+  const editProps = useMemo<ApiFormProps>(
+    () => ({
+      ...props,
+      fetchInitialData: props.fetchInitialData ?? true,
+      submitText: t`Update` ?? props.submitText,
+      method: 'PUT'
+    }),
+    [props]
+  );
+
+  return <OptionsApiForm props={editProps} id={id} />;
+}
+
+export function DeleteApiForm({
+  id,
+  props
+}: {
+  id?: string;
+  props: ApiFormProps;
+}) {
+  const deleteProps = useMemo<ApiFormProps>(
+    () => ({
+      ...props,
+      method: 'DELETE',
+      submitText: t`Delete`,
+      submitColor: 'red',
+      fields: {}
+    }),
+    [props]
+  );
+
+  return <OptionsApiForm props={deleteProps} id={id} />;
+}

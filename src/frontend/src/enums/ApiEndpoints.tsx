@@ -84,6 +84,7 @@ export enum ApiPaths {
 
   // Plugin URLs
   plugin_list = 'api-plugin-list',
+  plugin_setting_list = 'api-plugin-settings',
 
   project_code_list = 'api-project-code-list',
   custom_unit_list = 'api-custom-unit-list'

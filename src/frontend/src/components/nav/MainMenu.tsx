@@ -59,15 +59,6 @@ export function MainMenu() {
             <Trans>System Settings</Trans>
           </Menu.Item>
         )}
-        {userState.user?.is_staff && (
-          <Menu.Item
-            icon={<IconPlugConnected />}
-            component={Link}
-            to="/settings/plugin"
-          >
-            <Trans>Plugins</Trans>
-          </Menu.Item>
-        )}
         <Menu.Divider />
 
         <Menu.Item

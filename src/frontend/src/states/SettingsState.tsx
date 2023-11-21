@@ -1,7 +1,7 @@
 /**
  * State management for remote (server side) settings
  */
-import { create } from 'zustand';
+import { create, createStore } from 'zustand';
 
 import { api } from '../App';
 import { ApiPaths } from '../enums/ApiEndpoints';
@@ -78,6 +78,50 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
     return isTrue(value);
   }
 }));
+
+/**
+ * State management for plugin settings
+ */
+interface CreatePluginSettingStateProps {
+  plugin: string;
+}
+
+export const createPluginSettingsState = ({
+  plugin
+}: CreatePluginSettingStateProps) => {
+  const pathParams: PathParams = { plugin };
+
+  return createStore<SettingsStateProps>()((set, get) => ({
+    settings: [],
+    lookup: {},
+    endpoint: ApiPaths.plugin_setting_list,
+    pathParams,
+    fetchSettings: async () => {
+      await api
+        .get(apiUrl(ApiPaths.plugin_setting_list, undefined, { plugin }))
+        .then((response) => {
+          const settings = response.data;
+          set({
+            settings,
+            lookup: generate_lookup(settings)
+          });
+        })
+        .catch((error) => {
+          console.error(
+            `Error fetching plugin settings for plugin ${plugin}:`,
+            error
+          );
+        });
+    },
+    getSetting: (key: string, default_value?: string) => {
+      return get().lookup[key] ?? default_value ?? '';
+    },
+    isSet: (key: string, default_value?: boolean) => {
+      let value = get().lookup[key] ?? default_value ?? 'false';
+      return isTrue(value);
+    }
+  }));
+};
 
 /*
   return a lookup dictionary for the value of the provided Setting list

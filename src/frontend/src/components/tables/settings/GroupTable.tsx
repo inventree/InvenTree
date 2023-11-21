@@ -1,6 +1,7 @@
-import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import {
@@ -9,17 +10,81 @@ import {
   openEditApiForm
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useInstance } from '../../../hooks/UseInstance';
 import { apiUrl } from '../../../states/ApiState';
 import { AddItemButton } from '../../buttons/AddItemButton';
+import { EditApiForm } from '../../forms/ApiForm';
+import { PlaceholderPill } from '../../items/Placeholder';
+import { DetailDrawer } from '../../nav/DetailDrawer';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+
+export function GroupDrawer({
+  id,
+  refreshTable
+}: {
+  id: string;
+  refreshTable: () => void;
+}) {
+  const {
+    refreshInstance,
+    instanceQuery: { isFetching, error }
+  } = useInstance({
+    endpoint: ApiPaths.group_list,
+    pk: id,
+    throwError: true
+  });
+
+  if (isFetching) {
+    return <LoadingOverlay visible={true} />;
+  }
+
+  if (error) {
+    return (
+      <Text>
+        {(error as any)?.response?.status === 404 ? (
+          <Trans>Group with id {id} not found</Trans>
+        ) : (
+          <Trans>An error occurred while fetching group details</Trans>
+        )}
+      </Text>
+    );
+  }
+
+  return (
+    <Stack>
+      <EditApiForm
+        props={{
+          url: ApiPaths.group_list,
+          pk: id,
+          fields: {
+            name: {}
+          },
+          onFormSuccess: () => {
+            refreshTable();
+            refreshInstance();
+          }
+        }}
+        id={`group-detail-drawer-${id}`}
+      />
+
+      <Title order={5}>
+        <Trans>Permission set</Trans>
+      </Title>
+      <Group>
+        <PlaceholderPill />
+      </Group>
+    </Stack>
+  );
+}
 
 /**
  * Table for displaying list of groups
  */
 export function GroupTable() {
   const { tableKey, refreshTable } = useTableRefresh('groups');
+  const navigate = useNavigate();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -89,14 +154,29 @@ export function GroupTable() {
   }, []);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiPaths.group_list)}
-      tableKey={tableKey}
-      columns={columns}
-      props={{
-        rowActions: rowActions,
-        customActionGroups: tableActions
-      }}
-    />
+    <>
+      <DetailDrawer
+        title={t`Edit group`}
+        renderContent={(id) => {
+          if (!id || !id.startsWith('group-')) return false;
+          return (
+            <GroupDrawer
+              id={id.replace('group-', '')}
+              refreshTable={refreshTable}
+            />
+          );
+        }}
+      />
+      <InvenTreeTable
+        url={apiUrl(ApiPaths.group_list)}
+        tableKey={tableKey}
+        columns={columns}
+        props={{
+          rowActions: rowActions,
+          customActionGroups: tableActions,
+          onRowClick: (record) => navigate(`group-${record.pk}/`)
+        }}
+      />
+    </>
   );
 }

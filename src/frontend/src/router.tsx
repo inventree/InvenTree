@@ -89,11 +89,8 @@ export const SystemSettings = Loadable(
   lazy(() => import('./pages/Index/Settings/SystemSettings'))
 );
 
-export const PluginSettings = Loadable(
-  lazy(() => import('./pages/Index/Settings/PluginSettings'))
-);
 export const AdminCenter = Loadable(
-  lazy(() => import('./pages/Index/Settings/AdminCenter'))
+  lazy(() => import('./pages/Index/Settings/AdminCenter/Index'))
 );
 
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
@@ -120,7 +117,6 @@ export const routes = (
         <Route path="admin/*" element={<AdminCenter />} />
         <Route path="system/*" element={<SystemSettings />} />
         <Route path="user/*" element={<UserSettings />} />
-        <Route path="plugin/*" element={<PluginSettings />} />
       </Route>
       <Route path="part/">
         <Route index element={<Navigate to="category/" />} />

@@ -180,6 +180,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'order/ro/attachment/';
     case ApiPaths.plugin_list:
       return 'plugins/';
+    case ApiPaths.plugin_setting_list:
+      return 'plugins/:plugin/settings/';
     case ApiPaths.project_code_list:
       return 'project-code/';
     case ApiPaths.custom_unit_list:

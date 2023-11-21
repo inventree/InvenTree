@@ -1,7 +1,8 @@
-import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { useCallback, useMemo, useState } from 'react';
+import { Trans, t } from '@lingui/macro';
+import { List, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import {
@@ -10,13 +11,15 @@ import {
   openEditApiForm
 } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useInstance } from '../../../hooks/UseInstance';
 import { apiUrl } from '../../../states/ApiState';
 import { AddItemButton } from '../../buttons/AddItemButton';
+import { EditApiForm } from '../../forms/ApiForm';
+import { DetailDrawer } from '../../nav/DetailDrawer';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
-import { UserDrawer } from './UserDrawer';
 
 interface GroupDetailI {
   pk: number;
@@ -35,13 +38,88 @@ export interface UserDetailI {
   is_superuser: boolean;
 }
 
+export function UserDrawer({
+  id,
+  refreshTable
+}: {
+  id: string;
+  refreshTable: () => void;
+}) {
+  const {
+    instance: userDetail,
+    refreshInstance,
+    instanceQuery: { isFetching, error }
+  } = useInstance<UserDetailI>({
+    endpoint: ApiPaths.user_list,
+    pk: id,
+    throwError: true
+  });
+
+  if (isFetching) {
+    return <LoadingOverlay visible={true} />;
+  }
+
+  if (error) {
+    return (
+      <Text>
+        {(error as any)?.response?.status === 404 ? (
+          <Trans>User with id {id} not found</Trans>
+        ) : (
+          <Trans>An error occurred while fetching user details</Trans>
+        )}
+      </Text>
+    );
+  }
+
+  return (
+    <Stack>
+      <EditApiForm
+        props={{
+          url: ApiPaths.user_list,
+          pk: id,
+          fields: {
+            username: {},
+            first_name: {},
+            last_name: {},
+            email: {},
+            is_staff: {},
+            is_superuser: {},
+            is_active: {}
+          },
+          onFormSuccess: () => {
+            refreshTable();
+            refreshInstance();
+          }
+        }}
+        id={`user-detail-drawer-${id}`}
+      />
+
+      <Title order={5}>
+        <Trans>Groups</Trans>
+      </Title>
+      <Text ml={'md'}>
+        {userDetail?.groups && userDetail?.groups?.length > 0 ? (
+          <List>
+            {userDetail?.groups?.map((group) => (
+              <List.Item key={group.pk}>
+                <Link to={`../group-${group.pk}`}>{group.name}</Link>
+              </List.Item>
+            ))}
+          </List>
+        ) : (
+          <Trans>No groups</Trans>
+        )}
+      </Text>
+    </Stack>
+  );
+}
+
 /**
  * Table for displaying list of users
  */
 export function UserTable() {
   const { tableKey, refreshTable } = useTableRefresh('users');
-  const [opened, { open, close }] = useDisclosure(false);
-  const [userDetail, setUserDetail] = useState<UserDetailI>();
+  const navigate = useNavigate();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -152,11 +230,17 @@ export function UserTable() {
 
   return (
     <>
-      <UserDrawer
-        opened={opened}
-        close={close}
-        refreshTable={refreshTable}
-        userDetail={userDetail}
+      <DetailDrawer
+        title={t`Edit user`}
+        renderContent={(id) => {
+          if (!id || !id.startsWith('user-')) return false;
+          return (
+            <UserDrawer
+              id={id.replace('user-', '')}
+              refreshTable={refreshTable}
+            />
+          );
+        }}
       />
       <InvenTreeTable
         url={apiUrl(ApiPaths.user_list)}
@@ -165,10 +249,7 @@ export function UserTable() {
         props={{
           rowActions: rowActions,
           customActionGroups: tableActions,
-          onRowClick: (record: any) => {
-            setUserDetail(record);
-            open();
-          }
+          onRowClick: (record) => navigate(`user-${record.pk}/`)
         }}
       />
     </>

@@ -1,8 +1,10 @@
 import { Stack, Text, useMantineTheme } from '@mantine/core';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { useStore } from 'zustand';
 
 import {
   SettingsStateProps,
+  createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
@@ -71,4 +73,13 @@ export function GlobalSettingList({ keys }: { keys: string[] }) {
   const globalSettings = useGlobalSettingsState();
 
   return <SettingList settingsState={globalSettings} keys={keys} />;
+}
+
+export function PluginSettingList({ pluginPk }: { pluginPk: string }) {
+  const pluginSettingsStore = useRef(
+    createPluginSettingsState({ plugin: pluginPk })
+  ).current;
+  const pluginSettings = useStore(pluginSettingsStore);
+
+  return <SettingList settingsState={pluginSettings} />;
 }

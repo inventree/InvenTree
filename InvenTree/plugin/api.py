@@ -3,9 +3,11 @@
 from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
@@ -251,7 +253,31 @@ def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
     if not plugin_cgf.active:
         raise NotFound(detail=f"Plugin '{ref}' is not active")
 
-    return plugin_cgf.plugin
+    plugin = plugin_cgf.plugin
+
+    if not plugin:
+        raise NotFound(detail=f"Plugin '{ref}' not installed")
+
+    return plugin
+
+
+class PluginAllSettingList(APIView):
+    """List endpoint for all plugin settings for a specific plugin.
+
+    - GET: return all settings for a plugin config
+    """
+
+    permission_classes = [GlobalSettingsPermissions]
+
+    @extend_schema(responses={200: PluginSerializers.PluginSettingSerializer(many=True)})
+    def get(self, request, pk):
+        """Get all settings for a plugin config."""
+        plugin = check_plugin(None, pk)
+
+        settings_dict = PluginSetting.all_settings(settings_definition=plugin.settings, plugin=plugin.plugin_config())
+
+        results = PluginSerializers.PluginSettingSerializer(list(settings_dict.values()), many=True).data
+        return Response(results)
 
 
 class PluginSettingDetail(RetrieveUpdateAPI):
@@ -300,7 +326,10 @@ plugin_api_urls = [
 
         # Detail views for a single PluginConfig item
         path(r'<int:pk>/', include([
-            re_path(r'^settings/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail-pk'),
+            re_path(r"^settings/", include([
+                re_path(r'^(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail-pk'),
+                re_path(r"^.*$", PluginAllSettingList.as_view(), name="api-plugin-settings"),
+            ])),
             re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-detail-activate'),
             re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
         ])),
