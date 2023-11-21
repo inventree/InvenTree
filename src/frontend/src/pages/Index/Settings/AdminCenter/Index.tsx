@@ -7,9 +7,12 @@ import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { PluginManagementPanel } from './PluginManagementPanel';
+import useSystemSettingPanels from './SystemSettingPanels';
 import { UserManagementPanel } from './UserManagementPanel';
 
 export default function AdminCenter() {
+  const systemSettingsPanels = useSystemSettingPanels();
+
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -23,7 +26,13 @@ export default function AdminCenter() {
         label: t`Plugins`,
         icon: <IconPlugConnected />,
         content: <PluginManagementPanel />
-      }
+      },
+      {
+        name: 'system-settings',
+        label: t`System Settings`,
+        divider: true
+      },
+      ...systemSettingsPanels
     ];
   }, []);
 

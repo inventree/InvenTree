@@ -35,25 +35,21 @@ export function MainMenu() {
       </Menu.Target>
       <Menu.Dropdown>
         {userState.user?.is_staff && (
-          <Menu.Item
-            icon={<IconUserBolt />}
-            component={Link}
-            to="/settings/admin"
-          >
+          <Menu.Item icon={<IconUserBolt />} component={Link} to="/admin">
             <Trans>Admin Center</Trans>
           </Menu.Item>
         )}
         <Menu.Label>
           <Trans>Settings</Trans>
         </Menu.Label>
-        <Menu.Item icon={<IconUserCog />} component={Link} to="/settings/user">
+        <Menu.Item icon={<IconUserCog />} component={Link} to="/settings">
           <Trans>Account settings</Trans>
         </Menu.Item>
         {userState.user?.is_staff && (
           <Menu.Item
             icon={<IconSettings />}
             component={Link}
-            to="/settings/system"
+            to="/admin/server"
           >
             <Trans>System Settings</Trans>
           </Menu.Item>

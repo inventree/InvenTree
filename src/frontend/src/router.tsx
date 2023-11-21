@@ -85,10 +85,6 @@ export const UserSettings = Loadable(
   lazy(() => import('./pages/Index/Settings/UserSettings'))
 );
 
-export const SystemSettings = Loadable(
-  lazy(() => import('./pages/Index/Settings/SystemSettings'))
-);
-
 export const AdminCenter = Loadable(
   lazy(() => import('./pages/Index/Settings/AdminCenter/Index'))
 );
@@ -112,10 +108,9 @@ export const routes = (
       <Route path="notifications/*" element={<Notifications />} />,
       <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
+      <Route path="admin/*" element={<AdminCenter />} />
       <Route path="settings/">
-        <Route index element={<Navigate to="admin/" />} />
-        <Route path="admin/*" element={<AdminCenter />} />
-        <Route path="system/*" element={<SystemSettings />} />
+        <Route index element={<Navigate to="user/" />} />
         <Route path="user/*" element={<UserSettings />} />
       </Route>
       <Route path="part/">

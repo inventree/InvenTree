@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { Divider, Stack } from '@mantine/core';
 import {
   IconBellCog,
@@ -21,20 +21,18 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { StylishText } from '../../../components/items/StylishText';
-import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
-import { SettingsHeader } from '../../../components/nav/SettingsHeader';
-import { GlobalSettingList } from '../../../components/settings/SettingList';
-import { PartParameterTemplateTable } from '../../../components/tables/part/PartParameterTemplateTable';
-import { CurrencyTable } from '../../../components/tables/settings/CurrencyTable';
-import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
-import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
-import { useServerApiState } from '../../../states/ApiState';
+import { StylishText } from '../../../../components/items/StylishText';
+import { PanelType } from '../../../../components/nav/PanelGroup';
+import { GlobalSettingList } from '../../../../components/settings/SettingList';
+import { PartParameterTemplateTable } from '../../../../components/tables/part/PartParameterTemplateTable';
+import { CurrencyTable } from '../../../../components/tables/settings/CurrencyTable';
+import { CustomUnitsTable } from '../../../../components/tables/settings/CustomUnitsTable';
+import { ProjectCodeTable } from '../../../../components/tables/settings/ProjectCodeTable';
 
 /**
- * System settings page
+ * System setting panels
  */
-export default function SystemSettings() {
+export default function useSystemSettingPanels() {
   const systemSettingsPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -287,19 +285,6 @@ export default function SystemSettings() {
       }
     ];
   }, []);
-  const [server] = useServerApiState((state) => [state.server]);
 
-  return (
-    <>
-      <Stack spacing="xs">
-        <SettingsHeader
-          title={t`System Settings`}
-          subtitle={server.instance || ''}
-          switch_link="/settings/user"
-          switch_text={<Trans>Switch to User Setting</Trans>}
-        />
-        <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
-      </Stack>
-    </>
-  );
+  return systemSettingsPanels;
 }

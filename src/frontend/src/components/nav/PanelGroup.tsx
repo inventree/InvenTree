@@ -34,6 +34,7 @@ export type PanelType = {
   content?: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
+  divider?: boolean;
 };
 
 export type PanelProps = {
@@ -124,6 +125,8 @@ function BasePanelGroup({
                     value={panel.name}
                     icon={panel.icon}
                     hidden={panel.hidden}
+                    disabled={panel.divider}
+                    style={panel.divider ? { cursor: 'unset' } : {}}
                   >
                     {expanded && panel.label}
                   </Tabs.Tab>
@@ -147,7 +150,8 @@ function BasePanelGroup({
         </Tabs.List>
         {panels.map(
           (panel) =>
-            !panel.hidden && (
+            !panel.hidden &&
+            !panel.divider && (
               <Tabs.Panel
                 key={panel.name}
                 value={panel.name}
