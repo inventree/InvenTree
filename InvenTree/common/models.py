@@ -51,6 +51,7 @@ import InvenTree.tasks
 import InvenTree.validators
 import order.validators
 import report.helpers
+import users.models
 from plugin import registry
 
 logger = logging.getLogger('inventree')
@@ -124,6 +125,15 @@ class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
         blank=True,
         verbose_name=_('Description'),
         help_text=_('Project description'),
+    )
+
+    responsible = models.ForeignKey(
+        users.models.Owner,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Responsible'),
+        help_text=_('User or group responsible for this project'),
+        related_name='project_codes',
     )
 
 

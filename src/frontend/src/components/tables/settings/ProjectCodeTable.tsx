@@ -14,7 +14,7 @@ import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
-import { DescriptionColumn } from '../ColumnRenderers';
+import { DescriptionColumn, ResponsibleColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -33,7 +33,8 @@ export function ProjectCodeTable() {
         sortable: true,
         title: t`Project Code`
       },
-      DescriptionColumn()
+      DescriptionColumn(),
+      ResponsibleColumn()
     ];
   }, []);
 
@@ -49,7 +50,8 @@ export function ProjectCodeTable() {
               title: t`Edit project code`,
               fields: {
                 code: {},
-                description: {}
+                description: {},
+                responsible: {}
               },
               onFormSuccess: refreshTable,
               successMessage: t`Project code updated`
@@ -82,7 +84,8 @@ export function ProjectCodeTable() {
       title: t`Add project code`,
       fields: {
         code: {},
-        description: {}
+        description: {},
+        responsible: {}
       },
       onFormSuccess: refreshTable,
       successMessage: t`Added project code`
