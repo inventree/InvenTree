@@ -16,7 +16,6 @@ from django.utils.translation import gettext_lazy as _
 
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
@@ -1135,11 +1134,6 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         default_currency = common.settings.currency_code_default()
 
         if override_min is not None and override_max is not None:
-            override_min_currency = data.get('override_min_currency', default_currency)
-            override_max_currency = data.get('override_max_currency', default_currency)
-
-            override_min = Money(override_min, override_min_currency)
-            override_max = Money(override_max, override_max_currency)
 
             try:
                 override_min = convert_money(override_min, default_currency)
@@ -1160,12 +1154,9 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         super().save()
 
-        data = self.validated_data
-
-        if InvenTree.helpers.str2bool(data.get('update', False)):
-            # Update part pricing
-            pricing = self.instance
-            pricing.update_pricing()
+        # Update part pricing
+        pricing = self.instance
+        pricing.update_pricing()
 
 
 class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
