@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-11 21:26\n"
+"PO-Revision-Date: 2023-11-18 23:07\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -96,6 +96,8 @@ msgid "Welcome, log in below"
 msgstr "Willkommen, unten anmelden"
 
 #: src/components/forms/AuthenticationForm.tsx:91
+#: src/components/tables/settings/UserDrawer.tsx:159
+#: src/components/tables/settings/UserTable.tsx:57
 msgid "Username"
 msgstr "Nutzername"
 
@@ -114,6 +116,8 @@ msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
 #: src/components/forms/AuthenticationForm.tsx:117
+#: src/components/tables/settings/UserDrawer.tsx:163
+#: src/components/tables/settings/UserTable.tsx:51
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:48
 msgid "Email"
@@ -155,6 +159,7 @@ msgstr "Adresse"
 #: src/components/tables/part/PartCategoryTable.tsx:24
 #: src/components/tables/part/PartParameterTemplateTable.tsx:32
 #: src/components/tables/settings/CustomUnitsTable.tsx:32
+#: src/components/tables/settings/GroupTable.tsx:29
 #: src/components/tables/stock/StockLocationTable.tsx:25
 msgid "Name"
 msgstr "Name"
@@ -553,12 +558,13 @@ msgstr ""
 #~ msgstr "Profile"
 
 #: src/components/nav/MainMenu.tsx:44
-#: src/pages/Index/Settings/AdminCenter.tsx:89
+#: src/defaults/menuItems.tsx:63
+#: src/pages/Index/Settings/AdminCenter.tsx:98
 msgid "Admin Center"
 msgstr ""
 
 #: src/components/nav/MainMenu.tsx:48
-#: src/pages/Index/Settings/AdminCenter.tsx:35
+#: src/pages/Index/Settings/AdminCenter.tsx:44
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -701,7 +707,7 @@ msgstr ""
 #: src/components/tables/stock/StockItemTable.tsx:27
 #: src/pages/part/PartDetail.tsx:328
 msgid "Part"
-msgstr ""
+msgstr "Teil"
 
 #: src/components/render/ModelType.tsx:21
 #: src/components/tables/part/PartCategoryTable.tsx:36
@@ -815,11 +821,11 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:102
 msgid "Purchase Order Line"
-msgstr ""
+msgstr "Bestellposition"
 
 #: src/components/render/ModelType.tsx:103
 msgid "Purchase Order Lines"
-msgstr ""
+msgstr "Bestellpositionen"
 
 #: src/components/render/ModelType.tsx:107
 #: src/components/tables/sales/SalesOrderTable.tsx:37
@@ -886,6 +892,7 @@ msgid "User"
 msgstr "Nutzer"
 
 #: src/components/render/ModelType.tsx:150
+#: src/pages/Index/Settings/AdminCenter.tsx:34
 msgid "Users"
 msgstr "Benutzer"
 
@@ -943,7 +950,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:60
 #: src/pages/sales/SalesOrderDetail.tsx:46
 msgid "Line Items"
-msgstr ""
+msgstr "Positionen"
 
 #: src/components/tables/ColumnRenderers.tsx:78
 msgid "Status"
@@ -1110,7 +1117,7 @@ msgstr ""
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:119
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:40
 msgid "Reference"
-msgstr ""
+msgstr "Referenz"
 
 #: src/components/tables/bom/BomTable.tsx:110
 msgid "Substitutes"
@@ -1199,7 +1206,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:78
 #: src/pages/stock/StockDetail.tsx:120
 msgid "Notes"
-msgstr ""
+msgstr "Notizen"
 
 #: src/components/tables/bom/BomTable.tsx:256
 msgid "View BOM"
@@ -1207,7 +1214,7 @@ msgstr ""
 
 #: src/components/tables/bom/BomTable.tsx:267
 msgid "Validate BOM line"
-msgstr ""
+msgstr "Stücklisten-Position bestätigen"
 
 #: src/components/tables/bom/BomTable.tsx:275
 msgid "Edit Substitutes"
@@ -1265,6 +1272,8 @@ msgstr ""
 #: src/components/tables/build/BuildOrderTable.tsx:110
 #: src/components/tables/part/PartTable.tsx:175
 #: src/components/tables/plugin/PluginListTable.tsx:218
+#: src/components/tables/settings/UserDrawer.tsx:181
+#: src/components/tables/settings/UserTable.tsx:88
 msgid "Active"
 msgstr ""
 
@@ -1692,7 +1701,7 @@ msgstr ""
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:55
 msgid "Receive line item"
-msgstr ""
+msgstr "Position empfangen"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:55
 #~ msgid "Receive"
@@ -1700,66 +1709,66 @@ msgstr ""
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:76
 msgid "Edit Line Item"
-msgstr ""
+msgstr "Position bearbeiten"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:79
 msgid "Line item updated"
-msgstr ""
+msgstr "Position aktualisiert"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:112
 msgid "Part Description"
-msgstr ""
+msgstr "Teilebeschreibung"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:137
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:173
 #: src/components/tables/purchasing/SupplierPartTable.tsx:105
 #: src/components/tables/purchasing/SupplierPartTable.tsx:125
 msgid "Pack Quantity"
-msgstr ""
+msgstr "Verpackungsmenge"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:143
 msgid "Total Quantity"
-msgstr ""
+msgstr "Gesamtmenge"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:159
 msgid "Received"
-msgstr ""
+msgstr "Erhalten"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:178
 msgid "Supplier Code"
-msgstr ""
+msgstr "Lieferantennummer"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:185
 msgid "Supplier Link"
-msgstr ""
+msgstr "Lieferanten-Link"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:192
 msgid "Manufacturer Code"
-msgstr ""
+msgstr "Herstellernummer"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:200
 msgid "Unit Price"
-msgstr ""
+msgstr "Preis pro Einheit"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:206
 msgid "Destination"
-msgstr ""
+msgstr "Bestimmungsort"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:224
 msgid "Add Line Item"
-msgstr ""
+msgstr "Position hinzufügen"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:230
 msgid "Line item added"
-msgstr ""
+msgstr "Position hinzugefügt"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:239
 msgid "Add line item"
-msgstr ""
+msgstr "Position hinzufügen"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:245
 msgid "Receive items"
-msgstr ""
+msgstr "Erhaltene Artikel"
 
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:48
 #: src/components/tables/purchasing/SupplierPartTable.tsx:51
@@ -1900,6 +1909,35 @@ msgstr ""
 msgid "Custom unit created"
 msgstr ""
 
+#: src/components/tables/settings/GroupTable.tsx:41
+msgid "Edit group"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:46
+msgid "Group updated"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:55
+msgid "Delete group"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:56
+msgid "Group deleted"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:59
+msgid "Are you sure you want to delete this group?"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:70
+#: src/components/tables/settings/GroupTable.tsx:84
+msgid "Add group"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:73
+msgid "Added group"
+msgstr ""
+
 #: src/components/tables/settings/ProjectCodeTable.tsx:49
 msgid "Edit project code"
 msgstr ""
@@ -1927,6 +1965,96 @@ msgstr ""
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:88
 msgid "Added project code"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:92
+msgid "User permission changed successfully"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:93
+msgid "Some changes might only take effect after the user refreshes their login."
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:118
+msgid "Changed user active status successfully"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:119
+msgid "Set to {active}"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:142
+msgid "User details for {0}"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:148
+#: src/pages/company/CompanyDetail.tsx:71
+#: src/pages/part/PartDetail.tsx:87
+#: src/pages/stock/StockDetail.tsx:69
+msgid "Details"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:165
+#: src/components/tables/settings/UserTable.tsx:62
+msgid "First Name"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:170
+#: src/components/tables/settings/UserTable.tsx:67
+msgid "Last Name"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:176
+msgid "Rights"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:184
+#: src/components/tables/settings/UserTable.tsx:80
+msgid "Staff"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:190
+#: src/components/tables/settings/UserTable.tsx:84
+msgid "Superuser"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:200
+#: src/components/tables/settings/UserTable.tsx:73
+#: src/pages/Index/Settings/AdminCenter.tsx:38
+msgid "Groups"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:204
+msgid "No groups"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:100
+msgid "Edit user"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:107
+msgid "User updated"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:116
+msgid "Delete user"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:117
+msgid "user deleted"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:120
+msgid "Are you sure you want to delete this user?"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:131
+#: src/components/tables/settings/UserTable.tsx:147
+msgid "Add user"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:139
+msgid "Added user"
 msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:72
@@ -2311,7 +2439,7 @@ msgid "Sales"
 msgstr ""
 
 #: src/defaults/links.tsx:34
-#: src/defaults/menuItems.tsx:66
+#: src/defaults/menuItems.tsx:71
 #: src/pages/Index/Playground.tsx:104
 msgid "Playground"
 msgstr ""
@@ -2492,15 +2620,15 @@ msgstr ""
 
 #: src/forms/AttachmentForms.tsx:125
 msgid "Delete Attachment"
-msgstr ""
+msgstr "Anhang löschen"
 
 #: src/forms/AttachmentForms.tsx:126
 msgid "Attachment deleted"
-msgstr ""
+msgstr "Anhang gelöscht"
 
 #: src/forms/AttachmentForms.tsx:130
 msgid "Are you sure you want to delete this attachment?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie diesen Anhang löschen möchten?"
 
 #: src/forms/CompanyForms.tsx:99
 msgid "Edit Company"
@@ -2510,23 +2638,23 @@ msgstr ""
 msgid "Company updated"
 msgstr ""
 
-#: src/forms/PartForms.tsx:73
+#: src/forms/PartForms.tsx:77
 msgid "Create Part"
 msgstr ""
 
-#: src/forms/PartForms.tsx:75
+#: src/forms/PartForms.tsx:79
 msgid "Part created"
 msgstr ""
 
-#: src/forms/PartForms.tsx:92
+#: src/forms/PartForms.tsx:96
 msgid "Edit Part"
 msgstr ""
 
-#: src/forms/PartForms.tsx:96
+#: src/forms/PartForms.tsx:100
 msgid "Part updated"
 msgstr ""
 
-#: src/forms/PartForms.tsx:107
+#: src/forms/PartForms.tsx:111
 msgid "Parent part category"
 msgstr ""
 
@@ -3092,28 +3220,32 @@ msgstr ""
 msgid "Loader"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:28
+#: src/pages/Index/Settings/AdminCenter.tsx:30
 msgid "User Management"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:39
+#: src/pages/Index/Settings/AdminCenter.tsx:48
 msgid "Select settings relevant for user lifecycle. More available in"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:45
+#: src/pages/Index/Settings/AdminCenter.tsx:54
 msgid "System settings"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:65
+#: src/pages/Index/Settings/AdminCenter.tsx:74
 msgid "Quick Actions"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:70
+#: src/pages/Index/Settings/AdminCenter.tsx:79
 msgid "Add a new user"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:90
-msgid "Advanced Amininistrative Options for InvenTree"
+#: src/pages/Index/Settings/AdminCenter.tsx:91
+#~ msgid "Advanced Amininistrative Options for InvenTree"
+#~ msgstr "Advanced Amininistrative Options for InvenTree"
+
+#: src/pages/Index/Settings/AdminCenter.tsx:99
+msgid "Advanced Options"
 msgstr ""
 
 #: src/pages/Index/Settings/PluginSettings.tsx:47
@@ -3323,12 +3455,6 @@ msgstr ""
 
 #: src/pages/build/BuildIndex.tsx:39
 msgid "New Build Order"
-msgstr ""
-
-#: src/pages/company/CompanyDetail.tsx:71
-#: src/pages/part/PartDetail.tsx:87
-#: src/pages/stock/StockDetail.tsx:69
-msgid "Details"
 msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:76

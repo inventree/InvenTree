@@ -223,6 +223,7 @@ class ManufacturerPartSerializer(InvenTreeTagModelSerializer):
             'description',
             'MPN',
             'link',
+            'barcode_hash',
 
             'tags',
         ]

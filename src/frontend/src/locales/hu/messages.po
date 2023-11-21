@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-10 20:54\n"
+"PO-Revision-Date: 2023-11-15 22:59\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -96,6 +96,8 @@ msgid "Welcome, log in below"
 msgstr "Üdvözlet, bejelentkezés lent"
 
 #: src/components/forms/AuthenticationForm.tsx:91
+#: src/components/tables/settings/UserDrawer.tsx:159
+#: src/components/tables/settings/UserTable.tsx:57
 msgid "Username"
 msgstr "Felhasználónév"
 
@@ -114,6 +116,8 @@ msgid "Reset password"
 msgstr "Jelszó visszaállítása"
 
 #: src/components/forms/AuthenticationForm.tsx:117
+#: src/components/tables/settings/UserDrawer.tsx:163
+#: src/components/tables/settings/UserTable.tsx:51
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:48
 msgid "Email"
@@ -155,6 +159,7 @@ msgstr "Kiszolgáló"
 #: src/components/tables/part/PartCategoryTable.tsx:24
 #: src/components/tables/part/PartParameterTemplateTable.tsx:32
 #: src/components/tables/settings/CustomUnitsTable.tsx:32
+#: src/components/tables/settings/GroupTable.tsx:29
 #: src/components/tables/stock/StockLocationTable.tsx:25
 msgid "Name"
 msgstr "Név"
@@ -553,12 +558,13 @@ msgstr ""
 #~ msgstr "Profile"
 
 #: src/components/nav/MainMenu.tsx:44
-#: src/pages/Index/Settings/AdminCenter.tsx:89
+#: src/defaults/menuItems.tsx:63
+#: src/pages/Index/Settings/AdminCenter.tsx:98
 msgid "Admin Center"
 msgstr ""
 
 #: src/components/nav/MainMenu.tsx:48
-#: src/pages/Index/Settings/AdminCenter.tsx:35
+#: src/pages/Index/Settings/AdminCenter.tsx:44
 msgid "Settings"
 msgstr "Beállítások"
 
@@ -886,6 +892,7 @@ msgid "User"
 msgstr "Felhasználó"
 
 #: src/components/render/ModelType.tsx:150
+#: src/pages/Index/Settings/AdminCenter.tsx:34
 msgid "Users"
 msgstr ""
 
@@ -1265,6 +1272,8 @@ msgstr "Kiállította"
 #: src/components/tables/build/BuildOrderTable.tsx:110
 #: src/components/tables/part/PartTable.tsx:175
 #: src/components/tables/plugin/PluginListTable.tsx:218
+#: src/components/tables/settings/UserDrawer.tsx:181
+#: src/components/tables/settings/UserTable.tsx:88
 msgid "Active"
 msgstr "Aktív"
 
@@ -1900,6 +1909,35 @@ msgstr ""
 msgid "Custom unit created"
 msgstr ""
 
+#: src/components/tables/settings/GroupTable.tsx:41
+msgid "Edit group"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:46
+msgid "Group updated"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:55
+msgid "Delete group"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:56
+msgid "Group deleted"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:59
+msgid "Are you sure you want to delete this group?"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:70
+#: src/components/tables/settings/GroupTable.tsx:84
+msgid "Add group"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:73
+msgid "Added group"
+msgstr ""
+
 #: src/components/tables/settings/ProjectCodeTable.tsx:49
 msgid "Edit project code"
 msgstr ""
@@ -1927,6 +1965,96 @@ msgstr ""
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:88
 msgid "Added project code"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:92
+msgid "User permission changed successfully"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:93
+msgid "Some changes might only take effect after the user refreshes their login."
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:118
+msgid "Changed user active status successfully"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:119
+msgid "Set to {active}"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:142
+msgid "User details for {0}"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:148
+#: src/pages/company/CompanyDetail.tsx:71
+#: src/pages/part/PartDetail.tsx:87
+#: src/pages/stock/StockDetail.tsx:69
+msgid "Details"
+msgstr "Részletek"
+
+#: src/components/tables/settings/UserDrawer.tsx:165
+#: src/components/tables/settings/UserTable.tsx:62
+msgid "First Name"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:170
+#: src/components/tables/settings/UserTable.tsx:67
+msgid "Last Name"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:176
+msgid "Rights"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:184
+#: src/components/tables/settings/UserTable.tsx:80
+msgid "Staff"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:190
+#: src/components/tables/settings/UserTable.tsx:84
+msgid "Superuser"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:200
+#: src/components/tables/settings/UserTable.tsx:73
+#: src/pages/Index/Settings/AdminCenter.tsx:38
+msgid "Groups"
+msgstr ""
+
+#: src/components/tables/settings/UserDrawer.tsx:204
+msgid "No groups"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:100
+msgid "Edit user"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:107
+msgid "User updated"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:116
+msgid "Delete user"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:117
+msgid "user deleted"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:120
+msgid "Are you sure you want to delete this user?"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:131
+#: src/components/tables/settings/UserTable.tsx:147
+msgid "Add user"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:139
+msgid "Added user"
 msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:72
@@ -2311,7 +2439,7 @@ msgid "Sales"
 msgstr ""
 
 #: src/defaults/links.tsx:34
-#: src/defaults/menuItems.tsx:66
+#: src/defaults/menuItems.tsx:71
 #: src/pages/Index/Playground.tsx:104
 msgid "Playground"
 msgstr "Játszótér"
@@ -2510,23 +2638,23 @@ msgstr ""
 msgid "Company updated"
 msgstr ""
 
-#: src/forms/PartForms.tsx:73
+#: src/forms/PartForms.tsx:77
 msgid "Create Part"
 msgstr "Alkatrész létrehozása"
 
-#: src/forms/PartForms.tsx:75
+#: src/forms/PartForms.tsx:79
 msgid "Part created"
 msgstr "Alkatrész létrehozva"
 
-#: src/forms/PartForms.tsx:92
+#: src/forms/PartForms.tsx:96
 msgid "Edit Part"
 msgstr "Alkatrész szerkesztése"
 
-#: src/forms/PartForms.tsx:96
+#: src/forms/PartForms.tsx:100
 msgid "Part updated"
 msgstr "Alkatrész frissítve"
 
-#: src/forms/PartForms.tsx:107
+#: src/forms/PartForms.tsx:111
 msgid "Parent part category"
 msgstr "Felsőbb szintű alkatrész kategória"
 
@@ -3092,28 +3220,32 @@ msgstr "Szegély sugár"
 msgid "Loader"
 msgstr "Betöltő"
 
-#: src/pages/Index/Settings/AdminCenter.tsx:28
+#: src/pages/Index/Settings/AdminCenter.tsx:30
 msgid "User Management"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:39
+#: src/pages/Index/Settings/AdminCenter.tsx:48
 msgid "Select settings relevant for user lifecycle. More available in"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:45
+#: src/pages/Index/Settings/AdminCenter.tsx:54
 msgid "System settings"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:65
+#: src/pages/Index/Settings/AdminCenter.tsx:74
 msgid "Quick Actions"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:70
+#: src/pages/Index/Settings/AdminCenter.tsx:79
 msgid "Add a new user"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter.tsx:90
-msgid "Advanced Amininistrative Options for InvenTree"
+#: src/pages/Index/Settings/AdminCenter.tsx:91
+#~ msgid "Advanced Amininistrative Options for InvenTree"
+#~ msgstr "Advanced Amininistrative Options for InvenTree"
+
+#: src/pages/Index/Settings/AdminCenter.tsx:99
+msgid "Advanced Options"
 msgstr ""
 
 #: src/pages/Index/Settings/PluginSettings.tsx:47
@@ -3324,12 +3456,6 @@ msgstr ""
 #: src/pages/build/BuildIndex.tsx:39
 msgid "New Build Order"
 msgstr "Új gyártási utasítás"
-
-#: src/pages/company/CompanyDetail.tsx:71
-#: src/pages/part/PartDetail.tsx:87
-#: src/pages/stock/StockDetail.tsx:69
-msgid "Details"
-msgstr "Részletek"
 
 #: src/pages/company/CompanyDetail.tsx:76
 msgid "Manufactured Parts"

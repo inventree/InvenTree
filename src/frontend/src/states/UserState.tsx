@@ -42,6 +42,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       })
       .then((response) => {
         const user: UserProps = {
+          pk: response.data.pk,
           first_name: response.data?.first_name ?? '',
           last_name: response.data?.last_name ?? '',
           email: response.data.email,

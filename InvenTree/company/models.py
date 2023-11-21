@@ -206,13 +206,13 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     @property
     def parts(self):
         """Return SupplierPart objects which are supplied or manufactured by this company."""
-        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id))
+        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id)).distinct()
 
     @property
     def stock_items(self):
         """Return a list of all stock items supplied or manufactured by this company."""
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
+        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).distinct()
 
 
 class CompanyAttachment(InvenTreeAttachment):
@@ -387,7 +387,7 @@ class Address(models.Model):
                              help_text=_('Link to address information (external)'))
 
 
-class ManufacturerPart(MetadataMixin, models.Model):
+class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
     Attributes:
