@@ -34,29 +34,8 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
     def format_matched_response(self, label, model, instance):
         """Format a response for the scanned data"""
-        data = {
-            'pk': instance.pk
-        }
 
-        # Add in the API URL if available
-        if hasattr(model, 'get_api_url'):
-            data['api_url'] = f"{model.get_api_url()}{instance.pk}/"
-
-        # Add in the web URL if available
-        if hasattr(instance, 'get_absolute_url'):
-            url = instance.get_absolute_url()
-            data['web_url'] = url
-        else:
-            url = None  # pragma: no cover
-
-        response = {
-            label: data
-        }
-
-        if url is not None:
-            response['url'] = url
-
-        return response
+        return {label: instance.format_matched_response()}
 
     def scan(self, barcode_data):
         """Scan a barcode against this plugin.

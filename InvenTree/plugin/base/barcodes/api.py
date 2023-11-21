@@ -59,29 +59,12 @@ class BarcodeView(CreateAPIView):
         """
         raise NotImplementedError(f"handle_barcode not implemented for {self.__class__}")
 
+    def scan_barcode(self, barcode: str, request, **kwargs):
+        """Perform a generic 'scan' of the provided barcode data.
 
-class BarcodeScan(BarcodeView):
-    """Endpoint for handling generic barcode scan requests.
-
-    Barcode data are decoded by the client application,
-    and sent to this endpoint (as a JSON object) for validation.
-
-    A barcode could follow the internal InvenTree barcode format,
-    or it could match to a third-party barcode format (e.g. Digikey).
-    """
-
-    def handle_barcode(self, barcode: str, request, **kwargs):
-        """Perform barcode scan action
-
-        Arguments:
-            barcode: Raw barcode value
-            request: HTTP request object
-
-        kwargs:
-            Any custom fields passed by the specific serializer
+        Check each loaded plugin, and return the first valid match
         """
 
-        # Note: the default barcode handlers are loaded (and thus run) first
         plugins = registry.with_mixin('barcode')
 
         # Look for a barcode plugin which knows how to deal with this barcode
@@ -110,14 +93,39 @@ class BarcodeScan(BarcodeView):
         response['barcode_data'] = barcode
         response['barcode_hash'] = hash_barcode(barcode)
 
-        # A plugin has not been found!
-        if plugin is None:
-            response['error'] = _('No match found for barcode data')
+        return response
 
-            raise ValidationError(response)
-        else:
-            response['success'] = _('Match found for barcode data')
-            return Response(response)
+
+class BarcodeScan(BarcodeView):
+    """Endpoint for handling generic barcode scan requests.
+
+    Barcode data are decoded by the client application,
+    and sent to this endpoint (as a JSON object) for validation.
+
+    A barcode could follow the internal InvenTree barcode format,
+    or it could match to a third-party barcode format (e.g. Digikey).
+    """
+
+    def handle_barcode(self, barcode: str, request, **kwargs):
+        """Perform barcode scan action
+
+        Arguments:
+            barcode: Raw barcode value
+            request: HTTP request object
+
+        kwargs:
+            Any custom fields passed by the specific serializer
+        """
+
+        result = self.scan_barcode(barcode, request, **kwargs)
+
+        if result['plugin'] is None:
+            result['error'] = _('No match found for barcode data')
+
+            raise ValidationError(result)
+
+        result['success'] = _('Match found for barcode data')
+        return Response(result)
 
 
 class BarcodeAssign(BarcodeView):
@@ -254,6 +262,98 @@ class BarcodeUnassign(BarcodeView):
         })
 
 
+class BarcodePOAllocate(BarcodeView):
+    """Endpoint for allocating parts to a purchase order by scanning their barcode
+
+    Note that the scanned barcode may point to:
+
+    - A Part object
+    - A ManufacturerPart object
+    - A SupplierPart object
+    """
+
+    serializer_class = barcode_serializers.BarcodePOAllocateSerializer
+
+    def get_supplier_part(self, purchase_order, part=None, supplier_part=None, manufacturer_part=None):
+        """Return a single matching SupplierPart (or else raise an exception)
+
+        Arguments:
+            purchase_order: PurchaseOrder object
+            part: Part object (optional)
+            supplier_part: SupplierPart object (optional)
+            manufacturer_part: ManufacturerPart object (optional)
+
+        Returns:
+            SupplierPart object
+
+        Raises:
+            ValidationError if no matching SupplierPart is found
+
+        """
+
+        import company.models
+
+        supplier = purchase_order.supplier
+
+        supplier_parts = company.models.SupplierPart.objects.filter(supplier=supplier)
+
+        if not part and not supplier_part and not manufacturer_part:
+            raise ValidationError({
+                'error': _('No matching part data found'),
+            })
+
+        if part:
+            if part_id := part.get('pk', None):
+                supplier_parts = supplier_parts.filter(part__pk=part_id)
+
+        if supplier_part:
+            if supplier_part_id := supplier_part.get('pk', None):
+                supplier_parts = supplier_parts.filter(pk=supplier_part_id)
+
+        if manufacturer_part:
+            if manufacturer_part_id := manufacturer_part.get('pk', None):
+                supplier_parts = supplier_parts.filter(manufacturer_part__pk=manufacturer_part_id)
+
+        if supplier_parts.count() == 0:
+            raise ValidationError({
+                "error": _("No matching supplier parts found")
+            })
+
+        if supplier_parts.count() > 1:
+            raise ValidationError({
+                "error": _("Multiple matching supplier parts found")
+            })
+
+        # At this stage, we have a single matching supplier part
+        return supplier_parts.first()
+
+    def handle_barcode(self, barcode: str, request, **kwargs):
+        """Scan the provided barcode data"""
+
+        # The purchase order is provided as part of the request
+        purchase_order = kwargs.get('purchase_order')
+
+        result = self.scan_barcode(barcode, request, **kwargs)
+
+        if result['plugin'] is None:
+            result['error'] = _('No match found for barcode data')
+            raise ValidationError(result)
+
+        supplier_part = self.get_supplier_part(
+            purchase_order,
+            part=result.get('part', None),
+            supplier_part=result.get('supplierpart', None),
+            manufacturer_part=result.get('manufacturerpart', None),
+        )
+
+        result['success'] = _("Matched supplier part")
+        result['supplierpart'] = supplier_part.format_matched_response()
+
+        # TODO: Determine the 'quantity to order' for the supplier part
+
+        return Response(result)
+
+
 class BarcodePOReceive(BarcodeView):
     """Endpoint for handling receiving parts by scanning their barcode.
 
@@ -344,6 +444,9 @@ barcode_api_urls = [
 
     # Receive a purchase order item by scanning its barcode
     path("po-receive/", BarcodePOReceive.as_view(), name="api-barcode-po-receive"),
+
+    # Allocate parts to a purchase order by scanning their barcode
+    path("po-allocate/", BarcodePOAllocate.as_view(), name="api-barcode-po-allocate"),
 
     # Catch-all performs barcode 'scan'
     re_path(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),
