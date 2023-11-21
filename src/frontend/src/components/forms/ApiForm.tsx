@@ -177,7 +177,12 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     criteriaMode: 'all',
     defaultValues
   });
-  const { isValid, isDirty, isLoading: isFormLoading } = form.formState;
+  const {
+    isValid,
+    isDirty,
+    isLoading: isFormLoading,
+    isSubmitting
+  } = form.formState;
 
   // Cache URL
   const url = useMemo(
@@ -346,8 +351,8 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
   };
 
   const isLoading = useMemo(
-    () => isFormLoading || initialDataQuery.isFetching,
-    [isFormLoading, initialDataQuery.isFetching]
+    () => isFormLoading || initialDataQuery.isFetching || isSubmitting,
+    [isFormLoading, initialDataQuery.isFetching, isSubmitting]
   );
 
   const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {

@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 153
+INVENTREE_API_VERSION = 154
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v154 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5953
+    - Adds API endpoint for listing all settings of a particular plugin
+    - Adds API endpoint for registry status (errors)
 
 v153 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5956
     - Adds override_min and override_max fields to part pricing API

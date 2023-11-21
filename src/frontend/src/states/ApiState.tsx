@@ -182,6 +182,10 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'plugins/';
     case ApiPaths.plugin_setting_list:
       return 'plugins/:plugin/settings/';
+    case ApiPaths.plugin_registry_status:
+      return 'plugins/status/';
+    case ApiPaths.plugin_install:
+      return 'plugins/install/';
     case ApiPaths.project_code_list:
       return 'project-code/';
     case ApiPaths.custom_unit_list:

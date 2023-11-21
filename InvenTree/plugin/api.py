@@ -17,6 +17,7 @@ from InvenTree.helpers import str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI, UpdateAPI)
 from InvenTree.permissions import IsSuperuser
+from plugin import registry
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
@@ -317,6 +318,37 @@ class PluginSettingDetail(RetrieveUpdateAPI):
     ]
 
 
+class RegistryStatusView(APIView):
+    """Status API endpoint for the plugin registry.
+
+    - GET: Provide status data for the plugin registry
+    """
+
+    permission_classes = [IsSuperuser, ]
+
+    serializer_class = PluginSerializers.PluginRegistryStatusSerializer
+
+    @extend_schema(responses={200: PluginSerializers.PluginRegistryStatusSerializer()})
+    def get(self, request):
+        """Show registry status information."""
+        error_list = []
+
+        for stage, errors in registry.errors.items():
+            for error_detail in errors:
+                for name, message in error_detail.items():
+                    error_list.append({
+                        "stage": stage,
+                        "name": name,
+                        "message": message,
+                    })
+
+        result = PluginSerializers.PluginRegistryStatusSerializer({
+            "registry_errors": error_list,
+        }).data
+
+        return Response(result)
+
+
 plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
     re_path(r'^barcode/', include(barcode_api_urls)),
@@ -344,6 +376,9 @@ plugin_api_urls = [
         # Plugin management
         re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
         re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
+
+        # Registry status
+        re_path(r"^status/", RegistryStatusView.as_view(), name="api-plugin-registry-status"),
 
         # Anything else
         re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),

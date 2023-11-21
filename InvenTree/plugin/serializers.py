@@ -174,3 +174,17 @@ class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
     EXTRA_FIELDS = ['method', ]
 
     method = serializers.CharField(read_only=True)
+
+
+class PluginRegistryErrorSerializer(serializers.Serializer):
+    """Serializer for a plugin registry error."""
+
+    stage = serializers.CharField()
+    name = serializers.CharField()
+    message = serializers.CharField()
+
+
+class PluginRegistryStatusSerializer(serializers.Serializer):
+    """Serializer for plugin registry status."""
+
+    registry_errors = serializers.ListField(child=PluginRegistryErrorSerializer())

@@ -19,6 +19,7 @@ export interface ApiFormModalProps extends ApiFormProps {
   cancelColor?: string;
   onClose?: () => void;
   onOpen?: () => void;
+  closeOnClickOutside?: boolean;
 }
 
 /**
@@ -57,6 +58,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
     title: formProps.title,
     onOpen: formProps.onOpen,
     onClose: formProps.onClose,
+    closeOnClickOutside: formProps.closeOnClickOutside,
     size: 'xl',
     children: (
       <Stack spacing={'xs'}>

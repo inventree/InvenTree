@@ -17,6 +17,7 @@ import {
   IconCircleCheck,
   IconCircleX,
   IconHelpCircle,
+  IconPlaylistAdd,
   IconRefresh
 } from '@tabler/icons-react';
 import { IconDots } from '@tabler/icons-react';
@@ -27,8 +28,11 @@ import { api } from '../../../App';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useInstance } from '../../../hooks/UseInstance';
 import { apiUrl } from '../../../states/ApiState';
+import { ActionButton } from '../../buttons/ActionButton';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { ActionDropdown, EditItemAction } from '../../items/ActionDropdown';
 import { StylishText } from '../../items/StylishText';
 import { YesNoButton } from '../../items/YesNoButton';
@@ -424,8 +428,49 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
     return actions;
   }
 
+  const installPluginModal = useCreateApiFormModal({
+    title: t`Install plugin`,
+    url: ApiPaths.plugin_install,
+    fields: {
+      packagename: {},
+      url: {},
+      confirm: {}
+    },
+    closeOnClickOutside: false,
+    submitText: t`Install`,
+    successMessage: undefined,
+    onFormSuccess: (data) => {
+      notifications.show({
+        title: t`Plugin installed successfully`,
+        message: data.result,
+        autoClose: 30000,
+        color: 'green'
+      });
+
+      refreshTable();
+    }
+  });
+
+  // Custom table actions
+  const tableActions = useMemo(() => {
+    let actions = [];
+
+    // TODO: Hide if user does not have permission to install plugin
+    actions.push(
+      <ActionButton
+        color="green"
+        icon={<IconPlaylistAdd />}
+        tooltip={t`Install Plugin`}
+        onClick={() => installPluginModal.open()}
+      />
+    );
+
+    return actions;
+  }, []);
+
   return (
     <>
+      {installPluginModal.modal}
       <DetailDrawer
         title={t`Plugin detail`}
         size={'lg'}
@@ -446,6 +491,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           },
           rowActions: rowActions,
           onRowClick: (plugin) => navigate(`${plugin.pk}/`),
+          customActionGroups: tableActions,
           customFilters: [
             {
               name: 'active',
