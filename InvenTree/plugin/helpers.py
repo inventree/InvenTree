@@ -103,7 +103,7 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 def get_entrypoints():
     """Returns list for entrypoints for InvenTree plugins."""
-    return entry_points(group='inventree_plugins')
+    return entry_points().select(group='inventree_plugins')
 # endregion
 
 
