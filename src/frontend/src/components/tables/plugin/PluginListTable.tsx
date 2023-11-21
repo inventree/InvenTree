@@ -3,7 +3,6 @@ import {
   Alert,
   Box,
   Card,
-  Flex,
   Group,
   LoadingOverlay,
   Stack,
@@ -32,11 +31,9 @@ import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useInstance } from '../../../hooks/UseInstance';
 import { apiUrl } from '../../../states/ApiState';
 import { ActionButton } from '../../buttons/ActionButton';
-import { AddItemButton } from '../../buttons/AddItemButton';
 import { ActionDropdown, EditItemAction } from '../../items/ActionDropdown';
 import { InfoItem } from '../../items/InfoItem';
 import { StylishText } from '../../items/StylishText';
-import { YesNoButton } from '../../items/YesNoButton';
 import { DetailDrawer } from '../../nav/DetailDrawer';
 import { PluginSettingList } from '../../settings/SettingList';
 import { TableColumn } from '../Column';

@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro';
-import { Alert, Space, Stack, Title } from '@mantine/core';
+import { Alert, Stack, Title } from '@mantine/core';
 import { IconAlertTriangle, IconInfoCircle } from '@tabler/icons-react';
 
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
