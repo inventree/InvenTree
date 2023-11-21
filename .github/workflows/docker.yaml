@@ -40,6 +40,7 @@ jobs:
         with:
           filters: |
             docker:
+              - .github/workflows/docker.yaml
               - docker/**
               - docker-compose.yml
               - docker.dev.env
