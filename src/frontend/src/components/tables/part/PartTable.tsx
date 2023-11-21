@@ -3,6 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { formatPriceRange } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { shortenString } from '../../../functions/tables';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
@@ -156,9 +157,8 @@ function partTableColumns(): TableColumn[] {
       title: t`Price Range`,
       sortable: false,
 
-      render: function (record: any) {
-        // TODO: Render price range
-        return '-- price --';
+      render: (record: any) => {
+        return formatPriceRange(record.pricing_min, record.pricing_max);
       }
     },
     LinkColumn()

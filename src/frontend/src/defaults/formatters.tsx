@@ -53,6 +53,39 @@ export function formatCurrency(
   return formatter.format(value);
 }
 
+/*
+ * Render the price range for the provided values
+ */
+export function formatPriceRange(
+  minValue: number | null,
+  maxValue: number | null,
+  options: formatCurrencyOptionsType = {}
+) {
+  // If neither values are provided, return a dash
+  if (minValue == null && maxValue == null) {
+    return '-';
+  }
+
+  if (minValue == null) {
+    return formatCurrency(maxValue!, options);
+  }
+
+  if (maxValue == null) {
+    return formatCurrency(minValue!, options);
+  }
+
+  // If both values are the same, return a single value
+  if (minValue == maxValue) {
+    return formatCurrency(minValue, options);
+  }
+
+  // Otherwise, return a range
+  return `${formatCurrency(minValue, options)} - ${formatCurrency(
+    maxValue,
+    options
+  )}`;
+}
+
 interface renderDateOptionsType {
   showTime?: boolean;
 }
