@@ -1,5 +1,14 @@
 import { t } from '@lingui/macro';
-import { Button, Group, Space, Stack, Switch, Text } from '@mantine/core';
+import {
+  Button,
+  Group,
+  Paper,
+  Space,
+  Stack,
+  Switch,
+  Text,
+  useMantineTheme
+} from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconEdit } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -146,13 +155,25 @@ function SettingValue({
  */
 export function SettingItem({
   settingsState,
-  setting
+  setting,
+  shaded
 }: {
   settingsState: SettingsStateProps;
   setting: Setting;
+  shaded: boolean;
 }) {
+  const theme = useMantineTheme();
+
+  const style: Record<string, string> = { paddingLeft: '8px' };
+  if (shaded) {
+    style['backgroundColor'] =
+      theme.colorScheme === 'light'
+        ? theme.colors.gray[1]
+        : theme.colors.gray[9];
+  }
+
   return (
-    <>
+    <Paper style={style}>
       <Group position="apart" p="10">
         <Stack spacing="2">
           <Text>{setting.name}</Text>
@@ -160,6 +181,6 @@ export function SettingItem({
         </Stack>
         <SettingValue settingsState={settingsState} setting={setting} />
       </Group>
-    </>
+    </Paper>
   );
 }
