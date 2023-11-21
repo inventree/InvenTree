@@ -1,13 +1,11 @@
 import { Trans, t } from '@lingui/macro';
 import {
-  ActionIcon,
   Alert,
   Box,
   Card,
   Flex,
   Group,
   LoadingOverlay,
-  Space,
   Stack,
   Text,
   Title,

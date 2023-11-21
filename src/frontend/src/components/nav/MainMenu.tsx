@@ -3,7 +3,6 @@ import { Group, Menu, Skeleton, Text, UnstyledButton } from '@mantine/core';
 import {
   IconChevronDown,
   IconLogout,
-  IconPlugConnected,
   IconSettings,
   IconUserBolt,
   IconUserCog
