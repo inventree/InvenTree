@@ -272,9 +272,13 @@ class PluginAllSettingList(APIView):
     @extend_schema(responses={200: PluginSerializers.PluginSettingSerializer(many=True)})
     def get(self, request, pk):
         """Get all settings for a plugin config."""
+
+        # look up the plugin
         plugin = check_plugin(None, pk)
 
-        settings_dict = PluginSetting.all_settings(settings_definition=plugin.settings, plugin=plugin.plugin_config())
+        settings = getattr(plugin, 'settings', {})
+
+        settings_dict = PluginSetting.all_settings(settings_definition=settings, plugin=plugin.plugin_config())
 
         results = PluginSerializers.PluginSettingSerializer(list(settings_dict.values()), many=True).data
         return Response(results)
