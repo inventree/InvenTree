@@ -1,4 +1,4 @@
-import { Divider, Drawer, Stack, Text } from '@mantine/core';
+import { Divider, Drawer, MantineNumberSize, Stack, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 
@@ -13,11 +13,13 @@ export interface DrawerProps {
   position?: 'right' | 'left';
   renderContent: (id?: string) => React.ReactNode;
   urlPrefix?: string;
+  size?: MantineNumberSize;
 }
 
 function DetailDrawerComponent({
   title,
   position = 'right',
+  size,
   renderContent
 }: DrawerProps) {
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ function DetailDrawerComponent({
       opened={opened}
       onClose={() => navigate('../')}
       position={position}
+      size={size}
       title={
         <Text size="xl" fw={600} variant="gradient">
           {title}

@@ -428,6 +428,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
     <>
       <DetailDrawer
         title={t`Plugin detail`}
+        size={'lg'}
         renderContent={(id) => {
           if (!id) return false;
           return <PluginDrawer id={id} refreshTable={refreshTable} />;

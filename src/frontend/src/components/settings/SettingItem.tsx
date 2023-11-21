@@ -5,10 +5,12 @@ import { IconEdit } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { api } from '../../App';
+import { ModelType } from '../../enums/ModelType';
 import { openModalApiForm } from '../../functions/forms';
 import { apiUrl } from '../../states/ApiState';
 import { SettingsStateProps } from '../../states/SettingsState';
 import { Setting, SettingType } from '../../states/states';
+import { ApiFormFieldType } from '../forms/fields/ApiFormField';
 
 /**
  * Render a single setting value
@@ -47,10 +49,29 @@ function SettingValue({
 
   // Callback function to open the edit dialog (for non-boolean settings)
   function onEditButton() {
-    let field_type = setting?.type ?? 'string';
+    const fieldDefinition: ApiFormFieldType = {
+      value: setting?.value ?? '',
+      field_type: setting?.type ?? 'string',
+      label: setting?.name,
+      description: setting?.description
+    };
 
-    if (setting?.choices && setting?.choices?.length > 0) {
-      field_type = SettingType.Choice;
+    // Match choices
+    if (setting?.choices) {
+      fieldDefinition.field_type = SettingType.Choice;
+      fieldDefinition.choices = setting?.choices || [];
+    }
+
+    // Match related field
+    if (
+      fieldDefinition.field_type === SettingType.Model &&
+      setting.api_url &&
+      setting.model_name
+    ) {
+      fieldDefinition.api_url = setting.api_url;
+
+      // TODO: improve this model matching mechanism
+      fieldDefinition.model = setting.model_name.split('.')[1] as ModelType;
     }
 
     openModalApiForm({
@@ -61,13 +82,7 @@ function SettingValue({
       title: t`Edit Setting`,
       ignorePermissionCheck: true,
       fields: {
-        value: {
-          value: setting?.value ?? '',
-          field_type: field_type,
-          choices: setting?.choices || [],
-          label: setting?.name,
-          description: setting?.description
-        }
+        value: fieldDefinition
       },
       onFormSuccess() {
         showNotification({
