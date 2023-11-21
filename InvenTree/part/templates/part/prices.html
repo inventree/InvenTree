@@ -97,6 +97,14 @@
                         <td>{% render_currency pricing.variant_cost_max %}</td>
                     </tr>
                     {% endif %}
+                    {% if pricing.override_min or pricing.override_max %}
+                    <tr>
+                        <td><a href='#pricing-overrides'><span class='fas fa-exclamation-circle'></span></a></td>
+                        <th>{% trans "Pricing Overrides" %}</th>
+                        <td>{% render_currency pricing.override_min currency=pricing.override_min_currency %}</td>
+                        <td>{% render_currency pricing.override_max currency=pricing.override_max_currency %}</td>
+                    </tr>
+                    {% endif %}
                     <tr>
                         <td></td>
                         <th>{% trans "Overall Pricing" %}</th>

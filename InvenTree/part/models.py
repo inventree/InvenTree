@@ -2369,6 +2369,7 @@ class PartPricing(common.models.MetaMixin):
     def update_pricing(self, counter: int = 0, cascade: bool = True):
         """Recalculate all cost data for the referenced Part instance"""
         # If importing data, skip pricing update
+
         if InvenTree.ready.isImportingData():
             return
 
@@ -2698,6 +2699,7 @@ class PartPricing(common.models.MetaMixin):
 
         Here we simply take the minimum / maximum values of the other calculated fields.
         """
+
         overall_min = None
         overall_max = None
 
