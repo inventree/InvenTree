@@ -404,6 +404,11 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(batch='B123')
         self.assertEqual(len(response), 1)
 
+    def test_filter_by_company(self):
+        """Test that we can filter stock items by company"""
+        for cmp in company.models.Company.objects.all():
+            self.get_stock(company=cmp.pk)
+
     def test_filter_by_serialized(self):
         """Filter StockItem by serialized status."""
         response = self.get_stock(serialized=1)
@@ -658,10 +663,10 @@ class StockItemListTest(StockAPITestCase):
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""
 
-        def get_stock(data):
+        def get_stock(data, expected_status=200):
             """Helper function to fetch stock items."""
             response = self.client.get(self.list_url, data=data)
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, expected_status)
             return response.data
 
         # Create a bunch of StockItem objects
