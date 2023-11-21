@@ -34,6 +34,7 @@ import { apiUrl } from '../../../states/ApiState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { ActionDropdown, EditItemAction } from '../../items/ActionDropdown';
+import { InfoItem } from '../../items/InfoItem';
 import { StylishText } from '../../items/StylishText';
 import { YesNoButton } from '../../items/YesNoButton';
 import { DetailDrawer } from '../../nav/DetailDrawer';
@@ -106,36 +107,6 @@ export function PluginDrawer({
           <Trans>An error occurred while fetching plugin details</Trans>
         )}
       </Text>
-    );
-  }
-
-  function InfoItem({
-    name,
-    children,
-    type,
-    value
-  }: {
-    name: string;
-    children?: React.ReactNode;
-    type?: 'text' | 'boolean';
-    value?: any;
-  }) {
-    return (
-      <Group position="apart">
-        <Text fz="sm" fw={700}>
-          {name}:
-        </Text>
-        <Flex>
-          {children}
-          {value !== undefined && type === 'text' ? (
-            <Text>{value || <Trans>None</Trans>}</Text>
-          ) : type === 'boolean' ? (
-            <YesNoButton value={value || false} />
-          ) : (
-            ''
-          )}
-        </Flex>
-      </Group>
     );
   }
 
