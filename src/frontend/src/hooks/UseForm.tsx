@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
@@ -57,7 +58,12 @@ export function useApiFormModal(props: ApiFormModalProps) {
     onOpen: formProps.onOpen,
     onClose: formProps.onClose,
     size: 'xl',
-    children: <OptionsApiForm props={formProps} id={id} />
+    children: (
+      <Stack spacing={'xs'}>
+        <Divider />
+        <OptionsApiForm props={formProps} id={id} />
+      </Stack>
+    )
   });
 
   useEffect(() => {

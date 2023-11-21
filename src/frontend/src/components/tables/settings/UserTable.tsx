@@ -1,5 +1,6 @@
 import { Trans, t } from '@lingui/macro';
-import { List, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import { Alert, List, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
@@ -13,6 +14,7 @@ import {
 import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { useInstance } from '../../../hooks/UseInstance';
 import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { EditApiForm } from '../../forms/ApiForm';
 import { DetailDrawer } from '../../nav/DetailDrawer';
@@ -55,6 +57,12 @@ export function UserDrawer({
     throwError: true
   });
 
+  const currentUserPk = useUserState((s) => s.user?.pk);
+  const isCurrentUser = useMemo(
+    () => currentUserPk === parseInt(id, 10),
+    [currentUserPk, id]
+  );
+
   if (isFetching) {
     return <LoadingOverlay visible={true} />;
   }
@@ -82,10 +90,33 @@ export function UserDrawer({
             first_name: {},
             last_name: {},
             email: {},
-            is_staff: {},
-            is_superuser: {},
-            is_active: {}
+            is_active: {
+              label: t`Is Active`,
+              description: t`Designates whether this user should be treated as active. Unselect this instead of deleting accounts.`,
+              disabled: isCurrentUser
+            },
+            is_staff: {
+              label: t`Is Staff`,
+              description: t`Designates whether the user can log into the django admin site.`,
+              disabled: isCurrentUser
+            },
+            is_superuser: {
+              label: t`Is Superuser`,
+              description: t`Designates that this user has all permissions without explicitly assigning them.`,
+              disabled: isCurrentUser
+            }
           },
+          postFormContent: isCurrentUser ? (
+            <Alert
+              title={<Trans>Info</Trans>}
+              color="blue"
+              icon={<IconInfoCircle />}
+            >
+              <Trans>
+                You cannot edit the rights for the currently logged-in user.
+              </Trans>
+            </Alert>
+          ) : undefined,
           onFormSuccess: () => {
             refreshTable();
             refreshInstance();

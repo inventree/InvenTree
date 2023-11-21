@@ -1,4 +1,4 @@
-import { Drawer, Text } from '@mantine/core';
+import { Divider, Drawer, Stack, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 
@@ -38,7 +38,10 @@ function DetailDrawerComponent({
       }
       overlayProps={{ opacity: 0.5, blur: 4 }}
     >
-      {content}
+      <Stack spacing={'xs'}>
+        <Divider />
+        {content}
+      </Stack>
     </Drawer>
   );
 }

@@ -356,7 +356,6 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
 
   return (
     <Stack>
-      <Divider />
       <Stack spacing="sm">
         <LoadingOverlay visible={isLoading} />
         {(!isValid || nonFieldErrors.length > 0) && (
