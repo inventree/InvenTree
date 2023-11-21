@@ -18,7 +18,7 @@ export interface PluginRegistryErrorI {
  * Table displaying list of plugin registry errors
  */
 export function PluginErrorTable({ props }: { props: InvenTreeTableProps }) {
-  const { tableKey, refreshTable } = useTableRefresh('registryErrors');
+  const { tableKey } = useTableRefresh('registryErrors');
 
   const registryErrorTableColumns: TableColumn<PluginRegistryErrorI>[] =
     useMemo(
