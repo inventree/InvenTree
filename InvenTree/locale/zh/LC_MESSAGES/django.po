@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-20 21:27+0000\n"
-"PO-Revision-Date: 2023-11-17 23:10\n"
+"PO-Revision-Date: 2023-11-21 00:07\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -23,16 +23,16 @@ msgstr "未找到 API 端点"
 
 #: InvenTree/api.py:425
 msgid "User does not have permission to view this model"
-msgstr "用户没有权限编辑当前数据。"
+msgstr "用户没有权限查阅当前模型。"
 
 #: InvenTree/conversion.py:92
 msgid "No value provided"
-msgstr "没有提供日期"
+msgstr "没有提供数值"
 
 #: InvenTree/conversion.py:125
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "不能转换{original} 给 {unit}"
 
 #: InvenTree/conversion.py:127
 msgid "Invalid quantity supplied"
@@ -41,7 +41,7 @@ msgstr "提供的数量无效"
 #: InvenTree/conversion.py:141
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr "提供的数量无效 ({exc})"
+msgstr "提供的数量无效)"
 
 #: InvenTree/exceptions.py:89
 msgid "Error details can be found in the admin panel"
@@ -77,7 +77,7 @@ msgstr "备注"
 #: InvenTree/format.py:154
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "值 '{name}' 没有以模式格式显示"
+msgstr "'{name}' 没有以模式格式显示"
 
 #: InvenTree/format.py:164
 msgid "Provided value does not match required pattern: "
@@ -137,7 +137,7 @@ msgstr "空序列号字符串"
 
 #: InvenTree/helpers.py:490
 msgid "Duplicate serial"
-msgstr "重复的序列号"
+msgstr "复制的序列号"
 
 #: InvenTree/helpers.py:523 InvenTree/helpers.py:558
 #, python-brace-format
@@ -147,7 +147,7 @@ msgstr ""
 #: InvenTree/helpers.py:552
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr "组 {group} 超出了允许的数量 ({expected_quantity})"
+msgstr "组范围 {group} 超出了允许的数量 ({expected_quantity})"
 
 #: InvenTree/helpers.py:576 InvenTree/helpers.py:583 InvenTree/helpers.py:598
 #, python-brace-format
@@ -474,12 +474,9 @@ msgstr "欢迎到 {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"您的帐户已创建\n"
+msgstr "您的帐户已创建\n"
 "请用密码重置运行功能 (从https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -6288,52 +6285,52 @@ msgstr "此BOM 项目已验证"
 #: templates/js/translated/table_filters.js:178
 #: templates/js/translated/table_filters.js:211
 msgid "Gets inherited"
-msgstr ""
+msgstr "获取继承的"
 
 #: part/models.py:3792
 msgid "This BOM item is inherited by BOMs for variant parts"
-msgstr ""
+msgstr "这个BOM 项目是由BOM继承的变体部件。"
 
 #: part/models.py:3797 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1046
 msgid "Allow Variants"
-msgstr ""
+msgstr "允许变体"
 
 #: part/models.py:3798
 msgid "Stock items for variant parts can be used for this BOM item"
-msgstr ""
+msgstr "变体部件的库存项目可以用于此BOM 项目"
 
 #: part/models.py:3884 stock/models.py:613
 msgid "Quantity must be integer value for trackable parts"
-msgstr ""
+msgstr "数量必须是可跟踪零件的整数"
 
 #: part/models.py:3893 part/models.py:3895
 msgid "Sub part must be specified"
-msgstr ""
+msgstr "必须指定子部件"
 
 #: part/models.py:4020
 msgid "BOM Item Substitute"
-msgstr ""
+msgstr "物料清单项目替代"
 
 #: part/models.py:4041
 msgid "Substitute part cannot be the same as the master part"
-msgstr ""
+msgstr "替代部件不能与主部件相同"
 
 #: part/models.py:4054
 msgid "Parent BOM item"
-msgstr ""
+msgstr "上级BOM项目"
 
 #: part/models.py:4062
 msgid "Substitute part"
-msgstr ""
+msgstr "替代部分"
 
 #: part/models.py:4077
 msgid "Part 1"
-msgstr ""
+msgstr "部件 1"
 
 #: part/models.py:4081
 msgid "Part 2"
-msgstr ""
+msgstr "部件2"
 
 #: part/models.py:4081
 msgid "Select Related Part"
@@ -6341,11 +6338,11 @@ msgstr "选择相关的部件"
 
 #: part/models.py:4098
 msgid "Part relationship cannot be created between a part and itself"
-msgstr ""
+msgstr "部件关系不能在部件和自身之间创建"
 
 #: part/models.py:4102
 msgid "Duplicate relationship already exists"
-msgstr ""
+msgstr "复制关系已经存在"
 
 #: part/serializers.py:170 part/serializers.py:193 stock/serializers.py:324
 msgid "Purchase currency of this stock item"
@@ -6498,23 +6495,23 @@ msgstr "排除外部位置的库存项目"
 
 #: part/serializers.py:984
 msgid "Generate Report"
-msgstr ""
+msgstr "生成报告"
 
 #: part/serializers.py:985
 msgid "Generate report file containing calculated stocktake data"
-msgstr ""
+msgstr "生成包含计算出来的盘点数据的报告文件"
 
 #: part/serializers.py:990
 msgid "Update Parts"
-msgstr ""
+msgstr "更新配件"
 
 #: part/serializers.py:991
 msgid "Update specified parts with calculated stocktake data"
-msgstr ""
+msgstr "使用计算出的盘点数据更新指定部分"
 
 #: part/serializers.py:998
 msgid "Stocktake functionality is not enabled"
-msgstr ""
+msgstr "评估功能未启用"
 
 #: part/serializers.py:1087
 msgid "Update"
@@ -6522,11 +6519,11 @@ msgstr "更新"
 
 #: part/serializers.py:1088
 msgid "Update pricing for this part"
-msgstr ""
+msgstr "更新这个部件的价格"
 
 #: part/serializers.py:1395
 msgid "Select part to copy BOM from"
-msgstr ""
+msgstr "选择要复制BOM的部件"
 
 #: part/serializers.py:1403
 msgid "Remove Existing Data"
@@ -6534,55 +6531,55 @@ msgstr "移除现有数据"
 
 #: part/serializers.py:1404
 msgid "Remove existing BOM items before copying"
-msgstr ""
+msgstr "复制前删除现有的BOM项目"
 
 #: part/serializers.py:1409
 msgid "Include Inherited"
-msgstr ""
+msgstr "包含继承的"
 
 #: part/serializers.py:1410
 msgid "Include BOM items which are inherited from templated parts"
-msgstr ""
+msgstr "包含从模板部件继承的 BOM 项目"
 
 #: part/serializers.py:1415
 msgid "Skip Invalid Rows"
-msgstr ""
+msgstr "跳过无效行"
 
 #: part/serializers.py:1416
 msgid "Enable this option to skip invalid rows"
-msgstr ""
+msgstr "启用此选项以跳过无效行"
 
 #: part/serializers.py:1421
 msgid "Copy Substitute Parts"
-msgstr ""
+msgstr "复制替代部件"
 
 #: part/serializers.py:1422
 msgid "Copy substitute parts when duplicate BOM items"
-msgstr ""
+msgstr "复制BOM 项目时复制替代部件"
 
 #: part/serializers.py:1462
 msgid "Clear Existing BOM"
-msgstr ""
+msgstr "清除现有的BOM"
 
 #: part/serializers.py:1463
 msgid "Delete existing BOM items before uploading"
-msgstr ""
+msgstr "上传前删除现有的 BOM 项目"
 
 #: part/serializers.py:1493
 msgid "No part column specified"
-msgstr ""
+msgstr "未指定部件列"
 
 #: part/serializers.py:1537
 msgid "Multiple matching parts found"
-msgstr ""
+msgstr "找到多个匹配的配件。"
 
 #: part/serializers.py:1540
 msgid "No matching part found"
-msgstr ""
+msgstr "没有找到匹配的部件"
 
 #: part/serializers.py:1543
 msgid "Part is not designated as a component"
-msgstr ""
+msgstr "部件未指定为组件"
 
 #: part/serializers.py:1552
 msgid "Quantity not provided"
@@ -6590,11 +6587,11 @@ msgstr "未提供数量"
 
 #: part/serializers.py:1560
 msgid "Invalid quantity"
-msgstr ""
+msgstr "无效的数量"
 
 #: part/serializers.py:1581
 msgid "At least one BOM item is required"
-msgstr ""
+msgstr "至少需要一个 BOM 项目"
 
 #: part/stocktake.py:223 templates/js/translated/part.js:1066
 #: templates/js/translated/part.js:1820 templates/js/translated/part.js:1875
@@ -6604,19 +6601,19 @@ msgstr "总数量"
 
 #: part/stocktake.py:224
 msgid "Total Cost Min"
-msgstr ""
+msgstr "总费用最小值"
 
 #: part/stocktake.py:225
 msgid "Total Cost Max"
-msgstr ""
+msgstr "总费用最大值"
 
 #: part/stocktake.py:289
 msgid "Stocktake Report Available"
-msgstr ""
+msgstr "盘点报告可用"
 
 #: part/stocktake.py:290
 msgid "A new stocktake report is available for download"
-msgstr ""
+msgstr "有新的盘点报告可供下载"
 
 #: part/tasks.py:33
 msgid "Low stock notification"
@@ -6625,7 +6622,7 @@ msgstr "低库存通知"
 #: part/tasks.py:34
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
-msgstr ""
+msgstr "可用 {part.name}库存已经跌到设置的最低值"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
@@ -6633,17 +6630,17 @@ msgstr "没有权限编辑BOM"
 
 #: part/templates/part/bom.html:15
 msgid "The BOM this part has been changed, and must be validated"
-msgstr ""
+msgstr "此物料清单中部件已被更改，必须验证"
 
 #: part/templates/part/bom.html:17
 #, python-format
 msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr ""
+msgstr "The BOM for <em>%(part)s</em> 的BOM被%(checker)s 在 %(check_date)s 最后更改"
 
 #: part/templates/part/bom.html:21
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr ""
+msgstr "<em>%(part)s</em> 的物料清单己失效"
 
 #: part/templates/part/category.html:35
 msgid "Perform stocktake for this part category"
@@ -6651,11 +6648,11 @@ msgstr "对此类零件做库存盘点"
 
 #: part/templates/part/category.html:41 part/templates/part/category.html:45
 msgid "You are subscribed to notifications for this category"
-msgstr ""
+msgstr "您已订阅此类别的通知"
 
 #: part/templates/part/category.html:49
 msgid "Subscribe to notifications for this category"
-msgstr ""
+msgstr "订阅此类别的通知"
 
 #: part/templates/part/category.html:55
 msgid "Category Actions"
@@ -6719,22 +6716,22 @@ msgstr "导入零件"
 #: part/templates/part/copy_part.html:10
 #, python-format
 msgid "Make a copy of part '%(full_name)s'."
-msgstr ""
+msgstr "制作一个 '%(full_name)s'配件的副本."
 
 #: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
 msgid "Possible Matching Parts"
-msgstr ""
+msgstr "可能的匹配项"
 
 #: part/templates/part/copy_part.html:15
 #: part/templates/part/create_part.html:12
 msgid "The new part may be a duplicate of these existing parts"
-msgstr ""
+msgstr "新部分可能与这些现有部件重复。"
 
 #: part/templates/part/create_part.html:17
 #, python-format
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
-msgstr ""
+msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% 匹配)"
 
 #: part/templates/part/detail.html:20
 msgid "Part Stock"
@@ -6885,7 +6882,7 @@ msgstr "零件导入要求"
 
 #: part/templates/part/import_wizard/part_upload.html:33
 msgid "The part import file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "部分导入文件必须包含所提供的必填列数 "
 
 #: part/templates/part/import_wizard/part_upload.html:33
 msgid "Part Import Template"
@@ -6913,11 +6910,11 @@ msgstr "商品列表"
 
 #: part/templates/part/part_base.html:25 part/templates/part/part_base.html:29
 msgid "You are subscribed to notifications for this part"
-msgstr ""
+msgstr "您已订阅此部件的通知"
 
 #: part/templates/part/part_base.html:33
 msgid "Subscribe to notifications for this part"
-msgstr ""
+msgstr "订阅此部件的通知"
 
 #: part/templates/part/part_base.html:52
 #: stock/templates/stock/item_base.html:62
@@ -6927,7 +6924,7 @@ msgstr "打印标签"
 
 #: part/templates/part/part_base.html:58
 msgid "Show pricing information"
-msgstr ""
+msgstr "显示定价信息"
 
 #: part/templates/part/part_base.html:63
 #: stock/templates/stock/item_base.html:110
@@ -6985,7 +6982,7 @@ msgstr "商品可以销售给客户"
 
 #: part/templates/part/part_base.html:145
 msgid "Part is not active"
-msgstr ""
+msgstr "部件未激活"
 
 #: part/templates/part/part_base.html:146
 #: templates/js/translated/company.js:1277
@@ -6993,7 +6990,7 @@ msgstr ""
 #: templates/js/translated/model_renderers.js:304
 #: templates/js/translated/part.js:814 templates/js/translated/part.js:1218
 msgid "Inactive"
-msgstr ""
+msgstr "非活跃的"
 
 #: part/templates/part/part_base.html:153
 msgid "Part is virtual (not a physical part)"
@@ -7048,28 +7045,28 @@ msgstr "关联条形码到零件"
 
 #: part/templates/part/part_base.html:472 templates/js/translated/part.js:2285
 msgid "part"
-msgstr ""
+msgstr "部件"
 
 #: part/templates/part/part_base.html:512
 msgid "Calculate"
-msgstr ""
+msgstr "计算"
 
 #: part/templates/part/part_base.html:529
 msgid "Remove associated image from this part"
-msgstr ""
+msgstr "删除与部件关联的图片"
 
 #: part/templates/part/part_base.html:580
 msgid "No matching images found"
-msgstr ""
+msgstr "没有找到匹配的图像"
 
 #: part/templates/part/part_base.html:676
 msgid "Hide Part Details"
-msgstr ""
+msgstr "隐藏部件详细信息"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:73
 #: part/templates/part/prices.html:216 templates/js/translated/pricing.js:485
 msgid "Supplier Pricing"
-msgstr ""
+msgstr "供应商价格"
 
 #: part/templates/part/part_pricing.html:26
 #: part/templates/part/part_pricing.html:52
@@ -7080,7 +7077,7 @@ msgstr "单位成本"
 
 #: part/templates/part/part_pricing.html:40
 msgid "No supplier pricing available"
-msgstr ""
+msgstr "没有可用的供货商价格"
 
 #: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:87
 #: part/templates/part/prices.html:239
@@ -7216,7 +7213,7 @@ msgstr "销售价格"
 
 #: part/templates/part/prices.html:292
 msgid "Add Sell Price Break"
-msgstr ""
+msgstr "添加内部价格限制"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
 #: templates/js/translated/part.js:2138 templates/js/translated/part.js:2140
@@ -7233,32 +7230,32 @@ msgstr "返回BOM"
 
 #: part/templates/part/upload_bom.html:13
 msgid "Upload Bill of Materials"
-msgstr ""
+msgstr "上传材料单"
 
 #: part/templates/part/upload_bom.html:19
 msgid "BOM upload requirements"
-msgstr ""
+msgstr "BOM 上传要求"
 
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
 msgid "Upload BOM File"
-msgstr ""
+msgstr "上传 BOM 文件"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
-msgstr ""
+msgstr "提交 BOM 数据"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
-msgstr ""
+msgstr "BOM 上传要求"
 
 #: part/templates/part/upload_bom.html:39
 msgid "The BOM file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "部让1BOM导入文件必须包含所提供的必填列数 "
 
 #: part/templates/part/upload_bom.html:39
 msgid "BOM Upload Template"
-msgstr ""
+msgstr "BOM 上传模板"
 
 #: part/templates/part/upload_bom.html:40
 msgid "Each part must already exist in the database"
@@ -7266,28 +7263,28 @@ msgstr "每个商品必须已经存在于数据库"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
-msgstr ""
+msgstr "创建新的配件变体"
 
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
-msgstr ""
+msgstr "从此模板创建一个新的部件模板"
 
 #: part/templatetags/inventree_extras.py:185
 msgid "Unknown database"
-msgstr ""
+msgstr "未知的数据库"
 
 #: part/templatetags/inventree_extras.py:231
 msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr ""
+msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: part/views.py:110
 msgid "Match References"
-msgstr ""
+msgstr "匹配参考"
 
 #: part/views.py:242
 #, python-brace-format
 msgid "Can't import part {new_part.name} because there is no category assigned"
-msgstr ""
+msgstr "无法导入 {new_part.name} 配件，因为没有类别指派。"
 
 #: part/views.py:383
 msgid "Select Part Image"
@@ -7324,39 +7321,31 @@ msgstr "找到匹配条形码数据"
 #: plugin/base/barcodes/api.py:154
 #: templates/js/translated/purchase_order.js:1402
 msgid "Barcode matches existing item"
-msgstr ""
+msgstr "条码匹配现有项目"
 
 #: plugin/base/barcodes/api.py:302
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching part data found"
-msgstr "未找到指定操作"
+msgstr "没有找到匹配的配件数据"
 
 #: plugin/base/barcodes/api.py:319
-#, fuzzy
-#| msgid "No supplier parts found"
 msgid "No matching supplier parts found"
-msgstr "未找到供应商商品"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:324
-#, fuzzy
-#| msgid "No supplier parts found"
 msgid "Multiple matching supplier parts found"
-msgstr "未找到供应商商品"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:349
-#, fuzzy
-#| msgid "Match Supplier Parts"
 msgid "Matched supplier part"
-msgstr "匹配供应商零件"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:395
 msgid "Item has already been received"
-msgstr ""
+msgstr "项目已被接收"
 
 #: plugin/base/barcodes/api.py:430
 msgid "No match for supplier barcode"
-msgstr ""
+msgstr "供应商条形码没有匹配"
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7389,46 +7378,32 @@ msgid "Received purchase order line item"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:21
-#, fuzzy
-#| msgid "Scanned barcode"
 msgid "Scanned barcode data"
-msgstr "已扫描条形码"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "Purchase Order Settings"
 msgid "PurchaseOrder to allocate items against"
-msgstr "采购订单设置"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:88
-#, fuzzy
-#| msgid "Purchase order {po} is now overdue"
 msgid "Purchase order is not pending"
-msgstr "采购订单 {po} 已逾期"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:105
-#, fuzzy
-#| msgid "Purchase Order Reference Pattern"
 msgid "PurchaseOrder to receive items against"
-msgstr "采购订单参考模式"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:112
-#, fuzzy
-#| msgid "Purchase order must be specified"
 msgid "Purchase order has not been placed"
-msgstr "必须指定采购订单"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:119
-#, fuzzy
-#| msgid "Location not specified"
 msgid "Location to receive items into"
-msgstr "未指定仓储地点"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:126
-#, fuzzy
-#| msgid "Create new stock location"
 msgid "Cannot select a structural location"
-msgstr "新建仓储地点"
+msgstr ""
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -8077,10 +8052,8 @@ msgid "External Location"
 msgstr ""
 
 #: stock/api.py:659
-#, fuzzy
-#| msgid "Part Name"
 msgid "Part Tree"
-msgstr "零件名称"
+msgstr ""
 
 #: stock/api.py:688
 msgid "Expiry date before"
@@ -13307,8 +13280,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13484,5 +13456,3 @@ msgstr "编辑项目权限"
 msgid "Permission to delete items"
 msgstr "删除项目权限"
 
-#~ msgid "Missing barcode data"
-#~ msgstr "缺少条形码数据"
