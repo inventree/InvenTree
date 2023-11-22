@@ -2,10 +2,16 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 152
+INVENTREE_API_VERSION = 154
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v154 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5944
+    - Adds "responsible" field to the ProjectCode table
+
+v153 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5956
+    - Adds override_min and override_max fields to part pricing API
 
 v152 -> 2023-11-20 : https://github.com/inventree/InvenTree/pull/5949
     - Adds barcode support for manufacturerpart model
