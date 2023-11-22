@@ -26,7 +26,7 @@ from generic.states.api import StatusView
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
-                               SEARCH_ORDER_FILTER_ALIAS)
+                               SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter)
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -680,17 +680,17 @@ class StockFilter(rest_filters.FilterSet):
         ).distinct()
 
     # Update date filters
-    updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
-    updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
+    updated_before = InvenTreeDateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
+    updated_after = InvenTreeDateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
 
     # Stock "expiry" filters
-    expiry_date_lte = rest_filters.DateFilter(
+    expiry_date_lte = InvenTreeDateFilter(
         label=_("Expiry date before"),
         field_name='expiry_date',
         lookup_expr='lte',
     )
 
-    expiry_date_gte = rest_filters.DateFilter(
+    expiry_date_gte = InvenTreeDateFilter(
         label=_('Expiry date after'),
         field_name='expiry_date',
         lookup_expr='gte',

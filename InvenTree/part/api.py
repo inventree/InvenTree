@@ -20,7 +20,7 @@ from build.models import Build, BuildItem
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
-                               SEARCH_ORDER_FILTER_ALIAS,
+                               SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter,
                                InvenTreeSearchFilter)
 from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
                                str2bool, str2int)
@@ -971,8 +971,8 @@ class PartFilter(rest_filters.FilterSet):
     tags_slug = rest_filters.CharFilter(field_name='tags__slug', lookup_expr='iexact')
 
     # Created date filters
-    created_before = rest_filters.DateFilter(label='Updated before', field_name='creation_date', lookup_expr='lte')
-    created_after = rest_filters.DateFilter(label='Updated after', field_name='creation_date', lookup_expr='gte')
+    created_before = InvenTreeDateFilter(label='Updated before', field_name='creation_date', lookup_expr='lte')
+    created_after = InvenTreeDateFilter(label='Updated after', field_name='creation_date', lookup_expr='gte')
 
 
 class PartMixin:
