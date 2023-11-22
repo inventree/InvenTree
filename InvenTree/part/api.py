@@ -1190,6 +1190,13 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
                 except (ValueError, PartCategory.DoesNotExist):
                     pass
 
+        # Does the user wish to filter by default location?
+        default_loc = params.get("default_location", None)
+
+        if default_loc is not None:
+            # Filter out any part not in the specified default location
+            queryset = queryset.filter(default_location=default_loc)
+
         queryset = self.filter_parametric_data(queryset)
 
         return queryset

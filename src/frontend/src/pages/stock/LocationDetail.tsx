@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
+import { PartListTable } from '../../components/tables/part/PartTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { StockLocationTable } from '../../components/tables/stock/StockLocationTable';
 import { ApiPaths } from '../../enums/ApiEndpoints';
@@ -45,12 +46,26 @@ export default function Stock() {
       },
       {
         name: 'sublocations',
-        label: t`Stock Locations`,
+        label: t`Stock Locaons`,
         icon: <IconSitemap />,
         content: (
           <StockLocationTable
             params={{
               parent: location.pk ?? null
+            }}
+          />
+        )
+      },
+      {
+        name: 'default_parts',
+        label: t`Parts`,
+        icon: <IconPackages />,
+        content: (
+          <PartListTable
+            props={{
+              params: {
+                default_location: location.pk ?? null
+              }
             }}
           />
         )
