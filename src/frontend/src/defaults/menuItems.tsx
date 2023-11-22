@@ -56,12 +56,12 @@ export const menuItems: MenuLinkItem[] = [
   {
     id: 'settings-system',
     text: <Trans>System Settings</Trans>,
-    link: '/admin/server'
+    link: '/settings/system'
   },
   {
     id: 'settings-admin',
     text: <Trans>Admin Center</Trans>,
-    link: '/admin'
+    link: '/settings/admin'
   }
 ];
 

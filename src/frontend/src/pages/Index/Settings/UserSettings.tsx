@@ -115,7 +115,7 @@ export default function UserSettings() {
           title={t`Account Settings`}
           subtitle={`${user?.first_name} ${user?.last_name}`}
           shorthand={user?.username || ''}
-          switch_link="/admin/server"
+          switch_link="/settings/system"
           switch_text={<Trans>Switch to System Setting</Trans>}
           switch_condition={user?.is_staff || false}
         />

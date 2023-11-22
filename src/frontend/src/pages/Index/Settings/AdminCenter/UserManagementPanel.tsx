@@ -31,7 +31,7 @@ export function UserManagementPanel() {
               Select settings relevant for user lifecycle. More available in
             </Trans>
           </Text>
-          <Anchor component={Link} to={'/admin/server'}>
+          <Anchor component={Link} to={'/settings/system'}>
             <Trans>System settings</Trans>
           </Anchor>
         </Group>
