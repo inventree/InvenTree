@@ -85,12 +85,15 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
 
     def get_ordering(self, request, queryset, view):
         """Override ordering for supporting aliases."""
-        ordering = super().get_ordering(request, queryset, view) or []
+        ordering = super().get_ordering(request, queryset, view) or None
+
+        if ordering is None:
+            ordering = []
 
         aliases = getattr(view, 'ordering_field_aliases', None)
 
         # Attempt to map ordering fields based on provided aliases
-        if ordering is not None and aliases is not None:
+        if aliases:
             """Ordering fields should be mapped to separate fields."""
 
             ordering_initial = ordering

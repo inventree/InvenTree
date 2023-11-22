@@ -56,9 +56,8 @@ export function BomTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      // TODO: Improve column rendering
       {
-        accessor: 'part',
+        accessor: 'sub_part',
         title: t`Part`,
         switchable: false,
         sortable: true,
@@ -139,10 +138,9 @@ export function BomTable({
         // TODO: See bom.js for existing implementation
       }),
       {
-        accessor: 'price_range',
+        accessor: 'pricing_max',
         title: t`Price Range`,
-
-        sortable: false,
+        sortable: true,
         render: (row) => {
           return formatPriceRange(row.pricing_min, row.pricing_max);
         }

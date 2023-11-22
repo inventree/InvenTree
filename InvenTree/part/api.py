@@ -1631,6 +1631,18 @@ class BomFilter(rest_filters.FilterSet):
             'validated',
         ]
 
+    part = rest_filters.ModelChoiceFilter(queryset=Part.objects.all(), label='Part', method='filter_part')
+
+    def filter_part(self, queryset, name, part):
+        """Filter by 'part' - return all BOM items which are linked to the specified part"""
+        return queryset.filter(part.get_bom_item_filter())
+
+    uses = rest_filters.ModelChoiceFilter(queryset=Part.objects.all(), label='Uses', method='filter_uses')
+
+    def filter_uses(self, queryset, name, part):
+        """Filter by 'uses' - return all BOM items which are used by the specified part"""
+        return queryset.filter(part.get_used_in_bom_item_filter())
+
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
     part_trackable = rest_filters.BooleanFilter(label='Master part is trackable', field_name='part__trackable')
@@ -1716,87 +1728,6 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
 
     filterset_class = BomFilter
 
-    def list(self, request, *args, **kwargs):
-        """Return serialized list response for this endpoint"""
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-
-        data = serializer.data
-
-        """
-        Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browsable API) return a DRF response
-        b) For AJAX requests, simply return a JSON rendered response.
-        """
-        if page is not None:
-            return self.get_paginated_response(data)
-        elif request.is_ajax():
-            return JsonResponse(data, safe=False)
-        return Response(data)
-
-    def filter_queryset(self, queryset):
-        """Custom query filtering for the BomItem list API"""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by part?
-        part = params.get('part', None)
-
-        if part is not None:
-            """
-            If we are filtering by "part", there are two cases to consider:
-
-            a) Bom items which are defined for *this* part
-            b) Inherited parts which are defined for a *parent* part
-
-            So we need to construct two queries!
-            """
-
-            # First, check that the part is actually valid!
-            try:
-                part = Part.objects.get(pk=part)
-
-                queryset = queryset.filter(part.get_bom_item_filter())
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        """
-        Filter by 'uses'?
-
-        Here we pass a part ID and return BOM items for any assemblies which "use" (or "require") that part.
-
-        There are multiple ways that an assembly can "use" a sub-part:
-
-        A) Directly specifying the sub_part in a BomItem field
-        B) Specifying a "template" part with inherited=True
-        C) Allowing variant parts to be substituted
-        D) Allowing direct substitute parts to be specified
-
-        - BOM items which are "inherited" by parts which are variants of the master BomItem
-        """
-        uses = params.get('uses', None)
-
-        if uses is not None:
-
-            try:
-                # Extract the part we are interested in
-                uses_part = Part.objects.get(pk=uses)
-
-                queryset = queryset.filter(uses_part.get_used_in_bom_item_filter())
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     search_fields = [
@@ -1817,10 +1748,14 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'inherited',
         'optional',
         'consumable',
+        'pricing_min',
+        'pricing_max',
     ]
 
     ordering_field_aliases = {
         'sub_part': 'sub_part__name',
+        'pricing_min': 'sub_part__pricing__overall_min',
+        'pricing_max': 'sub_part__pricing__overall_max',
     }
 
 
