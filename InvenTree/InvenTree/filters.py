@@ -59,7 +59,7 @@ class InvenTreeSearchFilter(filters.SearchFilter):
 
 
 class InvenTreeOrderingFilter(filters.OrderingFilter):
-    """Custom OrderingFilter class which allows aliased filtering of related fields.
+    """Custom OrderingFilter class which provides additional filtering options.
 
     To use, simply specify this filter in the "filter_backends" section.
 
@@ -67,17 +67,25 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
         InvenTreeOrderingFilter,
     ]
 
-    Then, specify a ordering_field_aliases attribute:
+    Filter aliases can be defined in the view class:
 
     ordering_field_alises = {
         'name': 'part__part__name',
         'SKU': 'part__SKU',
     }
+
+    We can also order on annotated fields:
+
+    annotated_ordering_fields = [
+        'my_custom_field',
+        'another_custom_field',
+    ]
+
     """
 
     def get_ordering(self, request, queryset, view):
         """Override ordering for supporting aliases."""
-        ordering = super().get_ordering(request, queryset, view)
+        ordering = super().get_ordering(request, queryset, view) or []
 
         aliases = getattr(view, 'ordering_field_aliases', None)
 
@@ -129,6 +137,21 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
                     ordering.append(a)
 
         return ordering
+
+    def filter_queryset(self, request, queryset, view):
+        """Override filter_queryset method to support annotated ordering fields."""
+
+        queryset = super().filter_queryset(request, queryset, view)
+
+        annotated_fields = getattr(view, 'annotated_ordering_fields', None)
+        ordering = request.query_params.get('ordering', None)
+
+        if ordering and annotated_fields:
+            if ordering.replace('-', '') in annotated_fields:
+                # Ordering on an annotated field
+                queryset = queryset.order_by(ordering)
+
+        return queryset
 
 
 SEARCH_ORDER_FILTER = [
