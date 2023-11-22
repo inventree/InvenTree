@@ -1,24 +1,66 @@
-import { t } from '@lingui/macro';
-import { Divider, Paper, Stack } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import {
+  Accordion,
+  Divider,
+  Group,
+  Paper,
+  Space,
+  Stack,
+  Table,
+  Text
+} from '@mantine/core';
+import {
+  IconBuildingStore,
+  IconChartLine,
+  IconClipboardData,
+  IconTools,
+  IconTruckDelivery
+} from '@tabler/icons-react';
 
 import { StylishText } from '../../components/items/StylishText';
+import { formatCurrency } from '../../defaults/formatters';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 
 function PricingGroup({
   children,
-  title
+  title,
+  label
 }: {
   children?: React.ReactNode;
   title: string;
+  label: string;
 }) {
   return (
-    <Paper radius="sm" p="md">
-      <Stack spacing="xs">
-        <StylishText size="xl">{title}</StylishText>
-        <Divider />
-        {children}
-      </Stack>
-    </Paper>
+    <Accordion.Item value={label}>
+      <Accordion.Control>
+        <StylishText size="md">{title}</StylishText>
+      </Accordion.Control>
+      <Accordion.Panel>{children}</Accordion.Panel>
+    </Accordion.Item>
+  );
+}
+
+function OverviewRow({
+  title,
+  min_cost,
+  max_cost,
+  currency
+}: {
+  title: string;
+  min_cost: number | null;
+  max_cost: number | null;
+  currency: string;
+}) {
+  const no_data = <Text italic>{t`No data`}</Text>;
+
+  return (
+    <tr>
+      <th>{title}</th>
+      <td>{formatCurrency(min_cost, { currency: currency }) || no_data}</td>
+      <td>{formatCurrency(max_cost, { currency: currency }) || no_data}</td>
+    </tr>
   );
 }
 
@@ -28,19 +70,126 @@ function PricingGroup({
 export function PartPricingPanel({ part }: { part: any }) {
   const user = useUserState();
 
+  const { instance: pricing, refreshInstance: refreshPricing } = useInstance({
+    endpoint: ApiPaths.part_pricing_detail,
+    pk: part.pk
+  });
+
   return (
     <Stack spacing="xs">
-      <PricingGroup title={t`Pricing Overview`}></PricingGroup>
-      <PricingGroup title={t`Internal Pricing`}></PricingGroup>
-      {part.assembly && <PricingGroup title={t`BOM Pricing`}></PricingGroup>}
-      {part.purchaseable && (
-        <PricingGroup title={t`Supplier Pricing`}></PricingGroup>
-      )}
-      {part.purchaseable && (
-        <PricingGroup title={t`Purchase History`}></PricingGroup>
-      )}
-      {part.salable && <PricingGroup title={t`Sale Pricing`}></PricingGroup>}
-      {part.salable && <PricingGroup title={t`Sale History`}></PricingGroup>}
+      <Group position="left" spacing="sm" grow>
+        <Stack align="stretch" justify="flex-start">
+          <StylishText size="sm">{t`Cost Price`}</StylishText>
+          <Table>
+            <thead>
+              <th>
+                <Trans>Category</Trans>
+              </th>
+              <th>
+                <Trans>Minimum</Trans>
+              </th>
+              <th>
+                <Trans>Maximum</Trans>
+              </th>
+            </thead>
+            <tbody>
+              <OverviewRow
+                title={t`Internal Pricing`}
+                min_cost={pricing.internal_cost_min}
+                max_cost={pricing.internal_cost_max}
+                currency={pricing.currency}
+              />
+              <OverviewRow
+                title={t`BOM Pricing`}
+                min_cost={pricing.bom_cost_min}
+                max_cost={pricing.bom_cost_max}
+                currency={pricing.currency}
+              />
+              <OverviewRow
+                title={t`Supplier Pricing`}
+                min_cost={pricing.supplier_price_min}
+                max_cost={pricing.supplier_price_max}
+                currency={pricing.currency}
+              />
+              <OverviewRow
+                title={t`Purchase History`}
+                min_cost={pricing.purchase_cost_min}
+                max_cost={pricing.purchase_cost_max}
+                currency={pricing.currency}
+              />
+              <OverviewRow
+                title={t`Overall Pricing`}
+                min_cost={pricing.overall_min}
+                max_cost={pricing.overall_min}
+                currency={pricing.currency}
+              />
+            </tbody>
+          </Table>
+          <Space />
+        </Stack>
+        <Stack align="stretch" justify="flex-start">
+          <StylishText size="sm">{t`Sale Price`}</StylishText>
+          <Table>
+            <thead>
+              <th>
+                <Trans>Category</Trans>
+              </th>
+              <th>
+                <Trans>Minimum</Trans>
+              </th>
+              <th>
+                <Trans>Maximum</Trans>
+              </th>
+            </thead>
+            <tbody>
+              <OverviewRow
+                title={t`Internal Pricing`}
+                min_cost={pricing.sale_price_min}
+                max_cost={pricing.sale_price_max}
+                currency={pricing.currency}
+              />
+              <OverviewRow
+                title={t`Sale History`}
+                min_cost={pricing.sale_history_min}
+                max_cost={pricing.sale_history_max}
+                currency={pricing.currency}
+              />
+            </tbody>
+          </Table>
+          <Space />
+        </Stack>
+      </Group>
+
+      <Accordion defaultValue={['internal']} multiple>
+        <PricingGroup
+          title={t`Internal Pricing`}
+          label="internal"
+        ></PricingGroup>
+        {part.assembly && (
+          <PricingGroup title={t`BOM Pricing`} label="bom"></PricingGroup>
+        )}
+        {part.purchaseable && (
+          <PricingGroup
+            title={t`Supplier Pricing`}
+            label="supplier"
+          ></PricingGroup>
+        )}
+        {part.purchaseable && (
+          <PricingGroup
+            title={t`Purchase History`}
+            label="purchase"
+          ></PricingGroup>
+        )}
+        {part.salable && (
+          <PricingGroup title={t`Sale Pricing`} label="sales"></PricingGroup>
+        )}
+        {part.salable && (
+          <PricingGroup
+            title={t`Sale History`}
+            label="saleshistory"
+          ></PricingGroup>
+        )}
+      </Accordion>
     </Stack>
   );
 }

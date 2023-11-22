@@ -21,7 +21,7 @@ interface formatCurrencyOptionsType {
  * - digits: Maximum number of significant digits (default = 10)
  */
 export function formatCurrency(
-  value: number,
+  value: number | null,
   options: formatCurrencyOptionsType = {}
 ) {
   if (value == null) {
