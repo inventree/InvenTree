@@ -16,12 +16,22 @@ import {
   IconTools,
   IconTruckDelivery
 } from '@tabler/icons-react';
+import {
+  ArcElement,
+  ChartData,
+  Chart as ChartJS,
+  Legend,
+  Tooltip
+} from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
 
 import { StylishText } from '../../components/items/StylishText';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 function PricingGroup({
   children,
@@ -75,12 +85,26 @@ export function PartPricingPanel({ part }: { part: any }) {
     pk: part.pk
   });
 
+  const DATA_COUNT = 5;
+  const NUMBER_CFG = { count: DATA_COUNT, min: 0, max: 100 };
+
+  const data: ChartData = {
+    labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [], // Utils.numbers(NUMBER_CFG),
+        backgroundColor: '#F00' // Object.values(Utils.CHART_COLORS),
+      }
+    ]
+  };
+
   return (
     <Stack spacing="xs">
       <Group position="left" spacing="sm" grow>
         <Stack align="stretch" justify="flex-start">
           <StylishText size="sm">{t`Cost Price`}</StylishText>
-          <Table>
+          <Table striped>
             <thead>
               <th>
                 <Trans>Category</Trans>
@@ -129,7 +153,7 @@ export function PartPricingPanel({ part }: { part: any }) {
         </Stack>
         <Stack align="stretch" justify="flex-start">
           <StylishText size="sm">{t`Sale Price`}</StylishText>
-          <Table>
+          <Table striped>
             <thead>
               <th>
                 <Trans>Category</Trans>
@@ -166,7 +190,11 @@ export function PartPricingPanel({ part }: { part: any }) {
           label="internal"
         ></PricingGroup>
         {part.assembly && (
-          <PricingGroup title={t`BOM Pricing`} label="bom"></PricingGroup>
+          <PricingGroup title={t`BOM Pricing`} label="bom">
+            <Group grow position="left" spacing="sm">
+              <Doughnut data={data} />
+            </Group>
+          </PricingGroup>
         )}
         {part.purchaseable && (
           <PricingGroup
