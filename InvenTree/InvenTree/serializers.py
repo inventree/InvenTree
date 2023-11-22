@@ -43,6 +43,17 @@ class InvenTreeMoneySerializer(MoneyField):
 
         super().__init__(*args, **kwargs)
 
+    def to_representation(self, obj):
+        """Ensure the value is rendered as a decimal value"""
+
+        if isinstance(obj, MONEY_CLASSES):
+            obj = obj.amount
+
+        if obj is None:
+            return None
+
+        return float(obj)
+
     def get_value(self, data):
         """Test that the returned amount is a valid Decimal."""
         amount = super(DecimalField, self).get_value(data)
