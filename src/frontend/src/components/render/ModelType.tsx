@@ -54,15 +54,15 @@ export const ModelInformationDict: ModelDictory = {
   stockitem: {
     label: t`Stock Item`,
     label_multiple: t`Stock Items`,
-    url_overview: '/stockitem',
-    url_detail: '/stockitem/:pk/',
+    url_overview: '/stock/item',
+    url_detail: '/stock/item/:pk/',
     api_endpoint: ApiPaths.stock_item_list
   },
   stocklocation: {
     label: t`Stock Location`,
     label_multiple: t`Stock Locations`,
-    url_overview: '/stocklocation',
-    url_detail: '/stocklocation/:pk/',
+    url_overview: '/stock/location',
+    url_detail: '/stock/location/:pk/',
     api_endpoint: ApiPaths.stock_location_list
   },
   stockhistory: {
@@ -94,8 +94,8 @@ export const ModelInformationDict: ModelDictory = {
   purchaseorder: {
     label: t`Purchase Order`,
     label_multiple: t`Purchase Orders`,
-    url_overview: '/purchaseorder',
-    url_detail: '/purchaseorder/:pk/',
+    url_overview: '/purchasing/purchase-order',
+    url_detail: '/purchasing/purchase-order/:pk/',
     api_endpoint: ApiPaths.purchase_order_list
   },
   purchaseorderline: {
@@ -106,8 +106,8 @@ export const ModelInformationDict: ModelDictory = {
   salesorder: {
     label: t`Sales Order`,
     label_multiple: t`Sales Orders`,
-    url_overview: '/salesorder',
-    url_detail: '/salesorder/:pk/',
+    url_overview: '/sales/sales-order',
+    url_detail: '/sales/sales-order/:pk/',
     api_endpoint: ApiPaths.sales_order_list
   },
   salesordershipment: {
@@ -120,8 +120,8 @@ export const ModelInformationDict: ModelDictory = {
   returnorder: {
     label: t`Return Order`,
     label_multiple: t`Return Orders`,
-    url_overview: '/returnorder',
-    url_detail: '/returnorder/:pk/',
+    url_overview: '/sales/return-order',
+    url_detail: '/sales/return-order/:pk/',
     api_endpoint: ApiPaths.return_order_list
   },
   address: {
