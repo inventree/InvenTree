@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 
 import { api } from '../App';
 import { ApiPaths } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
+import { PathParams, apiUrl } from '../states/ApiState';
 
 /**
  * Custom hook for loading a single instance of an instance from the API
@@ -17,6 +17,7 @@ import { apiUrl } from '../states/ApiState';
 export function useInstance({
   endpoint,
   pk,
+  pathParams,
   params = {},
   defaultValue = {},
   hasPrimaryKey = true,
@@ -25,6 +26,7 @@ export function useInstance({
 }: {
   endpoint: ApiPaths;
   pk?: string | undefined;
+  pathParams?: PathParams;
   hasPrimaryKey?: boolean;
   params?: any;
   defaultValue?: any;
@@ -43,7 +45,7 @@ export function useInstance({
         }
       }
 
-      let url = apiUrl(endpoint, pk);
+      let url = apiUrl(endpoint, pk, pathParams);
 
       return api
         .get(url, {

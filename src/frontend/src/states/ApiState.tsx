@@ -128,6 +128,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'bom/';
     case ApiPaths.part_list:
       return 'part/';
+    case ApiPaths.part_pricing_detail:
+      return 'part/:id/pricing/';
     case ApiPaths.part_parameter_list:
       return 'part/parameter/';
     case ApiPaths.part_parameter_template_list:
@@ -207,7 +209,13 @@ export function apiUrl(
   }
 
   if (_url && pk) {
-    _url += `${pk}/`;
+    if (_url.indexOf(':id') !== -1) {
+      // ID value may be specified within the endpoint URL
+      _url = _url.replace(':id', `${pk}`);
+    } else {
+      // Otherwise, append to the URL
+      _url += `${pk}/`;
+    }
   }
 
   if (_url && pathParams) {
