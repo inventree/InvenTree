@@ -2,10 +2,30 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 149
+INVENTREE_API_VERSION = 154
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v154 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5944
+    - Adds "responsible" field to the ProjectCode table
+
+v153 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5956
+    - Adds override_min and override_max fields to part pricing API
+
+v152 -> 2023-11-20 : https://github.com/inventree/InvenTree/pull/5949
+    - Adds barcode support for manufacturerpart model
+    - Adds API endpoint for adding parts to purchase order using barcode scan
+
+v151 -> 2023-11-13 : https://github.com/inventree/InvenTree/pull/5906
+    - Allow user list API to be filtered by user active status
+    - Allow owner list API to be filtered by user active status
+
+v150 -> 2023-11-07: https://github.com/inventree/InvenTree/pull/5875
+    - Extended user API endpoints to enable ordering
+    - Extended user API endpoints to enable user role changes
+    - Added endpoint to create a new user
+
 v149 -> 2023-11-07 : https://github.com/inventree/InvenTree/pull/5876
     - Add 'building' quantity to BomItem serializer
     - Add extra ordering options for the BomItem list API

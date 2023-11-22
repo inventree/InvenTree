@@ -23,8 +23,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         """Setup for all tests."""
         self.MSG_NO_PKG = 'Either packagename of URL must be provided'
 
-        self.PKG_NAME = 'minimal'
-        self.PKG_URL = 'git+https://github.com/geoffrey-a-reed/minimal'
+        self.PKG_NAME = 'inventree-brother-plugin'
+        self.PKG_URL = 'git+https://github.com/inventree/inventree-brother-plugin'
         super().setUp()
 
     def test_plugin_install(self):
@@ -71,7 +71,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             {
                 'confirm': True,
                 'url': self.PKG_URL,
-                'packagename': 'minimal',
+                'packagename': self.PKG_NAME,
             },
             expected_code=201,
         ).data

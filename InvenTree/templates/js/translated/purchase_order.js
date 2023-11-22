@@ -139,6 +139,9 @@ function purchaseOrderFields(options={}) {
         },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         },
     };
 

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { api } from '../App';
 import { StatusCodeListInterface } from '../components/render/StatusRenderer';
@@ -15,7 +15,7 @@ interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
-  status: StatusLookup | undefined;
+  status?: StatusLookup;
 }
 
 export const useServerApiState = create<ServerApiStateProps>()(
@@ -44,7 +44,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
     }),
     {
       name: 'server-api-state',
-      getStorage: () => sessionStorage
+      storage: createJSONStorage(() => sessionStorage)
     }
   )
 );
@@ -85,15 +85,15 @@ export function apiEndpoint(path: ApiPaths): string {
     case ApiPaths.user_sso:
       return 'auth/social/';
     case ApiPaths.user_sso_remove:
-      return 'auth/social/$id/disconnect/';
+      return 'auth/social/:id/disconnect/';
     case ApiPaths.user_emails:
       return 'auth/emails/';
     case ApiPaths.user_email_remove:
-      return 'auth/emails/$id/remove/';
+      return 'auth/emails/:id/remove/';
     case ApiPaths.user_email_verify:
-      return 'auth/emails/$id/verify/';
+      return 'auth/emails/:id/verify/';
     case ApiPaths.user_email_primary:
-      return 'auth/emails/$id/primary/';
+      return 'auth/emails/:id/primary/';
     case ApiPaths.currency_list:
       return 'currency/exchange/';
     case ApiPaths.currency_refresh:
@@ -116,6 +116,10 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'version/';
     case ApiPaths.sso_providers:
       return 'auth/providers/';
+    case ApiPaths.group_list:
+      return 'user/group/';
+    case ApiPaths.owner_list:
+      return 'user/owner/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:
@@ -185,10 +189,16 @@ export function apiEndpoint(path: ApiPaths): string {
   }
 }
 
+export type PathParams = Record<string, string | number>;
+
 /**
  * Construct an API URL with an endpoint and (optional) pk value
  */
-export function apiUrl(path: ApiPaths, pk?: any): string {
+export function apiUrl(
+  path: ApiPaths,
+  pk?: any,
+  pathParams?: PathParams
+): string {
   let _url = apiEndpoint(path);
 
   // If the URL does not start with a '/', add the API prefix
@@ -198,6 +208,12 @@ export function apiUrl(path: ApiPaths, pk?: any): string {
 
   if (_url && pk) {
     _url += `${pk}/`;
+  }
+
+  if (_url && pathParams) {
+    for (const key in pathParams) {
+      _url = _url.replace(`:${key}`, `${pathParams[key]}`);
+    }
   }
 
   return _url;

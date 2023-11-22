@@ -11,6 +11,7 @@ from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.serializers import (InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
+from users.serializers import OwnerSerializer
 
 
 class SettingsValueField(serializers.Field):
@@ -281,8 +282,12 @@ class ProjectCodeSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'code',
-            'description'
+            'description',
+            'responsible',
+            'responsible_detail',
         ]
+
+    responsible_detail = OwnerSerializer(source='responsible', read_only=True)
 
 
 class FlagSerializer(serializers.Serializer):

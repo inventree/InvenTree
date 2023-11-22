@@ -113,6 +113,9 @@ function buildFormFields() {
         },
         responsible: {
             icon: 'fa-users',
+            filters: {
+                is_active: true,
+            }
         },
     };
 

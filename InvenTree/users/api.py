@@ -6,14 +6,15 @@ import logging
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
-from InvenTree.serializers import UserSerializer
+import InvenTree.helpers
+from InvenTree.filters import SEARCH_ORDER_FILTER
+from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
@@ -42,19 +43,39 @@ class OwnerList(ListAPI):
         but until we determine a better way, this is what we have...
         """
         search_term = str(self.request.query_params.get('search', '')).lower()
+        is_active = self.request.query_params.get('is_active', None)
 
         queryset = super().filter_queryset(queryset)
 
-        if not search_term:
-            return queryset
-
         results = []
 
-        # Extract search term f
+        # Get a list of all matching users, depending on the *is_active* flag
+        if is_active is not None:
+            is_active = InvenTree.helpers.str2bool(is_active)
+            matching_user_ids = User.objects.filter(is_active=is_active).values_list('pk', flat=True)
 
         for result in queryset.all():
-            if search_term in result.name().lower():
-                results.append(result)
+
+            name = str(result.name()).lower().strip()
+            search_match = True
+
+            # Extract search term f
+            if search_term:
+                for entry in search_term.strip().split(' '):
+                    if entry not in name:
+                        search_match = False
+                        break
+
+            if not search_match:
+                continue
+
+            if is_active is not None:
+                # Skip any users which do not match the required *is_active* value
+                if result.owner_type.name == 'user' and result.owner_id not in matching_user_ids:
+                    continue
+
+            # If we get here, there is no reason *not* to include this result
+            results.append(result)
 
         return results
 
@@ -112,11 +133,11 @@ class RoleDetails(APIView):
         return Response(data)
 
 
-class UserDetail(RetrieveAPI):
+class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = ExendedUserSerializer
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -130,19 +151,15 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
         return self.request.user
 
 
-class UserList(ListAPI):
+class UserList(ListCreateAPI):
     """List endpoint for detail on all users."""
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
         'first_name',
@@ -150,8 +167,24 @@ class UserList(ListAPI):
         'username',
     ]
 
+    ordering_fields = [
+        'email',
+        'username',
+        'first_name',
+        'last_name',
+        'is_staff',
+        'is_superuser',
+        'is_active',
+    ]
 
-class GroupDetail(RetrieveAPI):
+    filterset_fields = [
+        'is_staff',
+        'is_active',
+        'is_superuser',
+    ]
+
+
+class GroupDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group"""
 
     queryset = Group.objects.all()
@@ -161,7 +194,7 @@ class GroupDetail(RetrieveAPI):
     ]
 
 
-class GroupList(ListAPI):
+class GroupList(ListCreateAPI):
     """List endpoint for all auth groups"""
 
     queryset = Group.objects.all()
@@ -170,12 +203,13 @@ class GroupList(ListAPI):
         permissions.IsAuthenticated,
     ]
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = [
+        'name',
+    ]
+
+    ordering_fields = [
         'name',
     ]
 

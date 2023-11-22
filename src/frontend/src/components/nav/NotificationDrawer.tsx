@@ -88,7 +88,7 @@ export function NotificationDrawer({
           </Alert>
         )}
         {notificationQuery.data?.results?.map((notification: any) => (
-          <Group position="apart">
+          <Group position="apart" key={notification.pk}>
             <Stack spacing="3">
               <Text size="sm">{notification.target?.name ?? 'target'}</Text>
               <Text size="xs">{notification.age_human ?? 'name'}</Text>

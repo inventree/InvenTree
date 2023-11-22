@@ -4,13 +4,10 @@ import { ReactNode, useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
-import { supplierPartFields } from '../../../forms/CompanyForms';
-import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../../functions/forms';
+import { useSupplierPartFields } from '../../../forms/CompanyForms';
+import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -155,29 +152,35 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     ];
   }, [params]);
 
-  const addSupplierPart = useCallback(() => {
-    let fields = supplierPartFields();
-
-    fields.part.value = params?.part;
-    fields.supplier.value = params?.supplier;
-
-    openCreateApiForm({
+  const addSupplierPartFields = useSupplierPartFields({
+    partPk: params?.part,
+    supplierPk: params?.supplier,
+    hidePart: true
+  });
+  const { modal: addSupplierPartModal, open: openAddSupplierPartForm } =
+    useCreateApiFormModal({
       url: ApiPaths.supplier_part_list,
       title: t`Add Supplier Part`,
-      fields: fields,
+      fields: addSupplierPartFields,
       onFormSuccess: refreshTable,
       successMessage: t`Supplier part created`
     });
-  }, [params]);
 
   // Table actions
   const tableActions = useMemo(() => {
     // TODO: Hide actions based on user permissions
 
     return [
-      <AddItemButton tooltip={t`Add supplier part`} onClick={addSupplierPart} />
+      <AddItemButton
+        tooltip={t`Add supplier part`}
+        onClick={openAddSupplierPartForm}
+      />
     ];
   }, [user]);
+
+  const editSupplierPartFields = useSupplierPartFields({
+    hidePart: true
+  });
 
   // Row action callback
   const rowActions = useCallback(
@@ -191,7 +194,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
                 url: ApiPaths.supplier_part_list,
                 pk: record.pk,
                 title: t`Edit Supplier Part`,
-                fields: supplierPartFields(),
+                fields: editSupplierPartFields,
                 onFormSuccess: refreshTable,
                 successMessage: t`Supplier part updated`
               });
@@ -215,24 +218,27 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         })
       ];
     },
-    [user]
+    [user, editSupplierPartFields]
   );
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiPaths.supplier_part_list)}
-      tableKey={tableKey}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          part_detail: true,
-          supplier_detail: true,
-          manufacturer_detail: true
-        },
-        rowActions: rowActions,
-        customActionGroups: tableActions
-      }}
-    />
+    <>
+      {addSupplierPartModal}
+      <InvenTreeTable
+        url={apiUrl(ApiPaths.supplier_part_list)}
+        tableKey={tableKey}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            part_detail: true,
+            supplier_detail: true,
+            manufacturer_detail: true
+          },
+          rowActions: rowActions,
+          customActionGroups: tableActions
+        }}
+      />
+    </>
   );
 }
