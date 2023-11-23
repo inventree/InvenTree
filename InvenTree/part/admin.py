@@ -25,7 +25,6 @@ class PartResource(InvenTreeResource):
         exclude = [
             'bom_checksum', 'bom_checked_by', 'bom_checked_date',
             'lft', 'rght', 'tree_id', 'level',
-            'image',
             'metadata',
             'barcode_data', 'barcode_hash',
         ]
@@ -39,6 +38,7 @@ class PartResource(InvenTreeResource):
     link = Field(attribute='link', column_name=_('Link'), widget=widgets.CharWidget())
     units = Field(attribute='units', column_name=_('Units'), widget=widgets.CharWidget())
     notes = Field(attribute='notes', column_name=_('Notes'))
+    image = Field(attribute='image', column_name=_('Part Image'), readonly=True)
     category = Field(attribute='category', column_name=_('Category ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
     category_name = Field(attribute='category__name', column_name=_('Category Name'), readonly=True)
     default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
