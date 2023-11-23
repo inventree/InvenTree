@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-22 23:42+0000\n"
+"POT-Creation-Date: 2023-11-23 23:36+0000\n"
 "PO-Revision-Date: 2023-11-23 00:37\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -474,9 +474,13 @@ msgstr "Chào mừng đến với {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid "Your account has been created.\n\n"
+msgid ""
+"Your account has been created.\n"
+"\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr "Tài khoản của bạn đã được tạo.\n\n"
+msgstr ""
+"Tài khoản của bạn đã được tạo.\n"
+"\n"
 "Xin hãy sử dụng chức năng quên mật khẩu để truy cập (tại https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -662,7 +666,7 @@ msgstr "Tiếng Trung (Giản thể)"
 msgid "Chinese (Traditional)"
 msgstr "Tiếng Trung (Phồn thể)"
 
-#: InvenTree/status.py:68 part/serializers.py:1006
+#: InvenTree/status.py:68 part/serializers.py:1008
 msgid "Background worker check failed"
 msgstr "Nhân công chạy ngầm kiểm tra thất bại"
 
@@ -1028,7 +1032,7 @@ msgstr "Đơn đặt bản dựng với bản dựng này đã được phân b�
 #: part/models.py:3109 part/models.py:3128 part/models.py:3147
 #: part/models.py:3168 part/models.py:3260 part/models.py:3534
 #: part/models.py:3656 part/models.py:3759 part/models.py:4082
-#: part/serializers.py:965 part/serializers.py:1452
+#: part/serializers.py:967 part/serializers.py:1454
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1245,7 +1249,7 @@ msgstr "Đầu ra bản dựng không phù hợp với đơn đặt bản dựng
 
 #: build/models.py:855 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:444 order/serializers.py:389
-#: order/serializers.py:511 part/serializers.py:1277 part/serializers.py:1616
+#: order/serializers.py:511 part/serializers.py:1279 part/serializers.py:1618
 #: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "Số lượng phải lớn hơn 0"
@@ -1427,7 +1431,7 @@ msgid "A list of build outputs must be provided"
 msgstr "Danh sách đầu ra bản dựng phải được cung cấp"
 
 #: build/serializers.py:421 build/serializers.py:493 order/serializers.py:497
-#: order/serializers.py:616 order/serializers.py:1623 part/serializers.py:977
+#: order/serializers.py:616 order/serializers.py:1623 part/serializers.py:979
 #: stock/serializers.py:410 stock/serializers.py:575 stock/serializers.py:669
 #: stock/serializers.py:1150 stock/serializers.py:1421
 #: stock/templates/stock/item_base.html:394
@@ -5616,13 +5620,13 @@ msgstr "IPN cha"
 msgid "Part IPN"
 msgstr "IPN sản phẩm"
 
-#: part/admin.py:276 part/serializers.py:1085
+#: part/admin.py:276 part/serializers.py:1087
 #: templates/js/translated/pricing.js:358
 #: templates/js/translated/pricing.js:1024
 msgid "Minimum Price"
 msgstr "Giá thấp nhất"
 
-#: part/admin.py:277 part/serializers.py:1097
+#: part/admin.py:277 part/serializers.py:1099
 #: templates/js/translated/pricing.js:353
 #: templates/js/translated/pricing.js:1032
 msgid "Maximum Price"
@@ -5780,7 +5784,7 @@ msgid "Part keywords to improve visibility in search results"
 msgstr "Từ khóa sản phẩm để cải thiện sự hiện diện trong kết quả tìm kiếm"
 
 #: part/models.py:818 part/models.py:3188 part/models.py:3608
-#: part/serializers.py:357 part/serializers.py:971
+#: part/serializers.py:357 part/serializers.py:973
 #: part/templates/part/part_base.html:260 stock/api.py:633
 #: templates/InvenTree/settings/settings_staff_js.html:300
 #: templates/js/translated/notification.js:60
@@ -6461,185 +6465,185 @@ msgstr "Mã số nhà sản xuất khớp với MPN này đã tồn tại"
 msgid "Supplier part matching this SKU already exists"
 msgstr "Mã số nhà cung cấp khớp với SKU này đã tồn tại"
 
-#: part/serializers.py:742 part/templates/part/copy_part.html:9
+#: part/serializers.py:744 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
 msgid "Duplicate Part"
 msgstr "Nhân bản sản phẩm"
 
-#: part/serializers.py:742
+#: part/serializers.py:744
 msgid "Copy initial data from another Part"
 msgstr "Sao chép dữ liệu ban đầu từ sản phẩm khác"
 
-#: part/serializers.py:747 templates/js/translated/part.js:102
+#: part/serializers.py:749 templates/js/translated/part.js:102
 msgid "Initial Stock"
 msgstr "Số liệu kho ban đầu"
 
-#: part/serializers.py:747
+#: part/serializers.py:749
 msgid "Create Part with initial stock quantity"
 msgstr "Tạo sản phẩm với số lượng tồn kho ban đầu"
 
-#: part/serializers.py:752
+#: part/serializers.py:754
 msgid "Supplier Information"
 msgstr "Thông tin nhà cung cấp"
 
-#: part/serializers.py:752
+#: part/serializers.py:754
 msgid "Add initial supplier information for this part"
 msgstr "Thêm thông tin nhà cung cấp ban đầu cho sản phẩm này"
 
-#: part/serializers.py:758
+#: part/serializers.py:760
 msgid "Copy Category Parameters"
 msgstr "Sao chép thông số nhóm hàng"
 
-#: part/serializers.py:759
+#: part/serializers.py:761
 msgid "Copy parameter templates from selected part category"
 msgstr "Sao chép mẫu tham số từ nhóm sản phẩm được chọn"
 
-#: part/serializers.py:965
+#: part/serializers.py:967
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr "Hạn chế báo cáo kiểm kê với sản phẩm riêng biệt và sản phẩm biến thể bất kỳ"
 
-#: part/serializers.py:971
+#: part/serializers.py:973
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr "Hạn chế báo cáo kiểm kê với danh mục sản phẩm riêng biệt và danh mục con bất kỳ"
 
-#: part/serializers.py:977
+#: part/serializers.py:979
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr "Hạn chế báo cáo kiểm kê với vị trí kho riêng biệt và vị trí con bất kỳ"
 
-#: part/serializers.py:982
+#: part/serializers.py:984
 msgid "Exclude External Stock"
 msgstr "Ngoại trừ kho bên ngoài"
 
-#: part/serializers.py:983
+#: part/serializers.py:985
 msgid "Exclude stock items in external locations"
 msgstr "Loại trừ hàng trong kho của vị trí bên ngoài"
 
-#: part/serializers.py:988
+#: part/serializers.py:990
 msgid "Generate Report"
 msgstr "Tạo báo cáo"
 
-#: part/serializers.py:989
+#: part/serializers.py:991
 msgid "Generate report file containing calculated stocktake data"
 msgstr "Tạo tệp báo cáo chứa dữ liệu kiểm kê đã tính toán"
 
-#: part/serializers.py:994
+#: part/serializers.py:996
 msgid "Update Parts"
 msgstr "Cập nhật sản phẩm"
 
-#: part/serializers.py:995
+#: part/serializers.py:997
 msgid "Update specified parts with calculated stocktake data"
 msgstr "Cập nhật sản phẩm cụ thể với dữ liệu kiểm kê đã tính"
 
-#: part/serializers.py:1002
+#: part/serializers.py:1004
 msgid "Stocktake functionality is not enabled"
 msgstr "Chức năng kiểm kê chưa được bật"
 
-#: part/serializers.py:1086
+#: part/serializers.py:1088
 msgid "Override calculated value for minimum price"
 msgstr ""
 
-#: part/serializers.py:1091
+#: part/serializers.py:1093
 msgid "Minimum price currency"
 msgstr ""
 
-#: part/serializers.py:1098
+#: part/serializers.py:1100
 msgid "Override calculated value for maximum price"
 msgstr ""
 
-#: part/serializers.py:1103
+#: part/serializers.py:1105
 msgid "Maximum price currency"
 msgstr ""
 
-#: part/serializers.py:1119
+#: part/serializers.py:1121
 msgid "Update"
 msgstr "Cập nhật"
 
-#: part/serializers.py:1120
+#: part/serializers.py:1122
 msgid "Update pricing for this part"
 msgstr "Cập nhật giá cho sản phẩm này"
 
-#: part/serializers.py:1141
+#: part/serializers.py:1143
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr ""
 
-#: part/serializers.py:1145
+#: part/serializers.py:1147
 msgid "Minimum price must not be greater than maximum price"
 msgstr ""
 
-#: part/serializers.py:1146
+#: part/serializers.py:1148
 msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
-#: part/serializers.py:1453
+#: part/serializers.py:1455
 msgid "Select part to copy BOM from"
 msgstr "Chọn sản phẩm để sao chép định mức nguyên vật liệu"
 
-#: part/serializers.py:1461
+#: part/serializers.py:1463
 msgid "Remove Existing Data"
 msgstr "Xóa dữ liệu đã tồn tại"
 
-#: part/serializers.py:1462
+#: part/serializers.py:1464
 msgid "Remove existing BOM items before copying"
 msgstr "Xóa mục BOM đã tồn tại trước khi sao chép"
 
-#: part/serializers.py:1467
+#: part/serializers.py:1469
 msgid "Include Inherited"
 msgstr "Bao gồm thừa hưởng"
 
-#: part/serializers.py:1468
+#: part/serializers.py:1470
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Bao gồm mục BOM được thừa hưởng từ sản phẩm mẫu"
 
-#: part/serializers.py:1473
+#: part/serializers.py:1475
 msgid "Skip Invalid Rows"
 msgstr "Bỏ qua dòng không hợp lệ"
 
-#: part/serializers.py:1474
+#: part/serializers.py:1476
 msgid "Enable this option to skip invalid rows"
 msgstr "Bật tùy chọn này để bỏ qua dòng không hợp lệ"
 
-#: part/serializers.py:1479
+#: part/serializers.py:1481
 msgid "Copy Substitute Parts"
 msgstr "Sao chép sản phẩm thay thế"
 
-#: part/serializers.py:1480
+#: part/serializers.py:1482
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Sao chép sản phẩm thay thế khi nhân bản hàng hóa BOM"
 
-#: part/serializers.py:1520
+#: part/serializers.py:1522
 msgid "Clear Existing BOM"
 msgstr "Dọn dẹp BOM đang tồn tại"
 
-#: part/serializers.py:1521
+#: part/serializers.py:1523
 msgid "Delete existing BOM items before uploading"
 msgstr "Xóa mục BOM đang tồn tại trước khi tải lên"
 
-#: part/serializers.py:1551
+#: part/serializers.py:1553
 msgid "No part column specified"
 msgstr "Chưa chỉ ra cột sản phẩm"
 
-#: part/serializers.py:1595
+#: part/serializers.py:1597
 msgid "Multiple matching parts found"
 msgstr "Tìm thấy nhiều sản phẩm phù hợp"
 
-#: part/serializers.py:1598
+#: part/serializers.py:1600
 msgid "No matching part found"
 msgstr "Không tìm thấy sản phẩm nào"
 
-#: part/serializers.py:1601
+#: part/serializers.py:1603
 msgid "Part is not designated as a component"
 msgstr "Sản phẩm không được chỉ định như là một thành phần"
 
-#: part/serializers.py:1610
+#: part/serializers.py:1612
 msgid "Quantity not provided"
 msgstr "Chưa cung cấp số lượng"
 
-#: part/serializers.py:1618
+#: part/serializers.py:1620
 msgid "Invalid quantity"
 msgstr "Số lượng không hợp lệ"
 
-#: part/serializers.py:1639
+#: part/serializers.py:1641
 msgid "At least one BOM item is required"
 msgstr "Buộc phải nhập ít nhất một mục BOM"
 
@@ -13344,7 +13348,8 @@ msgstr "Nhà cung cấp SSO đã chọn không hợp lệ hoặc đã không đ�
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "Bạn chuân bị sử dụng tài khoản %(provider_name)s của bạn để đăng nhập%(site_name)s<br>Vì là bước cuối cùng, xin hãy hoàn thiện biểu mẫu dưới đây:"
 
@@ -13519,4 +13524,3 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
-
