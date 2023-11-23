@@ -5,6 +5,7 @@ import io
 import logging
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError, models, transaction
@@ -13,11 +14,14 @@ from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
 import common.models
+import common.settings
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
@@ -1042,6 +1046,10 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'supplier_price_max',
             'variant_cost_min',
             'variant_cost_max',
+            'override_min',
+            'override_min_currency',
+            'override_max',
+            'override_max_currency',
             'overall_min',
             'overall_max',
             'sale_price_min',
@@ -1073,6 +1081,30 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     variant_cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True)
     variant_cost_max = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
+    override_min = InvenTree.serializers.InvenTreeMoneySerializer(
+        label=_('Minimum Price'),
+        help_text=_('Override calculated value for minimum price'),
+        allow_null=True, read_only=False, required=False,
+    )
+
+    override_min_currency = serializers.ChoiceField(
+        label=_('Minimum price currency'),
+        read_only=False, required=False,
+        choices=common.settings.currency_code_mappings(),
+    )
+
+    override_max = InvenTree.serializers.InvenTreeMoneySerializer(
+        label=_('Maximum Price'),
+        help_text=_('Override calculated value for maximum price'),
+        allow_null=True, read_only=False, required=False,
+    )
+
+    override_max_currency = serializers.ChoiceField(
+        label=_('Maximum price currency'),
+        read_only=False, required=False,
+        choices=common.settings.currency_code_mappings(),
+    )
+
     overall_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True)
     overall_max = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
@@ -1086,18 +1118,44 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         write_only=True,
         label=_('Update'),
         help_text=_('Update pricing for this part'),
-        default=False,
-        required=False,
+        default=False, required=False, allow_null=True,
     )
+
+    def validate(self, data):
+        """Validate supplied pricing data"""
+
+        super().validate(data)
+
+        # Check that override_min is not greater than override_max
+        override_min = data.get('override_min', None)
+        override_max = data.get('override_max', None)
+
+        default_currency = common.settings.currency_code_default()
+
+        if override_min is not None and override_max is not None:
+
+            try:
+                override_min = convert_money(override_min, default_currency)
+                override_max = convert_money(override_max, default_currency)
+            except MissingRate:
+                raise ValidationError(_(f'Could not convert from provided currencies to {default_currency}'))
+
+            if override_min > override_max:
+                raise ValidationError({
+                    'override_min': _('Minimum price must not be greater than maximum price'),
+                    'override_max': _('Maximum price must not be less than minimum price')
+                })
+
+        return data
 
     def save(self):
         """Called when the serializer is saved"""
-        data = self.validated_data
 
-        if InvenTree.helpers.str2bool(data.get('update', False)):
-            # Update part pricing
-            pricing = self.instance
-            pricing.update_pricing()
+        super().save()
+
+        # Update part pricing
+        pricing = self.instance
+        pricing.update_pricing()
 
 
 class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
