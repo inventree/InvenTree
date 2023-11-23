@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-21 13:44+0000\n"
-"PO-Revision-Date: 2023-11-21 00:07\n"
+"POT-Creation-Date: 2023-11-22 23:42+0000\n"
+"PO-Revision-Date: 2023-11-23 00:37\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -56,7 +56,7 @@ msgstr "ป้อนวันที่"
 #: company/models.py:732 company/templates/company/sidebar.html:37
 #: order/models.py:1104 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
-#: order/templates/order/so_sidebar.html:17 part/admin.py:41
+#: order/templates/order/so_sidebar.html:17 part/admin.py:40
 #: part/models.py:2998 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
 #: stock/admin.py:139 stock/models.py:2217 stock/models.py:2325
@@ -267,7 +267,7 @@ msgstr "เลือกไฟล์ที่ต้องการแนบ"
 #: InvenTree/models.py:482 common/models.py:2877 company/models.py:128
 #: company/models.py:386 company/models.py:440 company/models.py:719
 #: order/models.py:234 order/models.py:1108 order/models.py:1466
-#: part/admin.py:39 part/models.py:836
+#: part/admin.py:38 part/models.py:836
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
 #: stock/admin.py:138 templates/js/translated/company.js:1309
@@ -474,9 +474,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -3874,7 +3872,7 @@ msgid "Parameter value"
 msgstr ""
 
 #: company/models.py:538 company/templates/company/supplier_part.html:168
-#: part/admin.py:40 part/models.py:923 part/models.py:3395
+#: part/admin.py:39 part/models.py:923 part/models.py:3395
 #: part/templates/part/part_base.html:284
 #: templates/js/translated/company.js:1415 templates/js/translated/part.js:1511
 #: templates/js/translated/part.js:1615 templates/js/translated/part.js:2368
@@ -5485,36 +5483,40 @@ msgstr ""
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
-#: part/admin.py:33 part/admin.py:269 part/models.py:3660 part/stocktake.py:217
+#: part/admin.py:32 part/admin.py:269 part/models.py:3660 part/stocktake.py:217
 #: stock/admin.py:119
 msgid "Part ID"
 msgstr ""
 
-#: part/admin.py:34 part/admin.py:271 part/models.py:3664 part/stocktake.py:218
+#: part/admin.py:33 part/admin.py:271 part/models.py:3664 part/stocktake.py:218
 #: stock/admin.py:120
 msgid "Part Name"
 msgstr ""
 
-#: part/admin.py:35 part/stocktake.py:219
+#: part/admin.py:34 part/stocktake.py:219
 msgid "Part Description"
 msgstr ""
 
-#: part/admin.py:36 part/models.py:824 part/templates/part/part_base.html:269
+#: part/admin.py:35 part/models.py:824 part/templates/part/part_base.html:269
 #: report/templates/report/inventree_slr_report.html:103
 #: templates/js/translated/part.js:1226 templates/js/translated/part.js:2339
 #: templates/js/translated/stock.js:2006
 msgid "IPN"
 msgstr ""
 
-#: part/admin.py:37 part/models.py:831 part/templates/part/part_base.html:277
+#: part/admin.py:36 part/models.py:831 part/templates/part/part_base.html:277
 #: report/models.py:189 templates/js/translated/part.js:1231
 #: templates/js/translated/part.js:2345
 msgid "Revision"
 msgstr ""
 
-#: part/admin.py:38 part/admin.py:195 part/models.py:810
+#: part/admin.py:37 part/admin.py:195 part/models.py:810
 #: part/templates/part/category.html:94 part/templates/part/part_base.html:298
 msgid "Keywords"
+msgstr ""
+
+#: part/admin.py:41
+msgid "Part Image"
 msgstr ""
 
 #: part/admin.py:42 part/admin.py:189 part/stocktake.py:220
@@ -13341,8 +13343,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13517,3 +13518,4 @@ msgstr ""
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr ""
+
