@@ -24,7 +24,7 @@ You need to make sure that you have the following tools installed before continu
    ```
 2. open vscode, navigate to the extensions sidebar and search for `ms-vscode-remote.remote-containers`. Click on install.
 3. open the cloned folder from above by clicking on `file > open folder`
-4. vscode should now ask you if you'd like to reopen this folder in a devcontainer. Click `Reopen in Container`. If it shouldn't ask you open the command palette (<kbd>CTRL/CMD</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>) and search for `Reopen in Container`. This can take a few minutes until the image is downloaded, build and setup with all dependencies.
+4. vscode should now ask you if you'd like to reopen this folder in a devcontainer. Click `Reopen in Container`. If it does not ask you, open the command palette (<kbd>CTRL/CMD</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>) and search for `Reopen in Container`. This can take a few minutes until the image is downloaded, build and setup with all dependencies.
 5. Open a new terminal from the top menu by clicking `Terminal > New Terminal`
 6. The last line in your terminal should now show the text `(venv)` at the start of the line
 7. From here' we need to setup the InvenTree specific development environment
@@ -65,7 +65,7 @@ You can now set breakpoints and vscode will automatically pause execution if tha
 
 !!! info "React Frontend development"
 
-The React frontend requires additional steps to run. Refer to
+The React frontend requires additional steps to run. Refer to [Platform UI / React](./react-frontend.md)
 
 ### Plugin development
 
