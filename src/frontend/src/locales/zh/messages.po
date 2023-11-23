@@ -8,19 +8,19 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-21 00:07\n"
+"PO-Revision-Date: 2023-11-23 00:37\n"
 "Last-Translator: \n"
-"Language-Team: Chinese Traditional\n"
+"Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: zh-TW\n"
+"X-Crowdin-Language: zh-CN\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
-msgstr ""
+msgstr "标题"
 
 #: src/components/forms/ApiForm.tsx:127
 #: src/functions/forms.tsx:48
@@ -32,28 +32,28 @@ msgstr ""
 #: src/components/forms/ApiForm.tsx:291
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "操作成功"
 
 #: src/components/forms/ApiForm.tsx:363
 msgid "Form Errors Exist"
-msgstr ""
+msgstr "表单存在错误"
 
 #: src/components/forms/ApiForm.tsx:406
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
-msgstr ""
+msgstr "提交"
 
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:33
 msgid "Login failed"
-msgstr ""
+msgstr "登录失败"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
 #: src/functions/auth.tsx:111
 msgid "Check your input and try again."
-msgstr ""
+msgstr "请检查您的输入并重试。"
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -63,11 +63,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr ""
+msgstr "登录成功"
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr ""
+msgstr "欢迎回来！"
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -76,11 +76,11 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:102
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "邮件发送成功"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr ""
+msgstr "请检查您的收件箱以查看登录链接。如果您有帐户，您将收到登录链接。如未收到，请检查垃圾邮件夹。"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -89,31 +89,31 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:72
 msgid "Input error"
-msgstr ""
+msgstr "输入错误"
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr ""
+msgstr "欢迎，请在下方登录"
 
 #: src/components/forms/AuthenticationForm.tsx:91
 #: src/components/tables/settings/UserDrawer.tsx:159
 #: src/components/tables/settings/UserTable.tsx:57
 msgid "Username"
-msgstr ""
+msgstr "用户名"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr ""
+msgstr "密码"
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr ""
+msgstr "您的密码"
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "重置密码"
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/components/tables/settings/UserDrawer.tsx:163
@@ -121,13 +121,13 @@ msgstr ""
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
-msgstr ""
+msgstr "邮箱"
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr ""
+msgstr "我们将向您发送登录链接 - 如果您已注册"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -135,24 +135,24 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr ""
+msgstr "给我发一封电子邮件"
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr ""
+msgstr "我将使用用户名和密码"
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
-msgstr ""
+msgstr "登录"
 
 #: src/components/forms/AuthenticationForm.tsx:147
 msgid "Send Email"
-msgstr ""
+msgstr "发送电子邮件"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr ""
+msgstr "主机"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
@@ -162,44 +162,44 @@ msgstr ""
 #: src/components/tables/settings/GroupTable.tsx:29
 #: src/components/tables/stock/StockLocationTable.tsx:25
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr ""
+msgstr "这里没有人..."
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "添加主机"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr ""
+msgstr "选择对象目标"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr ""
+msgstr "编辑可能的主机选项"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "版本：{0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr ""
+msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr ""
+msgstr "名称：{0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr ""
+msgstr "状态: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
@@ -210,62 +210,62 @@ msgstr ""
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 msgid "Error"
-msgstr ""
+msgstr "错误"
 
 #: src/components/forms/fields/RelatedModelField.tsx:199
 #: src/pages/Index/Settings/UserSettings.tsx:64
 msgid "Search"
-msgstr ""
+msgstr "搜索"
 
 #: src/components/forms/fields/RelatedModelField.tsx:200
 #: src/components/modals/AboutInvenTreeModal.tsx:67
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:301
 msgid "Loading"
-msgstr ""
+msgstr "正在加载"
 
 #: src/components/forms/fields/RelatedModelField.tsx:202
 msgid "No results found"
-msgstr ""
+msgstr "未找到结果"
 
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:49
 msgid "Thumbnail"
-msgstr ""
+msgstr "缩略图"
 
 #: src/components/items/ActionDropdown.tsx:84
 #: src/pages/build/BuildDetail.tsx:206
 msgid "Barcode Actions"
-msgstr ""
+msgstr "条形码操作"
 
 #: src/components/items/ActionDropdown.tsx:101
 msgid "View"
-msgstr ""
+msgstr "视图"
 
 #: src/components/items/ActionDropdown.tsx:102
 msgid "View barcode"
-msgstr ""
+msgstr "查看条形码"
 
 #: src/components/items/ActionDropdown.tsx:118
 msgid "Link Barcode"
-msgstr ""
+msgstr "关联二维码"
 
 #: src/components/items/ActionDropdown.tsx:119
 msgid "Link custom barcode"
-msgstr ""
+msgstr "链接自定义条形码"
 
 #: src/components/items/ActionDropdown.tsx:135
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "解绑条形码"
 
 #: src/components/items/ActionDropdown.tsx:136
 msgid "Unlink custom barcode"
-msgstr ""
+msgstr "解绑自定义条码链接"
 
 #: src/components/items/ActionDropdown.tsx:154
 #: src/components/tables/RowActions.tsx:44
 msgid "Edit"
-msgstr ""
+msgstr "编辑"
 
 #: src/components/items/ActionDropdown.tsx:173
 #: src/components/tables/RowActions.tsx:61
@@ -274,263 +274,263 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:332
 #: src/pages/Notifications.tsx:79
 msgid "Delete"
-msgstr ""
+msgstr "删除"
 
 #: src/components/items/ActionDropdown.tsx:174
 msgid "Delete item"
-msgstr ""
+msgstr "删除项目"
 
 #: src/components/items/ActionDropdown.tsx:192
 #: src/components/tables/RowActions.tsx:27
 #: src/pages/stock/StockDetail.tsx:195
 msgid "Duplicate"
-msgstr ""
+msgstr "复制"
 
 #: src/components/items/ActionDropdown.tsx:193
 msgid "Duplicate item"
-msgstr ""
+msgstr "重复项目"
 
 #: src/components/items/CopyButton.tsx:18
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "复制到剪贴板"
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr ""
+msgstr "了解更多"
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/components/tables/InvenTreeTable.tsx:384
 msgid "Unknown error"
-msgstr ""
+msgstr "未知错误"
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr ""
+msgstr "出现了一个错误"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "了解更多"
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "InvenTree Logo"
 
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:30
 msgid "This information is only available for staff users"
-msgstr ""
+msgstr "此信息仅供员工使用"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr ""
+msgstr "此功能/按钮/站点是一个未实现的功能的占位符，只是部分或打算测试的功能。"
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr ""
+msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
-msgstr ""
+msgstr "此面板是一个占位符。"
 
 #: src/components/items/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr ""
+msgstr "扫描二维码"
 
 #: src/components/items/YesNoButton.tsx:12
 msgid "Yes"
-msgstr ""
+msgstr "确定"
 
 #: src/components/items/YesNoButton.tsx:12
 msgid "No"
-msgstr ""
+msgstr "取消"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:85
 msgid "Your InvenTree version status is"
-msgstr ""
+msgstr "您的Inventree 版本状态是"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:89
 msgid "Development Version"
-msgstr ""
+msgstr "开发版"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:93
 msgid "Up to Date"
-msgstr ""
+msgstr "已是最新版本"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:97
 msgid "Update Available"
-msgstr ""
+msgstr "有可用更新"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:102
 msgid "Version Information"
-msgstr ""
+msgstr "版本信息"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:110
 msgid "InvenTree Version"
-msgstr ""
+msgstr "InvenTree 版本"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:116
 msgid "Commit Hash"
-msgstr ""
+msgstr "提交哈希值"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:121
 msgid "Commit Date"
-msgstr ""
+msgstr "提交日期"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:126
 msgid "Commit Branch"
-msgstr ""
+msgstr "提交分支"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:131
 #: src/components/modals/ServerInfoModal.tsx:124
 msgid "API Version"
-msgstr ""
+msgstr "API 版本"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:134
 msgid "Python Version"
-msgstr ""
+msgstr "Python 版本"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:137
 msgid "Django Version"
-msgstr ""
+msgstr "Django版本"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:147
 msgid "Links"
-msgstr ""
+msgstr "链接"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:153
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "InvenTree 文档"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:154
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "在Github上查看源代码"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:155
 msgid "Credits"
-msgstr ""
+msgstr "致谢"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:156
 msgid "Mobile App"
-msgstr ""
+msgstr "手机 App"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:157
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "提交问题报告"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:167
 msgid "Copy version information"
-msgstr ""
+msgstr "复制版本信息"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
-msgstr ""
+msgstr "未知响应"
 
 #: src/components/modals/QrCodeModal.tsx:102
 #: src/pages/Index/Scan.tsx:618
 msgid "Error while getting camera"
-msgstr ""
+msgstr "获取相机时出错"
 
 #: src/components/modals/QrCodeModal.tsx:125
 #: src/pages/Index/Scan.tsx:641
 msgid "Error while scanning"
-msgstr ""
+msgstr "扫描时出错"
 
 #: src/components/modals/QrCodeModal.tsx:139
 #: src/pages/Index/Scan.tsx:655
 msgid "Error while stopping"
-msgstr ""
+msgstr "停止时出错"
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/defaults/menuItems.tsx:21
 #: src/pages/Index/Scan.tsx:724
 msgid "Scanning"
-msgstr ""
+msgstr "正在扫描"
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/pages/Index/Scan.tsx:724
 msgid "Not scanning"
-msgstr ""
+msgstr "未扫描"
 
 #: src/components/modals/QrCodeModal.tsx:159
 #: src/pages/Index/Scan.tsx:730
 msgid "Select Camera"
-msgstr ""
+msgstr "选择相机"
 
 #: src/components/modals/QrCodeModal.tsx:169
 #: src/pages/Index/Scan.tsx:716
 msgid "Start scanning"
-msgstr ""
+msgstr "开始扫描"
 
 #: src/components/modals/QrCodeModal.tsx:176
 #: src/pages/Index/Scan.tsx:710
 msgid "Stop scanning"
-msgstr ""
+msgstr "停止扫描"
 
 #: src/components/modals/QrCodeModal.tsx:181
 msgid "No scans yet!"
-msgstr ""
+msgstr "还没有扫描！"
 
 #: src/components/modals/QrCodeModal.tsx:201
 #: src/components/modals/ServerInfoModal.tsx:137
 msgid "Close modal"
-msgstr ""
+msgstr "关闭模态框"
 
 #: src/components/modals/ServerInfoModal.tsx:17
 #: src/pages/Index/Settings/SystemSettings.tsx:42
 msgid "Server"
-msgstr ""
+msgstr "服务器"
 
 #: src/components/modals/ServerInfoModal.tsx:23
 msgid "Instance Name"
-msgstr ""
+msgstr "实例名称"
 
 #: src/components/modals/ServerInfoModal.tsx:29
 msgid "Database"
-msgstr ""
+msgstr "数据库"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 msgid "Bebug Mode"
-msgstr ""
+msgstr "调试模式"
 
 #: src/components/modals/ServerInfoModal.tsx:41
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "服务器以调试模式运行"
 
 #: src/components/modals/ServerInfoModal.tsx:48
 msgid "Docker Mode"
-msgstr ""
+msgstr "停靠模式"
 
 #: src/components/modals/ServerInfoModal.tsx:51
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "服务器是使用docker部署的"
 
 #: src/components/modals/ServerInfoModal.tsx:57
 msgid "Plugin Support"
-msgstr ""
+msgstr "插件支持"
 
 #: src/components/modals/ServerInfoModal.tsx:62
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "插件支持已启用"
 
 #: src/components/modals/ServerInfoModal.tsx:64
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "插件支持已禁用"
 
 #: src/components/modals/ServerInfoModal.tsx:71
 msgid "Server status"
-msgstr ""
+msgstr "服务器状态"
 
 #: src/components/modals/ServerInfoModal.tsx:77
 msgid "Healthy"
-msgstr ""
+msgstr "健康"
 
 #: src/components/modals/ServerInfoModal.tsx:79
 msgid "Issues detected"
-msgstr ""
+msgstr "检测到问题"
 
 #: src/components/modals/ServerInfoModal.tsx:88
 msgid "Background Worker"
-msgstr ""
+msgstr "后台工作者"
 
 #: src/components/modals/ServerInfoModal.tsx:92
 msgid "Background worker not running"
@@ -744,7 +744,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:42
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "制造商零件"
 
 #: src/components/render/ModelType.tsx:48
 #: src/pages/part/CategoryDetail.tsx:102
@@ -754,7 +754,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:55
 #: src/pages/stock/StockDetail.tsx:220
 msgid "Stock Item"
-msgstr ""
+msgstr "库存项"
 
 #: src/components/render/ModelType.tsx:56
 #: src/components/tables/stock/StockLocationTable.tsx:36
@@ -762,55 +762,55 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:36
 #: src/pages/stock/LocationDetail.tsx:82
 msgid "Stock Items"
-msgstr ""
+msgstr "库存项"
 
 #: src/components/render/ModelType.tsx:62
 msgid "Stock Location"
-msgstr ""
+msgstr "库存位置"
 
 #: src/components/render/ModelType.tsx:69
 msgid "Stock History"
-msgstr ""
+msgstr "库存历史记录"
 
 #: src/components/render/ModelType.tsx:70
 msgid "Stock Histories"
-msgstr ""
+msgstr "库存历史记录"
 
 #: src/components/render/ModelType.tsx:74
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:43
 msgid "Build"
-msgstr ""
+msgstr "构建..."
 
 #: src/components/render/ModelType.tsx:75
 msgid "Builds"
-msgstr ""
+msgstr "编译"
 
 #: src/components/render/ModelType.tsx:81
 #: src/pages/company/CompanyDetail.tsx:195
 msgid "Company"
-msgstr ""
+msgstr "公司"
 
 #: src/components/render/ModelType.tsx:82
 msgid "Companies"
-msgstr ""
+msgstr "公司"
 
 #: src/components/render/ModelType.tsx:88
 #: src/components/tables/ColumnRenderers.tsx:66
 #: src/components/tables/TableHoverCard.tsx:58
 #: src/components/tables/settings/ProjectCodeTable.tsx:34
 msgid "Project Code"
-msgstr ""
+msgstr "项目编码"
 
 #: src/components/render/ModelType.tsx:89
 #: src/pages/Index/Settings/SystemSettings.tsx:106
 msgid "Project Codes"
-msgstr ""
+msgstr "项目代码:"
 
 #: src/components/render/ModelType.tsx:95
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:131
 msgid "Purchase Order"
-msgstr ""
+msgstr "采购订单"
 
 #: src/components/render/ModelType.tsx:96
 #: src/pages/Index/Settings/SystemSettings.tsx:263
@@ -818,21 +818,21 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:175
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
-msgstr ""
+msgstr "采购订单"
 
 #: src/components/render/ModelType.tsx:102
 msgid "Purchase Order Line"
-msgstr ""
+msgstr "采购订单行"
 
 #: src/components/render/ModelType.tsx:103
 msgid "Purchase Order Lines"
-msgstr ""
+msgstr "采购订单行"
 
 #: src/components/render/ModelType.tsx:107
 #: src/components/tables/sales/SalesOrderTable.tsx:37
 #: src/pages/sales/SalesOrderDetail.tsx:96
 msgid "Sales Order"
-msgstr ""
+msgstr "销售订单"
 
 #: src/components/render/ModelType.tsx:108
 #: src/pages/Index/Settings/SystemSettings.tsx:276
@@ -840,7 +840,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:181
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
-msgstr ""
+msgstr "销售订单"
 
 #: src/components/render/ModelType.tsx:114
 msgid "Sales Order Shipment"
@@ -1058,7 +1058,7 @@ msgstr ""
 #: src/functions/forms.tsx:201
 #: src/hooks/UseForm.tsx:36
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: src/components/tables/FilterSelectModal.tsx:172
 msgid "Add Filter"
@@ -1947,32 +1947,32 @@ msgstr ""
 msgid "Added group"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:49
+#: src/components/tables/settings/ProjectCodeTable.tsx:50
 msgid "Edit project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:55
+#: src/components/tables/settings/ProjectCodeTable.tsx:57
 msgid "Project code updated"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:65
+#: src/components/tables/settings/ProjectCodeTable.tsx:67
 msgid "Delete project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:66
+#: src/components/tables/settings/ProjectCodeTable.tsx:68
 msgid "Project code deleted"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:69
+#: src/components/tables/settings/ProjectCodeTable.tsx:71
 msgid "Are you sure you want to remove this project code?"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:82
-#: src/components/tables/settings/ProjectCodeTable.tsx:96
+#: src/components/tables/settings/ProjectCodeTable.tsx:84
+#: src/components/tables/settings/ProjectCodeTable.tsx:99
 msgid "Add project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:88
+#: src/components/tables/settings/ProjectCodeTable.tsx:91
 msgid "Added project code"
 msgstr ""
 
