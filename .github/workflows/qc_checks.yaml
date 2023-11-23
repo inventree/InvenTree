@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true'
+    if: true
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -89,7 +89,7 @@ jobs:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
+    if: true
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
