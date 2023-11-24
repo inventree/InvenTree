@@ -8,7 +8,7 @@ msgstr ""
 "Language: fa\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-23 00:37\n"
+"PO-Revision-Date: 2023-11-24 00:35\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3677,3 +3677,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
