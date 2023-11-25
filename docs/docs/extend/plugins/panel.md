@@ -357,11 +357,16 @@ json container and transferred to the plugin.
 
 #### Store the Data
 I case you plugin needs to store data permanently, InvenTree has a nice feature called
-[metadata](metadata.md). You can easily store your values using the following
+[metadata](metadata.md). You can easily store your values by adding a few lines
+to the do_something function.
 code:
 
 ```python
-for key in data:
-    self.build.metadata[key]=data[key]
-self.build.save()
+    def do_something(self, request):
+
+        data=json.loads(request.body)
+        print('Data received:', data)
+	for key in data:
+	    self.build.metadata[key]=data[key]
+	self.build.save()
 ```
