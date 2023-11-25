@@ -114,7 +114,7 @@ export function UserTable() {
             url: ApiPaths.user_list,
             pk: record.pk,
             title: t`Delete user`,
-            successMessage: t`user deleted`,
+            successMessage: t`User deleted`,
             onFormSuccess: refreshTable,
             preFormContent: (
               <Text>{t`Are you sure you want to delete this user?`}</Text>
