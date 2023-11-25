@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-23 23:36+0000\n"
-"PO-Revision-Date: 2023-11-24 00:35\n"
+"PO-Revision-Date: 2023-11-25 00:34\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -32,16 +32,16 @@ msgstr "Nenhum valor fornecido"
 #: InvenTree/conversion.py:125
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "Não foi possível converter {original} para {unit}"
 
 #: InvenTree/conversion.py:127
 msgid "Invalid quantity supplied"
-msgstr ""
+msgstr "Quantidade fornecida inválida"
 
 #: InvenTree/conversion.py:141
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr ""
+msgstr "Quantidade fornecida inválida ({exc})"
 
 #: InvenTree/exceptions.py:89
 msgid "Error details can be found in the admin panel"
