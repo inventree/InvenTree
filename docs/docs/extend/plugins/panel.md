@@ -90,7 +90,6 @@ class MouserCartPanel(PanelMixin, InvenTreePlugin, UrlsMixin):
 
         # This panel will *only* display on the PurchaseOrder view,
         if isinstance(view, PurchaseOrderDetail):
-            self.build=view.get_object()
             panels.append({
                 'title': 'Mouser Actions',
                 'icon': 'fa-user',
@@ -192,11 +191,12 @@ class ExamplePanel(PanelMixin, InvenTreePlugin, UrlsMixin):
     def get_custom_panels(self, view, request):
         panels = []
         if isinstance(view, BuildDetail):
-		panels.append({
-		    'title': 'Example Info',
-		    'icon': 'fa-industry',
-		    'content_template': 'example_panel/example.html',
-		})
+	    self.build=view.get_object()
+	    panels.append({
+		'title': 'Example Info',
+		'icon': 'fa-industry',
+		'content_template': 'example_panel/example.html',
+	    })
         return panels
 
     def setup_urls(self):
@@ -332,6 +332,7 @@ from company.models import Company
     def get_custom_panels(self, view, request):
         panels = []
         if isinstance(view, BuildDetail):
+	    self.build=view.get_object()
             self.companies=Company.objects.filter(is_supplier=True)
             panels.append({
             ...
