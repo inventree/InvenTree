@@ -704,7 +704,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
     SKU = models.CharField(
         max_length=100,
         verbose_name=__("SKU = Stock Keeping Unit (supplier part number)", 'SKU'),
-        help_text=_('Supplier stock keeping unit', )
+        help_text=_('Supplier stock keeping unit')
     )
 
     manufacturer_part = models.ForeignKey(
