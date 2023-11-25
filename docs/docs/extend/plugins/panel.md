@@ -90,6 +90,7 @@ class MouserCartPanel(PanelMixin, InvenTreePlugin, UrlsMixin):
 
         # This panel will *only* display on the PurchaseOrder view,
         if isinstance(view, PurchaseOrderDetail):
+            self.build=view.get_object()
             panels.append({
                 'title': 'Mouser Actions',
                 'icon': 'fa-user',
@@ -352,3 +353,14 @@ by looping.
 
 The value of the select is the pk of the company. It can simply be added to the
 json container and transferred to the plugin.
+
+#### Store the Data
+I case you plugin needs to store data permanently, InvenTree has a nice feature called
+[metadata](metadata.md). You can easily store your values using the following
+code:
+
+```python
+for key in data:
+    self.build.metadata[key]=data[key]
+self.build.save()
+```
