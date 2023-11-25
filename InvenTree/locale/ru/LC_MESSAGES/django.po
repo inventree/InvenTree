@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-22 23:42+0000\n"
+"POT-Creation-Date: 2023-11-25 23:33+0000\n"
 "PO-Revision-Date: 2023-11-23 00:36\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -53,7 +53,7 @@ msgstr "Введите дату"
 
 #: InvenTree/fields.py:200 InvenTree/models.py:920 build/serializers.py:433
 #: build/serializers.py:511 build/templates/build/sidebar.html:21
-#: company/models.py:732 company/templates/company/sidebar.html:37
+#: company/models.py:733 company/templates/company/sidebar.html:37
 #: order/models.py:1104 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:40
@@ -203,7 +203,7 @@ msgstr "Предоставленный URL не является допусти�
 msgid "[{site.name}] Log in to the app"
 msgstr "[{site.name}] Войти в приложение"
 
-#: InvenTree/magic_login.py:38 company/models.py:122
+#: InvenTree/magic_login.py:38 company/models.py:123
 #: company/templates/company/company_base.html:132
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
@@ -264,8 +264,8 @@ msgstr "Вложения"
 msgid "Select file to attach"
 msgstr "Выберите файл для вложения"
 
-#: InvenTree/models.py:482 common/models.py:2877 company/models.py:128
-#: company/models.py:386 company/models.py:440 company/models.py:719
+#: InvenTree/models.py:482 common/models.py:2877 company/models.py:129
+#: company/models.py:387 company/models.py:441 company/models.py:720
 #: order/models.py:234 order/models.py:1108 order/models.py:1466
 #: part/admin.py:38 part/models.py:836
 #: part/templates/part/part_scheduling.html:11
@@ -343,7 +343,7 @@ msgid "Invalid choice"
 msgstr "Неверный выбор"
 
 #: InvenTree/models.py:786 InvenTree/models.py:787 common/models.py:2536
-#: common/models.py:2982 company/models.py:524 label/models.py:116
+#: common/models.py:2982 company/models.py:525 label/models.py:116
 #: part/models.py:782 part/models.py:3388 plugin/models.py:42
 #: report/models.py:170 stock/models.py:71 stock/models.py:72
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -364,7 +364,7 @@ msgstr "Название"
 
 #: InvenTree/models.py:793 build/models.py:175
 #: build/templates/build/detail.html:24 common/models.py:126
-#: company/models.py:446 company/models.py:725
+#: company/models.py:447 company/models.py:726
 #: company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:107 label/models.py:123
@@ -448,7 +448,7 @@ msgstr "Сервер зарегистрировал ошибку."
 msgid "Must be a valid number"
 msgstr "Должно быть действительным номером"
 
-#: InvenTree/serializers.py:90 company/models.py:150
+#: InvenTree/serializers.py:90 company/models.py:151
 #: company/templates/company/company_base.html:106 part/models.py:2833
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
@@ -474,7 +474,9 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid "Your account has been created.\n\n"
+msgid ""
+"Your account has been created.\n"
+"\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -661,7 +663,7 @@ msgstr "Китайский (Упрощенный)"
 msgid "Chinese (Traditional)"
 msgstr "Китайский (Традиционный)"
 
-#: InvenTree/status.py:68 part/serializers.py:1006
+#: InvenTree/status.py:68 part/serializers.py:1008
 msgid "Background worker check failed"
 msgstr "Проверка фонового работника не удалась"
 
@@ -945,7 +947,7 @@ msgstr "Отслеживается"
 msgid "Allocated"
 msgstr "Выделено"
 
-#: build/api.py:293 company/models.py:766
+#: build/api.py:293 company/models.py:767
 #: company/templates/company/supplier_part.html:114
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
@@ -1021,13 +1023,13 @@ msgid "BuildOrder to which this build is allocated"
 msgstr "ПорядокСборки, которому выделяется эта сборка"
 
 #: build/models.py:192 build/templates/build/build_base.html:97
-#: build/templates/build/detail.html:29 company/models.py:907
+#: build/templates/build/detail.html:29 company/models.py:908
 #: order/models.py:1209 order/models.py:1324 order/models.py:1325
 #: part/models.py:365 part/models.py:2846 part/models.py:2972
 #: part/models.py:3109 part/models.py:3128 part/models.py:3147
 #: part/models.py:3168 part/models.py:3260 part/models.py:3534
 #: part/models.py:3656 part/models.py:3759 part/models.py:4082
-#: part/serializers.py:965 part/serializers.py:1452
+#: part/serializers.py:967 part/serializers.py:1454
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1244,7 +1246,7 @@ msgstr "Вывод сборки не совпадает с порядком сб
 
 #: build/models.py:855 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:444 order/serializers.py:389
-#: order/serializers.py:511 part/serializers.py:1277 part/serializers.py:1616
+#: order/serializers.py:511 part/serializers.py:1279 part/serializers.py:1618
 #: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "Количество должно быть больше нуля"
@@ -1426,7 +1428,7 @@ msgid "A list of build outputs must be provided"
 msgstr "Необходимо представить список результатов сборки"
 
 #: build/serializers.py:421 build/serializers.py:493 order/serializers.py:497
-#: order/serializers.py:616 order/serializers.py:1623 part/serializers.py:977
+#: order/serializers.py:616 order/serializers.py:1623 part/serializers.py:979
 #: stock/serializers.py:410 stock/serializers.py:575 stock/serializers.py:669
 #: stock/serializers.py:1150 stock/serializers.py:1421
 #: stock/templates/stock/item_base.html:394
@@ -2134,7 +2136,7 @@ msgstr ""
 msgid "Show the `about` modal only to superusers"
 msgstr ""
 
-#: common/models.py:1114 company/models.py:101 company/models.py:102
+#: common/models.py:1114 company/models.py:102 company/models.py:103
 msgid "Company name"
 msgstr "Название компании"
 
@@ -3522,7 +3524,7 @@ msgstr ""
 msgid "Was this news item read?"
 msgstr ""
 
-#: common/models.py:2917 company/models.py:139 part/models.py:849
+#: common/models.py:2917 company/models.py:140 part/models.py:849
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report_base.html:35
@@ -3632,184 +3634,184 @@ msgstr "Детали импортированы"
 msgid "Previous Step"
 msgstr "Предыдущий шаг"
 
-#: company/models.py:106
+#: company/models.py:107
 msgid "Company description"
 msgstr "Описание компании"
 
-#: company/models.py:107
+#: company/models.py:108
 msgid "Description of the company"
 msgstr "Описание компании"
 
-#: company/models.py:113 company/templates/company/company_base.html:100
+#: company/models.py:114 company/templates/company/company_base.html:100
 #: templates/InvenTree/settings/plugin_settings.html:54
 #: templates/js/translated/company.js:522
 msgid "Website"
 msgstr "Сайт"
 
-#: company/models.py:114
+#: company/models.py:115
 msgid "Company website URL"
 msgstr "Сайт компании"
 
-#: company/models.py:118
+#: company/models.py:119
 msgid "Phone number"
 msgstr "Телефон"
 
-#: company/models.py:119
+#: company/models.py:120
 msgid "Contact phone number"
 msgstr "Контактный телефон"
 
-#: company/models.py:122
+#: company/models.py:123
 msgid "Contact email address"
 msgstr "Контактный EMail"
 
-#: company/models.py:125 company/templates/company/company_base.html:139
+#: company/models.py:126 company/templates/company/company_base.html:139
 #: order/models.py:264 order/templates/order/order_base.html:203
 #: order/templates/order/return_order_base.html:174
 #: order/templates/order/sales_order_base.html:214
 msgid "Contact"
 msgstr "Контакт"
 
-#: company/models.py:126
+#: company/models.py:127
 msgid "Point of contact"
 msgstr "Контактное лицо"
 
-#: company/models.py:128
+#: company/models.py:129
 msgid "Link to external company information"
 msgstr "Ссылка на описание компании"
 
-#: company/models.py:142
+#: company/models.py:143
 msgid "is customer"
 msgstr "покупатель"
 
-#: company/models.py:142
+#: company/models.py:143
 msgid "Do you sell items to this company?"
 msgstr "Вы продаёте детали этой компании?"
 
-#: company/models.py:144
+#: company/models.py:145
 msgid "is supplier"
 msgstr "поставщик"
 
-#: company/models.py:144
+#: company/models.py:145
 msgid "Do you purchase items from this company?"
 msgstr "Вы закупаете детали у этой компании?"
 
-#: company/models.py:146
+#: company/models.py:147
 msgid "is manufacturer"
 msgstr "производитель"
 
-#: company/models.py:146
+#: company/models.py:147
 msgid "Does this company manufacture parts?"
 msgstr "Является ли компания производителем деталей?"
 
-#: company/models.py:153
+#: company/models.py:154
 msgid "Default currency used for this company"
 msgstr "Для этой компании используется валюта по умолчанию"
 
-#: company/models.py:232 company/models.py:333
+#: company/models.py:233 company/models.py:334
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12 stock/api.py:671
 #: templates/InvenTree/search.html:178 templates/js/translated/company.js:495
 msgid "Company"
 msgstr "Компания"
 
-#: company/models.py:334
+#: company/models.py:335
 msgid "Select company"
 msgstr "Выберите компанию"
 
-#: company/models.py:337
+#: company/models.py:338
 msgid "Address title"
 msgstr ""
 
-#: company/models.py:338
+#: company/models.py:339
 msgid "Title describing the address entry"
 msgstr ""
 
-#: company/models.py:342
+#: company/models.py:343
 msgid "Primary address"
 msgstr ""
 
-#: company/models.py:343
+#: company/models.py:344
 msgid "Set as primary address"
 msgstr ""
 
-#: company/models.py:346 templates/js/translated/company.js:904
+#: company/models.py:347 templates/js/translated/company.js:904
 #: templates/js/translated/company.js:961
 msgid "Line 1"
 msgstr ""
 
-#: company/models.py:347
+#: company/models.py:348
 msgid "Address line 1"
 msgstr ""
 
-#: company/models.py:351 templates/js/translated/company.js:905
+#: company/models.py:352 templates/js/translated/company.js:905
 #: templates/js/translated/company.js:967
 msgid "Line 2"
 msgstr ""
 
-#: company/models.py:352
+#: company/models.py:353
 msgid "Address line 2"
 msgstr ""
 
-#: company/models.py:356 company/models.py:357
+#: company/models.py:357 company/models.py:358
 #: templates/js/translated/company.js:973
 msgid "Postal code"
 msgstr ""
 
-#: company/models.py:361
+#: company/models.py:362
 msgid "City/Region"
 msgstr ""
 
-#: company/models.py:362
+#: company/models.py:363
 msgid "Postal code city/region"
 msgstr ""
 
-#: company/models.py:366
+#: company/models.py:367
 msgid "State/Province"
 msgstr ""
 
-#: company/models.py:367
+#: company/models.py:368
 msgid "State or province"
 msgstr ""
 
-#: company/models.py:371 templates/js/translated/company.js:991
+#: company/models.py:372 templates/js/translated/company.js:991
 msgid "Country"
 msgstr ""
 
-#: company/models.py:372
+#: company/models.py:373
 msgid "Address country"
 msgstr ""
 
-#: company/models.py:376
+#: company/models.py:377
 msgid "Courier shipping notes"
 msgstr ""
 
-#: company/models.py:377
+#: company/models.py:378
 msgid "Notes for shipping courier"
 msgstr ""
 
-#: company/models.py:381
+#: company/models.py:382
 msgid "Internal shipping notes"
 msgstr ""
 
-#: company/models.py:382
+#: company/models.py:383
 msgid "Shipping notes for internal use"
 msgstr ""
 
-#: company/models.py:387
+#: company/models.py:388
 msgid "Link to address information (external)"
 msgstr ""
 
-#: company/models.py:412 company/models.py:688 stock/models.py:709
+#: company/models.py:413 company/models.py:689 stock/models.py:709
 #: stock/serializers.py:205 stock/templates/stock/item_base.html:142
 #: templates/js/translated/bom.js:622
 msgid "Base Part"
 msgstr "Базовая деталь"
 
-#: company/models.py:416 company/models.py:692
+#: company/models.py:417 company/models.py:693
 msgid "Select part"
 msgstr "Выберите деталь"
 
-#: company/models.py:427 company/templates/company/company_base.html:76
+#: company/models.py:428 company/templates/company/company_base.html:76
 #: company/templates/company/manufacturer_part.html:90
 #: company/templates/company/supplier_part.html:145 part/serializers.py:445
 #: stock/templates/stock/item_base.html:207
@@ -3821,11 +3823,11 @@ msgstr "Выберите деталь"
 msgid "Manufacturer"
 msgstr "Производитель"
 
-#: company/models.py:428
+#: company/models.py:429
 msgid "Select manufacturer"
 msgstr "Выберите производителя"
 
-#: company/models.py:434 company/templates/company/manufacturer_part.html:101
+#: company/models.py:435 company/templates/company/manufacturer_part.html:101
 #: company/templates/company/supplier_part.html:153 part/serializers.py:451
 #: templates/js/translated/company.js:351
 #: templates/js/translated/company.js:1107
@@ -3836,30 +3838,30 @@ msgstr "Выберите производителя"
 msgid "MPN"
 msgstr ""
 
-#: company/models.py:435
+#: company/models.py:436
 msgid "Manufacturer Part Number"
 msgstr "Код производителя"
 
-#: company/models.py:441
+#: company/models.py:442
 msgid "URL for external manufacturer part link"
 msgstr "Ссылка на сайт производителя"
 
-#: company/models.py:447
+#: company/models.py:448
 msgid "Manufacturer part description"
 msgstr ""
 
-#: company/models.py:494 company/models.py:518 company/models.py:713
+#: company/models.py:495 company/models.py:519 company/models.py:714
 #: company/templates/company/manufacturer_part.html:7
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:217
 msgid "Manufacturer Part"
 msgstr "Деталь производителя"
 
-#: company/models.py:525
+#: company/models.py:526
 msgid "Parameter name"
 msgstr "Наименование параметра"
 
-#: company/models.py:531
+#: company/models.py:532
 #: report/templates/report/inventree_test_report_base.html:104
 #: stock/models.py:2312 templates/js/translated/company.js:1156
 #: templates/js/translated/company.js:1409 templates/js/translated/part.js:1492
@@ -3867,11 +3869,11 @@ msgstr "Наименование параметра"
 msgid "Value"
 msgstr "Значение"
 
-#: company/models.py:532
+#: company/models.py:533
 msgid "Parameter value"
 msgstr "Значение параметра"
 
-#: company/models.py:538 company/templates/company/supplier_part.html:168
+#: company/models.py:539 company/templates/company/supplier_part.html:168
 #: part/admin.py:39 part/models.py:923 part/models.py:3395
 #: part/templates/part/part_base.html:284
 #: templates/js/translated/company.js:1415 templates/js/translated/part.js:1511
@@ -3879,23 +3881,23 @@ msgstr "Значение параметра"
 msgid "Units"
 msgstr "Ед.изм"
 
-#: company/models.py:539
+#: company/models.py:540
 msgid "Parameter units"
 msgstr "Единицы измерения"
 
-#: company/models.py:633
+#: company/models.py:634
 msgid "Pack units must be compatible with the base part units"
 msgstr ""
 
-#: company/models.py:639
+#: company/models.py:640
 msgid "Pack units must be greater than zero"
 msgstr ""
 
-#: company/models.py:655
+#: company/models.py:656
 msgid "Linked manufacturer part must reference the same base part"
 msgstr ""
 
-#: company/models.py:699 company/templates/company/company_base.html:81
+#: company/models.py:700 company/templates/company/company_base.html:81
 #: company/templates/company/supplier_part.html:129 order/models.py:386
 #: order/templates/order/order_base.html:136 part/bom.py:284 part/bom.py:312
 #: part/serializers.py:434 plugin/builtin/suppliers/digikey.py:25
@@ -3911,36 +3913,27 @@ msgstr ""
 msgid "Supplier"
 msgstr "Поставщик"
 
-#: company/models.py:700
+#: company/models.py:701
 msgid "Select supplier"
 msgstr "Выберите поставщика"
 
-#: company/models.py:705 company/templates/company/supplier_part.html:139
-#: part/bom.py:285 part/bom.py:313 part/serializers.py:440
-#: templates/js/translated/company.js:349 templates/js/translated/part.js:1786
-#: templates/js/translated/pricing.js:510
-#: templates/js/translated/purchase_order.js:1844
-#: templates/js/translated/purchase_order.js:2022
-msgid "SKU"
-msgstr ""
-
-#: company/models.py:706 part/serializers.py:440
+#: company/models.py:707 part/serializers.py:440
 msgid "Supplier stock keeping unit"
 msgstr "Код поставщика"
 
-#: company/models.py:714
+#: company/models.py:715
 msgid "Select manufacturer part"
 msgstr "Выберите производителя части"
 
-#: company/models.py:720
+#: company/models.py:721
 msgid "URL for external supplier part link"
 msgstr "Ссылка на сайт поставщика"
 
-#: company/models.py:726
+#: company/models.py:727
 msgid "Supplier part description"
 msgstr ""
 
-#: company/models.py:731 company/templates/company/supplier_part.html:187
+#: company/models.py:732 company/templates/company/supplier_part.html:187
 #: part/admin.py:275 part/models.py:3797 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
@@ -3951,15 +3944,15 @@ msgstr ""
 msgid "Note"
 msgstr "Заметка"
 
-#: company/models.py:735 part/models.py:1857
+#: company/models.py:736 part/models.py:1857
 msgid "base cost"
 msgstr "базовая стоимость"
 
-#: company/models.py:735 part/models.py:1857
+#: company/models.py:736 part/models.py:1857
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
-#: company/models.py:737 company/templates/company/supplier_part.html:160
+#: company/models.py:738 company/templates/company/supplier_part.html:160
 #: stock/admin.py:137 stock/models.py:735 stock/serializers.py:1297
 #: stock/templates/stock/item_base.html:240
 #: templates/js/translated/company.js:1636
@@ -3967,11 +3960,11 @@ msgstr ""
 msgid "Packaging"
 msgstr "Упаковка"
 
-#: company/models.py:737
+#: company/models.py:738
 msgid "Part packaging"
 msgstr ""
 
-#: company/models.py:741 templates/js/translated/company.js:1641
+#: company/models.py:742 templates/js/translated/company.js:1641
 #: templates/js/translated/part.js:1820 templates/js/translated/part.js:1875
 #: templates/js/translated/purchase_order.js:314
 #: templates/js/translated/purchase_order.js:845
@@ -3981,27 +3974,27 @@ msgstr ""
 msgid "Pack Quantity"
 msgstr ""
 
-#: company/models.py:742
+#: company/models.py:743
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr ""
 
-#: company/models.py:758 part/models.py:1859
+#: company/models.py:759 part/models.py:1859
 msgid "multiple"
 msgstr ""
 
-#: company/models.py:758
+#: company/models.py:759
 msgid "Order multiple"
 msgstr ""
 
-#: company/models.py:767
+#: company/models.py:768
 msgid "Quantity available from supplier"
 msgstr ""
 
-#: company/models.py:771
+#: company/models.py:772
 msgid "Availability Updated"
 msgstr ""
 
-#: company/models.py:772
+#: company/models.py:773
 msgid "Date of last update of availability data"
 msgstr ""
 
@@ -4373,6 +4366,15 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:133
 msgid "No supplier information available"
+msgstr ""
+
+#: company/templates/company/supplier_part.html:139 part/bom.py:285
+#: part/bom.py:313 part/serializers.py:440
+#: templates/js/translated/company.js:349 templates/js/translated/part.js:1786
+#: templates/js/translated/pricing.js:510
+#: templates/js/translated/purchase_order.js:1844
+#: templates/js/translated/purchase_order.js:2022
+msgid "SKU"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:206
@@ -5615,13 +5617,13 @@ msgstr ""
 msgid "Part IPN"
 msgstr "IPN"
 
-#: part/admin.py:276 part/serializers.py:1085
+#: part/admin.py:276 part/serializers.py:1087
 #: templates/js/translated/pricing.js:358
 #: templates/js/translated/pricing.js:1024
 msgid "Minimum Price"
 msgstr ""
 
-#: part/admin.py:277 part/serializers.py:1097
+#: part/admin.py:277 part/serializers.py:1099
 #: templates/js/translated/pricing.js:353
 #: templates/js/translated/pricing.js:1032
 msgid "Maximum Price"
@@ -5779,7 +5781,7 @@ msgid "Part keywords to improve visibility in search results"
 msgstr "Ключевые слова для улучшения видимости в результатах поиска"
 
 #: part/models.py:818 part/models.py:3188 part/models.py:3608
-#: part/serializers.py:357 part/serializers.py:971
+#: part/serializers.py:357 part/serializers.py:973
 #: part/templates/part/part_base.html:260 stock/api.py:633
 #: templates/InvenTree/settings/settings_staff_js.html:300
 #: templates/js/translated/notification.js:60
@@ -6460,185 +6462,185 @@ msgstr ""
 msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
-#: part/serializers.py:742 part/templates/part/copy_part.html:9
+#: part/serializers.py:744 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
 msgid "Duplicate Part"
 msgstr "Дублировать деталь"
 
-#: part/serializers.py:742
+#: part/serializers.py:744
 msgid "Copy initial data from another Part"
 msgstr ""
 
-#: part/serializers.py:747 templates/js/translated/part.js:102
+#: part/serializers.py:749 templates/js/translated/part.js:102
 msgid "Initial Stock"
 msgstr ""
 
-#: part/serializers.py:747
+#: part/serializers.py:749
 msgid "Create Part with initial stock quantity"
 msgstr ""
 
-#: part/serializers.py:752
+#: part/serializers.py:754
 msgid "Supplier Information"
 msgstr ""
 
-#: part/serializers.py:752
+#: part/serializers.py:754
 msgid "Add initial supplier information for this part"
 msgstr ""
 
-#: part/serializers.py:758
+#: part/serializers.py:760
 msgid "Copy Category Parameters"
 msgstr "Копировать параметры категории"
 
-#: part/serializers.py:759
+#: part/serializers.py:761
 msgid "Copy parameter templates from selected part category"
 msgstr "Копировать шаблоны параметров из выбранной категории деталей"
 
-#: part/serializers.py:965
+#: part/serializers.py:967
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr ""
 
-#: part/serializers.py:971
+#: part/serializers.py:973
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr ""
 
-#: part/serializers.py:977
+#: part/serializers.py:979
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr ""
 
-#: part/serializers.py:982
+#: part/serializers.py:984
 msgid "Exclude External Stock"
 msgstr ""
 
-#: part/serializers.py:983
+#: part/serializers.py:985
 msgid "Exclude stock items in external locations"
 msgstr ""
 
-#: part/serializers.py:988
+#: part/serializers.py:990
 msgid "Generate Report"
 msgstr ""
 
-#: part/serializers.py:989
+#: part/serializers.py:991
 msgid "Generate report file containing calculated stocktake data"
 msgstr ""
 
-#: part/serializers.py:994
+#: part/serializers.py:996
 msgid "Update Parts"
 msgstr ""
 
-#: part/serializers.py:995
+#: part/serializers.py:997
 msgid "Update specified parts with calculated stocktake data"
 msgstr ""
 
-#: part/serializers.py:1002
+#: part/serializers.py:1004
 msgid "Stocktake functionality is not enabled"
 msgstr ""
 
-#: part/serializers.py:1086
+#: part/serializers.py:1088
 msgid "Override calculated value for minimum price"
 msgstr ""
 
-#: part/serializers.py:1091
+#: part/serializers.py:1093
 msgid "Minimum price currency"
 msgstr ""
 
-#: part/serializers.py:1098
+#: part/serializers.py:1100
 msgid "Override calculated value for maximum price"
 msgstr ""
 
-#: part/serializers.py:1103
+#: part/serializers.py:1105
 msgid "Maximum price currency"
 msgstr ""
 
-#: part/serializers.py:1119
+#: part/serializers.py:1121
 msgid "Update"
 msgstr ""
 
-#: part/serializers.py:1120
+#: part/serializers.py:1122
 msgid "Update pricing for this part"
 msgstr ""
 
-#: part/serializers.py:1141
+#: part/serializers.py:1143
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr ""
 
-#: part/serializers.py:1145
+#: part/serializers.py:1147
 msgid "Minimum price must not be greater than maximum price"
 msgstr ""
 
-#: part/serializers.py:1146
+#: part/serializers.py:1148
 msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
-#: part/serializers.py:1453
+#: part/serializers.py:1455
 msgid "Select part to copy BOM from"
 msgstr ""
 
-#: part/serializers.py:1461
+#: part/serializers.py:1463
 msgid "Remove Existing Data"
 msgstr ""
 
-#: part/serializers.py:1462
+#: part/serializers.py:1464
 msgid "Remove existing BOM items before copying"
 msgstr ""
 
-#: part/serializers.py:1467
+#: part/serializers.py:1469
 msgid "Include Inherited"
 msgstr ""
 
-#: part/serializers.py:1468
+#: part/serializers.py:1470
 msgid "Include BOM items which are inherited from templated parts"
 msgstr ""
 
-#: part/serializers.py:1473
+#: part/serializers.py:1475
 msgid "Skip Invalid Rows"
 msgstr ""
 
-#: part/serializers.py:1474
+#: part/serializers.py:1476
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/serializers.py:1479
+#: part/serializers.py:1481
 msgid "Copy Substitute Parts"
 msgstr ""
 
-#: part/serializers.py:1480
+#: part/serializers.py:1482
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr ""
 
-#: part/serializers.py:1520
+#: part/serializers.py:1522
 msgid "Clear Existing BOM"
 msgstr ""
 
-#: part/serializers.py:1521
+#: part/serializers.py:1523
 msgid "Delete existing BOM items before uploading"
 msgstr ""
 
-#: part/serializers.py:1551
+#: part/serializers.py:1553
 msgid "No part column specified"
 msgstr ""
 
-#: part/serializers.py:1595
+#: part/serializers.py:1597
 msgid "Multiple matching parts found"
 msgstr ""
 
-#: part/serializers.py:1598
+#: part/serializers.py:1600
 msgid "No matching part found"
 msgstr "Подходящая деталь не найдена"
 
-#: part/serializers.py:1601
+#: part/serializers.py:1603
 msgid "Part is not designated as a component"
 msgstr ""
 
-#: part/serializers.py:1610
+#: part/serializers.py:1612
 msgid "Quantity not provided"
 msgstr ""
 
-#: part/serializers.py:1618
+#: part/serializers.py:1620
 msgid "Invalid quantity"
 msgstr "Некорректное количество"
 
-#: part/serializers.py:1639
+#: part/serializers.py:1641
 msgid "At least one BOM item is required"
 msgstr ""
 
@@ -13343,7 +13345,8 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13518,4 +13521,3 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
-
