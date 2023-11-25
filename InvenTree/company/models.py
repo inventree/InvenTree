@@ -13,6 +13,7 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy as __
 
 from moneyed import CURRENCIES
 from stdimage.models import StdImageField
@@ -702,7 +703,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     SKU = models.CharField(
         max_length=100,
-        verbose_name=_('SKU'),
+        verbose_name=__("SKU = Stock Keeping Unit (supplier part number)", 'SKU'),
         help_text=_('Supplier stock keeping unit')
     )
 
