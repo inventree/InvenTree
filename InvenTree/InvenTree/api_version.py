@@ -2,7 +2,7 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 155
+INVENTREE_API_VERSION = 156
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
