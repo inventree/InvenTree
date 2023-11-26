@@ -35,7 +35,7 @@ export function ServerInfoModal({
           {server.debug_mode && (
             <tr>
               <td>
-                <Trans>Bebug Mode</Trans>
+                <Trans>Debug Mode</Trans>
               </td>
               <td>
                 <Trans>Server is running in debug mode</Trans>
