@@ -7,6 +7,9 @@ INVENTREE_API_VERSION = 155
 
 INVENTREE_API_TEXT = """
 
+v156 -> 2023-11-26 : https://github.com/inventree/InvenTree/pull/5982
+    - Add POST endpoint for report and label creation
+
 v155 -> 2023-11-24 : https://github.com/inventree/InvenTree/pull/5979
     - Add "creation_date" field to Part instance serializer
 
