@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-22 23:42+0000\n"
-"PO-Revision-Date: 2023-11-23 00:37\n"
+"POT-Creation-Date: 2023-11-23 23:36+0000\n"
+"PO-Revision-Date: 2023-11-25 00:34\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -32,16 +32,16 @@ msgstr "Nenhum valor fornecido"
 #: InvenTree/conversion.py:125
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "Não foi possível converter {original} para {unit}"
 
 #: InvenTree/conversion.py:127
 msgid "Invalid quantity supplied"
-msgstr ""
+msgstr "Quantidade fornecida inválida"
 
 #: InvenTree/conversion.py:141
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr ""
+msgstr "Quantidade fornecida inválida ({exc})"
 
 #: InvenTree/exceptions.py:89
 msgid "Error details can be found in the admin panel"
@@ -661,7 +661,7 @@ msgstr "Chinês (Simplificado)"
 msgid "Chinese (Traditional)"
 msgstr "Chinês (Tradicional)"
 
-#: InvenTree/status.py:68 part/serializers.py:1006
+#: InvenTree/status.py:68 part/serializers.py:1008
 msgid "Background worker check failed"
 msgstr "Falha em verificar o histórico do trabalhador"
 
@@ -1027,7 +1027,7 @@ msgstr "Pedido de produção para qual este serviço está alocado"
 #: part/models.py:3109 part/models.py:3128 part/models.py:3147
 #: part/models.py:3168 part/models.py:3260 part/models.py:3534
 #: part/models.py:3656 part/models.py:3759 part/models.py:4082
-#: part/serializers.py:965 part/serializers.py:1452
+#: part/serializers.py:967 part/serializers.py:1454
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1244,7 +1244,7 @@ msgstr "Saída da produção não corresponde ao Pedido de Produção"
 
 #: build/models.py:855 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:444 order/serializers.py:389
-#: order/serializers.py:511 part/serializers.py:1277 part/serializers.py:1616
+#: order/serializers.py:511 part/serializers.py:1279 part/serializers.py:1618
 #: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "Quantidade deve ser maior que zero"
@@ -1426,7 +1426,7 @@ msgid "A list of build outputs must be provided"
 msgstr "Uma lista de saídas de produção deve ser fornecida"
 
 #: build/serializers.py:421 build/serializers.py:493 order/serializers.py:497
-#: order/serializers.py:616 order/serializers.py:1623 part/serializers.py:977
+#: order/serializers.py:616 order/serializers.py:1623 part/serializers.py:979
 #: stock/serializers.py:410 stock/serializers.py:575 stock/serializers.py:669
 #: stock/serializers.py:1150 stock/serializers.py:1421
 #: stock/templates/stock/item_base.html:394
@@ -5615,13 +5615,13 @@ msgstr "IPN Paternal"
 msgid "Part IPN"
 msgstr "IPN da Peça"
 
-#: part/admin.py:276 part/serializers.py:1085
+#: part/admin.py:276 part/serializers.py:1087
 #: templates/js/translated/pricing.js:358
 #: templates/js/translated/pricing.js:1024
 msgid "Minimum Price"
 msgstr "Preço Mínimo"
 
-#: part/admin.py:277 part/serializers.py:1097
+#: part/admin.py:277 part/serializers.py:1099
 #: templates/js/translated/pricing.js:353
 #: templates/js/translated/pricing.js:1032
 msgid "Maximum Price"
@@ -5779,7 +5779,7 @@ msgid "Part keywords to improve visibility in search results"
 msgstr "Palavras-chave para melhorar a visibilidade nos resultados da pesquisa"
 
 #: part/models.py:818 part/models.py:3188 part/models.py:3608
-#: part/serializers.py:357 part/serializers.py:971
+#: part/serializers.py:357 part/serializers.py:973
 #: part/templates/part/part_base.html:260 stock/api.py:633
 #: templates/InvenTree/settings/settings_staff_js.html:300
 #: templates/js/translated/notification.js:60
@@ -6460,185 +6460,185 @@ msgstr "A peça do fabricante que corresponde a essa MPN já existe"
 msgid "Supplier part matching this SKU already exists"
 msgstr "A peça do fornecedor que corresponde a essa SKU já existe"
 
-#: part/serializers.py:742 part/templates/part/copy_part.html:9
+#: part/serializers.py:744 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
 msgid "Duplicate Part"
 msgstr "Peça duplicada"
 
-#: part/serializers.py:742
+#: part/serializers.py:744
 msgid "Copy initial data from another Part"
 msgstr "Copiar dados iniciais de outra peça"
 
-#: part/serializers.py:747 templates/js/translated/part.js:102
+#: part/serializers.py:749 templates/js/translated/part.js:102
 msgid "Initial Stock"
 msgstr "Estoque inicial"
 
-#: part/serializers.py:747
+#: part/serializers.py:749
 msgid "Create Part with initial stock quantity"
 msgstr "Criar peça com a quantidade inicial de estoque"
 
-#: part/serializers.py:752
+#: part/serializers.py:754
 msgid "Supplier Information"
 msgstr "Informações do Fornecedor"
 
-#: part/serializers.py:752
+#: part/serializers.py:754
 msgid "Add initial supplier information for this part"
 msgstr "Adicionar informação inicial de fornecedor para esta peça"
 
-#: part/serializers.py:758
+#: part/serializers.py:760
 msgid "Copy Category Parameters"
 msgstr "Copiar Parâmetros da Categoria"
 
-#: part/serializers.py:759
+#: part/serializers.py:761
 msgid "Copy parameter templates from selected part category"
 msgstr "Copiar modelos de parâmetros a partir de categoria de peça selecionada"
 
-#: part/serializers.py:965
+#: part/serializers.py:967
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr "Limitar o relatório de balanço a uma determinada peça e quaisquer peças variantes"
 
-#: part/serializers.py:971
+#: part/serializers.py:973
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr "Limitar o relatório de balanço a uma determinada categoria, e qualquer peças filhas"
 
-#: part/serializers.py:977
+#: part/serializers.py:979
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr "Limitar o relatório de balanço a um determinado local de estoque, e qualquer local filho"
 
-#: part/serializers.py:982
+#: part/serializers.py:984
 msgid "Exclude External Stock"
 msgstr "Excluir Estoque externo"
 
-#: part/serializers.py:983
+#: part/serializers.py:985
 msgid "Exclude stock items in external locations"
 msgstr "Excluir itens de estoque em locais externos"
 
-#: part/serializers.py:988
+#: part/serializers.py:990
 msgid "Generate Report"
 msgstr "Gerar relatório"
 
-#: part/serializers.py:989
+#: part/serializers.py:991
 msgid "Generate report file containing calculated stocktake data"
 msgstr "Gerar arquivo de relatório contendo dados de estoque calculados"
 
-#: part/serializers.py:994
+#: part/serializers.py:996
 msgid "Update Parts"
 msgstr "Atualizar Peças"
 
-#: part/serializers.py:995
+#: part/serializers.py:997
 msgid "Update specified parts with calculated stocktake data"
 msgstr "Atualizar peças especificadas com dados de estoque calculados"
 
-#: part/serializers.py:1002
+#: part/serializers.py:1004
 msgid "Stocktake functionality is not enabled"
 msgstr "Função de Balanço de Estoque não está ativada"
 
-#: part/serializers.py:1086
+#: part/serializers.py:1088
 msgid "Override calculated value for minimum price"
 msgstr ""
 
-#: part/serializers.py:1091
+#: part/serializers.py:1093
 msgid "Minimum price currency"
 msgstr ""
 
-#: part/serializers.py:1098
+#: part/serializers.py:1100
 msgid "Override calculated value for maximum price"
 msgstr ""
 
-#: part/serializers.py:1103
+#: part/serializers.py:1105
 msgid "Maximum price currency"
 msgstr ""
 
-#: part/serializers.py:1119
+#: part/serializers.py:1121
 msgid "Update"
 msgstr "Atualizar"
 
-#: part/serializers.py:1120
+#: part/serializers.py:1122
 msgid "Update pricing for this part"
 msgstr "Atualizar preços desta peça"
 
-#: part/serializers.py:1141
+#: part/serializers.py:1143
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr ""
 
-#: part/serializers.py:1145
+#: part/serializers.py:1147
 msgid "Minimum price must not be greater than maximum price"
 msgstr ""
 
-#: part/serializers.py:1146
+#: part/serializers.py:1148
 msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
-#: part/serializers.py:1453
+#: part/serializers.py:1455
 msgid "Select part to copy BOM from"
 msgstr "Selecionar peça para copiar a LDM"
 
-#: part/serializers.py:1461
+#: part/serializers.py:1463
 msgid "Remove Existing Data"
 msgstr "Remover Dado Existente"
 
-#: part/serializers.py:1462
+#: part/serializers.py:1464
 msgid "Remove existing BOM items before copying"
 msgstr "Remova itens LDM existentes antes de copiar"
 
-#: part/serializers.py:1467
+#: part/serializers.py:1469
 msgid "Include Inherited"
 msgstr "Incluir Herdados"
 
-#: part/serializers.py:1468
+#: part/serializers.py:1470
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Incluir itens LDM que são herdados de peças modelo"
 
-#: part/serializers.py:1473
+#: part/serializers.py:1475
 msgid "Skip Invalid Rows"
 msgstr "Pular Linhas inválidas"
 
-#: part/serializers.py:1474
+#: part/serializers.py:1476
 msgid "Enable this option to skip invalid rows"
 msgstr "Habilitar esta opção para pular linhas inválidas"
 
-#: part/serializers.py:1479
+#: part/serializers.py:1481
 msgid "Copy Substitute Parts"
 msgstr "Copiar Peças Substitutas"
 
-#: part/serializers.py:1480
+#: part/serializers.py:1482
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Copiar peças de substitutas quando duplicar itens de LDM"
 
-#: part/serializers.py:1520
+#: part/serializers.py:1522
 msgid "Clear Existing BOM"
 msgstr "Limpar LDM Existente"
 
-#: part/serializers.py:1521
+#: part/serializers.py:1523
 msgid "Delete existing BOM items before uploading"
 msgstr "Apagar itens LDM existentes antes de carregar"
 
-#: part/serializers.py:1551
+#: part/serializers.py:1553
 msgid "No part column specified"
 msgstr "Nenhuma coluna de peça especificada"
 
-#: part/serializers.py:1595
+#: part/serializers.py:1597
 msgid "Multiple matching parts found"
 msgstr "Múltiplas peças correspondentes encontradas"
 
-#: part/serializers.py:1598
+#: part/serializers.py:1600
 msgid "No matching part found"
 msgstr "Nenhuma peça correspondente encontrada"
 
-#: part/serializers.py:1601
+#: part/serializers.py:1603
 msgid "Part is not designated as a component"
 msgstr "Peça não está designada como componente"
 
-#: part/serializers.py:1610
+#: part/serializers.py:1612
 msgid "Quantity not provided"
 msgstr "Quantidade não foi fornecida"
 
-#: part/serializers.py:1618
+#: part/serializers.py:1620
 msgid "Invalid quantity"
 msgstr "Quantidade Inválida"
 
-#: part/serializers.py:1639
+#: part/serializers.py:1641
 msgid "At least one BOM item is required"
 msgstr "Pelo menos um item LDM é necessário"
 
