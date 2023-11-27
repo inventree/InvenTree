@@ -15,9 +15,11 @@ FRONTEND_SETTINGS = json.dumps(settings.FRONTEND_SETTINGS)
 
 
 @register.simple_tag
-def spa_bundle():
+def spa_bundle(manifest_path: str | Path = ''):
     """Render SPA bundle."""
-    manifest = Path(__file__).parent.parent.joinpath("static/web/manifest.json")
+    if manifest_path == '':
+        manifest_path = Path(__file__).parent.parent.joinpath("static/web/manifest.json")
+    manifest = Path(manifest_path)
 
     if not manifest.exists():
         logger.error("Manifest file not found")
