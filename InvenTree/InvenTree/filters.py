@@ -19,9 +19,7 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
         """Override the filter method to handle timezones correctly."""
 
         if settings.USE_TZ:
-
-            # Check if value is already timezone aware
-            if value is not None and not timezone.is_aware(value):
+            if value is not None:
                 tz = timezone.get_current_timezone()
                 value = datetime(value.year, value.month, value.day)
                 value = make_aware(value, tz, True)

@@ -504,6 +504,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'category_detail',
             'category_path',
             'component',
+            'creation_date',
             'default_expiry',
             'default_location',
             'default_supplier',
@@ -558,6 +559,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
         read_only_fields = [
             'barcode_hash',
+            'creation_date',
         ]
 
     tags = TagListSerializerField(required=False)

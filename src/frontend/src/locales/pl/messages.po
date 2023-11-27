@@ -8,7 +8,7 @@ msgstr ""
 "Language: pl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-21 00:07\n"
+"PO-Revision-Date: 2023-11-24 00:35\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
@@ -63,11 +63,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr ""
+msgstr "Zalogowano pomyślnie"
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr ""
+msgstr "Witamy ponownie!"
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -76,7 +76,7 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:102
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "Wiadomość dostarczona"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
@@ -1947,32 +1947,32 @@ msgstr ""
 msgid "Added group"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:49
+#: src/components/tables/settings/ProjectCodeTable.tsx:50
 msgid "Edit project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:55
+#: src/components/tables/settings/ProjectCodeTable.tsx:57
 msgid "Project code updated"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:65
+#: src/components/tables/settings/ProjectCodeTable.tsx:67
 msgid "Delete project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:66
+#: src/components/tables/settings/ProjectCodeTable.tsx:68
 msgid "Project code deleted"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:69
+#: src/components/tables/settings/ProjectCodeTable.tsx:71
 msgid "Are you sure you want to remove this project code?"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:82
-#: src/components/tables/settings/ProjectCodeTable.tsx:96
+#: src/components/tables/settings/ProjectCodeTable.tsx:84
+#: src/components/tables/settings/ProjectCodeTable.tsx:99
 msgid "Add project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:88
+#: src/components/tables/settings/ProjectCodeTable.tsx:91
 msgid "Added project code"
 msgstr ""
 

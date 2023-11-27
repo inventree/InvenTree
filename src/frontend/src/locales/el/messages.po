@@ -8,7 +8,7 @@ msgstr ""
 "Language: el\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-21 00:06\n"
+"PO-Revision-Date: 2023-11-24 00:34\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1947,32 +1947,32 @@ msgstr ""
 msgid "Added group"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:49
+#: src/components/tables/settings/ProjectCodeTable.tsx:50
 msgid "Edit project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:55
+#: src/components/tables/settings/ProjectCodeTable.tsx:57
 msgid "Project code updated"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:65
+#: src/components/tables/settings/ProjectCodeTable.tsx:67
 msgid "Delete project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:66
+#: src/components/tables/settings/ProjectCodeTable.tsx:68
 msgid "Project code deleted"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:69
+#: src/components/tables/settings/ProjectCodeTable.tsx:71
 msgid "Are you sure you want to remove this project code?"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:82
-#: src/components/tables/settings/ProjectCodeTable.tsx:96
+#: src/components/tables/settings/ProjectCodeTable.tsx:84
+#: src/components/tables/settings/ProjectCodeTable.tsx:99
 msgid "Add project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:88
+#: src/components/tables/settings/ProjectCodeTable.tsx:91
 msgid "Added project code"
 msgstr ""
 
