@@ -23,6 +23,11 @@ def spa_bundle():
         logger.error("Manifest file not found")
         return
 
+    try:
+        manifest_data = json.load(manifest.open())
+    except (TypeError, json.decoder.JSONDecodeError):
+        logger.exception("Failed to parse manifest file")
+        return
     manifest_data = json.load(manifest.open())
     index = manifest_data.get("index.html")
     css_index = manifest_data.get("index.css")
