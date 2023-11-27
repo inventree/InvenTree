@@ -3,6 +3,7 @@
 import json
 from logging import getLogger
 from pathlib import Path
+from typing import Union
 
 from django import template
 from django.conf import settings
@@ -15,7 +16,7 @@ FRONTEND_SETTINGS = json.dumps(settings.FRONTEND_SETTINGS)
 
 
 @register.simple_tag
-def spa_bundle(manifest_path: str | Path = '', app: str = 'web'):
+def spa_bundle(manifest_path: Union[str, Path] = '', app: str = 'web'):
     """Render SPA bundle."""
     def get_url(file: str) -> str:
         """Get static url for file."""
