@@ -8,7 +8,7 @@ msgstr ""
 "Language: da\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-24 00:34\n"
+"PO-Revision-Date: 2023-11-27 01:36\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -494,7 +494,7 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:38
 #~ msgid "Bebug Mode"
-#~ msgstr ""
+#~ msgstr "Bebug Mode"
 
 #: src/components/modals/ServerInfoModal.tsx:41
 msgid "Server is running in debug mode"
@@ -2059,7 +2059,7 @@ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:117
 #~ msgid "user deleted"
-#~ msgstr ""
+#~ msgstr "user deleted"
 
 #: src/components/tables/settings/UserTable.tsx:120
 msgid "Are you sure you want to delete this user?"
@@ -3685,3 +3685,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
