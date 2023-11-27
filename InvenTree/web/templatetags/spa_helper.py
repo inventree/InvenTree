@@ -28,10 +28,10 @@ def spa_bundle():
     except (TypeError, json.decoder.JSONDecodeError):
         logger.exception("Failed to parse manifest file")
         return
-    manifest_data = json.load(manifest.open())
-    index = manifest_data.get("index.html")
-    css_index = manifest_data.get("index.css")
 
+    return_string = ""
+    # JS (based on index.html file as entrypoint)
+    index = manifest_data.get("index.html")
     dynamic_files = index.get("dynamicImports", [])
     imports_files = "".join(
         [
@@ -39,11 +39,14 @@ def spa_bundle():
             for file in dynamic_files
         ]
     )
+    return_string += f"""<script type="module" src="{settings.STATIC_URL}web/{index['file']}"></script>{imports_files}"""
 
-    return mark_safe(
-        f"""<link rel="stylesheet" href="{settings.STATIC_URL}web/{css_index['file']}" />
-        <script type="module" src="{settings.STATIC_URL}web/{index['file']}"></script>{imports_files}"""
-    )
+    # CSS (based on index.css file as entrypoint)
+    css_index = manifest_data.get("index.css")
+    if css_index:
+        return_string += f"""<link rel="stylesheet" href="{settings.STATIC_URL}web/{css_index['file']}" />"""
+
+    return mark_safe(return_string)
 
 
 @register.simple_tag
