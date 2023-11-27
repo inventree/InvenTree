@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-27 00:53+0000\n"
-"PO-Revision-Date: 2023-11-24 00:34\n"
+"POT-Creation-Date: 2023-11-26 09:53+0000\n"
+"PO-Revision-Date: 2023-11-27 01:36\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -474,13 +474,9 @@ msgstr "Willkommen bei {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Ihr Konto wurde erstellt.\n"
-"\n"
+msgstr "Ihr Konto wurde erstellt.\n\n"
 "Bitte verwenden Sie die Passwort-Zurücksetzen-Funktion, um Zugriff zu erhalten (https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -2056,7 +2052,7 @@ msgstr "Projektbeschreibung"
 
 #: common/models.py:135
 msgid "User or group responsible for this project"
-msgstr ""
+msgstr "Benutzer oder Gruppe verantwortlich für dieses Projekt"
 
 #: common/models.py:658
 msgid "Settings key (must be unique - case insensitive)"
@@ -4938,7 +4934,7 @@ msgstr "Das Datum des Empfangs dieses Rücksendeartikels"
 #: order/models.py:1952 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
-msgstr ""
+msgstr "Ergebnis"
 
 #: order/models.py:1952
 msgid "Outcome for this line item"
@@ -4946,7 +4942,7 @@ msgstr ""
 
 #: order/models.py:1958
 msgid "Cost associated with return or repair for this line item"
-msgstr ""
+msgstr "Kosten für die Rückgabe oder Reparatur dieses Objektes"
 
 #: order/serializers.py:258
 msgid "Order cannot be cancelled"
@@ -5160,7 +5156,7 @@ msgstr "Auftrag fertigstellen"
 
 #: order/templates/order/order_base.html:91
 msgid "Supplier part thumbnail"
-msgstr ""
+msgstr "Vorschaubild des Lieferanten"
 
 #: order/templates/order/order_base.html:106
 #: order/templates/order/return_order_base.html:101
@@ -5522,7 +5518,7 @@ msgstr "Schlüsselwörter"
 
 #: part/admin.py:41
 msgid "Part Image"
-msgstr ""
+msgstr "Artikelbild"
 
 #: part/admin.py:42 part/admin.py:189 part/stocktake.py:220
 msgid "Category ID"
@@ -5741,7 +5737,7 @@ msgstr ""
 #: part/models.py:573
 #, python-brace-format
 msgid "IPN must match regex pattern {pattern}"
-msgstr ""
+msgstr "IPN muss mit Regex-Muster {pattern} übereinstimmen"
 
 #: part/models.py:643
 msgid "Stock item with this serial number already exists"
@@ -5777,7 +5773,7 @@ msgstr "Ist dieses Teil eine Variante eines anderen Teils?"
 
 #: part/models.py:805
 msgid "Part description (optional)"
-msgstr ""
+msgstr "Artikelbeschreibung (optional)"
 
 #: part/models.py:811
 msgid "Part keywords to improve visibility in search results"
@@ -5882,7 +5878,7 @@ msgstr "Erstellungs-Nutzer"
 
 #: part/models.py:982
 msgid "Owner responsible for this part"
-msgstr ""
+msgstr "Verantwortlicher Besitzer für dieses Teil"
 
 #: part/models.py:988 part/templates/part/part_base.html:339
 #: stock/templates/stock/item_base.html:451
@@ -5980,11 +5976,11 @@ msgstr "Berechnete maximale Kosten für Variantenteile"
 
 #: part/models.py:2912
 msgid "Override minimum cost"
-msgstr ""
+msgstr "Mindestkosten überschreiben"
 
 #: part/models.py:2918
 msgid "Override maximum cost"
-msgstr ""
+msgstr "Maximale Kosten überschreiben"
 
 #: part/models.py:2924
 msgid "Calculated overall minimum cost"
@@ -6157,7 +6153,7 @@ msgstr "Checkbox-Parameter können keine Einheiten haben"
 
 #: part/models.py:3340
 msgid "Checkbox parameters cannot have choices"
-msgstr ""
+msgstr "Checkbox-Parameter können keine Auswahl haben"
 
 #: part/models.py:3358
 msgid "Choices must be unique"
@@ -6173,7 +6169,7 @@ msgstr "Name des Parameters"
 
 #: part/models.py:3395
 msgid "Physical units for this parameter"
-msgstr ""
+msgstr "Physikalische Einheiten für diesen Parameter"
 
 #: part/models.py:3405
 msgid "Parameter description"
@@ -6194,7 +6190,7 @@ msgstr "Auswahlmöglichkeiten"
 
 #: part/models.py:3418
 msgid "Valid choices for this parameter (comma-separated)"
-msgstr ""
+msgstr "Gültige Optionen für diesen Parameter (durch Kommas getrennt)"
 
 #: part/models.py:3492
 msgid "Invalid choice for parameter value"
@@ -6419,7 +6415,7 @@ msgstr "Anmerkungen kopieren"
 
 #: part/serializers.py:408
 msgid "Copy notes from original part"
-msgstr ""
+msgstr "Notizen aus Originalteil kopieren"
 
 #: part/serializers.py:418
 msgid "Initial Stock Quantity"
@@ -6540,7 +6536,7 @@ msgstr "Inventur-Funktionalität ist nicht aktiviert"
 
 #: part/serializers.py:1088
 msgid "Override calculated value for minimum price"
-msgstr ""
+msgstr "Berechneten Wert für Mindestpreis überschreiben"
 
 #: part/serializers.py:1093
 msgid "Minimum price currency"
@@ -7829,7 +7825,7 @@ msgstr "A4"
 
 #: report/helpers.py:16
 msgid "A3"
-msgstr ""
+msgstr "A3"
 
 #: report/helpers.py:17
 msgid "Legal"
@@ -13348,11 +13344,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
+msgstr "Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
 "%(site_name)s anzumelden.<br>Als letzten Schritt füllen Sie bitte folgendes Formular aus:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13526,3 +13520,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
