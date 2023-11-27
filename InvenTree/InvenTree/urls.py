@@ -217,9 +217,6 @@ classic_frontendpatterns = [
     re_path(r'^accounts/', include('allauth.urls')),        # included urlpatterns
 ]
 
-
-new_frontendpatterns = platform_urls
-
 urlpatterns = []
 
 if settings.INVENTREE_ADMIN_ENABLED:
@@ -236,7 +233,7 @@ frontendpatterns = []
 if settings.ENABLE_CLASSIC_FRONTEND:
     frontendpatterns += classic_frontendpatterns
 if settings.ENABLE_PLATFORM_FRONTEND:
-    frontendpatterns += new_frontendpatterns
+    frontendpatterns += platform_urls
 
 urlpatterns += frontendpatterns
 

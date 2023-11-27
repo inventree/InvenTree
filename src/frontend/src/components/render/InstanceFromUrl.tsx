@@ -3,9 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ModelType } from '../../enums/ModelType';
-import { apiUrl } from '../../states/ApiState';
 import { RenderInstance } from './Instance';
-import { ModelInformationDict } from './ModelType';
 
 /**
  * Render a model instance from a URL
