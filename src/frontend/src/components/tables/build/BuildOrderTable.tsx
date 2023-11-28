@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { renderDate } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
@@ -128,12 +128,12 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
 
   const navigate = useNavigate();
 
-  const { tableKey, refreshTable } = useTableRefresh('buildorder');
+  const table = useTable('buildorder');
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.build_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,

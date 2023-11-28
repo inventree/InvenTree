@@ -9,7 +9,7 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -21,7 +21,7 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
  * Table for displaying list of custom physical units
  */
 export function CustomUnitsTable() {
-  const { tableKey, refreshTable } = useTableRefresh('custom-units');
+  const table = useTable('custom-units');
 
   const user = useUserState();
 
@@ -63,7 +63,7 @@ export function CustomUnitsTable() {
                 definition: {},
                 symbol: {}
               },
-              onFormSuccess: refreshTable,
+              onFormSuccess: table.refreshTable,
               successMessage: t`Custom unit updated`
             });
           }
@@ -76,7 +76,7 @@ export function CustomUnitsTable() {
               pk: record.pk,
               title: t`Delete custom unit`,
               successMessage: t`Custom unit deleted`,
-              onFormSuccess: refreshTable,
+              onFormSuccess: table.refreshTable,
               preFormContent: (
                 <Text>{t`Are you sure you want to remove this custom unit?`}</Text>
               )
@@ -98,7 +98,7 @@ export function CustomUnitsTable() {
         symbol: {}
       },
       successMessage: t`Custom unit created`,
-      onFormSuccess: refreshTable
+      onFormSuccess: table.refreshTable
     });
   }, []);
 
@@ -116,7 +116,7 @@ export function CustomUnitsTable() {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.custom_unit_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
         rowActions: rowActions,

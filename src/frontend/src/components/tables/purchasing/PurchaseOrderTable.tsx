@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import {
@@ -25,7 +25,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function PurchaseOrderTable({ params }: { params?: any }) {
   const navigate = useNavigate();
 
-  const { tableKey } = useTableRefresh('purchase-order');
+  const table = useTable('purchase-order');
 
   // TODO: Custom filters
 
@@ -76,7 +76,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.purchase_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {

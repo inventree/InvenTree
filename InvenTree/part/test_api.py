@@ -1,5 +1,6 @@
 """Unit tests for the various part API endpoints"""
 
+from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
 from random import randint
@@ -1124,6 +1125,52 @@ class PartAPITest(PartAPITestBase):
 
                 if part.category:
                     self.assertEqual(part.category.name, row['Category Name'])
+
+    def test_date_filters(self):
+        """Test that the creation date filters work correctly"""
+
+        url = reverse('api-part-list')
+
+        response = self.get(url)
+
+        n = len(response.data)
+
+        date_compare = datetime.fromisoformat('2019-01-01')
+
+        # Filter by creation date
+        response = self.get(
+            url,
+            {
+                'created_before': '2019-01-01',
+            },
+            expected_code=200
+        )
+
+        self.assertTrue(len(response.data) < n)
+        self.assertTrue(len(response.data) > 0)
+
+        for item in response.data:
+            self.assertIsNotNone(item['creation_date'])
+
+            date = datetime.fromisoformat(item['creation_date'])
+            self.assertLessEqual(date, date_compare)
+
+        response = self.get(
+            url,
+            {
+                'created_after': '2019-01-01',
+            },
+            expected_code=200
+        )
+
+        self.assertTrue(len(response.data) < n)
+        self.assertTrue(len(response.data) > 0)
+
+        for item in response.data:
+            self.assertIsNotNone(item['creation_date'])
+
+            date = datetime.fromisoformat(item['creation_date'])
+            self.assertGreaterEqual(date, date_compare)
 
 
 class PartCreationTests(PartAPITestBase):
