@@ -9,7 +9,7 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -23,7 +23,7 @@ import { RowDeleteAction, RowEditAction } from '../RowActions';
  * Construct a table listing parameters for a given part
  */
 export function PartParameterTable({ partId }: { partId: any }) {
-  const { tableKey, refreshTable } = useTableRefresh('part-parameters');
+  const table = useTable('part-parameters');
 
   const user = useUserState();
 
@@ -124,7 +124,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
                 data: {}
               },
               successMessage: t`Part parameter updated`,
-              onFormSuccess: refreshTable
+              onFormSuccess: table.refreshTable
             });
           }
         })
@@ -139,7 +139,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
               pk: record.pk,
               title: t`Delete Part Parameter`,
               successMessage: t`Part parameter deleted`,
-              onFormSuccess: refreshTable,
+              onFormSuccess: table.refreshTable,
               preFormWarning: t`Are you sure you want to remove this parameter?`
             });
           }
@@ -168,7 +168,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
         data: {}
       },
       successMessage: t`Part parameter added`,
-      onFormSuccess: refreshTable
+      onFormSuccess: table.refreshTable
     });
   }, [partId]);
 
@@ -187,7 +187,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.part_parameter_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         rowActions: rowActions,

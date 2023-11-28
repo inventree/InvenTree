@@ -8,7 +8,7 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
@@ -19,7 +19,7 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
  * Table for displaying list of groups
  */
 export function GroupTable() {
-  const { tableKey, refreshTable } = useTableRefresh('groups');
+  const table = useTable('groups');
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -42,7 +42,7 @@ export function GroupTable() {
             fields: {
               name: {}
             },
-            onFormSuccess: refreshTable,
+            onFormSuccess: table.refreshTable,
             successMessage: t`Group updated`
           });
         }
@@ -54,7 +54,7 @@ export function GroupTable() {
             pk: record.pk,
             title: t`Delete group`,
             successMessage: t`Group deleted`,
-            onFormSuccess: refreshTable,
+            onFormSuccess: table.refreshTable,
             preFormWarning: t`Are you sure you want to delete this group?`
           });
         }
@@ -67,7 +67,7 @@ export function GroupTable() {
       url: ApiPaths.group_list,
       title: t`Add group`,
       fields: { name: {} },
-      onFormSuccess: refreshTable,
+      onFormSuccess: table.refreshTable,
       successMessage: t`Added group`
     });
   }, []);
@@ -89,7 +89,7 @@ export function GroupTable() {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.group_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
         rowActions: rowActions,

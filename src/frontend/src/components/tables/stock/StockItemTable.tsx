@@ -6,13 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { StatusColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
-import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 import { InvenTreeTable } from './../InvenTreeTable';
 
@@ -172,7 +171,7 @@ function stockItemTableColumns(): TableColumn[] {
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left">
+              <Group spacing="xs" position="left" noWrap={true}>
                 <Text color={color}>{text}</Text>
                 {part.units && (
                   <Text size="xs" color={color}>
@@ -264,27 +263,19 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
-  const { tableKey, refreshTable } = useTableRefresh('stockitem');
-
-  function stockItemRowActions(record: any): RowAction[] {
-    let actions: RowAction[] = [];
-
-    // TODO: Custom row actions for stock table
-    return actions;
-  }
+  const table = useTable('stockitems');
 
   const navigate = useNavigate();
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.stock_item_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,
         enableSelection: true,
         customFilters: tableFilters,
-        rowActions: stockItemRowActions,
         onRowClick: (record) => navigate(`/stock/item/${record.pk}`),
         params: {
           ...params,

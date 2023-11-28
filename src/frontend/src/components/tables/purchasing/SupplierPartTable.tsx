@@ -6,8 +6,8 @@ import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { useSupplierPartFields } from '../../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -23,7 +23,7 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 
 export function SupplierPartTable({ params }: { params: any }): ReactNode {
-  const { tableKey, refreshTable } = useTableRefresh('supplierparts');
+  const table = useTable('supplierparts');
 
   const user = useUserState();
 
@@ -162,7 +162,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       url: ApiPaths.supplier_part_list,
       title: t`Add Supplier Part`,
       fields: addSupplierPartFields,
-      onFormSuccess: refreshTable,
+      onFormSuccess: table.refreshTable,
       successMessage: t`Supplier part created`
     });
 
@@ -195,7 +195,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
                 pk: record.pk,
                 title: t`Edit Supplier Part`,
                 fields: editSupplierPartFields,
-                onFormSuccess: refreshTable,
+                onFormSuccess: table.refreshTable,
                 successMessage: t`Supplier part updated`
               });
           }
@@ -209,7 +209,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
                 pk: record.pk,
                 title: t`Delete Supplier Part`,
                 successMessage: t`Supplier part deleted`,
-                onFormSuccess: refreshTable,
+                onFormSuccess: table.refreshTable,
                 preFormWarning: t`Are you sure you want to remove this supplier part?`
               });
           }
@@ -224,7 +224,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       {addSupplierPartModal}
       <InvenTreeTable
         url={apiUrl(ApiPaths.supplier_part_list)}
-        tableKey={tableKey}
+        tableState={table}
         columns={tableColumns}
         props={{
           params: {
