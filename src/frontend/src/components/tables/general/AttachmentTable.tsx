@@ -13,7 +13,7 @@ import {
   deleteAttachment,
   editAttachment
 } from '../../../forms/AttachmentForms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { AttachmentLink } from '../../items/AttachmentLink';
 import { TableColumn } from '../Column';
@@ -82,7 +82,7 @@ export function AttachmentTable({
   pk: number;
   model: string;
 }): ReactNode {
-  const { tableKey, refreshTable } = useTableRefresh(`${model}-attachments`);
+  const table = useTable(`${model}-attachments`);
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 
@@ -122,7 +122,7 @@ export function AttachmentTable({
               model: model,
               pk: record.pk,
               attachmentType: record.attachment ? 'file' : 'link',
-              callback: refreshTable
+              callback: table.refreshTable
             });
           }
         })
@@ -136,7 +136,7 @@ export function AttachmentTable({
             deleteAttachment({
               endpoint: endpoint,
               pk: record.pk,
-              callback: refreshTable
+              callback: table.refreshTable
             });
           }
         })
@@ -162,7 +162,7 @@ export function AttachmentTable({
             color: 'green'
           });
 
-          refreshTable();
+          table.refreshTable();
 
           return response;
         })
@@ -192,7 +192,7 @@ export function AttachmentTable({
                 model: model,
                 pk: pk,
                 attachmentType: 'file',
-                callback: refreshTable
+                callback: table.refreshTable
               });
             }}
           >
@@ -211,7 +211,7 @@ export function AttachmentTable({
                 model: model,
                 pk: pk,
                 attachmentType: 'link',
-                callback: refreshTable
+                callback: table.refreshTable
               });
             }}
           >
@@ -230,7 +230,7 @@ export function AttachmentTable({
         <InvenTreeTable
           key="attachment-table"
           url={url}
-          tableKey={tableKey}
+          tableState={table}
           columns={tableColumns}
           props={{
             noRecordsText: t`No attachments found`,
