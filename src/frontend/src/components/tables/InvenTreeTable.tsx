@@ -9,6 +9,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
+import { TableState } from '../../hooks/UseTable';
 import { ButtonMenu } from '../buttons/ButtonMenu';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
@@ -25,8 +26,7 @@ const defaultPageSize: number = 25;
  * Set of optional properties which can be passed to an InvenTreeTable component
  *
  * @param params : any - Base query parameters
- * @param tableKey : string - Unique key for the table (used for local storage)
- * @param refreshId : string - Unique ID for the table (used to trigger a refresh)
+ * @param tableState : TableState - State manager for the table
  * @param defaultSortColumn : string - Default column to sort by
  * @param noRecordsText : string - Text to display when no records are found
  * @param enableDownload : boolean - Enable download actions
@@ -92,18 +92,19 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
  */
 export function InvenTreeTable<T = any>({
   url,
-  tableKey,
+  tableState,
   columns,
   props
 }: {
   url: string;
-  tableKey: string;
+  tableState: TableState;
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }) {
   // Use the first part of the table key as the table name
   const tableName: string = useMemo(() => {
-    return tableKey.split('-')[0];
+    let key = tableState?.tableKey ?? 'table';
+    return key.split('-')[0];
   }, []);
 
   // Build table properties based on provided props (and default props)
@@ -411,14 +412,12 @@ export function InvenTreeTable<T = any>({
   const [recordCount, setRecordCount] = useState<number>(0);
 
   /*
-   * Reload the table whenever the refetch changes
+   * Reload the table whenever the tableKey changes
    * this allows us to programmatically refresh the table
-   *
-   * Implement this using the custom useTableRefresh hook
    */
   useEffect(() => {
     refetch();
-  }, [tableKey, props.params]);
+  }, [tableState?.tableKey, props.params]);
 
   return (
     <>
