@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-26 09:53+0000\n"
-"PO-Revision-Date: 2023-11-27 01:37\n"
+"POT-Creation-Date: 2023-11-27 02:02+0000\n"
+"PO-Revision-Date: 2023-11-28 01:41\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -3356,8 +3356,8 @@ msgid "Table String Length"
 msgstr "Lunghezza Stringa Tabella"
 
 #: common/models.py:2279
-msgid "Maximimum length limit for strings displayed in table views"
-msgstr "Limite massimo di lunghezza per le stringhe visualizzate nelle viste della tabella"
+msgid "Maximum length limit for strings displayed in table views"
+msgstr ""
 
 #: common/models.py:2288
 msgid "Default part label template"
