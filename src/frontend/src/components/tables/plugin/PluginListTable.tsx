@@ -26,9 +26,9 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../../App';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { openEditApiForm } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useInstance } from '../../../hooks/UseInstance';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../../states/ApiState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { ActionDropdown, EditItemAction } from '../../items/ActionDropdown';
@@ -244,7 +244,7 @@ function PluginIcon(plugin: PluginI) {
  * Table displaying list of available plugins
  */
 export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
-  const { tableKey, refreshTable } = useTableRefresh('plugin');
+  const table = useTable('plugin');
   const navigate = useNavigate();
 
   const pluginsEnabled = useServerApiState(
@@ -347,7 +347,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           api
             .patch(url, { active: active })
             .then(() => {
-              refreshTable();
+              table.refreshTable();
               notifications.hide(id);
               notifications.show({
                 title: t`Plugin updated`,
@@ -419,7 +419,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         color: 'green'
       });
 
-      refreshTable();
+      table.refreshTable();
     }
   });
 
@@ -449,12 +449,12 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         size={'lg'}
         renderContent={(id) => {
           if (!id) return false;
-          return <PluginDrawer id={id} refreshTable={refreshTable} />;
+          return <PluginDrawer id={id} refreshTable={table.refreshTable} />;
         }}
       />
       <InvenTreeTable
         url={apiUrl(ApiPaths.plugin_list)}
-        tableKey={tableKey}
+        tableState={table}
         columns={pluginTableColumns}
         props={{
           ...props,

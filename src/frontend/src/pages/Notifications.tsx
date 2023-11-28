@@ -14,12 +14,12 @@ import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/nav/PanelGroup';
 import { NotificationTable } from '../components/tables/notifications/NotificationsTable';
 import { ApiPaths } from '../enums/ApiEndpoints';
-import { useTableRefresh } from '../hooks/TableRefresh';
+import { useTable } from '../hooks/UseTable';
 import { apiUrl } from '../states/ApiState';
 
 export default function NotificationsPage() {
-  const unreadRefresh = useTableRefresh('unreadnotifications');
-  const historyRefresh = useTableRefresh('readnotifications');
+  const unreadTable = useTable('unreadnotifications');
+  const readTable = useTable('readnotifications');
 
   const notificationPanels = useMemo(() => {
     return [
@@ -30,7 +30,7 @@ export default function NotificationsPage() {
         content: (
           <NotificationTable
             params={{ read: false }}
-            tableKey={unreadRefresh.tableKey}
+            tableState={unreadTable}
             actions={(record) => [
               {
                 title: t`Mark as read`,
@@ -43,7 +43,7 @@ export default function NotificationsPage() {
                       read: true
                     })
                     .then((response) => {
-                      unreadRefresh.refreshTable();
+                      unreadTable.refreshTable();
                     });
                 }
               }
@@ -58,7 +58,7 @@ export default function NotificationsPage() {
         content: (
           <NotificationTable
             params={{ read: true }}
-            tableKey={historyRefresh.tableKey}
+            tableState={readTable}
             actions={(record) => [
               {
                 title: t`Mark as unread`,
@@ -71,7 +71,7 @@ export default function NotificationsPage() {
                       read: false
                     })
                     .then((response) => {
-                      historyRefresh.refreshTable();
+                      readTable.refreshTable();
                     });
                 }
               },
@@ -83,7 +83,7 @@ export default function NotificationsPage() {
                   api
                     .delete(apiUrl(ApiPaths.notifications_list, record.pk))
                     .then((response) => {
-                      historyRefresh.refreshTable();
+                      readTable.refreshTable();
                     });
                 }
               }
@@ -92,7 +92,7 @@ export default function NotificationsPage() {
         )
       }
     ];
-  }, [historyRefresh, unreadRefresh]);
+  }, [unreadTable, readTable]);
 
   return (
     <>

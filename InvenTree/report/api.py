@@ -20,7 +20,8 @@ import part.models
 from InvenTree.api import MetadataView
 from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateDestroyAPI)
 from stock.models import StockItem, StockItemAttachment, StockLocation
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
@@ -33,7 +34,7 @@ from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           StockLocationReportSerializer, TestReportSerializer)
 
 
-class ReportListView(ListAPI):
+class ReportListView(ListCreateAPI):
     """Generic API class for report templates."""
 
     filter_backends = [

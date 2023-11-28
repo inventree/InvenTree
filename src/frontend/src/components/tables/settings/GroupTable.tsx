@@ -9,8 +9,8 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { useInstance } from '../../../hooks/UseInstance';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { EditApiForm } from '../../forms/ApiForm';
@@ -83,7 +83,7 @@ export function GroupDrawer({
  * Table for displaying list of groups
  */
 export function GroupTable() {
-  const { tableKey, refreshTable } = useTableRefresh('groups');
+  const table = useTable('groups');
   const navigate = useNavigate();
 
   const columns: TableColumn[] = useMemo(() => {
@@ -107,7 +107,7 @@ export function GroupTable() {
             fields: {
               name: {}
             },
-            onFormSuccess: refreshTable,
+            onFormSuccess: table.refreshTable,
             successMessage: t`Group updated`
           });
         }
@@ -119,7 +119,7 @@ export function GroupTable() {
             pk: record.pk,
             title: t`Delete group`,
             successMessage: t`Group deleted`,
-            onFormSuccess: refreshTable,
+            onFormSuccess: table.refreshTable,
             preFormContent: (
               <Text>{t`Are you sure you want to delete this group?`}</Text>
             )
@@ -134,7 +134,7 @@ export function GroupTable() {
       url: ApiPaths.group_list,
       title: t`Add group`,
       fields: { name: {} },
-      onFormSuccess: refreshTable,
+      onFormSuccess: table.refreshTable,
       successMessage: t`Added group`
     });
   }, []);
@@ -162,14 +162,14 @@ export function GroupTable() {
           return (
             <GroupDrawer
               id={id.replace('group-', '')}
-              refreshTable={refreshTable}
+              refreshTable={table.refreshTable}
             />
           );
         }}
       />
       <InvenTreeTable
         url={apiUrl(ApiPaths.group_list)}
-        tableKey={tableKey}
+        tableState={table}
         columns={columns}
         props={{
           rowActions: rowActions,

@@ -11,8 +11,8 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
 import { useInstance } from '../../../hooks/UseInstance';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -149,7 +149,7 @@ export function UserDrawer({
  * Table for displaying list of users
  */
 export function UserTable() {
-  const { tableKey, refreshTable } = useTableRefresh('users');
+  const table = useTable('users');
   const navigate = useNavigate();
 
   const columns: TableColumn[] = useMemo(() => {
@@ -212,7 +212,7 @@ export function UserTable() {
               first_name: {},
               last_name: {}
             },
-            onFormSuccess: refreshTable,
+            onFormSuccess: table.refreshTable,
             successMessage: t`User updated`
           });
         }
@@ -223,8 +223,8 @@ export function UserTable() {
             url: ApiPaths.user_list,
             pk: record.pk,
             title: t`Delete user`,
-            successMessage: t`user deleted`,
-            onFormSuccess: refreshTable,
+            successMessage: t`User deleted`,
+            onFormSuccess: table.refreshTable,
             preFormContent: (
               <Text>{t`Are you sure you want to delete this user?`}</Text>
             )
@@ -244,7 +244,7 @@ export function UserTable() {
         first_name: {},
         last_name: {}
       },
-      onFormSuccess: refreshTable,
+      onFormSuccess: table.refreshTable,
       successMessage: t`Added user`
     });
   }, []);
@@ -268,14 +268,14 @@ export function UserTable() {
           return (
             <UserDrawer
               id={id.replace('user-', '')}
-              refreshTable={refreshTable}
+              refreshTable={table.refreshTable}
             />
           );
         }}
       />
       <InvenTreeTable
         url={apiUrl(ApiPaths.user_list)}
-        tableKey={tableKey}
+        tableState={table}
         columns={columns}
         props={{
           rowActions: rowActions,
