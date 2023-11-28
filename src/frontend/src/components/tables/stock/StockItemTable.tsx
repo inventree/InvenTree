@@ -172,7 +172,7 @@ function stockItemTableColumns(): TableColumn[] {
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left">
+              <Group spacing="xs" position="left" noWrap={true}>
                 <Text color={color}>{text}</Text>
                 {part.units && (
                   <Text size="xs" color={color}>
@@ -266,13 +266,6 @@ export function StockItemTable({ params = {} }: { params?: any }) {
 
   const table = useTable('stockitems');
 
-  function stockItemRowActions(record: any): RowAction[] {
-    let actions: RowAction[] = [];
-
-    // TODO: Custom row actions for stock table
-    return actions;
-  }
-
   const navigate = useNavigate();
 
   return (
@@ -284,7 +277,6 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         enableDownload: true,
         enableSelection: true,
         customFilters: tableFilters,
-        rowActions: stockItemRowActions,
         onRowClick: (record) => navigate(`/stock/item/${record.pk}`),
         params: {
           ...params,
