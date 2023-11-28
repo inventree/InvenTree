@@ -137,3 +137,22 @@ export function contactFields(): ApiFormFieldSet {
     role: {}
   };
 }
+
+export function addressFields(): ApiFormFieldSet {
+  return {
+    company: {
+      hidden: true
+    },
+    title: {},
+    primary: {},
+    line1: {},
+    line2: {},
+    postal_code: {},
+    postal_city: {},
+    province: {},
+    country: {},
+    shipping_notes: {},
+    internal_shipping_notes: {},
+    link: {}
+  };
+}
