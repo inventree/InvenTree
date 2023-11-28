@@ -65,12 +65,6 @@ function SettingValue({
       description: setting?.description
     };
 
-    // Match choices
-    if (setting?.choices) {
-      fieldDefinition.field_type = SettingType.Choice;
-      fieldDefinition.choices = setting?.choices || [];
-    }
-
     // Match related field
     if (
       fieldDefinition.field_type === SettingType.Model &&
@@ -81,6 +75,10 @@ function SettingValue({
 
       // TODO: improve this model matching mechanism
       fieldDefinition.model = setting.model_name.split('.')[1] as ModelType;
+    } else if (setting.choices?.length > 0) {
+      // Match choices
+      fieldDefinition.field_type = SettingType.Choice;
+      fieldDefinition.choices = setting?.choices || [];
     }
 
     openModalApiForm({

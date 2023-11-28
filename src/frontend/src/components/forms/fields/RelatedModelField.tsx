@@ -71,6 +71,12 @@ export function RelatedModelField({
   const [value, setValue] = useState<string>('');
   const [searchText, cancelSearchText] = useDebouncedValue(value, 250);
 
+  // reset current data on search value change
+  useEffect(() => {
+    dataRef.current = [];
+    setData([]);
+  }, [searchText]);
+
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
     queryKey: [`related-field-${fieldName}`, fieldId, offset, searchText],
