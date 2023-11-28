@@ -80,7 +80,7 @@ export function PartParameterTemplateTable() {
               title: t`Delete Parameter Template`,
               successMessage: t`Parameter template deleted`,
               onFormSuccess: refreshTable,
-              preFormContent: <Text>{t`Remove parameter template`}</Text>
+              preFormWarning: t`Are you sure you want to remove this parameter template?`
             });
           }
         })

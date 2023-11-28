@@ -55,9 +55,7 @@ export function GroupTable() {
             title: t`Delete group`,
             successMessage: t`Group deleted`,
             onFormSuccess: refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to delete this group?`}</Text>
-            )
+            preFormWarning: t`Are you sure you want to delete this group?`
           });
         }
       })

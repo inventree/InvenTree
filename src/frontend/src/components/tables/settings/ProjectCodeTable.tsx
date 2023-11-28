@@ -67,9 +67,7 @@ export function ProjectCodeTable() {
               title: t`Delete project code`,
               successMessage: t`Project code deleted`,
               onFormSuccess: refreshTable,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this project code?`}</Text>
-              )
+              preFormWarning: t`Are you sure you want to remove this project code?`
             });
           }
         })

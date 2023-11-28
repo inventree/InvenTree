@@ -90,7 +90,7 @@ export function ContactTable({
               title: t`Delete Contact`,
               successMessage: t`Contact deleted`,
               onFormSuccess: refreshTable,
-              preFormContent: <Text>{t`Remove contact`}</Text>
+              preFormWarning: t`Are you sure you want to delete this contact?`
             });
           }
         })

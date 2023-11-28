@@ -126,8 +126,6 @@ export function deleteAttachment({
     successMessage: t`Attachment deleted`,
     onFormSuccess: callback,
     fields: {},
-    preFormContent: (
-      <Text>{t`Are you sure you want to delete this attachment?`}</Text>
-    )
+    preFormWarning: t`Are you sure you want to delete this attachment?`
   });
 }

@@ -210,9 +210,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
                 title: t`Delete Supplier Part`,
                 successMessage: t`Supplier part deleted`,
                 onFormSuccess: refreshTable,
-                preFormContent: (
-                  <Text>{t`Are you sure you want to remove this supplier part?`}</Text>
-                )
+                preFormWarning: t`Are you sure you want to remove this supplier part?`
               });
           }
         })
