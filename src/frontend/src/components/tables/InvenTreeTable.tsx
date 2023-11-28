@@ -412,10 +412,8 @@ export function InvenTreeTable<T = any>({
   const [recordCount, setRecordCount] = useState<number>(0);
 
   /*
-   * Reload the table whenever the refetch changes
+   * Reload the table whenever the tableKey changes
    * this allows us to programmatically refresh the table
-   *
-   * Implement this using the custom useTableRefresh hook
    */
   useEffect(() => {
     refetch();
