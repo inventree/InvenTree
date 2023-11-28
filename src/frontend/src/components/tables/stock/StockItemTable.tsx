@@ -12,7 +12,6 @@ import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { StatusColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
-import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 import { InvenTreeTable } from './../InvenTreeTable';
 
