@@ -27,6 +27,7 @@ import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { PanelType } from '../../components/nav/PanelGroup';
+import { ContactTable } from '../../components/tables/company/ContactTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
 import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable';
@@ -128,7 +129,8 @@ export default function CompanyDetail(props: CompanyDetailProps) {
       {
         name: 'contacts',
         label: t`Contacts`,
-        icon: <IconUsersGroup />
+        icon: <IconUsersGroup />,
+        content: company?.pk && <ContactTable companyId={company.pk} />
       },
       {
         name: 'addresses',

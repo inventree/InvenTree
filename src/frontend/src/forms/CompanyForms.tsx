@@ -9,11 +9,11 @@ import {
   IconPackage,
   IconPhone
 } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ApiPaths } from '../enums/ApiEndpoints';
-import { openEditApiForm } from '../functions/forms';
+import { openCreateApiForm, openEditApiForm } from '../functions/forms';
 
 /**
  * Field set for SupplierPart instance
@@ -124,4 +124,16 @@ export function editCompany({
     successMessage: t`Company updated`,
     onFormSuccess: callback
   });
+}
+
+export function contactFields(): ApiFormFieldSet {
+  return {
+    company: {
+      hidden: true
+    },
+    name: {},
+    phone: {},
+    email: {},
+    role: {}
+  };
 }
