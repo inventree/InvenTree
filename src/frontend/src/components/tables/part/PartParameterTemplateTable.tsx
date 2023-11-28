@@ -41,7 +41,7 @@ export function PartParameterTemplateTable() {
       {
         accessor: 'description',
         title: t`Description`,
-        sortbale: false
+        sortable: false
       },
       {
         accessor: 'checkbox',
