@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
@@ -264,7 +264,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
-  const { tableKey, refreshTable } = useTableRefresh('stockitem');
+  const table = useTable('stockitems');
 
   function stockItemRowActions(record: any): RowAction[] {
     let actions: RowAction[] = [];
@@ -278,7 +278,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.stock_item_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,
