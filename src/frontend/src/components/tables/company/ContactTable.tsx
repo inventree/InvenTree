@@ -50,12 +50,6 @@ export function ContactTable({
         sortable: false
       },
       {
-        accessor: 'notes',
-        title: t`Notes`,
-        switchable: true,
-        sortable: false
-      },
-      {
         accessor: 'role',
         title: t`Role`,
         switchable: true,
