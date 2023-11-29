@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -9,7 +8,7 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -22,7 +21,7 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
  * Table for displaying list of project codes
  */
 export function ProjectCodeTable() {
-  const { tableKey, refreshTable } = useTableRefresh('project-code');
+  const table = useTable('project-codes');
 
   const user = useUserState();
 
@@ -53,7 +52,7 @@ export function ProjectCodeTable() {
                 description: {},
                 responsible: {}
               },
-              onFormSuccess: refreshTable,
+              onFormSuccess: table.refreshTable,
               successMessage: t`Project code updated`
             });
           }
@@ -66,10 +65,8 @@ export function ProjectCodeTable() {
               pk: record.pk,
               title: t`Delete project code`,
               successMessage: t`Project code deleted`,
-              onFormSuccess: refreshTable,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this project code?`}</Text>
-              )
+              onFormSuccess: table.refreshTable,
+              preFormWarning: t`Are you sure you want to remove this project code?`
             });
           }
         })
@@ -87,7 +84,7 @@ export function ProjectCodeTable() {
         description: {},
         responsible: {}
       },
-      onFormSuccess: refreshTable,
+      onFormSuccess: table.refreshTable,
       successMessage: t`Added project code`
     });
   }, []);
@@ -105,7 +102,7 @@ export function ProjectCodeTable() {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.project_code_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
         rowActions: rowActions,

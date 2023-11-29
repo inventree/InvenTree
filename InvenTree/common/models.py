@@ -2276,7 +2276,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
         'TABLE_STRING_MAX_LENGTH': {
             'name': _('Table String Length'),
-            'description': _('Maximimum length limit for strings displayed in table views'),
+            'description': _('Maximum length limit for strings displayed in table views'),
             'validator': [
                 int,
                 MinValueValidator(0),

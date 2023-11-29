@@ -18,7 +18,8 @@ import label.models
 import label.serializers
 from InvenTree.api import MetadataView
 from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateDestroyAPI)
 from part.models import Part
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
@@ -65,7 +66,7 @@ class LabelFilterMixin:
         return self.ITEM_MODEL.objects.filter(pk__in=valid_ids)
 
 
-class LabelListView(LabelFilterMixin, ListAPI):
+class LabelListView(LabelFilterMixin, ListCreateAPI):
     """Generic API class for label templates."""
 
     def filter_queryset(self, queryset):

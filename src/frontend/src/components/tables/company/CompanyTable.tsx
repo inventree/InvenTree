@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { DescriptionColumn } from '../ColumnRenderers';
@@ -21,7 +21,7 @@ export function CompanyTable({
   params?: any;
   path?: string;
 }) {
-  const { tableKey } = useTableRefresh('company');
+  const table = useTable('company');
 
   const navigate = useNavigate();
 
@@ -56,7 +56,7 @@ export function CompanyTable({
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.company_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
         params: {

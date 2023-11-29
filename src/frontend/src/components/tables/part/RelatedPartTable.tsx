@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -19,7 +19,7 @@ import { RowDeleteAction } from '../RowActions';
  * Construct a table listing related parts for a given part
  */
 export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
-  const { tableKey, refreshTable } = useTableRefresh('relatedparts');
+  const table = useTable('relatedparts');
 
   const navigate = useNavigate();
 
@@ -80,7 +80,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
         }
       },
       successMessage: t`Related part added`,
-      onFormSuccess: refreshTable
+      onFormSuccess: table.refreshTable
     });
   }, [partId]);
 
@@ -112,10 +112,8 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
               pk: record.pk,
               title: t`Delete Related Part`,
               successMessage: t`Related part deleted`,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this relationship?`}</Text>
-              ),
-              onFormSuccess: refreshTable
+              preFormWarning: t`Are you sure you want to remove this relationship?`,
+              onFormSuccess: table.refreshTable
             });
           }
         })
@@ -127,7 +125,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.related_part_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {

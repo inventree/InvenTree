@@ -191,11 +191,12 @@ class ExamplePanel(PanelMixin, InvenTreePlugin, UrlsMixin):
     def get_custom_panels(self, view, request):
         panels = []
         if isinstance(view, BuildDetail):
-		panels.append({
-		    'title': 'Example Info',
-		    'icon': 'fa-industry',
-		    'content_template': 'example_panel/example.html',
-		})
+	    self.build=view.get_object()
+	    panels.append({
+		'title': 'Example Info',
+		'icon': 'fa-industry',
+		'content_template': 'example_panel/example.html',
+	    })
         return panels
 
     def setup_urls(self):
@@ -331,6 +332,7 @@ from company.models import Company
     def get_custom_panels(self, view, request):
         panels = []
         if isinstance(view, BuildDetail):
+	    self.build=view.get_object()
             self.companies=Company.objects.filter(is_supplier=True)
             panels.append({
             ...
@@ -352,3 +354,19 @@ by looping.
 
 The value of the select is the pk of the company. It can simply be added to the
 json container and transferred to the plugin.
+
+#### Store the Data
+I case you plugin needs to store data permanently, InvenTree has a nice feature called
+[metadata](metadata.md). You can easily store your values by adding a few lines
+to the do_something function.
+code:
+
+```python
+    def do_something(self, request):
+
+        data=json.loads(request.body)
+        print('Data received:', data)
+	for key in data:
+	    self.build.metadata[key]=data[key]
+	self.build.save()
+```

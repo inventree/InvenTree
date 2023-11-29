@@ -484,8 +484,12 @@ msgid "Database"
 msgstr "Database"
 
 #: src/components/modals/ServerInfoModal.tsx:38
-msgid "Bebug Mode"
-msgstr "Bebug Mode"
+msgid "Debug Mode"
+msgstr "Debug Mode"
+
+#: src/components/modals/ServerInfoModal.tsx:38
+#~ msgid "Bebug Mode"
+#~ msgstr "Bebug Mode"
 
 #: src/components/modals/ServerInfoModal.tsx:41
 msgid "Server is running in debug mode"
@@ -1942,32 +1946,32 @@ msgstr "Add group"
 msgid "Added group"
 msgstr "Added group"
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:49
+#: src/components/tables/settings/ProjectCodeTable.tsx:50
 msgid "Edit project code"
 msgstr "Edit project code"
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:55
+#: src/components/tables/settings/ProjectCodeTable.tsx:57
 msgid "Project code updated"
 msgstr "Project code updated"
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:65
+#: src/components/tables/settings/ProjectCodeTable.tsx:67
 msgid "Delete project code"
 msgstr "Delete project code"
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:66
+#: src/components/tables/settings/ProjectCodeTable.tsx:68
 msgid "Project code deleted"
 msgstr "Project code deleted"
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:69
+#: src/components/tables/settings/ProjectCodeTable.tsx:71
 msgid "Are you sure you want to remove this project code?"
 msgstr "Are you sure you want to remove this project code?"
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:82
-#: src/components/tables/settings/ProjectCodeTable.tsx:96
+#: src/components/tables/settings/ProjectCodeTable.tsx:84
+#: src/components/tables/settings/ProjectCodeTable.tsx:99
 msgid "Add project code"
 msgstr "Add project code"
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:88
+#: src/components/tables/settings/ProjectCodeTable.tsx:91
 msgid "Added project code"
 msgstr "Added project code"
 
@@ -2045,8 +2049,12 @@ msgid "Delete user"
 msgstr "Delete user"
 
 #: src/components/tables/settings/UserTable.tsx:117
-msgid "user deleted"
-msgstr "user deleted"
+msgid "User deleted"
+msgstr "User deleted"
+
+#: src/components/tables/settings/UserTable.tsx:117
+#~ msgid "user deleted"
+#~ msgstr "user deleted"
 
 #: src/components/tables/settings/UserTable.tsx:120
 msgid "Are you sure you want to delete this user?"

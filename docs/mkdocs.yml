@@ -78,6 +78,7 @@ nav:
       - Getting started: develop/starting.md
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
+      - Platform UI: develop/react-frontend.md
     - Credits: credits.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md

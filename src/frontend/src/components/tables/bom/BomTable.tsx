@@ -12,7 +12,7 @@ import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { bomItemFields } from '../../../forms/BomForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -51,7 +51,7 @@ export function BomTable({
 
   const user = useUserState();
 
-  const { tableKey, refreshTable } = useTableRefresh('bom');
+  const table = useTable('bom');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -289,7 +289,7 @@ export function BomTable({
               title: t`Edit Bom Item`,
               fields: bomItemFields(),
               successMessage: t`Bom item updated`,
-              onFormSuccess: refreshTable
+              onFormSuccess: table.refreshTable
             });
           }
         })
@@ -305,10 +305,8 @@ export function BomTable({
               pk: record.pk,
               title: t`Delete Bom Item`,
               successMessage: t`Bom item deleted`,
-              onFormSuccess: refreshTable,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this BOM item?`}</Text>
-              )
+              onFormSuccess: table.refreshTable,
+              preFormWarning: t`Are you sure you want to remove this BOM item?`
             });
           }
         })
@@ -322,7 +320,7 @@ export function BomTable({
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.bom_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {
