@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
@@ -14,7 +14,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
  * Stock location table
  */
 export function StockLocationTable({ params = {} }: { params?: any }) {
-  const { tableKey, refreshTable } = useTableRefresh('stocklocation');
+  const table = useTable('stocklocation');
 
   const navigate = useNavigate();
 
@@ -64,7 +64,7 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.stock_location_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,
