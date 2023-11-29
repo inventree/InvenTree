@@ -140,9 +140,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
               title: t`Delete Part Parameter`,
               successMessage: t`Part parameter deleted`,
               onFormSuccess: table.refreshTable,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this parameter?`}</Text>
-              )
+              preFormWarning: t`Are you sure you want to remove this parameter?`
             });
           }
         })

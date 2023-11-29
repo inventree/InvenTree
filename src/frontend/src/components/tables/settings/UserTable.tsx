@@ -225,9 +225,7 @@ export function UserTable() {
             title: t`Delete user`,
             successMessage: t`User deleted`,
             onFormSuccess: table.refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to delete this user?`}</Text>
-            )
+            preFormWarning: t`Are you sure you want to delete this user?`
           });
         }
       })
