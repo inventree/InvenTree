@@ -71,4 +71,3 @@ Next you can start configuring the connection. Either use the config file or set
 | `ldap.require_group` | `INVENTREE_LDAP_REQUIRE_GROUP` | If set, users _must_ be in this group to log in to InvenTree |
 | `ldap.deny_group` | `INVENTREE_LDAP_DENY_GROUP` | If set, users _must not_ be in this group to log in to InvenTree |
 | `ldap.user_flags_by_group` | `INVENTREE_LDAP_USER_FLAGS_BY_GROUP` | LDAP group to InvenTree user flag map, can be json if used as env, in yml directly specify the object. See config template for example, default: `{}` |
-
