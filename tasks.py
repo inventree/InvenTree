@@ -168,6 +168,7 @@ def install(c):
 
     # Install required Python packages with PIP
     c.run('pip3 install --upgrade pip')
+    c.run('pip3 install --upgrade setuptools')
     c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 

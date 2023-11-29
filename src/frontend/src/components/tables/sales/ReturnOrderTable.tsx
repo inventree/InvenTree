@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import {
@@ -19,7 +19,7 @@ import {
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
-  const { tableKey } = useTableRefresh('return-orders');
+  const table = useTable('return-orders');
 
   const navigate = useNavigate();
 
@@ -74,7 +74,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.return_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {

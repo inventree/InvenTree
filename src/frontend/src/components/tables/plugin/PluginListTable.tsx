@@ -11,7 +11,7 @@ import { useCallback, useMemo } from 'react';
 
 import { api } from '../../../App';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { StylishText } from '../../items/StylishText';
 import { TableColumn } from '../Column';
@@ -49,7 +49,7 @@ function PluginIcon(plugin: any) {
  * Table displaying list of available plugins
  */
 export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
-  const { tableKey, refreshTable } = useTableRefresh('plugin');
+  const table = useTable('plugin');
 
   const pluginTableColumns: TableColumn[] = useMemo(
     () => [
@@ -147,7 +147,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           api
             .patch(url, { active: active })
             .then(() => {
-              refreshTable();
+              table.refreshTable();
               notifications.hide(id);
               notifications.show({
                 title: t`Plugin updated`,
@@ -203,7 +203,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.plugin_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={pluginTableColumns}
       props={{
         ...props,

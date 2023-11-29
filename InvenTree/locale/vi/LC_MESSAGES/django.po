@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-16 02:19+0000\n"
-"PO-Revision-Date: 2023-11-16 23:15\n"
+"POT-Creation-Date: 2023-11-23 23:36+0000\n"
+"PO-Revision-Date: 2023-11-24 00:35\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -56,8 +56,8 @@ msgstr "Nhập ngày"
 #: company/models.py:732 company/templates/company/sidebar.html:37
 #: order/models.py:1104 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
-#: order/templates/order/so_sidebar.html:17 part/admin.py:41
-#: part/models.py:3009 part/templates/part/part_sidebar.html:63
+#: order/templates/order/so_sidebar.html:17 part/admin.py:40
+#: part/models.py:2998 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
 #: stock/admin.py:139 stock/models.py:2217 stock/models.py:2325
 #: stock/serializers.py:417 stock/serializers.py:580 stock/serializers.py:674
@@ -264,10 +264,10 @@ msgstr "Đính kèm"
 msgid "Select file to attach"
 msgstr "Chọn file đính kèm"
 
-#: InvenTree/models.py:482 common/models.py:2867 company/models.py:128
+#: InvenTree/models.py:482 common/models.py:2877 company/models.py:128
 #: company/models.py:386 company/models.py:440 company/models.py:719
 #: order/models.py:234 order/models.py:1108 order/models.py:1466
-#: part/admin.py:39 part/models.py:868
+#: part/admin.py:38 part/models.py:836
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
 #: stock/admin.py:138 templates/js/translated/company.js:1309
@@ -281,7 +281,7 @@ msgstr "Chọn file đính kèm"
 msgid "Link"
 msgstr "Liên kết"
 
-#: InvenTree/models.py:483 build/models.py:302 part/models.py:869
+#: InvenTree/models.py:483 build/models.py:302 part/models.py:837
 #: stock/models.py:769
 msgid "Link to external URL"
 msgstr "Liên kết đến URL bên ngoài"
@@ -295,10 +295,10 @@ msgstr "Bình luận"
 msgid "File comment"
 msgstr "Bình luận tệp tin"
 
-#: InvenTree/models.py:492 InvenTree/models.py:493 common/models.py:2327
-#: common/models.py:2328 common/models.py:2540 common/models.py:2541
-#: common/models.py:2797 common/models.py:2798 part/models.py:3017
-#: part/models.py:3102 part/models.py:3181 part/models.py:3201
+#: InvenTree/models.py:492 InvenTree/models.py:493 common/models.py:2337
+#: common/models.py:2338 common/models.py:2550 common/models.py:2551
+#: common/models.py:2807 common/models.py:2808 part/models.py:3006
+#: part/models.py:3091 part/models.py:3170 part/models.py:3190
 #: plugin/models.py:229 plugin/models.py:230
 #: report/templates/report/inventree_test_report_base.html:105
 #: templates/js/translated/stock.js:3007 users/models.py:102
@@ -342,16 +342,16 @@ msgstr "Tên trùng lặp không thể tồn tại trong cùng cấp thư mục"
 msgid "Invalid choice"
 msgstr "Lựa chọn sai"
 
-#: InvenTree/models.py:786 InvenTree/models.py:787 common/models.py:2526
-#: common/models.py:2972 company/models.py:524 label/models.py:116
-#: part/models.py:814 part/models.py:3399 plugin/models.py:42
+#: InvenTree/models.py:786 InvenTree/models.py:787 common/models.py:2536
+#: common/models.py:2982 company/models.py:524 label/models.py:116
+#: part/models.py:782 part/models.py:3388 plugin/models.py:42
 #: report/models.py:170 stock/models.py:71 stock/models.py:72
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
 #: templates/InvenTree/settings/plugin.html:74
 #: templates/InvenTree/settings/plugin_settings.html:22
 #: templates/InvenTree/settings/settings_staff_js.html:67
-#: templates/InvenTree/settings/settings_staff_js.html:426
+#: templates/InvenTree/settings/settings_staff_js.html:446
 #: templates/js/translated/company.js:666
 #: templates/js/translated/company.js:714
 #: templates/js/translated/company.js:903
@@ -363,13 +363,13 @@ msgid "Name"
 msgstr "Tên"
 
 #: InvenTree/models.py:793 build/models.py:175
-#: build/templates/build/detail.html:24 common/models.py:125
+#: build/templates/build/detail.html:24 common/models.py:126
 #: company/models.py:446 company/models.py:725
 #: company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:107 label/models.py:123
 #: order/models.py:226 order/models.py:1132 part/admin.py:191 part/admin.py:272
-#: part/models.py:836 part/models.py:3415 part/templates/part/category.html:82
+#: part/models.py:804 part/models.py:3404 part/templates/part/category.html:82
 #: part/templates/part/part_base.html:170
 #: part/templates/part/part_scheduling.html:12 report/models.py:183
 #: report/models.py:611 report/models.py:654
@@ -377,8 +377,8 @@ msgstr "Tên"
 #: stock/admin.py:42 stock/models.py:78 stock/templates/stock/location.html:125
 #: templates/InvenTree/settings/notifications.html:19
 #: templates/InvenTree/settings/plugin_settings.html:27
-#: templates/InvenTree/settings/settings_staff_js.html:151
-#: templates/InvenTree/settings/settings_staff_js.html:431
+#: templates/InvenTree/settings/settings_staff_js.html:170
+#: templates/InvenTree/settings/settings_staff_js.html:451
 #: templates/js/translated/bom.js:633 templates/js/translated/bom.js:963
 #: templates/js/translated/build.js:2127 templates/js/translated/company.js:518
 #: templates/js/translated/company.js:1320
@@ -432,24 +432,24 @@ msgstr "Dữ liệu băm mã vạch"
 msgid "Unique hash of barcode data"
 msgstr "Chuỗi băm duy nhất của dữ liệu mã vạch"
 
-#: InvenTree/models.py:995
+#: InvenTree/models.py:1011
 msgid "Existing barcode found"
 msgstr "Mã vạch đã tồn tại"
 
-#: InvenTree/models.py:1036
+#: InvenTree/models.py:1052
 msgid "Server Error"
 msgstr "Lỗi máy chủ"
 
-#: InvenTree/models.py:1037
+#: InvenTree/models.py:1053
 msgid "An error has been logged by the server."
 msgstr "Lỗi đã được ghi lại bởi máy chủ."
 
-#: InvenTree/serializers.py:61 part/models.py:3904
+#: InvenTree/serializers.py:61 part/models.py:3893
 msgid "Must be a valid number"
 msgstr "Phải là một số hợp lệ"
 
 #: InvenTree/serializers.py:90 company/models.py:150
-#: company/templates/company/company_base.html:106 part/models.py:2856
+#: company/templates/company/company_base.html:106 part/models.py:2833
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
@@ -662,7 +662,7 @@ msgstr "Tiếng Trung (Giản thể)"
 msgid "Chinese (Traditional)"
 msgstr "Tiếng Trung (Phồn thể)"
 
-#: InvenTree/status.py:68 part/serializers.py:1002
+#: InvenTree/status.py:68 part/serializers.py:1008
 msgid "Background worker check failed"
 msgstr "Nhân công chạy ngầm kiểm tra thất bại"
 
@@ -918,14 +918,14 @@ msgstr "Giới thiệu"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Bạn dựng phải được hủy bỏ trước khi có thể xóa được"
 
-#: build/api.py:281 part/models.py:3796 templates/js/translated/bom.js:997
+#: build/api.py:281 part/models.py:3785 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2511
 #: templates/js/translated/table_filters.js:190
 #: templates/js/translated/table_filters.js:579
 msgid "Consumable"
 msgstr "Vật tư tiêu hao"
 
-#: build/api.py:282 part/models.py:3790 part/templates/part/upload_bom.html:58
+#: build/api.py:282 part/models.py:3779 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:1001 templates/js/translated/bom.js:1028
 #: templates/js/translated/build.js:2520
 #: templates/js/translated/table_filters.js:186
@@ -994,7 +994,7 @@ msgstr "Tham chiếu đơn đặt bản dựng"
 
 #: build/models.py:167 order/models.py:363 order/models.py:776
 #: order/models.py:1102 order/models.py:1738 part/admin.py:274
-#: part/models.py:3805 part/templates/part/upload_bom.html:54
+#: part/models.py:3794 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:26
@@ -1024,11 +1024,11 @@ msgstr "Đơn đặt bản dựng với bản dựng này đã được phân b�
 #: build/models.py:192 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:907
 #: order/models.py:1209 order/models.py:1324 order/models.py:1325
-#: part/models.py:365 part/models.py:2869 part/models.py:2983
-#: part/models.py:3120 part/models.py:3139 part/models.py:3158
-#: part/models.py:3179 part/models.py:3271 part/models.py:3545
-#: part/models.py:3667 part/models.py:3770 part/models.py:4093
-#: part/serializers.py:961 part/serializers.py:1394
+#: part/models.py:365 part/models.py:2846 part/models.py:2972
+#: part/models.py:3109 part/models.py:3128 part/models.py:3147
+#: part/models.py:3168 part/models.py:3260 part/models.py:3534
+#: part/models.py:3656 part/models.py:3759 part/models.py:4082
+#: part/serializers.py:967 part/serializers.py:1454
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1136,7 +1136,7 @@ msgstr "Mã lô hàng"
 msgid "Batch code for this build output"
 msgstr "Mã lô cho đầu ra bản dựng này"
 
-#: build/models.py:264 order/models.py:242 part/models.py:1006
+#: build/models.py:264 order/models.py:242 part/models.py:974
 #: part/templates/part/part_base.html:310
 #: templates/js/translated/return_order.js:339
 #: templates/js/translated/sales_order.js:827
@@ -1169,12 +1169,13 @@ msgid "User who issued this build order"
 msgstr "Người dùng người đã được phân công cho đơn đặt bản dựng này"
 
 #: build/models.py:295 build/templates/build/build_base.html:204
-#: build/templates/build/detail.html:122 order/models.py:256
-#: order/templates/order/order_base.html:217
+#: build/templates/build/detail.html:122 common/models.py:134
+#: order/models.py:256 order/templates/order/order_base.html:217
 #: order/templates/order/return_order_base.html:188
-#: order/templates/order/sales_order_base.html:228 part/models.py:1013
+#: order/templates/order/sales_order_base.html:228 part/models.py:981
 #: part/templates/part/part_base.html:390
 #: report/templates/report/inventree_build_order_base.html:158
+#: templates/InvenTree/settings/settings_staff_js.html:150
 #: templates/js/translated/build.js:2207
 #: templates/js/translated/purchase_order.js:1757
 #: templates/js/translated/return_order.js:359
@@ -1206,7 +1207,7 @@ msgstr "Độ ưu tiên"
 msgid "Priority of this build order"
 msgstr "Độ quan trọng của đơn đặt bản dựng"
 
-#: build/models.py:316 common/models.py:118 order/admin.py:17
+#: build/models.py:316 common/models.py:119 order/admin.py:17
 #: order/models.py:231 templates/InvenTree/settings/settings_staff_js.html:146
 #: templates/js/translated/build.js:2132
 #: templates/js/translated/purchase_order.js:1704
@@ -1244,7 +1245,7 @@ msgstr "Đầu ra bản dựng không phù hợp với đơn đặt bản dựng
 
 #: build/models.py:855 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:444 order/serializers.py:389
-#: order/serializers.py:511 part/serializers.py:1219 part/serializers.py:1558
+#: order/serializers.py:511 part/serializers.py:1279 part/serializers.py:1618
 #: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "Số lượng phải lớn hơn 0"
@@ -1259,10 +1260,10 @@ msgstr "Dựng đối tượng"
 
 #: build/models.py:1288 build/models.py:1546 build/serializers.py:205
 #: build/serializers.py:242 build/templates/build/build_base.html:102
-#: build/templates/build/detail.html:34 common/models.py:2349
+#: build/templates/build/detail.html:34 common/models.py:2359
 #: order/models.py:1089 order/models.py:1660 order/serializers.py:1267
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:273
-#: part/forms.py:47 part/models.py:2996 part/models.py:3786
+#: part/forms.py:47 part/models.py:2985 part/models.py:3775
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1417,7 +1418,7 @@ msgstr "Số sêri tự cấp"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Tự động cấp số seri phù hợp cho hàng hóa được yêu cầu"
 
-#: build/serializers.py:332 stock/api.py:791
+#: build/serializers.py:332 stock/api.py:873
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Số sêri sau đây đã tồn tại hoặc không hợp lệ"
 
@@ -1426,7 +1427,7 @@ msgid "A list of build outputs must be provided"
 msgstr "Danh sách đầu ra bản dựng phải được cung cấp"
 
 #: build/serializers.py:421 build/serializers.py:493 order/serializers.py:497
-#: order/serializers.py:616 order/serializers.py:1623 part/serializers.py:973
+#: order/serializers.py:616 order/serializers.py:1623 part/serializers.py:979
 #: stock/serializers.py:410 stock/serializers.py:575 stock/serializers.py:669
 #: stock/serializers.py:1150 stock/serializers.py:1421
 #: stock/templates/stock/item_base.html:394
@@ -1796,7 +1797,7 @@ msgid "Completed Outputs"
 msgstr "Đầu ra hoàn thiện"
 
 #: build/templates/build/build_base.html:190
-#: build/templates/build/detail.html:101 order/api.py:1410 order/models.py:1317
+#: build/templates/build/detail.html:101 order/api.py:1409 order/models.py:1317
 #: order/models.py:1416 order/models.py:1564
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
@@ -2033,1365 +2034,1369 @@ msgstr "Tập tin {name.title()}"
 msgid "Select {name} file to upload"
 msgstr "Chọn tập tin {name} để tải lên"
 
-#: common/models.py:71
+#: common/models.py:72
 msgid "Updated"
 msgstr "Đã cập nhật"
 
-#: common/models.py:72
+#: common/models.py:73
 msgid "Timestamp of last update"
 msgstr "Nhãn thời gian của lần cập cuối cùng"
 
-#: common/models.py:119
+#: common/models.py:120
 msgid "Unique project code"
 msgstr "Mã dự án duy nhất"
 
-#: common/models.py:126
+#: common/models.py:127
 msgid "Project description"
 msgstr "Mô tả dự án"
 
-#: common/models.py:648
+#: common/models.py:135
+msgid "User or group responsible for this project"
+msgstr ""
+
+#: common/models.py:658
 msgid "Settings key (must be unique - case insensitive)"
 msgstr "Khóa thiết lập (phải duy nhất - phân biệt hoa thường)"
 
-#: common/models.py:650
+#: common/models.py:660
 msgid "Settings value"
 msgstr "Giá trị cài đặt"
 
-#: common/models.py:691
+#: common/models.py:701
 msgid "Chosen value is not a valid option"
 msgstr "Giá trị đã chọn không hợp lệ"
 
-#: common/models.py:708
+#: common/models.py:718
 msgid "Value must be a boolean value"
 msgstr "Giá trị phải là kiểu boolean"
 
-#: common/models.py:719
+#: common/models.py:729
 msgid "Value must be an integer value"
 msgstr "Giá trị phải là một số nguyên dương"
 
-#: common/models.py:758
+#: common/models.py:768
 msgid "Key string must be unique"
 msgstr "Chuỗi khóa phải duy nhất"
 
-#: common/models.py:963
+#: common/models.py:973
 msgid "No group"
 msgstr "Không có nhóm"
 
-#: common/models.py:988
+#: common/models.py:998
 msgid "An empty domain is not allowed."
 msgstr "Tên miền rỗng là không được phép."
 
-#: common/models.py:990
+#: common/models.py:1000
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
 msgstr "Tên miền không hợp lệ: {domain}"
 
-#: common/models.py:1002
+#: common/models.py:1012
 msgid "No plugin"
 msgstr "Không phần mở rộng"
 
-#: common/models.py:1068
+#: common/models.py:1078
 msgid "Restart required"
 msgstr "Cần khởi động lại"
 
-#: common/models.py:1069
+#: common/models.py:1079
 msgid "A setting has been changed which requires a server restart"
 msgstr "Một thiết lập đã bị thay đổi yêu cầu khởi động lại máy chủ"
 
-#: common/models.py:1076
+#: common/models.py:1086
 msgid "Pending migrations"
 msgstr "Chuyển dữ liệu chờ xử lý"
 
-#: common/models.py:1077
+#: common/models.py:1087
 msgid "Number of pending database migrations"
 msgstr "Số đợt nâng cấp cơ sở dữ liệu chờ xử lý"
 
-#: common/models.py:1083
+#: common/models.py:1093
 msgid "Server Instance Name"
 msgstr "Tên thực thể máy chủ"
 
-#: common/models.py:1085
+#: common/models.py:1095
 msgid "String descriptor for the server instance"
 msgstr "Mô tả chuỗi cho thực thể máy chủ"
 
-#: common/models.py:1090
+#: common/models.py:1100
 msgid "Use instance name"
 msgstr "Sử dụng tên thực thể"
 
-#: common/models.py:1091
+#: common/models.py:1101
 msgid "Use the instance name in the title-bar"
 msgstr "Sử dụng tên thực thể trên thanh tiêu đề"
 
-#: common/models.py:1097
+#: common/models.py:1107
 msgid "Restrict showing `about`"
 msgstr "Cấm hiển thị `giới thiệu`"
 
-#: common/models.py:1098
+#: common/models.py:1108
 msgid "Show the `about` modal only to superusers"
 msgstr "Chỉ hiển thị cửa sổ `giới thiệu` với siêu người dùng"
 
-#: common/models.py:1104 company/models.py:101 company/models.py:102
+#: common/models.py:1114 company/models.py:101 company/models.py:102
 msgid "Company name"
 msgstr "Tên công ty"
 
-#: common/models.py:1105
+#: common/models.py:1115
 msgid "Internal company name"
 msgstr "Tên công ty nội bộ"
 
-#: common/models.py:1110
+#: common/models.py:1120
 msgid "Base URL"
 msgstr "URL cơ sở"
 
-#: common/models.py:1111
+#: common/models.py:1121
 msgid "Base URL for server instance"
 msgstr "URL cơ sở cho thực thể máy chủ"
 
-#: common/models.py:1118
+#: common/models.py:1128
 msgid "Default Currency"
 msgstr "Tiền tệ mặc định"
 
-#: common/models.py:1119
+#: common/models.py:1129
 msgid "Select base currency for pricing calculations"
 msgstr "Chọn tiền tệ chính khi tính giá"
 
-#: common/models.py:1126
+#: common/models.py:1136
 msgid "Currency Update Interval"
 msgstr "Tần suất cập nhật tiền tệ"
 
-#: common/models.py:1127
+#: common/models.py:1137
 msgid "How often to update exchange rates (set to zero to disable)"
 msgstr "Mức độ thường xuyên để cập nhật tỉ giá hối đoái (điền 0 để tắt)"
 
-#: common/models.py:1129 common/models.py:1193 common/models.py:1211
-#: common/models.py:1218 common/models.py:1229 common/models.py:1240
-#: common/models.py:1471 common/models.py:1495 common/models.py:1614
-#: common/models.py:1870
+#: common/models.py:1139 common/models.py:1203 common/models.py:1221
+#: common/models.py:1228 common/models.py:1239 common/models.py:1250
+#: common/models.py:1481 common/models.py:1505 common/models.py:1624
+#: common/models.py:1880
 msgid "days"
 msgstr "ngày"
 
-#: common/models.py:1137
+#: common/models.py:1147
 msgid "Currency Update Plugin"
 msgstr "Phần mở rộng cập nhật tiền tệ"
 
-#: common/models.py:1138
+#: common/models.py:1148
 msgid "Currency update plugin to use"
 msgstr "Phần mở rộng cập nhật tiền tệ được sử dụng"
 
-#: common/models.py:1144
+#: common/models.py:1154
 msgid "Download from URL"
 msgstr "Tải về từ URL"
 
-#: common/models.py:1145
+#: common/models.py:1155
 msgid "Allow download of remote images and files from external URL"
 msgstr "Cho phép tải ảnh và tệp tin từ xa theo URL bên ngoài"
 
-#: common/models.py:1151
+#: common/models.py:1161
 msgid "Download Size Limit"
 msgstr "Giới hạn kích thước tải xuống"
 
-#: common/models.py:1152
+#: common/models.py:1162
 msgid "Maximum allowable download size for remote image"
 msgstr "Kích thước tải xuống tối đa với hình ảnh từ xa"
 
-#: common/models.py:1163
+#: common/models.py:1173
 msgid "User-agent used to download from URL"
 msgstr "User-agent được dùng để tải xuống theo URL"
 
-#: common/models.py:1164
+#: common/models.py:1174
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
 msgstr "Cho phép ghi đè user-agent được dùng để tải về hình ảnh và tệp tin từ xa theo URL bên ngoài (để trống nghĩa là dùng mặc định)"
 
-#: common/models.py:1169
+#: common/models.py:1179
 msgid "Require confirm"
 msgstr "Yêu cầu xác nhận"
 
-#: common/models.py:1170
+#: common/models.py:1180
 msgid "Require explicit user confirmation for certain action."
 msgstr "Yêu cầu người dùng xác nhận rõ ràng với một số chức năng nhất định."
 
-#: common/models.py:1176
+#: common/models.py:1186
 msgid "Tree Depth"
 msgstr "Cấp độ cây"
 
-#: common/models.py:1177
+#: common/models.py:1187
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
 msgstr "Độ sâu cây mặc định cho màn hình cây. Cấp độ sâu hơn sẽ sử dụng kỹ thuật tải chậm nếu cần thiết."
 
-#: common/models.py:1186
+#: common/models.py:1196
 msgid "Update Check Interval"
 msgstr "Thời gian kiểm tra bản cập nhật"
 
-#: common/models.py:1187
+#: common/models.py:1197
 msgid "How often to check for updates (set to zero to disable)"
 msgstr "Mức độ thường xuyên để kiểm tra bản cập nhật (điền 0 để tắt)"
 
-#: common/models.py:1197
+#: common/models.py:1207
 msgid "Automatic Backup"
 msgstr "Sao lưu tự động"
 
-#: common/models.py:1198
+#: common/models.py:1208
 msgid "Enable automatic backup of database and media files"
 msgstr "Bật tính năng sao lưu tự động cơ sở dữ liệu và tệp tin đa phương tiện"
 
-#: common/models.py:1204
+#: common/models.py:1214
 msgid "Auto Backup Interval"
 msgstr "Khoảng thời gian sao lưu tự động"
 
-#: common/models.py:1205
+#: common/models.py:1215
 msgid "Specify number of days between automated backup events"
 msgstr "Xác định số ngày giữa các kỳ sao lưu tự động"
 
-#: common/models.py:1215
+#: common/models.py:1225
 msgid "Task Deletion Interval"
 msgstr "Khoảng thời gian xóa tác vụ"
 
-#: common/models.py:1216
+#: common/models.py:1226
 msgid "Background task results will be deleted after specified number of days"
 msgstr "Kết quả tác vụ chạy ngầm sẽ bị xóa sau số ngày được chỉ định"
 
-#: common/models.py:1226
+#: common/models.py:1236
 msgid "Error Log Deletion Interval"
 msgstr "Khoảng thời gian xóa nhật ký lỗi"
 
-#: common/models.py:1227
+#: common/models.py:1237
 msgid "Error logs will be deleted after specified number of days"
 msgstr "Nhật ký lỗi sẽ bị xóa sau số ngày được chỉ định"
 
-#: common/models.py:1237
+#: common/models.py:1247
 msgid "Notification Deletion Interval"
 msgstr "Khoảng thời gian xóa thông báo"
 
-#: common/models.py:1238
+#: common/models.py:1248
 msgid "User notifications will be deleted after specified number of days"
 msgstr "Thông báo sẽ bị xóa sau số ngày được chỉ định"
 
-#: common/models.py:1248 templates/InvenTree/settings/sidebar.html:31
+#: common/models.py:1258 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
 msgstr "Hỗ trợ mã vạch"
 
-#: common/models.py:1249
+#: common/models.py:1259
 msgid "Enable barcode scanner support in the web interface"
 msgstr "Bật hỗ trợ máy quét mã vạch trong giao diện web"
 
-#: common/models.py:1255
+#: common/models.py:1265
 msgid "Barcode Input Delay"
 msgstr "Độ trễ quét mã vạch"
 
-#: common/models.py:1256
+#: common/models.py:1266
 msgid "Barcode input processing delay time"
 msgstr "Thời gian trễ xử lý đầu đọc mã vạch"
 
-#: common/models.py:1266
+#: common/models.py:1276
 msgid "Barcode Webcam Support"
 msgstr "Hỗ trợ mã vạch qua webcam"
 
-#: common/models.py:1267
+#: common/models.py:1277
 msgid "Allow barcode scanning via webcam in browser"
 msgstr "Cho phép quét mã vạch qua webcam bên trong trình duyệt"
 
-#: common/models.py:1273
+#: common/models.py:1283
 msgid "Part Revisions"
 msgstr "Phiên bản Sản phẩm"
 
-#: common/models.py:1274
+#: common/models.py:1284
 msgid "Enable revision field for Part"
 msgstr "Bật trường phiên bản cho sản phẩm"
 
-#: common/models.py:1280
+#: common/models.py:1290
 msgid "IPN Regex"
 msgstr "Mẫu IPN"
 
-#: common/models.py:1281
+#: common/models.py:1291
 msgid "Regular expression pattern for matching Part IPN"
 msgstr "Mẫu dùng nhanh phổ biến dành cho tìm IPN sản phẩm"
 
-#: common/models.py:1285
+#: common/models.py:1295
 msgid "Allow Duplicate IPN"
 msgstr "Cho phép trùng IPN"
 
-#: common/models.py:1286
+#: common/models.py:1296
 msgid "Allow multiple parts to share the same IPN"
 msgstr "Cho phép nhiều sản phẩm dùng IPN giống nhau"
 
-#: common/models.py:1292
+#: common/models.py:1302
 msgid "Allow Editing IPN"
 msgstr "Cho phép sửa IPN"
 
-#: common/models.py:1293
+#: common/models.py:1303
 msgid "Allow changing the IPN value while editing a part"
 msgstr "Cho phép đổi giá trị IPN khi sửa một sản phẩm"
 
-#: common/models.py:1299
+#: common/models.py:1309
 msgid "Copy Part BOM Data"
 msgstr "Sao chép dữ liệu BOM của sản phẩm"
 
-#: common/models.py:1300
+#: common/models.py:1310
 msgid "Copy BOM data by default when duplicating a part"
 msgstr "Sao chép dữ liệu BOM mặc định khi nhân bản 1 sản phẩm"
 
-#: common/models.py:1306
+#: common/models.py:1316
 msgid "Copy Part Parameter Data"
 msgstr "Sao chép dữ liệu tham số sản phẩm"
 
-#: common/models.py:1307
+#: common/models.py:1317
 msgid "Copy parameter data by default when duplicating a part"
 msgstr "Sao chép dữ liệu tham số mặc định khi nhân bản 1 sản phẩm"
 
-#: common/models.py:1313
+#: common/models.py:1323
 msgid "Copy Part Test Data"
 msgstr "Chép thông tin kiểm thử sản phẩm"
 
-#: common/models.py:1314
+#: common/models.py:1324
 msgid "Copy test data by default when duplicating a part"
 msgstr "Sao chép dữ liệu kiểm thử mặc định khi nhân bản 1 sản phẩm"
 
-#: common/models.py:1320
+#: common/models.py:1330
 msgid "Copy Category Parameter Templates"
 msgstr "Sao chéo mẫu tham số danh mục"
 
-#: common/models.py:1321
+#: common/models.py:1331
 msgid "Copy category parameter templates when creating a part"
 msgstr "Sao chéo mẫu tham số danh mục khi tạo 1 sản phẩm"
 
-#: common/models.py:1327 part/admin.py:55 part/models.py:3550
+#: common/models.py:1337 part/admin.py:55 part/models.py:3539
 #: report/models.py:176 templates/js/translated/table_filters.js:139
 #: templates/js/translated/table_filters.js:763
 msgid "Template"
 msgstr "Mẫu"
 
-#: common/models.py:1328
+#: common/models.py:1338
 msgid "Parts are templates by default"
 msgstr "Sản phẩm là mẫu bởi mặc định"
 
-#: common/models.py:1334 part/admin.py:51 part/admin.py:279 part/models.py:964
+#: common/models.py:1344 part/admin.py:51 part/admin.py:279 part/models.py:932
 #: templates/js/translated/bom.js:1633
 #: templates/js/translated/table_filters.js:330
 #: templates/js/translated/table_filters.js:717
 msgid "Assembly"
 msgstr "Lắp ráp"
 
-#: common/models.py:1335
+#: common/models.py:1345
 msgid "Parts can be assembled from other components by default"
 msgstr "Sản phẩm có thể lắp giáp từ thành phần khác theo mặc định"
 
-#: common/models.py:1341 part/admin.py:52 part/models.py:970
+#: common/models.py:1351 part/admin.py:52 part/models.py:938
 #: templates/js/translated/table_filters.js:725
 msgid "Component"
 msgstr "Thành phần"
 
-#: common/models.py:1342
+#: common/models.py:1352
 msgid "Parts can be used as sub-components by default"
 msgstr "Sản phẩm có thể được sử dụng mặc định như thành phần phụ"
 
-#: common/models.py:1348 part/admin.py:53 part/models.py:981
+#: common/models.py:1358 part/admin.py:53 part/models.py:949
 msgid "Purchaseable"
 msgstr "Có thể mua"
 
-#: common/models.py:1349
+#: common/models.py:1359
 msgid "Parts are purchaseable by default"
 msgstr "Sản phẩm mặc định có thể mua được"
 
-#: common/models.py:1355 part/admin.py:54 part/models.py:986
+#: common/models.py:1365 part/admin.py:54 part/models.py:954
 #: templates/js/translated/table_filters.js:751
 msgid "Salable"
 msgstr "Có thể bán"
 
-#: common/models.py:1356
+#: common/models.py:1366
 msgid "Parts are salable by default"
 msgstr "Sản phẩm mặc định có thể bán được"
 
-#: common/models.py:1362 part/admin.py:56 part/models.py:976
+#: common/models.py:1372 part/admin.py:56 part/models.py:944
 #: templates/js/translated/table_filters.js:147
 #: templates/js/translated/table_filters.js:223
 #: templates/js/translated/table_filters.js:767
 msgid "Trackable"
 msgstr "Có thể theo dõi"
 
-#: common/models.py:1363
+#: common/models.py:1373
 msgid "Parts are trackable by default"
 msgstr "Sản phẩm mặc định có thể theo dõi được"
 
-#: common/models.py:1369 part/admin.py:57 part/models.py:996
+#: common/models.py:1379 part/admin.py:57 part/models.py:964
 #: part/templates/part/part_base.html:154
 #: templates/js/translated/table_filters.js:143
 #: templates/js/translated/table_filters.js:771
 msgid "Virtual"
 msgstr "Ảo"
 
-#: common/models.py:1370
+#: common/models.py:1380
 msgid "Parts are virtual by default"
 msgstr "Sản phẩm mặc định là số hóa"
 
-#: common/models.py:1376
+#: common/models.py:1386
 msgid "Show Import in Views"
 msgstr "Hiển thị Nhập liệu trong khung xem"
 
-#: common/models.py:1377
+#: common/models.py:1387
 msgid "Display the import wizard in some part views"
 msgstr "Hiển thị đồ thuật nhập dữ liệu trong một số khung nhìn sản phẩm"
 
-#: common/models.py:1383
+#: common/models.py:1393
 msgid "Show related parts"
 msgstr "Hiển thị sản phẩm liên quan"
 
-#: common/models.py:1384
+#: common/models.py:1394
 msgid "Display related parts for a part"
 msgstr "Hiện sản phẩm liên quan cho 1 sản phẩm"
 
-#: common/models.py:1390
+#: common/models.py:1400
 msgid "Initial Stock Data"
 msgstr "Số liệu tồn kho ban đầu"
 
-#: common/models.py:1391
+#: common/models.py:1401
 msgid "Allow creation of initial stock when adding a new part"
 msgstr "Cho phép tạo tồn kho ban đầu khi thêm 1 sản phẩm mới"
 
-#: common/models.py:1397 templates/js/translated/part.js:107
+#: common/models.py:1407 templates/js/translated/part.js:107
 msgid "Initial Supplier Data"
 msgstr "Dữ liệu nhà cung cấp ban đầu"
 
-#: common/models.py:1398
+#: common/models.py:1408
 msgid "Allow creation of initial supplier data when adding a new part"
 msgstr "Cho phép tạo dữ liệu nhà cung cấp ban đầu khi thêm 1 sản phẩm mới"
 
-#: common/models.py:1404
+#: common/models.py:1414
 msgid "Part Name Display Format"
 msgstr "Định dạng tên sản phẩm hiển thị"
 
-#: common/models.py:1405
+#: common/models.py:1415
 msgid "Format to display the part name"
 msgstr "Định dạng để hiển thị tên sản phẩm"
 
-#: common/models.py:1412
+#: common/models.py:1422
 msgid "Part Category Default Icon"
 msgstr "Biểu tượng mặc định của danh mục sản phẩm"
 
-#: common/models.py:1413
+#: common/models.py:1423
 msgid "Part category default icon (empty means no icon)"
 msgstr "Biểu tượng mặc định của danh mục sản phẩm (để trống nghĩa là không có biểu tượng)"
 
-#: common/models.py:1418
+#: common/models.py:1428
 msgid "Enforce Parameter Units"
 msgstr "Bắt buộc đơn vị tham số"
 
-#: common/models.py:1419
+#: common/models.py:1429
 msgid "If units are provided, parameter values must match the specified units"
 msgstr "Nếu đơn vị được cung cấp, giá trị tham số phải phù hợp với các đơn vị xác định"
 
-#: common/models.py:1425
+#: common/models.py:1435
 msgid "Minimum Pricing Decimal Places"
 msgstr "Vị trí phần thập phân giá bán tối thiểu"
 
-#: common/models.py:1426
+#: common/models.py:1436
 msgid "Minimum number of decimal places to display when rendering pricing data"
 msgstr "Số vị trí thập phân tối thiểu cần hiển thị khi tạo dữ liệu giá"
 
-#: common/models.py:1436
+#: common/models.py:1446
 msgid "Maximum Pricing Decimal Places"
 msgstr "Vị trí phần thập phân giá bán tối đa"
 
-#: common/models.py:1437
+#: common/models.py:1447
 msgid "Maximum number of decimal places to display when rendering pricing data"
 msgstr "Số vị trí thập phân tối đa cần hiển thị khi tạo dữ liệu giá"
 
-#: common/models.py:1447
+#: common/models.py:1457
 msgid "Use Supplier Pricing"
 msgstr "Sử dụng giá bán nhà cung cấp"
 
-#: common/models.py:1448
+#: common/models.py:1458
 msgid "Include supplier price breaks in overall pricing calculations"
 msgstr "Bao gồm giá phá vỡ cả nhà cung cấp trong tính toán giá tổng thể"
 
-#: common/models.py:1454
+#: common/models.py:1464
 msgid "Purchase History Override"
 msgstr "Ghi đè lịch sử mua hàng"
 
-#: common/models.py:1455
+#: common/models.py:1465
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr "Giá đơn hàng đặt mua trước đó ghi đè giá phá vỡ của nhà cung cấp"
 
-#: common/models.py:1461
+#: common/models.py:1471
 msgid "Use Stock Item Pricing"
 msgstr "Sử dụng giá hàng hóa trong kho"
 
-#: common/models.py:1462
+#: common/models.py:1472
 msgid "Use pricing from manually entered stock data for pricing calculations"
 msgstr "Dùng giá bán từ dữ liệu kho nhập vào thủ công đối với bộ tính toán giá bán"
 
-#: common/models.py:1468
+#: common/models.py:1478
 msgid "Stock Item Pricing Age"
 msgstr "Tuổi giá kho hàng"
 
-#: common/models.py:1469
+#: common/models.py:1479
 msgid "Exclude stock items older than this number of days from pricing calculations"
 msgstr "Loại trừ hàng hóa trong kho cũ hơn số ngày ngày từ bảng tính giá bán"
 
-#: common/models.py:1479
+#: common/models.py:1489
 msgid "Use Variant Pricing"
 msgstr "Sử dụng giá biến thể"
 
-#: common/models.py:1480
+#: common/models.py:1490
 msgid "Include variant pricing in overall pricing calculations"
 msgstr "Bao gồm giá biến thể trong bộ tính toán giá tổng thể"
 
-#: common/models.py:1486
+#: common/models.py:1496
 msgid "Active Variants Only"
 msgstr "Chỉ các biến thể hoạt động"
 
-#: common/models.py:1487
+#: common/models.py:1497
 msgid "Only use active variant parts for calculating variant pricing"
 msgstr "Chỉ sử dụng sản phẩm biến thể hoạt động để tính toán giá bán biến thể"
 
-#: common/models.py:1493
+#: common/models.py:1503
 msgid "Pricing Rebuild Interval"
 msgstr "Tần suất tạo lại giá"
 
-#: common/models.py:1494
+#: common/models.py:1504
 msgid "Number of days before part pricing is automatically updated"
 msgstr "Số ngày trước khi giá sản phẩm được tự động cập nhật"
 
-#: common/models.py:1504
+#: common/models.py:1514
 msgid "Internal Prices"
 msgstr "Giá nội bộ"
 
-#: common/models.py:1505
+#: common/models.py:1515
 msgid "Enable internal prices for parts"
 msgstr "Bật giá nội bộ cho sản phẩm"
 
-#: common/models.py:1511
+#: common/models.py:1521
 msgid "Internal Price Override"
 msgstr "Ghi đè giá nội bộ"
 
-#: common/models.py:1512
+#: common/models.py:1522
 msgid "If available, internal prices override price range calculations"
 msgstr "Nếu khả dụng, giá nội bộ ghi đè tính toán khoảng giá"
 
-#: common/models.py:1518
+#: common/models.py:1528
 msgid "Enable label printing"
 msgstr "Bật in tem nhãn"
 
-#: common/models.py:1519
+#: common/models.py:1529
 msgid "Enable label printing from the web interface"
 msgstr "Bật chức năng in tem nhãn từ giao diện web"
 
-#: common/models.py:1525
+#: common/models.py:1535
 msgid "Label Image DPI"
 msgstr "DPI hỉnh ảnh tem nhãn"
 
-#: common/models.py:1526
+#: common/models.py:1536
 msgid "DPI resolution when generating image files to supply to label printing plugins"
 msgstr "Độ phân giải DPI khi tạo tệp hình ảnh để cung cấp cho plugin in ấn tem nhãn"
 
-#: common/models.py:1535
+#: common/models.py:1545
 msgid "Enable Reports"
 msgstr "Bật báo cáo"
 
-#: common/models.py:1536
+#: common/models.py:1546
 msgid "Enable generation of reports"
 msgstr "Cho phép tạo báo cáo"
 
-#: common/models.py:1542 templates/stats.html:25
+#: common/models.py:1552 templates/stats.html:25
 msgid "Debug Mode"
 msgstr "Chế độ gỡ lỗi"
 
-#: common/models.py:1543
+#: common/models.py:1553
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "Tạo báo cáo trong chế độ gỡ lỗi (đầu ra HTML)"
 
-#: common/models.py:1549 plugin/builtin/labels/label_sheet.py:28
+#: common/models.py:1559 plugin/builtin/labels/label_sheet.py:28
 #: report/models.py:197
 msgid "Page Size"
 msgstr "Khổ giấy"
 
-#: common/models.py:1550
+#: common/models.py:1560
 msgid "Default page size for PDF reports"
 msgstr "Kích thước trang mặc định cho báo cáo PDF"
 
-#: common/models.py:1556
+#: common/models.py:1566
 msgid "Enable Test Reports"
 msgstr "Bật báo cáo kiểm thử"
 
-#: common/models.py:1557
+#: common/models.py:1567
 msgid "Enable generation of test reports"
 msgstr "Cho phép tạo báo cáo kiểm thử"
 
-#: common/models.py:1563
+#: common/models.py:1573
 msgid "Attach Test Reports"
 msgstr "Đính kèm báo cáo kiểm thử"
 
-#: common/models.py:1564
+#: common/models.py:1574
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
 msgstr "Khi in một báo cáo kiểm thử, đính kèm một bản sao của báo cáo kiểm thử với hàng trong kho đã được kết hợp"
 
-#: common/models.py:1570
+#: common/models.py:1580
 msgid "Globally Unique Serials"
 msgstr "Sê ri toàn cục duy nhất"
 
-#: common/models.py:1571
+#: common/models.py:1581
 msgid "Serial numbers for stock items must be globally unique"
 msgstr "Số sê ri cho hàng trong kho phải là duy nhất trong toàn hệ thống"
 
-#: common/models.py:1577
+#: common/models.py:1587
 msgid "Autofill Serial Numbers"
 msgstr "Tự động điền số sê ri"
 
-#: common/models.py:1578
+#: common/models.py:1588
 msgid "Autofill serial numbers in forms"
 msgstr "Tự động điền số sê ri vào biểu mẫu"
 
-#: common/models.py:1584
+#: common/models.py:1594
 msgid "Delete Depleted Stock"
 msgstr "Xóa kho đã hết hàng"
 
-#: common/models.py:1585
+#: common/models.py:1595
 msgid "Determines default behaviour when a stock item is depleted"
 msgstr "Nhận dạng hành vi mặc định khi hàng trong kho bị hết"
 
-#: common/models.py:1591
+#: common/models.py:1601
 msgid "Batch Code Template"
 msgstr "Mẫu sinh mã theo lô"
 
-#: common/models.py:1592
+#: common/models.py:1602
 msgid "Template for generating default batch codes for stock items"
 msgstr "Mẫu tạo mã theo lô mặc định cho hàng trong kho"
 
-#: common/models.py:1597
+#: common/models.py:1607
 msgid "Stock Expiry"
 msgstr "Quá hạn trong kho"
 
-#: common/models.py:1598
+#: common/models.py:1608
 msgid "Enable stock expiry functionality"
 msgstr "Bật chức năng quá hạn tồn kho"
 
-#: common/models.py:1604
+#: common/models.py:1614
 msgid "Sell Expired Stock"
 msgstr "Bán kho quá hạn"
 
-#: common/models.py:1605
+#: common/models.py:1615
 msgid "Allow sale of expired stock"
 msgstr "Cho phép bán hàng kho quá hạn"
 
-#: common/models.py:1611
+#: common/models.py:1621
 msgid "Stock Stale Time"
 msgstr "Thời gian hàng cũ trong kho"
 
-#: common/models.py:1612
+#: common/models.py:1622
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "Số ngày hàng trong kho được xác định là cũ trước khi quá hạn"
 
-#: common/models.py:1619
+#: common/models.py:1629
 msgid "Build Expired Stock"
 msgstr "Dựng kho quá hạn"
 
-#: common/models.py:1620
+#: common/models.py:1630
 msgid "Allow building with expired stock"
 msgstr "Cho phép xây dựng với kho hàng quá hạn"
 
-#: common/models.py:1626
+#: common/models.py:1636
 msgid "Stock Ownership Control"
 msgstr "Kiểm soát sở hữu kho"
 
-#: common/models.py:1627
+#: common/models.py:1637
 msgid "Enable ownership control over stock locations and items"
 msgstr "Bật chức năng kiểm soát sở hữu kho với địa điểm và hàng trong kho"
 
-#: common/models.py:1633
+#: common/models.py:1643
 msgid "Stock Location Default Icon"
 msgstr "Biểu tượng địa điểm kho mặc định"
 
-#: common/models.py:1634
+#: common/models.py:1644
 msgid "Stock location default icon (empty means no icon)"
 msgstr "Biểu tượng địa điểm kho hàng mặc định (trống nghĩa là không có biểu tượng)"
 
-#: common/models.py:1639
+#: common/models.py:1649
 msgid "Show Installed Stock Items"
 msgstr "Hiển thị hàng hóa đã lắp đặt"
 
-#: common/models.py:1640
+#: common/models.py:1650
 msgid "Display installed stock items in stock tables"
 msgstr "Hiển thị hàng trong kho đã được lắp đặt trên bảng kho"
 
-#: common/models.py:1646
+#: common/models.py:1656
 msgid "Build Order Reference Pattern"
 msgstr "Mã tham chiếu đơn đặt bản dựng"
 
-#: common/models.py:1647
+#: common/models.py:1657
 msgid "Required pattern for generating Build Order reference field"
 msgstr "Mẫu bắt buộc cho để trường tham chiếu đơn đặt bản dựng"
 
-#: common/models.py:1653
+#: common/models.py:1663
 msgid "Enable Return Orders"
 msgstr "Bật đơn hàng trả lại"
 
-#: common/models.py:1654
+#: common/models.py:1664
 msgid "Enable return order functionality in the user interface"
 msgstr "Bật chức năng đơn hàng trả lại trong giao diện người dùng"
 
-#: common/models.py:1660
+#: common/models.py:1670
 msgid "Return Order Reference Pattern"
 msgstr "Mẫu tham chiếu đơn hàng trả lại"
 
-#: common/models.py:1661
+#: common/models.py:1671
 msgid "Required pattern for generating Return Order reference field"
 msgstr "Mẫu bắt buộc để tạo trường tham chiếu đơn hàng trả lại"
 
-#: common/models.py:1667
+#: common/models.py:1677
 msgid "Edit Completed Return Orders"
 msgstr "Sửa đơn hàng trả lại đã hoàn thành"
 
-#: common/models.py:1668
+#: common/models.py:1678
 msgid "Allow editing of return orders after they have been completed"
 msgstr "Cho phép sửa đơn hàng trả lại sau khi đã hoàn thành rồi"
 
-#: common/models.py:1674
+#: common/models.py:1684
 msgid "Sales Order Reference Pattern"
 msgstr "Mẫu tham chiếu đơn đặt hàng"
 
-#: common/models.py:1675
+#: common/models.py:1685
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "Mẫu bắt buộc để tạo trường tham chiếu đơn đặt hàng"
 
-#: common/models.py:1681
+#: common/models.py:1691
 msgid "Sales Order Default Shipment"
 msgstr "Vận chuyển mặc định đơn đặt hàng"
 
-#: common/models.py:1682
+#: common/models.py:1692
 msgid "Enable creation of default shipment with sales orders"
 msgstr "Cho phép tạo vận chuyển mặc định với đơn đặt hàng"
 
-#: common/models.py:1688
+#: common/models.py:1698
 msgid "Edit Completed Sales Orders"
 msgstr "Sửa đơn đặt hàng đã hoàn thành"
 
-#: common/models.py:1689
+#: common/models.py:1699
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Cho phép sửa đơn đặt hàng sau khi đã vận chuyển hoặc hoàn thành"
 
-#: common/models.py:1695
+#: common/models.py:1705
 msgid "Purchase Order Reference Pattern"
 msgstr "Mẫu tham chiếu đơn đặt mua"
 
-#: common/models.py:1696
+#: common/models.py:1706
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Mẫu bắt buộc cho để trường tham chiếu đơn đặt mua"
 
-#: common/models.py:1702
+#: common/models.py:1712
 msgid "Edit Completed Purchase Orders"
 msgstr "Sửa đơn đặt mua đã hoàn thành"
 
-#: common/models.py:1703
+#: common/models.py:1713
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "Cho phép sửa đơn đặt mua sau khi đã vận chuyển hoặc hoàn thành"
 
-#: common/models.py:1710
+#: common/models.py:1720
 msgid "Enable password forgot"
 msgstr "Bật quên mật khẩu"
 
-#: common/models.py:1711
+#: common/models.py:1721
 msgid "Enable password forgot function on the login pages"
 msgstr "Bật chức năng quên mật khẩu trong trang đăng nhập"
 
-#: common/models.py:1717
+#: common/models.py:1727
 msgid "Enable registration"
 msgstr "Bật đăng ký"
 
-#: common/models.py:1718
+#: common/models.py:1728
 msgid "Enable self-registration for users on the login pages"
 msgstr "Cho phép người dùng tự đăng ký tại trang đăng nhập"
 
-#: common/models.py:1724
+#: common/models.py:1734
 msgid "Enable SSO"
 msgstr "Bật SSO"
 
-#: common/models.py:1725
+#: common/models.py:1735
 msgid "Enable SSO on the login pages"
 msgstr "Cho phép SSO tại trang đăng nhập"
 
-#: common/models.py:1731
+#: common/models.py:1741
 msgid "Enable SSO registration"
 msgstr "Bật đăng ký SSO"
 
-#: common/models.py:1732
+#: common/models.py:1742
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Cho phép người dùng tự đăng ký SSO tại trang đăng nhập"
 
-#: common/models.py:1738
+#: common/models.py:1748
 msgid "Email required"
 msgstr "Yêu cầu email"
 
-#: common/models.py:1739
+#: common/models.py:1749
 msgid "Require user to supply mail on signup"
 msgstr "Yêu cầu người dùng cung cấp email để đăng ký"
 
-#: common/models.py:1745
+#: common/models.py:1755
 msgid "Auto-fill SSO users"
 msgstr "Người dùng tự động điền SSO"
 
-#: common/models.py:1746
+#: common/models.py:1756
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Tự động điền thông tin chi tiết từ dữ liệu tài khoản SSO"
 
-#: common/models.py:1752
+#: common/models.py:1762
 msgid "Mail twice"
 msgstr "Thư 2 lần"
 
-#: common/models.py:1753
+#: common/models.py:1763
 msgid "On signup ask users twice for their mail"
 msgstr "Khi đăng ký sẽ hỏi người dùng hai lần thư điện tử của họ"
 
-#: common/models.py:1759
+#: common/models.py:1769
 msgid "Password twice"
 msgstr "Mật khẩu 2 lần"
 
-#: common/models.py:1760
+#: common/models.py:1770
 msgid "On signup ask users twice for their password"
 msgstr "Khi đăng ký sẽ hỏi người dùng hai lần mật khẩu của họ"
 
-#: common/models.py:1766
+#: common/models.py:1776
 msgid "Allowed domains"
 msgstr "Các tên miền được phép"
 
-#: common/models.py:1767
+#: common/models.py:1777
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "Cấm đăng ký với 1 số tên miền cụ thể (dấu phẩy ngăn cách, bắt đầu với dấu @)"
 
-#: common/models.py:1773
+#: common/models.py:1783
 msgid "Group on signup"
 msgstr "Nhóm khi đăng ký"
 
-#: common/models.py:1774
+#: common/models.py:1784
 msgid "Group to which new users are assigned on registration"
 msgstr "Nhóm được gán cho người dùng mới khi đăng ký"
 
-#: common/models.py:1780
+#: common/models.py:1790
 msgid "Enforce MFA"
 msgstr "Bắt buộc MFA"
 
-#: common/models.py:1781
+#: common/models.py:1791
 msgid "Users must use multifactor security."
 msgstr "Người dùng phải sử dụng bảo mật đa nhân tố."
 
-#: common/models.py:1787
+#: common/models.py:1797
 msgid "Check plugins on startup"
 msgstr "Kiểm tra phần mở rộng khi khởi động"
 
-#: common/models.py:1788
+#: common/models.py:1798
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Kiểm tra toàn bộ phần mở rộng đã được cài đặt khi khởi dộng - bật trong môi trường ảo hóa"
 
-#: common/models.py:1796
+#: common/models.py:1806
 msgid "Enable URL integration"
 msgstr "Bật tích hợp URL"
 
-#: common/models.py:1797
+#: common/models.py:1807
 msgid "Enable plugins to add URL routes"
 msgstr "Bật phần mở rộng để thêm định tuyến URL"
 
-#: common/models.py:1804
+#: common/models.py:1814
 msgid "Enable navigation integration"
 msgstr "Bật tích hợp điều hướng"
 
-#: common/models.py:1805
+#: common/models.py:1815
 msgid "Enable plugins to integrate into navigation"
 msgstr "Bật phần mở rộng để tích hợp thanh định hướng"
 
-#: common/models.py:1812
+#: common/models.py:1822
 msgid "Enable app integration"
 msgstr "Bật tích hợp ứng dụng"
 
-#: common/models.py:1813
+#: common/models.py:1823
 msgid "Enable plugins to add apps"
 msgstr "Bật phần mở rộng để thêm ứng dụng"
 
-#: common/models.py:1820
+#: common/models.py:1830
 msgid "Enable schedule integration"
 msgstr "Cho phép tích hợp lập lịch"
 
-#: common/models.py:1821
+#: common/models.py:1831
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Bật phẩn mở rộng để chạy các tác vụ theo lịch"
 
-#: common/models.py:1828
+#: common/models.py:1838
 msgid "Enable event integration"
 msgstr "Bật tích hợp nguồn cấp sự kiện"
 
-#: common/models.py:1829
+#: common/models.py:1839
 msgid "Enable plugins to respond to internal events"
 msgstr "Bật phần mở rộng để trả lời sự kiện bên trong"
 
-#: common/models.py:1836
+#: common/models.py:1846
 msgid "Enable project codes"
 msgstr "Bật mã dự án"
 
-#: common/models.py:1837
+#: common/models.py:1847
 msgid "Enable project codes for tracking projects"
 msgstr "Bật mã dự án để theo dõi dự án"
 
-#: common/models.py:1843
+#: common/models.py:1853
 msgid "Stocktake Functionality"
 msgstr "Chức năng kiểm kê"
 
-#: common/models.py:1844
+#: common/models.py:1854
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
 msgstr "Bật chức năng kiểm kê theo mức độ ghi nhận kho và tính toán giá trị kho"
 
-#: common/models.py:1850
+#: common/models.py:1860
 msgid "Exclude External Locations"
 msgstr "Ngoại trừ vị trí bên ngoài"
 
-#: common/models.py:1851
+#: common/models.py:1861
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr "Loại trừ hàng trong kho thuộc địa điểm bên ngoài ra khỏi tính toán kiểm kê"
 
-#: common/models.py:1857
+#: common/models.py:1867
 msgid "Automatic Stocktake Period"
 msgstr "Giai đoạn kiểm kê tự động"
 
-#: common/models.py:1858
+#: common/models.py:1868
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
 msgstr "Số ngày giữa ghi chép kiểm kê tự động (đặt không để tắt)"
 
-#: common/models.py:1867
+#: common/models.py:1877
 msgid "Report Deletion Interval"
 msgstr "Khoảng thời gian xóa báo cáo"
 
-#: common/models.py:1868
+#: common/models.py:1878
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr "Báo cáo kiểm kê sẽ bị xóa sau số ngày xác định"
 
-#: common/models.py:1878
+#: common/models.py:1888
 msgid "Display Users full names"
 msgstr "Hiển thị tên đầy đủ của người dùng"
 
-#: common/models.py:1879
+#: common/models.py:1889
 msgid "Display Users full names instead of usernames"
 msgstr "Hiển thị tên đầy đủ thay vì tên đăng nhập"
 
-#: common/models.py:1891 common/models.py:2320
+#: common/models.py:1901 common/models.py:2330
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Khóa thiết lập (phải duy nhất - phân biệt hoa thường"
 
-#: common/models.py:1931
+#: common/models.py:1941
 msgid "Hide inactive parts"
 msgstr "Ẩn sản phẩm ngừng hoạt động"
 
-#: common/models.py:1932
+#: common/models.py:1942
 msgid "Hide inactive parts in results displayed on the homepage"
 msgstr "Ẩn sản phẩm bị tắt trong kết quả trình bày tại trang chủ"
 
-#: common/models.py:1938
+#: common/models.py:1948
 msgid "Show subscribed parts"
 msgstr "Hiện sản phẩm đã đăng ký"
 
-#: common/models.py:1939
+#: common/models.py:1949
 msgid "Show subscribed parts on the homepage"
 msgstr "Hiện sản phẩm đã đăng ký trên trang chủ"
 
-#: common/models.py:1945
+#: common/models.py:1955
 msgid "Show subscribed categories"
 msgstr "Hiện danh mục đã đăng ký"
 
-#: common/models.py:1946
+#: common/models.py:1956
 msgid "Show subscribed part categories on the homepage"
 msgstr "Hiện danh mục sản phẩm đã đăng ký trên trang chủ"
 
-#: common/models.py:1952
+#: common/models.py:1962
 msgid "Show latest parts"
 msgstr "Hiển thị nguyên liệu mới nhất"
 
-#: common/models.py:1953
+#: common/models.py:1963
 msgid "Show latest parts on the homepage"
 msgstr "Hiển thị nguyên liệu mới nhất trên trang chủ"
 
-#: common/models.py:1959
+#: common/models.py:1969
 msgid "Show unvalidated BOMs"
 msgstr "Hiển thị BOM chưa được xác thực"
 
-#: common/models.py:1960
+#: common/models.py:1970
 msgid "Show BOMs that await validation on the homepage"
 msgstr "Hiện BOM chờ xác thực tại trang chủ"
 
-#: common/models.py:1966
+#: common/models.py:1976
 msgid "Show recent stock changes"
 msgstr "Hiện thay đổi kho hàng gần đây"
 
-#: common/models.py:1967
+#: common/models.py:1977
 msgid "Show recently changed stock items on the homepage"
 msgstr "Hiện hàng trong kho được thay đổi gần nhất trên trang chủ"
 
-#: common/models.py:1973
+#: common/models.py:1983
 msgid "Show low stock"
 msgstr "Hiển thị hàng còn ít"
 
-#: common/models.py:1974
+#: common/models.py:1984
 msgid "Show low stock items on the homepage"
 msgstr "Hiển thị hàng hóa còn ít tại trang chủ"
 
-#: common/models.py:1980
+#: common/models.py:1990
 msgid "Show depleted stock"
 msgstr "Hiển thị hết hàng"
 
-#: common/models.py:1981
+#: common/models.py:1991
 msgid "Show depleted stock items on the homepage"
 msgstr "Hiển thị hàng hóa đã bán hết tại trang chủ"
 
-#: common/models.py:1987
+#: common/models.py:1997
 msgid "Show needed stock"
 msgstr "Hiển thị hàng cần thiết"
 
-#: common/models.py:1988
+#: common/models.py:1998
 msgid "Show stock items needed for builds on the homepage"
 msgstr "Hiện hàng trong kho cần thiết cho xây dựng tại trang chủ"
 
-#: common/models.py:1994
+#: common/models.py:2004
 msgid "Show expired stock"
 msgstr "Bán kho quá hạn"
 
-#: common/models.py:1995
+#: common/models.py:2005
 msgid "Show expired stock items on the homepage"
 msgstr "Hiển thị hàng hóa đã quá hạn trên trang chủ"
 
-#: common/models.py:2001
+#: common/models.py:2011
 msgid "Show stale stock"
 msgstr "Hiện kho hàng ế"
 
-#: common/models.py:2002
+#: common/models.py:2012
 msgid "Show stale stock items on the homepage"
 msgstr "Hiện hàng trong kho bị ế trên trang chủ"
 
-#: common/models.py:2008
+#: common/models.py:2018
 msgid "Show pending builds"
 msgstr "Hiện bản dựng chờ xử lý"
 
-#: common/models.py:2009
+#: common/models.py:2019
 msgid "Show pending builds on the homepage"
 msgstr "Hiện bản dựng chờ xử lý trên trang chủ"
 
-#: common/models.py:2015
+#: common/models.py:2025
 msgid "Show overdue builds"
 msgstr "Hiện bản dựng quá hạn"
 
-#: common/models.py:2016
+#: common/models.py:2026
 msgid "Show overdue builds on the homepage"
 msgstr "Hiện bản dựng quá hạn trên trang chủ"
 
-#: common/models.py:2022
+#: common/models.py:2032
 msgid "Show outstanding POs"
 msgstr "Hiện PO nổi bật"
 
-#: common/models.py:2023
+#: common/models.py:2033
 msgid "Show outstanding POs on the homepage"
 msgstr "Hiện PO nổi bật trên trang chủ"
 
-#: common/models.py:2029
+#: common/models.py:2039
 msgid "Show overdue POs"
 msgstr "Hiện PO quá hạn"
 
-#: common/models.py:2030
+#: common/models.py:2040
 msgid "Show overdue POs on the homepage"
 msgstr "Hiện đơn mua hàng quá hạn trên trang chủ"
 
-#: common/models.py:2036
+#: common/models.py:2046
 msgid "Show outstanding SOs"
 msgstr "Hiện đơn hàng vận chuyển nổi bật"
 
-#: common/models.py:2037
+#: common/models.py:2047
 msgid "Show outstanding SOs on the homepage"
 msgstr "Hiện đơn hàng vận chuyển nổi bật tại trang chủ"
 
-#: common/models.py:2043
+#: common/models.py:2053
 msgid "Show overdue SOs"
 msgstr "Hiện đơn vận chuyển quá hạn"
 
-#: common/models.py:2044
+#: common/models.py:2054
 msgid "Show overdue SOs on the homepage"
 msgstr "Hiện đơn vận chuyển quá hạn trên trang chủ"
 
-#: common/models.py:2050
+#: common/models.py:2060
 msgid "Show pending SO shipments"
 msgstr "Hiện đơn vận chuyển chờ xử lý"
 
-#: common/models.py:2051
+#: common/models.py:2061
 msgid "Show pending SO shipments on the homepage"
 msgstr "Hiện đơn vận chuyển chờ xử lý trên trang chủ"
 
-#: common/models.py:2057
+#: common/models.py:2067
 msgid "Show News"
 msgstr "Hiện tin tức"
 
-#: common/models.py:2058
+#: common/models.py:2068
 msgid "Show news on the homepage"
 msgstr "Hiện tin tức trên trang chủ"
 
-#: common/models.py:2064
+#: common/models.py:2074
 msgid "Inline label display"
 msgstr "Hiển thị nhãn cùng dòng"
 
-#: common/models.py:2065
+#: common/models.py:2075
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr "Hiển thị nhãn PDF trong trình duyệt, thay vì tải về dạng tệp tin"
 
-#: common/models.py:2071
+#: common/models.py:2081
 msgid "Default label printer"
 msgstr "Máy in tem nhãn mặc định"
 
-#: common/models.py:2072
+#: common/models.py:2082
 msgid "Configure which label printer should be selected by default"
 msgstr "Cấu hình máy in tem nhãn nào được chọn mặc định"
 
-#: common/models.py:2078
+#: common/models.py:2088
 msgid "Inline report display"
 msgstr "Hiển thị báo cáo cùng hàng"
 
-#: common/models.py:2079
+#: common/models.py:2089
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr "Hiện báo cáo PDF trong trình duyệt, thay vì tải về dạng tệp tin"
 
-#: common/models.py:2085
+#: common/models.py:2095
 msgid "Search Parts"
 msgstr "Tìm sản phẩm"
 
-#: common/models.py:2086
+#: common/models.py:2096
 msgid "Display parts in search preview window"
 msgstr "Hiện hàng hóa trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2092
+#: common/models.py:2102
 msgid "Search Supplier Parts"
 msgstr "Tìm sản phẩm nhà cung cấp"
 
-#: common/models.py:2093
+#: common/models.py:2103
 msgid "Display supplier parts in search preview window"
 msgstr "Hiện sản phẩm nhà cung cấp trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2099
+#: common/models.py:2109
 msgid "Search Manufacturer Parts"
 msgstr "Tìm sản phẩm nhà sản xuất"
 
-#: common/models.py:2100
+#: common/models.py:2110
 msgid "Display manufacturer parts in search preview window"
 msgstr "Hiện sản phẩm nhà sản xuất trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2106
+#: common/models.py:2116
 msgid "Hide Inactive Parts"
 msgstr "Ẩn sản phẩm ngừng hoạt động"
 
-#: common/models.py:2107
+#: common/models.py:2117
 msgid "Excluded inactive parts from search preview window"
 msgstr "Loại trừ sản phẩm ngưng hoạt động trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2113
+#: common/models.py:2123
 msgid "Search Categories"
 msgstr "Tìm kiếm danh mục"
 
-#: common/models.py:2114
+#: common/models.py:2124
 msgid "Display part categories in search preview window"
 msgstr "Hiện danh mục sản phẩm trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2120
+#: common/models.py:2130
 msgid "Search Stock"
 msgstr "Tìm kiếm kho"
 
-#: common/models.py:2121
+#: common/models.py:2131
 msgid "Display stock items in search preview window"
 msgstr "Hiện hàng hóa ở kho trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2127
+#: common/models.py:2137
 msgid "Hide Unavailable Stock Items"
 msgstr "Ẩn hàng hóa trong kho không có sẵn"
 
-#: common/models.py:2128
+#: common/models.py:2138
 msgid "Exclude stock items which are not available from the search preview window"
 msgstr "Không bao gồm hàng hóa trong kho mà không sẵn sàng từ màn hình xem trước tìm kiếm"
 
-#: common/models.py:2134
+#: common/models.py:2144
 msgid "Search Locations"
 msgstr "Tìm kiếm vị trí"
 
-#: common/models.py:2135
+#: common/models.py:2145
 msgid "Display stock locations in search preview window"
 msgstr "Hiện vị trí kho hàng trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2141
+#: common/models.py:2151
 msgid "Search Companies"
 msgstr "Tìm kiếm công ty"
 
-#: common/models.py:2142
+#: common/models.py:2152
 msgid "Display companies in search preview window"
 msgstr "Hiện công ty trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2148
+#: common/models.py:2158
 msgid "Search Build Orders"
 msgstr "Tìm kiếm đặt hàng xây dựng"
 
-#: common/models.py:2149
+#: common/models.py:2159
 msgid "Display build orders in search preview window"
 msgstr "Hiện đơn đặt xây dựng trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2155
+#: common/models.py:2165
 msgid "Search Purchase Orders"
 msgstr "Tìm kiếm đơn đặt mua"
 
-#: common/models.py:2156
+#: common/models.py:2166
 msgid "Display purchase orders in search preview window"
 msgstr "Hiện đơn đặt mua trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2162
+#: common/models.py:2172
 msgid "Exclude Inactive Purchase Orders"
 msgstr "Loại trừ đơn đặt mua không hoạt động"
 
-#: common/models.py:2163
+#: common/models.py:2173
 msgid "Exclude inactive purchase orders from search preview window"
 msgstr "Loại trừ đơn đặt mua không hoạt động ra khỏi cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2169
+#: common/models.py:2179
 msgid "Search Sales Orders"
 msgstr "Tìm đơn đặt hàng người mua"
 
-#: common/models.py:2170
+#: common/models.py:2180
 msgid "Display sales orders in search preview window"
 msgstr "Hiện đơn đặt hàng người mua trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2176
+#: common/models.py:2186
 msgid "Exclude Inactive Sales Orders"
 msgstr "Loại trừ đơn đặt hàng người mua không hoạt động"
 
-#: common/models.py:2177
+#: common/models.py:2187
 msgid "Exclude inactive sales orders from search preview window"
 msgstr "Không bao gồm đơn đặt hàng người mua không hoạt động trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2183
+#: common/models.py:2193
 msgid "Search Return Orders"
 msgstr "Tìm kiếm đơn hàng trả lại"
 
-#: common/models.py:2184
+#: common/models.py:2194
 msgid "Display return orders in search preview window"
 msgstr "Hiện đơn hàng trả lại trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2190
+#: common/models.py:2200
 msgid "Exclude Inactive Return Orders"
 msgstr "Loại trừ đơn hàng trả lại không hoạt động"
 
-#: common/models.py:2191
+#: common/models.py:2201
 msgid "Exclude inactive return orders from search preview window"
 msgstr "Không bao gồm đơn hàng trả lại không hoạt động trong cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2197
+#: common/models.py:2207
 msgid "Search Preview Results"
 msgstr "Kết quả xem trước tìm kiếm"
 
-#: common/models.py:2198
+#: common/models.py:2208
 msgid "Number of results to show in each section of the search preview window"
 msgstr "Số kết quả cần hiển thị trong từng phần của cửa sổ xem trước tìm kiếm"
 
-#: common/models.py:2204
+#: common/models.py:2214
 msgid "Regex Search"
 msgstr "Tìm kiếm biểu thức"
 
-#: common/models.py:2205
+#: common/models.py:2215
 msgid "Enable regular expressions in search queries"
 msgstr "Bật tìm kiếm biểu thức chính quy trong câu truy vấn tìm kiếm"
 
-#: common/models.py:2211
+#: common/models.py:2221
 msgid "Whole Word Search"
 msgstr "Tìm phù hợp toàn bộ chữ"
 
-#: common/models.py:2212
+#: common/models.py:2222
 msgid "Search queries return results for whole word matches"
 msgstr "Truy vấn tìm trả về kết quả phù hợp toàn bộ chữ"
 
-#: common/models.py:2218
+#: common/models.py:2228
 msgid "Show Quantity in Forms"
 msgstr "Hiện số lượng trong biểu mẫu"
 
-#: common/models.py:2219
+#: common/models.py:2229
 msgid "Display available part quantity in some forms"
 msgstr "Hiển thị số lượng sản phẩm có sẵn trong một số biểu mẫu"
 
-#: common/models.py:2225
+#: common/models.py:2235
 msgid "Escape Key Closes Forms"
 msgstr "Phím escape để đóng mẫu biểu"
 
-#: common/models.py:2226
+#: common/models.py:2236
 msgid "Use the escape key to close modal forms"
 msgstr "Sử dụng phím escape để đóng mẫu biểu hộp thoại"
 
-#: common/models.py:2232
+#: common/models.py:2242
 msgid "Fixed Navbar"
 msgstr "Cố định điều hướng"
 
-#: common/models.py:2233
+#: common/models.py:2243
 msgid "The navbar position is fixed to the top of the screen"
 msgstr "Vị trí thành điều hướng là cố định trên cùng màn hình"
 
-#: common/models.py:2239
+#: common/models.py:2249
 msgid "Date Format"
 msgstr "Định dạng ngày"
 
-#: common/models.py:2240
+#: common/models.py:2250
 msgid "Preferred format for displaying dates"
 msgstr "Định dạng ưa chuộng khi hiển thị ngày"
 
-#: common/models.py:2254 part/templates/part/detail.html:41
+#: common/models.py:2264 part/templates/part/detail.html:41
 msgid "Part Scheduling"
 msgstr "Lập lịch sản phẩm"
 
-#: common/models.py:2255
+#: common/models.py:2265
 msgid "Display part scheduling information"
 msgstr "Hiển thị thông tin lịch sản phẩm"
 
-#: common/models.py:2261 part/templates/part/detail.html:62
+#: common/models.py:2271 part/templates/part/detail.html:62
 msgid "Part Stocktake"
 msgstr "Kiểm kê sản phẩm"
 
-#: common/models.py:2262
+#: common/models.py:2272
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
 msgstr "Hiển thị thông tin kiểm kê sản phẩm (nếu chức năng kiểm kê được bật)"
 
-#: common/models.py:2268
+#: common/models.py:2278
 msgid "Table String Length"
 msgstr "Độ dài chuỗi trong bảng"
 
-#: common/models.py:2269
+#: common/models.py:2279
 msgid "Maximimum length limit for strings displayed in table views"
 msgstr "Giới hạn độ dài tối đa cho chuỗi hiển thị trong kiểu xem bảng biểu"
 
-#: common/models.py:2278
+#: common/models.py:2288
 msgid "Default part label template"
 msgstr "Mẫu nhãn sản phẩm mặc định"
 
-#: common/models.py:2279
+#: common/models.py:2289
 msgid "The part label template to be automatically selected"
 msgstr "Mẫu nhãn sản phẩm mặc định được chọn tự động"
 
-#: common/models.py:2287
+#: common/models.py:2297
 msgid "Default stock item template"
 msgstr "Mẫu hàng hóa trong khi mặc định"
 
-#: common/models.py:2288
+#: common/models.py:2298
 msgid "The stock item label template to be automatically selected"
 msgstr "Mẫu nhãn hàng hóa trong kho tự động được chọn"
 
-#: common/models.py:2296
+#: common/models.py:2306
 msgid "Default stock location label template"
 msgstr "Mẫu nhãn vị trí kho mặc định"
 
-#: common/models.py:2297
+#: common/models.py:2307
 msgid "The stock location label template to be automatically selected"
 msgstr "Mẫu nhãn vị trí kho được chọn tự động"
 
-#: common/models.py:2305
+#: common/models.py:2315
 msgid "Receive error reports"
 msgstr "Nhận báo cáo lỗi"
 
-#: common/models.py:2306
+#: common/models.py:2316
 msgid "Receive notifications for system errors"
 msgstr "Nhận thông báo khi có lỗi hệ thống"
 
-#: common/models.py:2350
+#: common/models.py:2360
 msgid "Price break quantity"
 msgstr "Số lượng giá phá vỡ"
 
-#: common/models.py:2357 company/serializers.py:484 order/admin.py:41
+#: common/models.py:2367 company/serializers.py:485 order/admin.py:41
 #: order/models.py:1147 order/models.py:1957
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1883
 #: templates/js/translated/pricing.js:621
@@ -3399,23 +3404,23 @@ msgstr "Số lượng giá phá vỡ"
 msgid "Price"
 msgstr "Giá"
 
-#: common/models.py:2358
+#: common/models.py:2368
 msgid "Unit price at specified quantity"
 msgstr "Đơn vị giá theo số lượng cụ thể"
 
-#: common/models.py:2517 common/models.py:2695
+#: common/models.py:2527 common/models.py:2705
 msgid "Endpoint"
 msgstr "Đầu mối"
 
-#: common/models.py:2518
+#: common/models.py:2528
 msgid "Endpoint at which this webhook is received"
 msgstr "Đầu mối tại điểm webhook được nhận"
 
-#: common/models.py:2527
+#: common/models.py:2537
 msgid "Name for this webhook"
 msgstr "Tên của webhook này"
 
-#: common/models.py:2532 part/admin.py:50 part/models.py:991
+#: common/models.py:2542 part/admin.py:50 part/models.py:959
 #: plugin/models.py:48 templates/js/translated/table_filters.js:135
 #: templates/js/translated/table_filters.js:219
 #: templates/js/translated/table_filters.js:488
@@ -3424,101 +3429,101 @@ msgstr "Tên của webhook này"
 msgid "Active"
 msgstr "Hoạt động"
 
-#: common/models.py:2533
+#: common/models.py:2543
 msgid "Is this webhook active"
 msgstr "Webhook có hoạt động không"
 
-#: common/models.py:2547 users/models.py:149
+#: common/models.py:2557 users/models.py:149
 msgid "Token"
 msgstr "Chữ ký số"
 
-#: common/models.py:2548
+#: common/models.py:2558
 msgid "Token for access"
 msgstr "Chữ ký số để truy cập"
 
-#: common/models.py:2555
+#: common/models.py:2565
 msgid "Secret"
 msgstr "Bí mật"
 
-#: common/models.py:2556
+#: common/models.py:2566
 msgid "Shared secret for HMAC"
 msgstr "Mã bí mật dùng chung cho HMAC"
 
-#: common/models.py:2662
+#: common/models.py:2672
 msgid "Message ID"
 msgstr "Mã Tin nhắn"
 
-#: common/models.py:2663
+#: common/models.py:2673
 msgid "Unique identifier for this message"
 msgstr "Định danh duy nhất cho tin nhắn này"
 
-#: common/models.py:2671
+#: common/models.py:2681
 msgid "Host"
 msgstr "Máy chủ"
 
-#: common/models.py:2672
+#: common/models.py:2682
 msgid "Host from which this message was received"
 msgstr "Mãy chủ từ tin nhắn này đã được nhận"
 
-#: common/models.py:2679
+#: common/models.py:2689
 msgid "Header"
 msgstr "Đầu mục"
 
-#: common/models.py:2680
+#: common/models.py:2690
 msgid "Header of this message"
 msgstr "Đầu mục tin nhắn"
 
-#: common/models.py:2686
+#: common/models.py:2696
 msgid "Body"
 msgstr "Thân"
 
-#: common/models.py:2687
+#: common/models.py:2697
 msgid "Body of this message"
 msgstr "Thân tin nhắn này"
 
-#: common/models.py:2696
+#: common/models.py:2706
 msgid "Endpoint on which this message was received"
 msgstr "Đầu mối của tin nhắn này đã nhận được"
 
-#: common/models.py:2701
+#: common/models.py:2711
 msgid "Worked on"
 msgstr "Làm việc vào"
 
-#: common/models.py:2702
+#: common/models.py:2712
 msgid "Was the work on this message finished?"
 msgstr "Công việc trong tin nhắn này đã kết thúc?"
 
-#: common/models.py:2856
+#: common/models.py:2866
 msgid "Id"
 msgstr "Mã"
 
-#: common/models.py:2862 templates/js/translated/company.js:955
+#: common/models.py:2872 templates/js/translated/company.js:955
 #: templates/js/translated/news.js:44
 msgid "Title"
 msgstr "Tiêu đề"
 
-#: common/models.py:2872 templates/js/translated/news.js:60
+#: common/models.py:2882 templates/js/translated/news.js:60
 msgid "Published"
 msgstr "Đã công bố"
 
-#: common/models.py:2877 templates/InvenTree/settings/plugin_settings.html:32
+#: common/models.py:2887 templates/InvenTree/settings/plugin_settings.html:32
 #: templates/js/translated/news.js:56 templates/js/translated/plugin.js:102
 msgid "Author"
 msgstr "Tác giả"
 
-#: common/models.py:2882 templates/js/translated/news.js:52
+#: common/models.py:2892 templates/js/translated/news.js:52
 msgid "Summary"
 msgstr "Tóm tắt"
 
-#: common/models.py:2887
+#: common/models.py:2897
 msgid "Read"
 msgstr "Đọc"
 
-#: common/models.py:2888
+#: common/models.py:2898
 msgid "Was this news item read?"
 msgstr "Tin này đã được đọc?"
 
-#: common/models.py:2907 company/models.py:139 part/models.py:881
+#: common/models.py:2917 company/models.py:139 part/models.py:849
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report_base.html:35
@@ -3528,31 +3533,31 @@ msgstr "Tin này đã được đọc?"
 msgid "Image"
 msgstr "Hình ảnh"
 
-#: common/models.py:2908
+#: common/models.py:2918
 msgid "Image file"
 msgstr "Tệp ảnh"
 
-#: common/models.py:2951
+#: common/models.py:2961
 msgid "Unit name must be a valid identifier"
 msgstr "Tên đơn vị phải là một định danh hợp lệ"
 
-#: common/models.py:2973
+#: common/models.py:2983
 msgid "Unit name"
 msgstr "Tên đơn vị"
 
-#: common/models.py:2979 templates/InvenTree/settings/settings_staff_js.html:75
+#: common/models.py:2989 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
 msgstr "Biểu tượng"
 
-#: common/models.py:2980
+#: common/models.py:2990
 msgid "Optional unit symbol"
 msgstr "Biểu tượng đơn vị tùy chọn"
 
-#: common/models.py:2986 templates/InvenTree/settings/settings_staff_js.html:71
+#: common/models.py:2996 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
 msgstr "Định nghĩa"
 
-#: common/models.py:2987
+#: common/models.py:2997
 msgid "Unit definition"
 msgstr "Định nghĩa đơn vị"
 
@@ -3703,7 +3708,7 @@ msgstr "Tiền tệ mặc định dùng cho công ty này"
 
 #: company/models.py:232 company/models.py:333
 #: company/templates/company/company_base.html:8
-#: company/templates/company/company_base.html:12
+#: company/templates/company/company_base.html:12 stock/api.py:671
 #: templates/InvenTree/search.html:178 templates/js/translated/company.js:495
 msgid "Company"
 msgstr "Doanh nghiêp"
@@ -3807,7 +3812,7 @@ msgstr "Chọn sản phẩm"
 
 #: company/models.py:427 company/templates/company/company_base.html:76
 #: company/templates/company/manufacturer_part.html:90
-#: company/templates/company/supplier_part.html:145 part/serializers.py:441
+#: company/templates/company/supplier_part.html:145 part/serializers.py:445
 #: stock/templates/stock/item_base.html:207
 #: templates/js/translated/company.js:506
 #: templates/js/translated/company.js:1108
@@ -3822,7 +3827,7 @@ msgid "Select manufacturer"
 msgstr "Chọn nhà sản xuất"
 
 #: company/models.py:434 company/templates/company/manufacturer_part.html:101
-#: company/templates/company/supplier_part.html:153 part/serializers.py:447
+#: company/templates/company/supplier_part.html:153 part/serializers.py:451
 #: templates/js/translated/company.js:351
 #: templates/js/translated/company.js:1107
 #: templates/js/translated/company.js:1302
@@ -3868,7 +3873,7 @@ msgid "Parameter value"
 msgstr "Giá trị tham số"
 
 #: company/models.py:538 company/templates/company/supplier_part.html:168
-#: part/admin.py:40 part/models.py:955 part/models.py:3406
+#: part/admin.py:39 part/models.py:923 part/models.py:3395
 #: part/templates/part/part_base.html:284
 #: templates/js/translated/company.js:1415 templates/js/translated/part.js:1511
 #: templates/js/translated/part.js:1615 templates/js/translated/part.js:2368
@@ -3894,7 +3899,7 @@ msgstr "Sản phẩm nhà sản xuất đã liên kết phải tham chiếu vớ
 #: company/models.py:699 company/templates/company/company_base.html:81
 #: company/templates/company/supplier_part.html:129 order/models.py:386
 #: order/templates/order/order_base.html:136 part/bom.py:284 part/bom.py:312
-#: part/serializers.py:430 plugin/builtin/suppliers/digikey.py:25
+#: part/serializers.py:434 plugin/builtin/suppliers/digikey.py:25
 #: plugin/builtin/suppliers/lcsc.py:26 plugin/builtin/suppliers/mouser.py:24
 #: plugin/builtin/suppliers/tme.py:26 stock/templates/stock/item_base.html:224
 #: templates/email/overdue_purchase_order.html:16
@@ -3912,7 +3917,7 @@ msgid "Select supplier"
 msgstr "Chọn nhà cung cấp"
 
 #: company/models.py:705 company/templates/company/supplier_part.html:139
-#: part/bom.py:285 part/bom.py:313 part/serializers.py:436
+#: part/bom.py:285 part/bom.py:313 part/serializers.py:440
 #: templates/js/translated/company.js:349 templates/js/translated/part.js:1786
 #: templates/js/translated/pricing.js:510
 #: templates/js/translated/purchase_order.js:1844
@@ -3920,7 +3925,7 @@ msgstr "Chọn nhà cung cấp"
 msgid "SKU"
 msgstr "SKU"
 
-#: company/models.py:706 part/serializers.py:436
+#: company/models.py:706 part/serializers.py:440
 msgid "Supplier stock keeping unit"
 msgstr "Đơn vị quản lý kho nhà cung cấp"
 
@@ -3937,7 +3942,7 @@ msgid "Supplier part description"
 msgstr "Mô tả sản phẩm nhà cung cấp"
 
 #: company/models.py:731 company/templates/company/supplier_part.html:187
-#: part/admin.py:275 part/models.py:3808 part/templates/part/upload_bom.html:59
+#: part/admin.py:275 part/models.py:3797 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
 #: report/templates/report/inventree_return_order_report_base.html:27
@@ -3947,11 +3952,11 @@ msgstr "Mô tả sản phẩm nhà cung cấp"
 msgid "Note"
 msgstr "Ghi chú"
 
-#: company/models.py:735 part/models.py:1889
+#: company/models.py:735 part/models.py:1857
 msgid "base cost"
 msgstr "chi phí cơ sở"
 
-#: company/models.py:735 part/models.py:1889
+#: company/models.py:735 part/models.py:1857
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Thu phí tối thiểu (vd: phí kho bãi)"
 
@@ -3981,7 +3986,7 @@ msgstr "Số lượng gói"
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "Tổng số lượng được cung cấp trong một gói đơn. Để trống cho các hàng hóa riêng lẻ."
 
-#: company/models.py:758 part/models.py:1891
+#: company/models.py:758 part/models.py:1859
 msgid "multiple"
 msgstr "nhiều"
 
@@ -4535,11 +4540,11 @@ msgstr "Mã QR"
 msgid "Total Price"
 msgstr "Tổng tiền"
 
-#: order/api.py:231
+#: order/api.py:230
 msgid "No matching purchase order found"
 msgstr "Không tìm thấy đơn đặt mua phù hợp"
 
-#: order/api.py:1408 order/models.py:1193 order/models.py:1276
+#: order/api.py:1407 order/models.py:1193 order/models.py:1276
 #: order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:18
 #: report/templates/report/inventree_po_report_base.html:14
@@ -4553,7 +4558,7 @@ msgstr "Không tìm thấy đơn đặt mua phù hợp"
 msgid "Purchase Order"
 msgstr "Đơn hàng"
 
-#: order/api.py:1412 order/models.py:1927 order/models.py:1973
+#: order/api.py:1411 order/models.py:1927 order/models.py:1973
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4562,7 +4567,7 @@ msgstr "Đơn hàng"
 msgid "Return Order"
 msgstr "Đơn hàng trả lại"
 
-#: order/api.py:1414 templates/js/translated/sales_order.js:1042
+#: order/api.py:1413 templates/js/translated/sales_order.js:1042
 msgid "Unknown"
 msgstr "Không rõ"
 
@@ -4784,7 +4789,7 @@ msgid "Only salable parts can be assigned to a sales order"
 msgstr "Chỉ có thể gán sản phẩm có thể bán vào đơn đặt bán hàng"
 
 #: order/models.py:1335 part/templates/part/part_pricing.html:107
-#: part/templates/part/prices.html:128 templates/js/translated/pricing.js:957
+#: part/templates/part/prices.html:139 templates/js/translated/pricing.js:957
 msgid "Sale Price"
 msgstr "Giá bán"
 
@@ -5479,37 +5484,41 @@ msgstr "Cập nhật {part} giá đơn vị đến {price}"
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr "Cập nhật {part} giá đơn vị đến {price} và số lượng đến {qty}"
 
-#: part/admin.py:33 part/admin.py:269 part/models.py:3671 part/stocktake.py:217
+#: part/admin.py:32 part/admin.py:269 part/models.py:3660 part/stocktake.py:217
 #: stock/admin.py:119
 msgid "Part ID"
 msgstr "ID sản phẩm"
 
-#: part/admin.py:34 part/admin.py:271 part/models.py:3675 part/stocktake.py:218
+#: part/admin.py:33 part/admin.py:271 part/models.py:3664 part/stocktake.py:218
 #: stock/admin.py:120
 msgid "Part Name"
 msgstr "Tên sản phẩm"
 
-#: part/admin.py:35 part/stocktake.py:219
+#: part/admin.py:34 part/stocktake.py:219
 msgid "Part Description"
 msgstr "Mô tả sản phẩm"
 
-#: part/admin.py:36 part/models.py:856 part/templates/part/part_base.html:269
+#: part/admin.py:35 part/models.py:824 part/templates/part/part_base.html:269
 #: report/templates/report/inventree_slr_report.html:103
 #: templates/js/translated/part.js:1226 templates/js/translated/part.js:2339
 #: templates/js/translated/stock.js:2006
 msgid "IPN"
 msgstr "IPN"
 
-#: part/admin.py:37 part/models.py:863 part/templates/part/part_base.html:277
+#: part/admin.py:36 part/models.py:831 part/templates/part/part_base.html:277
 #: report/models.py:189 templates/js/translated/part.js:1231
 #: templates/js/translated/part.js:2345
 msgid "Revision"
 msgstr "Phiên bản"
 
-#: part/admin.py:38 part/admin.py:195 part/models.py:842
+#: part/admin.py:37 part/admin.py:195 part/models.py:810
 #: part/templates/part/category.html:94 part/templates/part/part_base.html:298
 msgid "Keywords"
 msgstr "Từ khóa"
+
+#: part/admin.py:41
+msgid "Part Image"
+msgstr ""
 
 #: part/admin.py:42 part/admin.py:189 part/stocktake.py:220
 msgid "Category ID"
@@ -5527,11 +5536,11 @@ msgstr "ID vị trí mặc định"
 msgid "Default Supplier ID"
 msgstr "ID nhà cung ứng mặc định"
 
-#: part/admin.py:46 part/models.py:831 part/templates/part/part_base.html:177
+#: part/admin.py:46 part/models.py:799 part/templates/part/part_base.html:177
 msgid "Variant Of"
 msgstr "Biến thể của"
 
-#: part/admin.py:47 part/models.py:948 part/templates/part/part_base.html:203
+#: part/admin.py:47 part/models.py:916 part/templates/part/part_base.html:203
 msgid "Minimum Stock"
 msgstr "Kho tối thiểu"
 
@@ -5557,11 +5566,13 @@ msgstr "Sử dụng trong"
 msgid "Building"
 msgstr "Đang dựng"
 
-#: part/admin.py:66 part/models.py:2934 templates/js/translated/part.js:969
+#: part/admin.py:66 part/models.py:2911 part/models.py:2923
+#: templates/js/translated/part.js:969
 msgid "Minimum Cost"
 msgstr "Chi phí tối thiểu"
 
-#: part/admin.py:67 part/models.py:2940 templates/js/translated/part.js:979
+#: part/admin.py:67 part/models.py:2917 part/models.py:2929
+#: templates/js/translated/part.js:979
 msgid "Maximum Cost"
 msgstr "Chi phí tối đa"
 
@@ -5578,7 +5589,7 @@ msgstr "Tên cha"
 msgid "Category Path"
 msgstr "Đưỡng dẫn danh mục"
 
-#: part/admin.py:199 part/models.py:366 part/serializers.py:340
+#: part/admin.py:199 part/models.py:366 part/serializers.py:344
 #: part/templates/part/cat_link.html:3 part/templates/part/category.html:23
 #: part/templates/part/category.html:141 part/templates/part/category.html:161
 #: part/templates/part/category_sidebar.html:9
@@ -5601,16 +5612,18 @@ msgstr "ID hàng hóa BOM"
 msgid "Parent IPN"
 msgstr "IPN cha"
 
-#: part/admin.py:270 part/models.py:3679
+#: part/admin.py:270 part/models.py:3668
 msgid "Part IPN"
 msgstr "IPN sản phẩm"
 
-#: part/admin.py:276 templates/js/translated/pricing.js:358
+#: part/admin.py:276 part/serializers.py:1087
+#: templates/js/translated/pricing.js:358
 #: templates/js/translated/pricing.js:1024
 msgid "Minimum Price"
 msgstr "Giá thấp nhất"
 
-#: part/admin.py:277 templates/js/translated/pricing.js:353
+#: part/admin.py:277 part/serializers.py:1099
+#: templates/js/translated/pricing.js:353
 #: templates/js/translated/pricing.js:1032
 msgid "Maximum Price"
 msgstr "Giá cao nhất"
@@ -5643,7 +5656,7 @@ msgstr "Xác minh toàn bộ hóa đơn vật liệu"
 msgid "This option must be selected"
 msgstr "Tùy chọn này phải được chọn"
 
-#: part/bom.py:174 part/models.py:97 part/models.py:890
+#: part/bom.py:174 part/models.py:97 part/models.py:858
 #: part/templates/part/category.html:116 part/templates/part/part_base.html:367
 msgid "Default Location"
 msgstr "Điểm bán mặc định"
@@ -5661,7 +5674,7 @@ msgstr "Số hàng tồn"
 msgid "Input quantity for price calculation"
 msgstr "Số lượng đầu ra cho tính toán giá bán"
 
-#: part/models.py:79 part/models.py:3620 part/templates/part/category.html:16
+#: part/models.py:79 part/models.py:3609 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr "Danh mục sản phẩm"
@@ -5695,7 +5708,7 @@ msgid "Default keywords for parts in this category"
 msgstr "Từ khóa mặc định cho sản phẩm trong danh mục này"
 
 #: part/models.py:114 stock/models.py:85 stock/models.py:142
-#: templates/InvenTree/settings/settings_staff_js.html:436
+#: templates/InvenTree/settings/settings_staff_js.html:456
 msgid "Icon"
 msgstr "Biểu tượng"
 
@@ -5730,298 +5743,306 @@ msgstr "IPN phải phù hợp mẫu biểu thức chính quy {pattern}"
 msgid "Stock item with this serial number already exists"
 msgstr "Hàng trong kho với số sê ri này đã tồn tại"
 
-#: part/models.py:770
+#: part/models.py:738
 msgid "Duplicate IPN not allowed in part settings"
 msgstr "IPN trùng lặp không được cho phép trong thiết lập sản phẩm"
 
-#: part/models.py:775
+#: part/models.py:743
 msgid "Part with this Name, IPN and Revision already exists."
 msgstr "Sản phẩm với Tên, IPN và Duyệt lại đã tồn tại."
 
-#: part/models.py:789
+#: part/models.py:757
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr "Sản phẩm không thể được phân vào danh mục sản phẩm có cấu trúc!"
 
-#: part/models.py:813 part/models.py:3676
+#: part/models.py:781 part/models.py:3665
 msgid "Part name"
 msgstr "Tên sản phẩm"
 
-#: part/models.py:819
+#: part/models.py:787
 msgid "Is Template"
 msgstr "Là Mẫu"
 
-#: part/models.py:820
+#: part/models.py:788
 msgid "Is this part a template part?"
 msgstr "Sản phẩm này có phải là sản phẩm mẫu?"
 
-#: part/models.py:830
+#: part/models.py:798
 msgid "Is this part a variant of another part?"
 msgstr "Đây có phải là 1 biến thể của sản phẩm khác?"
 
-#: part/models.py:837
+#: part/models.py:805
 msgid "Part description (optional)"
 msgstr "Mô tả (không bắt buộc)"
 
-#: part/models.py:843
+#: part/models.py:811
 msgid "Part keywords to improve visibility in search results"
 msgstr "Từ khóa sản phẩm để cải thiện sự hiện diện trong kết quả tìm kiếm"
 
-#: part/models.py:850 part/models.py:3199 part/models.py:3619
-#: part/serializers.py:353 part/serializers.py:967
-#: part/templates/part/part_base.html:260
-#: templates/InvenTree/settings/settings_staff_js.html:280
+#: part/models.py:818 part/models.py:3188 part/models.py:3608
+#: part/serializers.py:357 part/serializers.py:973
+#: part/templates/part/part_base.html:260 stock/api.py:633
+#: templates/InvenTree/settings/settings_staff_js.html:300
 #: templates/js/translated/notification.js:60
 #: templates/js/translated/part.js:2375
 msgid "Category"
 msgstr "Danh mục"
 
-#: part/models.py:851
+#: part/models.py:819
 msgid "Part category"
 msgstr "Danh mục sản phẩm"
 
-#: part/models.py:857
+#: part/models.py:825
 msgid "Internal Part Number"
 msgstr "Mã sản phẩm nội bộ"
 
-#: part/models.py:862
+#: part/models.py:830
 msgid "Part revision or version number"
 msgstr "Số phiên bản hoặc bản duyệt lại sản phẩm"
 
-#: part/models.py:888
+#: part/models.py:856
 msgid "Where is this item normally stored?"
 msgstr "Hàng hóa này sẽ được cất vào đâu?"
 
-#: part/models.py:933 part/templates/part/part_base.html:376
+#: part/models.py:901 part/templates/part/part_base.html:376
 msgid "Default Supplier"
 msgstr "Nhà cung ứng mặc định"
 
-#: part/models.py:934
+#: part/models.py:902
 msgid "Default supplier part"
 msgstr "Nhà cung ứng sản phẩm mặc định"
 
-#: part/models.py:941
+#: part/models.py:909
 msgid "Default Expiry"
 msgstr "Hết hạn mặc định"
 
-#: part/models.py:942
+#: part/models.py:910
 msgid "Expiry time (in days) for stock items of this part"
 msgstr "Thời gian hết hạn (theo ngày) để nhập kho hàng hóa cho sản phẩm này"
 
-#: part/models.py:949
+#: part/models.py:917
 msgid "Minimum allowed stock level"
 msgstr "Cấp độ kho tối thiểu được phép"
 
-#: part/models.py:956
+#: part/models.py:924
 msgid "Units of measure for this part"
 msgstr "Đơn vị đo cho sản phẩm này"
 
-#: part/models.py:965
+#: part/models.py:933
 msgid "Can this part be built from other parts?"
 msgstr "Sản phẩm này có thể được dựng từ sản phẩm khác?"
 
-#: part/models.py:971
+#: part/models.py:939
 msgid "Can this part be used to build other parts?"
 msgstr "Sản phẩm này có thể dùng để dựng các sản phẩm khác?"
 
-#: part/models.py:977
+#: part/models.py:945
 msgid "Does this part have tracking for unique items?"
 msgstr "Sản phẩm này có đang theo dõi cho hàng hóa duy nhất?"
 
-#: part/models.py:982
+#: part/models.py:950
 msgid "Can this part be purchased from external suppliers?"
 msgstr "Sản phẩm này có thể mua được từ nhà cung ứng bên ngoài?"
 
-#: part/models.py:987
+#: part/models.py:955
 msgid "Can this part be sold to customers?"
 msgstr "Sản phẩm này có thể được bán cho khách hàng?"
 
-#: part/models.py:992
+#: part/models.py:960
 msgid "Is this part active?"
 msgstr "Sản phẩm này đang hoạt động?"
 
-#: part/models.py:997
+#: part/models.py:965
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr "Đây là sản phẩm ảo, ví dụ như sản phẩm phần mềm hay bản quyền?"
 
-#: part/models.py:999
+#: part/models.py:967
 msgid "BOM checksum"
 msgstr "Giá trị tổng kiểm BOM"
 
-#: part/models.py:999
+#: part/models.py:967
 msgid "Stored BOM checksum"
 msgstr "Giá trị tổng kiểm BOM đã được lưu"
 
-#: part/models.py:1002
+#: part/models.py:970
 msgid "BOM checked by"
 msgstr "BOM kiểm tra bởi"
 
-#: part/models.py:1004
+#: part/models.py:972
 msgid "BOM checked date"
 msgstr "Ngày kiểm tra BOM"
 
-#: part/models.py:1008
+#: part/models.py:976
 msgid "Creation User"
 msgstr "Tạo người dùng"
 
-#: part/models.py:1014
+#: part/models.py:982
 msgid "Owner responsible for this part"
 msgstr "Trách nhiệm chủ sở hữu cho sản phẩm này"
 
-#: part/models.py:1020 part/templates/part/part_base.html:339
+#: part/models.py:988 part/templates/part/part_base.html:339
 #: stock/templates/stock/item_base.html:451
 #: templates/js/translated/part.js:2469
 msgid "Last Stocktake"
 msgstr "Kiểm kê cuối cùng"
 
-#: part/models.py:1891
+#: part/models.py:1859
 msgid "Sell multiple"
 msgstr "Bán nhiều"
 
-#: part/models.py:2857
+#: part/models.py:2834
 msgid "Currency used to cache pricing calculations"
 msgstr "Tiền được dùng để làm đệm tính toán giá bán"
 
-#: part/models.py:2874
+#: part/models.py:2851
 msgid "Minimum BOM Cost"
 msgstr "Chi phí BOM tối thiểu"
 
-#: part/models.py:2875
+#: part/models.py:2852
 msgid "Minimum cost of component parts"
 msgstr "Chi phí thành phần sản phẩm tối thiểu"
 
-#: part/models.py:2880
+#: part/models.py:2857
 msgid "Maximum BOM Cost"
 msgstr "Chi phí BOM tối đa"
 
-#: part/models.py:2881
+#: part/models.py:2858
 msgid "Maximum cost of component parts"
 msgstr "Chi phí thành phần sản phẩm tối đa"
 
-#: part/models.py:2886
+#: part/models.py:2863
 msgid "Minimum Purchase Cost"
 msgstr "Chi phí mua vào tối thiểu"
 
-#: part/models.py:2887
+#: part/models.py:2864
 msgid "Minimum historical purchase cost"
 msgstr "Chi phí mua vào tối thiểu trong lịch sử"
 
-#: part/models.py:2892
+#: part/models.py:2869
 msgid "Maximum Purchase Cost"
 msgstr "Chi phí mua tối đa"
 
-#: part/models.py:2893
+#: part/models.py:2870
 msgid "Maximum historical purchase cost"
 msgstr "Chi phí thành phần sản phẩm tối đa trong lịch sử"
 
-#: part/models.py:2898
+#: part/models.py:2875
 msgid "Minimum Internal Price"
 msgstr "Giá nội bộ tối thiểu"
 
-#: part/models.py:2899
+#: part/models.py:2876
 msgid "Minimum cost based on internal price breaks"
 msgstr "Chi phí tối thiểu dựa trên phá vỡ giá nội bộ"
 
-#: part/models.py:2904
+#: part/models.py:2881
 msgid "Maximum Internal Price"
 msgstr "Giá nội bộ tối đa"
 
-#: part/models.py:2905
+#: part/models.py:2882
 msgid "Maximum cost based on internal price breaks"
 msgstr "Chi phí tối đa dựa trên phá vỡ giá nội bộ"
 
-#: part/models.py:2910
+#: part/models.py:2887
 msgid "Minimum Supplier Price"
 msgstr "Giá nhà cung ứng tối thiểu"
 
-#: part/models.py:2911
+#: part/models.py:2888
 msgid "Minimum price of part from external suppliers"
 msgstr "Giá sản phẩm tối thiểu từ nhà cung ứng bên ngoài"
 
-#: part/models.py:2916
+#: part/models.py:2893
 msgid "Maximum Supplier Price"
 msgstr "Giá nhà cung ứng tối đa"
 
-#: part/models.py:2917
+#: part/models.py:2894
 msgid "Maximum price of part from external suppliers"
 msgstr "Giá sản phẩm tối đã từ nhà cung ứng bên ngoài"
 
-#: part/models.py:2922
+#: part/models.py:2899
 msgid "Minimum Variant Cost"
 msgstr "Giá trị biến thể tối thiểu"
 
-#: part/models.py:2923
+#: part/models.py:2900
 msgid "Calculated minimum cost of variant parts"
 msgstr "Chi phí tối thiểu của sản phẩm biến thể đã tính"
 
-#: part/models.py:2928
+#: part/models.py:2905
 msgid "Maximum Variant Cost"
 msgstr "Chi phí biến thể tối đa"
 
-#: part/models.py:2929
+#: part/models.py:2906
 msgid "Calculated maximum cost of variant parts"
 msgstr "Chi phí tối đa của sản phẩm biến thể đã tính"
 
-#: part/models.py:2935
+#: part/models.py:2912
+msgid "Override minimum cost"
+msgstr ""
+
+#: part/models.py:2918
+msgid "Override maximum cost"
+msgstr ""
+
+#: part/models.py:2924
 msgid "Calculated overall minimum cost"
 msgstr "Chi phí tối thiểu tính toán tổng thể"
 
-#: part/models.py:2941
+#: part/models.py:2930
 msgid "Calculated overall maximum cost"
 msgstr "Chi phí tối đa tính toán tổng thể"
 
-#: part/models.py:2946
+#: part/models.py:2935
 msgid "Minimum Sale Price"
 msgstr "Giá bán thấp nhất"
 
-#: part/models.py:2947
+#: part/models.py:2936
 msgid "Minimum sale price based on price breaks"
 msgstr "Giá bán tối thiểu dựa trên phá giá"
 
-#: part/models.py:2952
+#: part/models.py:2941
 msgid "Maximum Sale Price"
 msgstr "Giá bán cao nhất"
 
-#: part/models.py:2953
+#: part/models.py:2942
 msgid "Maximum sale price based on price breaks"
 msgstr "Giá bán cao nhất dựa trên phá giá"
 
-#: part/models.py:2958
+#: part/models.py:2947
 msgid "Minimum Sale Cost"
 msgstr "Chi phí bán hàng tối thiểu"
 
-#: part/models.py:2959
+#: part/models.py:2948
 msgid "Minimum historical sale price"
 msgstr "Giá bán hàng tối thiểu trong lịch sử"
 
-#: part/models.py:2964
+#: part/models.py:2953
 msgid "Maximum Sale Cost"
 msgstr "Giá bán hàng tối đa"
 
-#: part/models.py:2965
+#: part/models.py:2954
 msgid "Maximum historical sale price"
 msgstr "Giá bán hàng tối đa trong lịch sử"
 
-#: part/models.py:2984
+#: part/models.py:2973
 msgid "Part for stocktake"
 msgstr "Sản phẩm dành cho kiểm kê"
 
-#: part/models.py:2989
+#: part/models.py:2978
 msgid "Item Count"
 msgstr "Tổng số hàng"
 
-#: part/models.py:2990
+#: part/models.py:2979
 msgid "Number of individual stock entries at time of stocktake"
 msgstr "Số mục kho độc lậo tại thời điểm kiểm kê"
 
-#: part/models.py:2997
+#: part/models.py:2986
 msgid "Total available stock at time of stocktake"
 msgstr "Tống số kho tại thời điểm kiểm kê"
 
-#: part/models.py:3001 part/models.py:3081
+#: part/models.py:2990 part/models.py:3070
 #: part/templates/part/part_scheduling.html:13
 #: report/templates/report/inventree_test_report_base.html:106
 #: templates/InvenTree/settings/plugin_settings.html:37
-#: templates/InvenTree/settings/settings_staff_js.html:520
+#: templates/InvenTree/settings/settings_staff_js.html:540
 #: templates/js/translated/part.js:1085 templates/js/translated/pricing.js:826
 #: templates/js/translated/pricing.js:950
 #: templates/js/translated/purchase_order.js:1725
@@ -6029,567 +6050,596 @@ msgstr "Tống số kho tại thời điểm kiểm kê"
 msgid "Date"
 msgstr "Ngày"
 
-#: part/models.py:3002
+#: part/models.py:2991
 msgid "Date stocktake was performed"
 msgstr "Kiểm kê đã thực hiện"
 
-#: part/models.py:3010
+#: part/models.py:2999
 msgid "Additional notes"
 msgstr "Ghi chú bổ sung"
 
-#: part/models.py:3018
+#: part/models.py:3007
 msgid "User who performed this stocktake"
 msgstr "Người dùng đã thực hiện đợt kiểm kê này"
 
-#: part/models.py:3023
+#: part/models.py:3012
 msgid "Minimum Stock Cost"
 msgstr "Chi phí kho tối thiểu"
 
-#: part/models.py:3024
+#: part/models.py:3013
 msgid "Estimated minimum cost of stock on hand"
 msgstr "Chi phí kho tối thiểu ước tính của kho đang có"
 
-#: part/models.py:3029
+#: part/models.py:3018
 msgid "Maximum Stock Cost"
 msgstr "Chi phí kho tối đa"
 
-#: part/models.py:3030
+#: part/models.py:3019
 msgid "Estimated maximum cost of stock on hand"
 msgstr "Chi phí kho tối đa ước tính của kho đang có"
 
-#: part/models.py:3088 templates/InvenTree/settings/settings_staff_js.html:509
+#: part/models.py:3077 templates/InvenTree/settings/settings_staff_js.html:529
 msgid "Report"
 msgstr "Báo cáo"
 
-#: part/models.py:3089
+#: part/models.py:3078
 msgid "Stocktake report file (generated internally)"
 msgstr "Tệp báo cáo kiểm kê (được sinh nội bộ)"
 
-#: part/models.py:3094 templates/InvenTree/settings/settings_staff_js.html:516
+#: part/models.py:3083 templates/InvenTree/settings/settings_staff_js.html:536
 msgid "Part Count"
 msgstr "Bộ đếm sản phẩm"
 
-#: part/models.py:3095
+#: part/models.py:3084
 msgid "Number of parts covered by stocktake"
 msgstr "Số sản phẩm đã được bao quát bởi kiểm kê"
 
-#: part/models.py:3103
+#: part/models.py:3092
 msgid "User who requested this stocktake report"
 msgstr "Người dùng đã yêu cầu báo cáo kiểm kê này"
 
-#: part/models.py:3239
+#: part/models.py:3228
 msgid "Test templates can only be created for trackable parts"
 msgstr "Chỉ có thể tạo mẫu kiểm thử cho sản phẩm có thể theo dõi"
 
-#: part/models.py:3256
+#: part/models.py:3245
 msgid "Test with this name already exists for this part"
 msgstr "Kiểm thử với tên này đã tồn tại cho sản phẩm này"
 
-#: part/models.py:3276 templates/js/translated/part.js:2866
+#: part/models.py:3265 templates/js/translated/part.js:2866
 msgid "Test Name"
 msgstr "Tên kiểm thử"
 
-#: part/models.py:3277
+#: part/models.py:3266
 msgid "Enter a name for the test"
 msgstr "Nhập tên cho kiểm thử"
 
-#: part/models.py:3282
+#: part/models.py:3271
 msgid "Test Description"
 msgstr "Mô tả kiểm thử"
 
-#: part/models.py:3283
+#: part/models.py:3272
 msgid "Enter description for this test"
 msgstr "Nhập mô tả cho kiểm thử này"
 
-#: part/models.py:3288 templates/js/translated/part.js:2875
+#: part/models.py:3277 templates/js/translated/part.js:2875
 #: templates/js/translated/table_filters.js:477
 msgid "Required"
 msgstr "Bắt buộc"
 
-#: part/models.py:3289
+#: part/models.py:3278
 msgid "Is this test required to pass?"
 msgstr "Kiểm thử này bắt buộc phải đạt?"
 
-#: part/models.py:3294 templates/js/translated/part.js:2883
+#: part/models.py:3283 templates/js/translated/part.js:2883
 msgid "Requires Value"
 msgstr "Giá trị bắt buộc"
 
-#: part/models.py:3295
+#: part/models.py:3284
 msgid "Does this test require a value when adding a test result?"
 msgstr "Kiểm thử này yêu cầu 1 giá trị khi thêm một kết quả kiểm thử?"
 
-#: part/models.py:3300 templates/js/translated/part.js:2890
+#: part/models.py:3289 templates/js/translated/part.js:2890
 msgid "Requires Attachment"
 msgstr "Yêu cầu đính kèm"
 
-#: part/models.py:3301
+#: part/models.py:3290
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr "Kiểm thử này yêu cầu tệp đính kèm khi thêm một kết quả kiểm thử?"
 
-#: part/models.py:3346
+#: part/models.py:3335
 msgid "Checkbox parameters cannot have units"
 msgstr "Tham số hộp kiểm tra không thể có đơn vị"
 
-#: part/models.py:3351
+#: part/models.py:3340
 msgid "Checkbox parameters cannot have choices"
 msgstr "Tham số hộp kiểm tra không thể có lựa chọn"
 
-#: part/models.py:3369
+#: part/models.py:3358
 msgid "Choices must be unique"
 msgstr "Lựa chọn phải duy nhất"
 
-#: part/models.py:3385
+#: part/models.py:3374
 msgid "Parameter template name must be unique"
 msgstr "Tên tham số mẫu phải là duy nhất"
 
-#: part/models.py:3400
+#: part/models.py:3389
 msgid "Parameter Name"
 msgstr "Tên tham số"
 
-#: part/models.py:3406
+#: part/models.py:3395
 msgid "Physical units for this parameter"
 msgstr "Đơn vị vật lý cho tham số này"
 
-#: part/models.py:3416
+#: part/models.py:3405
 msgid "Parameter description"
 msgstr "Mô tả tham số"
 
-#: part/models.py:3422 templates/js/translated/part.js:1627
+#: part/models.py:3411 templates/js/translated/part.js:1627
 #: templates/js/translated/table_filters.js:817
 msgid "Checkbox"
 msgstr "Ô lựa chọn"
 
-#: part/models.py:3423
+#: part/models.py:3412
 msgid "Is this parameter a checkbox?"
 msgstr "Tham số này có phải là hộp kiểm tra?"
 
-#: part/models.py:3428 templates/js/translated/part.js:1636
+#: part/models.py:3417 templates/js/translated/part.js:1636
 msgid "Choices"
 msgstr "Lựa chọn"
 
-#: part/models.py:3429
+#: part/models.py:3418
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "Lựa chọn hợp lệ từ tham số này (ngăn cách bằng dấu phẩy)"
 
-#: part/models.py:3503
+#: part/models.py:3492
 msgid "Invalid choice for parameter value"
 msgstr "Lựa chọn sai cho giá trị tham số"
 
-#: part/models.py:3545
+#: part/models.py:3534
 msgid "Parent Part"
 msgstr "Sản phẩm cha"
 
-#: part/models.py:3550 part/models.py:3625 part/models.py:3626
-#: templates/InvenTree/settings/settings_staff_js.html:275
+#: part/models.py:3539 part/models.py:3614 part/models.py:3615
+#: templates/InvenTree/settings/settings_staff_js.html:295
 msgid "Parameter Template"
 msgstr "Mẫu tham số"
 
-#: part/models.py:3555
+#: part/models.py:3544
 msgid "Data"
 msgstr "Dữ liệu"
 
-#: part/models.py:3555
+#: part/models.py:3544
 msgid "Parameter Value"
 msgstr "Giá trị tham số"
 
-#: part/models.py:3630 templates/InvenTree/settings/settings_staff_js.html:284
+#: part/models.py:3619 templates/InvenTree/settings/settings_staff_js.html:304
 msgid "Default Value"
 msgstr "Giá trị mặc định"
 
-#: part/models.py:3631
+#: part/models.py:3620
 msgid "Default Parameter Value"
 msgstr "Giá trị tham số mặc định"
 
-#: part/models.py:3668
+#: part/models.py:3657
 msgid "Part ID or part name"
 msgstr "Tên hoặc mã sản phẩm"
 
-#: part/models.py:3672
+#: part/models.py:3661
 msgid "Unique part ID value"
 msgstr "Giá trị mã sản phẩm duy nhất"
 
-#: part/models.py:3680
+#: part/models.py:3669
 msgid "Part IPN value"
 msgstr "Giá trị IPN sản phẩm"
 
-#: part/models.py:3683
+#: part/models.py:3672
 msgid "Level"
 msgstr "Cấp độ"
 
-#: part/models.py:3684
+#: part/models.py:3673
 msgid "BOM level"
 msgstr "Cấp độ BOM"
 
-#: part/models.py:3690 part/models.py:4085
+#: part/models.py:3679 part/models.py:4074 stock/api.py:648
 msgid "BOM Item"
 msgstr "Mục BOM"
 
-#: part/models.py:3771
+#: part/models.py:3760
 msgid "Select parent part"
 msgstr "Chọn sản phẩm cha"
 
-#: part/models.py:3779
+#: part/models.py:3768
 msgid "Sub part"
 msgstr "Sản phẩm phụ"
 
-#: part/models.py:3780
+#: part/models.py:3769
 msgid "Select part to be used in BOM"
 msgstr "Chọn sản phẩm được dùng trong BOM"
 
-#: part/models.py:3786
+#: part/models.py:3775
 msgid "BOM quantity for this BOM item"
 msgstr "Số lượng BOM cho mục BOM này"
 
-#: part/models.py:3791
+#: part/models.py:3780
 msgid "This BOM item is optional"
 msgstr "Mục BOM này là tùy chọn"
 
-#: part/models.py:3797
+#: part/models.py:3786
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "Mục BOM này bị tiêu hao (không được theo dõi trong đơn đặt bản dựng)"
 
-#: part/models.py:3801 part/templates/part/upload_bom.html:55
+#: part/models.py:3790 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr "Dư thừa"
 
-#: part/models.py:3802
+#: part/models.py:3791
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "Số lượng bản dựng lãng phí ước tính (tuyệt đối hoặc phần trăm)"
 
-#: part/models.py:3805
+#: part/models.py:3794
 msgid "BOM item reference"
 msgstr "Tham chiếu mục BOM"
 
-#: part/models.py:3808
+#: part/models.py:3797
 msgid "BOM item notes"
 msgstr "Ghi chú mục BOM"
 
-#: part/models.py:3812
+#: part/models.py:3801
 msgid "Checksum"
 msgstr "Giá trị tổng kiểm"
 
-#: part/models.py:3812
+#: part/models.py:3801
 msgid "BOM line checksum"
 msgstr "Giá trị tổng kiểm dòng BOM"
 
-#: part/models.py:3817 templates/js/translated/table_filters.js:174
+#: part/models.py:3806 templates/js/translated/table_filters.js:174
 msgid "Validated"
 msgstr "Đã xác minh"
 
-#: part/models.py:3818
+#: part/models.py:3807
 msgid "This BOM item has been validated"
 msgstr "Mục BOM này là hợp lệ"
 
-#: part/models.py:3823 part/templates/part/upload_bom.html:57
+#: part/models.py:3812 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1054
 #: templates/js/translated/table_filters.js:178
 #: templates/js/translated/table_filters.js:211
 msgid "Gets inherited"
 msgstr "Nhận thừa hưởng"
 
-#: part/models.py:3824
+#: part/models.py:3813
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Mục BOM này được thừa kế bởi BOM cho sản phẩm biến thể"
 
-#: part/models.py:3829 part/templates/part/upload_bom.html:56
+#: part/models.py:3818 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1046
 msgid "Allow Variants"
 msgstr "Cho phép biến thể"
 
-#: part/models.py:3830
+#: part/models.py:3819
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Hàng trong kho cho sản phẩm biến thể có thể được dùng bởi mục BOM này"
 
-#: part/models.py:3916 stock/models.py:613
+#: part/models.py:3905 stock/models.py:613
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Số lượng phải là giá trị nguyên dùng cho sản phẩm có thể theo dõi được"
 
-#: part/models.py:3925 part/models.py:3927
+#: part/models.py:3914 part/models.py:3916
 msgid "Sub part must be specified"
 msgstr "Sản phẩm phụ phải được chỉ định"
 
-#: part/models.py:4052
+#: part/models.py:4041
 msgid "BOM Item Substitute"
 msgstr "Sảm phẩm thay thế mục BOM"
 
-#: part/models.py:4073
+#: part/models.py:4062
 msgid "Substitute part cannot be the same as the master part"
 msgstr "Sản phẩm thay thế không thể giống sản phẩm chủ đạo"
 
-#: part/models.py:4086
+#: part/models.py:4075
 msgid "Parent BOM item"
 msgstr "Hàng hóa BOM cha"
 
-#: part/models.py:4094
+#: part/models.py:4083
 msgid "Substitute part"
 msgstr "Sản phẩm thay thế"
 
-#: part/models.py:4109
+#: part/models.py:4098
 msgid "Part 1"
 msgstr "Sản phẩm 1"
 
-#: part/models.py:4113
+#: part/models.py:4102
 msgid "Part 2"
 msgstr "Sản phẩm 2"
 
-#: part/models.py:4113
+#: part/models.py:4102
 msgid "Select Related Part"
 msgstr "Chọn sản phẩm liên quan"
 
-#: part/models.py:4130
+#: part/models.py:4119
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "Không thể tạo mối quan hệ giữa một sản phẩm và chính nó"
 
-#: part/models.py:4134
+#: part/models.py:4123
 msgid "Duplicate relationship already exists"
 msgstr "Đã tồn tại mối quan hệ trùng lặp"
 
-#: part/serializers.py:170 part/serializers.py:193 stock/serializers.py:324
+#: part/serializers.py:174 part/serializers.py:197 stock/serializers.py:324
 msgid "Purchase currency of this stock item"
 msgstr "Loại tiền mua hàng của hàng hóa này"
 
-#: part/serializers.py:346
+#: part/serializers.py:350
 msgid "No parts selected"
 msgstr "Chưa chọn sản phẩm"
 
-#: part/serializers.py:354
+#: part/serializers.py:358
 msgid "Select category"
 msgstr "Chọn danh mục"
 
-#: part/serializers.py:384
+#: part/serializers.py:388
 msgid "Original Part"
 msgstr "Sản phẩm gốc"
 
-#: part/serializers.py:384
+#: part/serializers.py:388
 msgid "Select original part to duplicate"
 msgstr "Chọn sản phẩm gốc để nhân bản"
 
-#: part/serializers.py:389
+#: part/serializers.py:393
 msgid "Copy Image"
 msgstr "Sao chép ảnh"
 
-#: part/serializers.py:389
+#: part/serializers.py:393
 msgid "Copy image from original part"
 msgstr "Sao chép hình ảnh từ sản phẩm gốc"
 
-#: part/serializers.py:394 part/templates/part/detail.html:277
+#: part/serializers.py:398 part/templates/part/detail.html:277
 msgid "Copy BOM"
 msgstr "Sao chép BOM"
 
-#: part/serializers.py:394
+#: part/serializers.py:398
 msgid "Copy bill of materials from original part"
 msgstr "Sao chép định mức nguyên vật liệu từ sản phẩm gốc"
 
-#: part/serializers.py:399
+#: part/serializers.py:403
 msgid "Copy Parameters"
 msgstr "Sao chép thông số"
 
-#: part/serializers.py:399
+#: part/serializers.py:403
 msgid "Copy parameter data from original part"
 msgstr "Sao chép thông tin tham số từ sản phẩm gốc"
 
-#: part/serializers.py:404
+#: part/serializers.py:408
 msgid "Copy Notes"
 msgstr "Sao chép ghi chú"
 
-#: part/serializers.py:404
+#: part/serializers.py:408
 msgid "Copy notes from original part"
 msgstr "Sao chép ghi chú từ sản phẩm gốc"
 
-#: part/serializers.py:414
+#: part/serializers.py:418
 msgid "Initial Stock Quantity"
 msgstr "Số liệu tồn kho ban đầu"
 
-#: part/serializers.py:414
+#: part/serializers.py:418
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
 msgstr "Chỉ ra số lượng tồn kho ban đầu cho sản phẩm. Nếu điền là không, không thêm kho nào."
 
-#: part/serializers.py:420
+#: part/serializers.py:424
 msgid "Initial Stock Location"
 msgstr "Vị trí kho ban đầu"
 
-#: part/serializers.py:420
+#: part/serializers.py:424
 msgid "Specify initial stock location for this Part"
 msgstr "Chỉ định vị trí kho ban đầu cho sản phẩm này"
 
-#: part/serializers.py:430
+#: part/serializers.py:434
 msgid "Select supplier (or leave blank to skip)"
 msgstr "Chọn nhà cung cấp (hoặc để trống để bỏ qua)"
 
-#: part/serializers.py:441
+#: part/serializers.py:445
 msgid "Select manufacturer (or leave blank to skip)"
 msgstr "Chọn nhà sản xuất (hoặc để trống để bỏ qua)"
 
-#: part/serializers.py:447
+#: part/serializers.py:451
 msgid "Manufacturer part number"
 msgstr "Mã số nhà sản xuất"
 
-#: part/serializers.py:453
+#: part/serializers.py:457
 msgid "Selected company is not a valid supplier"
 msgstr "Công ty đã chọn không phải là nhà cung ứng hợp lệ"
 
-#: part/serializers.py:460
+#: part/serializers.py:464
 msgid "Selected company is not a valid manufacturer"
 msgstr "Công ty đã chọn không phải là nhà sản xuất hợp lệ"
 
-#: part/serializers.py:471
+#: part/serializers.py:475
 msgid "Manufacturer part matching this MPN already exists"
 msgstr "Mã số nhà sản xuất khớp với MPN này đã tồn tại"
 
-#: part/serializers.py:479
+#: part/serializers.py:483
 msgid "Supplier part matching this SKU already exists"
 msgstr "Mã số nhà cung cấp khớp với SKU này đã tồn tại"
 
-#: part/serializers.py:738 part/templates/part/copy_part.html:9
+#: part/serializers.py:744 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
 msgid "Duplicate Part"
 msgstr "Nhân bản sản phẩm"
 
-#: part/serializers.py:738
+#: part/serializers.py:744
 msgid "Copy initial data from another Part"
 msgstr "Sao chép dữ liệu ban đầu từ sản phẩm khác"
 
-#: part/serializers.py:743 templates/js/translated/part.js:102
+#: part/serializers.py:749 templates/js/translated/part.js:102
 msgid "Initial Stock"
 msgstr "Số liệu kho ban đầu"
 
-#: part/serializers.py:743
+#: part/serializers.py:749
 msgid "Create Part with initial stock quantity"
 msgstr "Tạo sản phẩm với số lượng tồn kho ban đầu"
 
-#: part/serializers.py:748
+#: part/serializers.py:754
 msgid "Supplier Information"
 msgstr "Thông tin nhà cung cấp"
 
-#: part/serializers.py:748
+#: part/serializers.py:754
 msgid "Add initial supplier information for this part"
 msgstr "Thêm thông tin nhà cung cấp ban đầu cho sản phẩm này"
 
-#: part/serializers.py:754
+#: part/serializers.py:760
 msgid "Copy Category Parameters"
 msgstr "Sao chép thông số nhóm hàng"
 
-#: part/serializers.py:755
+#: part/serializers.py:761
 msgid "Copy parameter templates from selected part category"
 msgstr "Sao chép mẫu tham số từ nhóm sản phẩm được chọn"
 
-#: part/serializers.py:961
+#: part/serializers.py:967
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr "Hạn chế báo cáo kiểm kê với sản phẩm riêng biệt và sản phẩm biến thể bất kỳ"
 
-#: part/serializers.py:967
+#: part/serializers.py:973
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr "Hạn chế báo cáo kiểm kê với danh mục sản phẩm riêng biệt và danh mục con bất kỳ"
 
-#: part/serializers.py:973
+#: part/serializers.py:979
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr "Hạn chế báo cáo kiểm kê với vị trí kho riêng biệt và vị trí con bất kỳ"
 
-#: part/serializers.py:978
+#: part/serializers.py:984
 msgid "Exclude External Stock"
 msgstr "Ngoại trừ kho bên ngoài"
 
-#: part/serializers.py:979
+#: part/serializers.py:985
 msgid "Exclude stock items in external locations"
 msgstr "Loại trừ hàng trong kho của vị trí bên ngoài"
 
-#: part/serializers.py:984
+#: part/serializers.py:990
 msgid "Generate Report"
 msgstr "Tạo báo cáo"
 
-#: part/serializers.py:985
+#: part/serializers.py:991
 msgid "Generate report file containing calculated stocktake data"
 msgstr "Tạo tệp báo cáo chứa dữ liệu kiểm kê đã tính toán"
 
-#: part/serializers.py:990
+#: part/serializers.py:996
 msgid "Update Parts"
 msgstr "Cập nhật sản phẩm"
 
-#: part/serializers.py:991
+#: part/serializers.py:997
 msgid "Update specified parts with calculated stocktake data"
 msgstr "Cập nhật sản phẩm cụ thể với dữ liệu kiểm kê đã tính"
 
-#: part/serializers.py:998
+#: part/serializers.py:1004
 msgid "Stocktake functionality is not enabled"
 msgstr "Chức năng kiểm kê chưa được bật"
 
-#: part/serializers.py:1087
+#: part/serializers.py:1088
+msgid "Override calculated value for minimum price"
+msgstr ""
+
+#: part/serializers.py:1093
+msgid "Minimum price currency"
+msgstr ""
+
+#: part/serializers.py:1100
+msgid "Override calculated value for maximum price"
+msgstr ""
+
+#: part/serializers.py:1105
+msgid "Maximum price currency"
+msgstr ""
+
+#: part/serializers.py:1121
 msgid "Update"
 msgstr "Cập nhật"
 
-#: part/serializers.py:1088
+#: part/serializers.py:1122
 msgid "Update pricing for this part"
 msgstr "Cập nhật giá cho sản phẩm này"
 
-#: part/serializers.py:1395
+#: part/serializers.py:1143
+#, python-brace-format
+msgid "Could not convert from provided currencies to {default_currency}"
+msgstr ""
+
+#: part/serializers.py:1147
+msgid "Minimum price must not be greater than maximum price"
+msgstr ""
+
+#: part/serializers.py:1148
+msgid "Maximum price must not be less than minimum price"
+msgstr ""
+
+#: part/serializers.py:1455
 msgid "Select part to copy BOM from"
 msgstr "Chọn sản phẩm để sao chép định mức nguyên vật liệu"
 
-#: part/serializers.py:1403
+#: part/serializers.py:1463
 msgid "Remove Existing Data"
 msgstr "Xóa dữ liệu đã tồn tại"
 
-#: part/serializers.py:1404
+#: part/serializers.py:1464
 msgid "Remove existing BOM items before copying"
 msgstr "Xóa mục BOM đã tồn tại trước khi sao chép"
 
-#: part/serializers.py:1409
+#: part/serializers.py:1469
 msgid "Include Inherited"
 msgstr "Bao gồm thừa hưởng"
 
-#: part/serializers.py:1410
+#: part/serializers.py:1470
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Bao gồm mục BOM được thừa hưởng từ sản phẩm mẫu"
 
-#: part/serializers.py:1415
+#: part/serializers.py:1475
 msgid "Skip Invalid Rows"
 msgstr "Bỏ qua dòng không hợp lệ"
 
-#: part/serializers.py:1416
+#: part/serializers.py:1476
 msgid "Enable this option to skip invalid rows"
 msgstr "Bật tùy chọn này để bỏ qua dòng không hợp lệ"
 
-#: part/serializers.py:1421
+#: part/serializers.py:1481
 msgid "Copy Substitute Parts"
 msgstr "Sao chép sản phẩm thay thế"
 
-#: part/serializers.py:1422
+#: part/serializers.py:1482
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Sao chép sản phẩm thay thế khi nhân bản hàng hóa BOM"
 
-#: part/serializers.py:1462
+#: part/serializers.py:1522
 msgid "Clear Existing BOM"
 msgstr "Dọn dẹp BOM đang tồn tại"
 
-#: part/serializers.py:1463
+#: part/serializers.py:1523
 msgid "Delete existing BOM items before uploading"
 msgstr "Xóa mục BOM đang tồn tại trước khi tải lên"
 
-#: part/serializers.py:1493
+#: part/serializers.py:1553
 msgid "No part column specified"
 msgstr "Chưa chỉ ra cột sản phẩm"
 
-#: part/serializers.py:1537
+#: part/serializers.py:1597
 msgid "Multiple matching parts found"
 msgstr "Tìm thấy nhiều sản phẩm phù hợp"
 
-#: part/serializers.py:1540
+#: part/serializers.py:1600
 msgid "No matching part found"
 msgstr "Không tìm thấy sản phẩm nào"
 
-#: part/serializers.py:1543
+#: part/serializers.py:1603
 msgid "Part is not designated as a component"
 msgstr "Sản phẩm không được chỉ định như là một thành phần"
 
-#: part/serializers.py:1552
+#: part/serializers.py:1612
 msgid "Quantity not provided"
 msgstr "Chưa cung cấp số lượng"
 
-#: part/serializers.py:1560
+#: part/serializers.py:1620
 msgid "Invalid quantity"
 msgstr "Số lượng không hợp lệ"
 
-#: part/serializers.py:1581
+#: part/serializers.py:1641
 msgid "At least one BOM item is required"
 msgstr "Buộc phải nhập ít nhất một mục BOM"
 
@@ -7063,8 +7113,8 @@ msgstr "Không tìm thấy hình ảnh phù hợp"
 msgid "Hide Part Details"
 msgstr "Ẩn chi tiết sản phẩm"
 
-#: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:73
-#: part/templates/part/prices.html:216 templates/js/translated/pricing.js:485
+#: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:76
+#: part/templates/part/prices.html:227 templates/js/translated/pricing.js:485
 msgid "Supplier Pricing"
 msgstr "Giá bán nhà cung cấp"
 
@@ -7079,8 +7129,8 @@ msgstr "Chi phí đơn vị"
 msgid "No supplier pricing available"
 msgstr "Chưa có sẵn giá cả nhà cung cấp"
 
-#: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:87
-#: part/templates/part/prices.html:239
+#: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:90
+#: part/templates/part/prices.html:250
 msgid "BOM Pricing"
 msgstr "Giá cả BOM"
 
@@ -7148,7 +7198,20 @@ msgstr "Tóm lược định giá"
 msgid "Refresh Part Pricing"
 msgstr "Làm mới giá sản phẩm"
 
-#: part/templates/part/prices.html:25 stock/admin.py:147
+#: part/templates/part/prices.html:17
+msgid "Override Part Pricing"
+msgstr ""
+
+#: part/templates/part/prices.html:18
+#: templates/InvenTree/settings/settings_staff_js.html:80
+#: templates/InvenTree/settings/user.html:24
+#: templates/js/translated/helpers.js:100
+#: templates/js/translated/pricing.js:628 templates/notes_buttons.html:3
+#: templates/notes_buttons.html:4
+msgid "Edit"
+msgstr "Sửa"
+
+#: part/templates/part/prices.html:28 stock/admin.py:147
 #: stock/templates/stock/item_base.html:446
 #: templates/js/translated/company.js:1693
 #: templates/js/translated/company.js:1703
@@ -7156,64 +7219,72 @@ msgstr "Làm mới giá sản phẩm"
 msgid "Last Updated"
 msgstr "Cập nhật lần cuối"
 
-#: part/templates/part/prices.html:34 part/templates/part/prices.html:116
+#: part/templates/part/prices.html:37 part/templates/part/prices.html:127
 msgid "Price Category"
 msgstr "Danh mục giá"
 
-#: part/templates/part/prices.html:35 part/templates/part/prices.html:117
+#: part/templates/part/prices.html:38 part/templates/part/prices.html:128
 msgid "Minimum"
 msgstr "Tối thiểu"
 
-#: part/templates/part/prices.html:36 part/templates/part/prices.html:118
+#: part/templates/part/prices.html:39 part/templates/part/prices.html:129
 msgid "Maximum"
 msgstr "Tối đa"
 
-#: part/templates/part/prices.html:48 part/templates/part/prices.html:163
+#: part/templates/part/prices.html:51 part/templates/part/prices.html:174
 msgid "Internal Pricing"
 msgstr "Định giá nội bộ"
 
-#: part/templates/part/prices.html:61 part/templates/part/prices.html:195
+#: part/templates/part/prices.html:64 part/templates/part/prices.html:206
 msgid "Purchase History"
 msgstr "Lịch sử mua hàng"
 
-#: part/templates/part/prices.html:95 part/templates/part/prices.html:263
+#: part/templates/part/prices.html:98 part/templates/part/prices.html:274
 msgid "Variant Pricing"
 msgstr "Định giá biến thể"
 
-#: part/templates/part/prices.html:102
+#: part/templates/part/prices.html:106
+msgid "Pricing Overrides"
+msgstr ""
+
+#: part/templates/part/prices.html:113
 msgid "Overall Pricing"
 msgstr "Định giá tổng thể"
 
-#: part/templates/part/prices.html:138 part/templates/part/prices.html:315
+#: part/templates/part/prices.html:149 part/templates/part/prices.html:326
 msgid "Sale History"
 msgstr "Lịch Sử Giao Dịch"
 
-#: part/templates/part/prices.html:146
+#: part/templates/part/prices.html:157
 msgid "Sale price data is not available for this part"
 msgstr "Chưa có dữ liệu giá giao dịch cho sản phẩm này"
 
-#: part/templates/part/prices.html:153
+#: part/templates/part/prices.html:164
 msgid "Price range data is not available for this part."
 msgstr "Dữ liệu khoảng giá không có sẵn cho sản phẩm này."
 
-#: part/templates/part/prices.html:164 part/templates/part/prices.html:196
-#: part/templates/part/prices.html:217 part/templates/part/prices.html:240
-#: part/templates/part/prices.html:264 part/templates/part/prices.html:287
-#: part/templates/part/prices.html:316
+#: part/templates/part/prices.html:175 part/templates/part/prices.html:207
+#: part/templates/part/prices.html:228 part/templates/part/prices.html:251
+#: part/templates/part/prices.html:275 part/templates/part/prices.html:298
+#: part/templates/part/prices.html:327
 msgid "Jump to overview"
 msgstr "Chuyển tới tổng quan"
 
-#: part/templates/part/prices.html:169
+#: part/templates/part/prices.html:180
 msgid "Add Internal Price Break"
 msgstr "Thêm phá giá nội bộ"
 
-#: part/templates/part/prices.html:286
+#: part/templates/part/prices.html:297
 msgid "Sale Pricing"
 msgstr "Định giá bán hàng"
 
-#: part/templates/part/prices.html:292
+#: part/templates/part/prices.html:303
 msgid "Add Sell Price Break"
 msgstr "Thêm định giá bán hàng"
+
+#: part/templates/part/pricing_javascript.html:24
+msgid "Update Pricing"
+msgstr ""
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
 #: templates/js/translated/part.js:2138 templates/js/translated/part.js:2140
@@ -7310,41 +7381,40 @@ msgstr "Chưa chỉ ra hành động cụ thể"
 msgid "No matching action found"
 msgstr "Không tìm thấy chức năng phù hợp"
 
-#: plugin/base/barcodes/api.py:59 plugin/base/barcodes/api.py:123
-#: plugin/base/barcodes/api.py:282
-msgid "Missing barcode data"
-msgstr "Sai dữ liệu mã vạch"
-
-#: plugin/base/barcodes/api.py:94
+#: plugin/base/barcodes/api.py:123 plugin/base/barcodes/api.py:339
 msgid "No match found for barcode data"
 msgstr "Không tìm thấy dữ liệu mã vạch phù hợp"
 
-#: plugin/base/barcodes/api.py:98
+#: plugin/base/barcodes/api.py:127
 msgid "Match found for barcode data"
 msgstr "Đã tìm thấy dữ liệu mã vạch phù hợp"
 
-#: plugin/base/barcodes/api.py:133
+#: plugin/base/barcodes/api.py:154
 #: templates/js/translated/purchase_order.js:1402
 msgid "Barcode matches existing item"
 msgstr "Mã vạch phù hợp với hàng hóa hiện có"
 
-#: plugin/base/barcodes/api.py:229
-msgid "No match found for provided value"
-msgstr "Không tìm thấy dữ liệu phù hợp với dữ liệu được cung cấp"
+#: plugin/base/barcodes/api.py:302
+msgid "No matching part data found"
+msgstr ""
 
-#: plugin/base/barcodes/api.py:291
-msgid "Invalid purchase order"
-msgstr "Đơn đặt mua không hợp lệ"
+#: plugin/base/barcodes/api.py:319
+msgid "No matching supplier parts found"
+msgstr ""
 
-#: plugin/base/barcodes/api.py:297
-msgid "Invalid stock location"
-msgstr "Vị trí kho không hợp lệ"
+#: plugin/base/barcodes/api.py:324
+msgid "Multiple matching supplier parts found"
+msgstr ""
 
-#: plugin/base/barcodes/api.py:308
+#: plugin/base/barcodes/api.py:349
+msgid "Matched supplier part"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:395
 msgid "Item has already been received"
 msgstr "Hàng hóa này đã được nhận"
 
-#: plugin/base/barcodes/api.py:343
+#: plugin/base/barcodes/api.py:430
 msgid "No match for supplier barcode"
 msgstr "Không phù hợp với mã vạch nhà cung cấp"
 
@@ -7377,6 +7447,34 @@ msgstr "Buộc phải nhập thông tin khác để nhận mục dòng này"
 #: plugin/base/barcodes/mixins.py:480
 msgid "Received purchase order line item"
 msgstr "Mục dòng đơn đặt mua đã nhận"
+
+#: plugin/base/barcodes/serializers.py:21
+msgid "Scanned barcode data"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:81
+msgid "PurchaseOrder to allocate items against"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:88
+msgid "Purchase order is not pending"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:105
+msgid "PurchaseOrder to receive items against"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:112
+msgid "Purchase order has not been placed"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:119
+msgid "Location to receive items into"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:126
+msgid "Cannot select a structural location"
+msgstr ""
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -8024,23 +8122,40 @@ msgstr "Ngày hết hạn"
 msgid "External Location"
 msgstr "Địa điểm bên ngoài"
 
-#: stock/api.py:696
+#: stock/api.py:659
+msgid "Part Tree"
+msgstr ""
+
+#: stock/api.py:688
+msgid "Expiry date before"
+msgstr ""
+
+#: stock/api.py:694
+msgid "Expiry date after"
+msgstr ""
+
+#: stock/api.py:699 stock/templates/stock/item_base.html:439
+#: templates/js/translated/table_filters.js:441
+msgid "Stale"
+msgstr "Ế"
+
+#: stock/api.py:778
 msgid "Quantity is required"
 msgstr "Bắt buộc nhập số lượng"
 
-#: stock/api.py:703
+#: stock/api.py:785
 msgid "Valid part must be supplied"
 msgstr "Phải cung cấp sản phẩm hợp lệ"
 
-#: stock/api.py:731
+#: stock/api.py:813
 msgid "The given supplier part does not exist"
 msgstr "Sản phẩm nhà cung cấp đã đưa không tồn tại"
 
-#: stock/api.py:740
+#: stock/api.py:822
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "Sản phẩm nhà cung cấp có kích thước đóng gói được định nghĩa nhưng cờ use_pack_size chưa được thiết lập"
 
-#: stock/api.py:763
+#: stock/api.py:845
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Số sê-ri không thê được cung cấp cho sản phẩm không thể theo dõi"
 
@@ -8709,11 +8824,6 @@ msgstr "Đã hết hạn"
 msgid "This StockItem expires on %(item.expiry_date)s"
 msgstr "Mặt hàng này hết hạn vào %(item.expiry_date)s"
 
-#: stock/templates/stock/item_base.html:439
-#: templates/js/translated/table_filters.js:441
-msgid "Stale"
-msgstr "Ế"
-
 #: stock/templates/stock/item_base.html:455
 msgid "No stocktake performed"
 msgstr "Chưa thực hiện kiểm kê"
@@ -9287,7 +9397,7 @@ msgid "Project Codes"
 msgstr "Mã dự án"
 
 #: templates/InvenTree/settings/project_codes.html:25
-#: templates/InvenTree/settings/settings_staff_js.html:196
+#: templates/InvenTree/settings/settings_staff_js.html:216
 msgid "New Project Code"
 msgstr "Mã dự án mới"
 
@@ -9328,16 +9438,8 @@ msgstr "Chỉnh sửa cài đặt người dùng"
 msgid "Rate"
 msgstr "Tỷ lệ"
 
-#: templates/InvenTree/settings/settings_staff_js.html:80
-#: templates/InvenTree/settings/user.html:24
-#: templates/js/translated/helpers.js:100
-#: templates/js/translated/pricing.js:628 templates/notes_buttons.html:3
-#: templates/notes_buttons.html:4
-msgid "Edit"
-msgstr "Sửa"
-
 #: templates/InvenTree/settings/settings_staff_js.html:81
-#: templates/js/translated/forms.js:537 templates/js/translated/helpers.js:105
+#: templates/js/translated/forms.js:543 templates/js/translated/helpers.js:105
 #: templates/js/translated/part.js:392 templates/js/translated/pricing.js:629
 #: templates/js/translated/stock.js:245 users/models.py:410
 msgid "Delete"
@@ -9359,68 +9461,73 @@ msgstr "Đơn vị tùy chỉnh mới"
 msgid "No project codes found"
 msgstr "Không tìm thấy mã dự án"
 
-#: templates/InvenTree/settings/settings_staff_js.html:156
-#: templates/InvenTree/settings/settings_staff_js.html:170
+#: templates/InvenTree/settings/settings_staff_js.html:158
+#: templates/js/translated/build.js:2216
+msgid "group"
+msgstr "nhóm"
+
+#: templates/InvenTree/settings/settings_staff_js.html:175
+#: templates/InvenTree/settings/settings_staff_js.html:189
 msgid "Edit Project Code"
 msgstr "Sửa mã dự án"
 
-#: templates/InvenTree/settings/settings_staff_js.html:157
-#: templates/InvenTree/settings/settings_staff_js.html:183
+#: templates/InvenTree/settings/settings_staff_js.html:176
+#: templates/InvenTree/settings/settings_staff_js.html:203
 msgid "Delete Project Code"
 msgstr "Xóa mã dự án"
 
-#: templates/InvenTree/settings/settings_staff_js.html:265
+#: templates/InvenTree/settings/settings_staff_js.html:285
 msgid "No category parameter templates found"
 msgstr "Không tìm thấy mẫu tham số danh mục"
 
-#: templates/InvenTree/settings/settings_staff_js.html:288
+#: templates/InvenTree/settings/settings_staff_js.html:308
 #: templates/js/translated/part.js:1645
 msgid "Edit Template"
 msgstr "Sửa mẫu"
 
-#: templates/InvenTree/settings/settings_staff_js.html:289
+#: templates/InvenTree/settings/settings_staff_js.html:309
 #: templates/js/translated/part.js:1646
 msgid "Delete Template"
 msgstr "Xóa mẫu"
 
-#: templates/InvenTree/settings/settings_staff_js.html:306
+#: templates/InvenTree/settings/settings_staff_js.html:326
 msgid "Edit Category Parameter Template"
 msgstr "Sửa mẫu tham số danh mục"
 
-#: templates/InvenTree/settings/settings_staff_js.html:333
+#: templates/InvenTree/settings/settings_staff_js.html:353
 msgid "Delete Category Parameter Template"
 msgstr "Xóa mẫu tham số danh mục"
 
-#: templates/InvenTree/settings/settings_staff_js.html:368
+#: templates/InvenTree/settings/settings_staff_js.html:388
 msgid "Create Category Parameter Template"
 msgstr "Tạo mẫu tham số danh mục"
 
-#: templates/InvenTree/settings/settings_staff_js.html:398
+#: templates/InvenTree/settings/settings_staff_js.html:418
 msgid "Create Part Parameter Template"
 msgstr "Tạo mẫu tham số sản phẩm"
 
-#: templates/InvenTree/settings/settings_staff_js.html:420
+#: templates/InvenTree/settings/settings_staff_js.html:440
 msgid "No stock location types found"
 msgstr "Không tìm thấy loại vị trí kho"
 
-#: templates/InvenTree/settings/settings_staff_js.html:441
+#: templates/InvenTree/settings/settings_staff_js.html:461
 msgid "Location count"
 msgstr "Đếm vị trí"
 
-#: templates/InvenTree/settings/settings_staff_js.html:446
-#: templates/InvenTree/settings/settings_staff_js.html:460
+#: templates/InvenTree/settings/settings_staff_js.html:466
+#: templates/InvenTree/settings/settings_staff_js.html:480
 msgid "Edit Location Type"
 msgstr "Sửa loại vị trí"
 
-#: templates/InvenTree/settings/settings_staff_js.html:447
+#: templates/InvenTree/settings/settings_staff_js.html:467
 msgid "Delete Location type"
 msgstr "Xóa loại vị trí"
 
-#: templates/InvenTree/settings/settings_staff_js.html:470
+#: templates/InvenTree/settings/settings_staff_js.html:490
 msgid "Delete Location Type"
 msgstr "Xóa loại vị trí"
 
-#: templates/InvenTree/settings/settings_staff_js.html:480
+#: templates/InvenTree/settings/settings_staff_js.html:500
 #: templates/InvenTree/settings/stock.html:35
 msgid "New Location Type"
 msgstr "Loại vị trí mới"
@@ -9443,7 +9550,7 @@ msgid "Home Page"
 msgstr "Trang chủ"
 
 #: templates/InvenTree/settings/sidebar.html:15
-#: templates/js/translated/forms.js:2149 templates/js/translated/tables.js:543
+#: templates/js/translated/forms.js:2155 templates/js/translated/tables.js:543
 #: templates/navbar.html:107 templates/search.html:8
 #: templates/search_form.html:6 templates/search_form.html:7
 msgid "Search"
@@ -9791,7 +9898,7 @@ msgstr "Xác nhận địa chỉ email"
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr "Xin hãy xác nhận rằng <a href=\"mailto:%(email)s\">%(email)s</a> là địa chỉ email cho người dùng %(user_display)s."
 
-#: templates/account/email_confirm.html:21 templates/js/translated/forms.js:764
+#: templates/account/email_confirm.html:21 templates/js/translated/forms.js:770
 msgid "Confirm"
 msgstr "Xác nhận"
 
@@ -10745,7 +10852,7 @@ msgid "No builds matching query"
 msgstr "Không có bản dựng nào phù hợp truy vấn"
 
 #: templates/js/translated/build.js:2105 templates/js/translated/build.js:2470
-#: templates/js/translated/forms.js:2145 templates/js/translated/forms.js:2161
+#: templates/js/translated/forms.js:2151 templates/js/translated/forms.js:2167
 #: templates/js/translated/part.js:2314 templates/js/translated/part.js:2740
 #: templates/js/translated/stock.js:1953 templates/js/translated/stock.js:2681
 msgid "Select"
@@ -10762,10 +10869,6 @@ msgstr "Tiến trình"
 #: templates/js/translated/build.js:2201 templates/js/translated/stock.js:3013
 msgid "No user information"
 msgstr "Không có thông tin người dùng"
-
-#: templates/js/translated/build.js:2216
-msgid "group"
-msgstr "nhóm"
 
 #: templates/js/translated/build.js:2377
 #: templates/js/translated/sales_order.js:1646
@@ -11146,40 +11249,40 @@ msgstr "Hoạt động xóa là không được phép"
 msgid "View operation not allowed"
 msgstr "Hoạt động xem là không được phép"
 
-#: templates/js/translated/forms.js:790
+#: templates/js/translated/forms.js:796
 msgid "Keep this form open"
 msgstr "Giữ biểu mẫu này mở"
 
-#: templates/js/translated/forms.js:893
+#: templates/js/translated/forms.js:899
 msgid "Enter a valid number"
 msgstr "Nhập vào số hợp lệ"
 
-#: templates/js/translated/forms.js:1463 templates/modals.html:19
+#: templates/js/translated/forms.js:1469 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr "Lỗi biểu mẫu tồn tại"
 
-#: templates/js/translated/forms.js:1961
+#: templates/js/translated/forms.js:1967
 msgid "No results found"
 msgstr "Không tìm thấy kết quả"
 
-#: templates/js/translated/forms.js:2265 templates/js/translated/search.js:239
+#: templates/js/translated/forms.js:2271 templates/js/translated/search.js:239
 msgid "Searching"
 msgstr "Đang tìm kiếm"
 
-#: templates/js/translated/forms.js:2479
+#: templates/js/translated/forms.js:2485
 msgid "Clear input"
 msgstr "Dọn dẹp đầu vào"
 
-#: templates/js/translated/forms.js:3065
+#: templates/js/translated/forms.js:3071
 msgid "File Column"
 msgstr "Cột tệp tin"
 
-#: templates/js/translated/forms.js:3065
+#: templates/js/translated/forms.js:3071
 msgid "Field Name"
 msgstr "Tên trường"
 
-#: templates/js/translated/forms.js:3077
+#: templates/js/translated/forms.js:3083
 msgid "Select Columns"
 msgstr "Chọn cột"
 
