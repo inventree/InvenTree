@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ApiPaths } from '../enums/ApiEndpoints';

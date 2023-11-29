@@ -9,11 +9,11 @@ import {
   IconPackage,
   IconPhone
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ApiPaths } from '../enums/ApiEndpoints';
-import { openCreateApiForm, openEditApiForm } from '../functions/forms';
+import { openEditApiForm } from '../functions/forms';
 
 /**
  * Field set for SupplierPart instance

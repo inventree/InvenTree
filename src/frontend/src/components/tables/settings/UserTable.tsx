@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 
