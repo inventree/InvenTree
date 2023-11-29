@@ -112,9 +112,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
               pk: record.pk,
               title: t`Delete Related Part`,
               successMessage: t`Related part deleted`,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this relationship?`}</Text>
-              ),
+              preFormWarning: t`Are you sure you want to remove this relationship?`,
               onFormSuccess: table.refreshTable
             });
           }

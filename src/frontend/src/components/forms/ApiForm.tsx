@@ -70,6 +70,8 @@ export interface ApiFormProps {
   fetchInitialData?: boolean;
   ignorePermissionCheck?: boolean;
   preFormContent?: JSX.Element;
+  preFormWarning?: string;
+  preFormSuccess?: string;
   postFormContent?: JSX.Element;
   successMessage?: string;
   onFormSuccess?: (data: any) => void;
@@ -287,7 +289,10 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
 
             // Optionally show a success message
             if (props.successMessage) {
+              notifications.hide('form-success');
+
               notifications.show({
+                id: 'form-success',
                 title: t`Success`,
                 message: props.successMessage,
                 color: 'green'
@@ -371,6 +376,16 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
           </Alert>
         )}
         {props.preFormContent}
+        {props.preFormSuccess && (
+          <Alert color="green" radius="sm">
+            {props.preFormSuccess}
+          </Alert>
+        )}
+        {props.preFormWarning && (
+          <Alert color="orange" radius="sm">
+            {props.preFormWarning}
+          </Alert>
+        )}
         <Stack spacing="xs">
           {Object.entries(props.fields ?? {}).map(([fieldName, field]) => (
             <ApiFormField

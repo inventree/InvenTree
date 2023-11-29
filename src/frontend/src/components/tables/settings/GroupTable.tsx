@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -55,9 +54,7 @@ export function GroupTable() {
             title: t`Delete group`,
             successMessage: t`Group deleted`,
             onFormSuccess: table.refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to delete this group?`}</Text>
-            )
+            preFormWarning: t`Are you sure you want to delete this group?`
           });
         }
       })
