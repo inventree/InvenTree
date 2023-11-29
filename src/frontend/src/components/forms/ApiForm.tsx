@@ -60,7 +60,7 @@ export interface ApiFormAction {
  * @param onFormError : A callback function to call when the form is submitted with errors.
  */
 export interface ApiFormProps {
-  url: ApiPaths;
+  url: ApiPaths | string;
   pk?: number | string | undefined;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
