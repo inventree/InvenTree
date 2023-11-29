@@ -9,6 +9,7 @@ export interface HostList {
 
 // Type interface fully defining the current user
 export interface UserProps {
+  pk: number;
   username: string;
   first_name: string;
   last_name: string;
@@ -86,4 +87,7 @@ export type ErrorResponse = {
   status: number;
   statusText: string;
   message?: string;
+};
+export type SettingsLookup = {
+  [key: string]: string;
 };

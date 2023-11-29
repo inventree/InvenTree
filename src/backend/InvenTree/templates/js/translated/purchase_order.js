@@ -139,6 +139,9 @@ function purchaseOrderFields(options={}) {
         },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         },
     };
 
@@ -883,15 +886,23 @@ function orderParts(parts_list, options={}) {
                 // Request 'requirements' information for each part
                 inventreeGet(`{% url "api-part-list" %}${part.pk}/requirements/`, {}, {
                     success: function(response) {
-                        var required = response.required || 0;
-                        var allocated = response.allocated || 0;
-                        var available = response.available_stock || 0;
+                        let required = response.required || 0;
+                        let allocated = response.allocated || 0;
+                        let available = response.available_stock || 0;
+                        let on_order = response.on_order || 0;
 
                         // Based on what we currently 'have' on hand, what do we need to order?
-                        var deficit = Math.max(required - allocated, 0);
+                        let deficit = Math.max(required - allocated, 0);
 
                         if (available < deficit) {
                             var q = deficit - available;
+
+                            // If we have some on order, subtract that from the quantity we need to order
+                            if (on_order > 0) {
+                                q -= on_order;
+                            }
+
+                            q = Math.max(q, 0);
 
                             updateFieldValue(
                                 `quantity_${part.pk}`,

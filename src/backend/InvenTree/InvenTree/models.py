@@ -969,6 +969,22 @@ class InvenTreeBarcodeMixin(models.Model):
             **kwargs
         )
 
+    def format_matched_response(self):
+        """Format a standard response for a matched barcode."""
+
+        data = {
+            'pk': self.pk,
+        }
+
+        if hasattr(self, 'get_api_url'):
+            api_url = self.get_api_url()
+            data['api_url'] = f"{api_url}{self.pk}/"
+
+        if hasattr(self, 'get_absolute_url'):
+            data['web_url'] = self.get_absolute_url()
+
+        return data
+
     @property
     def barcode(self):
         """Format a minimal barcode string (e.g. for label printing)"""

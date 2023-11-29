@@ -1,5 +1,5 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
@@ -59,7 +59,9 @@ export function PageDetail({
             <Space />
             {actions && (
               <Group spacing={5} position="right">
-                {actions}
+                {actions.map((action, idx) => (
+                  <Fragment key={idx}>{action}</Fragment>
+                ))}
               </Group>
             )}
           </Group>

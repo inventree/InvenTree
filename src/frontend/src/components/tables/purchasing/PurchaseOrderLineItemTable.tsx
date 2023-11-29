@@ -4,14 +4,23 @@ import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { ProgressBar } from '../../../components/items/ProgressBar';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
 import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
+import { RenderStockLocation } from '../../render/Stock';
+import {
+  CurrencyColumn,
+  LinkColumn,
+  TargetDateColumn,
+  TotalPriceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowDeleteAction,
@@ -30,26 +39,23 @@ export function PurchaseOrderLineItemTable({
   orderId: number;
   params?: any;
 }) {
-  const { tableKey, refreshTable } = useTableRefresh(
-    'purchase-order-line-item'
-  );
+  const table = useTable('purchase-order-line-item');
 
   const user = useUserState();
 
   const rowActions = useCallback(
     (record: any) => {
-      // TODO: Hide certain actions if user does not have required permissions
-
       let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
       return [
         {
           hidden: received,
-          title: t`Receive`,
-          tooltip: t`Receive line item`,
+          title: t`Receive line item`,
+          icon: <IconSquareArrowRight />,
           color: 'green'
         },
         RowEditAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
           onClick: () => {
             let supplier = record?.supplier_part_detail?.supplier;
 
@@ -58,7 +64,8 @@ export function PurchaseOrderLineItemTable({
             }
 
             let fields = purchaseOrderLineItemFields({
-              supplierId: supplier
+              supplierId: supplier,
+              create: false
             });
 
             openEditApiForm({
@@ -66,13 +73,17 @@ export function PurchaseOrderLineItemTable({
               pk: record.pk,
               title: t`Edit Line Item`,
               fields: fields,
-              onFormSuccess: refreshTable,
+              onFormSuccess: table.refreshTable,
               successMessage: t`Line item updated`
             });
           }
         }),
-        RowDuplicateAction({}),
-        RowDeleteAction({})
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+        })
       ];
     },
     [orderId, user]
@@ -112,8 +123,8 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          let part = record?.part_detail;
           let supplier_part = record?.supplier_part_detail ?? {};
+          let part = record?.part_detail ?? supplier_part?.part_detail ?? {};
           let extra = [];
 
           if (supplier_part.pack_quantity_native != 1) {
@@ -127,8 +138,7 @@ export function PurchaseOrderLineItemTable({
 
             extra.push(
               <Text key="total-quantity">
-                {t`Total Quantity`}: {total}
-                {part.units}
+                {t`Total Quantity`}: {total} {part?.units}
               </Text>
             );
           }
@@ -158,7 +168,6 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'pack_quantity',
         sortable: false,
-
         title: t`Pack Quantity`,
         render: (record: any) => record?.supplier_part_detail?.pack_quantity
       },
@@ -166,7 +175,8 @@ export function PurchaseOrderLineItemTable({
         accessor: 'SKU',
         title: t`Supplier Code`,
         switchable: false,
-        sortable: true
+        sortable: true,
+        render: (record: any) => record?.supplier_part_detail?.SKU
       },
       {
         accessor: 'supplier_link',
@@ -183,43 +193,26 @@ export function PurchaseOrderLineItemTable({
         render: (record: any) =>
           record?.supplier_part_detail?.manufacturer_part_detail?.MPN
       },
-
-      {
+      CurrencyColumn({
         accessor: 'purchase_price',
-        title: t`Unit Price`,
-        sortable: true
-
-        // TODO: custom renderer
-      },
-      {
-        accessor: 'total_price',
-        title: t`Total Price`,
-        sortable: true
-
-        // TODO: custom renderer
-      },
-      {
-        accessor: 'target_date',
-        title: t`Target Date`,
-        sortable: true
-      },
+        title: t`Unit Price`
+      }),
+      TotalPriceColumn(),
+      TargetDateColumn(),
       {
         accessor: 'destination',
         title: t`Destination`,
-        sortable: false
-
-        // TODO: Custom renderer
+        sortable: false,
+        render: (record: any) =>
+          record.destination
+            ? RenderStockLocation({ instance: record.destination_detail })
+            : '-'
       },
       {
         accessor: 'notes',
         title: t`Notes`
       },
-      {
-        accessor: 'link',
-        title: t`Link`
-
-        // TODO: custom renderer
-      }
+      LinkColumn()
     ];
   }, [orderId, user]);
 
@@ -227,28 +220,36 @@ export function PurchaseOrderLineItemTable({
     openCreateApiForm({
       url: ApiPaths.purchase_order_line_list,
       title: t`Add Line Item`,
-      fields: purchaseOrderLineItemFields({}),
-      onFormSuccess: refreshTable,
+      fields: purchaseOrderLineItemFields({
+        create: true,
+        orderId: orderId
+      }),
+      onFormSuccess: table.refreshTable,
       successMessage: t`Line item added`
     });
-  }, []);
+  }, [orderId]);
 
   // Custom table actions
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-line-item"
         tooltip={t`Add line item`}
         onClick={addLine}
-        hidden={!user?.checkUserRole('purchaseorder', 'add')}
+        hidden={!user?.hasAddRole(UserRoles.purchase_order)}
       />,
-      <ActionButton text={t`Receive items`} icon={<IconSquareArrowRight />} />
+      <ActionButton
+        key="receive-items"
+        text={t`Receive items`}
+        icon={<IconSquareArrowRight />}
+      />
     ];
   }, [orderId, user]);
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.purchase_order_line_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableSelection: true,

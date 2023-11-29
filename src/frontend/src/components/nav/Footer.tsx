@@ -2,7 +2,7 @@ import { Anchor, Container, Group } from '@mantine/core';
 
 import { footerLinks } from '../../defaults/links';
 import { InvenTreeStyle } from '../../globalStyle';
-import { InvenTreeLogo } from '../items/InvenTreeLogo';
+import { InvenTreeLogoHomeButton } from '../items/InvenTreeLogo';
 
 export function Footer() {
   const { classes } = InvenTreeStyle();
@@ -21,7 +21,7 @@ export function Footer() {
   return (
     <div className={classes.layoutFooter}>
       <Container className={classes.layoutFooterInner} size={'100%'}>
-        <InvenTreeLogo />
+        <InvenTreeLogoHomeButton />
         <Group className={classes.layoutFooterLinks}>{items}</Group>
       </Container>
     </div>

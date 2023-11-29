@@ -2,8 +2,9 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
@@ -21,7 +22,7 @@ export function UsedInTable({
 }) {
   const navigate = useNavigate();
 
-  const { tableKey } = useTableRefresh('usedin');
+  const table = useTable('usedin');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -85,7 +86,7 @@ export function UsedInTable({
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.bom_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {

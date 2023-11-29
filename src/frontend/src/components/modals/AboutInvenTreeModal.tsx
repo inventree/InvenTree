@@ -4,7 +4,8 @@ import { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
-import { ApiPaths, apiUrl, useServerApiState } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../items/CopyButton';

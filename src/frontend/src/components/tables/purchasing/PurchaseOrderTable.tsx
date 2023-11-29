@@ -2,11 +2,21 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
-import { ModelType } from '../../render/ModelType';
-import { StatusRenderer } from '../../renderers/StatusRenderer';
+import {
+  CreationDateColumn,
+  DescriptionColumn,
+  LineItemsProgressColumn,
+  ProjectCodeColumn,
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn,
+  TotalPriceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -15,7 +25,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function PurchaseOrderTable({ params }: { params?: any }) {
   const navigate = useNavigate();
 
-  const { tableKey } = useTableRefresh('purchase-order');
+  const table = useTable('purchase-order');
 
   // TODO: Custom filters
 
@@ -30,11 +40,9 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         title: t`Reference`,
         sortable: true,
         switchable: false
+        // TODO: Display extra information if order is overdue
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn(),
       {
         accessor: 'supplier__name',
         title: t`Supplier`,
@@ -55,61 +63,20 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         accessor: 'supplier_reference',
         title: t`Supplier Reference`
       },
-      {
-        accessor: 'project_code',
-        title: t`Project Code`
-
-        // TODO: Custom project code formatter
-      },
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-
-        render: (record: any) =>
-          StatusRenderer({
-            status: record.status,
-            type: ModelType.purchaseorder
-          })
-      },
-      {
-        accessor: 'creation_date',
-        title: t`Created`
-
-        // TODO: Custom date formatter
-      },
-      {
-        accessor: 'target_date',
-        title: t`Target Date`
-
-        // TODO: Custom date formatter
-      },
-      {
-        accessor: 'line_items',
-        title: t`Line Items`,
-        sortable: true
-      },
-      {
-        accessor: 'total_price',
-        title: t`Total Price`,
-        sortable: true
-
-        // TODO: Custom money formatter
-      },
-      {
-        accessor: 'responsible',
-        title: t`Responsible`,
-        sortable: true
-
-        // TODO: custom 'owner' formatter
-      }
+      LineItemsProgressColumn(),
+      StatusColumn(ModelType.purchaseorder),
+      ProjectCodeColumn(),
+      CreationDateColumn(),
+      TargetDateColumn(),
+      TotalPriceColumn(),
+      ResponsibleColumn()
     ];
   }, []);
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.purchase_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {

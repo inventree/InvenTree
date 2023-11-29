@@ -27,15 +27,19 @@ import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { PanelType } from '../../components/nav/PanelGroup';
+import { AddressTable } from '../../components/tables/company/AddressTable';
+import { ContactTable } from '../../components/tables/company/ContactTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
 import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { UserRoles } from '../../enums/Roles';
 import { editCompany } from '../../forms/CompanyForms';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 
 export type CompanyDetailProps = {
@@ -126,12 +130,14 @@ export default function CompanyDetail(props: CompanyDetailProps) {
       {
         name: 'contacts',
         label: t`Contacts`,
-        icon: <IconUsersGroup />
+        icon: <IconUsersGroup />,
+        content: company?.pk && <ContactTable companyId={company.pk} />
       },
       {
         name: 'addresses',
         label: t`Addresses`,
-        icon: <IconMap2 />
+        icon: <IconMap2 />,
+        content: company?.pk && <AddressTable companyId={company.pk} />
       },
       {
         name: 'attachments',
@@ -161,10 +167,6 @@ export default function CompanyDetail(props: CompanyDetailProps) {
   }, [id, company]);
 
   const companyActions = useMemo(() => {
-    // TODO: Finer fidelity on these permissions, perhaps?
-    let canEdit = user.checkUserRole('purchase_order', 'change');
-    let canDelete = user.checkUserRole('purchase_order', 'delete');
-
     return [
       <ActionDropdown
         key="company"
@@ -172,7 +174,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon={<IconDots />}
         actions={[
           EditItemAction({
-            disabled: !canEdit,
+            disabled: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => {
               if (company?.pk) {
                 editCompany({
@@ -183,7 +185,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
             }
           }),
           DeleteItemAction({
-            disabled: !canDelete
+            disabled: !user.hasDeleteRole(UserRoles.purchase_order)
           })
         ]}
       />

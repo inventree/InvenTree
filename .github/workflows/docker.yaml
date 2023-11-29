@@ -22,15 +22,38 @@ on:
   push:
     branches:
       - 'master'
-  # pull_request:
-  #   branches:
-  #     - 'master'
+  pull_request:
+    branches:
+      - 'master'
 
 jobs:
+
+  paths-filter:
+    name: Filter
+    runs-on: ubuntu-latest
+
+    outputs:
+      docker: ${{ steps.filter.outputs.docker }}
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # pin@v2.11.1
+        id: filter
+        with:
+          filters: |
+            docker:
+              - .github/workflows/docker.yaml
+              - docker/**
+              - docker-compose.yml
+              - docker.dev.env
+              - Dockerfile
+
 
   # Build the docker image
   build:
     runs-on: ubuntu-latest
+    needs: paths-filter
+    if: needs.paths-filter.outputs.docker == 'true' || github.event_name == 'release' || github.event_name == 'push'
     permissions:
       contents: read
       packages: write
@@ -61,7 +84,6 @@ jobs:
           docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke update
           docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke setup-dev
           docker-compose --project-directory . -f contrib/container/docker-compose.yml up -d
-          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server pip install setuptools==68.1.2
           docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke wait
       - name: Check Data Directory
         # The following file structure should have been created by the docker image

@@ -51,6 +51,7 @@ import InvenTree.tasks
 import InvenTree.validators
 import order.validators
 import report.helpers
+import users.models
 from plugin import registry
 
 logger = logging.getLogger('inventree')
@@ -124,6 +125,15 @@ class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
         blank=True,
         verbose_name=_('Description'),
         help_text=_('Project description'),
+    )
+
+    responsible = models.ForeignKey(
+        users.models.Owner,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Responsible'),
+        help_text=_('User or group responsible for this project'),
+        related_name='project_codes',
     )
 
 
@@ -1874,6 +1884,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ]
         },
 
+        'DISPLAY_FULL_NAMES': {
+            'name': _('Display Users full names'),
+            'description': _('Display Users full names instead of usernames'),
+            'default': False,
+            'validator': bool
+        }
     }
 
     typ = 'inventree'
@@ -2260,7 +2276,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
         'TABLE_STRING_MAX_LENGTH': {
             'name': _('Table String Length'),
-            'description': _('Maximimum length limit for strings displayed in table views'),
+            'description': _('Maximum length limit for strings displayed in table views'),
             'validator': [
                 int,
                 MinValueValidator(0),

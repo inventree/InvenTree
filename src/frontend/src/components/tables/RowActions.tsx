@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Tooltip } from '@mantine/core';
-import { Menu, Text } from '@mantine/core';
-import { IconDots } from '@tabler/icons-react';
+import { ActionIcon, Group, Tooltip } from '@mantine/core';
+import { Menu } from '@mantine/core';
+import { IconCopy, IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
@@ -10,8 +10,8 @@ import { notYetImplemented } from '../../functions/notifications';
 export type RowAction = {
   title: string;
   color?: string;
+  icon: ReactNode;
   onClick?: () => void;
-  tooltip?: string;
   hidden?: boolean;
 };
 
@@ -27,6 +27,7 @@ export function RowDuplicateAction({
     title: t`Duplicate`,
     color: 'green',
     onClick: onClick,
+    icon: <IconCopy />,
     hidden: hidden
   };
 }
@@ -43,6 +44,7 @@ export function RowEditAction({
     title: t`Edit`,
     color: 'blue',
     onClick: onClick,
+    icon: <IconEdit />,
     hidden: hidden
   };
 }
@@ -59,6 +61,7 @@ export function RowDeleteAction({
     title: t`Delete`,
     color: 'red',
     onClick: onClick,
+    icon: <IconTrash />,
     hidden: hidden
   };
 }
@@ -82,7 +85,7 @@ export function RowActions({
     event?.preventDefault();
     event?.stopPropagation();
     event?.nativeEvent?.stopImmediatePropagation();
-    setOpened(true);
+    setOpened(!opened);
   }
 
   const [opened, setOpened] = useState(false);
@@ -91,16 +94,50 @@ export function RowActions({
     return actions.filter((action) => !action.hidden);
   }, [actions]);
 
+  // Render a single action icon
+  function RowActionIcon(action: RowAction) {
+    return (
+      <Tooltip withinPortal={true} label={action.title} key={action.title}>
+        <ActionIcon
+          color={action.color}
+          size={20}
+          onClick={(event) => {
+            // Prevent clicking on the action from selecting the row itself
+            event?.preventDefault();
+            event?.stopPropagation();
+            event?.nativeEvent?.stopImmediatePropagation();
+
+            if (action.onClick) {
+              action.onClick();
+            } else {
+              notYetImplemented();
+            }
+
+            setOpened(false);
+          }}
+        >
+          {action.icon}
+        </ActionIcon>
+      </Tooltip>
+    );
+  }
+
+  // If only a single action is available, display that
+  if (visibleActions.length == 1) {
+    return <RowActionIcon {...visibleActions[0]} />;
+  }
+
   return (
     visibleActions.length > 0 && (
       <Menu
         withinPortal={true}
         disabled={disabled}
+        position="left"
         opened={opened}
         onChange={setOpened}
       >
         <Menu.Target>
-          <Tooltip label={title || t`Actions`}>
+          <Tooltip withinPortal={true} label={title || t`Actions`}>
             <ActionIcon
               onClick={openMenu}
               disabled={disabled}
@@ -112,28 +149,11 @@ export function RowActions({
           </Tooltip>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Label>{title || t`Actions`}</Menu.Label>
-          {visibleActions.map((action, idx) => (
-            <Menu.Item
-              key={idx}
-              onClick={(event) => {
-                // Prevent clicking on the action from selecting the row itself
-                event?.preventDefault();
-                event?.stopPropagation();
-                event?.nativeEvent?.stopImmediatePropagation();
-                if (action.onClick) {
-                  action.onClick();
-                } else {
-                  notYetImplemented();
-                }
-              }}
-              title={action.tooltip || action.title}
-            >
-              <Text size="xs" color={action.color}>
-                {action.title}
-              </Text>
-            </Menu.Item>
-          ))}
+          <Group position="right" spacing="xs" p={8}>
+            {visibleActions.map((action) => (
+              <RowActionIcon key={action.title} {...action} />
+            ))}
+          </Group>
         </Menu.Dropdown>
       </Menu>
     )

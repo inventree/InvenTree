@@ -1,16 +1,19 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import {
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
+import { DescriptionColumn, ResponsibleColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -18,7 +21,9 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
  * Table for displaying list of project codes
  */
 export function ProjectCodeTable() {
-  const { tableKey, refreshTable } = useTableRefresh('project-code');
+  const table = useTable('project-codes');
+
+  const user = useUserState();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -27,47 +32,48 @@ export function ProjectCodeTable() {
         sortable: true,
         title: t`Project Code`
       },
-      {
-        accessor: 'description',
-        sortable: false,
-        title: t`Description`
-      }
+      DescriptionColumn(),
+      ResponsibleColumn()
     ];
   }, []);
 
-  const rowActions = useCallback((record: any): RowAction[] => {
-    return [
-      RowEditAction({
-        onClick: () => {
-          openEditApiForm({
-            url: ApiPaths.project_code_list,
-            pk: record.pk,
-            title: t`Edit project code`,
-            fields: {
-              code: {},
-              description: {}
-            },
-            onFormSuccess: refreshTable,
-            successMessage: t`Project code updated`
-          });
-        }
-      }),
-      RowDeleteAction({
-        onClick: () => {
-          openDeleteApiForm({
-            url: ApiPaths.project_code_list,
-            pk: record.pk,
-            title: t`Delete project code`,
-            successMessage: t`Project code deleted`,
-            onFormSuccess: refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to remove this project code?`}</Text>
-            )
-          });
-        }
-      })
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.admin),
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.project_code_list,
+              pk: record.pk,
+              title: t`Edit project code`,
+              fields: {
+                code: {},
+                description: {},
+                responsible: {}
+              },
+              onFormSuccess: table.refreshTable,
+              successMessage: t`Project code updated`
+            });
+          }
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.admin),
+          onClick: () => {
+            openDeleteApiForm({
+              url: ApiPaths.project_code_list,
+              pk: record.pk,
+              title: t`Delete project code`,
+              successMessage: t`Project code deleted`,
+              onFormSuccess: table.refreshTable,
+              preFormWarning: t`Are you sure you want to remove this project code?`
+            });
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   const addProjectCode = useCallback(() => {
     openCreateApiForm({
@@ -75,9 +81,10 @@ export function ProjectCodeTable() {
       title: t`Add project code`,
       fields: {
         code: {},
-        description: {}
+        description: {},
+        responsible: {}
       },
-      onFormSuccess: refreshTable,
+      onFormSuccess: table.refreshTable,
       successMessage: t`Added project code`
     });
   }, []);
@@ -95,7 +102,7 @@ export function ProjectCodeTable() {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.project_code_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
         rowActions: rowActions,

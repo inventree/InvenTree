@@ -10,10 +10,10 @@ from pathlib import Path
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import OperationalError
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
-from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
-                             isPluginRegistryLoaded)
+from InvenTree.ready import (canAppAccessDatabase, isImportingData,
+                             isInMainThread, isPluginRegistryLoaded)
 
 logger = logging.getLogger("inventree")
 
@@ -40,11 +40,10 @@ class LabelConfig(AppConfig):
         if not isPluginRegistryLoaded() or not isInMainThread():
             return
 
-        if canAppAccessDatabase(allow_test=False):
-
+        if canAppAccessDatabase(allow_test=False) and not isImportingData():
             try:
                 self.create_labels()  # pragma: no cover
-            except (AppRegistryNotReady, OperationalError):
+            except (AppRegistryNotReady, IntegrityError, OperationalError, ProgrammingError):
                 # Database might not yet be ready
                 warnings.warn('Database was not ready for creating labels', stacklevel=2)
 

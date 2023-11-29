@@ -137,6 +137,11 @@ function printLabels(options) {
 
         // update form
         updateForm(formOptions);
+
+        // workaround to fix a bug where one cannot scroll after changing the plugin
+        // without opening and closing the select box again manually
+        $("#id__plugin").select2("open");
+        $("#id__plugin").select2("close");
     }
 
     const printingFormOptions = {

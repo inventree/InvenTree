@@ -9,55 +9,76 @@ import {
   IconPackage,
   IconPhone
 } from '@tabler/icons-react';
+import { useEffect, useMemo, useState } from 'react';
 
-import {
-  ApiFormData,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../enums/ApiEndpoints';
 import { openEditApiForm } from '../functions/forms';
-import { ApiPaths } from '../states/ApiState';
 
 /**
  * Field set for SupplierPart instance
  */
-export function supplierPartFields(): ApiFormFieldSet {
-  return {
-    part: {
-      filters: {
-        purchaseable: true
-      }
-    },
-    manufacturer_part: {
-      filters: {
-        part_detail: true,
-        manufacturer_detail: true
-      },
-      adjustFilters: (filters: any, form: ApiFormData) => {
-        let part = form.values.part;
+export function useSupplierPartFields({
+  partPk,
+  supplierPk,
+  hidePart
+}: {
+  partPk?: number;
+  supplierPk?: number;
+  hidePart?: boolean;
+}) {
+  const [part, setPart] = useState<number | undefined>(partPk);
 
-        if (part) {
-          filters.part = part;
+  useEffect(() => {
+    setPart(partPk);
+  }, [partPk]);
+
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      part: {
+        hidden: hidePart,
+        value: part,
+        onValueChange: setPart,
+        filters: {
+          purchaseable: true
         }
+      },
+      manufacturer_part: {
+        filters: {
+          part_detail: true,
+          manufacturer_detail: true
+        },
+        adjustFilters: (filters: any) => {
+          if (part) {
+            filters.part = part;
+          }
 
-        return filters;
+          return filters;
+        }
+      },
+      supplier: {},
+      SKU: {
+        icon: <IconHash />
+      },
+      description: {},
+      link: {
+        icon: <IconLink />
+      },
+      note: {
+        icon: <IconNote />
+      },
+      pack_quantity: {},
+      packaging: {
+        icon: <IconPackage />
       }
-    },
-    supplier: {},
-    SKU: {
-      icon: <IconHash />
-    },
-    description: {},
-    link: {
-      icon: <IconLink />
-    },
-    note: {
-      icon: <IconNote />
-    },
-    pack_quantity: {},
-    packaging: {
-      icon: <IconPackage />
+    };
+
+    if (supplierPk !== undefined) {
+      fields.supplier.value = supplierPk;
     }
-  };
+
+    return fields;
+  }, [part]);
 }
 
 /**
@@ -103,4 +124,35 @@ export function editCompany({
     successMessage: t`Company updated`,
     onFormSuccess: callback
   });
+}
+
+export function contactFields(): ApiFormFieldSet {
+  return {
+    company: {
+      hidden: true
+    },
+    name: {},
+    phone: {},
+    email: {},
+    role: {}
+  };
+}
+
+export function addressFields(): ApiFormFieldSet {
+  return {
+    company: {
+      hidden: true
+    },
+    title: {},
+    primary: {},
+    line1: {},
+    line2: {},
+    postal_code: {},
+    postal_city: {},
+    province: {},
+    country: {},
+    shipping_notes: {},
+    internal_shipping_notes: {},
+    link: {}
+  };
 }

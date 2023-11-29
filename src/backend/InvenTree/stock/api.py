@@ -26,7 +26,7 @@ from generic.states.api import StatusView
 from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
-                               SEARCH_ORDER_FILTER_ALIAS)
+                               SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter)
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
@@ -481,7 +481,7 @@ class StockFilter(rest_filters.FilterSet):
         """Filter by whether or not the stock item is 'allocated'"""
         if str2bool(value):
             # Filter StockItem with either build allocations or sales order allocations
-            return queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
+            return queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False)).distinct()
         # Filter StockItem without build allocations or sales order allocations
         return queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
 
@@ -546,7 +546,8 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q)
-        return queryset.filter(q)
+
+        return queryset.filter(q).distinct()
 
     has_batch = rest_filters.BooleanFilter(label='Has batch code', method='filter_has_batch')
 
@@ -556,7 +557,8 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q)
-        return queryset.filter(q)
+
+        return queryset.filter(q).distinct()
 
     tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
 
@@ -572,7 +574,8 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q_batch & q_serial)
-        return queryset.filter(q_batch & q_serial)
+
+        return queryset.filter(q_batch).filter(q_serial).distinct()
 
     installed = rest_filters.BooleanFilter(label='Installed in other stock item', method='filter_installed')
 
@@ -626,9 +629,91 @@ class StockFilter(rest_filters.FilterSet):
             parent__in=ancestor.get_descendants(include_self=True)
         )
 
+    category = rest_filters.ModelChoiceFilter(
+        label=_('Category'),
+        queryset=PartCategory.objects.all(),
+        method='filter_category'
+    )
+
+    def filter_category(self, queryset, name, category):
+        """Filter based on part category"""
+
+        child_categories = category.get_descendants(include_self=True)
+
+        return queryset.filter(
+            part__category__in=child_categories,
+        )
+
+    bom_item = rest_filters.ModelChoiceFilter(
+        label=_('BOM Item'),
+        queryset=BomItem.objects.all(),
+        method='filter_bom_item'
+    )
+
+    def filter_bom_item(self, queryset, name, bom_item):
+        """Filter based on BOM item"""
+
+        return queryset.filter(bom_item.get_stock_filter())
+
+    part_tree = rest_filters.ModelChoiceFilter(
+        label=_('Part Tree'),
+        queryset=Part.objects.all(),
+        method='filter_part_tree'
+    )
+
+    def filter_part_tree(self, queryset, name, part_tree):
+        """Filter based on part tree"""
+        return queryset.filter(
+            part__tree_id=part_tree.tree_id
+        )
+
+    company = rest_filters.ModelChoiceFilter(
+        label=_('Company'),
+        queryset=Company.objects.all(),
+        method='filter_company'
+    )
+
+    def filter_company(self, queryset, name, company):
+        """Filter by company (either manufacturer or supplier)"""
+        return queryset.filter(
+            Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company)
+        ).distinct()
+
     # Update date filters
-    updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
-    updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
+    updated_before = InvenTreeDateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
+    updated_after = InvenTreeDateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
+
+    # Stock "expiry" filters
+    expiry_date_lte = InvenTreeDateFilter(
+        label=_("Expiry date before"),
+        field_name='expiry_date',
+        lookup_expr='lte',
+    )
+
+    expiry_date_gte = InvenTreeDateFilter(
+        label=_('Expiry date after'),
+        field_name='expiry_date',
+        lookup_expr='gte',
+    )
+
+    stale = rest_filters.BooleanFilter(label=_('Stale'), method='filter_stale')
+
+    def filter_stale(self, queryset, name, value):
+        """Filter by stale stock items."""
+
+        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+
+        if stale_days <= 0:
+            # No filtering, does not make sense
+            return queryset
+
+        stale_date = datetime.now().date() + timedelta(days=stale_days)
+        stale_filter = StockItem.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
+
+        if str2bool(value):
+            return queryset.filter(stale_filter)
+        else:
+            return queryset.exclude(stale_filter)
 
 
 class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
@@ -895,44 +980,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         queryset = super().filter_queryset(queryset)
 
-        if common.settings.stock_expiry_enabled():
-
-            # Filter by 'expiry date'
-            expired_date_lte = params.get('expiry_date_lte', None)
-            if expired_date_lte is not None:
-                try:
-                    date_lte = datetime.fromisoformat(expired_date_lte)
-                    queryset = queryset.filter(expiry_date__lte=date_lte)
-                except (ValueError, TypeError):
-                    pass
-
-            expiry_date_gte = params.get('expiry_date_gte', None)
-            if expiry_date_gte is not None:
-                try:
-                    date_gte = datetime.fromisoformat(expiry_date_gte)
-                    queryset = queryset.filter(expiry_date__gte=date_gte)
-                except (ValueError, TypeError):
-                    pass
-
-            # Filter by 'stale' status
-            stale = params.get('stale', None)
-
-            if stale is not None:
-                stale = str2bool(stale)
-
-                # How many days to account for "staleness"?
-                stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
-
-                if stale_days > 0:
-                    stale_date = datetime.now().date() + timedelta(days=stale_days)
-
-                    stale_filter = StockItem.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
-
-                    if stale:
-                        queryset = queryset.filter(stale_filter)
-                    else:
-                        queryset = queryset.exclude(stale_filter)
-
         # Exclude stock item tree
         exclude_tree = params.get('exclude_tree', None)
 
@@ -945,18 +992,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                 )
 
             except (ValueError, StockItem.DoesNotExist):
-                pass
-
-        # Filter by "part tree" - only allow parts within a given variant tree
-        part_tree = params.get('part_tree', None)
-
-        if part_tree is not None:
-            try:
-                part = Part.objects.get(pk=part_tree)
-
-                if part.tree_id is not None:
-                    queryset = queryset.filter(part__tree_id=part.tree_id)
-            except Exception:
                 pass
 
         # Exclude StockItems which are already allocated to a particular SalesOrder
@@ -1028,35 +1063,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
                 except (ValueError, StockLocation.DoesNotExist):
                     pass
-
-        # Does the client wish to filter by part category?
-        cat_id = params.get('category', None)
-
-        if cat_id:
-            try:
-                category = PartCategory.objects.get(pk=cat_id)
-                queryset = queryset.filter(part__category__in=category.getUniqueChildren())
-
-            except (ValueError, PartCategory.DoesNotExist):
-                raise ValidationError({"category": "Invalid category id specified"})
-
-        # Does the client wish to filter by BomItem
-        bom_item_id = params.get('bom_item', None)
-
-        if bom_item_id is not None:
-            try:
-                bom_item = BomItem.objects.get(pk=bom_item_id)
-
-                queryset = queryset.filter(bom_item.get_stock_filter())
-
-            except (ValueError, BomItem.DoesNotExist):
-                pass
-
-        # Filter by company (either manufacturer or supplier)
-        company = params.get('company', None)
-
-        if company is not None:
-            queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company))
 
         return queryset
 

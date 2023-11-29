@@ -12,8 +12,8 @@ export const menuItems: MenuLinkItem[] = [
   },
   {
     id: 'profile',
-    text: <Trans>Profile page</Trans>,
-    link: '/profile/user',
+    text: <Trans>Account settings</Trans>,
+    link: '/settings/user',
     doctext: <Trans>User attributes and design settings.</Trans>
   },
   {
@@ -22,6 +22,46 @@ export const menuItems: MenuLinkItem[] = [
     link: '/scan',
     doctext: <Trans>View for interactive scanning and multiple actions.</Trans>,
     highlight: true
+  },
+  {
+    id: 'dashboard',
+    text: <Trans>Dashboard</Trans>,
+    link: '/dashboard'
+  },
+  {
+    id: 'parts',
+    text: <Trans>Parts</Trans>,
+    link: '/part/'
+  },
+  {
+    id: 'stock',
+    text: <Trans>Stock</Trans>,
+    link: '/stock'
+  },
+  {
+    id: 'build',
+    text: <Trans>Build</Trans>,
+    link: '/build/'
+  },
+  {
+    id: 'purchasing',
+    text: <Trans>Purchasing</Trans>,
+    link: '/purchasing/'
+  },
+  {
+    id: 'sales',
+    text: <Trans>Sales</Trans>,
+    link: '/sales/'
+  },
+  {
+    id: 'settings-system',
+    text: <Trans>System Settings</Trans>,
+    link: '/settings/system'
+  },
+  {
+    id: 'settings-admin',
+    text: <Trans>Admin Center</Trans>,
+    link: '/settings/admin'
   }
 ];
 

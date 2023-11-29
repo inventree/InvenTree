@@ -4,7 +4,8 @@ import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
 import { api } from '../App';
-import { ApiPaths, apiUrl, useServerApiState } from '../states/ApiState';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
 import {

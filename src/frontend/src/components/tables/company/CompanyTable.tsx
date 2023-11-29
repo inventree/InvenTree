@@ -3,9 +3,11 @@ import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -19,7 +21,7 @@ export function CompanyTable({
   params?: any;
   path?: string;
 }) {
-  const { tableKey } = useTableRefresh('company');
+  const table = useTable('company');
 
   const navigate = useNavigate();
 
@@ -42,11 +44,7 @@ export function CompanyTable({
           );
         }
       },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        sortable: false
-      },
+      DescriptionColumn(),
       {
         accessor: 'website',
         title: t`Website`,
@@ -58,7 +56,7 @@ export function CompanyTable({
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.company_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
         params: {

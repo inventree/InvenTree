@@ -14,12 +14,12 @@ export function SettingsHeader({
   switch_text,
   switch_link
 }: {
-  title: string;
+  title: string | ReactNode;
   shorthand?: string;
-  subtitle: string | ReactNode;
+  subtitle?: string | ReactNode;
   switch_condition?: boolean;
-  switch_text: string | ReactNode;
-  switch_link: string;
+  switch_text?: string | ReactNode;
+  switch_link?: string;
 }) {
   return (
     <Stack spacing="0" ml={'sm'}>
@@ -29,7 +29,7 @@ export function SettingsHeader({
       </Group>
       <Group>
         <Text c="dimmed">{subtitle}</Text>
-        {switch_condition && (
+        {switch_text && switch_link && switch_condition && (
           <Anchor component={Link} to={switch_link}>
             <IconSwitch size={14} />
             {switch_text}

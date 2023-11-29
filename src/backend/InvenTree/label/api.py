@@ -18,7 +18,8 @@ import label.models
 import label.serializers
 from InvenTree.api import MetadataView
 from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateDestroyAPI)
 from part.models import Part
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
@@ -65,7 +66,7 @@ class LabelFilterMixin:
         return self.ITEM_MODEL.objects.filter(pk__in=valid_ids)
 
 
-class LabelListView(LabelFilterMixin, ListAPI):
+class LabelListView(LabelFilterMixin, ListCreateAPI):
     """Generic API class for label templates."""
 
     def filter_queryset(self, queryset):
@@ -159,7 +160,8 @@ class LabelPrintMixin(LabelFilterMixin):
         # Check the request to determine if the user has selected a label printing plugin
         plugin = self.get_plugin(self.request)
 
-        serializer = plugin.get_printing_options_serializer(self.request)
+        kwargs.setdefault('context', self.get_serializer_context())
+        serializer = plugin.get_printing_options_serializer(self.request, *args, **kwargs)
 
         # if no serializer is defined, return an empty serializer
         if not serializer:
@@ -221,8 +223,12 @@ class LabelPrintMixin(LabelFilterMixin):
         # Label template
         label = self.get_object()
 
+        # Check the label dimensions
+        if label.width <= 0 or label.height <= 0:
+            raise ValidationError('Label has invalid dimensions')
+
         # if the plugin returns a serializer, validate the data
-        if serializer := plugin.get_printing_options_serializer(request, data=request.data):
+        if serializer := plugin.get_printing_options_serializer(request, data=request.data, context=self.get_serializer_context()):
             serializer.is_valid(raise_exception=True)
 
         # At this point, we offload the label(s) to the selected plugin.

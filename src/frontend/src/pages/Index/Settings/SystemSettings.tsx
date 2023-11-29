@@ -25,6 +25,7 @@ import { StylishText } from '../../../components/items/StylishText';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
+import { PartParameterTemplateTable } from '../../../components/tables/part/PartParameterTemplateTable';
 import { CurrencyTable } from '../../../components/tables/settings/CurrencyTable';
 import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
 import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
@@ -48,6 +49,7 @@ export default function SystemSettings() {
               'INVENTREE_INSTANCE',
               'INVENTREE_INSTANCE_TITLE',
               'INVENTREE_RESTRICT_ABOUT',
+              'DISPLAY_FULL_NAMES',
               'INVENTREE_UPDATE_CHECK_INTERVAL',
               'INVENTREE_DOWNLOAD_FROM_URL',
               'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
@@ -220,7 +222,8 @@ export default function SystemSettings() {
       {
         name: 'parameters',
         label: t`Part Parameters`,
-        icon: <IconList />
+        icon: <IconList />,
+        content: <PartParameterTemplateTable />
       },
       {
         name: 'stock',
@@ -290,8 +293,8 @@ export default function SystemSettings() {
     <>
       <Stack spacing="xs">
         <SettingsHeader
-          title={server.instance || ''}
-          subtitle={<Trans>System Settings</Trans>}
+          title={t`System Settings`}
+          subtitle={server.instance || ''}
           switch_link="/settings/user"
           switch_text={<Trans>Switch to User Setting</Trans>}
         />

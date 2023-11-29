@@ -1,5 +1,6 @@
 """Unit tests for the various part API endpoints"""
 
+from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
 from random import randint
@@ -1125,6 +1126,52 @@ class PartAPITest(PartAPITestBase):
                 if part.category:
                     self.assertEqual(part.category.name, row['Category Name'])
 
+    def test_date_filters(self):
+        """Test that the creation date filters work correctly"""
+
+        url = reverse('api-part-list')
+
+        response = self.get(url)
+
+        n = len(response.data)
+
+        date_compare = datetime.fromisoformat('2019-01-01')
+
+        # Filter by creation date
+        response = self.get(
+            url,
+            {
+                'created_before': '2019-01-01',
+            },
+            expected_code=200
+        )
+
+        self.assertTrue(len(response.data) < n)
+        self.assertTrue(len(response.data) > 0)
+
+        for item in response.data:
+            self.assertIsNotNone(item['creation_date'])
+
+            date = datetime.fromisoformat(item['creation_date'])
+            self.assertLessEqual(date, date_compare)
+
+        response = self.get(
+            url,
+            {
+                'created_after': '2019-01-01',
+            },
+            expected_code=200
+        )
+
+        self.assertTrue(len(response.data) < n)
+        self.assertTrue(len(response.data) > 0)
+
+        for item in response.data:
+            self.assertIsNotNone(item['creation_date'])
+
+            date = datetime.fromisoformat(item['creation_date'])
+            self.assertGreaterEqual(date, date_compare)
+
 
 class PartCreationTests(PartAPITestBase):
     """Tests for creating new Part instances via the API"""
@@ -2196,6 +2243,13 @@ class BomItemTest(InvenTreeAPITestCase):
         'part.delete',
     ]
 
+    def setUp(self):
+        """Set up the test case"""
+        super().setUp()
+
+        # Rebuild part tree so BOM items validate correctly
+        Part.objects.rebuild()
+
     def test_bom_list(self):
         """Tests for the BomItem list endpoint."""
         # How many BOM items currently exist in the database?
@@ -2357,6 +2411,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_get_bom_detail(self):
         """Get the detail view for a single BomItem object."""
+
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
 
         response = self.get(url, expected_code=200)
@@ -3031,6 +3086,11 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
         'part.change',
         'part_category.change',
     ]
+
+    def setUp(self):
+        """Setup unit tets"""
+        super().setUp()
+        Part.objects.rebuild()
 
     def metatester(self, apikey, model):
         """Generic tester"""

@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro';
 import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { ReactNode } from 'react';
@@ -21,8 +22,12 @@ export function TableHoverCard({
     return value;
   }
 
+  if (Array.isArray(extra) && extra.length == 0) {
+    return value;
+  }
+
   return (
-    <HoverCard>
+    <HoverCard withinPortal={true}>
       <HoverCard.Target>
         <Group spacing="xs" position="apart" noWrap={true}>
           {value}
@@ -40,5 +45,24 @@ export function TableHoverCard({
         </Stack>
       </HoverCard.Dropdown>
     </HoverCard>
+  );
+}
+
+/**
+ * Custom hovercard for displaying projectcode detail in a table
+ */
+export function ProjectCodeHoverCard({ projectCode }: { projectCode: any }) {
+  return projectCode ? (
+    <TableHoverCard
+      value={projectCode?.code}
+      title={t`Project Code`}
+      extra={
+        projectCode && (
+          <Text key="project-code">{projectCode?.description}</Text>
+        )
+      }
+    />
+  ) : (
+    '-'
   );
 }

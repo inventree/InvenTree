@@ -5,6 +5,7 @@ import {
   IconLogout,
   IconPlugConnected,
   IconSettings,
+  IconUserBolt,
   IconUserCog
 } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
@@ -34,6 +35,15 @@ export function MainMenu() {
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
+        {userState.user?.is_staff && (
+          <Menu.Item
+            icon={<IconUserBolt />}
+            component={Link}
+            to="/settings/admin"
+          >
+            <Trans>Admin Center</Trans>
+          </Menu.Item>
+        )}
         <Menu.Label>
           <Trans>Settings</Trans>
         </Menu.Label>

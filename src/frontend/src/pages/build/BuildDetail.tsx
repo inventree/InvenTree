@@ -14,8 +14,7 @@ import {
   IconPaperclip,
   IconPrinter,
   IconQrcode,
-  IconSitemap,
-  IconTrash
+  IconSitemap
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -31,16 +30,17 @@ import {
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { ModelType } from '../../components/render/ModelType';
-import { StatusRenderer } from '../../components/renderers/StatusRenderer';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { buildOrderFields } from '../../forms/BuildForms';
 import { openEditApiForm } from '../../functions/forms';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 
 /**

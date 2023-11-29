@@ -90,4 +90,5 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
 
         if debug:
             return self.render_to_html(label, request, **kwargs)
+
         return self.render_to_pdf(label, request, **kwargs)

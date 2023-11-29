@@ -127,6 +127,36 @@ def load_config_data(set_cache: bool = False) -> map:
     return data
 
 
+def do_typecast(value, type, var_name=None):
+    """Attempt to typecast a value.
+
+    Arguments:
+        value: Value to typecast
+        type: Function to use for typecasting the value e.g. int, float, str, list, dict
+        var_name: Name that should be logged e.g. 'INVENTREE_STATIC_ROOT'. Set if logging is required.
+
+    Returns:
+        Typecasted value or original value if typecasting failed.
+    """
+    # Force 'list' of strings
+    if type is list:
+        value = to_list(value)
+
+    # Valid JSON string is required
+    elif type is dict:
+        value = to_dict(value)
+
+    elif type is not None:
+        # Try to typecast the value
+        try:
+            val = type(value)
+            return val
+        except Exception as error:
+            if var_name:
+                logger.exception("Failed to typecast '%s' with value '%s' to type '%s' with error %s", var_name, value, type, error)
+    return value
+
+
 def get_setting(env_var=None, config_key=None, default_value=None, typecast=None):
     """Helper function for retrieving a configuration setting value.
 
@@ -138,29 +168,8 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
         env_var: Name of the environment variable e.g. 'INVENTREE_STATIC_ROOT'
         config_key: Key to lookup in the configuration file
         default_value: Value to return if first two options are not provided
-        typecast: Function to use for typecasting the value
+        typecast: Function to use for typecasting the value e.g. int, float, str, list, dict
     """
-    def try_typecasting(value, source: str):
-        """Attempt to typecast the value"""
-        # Force 'list' of strings
-        if typecast is list:
-            value = to_list(value)
-
-        # Valid JSON string is required
-        elif typecast is dict:
-            value = to_dict(value)
-
-        elif typecast is not None:
-            # Try to typecast the value
-            try:
-                val = typecast(value)
-                set_metadata(source)
-                return val
-            except Exception as error:
-                logger.exception("Failed to typecast '%s' with value '%s' to type '%s' with error %s", env_var, value, typecast, error)
-
-        set_metadata(source)
-        return value
 
     def set_metadata(source: str):
         """Set lookup metadata for the setting."""
@@ -172,7 +181,8 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
         val = os.getenv(env_var, None)
 
         if val is not None:
-            return try_typecasting(val, 'env')
+            set_metadata('env')
+            return do_typecast(val, typecast, var_name=env_var)
 
     # Next, try to load from configuration file
     if config_key is not None:
@@ -191,10 +201,12 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
             cfg_data = cfg_data[key]
 
         if result is not None:
-            return try_typecasting(result, 'yaml')
+            set_metadata('yaml')
+            return do_typecast(result, typecast, var_name=env_var)
 
     # Finally, return the default value
-    return try_typecasting(default_value, 'default')
+    set_metadata('default')
+    return do_typecast(default_value, typecast, var_name=env_var)
 
 
 def get_boolean_setting(env_var=None, config_key=None, default_value=False):

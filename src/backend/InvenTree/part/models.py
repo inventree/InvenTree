@@ -27,7 +27,6 @@ from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from jinja2 import Template
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
@@ -40,6 +39,7 @@ import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
+import part.helpers as part_helpers
 import part.settings as part_settings
 import users.models
 from build import models as BuildModels
@@ -483,14 +483,18 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         This will fail if:
 
         a) The parent part is the same as this one
-        b) The parent part is used in the BOM for *this* part
-        c) The parent part is used in the BOM for any child parts under this one
+        b) The parent part exists in the same variant tree as this one
+        c) The parent part is used in the BOM for *this* part
+        d) The parent part is used in the BOM for any child parts under this one
         """
         result = True
 
         try:
             if self.pk == parent.pk:
-                raise ValidationError({'sub_part': _(f"Part '{self}' is  used in BOM for '{parent}' (recursive)")})
+                raise ValidationError({'sub_part': _(f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)")})
+
+            if self.tree_id == parent.tree_id:
+                raise ValidationError({'sub_part': _(f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)")})
 
             bom_items = self.get_bom_items()
 
@@ -688,41 +692,9 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     @property
     def full_name(self):
-        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings.
+        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings"""
 
-        As a failsafe option, the following is done:
-
-        - IPN (if not null)
-        - Part name
-        - Part variant (if not null)
-
-        Elements are joined by the | character
-        """
-        full_name_pattern = InvenTreeSetting.get_setting('PART_NAME_FORMAT')
-
-        try:
-            context = {'part': self}
-            template_string = Template(full_name_pattern)
-            full_name = template_string.render(context)
-
-            return full_name
-
-        except Exception as attr_err:
-
-            logger.warning("exception while trying to create full name for part %s: %s", self.name, attr_err)
-
-            # Fallback to default format
-            elements = []
-
-            if self.IPN:
-                elements.append(self.IPN)
-
-            elements.append(self.name)
-
-            if self.revision:
-                elements.append(self.revision)
-
-            return ' | '.join(elements)
+        return part_helpers.render_part_full_name(self)
 
     def get_absolute_url(self):
         """Return the web URL for viewing this part."""
@@ -2397,6 +2369,7 @@ class PartPricing(common.models.MetaMixin):
     def update_pricing(self, counter: int = 0, cascade: bool = True):
         """Recalculate all cost data for the referenced Part instance"""
         # If importing data, skip pricing update
+
         if InvenTree.ready.isImportingData():
             return
 
@@ -2726,6 +2699,7 @@ class PartPricing(common.models.MetaMixin):
 
         Here we simply take the minimum / maximum values of the other calculated fields.
         """
+
         overall_min = None
         overall_max = None
 
@@ -2786,7 +2760,14 @@ class PartPricing(common.models.MetaMixin):
             if self.internal_cost_max is not None:
                 overall_max = self.internal_cost_max
 
+        if self.override_min is not None:
+            overall_min = self.convert(self.override_min)
+
         self.overall_min = overall_min
+
+        if self.override_max is not None:
+            overall_max = self.convert(self.override_max)
+
         self.overall_max = overall_max
 
     def update_sale_cost(self, save=True):
@@ -2923,6 +2904,18 @@ class PartPricing(common.models.MetaMixin):
         null=True, blank=True,
         verbose_name=_('Maximum Variant Cost'),
         help_text=_('Calculated maximum cost of variant parts'),
+    )
+
+    override_min = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Minimum Cost'),
+        help_text=_('Override minimum cost'),
+    )
+
+    override_max = InvenTree.fields.InvenTreeModelMoneyField(
+        null=True, blank=True,
+        verbose_name=_('Maximum Cost'),
+        help_text=_('Override maximum cost'),
     )
 
     overall_min = InvenTree.fields.InvenTreeModelMoneyField(

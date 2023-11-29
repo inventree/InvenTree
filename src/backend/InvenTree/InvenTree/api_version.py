@@ -2,10 +2,46 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 145
+INVENTREE_API_VERSION = 156
+"""Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
-"""
-Increment this API version number whenever there is a significant change to the API that any clients need to know about
+INVENTREE_API_TEXT = """
+
+v156 -> 2023-11-26 : https://github.com/inventree/InvenTree/pull/5982
+    - Add POST endpoint for report and label creation
+
+v155 -> 2023-11-24 : https://github.com/inventree/InvenTree/pull/5979
+    - Add "creation_date" field to Part instance serializer
+
+v154 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5944
+    - Adds "responsible" field to the ProjectCode table
+
+v153 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5956
+    - Adds override_min and override_max fields to part pricing API
+
+v152 -> 2023-11-20 : https://github.com/inventree/InvenTree/pull/5949
+    - Adds barcode support for manufacturerpart model
+    - Adds API endpoint for adding parts to purchase order using barcode scan
+
+v151 -> 2023-11-13 : https://github.com/inventree/InvenTree/pull/5906
+    - Allow user list API to be filtered by user active status
+    - Allow owner list API to be filtered by user active status
+
+v150 -> 2023-11-07: https://github.com/inventree/InvenTree/pull/5875
+    - Extended user API endpoints to enable ordering
+    - Extended user API endpoints to enable user role changes
+    - Added endpoint to create a new user
+
+v149 -> 2023-11-07 : https://github.com/inventree/InvenTree/pull/5876
+    - Add 'building' quantity to BomItem serializer
+    - Add extra ordering options for the BomItem list API
+
+v148 -> 2023-11-06 : https://github.com/inventree/InvenTree/pull/5872
+    - Allow "quantity" to be specified when installing an item into another item
+
+v147 -> 2023-11-04: https://github.com/inventree/InvenTree/pull/5860
+    - Adds "completed_lines" field to SalesOrder API endpoint
+    - Adds "completed_lines" field to PurchaseOrder API endpoint
 
 v146 -> 2023-11-02: https://github.com/inventree/InvenTree/pull/5822
     - Extended SSO Provider endpoint to contain if a provider is configured
@@ -108,7 +144,7 @@ v117 -> 2023-05-22 : https://github.com/inventree/InvenTree/pull/4854
 v116 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4823
     - Updates to part parameter implementation, to use physical units
 
-v115 - > 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
+v115 -> 2023-05-18 : https://github.com/inventree/InvenTree/pull/4846
     - Adds ability to partially scrap a build output
 
 v114 -> 2023-05-16 : https://github.com/inventree/InvenTree/pull/4825

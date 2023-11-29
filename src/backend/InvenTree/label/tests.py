@@ -106,7 +106,7 @@ class LabelTest(InvenTreeAPITestCase):
         <!-- Test InvenTree URL -->
         url: {{ qr_url|safe }}
         <!-- Test image URL generation -->
-        image: {% part_image part %}
+        image: {% part_image part width=128 %}
         <!-- Test InvenTree logo -->
         logo: {% logo_image %}
         </html>
@@ -154,8 +154,9 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIn(f"part: {part_pk} - {part_name}", content)
         self.assertIn(f'data: {{"part": {part_pk}}}', content)
         self.assertIn(f'http://testserver/part/{part_pk}/', content)
-        self.assertIn("img/blank_image.png", content)
-        self.assertIn("img/inventree.png", content)
+
+        # Check that a encoded image has been generated
+        self.assertIn('data:image/png;charset=utf-8;base64,', content)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""

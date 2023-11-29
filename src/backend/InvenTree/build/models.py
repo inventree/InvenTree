@@ -34,7 +34,7 @@ import InvenTree.ready
 import InvenTree.tasks
 
 import common.models
-from common.notifications import trigger_notification
+from common.notifications import trigger_notification, InvenTreeNotificationBodies
 from plugin.events import trigger_event
 
 import part.models
@@ -605,6 +605,14 @@ class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBar
         self.status = BuildStatus.CANCELLED.value
         self.save()
 
+        # Notify users that the order has been canceled
+        InvenTree.helpers_model.notify_responsible(
+            self,
+            Build,
+            exclude=self.issued_by,
+            content=InvenTreeNotificationBodies.OrderCanceled
+        )
+
         trigger_event('build.cancelled', id=self.pk)
 
     @transaction.atomic
@@ -1004,7 +1012,7 @@ class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBar
             )
 
             # Filter out "serialized" stock items, these cannot be auto-allocated
-            available_stock = available_stock.filter(Q(serial=None) | Q(serial=''))
+            available_stock = available_stock.filter(Q(serial=None) | Q(serial='')).distinct()
 
             if location:
                 # Filter only stock items located "below" the specified location

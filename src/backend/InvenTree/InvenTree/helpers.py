@@ -349,7 +349,7 @@ def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
         object_data['id'] = object_pk
         data[cls_name] = object_data
 
-    return json.dumps(data, sort_keys=True)
+    return str(json.dumps(data, sort_keys=True))
 
 
 def GetExportFormats():

@@ -29,8 +29,8 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializer,
                                    InvenTreeModelSerializer,
                                    InvenTreeMoneySerializer)
 from InvenTree.status_codes import (PurchaseOrderStatusGroups,
-                                    ReturnOrderStatus, SalesOrderStatusGroups,
-                                    StockStatus)
+                                    ReturnOrderLineStatus, ReturnOrderStatus,
+                                    SalesOrderStatusGroups, StockStatus)
 from part.serializers import PartBriefSerializer
 from users.serializers import OwnerSerializer
 
@@ -57,6 +57,9 @@ class AbstractOrderSerializer(serializers.Serializer):
 
     # Number of line items in this order
     line_items = serializers.IntegerField(read_only=True)
+
+    # Number of completed line items (this is an annotated field)
+    completed_lines = serializers.IntegerField(read_only=True)
 
     # Human-readable status text (read-only)
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -107,6 +110,7 @@ class AbstractOrderSerializer(serializers.Serializer):
             'target_date',
             'description',
             'line_items',
+            'completed_lines',
             'link',
             'project_code',
             'project_code_detail',
@@ -210,6 +214,10 @@ class PurchaseOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTre
         - Overdue status of the PurchaseOrder
         """
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        queryset = queryset.annotate(
+            completed_lines=SubqueryCount('lines', filter=Q(quantity__lte=F('received')))
+        )
 
         queryset = queryset.annotate(
             overdue=Case(
@@ -743,9 +751,14 @@ class SalesOrderSerializer(TotalPriceMixin, AbstractOrderSerializer, InvenTreeMo
         """Add extra information to the queryset.
 
         - Number of line items in the SalesOrder
+        - Number of completed line items in the SalesOrder
         - Overdue status of the SalesOrder
         """
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        queryset = queryset.annotate(
+            completed_lines=SubqueryCount('lines', filter=Q(quantity__lte=F('shipped')))
+        )
 
         queryset = queryset.annotate(
             overdue=Case(
@@ -1502,6 +1515,10 @@ class ReturnOrderSerializer(AbstractOrderSerializer, TotalPriceMixin, InvenTreeM
     def annotate_queryset(queryset):
         """Custom annotation for the serializer queryset"""
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        queryset = queryset.annotate(
+            completed_lines=SubqueryCount('lines', filter=~Q(outcome=ReturnOrderLineStatus.PENDING.value))
+        )
 
         queryset = queryset.annotate(
             overdue=Case(

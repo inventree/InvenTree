@@ -6,9 +6,10 @@ import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
+import { TableState } from '../../hooks/UseTable';
 import { ButtonMenu } from '../buttons/ButtonMenu';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
@@ -25,8 +26,7 @@ const defaultPageSize: number = 25;
  * Set of optional properties which can be passed to an InvenTreeTable component
  *
  * @param params : any - Base query parameters
- * @param tableKey : string - Unique key for the table (used for local storage)
- * @param refreshId : string - Unique ID for the table (used to trigger a refresh)
+ * @param tableState : TableState - State manager for the table
  * @param defaultSortColumn : string - Default column to sort by
  * @param noRecordsText : string - Text to display when no records are found
  * @param enableDownload : boolean - Enable download actions
@@ -44,7 +44,7 @@ const defaultPageSize: number = 25;
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  */
-export type InvenTreeTableProps = {
+export type InvenTreeTableProps<T = any> = {
   params?: any;
   defaultSortColumn?: string;
   noRecordsText?: string;
@@ -57,12 +57,12 @@ export type InvenTreeTableProps = {
   pageSize?: number;
   barcodeActions?: any[];
   customFilters?: TableFilter[];
-  customActionGroups?: any[];
+  customActionGroups?: React.ReactNode[];
   printingActions?: any[];
   idAccessor?: string;
-  dataFormatter?: (data: any) => any;
-  rowActions?: (record: any) => RowAction[];
-  onRowClick?: (record: any, index: number, event: any) => void;
+  dataFormatter?: (data: T) => any;
+  rowActions?: (record: T) => RowAction[];
+  onRowClick?: (record: T, index: number, event: any) => void;
 };
 
 /**
@@ -90,24 +90,25 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
-export function InvenTreeTable({
+export function InvenTreeTable<T = any>({
   url,
-  tableKey,
+  tableState,
   columns,
   props
 }: {
   url: string;
-  tableKey: string;
-  columns: TableColumn[];
-  props: InvenTreeTableProps;
+  tableState: TableState;
+  columns: TableColumn<T>[];
+  props: InvenTreeTableProps<T>;
 }) {
   // Use the first part of the table key as the table name
   const tableName: string = useMemo(() => {
-    return tableKey.split('-')[0];
+    let key = tableState?.tableKey ?? 'table';
+    return key.split('-')[0];
   }, []);
 
   // Build table properties based on provided props (and default props)
-  const tableProps: InvenTreeTableProps = useMemo(() => {
+  const tableProps: InvenTreeTableProps<T> = useMemo(() => {
     return {
       ...defaultInvenTreeTableProps,
       ...props
@@ -161,15 +162,6 @@ export function InvenTreeTable({
         hidden: false,
         switchable: false,
         width: 50,
-        cellsStyle: {
-          position: 'sticky',
-          right: 0,
-          // TODO: Use the theme color to set the background color
-          backgroundColor: '#FFF',
-          // TODO: Use the scroll area callbacks to determine if we need to display a "shadow"
-          borderLeft: '1px solid #DDD',
-          padding: '3px'
-        },
         render: function (record: any) {
           return (
             <RowActions
@@ -420,14 +412,12 @@ export function InvenTreeTable({
   const [recordCount, setRecordCount] = useState<number>(0);
 
   /*
-   * Reload the table whenever the refetch changes
+   * Reload the table whenever the tableKey changes
    * this allows us to programmatically refresh the table
-   *
-   * Implement this using the custom useTableRefresh hook
    */
   useEffect(() => {
     refetch();
-  }, [tableKey, props.params]);
+  }, [tableState?.tableKey, props.params]);
 
   return (
     <>
@@ -441,9 +431,9 @@ export function InvenTreeTable({
       <Stack spacing="sm">
         <Group position="apart">
           <Group position="left" key="custom-actions" spacing={5}>
-            {tableProps.customActionGroups?.map(
-              (group: any, idx: number) => group
-            )}
+            {tableProps.customActionGroups?.map((group, idx) => (
+              <Fragment key={idx}>{group}</Fragment>
+            ))}
             {(tableProps.barcodeActions?.length ?? 0 > 0) && (
               <ButtonMenu
                 key="barcode-actions"
@@ -520,6 +510,7 @@ export function InvenTreeTable({
           striped
           highlightOnHover
           loaderVariant="dots"
+          pinLastColumn={tableProps.rowActions != undefined}
           idAccessor={tableProps.idAccessor}
           minHeight={300}
           totalRecords={recordCount}

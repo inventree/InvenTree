@@ -3,10 +3,13 @@
 import logging
 import os
 import shutil
+import warnings
 from pathlib import Path
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.core.exceptions import AppRegistryNotReady
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 logger = logging.getLogger("inventree")
 
@@ -17,8 +20,8 @@ class ReportConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the report app is loaded."""
-        from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
-                                     isPluginRegistryLoaded)
+        from InvenTree.ready import (canAppAccessDatabase, isImportingData,
+                                     isInMainThread, isPluginRegistryLoaded)
 
         # skip loading if plugin registry is not loaded or we run in a background thread
         if not isPluginRegistryLoaded() or not isInMainThread():
@@ -29,14 +32,19 @@ class ReportConfig(AppConfig):
         logging.getLogger('weasyprint').setLevel(logging.WARNING)
 
         # Create entries for default report templates
-        if canAppAccessDatabase(allow_test=False):
-            self.create_default_test_reports()
-            self.create_default_build_reports()
-            self.create_default_bill_of_materials_reports()
-            self.create_default_purchase_order_reports()
-            self.create_default_sales_order_reports()
-            self.create_default_return_order_reports()
-            self.create_default_stock_location_reports()
+        if canAppAccessDatabase(allow_test=False) and not isImportingData():
+
+            try:
+                self.create_default_test_reports()
+                self.create_default_build_reports()
+                self.create_default_bill_of_materials_reports()
+                self.create_default_purchase_order_reports()
+                self.create_default_sales_order_reports()
+                self.create_default_return_order_reports()
+                self.create_default_stock_location_reports()
+            except (AppRegistryNotReady, IntegrityError, OperationalError, ProgrammingError):
+                # Database might not yet be ready
+                warnings.warn('Database was not ready for creating reports', stacklevel=2)
 
     def create_default_reports(self, model, reports):
         """Copy default report files across to the media directory."""

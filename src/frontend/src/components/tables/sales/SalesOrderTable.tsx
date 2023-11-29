@@ -2,15 +2,25 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
-import { ModelType } from '../../render/ModelType';
-import { TableStatusRenderer } from '../../renderers/StatusRenderer';
+import {
+  CreationDateColumn,
+  DescriptionColumn,
+  LineItemsProgressColumn,
+  ProjectCodeColumn,
+  ShipmentDateColumn,
+  StatusColumn,
+  TargetDateColumn,
+  TotalPriceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({ params }: { params?: any }) {
-  const { tableKey } = useTableRefresh('sales-order');
+  const table = useTable('sales-order');
 
   const navigate = useNavigate();
 
@@ -27,10 +37,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
         title: t`Sales Order`,
         sortable: true,
         switchable: false
-      },
-      {
-        accessor: 'description',
-        title: t`Description`
+        // TODO: Display extra information if order is overdue
       },
       {
         accessor: 'customer__name',
@@ -52,32 +59,21 @@ export function SalesOrderTable({ params }: { params?: any }) {
         accessor: 'customer_reference',
         title: t`Customer Reference`
       },
-      {
-        accessor: 'project_code',
-        title: t`Project Code`
-
-        // TODO: Custom formatter
-      },
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-
-        render: TableStatusRenderer(ModelType.salesorder)
-      }
-
-      // TODO: Creation date
-      // TODO: Target date
-      // TODO: Shipment date
-      // TODO: Line items
-      // TODO: Total price
+      DescriptionColumn(),
+      LineItemsProgressColumn(),
+      StatusColumn(ModelType.salesorder),
+      ProjectCodeColumn(),
+      CreationDateColumn(),
+      TargetDateColumn(),
+      ShipmentDateColumn(),
+      TotalPriceColumn()
     ];
   }, []);
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.sales_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {

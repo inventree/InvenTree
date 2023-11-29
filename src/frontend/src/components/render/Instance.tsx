@@ -3,6 +3,7 @@ import { Alert, Space } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
+import { ModelType } from '../../enums/ModelType';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildOrder } from './Build';
 import {
@@ -13,7 +14,6 @@ import {
   RenderSupplierPart
 } from './Company';
 import { RenderProjectCode } from './Generic';
-import { ModelType } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -101,7 +101,7 @@ export function RenderInlineModel({
 }: {
   primary: string;
   secondary?: string;
-  suffix?: string;
+  suffix?: ReactNode;
   image?: string;
   labels?: string[];
   url?: string;
@@ -110,8 +110,8 @@ export function RenderInlineModel({
   // TODO: Handle URL
 
   return (
-    <Group spacing="xs" position="apart">
-      <Group spacing="xs" position="left">
+    <Group spacing="xs" position="apart" noWrap={true}>
+      <Group spacing="xs" position="left" noWrap={true}>
         {image && Thumbnail({ src: image, size: 18 })}
         <Text size="sm">{primary}</Text>
         {secondary && <Text size="xs">{secondary}</Text>}

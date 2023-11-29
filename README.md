@@ -159,7 +159,7 @@ Find a full list of used third-party libraries in [our documentation](https://do
 <p>This project is supported by the following sponsors:</p>
 
 <p align="center">
-<!-- sponsors --><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/MartinLoeper"><img src="https://github.com/MartinLoeper.png" width="60px" alt="Martin Löper" /></a><a href="https://github.com/lippoliv"><img src="https://github.com/lippoliv.png" width="60px" alt="Oliver Lippert" /></a><a href="https://github.com/lfg-seth"><img src="https://github.com/lfg-seth.png" width="60px" alt="Seth Smith" /></a><a href="https://github.com/snorkrat"><img src="https://github.com/snorkrat.png" width="60px" alt="" /></a><!-- sponsors -->
 </p>
 
 <p>With ongoing resources provided by:</p>

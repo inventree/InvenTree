@@ -228,7 +228,11 @@ def getModelsWithMixin(mixin_class) -> list:
     """
     from django.contrib.contenttypes.models import ContentType
 
-    db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
+    try:
+        db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
+    except (OperationalError, ProgrammingError):
+        # Database is likely not yet ready
+        db_models = []
 
     return [x for x in db_models if x is not None and issubclass(x, mixin_class)]
 

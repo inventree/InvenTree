@@ -1414,10 +1414,10 @@ attr-accept@^2.2.2:
   resolved "https://registry.yarnpkg.com/attr-accept/-/attr-accept-2.2.2.tgz#646613809660110749e92f2c10833b70968d929b"
   integrity sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==
 
-axios@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.5.1.tgz#11fbaa11fc35f431193a9564109c88c1f27b585f"
-  integrity sha512-Q28iYCWzNHjAm+yEAot5QaAMxhMghWLFVf7rRdwhUI+c2jix2DUXjAHXVi+s1ibs3mjPO/cCgbA++3BjD0vP/A==
+axios@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.0.tgz#f1e5292f26b2fd5c2e66876adc5b06cdbd7d2102"
+  integrity sha512-EZ1DYihju9pwVB+jg67ogm+Tmqc6JmhamRN6I4Zt8DfZu5lbcQGw3ozH9lFejSJgs/ibaef3A9PMXPLeefFGJg==
   dependencies:
     follow-redirects "^1.15.0"
     form-data "^4.0.0"
@@ -2219,10 +2219,10 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
-mantine-datatable@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-6.0.0.tgz#e402f8461b30b7f833546212297d1242481bc267"
-  integrity sha512-fj2GFpZ30B30zaQFIsFlmUzRbK3hoiLaZXGaquDqK0jbIzsxlIDbLjgTvI9KJ8f1Gk+bE0lXc4yRBsmvg6DCnA==
+mantine-datatable@^6.0.5:
+  version "6.0.5"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-6.0.5.tgz#e8e6e781de44233bd40c26cd7400186fce15f7a0"
+  integrity sha512-TMDz7zkpDUkK2qlSn5pA+EuwHAVogDyPWNbs702M5f5mmHjjtC6q20U+4f09kYU+uZzrJ3E9wDA2Y1+bxXl/ew==
 
 marked@^4.1.0:
   version "4.3.0"
@@ -2527,6 +2527,11 @@ react-grid-layout@^1.4.2:
     react-draggable "^4.4.5"
     react-resizable "^3.0.5"
     resize-observer-polyfill "^1.5.1"
+
+react-hook-form@^7.48.2:
+  version "7.48.2"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.48.2.tgz#01150354d2be61412ff56a030b62a119283b9935"
+  integrity sha512-H0T2InFQb1hX7qKtDIZmvpU1Xfn/bdahWBN1fH19gSe4bBEqTfmlr7H3XWTaVtiK4/tpPaI1F3355GPMZYge+A==
 
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"

@@ -1095,25 +1095,39 @@ class TestOffloadTask(InvenTreeTestCase):
 
         Ref: https://github.com/inventree/InvenTree/pull/3273
         """
-        offload_task(
-            'dummy_tasks.parts',
-            part=Part.objects.get(pk=1),
-            cat=PartCategory.objects.get(pk=1),
-            force_async=True
-        )
 
-        offload_task(
+        self.assertTrue(offload_task(
             'dummy_tasks.stock',
             item=StockItem.objects.get(pk=1),
             loc=StockLocation.objects.get(pk=1),
             force_async=True
-        )
+        ))
 
-        offload_task(
+        self.assertTrue(offload_task(
             'dummy_task.numbers',
             1, 2, 3, 4, 5,
             force_async=True
-        )
+        ))
+
+        # Offload a dummy task, but force sync
+        # This should fail, because the function does not exist
+        with self.assertLogs(logger='inventree', level='WARNING') as log:
+            self.assertFalse(offload_task(
+                'dummy_task.numbers',
+                1, 1, 1,
+                force_sync=True
+            ))
+
+            self.assertIn("Malformed function path", str(log.output))
+
+        # Offload dummy task with a Part instance
+        # This should succeed, ensuring that the Part instance is correctly pickled
+        self.assertTrue(offload_task(
+            'dummy_tasks.parts',
+            part=Part.objects.get(pk=1),
+            cat=PartCategory.objects.get(pk=1),
+            force_async=True
+        ))
 
     def test_daily_holdoff(self):
         """Tests for daily task holdoff helper functions"""

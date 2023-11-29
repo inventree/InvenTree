@@ -3,11 +3,13 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { shortenString } from '../../../functions/tables';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
+import { DescriptionColumn, LinkColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -42,11 +44,7 @@ function partTableColumns(): TableColumn[] {
       sortable: true,
       title: t`Units`
     },
-    {
-      accessor: 'description',
-      title: t`Description`,
-      sortable: true
-    },
+    DescriptionColumn(),
     {
       accessor: 'category',
       title: t`Category`,
@@ -80,23 +78,29 @@ function partTableColumns(): TableColumn[] {
 
         if (min_stock > stock) {
           extra.push(
-            <Text color="orange">{t`Minimum stock` + `: ${min_stock}`}</Text>
+            <Text key="min-stock" color="orange">
+              {t`Minimum stock` + `: ${min_stock}`}
+            </Text>
           );
 
           color = 'orange';
         }
 
         if (record.ordering > 0) {
-          extra.push(<Text>{t`On Order` + `: ${record.ordering}`}</Text>);
+          extra.push(
+            <Text key="on-order">{t`On Order` + `: ${record.ordering}`}</Text>
+          );
         }
 
         if (record.building) {
-          extra.push(<Text>{t`Building` + `: ${record.building}`}</Text>);
+          extra.push(
+            <Text key="building">{t`Building` + `: ${record.building}`}</Text>
+          );
         }
 
         if (record.allocated_to_build_orders > 0) {
           extra.push(
-            <Text>
+            <Text key="bo-allocations">
               {t`Build Order Allocations` +
                 `: ${record.allocated_to_build_orders}`}
             </Text>
@@ -105,7 +109,7 @@ function partTableColumns(): TableColumn[] {
 
         if (record.allocated_to_sales_orders > 0) {
           extra.push(
-            <Text>
+            <Text key="so-allocations">
               {t`Sales Order Allocations` +
                 `: ${record.allocated_to_sales_orders}`}
             </Text>
@@ -113,7 +117,9 @@ function partTableColumns(): TableColumn[] {
         }
 
         if (available != stock) {
-          extra.push(<Text>{t`Available` + `: ${available}`}</Text>);
+          extra.push(
+            <Text key="available">{t`Available` + `: ${available}`}</Text>
+          );
         }
 
         // TODO: Add extra information on stock "demand"
@@ -155,10 +161,7 @@ function partTableColumns(): TableColumn[] {
         return '-- price --';
       }
     },
-    {
-      accessor: 'link',
-      title: t`Link`
-    }
+    LinkColumn()
   ];
 }
 
@@ -262,14 +265,14 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
   const tableColumns = useMemo(() => partTableColumns(), []);
   const tableFilters = useMemo(() => partTableFilters(), []);
 
-  const { tableKey, refreshTable } = useTableRefresh('part');
+  const table = useTable('part-list');
 
   const navigate = useNavigate();
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.part_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         ...props,

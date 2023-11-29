@@ -7,6 +7,7 @@ from unittest import mock
 from django.apps import apps
 from django.urls import reverse
 
+from pdfminer.high_level import extract_text
 from PIL import Image
 
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -78,11 +79,11 @@ class LabelMixinTests(InvenTreeAPITestCase):
         """Test that the sample printing plugin is installed."""
         # Get all label plugins
         plugins = registry.with_mixin('labels')
-        self.assertEqual(len(plugins), 2)
+        self.assertEqual(len(plugins), 3)
 
         # But, it is not 'active'
         plugins = registry.with_mixin('labels', active=True)
-        self.assertEqual(len(plugins), 1)
+        self.assertEqual(len(plugins), 2)
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
@@ -124,9 +125,12 @@ class LabelMixinTests(InvenTreeAPITestCase):
             }
         )
 
-        self.assertEqual(len(response.data), 2)
-        data = response.data[1]
-        self.assertEqual(data['key'], 'samplelabelprinter')
+        self.assertEqual(len(response.data), 3)
+
+        labels = [item['key'] for item in response.data]
+
+        self.assertIn('samplelabelprinter', labels)
+        self.assertIn('inventreelabelsheet', labels)
 
     def test_printing_process(self):
         """Test that a label can be printed."""
@@ -135,6 +139,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Lookup references
         part = Part.objects.first()
+        parts = Part.objects.all()[:2]
         plugin_ref = 'samplelabelprinter'
         label = PartLabel.objects.first()
 
@@ -155,13 +160,13 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.get(url, expected_code=200)
 
         # Print multiple parts
-        self.get(self.do_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200)
+        self.get(self.do_url(parts, plugin_ref, label), expected_code=200)
 
         # Print multiple parts without a plugin
-        self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
+        self.get(self.do_url(parts, None, label), expected_code=200)
 
         # Print multiple parts without a plugin in debug mode
-        response = self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
+        response = self.get(self.do_url(parts, None, label), expected_code=200)
 
         data = json.loads(response.content)
         self.assertIn('file', data)
@@ -174,9 +179,9 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.assertTrue(os.path.exists('label.pdf'))
 
         # Read the raw .pdf data - ensure it contains some sensible information
-        with open('label.pdf', 'rb') as f:
-            pdf_data = str(f.read())
-            self.assertIn('WeasyPrint', pdf_data)
+        filetext = extract_text('label.pdf')
+        matched = [part.name in filetext for part in parts]
+        self.assertIn(True, matched)
 
         # Check that the .png file has already been created
         self.assertTrue(os.path.exists('label.png'))
@@ -190,24 +195,25 @@ class LabelMixinTests(InvenTreeAPITestCase):
         apps.get_app_config('label').create_labels()
 
         # Lookup references
+        parts = Part.objects.all()[:2]
         plugin_ref = 'samplelabelprinter'
         label = PartLabel.objects.first()
 
         self.do_activate_plugin()
 
         # test options response
-        options = self.options(self.do_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200).json()
+        options = self.options(self.do_url(parts, plugin_ref, label), expected_code=200).json()
         self.assertTrue("amount" in options["actions"]["POST"])
 
         plg = registry.get_plugin(plugin_ref)
         with mock.patch.object(plg, "print_label") as print_label:
             # wrong value type
-            res = self.post(self.do_url(Part.objects.all()[:2], plugin_ref, label), data={"amount": "-no-valid-int-"}, expected_code=400).json()
+            res = self.post(self.do_url(parts, plugin_ref, label), data={"amount": "-no-valid-int-"}, expected_code=400).json()
             self.assertTrue("amount" in res)
             print_label.assert_not_called()
 
             # correct value type
-            self.post(self.do_url(Part.objects.all()[:2], plugin_ref, label), data={"amount": 13}, expected_code=200).json()
+            self.post(self.do_url(parts, plugin_ref, label), data={"amount": 13}, expected_code=200).json()
             self.assertEqual(print_label.call_args.kwargs["printing_options"], {"amount": 13})
 
     def test_printing_endpoints(self):

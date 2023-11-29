@@ -2,17 +2,19 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Stock location table
  */
 export function StockLocationTable({ params = {} }: { params?: any }) {
-  const { tableKey, refreshTable } = useTableRefresh('stocklocation');
+  const table = useTable('stocklocation');
 
   const navigate = useNavigate();
 
@@ -23,10 +25,7 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
         title: t`Name`,
         switchable: false
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn(),
       {
         accessor: 'pathstring',
         title: t`Path`,
@@ -65,7 +64,7 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.stock_location_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,

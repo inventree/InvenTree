@@ -14,8 +14,8 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
 import { PartListTable } from '../../components/tables/part/PartTable';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths } from '../../states/ApiState';
 
 /**
  * Detail view for a single PartCategory instance.

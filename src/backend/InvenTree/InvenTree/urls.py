@@ -36,7 +36,8 @@ from plugin.urls import get_plugin_urls
 from stock.urls import stock_urls
 from web.urls import urlpatterns as platform_urls
 
-from .api import APISearchView, InfoView, NotFoundView, VersionView
+from .api import (APISearchView, InfoView, NotFoundView, VersionTextView,
+                  VersionView)
 from .magic_login import GetSimpleLoginView
 from .social_auth_urls import (EmailListView, EmailPrimaryView,
                                EmailRemoveView, EmailVerifyView,
@@ -79,6 +80,7 @@ apipatterns = [
     re_path('schema/', SpectacularAPIView.as_view(custom_settings={'SCHEMA_PATH_PREFIX': '/api/'}), name='schema'),
 
     # InvenTree information endpoints
+    path("version-text", VersionTextView.as_view(), name="api-version-text"),  # version text
     path('version/', VersionView.as_view(), name='api-version'),  # version info
     path('', InfoView.as_view(), name='api-inventree-info'),  # server info
 
@@ -215,9 +217,6 @@ classic_frontendpatterns = [
     re_path(r'^accounts/', include('allauth.urls')),        # included urlpatterns
 ]
 
-
-new_frontendpatterns = platform_urls
-
 urlpatterns = []
 
 if settings.INVENTREE_ADMIN_ENABLED:
@@ -234,7 +233,7 @@ frontendpatterns = []
 if settings.ENABLE_CLASSIC_FRONTEND:
     frontendpatterns += classic_frontendpatterns
 if settings.ENABLE_PLATFORM_FRONTEND:
-    frontendpatterns += new_frontendpatterns
+    frontendpatterns += platform_urls
 
 urlpatterns += frontendpatterns
 

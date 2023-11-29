@@ -14,7 +14,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -87,7 +88,7 @@ export function NotificationDrawer({
           </Alert>
         )}
         {notificationQuery.data?.results?.map((notification: any) => (
-          <Group position="apart">
+          <Group position="apart" key={notification.pk}>
             <Stack spacing="3">
               <Text size="sm">{notification.target?.name ?? 'target'}</Text>
               <Text size="xs">{notification.age_human ?? 'name'}</Text>

@@ -47,37 +47,44 @@ import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
-import { Render, RenderTypes } from '../../components/renderers';
+import { RenderInstance } from '../../components/render/Instance';
+import { ModelInformationDict } from '../../components/render/ModelType';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 
 interface ScanItem {
   id: string;
   ref: string;
   data: any;
+  instance?: any;
   timestamp: Date;
   source: string;
   link?: string;
-  objectType?: RenderTypes;
-  objectPk?: string;
+  model?: ModelType;
+  pk?: string;
 }
 
-function matchObject(rd: any): [RenderTypes | undefined, string | undefined] {
+/*
+ * Match the scanned object to a known internal model type
+ */
+function matchObject(rd: any): [ModelType | undefined, string | undefined] {
   if (rd?.part) {
-    return [RenderTypes.part, rd?.part.pk];
+    return [ModelType.part, rd?.part.pk];
   } else if (rd?.stockitem) {
-    return [RenderTypes.stock_item, rd?.stockitem.pk];
+    return [ModelType.stockitem, rd?.stockitem.pk];
   } else if (rd?.stocklocation) {
-    return [RenderTypes.stock_location, rd?.stocklocation.pk];
+    return [ModelType.stocklocation, rd?.stocklocation.pk];
   } else if (rd?.supplierpart) {
-    return [RenderTypes.supplier_part, rd?.supplierpart.pk];
+    return [ModelType.supplierpart, rd?.supplierpart.pk];
   } else if (rd?.purchaseorder) {
-    return [RenderTypes.purchase_order, rd?.purchaseorder.pk];
+    return [ModelType.purchaseorder, rd?.purchaseorder.pk];
   } else if (rd?.salesorder) {
-    return [RenderTypes.sales_order, rd?.salesorder.pk];
+    return [ModelType.salesorder, rd?.salesorder.pk];
   } else if (rd?.build) {
-    return [RenderTypes.build_order, rd?.build.pk];
+    return [ModelType.build, rd?.build.pk];
   } else {
     return [undefined, undefined];
   }
@@ -147,8 +154,27 @@ export default function Scan() {
         item.link = response.data?.url;
 
         const rsp = matchObject(response.data);
-        item.objectType = rsp[0];
-        item.objectPk = rsp[1];
+        item.model = rsp[0];
+        item.pk = rsp[1];
+
+        // Fetch instance data
+        if (item.model && item.pk) {
+          let model_info = ModelInformationDict[item.model];
+
+          if (model_info && model_info.api_endpoint) {
+            let url = apiUrl(model_info.api_endpoint, item.pk);
+
+            api
+              .get(url)
+              .then((response) => {
+                item.instance = response.data;
+              })
+              .catch((err) => {
+                console.error('error while fetching instance data at', url);
+                console.info(err);
+              });
+          }
+        }
 
         historyHandlers.setState(history);
       })
@@ -206,7 +232,7 @@ export default function Scan() {
       ...new Set(
         selection
           .map((id) => {
-            return history.find((item) => item.id === id)?.objectType;
+            return history.find((item) => item.id === id)?.model;
           })
           .filter((item) => item != undefined)
       )
@@ -384,13 +410,13 @@ function HistoryTable({
           />
         </td>
         <td>
-          {item.objectPk && item.objectType ? (
-            <Render type={item.objectType} pk={item.objectPk} />
+          {item.pk && item.model && item.instance ? (
+            <RenderInstance model={item.model} instance={item.instance} />
           ) : (
             item.ref
           )}
         </td>
-        <td>{item.objectType}</td>
+        <td>{item.model}</td>
         <td>{item.source}</td>
         <td>{item.timestamp?.toString()}</td>
       </tr>

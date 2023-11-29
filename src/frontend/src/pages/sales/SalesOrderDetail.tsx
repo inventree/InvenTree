@@ -16,8 +16,9 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 
 /**
  * Detail page for a single SalesOrder

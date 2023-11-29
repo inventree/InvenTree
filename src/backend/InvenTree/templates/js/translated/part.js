@@ -172,6 +172,9 @@ function partFields(options={}) {
         },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         },
         component: {
             default: global_settings.PART_COMPONENT,

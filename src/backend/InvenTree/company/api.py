@@ -376,7 +376,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         company = params.get('company', None)
 
         if company is not None:
-            queryset = queryset.filter(Q(manufacturer_part__manufacturer=company) | Q(supplier=company))
+            queryset = queryset.filter(Q(manufacturer_part__manufacturer=company) | Q(supplier=company)).distinct()
 
         return queryset
 
