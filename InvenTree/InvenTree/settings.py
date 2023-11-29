@@ -307,7 +307,7 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
 LDAP_AUTH = get_boolean_setting("INVENTREE_LDAP_ENABLED", "ldap.enabled", False)
 if LDAP_AUTH:
     import ldap
-    from django_auth_ldap.config import LDAPSearch
+    from django_auth_ldap.config import LDAPSearch, GroupOfUniqueNames
 
     AUTHENTICATION_BACKENDS.append("django_auth_ldap.backend.LDAPBackend")
 
@@ -359,6 +359,17 @@ if LDAP_AUTH:
     }, dict)
     AUTH_LDAP_ALWAYS_UPDATE_USER = get_boolean_setting("INVENTREE_LDAP_ALWAYS_UPDATE_USER", "ldap.always_update_user", True)
     AUTH_LDAP_CACHE_TIMEOUT = get_setting("INVENTREE_LDAP_CACHE_TIMEOUT", "ldap.cache_timeout", 3600, int)
+    
+    AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+        get_setting("INVENTREE_LDAP_GROUP_SEARCH", "ldap.group_search"),
+        ldap.SCOPE_SUBTREE,
+        "(objectClass=groupOfUniqueNames)",
+    )
+    AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr="cn")
+    AUTH_LDAP_REQUIRE_GROUP = get_setting("INVENTREE_LDAP_REQUIRE_GROUP", "ldap.require_group")
+    AUTH_LDAP_DENY_GROUP = get_setting("INVENTREE_LDAP_DENY_GROUP", "ldap.deny_group")
+    AUTH_LDAP_USER_FLAGS_BY_GROUP = get_setting("INVENTREE_LDAP_USER_FLAGS_BY_GROUP", "ldap.user_flags_by_group", {}, dict)
+    AUTH_LDAP_FIND_GROUP_PERMS = True
 
 DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
 
