@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-27 02:02+0000\n"
+"POT-Creation-Date: 2023-11-29 03:06+0000\n"
 "PO-Revision-Date: 2023-11-28 01:41\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -474,9 +474,13 @@ msgstr "Chào mừng đến với {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid "Your account has been created.\n\n"
+msgid ""
+"Your account has been created.\n"
+"\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr "Tài khoản của bạn đã được tạo.\n\n"
+msgstr ""
+"Tài khoản của bạn đã được tạo.\n"
+"\n"
 "Xin hãy sử dụng chức năng quên mật khẩu để truy cập (tại https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -13344,7 +13348,8 @@ msgstr "Nhà cung cấp SSO đã chọn không hợp lệ hoặc đã không đ�
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "Bạn chuân bị sử dụng tài khoản %(provider_name)s của bạn để đăng nhập%(site_name)s<br>Vì là bước cuối cùng, xin hãy hoàn thiện biểu mẫu dưới đây:"
 
@@ -13519,4 +13524,3 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
-
