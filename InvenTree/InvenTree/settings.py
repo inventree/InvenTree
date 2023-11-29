@@ -359,7 +359,7 @@ if LDAP_AUTH:
     }, dict)
     AUTH_LDAP_ALWAYS_UPDATE_USER = get_boolean_setting("INVENTREE_LDAP_ALWAYS_UPDATE_USER", "ldap.always_update_user", True)
     AUTH_LDAP_CACHE_TIMEOUT = get_setting("INVENTREE_LDAP_CACHE_TIMEOUT", "ldap.cache_timeout", 3600, int)
-    
+
     AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
         get_setting("INVENTREE_LDAP_GROUP_SEARCH", "ldap.group_search"),
         ldap.SCOPE_SUBTREE,
