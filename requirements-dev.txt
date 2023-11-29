@@ -33,7 +33,7 @@ coverage==5.5
     #   coveralls
 coveralls==2.1.2
     # via -r requirements-dev.in
-cryptography==41.0.5
+cryptography==41.0.6
     # via
     #   -c requirements.txt
     #   pdfminer-six
