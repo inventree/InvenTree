@@ -465,8 +465,12 @@ msgid "Database"
 msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:38
-msgid "Bebug Mode"
+msgid "Debug Mode"
 msgstr ""
+
+#: src/components/modals/ServerInfoModal.tsx:38
+#~ msgid "Bebug Mode"
+#~ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:41
 msgid "Server is running in debug mode"
@@ -2014,8 +2018,12 @@ msgid "Delete user"
 msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:117
-msgid "user deleted"
+msgid "User deleted"
 msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:117
+#~ msgid "user deleted"
+#~ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:120
 msgid "Are you sure you want to delete this user?"
