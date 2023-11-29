@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -10,7 +9,7 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -27,7 +26,7 @@ export function ContactTable({
 }) {
   const user = useUserState();
 
-  const { tableKey, refreshTable } = useTableRefresh('contact');
+  const table = useTable('contact');
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -77,7 +76,7 @@ export function ContactTable({
               title: t`Edit Contact`,
               fields: contactFields(),
               successMessage: t`Contact updated`,
-              onFormSuccess: refreshTable
+              onFormSuccess: table.refreshTable
             });
           }
         }),
@@ -89,7 +88,7 @@ export function ContactTable({
               pk: record.pk,
               title: t`Delete Contact`,
               successMessage: t`Contact deleted`,
-              onFormSuccess: refreshTable,
+              onFormSuccess: table.refreshTable,
               preFormWarning: t`Are you sure you want to delete this contact?`
             });
           }
@@ -109,7 +108,7 @@ export function ContactTable({
       title: t`Create Contact`,
       fields: fields,
       successMessage: t`Contact created`,
-      onFormSuccess: refreshTable
+      onFormSuccess: table.refreshTable
     });
   }, [companyId]);
 
@@ -130,7 +129,7 @@ export function ContactTable({
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.contact_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
         rowActions: rowActions,

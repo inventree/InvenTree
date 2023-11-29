@@ -9,7 +9,7 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -27,7 +27,7 @@ export function AddressTable({
 }) {
   const user = useUserState();
 
-  const { tableKey, refreshTable } = useTableRefresh('address');
+  const table = useTable('address');
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -128,7 +128,7 @@ export function AddressTable({
               title: t`Edit Address`,
               fields: addressFields(),
               successMessage: t`Address updated`,
-              onFormSuccess: refreshTable
+              onFormSuccess: table.refreshTable
             });
           }
         }),
@@ -140,7 +140,7 @@ export function AddressTable({
               pk: record.pk,
               title: t`Delete Address`,
               successMessage: t`Address deleted`,
-              onFormSuccess: refreshTable,
+              onFormSuccess: table.refreshTable,
               preFormWarning: t`Are you sure you want to delete this address?`
             });
           }
@@ -160,7 +160,7 @@ export function AddressTable({
       title: t`Add Address`,
       fields: fields,
       successMessage: t`Address created`,
-      onFormSuccess: refreshTable
+      onFormSuccess: table.refreshTable
     });
   }, [companyId]);
 
@@ -181,7 +181,7 @@ export function AddressTable({
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.address_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
         rowActions: rowActions,
