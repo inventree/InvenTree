@@ -6,7 +6,7 @@ import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { GroupTable } from '../../../../components/tables/settings/GroupTable';
 import { UserTable } from '../../../../components/tables/settings/UserTable';
 
-export function UserManagementPanel() {
+export default function UserManagementPanel() {
   return (
     <Stack spacing="xs">
       <Title order={5}>

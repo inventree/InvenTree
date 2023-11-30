@@ -1,13 +1,19 @@
 import { Trans, t } from '@lingui/macro';
 import { Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { IconPlugConnected, IconUsersGroup } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { lazy, useMemo } from 'react';
 
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
-import { PluginManagementPanel } from './PluginManagementPanel';
-import { UserManagementPanel } from './UserManagementPanel';
+import { Loadable } from '../../../../functions/loading';
+
+const UserManagementPanel = Loadable(
+  lazy(() => import('./UserManagementPanel'))
+);
+const PluginManagementPanel = Loadable(
+  lazy(() => import('./PluginManagementPanel'))
+);
 
 export default function AdminCenter() {
   const adminCenterPanels: PanelType[] = useMemo(() => {

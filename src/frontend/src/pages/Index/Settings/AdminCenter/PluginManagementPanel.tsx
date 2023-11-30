@@ -7,7 +7,7 @@ import { PluginErrorTable } from '../../../../components/tables/plugin/PluginErr
 import { PluginListTable } from '../../../../components/tables/plugin/PluginListTable';
 import { useServerApiState } from '../../../../states/ApiState';
 
-export function PluginManagementPanel() {
+export default function PluginManagementPanel() {
   const pluginsEnabled = useServerApiState(
     (state) => state.server.plugins_enabled
   );
