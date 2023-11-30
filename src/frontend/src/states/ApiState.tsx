@@ -9,7 +9,7 @@ import { ApiPaths } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { ServerAPIProps } from './states';
 
-type StatusLookup = Record<ModelType, StatusCodeListInterface>;
+type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
@@ -35,7 +35,8 @@ export const useServerApiState = create<ServerApiStateProps>()(
         await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
           const newStatusLookup: StatusLookup = {} as StatusLookup;
           for (const key in response.data) {
-            newStatusLookup[statusCodeList[key]] = response.data[key].values;
+            newStatusLookup[statusCodeList[key] || key] =
+              response.data[key].values;
           }
           set({ status: newStatusLookup });
         });
