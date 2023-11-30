@@ -13,10 +13,18 @@ import { InvenTreeTable } from '../InvenTreeTable';
 /**
  * Stock location table
  */
-export function StockLocationTable({ params = {} }: { params?: any }) {
+export function StockLocationTable({
+  wait = false,
+  params = {}
+}: {
+  wait: boolean;
+  params?: any;
+}) {
   const table = useTable('stocklocation');
 
   const navigate = useNavigate();
+
+  console.log('Location run with wait:', wait);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -63,6 +71,7 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
+      wait={wait}
       url={apiUrl(ApiPaths.stock_location_list)}
       tableState={table}
       columns={tableColumns}

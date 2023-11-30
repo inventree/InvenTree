@@ -30,6 +30,15 @@ export default function Stock() {
   });
 
   const locationPanels: PanelType[] = useMemo(() => {
+    console.log(
+      'Location:',
+      location,
+      'id:',
+      id,
+      instanceQuery.isFetching,
+      'loc.pk:',
+      location.pk
+    );
     return [
       {
         name: 'stock-items',
@@ -37,6 +46,7 @@ export default function Stock() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
+            wait={instanceQuery.isFetching}
             params={{
               location: location.pk ?? null
             }}
@@ -49,6 +59,7 @@ export default function Stock() {
         icon: <IconSitemap />,
         content: (
           <StockLocationTable
+            wait={instanceQuery.isFetching}
             params={{
               parent: location.pk ?? null
             }}

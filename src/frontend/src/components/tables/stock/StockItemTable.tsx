@@ -259,7 +259,13 @@ function stockItemTableFilters(): TableFilter[] {
 /*
  * Load a table of stock items
  */
-export function StockItemTable({ params = {} }: { params?: any }) {
+export function StockItemTable({
+  wait = false,
+  params = {}
+}: {
+  wait: boolean;
+  params?: any;
+}) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
@@ -270,6 +276,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.stock_item_list)}
+      wait={wait}
       tableState={table}
       columns={tableColumns}
       props={{
