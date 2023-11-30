@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-23 23:36+0000\n"
-"PO-Revision-Date: 2023-11-24 00:35\n"
+"POT-Creation-Date: 2023-11-27 02:02+0000\n"
+"PO-Revision-Date: 2023-11-28 01:41\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -53,7 +53,7 @@ msgstr "Tarih giriniz"
 
 #: InvenTree/fields.py:200 InvenTree/models.py:920 build/serializers.py:433
 #: build/serializers.py:511 build/templates/build/sidebar.html:21
-#: company/models.py:732 company/templates/company/sidebar.html:37
+#: company/models.py:733 company/templates/company/sidebar.html:37
 #: order/models.py:1104 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:40
@@ -203,7 +203,7 @@ msgstr "Sağlanan URL geçerli bir resim dosyası değil"
 msgid "[{site.name}] Log in to the app"
 msgstr ""
 
-#: InvenTree/magic_login.py:38 company/models.py:122
+#: InvenTree/magic_login.py:38 company/models.py:123
 #: company/templates/company/company_base.html:132
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
@@ -264,8 +264,8 @@ msgstr "Ek"
 msgid "Select file to attach"
 msgstr "Eklenecek dosyayı seç"
 
-#: InvenTree/models.py:482 common/models.py:2877 company/models.py:128
-#: company/models.py:386 company/models.py:440 company/models.py:719
+#: InvenTree/models.py:482 common/models.py:2877 company/models.py:129
+#: company/models.py:387 company/models.py:441 company/models.py:720
 #: order/models.py:234 order/models.py:1108 order/models.py:1466
 #: part/admin.py:38 part/models.py:836
 #: part/templates/part/part_scheduling.html:11
@@ -343,7 +343,7 @@ msgid "Invalid choice"
 msgstr "Geçersiz seçim"
 
 #: InvenTree/models.py:786 InvenTree/models.py:787 common/models.py:2536
-#: common/models.py:2982 company/models.py:524 label/models.py:116
+#: common/models.py:2982 company/models.py:525 label/models.py:116
 #: part/models.py:782 part/models.py:3388 plugin/models.py:42
 #: report/models.py:170 stock/models.py:71 stock/models.py:72
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -364,7 +364,7 @@ msgstr "Adı"
 
 #: InvenTree/models.py:793 build/models.py:175
 #: build/templates/build/detail.html:24 common/models.py:126
-#: company/models.py:446 company/models.py:725
+#: company/models.py:447 company/models.py:726
 #: company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:107 label/models.py:123
@@ -448,7 +448,7 @@ msgstr ""
 msgid "Must be a valid number"
 msgstr "Geçerli bir numara olmalı"
 
-#: InvenTree/serializers.py:90 company/models.py:150
+#: InvenTree/serializers.py:90 company/models.py:151
 #: company/templates/company/company_base.html:106 part/models.py:2833
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
@@ -945,7 +945,7 @@ msgstr ""
 msgid "Allocated"
 msgstr ""
 
-#: build/api.py:293 company/models.py:766
+#: build/api.py:293 company/models.py:767
 #: company/templates/company/supplier_part.html:114
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
@@ -1021,7 +1021,7 @@ msgid "BuildOrder to which this build is allocated"
 msgstr "Bu yapım işinin tahsis edildiği yapım işi emri"
 
 #: build/models.py:192 build/templates/build/build_base.html:97
-#: build/templates/build/detail.html:29 company/models.py:907
+#: build/templates/build/detail.html:29 company/models.py:908
 #: order/models.py:1209 order/models.py:1324 order/models.py:1325
 #: part/models.py:365 part/models.py:2846 part/models.py:2972
 #: part/models.py:3109 part/models.py:3128 part/models.py:3147
@@ -2134,7 +2134,7 @@ msgstr ""
 msgid "Show the `about` modal only to superusers"
 msgstr ""
 
-#: common/models.py:1114 company/models.py:101 company/models.py:102
+#: common/models.py:1114 company/models.py:102 company/models.py:103
 msgid "Company name"
 msgstr "Şirket adı"
 
@@ -3356,7 +3356,7 @@ msgid "Table String Length"
 msgstr ""
 
 #: common/models.py:2279
-msgid "Maximimum length limit for strings displayed in table views"
+msgid "Maximum length limit for strings displayed in table views"
 msgstr ""
 
 #: common/models.py:2288
@@ -3522,7 +3522,7 @@ msgstr ""
 msgid "Was this news item read?"
 msgstr ""
 
-#: common/models.py:2917 company/models.py:139 part/models.py:849
+#: common/models.py:2917 company/models.py:140 part/models.py:849
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report_base.html:35
@@ -3632,184 +3632,184 @@ msgstr ""
 msgid "Previous Step"
 msgstr ""
 
-#: company/models.py:106
+#: company/models.py:107
 msgid "Company description"
 msgstr ""
 
-#: company/models.py:107
+#: company/models.py:108
 msgid "Description of the company"
 msgstr ""
 
-#: company/models.py:113 company/templates/company/company_base.html:100
+#: company/models.py:114 company/templates/company/company_base.html:100
 #: templates/InvenTree/settings/plugin_settings.html:54
 #: templates/js/translated/company.js:522
 msgid "Website"
 msgstr ""
 
-#: company/models.py:114
+#: company/models.py:115
 msgid "Company website URL"
 msgstr "Şirket web sitesi"
 
-#: company/models.py:118
+#: company/models.py:119
 msgid "Phone number"
 msgstr "Telefon numarası"
 
-#: company/models.py:119
+#: company/models.py:120
 msgid "Contact phone number"
 msgstr "İletişim telefon numarası"
 
-#: company/models.py:122
+#: company/models.py:123
 msgid "Contact email address"
 msgstr "İletişim e-posta adresi"
 
-#: company/models.py:125 company/templates/company/company_base.html:139
+#: company/models.py:126 company/templates/company/company_base.html:139
 #: order/models.py:264 order/templates/order/order_base.html:203
 #: order/templates/order/return_order_base.html:174
 #: order/templates/order/sales_order_base.html:214
 msgid "Contact"
 msgstr "İletişim"
 
-#: company/models.py:126
+#: company/models.py:127
 msgid "Point of contact"
 msgstr ""
 
-#: company/models.py:128
+#: company/models.py:129
 msgid "Link to external company information"
 msgstr ""
 
-#: company/models.py:142
+#: company/models.py:143
 msgid "is customer"
 msgstr "müşteri mi"
 
-#: company/models.py:142
+#: company/models.py:143
 msgid "Do you sell items to this company?"
 msgstr "Bu şirkete ürün satıyor musunuz?"
 
-#: company/models.py:144
+#: company/models.py:145
 msgid "is supplier"
 msgstr "tedarikçi mi"
 
-#: company/models.py:144
+#: company/models.py:145
 msgid "Do you purchase items from this company?"
 msgstr "Bu şirketten ürün satın alıyor musunuz?"
 
-#: company/models.py:146
+#: company/models.py:147
 msgid "is manufacturer"
 msgstr "üretici mi"
 
-#: company/models.py:146
+#: company/models.py:147
 msgid "Does this company manufacture parts?"
 msgstr "Bu şirket üretim yapıyor mu?"
 
-#: company/models.py:153
+#: company/models.py:154
 msgid "Default currency used for this company"
 msgstr "Bu şirket için varsayılan para birimi"
 
-#: company/models.py:232 company/models.py:333
+#: company/models.py:233 company/models.py:334
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12 stock/api.py:671
 #: templates/InvenTree/search.html:178 templates/js/translated/company.js:495
 msgid "Company"
 msgstr ""
 
-#: company/models.py:334
+#: company/models.py:335
 msgid "Select company"
 msgstr ""
 
-#: company/models.py:337
+#: company/models.py:338
 msgid "Address title"
 msgstr ""
 
-#: company/models.py:338
+#: company/models.py:339
 msgid "Title describing the address entry"
 msgstr ""
 
-#: company/models.py:342
+#: company/models.py:343
 msgid "Primary address"
 msgstr ""
 
-#: company/models.py:343
+#: company/models.py:344
 msgid "Set as primary address"
 msgstr ""
 
-#: company/models.py:346 templates/js/translated/company.js:904
+#: company/models.py:347 templates/js/translated/company.js:904
 #: templates/js/translated/company.js:961
 msgid "Line 1"
 msgstr ""
 
-#: company/models.py:347
+#: company/models.py:348
 msgid "Address line 1"
 msgstr ""
 
-#: company/models.py:351 templates/js/translated/company.js:905
+#: company/models.py:352 templates/js/translated/company.js:905
 #: templates/js/translated/company.js:967
 msgid "Line 2"
 msgstr ""
 
-#: company/models.py:352
+#: company/models.py:353
 msgid "Address line 2"
 msgstr ""
 
-#: company/models.py:356 company/models.py:357
+#: company/models.py:357 company/models.py:358
 #: templates/js/translated/company.js:973
 msgid "Postal code"
 msgstr ""
 
-#: company/models.py:361
+#: company/models.py:362
 msgid "City/Region"
 msgstr ""
 
-#: company/models.py:362
+#: company/models.py:363
 msgid "Postal code city/region"
 msgstr ""
 
-#: company/models.py:366
+#: company/models.py:367
 msgid "State/Province"
 msgstr ""
 
-#: company/models.py:367
+#: company/models.py:368
 msgid "State or province"
 msgstr ""
 
-#: company/models.py:371 templates/js/translated/company.js:991
+#: company/models.py:372 templates/js/translated/company.js:991
 msgid "Country"
 msgstr ""
 
-#: company/models.py:372
+#: company/models.py:373
 msgid "Address country"
 msgstr ""
 
-#: company/models.py:376
+#: company/models.py:377
 msgid "Courier shipping notes"
 msgstr ""
 
-#: company/models.py:377
+#: company/models.py:378
 msgid "Notes for shipping courier"
 msgstr ""
 
-#: company/models.py:381
+#: company/models.py:382
 msgid "Internal shipping notes"
 msgstr ""
 
-#: company/models.py:382
+#: company/models.py:383
 msgid "Shipping notes for internal use"
 msgstr ""
 
-#: company/models.py:387
+#: company/models.py:388
 msgid "Link to address information (external)"
 msgstr ""
 
-#: company/models.py:412 company/models.py:688 stock/models.py:709
+#: company/models.py:413 company/models.py:689 stock/models.py:709
 #: stock/serializers.py:205 stock/templates/stock/item_base.html:142
 #: templates/js/translated/bom.js:622
 msgid "Base Part"
 msgstr "Temel Parça"
 
-#: company/models.py:416 company/models.py:692
+#: company/models.py:417 company/models.py:693
 msgid "Select part"
 msgstr "Parça seçin"
 
-#: company/models.py:427 company/templates/company/company_base.html:76
+#: company/models.py:428 company/templates/company/company_base.html:76
 #: company/templates/company/manufacturer_part.html:90
 #: company/templates/company/supplier_part.html:145 part/serializers.py:445
 #: stock/templates/stock/item_base.html:207
@@ -3821,11 +3821,11 @@ msgstr "Parça seçin"
 msgid "Manufacturer"
 msgstr "Üretici"
 
-#: company/models.py:428
+#: company/models.py:429
 msgid "Select manufacturer"
 msgstr "Üretici seçin"
 
-#: company/models.py:434 company/templates/company/manufacturer_part.html:101
+#: company/models.py:435 company/templates/company/manufacturer_part.html:101
 #: company/templates/company/supplier_part.html:153 part/serializers.py:451
 #: templates/js/translated/company.js:351
 #: templates/js/translated/company.js:1107
@@ -3836,30 +3836,30 @@ msgstr "Üretici seçin"
 msgid "MPN"
 msgstr "ÜPN"
 
-#: company/models.py:435
+#: company/models.py:436
 msgid "Manufacturer Part Number"
 msgstr "Üretici Parça Numarası"
 
-#: company/models.py:441
+#: company/models.py:442
 msgid "URL for external manufacturer part link"
 msgstr ""
 
-#: company/models.py:447
+#: company/models.py:448
 msgid "Manufacturer part description"
 msgstr ""
 
-#: company/models.py:494 company/models.py:518 company/models.py:713
+#: company/models.py:495 company/models.py:519 company/models.py:714
 #: company/templates/company/manufacturer_part.html:7
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:217
 msgid "Manufacturer Part"
 msgstr ""
 
-#: company/models.py:525
+#: company/models.py:526
 msgid "Parameter name"
 msgstr "Parametre adı"
 
-#: company/models.py:531
+#: company/models.py:532
 #: report/templates/report/inventree_test_report_base.html:104
 #: stock/models.py:2312 templates/js/translated/company.js:1156
 #: templates/js/translated/company.js:1409 templates/js/translated/part.js:1492
@@ -3867,11 +3867,11 @@ msgstr "Parametre adı"
 msgid "Value"
 msgstr "Değer"
 
-#: company/models.py:532
+#: company/models.py:533
 msgid "Parameter value"
 msgstr "Parametre değeri"
 
-#: company/models.py:538 company/templates/company/supplier_part.html:168
+#: company/models.py:539 company/templates/company/supplier_part.html:168
 #: part/admin.py:39 part/models.py:923 part/models.py:3395
 #: part/templates/part/part_base.html:284
 #: templates/js/translated/company.js:1415 templates/js/translated/part.js:1511
@@ -3879,23 +3879,23 @@ msgstr "Parametre değeri"
 msgid "Units"
 msgstr ""
 
-#: company/models.py:539
+#: company/models.py:540
 msgid "Parameter units"
 msgstr ""
 
-#: company/models.py:633
+#: company/models.py:634
 msgid "Pack units must be compatible with the base part units"
 msgstr ""
 
-#: company/models.py:639
+#: company/models.py:640
 msgid "Pack units must be greater than zero"
 msgstr ""
 
-#: company/models.py:655
+#: company/models.py:656
 msgid "Linked manufacturer part must reference the same base part"
 msgstr ""
 
-#: company/models.py:699 company/templates/company/company_base.html:81
+#: company/models.py:700 company/templates/company/company_base.html:81
 #: company/templates/company/supplier_part.html:129 order/models.py:386
 #: order/templates/order/order_base.html:136 part/bom.py:284 part/bom.py:312
 #: part/serializers.py:434 plugin/builtin/suppliers/digikey.py:25
@@ -3911,36 +3911,27 @@ msgstr ""
 msgid "Supplier"
 msgstr "Tedarikçi"
 
-#: company/models.py:700
+#: company/models.py:701
 msgid "Select supplier"
 msgstr "Tedarikçi seçin"
 
-#: company/models.py:705 company/templates/company/supplier_part.html:139
-#: part/bom.py:285 part/bom.py:313 part/serializers.py:440
-#: templates/js/translated/company.js:349 templates/js/translated/part.js:1786
-#: templates/js/translated/pricing.js:510
-#: templates/js/translated/purchase_order.js:1844
-#: templates/js/translated/purchase_order.js:2022
-msgid "SKU"
-msgstr ""
-
-#: company/models.py:706 part/serializers.py:440
+#: company/models.py:707 part/serializers.py:440
 msgid "Supplier stock keeping unit"
 msgstr ""
 
-#: company/models.py:714
+#: company/models.py:715
 msgid "Select manufacturer part"
 msgstr ""
 
-#: company/models.py:720
+#: company/models.py:721
 msgid "URL for external supplier part link"
 msgstr ""
 
-#: company/models.py:726
+#: company/models.py:727
 msgid "Supplier part description"
 msgstr ""
 
-#: company/models.py:731 company/templates/company/supplier_part.html:187
+#: company/models.py:732 company/templates/company/supplier_part.html:187
 #: part/admin.py:275 part/models.py:3797 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
@@ -3951,15 +3942,15 @@ msgstr ""
 msgid "Note"
 msgstr "Not"
 
-#: company/models.py:735 part/models.py:1857
+#: company/models.py:736 part/models.py:1857
 msgid "base cost"
 msgstr "temel maliyet"
 
-#: company/models.py:735 part/models.py:1857
+#: company/models.py:736 part/models.py:1857
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
-#: company/models.py:737 company/templates/company/supplier_part.html:160
+#: company/models.py:738 company/templates/company/supplier_part.html:160
 #: stock/admin.py:137 stock/models.py:735 stock/serializers.py:1297
 #: stock/templates/stock/item_base.html:240
 #: templates/js/translated/company.js:1636
@@ -3967,11 +3958,11 @@ msgstr ""
 msgid "Packaging"
 msgstr "Paketleme"
 
-#: company/models.py:737
+#: company/models.py:738
 msgid "Part packaging"
 msgstr ""
 
-#: company/models.py:741 templates/js/translated/company.js:1641
+#: company/models.py:742 templates/js/translated/company.js:1641
 #: templates/js/translated/part.js:1820 templates/js/translated/part.js:1875
 #: templates/js/translated/purchase_order.js:314
 #: templates/js/translated/purchase_order.js:845
@@ -3981,27 +3972,27 @@ msgstr ""
 msgid "Pack Quantity"
 msgstr ""
 
-#: company/models.py:742
+#: company/models.py:743
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr ""
 
-#: company/models.py:758 part/models.py:1859
+#: company/models.py:759 part/models.py:1859
 msgid "multiple"
 msgstr "çoklu"
 
-#: company/models.py:758
+#: company/models.py:759
 msgid "Order multiple"
 msgstr ""
 
-#: company/models.py:767
+#: company/models.py:768
 msgid "Quantity available from supplier"
 msgstr ""
 
-#: company/models.py:771
+#: company/models.py:772
 msgid "Availability Updated"
 msgstr ""
 
-#: company/models.py:772
+#: company/models.py:773
 msgid "Date of last update of availability data"
 msgstr ""
 
@@ -4373,6 +4364,15 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:133
 msgid "No supplier information available"
+msgstr ""
+
+#: company/templates/company/supplier_part.html:139 part/bom.py:285
+#: part/bom.py:313 part/serializers.py:440
+#: templates/js/translated/company.js:349 templates/js/translated/part.js:1786
+#: templates/js/translated/pricing.js:510
+#: templates/js/translated/purchase_order.js:1844
+#: templates/js/translated/purchase_order.js:2022
+msgid "SKU"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:206
@@ -7805,16 +7805,16 @@ msgstr ""
 msgid "Activate this plugin"
 msgstr ""
 
-#: report/api.py:172
+#: report/api.py:173
 msgid "No valid objects provided to template"
 msgstr "Şablon için geçerli bir nesne sağlanmadı"
 
-#: report/api.py:209 report/api.py:245
+#: report/api.py:210 report/api.py:246
 #, python-brace-format
 msgid "Template file '{template}' is missing or does not exist"
 msgstr ""
 
-#: report/api.py:322
+#: report/api.py:323
 msgid "Test report"
 msgstr ""
 
