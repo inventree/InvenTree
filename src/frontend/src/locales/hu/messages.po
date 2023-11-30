@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-29 01:51\n"
+"PO-Revision-Date: 2023-11-30 01:56\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1550,9 +1550,9 @@ msgstr "Paraméter sablon törölve"
 msgid "Are you sure you want to remove this parameter template?"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:81
+#: src/components/tables/part/PartParameterTemplateTable.tsx:83
 #~ msgid "Remove parameter template"
-#~ msgstr "Paraméter sablon törlés"
+#~ msgstr "Remove parameter template"
 
 #: src/components/tables/part/PartParameterTemplateTable.tsx:92
 msgid "Create Parameter Template"
@@ -3788,3 +3788,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+
