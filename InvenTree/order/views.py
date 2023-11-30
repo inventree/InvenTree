@@ -342,8 +342,9 @@ class LineItemPricing(PartPricing):
         else:
             return None
 
-        if id:
+        if part and id:
             return part.id
+
         return part
 
     def get_so(self, pk=False):
