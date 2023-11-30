@@ -9,6 +9,7 @@ import { TableColumn } from '../Column';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 
 export interface PluginRegistryErrorI {
+  id: number;
   stage: string;
   name: string;
   message: string;
@@ -47,7 +48,9 @@ export function PluginErrorTable({ props }: { props: InvenTreeTableProps }) {
       columns={registryErrorTableColumns}
       props={{
         ...props,
-        dataFormatter: (data: any) => data.registry_errors,
+        dataFormatter: (data: any) =>
+          data.registry_errors.map((e: any, i: number) => ({ id: i, ...e })),
+        idAccessor: 'id',
         enableDownload: false,
         enableFilters: false,
         enableSearch: false,
