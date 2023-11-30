@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-29 01:51\n"
+"PO-Revision-Date: 2023-11-30 01:56\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -1550,9 +1550,9 @@ msgstr ""
 msgid "Are you sure you want to remove this parameter template?"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:81
+#: src/components/tables/part/PartParameterTemplateTable.tsx:83
 #~ msgid "Remove parameter template"
-#~ msgstr ""
+#~ msgstr "Remove parameter template"
 
 #: src/components/tables/part/PartParameterTemplateTable.tsx:92
 msgid "Create Parameter Template"
@@ -3788,3 +3788,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
