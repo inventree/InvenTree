@@ -46,7 +46,7 @@ export default function Stock() {
       },
       {
         name: 'sublocations',
-        label: t`Stock Locaons`,
+        label: t`Stock Locations`,
         icon: <IconSitemap />,
         content: (
           <StockLocationTable
@@ -58,7 +58,7 @@ export default function Stock() {
       },
       {
         name: 'default_parts',
-        label: t`Parts`,
+        label: t`Default Parts`,
         icon: <IconPackages />,
         content: (
           <PartListTable
