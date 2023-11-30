@@ -4,11 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
-import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../../functions/forms';
+import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
 import { useInstance } from '../../../hooks/UseInstance';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -19,6 +15,11 @@ import { DetailDrawer } from '../../nav/DetailDrawer';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+
+export interface GroupDetailI {
+  pk: number;
+  name: string;
+}
 
 export function GroupDrawer({
   id,
@@ -86,7 +87,12 @@ export function GroupTable() {
   const table = useTable('groups');
   const navigate = useNavigate();
 
-  const columns: TableColumn[] = useMemo(() => {
+  const openDetailDrawer = useCallback(
+    (pk: number) => navigate(`group-${pk}/`),
+    []
+  );
+
+  const columns: TableColumn<GroupDetailI>[] = useMemo(() => {
     return [
       {
         accessor: 'name',
@@ -96,21 +102,10 @@ export function GroupTable() {
     ];
   }, []);
 
-  const rowActions = useCallback((record: any): RowAction[] => {
+  const rowActions = useCallback((record: GroupDetailI): RowAction[] => {
     return [
       RowEditAction({
-        onClick: () => {
-          openEditApiForm({
-            url: ApiPaths.group_list,
-            pk: record.pk,
-            title: t`Edit group`,
-            fields: {
-              name: {}
-            },
-            onFormSuccess: table.refreshTable,
-            successMessage: t`Group updated`
-          });
-        }
+        onClick: () => openDetailDrawer(record.pk)
       }),
       RowDeleteAction({
         onClick: () => {
@@ -172,7 +167,7 @@ export function GroupTable() {
         props={{
           rowActions: rowActions,
           customActionGroups: tableActions,
-          onRowClick: (record) => navigate(`group-${record.pk}/`)
+          onRowClick: (record) => openDetailDrawer(record.pk)
         }}
       />
     </>

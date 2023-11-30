@@ -6,11 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
-import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../../functions/forms';
+import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
 import { useInstance } from '../../../hooks/UseInstance';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -22,11 +18,7 @@ import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
-
-interface GroupDetailI {
-  pk: number;
-  name: string;
-}
+import { GroupDetailI } from './GroupTable';
 
 export interface UserDetailI {
   pk: number;
@@ -152,6 +144,11 @@ export function UserTable() {
   const table = useTable('users');
   const navigate = useNavigate();
 
+  const openDetailDrawer = useCallback(
+    (pk: number) => navigate(`user-${pk}/`),
+    []
+  );
+
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
@@ -202,20 +199,7 @@ export function UserTable() {
   const rowActions = useCallback((record: UserDetailI): RowAction[] => {
     return [
       RowEditAction({
-        onClick: () => {
-          openEditApiForm({
-            url: ApiPaths.user_list,
-            pk: record.pk,
-            title: t`Edit user`,
-            fields: {
-              email: {},
-              first_name: {},
-              last_name: {}
-            },
-            onFormSuccess: table.refreshTable,
-            successMessage: t`User updated`
-          });
-        }
+        onClick: () => openDetailDrawer(record.pk)
       }),
       RowDeleteAction({
         onClick: () => {
@@ -278,7 +262,7 @@ export function UserTable() {
         props={{
           rowActions: rowActions,
           customActionGroups: tableActions,
-          onRowClick: (record) => navigate(`user-${record.pk}/`)
+          onRowClick: (record) => openDetailDrawer(record.pk)
         }}
       />
     </>
