@@ -935,6 +935,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
         return True
 
+    @property
     def can_cancel(self):
         """Return True if this order can be cancelled."""
         return self.is_open
@@ -947,7 +948,7 @@ class SalesOrder(TotalPriceMixin, Order):
         - Mark the order as 'cancelled'
         - Delete any StockItems which have been allocated
         """
-        if not self.can_cancel():
+        if not self.can_cancel:
             return False
 
         self.status = SalesOrderStatus.CANCELLED.value
