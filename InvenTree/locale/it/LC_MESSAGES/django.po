@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-29 03:06+0000\n"
-"PO-Revision-Date: 2023-11-28 01:41\n"
+"POT-Creation-Date: 2023-11-30 05:32+0000\n"
+"PO-Revision-Date: 2023-12-01 02:01\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -474,9 +474,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -543,123 +541,123 @@ msgstr "URL del file immagine remota"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Il download delle immagini da URL remoto non è abilitato"
 
-#: InvenTree/settings.py:819
+#: InvenTree/settings.py:830
 msgid "Bulgarian"
 msgstr ""
 
-#: InvenTree/settings.py:820
+#: InvenTree/settings.py:831
 msgid "Czech"
 msgstr "Ceco"
 
-#: InvenTree/settings.py:821
+#: InvenTree/settings.py:832
 msgid "Danish"
 msgstr "Danese"
 
-#: InvenTree/settings.py:822
+#: InvenTree/settings.py:833
 msgid "German"
 msgstr "Tedesco"
 
-#: InvenTree/settings.py:823
+#: InvenTree/settings.py:834
 msgid "Greek"
 msgstr "Greco"
 
-#: InvenTree/settings.py:824
+#: InvenTree/settings.py:835
 msgid "English"
 msgstr "Inglese"
 
-#: InvenTree/settings.py:825
+#: InvenTree/settings.py:836
 msgid "Spanish"
 msgstr "Spagnolo"
 
-#: InvenTree/settings.py:826
+#: InvenTree/settings.py:837
 msgid "Spanish (Mexican)"
 msgstr "Spagnolo (Messicano)"
 
-#: InvenTree/settings.py:827
+#: InvenTree/settings.py:838
 msgid "Farsi / Persian"
 msgstr "Farsi / Persiano"
 
-#: InvenTree/settings.py:828
+#: InvenTree/settings.py:839
 msgid "Finnish"
 msgstr ""
 
-#: InvenTree/settings.py:829
+#: InvenTree/settings.py:840
 msgid "French"
 msgstr "Francese"
 
-#: InvenTree/settings.py:830
+#: InvenTree/settings.py:841
 msgid "Hebrew"
 msgstr "Ebraico"
 
-#: InvenTree/settings.py:831
+#: InvenTree/settings.py:842
 msgid "Hindi"
 msgstr ""
 
-#: InvenTree/settings.py:832
+#: InvenTree/settings.py:843
 msgid "Hungarian"
 msgstr "Ungherese"
 
-#: InvenTree/settings.py:833
+#: InvenTree/settings.py:844
 msgid "Italian"
 msgstr "Italiano"
 
-#: InvenTree/settings.py:834
+#: InvenTree/settings.py:845
 msgid "Japanese"
 msgstr "Giapponese"
 
-#: InvenTree/settings.py:835
+#: InvenTree/settings.py:846
 msgid "Korean"
 msgstr "Coreano"
 
-#: InvenTree/settings.py:836
+#: InvenTree/settings.py:847
 msgid "Dutch"
 msgstr "Olandese"
 
-#: InvenTree/settings.py:837
+#: InvenTree/settings.py:848
 msgid "Norwegian"
 msgstr "Norvegese"
 
-#: InvenTree/settings.py:838
+#: InvenTree/settings.py:849
 msgid "Polish"
 msgstr "Polacco"
 
-#: InvenTree/settings.py:839
+#: InvenTree/settings.py:850
 msgid "Portuguese"
 msgstr "Portoghese"
 
-#: InvenTree/settings.py:840
+#: InvenTree/settings.py:851
 msgid "Portuguese (Brazilian)"
 msgstr "Portoghese (Brasile)"
 
-#: InvenTree/settings.py:841
+#: InvenTree/settings.py:852
 msgid "Russian"
 msgstr "Russo"
 
-#: InvenTree/settings.py:842
+#: InvenTree/settings.py:853
 msgid "Slovenian"
 msgstr "Sloveno"
 
-#: InvenTree/settings.py:843
+#: InvenTree/settings.py:854
 msgid "Swedish"
 msgstr "Svedese"
 
-#: InvenTree/settings.py:844
+#: InvenTree/settings.py:855
 msgid "Thai"
 msgstr "Thailandese"
 
-#: InvenTree/settings.py:845
+#: InvenTree/settings.py:856
 msgid "Turkish"
 msgstr "Turco"
 
-#: InvenTree/settings.py:846
+#: InvenTree/settings.py:857
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: InvenTree/settings.py:847
+#: InvenTree/settings.py:858
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: InvenTree/settings.py:848
+#: InvenTree/settings.py:859
 msgid "Chinese (Traditional)"
 msgstr ""
 
@@ -5467,20 +5465,20 @@ msgstr "Nuova spedizione"
 msgid "Match Supplier Parts"
 msgstr "Corrispondenza Articoli del Fornitore"
 
-#: order/views.py:389
+#: order/views.py:390
 msgid "Sales order not found"
 msgstr "Ordine di Vendita non trovato"
 
-#: order/views.py:395
+#: order/views.py:396
 msgid "Price not found"
 msgstr "Prezzo non trovato"
 
-#: order/views.py:398
+#: order/views.py:399
 #, python-brace-format
 msgid "Updated {part} unit-price to {price}"
 msgstr "Aggiornato {part} prezzo unitario a {price}"
 
-#: order/views.py:403
+#: order/views.py:404
 #, python-brace-format
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr "Aggiornato {part} unità prezzo a {price} e quantità a {qty}"
@@ -13345,11 +13343,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13523,3 +13519,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
