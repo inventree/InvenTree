@@ -5,6 +5,15 @@ from InvenTree.unit_test import InvenTreeTestCase
 from .transition import StateTransitionMixin, TransitionMethod, storage
 
 
+class MyPrivateError(NotImplementedError):
+    """Error for testing purposes."""
+
+
+def dflt(*args, **kwargs):
+    """Default function for testing."""
+    raise MyPrivateError('dflt')
+
+
 class TransitionTests(InvenTreeTestCase):
     """Tests for basic NotificationMethod."""
 
@@ -20,23 +29,31 @@ class TransitionTests(InvenTreeTestCase):
     def test_storage(self):
         """Ensure that the storage collection mechanism works."""
 
-        class MyPrivateError(NotImplementedError):
-            ...
-
-        class ValidImplementation(TransitionMethod):
+        class RaisingImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
-                raise MyPrivateError('This is a private error for teting purposes')
+                raise MyPrivateError('RaisingImplementation')
 
         # Ensure registering works
         self.assertEqual(len(storage.list), 0)
         storage.collect()
-        self.assertEqual(len(storage.list), 1)
+        self.assertEqual(len(storage.list), 3)
 
         # Ensure the class is registered
-        self.assertIn(ValidImplementation, storage.list)
+        self.assertIn(RaisingImplementation, storage.list)
 
         # Ensure stuff is passed to the class
-        with self.assertRaises(MyPrivateError):
-            def dflt(*args, **kwargs):
-                print(args, kwargs)
-            StateTransitionMixin.handle_transition(0, 1, self, ValidImplementation.transition, dflt)
+        with self.assertRaises(MyPrivateError) as exp:
+            StateTransitionMixin.handle_transition(0, 1, self, self, dflt)
+        self.assertEqual(str(exp.exception), 'RaisingImplementation')
+
+    def test_default_function(self):
+        """Ensure that the default function is called."""
+
+        class ValidImplementation(TransitionMethod):
+            def transition(self, *args, **kwargs):
+                return False  # Return false to indicate that this should run
+
+        # Ensure the default action is called
+        with self.assertRaises(MyPrivateError) as exp:
+            StateTransitionMixin.handle_transition(0, 1, self, self, dflt)
+        self.assertEqual(str(exp.exception), 'dflt')
