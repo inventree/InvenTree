@@ -7,7 +7,16 @@ class TransitionMethod:
 
     Must implement a method called `transition` that takes both args and kwargs.
     """
-    ...
+
+    def __init__(self) -> None:
+        """Check that the method is defined correctly.
+
+        This checks that:
+        - The needed functions are implemented
+        """
+        # Check if a sending fnc is defined
+        if (not hasattr(self, 'transition')):
+            raise NotImplementedError('A TransitionMethod must define a `transition` method')
 
 
 class TransitionMethodStorageClass:
