@@ -33,6 +33,7 @@ import users.models as UserModels
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Address, Company, Contact, SupplierPart
+from generic.states import StateTransitionMixin
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeURLField,
                               RoundingDecimalField)
@@ -281,7 +282,7 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
         raise NotImplementedError(f"get_status_class() not implemented for {__class__}")
 
 
-class PurchaseOrder(TotalPriceMixin, Order):
+class PurchaseOrder(StateTransitionMixin, TotalPriceMixin, Order):
     """A PurchaseOrder represents goods shipped inwards from an external supplier.
 
     Attributes:
@@ -479,13 +480,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         return line
 
-    @transaction.atomic
-    def place_order(self):
+    # region state changes
+    def default_action_place(self, *args, **kwargs):
         """Marks the PurchaseOrder as PLACED.
 
         Order must be currently PENDING.
         """
-        if self.status == PurchaseOrderStatus.PENDING:
+        if self.is_pending:
             self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = datetime.now().date()
             self.save()
@@ -500,8 +501,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 content=InvenTreeNotificationBodies.NewOrder
             )
 
-    @transaction.atomic
-    def complete_order(self):
+    def default_action_complete(self, *args, **kwargs):
         """Marks the PurchaseOrder as COMPLETE.
 
         Order must be currently PLACED.
@@ -519,31 +519,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             trigger_event('purchaseorder.completed', id=self.pk)
 
-    @property
-    def is_pending(self):
-        """Return True if the PurchaseOrder is 'pending'"""
-        return self.status == PurchaseOrderStatus.PENDING.value
-
-    @property
-    def is_open(self):
-        """Return True if the PurchaseOrder is 'open'"""
-        return self.status in PurchaseOrderStatusGroups.OPEN
-
-    def can_cancel(self):
-        """A PurchaseOrder can only be cancelled under the following circumstances.
-
-        - Status is PLACED
-        - Status is PENDING
-        """
-        return self.status in [
-            PurchaseOrderStatus.PLACED.value,
-            PurchaseOrderStatus.PENDING.value
-        ]
-
-    @transaction.atomic
-    def cancel_order(self):
+    def default_action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
-        if self.can_cancel():
+        if self.can_cancel:
             self.status = PurchaseOrderStatus.CANCELLED.value
             self.save()
 
@@ -556,6 +534,44 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.OrderCanceled
             )
+
+    @transaction.atomic
+    def place_order(self):
+        """Attempt to transition the PurchaseOrder to PLACED status."""
+        self.handle_transition(self.status, PurchaseOrderStatus.PLACED.value, self, self.default_action_place)
+
+    @transaction.atomic
+    def complete_order(self):
+        """Attempt to transition the PurchaseOrder to COMPLETE status."""
+        self.handle_transition(self.status, PurchaseOrderStatus.COMPLETE.value, self, self.default_action_complete)
+
+    @transaction.atomic
+    def cancel_order(self):
+        """Attempt to transition the PurchaseOrder to CANCELLED status."""
+        self.handle_transition(self.status, PurchaseOrderStatus.CANCELLED.value, self, self.default_action_cancel)
+
+    @property
+    def is_pending(self):
+        """Return True if the PurchaseOrder is 'pending'"""
+        return self.status == PurchaseOrderStatus.PENDING.value
+
+    @property
+    def is_open(self):
+        """Return True if the PurchaseOrder is 'open'"""
+        return self.status in PurchaseOrderStatusGroups.OPEN
+
+    @property
+    def can_cancel(self):
+        """A PurchaseOrder can only be cancelled under the following circumstances.
+
+        - Status is PLACED
+        - Status is PENDING
+        """
+        return self.status in [
+            PurchaseOrderStatus.PLACED.value,
+            PurchaseOrderStatus.PENDING.value
+        ]
+    # endregion
 
     def pending_line_items(self):
         """Return a list of pending line items for this order.
