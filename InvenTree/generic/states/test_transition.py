@@ -36,7 +36,7 @@ class TransitionTests(InvenTreeTestCase):
         # Ensure registering works
         self.assertEqual(len(storage.list), 0)
         storage.collect()
-        self.assertEqual(len(storage.list), 3)
+        self.assertEqual(len(storage.list), 2)
 
         # Ensure the class is registered
         self.assertIn(RaisingImplementation, storage.list)

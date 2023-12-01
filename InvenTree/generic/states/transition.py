@@ -31,6 +31,11 @@ class TransitionMethodStorageClass:
         """Collect all classes in the environment that are transition methods."""
         filtered_list = {}
         for item in InvenTree.helpers.inheritors(TransitionMethod):
+            # Try if valid
+            try:
+                item()
+            except NotImplementedError:
+                continue
             filtered_list[f'{item.__module__}.{item.__qualname__}'] = item
 
         self.list = list(filtered_list.values())
